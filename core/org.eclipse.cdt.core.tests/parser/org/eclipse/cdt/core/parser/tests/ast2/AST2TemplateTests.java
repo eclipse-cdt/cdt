@@ -425,6 +425,63 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		assertEquals(f.getID(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
 	}
 
+	// template < int N > void f(const int (&v)[N]);
+	// void main() {
+	//     f({1,2,3});
+	// }
+	public void test_dr1591_DeduceArrayFromInitializerList_a() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+		NameCollector col = new NameCollector();
+		tu.accept(col);
+
+		ICPPFunctionTemplate f = (ICPPFunctionTemplate) col.getName(1).resolveBinding();
+		assertEquals("f", col.getName(5).toString());
+
+		IBinding fCall = col.getName(5).resolveBinding();
+		assertInstance(fCall, IFunction.class);
+		IFunction f2 = (IFunction) fCall;
+		assertInstance(f2, ICPPTemplateInstance.class);
+		assertSame(f, ((ICPPTemplateInstance) f2).getTemplateDefinition());
+	}
+
+	// template < typename T, int N > void f(const T (&v)[N]);
+	// void main() {
+	//     f({1,2,3});
+	// }
+	public void test_dr1591_DeduceArrayFromInitializerList_b() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+		NameCollector col = new NameCollector();
+		tu.accept(col);
+
+		ICPPFunctionTemplate f = (ICPPFunctionTemplate) col.getName(2).resolveBinding();
+		assertEquals("f", col.getName(7).toString());
+
+		IBinding fCall = col.getName(7).resolveBinding();
+		assertInstance(fCall, IFunction.class);
+		IFunction f2 = (IFunction) fCall;
+		assertInstance(f2, ICPPTemplateInstance.class);
+		assertSame(f, ((ICPPTemplateInstance) f2).getTemplateDefinition());
+	}
+
+	// template < typename T, int N > void f(const T (&v)[N]);
+	// void main() {
+	//     f({1,2.0,3});
+	// }
+	public void test_dr1591_DeduceArrayFromInitializerList_c() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+		NameCollector col = new NameCollector();
+		tu.accept(col);
+
+		ICPPFunctionTemplate f = (ICPPFunctionTemplate) col.getName(2).resolveBinding();
+		assertEquals("f", col.getName(7).toString());
+
+		IBinding fCall = col.getName(7).resolveBinding();
+		assertInstance(fCall, IProblemBinding.class);
+
+		IProblemBinding fCallPB = (IProblemBinding) fCall;
+		assertEquals(IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fCallPB.getID());
+	}
+
 	// template < class T, template < class X > class U, T *pT > class A {
 	// };
 	public void testTemplateParameters() throws Exception {

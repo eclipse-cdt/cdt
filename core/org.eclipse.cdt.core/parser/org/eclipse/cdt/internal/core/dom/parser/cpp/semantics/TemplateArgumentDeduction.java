@@ -148,7 +148,20 @@ public class TemplateArgumentDeduction {
 						par = SemanticUtil.getNestedType(par, TDEF | REF | CVTYPE);
 
 						// Check if this is a deduced context.
-						IType inner = Conversions.getInitListType(par);
+						IType inner = null;
+						if (par instanceof IArrayType) {
+							// As per DR1591, if an initializer list is given as an argument for parameter type P[N],
+							// we can deduce N from the size of the initializer list (and potentially deduce P from
+							// the elements in the list).
+							inner = ((IArrayType) par).getType();
+							IValue as = IntegralValue
+									.create(((InitializerListType) arg).getEvaluation().getClauses().length);
+							IValue ps = ((IArrayType) par).getSize();
+							if (!deduct.fromArraySize(ps, as))
+								return false;
+						} else {
+							inner = Conversions.getInitListType(par);
+						}
 						if (inner != null) {
 							final EvalInitList eval = ((InitializerListType) arg).getEvaluation();
 							for (ICPPEvaluation clause : eval.getClauses()) {
@@ -853,6 +866,35 @@ public class TemplateArgumentDeduction {
 						&& fromType(p.getTypeValue(), a.getTypeValue(), false, true));
 	}
 
+	/**
+	 * Deduce a parameter array size from an argument array size.
+	 * @param ps  the parameter size (may refer to template parameter)
+	 * @param as  the argument array or initializer list size
+	 * @return  false if deduction encountered an error, true otherwise
+	 */
+	private boolean fromArraySize(IValue ps, IValue as) {
+		if (as != ps) {
+			if (as == null || ps == null)
+				return false;
+
+			int parID = IntegralValue.isTemplateParameter(ps);
+			if (parID >= 0) {
+				ICPPTemplateArgument old = fDeducedArgs.getArgument(parID, fPackOffset);
+				if (old == null) {
+					if (!deduce(parID, new CPPTemplateNonTypeArgument(as, new TypeOfValueDeducedFromArraySize()))) {
+						return false;
+					}
+				} else if (!as.equals(old.getNonTypeValue())) {
+					return false;
+				}
+			} else if (!as.equals(ps)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	private boolean fromType(IType p, IType a, boolean allowCVQConversion, boolean verifyNonDeduced)
 			throws DOMException {
 		IType originalArgType = a;
@@ -910,25 +952,8 @@ public class TemplateArgumentDeduction {
 				IArrayType pa = (IArrayType) p;
 				IValue as = aa.getSize();
 				IValue ps = pa.getSize();
-				if (as != ps) {
-					if (as == null || ps == null)
-						return false;
-
-					int parID = IntegralValue.isTemplateParameter(ps);
-					if (parID >= 0) {
-						ICPPTemplateArgument old = fDeducedArgs.getArgument(parID, fPackOffset);
-						if (old == null) {
-							if (!deduce(parID,
-									new CPPTemplateNonTypeArgument(as, new TypeOfValueDeducedFromArraySize()))) {
-								return false;
-							}
-						} else if (!as.equals(old.getNonTypeValue())) {
-							return false;
-						}
-					} else if (!as.equals(as)) {
-						return false;
-					}
-				}
+				if (!fromArraySize(ps, as))
+					return false;
 				p = pa.getType();
 				a = aa.getType();
 			} else if (p instanceof IQualifierType) {

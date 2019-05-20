@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0a115c1d_cbfca70c",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-05-20T06:42:15Z",
+      "side": 1,
+      "message": "I think the best thing is to track if we are in the right class or not. I\u0027m not sure if this check is ok even in other codan checkers actually.",
+      "parentUuid": "5fd8822e_c4bae566",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "64606b8c_d2a6ac4c",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
         "patchSetId": 9
@@ -59,6 +77,24 @@
     },
     {
       "key": {
+        "uuid": "dd2995fb_640063b3",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-05-20T06:42:15Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "bdc52c78_67416832",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6026b3ae_9bc935a8",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
         "patchSetId": 9
@@ -87,6 +123,24 @@
       "writtenOn": "2019-05-20T04:48:17Z",
       "side": 1,
       "message": "What is this condition for?",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bd3d08d1_93796016",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-05-20T06:42:15Z",
+      "side": 1,
+      "message": "Since we want to avoid delegating constructors here, we take a look at class type of the constructor called. If it isn\u0027t an ICPPClassType it\u0027s not needed to perform the isSameType check, for example we are calling a constructor defined for a struct.",
+      "parentUuid": "efd3fe14_d9e1ac7d",
       "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

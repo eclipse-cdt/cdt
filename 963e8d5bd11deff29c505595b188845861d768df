@@ -16,6 +16,24 @@
       "revId": "963e8d5bd11deff29c505595b188845861d768df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eafddcc1_ffe8b51b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUtil.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-05-20T05:50:35Z",
+      "side": 1,
+      "message": "I am not 100% sure, so I added the protection.",
+      "parentUuid": "cca5cb30_99ef1faf",
+      "revId": "963e8d5bd11deff29c505595b188845861d768df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

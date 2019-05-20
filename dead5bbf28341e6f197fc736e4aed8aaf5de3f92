@@ -16,6 +16,24 @@
       "revId": "dead5bbf28341e6f197fc736e4aed8aaf5de3f92",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ebd31ff_a1b17d8b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-05-20T17:01:37Z",
+      "side": 1,
+      "message": "What is it that made it unnecessary?",
+      "parentUuid": "60d7cc76_7909eaae",
+      "revId": "dead5bbf28341e6f197fc736e4aed8aaf5de3f92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

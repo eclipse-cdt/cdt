@@ -1,0 +1,129 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5fd8822e_c4bae566",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T04:48:17Z",
+      "side": 1,
+      "message": "This approach doesn\u0027t work correctly when in the presence of a local class within either a constructor or destructor (edge case I know!).\n\nclass Foo\n{\npublic:\n\tFoo()\n\t{\n\t\tclass LocalClass {\n\t\t\tLocalClass() {\n\n\t\t\t}\n\n\t\t\tvirtual void foo() {\n\n\t\t\t}\n\t\t\tvoid func() {\n\t\t\t\tfoo(); // False positive here\n\t\t\t}\n\t\t\tvirtual ~LocalClass() {}\n\t\t};\n\t}\n};\n\nAn option might be to use ASTQueries.findEnclosingFunction on each IASTFunctionCallExpression visited but it might be slower, I\u0027m not sure. But this probably won\u0027t work well in the context of lambdas:\n\nclass Foo\n{\npublic:\n\tFoo()\n\t{\n\t\t[this]() {\n\t\t\tfunc();\n\t\t}();\n\t}\n\n\tvirtual void func() {\n\t}\n\n\t~Foo() {\n\t}\n};\n\nEither way, tests should probably be added for these cases.",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64606b8c_d2a6ac4c",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T04:48:17Z",
+      "side": 1,
+      "message": "redundant null check",
+      "range": {
+        "startLine": 95,
+        "startChar": 9,
+        "endLine": 95,
+        "endChar": 25
+      },
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bdc52c78_67416832",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T04:48:17Z",
+      "side": 1,
+      "message": "Maybe it would be nice to only report the problem on the field name in the case of:\nthis-\u003efunc();\nRight now, the whole thing is underlined in red but it could be only \"func\" instead. You would only need to use the result of getFieldName() above instead of \u0027expression\u0027. Maybe a new local variable would do it:\nIASTNode problemNode \u003d expression;\n...\nif (/*idExpressionCase */)\n  //No change\nif (/*fieldReferenceCase */)\n  IASTName name \u003d fName.getFieldName();\n  fBinding \u003d name.resolveBinding();\n  problemNode \u003d name;\n...\n reportProblem(VIRTUAL_CALL_ID, problemNode;",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6026b3ae_9bc935a8",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T04:48:17Z",
+      "side": 1,
+      "message": "I think there should be a test covering delegating constructors.",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "efd3fe14_d9e1ac7d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T04:48:17Z",
+      "side": 1,
+      "message": "What is this condition for?",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "906e16f1_a5607acb",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T04:48:17Z",
+      "side": 1,
+      "message": "We should probably test some of these.",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b82da01_5653a606",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/VirtualMethodCallCheckerTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T04:48:17Z",
+      "side": 1,
+      "message": "Maybe add a nested class test? This is a typical problematic case when dealing with classes and constructors features.",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

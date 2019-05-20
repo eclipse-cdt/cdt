@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "60d7cc76_7909eaae",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AggregateInitialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-05-20T16:57:41Z",
+      "side": 1,
+      "message": "This extra protection is actually not needed anymore for protecting from the infinite recursion. Not sure if it still makes sense to keep it...",
+      "revId": "dead5bbf28341e6f197fc736e4aed8aaf5de3f92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

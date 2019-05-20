@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "629d4a1d_b255c0c2",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-05-20T22:29:17Z",
+      "side": 1,
+      "message": "These days we have more robust test helpers like BindingAssertionHelper which avoid having to count names and update counts if the testcase changes.\n\nThere\u0027s no need to change this now, just something to keep in mind for the future.",
+      "revId": "42c08a36545af705d73d612f49ab4b9ee97ef2b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba620f31_261913dd",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-05-20T22:29:17Z",
+      "side": 1,
+      "message": "Prefer `assertInstance(fCall, IFunction.class)` (gives a better error message).",
+      "revId": "42c08a36545af705d73d612f49ab4b9ee97ef2b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

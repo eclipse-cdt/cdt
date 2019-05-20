@@ -87,6 +87,24 @@
     },
     {
       "key": {
+        "uuid": "124f15a4_1ebe5bc2",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/SwitchCaseChecker.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-05-20T06:55:38Z",
+      "side": 1,
+      "message": "No actually, we don\u0027t want to process a switch statement with partial macro expansion. So we allow only a possible semicolon. If locations.length is 2 it means the node is partially included in the macro, so we check the len of the node ending this macro just to see if it\u0027s only a single character, the semicolon. The same check is perfomed by CaseBreakChecker.",
+      "parentUuid": "c4b76e84_a6efd22a",
+      "revId": "b2e8e32e8657033c56901d628af6304ea02ccfcf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2e7e7246_69ce8bd7",
         "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/SwitchCaseCheckerTest.java",
         "patchSetId": 10
@@ -98,6 +116,24 @@
       "writtenOn": "2019-05-20T05:56:53Z",
       "side": 1,
       "message": "Maybe we need a test for enum classes?",
+      "revId": "b2e8e32e8657033c56901d628af6304ea02ccfcf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "654c1fb8_8f624d81",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/SwitchCaseCheckerTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-05-20T06:55:38Z",
+      "side": 1,
+      "message": "It would good, I\u0027m going to add a test for them.",
+      "parentUuid": "2e7e7246_69ce8bd7",
       "revId": "b2e8e32e8657033c56901d628af6304ea02ccfcf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

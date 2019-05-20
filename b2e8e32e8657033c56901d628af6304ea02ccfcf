@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27780219_4e22227d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 10
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T05:56:53Z",
+      "side": 1,
+      "message": "Missing",
+      "revId": "b2e8e32e8657033c56901d628af6304ea02ccfcf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a4c65d2_6ea2e3de",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 10
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T05:56:53Z",
+      "side": 1,
+      "message": "... when the default case is missing, the switch ...",
+      "revId": "b2e8e32e8657033c56901d628af6304ea02ccfcf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d97cdea_13b22851",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/SwitchCaseChecker.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T05:56:53Z",
+      "side": 1,
+      "message": "I don\u0027t think this case is covered in the tests.",
+      "revId": "b2e8e32e8657033c56901d628af6304ea02ccfcf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c9cd2db0_ccfe0ca9",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/SwitchCaseChecker.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T05:56:53Z",
+      "side": 1,
+      "message": "I don\u0027t think this case is covered in the tests.",
+      "revId": "b2e8e32e8657033c56901d628af6304ea02ccfcf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4b76e84_a6efd22a",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/SwitchCaseChecker.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T05:56:53Z",
+      "side": 1,
+      "message": "I don\u0027t understand this line. I guess it has to do with the semicolon comment above? What about it? \nWhat about the case where locations[1].getNodeLength() \u003e 1 \n\n#define MYSWITCH \tswitch(a)\\\n{\\\ncase MyEnum::ENUM2:\\\n\treturn 0\\\n\nenum class MyEnum {\n\tENUM1,\n\tENUM2\n};\n\nint main() {\n\tMyEnum a;\n\tMYSWITCH;}\n\treturn 0;\n}\n\nIt would seem this condition would let this through and the problem is reported within the macro. I think this is what this method was trying to prevent?\n\nEither way, there should probably be a couple of tests for macro handling.",
+      "revId": "b2e8e32e8657033c56901d628af6304ea02ccfcf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e7e7246_69ce8bd7",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/SwitchCaseCheckerTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-20T05:56:53Z",
+      "side": 1,
+      "message": "Maybe we need a test for enum classes?",
+      "revId": "b2e8e32e8657033c56901d628af6304ea02ccfcf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

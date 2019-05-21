@@ -105,6 +105,24 @@
     },
     {
       "key": {
+        "uuid": "f41f01d4_678b76a9",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/SwitchCaseChecker.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-21T00:49:15Z",
+      "side": 1,
+      "message": "Sorry, I still don\u0027t quite understand. Could you perhaps give some examples? If the intent is to skip a switch statement with partial macro expansion (except for one semicolon), then shouldn\u0027t the example I gave be skipped? As it is, it would be processed because locations.length \u003d\u003d 2 \u0026\u0026 locations[1].getNodeLength() \u003e 1. With a single character it would be skipped, which is not the intent of the comment in code or your explanation.\n\nAlso, about the semi-colon exception, even if the condition did work correctly, why would it skip a switch statement that is fully in a macro expansion but not skip one with a partial expansion? Also, I\u0027m not sure it possible to have a semicolon actually end a statement node?",
+      "parentUuid": "124f15a4_1ebe5bc2",
+      "revId": "b2e8e32e8657033c56901d628af6304ea02ccfcf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2e7e7246_69ce8bd7",
         "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/SwitchCaseCheckerTest.java",
         "patchSetId": 10

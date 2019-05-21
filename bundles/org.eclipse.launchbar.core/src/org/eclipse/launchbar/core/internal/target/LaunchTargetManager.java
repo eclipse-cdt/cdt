@@ -26,12 +26,13 @@ import org.eclipse.launchbar.core.internal.Activator;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetListener;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager2;
 import org.eclipse.launchbar.core.target.ILaunchTargetProvider;
 import org.eclipse.launchbar.core.target.TargetStatus;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-public class LaunchTargetManager implements ILaunchTargetManager {
+public class LaunchTargetManager implements ILaunchTargetManager, ILaunchTargetManager2 {
 
 	private Map<String, Map<String, ILaunchTarget>> targets;
 	private Map<String, IConfigurationElement> typeElements;
@@ -188,7 +189,7 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 	}
 
 	@Override
-	public ILaunchTarget addLaunchTarget(String typeId, String id) {
+	public ILaunchTarget addLaunchTargetNoNotify(String typeId, String id) {
 		initTargets();
 		Map<String, ILaunchTarget> type = targets.get(typeId);
 		if (type == null) {
@@ -212,18 +213,24 @@ public class LaunchTargetManager implements ILaunchTargetManager {
 			ILaunchTarget target = new LaunchTarget(typeId, id, child);
 			type.put(id, target);
 			prefs.flush();
-
-			synchronized (listeners) {
-				for (ILaunchTargetListener listener : listeners) {
-					listener.launchTargetAdded(target);
-				}
-			}
-
 			return target;
 		} catch (BackingStoreException e) {
 			Activator.log(e);
 			return null;
 		}
+	}
+	
+	@Override
+	public ILaunchTarget addLaunchTarget(String typeId, String id) {
+		ILaunchTarget target = addLaunchTargetNoNotify(typeId, id);
+		if (target != null) {
+			synchronized (listeners) {
+				for (ILaunchTargetListener listener : listeners) {
+					listener.launchTargetAdded(target);
+				}
+			}
+		}
+		return target;
 	}
 
 	@Override

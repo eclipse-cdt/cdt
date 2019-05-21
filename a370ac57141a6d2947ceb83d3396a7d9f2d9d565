@@ -165,6 +165,24 @@
     },
     {
       "key": {
+        "uuid": "41a527f4_61aa91a2",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-21T01:18:51Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be covered by the \"instanceof ICPPConstructor\" check below? ICPPClassType I believe would be the class definition itself, not it\u0027s constructor. I haven\u0027t managed to hit this condition with test code.",
+      "parentUuid": "bd3d08d1_93796016",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "906e16f1_a5607acb",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
         "patchSetId": 9

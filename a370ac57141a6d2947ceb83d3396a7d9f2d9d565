@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "1c75eeea_093f17f4",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-21T00:55:09Z",
+      "side": 1,
+      "message": "I think a tweak to the current approach might work. If we do ctorDtorStack.push(false) when not a constructor/destructor. Then instead of if(!ctorDtorStack.empty()) we do if(ctorDtorStack.peek())",
+      "parentUuid": "0a115c1d_cbfca70c",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "64606b8c_d2a6ac4c",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
         "patchSetId": 9

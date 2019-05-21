@@ -183,6 +183,24 @@
     },
     {
       "key": {
+        "uuid": "aec650ff_f5876da5",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-05-21T05:27:06Z",
+      "side": 1,
+      "message": "it seems the code come from implementation of bug 402607, we just need to verify if this condition is (still) applicable in this case, if not we can remove it.",
+      "parentUuid": "41a527f4_61aa91a2",
+      "revId": "a370ac57141a6d2947ceb83d3396a7d9f2d9d565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "906e16f1_a5607acb",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
         "patchSetId": 9

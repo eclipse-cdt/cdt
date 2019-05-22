@@ -65,6 +65,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -122,6 +123,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		closeWelcome();
 		super.setUp();
 	}
 
@@ -442,6 +444,19 @@ public class BasicCEditorTest extends BaseUITestCase {
 		assertTrue(part instanceof CEditor);
 	}
 
+	public static void closeWelcome() {
+		try {
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			IWorkbenchPage activePage = window.getActivePage();
+			IWorkbenchPart activePart = activePage.getActivePart();
+			if (activePart.getTitle().equals("Welcome")) {
+				activePart.dispose();
+			}
+		} catch (Exception e) {
+			// ignore
+		}
+	}
+
 	public void testLeakingInstanceAfterClose() throws Exception {
 		final String file = "/ceditor/src/main.cpp";
 		fCProject = EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
@@ -452,11 +467,13 @@ public class BasicCEditorTest extends BaseUITestCase {
 		EditorTestHelper.closeEditor(fEditor);
 		fEditor = null;
 		fSourceViewer = null;
-		int ngc = 10;
-		while (ref.get() != null && ngc-- > 0) {
+		int ngc = 0;
+		while (ref.get() != null && ngc++ < 100) {
 			System.gc();
 			EditorTestHelper.runEventQueue(200);
 		}
+		System.out
+				.println("BasicCEditorTest.testLeakingInstanceAfterClose took " + ngc + " iterations of loop to exit");
 		assertNull("CEditor instance seems to be leaking after close", ref.get());
 	}
 

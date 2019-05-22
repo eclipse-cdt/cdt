@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager2;
 import org.eclipse.launchbar.core.target.ILaunchTargetProvider;
 import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
 import org.eclipse.launchbar.core.target.TargetStatus;
@@ -192,13 +193,14 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 							}
 							target = targetManager.getLaunchTarget(TYPE_ID, imageName);
 							if (target != null) {
-								if (target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, "")
+								if (target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, "") //$NON-NLS-1$
 										.equals(connection.getUri())) {
 									continue;
 								}
 								imageName = imageName2;
 							}
-							target = targetManager.addLaunchTarget(TYPE_ID, imageName);
+							target = ((ILaunchTargetManager2) targetManager).addLaunchTargetNoNotify(TYPE_ID,
+									imageName);
 							ILaunchTargetWorkingCopy wc = target.getWorkingCopy();
 							wc.setAttribute(ILaunchTarget.ATTR_OS, CONTAINER_LINUX);
 							wc.setAttribute(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());

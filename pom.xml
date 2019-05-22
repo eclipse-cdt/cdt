@@ -19,7 +19,7 @@
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.10</help-docs-eclipserun-repo>
+		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.11</help-docs-eclipserun-repo>
 	</properties>
 
 	<licenses>
@@ -39,7 +39,7 @@
 	<repositories>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.11/</url>
+			<url>https://download.eclipse.org/eclipse/updates/4.12-I-builds/I20190521-1800/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

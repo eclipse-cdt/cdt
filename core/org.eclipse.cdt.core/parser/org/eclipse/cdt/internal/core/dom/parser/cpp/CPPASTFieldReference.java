@@ -19,6 +19,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -353,7 +354,7 @@ public class CPPASTFieldReference extends ASTNode
 	}
 
 	public static int getFieldPosition(IBinding binding, IType ownerType) {
-		final IType nestedType = SemanticUtil.getNestedType(ownerType, ALLCVQ);
+		final IType nestedType = SemanticUtil.getNestedType(ownerType, ALLCVQ | TDEF);
 		if (nestedType instanceof ICPPClassType && binding instanceof ICPPField) {
 			final ICPPField field = (ICPPField) binding;
 			return getFieldPosition(field);

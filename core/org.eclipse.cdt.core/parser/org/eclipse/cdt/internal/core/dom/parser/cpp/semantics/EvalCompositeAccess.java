@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -118,6 +119,8 @@ public final class EvalCompositeAccess implements ICPPEvaluation {
 			ParameterPackType parameterPackType = (ParameterPackType) type;
 			return parameterPackType.getTypes()[elementId];
 		} else if (type instanceof ICPPBasicType) {
+			return type;
+		} else if (type instanceof IProblemType) {
 			return type;
 		}
 		return null;

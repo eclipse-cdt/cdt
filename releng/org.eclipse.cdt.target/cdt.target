@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="46">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="47">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
@@ -55,7 +55,7 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.launchbar.remote.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.2/launchbar-2.2.3-simrel-2019-03-m2/"/>
+<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.3/launchbar-2.3.0-prerelease1/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.linuxtools.docker.feature.feature.group" version="0.0.0"/>

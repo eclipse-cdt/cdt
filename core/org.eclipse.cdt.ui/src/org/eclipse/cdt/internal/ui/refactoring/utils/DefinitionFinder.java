@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -254,9 +256,22 @@ public class DefinitionFinder {
 	 */
 	public static IASTName getMemberDeclaration(ICPPMember member, IASTTranslationUnit contextTu,
 			CRefactoringContext context, IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		IASTName classDefintionName = getDefinition(member.getClassOwner(), contextTu, context, pm);
-		if (classDefintionName == null)
-			return null;
+		IBinding classBinding = member.getClassOwner();
+		IBinding memberBinding = member;
+		if (member instanceof ICPPSpecialization)
+			memberBinding = ((ICPPSpecialization) member).getSpecializedBinding();
+		IASTName classDefintionName = getDefinition(classBinding, contextTu, context, pm);
+		if (classDefintionName == null) {
+			/*
+			 * We didn't find the class definition, check again the template definition then
+			 * it was a template instance.
+			 */
+			if (classBinding instanceof ICPPTemplateInstance)
+				classBinding = ((ICPPTemplateInstance) classBinding).getTemplateDefinition();
+			classDefintionName = getDefinition(classBinding, contextTu, context, pm);
+			if (classDefintionName == null)
+				return null;
+		}
 		IASTCompositeTypeSpecifier compositeTypeSpecifier = ASTQueries.findAncestorWithType(classDefintionName,
 				IASTCompositeTypeSpecifier.class);
 		IASTTranslationUnit ast = classDefintionName.getTranslationUnit();
@@ -264,7 +279,7 @@ public class DefinitionFinder {
 		if (index == null) {
 			return null;
 		}
-		IASTName[] memberDeclarationNames = ast.getDeclarationsInAST(index.adaptBinding(member));
+		IASTName[] memberDeclarationNames = ast.getDeclarationsInAST(index.adaptBinding(memberBinding));
 		for (IASTName name : memberDeclarationNames) {
 			if (name.getPropertyInParent() == IASTDeclarator.DECLARATOR_NAME) {
 				IASTDeclaration declaration = ASTQueries.findAncestorWithType(name, IASTDeclaration.class);

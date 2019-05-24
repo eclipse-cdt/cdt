@@ -158,7 +158,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 				return CompositeValue.create(classType);
 			} else if (ctor == AGGREGATE_INITIALIZATION) {
 				return CompositeValue.create(new EvalInitList(fArguments, getTemplateDefinition()), classType);
-			} else if (ctor != null) {
+			} else if (ctor instanceof ICPPConstructor) {
 				EvalConstructor evalCtor = new EvalConstructor(classType, (ICPPConstructor) ctor, fArguments,
 						getTemplateDefinition());
 				ICPPEvaluation computedEvalCtor = evalCtor.computeForFunctionCall(new ActivationRecord(),

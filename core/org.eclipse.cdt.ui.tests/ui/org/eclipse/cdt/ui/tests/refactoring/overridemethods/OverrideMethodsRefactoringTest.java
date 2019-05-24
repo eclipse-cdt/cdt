@@ -271,6 +271,43 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 	}
 
 	//A.h
+	//template<class T>
+	//class Base {
+	//public:
+	//	virtual ~Base();
+	//	virtual void baseFunc(T *t) const = 0;
+	//};
+	//class X: public Base<int> {
+	//public:
+	//	X();
+	//	/*$*//*$$*/
+	//};
+	//====================
+	//template<class T>
+	//class Base {
+	//public:
+	//	virtual ~Base();
+	//	virtual void baseFunc(T *t) const = 0;
+	//};
+	//class X: public Base<int> {
+	//public:
+	//	X();
+	//	virtual void baseFunc(int *t) const;
+	//};
+
+	//A.cpp
+	//#include "A.h"
+	//====================
+	//#include "A.h"
+	//
+	//void X::baseFunc(int *t) const {
+	//}
+	public void testWithTemplateBaseClass() throws Exception {
+		selectedMethods = new String[] { "baseFunc(int *) {#0,0: int}" };
+		assertRefactoringSuccess();
+	}
+
+	//A.h
 	//class Base {
 	//public:
 	//	virtual ~Base();

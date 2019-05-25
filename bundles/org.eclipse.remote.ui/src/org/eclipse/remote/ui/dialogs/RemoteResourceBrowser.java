@@ -274,7 +274,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	 * text field, and in a future version should expand the browser to this
 	 * location if it exists.
 	 * 
-	 * @param path
+	 * @param path initial path
 	 */
 	public void setInitialPath(String path) {
 		fInitialPath = path;
@@ -283,7 +283,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	/**
 	 * Set the fDialogTitle of the dialog.
 	 * 
-	 * @param title
+	 * @param title title to display
 	 */
 	public void setTitle(String title) {
 		fDialogTitle = title;
@@ -308,7 +308,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	/**
 	 * Show available connections on browser if possible (default disabled).
 	 * 
-	 * @param enable
+	 * @param enable enable connection display if true
 	 */
 	public void showConnections(boolean enable) {
 		fShowConnections = enable;
@@ -317,7 +317,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	/**
 	 * Enable a checkbox to show hidden files (default enabled)
 	 * 
-	 * @param showHidden
+	 * @param showHidden show hidden files if true
 	 */
 	public void showHiddenCheckbox(boolean showHidden) {
 		fShowHiddenCheckbox = showHidden;
@@ -326,7 +326,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	/**
 	 * Enable selection of local files
 	 * 
-	 * @param showNewFolderButton
+	 * @param showLocalSelection show local files if true
 	 */
 	public void showLocalSelection(boolean showLocalSelection) {
 		fShowLocalSelection = showLocalSelection;
@@ -335,7 +335,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	/**
 	 * Enable a button to create new folders (default enabled)
 	 * 
-	 * @param showNewFolderButton
+	 * @param showNewFolderButton show new folder button if true
 	 */
 	public void showNewFolderButton(boolean showNewFolderButton) {
 		fShowNewFolderButton = showNewFolderButton;

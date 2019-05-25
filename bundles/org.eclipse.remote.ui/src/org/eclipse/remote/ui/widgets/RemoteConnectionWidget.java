@@ -176,8 +176,6 @@ public class RemoteConnectionWidget extends Composite {
 	 *            a combination of flags that modify the behavior of the widget.
 	 * @param context
 	 *            runnable context, or null
-	 * @param connnectionTypes
-	 *            list of connection types to select from
 	 * @since 2.0
 	 */
 	public RemoteConnectionWidget(Composite parent, int style, String title, int flags, IRunnableContext context) {
@@ -217,7 +215,7 @@ public class RemoteConnectionWidget extends Composite {
 	 *            a combination of flags that modify the behavior of the widget.
 	 * @param context
 	 *            runnable context, or null
-	 * @param connnectionTypes
+	 * @param connectionTypes
 	 *            list of connection types to select from
 	 * @since 2.0
 	 */
@@ -401,8 +399,6 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Handle the section of a new connection. Update connection option buttons appropriately.
-	 * 
-	 * @throws CoreException
 	 */
 	protected void handleConnectionSelected() {
 		final boolean enabled = fWidgetListener.isEnabled();
@@ -432,8 +428,6 @@ public class RemoteConnectionWidget extends Composite {
 	 * connection combo with the new connection.
 	 * 
 	 * TODO should probably select the new connection
-	 * 
-	 * @throws CoreException
 	 */
 	protected void handleNewRemoteConnectionSelected() {
 		if (getUIConnectionManager() != null) {
@@ -461,7 +455,6 @@ public class RemoteConnectionWidget extends Composite {
 	 * 
 	 * @param conn
 	 *            connection to select as current. If conn is null, select the first item in the list.
-	 * @throws CoreException
 	 * @since 2.0
 	 */
 	protected void handleConnectionTypeSelected(IRemoteConnection conn) {
@@ -543,7 +536,6 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Initialize the contents of the connection type combo. Keeps an array of connection types that matches the combo elements.
-	 * Returns the id of the selected element.
 	 * 
 	 * @since 2.0
 	 */
@@ -622,7 +614,6 @@ public class RemoteConnectionWidget extends Composite {
 	 *            connection type id
 	 * @param name
 	 *            connection name
-	 * @throws CoreException
 	 * @since 6.0
 	 */
 	public void setConnection(String id, String name) {

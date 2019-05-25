@@ -21,6 +21,7 @@
         <configuration>
            <outputDirectory>${basedir}/html/reference/api</outputDirectory>
            <javadocOptions>
+        	   <encoding>UTF-8</encoding>
                <excludes>
                    <exclude>org.eclipse.remote.internal.*</exclude>
                </excludes>

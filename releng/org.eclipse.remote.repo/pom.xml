@@ -43,12 +43,12 @@
 								</goals>
 								<configuration>
 									<tasks>
+										<mkdir dir="${remote-install-dir}" />
 										<delete includeemptydirs="true">
 											<fileset dir="${remote-install-dir}">
 												<include name="**/*" />
 											</fileset>
 										</delete>
-										<mkdir dir="${remote-install-dir}" />
 										<unzip
 											src="${project.build.directory}/${project.build.finalName}.zip"
 											dest="${remote-install-dir}" />

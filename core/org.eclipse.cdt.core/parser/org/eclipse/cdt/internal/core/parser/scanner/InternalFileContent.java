@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
@@ -67,6 +68,7 @@ public class InternalFileContent extends FileContent {
 	private final long fTimestamp;
 	private final long fFileSize;
 	private final long fReadTime;
+	private IFileNomination fPragmaOnceFile = null;
 
 	/**
 	 * For skipping include files.
@@ -75,12 +77,14 @@ public class InternalFileContent extends FileContent {
 	 * @throws IllegalArgumentException if fileLocation is <code>null</code> or the kind value is illegal for
 	 * this constructor.
 	 */
-	public InternalFileContent(String fileLocation, InclusionKind kind) throws IllegalArgumentException {
+	public InternalFileContent(String fileLocation, InclusionKind kind, IFileNomination pragmaOnceFile)
+			throws IllegalArgumentException {
 		if (fileLocation == null || kind != InclusionKind.SKIP_FILE) {
 			throw new IllegalArgumentException();
 		}
 		fKind = kind;
 		fFileLocation = fileLocation;
+		fPragmaOnceFile = pragmaOnceFile;
 		fMacroDefinitions = null;
 		fUsingDirectives = null;
 		fSource = null;
@@ -230,6 +234,14 @@ public class InternalFileContent extends FileContent {
 
 	public List<FileVersion> getNonPragmaOnceVersions() {
 		return fNonPragmaOnceFiles;
+	}
+
+	/**
+	 * Valid with {@link InclusionKind#SKIP_FILE}.
+	 * @return the file previously included or <code>null</code> if kind is different to {@link InclusionKind#SKIP_FILE}.
+	 */
+	public IFileNomination getPragmaOnceNomination() {
+		return fPragmaOnceFile;
 	}
 
 	/**

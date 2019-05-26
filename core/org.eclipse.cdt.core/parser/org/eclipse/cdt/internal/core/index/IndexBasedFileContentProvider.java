@@ -151,7 +151,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 
 		// Skip large files
 		if (fFileSizeLimit > 0 && fPathResolver.getFileSize(path) > fFileSizeLimit) {
-			return new InternalFileContent(path, InclusionKind.SKIP_FILE);
+			return new InternalFileContent(path, InclusionKind.SKIP_FILE, null);
 		}
 
 		if (fFallBackFactory != null) {

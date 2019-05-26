@@ -184,7 +184,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			final InternalFileContent fc;
 			IFileNomination once = fFileContentProvider.isIncludedWithPragmaOnceSemantics(path);
 			if (once != null) {
-				fc = new InternalFileContent(path, InclusionKind.SKIP_FILE);
+				fc = new InternalFileContent(path, InclusionKind.SKIP_FILE, once);
 			} else {
 				fc = fFileContentProvider.getContentForInclusion(path, fMacroDictionaryFacade);
 			}
@@ -1784,6 +1784,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 		case SKIP_FILE:
 			// Already included or fast parsing mode.
+			nominationDelegate = fi.getPragmaOnceNomination();
 			break;
 		}
 		if (stmt == null) {

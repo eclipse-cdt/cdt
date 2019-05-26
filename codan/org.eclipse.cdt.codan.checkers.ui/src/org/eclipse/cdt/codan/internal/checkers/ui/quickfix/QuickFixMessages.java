@@ -29,6 +29,8 @@ public class QuickFixMessages extends NLS {
 	public static String QuickFixUseDotOperator_replace_ptr;
 	public static String QuickFixForFixit_apply_fixit;
 	public static String QuickFixSuppressProblem_Label;
+	public static String QuickFixAddDefaultSwitch_add_default_to_switch;
+	public static String QuickFixAddCaseSwitch_add_cases_to_switch;
 
 	static {
 		NLS.initializeMessages(QuickFixMessages.class.getName(), QuickFixMessages.class);

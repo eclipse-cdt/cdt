@@ -43,6 +43,8 @@ import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixComm
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixFallthroughAttributeTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CatchByReferenceQuickFixTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CreateLocalVariableQuickFixTest;
+import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixAddCaseTest;
+import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixAddDefaultTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixSuppressProblemTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.SuggestedParenthesisQuickFixTest;
 
@@ -103,6 +105,8 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(CaseBreakQuickFixFallthroughAttributeTest.class);
 		suite.addTestSuite(AssignmentInConditionQuickFixTest.class);
 		suite.addTestSuite(QuickFixSuppressProblemTest.class);
+		suite.addTestSuite(QuickFixAddDefaultTest.class);
+		suite.addTestSuite(QuickFixAddCaseTest.class);
 		return suite;
 	}
 }

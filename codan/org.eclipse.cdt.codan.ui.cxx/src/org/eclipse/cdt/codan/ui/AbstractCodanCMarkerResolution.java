@@ -21,6 +21,7 @@ import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
@@ -308,5 +309,31 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 	 */
 	public String getProblemMessage(IMarker marker) {
 		return CodanProblemMarker.getMessage(marker);
+	}
+
+	/**
+	 * Get the enclosing node using the input position
+	 * @param ast The AST
+	 * @param charStart Start position
+	 * @param length Length
+	 * @return The node or null
+	 * @since 3.5
+	 */
+	protected IASTNode getASTNodeFromPosition(IASTTranslationUnit ast, final int charStart, final int length) {
+		IASTNode node = ast.getNodeSelector(null).findEnclosingNode(charStart, length);
+		return node;
+	}
+
+	/**
+	 * Get the enclosing node using the input marker
+	 * @param marker The marker
+	 * @param ast The AST
+	 * @return The node or null
+	 * @since 3.5
+	 */
+	protected IASTNode getASTNodeFromMarker(IMarker marker, IASTTranslationUnit ast) {
+		final int charStart = marker.getAttribute(IMarker.CHAR_START, -1);
+		final int length = marker.getAttribute(IMarker.CHAR_END, -1) - charStart;
+		return getASTNodeFromPosition(ast, charStart, length);
 	}
 }

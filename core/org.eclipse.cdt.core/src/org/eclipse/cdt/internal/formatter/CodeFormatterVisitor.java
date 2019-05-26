@@ -3912,13 +3912,20 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTLabelStatement node) {
-		// TLETODO [formatter] label indentation
+		int indentationLevel = scribe.indentationLevel;
+		if (!preferences.indent_label_compare_to_statements) {
+			scribe.indentationLevel = 0;
+		}
 		formatLeadingAttributes(node);
 		node.getName().accept(this);
 		scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_labeled_statement);
 		if (preferences.insert_space_after_colon_in_labeled_statement) {
 			scribe.space();
 		}
+		if (preferences.insert_new_line_after_label) {
+			scribe.startNewLine();
+		}
+		scribe.indentationLevel = indentationLevel;
 		node.getNestedStatement().accept(this);
 		return PROCESS_SKIP;
 	}

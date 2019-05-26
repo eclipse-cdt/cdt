@@ -4242,4 +4242,86 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testSwitchNoParen_Bug353022() throws Exception {
 		assertFormatterResult();
 	}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo:
+	//	for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+	public void testLabelIndentAndNewLine_Bug268404() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_COMPARE_TO_STATEMENTS,
+				DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_LABEL, CCorePlugin.INSERT);
+		assertFormatterResult();
+	}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+	public void testLabelNoIndentNoNewLine_Bug268404() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_COMPARE_TO_STATEMENTS,
+				DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_LABEL, CCorePlugin.DO_NOT_INSERT);
+		assertFormatterResult();
+	}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+	public void testLabelIndentNoNewLine_Bug268404() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_COMPARE_TO_STATEMENTS,
+				DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_LABEL, CCorePlugin.DO_NOT_INSERT);
+		assertFormatterResult();
+	}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//	foo: for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+
+	//int main(int argc, char **argv) {
+	//	goto foo;
+	//foo:
+	//	for (int i = 0; i < 100; ++i) {
+	//		goto foo;
+	//	}
+	//}
+	public void testLabelNoIndentNewLine_Bug268404() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_COMPARE_TO_STATEMENTS,
+				DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_LABEL, CCorePlugin.INSERT);
+		assertFormatterResult();
+	}
 }

@@ -73,6 +73,8 @@ public class IndentationTabPage extends FormatterTabPage {
 			"break;" + //$NON-NLS-1$
 			"}" + //$NON-NLS-1$
 			"}" + //$NON-NLS-1$
+			"label: for (int i = 0; i < 10; i++)" + //$NON-NLS-1$
+			"goto label;" + //$NON-NLS-1$
 			"}" + //$NON-NLS-1$
 			"} // end namespace FOO\n\n" + //$NON-NLS-1$
 			"extern \"C\" {\n" + //$NON-NLS-1$
@@ -170,6 +172,9 @@ public class IndentationTabPage extends FormatterTabPage {
 
 		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_indent_empty_lines,
 				DefaultCodeFormatterConstants.FORMATTER_INDENT_EMPTY_LINES, FALSE_TRUE);
+
+		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_indent_labels,
+				DefaultCodeFormatterConstants.FORMATTER_INDENT_LABEL_COMPARE_TO_STATEMENTS, FALSE_TRUE);
 	}
 
 	/*

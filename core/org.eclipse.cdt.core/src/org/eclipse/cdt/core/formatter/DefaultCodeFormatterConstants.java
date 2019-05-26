@@ -776,6 +776,21 @@ public class DefaultCodeFormatterConstants {
 	 */
 	public static final String FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_LINKAGE = CCorePlugin.PLUGIN_ID
 			+ ".formatter.indent_body_declarations_compare_to_linkage"; //$NON-NLS-1$
+
+	/**
+	 * <pre>
+	 * FORMATTER / Option to indent labels compare to statements where it is defined
+	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_label_compare_to_statements"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           TRUE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 * @since 6.8
+	 */
+	public static final String 	FORMATTER_INDENT_LABEL_COMPARE_TO_STATEMENTS = CCorePlugin.PLUGIN_ID
+			+ ".formatter.indent_label_compare_to_statements"; //$NON-NLS-1$
+
 	/**
 	 * <pre>
 	 * FORMATTER / Option to indent breaks compare to cases
@@ -883,6 +898,19 @@ public class DefaultCodeFormatterConstants {
 	 */
 	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_OPENING_BRACE_IN_INITIALIZER_LIST = CCorePlugin.PLUGIN_ID
 			+ ".formatter.insert_new_line_after_opening_brace_in_array_initializer";//$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a new line after a label
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_after_label"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 6.8
+	 */
+	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_LABEL = CCorePlugin.PLUGIN_ID
+			+ ".formatter.insert_new_line_after_label";//$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a new line after template declaration

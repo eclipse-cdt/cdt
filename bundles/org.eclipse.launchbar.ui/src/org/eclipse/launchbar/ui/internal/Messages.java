@@ -52,21 +52,21 @@ public class Messages extends NLS {
 	public static String NoLaunchModeSelected;
 	public static String NoLaunchGroupSelected;
 	public static String LaunchBarLaunchConfigDialog_Edit1;
-
 	public static String LaunchBarLaunchConfigDialog_Edit2;
-
 	public static String LaunchBarLaunchConfigDialog_EditConfiguration;
-
 	public static String LaunchBarLaunchConfigDialog_LaunchConfigName;
-
 	public static String LaunchBarLaunchConfigDialog_LCMustHaveName;
-
 	public static String LaunchBarLaunchConfigDialog_LCNameExists;
-
 	public static String LaunchBarLaunchConfigDialog_LCNameNotValid;
-
 	public static String LaunchBarLaunchConfigDialog_SetParameters;
-
+	public static String LaunchBarLaunchConfigDialog_Duplicate;
+	public static String LaunchBarLaunchConfigDialog_Delete;
+	public static String LaunchBarLaunchConfigDialog_Reset;
+	public static String LaunchBarLaunchConfigDialog_DeleteTitle;
+	public static String LaunchBarLaunchConfigDialog_ResetTitle;
+	public static String LaunchBarLaunchConfigDialog_DeleteConfirm;
+	public static String LaunchBarLaunchConfigDialog_ResetConfirm;
+	
 	public static String LaunchConfigurationNotFound;
 	public static String LaunchConfigurationNotFoundDesc;
 

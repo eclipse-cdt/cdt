@@ -12,11 +12,14 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
+import org.eclipse.launchbar.core.DefaultLaunchDescriptor;
+import org.eclipse.launchbar.core.DefaultLaunchDescriptorType;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.ui.ILaunchBarLaunchConfigDialog;
@@ -52,6 +55,9 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 	private CTabItem lastSelection;
 	private ProgressMonitorPart pmPart;
 	private boolean initing;
+
+	public static final int ID_DUPLICATE = IDialogConstants.CLIENT_ID + 1;
+	public static final int ID_DELETE    = IDialogConstants.CLIENT_ID + 2;
 
 	public LaunchBarLaunchConfigDialog(Shell shell, ILaunchConfigurationWorkingCopy workingCopy,
 			ILaunchDescriptor descriptor, ILaunchMode mode, ILaunchTarget target,
@@ -201,6 +207,90 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		return tabItem;
 	}
 
+	@Override
+	protected Control createButtonBar(Composite parent) {
+		Composite buttonBar = (Composite) super.createButtonBar(parent);
+		Control[] children = buttonBar.getChildren();
+		Control okCancelButtons = children[children.length - 1];
+		Control configButtons = createConfigButtons(buttonBar);
+
+		// insert our buttons ahead of the OK/Cancel buttons
+		configButtons.moveAbove(okCancelButtons);
+		
+		return buttonBar;
+	}
+
+	protected Control createConfigButtons(Composite parent) {
+        ((GridLayout) parent.getLayout()).numColumns++;
+		Composite composite = new Composite(parent, SWT.NONE);
+		// create a layout with spacing and margins appropriate for the font size.
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 0; // this is incremented by createButton
+		layout.makeColumnsEqualWidth = true;
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		composite.setLayout(layout);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER
+				| GridData.VERTICAL_ALIGN_CENTER);
+		composite.setLayoutData(data);
+		composite.setFont(parent.getFont());
+
+		// Allow Duplicate only if the resulting configuration is public
+		try {
+			if (DefaultLaunchDescriptorType.isPublic(workingCopy.getOriginal())) {
+				createButton(composite, ID_DUPLICATE, Messages.LaunchBarLaunchConfigDialog_Duplicate, false);
+			}
+		} catch (CoreException e) {
+			Activator.log(e.getStatus());
+		}
+
+		String deleteText;
+		if (descriptor instanceof DefaultLaunchDescriptor) {
+			deleteText = Messages.LaunchBarLaunchConfigDialog_Delete;
+		} else {
+			deleteText = Messages.LaunchBarLaunchConfigDialog_Reset;
+		}
+		
+		// TODO if the descriptor is not a launch config, this should really say Reset
+		createButton(composite, ID_DELETE, deleteText, false);
+	
+		return composite;
+	}
+	
+	@Override
+	protected void buttonPressed(int buttonId) {
+		if (buttonId == ID_DUPLICATE) {
+			duplicatePressed();
+		} else if (buttonId == ID_DELETE) {
+			deletePressed();
+		} else {
+			super.buttonPressed(buttonId);
+		}
+	}
+	
+	protected void deletePressed() {
+		String title, message;
+		if (descriptor instanceof DefaultLaunchDescriptor) {
+			title = Messages.LaunchBarLaunchConfigDialog_DeleteTitle;
+			message = Messages.LaunchBarLaunchConfigDialog_DeleteConfirm;
+		} else {
+			title = Messages.LaunchBarLaunchConfigDialog_ResetTitle;
+			message = Messages.LaunchBarLaunchConfigDialog_ResetConfirm;
+		}
+		
+		if (MessageDialog.openConfirm(getShell(), title, String.format(message, workingCopy.getName()))) {
+			setReturnCode(ID_DELETE);
+			close();
+		}
+	}
+
+	protected void duplicatePressed() {
+		setReturnCode(ID_DUPLICATE);
+		close();
+	}
+	
 	@Override
 	protected void okPressed() {
 		String newName = nameText.getText().trim();

@@ -8,7 +8,7 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.launchbar.core.internal;
+package org.eclipse.launchbar.core;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,12 +17,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.core.ILaunchDescriptorType;
+import org.eclipse.launchbar.core.internal.Activator;
 
 /**
  * A special descriptor type that managed configurations that aren't owned by
  * other descriptor types.
+ * 
+ * @since 2.3
  */
 public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
 
@@ -33,7 +34,27 @@ public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
 	@Override
 	public boolean supportsTargets() throws CoreException {
 		// Old style launch configs do not support targets.
+		// Though if yours does, you can always subclass and override this.
 		return false;
+	}
+
+	/**
+	 * Used to filter out private and external tools builders
+	 * 
+	 * @param config
+	 * @return
+	 * @throws CoreException
+	 */
+	public static boolean isPublic(ILaunchConfiguration config) throws CoreException {
+		ILaunchConfigurationType type = config.getType();
+		if (type == null) {
+			return false;
+		}
+
+		String category = type.getCategory();
+
+		return type.isPublic() && !(config.getAttribute(ILaunchManager.ATTR_PRIVATE, false))
+				&& !("org.eclipse.ui.externaltools.builder".equals(category)); // $NON-NLS-1$
 	}
 
 	@Override
@@ -41,16 +62,7 @@ public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
 		if (launchObject instanceof ILaunchConfiguration) {
 			ILaunchConfiguration config = (ILaunchConfiguration) launchObject;
 			try {
-				ILaunchConfigurationType type = config.getType();
-				if (type == null) {
-					return null;
-				}
-
-				// Filter out private and external tools builders
-				String category = type.getCategory();
-				if (type.isPublic() && !(config.getAttribute(ILaunchManager.ATTR_PRIVATE, false))
-						&& !("org.eclipse.ui.externaltools.builder".equals(category))) { //$NON-NLS-1$
-
+				if (isPublic(config)) {
 					DefaultLaunchDescriptor descriptor = descriptors.get(config);
 					if (descriptor == null) {
 						descriptor = new DefaultLaunchDescriptor(this, config);

@@ -8,23 +8,23 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.launchbar.core.internal;
+package org.eclipse.launchbar.core;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.core.ILaunchDescriptorType;
 
 /**
  * A special launch descriptor that managed configurations that aren't owned by other
- * descriptors. 
+ * descriptors.
+ *  
+ * @since 2.3
  */
 public class DefaultLaunchDescriptor extends PlatformObject implements ILaunchDescriptor {
 
-	private final DefaultLaunchDescriptorType type;
+	private final ILaunchDescriptorType type;
 	private final ILaunchConfiguration configuration;
 
-	public DefaultLaunchDescriptor(DefaultLaunchDescriptorType type, ILaunchConfiguration configuration) {
+	public DefaultLaunchDescriptor(ILaunchDescriptorType type, ILaunchConfiguration configuration) {
 		this.type = type;
 		this.configuration = configuration;
 	}

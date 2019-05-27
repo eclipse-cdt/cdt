@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -126,12 +127,26 @@ public class LaunchBarUIManager implements ILaunchBarUIManager {
 
 			LaunchBarLaunchConfigDialog dialog = new LaunchBarLaunchConfigDialog(shell, workingCopy, descriptor, mode,
 					target, buildTabGroup);
-			if (dialog.open() == Window.OK) {
+			switch (dialog.open()) {
+			case Window.OK:
 				if (!workingCopy.getOriginal().equals(workingCopy)
 						&& (!workingCopy.getOriginal().getAttributes().equals(workingCopy.getAttributes())
 								|| !workingCopy.getOriginal().getName().equals(workingCopy.getName()))) {
 					workingCopy.doSave();
 				}
+				break;
+			case LaunchBarLaunchConfigDialog.ID_DUPLICATE:
+				{
+					String newName = DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(workingCopy.getName());
+					ILaunchConfigurationWorkingCopy newWorkingCopy = workingCopy.copy(newName);
+					newWorkingCopy.doSave();
+				}
+				break;
+			case LaunchBarLaunchConfigDialog.ID_DELETE:
+				config.delete();
+				break;
+			default:
+				break;
 			}
 		} catch (CoreException e) {
 			return e.getStatus();

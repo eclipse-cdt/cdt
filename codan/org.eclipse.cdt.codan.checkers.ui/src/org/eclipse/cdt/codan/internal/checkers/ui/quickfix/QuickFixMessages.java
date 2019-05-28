@@ -31,6 +31,10 @@ public class QuickFixMessages extends NLS {
 	public static String QuickFixSuppressProblem_Label;
 	public static String QuickFixAddDefaultSwitch_add_default_to_switch;
 	public static String QuickFixAddCaseSwitch_add_cases_to_switch;
+	public static String QuickFixCppCast_const_cast;
+	public static String QuickFixCppCast_dynamic_cast;
+	public static String QuickFixCppCast_reinterpret_cast;
+	public static String QuickFixCppCast_static_cast;
 
 	static {
 		NLS.initializeMessages(QuickFixMessages.class.getName(), QuickFixMessages.class);

@@ -12,6 +12,22 @@
              problemId="com.baldapps.artemis.checkers.MissCaseProblem">
        </resolution>
        <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCppCastStatic"
+             problemId="org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem">
+       </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCppCastDynamic"
+             problemId="org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem">
+       </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCppCastConst"
+             problemId="org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem">
+       </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCppCastReinterpret"
+             problemId="org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem">
+       </resolution>
+       <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixForFixit"
              messagePattern=".*">
        </resolution>

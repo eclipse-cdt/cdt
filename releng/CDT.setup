@@ -103,6 +103,8 @@
         <requirement
             name="com.sun.xml.bind"/>
         <requirement
+            name="javax.activation"/>
+        <requirement
             name="javax.xml.bind"/>
         <requirement
             name="javax.xml.stream"/>

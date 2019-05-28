@@ -12,6 +12,23 @@
              problemId="com.baldapps.artemis.checkers.MissCaseProblem">
        </resolution>
        <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCppCastStatic"
+             problemId="org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem">
+       </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCppCastDynamic"
+             problemId="org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem">
+       </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCppCastConst"
+             problemId="org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem">
+       </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCppCastReinterpret"
+             problemId="org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem">
+>>>>>>> 15394e4 Bug 545699 - Added quickfix for C style cast
+       </resolution>
+       <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixForFixit"
              messagePattern=".*">
        </resolution>

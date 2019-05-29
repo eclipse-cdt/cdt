@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -90,25 +91,29 @@ public class QuickFixAddCaseSwitch extends AbstractAstRewriteQuickFix {
 		IASTBreakStatement breakStatement = factory.newBreakStatement();
 		IASTNode[] children = astNode.getChildren();
 		IASTCompoundStatement compound = null;
+		IASTNullStatement nullStatement = null;
 		for (int i = 0; i < children.length; ++i) {
 			if (children[i] instanceof IASTCompoundStatement) {
 				compound = (IASTCompoundStatement) children[i];
 				break;
-			}
+			} else if (children[i] instanceof IASTNullStatement)
+				nullStatement = (IASTNullStatement) children[i];
 		}
-		if (compound == null)
+		if (compound == null && nullStatement != null) {
+			compound = factory.newCompoundStatement();
+			for (IASTCaseStatement caseStatement : caseStatements)
+				compound.addStatement(caseStatement);
+			compound.addStatement(breakStatement);
+			r.replace(nullStatement, compound, null);
+		} else if (compound != null) {
+			for (IASTCaseStatement caseStatement : caseStatements)
+				r.insertBefore(compound, null, caseStatement, null);
+			r.insertBefore(compound, null, breakStatement, null);
+		} else
 			return;
-		for (IASTCaseStatement caseStatement : caseStatements)
-			r.insertBefore(compound, null, caseStatement, null);
-		r.insertBefore(compound, null, breakStatement, null);
 		Change c = r.rewriteAST();
 		try {
 			c.perform(new NullProgressMonitor());
-		} catch (CoreException e) {
-			CheckersUiActivator.log(e);
-			return;
-		}
-		try {
 			marker.delete();
 		} catch (CoreException e) {
 			CheckersUiActivator.log(e);
@@ -122,13 +127,13 @@ public class QuickFixAddCaseSwitch extends AbstractAstRewriteQuickFix {
 		Map<String, Number> enumValues = new HashMap<>();
 		if (type instanceof IEnumeration) {
 			IEnumerator[] enums = ((IEnumeration) type).getEnumerators();
-			String prefix = "";
+			String prefix = ""; //$NON-NLS-1$
 			if (type instanceof ICPPEnumeration) {
 				String[] qualName = CPPVisitor.getQualifiedName((IEnumeration) type);
 				StringBuilder builder = new StringBuilder();
 				for (int i = 0; i < qualName.length - 1; ++i) {
 					builder.append(qualName[i]);
-					builder.append("::");
+					builder.append("::"); //$NON-NLS-1$
 				}
 				prefix = builder.toString();
 			}

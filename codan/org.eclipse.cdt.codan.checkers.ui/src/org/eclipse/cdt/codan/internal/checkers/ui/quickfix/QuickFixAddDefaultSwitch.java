@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
@@ -58,24 +59,27 @@ public class QuickFixAddDefaultSwitch extends AbstractAstRewriteQuickFix {
 		IASTBreakStatement breakStatement = factory.newBreakStatement();
 		IASTNode[] children = astNode.getChildren();
 		IASTCompoundStatement compound = null;
+		IASTNullStatement nullStatement = null;
 		for (int i = 0; i < children.length; ++i) {
 			if (children[i] instanceof IASTCompoundStatement) {
 				compound = (IASTCompoundStatement) children[i];
 				break;
-			}
+			} else if (children[i] instanceof IASTNullStatement)
+				nullStatement = (IASTNullStatement) children[i];
 		}
-		if (compound == null)
+		if (compound == null && nullStatement != null) {
+			compound = factory.newCompoundStatement();
+			compound.addStatement(defStatement);
+			compound.addStatement(breakStatement);
+			r.replace(nullStatement, compound, null);
+		} else if (compound != null) {
+			r.insertBefore(compound, null, defStatement, null);
+			r.insertBefore(compound, null, breakStatement, null);
+		} else
 			return;
-		r.insertBefore(compound, null, defStatement, null);
-		r.insertBefore(compound, null, breakStatement, null);
 		Change c = r.rewriteAST();
 		try {
 			c.perform(new NullProgressMonitor());
-		} catch (CoreException e) {
-			CheckersUiActivator.log(e);
-			return;
-		}
-		try {
 			marker.delete();
 		} catch (CoreException e) {
 			CheckersUiActivator.log(e);

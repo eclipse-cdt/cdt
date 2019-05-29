@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "902d63cc_55e97992",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/utils/DefinitionFinder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T04:07:55Z",
+      "side": 1,
+      "message": "I have to look into this a bit more as I am not sure this is correct. Consider this code:\n\ntemplate\u003cclass T\u003e\nclass Base {\npublic:\n\tvirtual ~Base();\n\tvirtual void foo() {\n\t}\n};\n\ntemplate\u003c\u003e\nclass Base\u003cint\u003e {\npublic:\n\tvirtual void foo() {\n\t}\n};\n\nIf calling getMemberDeclaration on ICPPMember of the second foo, it would wrongly look in the Base class (not specialized), I think?",
+      "revId": "9b4b38049e9a3ea2f19188bf7f0c1267884108fc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

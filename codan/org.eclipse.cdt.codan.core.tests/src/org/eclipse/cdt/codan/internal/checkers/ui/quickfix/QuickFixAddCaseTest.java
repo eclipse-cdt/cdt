@@ -50,4 +50,54 @@ public class QuickFixAddCaseTest extends QuickFixTestCase {
 		assertContainedIn("PEAR:", result); //$NON-NLS-1$
 		assertContainedIn("BANANA:", result); //$NON-NLS-1$
 	}
+
+	//enum FRUIT {
+	// APPLE, PEAR, BANANA
+	//};
+	//void func() {
+	//FRUIT f = APPLE;
+	//switch (f)
+	//{
+	//
+	//}
+	//}
+	public void testAddCase2() throws Exception {
+		loadcode(getAboveComment());
+		String result = runQuickFixOneFile();
+		assertContainedIn("PEAR:", result); //$NON-NLS-1$
+		assertContainedIn("BANANA:", result); //$NON-NLS-1$
+		assertContainedIn("APPLE:", result); //$NON-NLS-1$
+	}
+
+	//enum FRUIT {
+	// APPLE, PEAR, BANANA
+	//};
+	//void func() {
+	//FRUIT f = APPLE;
+	//switch (f)
+	//	;
+	//}
+	public void testAddCase3() throws Exception {
+		loadcode(getAboveComment());
+		String result = runQuickFixOneFile();
+		assertContainedIn("PEAR:", result); //$NON-NLS-1$
+		assertContainedIn("BANANA:", result); //$NON-NLS-1$
+		assertContainedIn("APPLE:", result); //$NON-NLS-1$
+	}
+
+	//enum FRUIT {
+	// APPLE, PEAR, BANANA
+	//};
+	//void func() {
+	//FRUIT f = APPLE;
+	//switch (f)
+	//	case APPLE:
+	//		break;
+	//}
+	public void testAddCase4() throws Exception {
+		loadcode(getAboveComment());
+		String result = runQuickFixOneFile();
+		assertContainedIn("PEAR:", result); //$NON-NLS-1$
+		assertContainedIn("BANANA:", result); //$NON-NLS-1$
+	}
 }

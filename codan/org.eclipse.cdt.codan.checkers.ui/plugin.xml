@@ -5,11 +5,11 @@
           point="org.eclipse.cdt.codan.ui.codanMarkerResolution">
        <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixAddDefaultSwitch"
-             problemId="com.baldapps.artemis.checkers.MissDefaultProblem">
+             problemId="org.eclipse.cdt.codan.internal.checkers.MissDefaultProblem">
        </resolution>
        <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixAddCaseSwitch"
-             problemId="com.baldapps.artemis.checkers.MissCaseProblem">
+             problemId="org.eclipse.cdt.codan.internal.checkers.MissCaseProblem">
        </resolution>
        <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCppCastStatic"

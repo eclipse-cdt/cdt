@@ -47,4 +47,39 @@ public class QuickFixAddDefaultTest extends QuickFixTestCase {
 		assertContainedIn("default:", result); //$NON-NLS-1$
 	}
 
+	//void func() {
+	//int f = 0;
+	//switch (f)
+	//{
+	//
+	//}
+	//}
+	public void testAddCase2() throws Exception {
+		loadcode(getAboveComment());
+		String result = runQuickFixOneFile();
+		assertContainedIn("default:", result); //$NON-NLS-1$
+	}
+
+	//void func() {
+	//int f = 0;
+	//switch (f)
+	//	;
+	//}
+	public void testAddCase3() throws Exception {
+		loadcode(getAboveComment());
+		String result = runQuickFixOneFile();
+		assertContainedIn("default:", result); //$NON-NLS-1$
+	}
+
+	//void func() {
+	//int f = 0;
+	//switch (f)
+	//	case 0:
+	//		break;
+	//}
+	public void testAddCase4() throws Exception {
+		loadcode(getAboveComment());
+		String result = runQuickFixOneFile();
+		assertContainedIn("default:", result); //$NON-NLS-1$
+	}
 }

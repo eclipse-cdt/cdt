@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2760bc18_35dade04",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassWizardMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T01:49:17Z",
+      "side": 1,
+      "message": "It\u0027s a bit strange because the inline implementation is also a definition. So it might not be obvious that \"definition\" means implementation is \"out of the class definition\".",
+      "revId": "0c147ecb93de92709655d8d446b3d9a569d424ef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

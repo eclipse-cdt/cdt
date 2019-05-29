@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79330990_567597d7",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAddCaseSwitch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T01:34:41Z",
+      "side": 1,
+      "message": "This try/catch and the next one could have been reasonably merged.",
+      "revId": "3890eec7b714ef20d7f6410c32dcdabf7d49ff37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9336d31d_5cdc96a4",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAddCaseSwitch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T01:34:41Z",
+      "side": 1,
+      "message": "I think there\u0027s is a printer util somewhere..ASTTypeUtil?",
+      "revId": "3890eec7b714ef20d7f6410c32dcdabf7d49ff37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ada19ed7_fe759e59",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAddDefaultSwitch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T01:34:41Z",
+      "side": 1,
+      "message": "This try/catch and the next one could have been reasonably merged.",
+      "revId": "3890eec7b714ef20d7f6410c32dcdabf7d49ff37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5027dd2_097d275f",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/ui/AbstractCodanCMarkerResolution.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T01:34:41Z",
+      "side": 1,
+      "message": "A bit surprised by these API additions, normally there is a tendency to limit API changes. But this class seem to have a lot of helpers so I guess it keep with the spirit..",
+      "revId": "3890eec7b714ef20d7f6410c32dcdabf7d49ff37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

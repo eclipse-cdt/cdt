@@ -53,6 +53,40 @@
     },
     {
       "key": {
+        "uuid": "4c68fb85_2d89d9b0",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAddCaseTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T02:11:58Z",
+      "side": 1,
+      "message": "Seems like a few more tests could be added.\n\nFRUIT f \u003d APPLE;\nswitch (f)\n{\n\n}\n\n\nFRUIT f \u003d APPLE;\nswitch (f)\n\t;\n\n\nFRUIT f \u003d APPLE;\nswitch (f)\n\tcase APPLE:\n\t\tbreak;",
+      "revId": "3890eec7b714ef20d7f6410c32dcdabf7d49ff37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43520255_0c0bfe43",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAddDefaultTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T02:11:58Z",
+      "side": 1,
+      "message": "a few more tests (see other file)",
+      "revId": "3890eec7b714ef20d7f6410c32dcdabf7d49ff37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f5027dd2_097d275f",
         "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/ui/AbstractCodanCMarkerResolution.java",
         "patchSetId": 3

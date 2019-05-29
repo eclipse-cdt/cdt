@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0963f1ce_2c523569",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 6
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T02:52:23Z",
+      "side": 1,
+      "message": "Missing",
+      "revId": "3204aa05e07d5462f835dda7bfe313e6acc16dde",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0f69ba1a_216dd275",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 6
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T02:52:23Z",
+      "side": 1,
+      "message": "Missing",
+      "revId": "3204aa05e07d5462f835dda7bfe313e6acc16dde",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d571240_8e4ee434",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/SemanticQueries.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T02:52:23Z",
+      "side": 1,
+      "message": "This should probably be reviewed by Nathan",
+      "revId": "3204aa05e07d5462f835dda7bfe313e6acc16dde",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

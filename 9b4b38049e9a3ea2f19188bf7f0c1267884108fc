@@ -16,6 +16,24 @@
       "revId": "9b4b38049e9a3ea2f19188bf7f0c1267884108fc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e1b3ee95_cf964b91",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/utils/DefinitionFinder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-05-29T17:23:28Z",
+      "side": 1,
+      "message": "Yes, just tried. Now it\u0027s fixed with the new patch version. Try the class owner as-is, only if we didn\u0027t find anything and it was a template instance then we try again.",
+      "parentUuid": "902d63cc_55e97992",
+      "revId": "9b4b38049e9a3ea2f19188bf7f0c1267884108fc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

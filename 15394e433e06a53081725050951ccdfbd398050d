@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d494edbc_07f9a738",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T02:48:38Z",
+      "side": 1,
+      "message": "hmm, didn\u0027t we bump this already?",
+      "revId": "15394e433e06a53081725050951ccdfbd398050d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d59cc411_5d9d8f34",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/AbstractQuickFixCppCast.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T02:48:38Z",
+      "side": 1,
+      "message": "merge the try/catch with the one below?",
+      "revId": "15394e433e06a53081725050951ccdfbd398050d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a46bfcb6_5f572ac3",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixCStyleCastTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-29T02:48:38Z",
+      "side": 1,
+      "message": "can we throw in a typedef and a type alias in those tests? Maybe I\u0027m being a bit paranoid :)",
+      "revId": "15394e433e06a53081725050951ccdfbd398050d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

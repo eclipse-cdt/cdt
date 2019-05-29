@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "31ff78a8_27e85a6d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAddCaseSwitch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-05-29T17:09:01Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "79330990_567597d7",
+      "revId": "3890eec7b714ef20d7f6410c32dcdabf7d49ff37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9336d31d_5cdc96a4",
         "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAddCaseSwitch.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2019-05-29T01:34:41Z",
       "side": 1,
       "message": "I think there\u0027s is a printer util somewhere..ASTTypeUtil?",
+      "revId": "3890eec7b714ef20d7f6410c32dcdabf7d49ff37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c807c4b6_50c0a38e",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAddCaseSwitch.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-05-29T17:09:01Z",
+      "side": 1,
+      "message": "I didn\u0027t find anything similar for an enumeration, as you see I get the qualified name using CPPVisitor class and then I use the prefix for enum case label.",
+      "parentUuid": "9336d31d_5cdc96a4",
       "revId": "3890eec7b714ef20d7f6410c32dcdabf7d49ff37",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

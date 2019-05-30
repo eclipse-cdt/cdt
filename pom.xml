@@ -93,6 +93,7 @@
 		<module>build/org.eclipse.cdt.cmake.core</module>
 		<module>build/org.eclipse.cdt.cmake.ui</module>
 		<module>build/org.eclipse.cdt.cmake-feature</module>
+                <module>build/org.eclipse.cdt.compilationdatabase.core</module>
 
 		<module>build/org.eclipse.cdt.meson.core</module>
 		<module>build/org.eclipse.cdt.meson.docs</module>

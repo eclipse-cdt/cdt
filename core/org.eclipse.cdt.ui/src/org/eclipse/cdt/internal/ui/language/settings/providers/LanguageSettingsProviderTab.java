@@ -40,6 +40,7 @@ import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -1075,7 +1076,9 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		optionsPageMap.clear();
 		for (ILanguageSettingsProvider provider : presentedProviders) {
-			createOptionsPage(provider);
+			SafeRunner.run(() -> {
+				createOptionsPage(provider);
+			});
 		}
 
 		displaySelectedOptionPage();

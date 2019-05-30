@@ -3034,12 +3034,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (enclosedInMacroExpansion(node)) {
 			return PROCESS_SKIP;
 		}
-		if (doNodeLocationsOverlap(node.getOperand1(), node.getOperand2())) {
+		IASTNode op2 = node.getOperand2();
+		if (op2 == null)
+			op2 = node.getInitOperand2();
+		if (doNodeLocationsOverlap(node.getOperand1(), op2)) {
 			// Overlapping of operands is possible if the central part of the binary expression is
 			// a result of macro expansion. There is no need to print the operator in such case,
 			// so we simply delegate to each of the operands.
 			node.getOperand1().accept(this);
-			node.getOperand2().accept(this);
+			op2.accept(this);
 			return PROCESS_SKIP;
 		}
 		if (isAssignment(node)) {
@@ -3114,7 +3117,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		op1.accept(this);
 
 		// In case of macros we may have already passed the equal sign position.
-		if (getCurrentPosition() < nodeOffset(node.getOperand2())) {
+		IASTNode op2 = node.getOperand2();
+		if (op2 == null)
+			op2 = node.getInitOperand2();
+		if (getCurrentPosition() < nodeOffset(op2)) {
 			// Operator
 			final int nextToken = peekNextToken();
 			// In case of C++ alternative operators, like 'and', 'not', etc. a space
@@ -3137,7 +3143,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 				scribe.setTailFormatter(tailFormatter);
 				// Operand 2
-				final IASTExpression op2 = node.getOperand2();
+				op2 = node.getOperand2();
+				if (op2 == null)
+					op2 = node.getInitOperand2();
 				op2.accept(this);
 				scribe.runTailFormatter();
 				ok = true;

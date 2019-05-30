@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "871a72b4_e1b1d8c7",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui/plugin.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-05-30T02:23:42Z",
+      "side": 1,
+      "message": "the quick fixes don\u0027t work because the problemIds are wrong. The tests work because they don\u0027t go through the Ids, the marker resolution is instantiated within the test.\nPerhaps you can fix this in https://git.eclipse.org/r/#/c/143033/ ?",
+      "revId": "3890eec7b714ef20d7f6410c32dcdabf7d49ff37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "79330990_567597d7",
         "filename": "codan/org.eclipse.cdt.codan.checkers.ui/src/org/eclipse/cdt/codan/internal/checkers/ui/quickfix/QuickFixAddCaseSwitch.java",
         "patchSetId": 3

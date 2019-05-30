@@ -4324,4 +4324,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_LABEL, CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
+
+	//int main() {
+	//	int x;
+	//	x = {42};
+	//}
+
+	//int main() {
+	//	int x;
+	//	x = { 42 };
+	//}
+	public void testAssigmentWithInitList_Bug547684() throws Exception {
+		assertFormatterResult();
+	}
 }

@@ -50,6 +50,9 @@ public class LaunchImages {
 	public static String IMG_OBJS_EXEC = NAME_PREFIX + "exec_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_EXEC = createManaged(T_OBJS, IMG_OBJS_EXEC);
 
+	public static final String IMG_OBJS_REMOTE = NAME_PREFIX + "connect.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_REMOTE = createManaged(T_OBJS, IMG_OBJS_REMOTE);
+
 	public static void initialize() {
 	}
 

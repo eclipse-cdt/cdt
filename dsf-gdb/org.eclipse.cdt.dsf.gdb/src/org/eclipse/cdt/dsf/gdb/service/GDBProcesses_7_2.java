@@ -17,6 +17,7 @@
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -47,6 +48,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.GDBRemoteTCPLaunchTargetProvider;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -67,6 +69,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -435,7 +439,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 													} else {
 														super.handleCompleted();
 													}
-												};
+												}
 											});
 									return;
 								}
@@ -535,10 +539,21 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 		ILaunch launch = procCtx.getAdapter(ILaunch.class);
 		assert launch != null;
 		if (launch != null) {
-			Map<String, Object> attributes = null;
+			Map<String, Object> attributes = new HashMap<>();
 			try {
-				attributes = launch.getLaunchConfiguration().getAttributes();
+				attributes.putAll(launch.getLaunchConfiguration().getAttributes());
 			} catch (CoreException e) {
+				rm.done(e.getStatus());
+				return;
+			}
+
+			if (launch instanceof ITargetedLaunch) {
+				ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
+				if (target != null) {
+					attributes.putAll(target.getAttributes());
+					attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
+							target.getTypeId().equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID));
+				}
 			}
 
 			boolean isTcpConnection = CDebugUtils.getAttribute(attributes,

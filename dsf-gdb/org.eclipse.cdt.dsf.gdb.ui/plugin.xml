@@ -607,4 +607,27 @@
             plugin="org.eclipse.cdt.dsf.gdb">
       </statusHandler>
    </extension>
+   <extension
+         point="org.eclipse.launchbar.ui.launchTargetTypeUI">
+      <launchTargetTypeUI
+            id="org.eclipse.cdt.dsf.gdb.remoteTCPLaunchTargetType"
+            labelProvider="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbRemoteTargetLabelProvider">
+      </launchTargetTypeUI>
+      <wizard2
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewGdbRemoteTCPTargetWizard"
+            icon="icons/full/obj16/connect.gif"
+            id="org.eclipse.cdt.dsf.gdb.remoteTCPLaunchTargetType"
+            name="GDB Remote TCP">
+      </wizard2>
+      <launchTargetTypeUI
+            id="org.eclipse.cdt.dsf.gdb.remoteSerialLaunchTargetType"
+            labelProvider="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbRemoteTargetLabelProvider">
+      </launchTargetTypeUI>
+      <wizard2
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewGdbRemoteSerialTargetWizard"
+            icon="icons/full/obj16/connect.gif"
+            id="org.eclipse.cdt.dsf.gdb.remoteSerialLaunchTargetType"
+            name="GDB Remote Serial">
+      </wizard2>
+   </extension>
 </plugin>

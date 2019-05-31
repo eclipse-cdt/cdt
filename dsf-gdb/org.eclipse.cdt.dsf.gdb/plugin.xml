@@ -17,7 +17,7 @@
             id="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"
             type="org.eclipse.cdt.launch.remoteApplicationLaunchType"
             modes="debug"
-            delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
+            delegate="org.eclipse.cdt.dsf.gdb.launching.GdbTargetedLaunchDelegate"
             name="%launchDelegate.remoteApplication.name"
             delegateDescription="%launchDelegate.remoteApplication.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
@@ -91,7 +91,7 @@
             delegate="org.eclipse.cdt.dsf.gdb.internal.launching.CoreBuildLocalDebugLaunchDelegate"
             id="org.eclipse.cdt.dsf.gdb.coreBuildLocalDebug"
             modes="debug"
-            name="Core Build Local Debug"
+            name="%coreBuildLocalDebug.name"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
             type="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType">
@@ -100,5 +100,30 @@
                perspective="org.eclipse.debug.ui.DebugPerspective">
          </modeCombination>
       </launchDelegate>
+   </extension>
+   <extension
+         point="org.eclipse.launchbar.core.launchTargetTypes">
+      <launchTargetType
+            id="org.eclipse.cdt.dsf.gdb.remoteTCPLaunchTargetType"
+            provider="org.eclipse.cdt.dsf.gdb.launching.GDBRemoteTCPLaunchTargetProvider">
+      </launchTargetType>
+      <launchTargetType
+            id="org.eclipse.cdt.dsf.gdb.remoteSerialLaunchTargetType"
+            provider="org.eclipse.cdt.dsf.gdb.launching.GDBRemoteSerialLaunchTargetProvider">
+      </launchTargetType>
+   </extension>
+   <extension
+         point="org.eclipse.launchbar.core.launchBarContributions">
+      <descriptorType
+            class="org.eclipse.cdt.dsf.gdb.internal.launching.GdbRemoteLaunchDescriptorType"
+            id="org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType"
+            priority="10">
+      </descriptorType>
+      <configProvider
+            class="org.eclipse.cdt.dsf.gdb.internal.launching.GdbRemoteLaunchConfigProvider"
+            descriptorType="org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType"
+            priority="10"
+            supportsNullTarget="true">
+      </configProvider>
    </extension>
 </plugin>

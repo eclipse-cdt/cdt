@@ -15,7 +15,6 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
-import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.target.LaunchTargetWizard;
 
 public class NewGenericTargetWizard extends LaunchTargetWizard {
@@ -23,7 +22,7 @@ public class NewGenericTargetWizard extends LaunchTargetWizard {
 	private NewGenericTargetWizardPage page;
 
 	public NewGenericTargetWizard() {
-		setWindowTitle("New Generic Target");
+		setWindowTitle(LaunchMessages.getString("NewGenericTargetWizard_0")); //$NON-NLS-1$
 	}
 
 	@Override
@@ -61,10 +60,10 @@ public class NewGenericTargetWizard extends LaunchTargetWizard {
 
 	@Override
 	public void performDelete() {
-		ILaunchTargetManager manager = Activator.getService(ILaunchTargetManager.class);
+		ILaunchTargetManager manager = CDebugUIPlugin.getService(ILaunchTargetManager.class);
 		ILaunchTarget target = getLaunchTarget();
 		if (target != null) {
-			manager.removeLaunchTarget(getLaunchTarget());
+			manager.removeLaunchTarget(target);
 		}
 	}
 

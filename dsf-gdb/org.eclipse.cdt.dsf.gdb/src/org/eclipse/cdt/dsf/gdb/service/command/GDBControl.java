@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -52,10 +53,12 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.Messages;
 import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence;
+import org.eclipse.cdt.dsf.gdb.launching.GDBRemoteTCPLaunchTargetProvider;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.command.GdbCommandTimeoutManager.ICommandTimeoutListener;
@@ -94,6 +97,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -425,10 +430,22 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	public void completeInitialization(final RequestMonitor rm) {
 		// We take the attributes from the launchConfiguration
 		ILaunch launch = (ILaunch) getSession().getModelAdapter(ILaunch.class);
-		Map<String, Object> attributes = null;
+		Map<String, Object> attributes = new HashMap<>();
 		try {
-			attributes = launch.getLaunchConfiguration().getAttributes();
+			attributes.putAll(launch.getLaunchConfiguration().getAttributes());
 		} catch (CoreException e) {
+			rm.done(e.getStatus());
+			return;
+		}
+
+		// And optionally the target
+		if (launch instanceof ITargetedLaunch) {
+			ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
+			if (target != null) {
+				attributes.putAll(target.getAttributes());
+				attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
+						target.getTypeId().equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID));
+			}
 		}
 
 		// We need a RequestMonitorWithProgress, if we don't have one, we create one.

@@ -36,6 +36,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -275,4 +276,11 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 		reg.put(IGdbUIConstants.IMG_WIZBAN_ADVANCED_TIMEOUT_SETTINGS,
 				getImageDescriptor("icons/full/wizban/advtosettings_wiz.png")); //$NON-NLS-1$
 	}
+
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = plugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
+	}
+
 }

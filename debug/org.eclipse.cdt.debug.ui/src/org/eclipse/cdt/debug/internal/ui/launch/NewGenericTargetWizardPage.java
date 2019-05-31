@@ -29,8 +29,8 @@ public class NewGenericTargetWizardPage extends WizardPage {
 
 	public NewGenericTargetWizardPage(ILaunchTarget launchTarget) {
 		super(NewGenericTargetWizardPage.class.getName());
-		setTitle("Generic Target");
-		setDescription("Enter name and properties for the target.");
+		setTitle(LaunchMessages.getString("NewGenericTargetWizardPage.Title")); //$NON-NLS-1$
+		setDescription(LaunchMessages.getString("NewGenericTargetWizardPage.Desc")); //$NON-NLS-1$
 		this.launchTarget = launchTarget;
 	}
 
@@ -40,7 +40,7 @@ public class NewGenericTargetWizardPage extends WizardPage {
 		comp.setLayout(new GridLayout(2, false));
 
 		Label label = new Label(comp, SWT.NONE);
-		label.setText("Name:");
+		label.setText(LaunchMessages.getString("NewGenericTargetWizardPage.Name")); //$NON-NLS-1$
 
 		nameText = new Text(comp, SWT.BORDER);
 		nameText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -49,7 +49,7 @@ public class NewGenericTargetWizardPage extends WizardPage {
 		}
 
 		label = new Label(comp, SWT.NONE);
-		label.setText("Operating System:");
+		label.setText(LaunchMessages.getString("NewGenericTargetWizardPage.OS")); //$NON-NLS-1$
 
 		osText = new Text(comp, SWT.BORDER);
 		osText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -61,7 +61,7 @@ public class NewGenericTargetWizardPage extends WizardPage {
 		}
 
 		label = new Label(comp, SWT.NONE);
-		label.setText("CPU Architecture:");
+		label.setText(LaunchMessages.getString("NewGenericTargetWizardPage.Arch")); //$NON-NLS-1$
 
 		archText = new Text(comp, SWT.BORDER);
 		archText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));

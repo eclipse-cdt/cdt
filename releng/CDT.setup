@@ -186,7 +186,7 @@
         <repositoryList
             name="Photon">
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20190528213420/repository/"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20190531194818/repository/"/>
           <repository
               url="https://download.eclipse.org/technology/swtbot/releases/2.7.0/"/>
           <repository

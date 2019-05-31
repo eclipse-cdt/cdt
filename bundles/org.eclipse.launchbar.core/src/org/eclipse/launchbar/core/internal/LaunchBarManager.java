@@ -37,6 +37,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
+import org.eclipse.launchbar.core.DefaultLaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchBarListener;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.ILaunchConfigurationProvider;
@@ -310,6 +311,14 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 			throws CoreException {
 		if (descriptor == null)
 			return null;
+
+		if (descriptor instanceof DefaultLaunchDescriptor) {
+			// With the default descriptor, we already have the config, just return the type
+			// Doesn't matter what the target is, that's dealt with at launch time
+			ILaunchConfiguration config = descriptor.getAdapter(ILaunchConfiguration.class);
+			return config.getType();
+		}
+
 		for (LaunchConfigProviderInfo providerInfo : configProviders.get(getDescriptorTypeId(descriptor.getType()))) {
 			if (providerInfo.enabled(descriptor) && providerInfo.enabled(target)) {
 				ILaunchConfigurationProvider provider = providerInfo.getProvider();
@@ -321,6 +330,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 				}
 			}
 		}
+		
+		// not found
 		return null;
 	}
 
@@ -708,6 +719,9 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 				targets.add(target);
 			}
 		}
+		if (supportsNullTarget(descriptor)) {
+			targets.add(ILaunchTarget.NULL_TARGET);
+		}
 		return targets.toArray(new ILaunchTarget[targets.size()]);
 	}
 
@@ -727,6 +741,16 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		return false;
 	}
 
+	boolean supportsNullTarget(ILaunchDescriptor descriptor) {
+		String descriptorTypeId = getDescriptorTypeId(descriptor.getType());
+		for (LaunchConfigProviderInfo providerInfo : configProviders.get(descriptorTypeId)) {
+			if (providerInfo.enabled(descriptor) && providerInfo.supportsNullTarget()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	@Override
 	public ILaunchTarget getActiveLaunchTarget() {
 		return activeLaunchTarget;
@@ -761,9 +785,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	}
 
 	private void storeLaunchTarget(ILaunchDescriptor desc, ILaunchTarget target) {
-		if (target == null || target == ILaunchTarget.NULL_TARGET) {
-			// no point storing null, if stored id is invalid it won't be used
-			// anyway
+		if (target == null) {
+			// Don't store if it's null. Not sure we're null any more anyway.
 			return;
 		}
 		// per desc store, desc can be null means it store globally
@@ -807,6 +830,11 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		if (descriptor == null) {
 			return null;
 		}
+		
+		if (descriptor instanceof DefaultLaunchDescriptor) {
+			return descriptor.getAdapter(ILaunchConfiguration.class);
+		}
+		
 		String descTypeId = getDescriptorTypeId(descriptor.getType());
 		for (LaunchConfigProviderInfo providerInfo : configProviders.get(descTypeId)) {
 			try {

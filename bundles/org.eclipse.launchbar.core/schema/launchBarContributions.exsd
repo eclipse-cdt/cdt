@@ -131,6 +131,13 @@ provider with priority 5. Priority 0 is reserved for default provider.
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="supportsNullTarget" type="boolean">
+            <annotation>
+               <documentation>
+                  Does the descriptor managed by this config provider support the null target.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

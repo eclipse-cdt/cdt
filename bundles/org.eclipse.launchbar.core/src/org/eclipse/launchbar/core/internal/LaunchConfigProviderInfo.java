@@ -22,6 +22,7 @@ import org.eclipse.launchbar.core.ILaunchConfigurationProvider;
 public class LaunchConfigProviderInfo {
 	private final String descriptorTypeId;
 	private final int priority;
+	private final boolean supportsNullTarget;
 	private IConfigurationElement element;
 	private ILaunchConfigurationProvider provider;
 	private Expression expression;
@@ -38,6 +39,13 @@ public class LaunchConfigProviderInfo {
 		}
 		priority = priorityNum;
 
+		String nullTargetString = element.getAttribute("supportsNullTarget"); //$NON-NLS-1$
+		if (nullTargetString != null) {
+			supportsNullTarget = Boolean.parseBoolean(nullTargetString);
+		} else {
+			supportsNullTarget = false;
+		}
+		
 		this.element = element;
 
 		IConfigurationElement[] enabledExpressions = element.getChildren("enablement");//$NON-NLS-1$
@@ -70,6 +78,10 @@ public class LaunchConfigProviderInfo {
 		return priority;
 	}
 
+	public boolean supportsNullTarget() {
+		return supportsNullTarget;
+	}
+	
 	public ILaunchConfigurationProvider getProvider() {
 		if (provider == null) {
 			try {

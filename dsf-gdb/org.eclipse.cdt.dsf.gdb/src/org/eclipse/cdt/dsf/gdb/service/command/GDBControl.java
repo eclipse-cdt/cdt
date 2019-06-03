@@ -443,8 +443,13 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
 			if (target != null) {
 				attributes.putAll(target.getAttributes());
-				attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
-						target.getTypeId().equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID));
+				String tcp = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, ""); //$NON-NLS-1$
+				if (!tcp.isEmpty()) {
+					attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, Boolean.parseBoolean(tcp));
+				} else {
+					attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
+							target.getTypeId().equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID));
+				}
 			}
 		}
 

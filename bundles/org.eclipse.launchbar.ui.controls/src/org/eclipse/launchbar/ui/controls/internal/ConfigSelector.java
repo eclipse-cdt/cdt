@@ -28,6 +28,7 @@ import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.ui.DefaultDescriptorLabelProvider;
 import org.eclipse.launchbar.ui.ILaunchBarUIManager;
 import org.eclipse.launchbar.ui.NewLaunchConfigWizard;
+import org.eclipse.launchbar.ui.NewLaunchConfigWizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -174,7 +175,7 @@ public class ConfigSelector extends CSelector {
 			@Override
 			public void mouseUp(org.eclipse.swt.events.MouseEvent e) {
 				final NewLaunchConfigWizard wizard = new NewLaunchConfigWizard();
-				WizardDialog dialog = new WizardDialog(getShell(), wizard);
+				WizardDialog dialog = new NewLaunchConfigWizardDialog(getShell(), wizard);
 				if (dialog.open() == Window.OK) {
 					new Job(Messages.ConfigSelector_3) {
 						@Override

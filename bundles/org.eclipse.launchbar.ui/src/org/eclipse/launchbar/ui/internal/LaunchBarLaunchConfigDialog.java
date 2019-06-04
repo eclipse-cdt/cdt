@@ -96,10 +96,11 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 			ILaunchBarUIManager uiManager = Activator.getService(ILaunchBarUIManager.class);
 			ILabelProvider labelProvider = uiManager.getLabelProvider(descriptor);
 			String descName = labelProvider != null ? labelProvider.getText(descriptor) : descriptor.getName();
+			String typeName = workingCopy.getType().getName();
 			if (supportsTargets) {
-				setTitle(String.format(Messages.LaunchBarLaunchConfigDialog_Edit2, descName, mode.getLabel(), target.getId()));
+				setTitle(String.format(Messages.LaunchBarLaunchConfigDialog_Edit2, typeName, descName, mode.getLabel(), target.getId()));
 			} else {
-				setTitle(String.format(Messages.LaunchBarLaunchConfigDialog_Edit1, descName, mode.getLabel()));
+				setTitle(String.format(Messages.LaunchBarLaunchConfigDialog_Edit1, typeName, descName, mode.getLabel()));
 			}
 		} catch (CoreException e) {
 			Activator.log(e);

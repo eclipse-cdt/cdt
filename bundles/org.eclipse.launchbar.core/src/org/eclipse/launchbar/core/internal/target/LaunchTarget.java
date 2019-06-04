@@ -67,15 +67,17 @@ public class LaunchTarget extends PlatformObject implements ILaunchTarget {
 	@Override
 	public Map<String, String> getAttributes() {
 		Map<String, String> attrs = new HashMap<>();
-		try {
-			for (String key : attributes.keys()) {
-				String value = attributes.get(key, null);
-				if (value != null) {
-					attrs.put(key, value);
+		if (attributes != null) {
+			try {
+				for (String key : attributes.keys()) {
+					String value = attributes.get(key, null);
+					if (value != null) {
+						attrs.put(key, value);
+					}
 				}
+			} catch (BackingStoreException e) {
+				Activator.log(e);
 			}
-		} catch (BackingStoreException e) {
-			Activator.log(e);
 		}
 		return attrs;
 	}

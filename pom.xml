@@ -45,6 +45,8 @@
 		     -DskipTests will override anything else as normal maven
 		     users expect. -->
 		<skipTests>${cdt-other.skip.tests}</skipTests>
+		<dsf.gdb.tests.gdbPath>/shared/common/gdb/gdb-all/bin</dsf.gdb.tests.gdbPath>
+		<cdt.tests.dsf.gdb.versions>gdb.8.2</cdt.tests.dsf.gdb.versions>
 	</properties>
 
 	<licenses>

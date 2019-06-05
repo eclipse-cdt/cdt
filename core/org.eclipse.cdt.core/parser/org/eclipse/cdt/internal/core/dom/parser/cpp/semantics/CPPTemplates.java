@@ -1287,6 +1287,8 @@ public class CPPTemplates {
 	}
 
 	static int determinePackSize(IValue value, ICPPTemplateParameterMap tpMap) {
+		if (value == null)
+			return PACK_SIZE_NOT_FOUND;
 		ICPPEvaluation eval = value.getEvaluation();
 		if (eval == null)
 			return PACK_SIZE_NOT_FOUND;

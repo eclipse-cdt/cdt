@@ -74,12 +74,14 @@ class AggregateInitialization {
 		if (initFromStringLiteral(nestedType, initializer)) {
 			// [dcl.init.string]
 			fIndex++;
-			Number sizeOfCharArrayNumber = getArraySize(nestedType);
+			// nestedType is guaranteed to be an IArrayType if initFromStringLiteral() returns true
+			Number sizeOfCharArrayNumber = getArraySize((IArrayType) nestedType);
 			long sizeofCharArray = 0; // will error in case we cannot determine the size
 			if (sizeOfCharArrayNumber != null) {
 				sizeofCharArray = sizeOfCharArrayNumber.longValue();
 			}
-			Number sizeofStringLiteralNumber = getArraySize(initializer.getType());
+			// so is initializer.getType()
+			Number sizeofStringLiteralNumber = getArraySize((IArrayType) initializer.getType());
 			long sizeofStringLiteral = Long.MAX_VALUE; // will error in case we cannot determine the size
 			if (sizeofStringLiteralNumber != null) {
 				sizeofStringLiteral = sizeofStringLiteralNumber.longValue();
@@ -140,16 +142,20 @@ class AggregateInitialization {
 			}
 		} else if (type instanceof IArrayType) {
 			IArrayType arrayType = (IArrayType) type;
-			Number arraySize = arrayType.getSize().numberValue();
-			if (arraySize != null)
-				for (long i = 0; i < arraySize.longValue(); i++) {
-					Cost cost = checkElement(arrayType.getType(), null, worstCost);
-					if (!cost.converts())
-						return cost;
-					if (cost.compareTo(worstCost) > 0) {
-						worstCost = cost;
+			IValue sizeVal = arrayType.getSize();
+			if (sizeVal != null) {
+				Number arraySize = sizeVal.numberValue();
+				if (arraySize != null) {
+					for (long i = 0; i < arraySize.longValue(); i++) {
+						Cost cost = checkElement(arrayType.getType(), null, worstCost);
+						if (!cost.converts())
+							return cost;
+						if (cost.compareTo(worstCost) > 0) {
+							worstCost = cost;
+						}
 					}
 				}
+			}
 		}
 		return worstCost;
 	}
@@ -262,12 +268,10 @@ class AggregateInitialization {
 		return isCharArray(target) && fromStringLiteral(initializer);
 	}
 
-	private static Number getArraySize(IType type) {
-		if (((IArrayType) type).getSize() != null) {
-			IValue size = ((IArrayType) type).getSize();
-			if (size.numberValue() != null) {
-				return ((IArrayType) type).getSize().numberValue();
-			}
+	private static Number getArraySize(IArrayType type) {
+		IValue size = type.getSize();
+		if (size != null) {
+			return size.numberValue();
 		}
 		return null;
 	}

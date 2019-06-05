@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 
 /**
  * This checker detects format string vulnerabilities in the source code of
@@ -168,9 +169,15 @@ public class ScanfFormatStringSecurityChecker extends AbstractIndexAstChecker {
 					IType expressionType = idExpression.getExpressionType();
 					if (expressionType instanceof IArrayType) {
 						IArrayType arrayExpressionType = (IArrayType) expressionType;
-						long arraySize = arrayExpressionType.getSize().numberValue().longValue();
-						if (argumentSize > arraySize) {
-							reportProblem(ER_ID, idExpression, idExpression.getRawSignature());
+						IValue sizeVal = arrayExpressionType.getSize();
+						if (sizeVal != null) {
+							Number sizeNum = sizeVal.numberValue();
+							if (sizeNum != null) {
+								long arraySize = sizeNum.longValue();
+								if (argumentSize > arraySize) {
+									reportProblem(ER_ID, idExpression, idExpression.getRawSignature());
+								}
+							}
 						}
 					}
 				}

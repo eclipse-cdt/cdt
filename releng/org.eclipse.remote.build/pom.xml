@@ -173,10 +173,7 @@
 			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-source-feature-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<includeBinaryFeature>false</includeBinaryFeature>
-				</configuration>
+				<version>${tycho-extras-version}</version>
 				<executions>
 					<execution>
 						<id>source-feature</id>
@@ -184,12 +181,28 @@
 						<goals>
 							<goal>source-feature</goal>
 						</goals>
-			            <configuration>
-							<excludes>
-								<plugin id="org.eclipse.remote.proxy.server.linux.x86_64"/>
-								<plugin id="org.eclipse.remote.doc.isv"/>
-							</excludes>
-			            </configuration>
+					</execution>
+				</executions>
+	            <configuration>
+					<excludes>
+		                <plugin id="org.eclipse.remote.proxy.server.linux.x86_64"/>
+		                <plugin id="org.eclipse.remote.proxy.server.linux.ppc64le"/>
+		                <plugin id="org.eclipse.remote.proxy.server.macosx.x86_64"/>
+						<plugin id="org.eclipse.remote.doc.isv"/>
+					</excludes>
+	            </configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>attached-p2-metadata</id>
+						<goals>
+							<goal>p2-metadata</goal>
+						</goals>
+						<phase>package</phase>
 					</execution>
 				</executions>
 			</plugin>
@@ -217,20 +230,6 @@
 					<configuration>
 						<encoding>UTF-8</encoding>
 					</configuration>
-				</plugin>
-				<!-- enable source bundle generation -->
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-source-plugin</artifactId>
-					<version>${tycho-version}</version>
-					<executions>
-						<execution>
-							<id>plugin-source</id>
-							<goals>
-								<goal>plugin-source</goal>
-							</goals>
-						</execution>
-					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

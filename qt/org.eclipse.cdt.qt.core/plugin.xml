@@ -163,5 +163,12 @@
                 value="x86_64">
           </property>
        </mapping>
+       <mapping
+             spec="linux-g++">
+          <property
+                key="os"
+                value="linux">
+          </property>
+       </mapping>
     </extension>
 </plugin>

@@ -162,7 +162,9 @@ public class QtInstallManager implements IQtInstallManager {
 			}
 
 			for (Entry<String, String> property : install.getProperties().entrySet()) {
-				if (!property.getValue().equals(toolChain.getProperty(property.getKey()))) {
+				String tcValue = toolChain.getProperty(property.getKey());
+				// Treat null as a wildcard
+				if (tcValue != null && !property.getValue().equals(tcValue)) {
 					return false;
 				}
 			}

@@ -749,7 +749,7 @@
 							</goals>
 							<phase>verify</phase>
 							<configuration>
-								<baselineMode>warn</baselineMode>
+								<baselineMode>fail</baselineMode>
 								<baselineReplace>all</baselineReplace>
 								<baselineRepositories>
 									<repository>

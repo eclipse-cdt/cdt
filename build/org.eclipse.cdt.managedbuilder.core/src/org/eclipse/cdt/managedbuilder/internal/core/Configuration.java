@@ -473,7 +473,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		//				prefs.getBoolean(INTERNAL_BUILDER_IGNORE_ERR, true) : true;
 	}
 
-	public Configuration(ManagedProject managedProject, ToolChain tCh, String id, String name) {
+	public Configuration(ManagedProject managedProject, IToolChain tCh, String id, String name) {
 		setId(id);
 		setName(name);
 

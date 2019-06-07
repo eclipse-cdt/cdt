@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.docker.launcher.ui.launchbar;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -161,6 +163,19 @@ public class ContainerGCCToolChainProvider implements IToolChainProvider, IDocke
 					manager.recheckConfigs();
 				} else if (type == IDockerConnectionManagerListener.REMOVE_EVENT
 						|| type == IDockerConnectionManagerListener.DISABLE_EVENT) {
+					if (type == IDockerConnectionManagerListener.DISABLE_EVENT) {
+						// check if we are finalizing the class in which case do nothing as the connection
+						// was removed and the class is being garbage collected
+						try {
+							Method isFinalizing = connection.getClass().getMethod("isFinalizing"); //$NON-NLS-1$
+							if ((boolean) isFinalizing.invoke(connection)) {
+								return Status.OK_STATUS;
+							}
+						} catch (NoSuchMethodException | SecurityException | IllegalAccessException
+								| IllegalArgumentException | InvocationTargetException e) {
+							// do nothing
+						}
+					}
 					try {
 						String connectionURI = connection.getUri();
 						Collection<IToolChain> toolChains = toolChainManager.getAllToolChains();

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.docker.launcher;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -161,7 +163,7 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 	public synchronized void changeEvent(final IDockerConnection connection, final int type) {
 		Job checkConfigs = new Job("Check configs") { //$NON-NLS-1$
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
+			protected synchronized IStatus run(IProgressMonitor monitor) {
 
 				ICBuildConfigurationManager mgr = CCorePlugin.getService(ICBuildConfigurationManager.class);
 				ICBuildConfigurationManager2 manager = (ICBuildConfigurationManager2) mgr;
@@ -255,6 +257,19 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 					manager.recheckConfigs();
 				} else if (type == IDockerConnectionManagerListener.REMOVE_EVENT
 						|| type == IDockerConnectionManagerListener.DISABLE_EVENT) {
+					if (type == IDockerConnectionManagerListener.DISABLE_EVENT) {
+						// check if we are finalizing the class in which case do nothing as the connection
+						// was removed and the class is being garbage collected
+						try {
+							Method isFinalizing = connection.getClass().getMethod("isFinalizing"); //$NON-NLS-1$
+							if ((boolean) isFinalizing.invoke(connection)) {
+								return Status.OK_STATUS;
+							}
+						} catch (NoSuchMethodException | SecurityException | IllegalAccessException
+								| IllegalArgumentException | InvocationTargetException e) {
+							// do nothing
+						}
+					}
 					String connectionURI = connection.getUri();
 					ILaunchTarget[] targets = targetManager.getLaunchTargetsOfType(TYPE_ID);
 					for (ILaunchTarget target : targets) {

@@ -750,16 +750,18 @@
 								<goal>p2-metadata</goal>
 							</goals>
 							<phase>verify</phase>
+							<configuration>
+								<baselineMode>fail</baselineMode>
+								<baselineReplace>all</baselineReplace>
+								<baselineRepositories>
+									<repository>
+										<url>${comparator.repo}</url>
+									</repository>
+								</baselineRepositories>
+							</configuration>
 						</execution>
 					</executions>
 					<configuration>
-						<baselineMode>fail</baselineMode>
-						<baselineReplace>all</baselineReplace>
-						<baselineRepositories>
-							<repository>
-								<url>${comparator.repo}</url>
-							</repository>
-						</baselineRepositories>
 						<ignoredPatterns>
 							<pattern>META-INF/ECLIPSE_.RSA</pattern>
 							<pattern>META-INF/ECLIPSE_.SF</pattern>

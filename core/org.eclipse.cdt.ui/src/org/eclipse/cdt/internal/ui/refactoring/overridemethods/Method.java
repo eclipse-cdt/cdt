@@ -137,9 +137,6 @@ public class Method {
 			return null;
 
 		IASTDeclarator declarator = (IASTDeclarator) declaration.getParent();
-		IASTNode parent = declarator.getParent();
-		if (!(parent instanceof IASTSimpleDeclaration))
-			return null;
 
 		/**
 		 * We can't just copy the original nodes here but we need to create a new node. We can't do it

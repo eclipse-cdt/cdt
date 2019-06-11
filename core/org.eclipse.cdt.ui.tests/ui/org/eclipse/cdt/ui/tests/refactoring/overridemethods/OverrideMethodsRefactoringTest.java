@@ -640,4 +640,36 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 		selectedMethods = new String[] { "baseFunc(void *)const" };
 		assertRefactoringSuccess();
 	}
+
+	//A.h
+	//class Base {
+	//public:
+	//	virtual ~Base();
+	//	virtual void baseFunc() const {
+	//	}
+	//};
+	//class X: public Base {
+	//public:
+	//	X();
+	//	/*$*//*$$*/
+	//};
+	//====================
+	//class Base {
+	//public:
+	//	virtual ~Base();
+	//	virtual void baseFunc() const {
+	//	}
+	//};
+	//class X: public Base {
+	//public:
+	//	X();
+	//	virtual void baseFunc() const;
+	//};
+	//
+	//inline void X::baseFunc() const {
+	//}
+	public void testWithHeaderOnlyImpl_Bug548138() throws Exception {
+		selectedMethods = new String[] { "baseFunc()const" };
+		assertRefactoringSuccess();
+	}
 }

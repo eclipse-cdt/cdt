@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Stand-alone C/C++ GDB Debugger" uid="org.eclipse.cdt.debug.application.product" id="org.eclipse.cdt.debug.application.product" application="org.eclipse.cdt.debug.application.app" version="9.8.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="Stand-alone C/C++ GDB Debugger" uid="org.eclipse.cdt.debug.application.product" id="org.eclipse.cdt.debug.application.product" application="org.eclipse.cdt.debug.application.app" version="9.9.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/org.eclipse.cdt.debug.application/icons/about.png"/>

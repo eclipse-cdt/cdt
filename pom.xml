@@ -10,7 +10,7 @@
 
 	<groupId>org.eclipse.cdt</groupId>
 	<artifactId>cdt-parent</artifactId>
-	<version>9.8.0-SNAPSHOT</version>
+	<version>9.9.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>CDT Parent</name>
 
@@ -29,7 +29,7 @@
 		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.10/</help-docs-eclipserun-repo>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
-		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/9.7/cdt-9.7.2/</comparator.repo>
+		<comparator.repo>https://download.eclipse.org/tools/cdt/builds/9.8/cdt-9.8.0-simrel-2019-06-rc2/</comparator.repo>
 		<compare-version-with-baselines.skip>false</compare-version-with-baselines.skip>
 		<!--
 			Valid options: error, warning, and ignore

@@ -7,8 +7,8 @@
 -splitIndex
 -windowtitle "Eclipse CDT API Specification"
 -doctitle "Eclipse CDT API Specification"
--header "<strong>Eclipse CDT</strong><br>8.4 (Luna)"
--bottom "Copyright (c) IBM Corp. and others 2004, 2014.  All Rights Reserved."
+-header "<strong>Eclipse CDT</strong><br>8.9.0"
+-bottom "Copyright (c) IBM Corp. and others 2004, 2019.  All Rights Reserved."
 -group "C/C++ Development Tools Core Plug-in Packages" "org.eclipse.cdt.core;org.eclipse.cdt.core.*"
 -group "C/C++ Development Tools Debug Core Plug-in Packages" "org.eclipse.cdt.debug.core;org.eclipse.cdt.debug.core.*"
 -link http://docs.oracle.com/javase/7/docs/api/

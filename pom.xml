@@ -765,6 +765,7 @@
 						<ignoredPatterns>
 							<pattern>META-INF/ECLIPSE_.RSA</pattern>
 							<pattern>META-INF/ECLIPSE_.SF</pattern>
+							<pattern>index/*</pattern>
 						</ignoredPatterns>
 					</configuration>
 				</plugin>

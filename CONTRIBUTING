@@ -1,0 +1,58 @@
+# Contributing to Eclipse Parallel Tools Platform
+
+Thanks for your interest in this project.
+
+## Project description
+
+The aim of the Eclipse Parallel Tools Platform project is to produce an
+open-source industry-strength platform that provides a highly integrated
+environment specifically designed for parallel application development. The
+project will provide a standard, portable parallel IDE that supports a wide
+range of parallel architectures and runtime systems; a scalable parallel
+debugger; support for the integration of a wide range of parallel tools; and an
+environment that simplifies the end-user interaction with parallel systems.
+
+* https://projects.eclipse.org/projects/tools.ptp
+
+## Developer resources
+
+Information regarding source code management, builds, coding standards, and
+more.
+
+* https://projects.eclipse.org/projects/tools.ptp/developer
+
+The project maintains the following source code repositories
+
+* http://git.eclipse.org/c/ptp/org.eclipse.ptp.git
+* http://git.eclipse.org/c/ptp/org.eclipse.remote.git
+* http://git.eclipse.org/c/ptp/org.eclipse.photran.git
+
+This project uses Bugzilla to track ongoing development and issues.
+
+* Search for issues: https://bugs.eclipse.org/bugs/buglist.cgi?product=PTP
+* Create a new report: https://bugs.eclipse.org/bugs/enter_bug.cgi?product=PTP
+
+Be sure to search for existing bugs before you create another one. Remember that
+contributions are always welcome!
+
+## Eclipse Contributor Agreement
+
+Before your contribution can be accepted by the project team contributors must
+electronically sign the Eclipse Contributor Agreement (ECA).
+
+* http://www.eclipse.org/legal/ECA.php
+
+Commits that are provided by non-committers must have a Signed-off-by field in
+the footer indicating that the author is aware of the terms by which the
+contribution has been provided to the project. The non-committer must
+additionally have an Eclipse Foundation account and must have a signed Eclipse
+Contributor Agreement (ECA) on file.
+
+For more information, please see the Eclipse Committer Handbook:
+https://www.eclipse.org/projects/handbook/#resources-commit
+
+## Contact
+
+Contact the project developers via the project's "dev" list.
+
+* https://dev.eclipse.org/mailman/listinfo/ptp-dev

@@ -28,7 +28,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = DefaultScope.INSTANCE
 				.getNode(CodanCorePlugin.getDefault().getBundle().getSymbolicName());
-		node.putBoolean(PreferenceConstants.P_RUN_ON_BUILD, false);
+		node.putBoolean(PreferenceConstants.P_RUN_ON_BUILD, true);
 		node.putBoolean(PreferenceConstants.P_RUN_IN_EDITOR, true);
 		node.putBoolean(PreferenceConstants.P_USE_PARENT, true);
 	}

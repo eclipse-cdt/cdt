@@ -25,7 +25,6 @@ class Messages extends NLS {
 	public static String ImplementMethodAction_label;
 	public static String GettersAndSetters_label;
 	public static String ToggleFunctionAction_label;
-	public static String OverrideMethods_label;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

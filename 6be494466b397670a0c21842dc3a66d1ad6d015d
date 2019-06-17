@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6c54abb6_02aba54c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/Messages.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-06-17T11:54:24Z",
+      "side": 1,
+      "message": "after the fact - but this line, which is not referenced AFAICT - causes the following warning in CDT now:\n\nWarning: NLS missing message: OverrideMethods_label in: org.eclipse.cdt.ui.refactoring.actions.Messages",
+      "revId": "6be494466b397670a0c21842dc3a66d1ad6d015d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -24,9 +24,7 @@ CFLAGS += -fPIC -D_REENTRANT
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
 LIBS = \
-	$(OS_DIR)/win32/x86/serial.dll \
 	$(OS_DIR)/win32/x86_64/serial.dll \
-	$(OS_DIR)/linux/x86/libserial.so \
 	$(OS_DIR)/linux/x86_64/libserial.so
 else
 ifeq ($(UNAME),Darwin)
@@ -34,7 +32,6 @@ LIBS = \
 	$(OS_DIR)/macosx/x86_64/libserial.jnilib
 else
 LIBS = \
-	$(OS_DIR)/win32/x86/serial.dll \
 	$(OS_DIR)/win32/x86_64/serial.dll
 endif
 endif
@@ -46,23 +43,11 @@ clean :
 
 rebuild: clean all
 
-$(OS_DIR)/win32/x86/serial.dll:	serial.c
-	mkdir -p $(dir $@)
-	i686-w64-mingw32-gcc -Wl,--kill-at -static-libgcc -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ serial.c
-
 $(OS_DIR)/win32/x86_64/serial.dll:	serial.c
 	mkdir -p $(dir $@)
 	x86_64-w64-mingw32-gcc -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ serial.c
 
-$(OS_DIR)/linux/x86/libserial.so:	serial.c
-	mkdir -p $(dir $@)
-	gcc -m32 $(CFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
-
 $(OS_DIR)/linux/x86_64/libserial.so:	serial.c
-	mkdir -p $(dir $@)
-	gcc -m64 $(CFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
-
-$(OS_DIR)/linux/ppc64/libserial.so:	serial.c
 	mkdir -p $(dir $@)
 	gcc -m64 $(CFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
 

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Serial Port
 Bundle-SymbolicName: org.eclipse.cdt.native.serial
-Bundle-Version: 1.1.100.qualifier
+Bundle-Version: 1.1.200.qualifier
 Bundle-Vendor: Eclipse CDT
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.cdt.serial

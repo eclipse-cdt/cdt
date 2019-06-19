@@ -15,6 +15,7 @@
  *                                Save build output (bug 294106)
  * Andrew Gvozdev (Quoin Inc)   - Saving build output implemented in different way (bug 306222)
  * Umair Sair (Mentor Graphics) - Project dependencies are not built in the correct order (bug 546407)
+ * Umair Sair (Mentor Graphics) - Setting current project for markers creation (bug 545976)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -753,6 +754,8 @@ public class CommonBuilder extends ACBuilder {
 
 			if (status.isBuild()) {
 				try {
+					// Set the current project for markers creation
+					setCurrentProject(bInfo.getProject());
 					boolean isClean = builder.getBuildRunner().invokeBuild(kind, bInfo.getProject(),
 							bInfo.getConfiguration(), builder, bInfo.getConsole(), this, this, monitor);
 					if (isClean) {
@@ -1121,6 +1124,8 @@ public class CommonBuilder extends ACBuilder {
 
 							@Override
 							public void run(IProgressMonitor monitor) throws CoreException {
+								// Set the current project for markers creation
+								setCurrentProject(bInfo.getProject());
 								bInfo.fBuilder.getBuildRunner().invokeBuild(CLEAN_BUILD, bInfo.getProject(),
 										bInfo.getConfiguration(), bInfo.getBuilder(), bInfo.getConsole(),
 										CommonBuilder.this, CommonBuilder.this, monitor);
@@ -1138,6 +1143,8 @@ public class CommonBuilder extends ACBuilder {
 			backgroundJob.setRule(rule);
 			backgroundJob.schedule();
 		} else {
+			// Set the current project for markers creation
+			setCurrentProject(bInfo.getProject());
 			bInfo.fBuilder.getBuildRunner().invokeBuild(CLEAN_BUILD, bInfo.getProject(), bInfo.getConfiguration(),
 					bInfo.getBuilder(), bInfo.getConsole(), this, this, monitor);
 		}

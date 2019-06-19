@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d4d09825_665d376f",
+        "filename": "native/org.eclipse.cdt.native.serial/jni/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-06-19T14:31:29Z",
+      "side": 0,
+      "message": "Hi Mat, Thanks for having a look at this. Can you delete the native/org.eclipse.cdt.native.serial/os/win32/x86/serial.dll at the same time along with the other files that the Makefile does not build? Removing the makefile/etc entries but not the generated artifacts is an issue.",
+      "revId": "8e0ba58fa8d5bba87d3d462a4640318acb8d7389",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -186,7 +186,7 @@
         <repositoryList
             name="Photon">
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20190531194818/repository/"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository/"/>
           <repository
               url="https://download.eclipse.org/technology/swtbot/releases/2.7.0/"/>
           <repository
@@ -196,13 +196,13 @@
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
-              url="http://download.eclipse.org/eclipse/updates/4.12milestones/S-4.12RC1a-201905310245/"/>
+              url="https://download.eclipse.org/eclipse/updates/4.13-I-builds/I20190618-1805/"/>
           <repository
               url="https://ci.eclipse.org/cdt/view/LaunchBar/job/launchbar-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
           <repository
               url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
           <repository
-              url="https://download.eclipse.org/webtools/downloads/drops/R3.14.0/S-3.14.0.M3-20190528041652/repository/"/>
+              url="https://download.eclipse.org/webtools/downloads/drops/R3.14.0/R-3.14.0-20190612230649/repository/"/>
           <repository
               url="http://download.eclipse.org/technology/epp/logging/stable/"/>
           <repository

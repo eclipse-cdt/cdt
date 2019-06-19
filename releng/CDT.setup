@@ -192,8 +192,6 @@
           <repository
               url="https://download.eclipse.org/tools/ptp/builds/remote/3.0.1/"/>
           <repository
-              url="https://download.eclipse.org/releases/2019-06/"/>
-          <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
               url="https://download.eclipse.org/eclipse/updates/4.13-I-builds/I20190618-1805/"/>

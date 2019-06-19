@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="52">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="53">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
@@ -41,7 +41,7 @@
 <!-- Needed for org.eclipse.emf.edit -->
 <!-- Need to pull in org.eclipse.cdt.utils.pty for org.eclipse.remote.core to build -->
 <!-- This slows down the build significantly, it should be removed when it becomes possible. -->
-<repository location="https://download.eclipse.org/releases/2019-06/"/>
+<repository location="https://download.eclipse.org/releases/2019-09/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
@@ -51,7 +51,7 @@
 <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.test.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.12milestones/S-4.12RC1a-201905310245/"/>
+<repository location="https://download.eclipse.org/eclipse/updates/4.13-I-builds/I20190618-1805/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
@@ -64,7 +64,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/webtools/downloads/drops/R3.14.0/S-3.14.0.M3-20190528041652/repository/"/>
+<repository location="https://download.eclipse.org/webtools/downloads/drops/R3.14.0/R-3.14.0-20190612230649/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>

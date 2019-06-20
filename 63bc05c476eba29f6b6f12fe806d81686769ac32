@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "44c2e72c_d3b8c191",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/PreferenceInitializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-06-20T17:02:00Z",
+      "side": 1,
+      "message": "Ok, got it.",
+      "parentUuid": "769095a7_82f76ff8",
+      "revId": "63bc05c476eba29f6b6f12fe806d81686769ac32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "09ae7cc1_41670711",
         "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanUIMessages.properties",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2019-06-20T03:31:29Z",
       "side": 1,
       "message": "I\u0027m not sure \"Master\" is clear enough. How about\n\"Set launch method for checkers. Disabling a method will override the individual problem setting for this method\". Too long?",
+      "revId": "63bc05c476eba29f6b6f12fe806d81686769ac32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "778cfc05_5722647c",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanUIMessages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-06-20T17:02:00Z",
+      "side": 1,
+      "message": "\"Set launch method for checkers. Disabling a method will override the individual problem setting \" Better?",
+      "parentUuid": "09ae7cc1_41670711",
       "revId": "63bc05c476eba29f6b6f12fe806d81686769ac32",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

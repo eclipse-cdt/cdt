@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "769095a7_82f76ff8",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/PreferenceInitializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-06-20T03:31:29Z",
+      "side": 1,
+      "message": "Setting this to true initially won\u0027t have any effect because the codan builder is added when the property changes, see BuildPropertyPage.\nI\u0027m also not sure we should impose such a big change in behavior.",
+      "revId": "63bc05c476eba29f6b6f12fe806d81686769ac32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "09ae7cc1_41670711",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanUIMessages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-06-20T03:31:29Z",
+      "side": 1,
+      "message": "I\u0027m not sure \"Master\" is clear enough. How about\n\"Set launch method for checkers. Disabling a method will override the individual problem setting for this method\". Too long?",
+      "revId": "63bc05c476eba29f6b6f12fe806d81686769ac32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

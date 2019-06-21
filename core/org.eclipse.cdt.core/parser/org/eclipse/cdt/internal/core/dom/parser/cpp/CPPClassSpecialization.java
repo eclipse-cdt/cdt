@@ -53,6 +53,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecIncomplete;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -65,7 +66,9 @@ public class CPPClassSpecialization extends CPPSpecialization
 			implements ICPPMember, IRecursionResolvingBinding {
 		public static RecursionResolvingBinding createFor(IBinding original) {
 			IASTNode point = CPPSemantics.getCurrentLookupPoint();
-			if (original instanceof ICPPMethod)
+			if (original instanceof ICPPConstructor)
+				return new RecursionResolvingConstructor(point, original.getNameCharArray());
+			else if (original instanceof ICPPMethod)
 				return new RecursionResolvingMethod(point, original.getNameCharArray());
 			if (original instanceof ICPPField)
 				return new RecursionResolvingField(point, original.getNameCharArray());
@@ -104,7 +107,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		}
 	}
 
-	public final static class RecursionResolvingMethod extends RecursionResolvingBinding implements ICPPMethod {
+	public static class RecursionResolvingMethod extends RecursionResolvingBinding implements ICPPMethod {
 		public RecursionResolvingMethod(IASTNode node, char[] arg) {
 			super(node, arg);
 		}
@@ -158,6 +161,24 @@ public class CPPClassSpecialization extends CPPSpecialization
 		public boolean isConstexpr() {
 			return false;
 		}
+	}
+
+	public final static class RecursionResolvingConstructor extends RecursionResolvingMethod
+			implements ICPPConstructor {
+		public RecursionResolvingConstructor(IASTNode node, char[] arg) {
+			super(node, arg);
+		}
+
+		@Override
+		public ICPPExecution getConstructorChainExecution(IASTNode point) {
+			return getConstructorChainExecution();
+		}
+
+		@Override
+		public ICPPExecution getConstructorChainExecution() {
+			return ExecIncomplete.INSTANCE;
+		}
+
 	}
 
 	private ICPPClassSpecializationScope specScope;

@@ -69,6 +69,24 @@
       "revId": "63bc05c476eba29f6b6f12fe806d81686769ac32",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16e85df0_a54ca6ed",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/CodanUIMessages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-06-21T00:48:41Z",
+      "side": 1,
+      "message": "Sounds good to me! Thanks!",
+      "parentUuid": "778cfc05_5722647c",
+      "revId": "63bc05c476eba29f6b6f12fe806d81686769ac32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

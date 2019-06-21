@@ -4337,4 +4337,24 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testAssigmentWithInitList_Bug547684() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void func(int *const volatile&p) {
+	//}
+
+	//void func(int *const volatile&p) {
+	//}
+	public void testConstVolatileParam_Bug548512() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct Foo {
+	//	int *const volatile&p;
+	//};
+
+	//struct Foo {
+	//	int *const volatile&p;
+	//};
+	public void testConstVolatileMember_Bug548512() throws Exception {
+		assertFormatterResult();
+	}
 }

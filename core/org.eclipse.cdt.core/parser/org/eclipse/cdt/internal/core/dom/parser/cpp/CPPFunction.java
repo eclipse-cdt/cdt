@@ -86,7 +86,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 		@Override
 		public ICPPFunctionType getType() {
-			return null;
+			return new ProblemFunctionType(getID());
 		}
 
 		@Override

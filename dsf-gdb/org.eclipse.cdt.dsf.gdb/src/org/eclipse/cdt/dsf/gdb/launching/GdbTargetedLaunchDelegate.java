@@ -27,6 +27,7 @@ import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
  * launching matches the cpu architecture and OS of the target, and add the launch
  * checks to do the same. For now, though, we are assuming the user knows what they
  * are doing when they set this up since it's all manual at this point.
+ * @since 5.7
  */
 public class GdbTargetedLaunchDelegate extends GdbLaunchDelegate implements ILaunchConfigurationTargetedDelegate {
 

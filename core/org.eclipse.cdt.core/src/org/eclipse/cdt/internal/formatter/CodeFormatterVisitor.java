@@ -22,6 +22,7 @@ import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+import java.util.function.Predicate;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -1659,22 +1660,23 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private boolean skipConstVolatileRestrict(boolean spaceBefore) {
-		boolean skipped = false;
-		int token = peekNextToken();
-		while (token == Token.t_const || token == Token.t_volatile || token == Token.t_restrict) {
-			scribe.printNextToken(token, spaceBefore);
-			token = peekNextToken();
-			skipped = true;
-		}
-		return skipped;
+		return skipTokenWhile(token -> token == Token.t_const || token == Token.t_volatile || token == Token.t_restrict,
+				spaceBefore);
 	}
 
 	private boolean skipMutableConstexpr() {
+		return skipTokenWhile(token -> token == Token.t_mutable || token == Token.t_constexpr, true);
+	}
+
+	private boolean skipTokenWhile(Predicate<Integer> pred, boolean spaceBefore) {
 		boolean skipped = false;
 		int token = peekNextToken();
-		while (token == Token.t_mutable || token == Token.t_constexpr) {
-			scribe.printNextToken(token, true);
+		while (pred.test(token)) {
+			scribe.printNextToken(token, spaceBefore);
 			token = peekNextToken();
+			if (!spaceBefore && pred.test(token)) {
+				scribe.space();
+			}
 			skipped = true;
 		}
 		return skipped;

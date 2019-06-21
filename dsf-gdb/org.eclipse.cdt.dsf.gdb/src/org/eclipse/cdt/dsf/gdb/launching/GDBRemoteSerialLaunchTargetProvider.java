@@ -20,6 +20,9 @@ import org.eclipse.launchbar.core.target.ILaunchTargetProvider;
 import org.eclipse.launchbar.core.target.TargetStatus;
 import org.eclipse.launchbar.core.target.TargetStatus.Code;
 
+/**
+ * @since 5.7
+ */
 public class GDBRemoteSerialLaunchTargetProvider implements ILaunchTargetProvider {
 
 	public static final String TYPE_ID = "org.eclipse.cdt.dsf.gdb.remoteSerialLaunchTargetType"; //$NON-NLS-1$

@@ -43,15 +43,15 @@
 <unit id="org.eclipse.cdt.autotools.source.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.core" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/cdt/builds/9.7/cdt-9.7.0-simrel-2019-03-rc2a/"/>
+<repository location="https://download.eclipse.org/tools/cdt/builds/9.8/cdt-9.8.0-simrel-2019-06-rc2/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.launchbar.remote.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.2/launchbar-2.2.3-simrel-2019-03-m2/"/>
+<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.3/launchbar-2.3.0-simrel-2019-06-rc2/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<repository location="https://download.eclipse.org/releases/2019-03/"/>
+<repository location="https://download.eclipse.org/releases/2019-06/"/>
 </location>
 </locations>
 </target>

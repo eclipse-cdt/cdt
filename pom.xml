@@ -220,6 +220,7 @@
 		<module>visualizer/org.eclipse.cdt.visualizer-feature</module>
 
 		<module>windows/org.eclipse.cdt.msw.build</module>
+		<module>windows/org.eclipse.cdt.msw.build.tests</module>
 		<module>windows/org.eclipse.cdt.msw-feature</module>
 
 		<module>xlc/org.eclipse.cdt.core.lrparser.xlc</module>

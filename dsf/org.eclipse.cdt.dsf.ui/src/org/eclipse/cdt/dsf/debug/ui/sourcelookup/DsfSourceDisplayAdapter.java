@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
-import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -281,7 +280,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 
 		private String getEditorIdForFileStore(IFileStore fileStore) {
 			try {
-				return CDebugUIUtils.getEditorId(fileStore, false);
+				return IDE.getEditorDescriptorForFileStore(fileStore, false).getId();
 			} catch (PartInitException exc) {
 				DsfUIPlugin.log(exc);
 			}

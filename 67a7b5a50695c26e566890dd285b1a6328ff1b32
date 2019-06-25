@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c8fc478d_c8cb53a6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-06-25T19:21:20Z",
+      "side": 1,
+      "message": "(Actually we are waiting on https://git.eclipse.org/r/#/c/96800/ to be merged and to get a new I-build)",
+      "revId": "67a7b5a50695c26e566890dd285b1a6328ff1b32",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

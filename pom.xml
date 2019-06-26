@@ -751,8 +751,8 @@
 							</goals>
 							<phase>verify</phase>
 							<configuration>
-								<baselineMode>fail</baselineMode>
-								<baselineReplace>all</baselineReplace>
+								<baselineMode>warn</baselineMode>
+								<baselineReplace>none</baselineReplace>
 								<baselineRepositories>
 									<repository>
 										<url>${comparator.repo}</url>

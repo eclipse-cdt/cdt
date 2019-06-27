@@ -620,7 +620,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//b.h
 	//#include "a.h"
 	//struct B : public A {
-	//}
+	//};
 
 	//c.h
 	//class B;

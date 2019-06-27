@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core;
 import java.io.File;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.WeakHashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -150,6 +151,14 @@ public class MinGW {
 		return rootValue;
 	}
 
+	private static Optional<String> findMinGwInstallationLocation(String exeName, String envPath) {
+		IPath exeLocation = PathUtil.findProgramLocation(exeName, envPath);
+		if (exeLocation != null) {
+			return Optional.of(exeLocation.removeLastSegments(2).toOSString());
+		}
+		return Optional.empty();
+	}
+
 	private static String findMingwInPath(String envPath) {
 		if (envPath == null) {
 			// $PATH from user preferences
@@ -166,18 +175,19 @@ public class MinGW {
 			// Check for MinGW-w64 on Windows 64 bit, see
 			// http://mingw-w64.sourceforge.net/
 			if (Platform.ARCH_X86_64.equals(Platform.getOSArch())) {
-				IPath gcc64Loc = PathUtil.findProgramLocation("x86_64-w64-mingw32-gcc.exe", envPath); //$NON-NLS-1$
-				if (gcc64Loc != null) {
-					mingwLocation = gcc64Loc.removeLastSegments(2).toOSString();
-				}
+				mingwLocation = findMinGwInstallationLocation("x86_64-w64-mingw32-gcc.exe", envPath).orElse(null); //$NON-NLS-1$
 			}
 
-			// Look for mingw32-gcc.exe
 			if (mingwLocation == null) {
-				IPath gccLoc = PathUtil.findProgramLocation("mingw32-gcc.exe", envPath); //$NON-NLS-1$
-				if (gccLoc != null) {
-					mingwLocation = gccLoc.removeLastSegments(2).toOSString();
-				}
+				mingwLocation = findMinGwInstallationLocation("mingw32-gcc.exe", envPath).orElse(null); //$NON-NLS-1$
+			}
+
+			// Fallback: Look for paths containing "mingw"
+			if (mingwLocation == null) {
+				mingwLocation = findMinGwInstallationLocation("gcc.exe", envPath) //$NON-NLS-1$
+						.filter(path -> path.toLowerCase().contains("mingw")) //$NON-NLS-1$
+						.orElse(null);
+
 			}
 			mingwLocationCache.put(envPath, mingwLocation);
 		}

@@ -39,6 +39,11 @@ public class FloatingPointValueTests extends TestBase {
 		assertEvaluationEquals(2.5);
 	}
 
+	//	constexpr auto x = -2.5;
+	public void testNegativeDoubleLiteral() throws Exception {
+		assertEvaluationEquals(-2.5);
+	}
+
 	//  constexpr auto x = .5f;
 	public void testFloatLiteral() throws Exception {
 		assertEvaluationEquals(0.5);

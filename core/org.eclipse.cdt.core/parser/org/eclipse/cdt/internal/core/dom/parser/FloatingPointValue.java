@@ -44,6 +44,12 @@ public final class FloatingPointValue implements IValue {
 		int i = 0;
 		int len = value.length;
 
+		boolean valueIsPositive = true;
+		if (i < len && (value[i] == '+' || value[i] == '-')) {
+			valueIsPositive = (value[i] == '+');
+			++i;
+		}
+
 		while (i < len && value[i] >= '0' && value[i] <= '9') {
 			int digit = value[i] - '0';
 			result = result * 10 + digit;
@@ -86,6 +92,9 @@ public final class FloatingPointValue implements IValue {
 		if (i == len) {
 			if (!exponentIsPositive) {
 				exponent *= -1;
+			}
+			if (!valueIsPositive) {
+				result *= -1;
 			}
 			return result * Math.pow(10, exponent);
 		}

@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -7782,5 +7783,19 @@ public class AST2Tests extends AST2TestBase {
 		IASTExpression expr = helper.assertNode("*gd->queue->request_fn");
 		assertNotNull(expr);
 		assertFalse(expr.getExpressionType() instanceof IProblemType);
+	}
+
+	//	typedef struct __attribute__ ((__packed__)) {
+	//		unsigned char a;
+	//		unsigned char b;
+	//	} example2_s;
+	public void testStructAttribute_467346() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper(C);
+		IASTDeclaration[] decls = helper.getTranslationUnit().getDeclarations();
+		assertEquals(1, decls.length);
+		assertInstance(decls[0], IASTSimpleDeclaration.class);
+		IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) decls[0]).getDeclSpecifier();
+		IASTAttributeSpecifier[] attributes = declSpec.getAttributeSpecifiers();
+		assertEquals(1, attributes.length);
 	}
 }

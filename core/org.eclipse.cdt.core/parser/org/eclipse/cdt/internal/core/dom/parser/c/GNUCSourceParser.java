@@ -1311,7 +1311,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		// if __attribute__ or __declspec occurs after struct/union/class and before the identifier
-		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+		List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers,
+				supportDeclspecSpecifiers);
 
 		// class name
 		IASTName name = null;
@@ -1320,7 +1321,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		// if __attribute__ or __declspec occurs after struct/union/class identifier and before the { or ;
-		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+		attributes = CollectionUtils.merge(attributes,
+				__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers));
 
 		if (LT(1) != IToken.tLBRACE) {
 			IToken errorPoint = LA(1);
@@ -1333,6 +1335,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		}
 		ICASTCompositeTypeSpecifier result = getNodeFactory().newCompositeTypeSpecifier(classKind, name);
 		declarationListInBraces(result, offset, DeclarationOptions.C_MEMBER);
+		addAttributeSpecifiers(attributes, result);
 		return result;
 	}
 

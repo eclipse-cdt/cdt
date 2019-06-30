@@ -2070,6 +2070,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(ICASTCompositeTypeSpecifier node) {
+		boolean formatAttributes = false;
 		scribe.printComment();
 		final int line = scribe.line;
 
@@ -2099,6 +2100,20 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		final IASTName name = node.getName();
 		if (name != null) {
+			IASTAttributeSpecifier[] attributes = node.getAttributeSpecifiers();
+			if (attributes.length > 0) {
+				/**
+				 * According to GCC docs, attributes can be defined just after struct
+				 * or union keywords or just after the closing brace.
+				 */
+				int token = peekTokenAtPosition(nodeEndOffset(attributes[0]));
+				if (token == Token.tLBRACE
+						|| (name.getFileLocation() != null && nodeOffset(name) > nodeOffset(attributes[0]))) {
+					formatAttributes(node, true, false, IGCCASTAttributeList.TYPE_FILTER);
+				} else {
+					formatAttributes = true;
+				}
+			}
 			scribe.space();
 			name.accept(this);
 		}
@@ -2120,6 +2135,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			scribe.unIndent();
 		}
 		formatClosingBrace(preferences.brace_position_for_type_declaration);
+		if (formatAttributes)
+			formatAttributes(node, true, false, IGCCASTAttributeList.TYPE_FILTER);
 		return PROCESS_SKIP;
 	}
 
@@ -2157,7 +2174,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					 * According to GCC docs, attributes can be defined just after struct
 					 * or union keywords or just after the closing brace.
 					 */
-					if (name.getFileLocation() == null || nodeOffset(name) > nodeOffset(attributes[0])) {
+					token = peekTokenAtPosition(nodeEndOffset(attributes[0]));
+					if (token == Token.tLBRACE
+							|| (name.getFileLocation() != null && nodeOffset(name) > nodeOffset(attributes[0]))) {
 						formatAttributes(node, true, false, IGCCASTAttributeList.TYPE_FILTER);
 					} else {
 						formatAttributes = true;

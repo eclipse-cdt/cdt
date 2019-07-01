@@ -4,7 +4,7 @@
 
 	<id>assemble</id>
 	<formats>
-		<format>zip</format>
+		<format>jar</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 
@@ -12,7 +12,7 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<unpack>false</unpack>
+			<unpack>true</unpack>
 		</dependencySet>
 	</dependencySets>
 

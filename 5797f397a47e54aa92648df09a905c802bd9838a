@@ -1,0 +1,344 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a905a3b8_12154608",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTStructuredBindingDeclaration.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "Why are we using Optional rather than null to signify no ref-qualifier or no initializer?",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7b6c7df_912fd765",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/AbstractGNUSourceCodeParser.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1683,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "You could also have an attribute in this position:\n\n  auto [[maybe_unused]] variable;\n\nWe need to check for this.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2c02f313_0a1a3b65",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/AbstractGNUSourceCodeParser.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1701,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "What will happen in C? Will we produce a syntax or semantic error?",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c0dd1b69_504397b6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "It looks like this function handles a member get() function, but not a non-member get() function? Structured bindings can work with either.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd17ab30_7fee9fe3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "You could also use classType.getMethods() as a starting point.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ebee5568_dd53623a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "The standard wording places some semantic constraints on the aggregate decomposition case (http://eel.is/c++draft/dcl.struct.bind#5):\n\n* all of E\u0027s non-static data members shall be direct members of E or of the same base class of E\n* well-formed when named as e.name in the context of the structured binding\n* E shall not have an anonymous union member\n* the number of elements in the identifier-list shall be equal to the number of non-static data members of E\n\nWe should at least check the last one, because it\u0027s useful for catching mistakes. For the others, please feel free to add a TODO.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa881911_a8f39501",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "Let\u0027s use EvalFixed.INCOMPLETE rather than null.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "050ab83e_266e7d23",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "Same here, EvalFixed.INCOMPLETE.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "380af5bb_806959f1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 2945,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "We could avoid this duplicate check by setting a flag on Decl. However, it\u0027s probably cheap enough that it\u0027s not worth it.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d2366f49_69ad1061",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 2966,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "Are we sure declSpec is a simple-decl-specifier at this point? Should we include that check in isAtStartOfStructuredBinding()? Or perhaps check for it here and issue a semantic error?",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5914a336_d2639e01",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 4814,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "This refactoring does not preserve the setting of \u0027endOffset\u0027.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "075c1fcc_b5bd6534",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1666,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "Does this case actually need special handling? Won\u0027t the right thing happen if we just allow the existing logic to run?",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3119d9b2_e133ebb8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "This change can be reverted.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6c09795_99c64a6a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 2324,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "This one too.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a66f2e37_dc966d6b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1965,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "Here\u0027s what the latest wording says (http://eel.is/c++draft/dcl.struct.bind#4):\n\n\"Otherwise, if the qualified-id std::tuple_­size\u003cE\u003e names a complete class type with a member named value, the expression std::tuple_­size\u003cE\u003e::value shall be a well-formed integral constant expression and the number of elements in the identifier-list shall be equal to the value of that expression.\"\n\nThis implementation is close but there are a few subtle differences:\n\n* We should check for the presence of any member named \"value\", not necessarily a static field. If not present, proceed to paragraph 5 (aggregate decomposition).\n\n* If a member named \"value\" is present, commit to tuple decomposition. If anything goes wrong, issue an error (which for us means returning EvalFixed.INCOMPLETE from getInitializerEvaluation() or a ProblemType from createType().\n\n* In particular, if \"value\" is not a static field, or its type is not integral, or its initializer is not a constant expression, issue an error.\n\n* Then evaluate \"value\", and if the result does not match the number of initializers, issue an error.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "86f8fbdc_3d359521",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1968,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "Please give this function a more descriptive name, such as findTemplateInstances().",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bc8141fb_19d80410",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1998,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "What if the user writes \n\n  auto [x, y, z];\n\nat local scope? I think we need to check for this to avoid Optional.get() throwing a NoSuchElementException.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21a1e34f_72b52063",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 2020,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "Use logical or (||) for combining booleans.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8eb1f6b2_e2c5fe62",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 2028,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "An explanatory comment with some examples would help make this function easier to understand.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0be45ea_93d89a2d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/SemanticUtil.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 928,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-02T06:12:36Z",
+      "side": 1,
+      "message": "Const and volatile don\u0027t always create an IQualifierType, sometimes they\u0027re just represented as a flag on IPointerType; see ExpressionTypes.isVolatile(). Feel free to make that public and use it here.\n\nisConst() just above has the same problem, might as well fix that too.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

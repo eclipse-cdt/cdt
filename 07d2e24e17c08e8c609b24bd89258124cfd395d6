@@ -16,6 +16,24 @@
       "revId": "07d2e24e17c08e8c609b24bd89258124cfd395d6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "76589996_dd04c543",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPScannerExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-07-03T13:02:13Z",
+      "side": 1,
+      "message": "it produces a syntax error, I\u0027ve updated the comment to be more clear.",
+      "parentUuid": "58a6b81f_1650f03f",
+      "revId": "07d2e24e17c08e8c609b24bd89258124cfd395d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

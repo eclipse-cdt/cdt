@@ -6,11 +6,11 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>9.8.1-SNAPSHOT</version>
+		<version>9.8.2-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>5.4.101-SNAPSHOT</version>
+	<version>5.4.102-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.doc.isv</artifactId>
 	<packaging>eclipse-plugin</packaging>
 

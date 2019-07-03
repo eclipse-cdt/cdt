@@ -8,19 +8,11 @@
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 
-	<dependencySets>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<unpack>true</unpack>
-		</dependencySet>
-	</dependencySets>
-
-	<fileSets>
-		<fileSet>
-			<directory>${project.build.directory}/dependency</directory>
-			<outputDirectory>/</outputDirectory>
-		</fileSet>
-	</fileSets>
-
+    <fileSets>
+      <fileSet>
+        <directory>${project.build.directory}/dependency/</directory>
+        <outputDirectory>/</outputDirectory>
+        <useDefaultExcludes>true</useDefaultExcludes>
+      </fileSet>
+    </fileSets>
 </assembly>

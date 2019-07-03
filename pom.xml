@@ -29,16 +29,17 @@
 		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.10/</help-docs-eclipserun-repo>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
-		<!-- these parameters are to control baseline replace and compare. On a local build you may want
-		     to avoid baseline replace and compare, especially if you have different versions of Java than
-			 the baseline was built with.
-
-		     To set all the settings in one go to skip, use the skip-baseline profile
-	    -->
 		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/9.8/cdt-9.8.1/</comparator.repo>
-		<compare-version-with-baselines.skip>false</compare-version-with-baselines.skip>
-		<replace-version-with-baselines.mode>fail</replace-version-with-baselines.mode>
-		<replace-version-with-baselines.replace>all</replace-version-with-baselines.replace>
+		<!-- these parameters are to control baseline replace and compare. On a local build you want
+		     to avoid baseline replace and compare, especially if you have different versions of Java than
+			 the baseline was built with. This is the default.
+
+			 If you have the same version of Java as the build machine you can run baseline comparison and
+			 replace. To do that run with the baseline-compare-and-replace profile.
+	    -->
+		<compare-version-with-baselines.skip>true</compare-version-with-baselines.skip>
+		<replace-version-with-baselines.mode>disable</replace-version-with-baselines.mode>
+		<replace-version-with-baselines.replace>none</replace-version-with-baselines.replace>
 		<!--
 			Valid options: error, warning, and ignore
 			jgit.dirtyWorkingTree checking was added as of Tycho 0.19.0
@@ -442,12 +443,11 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>skip-baseline</id>
+			<id>baseline-compare-and-replace</id>
 			<properties>
-				<comparator.repo></comparator.repo>
-				<compare-version-with-baselines.skip>true</compare-version-with-baselines.skip>
-				<replace-version-with-baselines.mode>disable</replace-version-with-baselines.mode>
-				<replace-version-with-baselines.replace>none</replace-version-with-baselines.replace>
+				<compare-version-with-baselines.skip>false</compare-version-with-baselines.skip>
+				<replace-version-with-baselines.mode>fail</replace-version-with-baselines.mode>
+				<replace-version-with-baselines.replace>all</replace-version-with-baselines.replace>
 			</properties>
 		</profile>
 		<profile>

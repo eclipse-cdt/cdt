@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.parser.Keywords;
  */
 public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfiguration {
 	private static enum CompilerType {
-		GCC, Clang
+		GCC, Clang, MSVC
 	}
 
 	private static final int VERSION_4_2 = version(4, 2);
@@ -50,6 +50,8 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	private static GPPScannerExtensionConfiguration CONFIG_8_0 = new GPPScannerExtensionConfiguration(VERSION_8_0);
 	private static GPPScannerExtensionConfiguration CONFIG_CLANG = new GPPScannerExtensionConfiguration(
 			CompilerType.Clang, 0 /* version is ignored for now */);
+	private static GPPScannerExtensionConfiguration CONFIG_MSVC = new GPPScannerExtensionConfiguration(
+			CompilerType.MSVC, 0 /* version is ignored for now */);
 
 	public static GPPScannerExtensionConfiguration getInstance() {
 		return CONFIG;
@@ -67,6 +69,11 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 				String clang = definedSymbols.get("__clang__"); //$NON-NLS-1$
 				if (clang != null && Integer.valueOf(clang) > 0) {
 					return CONFIG_CLANG;
+				}
+
+				String mscVer = definedSymbols.get("_MSC_VER"); //$NON-NLS-1$
+				if (mscVer != null && Integer.valueOf(mscVer) > 0) {
+					return CONFIG_MSVC;
 				}
 
 				// GCC
@@ -189,6 +196,61 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			addKeyword(GCCKeywords.cp__is_trivially_constructible, IGCCToken.tTT_is_trivially_constructible);
 			addKeyword(GCCKeywords.cp__is_trivially_assignable, IGCCToken.tTT_is_trivially_assignable);
 			addKeyword(GCCKeywords.cp__is_constructible, IGCCToken.tTT_is_constructible);
+		} else if (compiler == CompilerType.MSVC) {
+			// As documented at
+			// https://docs.microsoft.com/en-us/cpp/extensions/compiler-support-for-type-traits-cpp-component-extensions?view=vs-2017
+			// For now we don't make it dependent on the version.
+			addKeyword(GCCKeywords.cp__has_nothrow_assign, IGCCToken.tTT_has_nothrow_assign);
+			addKeyword(GCCKeywords.cp__has_nothrow_constructor, IGCCToken.tTT_has_nothrow_constructor);
+			addKeyword(GCCKeywords.cp__has_nothrow_copy, IGCCToken.tTT_has_nothrow_copy);
+			addKeyword(GCCKeywords.cp__has_trivial_assign, IGCCToken.tTT_has_trivial_assign);
+			addKeyword(GCCKeywords.cp__has_trivial_constructor, IGCCToken.tTT_has_trivial_constructor);
+			addKeyword(GCCKeywords.cp__has_trivial_copy, IGCCToken.tTT_has_trivial_copy);
+			addKeyword(GCCKeywords.cp__has_trivial_destructor, IGCCToken.tTT_has_trivial_destructor);
+			addKeyword(GCCKeywords.cp__has_virtual_destructor, IGCCToken.tTT_has_virtual_destructor);
+			addKeyword(GCCKeywords.cp__is_abstract, IGCCToken.tTT_is_abstract);
+			addKeyword(GCCKeywords.cp__is_base_of, IGCCToken.tTT_is_base_of);
+			addKeyword(GCCKeywords.cp__is_class, IGCCToken.tTT_is_class);
+			addKeyword(GCCKeywords.cp__is_empty, IGCCToken.tTT_is_empty);
+			addKeyword(GCCKeywords.cp__is_enum, IGCCToken.tTT_is_enum);
+			addKeyword(GCCKeywords.cp__is_pod, IGCCToken.tTT_is_pod);
+			addKeyword(GCCKeywords.cp__is_polymorphic, IGCCToken.tTT_is_polymorphic);
+			addKeyword(GCCKeywords.cp__is_union, IGCCToken.tTT_is_union);
+			// Missing from that reference page:
+			// - __has_assign
+			// - __has_copy
+			// - __has_finalizer
+			// - __has_user_destructor
+			// - __is_convertible_to
+			// - __is_delegate
+			// - __is_interface_class
+			// - __is_ref_array
+			// - __is_ref_class
+			// - __is_simple_value_class
+			// - __is_value_class
+
+			// These are according to:
+			// http://clang.llvm.org/docs/LanguageExtensions.html#checks-for-type-trait-primitives.
+			addKeyword(GCCKeywords.cp__is_final, IGCCToken.tTT_is_final);
+			addKeyword(GCCKeywords.cp__underlying_type, IGCCToken.tTT_underlying_type);
+			addKeyword(GCCKeywords.cp__is_trivially_constructible, IGCCToken.tTT_is_trivially_constructible);
+			addKeyword(GCCKeywords.cp__is_trivially_assignable, IGCCToken.tTT_is_trivially_assignable);
+			addKeyword(GCCKeywords.cp__is_constructible, IGCCToken.tTT_is_constructible);
+			// Missing from that page:
+			// - __is_assignable
+			// - __is_destructible
+			// - __is_nothrow_destructible
+			// - __is_nothrow_assignable
+			// - __is_nothrow_constructible
+
+			// Found by looking at some headers
+			addKeyword(GCCKeywords.cp__is_standard_layout, IGCCToken.tTT_is_standard_layout);
+			addKeyword(GCCKeywords.cp__is_literal_type, IGCCToken.tTT_is_literal_type);
+			addKeyword(GCCKeywords.cp__is_trivial, IGCCToken.tTT_is_trivial);
+			addKeyword(GCCKeywords.cp__is_trivially_copyable, IGCCToken.tTT_is_trivially_copyable);
+			// Missing:
+			// - __is_trivially_destructible
+
 		}
 	}
 

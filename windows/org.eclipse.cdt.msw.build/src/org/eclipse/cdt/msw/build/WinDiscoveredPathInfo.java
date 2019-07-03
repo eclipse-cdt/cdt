@@ -31,26 +31,33 @@ public class WinDiscoveredPathInfo implements IDiscoveredPathInfo {
 		// Include paths
 		paths = WinEnvironmentVariableSupplier.getIncludePath();
 
-		symbols.put("_M_IX86", "600");
-		symbols.put("_WIN32", "1");
-		symbols.put("_MSC_VER", "1400");
+		symbols.put("_M_IX86", "600"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("_WIN32", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("_MSC_VER", "1400"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Microsoft specific modifiers that can be ignored
-		symbols.put("__cdecl", "");
-		symbols.put("__fastcall", "");
-		symbols.put("__restrict", "");
-		symbols.put("__sptr", "");
-		symbols.put("__stdcall", "");
-		symbols.put("__unaligned", "");
-		symbols.put("__uptr", "");
-		symbols.put("__w64", "");
+		symbols.put("__cdecl", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__fastcall", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__restrict", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__sptr", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__stdcall", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__unaligned", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__uptr", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__w64", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__clrcall", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__thiscall", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__vectorcall", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Redefine some things so that the CDT parser can handle them, until there is a VC specific parser
-		symbols.put("__forceinline", "__inline");
-		symbols.put("__int8", "char");
-		symbols.put("__int16", "short");
-		symbols.put("__int32", "int");
-		symbols.put("__int64", "long long");
+		symbols.put("__forceinline", "__inline"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__int8", "char"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__int16", "short"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__int32", "int"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__int64", "long long"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__pragma(X)", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__nullptr", "nullptr"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__debugbreak()", "0/0"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__LPREFIX(A)", "L\"##A\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

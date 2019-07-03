@@ -232,11 +232,11 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			// These are according to:
 			// http://clang.llvm.org/docs/LanguageExtensions.html#checks-for-type-trait-primitives.
 			addKeyword(GCCKeywords.cp__is_final, IGCCToken.tTT_is_final);
-			//This doesn't work:
+			//This produces a syntax error:
 			//template<class _Ty>
 			//struct underlying_type
 			//{
-			//using type = __underlying_type(_Ty);
+			//using type = __underlying_type(_Ty); //syntax-error
 			//};
 			addKeyword(GCCKeywords.cp__underlying_type, IGCCToken.tTT_underlying_type);
 			addKeyword(GCCKeywords.cp__is_trivially_constructible, IGCCToken.tTT_is_trivially_constructible);

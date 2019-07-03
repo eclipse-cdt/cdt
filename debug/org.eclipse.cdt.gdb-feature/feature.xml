@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.gdb"
       label="%featureName"
-      version="9.8.1.qualifier"
+      version="9.8.2.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.gdb"
       license-feature="org.eclipse.license"

@@ -10,7 +10,7 @@
 
 	<groupId>org.eclipse.cdt</groupId>
 	<artifactId>cdt-parent</artifactId>
-	<version>9.8.1-SNAPSHOT</version>
+	<version>9.8.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>CDT Parent</name>
 
@@ -35,7 +35,7 @@
 
 		     To set all the settings in one go to skip, use the skip-baseline profile
 	    -->
-		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/9.8/cdt-9.8.0/</comparator.repo>
+		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/9.8/cdt-9.8.1/</comparator.repo>
 		<compare-version-with-baselines.skip>false</compare-version-with-baselines.skip>
 		<replace-version-with-baselines.mode>fail</replace-version-with-baselines.mode>
 		<replace-version-with-baselines.replace>all</replace-version-with-baselines.replace>

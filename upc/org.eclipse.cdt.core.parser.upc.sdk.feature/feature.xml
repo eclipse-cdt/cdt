@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.core.parser.upc.sdk"
       label="%featureName"
-      version="9.8.1.qualifier"
+      version="9.8.2.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.core.parser.upc.source"
       license-feature="org.eclipse.license"

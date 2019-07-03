@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.managedbuilder.llvm"
       label="%featureName"
-      version="9.8.1.qualifier"
+      version="9.8.2.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.managedbuilder.llvm.ui"
       license-feature="org.eclipse.license"

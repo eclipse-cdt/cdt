@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58a6b81f_1650f03f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPScannerExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T06:45:58Z",
+      "side": 1,
+      "message": "I don\u0027t understand this comment. What exactly doesn\u0027t work?",
+      "revId": "07d2e24e17c08e8c609b24bd89258124cfd395d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

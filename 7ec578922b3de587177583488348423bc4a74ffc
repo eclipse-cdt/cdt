@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "974e375f_847efcd5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPScannerExtensionConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-07-03T13:02:46Z",
+      "side": 1,
+      "message": "oops, updated the wrong patch",
+      "revId": "7ec578922b3de587177583488348423bc4a74ffc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

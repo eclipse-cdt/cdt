@@ -2,6 +2,125 @@
   "comments": [
     {
       "key": {
+        "uuid": "b44e04db_34d21e30",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/CommonCPPTypes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T02:27:17Z",
+      "side": 1,
+      "message": "If we\u0027re going to move CommonCPPTypes to its own file, let\u0027s move CommonCTypes to its own file as well to be consistent.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b9bbad74_acb8efd9",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/constexpr/TestBase.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T02:27:17Z",
+      "side": 1,
+      "message": "I\u0027m not sure how much value there is in distinguishing these two cases. It may be simpler to just have a single function, assertEvaluationIsError(), which checks for either.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f693bef8_26786e0c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingIndexTests.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T02:27:17Z",
+      "side": 1,
+      "message": "To avoid confusion, please add a comment explaining that this testcase is actually ill-formed (due to the absence of get()), but we can still resolve the type (because we don\u0027t need get() for that).",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c09e2397_b4c83675",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingTests.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T02:27:17Z",
+      "side": 1,
+      "message": "Why do the test case names end in an underscore?",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c0abf87_58129670",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingTests.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T02:27:17Z",
+      "side": 1,
+      "message": "CommonCPPTypes.constVolatileOf(double_) would be a bit more readable.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "52a7c4f2_610a129c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingTests.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T02:27:17Z",
+      "side": 1,
+      "message": "Please add a test case with non-member get() as well.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dff7555a_8a775360",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingTests.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T02:27:17Z",
+      "side": 1,
+      "message": "This binding name is already used above.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a905a3b8_12154608",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTStructuredBindingDeclaration.java",
         "patchSetId": 17
@@ -64,6 +183,24 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "It looks like this function handles a member get() function, but not a non-member get() function? Structured bindings can work with either.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a0985cc_6b89c25d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T02:27:17Z",
+      "side": 1,
+      "message": "Ok, I see now that this actually handles a non-member get() function as well (and there is a test case for it in constexpr.StructuredBindingTests). However, this is not obvious, and two explanatory comments would be helpful:\n\n* CPPSemantics.findBindings() will search for get() not only in the provided class scope, but also any parent scopes (therefore finding non-member get() functions as cadidates)\n\n* CPPSemantics.resolveFunction() will correctly handle either a member or a non-member function, even though we called LookupData.setFunctionArguments() with containsImpliedObject\u003dtrue (which is normally only set for member lookups), because resolveFunction() ignores the argsContainImpliedObject flag if the binding it\u0027s considering isn\u0027t actually a method.\n\nThis second point kind of feels like we\u0027re relying on an implementation detail of CPPSemantics.resolveFunction(). For bonus points, add a comment at the declaration of resolveFunction() saying that it supports mixed member/non-member lookups in this way. (This ability would come in handy for e.g. lookup of begin()/end() in range-based for loops as well, which we don\u0027t currently implement correctly.)",
+      "parentUuid": "c0dd1b69_504397b6",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -336,6 +473,57 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "Const and volatile don\u0027t always create an IQualifierType, sometimes they\u0027re just represented as a flag on IPointerType; see ExpressionTypes.isVolatile(). Feel free to make that public and use it here.\n\nisConst() just above has the same problem, might as well fix that too.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84eab979_01eebf98",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/DeclarationWriter.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T02:27:17Z",
+      "side": 1,
+      "message": "Should we not pass in and respect \u0027writeSemicolon\u0027, for the case where the structured binding declaration appears in a range-based for loop?",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fff3c355_48f5bffc",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/selection/CPPSelectionTestsIndexer.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1395,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T02:27:17Z",
+      "side": 1,
+      "message": "Perhaps you meant to add the bug number after the underscore?",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d23f1e7_68ee801c",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/selection/CPPSelectionTestsNoIndexer.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1436,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-03T02:27:17Z",
+      "side": 1,
+      "message": "indexOf() is preferable to hardcoding offsets.",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

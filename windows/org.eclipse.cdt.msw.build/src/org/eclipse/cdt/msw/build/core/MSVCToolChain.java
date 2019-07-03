@@ -123,6 +123,9 @@ public class MSVCToolChain extends PlatformObject implements IToolChain {
 		symbols.put("__unaligned", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		symbols.put("__uptr", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		symbols.put("__w64", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__clrcall", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__thiscall", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__vectorcall", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Redefine some things so that the CDT parser can handle them, until there is a VC specific parser
 		symbols.put("__forceinline", "__inline"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -130,6 +133,10 @@ public class MSVCToolChain extends PlatformObject implements IToolChain {
 		symbols.put("__int16", "short"); //$NON-NLS-1$ //$NON-NLS-2$
 		symbols.put("__int32", "int"); //$NON-NLS-1$ //$NON-NLS-2$
 		symbols.put("__int64", "long long"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__pragma(X)", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__nullptr", "nullptr"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__debugbreak()", "0/0"); //$NON-NLS-1$ //$NON-NLS-2$
+		symbols.put("__LPREFIX(A)", "L\"##A\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

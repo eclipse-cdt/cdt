@@ -11350,6 +11350,17 @@ public class AST2CPPTests extends AST2CPPTestBase {
 
 	//	template <typename T>
 	//	struct underlying_type {
+	//		using type = __underlying_type(T);
+	//	};
+	//	enum class E : short {};
+	//	using target = underlying_type<E>::type;
+	public void testUnderlyingType_548954() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		assertSameType((ITypedef) helper.assertNonProblem("target"), CPPBasicType.SHORT);
+	}
+
+	//	template <typename T>
+	//	struct underlying_type {
 	//	    typedef __underlying_type(T) type;
 	//	};
 	//

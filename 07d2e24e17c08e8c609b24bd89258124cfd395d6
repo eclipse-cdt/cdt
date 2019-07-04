@@ -52,6 +52,24 @@
       "revId": "07d2e24e17c08e8c609b24bd89258124cfd395d6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bc49f0d5_61189835",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPScannerExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-07-04T02:05:52Z",
+      "side": 1,
+      "message": "Before this patch, this snippet produced a syntax error with gcc/clang but a \"unresolved symbol\" error with MSVC. After this patch it produces the same syntax error for all three. I only noticed because this snippet is in MSVC which is why I put the comment there. But I just created a bugzilla for this instead and will remove the comment for better clarity. See https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d548954",
+      "parentUuid": "112b96ee_2dcf39a9",
+      "revId": "07d2e24e17c08e8c609b24bd89258124cfd395d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

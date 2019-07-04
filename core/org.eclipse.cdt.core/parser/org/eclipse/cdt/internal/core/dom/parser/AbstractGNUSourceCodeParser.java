@@ -2780,6 +2780,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			// gcc-special
 		case IGCCToken.t_typeof:
 		case IGCCToken.t__attribute__:
+		case IGCCToken.tTT_underlying_type:
 
 			// content assist
 		case IToken.tCOMPLETION:

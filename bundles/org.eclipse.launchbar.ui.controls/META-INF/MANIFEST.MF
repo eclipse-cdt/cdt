@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.osgi.services;bundle-version="3.5.0",
  org.eclipse.debug.ui;bundle-version="3.11.200",
  org.eclipse.launchbar.core;bundle-version="2.0.0",
  org.eclipse.launchbar.ui;bundle-version="2.0.0"
-Import-Package: javax.annotation
+Import-Package: javax.annotation,
+ javax.inject
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin

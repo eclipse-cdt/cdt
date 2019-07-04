@@ -39,7 +39,7 @@
 	<repositories>
 		<repository>
 			<id>platform</id>
-			<url>https://download.eclipse.org/eclipse/updates/4.12-I-builds/I20190521-1800/</url>
+			<url>https://download.eclipse.org/eclipse/updates/4.13-I-builds/I20190707-1800/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -49,7 +49,7 @@
 		</repository>
 		<repository>
 			<id>cdt</id>
-			<url>http://download.eclipse.org/tools/cdt/releases/9.7</url>
+			<url>http://download.eclipse.org/tools/cdt/releases/9.8</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

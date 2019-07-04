@@ -308,9 +308,11 @@ public class CBuildConfigurationManager
 		// First see if we have one
 		for (IBuildConfiguration config : project.getBuildConfigs()) {
 			ICBuildConfiguration cconfig = getBuildConfiguration(config);
-			if (cconfig != null && cconfig.getToolChain().equals(toolChain)
-					&& launchMode.equals(cconfig.getLaunchMode())) {
-				return cconfig;
+			if (cconfig != null) {
+				IToolChain tc = cconfig.getToolChain();
+				if (tc != null && tc.equals(toolChain) && launchMode.equals(cconfig.getLaunchMode())) {
+					return cconfig;
+				}
 			}
 		}
 

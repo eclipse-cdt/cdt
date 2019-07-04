@@ -263,11 +263,18 @@ public interface IToolChain extends IAdaptable {
 	}
 
 	/**
+	 * Determine if this toolchain supports targets with the given set of properties.
+	 *
+	 * @param properties the set of properties to test against
+	 * @return does this toolchain support these properties
+	 *
 	 * @since 6.1
 	 */
 	default boolean matches(Map<String, String> properties) {
 		for (Map.Entry<String, String> property : properties.entrySet()) {
-			if (!property.getValue().equals(getProperty(property.getKey()))) {
+			String tcValue = getProperty(property.getKey());
+			// If toolchain doesn't have this property, it doesn't care
+			if (tcValue != null && !property.getValue().equals(tcValue)) {
 				return false;
 			}
 		}

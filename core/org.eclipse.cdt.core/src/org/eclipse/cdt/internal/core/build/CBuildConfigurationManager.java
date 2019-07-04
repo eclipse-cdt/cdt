@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.build.ErrorBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager2;
@@ -308,8 +309,8 @@ public class CBuildConfigurationManager
 		// First see if we have one
 		for (IBuildConfiguration config : project.getBuildConfigs()) {
 			ICBuildConfiguration cconfig = getBuildConfiguration(config);
-			if (cconfig != null && cconfig.getToolChain().equals(toolChain)
-					&& launchMode.equals(cconfig.getLaunchMode())) {
+			if (cconfig != null && !(cconfig instanceof ErrorBuildConfiguration)
+					&& cconfig.getToolChain().equals(toolChain) && launchMode.equals(cconfig.getLaunchMode())) {
 				return cconfig;
 			}
 		}

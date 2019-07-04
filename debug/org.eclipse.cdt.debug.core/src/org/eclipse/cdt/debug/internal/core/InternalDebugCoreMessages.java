@@ -30,6 +30,8 @@ public class InternalDebugCoreMessages extends NLS {
 	public static String CDebugAdapter_1;
 	public static String CDebugAdapter_Program_file_not_specified;
 	public static String CoreBuildLaunchBarTracker_Job;
+	public static String CoreBuildLaunchBarTracker_NoToolchainForTarget;
+	public static String CoreBuildLaunchBarTracker_TargetNotAvailable;
 	public static String CoreBuildLaunchConfigDelegate_noBinaries;
 	public static String CoreBuildLocalRunLaunchDelegate_ErrorLaunching;
 	public static String CRegisterManager_0;

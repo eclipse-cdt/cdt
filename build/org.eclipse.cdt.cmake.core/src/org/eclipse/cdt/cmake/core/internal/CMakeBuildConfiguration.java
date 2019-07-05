@@ -15,7 +15,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,8 +39,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 
 import com.google.gson.Gson;
 
@@ -53,25 +50,13 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public static final String BUILD_COMMAND = "cmake.command.build"; //$NON-NLS-1$
 	public static final String CLEAN_COMMAND = "cmake.command.clean"; //$NON-NLS-1$
 
-	private static final String TOOLCHAIN_FILE = "cdt.cmake.toolchainfile"; //$NON-NLS-1$
-
 	private ICMakeToolChainFile toolChainFile;
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
 
 		ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
-		Preferences settings = getSettings();
-		String pathStr = settings.get(TOOLCHAIN_FILE, ""); //$NON-NLS-1$
-		if (!pathStr.isEmpty()) {
-			Path path = Paths.get(pathStr);
-			toolChainFile = manager.getToolChainFile(path);
-		} else {
-			toolChainFile = manager.getToolChainFileFor(getToolChain());
-			if (toolChainFile != null) {
-				saveToolChainFile();
-			}
-		}
+		toolChainFile = manager.getToolChainFileFor(getToolChain());
 	}
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
@@ -81,25 +66,11 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
 			ICMakeToolChainFile toolChainFile, String launchMode) {
 		super(config, name, toolChain, launchMode);
-
 		this.toolChainFile = toolChainFile;
-		if (toolChainFile != null) {
-			saveToolChainFile();
-		}
 	}
 
 	public ICMakeToolChainFile getToolChainFile() {
 		return toolChainFile;
-	}
-
-	private void saveToolChainFile() {
-		Preferences settings = getSettings();
-		settings.put(TOOLCHAIN_FILE, toolChainFile.getPath().toString());
-		try {
-			settings.flush();
-		} catch (BackingStoreException e) {
-			Activator.log(e);
-		}
 	}
 
 	private boolean isLocal() throws CoreException {
@@ -225,7 +196,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					command.add("cmake"); //$NON-NLS-1$
 					command.add("--build"); //$NON-NLS-1$
 					command.add("."); //$NON-NLS-1$
-					if ("Ninja".equals(generator)) {
+					if ("Ninja".equals(generator)) { //$NON-NLS-1$
 						command.add("--"); //$NON-NLS-1$
 						command.add("-v"); //$NON-NLS-1$
 					}

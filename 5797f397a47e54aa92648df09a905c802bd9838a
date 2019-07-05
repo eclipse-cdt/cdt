@@ -282,6 +282,24 @@
     },
     {
       "key": {
+        "uuid": "470816d2_922c415f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTStructuredBindingDeclaration.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-05T23:38:55Z",
+      "side": 1,
+      "message": "Mostly just consistency with existing AST API.\n\nHowever, I agree that Optional is a more expressive API, and I\u0027m happy to introduce a policy that in new AST API (or just new API in general) we use Optional. I don\u0027t know if we have a place to write such a policy down, if not it can be unwritten for now.",
+      "parentUuid": "2b36871d_bdf12069",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f7b6c7df_912fd765",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/AbstractGNUSourceCodeParser.java",
         "patchSetId": 17
@@ -346,6 +364,24 @@
       "side": 1,
       "message": "Syntax error. Are you aware of any case in C where \"auto [\" would be valid right now? The cases I\u0027ve checked already result in a syntax error.",
       "parentUuid": "2c02f313_0a1a3b65",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f55f967c_54c886e3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/AbstractGNUSourceCodeParser.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1701,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-05T23:38:55Z",
+      "side": 1,
+      "message": "No, \"auto [\" wouldn\u0027t be valid in C. I just wasn\u0027t sure about the mechanism by which it would produce a syntax error. I wanted to make sure we don\u0027t start silently accepting it in C.",
+      "parentUuid": "9e62bba2_70d1d062",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -440,6 +476,24 @@
     },
     {
       "key": {
+        "uuid": "c7ce9991_dada882e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-05T23:38:55Z",
+      "side": 1,
+      "message": "Right, sorry, this is an old comment that I wrote before I realized that this implementation already works for non-member functions.",
+      "parentUuid": "083b83fe_0e4bb230",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ebee5568_dd53623a",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
         "patchSetId": 17
@@ -469,6 +523,24 @@
       "side": 1,
       "message": "Done\n\nI added the todos and implemented the last point.\n\nComment: Yes this is a simplified implementation of the evaluation. For the rules above I\u0027m not sure whether they might change in the future, because I don\u0027t see really their need for the first point (maybe it\u0027s a lack of insight). \nThe second point is new compared to the standard wording of C++17 and I\u0027m not sure how to check it.\nRegarding the last point, I think it would be still reasonable to try to evaluate a variable introduced by a structured binding, even if there are too few identifiers for the initializer. Wouldn\u0027t it be better to add a codan checker and postpone this analysis?",
       "parentUuid": "ebee5568_dd53623a",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9132bd8f_eeb96793",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-05T23:38:55Z",
+      "side": 1,
+      "message": "The second point is about access. Some test cases for it would be:\n\n  // Class with private fields\n  class Point {\n  private:\n    int x;\n    int y;\n\n    void foo() {\n      // OK, a member function can destructure a Point.\n      auto [x, y] \u003d *this;\n    }\n\n    friend void bar(Point p) {\n      // OK, a friend function can destructure a Point.\n      auto [x, y] \u003d p;\n    }\n  };\n\n  void baz(Point p) {\n    // Error, a non-member non-friend function cannot\n    // destructure a Point.\n    auto [x, y] \u003d p;\n  }\n\nGranted, in CDT we already have many places where we don\u0027t check access, so it\u0027s fine not to check it here either; maybe just add a TODO.\n\nRegarding the last point, I agree that there is value in evaluating whatever we can even if the structured binding declaration as a whole is ill-formed. I\u0027m happy to go with the Codan checker route (and feel free to leave the Codan checker for a future patch).",
+      "parentUuid": "2f5e6ac2_25988225",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -784,6 +856,24 @@
       "side": 1,
       "message": "Done\n\nAdded test cases that feature too many and too few names for the initializer, a non-static value member, a non-constexpr value member and a non-integral value member.\n\nRegarding the first point: I implemented the rules according to C++17, there was no explicit mentioning of value being a member. Do you have any insights why the wording was changed to \"with a member named value\"? How can std::tuple_­size\u003cE\u003e::value not be a static field if it is a well-formed integral constant expression? The only case I can come up with is in the context is a subtype of std::tuple_size\u003cE\u003e and that would be quite weird. But it is easy to fix.",
       "parentUuid": "a66f2e37_dc966d6b",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0c50aef4_44156fa4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1965,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-05T23:38:55Z",
+      "side": 1,
+      "message": "The idea is that if a member named \"value\" is present but it\u0027s not a static field, we should give an error rather than silently proceeding to try aggregate decomposition.\n\nMotivating example:\n\n  // This structure happens to work with aggregate decomposition.\n  struct Point {\n    int x;\n    int y;\n  };\n\n  // But the author wants different decomposition behaviour\n  // for it. (Maybe they want to store rectangular coordinates\n  // but want it to destructure into polar.)\n  // So, they override tuple_size.\n  // However, they make a mistake, and forget to make \"value\"\n  // static.\n  template \u003c\u003e\n  struct tuple_size\u003cPoint\u003e {\n      const int value \u003d 2;  // oops, no static\n  };\n\n  // tuple_element, get\u003c\u003e definitions omitted\n\n  // Now they attempt to perform the decomposition:\n  void foo(Point p) {\n    auto [r, theta] \u003d p;\n  }\n\nBad outcome: because tuple_size\u003cPoint\u003e::value wasn\u0027t a static field, the compiler silently proceeds to try aggregate decomposition, that succeeds, and the user silently gets rectangular coordinates.\n\nGood outcome: because tuple_size\u003cPoint\u003e::value wasn\u0027t a static field, the compiler issues an error.",
+      "parentUuid": "eb13f1ef_88c35605",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

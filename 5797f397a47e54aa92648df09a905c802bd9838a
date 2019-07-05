@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "621e17fa_dd2ab48a",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/CommonCPPTypes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b44e04db_34d21e30",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b9bbad74_acb8efd9",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/constexpr/TestBase.java",
         "patchSetId": 17
@@ -30,6 +48,24 @@
       "writtenOn": "2019-07-03T02:27:17Z",
       "side": 1,
       "message": "I\u0027m not sure how much value there is in distinguishing these two cases. It may be simpler to just have a single function, assertEvaluationIsError(), which checks for either.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "33fe37ba_086d2ae4",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/constexpr/TestBase.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nI still need to figure out the marshalling bug to be able to use assertEvaluationError() in all cases.",
+      "parentUuid": "b9bbad74_acb8efd9",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "9e81a608_5c0a6c04",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingIndexTests.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f693bef8_26786e0c",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c09e2397_b4c83675",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingTests.java",
         "patchSetId": 17
@@ -64,6 +118,24 @@
       "writtenOn": "2019-07-03T02:27:17Z",
       "side": 1,
       "message": "Why do the test case names end in an underscore?",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d4bd797c_8123e7e1",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingTests.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nI think I left it as a placeholder for the bug number. I\u0027ll remove them.",
+      "parentUuid": "c09e2397_b4c83675",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "eb34e0f6_9c5aecbb",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingTests.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c0abf87_58129670",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "52a7c4f2_610a129c",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingTests.java",
         "patchSetId": 17
@@ -98,6 +188,24 @@
       "writtenOn": "2019-07-03T02:27:17Z",
       "side": 1,
       "message": "Please add a test case with non-member get() as well.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7bd63420_b6436777",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingTests.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52a7c4f2_610a129c",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "7719ef1c_f03daaca",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/StructuredBindingTests.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dff7555a_8a775360",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a905a3b8_12154608",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTStructuredBindingDeclaration.java",
         "patchSetId": 17
@@ -132,6 +258,24 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "Why are we using Optional rather than null to signify no ref-qualifier or no initializer?",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2b36871d_bdf12069",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTStructuredBindingDeclaration.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "I consider it to be API that is more expressive. It is clear that an Optional return type can return an absent value, i.e. no RefQualifier, whereas I need to check the API documentation to figure out whether it could be null.\n\nWhat would be your reason not to use Optional? Efficiency?",
+      "parentUuid": "a905a3b8_12154608",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "3301350a_a2fd3239",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/AbstractGNUSourceCodeParser.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1683,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nYes that seems reasonable. It wasn\u0027t an issue so far as a potential attribute would be consumed in a preceeding decl-spec-seq. Nevertheless, I\u0027ve extended the check. I also changed the whole Method slightly:\n* Added a declspecifier parameter\n* Move the auto check to the method",
+      "parentUuid": "f7b6c7df_912fd765",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2c02f313_0a1a3b65",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/AbstractGNUSourceCodeParser.java",
         "patchSetId": 17
@@ -166,6 +328,24 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "What will happen in C? Will we produce a syntax or semantic error?",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9e62bba2_70d1d062",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/AbstractGNUSourceCodeParser.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1701,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Syntax error. Are you aware of any case in C where \"auto [\" would be valid right now? The cases I\u0027ve checked already result in a syntax error.",
+      "parentUuid": "2c02f313_0a1a3b65",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -207,6 +387,24 @@
     },
     {
       "key": {
+        "uuid": "4b75c552_e3cd1e49",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\nI tried to add short comments and java doc to reflect the behavior. Even though I\u0027m not a huge fan of comments, I see that they are helpful in this case. I keep struggling with the resolution of bindings and usually I\u0027m not sure whether I\u0027m using the infrastructure incorrectly or I just try to use it for use cases they had not been implemented for.",
+      "parentUuid": "4a0985cc_6b89c25d",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dd17ab30_7fee9fe3",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
         "patchSetId": 17
@@ -218,6 +416,24 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "You could also use classType.getMethods() as a starting point.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "083b83fe_0e4bb230",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "But that will not catch the non-member get() functions.",
+      "parentUuid": "dd17ab30_7fee9fe3",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -241,6 +457,24 @@
     },
     {
       "key": {
+        "uuid": "2f5e6ac2_25988225",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nI added the todos and implemented the last point.\n\nComment: Yes this is a simplified implementation of the evaluation. For the rules above I\u0027m not sure whether they might change in the future, because I don\u0027t see really their need for the first point (maybe it\u0027s a lack of insight). \nThe second point is new compared to the standard wording of C++17 and I\u0027m not sure how to check it.\nRegarding the last point, I think it would be still reasonable to try to evaluate a variable introduced by a structured binding, even if there are too few identifiers for the initializer. Wouldn\u0027t it be better to add a codan checker and postpone this analysis?",
+      "parentUuid": "ebee5568_dd53623a",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa881911_a8f39501",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
         "patchSetId": 17
@@ -252,6 +486,24 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "Let\u0027s use EvalFixed.INCOMPLETE rather than null.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96f5564d_6666393d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nI think we have something needing attention here (and regarding the return null below).\nI changed it here (see other problem below), I had to change CPPASTStructuredBinding::getExecution() though, which returned ExecIncomplete.INSTANCE if the EvalFixed.INCOMPLETE evaluation had been encountered, to always return an ExecDeclarator. Otherwise, I ended up issues when marshalling ExecIncomplete.INSTANCE. This seems to be a general issue. No test case actually marshals ExecIncomplete.INSTANCE. I couldn\u0027t check with Toni as he\u0027s out of office right now.",
+      "parentUuid": "fa881911_a8f39501",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -275,6 +527,24 @@
     },
     {
       "key": {
+        "uuid": "06bb7634_9ad7226b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "This is code extracted. In the initial version there was a case that returned null. And I think it had been implemented this way deliberately. I tried returning INCOMPLETE here before, but ended up having problems when persisting the evaluation,  because it is not supported to marshal an incomplete evaluation yet. Which results in dozens of test errors/failures. I\u0027m not sure whether it is a liability in the infrastructure or I just need to add a check at the right spot. I\u0027m not sure whether we ever actually returned INCOMPLETE from this function in an existing case.\n\nReturning EvalFixed.INCOMPLETE results in issues regarding marshalling of the evaluation. I have to check why exactly. But there already was a case that returned null in this method. See comment below in evaluationOfInitializer()\nThis EvalFixed.INCOMPLETE leads to ExecIncomplete.INSTANCE in CPPASTDeclarator::getExecution(), which in turn results in the marshalling problem. There is actually no test case in which the CPPVariable evaluation actually results in EvalFixed.INCOMPLETE (The same is true for CPPASTReturnStatement::getExecution(), which theoretically could result in ExecIncomplete:INSTANCE too).",
+      "parentUuid": "050ab83e_266e7d23",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "380af5bb_806959f1",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
         "patchSetId": 17
@@ -286,6 +556,24 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "We could avoid this duplicate check by setting a flag on Decl. However, it\u0027s probably cheap enough that it\u0027s not worth it.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "449e21e6_17038419",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 2945,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nYes, it\u0027s preferrable to code duplication. I added a field to Decl and a local variable to avoid moving the code for handling the structured binding around.",
+      "parentUuid": "380af5bb_806959f1",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -309,6 +597,24 @@
     },
     {
       "key": {
+        "uuid": "ea2e2ab8_b2123b77",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 2966,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nI added a check to make sure declSpec is an ICPPASTSimpleDeclSpecifier. I would avoid the check in isAtStartOfStructuredBinding() because it would introduce a dependency to C++ infrastructure. Actually, this method already creates a logical dependency to C++, but since it also checks for templates it\u0027s not a new issue.\nI think the semantic error will occur automatically when parsing ahead in an illegal case.",
+      "parentUuid": "d2366f49_69ad1061",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5914a336_d2639e01",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
         "patchSetId": 17
@@ -320,6 +626,24 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "This refactoring does not preserve the setting of \u0027endOffset\u0027.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3372a733_3ec118f0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 4814,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nI left the extracted method but set the endOffset again in case a ref-qualifier has been found.",
+      "parentUuid": "5914a336_d2639e01",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -343,6 +667,24 @@
     },
     {
       "key": {
+        "uuid": "8628b2d3_eab26dab",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1666,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nHm... No, no special treatment neccessary as far as I can see. I\u0027ll check with Hansruedi what the reason for this special treatment was.",
+      "parentUuid": "075c1fcc_b5bd6534",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3119d9b2_e133ebb8",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
         "patchSetId": 17
@@ -354,6 +696,24 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "This change can be reverted.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "432c7b35_32988b4c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3119d9b2_e133ebb8",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -377,6 +737,24 @@
     },
     {
       "key": {
+        "uuid": "1c4f9dd9_9a3fa5dd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 2324,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f6c09795_99c64a6a",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a66f2e37_dc966d6b",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
         "patchSetId": 17
@@ -388,6 +766,24 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "Here\u0027s what the latest wording says (http://eel.is/c++draft/dcl.struct.bind#4):\n\n\"Otherwise, if the qualified-id std::tuple_­size\u003cE\u003e names a complete class type with a member named value, the expression std::tuple_­size\u003cE\u003e::value shall be a well-formed integral constant expression and the number of elements in the identifier-list shall be equal to the value of that expression.\"\n\nThis implementation is close but there are a few subtle differences:\n\n* We should check for the presence of any member named \"value\", not necessarily a static field. If not present, proceed to paragraph 5 (aggregate decomposition).\n\n* If a member named \"value\" is present, commit to tuple decomposition. If anything goes wrong, issue an error (which for us means returning EvalFixed.INCOMPLETE from getInitializerEvaluation() or a ProblemType from createType().\n\n* In particular, if \"value\" is not a static field, or its type is not integral, or its initializer is not a constant expression, issue an error.\n\n* Then evaluate \"value\", and if the result does not match the number of initializers, issue an error.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eb13f1ef_88c35605",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1965,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nAdded test cases that feature too many and too few names for the initializer, a non-static value member, a non-constexpr value member and a non-integral value member.\n\nRegarding the first point: I implemented the rules according to C++17, there was no explicit mentioning of value being a member. Do you have any insights why the wording was changed to \"with a member named value\"? How can std::tuple_­size\u003cE\u003e::value not be a static field if it is a well-formed integral constant expression? The only case I can come up with is in the context is a subtype of std::tuple_size\u003cE\u003e and that would be quite weird. But it is easy to fix.",
+      "parentUuid": "a66f2e37_dc966d6b",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -411,6 +807,24 @@
     },
     {
       "key": {
+        "uuid": "a9d3fef1_40e57133",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1968,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "86f8fbdc_3d359521",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bc8141fb_19d80410",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
         "patchSetId": 17
@@ -422,6 +836,24 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "What if the user writes \n\n  auto [x, y, z];\n\nat local scope? I think we need to check for this to avoid Optional.get() throwing a NoSuchElementException.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "89ba804b_82b01895",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1998,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nAdded a test case for this",
+      "parentUuid": "bc8141fb_19d80410",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -445,6 +877,24 @@
     },
     {
       "key": {
+        "uuid": "798b3e95_aa4c756a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 2020,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21a1e34f_72b52063",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8eb1f6b2_e2c5fe62",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
         "patchSetId": 17
@@ -456,6 +906,24 @@
       "writtenOn": "2019-07-02T06:12:36Z",
       "side": 1,
       "message": "An explanatory comment with some examples would help make this function easier to understand.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2c3cca84_d1fd4b0a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 2028,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nI also added a check for volatile.",
+      "parentUuid": "8eb1f6b2_e2c5fe62",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -479,6 +947,24 @@
     },
     {
       "key": {
+        "uuid": "b0e18e5a_43200b97",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/SemanticUtil.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 928,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nMade ExpressionTypes.isVolatile() public and replaced the else block with a call to it.\nApplied the same to isConst().",
+      "parentUuid": "d0be45ea_93d89a2d",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "84eab979_01eebf98",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/DeclarationWriter.java",
         "patchSetId": 17
@@ -490,6 +976,24 @@
       "writtenOn": "2019-07-03T02:27:17Z",
       "side": 1,
       "message": "Should we not pass in and respect \u0027writeSemicolon\u0027, for the case where the structured binding declaration appears in a range-based for loop?",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "554c5212_8035df7f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/DeclarationWriter.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nAlso added a test case to check structured bindings in range-based for loops",
+      "parentUuid": "84eab979_01eebf98",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -513,6 +1017,24 @@
     },
     {
       "key": {
+        "uuid": "71d71bda_399c6b74",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/selection/CPPSelectionTestsIndexer.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1395,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done\n\nYes I probably did. I added it here. I don\u0027t see much value in the other files though, as I would add it to every case. Which is more distracting than helpful and it would hide cases from actual bug reports.",
+      "parentUuid": "fff3c355_48f5bffc",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0d23f1e7_68ee801c",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/selection/CPPSelectionTestsNoIndexer.java",
         "patchSetId": 17
@@ -524,6 +1046,24 @@
       "writtenOn": "2019-07-03T02:27:17Z",
       "side": 1,
       "message": "indexOf() is preferable to hardcoding offsets.",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "afeba38c_1c71c35a",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/selection/CPPSelectionTestsNoIndexer.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1436,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-05T12:25:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0d23f1e7_68ee801c",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

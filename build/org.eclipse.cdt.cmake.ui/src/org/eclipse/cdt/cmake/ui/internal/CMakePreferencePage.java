@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
+import org.eclipse.cdt.cmake.core.internal.CMakeToolChainManager;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -102,13 +103,18 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 				NewCMakeToolChainFileWizard wizard = new NewCMakeToolChainFileWizard();
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
 				if (dialog.open() == Window.OK) {
-					ICMakeToolChainFile file = wizard.getNewFile();
-					ICMakeToolChainFile oldFile = manager.getToolChainFile(file.getPath());
-					if (oldFile != null) {
-						filesToRemove.put(oldFile.getPath(), oldFile);
+					try {
+						ICMakeToolChainFile file = wizard.getNewFile();
+						IToolChain oldtc = file.getToolChain();
+						ICMakeToolChainFile oldFile = manager.getToolChainFileFor(oldtc);
+						if (oldFile != null) {
+							filesToRemove.put(oldFile.getPath(), oldFile);
+						}
+						filesToAdd.put(file.getPath(), file);
+						updateTable();
+					} catch (CoreException ex) {
+						Activator.log(ex);
 					}
-					filesToAdd.put(file.getPath(), file);
-					updateTable();
 				}
 			}
 		});
@@ -159,18 +165,25 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 	}
 
-	private Map<Path, ICMakeToolChainFile> getFiles() {
-		Map<Path, ICMakeToolChainFile> files = new HashMap<>();
-		for (ICMakeToolChainFile file : manager.getToolChainFiles()) {
-			files.put(file.getPath(), file);
-		}
+	private Map<String, ICMakeToolChainFile> getFiles() {
+		Map<String, ICMakeToolChainFile> files = new HashMap<>();
+		try {
+			for (ICMakeToolChainFile file : manager.getToolChainFiles()) {
+				String id = CMakeToolChainManager.makeToolChainId(file.getToolChain());
+				files.put(id, file);
+			}
 
-		for (ICMakeToolChainFile file : filesToRemove.values()) {
-			files.remove(file.getPath());
-		}
+			for (ICMakeToolChainFile file : filesToRemove.values()) {
+				String id = CMakeToolChainManager.makeToolChainId(file.getToolChain());
+				files.remove(id);
+			}
 
-		for (ICMakeToolChainFile file : filesToAdd.values()) {
-			files.put(file.getPath(), file);
+			for (ICMakeToolChainFile file : filesToAdd.values()) {
+				String id = CMakeToolChainManager.makeToolChainId(file.getToolChain());
+				files.put(id, file);
+			}
+		} catch (CoreException e) {
+			Activator.log(e);
 		}
 
 		return files;

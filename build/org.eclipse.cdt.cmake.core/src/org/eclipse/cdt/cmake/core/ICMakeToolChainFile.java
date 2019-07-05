@@ -23,12 +23,35 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface ICMakeToolChainFile {
 
+	/**
+	 * Return the path to the toolchain file.
+	 *
+	 * @return path to the toolchain file
+	 */
 	Path getPath();
 
+	/**
+	 * Return the value for a property.
+	 *
+	 * @param key key of the property
+	 * @return the value
+	 */
 	String getProperty(String key);
 
+	/**
+	 * Set a property.
+	 *
+	 * @param key key of the property
+	 * @param value value for the property
+	 */
 	void setProperty(String key, String value);
 
+	/**
+	 * Return the toolchain that this toolchain file enables.
+	 *
+	 * @return the toolchain for the file
+	 * @throws CoreException
+	 */
 	IToolChain getToolChain() throws CoreException;
 
 }

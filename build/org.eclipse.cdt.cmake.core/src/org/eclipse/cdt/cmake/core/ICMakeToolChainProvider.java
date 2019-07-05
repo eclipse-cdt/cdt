@@ -12,6 +12,12 @@ package org.eclipse.cdt.cmake.core;
 
 public interface ICMakeToolChainProvider {
 
+	/**
+	 * Allows the provider to add any automatic toolchain files so the user
+	 * doesn't have to.
+	 *
+	 * @param manager the manager object used to add toolchain files
+	 */
 	void init(ICMakeToolChainManager manager);
 
 }

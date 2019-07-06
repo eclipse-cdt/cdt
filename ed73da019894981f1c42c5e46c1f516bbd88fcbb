@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "34f010a0_b084c431",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/constexpr/TestBase.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-06T00:13:15Z",
+      "side": 1,
+      "message": "I was thinking something like:\n\n  assertTrue(IntegralValue.ERROR.equals(value) ||\n             IntegralValue.UNKNOWN.equals(value));\n\nHowever, if this works, that\u0027s fine.",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "926f388d_6737e680",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 4286,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-06T00:13:15Z",
+      "side": 1,
+      "message": "Please use the more specific parameter name \"beforeNode\" (taken from the findBindings() function to which we ultimately pass it) rather than \"point\".",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3fb04d60_7175ea2a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 4328,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-06T00:13:15Z",
+      "side": 1,
+      "message": "Likewise.",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "26d9f89c_e48b4fb5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-06T00:13:15Z",
+      "side": 1,
+      "message": "ICPPVariable.isConstexpr() checks whether the constexpr keyword was used.\n\nHowever, the wording only requires \"constant expression\", which is also satisfied by a plain \"const\" as long as the initializer is a compile-time constant. For example:\n\n  template \u003c\u003e\n  struct tuple_size\u003cPoint\u003e {\n    static const int value \u003d 2;  // valid\n  };\n\nI believe the check you want is something like field.getInitialValue().isConstantExpression().",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b3598cb2_f6674af7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 1974,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-06T00:13:15Z",
+      "side": 1,
+      "message": "Here too, let\u0027s give the \"point\" parameters more descriptive names.",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eaa10ad2_ad52d509",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 1997,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-06T00:13:15Z",
+      "side": 1,
+      "message": "Why the change from getBindings() to findBindings()?",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7d11a905_4b0f9463",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2045,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-06T00:13:15Z",
+      "side": 1,
+      "message": "getInitialValue() and numberValue() both need null checks.",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

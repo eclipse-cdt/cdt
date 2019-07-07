@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a6c7677_ee6a2335",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/DeductionGuideTests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-07T04:44:08Z",
+      "side": 1,
+      "message": "In a case like this where a test file is dedicated to a new feature, there is no need to add the number of the bug that introduces the feature at the end of each test.\n\n(Not to mention that the bug number in the tests doesn\u0027t match the bug number in the commit message :))",
+      "revId": "6a33dd10bcafc61b45bb4e777f564493f3f0a510",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b04b61c_2d1a0ae5",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx17/DeductionGuideTests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-07T04:44:08Z",
+      "side": 1,
+      "message": "Please indent test case code like you would normal code.",
+      "revId": "6a33dd10bcafc61b45bb4e777f564493f3f0a510",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f4b1d4a_e9f7b14b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTDeductionGuide.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-07T04:44:08Z",
+      "side": 1,
+      "message": "What about visitor.leave(this)?",
+      "revId": "6a33dd10bcafc61b45bb4e777f564493f3f0a510",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "346dd337_3d8b2765",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4871,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-07T04:44:08Z",
+      "side": 1,
+      "message": "Please document the meaning of the return value.",
+      "revId": "6a33dd10bcafc61b45bb4e777f564493f3f0a510",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

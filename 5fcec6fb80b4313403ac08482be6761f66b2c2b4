@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6664eddc_2edd1668",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/CommentsTabPage.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-07T05:20:24Z",
+      "side": 1,
+      "message": "Rename to commentGroup to remain consistent with its title?",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "22ea8c31_57a689f8",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-07T05:20:24Z",
+      "side": 1,
+      "message": "Why not just CCorePlugin.getOptions()? It returns a HashMap\u003cString, String\u003e.",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16c98679_6ac3d78d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-07T05:20:24Z",
+      "side": 1,
+      "message": "Since the preference is only checked in the constructor, does it mean that toggling one of these checkboxes will only take effect for newly opened editors?\n\nIs that consistent with other checkboxes in the formatter preferences?",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "654f8a5e_b3b260fc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-07T05:20:24Z",
+      "side": 1,
+      "message": "I\u0027m not sure why this method is public, as the only caller is customizeDocumentCommand(). Make it private/protected and remove the isEnabled() check?",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "81a81151_b9decdf4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-07T05:20:24Z",
+      "side": 1,
+      "message": "What if a user has Doxygen enabled in the workspace settings, but \"Format block comments\" unchecked in project-specific settings? We\u0027ll get a DoxygenMultilineAutoEditStrategy, but should we format block comments?",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

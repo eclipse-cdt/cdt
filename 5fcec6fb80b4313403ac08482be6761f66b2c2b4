@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "41972cc8_688fe8cc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/formatter/CommentsTabPage.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-07-07T06:26:00Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "6664eddc_2edd1668",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "22ea8c31_57a689f8",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2019-07-07T05:20:24Z",
       "side": 1,
       "message": "Why not just CCorePlugin.getOptions()? It returns a HashMap\u003cString, String\u003e.",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d9e1be1_0fe38ddf",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-07-07T06:26:00Z",
+      "side": 1,
+      "message": "I actually cloned the code from another part of CDT, but I can take a look.",
+      "parentUuid": "22ea8c31_57a689f8",
       "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "7a1d5ade_1259f830",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-07-07T06:26:00Z",
+      "side": 1,
+      "message": "Yes, you are right. I think it\u0027s a new thing, because usually the formatter is invoked on events like file save, open and so on and options are re-loaded. I will take a look if we can implement an \"observer\" listener on preferences.",
+      "parentUuid": "16c98679_6ac3d78d",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "654f8a5e_b3b260fc",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
         "patchSetId": 7
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "b9d9374f_ab91eadf",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-07-07T06:26:00Z",
+      "side": 1,
+      "message": "I think this class is \"public\", i.e. it can be extended by plugins, does it make sense to remove a public method? I can do it but we need to be sure it\u0027s not public used inside CDT and outside. Maybe we could change it to protected without any impact.",
+      "parentUuid": "654f8a5e_b3b260fc",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81a81151_b9decdf4",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
         "patchSetId": 7
@@ -81,6 +153,24 @@
       "writtenOn": "2019-07-07T05:20:24Z",
       "side": 1,
       "message": "What if a user has Doxygen enabled in the workspace settings, but \"Format block comments\" unchecked in project-specific settings? We\u0027ll get a DoxygenMultilineAutoEditStrategy, but should we format block comments?",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a21cd8c_e1646dd9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-07-07T06:26:00Z",
+      "side": 1,
+      "message": "Doxygen and \"format block comments\" are separated in the code or at least it was my goal, so what I expect is that Doxygen doc is correctly managed and formatted, \"normal\" block comments no on the other hand. In JDT there are separate options for Javadoc and block comments so I\u0027d say it\u0027s ok.",
+      "parentUuid": "81a81151_b9decdf4",
       "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

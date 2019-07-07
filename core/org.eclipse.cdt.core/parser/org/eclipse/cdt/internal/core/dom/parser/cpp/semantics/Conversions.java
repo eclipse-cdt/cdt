@@ -400,6 +400,7 @@ public class Conversions {
 	}
 
 	static IType getInitListType(IType target) {
+		target = getNestedType(target, REF | TDEF | CVTYPE);
 		if (target instanceof ICPPClassType && target instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst = (ICPPTemplateInstance) target;
 			if (CharArrayUtils.equals(INITIALIZER_LIST_NAME, inst.getNameCharArray())) {

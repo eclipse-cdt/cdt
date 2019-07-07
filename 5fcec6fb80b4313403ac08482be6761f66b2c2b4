@@ -142,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "64e9d5f2_d8d612ca",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-07T06:31:31Z",
+      "side": 1,
+      "message": "Ah, you\u0027re right, changing the access here would be an API break. It\u0027s fine as it is, then.",
+      "parentUuid": "b9d9374f_ab91eadf",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81a81151_b9decdf4",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
         "patchSetId": 7
@@ -171,6 +189,24 @@
       "side": 1,
       "message": "Doxygen and \"format block comments\" are separated in the code or at least it was my goal, so what I expect is that Doxygen doc is correctly managed and formatted, \"normal\" block comments no on the other hand. In JDT there are separate options for Javadoc and block comments so I\u0027d say it\u0027s ok.",
       "parentUuid": "81a81151_b9decdf4",
+      "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fda2592_ef8d8f44",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-07T06:31:31Z",
+      "side": 1,
+      "message": "Ok, makes sense.",
+      "parentUuid": "5a21cd8c_e1646dd9",
       "revId": "5fcec6fb80b4313403ac08482be6761f66b2c2b4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

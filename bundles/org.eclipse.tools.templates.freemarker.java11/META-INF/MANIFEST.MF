@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.tools.templates.freemarker.java11;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.2.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Fragment-Host: org.eclipse.tools.templates.freemarker;bundle-version="1.0.0"
 Automatic-Module-Name: org.eclipse.tools.templates.freemarker.java11

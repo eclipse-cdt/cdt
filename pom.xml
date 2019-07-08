@@ -34,7 +34,7 @@
 	<repositories>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.9/</url>
+			<url>https://download.eclipse.org/eclipse/updates/4.13-I-builds/I20190707-1800/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -44,7 +44,7 @@
 		</repository>
 		<repository>
 			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20180905201904/repository/</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
@@ -181,17 +181,7 @@
 						<environment>
 							<os>linux</os>
 							<ws>gtk</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
 							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86</arch>
 						</environment>
 						<environment>
 							<os>win32</os>

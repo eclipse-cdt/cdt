@@ -283,10 +283,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			int ioffset = getOffset(includes, i);
 			int moffset = getOffset(macros, m);
 			for (int k = 0; k < merged.length; k++) {
-				if (ioffset <= moffset) {
+				if (ioffset <= moffset && i < includes.length) {
 					merged[k] = includes[i];
 					ioffset = getOffset(includes, ++i);
-				} else {
+				} else if (m < macros.length) {
 					merged[k] = macros[m];
 					moffset = getOffset(macros, ++m);
 				}

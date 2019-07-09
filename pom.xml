@@ -14,7 +14,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>1.3.0</tycho-version>
+		<tycho-version>1.4.0</tycho-version>
 	</properties>
 
 	<licenses>
@@ -62,11 +62,6 @@
 		<pluginRepository>
 			<id>cbi</id>
 			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
-		</pluginRepository>
-		<!--Use Staging repo until 1.3.0 release, required for Java 11 support-->
-		<pluginRepository>
-			<id>tycho-1.3-staged</id>
-			<url>https://oss.sonatype.org/content/repositories/orgeclipsetycho-1050/</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<profiles>

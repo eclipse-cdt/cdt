@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d76b4795_e096a487",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersConstChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-09T06:18:25Z",
+      "side": 1,
+      "message": "Passing \u0027declaration\u0027 as the second argument here causes the yellow squiggly to be drawn over the entire function definition.\n\nI would suggest passing in just the IASTName for the method name instead.",
+      "revId": "d671be2539eb35958621c8fd9373c421f025598e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5066856f_dd2e24ee",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersConstChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-09T06:18:25Z",
+      "side": 1,
+      "message": "isVirtual() is potentially a nontrivial computation. Let\u0027s cache it in the ContextInfo instead of computing it multiple times.",
+      "revId": "d671be2539eb35958621c8fd9373c421f025598e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "48c3c300_16129feb",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/ClassMembersConstCheckerTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-09T06:18:25Z",
+      "side": 1,
+      "message": "A static method can also be recursive, would be useful to test that.",
+      "revId": "d671be2539eb35958621c8fd9373c421f025598e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d4649bfa_cb3abc0c",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/ClassMembersConstCheckerTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-09T06:18:25Z",
+      "side": 1,
+      "message": "testConst() is not defined in this testcase.",
+      "revId": "d671be2539eb35958621c8fd9373c421f025598e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

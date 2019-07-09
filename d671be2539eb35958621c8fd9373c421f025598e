@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "0ba58c48_2fae876e",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/plugin.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-09T06:21:11Z",
+      "side": 1,
+      "message": "I also haven\u0027t thought yet about whether these checkers should be enabled by default. I think I\u0027d want to test it on a real codebase and see the false positive rate before deciding that.",
+      "revId": "d671be2539eb35958621c8fd9373c421f025598e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d76b4795_e096a487",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersConstChecker.java",
         "patchSetId": 7

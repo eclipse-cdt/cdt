@@ -23,7 +23,11 @@ Require-Bundle: org.apache.commons.io,
  org.eclipse.lsp4e.debug,
  org.eclipse.debug.core,
  org.eclipse.debug.ui,
- org.eclipse.cdt.debug.core
+ org.eclipse.cdt.debug.core,
+ org.eclipse.lsp4j.debug,
+ org.eclipse.lsp4j.jsonrpc.debug,
+ com.google.guava,
+ org.eclipse.xtext.xbase.lib
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.debug.dap
 Bundle-Activator: org.eclipse.cdt.debug.dap.Activator

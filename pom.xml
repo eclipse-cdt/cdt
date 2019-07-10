@@ -133,6 +133,7 @@
 		<module>debug/org.eclipse.cdt.debug.ui</module>
 
 		<module>debug/org.eclipse.cdt.debug.dap</module>
+		<module>debug/org.eclipse.cdt.debug.dap-feature</module>
 
 		<module>debug/org.eclipse.cdt.gdb</module>
 		<module>debug/org.eclipse.cdt.gdb.ui</module>

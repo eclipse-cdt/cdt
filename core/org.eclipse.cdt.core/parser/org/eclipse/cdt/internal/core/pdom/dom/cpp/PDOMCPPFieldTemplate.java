@@ -48,6 +48,11 @@ public class PDOMCPPFieldTemplate extends PDOMCPPVariableTemplate implements ICP
 	}
 
 	@Override
+	protected int getRecordSize() {
+		return RECORD_SIZE;
+	}
+
+	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		return getClassOwner();
 	}

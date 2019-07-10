@@ -64,6 +64,11 @@ public class PDOMCPPVariableTemplatePartialSpecialization extends PDOMCPPVariabl
 	}
 
 	@Override
+	protected int getRecordSize() {
+		return RECORD_SIZE;
+	}
+
+	@Override
 	public ICPPTemplateDefinition getPrimaryTemplate() {
 		try {
 			return new PDOMCPPVariableTemplate(getLinkage(), getPrimaryTemplateRec());

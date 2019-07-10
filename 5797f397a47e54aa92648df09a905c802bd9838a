@@ -300,6 +300,24 @@
     },
     {
       "key": {
+        "uuid": "7f124bbe_4562fc54",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTStructuredBindingDeclaration.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-10T10:59:31Z",
+      "side": 1,
+      "message": "I guess this might be something to add to the API policy in the wiki (https://wiki.eclipse.org/CDT/policy#API). However, should check with the other committers on the mailing list first.",
+      "parentUuid": "470816d2_922c415f",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f7b6c7df_912fd765",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/AbstractGNUSourceCodeParser.java",
         "patchSetId": 17
@@ -494,6 +512,24 @@
     },
     {
       "key": {
+        "uuid": "c1a35e80_e601f7ee",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-10T10:59:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7ce9991_dada882e",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ebee5568_dd53623a",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
         "patchSetId": 17
@@ -541,6 +577,24 @@
       "side": 1,
       "message": "The second point is about access. Some test cases for it would be:\n\n  // Class with private fields\n  class Point {\n  private:\n    int x;\n    int y;\n\n    void foo() {\n      // OK, a member function can destructure a Point.\n      auto [x, y] \u003d *this;\n    }\n\n    friend void bar(Point p) {\n      // OK, a friend function can destructure a Point.\n      auto [x, y] \u003d p;\n    }\n  };\n\n  void baz(Point p) {\n    // Error, a non-member non-friend function cannot\n    // destructure a Point.\n    auto [x, y] \u003d p;\n  }\n\nGranted, in CDT we already have many places where we don\u0027t check access, so it\u0027s fine not to check it here either; maybe just add a TODO.\n\nRegarding the last point, I agree that there is value in evaluating whatever we can even if the structured binding declaration as a whole is ill-formed. I\u0027m happy to go with the Codan checker route (and feel free to leave the Codan checker for a future patch).",
       "parentUuid": "2f5e6ac2_25988225",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "61754c18_f0ea841b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-10T10:59:31Z",
+      "side": 1,
+      "message": "Done\n\nI\u0027ve reverted the check for the exact number of field match and added the accessibility check to the comment.",
+      "parentUuid": "9132bd8f_eeb96793",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -874,6 +928,24 @@
       "side": 1,
       "message": "The idea is that if a member named \"value\" is present but it\u0027s not a static field, we should give an error rather than silently proceeding to try aggregate decomposition.\n\nMotivating example:\n\n  // This structure happens to work with aggregate decomposition.\n  struct Point {\n    int x;\n    int y;\n  };\n\n  // But the author wants different decomposition behaviour\n  // for it. (Maybe they want to store rectangular coordinates\n  // but want it to destructure into polar.)\n  // So, they override tuple_size.\n  // However, they make a mistake, and forget to make \"value\"\n  // static.\n  template \u003c\u003e\n  struct tuple_size\u003cPoint\u003e {\n      const int value \u003d 2;  // oops, no static\n  };\n\n  // tuple_element, get\u003c\u003e definitions omitted\n\n  // Now they attempt to perform the decomposition:\n  void foo(Point p) {\n    auto [r, theta] \u003d p;\n  }\n\nBad outcome: because tuple_size\u003cPoint\u003e::value wasn\u0027t a static field, the compiler silently proceeds to try aggregate decomposition, that succeeds, and the user silently gets rectangular coordinates.\n\nGood outcome: because tuple_size\u003cPoint\u003e::value wasn\u0027t a static field, the compiler issues an error.",
       "parentUuid": "eb13f1ef_88c35605",
+      "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6da9193a_95db27a2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1965,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-10T10:59:31Z",
+      "side": 1,
+      "message": "Done\n\nOk, that makes sense. I had already added a similar test case.",
+      "parentUuid": "0c50aef4_44156fa4",
       "revId": "5797f397a47e54aa92648df09a905c802bd9838a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

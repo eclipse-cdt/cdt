@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplatePartialSpecialization;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -28,7 +29,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMCPPFieldTemplatePartialSpecialization extends PDOMCPPVariableTemplatePartialSpecialization
-		implements ICPPField {
+		implements ICPPFieldTemplate {
 
 	public PDOMCPPFieldTemplatePartialSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
 			ICPPVariableTemplatePartialSpecialization parSpec, PDOMCPPFieldTemplate pdomPrimary)

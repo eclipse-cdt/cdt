@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "81476b48_8c247a47",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/constexpr/TestBase.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-10T10:59:31Z",
+      "side": 1,
+      "message": "Done\n\nI\u0027ve combined the two cases.",
+      "parentUuid": "34f010a0_b084c431",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "926f388d_6737e680",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 19
@@ -30,6 +48,24 @@
       "writtenOn": "2019-07-06T00:13:15Z",
       "side": 1,
       "message": "Please use the more specific parameter name \"beforeNode\" (taken from the findBindings() function to which we ultimately pass it) rather than \"point\".",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "653690c4_0cb1e131",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 4286,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-10T10:59:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "926f388d_6737e680",
       "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "81908b3f_9263ab2c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 4328,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-10T10:59:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3fb04d60_7175ea2a",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "26d9f89c_e48b4fb5",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
         "patchSetId": 19
@@ -64,6 +118,24 @@
       "writtenOn": "2019-07-06T00:13:15Z",
       "side": 1,
       "message": "ICPPVariable.isConstexpr() checks whether the constexpr keyword was used.\n\nHowever, the wording only requires \"constant expression\", which is also satisfied by a plain \"const\" as long as the initializer is a compile-time constant. For example:\n\n  template \u003c\u003e\n  struct tuple_size\u003cPoint\u003e {\n    static const int value \u003d 2;  // valid\n  };\n\nI believe the check you want is something like field.getInitialValue().isConstantExpression().",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7a72b08_fc3fced4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-10T10:59:31Z",
+      "side": 1,
+      "message": "Done\n\nGood catch! I tried your suggestion, but doesn\u0027t that just check whether the initializer is a constant expression? My test for a non-const static value member failed then because it is initialized by a template non-type parameter, which is a constant expression. I changed the check to ExpressionTypes.isConst() on the variable\u0027s type.",
+      "parentUuid": "26d9f89c_e48b4fb5",
       "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "f8052a2f_f0237547",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 1974,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-10T10:59:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b3598cb2_f6674af7",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eaa10ad2_ad52d509",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
         "patchSetId": 19
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "2ee69dfa_66947e90",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 1997,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-10T10:59:31Z",
+      "side": 1,
+      "message": "While testing GCC\u0027s std::tuple implementation I recognized an issue with resolving the deduced type for any structured binding name beyond the first. In its standard library implementation tuple_element, a variadic class template, is inheriting recursively from itself. In the base \"type\" is aliased. getBindings(), however, will only look at the scope of the resolved class itself.\n\nI added a test case in which \"type\" is inherited from a base class of \"tuple_element\".",
+      "parentUuid": "eaa10ad2_ad52d509",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7d11a905_4b0f9463",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
         "patchSetId": 19
@@ -115,6 +223,24 @@
       "writtenOn": "2019-07-06T00:13:15Z",
       "side": 1,
       "message": "getInitialValue() and numberValue() both need null checks.",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d5dccd02_15e8cdd5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2045,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-10T10:59:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d11a905_4b0f9463",
       "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

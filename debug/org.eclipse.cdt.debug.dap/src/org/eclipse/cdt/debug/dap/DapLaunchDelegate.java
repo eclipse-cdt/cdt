@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.dap;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,10 +25,12 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -82,7 +85,18 @@ public class DapLaunchDelegate extends AbstractCLaunchDelegate2 {
 			builder.setMonitorDebugAdapter(true);
 			builder.setDspParameters(param);
 
-			new DSPLaunchDelegate().launch(builder);
+			DSPLaunchDelegate dspLaunchDelegate = new DSPLaunchDelegate() {
+				@Override
+				protected IDebugTarget createDebugTarget(SubMonitor subMonitor, Runnable cleanup,
+						InputStream inputStream, java.io.OutputStream outputStream, ILaunch launch,
+						Map<String, Object> dspParameters) throws CoreException {
+					DapDebugTarget target = new DapDebugTarget(launch, cleanup, inputStream, outputStream,
+							dspParameters);
+					target.initialize(subMonitor.split(80));
+					return target;
+				}
+			};
+			dspLaunchDelegate.launch(builder);
 		} catch (IOException e) {
 			IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
 			Activator.getDefault().getLog().log(errorStatus);

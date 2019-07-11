@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "33d93c14_3fb5b1ed",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/plugin.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-07-11T00:52:36Z",
+      "side": 1,
+      "message": "I\u0027d prefer leaving new checkers off by default given that we do not have a lot of testing resources and later on it can be enabled by default. But that is not a strong opinion.",
+      "parentUuid": "65b92da1_2afa2f97",
+      "revId": "d671be2539eb35958621c8fd9373c421f025598e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d76b4795_e096a487",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersConstChecker.java",
         "patchSetId": 7

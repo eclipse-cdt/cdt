@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f1938ad_3d81c1b9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/SemanticQueries.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-11T03:42:10Z",
+      "side": 1,
+      "message": "The rules for an assignment operator are slightly different: it actually is allowed to take its parameter by value (see http://eel.is/c++draft/class.copy.assign#1).\n\nNote, it still cannot be a template.",
+      "revId": "f515c4757a3168ad49b724660695fc610eb4d653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

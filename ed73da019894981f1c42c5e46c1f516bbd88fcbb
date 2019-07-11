@@ -142,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "f2772df4_83c4be8e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-11T03:31:58Z",
+      "side": 1,
+      "message": "Good point, we should check that the variable\u0027s type is const, and that its initializer its a constant expression.\n\n(Just the const check is not enough: consider \"static const int value \u003d std::rand();\".)",
+      "parentUuid": "d7a72b08_fc3fced4",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b3598cb2_f6674af7",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
         "patchSetId": 19
@@ -206,6 +224,24 @@
       "side": 1,
       "message": "While testing GCC\u0027s std::tuple implementation I recognized an issue with resolving the deduced type for any structured binding name beyond the first. In its standard library implementation tuple_element, a variadic class template, is inheriting recursively from itself. In the base \"type\" is aliased. getBindings(), however, will only look at the scope of the resolved class itself.\n\nI added a test case in which \"type\" is inherited from a base class of \"tuple_element\".",
       "parentUuid": "eaa10ad2_ad52d509",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad4d1db5_625d8dfc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 1997,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-11T03:31:58Z",
+      "side": 1,
+      "message": "Thanks. Maybe worth a comment, \"use findBindings so we look in base classes as well\".",
+      "parentUuid": "2ee69dfa_66947e90",
       "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7211145_b3b2bb3c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-11T03:31:58Z",
+      "side": 1,
+      "message": "typo: vriable",
+      "revId": "5de84a221a7e382f4a5226cabf900fea6db3f56f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

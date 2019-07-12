@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2c4925b2_fe8b6e3e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTStructuredBindingDeclaration.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-12T09:32:43Z",
+      "side": 1,
+      "message": "Thanks for mentioning it! I\u0027ll have a look at this. Currently, it seems that structured bindings are ignored.",
+      "parentUuid": "e799870a_2c0b4831",
+      "range": {
+        "startLine": 43,
+        "startChar": 17,
+        "endLine": 43,
+        "endChar": 52
+      },
+      "revId": "5de84a221a7e382f4a5226cabf900fea6db3f56f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7211145_b3b2bb3c",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
         "patchSetId": 20
@@ -36,6 +60,24 @@
       "writtenOn": "2019-07-11T03:31:58Z",
       "side": 1,
       "message": "typo: vriable",
+      "revId": "5de84a221a7e382f4a5226cabf900fea6db3f56f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a3c6a0a_dd1e46a4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-12T09:32:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7211145_b3b2bb3c",
       "revId": "5de84a221a7e382f4a5226cabf900fea6db3f56f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

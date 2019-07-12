@@ -160,6 +160,24 @@
     },
     {
       "key": {
+        "uuid": "338719e9_fed30bd0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-12T09:32:43Z",
+      "side": 1,
+      "message": "I actually don\u0027t see an issue regarding this case. This already results in an incomplete evaluation, because the value cannot be determined for a non-constexpr function call. I added a test case.",
+      "parentUuid": "f2772df4_83c4be8e",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b3598cb2_f6674af7",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
         "patchSetId": 19
@@ -242,6 +260,24 @@
       "side": 1,
       "message": "Thanks. Maybe worth a comment, \"use findBindings so we look in base classes as well\".",
       "parentUuid": "2ee69dfa_66947e90",
+      "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c2db384c_17c72a0a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 1997,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-12T09:32:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ad4d1db5_625d8dfc",
       "revId": "ed73da019894981f1c42c5e46c1f516bbd88fcbb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

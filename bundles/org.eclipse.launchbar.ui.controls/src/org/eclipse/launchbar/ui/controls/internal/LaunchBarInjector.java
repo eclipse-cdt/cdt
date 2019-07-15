@@ -38,6 +38,11 @@ public class LaunchBarInjector {
 
 	@Execute
 	void execute() {
+		if (application == null) {
+			// We are running headless, don't need the launch bar here.
+			return;
+		}
+
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		boolean enabled = store.getBoolean(Activator.PREF_ENABLE_LAUNCHBAR);
 		injectIntoAll(enabled);

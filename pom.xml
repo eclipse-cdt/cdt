@@ -21,6 +21,7 @@
 		<cbi-plugins.version>1.1.5</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
+		<simrel-site>https://download.eclipse.org/releases/2019-06</simrel-site>
 		<repo-path>tools/cdt/builds/master/nightly</repo-path>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -299,6 +300,14 @@
 				<doclint>none</doclint>
 			</properties>
 		</profile>
+		<!--
+		   Individual p2 repos can be turned on and off to allow building CDT, or parts of CDT against
+		   different target platforms easily.
+		   For example, you can:
+		    - test CDT against a pre-built CDT by using the cdtRepo profile.
+			- build the standalone rcp debugger against the latest simrel
+			   mvn verify -DuseSimrelRepo -f debug/org.eclipse.cdt.debug.application.product
+		-->
 		<profile>
 			<id>cdtRepo</id>
 			<repositories>
@@ -308,6 +317,50 @@
 					<layout>p2</layout>
 				</repository>
 			</repositories>
+		</profile>
+		<!-- See comment above cdtRepo profile -->
+		<profile>
+			<id>simrelRepo</id>
+			<activation>
+				<property>
+					<name>useSimrelRepo</name>
+				</property>
+			</activation>
+			<repositories>
+				<repository>
+					<id>simrel.repo</id>
+					<url>${simrel-site}</url>
+					<layout>p2</layout>
+				</repository>
+			</repositories>
+		</profile>
+		<!-- See comment above cdtRepo profile -->
+		<profile>
+			<id>defaultCdtTarget</id>
+			<activation>
+				<property>
+					<name>!useSimrelRepo</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<version>${tycho-version}</version>
+						<configuration>
+							<target>
+								<artifact>
+									<groupId>org.eclipse.cdt</groupId>
+									<artifactId>org.eclipse.cdt.target</artifactId>
+									<classifier>${target-platform}</classifier>
+									<version>1.0.0</version>
+								</artifact>
+							</target>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>macosx</id>
@@ -571,14 +624,6 @@
 							<arch>x86_64</arch>
 						</environment>
 					</environments>
-					<target>
-						<artifact>
-							<groupId>org.eclipse.cdt</groupId>
-							<artifactId>org.eclipse.cdt.target</artifactId>
-							<classifier>${target-platform}</classifier>
-							<version>1.0.0</version>
-						</artifact>
-					</target>
 				</configuration>
 			</plugin>
 			<plugin>

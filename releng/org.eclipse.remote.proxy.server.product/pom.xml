@@ -59,8 +59,8 @@
 					<artifactId>maven-antrun-plugin</artifactId>
 					<executions>
 						<execution>
-							<id>deploy</id>
-							<phase>install</phase>
+							<id>copy-built-proxy-servers-to-individual-bundles</id>
+							<phase>package</phase>
 							<goals>
 								<goal>run</goal>
 							</goals>

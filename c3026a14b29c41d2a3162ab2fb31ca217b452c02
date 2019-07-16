@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "42ebbd66_57e4ca5b",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 10
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-07-16T04:02:57Z",
+      "side": 1,
+      "message": "performance",
+      "revId": "c3026a14b29c41d2a3162ab2fb31ca217b452c02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f97be852_390b1b79",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/plugin.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-07-16T04:02:57Z",
+      "side": 1,
+      "message": "was it intentional to put this in CodeSyle and not ProgramminProblems?",
+      "revId": "c3026a14b29c41d2a3162ab2fb31ca217b452c02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ddcde482_93251544",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/AssignmentOperatorChecker.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-07-16T04:02:57Z",
+      "side": 1,
+      "message": "I don\u0027t think tracking the last visited decl is sufficient because of the local class case:\n\nclass Foo\n{\nFoo\u0026 operator\u003d(Foo\u0026 a) {\n\tclass Local\n\t{\n\t\tLocal\u0026 operator\u003d(Local\u0026 a) {\n\t\t}\n\t};\n\treturn *this;\n}\n};\n\nThe outer operator will not get flagged. This is similar to the issue we mentioned for VirtualMethodCallChecker and maybe a similar approach can be used to solve it.",
+      "revId": "c3026a14b29c41d2a3162ab2fb31ca217b452c02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ace41145_1e860c88",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/AssignmentOperatorChecker.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-07-16T04:02:57Z",
+      "side": 1,
+      "message": "I don\u0027t think using the SKIP here is correct. It means only the top level declarations will be visited. For example, this won\u0027t work because it will only visit the \"class Foo\" and not operator\u003d\n\nclass Foo\n{\nFoo\u0026 operator\u003d(Foo\u0026) {\n\treturn *this;\n}\n};",
+      "revId": "c3026a14b29c41d2a3162ab2fb31ca217b452c02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bc09f88d_37215d85",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/AssignmentOperatorChecker.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-07-16T04:02:57Z",
+      "side": 1,
+      "message": "I think maybe reporting on the whole declaration is a bit much? If the implementation of the operator is more than a few lines it can be a bit jarring to have everything underlined. Maybe reporting on the declarator is better?",
+      "revId": "c3026a14b29c41d2a3162ab2fb31ca217b452c02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7d2b69e_7ce7fb26",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/AssignmentOperatorCheckerTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-07-16T04:02:57Z",
+      "side": 1,
+      "message": "Can we add a few more tests for:\n- Inline operator\u003d definition. (problem mentioned in a previous comment)\n- Nested classes\n- Local class  (problem mentioned in a previous comment)\n- Deleted operator\u003d",
+      "revId": "c3026a14b29c41d2a3162ab2fb31ca217b452c02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

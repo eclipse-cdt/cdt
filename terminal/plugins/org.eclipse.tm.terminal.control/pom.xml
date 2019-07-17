@@ -17,7 +17,7 @@
   <parent>
     <groupId>org.eclipse.tm.terminal</groupId>
     <artifactId>org.eclipse.tm.terminal.maven-build</artifactId>
-    <version>4.5.100-SNAPSHOT</version>
+    <version>4.5.102-SNAPSHOT</version>
     <relativePath>../../admin/pom-build.xml</relativePath>
   </parent>
 

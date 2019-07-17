@@ -16,7 +16,7 @@
 <feature
       id="org.eclipse.tm.terminal.control.feature"
       label="%featureName"
-      version="4.5.100.qualifier"
+      version="4.5.102.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.tm.terminal.control"
       license-feature="org.eclipse.license"

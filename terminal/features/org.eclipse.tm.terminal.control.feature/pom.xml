@@ -19,6 +19,7 @@
 		<artifactId>org.eclipse.tm.terminal.features</artifactId>
 		<version>4.5.100-SNAPSHOT</version>
 	</parent>
+	<version>4.5.102-SNAPSHOT</version>
 
 	<artifactId>org.eclipse.tm.terminal.control.feature</artifactId>
 	<packaging>eclipse-feature</packaging>

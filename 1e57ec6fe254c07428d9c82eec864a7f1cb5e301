@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57b5c07d_cfb71bcf",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-07-17T03:39:11Z",
+      "side": 1,
+      "message": "Looks good. Maybe it would be enough to control this with a single property though. -DuseSimrelRepo\nthen\n\t\t\u003cprofile\u003e\n\t\t\t\u003cid\u003esimrelRepo\u003c/id\u003e\n\t\t\t\u003cactivation\u003e\n\t\t\t\t\u003cproperty\u003e\n\t\t\t\t\t\u003cname\u003euseSimrelRepo\u003c/name\u003e\n\t\t\t\t\u003c/property\u003e\n\t\t\t\u003c/activation\u003e\n                    ...\n                     \u003cprofile\u003e\n\t\t\t\u003cid\u003edefaultCdtTarget\u003c/id\u003e\n\t\t\t\u003cactivation\u003e\n\t\t\t\t\u003cproperty\u003e\n\t\t\t\t\t\u003cname\u003e!useSimrelRepo\u003c/name\u003e\n\t\t\t\t\u003c/property\u003e\n\t\t\t\u003c/activation\u003e\n\nUnless you see a situation where both simple and CDT target should be used?",
+      "revId": "1e57ec6fe254c07428d9c82eec864a7f1cb5e301",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

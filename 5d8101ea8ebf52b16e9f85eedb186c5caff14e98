@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "931ce883_0959a818",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersConstChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-17T09:39:46Z",
+      "side": 1,
+      "message": "Slightly shorter:\n\n  if (info.isVirtual \u003d\u003d null) {\n    info.isVirtual \u003d ClassTypeHelper.isVirtual(info.method);\n  }\n  return info.isVirtual;",
+      "revId": "5d8101ea8ebf52b16e9f85eedb186c5caff14e98",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e6ce125_ee6f13d8",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-07-17T14:07:08Z",
+      "side": 1,
+      "message": "Is this the right URL?",
+      "revId": "5c13a72d1c410916aaef3e2bea91c95e8dd6c7bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

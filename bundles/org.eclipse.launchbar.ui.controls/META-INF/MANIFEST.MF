@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Launch Bar UI Controls
 Bundle-SymbolicName: org.eclipse.launchbar.ui.controls;singleton:=true
-Bundle-Version: 1.0.2.qualifier
+Bundle-Version: 1.0.100.qualifier
 Bundle-Activator: org.eclipse.launchbar.ui.controls.internal.Activator
 Bundle-Vendor: Eclipse CDT
 Require-Bundle: org.eclipse.osgi.services;bundle-version="3.5.0",

@@ -84,6 +84,121 @@
       "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c55e4c62_2f35b845",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterOptions.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-07-24T06:33:18Z",
+      "side": 1,
+      "message": "You added new options here but there\u0027s no UI to control them. Please add the UI in order to allow the user to change it.",
+      "range": {
+        "startLine": 304,
+        "startChar": 0,
+        "endLine": 311,
+        "endChar": 73
+      },
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30f43b44_d0024064",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-07-24T06:33:18Z",
+      "side": 1,
+      "message": "ICPPASTStructuredBindingDeclaration is a child class of IASTSimpleDeclaration so the \"else if\" is correctly placed before the \"else if\" of IASTSimpleDeclaration, but in my opinion to have this depedency is not really good. Maybe it would be better to delegate the formatting inside the visit of IASTSimpleDeclaration:\n\nint visit(IASTSimpleDeclaration declaration) {\nif (declaration instanceof ICPPASTStructuredBindingDeclaration)\n   return visit((ICPPASTStructuredBindingDeclaration)declaration);\n.....\n}",
+      "range": {
+        "startLine": 723,
+        "startChar": 0,
+        "endLine": 724,
+        "endChar": 61
+      },
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ef804ce_a2a38171",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 1949,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-07-24T06:33:18Z",
+      "side": 1,
+      "message": "Usually this code fails with an exception if we are inside a macro. Maybe it\u0027s better to use peekNextToken to verify if the token is what we expect. A test should be added to cover this case.",
+      "range": {
+        "startLine": 1949,
+        "startChar": 2,
+        "endLine": 1949,
+        "endChar": 111
+      },
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a7da76e_e16850d6",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 3676,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-07-24T06:33:18Z",
+      "side": 1,
+      "message": "I guess you modified this code to take into account an inline declaration using structured binding inside a range for loop, (am I right?) but I can\u0027t see a test covering this case. In addition I think it\u0027s possible to use this syntax in C++17 even in \"if\" and \"switch\" initializer.",
+      "range": {
+        "startLine": 3676,
+        "startChar": 3,
+        "endLine": 3676,
+        "endChar": 40
+      },
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "86395d8a_7b7f9799",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 4423,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-07-24T06:33:18Z",
+      "side": 1,
+      "message": "As I said in my previous comments, we should add more tests here to cover: macro usage, \"if\"/\"switch\"/\"for\" inline initializer.",
+      "range": {
+        "startLine": 4421,
+        "startChar": 0,
+        "endLine": 4423,
+        "endChar": 2
+      },
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

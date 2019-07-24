@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0d0348b_e22c1035",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPImplicitVariable.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-24T05:35:24Z",
+      "side": 1,
+      "message": "We probably want to override getInitialValue() as well, to return initializerEvaluation.getValue().\n\nThere are other things we may need to override, like isConstexpr(), but we can do that on an as-needed basis.",
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c1c717f9_2bbc535e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPImplicitVariable.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-24T05:35:24Z",
+      "side": 1,
+      "message": "Evaluations already cache their type, so we can omit this and return initializerEvaluation.getType() from getType().",
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5695e915_fded0ced",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-24T05:35:24Z",
+      "side": 1,
+      "message": "The parameter type can remain the interface type here.",
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96f516db_08bf930f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-24T05:35:24Z",
+      "side": 1,
+      "message": "If we\u0027d like to cache the evaluation strategy too, we can do it as follows:\n\n* Add a class CPPStructuredBindingComposite deriving from CPPImplicitVariable\n* Give it a field of type IStructuredBindingNameEvaluationStrategy, and a getter for it\n* The strategy could either be computed in the constructor, or on the first call of the getter\n* Here, we cast the CPPImplicitVariable to CPPStructuredBindingComposite and query the cached strategy\n\n(Alternatively, we could avoid the extra class by renaming CPPImplicitVariable and putting the new method directly there. However, I think having a generic CPPImplicitVariable class is useful for future evolution.)",
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c754da18_7628609e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-24T05:35:24Z",
+      "side": 1,
+      "message": "Likewise, this method can return the interface type.",
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

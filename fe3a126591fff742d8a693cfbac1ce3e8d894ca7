@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ac96c5b0_f2eced5f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPImplicitVariable.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-24T13:23:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e0d0348b_e22c1035",
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c1c717f9_2bbc535e",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPImplicitVariable.java",
         "patchSetId": 22
@@ -30,6 +48,24 @@
       "writtenOn": "2019-07-24T05:35:24Z",
       "side": 1,
       "message": "Evaluations already cache their type, so we can omit this and return initializerEvaluation.getType() from getType().",
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bff9271d_3a97b3ce",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPImplicitVariable.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-24T13:23:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c1c717f9_2bbc535e",
       "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "42c0f9a5_980eac8a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-24T13:23:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5695e915_fded0ced",
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "96f516db_08bf930f",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
         "patchSetId": 22
@@ -64,6 +118,24 @@
       "writtenOn": "2019-07-24T05:35:24Z",
       "side": 1,
       "message": "If we\u0027d like to cache the evaluation strategy too, we can do it as follows:\n\n* Add a class CPPStructuredBindingComposite deriving from CPPImplicitVariable\n* Give it a field of type IStructuredBindingNameEvaluationStrategy, and a getter for it\n* The strategy could either be computed in the constructor, or on the first call of the getter\n* Here, we cast the CPPImplicitVariable to CPPStructuredBindingComposite and query the cached strategy\n\n(Alternatively, we could avoid the extra class by renaming CPPImplicitVariable and putting the new method directly there. However, I think having a generic CPPImplicitVariable class is useful for future evolution.)",
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d3e24a0f_fb8c0d41",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-24T13:23:27Z",
+      "side": 1,
+      "message": "Done\n\nI\u0027ve added the subclass CPPStructuredBindingComposite. Is there any (current or upcoming) C++ feature that will benefit from a CPPImplicitVariable?\n\nI removed the IStructuredBindingNameEvaluationStrategy interface and transformed it into an abstract class local to CPPStructuredBindingComposite, because we cannot have local interfaces. I moved the evaluation for individual names of a structured binding to CPPStructuredBindingComposite.\nThe strategy is initialized lazily.",
+      "parentUuid": "96f516db_08bf930f",
       "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "efb1f629_3fa5e2ac",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-24T13:23:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c754da18_7628609e",
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c55e4c62_2f35b845",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterOptions.java",
         "patchSetId": 22
@@ -98,6 +188,30 @@
       "writtenOn": "2019-07-24T06:33:18Z",
       "side": 1,
       "message": "You added new options here but there\u0027s no UI to control them. Please add the UI in order to allow the user to change it.",
+      "range": {
+        "startLine": 304,
+        "startChar": 0,
+        "endLine": 311,
+        "endChar": 73
+      },
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c7cffb4_f7681273",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/formatter/DefaultCodeFormatterOptions.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-24T13:23:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c55e4c62_2f35b845",
       "range": {
         "startLine": 304,
         "startChar": 0,
@@ -133,6 +247,30 @@
     },
     {
       "key": {
+        "uuid": "2b88050e_3cd76d25",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-24T13:23:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "30f43b44_d0024064",
+      "range": {
+        "startLine": 723,
+        "startChar": 0,
+        "endLine": 724,
+        "endChar": 61
+      },
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ef804ce_a2a38171",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
         "patchSetId": 22
@@ -144,6 +282,30 @@
       "writtenOn": "2019-07-24T06:33:18Z",
       "side": 1,
       "message": "Usually this code fails with an exception if we are inside a macro. Maybe it\u0027s better to use peekNextToken to verify if the token is what we expect. A test should be added to cover this case.",
+      "range": {
+        "startLine": 1949,
+        "startChar": 2,
+        "endLine": 1949,
+        "endChar": 111
+      },
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3773d281_51120889",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 1949,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-24T13:23:27Z",
+      "side": 1,
+      "message": "Done\n\nI changed the approach slightly. As I did not recognize that I could use formatList() to format the whole list including the brackets, I delegate it to this function now. I also added formatting for the ref-qualifier, which had been missing before. This part uses your suggested lookahead approach.\n\nI added a test case that includes function-like macros for two basic cases.",
+      "parentUuid": "8ef804ce_a2a38171",
       "range": {
         "startLine": 1949,
         "startChar": 2,
@@ -179,6 +341,30 @@
     },
     {
       "key": {
+        "uuid": "403fdcf1_9ea64dbc",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/CodeFormatterVisitor.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 3676,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-24T13:23:27Z",
+      "side": 1,
+      "message": "Yes, it seems like I modified the test case that was supposed to test this. I separated it and added cases for \"switch\", \"if\" and \"for\" statements.",
+      "parentUuid": "0a7da76e_e16850d6",
+      "range": {
+        "startLine": 3676,
+        "startChar": 3,
+        "endLine": 3676,
+        "endChar": 40
+      },
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "86395d8a_7b7f9799",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
         "patchSetId": 22
@@ -190,6 +376,30 @@
       "writtenOn": "2019-07-24T06:33:18Z",
       "side": 1,
       "message": "As I said in my previous comments, we should add more tests here to cover: macro usage, \"if\"/\"switch\"/\"for\" inline initializer.",
+      "range": {
+        "startLine": 4421,
+        "startChar": 0,
+        "endLine": 4423,
+        "endChar": 2
+      },
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aac2090_c819c030",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/CodeFormatterTest.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 4423,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2019-07-24T13:23:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "86395d8a_7b7f9799",
       "range": {
         "startLine": 4421,
         "startChar": 0,

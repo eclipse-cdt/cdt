@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * A launch configuration tab that displays and edits program arguments,
  * and working directory launch configuration attributes.
+ * @since 9.3
  */
 public abstract class CAbstractArgumentsTab extends CLaunchConfigurationTab {
 	// Program arguments UI widgets

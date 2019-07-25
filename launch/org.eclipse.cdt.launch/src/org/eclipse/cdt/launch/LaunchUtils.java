@@ -117,6 +117,7 @@ public class LaunchUtils {
 	 * @param configuration Launch configuration to obtain paths from
 	 * @return the program path
 	 * @throws CoreException if program path can not be resolved.
+	 * @since 9.3
 	 */
 	public static String getProgramPath(ILaunchConfiguration configuration) throws CoreException {
 		return resolveProgramPath(configuration, null);
@@ -129,6 +130,7 @@ public class LaunchUtils {
 	 * @param programName Optional (can be null) starting point for program name
 	 * @return the program path
 	 * @throws CoreException if program path can not be resolved.
+	 * @since 9.3
 	 */
 	public static String resolveProgramPath(ILaunchConfiguration configuration, String programName)
 			throws CoreException {
@@ -170,6 +172,7 @@ public class LaunchUtils {
 	 * @param configuration Launch configuration to obtain project from
 	 * @return the project
 	 * @throws CoreException
+	 * @since 9.3
 	 */
 	public static IProject getProject(ILaunchConfiguration configuration) throws CoreException {
 		String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
@@ -256,7 +259,6 @@ public class LaunchUtils {
 	/**
 	 * @since 6.1
 	 */
-	@SuppressWarnings("unchecked")
 	public static void enableActivity(final String activityID, final boolean enableit) {
 		if (PlatformUI.isWorkbenchRunning()) {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -264,7 +266,7 @@ public class LaunchUtils {
 				public void run() {
 					IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
 					IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
-					Set<String> enabledActivityIds = new HashSet<String>(activityManager.getEnabledActivityIds());
+					Set<String> enabledActivityIds = new HashSet<>(activityManager.getEnabledActivityIds());
 					boolean changed = false;
 					if (enableit)
 						changed = enabledActivityIds.add(activityID);

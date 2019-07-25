@@ -68,6 +68,9 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 		targetManager.addListener(this);
 	}
 
+	/**
+	 * @since 8.4
+	 */
 	public void dispose() {
 		targetManager.removeListener(this);
 	}

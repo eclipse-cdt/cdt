@@ -12,6 +12,9 @@ package org.eclipse.cdt.launch;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * @since 9.3
+ */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.launch.messages"; //$NON-NLS-1$
 	public static String LaunchUtils__0_not_found;

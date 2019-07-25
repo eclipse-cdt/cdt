@@ -33,6 +33,8 @@ import org.eclipse.core.runtime.PlatformObject;
  *
  * TODO leaving most of the implementation as default. I don't think any of these methods get called when
  * we're in this error state but we'll keep an eye open for NPE's and bad behavior.
+ *
+ * @since 6.9
  */
 public class ErrorBuildConfiguration extends PlatformObject implements ICBuildConfiguration, ICBuildConfiguration2 {
 

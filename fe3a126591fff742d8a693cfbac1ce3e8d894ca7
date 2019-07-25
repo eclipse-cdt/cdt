@@ -142,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "8a0fce32_cebb69fb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-07-25T01:58:20Z",
+      "side": 1,
+      "message": "\u003e Is there any\n \u003e (current or upcoming) C++ feature that will benefit from a\n \u003e CPPImplicitVariable?\n\nFor example, the standard says that a range-based for loop\n\n  for (init-statement range-declaration : range-initializer) statement\n\nnotionally expands to:\n\n  {\n    init-statement\n    auto\u0026\u0026 __range \u003d range-initializer;\n    auto __begin \u003d begin(__range);\n    auto __end \u003d end(__range);\n    for ( ; __begin !\u003d __end; ++__begin) {\n      range-declaration \u003d *__begin;\n      statement\n    }\n  }\n\nFor correct constexpr evaluation of a range-based for loop (especially in cases where begin() and end() are found by argument-dependent lookup after instantiation, which we don\u0027t currently handle), it may be useful for model this expansion with CPPImplicitVariables for __range, __begin, and __end, from which we create ExecDeclarators etc.)",
+      "parentUuid": "d3e24a0f_fb8c0d41",
+      "revId": "fe3a126591fff742d8a693cfbac1ce3e8d894ca7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c754da18_7628609e",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPVariable.java",
         "patchSetId": 22

@@ -106,6 +106,8 @@ public class DefinitionFinder {
 			IIndexFile indexFile = name.getFile();
 			if (contextTu.getASTFileSet().contains(indexFile) || contextTu.getIndexFileSet().contains(indexFile)) {
 				ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(indexFile.getLocation(), null);
+				if (tu == null)
+					return null;
 				if (searchedFiles.add(tu.getLocation().toOSString())) {
 					findDefinitionsInTranslationUnit(indexBinding, tu, context, definitions, pm);
 					if (definitions.size() > 1)
@@ -263,11 +265,13 @@ public class DefinitionFinder {
 		IASTName classDefintionName = getDefinition(classBinding, contextTu, context, pm);
 		if (classDefintionName == null) {
 			/*
-			 * We didn't find the class definition, check again the template definition then
+			 * We didn't find the class definition, check again the template definition then if
 			 * it was a template instance.
 			 */
 			if (classBinding instanceof ICPPTemplateInstance)
 				classBinding = ((ICPPTemplateInstance) classBinding).getTemplateDefinition();
+			else
+				return null;
 			classDefintionName = getDefinition(classBinding, contextTu, context, pm);
 			if (classDefintionName == null)
 				return null;

@@ -16,10 +16,13 @@ package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
+import org.eclipse.cdt.codan.internal.checkers.CommentChecker;
+import org.eclipse.cdt.codan.internal.checkers.ReturnStyleChecker;
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
 public class QuickFixSuppressProblemTest extends QuickFixTestCase {
+
 	@SuppressWarnings("restriction")
 	@Override
 	protected AbstractCodanCMarkerResolution createQuickFix() {
@@ -64,6 +67,17 @@ public class QuickFixSuppressProblemTest extends QuickFixTestCase {
 		loadcode(getAboveComment(), false);
 		String result = runQuickFixOneFile();
 		assertContainedIn("int func() { } // @suppress(\"No return\")", result);
+	}
+
+	//int main() {
+	//	return 0; //Line
+	//}
+	public void testMultipleSuppress_549466() throws Exception {
+		enableProblems(ReturnStyleChecker.ERR_ID, CommentChecker.COMMENT_NO_LINE);
+		loadcode(getAboveComment(), false);
+		String result = runQuickFixOneFile();
+		assertContainedIn("return 0; //Line // @suppress(\"Return with parenthesis\") // @suppress(\"Line comments\")",
+				result);
 	}
 
 	//int func() { }

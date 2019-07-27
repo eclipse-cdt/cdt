@@ -38,7 +38,7 @@ import org.eclipse.ui.IMarkerResolutionGenerator;
 public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionGenerator {
 	private static final String EXTENSION_POINT_NAME = "codanMarkerResolution"; //$NON-NLS-1$
 	private static final Map<String, Collection<ConditionalResolution>> conditionalResolutions = new HashMap<>();
-	private static final List<IMarkerResolution> universalResolutions = new ArrayList<>();
+	private static final List<IConfigurationElement> universalResolutions = new ArrayList<>();
 	private static boolean resolutionsLoaded;
 
 	static class ConditionalResolution {
@@ -123,7 +123,7 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 					.forEach(resolutions::add);
 		}
 
-		universalResolutions.stream().filter(
+		universalResolutions.stream().map(e -> instantiateResolution(e)).filter(
 				res -> !(res instanceof ICodanMarkerResolution) || ((ICodanMarkerResolution) res).isApplicable(marker))
 				.forEach(resolutions::add);
 
@@ -175,7 +175,7 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 			}
 			addResolution(id, candidate);
 		} else if (elementName.equals("universalResolution")) { //$NON-NLS-1$
-			universalResolutions.add(instantiateResolution(configurationElement));
+			universalResolutions.add(configurationElement);
 		}
 	}
 

@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 
 public class ReturnStyleChecker extends AbstractIndexAstChecker {
-	public final String ERR_ID = "org.eclipse.cdt.codan.internal.checkers.ReturnStyleProblem"; //$NON-NLS-1$
+	public static final String ERR_ID = "org.eclipse.cdt.codan.internal.checkers.ReturnStyleProblem"; //$NON-NLS-1$
 
 	@Override
 	public boolean runInEditor() {

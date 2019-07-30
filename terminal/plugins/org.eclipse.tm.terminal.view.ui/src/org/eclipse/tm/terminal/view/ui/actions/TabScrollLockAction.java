@@ -56,5 +56,7 @@ public class TabScrollLockAction extends AbstractTerminalAction {
 	@Override
 	public void updateAction(boolean aboutToShow) {
 		setEnabled(aboutToShow && getTarget() != null && getTarget().getState() == TerminalState.CONNECTED);
+		setChecked(getTarget() != null && getTarget().isScrollLock());
 	}
+
 }

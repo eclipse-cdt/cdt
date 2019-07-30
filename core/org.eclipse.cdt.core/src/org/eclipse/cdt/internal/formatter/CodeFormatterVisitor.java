@@ -1056,21 +1056,29 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				preferences.alignment_for_lambda_expression, Alignment.R_INNERMOST, 1, getCurrentPosition());
 		scribe.enterAlignment(alignment);
 
-		// Body
-		if (bodyStmt instanceof IASTCompoundStatement) {
-			if (enterNode(bodyStmt)) {
-				if (getCurrentPosition() <= nodeOffset(bodyStmt)) {
-					formatLeftCurlyBrace(line, preferences.brace_position_for_method_declaration);
+		boolean ok = false;
+		do {
+			try {
+				// Body
+				if (bodyStmt instanceof IASTCompoundStatement) {
+					if (enterNode(bodyStmt)) {
+						if (getCurrentPosition() <= nodeOffset(bodyStmt)) {
+							formatLeftCurlyBrace(line, preferences.brace_position_for_method_declaration);
+						}
+						formatBlock((IASTCompoundStatement) bodyStmt, preferences.brace_position_for_method_declaration,
+								preferences.insert_space_before_opening_brace_in_method_declaration,
+								preferences.indent_statements_compare_to_body);
+						exitNode(bodyStmt);
+					}
+				} else if (bodyStmt != null) {
+					bodyStmt.accept(this);
 				}
-				formatBlock((IASTCompoundStatement) bodyStmt, preferences.brace_position_for_method_declaration,
-						preferences.insert_space_before_opening_brace_in_method_declaration,
-						preferences.indent_statements_compare_to_body);
-				exitNode(bodyStmt);
+				scribe.printTrailingComment();
+				ok = true;
+			} catch (AlignmentException e) {
+				scribe.redoAlignment(e);
 			}
-		} else if (bodyStmt != null) {
-			bodyStmt.accept(this);
-		}
-		scribe.printTrailingComment();
+		} while (!ok);
 
 		// go back to the previous alignment again:
 		scribe.exitAlignment(alignment, true);

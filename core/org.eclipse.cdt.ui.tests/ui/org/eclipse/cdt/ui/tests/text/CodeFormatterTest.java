@@ -4460,4 +4460,61 @@ public class CodeFormatterTest extends BaseUITestCase {
 				DefaultCodeFormatterConstants.NEXT_LINE);
 		assertFormatterResult();
 	}
+
+	//bool thisIsMyVeeeeeeeeeeeeeeeeeryLongMethod() {
+	//	return true;
+	//}
+	//
+	//bool thisIsMyVeryLong2() {
+	//	return false;
+	//}
+	//
+	//template<typename T>
+	//void myMethod(T &&a, int c) {
+	//
+	//}
+	//int main() {
+	//	myMethod([]() {
+	//				int i = 0;
+	//				for (i = 0; i < 15; ++i) {
+	//					if (thisIsMyVeeeeeeeeeeeeeeeeeryLongMethod() && thisIsMyVeryLong2()) {
+	//						return 2;
+	//					} else {
+	//						return 1;
+	//					}
+	//				}
+	//	}, 15);
+	//	return 0;
+	//}
+
+	//bool thisIsMyVeeeeeeeeeeeeeeeeeryLongMethod() {
+	//	return true;
+	//}
+	//
+	//bool thisIsMyVeryLong2() {
+	//	return false;
+	//}
+	//
+	//template<typename T>
+	//void myMethod(T &&a, int c) {
+	//
+	//}
+	//int main() {
+	//	myMethod(
+	//			[]() {
+	//				int i = 0;
+	//				for (i = 0; i < 15; ++i) {
+	//					if (thisIsMyVeeeeeeeeeeeeeeeeeryLongMethod()
+	//							&& thisIsMyVeryLong2()) {
+	//						return 2;
+	//					} else {
+	//						return 1;
+	//					}
+	//				}
+	//			}, 15);
+	//	return 0;
+	//}
+	public void testWrappingLambdaExpression_Bug549653() throws Exception {
+		assertFormatterResult();
+	}
 }

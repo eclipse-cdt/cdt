@@ -187,6 +187,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -2152,11 +2153,11 @@ public class CPPVisitor extends ASTQueries {
 			if (initClause instanceof IASTEqualsInitializer) {
 				initClause = ((IASTEqualsInitializer) initClause).getInitializerClause();
 				if (initClause instanceof IASTLiteralExpression && SemanticUtil.isConst(type)) {
-					IType t = SemanticUtil.getNestedType(type, TDEF | ALLCVQ);
-					if (t instanceof CPPBasicType) {
-						IValue v = SemanticUtil.getValueOfInitializer(declarator.getInitializer(), t);
-						if (v.numberValue() != null)
-							((CPPBasicType) t).setAssociatedNumericalValue(v.numberValue().longValue());
+					// The check here avoids performing the computation in getValueOfInitialize()
+					// in cases where we wouldn't use it anyways because we don't have a CPPBasicType.
+					if (SemanticUtil.getNestedType(type, TDEF | ALLCVQ) instanceof CPPBasicType) {
+						type = associateTypeWithValue(type,
+								SemanticUtil.getValueOfInitializer(declarator.getInitializer(), type));
 					}
 				}
 			}
@@ -2178,6 +2179,42 @@ public class CPPVisitor extends ASTQueries {
 		} finally {
 			CPPSemantics.popLookupPoint();
 		}
+	}
+
+	/**
+	 * Returns an IType representing the same type as the argument, but
+	 * which also knows its value.
+	 *
+	 * This only has an effect for built-in types (modulo cv-qualification
+	 * and typedefs), and in cases where the a concrete numerical value
+	 * is known.
+	 *
+	 * The returned IType object may be different from the argument.
+	 */
+	public static IType associateTypeWithValue(IType type, IValue value) {
+		Number numberValue = value.numberValue();
+		if (numberValue != null) {
+			return associateTypeWithValue(type, numberValue.longValue());
+		}
+		return type;
+	}
+
+	private static IType associateTypeWithValue(IType type, long value) {
+		if (type instanceof ITypeContainer) {
+			ITypeContainer typeContainer = (ITypeContainer) type;
+			IType oldInner = typeContainer.getType();
+			IType newInner = associateTypeWithValue(oldInner, value);
+			if (oldInner != newInner) {
+				ITypeContainer clone = (ITypeContainer) typeContainer.clone();
+				clone.setType(newInner);
+				return clone;
+			}
+		} else if (type instanceof CPPBasicType) {
+			CPPBasicType clone = ((CPPBasicType) type).clone();
+			clone.setAssociatedNumericalValue(value);
+			return clone;
+		}
+		return type;
 	}
 
 	private static IType createAutoParameterType(IASTDeclSpecifier declSpec, IASTDeclarator declarator,

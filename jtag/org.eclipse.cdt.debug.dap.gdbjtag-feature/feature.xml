@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.cdt.debug.dap"
+      id="org.eclipse.cdt.debug.dap.gdbjtag"
       label="%featureName"
       version="9.9.0.qualifier"
       provider-name="%providerName"
@@ -44,12 +44,14 @@
       <import plugin="org.eclipse.lsp4j.jsonrpc.debug"/>
       <import plugin="com.google.guava"/>
       <import plugin="org.eclipse.xtext.xbase.lib"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.cdt.dsf.gdb" version="5.7.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.cdt.debug.dap"/>
+      <import plugin="org.eclipse.cdt.debug.gdbjtag.ui" version="8.1.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.cdt.debug.gdbjtag.core"/>
+      <import plugin="org.eclipse.core.variables" version="3.4.600" match="greaterOrEqual"/>
    </requires>
 
    <plugin
-         id="org.eclipse.cdt.debug.dap"
+         id="org.eclipse.cdt.debug.dap.gdbjtag"
          download-size="0"
          install-size="0"
          version="0.0.0"

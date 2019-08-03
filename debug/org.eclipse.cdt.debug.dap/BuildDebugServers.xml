@@ -2,6 +2,10 @@
 <project default="BuildDebugServers">
 	<!-- Wrap running yarn in an ant task so that we don't have to specify absolute path to yarn in external tool builder. -->
 	<target name="BuildDebugServers" description="Build the Node Debug Servers with yarn">
+		<exec executable="yarn" dir="./debug-servers" failifexecutionfails="true">
+			<arg value="upgrade"/>
+			<arg value="cdt-gdb-adapter"/>
+		</exec>
 		<exec executable="yarn" dir="./debug-servers" failifexecutionfails="true" />
 	</target>
 </project>

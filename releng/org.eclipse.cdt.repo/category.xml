@@ -131,6 +131,12 @@
    <feature url="features/org.eclipse.cdt.debug.dap.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.dap.source" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.debug.dap.gdbjtag_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.dap.gdbjtag" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.debug.dap.gdbjtag.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.dap.gdbjtag.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.debug.standalone_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.standalone" version="0.0.0">
       <category name="extra"/>
    </feature>

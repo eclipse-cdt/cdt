@@ -8,13 +8,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.debug.dap;
+package org.eclipse.cdt.debug.dap.gdbjtag.tabs;
 
-import org.eclipse.cdt.launch.ui.CAbstractArgumentsTab;
+import org.eclipse.cdt.launch.ui.CMainTab2;
 
-public class CArgumentsTab extends CAbstractArgumentsTab {
+public class CMainTab extends CMainTab2 {
 	@Override
 	public String getId() {
-		return "org.eclipse.cdt.debug.dap.argumentsTab"; //$NON-NLS-1$
+		return "org.eclipse.cdt.debug.dap.gdbjtag.mainTab"; //$NON-NLS-1$
 	}
 }

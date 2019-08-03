@@ -1,9 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
-Bundle-SymbolicName: org.eclipse.cdt.debug.dap;singleton:=true
+Bundle-Vendor: %Bundle-Vendor
+Bundle-SymbolicName: org.eclipse.cdt.debug.dap.gdbjtag;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Activator: org.eclipse.cdt.debug.dap.gdbjtag.Activator
 Require-Bundle: org.apache.commons.io,
  org.eclipse.core.runtime,
  org.eclipse.lsp4e;bundle-version="0.11.0",
@@ -28,12 +29,10 @@ Require-Bundle: org.apache.commons.io,
  org.eclipse.lsp4j.jsonrpc.debug,
  com.google.guava,
  org.eclipse.xtext.xbase.lib,
- org.eclipse.cdt.dsf.gdb;bundle-version="5.7.200"
-Bundle-Vendor: %Bundle-Vendor
-Export-Package: org.eclipse.cdt.debug.dap
-Bundle-Activator: org.eclipse.cdt.debug.dap.Activator
+ org.eclipse.cdt.debug.dap,
+ org.eclipse.cdt.debug.gdbjtag.ui;bundle-version="8.1.1",
+ org.eclipse.cdt.debug.gdbjtag.core,
+ org.eclipse.core.variables;bundle-version="3.4.600"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.cdt.debug.dap.gdbjtag
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.ui.editors.text,
- org.eclipse.ui.texteditor
-Automatic-Module-Name: org.eclipse.cdt.debug.dap
-Eclipse-BundleShape: dir

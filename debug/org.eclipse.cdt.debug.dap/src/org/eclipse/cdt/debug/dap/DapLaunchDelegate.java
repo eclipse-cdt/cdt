@@ -42,13 +42,17 @@ import org.eclipse.swt.widgets.Display;
 
 public class DapLaunchDelegate extends AbstractCLaunchDelegate2 {
 
-	private static final String DEBUG_ADAPTER_JS = "/debug-servers/node_modules/cdt-gdb-adapter/dist/debugAdapter.js"; //$NON-NLS-1$
-	// see https://github.com/eclipse-cdt/cdt-gdb-adapter/blob/73a31934d169555a338f53512b4994c017f67a1a/src/GDBDebugSession.ts#L22
-	private static final String GDB = "gdb"; //$NON-NLS-1$
-	private static final String PROGRAM = "program"; //$NON-NLS-1$
-	private static final String ARGUMENTS = "arguments"; //$NON-NLS-1$
-	private static final String VERBOSE = "verbose"; //$NON-NLS-1$
-	private static final String LOG_FILE = "logFile"; //$NON-NLS-1$
+	private static final String DEBUG_ADAPTER_ROOT = "/debug-servers/node_modules/cdt-gdb-adapter/dist/"; //$NON-NLS-1$
+	private static final String DEBUG_ADAPTER_JS = "debugAdapter.js"; //$NON-NLS-1$
+	private static final String DEBUG_TARGET_ADAPTER_JS = "debugTargetAdapter.js"; //$NON-NLS-1$
+	// https://github.com/eclipse-cdt/cdt-gdb-adapter/blob/eccf6bbb091aedd855adf0eaa1b28d341d8405d5/src/GDBDebugSession.ts#L22
+	public static final String GDB = "gdb"; //$NON-NLS-1$
+	public static final String PROGRAM = "program"; //$NON-NLS-1$
+	public static final String ARGUMENTS = "arguments"; //$NON-NLS-1$
+	public static final String VERBOSE = "verbose"; //$NON-NLS-1$
+	public static final String LOG_FILE = "logFile"; //$NON-NLS-1$
+	public static final String INIT_COMMANDS = "initCommands"; //$NON-NLS-1$
+
 	private InitializeLaunchConfigurations initializeLaunchConfigurations = new InitializeLaunchConfigurations(
 			this::warnNodeJSMissing);
 
@@ -64,16 +68,26 @@ public class DapLaunchDelegate extends AbstractCLaunchDelegate2 {
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
 		// user settings
-		Map<String, Object> param = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 
-		param.put(PROGRAM, LaunchUtils.getProgramPath(configuration));
-		param.put(ARGUMENTS, LaunchUtils.getProgramArguments(configuration));
+		// To support transitioning from DSF to DAP we support the IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME
+		// which is part of DSF but really is a generic setting
+		params.put(GDB, org.eclipse.cdt.dsf.gdb.launching.LaunchUtils.getGDBPath(configuration).toOSString());
+		params.put(PROGRAM, LaunchUtils.getProgramPath(configuration));
+		params.put(ARGUMENTS, LaunchUtils.getProgramArguments(configuration));
+		// Explicitly default to launch -- this is the default encoded in DSPDebugTarget.initialize()
+		params.put("request", "launch"); //$NON-NLS-1$//$NON-NLS-2$
+		launch(configuration, mode, launch, monitor, false, params);
+	}
 
+	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor,
+			boolean targetDebugAdapter, Map<String, Object> params) throws CoreException {
+		String debugAdapterJs = DEBUG_ADAPTER_ROOT + (targetDebugAdapter ? DEBUG_TARGET_ADAPTER_JS : DEBUG_ADAPTER_JS);
 		try {
-			URL fileURL = FileLocator.toFileURL(getClass().getResource(DEBUG_ADAPTER_JS));
+			URL fileURL = FileLocator.toFileURL(Activator.getDefault().getClass().getResource(debugAdapterJs));
 			if (fileURL == null) {
-				throw new IOException(Messages.DapLaunchDelegate_missing_debugAdapter_script + Activator.PLUGIN_ID
-						+ DEBUG_ADAPTER_JS);
+				throw new IOException(
+						Messages.DapLaunchDelegate_missing_debugAdapter_script + Activator.PLUGIN_ID + debugAdapterJs);
 			}
 			String path = fileURL.getPath();
 			List<String> debugCmdArgs = Collections.singletonList(path);
@@ -83,7 +97,7 @@ public class DapLaunchDelegate extends AbstractCLaunchDelegate2 {
 			builder.setLaunchDebugAdapter(initializeLaunchConfigurations.getNodeJsLocation()
 					.orElseThrow(() -> new IOException("Cannot find node runtime")), debugCmdArgs); //$NON-NLS-1$
 			builder.setMonitorDebugAdapter(true);
-			builder.setDspParameters(param);
+			builder.setDspParameters(params);
 
 			DSPLaunchDelegate dspLaunchDelegate = new DSPLaunchDelegate() {
 				@Override
@@ -100,7 +114,10 @@ public class DapLaunchDelegate extends AbstractCLaunchDelegate2 {
 		} catch (IOException e) {
 			IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
 			Activator.getDefault().getLog().log(errorStatus);
-			ErrorDialog.openError(Display.getDefault().getActiveShell(), "Debug error", e.getMessage(), errorStatus); //$NON-NLS-1$
+			Display.getDefault().asyncExec(() -> {
+				ErrorDialog.openError(Display.getDefault().getActiveShell(), "Debug error", e.getMessage(), //$NON-NLS-1$
+						errorStatus);
+			});
 		}
 	}
 

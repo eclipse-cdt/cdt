@@ -135,6 +135,8 @@
 
 		<module>debug/org.eclipse.cdt.debug.dap</module>
 		<module>debug/org.eclipse.cdt.debug.dap-feature</module>
+		<module>jtag/org.eclipse.cdt.debug.dap.gdbjtag</module>
+		<module>jtag/org.eclipse.cdt.debug.dap.gdbjtag-feature</module>
 
 		<module>debug/org.eclipse.cdt.gdb</module>
 		<module>debug/org.eclipse.cdt.gdb.ui</module>

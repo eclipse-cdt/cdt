@@ -36,13 +36,13 @@
             id="org.eclipse.cdt.debug.dap.localApplicationLaunch.mainTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.main.name"
-            class="org.eclipse.cdt.debug.dap.CMainTab">
+            class="org.eclipse.cdt.debug.dap.tabs.CMainTab">
         <associatedDelegate delegate="org.eclipse.cdt.debug.dap.localCLaunch"/>
       </tab>
       <tab id="org.eclipse.cdt.debug.dap.localApplicationLaunch.argumentsTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.arguments.name"
-            class="org.eclipse.cdt.debug.dap.CArgumentsTab">
+            class="org.eclipse.cdt.debug.dap.tabs.CArgumentsTab">
         <associatedDelegate delegate="org.eclipse.cdt.debug.dap.localCLaunch"/>
         <placement after="org.eclipse.cdt.debug.dap.mainTab"/>
       </tab>

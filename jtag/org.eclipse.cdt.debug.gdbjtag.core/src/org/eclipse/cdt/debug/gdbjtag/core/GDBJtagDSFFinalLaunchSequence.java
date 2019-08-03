@@ -342,7 +342,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 
 				if (symbolsFileName == null) {
 					rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1,
-							Messages.getString("GDBJtagDebugger.err_no_img_file"), null)); //$NON-NLS-1$
+							Messages.getString("GDBJtagDebugger.err_no_sym_file"), null)); //$NON-NLS-1$
 					rm.done();
 					return;
 				}

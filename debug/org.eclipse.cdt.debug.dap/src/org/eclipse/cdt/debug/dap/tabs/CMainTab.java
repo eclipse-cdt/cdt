@@ -8,7 +8,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.debug.dap;
+package org.eclipse.cdt.debug.dap.tabs;
 
 import org.eclipse.cdt.launch.ui.CMainTab2;
 

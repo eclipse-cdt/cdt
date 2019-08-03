@@ -118,12 +118,16 @@
             class="org.eclipse.cdt.dsf.gdb.internal.launching.GdbRemoteLaunchDescriptorType"
             id="org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType"
             priority="10">
+           <enablement>
+           </enablement>
       </descriptorType>
       <configProvider
             class="org.eclipse.cdt.dsf.gdb.internal.launching.GdbRemoteLaunchConfigProvider"
             descriptorType="org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType"
             priority="10"
             supportsNullTarget="true">
+           <enablement>
+           </enablement>
       </configProvider>
    </extension>
 </plugin>

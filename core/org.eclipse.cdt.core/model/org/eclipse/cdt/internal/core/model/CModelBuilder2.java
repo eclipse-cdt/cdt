@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -80,7 +79,6 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.INamespace;
-import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -247,30 +245,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				return delta;
 			}
 		});
-
-		if (isCanceled()) {
-			return;
-		}
-
-		// Report problems
-		IProblemRequestor problemRequestor = fTranslationUnit.getProblemRequestor();
-		if (problemRequestor != null && problemRequestor.isActive()) {
-			problemRequestor.beginReporting();
-			final IASTProblem[] ppProblems = ast.getPreprocessorProblems();
-			IASTProblem[] problems = ppProblems;
-			for (IASTProblem problem : problems) {
-				if (isLocalToFile(problem)) {
-					problemRequestor.acceptProblem(problem);
-				}
-			}
-			problems = CPPVisitor.getProblems(ast);
-			for (IASTProblem problem : problems) {
-				if (isLocalToFile(problem)) {
-					problemRequestor.acceptProblem(problem);
-				}
-			}
-			problemRequestor.endReporting();
-		}
 	}
 
 	private boolean isLocalToFile(IASTNode node) {

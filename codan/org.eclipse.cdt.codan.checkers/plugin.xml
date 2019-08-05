@@ -626,6 +626,19 @@
                markerType="org.eclipse.cdt.codan.core.codanProblem"
                messagePattern="%problem.messagePattern.MultipleDeclarationsProblem"
                name="%problem.name.MultipleDeclarationsProblem">
+         <checker
+            class="org.eclipse.cdt.codan.internal.checkers.SyntaxProblemChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.SyntaxProblemChecker"
+            name="%checker.name.SyntaxProblemChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="true"
+               defaultSeverity="Error"
+               description="%problem.description.SyntaxProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.SyntaxProblem"
+               markerType="org.eclipse.cdt.codan.core.codanSyntaxProblem"
+               messagePattern="%problem.messagePattern.SyntaxProblem"
+               name="%problem.name.SyntaxProblem">
          </problem>
       </checker>
    </extension>

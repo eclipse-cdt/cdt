@@ -100,9 +100,13 @@
             class="org.eclipse.cdt.codan.internal.ui.CodanProblemMarkerResolutionGenerator"
             markerType="org.eclipse.cdt.codan.core.codanProblem">
       </markerResolutionGenerator>
-            <markerResolutionGenerator
+      <markerResolutionGenerator
             class="org.eclipse.cdt.codan.internal.ui.CodanProblemMarkerResolutionGenerator"
             markerType="org.eclipse.cdt.codan.core.codanSemanticProblem">
+      </markerResolutionGenerator>
+      <markerResolutionGenerator
+            class="org.eclipse.cdt.codan.internal.ui.CodanProblemMarkerResolutionGenerator"
+            markerType="org.eclipse.cdt.codan.core.codanSyntaxProblem">
       </markerResolutionGenerator>
    </extension>
     <extension
@@ -168,6 +172,21 @@
     </extension>
     <extension
           point="org.eclipse.ui.editors.annotationTypes">
+       <type
+             markerSeverity="2"
+             markerType="org.eclipse.cdt.codan.core.codanSyntaxProblem"
+             name="org.eclipse.cdt.ui.indexmarker">
+       </type>
+       <type
+             markerSeverity="1"
+             markerType="org.eclipse.cdt.codan.core.codanSyntaxProblem"
+             name="org.eclipse.cdt.ui.indexmarker">
+       </type>
+       <type
+             markerSeverity="0"
+             markerType="org.eclipse.cdt.codan.core.codanSyntaxProblem"
+             name="org.eclipse.cdt.ui.indexmarker">
+       </type>
        <type
              markerSeverity="2"
              markerType="org.eclipse.cdt.codan.core.codanProblem"

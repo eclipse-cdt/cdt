@@ -21,7 +21,6 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
-import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.ModelProxyInstalledEvent;
 import org.eclipse.cdt.dsf.ui.viewmodel.RootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
@@ -40,7 +39,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
  * the root of a hierarchy.  It does not implement the label provider
  * functionality, so the default adapters should be used to retrieve the label.
  */
-public class LaunchRootVMNode extends RootVMNode implements IRootVMNode {
+public class LaunchRootVMNode extends RootVMNode {
 	public static class LaunchesEvent {
 		public enum Type {
 			ADDED, REMOVED, CHANGED, TERMINATED

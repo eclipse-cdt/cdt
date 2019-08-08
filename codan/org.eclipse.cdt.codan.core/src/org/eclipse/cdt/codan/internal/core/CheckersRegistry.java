@@ -53,7 +53,7 @@ import org.osgi.service.prefs.Preferences;
 /**
  * Implementation of checker registry interface
  */
-public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
+public class CheckersRegistry implements ICheckersRegistry {
 	private static final String NAME_ATTR = "name"; //$NON-NLS-1$
 	private static final String ID_ATTR = "id"; //$NON-NLS-1$
 	private static final String CLASS_ATTR = "class"; //$NON-NLS-1$

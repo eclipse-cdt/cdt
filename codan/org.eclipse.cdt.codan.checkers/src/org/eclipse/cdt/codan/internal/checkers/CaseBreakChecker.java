@@ -21,7 +21,6 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
-import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IProblemLocationFactory;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
@@ -47,7 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.StandardAttributes;
 import org.eclipse.cdt.core.parser.util.AttributeUtil;
 
-public class CaseBreakChecker extends AbstractIndexAstChecker implements ICheckerWithPreferences {
+public class CaseBreakChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem"; //$NON-NLS-1$
 	public static final String PARAM_LAST_CASE = "last_case_param"; //$NON-NLS-1$
 	public static final String PARAM_EMPTY_CASE = "empty_case_param"; //$NON-NLS-1$

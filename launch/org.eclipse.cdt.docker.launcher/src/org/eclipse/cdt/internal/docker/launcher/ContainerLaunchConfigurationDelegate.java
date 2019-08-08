@@ -56,7 +56,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.linuxtools.docker.core.Activator;
@@ -66,7 +65,7 @@ import org.eclipse.linuxtools.docker.core.IDockerPortBinding;
 import org.eclipse.linuxtools.docker.ui.launch.ContainerLauncher;
 import org.eclipse.linuxtools.docker.ui.launch.IContainerLaunchListener;
 
-public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate implements ILaunchConfigurationDelegate {
+public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 
 	private ContainerLauncher launcher;
 

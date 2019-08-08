@@ -16,7 +16,6 @@ package org.eclipse.cdt.codan.examples.checkers;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractCIndexChecker;
-import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.BasicProblemPreference;
@@ -31,7 +30,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  * @author Alena
  *
  */
-public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker implements ICheckerWithPreferences {
+public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker {
 	private static final String DEFAULT_PATTERN = "^[a-z]"; // name starts with english lowercase letter //$NON-NLS-1$
 	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
 	private static final String ER_ID = "org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionProblem"; //$NON-NLS-1$

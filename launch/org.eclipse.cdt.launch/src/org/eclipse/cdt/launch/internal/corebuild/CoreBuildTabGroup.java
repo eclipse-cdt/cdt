@@ -14,9 +14,8 @@ import org.eclipse.cdt.launch.ui.corebuild.CoreBuildTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 
-public class CoreBuildTabGroup extends AbstractLaunchConfigurationTabGroup implements ILaunchConfigurationTabGroup {
+public class CoreBuildTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {

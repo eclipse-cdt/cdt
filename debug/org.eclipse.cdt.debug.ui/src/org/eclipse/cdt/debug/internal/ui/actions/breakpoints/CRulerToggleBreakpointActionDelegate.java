@@ -18,7 +18,6 @@ import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -30,14 +29,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
  */
-public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDelegate implements IActionDelegate2 {
+public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDelegate {
 
 	private IEditorPart fEditor = null;
 	private ToggleBreakpointAction fDelegate = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor, org.eclipse.jface.text.source.IVerticalRulerInfo)
-	 */
 	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		fDelegate = new ToggleBreakpointAction(editor, null, rulerInfo);
@@ -46,9 +42,6 @@ public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDel
 		return fDelegate;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
 		if (fEditor != null) {
@@ -61,16 +54,10 @@ public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDel
 		super.setActiveEditor(callerAction, targetEditor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void init(IAction action) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fDelegate != null) {
@@ -80,9 +67,6 @@ public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDel
 		fEditor = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void runWithEvent(IAction action, Event event) {
 		if (fDelegate != null) {

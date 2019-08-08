@@ -20,7 +20,6 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SimpleMapPersistable;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionVMProvider;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IElementFormatProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
@@ -35,7 +34,7 @@ import org.eclipse.jface.viewers.TreePath;
  * PDA View Model provider for the expression view.
  */
 @SuppressWarnings("restriction")
-public class PDAExpressionVMProvider extends ExpressionVMProvider implements IElementFormatProvider {
+public class PDAExpressionVMProvider extends ExpressionVMProvider {
 
 	static String myPersistId = "org.eclipse.cdt.examples.dsf.pda.ui.variablePersistable";
 

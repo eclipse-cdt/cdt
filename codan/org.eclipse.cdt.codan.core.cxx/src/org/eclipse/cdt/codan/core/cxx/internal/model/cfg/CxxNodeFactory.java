@@ -17,7 +17,6 @@ import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
 import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
 import org.eclipse.cdt.codan.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
-import org.eclipse.cdt.codan.core.model.cfg.INodeFactory;
 import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
 import org.eclipse.cdt.codan.internal.core.cfg.NodeFactory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -25,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 /**
  * TODO: add description
  */
-public class CxxNodeFactory extends NodeFactory implements INodeFactory {
+public class CxxNodeFactory extends NodeFactory {
 	public CxxNodeFactory() {
 		super();
 	}

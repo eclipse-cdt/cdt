@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.model;
 
-import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -22,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 /**
  * Abstract class for checkers that do all the work on function definition level
  */
-public abstract class AbstractAstFunctionChecker extends AbstractIndexAstChecker implements ICheckerWithPreferences {
+public abstract class AbstractAstFunctionChecker extends AbstractIndexAstChecker {
 	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.

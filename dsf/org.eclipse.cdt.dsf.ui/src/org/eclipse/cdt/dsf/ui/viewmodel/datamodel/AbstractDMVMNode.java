@@ -49,7 +49,7 @@ import org.eclipse.jface.viewers.TreePath;
  *
  * @since 1.0
  */
-abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode {
+abstract public class AbstractDMVMNode extends AbstractVMNode {
 
 	/**
 	 * IVMContext implementation used for this schema node.

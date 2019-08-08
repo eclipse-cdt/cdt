@@ -13,14 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
-import org.eclipse.debug.core.commands.IDebugCommandHandler;
-
 /**
  * Handler interface for the reverse debug change method command
  *
  * @since 8.0
  */
-public interface IChangeReverseMethodHandler extends IReverseToggleHandler, IDebugCommandHandler {
+public interface IChangeReverseMethodHandler extends IReverseToggleHandler {
 
 	/**
 	 * List of different values for the reverse debugging method.

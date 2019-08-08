@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -35,7 +34,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import com.ibm.icu.text.DateFormat;
 
 class ExecutablesContentProvider extends ColumnLabelProvider
-		implements IStructuredContentProvider, ITreeContentProvider, IExecutablesChangeListener {
+		implements ITreeContentProvider, IExecutablesChangeListener {
 
 	final private TreeViewer viewer;
 
@@ -48,9 +47,6 @@ class ExecutablesContentProvider extends ColumnLabelProvider
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		ExecutablesManager.getExecutablesManager().removeExecutablesChangeListener(this);

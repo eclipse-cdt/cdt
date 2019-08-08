@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,8 +25,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
@@ -54,9 +52,6 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 			setSystem(true);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (getControl().isDisposed() || element == null) {
@@ -123,9 +118,6 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 			setSystem(true);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (getControl().isDisposed() || selection == null) {
@@ -214,12 +206,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 	}
 
 	private void addDisposeListener() {
-		getControl().addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				cancelJobs();
-			}
-		});
+		getControl().addDisposeListener(e -> cancelJobs());
 	}
 
 	protected void runDeferredUpdates() {
@@ -248,40 +235,28 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public synchronized void add(Object parentElement, Object childElement) {
 		super.add(parentElement, childElement);
 		runDeferredUpdates();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
-	public synchronized void add(Object parentElement, Object[] childElements) {
+	public synchronized void add(Object parentElement, Object... childElements) {
 		super.add(parentElement, childElements);
 		runDeferredUpdates();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object)
-	 */
 	@Override
 	public synchronized void remove(Object element) {
 		validateDeferredUpdates(element);
 		super.remove(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
-	 */
 	@Override
-	public synchronized void remove(Object[] elements) {
-		for (int i = 0; i < elements.length; i++) {
-			validateDeferredUpdates(elements[i]);
+	public synchronized void remove(Object... elements) {
+		for (Object element : elements) {
+			validateDeferredUpdates(element);
 		}
 		super.remove(elements);
 	}
@@ -371,15 +346,12 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 		if (widget != null) {
 			final Item[] currentChildren = getChildren(widget);
 			if (offset < currentChildren.length) {
-				preservingSelection(new Runnable() {
-					@Override
-					public void run() {
-						for (int i = offset; i < currentChildren.length; i++) {
-							if (currentChildren[i].getData() != null) {
-								disassociate(currentChildren[i]);
-							}
-							currentChildren[i].dispose();
+				preservingSelection(() -> {
+					for (int i = offset; i < currentChildren.length; i++) {
+						if (currentChildren[i].getData() != null) {
+							disassociate(currentChildren[i]);
 						}
+						currentChildren[i].dispose();
 					}
 				});
 			}
@@ -387,52 +359,49 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 	}
 
 	public synchronized void replace(final Object parent, final Object[] children, final int offset) {
-		preservingSelection(new Runnable() {
-			@Override
-			public void run() {
-				Widget widget = findItem(parent);
-				if (widget == null) {
+		preservingSelection(() -> {
+			Widget widget = findItem(parent);
+			if (widget == null) {
+				add(parent, children);
+			} else {
+				Item[] currentChildren = getChildren(widget);
+				int pos = offset;
+				if (pos >= currentChildren.length) {
+					// append
 					add(parent, children);
 				} else {
-					Item[] currentChildren = getChildren(widget);
-					int pos = offset;
-					if (pos >= currentChildren.length) {
-						// append
-						add(parent, children);
-					} else {
-						// replace
-						for (int i = 0; i < children.length; i++) {
-							Object child = children[i];
-							if (pos < currentChildren.length) {
-								// replace
-								Item item = currentChildren[pos];
-								Object data = item.getData();
-								if (!child.equals(data)) {
-									// no need to cancel pending updates here, the child may have shifted up/down
-									internalRefresh(item, child, true, true);
-								} else {
-									// If it's the same child, the label/content may still have changed
-									doUpdateItem(item, child);
-									updatePlus(item, child);
-								}
+					// replace
+					for (int i = 0; i < children.length; i++) {
+						Object child = children[i];
+						if (pos < currentChildren.length) {
+							// replace
+							Item item = currentChildren[pos];
+							Object data = item.getData();
+							if (!child.equals(data)) {
+								// no need to cancel pending updates here, the child may have shifted up/down
+								internalRefresh(item, child, true, true);
 							} else {
-								// add
-								int numLeft = children.length - i;
-								if (numLeft > 1) {
-									Object[] others = new Object[numLeft];
-									System.arraycopy(children, i, others, 0, numLeft);
-									add(parent, others);
-								} else {
-									add(parent, child);
-								}
-								break;
+								// If it's the same child, the label/content may still have changed
+								doUpdateItem(item, child);
+								updatePlus(item, child);
 							}
-							pos++;
+						} else {
+							// add
+							int numLeft = children.length - i;
+							if (numLeft > 1) {
+								Object[] others = new Object[numLeft];
+								System.arraycopy(children, i, others, 0, numLeft);
+								add(parent, others);
+							} else {
+								add(parent, child);
+							}
+							break;
 						}
+						pos++;
 					}
 				}
-				runDeferredUpdates();
 			}
+			runDeferredUpdates();
 		});
 	}
 

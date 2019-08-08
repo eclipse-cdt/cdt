@@ -27,7 +27,6 @@ import org.eclipse.cdt.examples.dsf.pda.ui.PDAUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.ui.IMemento;
@@ -37,7 +36,7 @@ import org.eclipse.ui.IMemento;
  * the base threads node and adds label and memento generation.
  */
 @SuppressWarnings("restriction")
-public class PDAThreadsVMNode extends AbstractThreadVMNode implements IElementLabelProvider, IElementMementoProvider {
+public class PDAThreadsVMNode extends AbstractThreadVMNode implements IElementMementoProvider {
 	public PDAThreadsVMNode(AbstractDMVMProvider provider, DsfSession session) {
 		super(provider, session);
 	}

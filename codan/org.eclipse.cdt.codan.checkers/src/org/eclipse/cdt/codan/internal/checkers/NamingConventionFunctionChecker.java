@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
-import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -34,7 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
  * This is style checker for function name code style. Pattern parameter is
  * regular expression defining the style.
  */
-public class NamingConventionFunctionChecker extends AbstractIndexAstChecker implements ICheckerWithPreferences {
+public class NamingConventionFunctionChecker extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"; //$NON-NLS-1$
 	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
 	public static final String PARAM_METHODS = "macro"; //$NON-NLS-1$

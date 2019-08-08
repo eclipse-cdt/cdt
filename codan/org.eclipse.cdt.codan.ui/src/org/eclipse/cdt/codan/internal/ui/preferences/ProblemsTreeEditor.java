@@ -41,7 +41,6 @@ import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ICheckStateProvider;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
@@ -139,7 +138,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		}
 	}
 
-	class ProblemsContentProvider implements IContentProvider, ITreeContentProvider {
+	class ProblemsContentProvider implements ITreeContentProvider {
 		@Override
 		public void dispose() {
 		}

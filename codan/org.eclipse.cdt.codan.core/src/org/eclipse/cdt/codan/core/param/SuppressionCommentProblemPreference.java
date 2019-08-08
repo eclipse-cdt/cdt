@@ -21,7 +21,7 @@ import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
  * Preference for suppressing a problem using code comments. Automatically added to all problems.
  * @since 4.0
  */
-public class SuppressionCommentProblemPreference extends BasicProblemPreference implements IProblemPreference {
+public class SuppressionCommentProblemPreference extends BasicProblemPreference {
 	public static final String KEY = "suppression_comment"; //$NON-NLS-1$;
 	// Even if using English name it is really a keyword, so no externalizable.
 	public static final String KEYWORD = "@suppress(\"{0}\")"; //$NON-NLS-1$;

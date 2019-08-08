@@ -17,7 +17,6 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
-import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.RootVMNode;
 
 /**
@@ -33,7 +32,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.RootVMNode;
  *
  * @since 1.0
  */
-public class RootDMVMNode extends RootVMNode implements IRootVMNode {
+public class RootDMVMNode extends RootVMNode {
 	public RootDMVMNode(AbstractVMProvider provider) {
 		super(provider);
 	}

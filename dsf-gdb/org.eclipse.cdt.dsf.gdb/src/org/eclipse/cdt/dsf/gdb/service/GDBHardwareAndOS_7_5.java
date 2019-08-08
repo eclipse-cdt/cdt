@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * @since 4.2
  */
-public class GDBHardwareAndOS_7_5 extends GDBHardwareAndOS implements IGDBHardwareAndOS2 {
+public class GDBHardwareAndOS_7_5 extends GDBHardwareAndOS {
 
 	public GDBHardwareAndOS_7_5(DsfSession session) {
 		super(session);

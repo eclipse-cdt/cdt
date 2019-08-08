@@ -23,7 +23,6 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -36,8 +35,8 @@ import org.eclipse.ui.actions.ActionDelegate;
  *
  * @since Sep 19, 2002
  */
-public abstract class AbstractEditorActionDelegate extends ActionDelegate implements IWorkbenchWindowActionDelegate,
-		IEditorActionDelegate, IPartListener, ISelectionListener, INullSelectionListener {
+public abstract class AbstractEditorActionDelegate extends ActionDelegate
+		implements IWorkbenchWindowActionDelegate, IEditorActionDelegate, IPartListener, INullSelectionListener {
 	private IAction fAction;
 	private IWorkbenchWindow fWorkbenchWindow;
 	private IWorkbenchPart fTargetPart;
@@ -49,9 +48,6 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate implem
 	public AbstractEditorActionDelegate() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
 	@Override
 	public void dispose() {
 		IWorkbenchWindow win = getWorkbenchWindow();
@@ -61,9 +57,6 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate implem
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
-	 */
 	@Override
 	public void init(IWorkbenchWindow window) {
 		setWorkbenchWindow(window);
@@ -77,9 +70,6 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate implem
 		update();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
-	 */
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		setAction(action);

@@ -332,7 +332,6 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	/**
 	 * Creates a new preferences page and opens it
 	 */
-	@SuppressWarnings("cast")
 	protected void configureWorkspaceSettings() {
 		try {
 			// create a new instance of the current class

@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint2;
-import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -30,7 +29,7 @@ import com.ibm.icu.text.MessageFormat;
  *
  * @since 6.1
  */
-public class CLineTracepoint extends AbstractTracepoint implements ICTracepoint, ICLineBreakpoint2 {
+public class CLineTracepoint extends AbstractTracepoint implements ICLineBreakpoint2 {
 
 	/**
 	 * Constructor for CLineTracepoint.
@@ -64,9 +63,6 @@ public class CLineTracepoint extends AbstractTracepoint implements ICTracepoint,
 		return count;
 	}
 
-	/*(non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
-	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
 		return MessageFormat.format(BreakpointMessages.getString("CLineTracepoint.0"), //$NON-NLS-1$

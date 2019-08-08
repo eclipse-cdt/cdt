@@ -32,7 +32,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.core.model.ITerminate;
 
 /**
  * The PDA launch object. In general, a DSF-based debugger has to override
@@ -47,7 +46,7 @@ import org.eclipse.debug.core.model.ITerminate;
  * </p>
  */
 @ThreadSafe
-public class PDALaunch extends DsfLaunch implements ITerminate {
+public class PDALaunch extends DsfLaunch {
 	// DSF executor and session.  Both are created and shutdown by the launch.
 	private final DefaultDsfExecutor fExecutor;
 	private final DsfSession fSession;

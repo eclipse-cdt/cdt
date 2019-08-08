@@ -57,7 +57,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -105,7 +104,7 @@ public class ControlFlowGraphView extends ViewPart {
 	class DeadNodes extends ArrayList<IBasicBlock> {
 	}
 
-	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
+	class ViewContentProvider implements ITreeContentProvider {
 		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}

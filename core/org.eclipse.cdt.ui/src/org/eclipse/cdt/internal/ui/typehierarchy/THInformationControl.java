@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -102,7 +102,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 		fHierarchyTreeViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		fHierarchyTreeViewer.setContentProvider(new THContentProvider());
 		fHierarchyTreeViewer.setLabelProvider(fHierarchyLabelProvider);
-		fHierarchyTreeViewer.setSorter(new ViewerSorter());
+		fHierarchyTreeViewer.setComparator(new ViewerComparator());
 		fHierarchyTreeViewer.setUseHashlookup(true);
 		fHierarchyTreeViewer.getTree().addKeyListener(getKeyAdapter());
 		return fHierarchyTreeViewer;

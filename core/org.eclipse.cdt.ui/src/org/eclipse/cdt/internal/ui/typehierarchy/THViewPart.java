@@ -64,8 +64,8 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -472,7 +472,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 				onMemberSelectionChanged(event);
 			}
 		});
-		fMemberViewer.setSorter(new ViewerSorter() {
+		fMemberViewer.setComparator(new ViewerComparator() {
 			@Override
 			public int category(Object element) {
 				if (element instanceof ICElement) {
@@ -535,7 +535,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		fHierarchyTreeViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		fHierarchyTreeViewer.setContentProvider(new THContentProvider());
 		fHierarchyTreeViewer.setLabelProvider(new DecoratingCLabelProvider(fHierarchyLabelProvider, true));
-		fHierarchyTreeViewer.setSorter(new ViewerSorter());
+		fHierarchyTreeViewer.setComparator(new ViewerComparator());
 		fHierarchyTreeViewer.setUseHashlookup(true);
 		fHierarchyTreeViewer.addOpenListener(new IOpenListener() {
 			@Override

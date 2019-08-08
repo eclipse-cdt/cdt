@@ -25,7 +25,7 @@ import org.eclipse.cdt.codan.core.model.IProblemProfile;
 /**
  * TODO: add description
  */
-public class CodanProblemCategory extends CodanProblemElement implements IProblemCategory, Cloneable {
+public class CodanProblemCategory extends CodanProblemElement implements IProblemCategory {
 	private String id;
 	private String name;
 	private ArrayList<IProblemElement> list = new ArrayList<>();

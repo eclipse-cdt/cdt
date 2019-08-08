@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  *
  * Clients may extend this class.
  */
-public abstract class AbstractCIndexChecker extends AbstractCElementChecker implements ICIndexChecker {
+public abstract class AbstractCIndexChecker extends AbstractCElementChecker {
 	private IFile file;
 	protected IIndex index;
 

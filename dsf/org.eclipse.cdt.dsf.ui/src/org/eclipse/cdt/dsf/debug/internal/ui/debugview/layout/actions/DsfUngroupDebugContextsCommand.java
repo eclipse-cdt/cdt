@@ -18,12 +18,11 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.internal.provisional.service.IExecutionContextTranslator;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.debug.core.commands.IDebugCommandHandler;
 
 /**
  * @since 2.2
  */
-public class DsfUngroupDebugContextsCommand extends DsfDebugViewLayoutCommand implements IDebugCommandHandler {
+public class DsfUngroupDebugContextsCommand extends DsfDebugViewLayoutCommand {
 
 	public DsfUngroupDebugContextsCommand(DsfSession session) {
 		super(session);

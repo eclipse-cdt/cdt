@@ -29,7 +29,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  * @since 4.4
  */
 @ConfinedToDsfExecutor("fConnection#getExecutor")
-public class CLIEventProcessor_7_7 extends CLIEventProcessor_7_0 implements IEventProcessor {
+public class CLIEventProcessor_7_7 extends CLIEventProcessor_7_0 {
 	private final ICommandControlService fControl;
 	private boolean fResetDPrintfStyle;
 

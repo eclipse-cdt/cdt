@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.xlc.core.scannerconfig;
 
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector3;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 
@@ -21,6 +20,5 @@ import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector
  * @author laggarcia
  *
  */
-public class PerProjectXLCScannerInfoCollector extends PerProjectSICollector
-		implements IScannerInfoCollector3, IManagedScannerInfoCollector {
+public class PerProjectXLCScannerInfoCollector extends PerProjectSICollector implements IManagedScannerInfoCollector {
 }

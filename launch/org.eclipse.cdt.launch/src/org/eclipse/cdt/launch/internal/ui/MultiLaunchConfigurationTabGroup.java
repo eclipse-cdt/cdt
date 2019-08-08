@@ -38,7 +38,6 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -66,7 +65,7 @@ import org.eclipse.ui.PlatformUI;
  */
 @Deprecated
 public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
-	static class ContentProvider implements IStructuredContentProvider, ITreeContentProvider {
+	static class ContentProvider implements ITreeContentProvider {
 		protected List<LaunchElement> input;
 
 		@Override

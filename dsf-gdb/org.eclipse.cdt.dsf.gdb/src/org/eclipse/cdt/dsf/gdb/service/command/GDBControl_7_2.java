@@ -26,7 +26,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * Turn on the use of the --thread-group option for GDB 7.2
  * @since 4.0
  */
-public class GDBControl_7_2 extends GDBControl_7_0 implements IGDBControl {
+public class GDBControl_7_2 extends GDBControl_7_0 {
 	public GDBControl_7_2(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
 		super(session, config, factory);
 		setUseThreadGroupOptions(true);

@@ -14,7 +14,6 @@ import java.util.Collection;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
-import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -35,7 +34,7 @@ import org.eclipse.osgi.util.NLS;
  * A Codan checker for QObject::connect and QObject::disconnect function calls.  The checker
  * confirms that SIGNAL and SLOT macro expansions reference a valid Qt signal or slot.
  */
-public class QtSyntaxChecker extends AbstractIndexAstChecker implements ICheckerWithPreferences {
+public class QtSyntaxChecker extends AbstractIndexAstChecker {
 	private final Checker checker = new Checker();
 
 	@Override

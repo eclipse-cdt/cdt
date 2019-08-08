@@ -30,13 +30,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.tools.templates.core.IGenerator;
 import org.eclipse.tools.templates.freemarker.FMProjectGenerator;
 import org.eclipse.tools.templates.freemarker.SourceRoot;
 import org.eclipse.tools.templates.freemarker.TemplateManifest;
 import org.osgi.framework.Bundle;
 
-public class AutotoolsProjectGenerator extends FMProjectGenerator implements IGenerator {
+public class AutotoolsProjectGenerator extends FMProjectGenerator {
 
 	public AutotoolsProjectGenerator(String manifestFile) {
 		super(manifestFile);

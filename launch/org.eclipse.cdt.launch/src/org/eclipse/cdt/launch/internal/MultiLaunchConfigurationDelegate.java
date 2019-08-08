@@ -38,7 +38,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.Launch;
-import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
@@ -55,8 +54,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  * @deprecated See Bug 517722, Launch Groups are now part of Platform.
  */
 @Deprecated
-public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegate
-		implements ILaunchConfigurationDelegate2 {
+public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegate {
 	public static final String DEFAULT_MODE = "default"; //$NON-NLS-1$
 	private static final String NAME_PROP = "name"; //$NON-NLS-1$
 	private static final String ENABLED_PROP = "enabled"; //$NON-NLS-1$

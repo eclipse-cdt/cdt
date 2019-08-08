@@ -41,7 +41,7 @@ public class SelectionUtils {
 	public static final ISelection EMPTY_SELECTION = new EmptySelection();
 
 	/** "Empty" or undefined selection. */
-	public static class EmptySelection implements ISelection, IStructuredSelection {
+	public static class EmptySelection implements IStructuredSelection {
 		@Override
 		public boolean isEmpty() {
 			return true;

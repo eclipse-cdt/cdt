@@ -72,7 +72,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 
-public class ThreadVMNode extends AbstractThreadVMNode implements IElementLabelProvider, IElementMementoProvider {
+public class ThreadVMNode extends AbstractThreadVMNode implements IElementMementoProvider {
 	/** Indicator that we should not display running threads */
 	private boolean fHideRunningThreadsProperty = false;
 

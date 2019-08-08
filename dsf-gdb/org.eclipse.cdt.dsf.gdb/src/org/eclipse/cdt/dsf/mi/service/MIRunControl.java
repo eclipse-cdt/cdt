@@ -185,7 +185,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	 */
 	@Immutable
 	protected static class RunControlEvent<V extends IDMContext, T extends MIEvent<? extends IDMContext>>
-			extends AbstractDMEvent<V> implements IDMEvent<V>, IMIDMEvent {
+			extends AbstractDMEvent<V> implements IMIDMEvent {
 		final private T fMIInfo;
 
 		public RunControlEvent(V dmc, T miInfo) {

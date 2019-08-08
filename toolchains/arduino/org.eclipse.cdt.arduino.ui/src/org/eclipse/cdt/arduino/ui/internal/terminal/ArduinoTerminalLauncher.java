@@ -13,9 +13,8 @@ package org.eclipse.cdt.arduino.ui.internal.terminal;
 import org.eclipse.tm.terminal.connector.cdtserial.launcher.SerialLauncherDelegate;
 import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel;
 import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
-import org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate;
 
-public class ArduinoTerminalLauncher extends SerialLauncherDelegate implements ILauncherDelegate {
+public class ArduinoTerminalLauncher extends SerialLauncherDelegate {
 
 	@Override
 	public IConfigurationPanel getPanel(IConfigurationPanelContainer container) {

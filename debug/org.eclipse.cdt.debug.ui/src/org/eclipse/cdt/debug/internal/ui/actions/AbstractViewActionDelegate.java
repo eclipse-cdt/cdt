@@ -32,7 +32,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INullSelectionListener;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -44,7 +43,7 @@ import org.eclipse.ui.actions.ActionDelegate;
  * driven by the selection in the Debug view.
  */
 public abstract class AbstractViewActionDelegate extends ActionDelegate
-		implements IViewActionDelegate, ISelectionListener, INullSelectionListener, IDebugEventSetListener {
+		implements IViewActionDelegate, INullSelectionListener, IDebugEventSetListener {
 
 	private IAction fAction;
 
@@ -52,9 +51,6 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate
 
 	private IStructuredSelection fSelection = StructuredSelection.EMPTY;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 		setView(view);
@@ -68,9 +64,6 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate
 		selectionChanged((IWorkbenchPart) null, ss);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#dispose()
-	 */
 	@Override
 	public void dispose() {
 		IWorkbenchWindow window = getWindow();
@@ -81,9 +74,6 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void init(IAction action) {
 		setAction(action);

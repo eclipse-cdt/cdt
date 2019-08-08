@@ -23,7 +23,7 @@ import org.eclipse.cdt.codan.core.model.IProblemProfile;
 /**
  * @author Alena
  */
-public class ProblemProfile implements IProblemProfile, Cloneable {
+public class ProblemProfile implements IProblemProfile {
 	private CodanProblemCategory rootCategory;
 	private Object resource;
 

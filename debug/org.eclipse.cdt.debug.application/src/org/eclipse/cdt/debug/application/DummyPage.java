@@ -15,12 +15,11 @@ package org.eclipse.cdt.debug.application;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 // This class is just to replace a category reference in org.eclipse.cdt.ui that
 // we exclude because we do not bring in the org.eclipse.cdt.managedbuild.ui plug-in.
-public class DummyPage extends PropertyPage implements IWorkbenchPropertyPage {
+public class DummyPage extends PropertyPage {
 
 	public DummyPage() {
 		// do nothing

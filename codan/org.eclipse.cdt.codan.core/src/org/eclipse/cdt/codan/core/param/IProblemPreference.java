@@ -25,5 +25,5 @@ package org.eclipse.cdt.codan.core.param;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IProblemPreference extends Cloneable, IProblemPreferenceValue, IProblemPreferenceDescriptor {
+public interface IProblemPreference extends IProblemPreferenceValue, IProblemPreferenceDescriptor {
 }

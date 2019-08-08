@@ -38,14 +38,12 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
-import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
  *
  */
-public class LaunchVMProvider extends AbstractLaunchVMProvider implements IDebugEventSetListener, ILaunchesListener2 {
+public class LaunchVMProvider extends AbstractLaunchVMProvider {
 
 	/**
 	 * Indicates that we are currently visualizing trace data.

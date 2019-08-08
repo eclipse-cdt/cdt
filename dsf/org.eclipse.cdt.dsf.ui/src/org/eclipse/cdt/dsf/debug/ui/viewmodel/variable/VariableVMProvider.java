@@ -36,13 +36,12 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.RootDMVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.AutomaticUpdatePolicy;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.IVMUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-public class VariableVMProvider extends AbstractElementVMProvider implements IColumnPresentationFactory {
+public class VariableVMProvider extends AbstractElementVMProvider {
 	private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {

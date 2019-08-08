@@ -66,8 +66,7 @@ import org.osgi.framework.BundleContext;
  * Initial breakpoint service implementation.
  * Implements the IBreakpoints interface.
  */
-public class MIBreakpoints extends AbstractDsfService
-		implements IBreakpoints, IBreakpointsExtension, IMIBreakpointPathAdjuster {
+public class MIBreakpoints extends AbstractDsfService implements IBreakpointsExtension, IMIBreakpointPathAdjuster {
 	/**
 	 * Breakpoint attributes markers used in the map parameters of insert/updateBreakpoint().
 	 * All are optional with the possible exception of TYPE. It is the responsibility of the

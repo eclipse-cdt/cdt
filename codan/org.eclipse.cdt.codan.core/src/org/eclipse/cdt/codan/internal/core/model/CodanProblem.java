@@ -23,7 +23,7 @@ import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 /**
  * A type of problems reported by Codan.
  */
-public class CodanProblem extends CodanProblemElement implements IProblemWorkingCopy, Cloneable, IProblemMultiple {
+public class CodanProblem extends CodanProblemElement implements IProblemWorkingCopy, IProblemMultiple {
 	private String id;
 	private String name;
 	private String messagePattern;

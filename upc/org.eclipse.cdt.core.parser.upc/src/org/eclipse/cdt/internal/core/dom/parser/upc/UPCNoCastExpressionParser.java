@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
-import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.core.dom.lrparser.ITokenCollector;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
@@ -65,8 +64,8 @@ import lpg.lpgjavaruntime.Token;
 import lpg.lpgjavaruntime.UndefinedEofSymbolException;
 import lpg.lpgjavaruntime.UnimplementedTerminalsException;
 
-public class UPCNoCastExpressionParser extends PrsStream implements RuleAction, ITokenStream, ITokenCollector,
-		IParser<IASTExpression>, ISecondaryParser<IASTExpression> {
+public class UPCNoCastExpressionParser extends PrsStream
+		implements RuleAction, ITokenStream, ITokenCollector, ISecondaryParser<IASTExpression> {
 	private static ParseTable prs = new UPCNoCastExpressionParserprs();
 	private FixedBacktrackingParser btParser;
 

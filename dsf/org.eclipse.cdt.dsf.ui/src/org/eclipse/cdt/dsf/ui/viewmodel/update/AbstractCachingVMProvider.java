@@ -65,8 +65,7 @@ import org.eclipse.jface.viewers.TreePath;
  *
  * @since 1.0
  */
-public class AbstractCachingVMProvider extends AbstractVMProvider
-		implements ICachingVMProvider, IElementPropertiesProvider, ICachingVMProviderExtension2 {
+public class AbstractCachingVMProvider extends AbstractVMProvider implements ICachingVMProviderExtension2 {
 	/**
 	 * @since 2.0
 	 */

@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
-public class C99Field extends C99Variable implements IC99Binding, IField, ITypeable {
+public class C99Field extends C99Variable implements IField {
 
 	private ICompositeType compositeTypeOwner;
 

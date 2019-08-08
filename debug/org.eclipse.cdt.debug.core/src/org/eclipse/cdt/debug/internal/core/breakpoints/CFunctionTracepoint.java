@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
@@ -28,7 +27,7 @@ import com.ibm.icu.text.MessageFormat;
  *
  * @since 6.1
  */
-public class CFunctionTracepoint extends AbstractTracepoint implements ICFunctionBreakpoint, ICTracepoint {
+public class CFunctionTracepoint extends AbstractTracepoint implements ICFunctionBreakpoint {
 
 	/**
 	 * Constructor for CFunctionTracepoint.
@@ -51,9 +50,6 @@ public class CFunctionTracepoint extends AbstractTracepoint implements ICFunctio
 		return C_FUNCTION_TRACEPOINT_MARKER;
 	}
 
-	/*(non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
-	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
 		return MessageFormat.format(BreakpointMessages.getString("CFunctionTracepoint.0"), //$NON-NLS-1$

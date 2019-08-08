@@ -48,7 +48,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -125,7 +125,7 @@ public class MakeView extends ViewPart {
 			}
 		});
 
-		fViewer.setSorter(new ViewerSorter() {
+		fViewer.setComparator(new ViewerComparator() {
 			@Override
 			public int category(Object element) {
 				if (element instanceof TargetSourceContainer) {

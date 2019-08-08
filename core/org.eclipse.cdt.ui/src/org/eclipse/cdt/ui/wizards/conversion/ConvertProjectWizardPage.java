@@ -38,7 +38,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -226,7 +226,7 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 		tableViewer.setInput(getElements());
 
 		// define and assign sorter
-		tableViewer.setSorter(new ViewerSorter() {
+		tableViewer.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object object1, Object object2) {
 

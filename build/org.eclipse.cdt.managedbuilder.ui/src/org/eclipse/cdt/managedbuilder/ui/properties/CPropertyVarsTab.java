@@ -61,7 +61,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -428,7 +428,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 
 		tableViewer.setContentProvider(new MacroContentProvider());
 		tableViewer.setLabelProvider(new MacroLabelProvider());
-		tableViewer.setSorter(new ViewerSorter());
+		tableViewer.setComparator(new ViewerComparator());
 
 		tableViewer.setColumnProperties(fEditableTableColumnProps);
 		tv = tableViewer;

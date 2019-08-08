@@ -36,7 +36,6 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ICoreRunnable;
@@ -56,7 +55,7 @@ import org.osgi.framework.BundleContext;
 /**
  *
  */
-public class AttachProcessHandler extends AbstractHandler implements IHandler {
+public class AttachProcessHandler extends AbstractHandler {
 
 	private static final String PROCESSES_CLASS = "processes"; //$NON-NLS-1$
 	private static final String THREADS_CLASS = "threads"; //$NON-NLS-1$

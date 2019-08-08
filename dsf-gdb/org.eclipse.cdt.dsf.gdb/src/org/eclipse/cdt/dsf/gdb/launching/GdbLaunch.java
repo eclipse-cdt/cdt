@@ -92,9 +92,7 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IDisconnectHandler;
 import org.eclipse.debug.core.commands.ITerminateHandler;
-import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
 
@@ -102,7 +100,7 @@ import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
  * The only object in the model that implements the traditional interfaces.
  */
 @ThreadSafe
-public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITracedLaunch, ITargetedLaunch {
+public class GdbLaunch extends DsfLaunch implements ITracedLaunch, ITargetedLaunch {
 	private DefaultDsfExecutor fExecutor;
 	private DsfSession fSession;
 	private DsfServicesTracker fTracker;

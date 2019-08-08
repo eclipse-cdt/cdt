@@ -233,8 +233,7 @@ public class ContainerDataVolumeDialog extends Dialog {
 	}
 
 	private void setupValidationSupport(final Label errorMessageIcon, final Label errorMessageLabel) {
-		for (@SuppressWarnings("unchecked")
-		Iterator<Binding> iterator = dbc.getBindings().iterator(); iterator.hasNext();) {
+		for (Iterator<Binding> iterator = dbc.getBindings().iterator(); iterator.hasNext();) {
 			final Binding binding = iterator.next();
 			binding.getModel().addChangeListener(onDataVolumeSettingsChanged(errorMessageIcon, errorMessageLabel));
 		}

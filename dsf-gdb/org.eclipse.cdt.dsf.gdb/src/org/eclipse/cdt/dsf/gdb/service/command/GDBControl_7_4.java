@@ -31,7 +31,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  *
  * @since 4.1
  */
-public class GDBControl_7_4 extends GDBControl_7_2 implements IGDBControl {
+public class GDBControl_7_4 extends GDBControl_7_2 {
 
 	/**
 	 * A command control context that is also a IBreakpointsTargetDMContext

@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 @SuppressWarnings("restriction")
-public class C99ProblemBinding extends ProblemBinding implements IProblemBinding {
+public class C99ProblemBinding extends ProblemBinding {
 
 	public C99ProblemBinding(int messageId) {
 		super(null, messageId);

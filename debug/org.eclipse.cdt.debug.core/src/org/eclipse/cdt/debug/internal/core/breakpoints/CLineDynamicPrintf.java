@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint2;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -30,7 +29,7 @@ import com.ibm.icu.text.MessageFormat;
  *
  * @since 7.5
  */
-public class CLineDynamicPrintf extends AbstractDynamicPrintf implements ICDynamicPrintf, ICLineBreakpoint2 {
+public class CLineDynamicPrintf extends AbstractDynamicPrintf {
 
 	public CLineDynamicPrintf() {
 	}
@@ -44,9 +43,6 @@ public class CLineDynamicPrintf extends AbstractDynamicPrintf implements ICDynam
 		return C_LINE_DYNAMICPRINTF_MARKER;
 	}
 
-	/*(non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
-	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
 		IMarker marker = this.getMarker();

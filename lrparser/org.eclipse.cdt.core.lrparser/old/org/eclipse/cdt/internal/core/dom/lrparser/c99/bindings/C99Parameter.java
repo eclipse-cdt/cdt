@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.ast.IParameter;
 
-public class C99Parameter extends C99Variable implements IParameter, ITypeable {
+public class C99Parameter extends C99Variable implements IParameter {
 
 	public C99Parameter() {
 	}

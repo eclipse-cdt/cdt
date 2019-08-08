@@ -49,7 +49,6 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 
 	private IProject project;
 
-	@SuppressWarnings("restriction")
 	@Override
 	public ICommandLauncher getCommandLauncher(IProject project) {
 		this.project = project;

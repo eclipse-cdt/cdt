@@ -275,9 +275,8 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 	 * Override to prevent clients from shutting down.  The executor will be
 	 * shut down when the underlying display is discovered to be shut down.
 	 */
-	@SuppressWarnings({ "cast", "unchecked" })
 	@Override
 	public List<Runnable> shutdownNow() {
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 }

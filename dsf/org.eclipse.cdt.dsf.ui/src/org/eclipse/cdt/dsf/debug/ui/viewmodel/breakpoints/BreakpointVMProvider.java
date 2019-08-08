@@ -112,7 +112,7 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 		@Override
 		protected void retrieve(final DataRequestMonitor<List<BreakpointOrganizerVMContext>> rm) {
 			getNestingCategoryBreakpoints(fParentPath, new DataRequestMonitor<IBreakpoint[]>(getExecutor(), rm) {
-				@SuppressWarnings({ "cast", "unchecked" })
+				@SuppressWarnings({ "unchecked" })
 				@Override
 				protected void handleSuccess() {
 					Map<IAdaptable, List<IBreakpoint>> bpsLists = new HashMap<>();

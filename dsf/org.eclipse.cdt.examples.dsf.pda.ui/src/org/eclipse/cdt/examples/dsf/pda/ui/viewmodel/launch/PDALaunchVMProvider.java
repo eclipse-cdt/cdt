@@ -23,8 +23,6 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
-import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
@@ -40,8 +38,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * </ul>
  */
 @SuppressWarnings("restriction")
-public class PDALaunchVMProvider extends AbstractLaunchVMProvider
-		implements IDebugEventSetListener, ILaunchesListener2 {
+public class PDALaunchVMProvider extends AbstractLaunchVMProvider {
 	@ThreadSafe
 	public PDALaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext,
 			DsfSession session) {

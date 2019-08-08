@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
-import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ICModelMarker;
@@ -56,8 +55,7 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-public class QtBuildConfiguration extends CBuildConfiguration
-		implements ICBuildConfiguration, IQtBuildConfiguration, IQtInstallListener {
+public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuildConfiguration, IQtInstallListener {
 
 	public static final String QMAKE_COMMAND = "cdt.qt.qmake.command"; //$NON-NLS-1$
 	public static final String QMAKE_ARGS = "cdt.qt.qmake.args"; //$NON-NLS-1$

@@ -19,7 +19,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -31,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
 /**
  * Base class for IVisualizer implementations.
  */
-abstract public class Visualizer implements IVisualizer, ISelectionProvider, ISelectionChangedListener {
+abstract public class Visualizer implements IVisualizer, ISelectionChangedListener {
 	// --- members ---
 
 	/** Visualizer's non-localized name. */

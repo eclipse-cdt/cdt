@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
@@ -28,7 +27,7 @@ import com.ibm.icu.text.MessageFormat;
  *
  * @since 7.5
  */
-public class CAddressDynamicPrintf extends AbstractDynamicPrintf implements ICAddressBreakpoint, ICDynamicPrintf {
+public class CAddressDynamicPrintf extends AbstractDynamicPrintf implements ICAddressBreakpoint {
 
 	public CAddressDynamicPrintf() {
 	}

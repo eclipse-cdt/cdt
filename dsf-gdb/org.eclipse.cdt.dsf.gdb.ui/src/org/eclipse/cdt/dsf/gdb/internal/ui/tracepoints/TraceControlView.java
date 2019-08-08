@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -64,7 +63,7 @@ import org.eclipse.ui.progress.UIJob;
  *
  * @since 2.1
  */
-public class TraceControlView extends ViewPart implements IViewPart {
+public class TraceControlView extends ViewPart {
 
 	private static final int ACTION_BUTTON_INDENTATION = 10;
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$

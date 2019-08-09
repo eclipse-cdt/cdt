@@ -14,7 +14,7 @@
  * Doug Schaefer - getting this into CDT
  ******************************************************************************/
 
-IEclipsePreferences#org-eclipse-cdt-ui			 {
+IEclipsePreferences#org-eclipse-cdt-ui:org-eclipse-cdt-ui {
 	preferences:
 		"asm_directive=221,40,103"
 		"asm_label=217,232,247"

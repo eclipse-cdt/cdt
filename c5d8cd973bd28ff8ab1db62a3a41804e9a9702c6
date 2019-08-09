@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c666dce7_c6820e0e",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersConstChecker.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-08-09T06:00:49Z",
+      "side": 1,
+      "message": "Reasoning about the return type based on syntax will miss some cases. For example:\n\n  // Reference to const, but const is not directly\n  // in the decl-specifier.\n  using ConstInt \u003d const int;\n  ConstInt\u0026 foo();\n\n  // Reference to non-const, but pointer operator\n  // is not directly in the function declarator.\n  using IntRef \u003d int\u0026;\n  IntRef bar();\n\nInstead, we should get the semantic return type (method.getType().getReturnType()) and perform checks on that.",
+      "revId": "c5d8cd973bd28ff8ab1db62a3a41804e9a9702c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c3744ed1_1bbef4f1",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersConstChecker.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-08-09T06:00:49Z",
+      "side": 1,
+      "message": "It\u0027s sufficient to check \u0027name.startsWith(\"operator \")\u0027 (note the space), since a valid identifier can\u0027t otherwise have a space in it.",
+      "revId": "c5d8cd973bd28ff8ab1db62a3a41804e9a9702c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f38b8728_35a1bad4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-08-09T06:00:49Z",
+      "side": 1,
+      "message": "This will mark every array access to be considered a potential write.\n\nI think we should check the surrounding context, and only consider it a write if it\u0027s an assignment expression.\n\nSuggested test case to add to VariableReadWriteFlagsTest:\n\n\t//\tint arr[5];\n\t//\tvoid test() {\n\t//\t\tarr[0];\n\t//\t\tarr[0] \u003d 1;\n\t//\t}\n\tpublic void testArraySubscript() throws Exception {\n\t\tAssertionHelper a \u003d getCPPAssertionHelper();\n\t\ta.assertReadWriteFlags(\"arr[0];\", \"arr\", READ);\n\t\ta.assertReadWriteFlags(\"arr[0] \u003d 1\", \"arr\", READ | WRITE);\n\t}",
+      "revId": "c5d8cd973bd28ff8ab1db62a3a41804e9a9702c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

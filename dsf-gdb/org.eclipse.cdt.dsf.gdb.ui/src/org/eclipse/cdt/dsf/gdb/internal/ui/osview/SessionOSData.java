@@ -241,14 +241,10 @@ public class SessionOSData {
 			//  async/job runnables, like perspective switch runnable using during debug launch,
 			//   causing launch to be stuck at random point.
 			//
-			Display.getDefault().asyncExec(new Runnable() {
+			Display.getDefault().asyncExec(() -> {
 
-				@Override
-				public void run() {
-
-					if (!c.isDisposed())
-						fUIListener.update();
-				}
+				if (!c.isDisposed())
+					fUIListener.update();
 			});
 
 	}

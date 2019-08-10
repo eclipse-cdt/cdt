@@ -296,12 +296,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 				}
 
 				// Submit the runnable to plant the breakpoints on dispatch thread.
-				getExecutor().submit(new Runnable() {
-					@Override
-					public void run() {
-						installInitialBreakpoints(breakpointsDmc, initialPlatformBPs, rm);
-					}
-				});
+				getExecutor().submit(() -> installInitialBreakpoints(breakpointsDmc, initialPlatformBPs, rm));
 
 				return Status.OK_STATUS;
 			}

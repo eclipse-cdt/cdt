@@ -53,12 +53,7 @@ public class ConsoleSaveAction extends Action {
 			return;
 		}
 
-		Runnable saveJob = new Runnable() {
-			@Override
-			public void run() {
-				saveContent(fileName);
-			}
-		};
+		Runnable saveJob = () -> saveContent(fileName);
 		BusyIndicator.showWhile(Display.getCurrent(), saveJob);
 	}
 

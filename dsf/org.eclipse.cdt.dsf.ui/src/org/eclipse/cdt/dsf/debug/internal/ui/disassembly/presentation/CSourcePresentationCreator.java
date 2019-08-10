@@ -266,12 +266,7 @@ public class CSourcePresentationCreator extends PresentationReconciler
 					fDamagerRepairer = new SourceTagDamagerRepairer(scanner, fSourceTagProvider, colorManager, store);
 					if (fSourceTagProvider != null) {
 						if (fSourceTagListener == null) {
-							fSourceTagListener = new ISourceTagListener() {
-								@Override
-								public void sourceTagsChanged(ISourceTagProvider provider) {
-									handleSourceTagsChanged();
-								}
-							};
+							fSourceTagListener = provider -> handleSourceTagsChanged();
 						}
 						fSourceTagProvider.addSourceTagListener(fSourceTagListener);
 					}
@@ -341,12 +336,9 @@ public class CSourcePresentationCreator extends PresentationReconciler
 			if (fViewer != null) {
 				Display display = fViewer.getTextWidget().getDisplay();
 				if (display.getThread() != Thread.currentThread()) {
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (fViewer != null) {
-								fViewer.invalidateTextPresentation();
-							}
+					display.asyncExec(() -> {
+						if (fViewer != null) {
+							fViewer.invalidateTextPresentation();
 						}
 					});
 				} else {

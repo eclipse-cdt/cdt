@@ -977,26 +977,22 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	public void listChanged(IDockerConnection c, java.util.List<IDockerImage> list) {
 		final IDockerImage[] finalList = list.toArray(new IDockerImage[0]);
 		if (c.getName().equals(connection.getName())) {
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					connection.removeImageListener(containerTab);
-					ArrayList<String> imageNames = new ArrayList<>();
-					displayedImages = new ArrayList<>();
-					for (IDockerImage image : finalList) {
-						java.util.List<String> tags = image.repoTags();
-						if (tags != null) {
-							for (String tag : tags) {
-								imageNames.add(tag);
-								displayedImages.add(image);
-							}
+			Display.getDefault().syncExec(() -> {
+				connection.removeImageListener(containerTab);
+				ArrayList<String> imageNames = new ArrayList<>();
+				displayedImages = new ArrayList<>();
+				for (IDockerImage image : finalList) {
+					java.util.List<String> tags = image.repoTags();
+					if (tags != null) {
+						for (String tag : tags) {
+							imageNames.add(tag);
+							displayedImages.add(image);
 						}
 					}
-					if (!imageCombo.isDisposed())
-						imageCombo.setItems(imageNames.toArray(new String[0]));
-					connection.addImageListener(containerTab);
 				}
-
+				if (!imageCombo.isDisposed())
+					imageCombo.setItems(imageNames.toArray(new String[0]));
+				connection.addImageListener(containerTab);
 			});
 		}
 	}

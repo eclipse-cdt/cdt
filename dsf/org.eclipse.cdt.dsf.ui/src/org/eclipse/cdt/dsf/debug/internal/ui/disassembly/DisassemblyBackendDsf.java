@@ -353,12 +353,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 							if (canDisassemble()) {
 								final BigInteger address = getLastKnownAddress();
 								if (address != null && !UNKNOWN_ADDRESS.equals(address)) {
-									fCallback.asyncExec(new Runnable() {
-										@Override
-										public void run() {
-											fCallback.updatePC(address);
-										}
-									});
+									fCallback.asyncExec(() -> fCallback.updatePC(address));
 								}
 							}
 						}
@@ -387,17 +382,14 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 					if (DEBUG)
 						System.out
 								.println("retrieveFrameAddress done " + DisassemblyUtils.getAddressText(addressValue)); //$NON-NLS-1$
-					fCallback.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (address.getSize() * 8 != fCallback.getAddressSize()) {
-								fCallback.addressSizeChanged(address.getSize() * 8);
-							}
-							if (frame == 0) {
-								fCallback.updatePC(addressValue);
-							} else {
-								fCallback.gotoFrame(frame, addressValue);
-							}
+					fCallback.asyncExec(() -> {
+						if (address.getSize() * 8 != fCallback.getAddressSize()) {
+							fCallback.addressSizeChanged(address.getSize() * 8);
+						}
+						if (frame == 0) {
+							fCallback.updatePC(addressValue);
+						} else {
+							fCallback.gotoFrame(frame, addressValue);
 						}
 					});
 				} else {
@@ -474,12 +466,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		}
 		final IExecutionDMContext context = event.getDMContext();
 		if (context.equals(fTargetContext) || DMContexts.isAncestorOf(fTargetContext, context)) {
-			fCallback.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					fCallback.handleTargetEnded();
-				}
-			});
+			fCallback.asyncExec(() -> fCallback.handleTargetEnded());
 		}
 	}
 
@@ -571,152 +558,98 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		final IDisassemblyDMContext context = DMContexts.getAncestorOfType(fTargetContext, IDisassemblyDMContext.class);
 
 		// align the start address first (bug 328168)
-		executor.execute(new Runnable() {
-			@Override
-			public void run() {
-				alignOpCodeAddress(startAddress, new DataRequestMonitor<BigInteger>(executor, null) {
+		executor.execute(() -> alignOpCodeAddress(startAddress, new DataRequestMonitor<BigInteger>(executor, null) {
 
-					@Override
-					public void handleCompleted() {
-						final BigInteger finalStartAddress = getData();
-						if (mixed) {
-							final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest = new DataRequestMonitor<IMixedInstruction[]>(
-									executor, null) {
-								@Override
-								public void handleCompleted() {
-									final IMixedInstruction[] data = getData();
-									if (!isCanceled() && data != null) {
-										fCallback.asyncExec(new Runnable() {
-											@Override
-											public void run() {
-												if (!insertDisassembly(finalStartAddress, finalEndAddress, data,
-														showSymbols, showDisassembly)) {
-													// retry in non-mixed mode
-													fCallback.retrieveDisassembly(finalStartAddress, finalEndAddress,
-															linesHint, false, true);
-												}
-											}
-										});
-									} else {
-										final IStatus status = getStatus();
-										if (status != null && !status.isOK()) {
-											if (file != null) {
-												fCallback.asyncExec(new Runnable() {
-													@Override
-													public void run() {
-														fCallback.retrieveDisassembly(finalStartAddress,
-																finalEndAddress, linesHint, true, true);
-													}
-												});
-											} else {
-												fCallback.asyncExec(new Runnable() {
-													@Override
-													public void run() {
-														fCallback.doScrollLocked(new Runnable() {
-															@Override
-															public void run() {
-																fCallback.insertError(finalStartAddress,
-																		status.getMessage());
-															}
-														});
-													}
-												});
-											}
-										}
-										fCallback.setUpdatePending(false);
-									}
-								}
-							};
-							if (file != null) {
-								executor.execute(new Runnable() {
-									@Override
-									public void run() {
-										final IDisassembly disassembly = fServicesTracker
-												.getService(IDisassembly.class);
-										if (disassembly == null) {
-											disassemblyRequest.cancel();
-											disassemblyRequest.done();
-											return;
-										}
-										disassembly.getMixedInstructions(context, file, lineNumber, lines * 2,
-												disassemblyRequest);
+			@Override
+			public void handleCompleted() {
+				final BigInteger finalStartAddress = getData();
+				if (mixed) {
+					final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest = new DataRequestMonitor<IMixedInstruction[]>(
+							executor, null) {
+						@Override
+						public void handleCompleted() {
+							final IMixedInstruction[] data = getData();
+							if (!isCanceled() && data != null) {
+								fCallback.asyncExec(() -> {
+									if (!insertDisassembly(finalStartAddress, finalEndAddress, data, showSymbols,
+											showDisassembly)) {
+										// retry in non-mixed mode
+										fCallback.retrieveDisassembly(finalStartAddress, finalEndAddress, linesHint,
+												false, true);
 									}
 								});
 							} else {
-								executor.execute(new Runnable() {
-									@Override
-									public void run() {
-										final IDisassembly disassembly = fServicesTracker
-												.getService(IDisassembly.class);
-										if (disassembly == null) {
-											disassemblyRequest.cancel();
-											disassemblyRequest.done();
-											return;
-										}
-										disassembly.getMixedInstructions(context, finalStartAddress, finalEndAddress,
-												disassemblyRequest);
+								final IStatus status = getStatus();
+								if (status != null && !status.isOK()) {
+									if (file != null) {
+										fCallback.asyncExec(() -> fCallback.retrieveDisassembly(finalStartAddress,
+												finalEndAddress, linesHint, true, true));
+									} else {
+										fCallback.asyncExec(() -> fCallback.doScrollLocked(
+												() -> fCallback.insertError(finalStartAddress, status.getMessage())));
+									}
+								}
+								fCallback.setUpdatePending(false);
+							}
+						}
+					};
+					if (file != null) {
+						executor.execute(() -> {
+							final IDisassembly disassembly = fServicesTracker.getService(IDisassembly.class);
+							if (disassembly == null) {
+								disassemblyRequest.cancel();
+								disassemblyRequest.done();
+								return;
+							}
+							disassembly.getMixedInstructions(context, file, lineNumber, lines * 2, disassemblyRequest);
+						});
+					} else {
+						executor.execute(() -> {
+							final IDisassembly disassembly = fServicesTracker.getService(IDisassembly.class);
+							if (disassembly == null) {
+								disassemblyRequest.cancel();
+								disassemblyRequest.done();
+								return;
+							}
+							disassembly.getMixedInstructions(context, finalStartAddress, finalEndAddress,
+									disassemblyRequest);
+						});
+					}
+				} else {
+					final DataRequestMonitor<IInstruction[]> disassemblyRequest = new DataRequestMonitor<IInstruction[]>(
+							executor, null) {
+						@Override
+						public void handleCompleted() {
+							if (!isCanceled() && getData() != null) {
+								fCallback.asyncExec(() -> {
+									if (!insertDisassembly(finalStartAddress, finalEndAddress, getData(), showSymbols,
+											showDisassembly)) {
+										fCallback.doScrollLocked(() -> fCallback.insertError(finalStartAddress,
+												DisassemblyMessages.DisassemblyBackendDsf_error_UnableToRetrieveData));
 									}
 								});
+							} else {
+								final IStatus status = getStatus();
+								if (status != null && !status.isOK()) {
+									fCallback.asyncExec(() -> fCallback.doScrollLocked(
+											() -> fCallback.insertError(finalStartAddress, status.getMessage())));
+								}
+								fCallback.setUpdatePending(false);
 							}
-						} else {
-							final DataRequestMonitor<IInstruction[]> disassemblyRequest = new DataRequestMonitor<IInstruction[]>(
-									executor, null) {
-								@Override
-								public void handleCompleted() {
-									if (!isCanceled() && getData() != null) {
-										fCallback.asyncExec(new Runnable() {
-											@Override
-											public void run() {
-												if (!insertDisassembly(finalStartAddress, finalEndAddress, getData(),
-														showSymbols, showDisassembly)) {
-													fCallback.doScrollLocked(new Runnable() {
-														@Override
-														public void run() {
-															fCallback.insertError(finalStartAddress,
-																	DisassemblyMessages.DisassemblyBackendDsf_error_UnableToRetrieveData);
-														}
-													});
-												}
-											}
-										});
-									} else {
-										final IStatus status = getStatus();
-										if (status != null && !status.isOK()) {
-											fCallback.asyncExec(new Runnable() {
-												@Override
-												public void run() {
-													fCallback.doScrollLocked(new Runnable() {
-														@Override
-														public void run() {
-															fCallback.insertError(finalStartAddress,
-																	status.getMessage());
-														}
-													});
-												}
-											});
-										}
-										fCallback.setUpdatePending(false);
-									}
-								}
-							};
-							executor.execute(new Runnable() {
-								@Override
-								public void run() {
-									final IDisassembly disassembly = fServicesTracker.getService(IDisassembly.class);
-									if (disassembly == null) {
-										disassemblyRequest.cancel();
-										disassemblyRequest.done();
-										return;
-									}
-									disassembly.getInstructions(context, finalStartAddress, finalEndAddress,
-											disassemblyRequest);
-								}
-							});
 						}
-					}
-				});
+					};
+					executor.execute(() -> {
+						final IDisassembly disassembly = fServicesTracker.getService(IDisassembly.class);
+						if (disassembly == null) {
+							disassemblyRequest.cancel();
+							disassemblyRequest.done();
+							return;
+						}
+						disassembly.getInstructions(context, finalStartAddress, finalEndAddress, disassemblyRequest);
+					});
+				}
 			}
-		});
+		}));
 	}
 
 	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IInstruction[] instructions,
@@ -1039,12 +972,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			protected void handleSuccess() {
 				final BigInteger address = getData();
 				if (address != null) {
-					fCallback.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							fCallback.gotoAddress(address);
-						}
-					});
+					fCallback.asyncExec(() -> fCallback.gotoAddress(address));
 				}
 			}
 		});
@@ -1090,12 +1018,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 						final IAddress address = data.getAddress();
 						if (address != null && address != IExpressionDMLocation.INVALID_ADDRESS) {
 							final BigInteger addressValue = address.getValue();
-							fCallback.asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									fCallback.gotoAddress(addressValue);
-								}
-							});
+							fCallback.asyncExec(() -> fCallback.gotoAddress(addressValue));
 							rm.setData(addressValue);
 							rm.done();
 						} else {
@@ -1191,13 +1114,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			public void handleCompleted() {
 				final IMixedInstruction[] data = getData();
 				if (!isCanceled() && data != null) {
-					fCallback.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (!insertDisassembly(null, endAddress, data, showSymbols, showDisassembly)) {
-								// retry in non-mixed mode
-								retrieveDisassembly(file, lines, endAddress, false, showSymbols, showDisassembly);
-							}
+					fCallback.asyncExec(() -> {
+						if (!insertDisassembly(null, endAddress, data, showSymbols, showDisassembly)) {
+							// retry in non-mixed mode
+							retrieveDisassembly(file, lines, endAddress, false, showSymbols, showDisassembly);
 						}
 					});
 				} else {
@@ -1211,17 +1131,14 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		};
 		assert !fCallback.getUpdatePending();
 		fCallback.setUpdatePending(true);
-		executor.execute(new Runnable() {
-			@Override
-			public void run() {
-				final IDisassembly disassembly = fServicesTracker.getService(IDisassembly.class);
-				if (disassembly == null) {
-					disassemblyRequest.cancel();
-					disassemblyRequest.done();
-					return;
-				}
-				disassembly.getMixedInstructions(context, finalFile, 1, lines, disassemblyRequest);
+		executor.execute(() -> {
+			final IDisassembly disassembly = fServicesTracker.getService(IDisassembly.class);
+			if (disassembly == null) {
+				disassemblyRequest.cancel();
+				disassemblyRequest.done();
+				return;
 			}
+			disassembly.getMixedInstructions(context, finalFile, 1, lines, disassemblyRequest);
 		});
 	}
 

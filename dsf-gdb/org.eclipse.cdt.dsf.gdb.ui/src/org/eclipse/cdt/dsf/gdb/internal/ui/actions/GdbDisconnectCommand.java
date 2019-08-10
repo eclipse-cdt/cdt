@@ -161,23 +161,20 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
 		// need it anymore, once the session has terminated;
 		// instead, we let it timeout and ignore it if the session
 		// is already terminated.
-		fExecutor.schedule(new Runnable() {
-			@Override
-			public void run() {
-				// Check that the session is still active when the timeout hits.
-				// If it is not, then everything has been cleaned up already.
-				if (DsfSession.isSessionActive(fSession.getId())) {
-					DsfSession.removeSessionEndedListener(endedListener);
+		fExecutor.schedule(() -> {
+			// Check that the session is still active when the timeout hits.
+			// If it is not, then everything has been cleaned up already.
+			if (DsfSession.isSessionActive(fSession.getId())) {
+				DsfSession.removeSessionEndedListener(endedListener);
 
-					// Marking the request as cancelled will prevent the removal of
-					// the launch from the Debug view in case of "Terminate and Remove".
-					// This is important for multi-process sessions when "Terminate and Remove"
-					// is applied to one of the running processes. In this case the selected
-					// process will be terminated but the associated launch will not be removed
-					// from the Debug view.
-					request.setStatus(Status.CANCEL_STATUS);
-					request.done();
-				}
+				// Marking the request as cancelled will prevent the removal of
+				// the launch from the Debug view in case of "Terminate and Remove".
+				// This is important for multi-process sessions when "Terminate and Remove"
+				// is applied to one of the running processes. In this case the selected
+				// process will be terminated but the associated launch will not be removed
+				// from the Debug view.
+				request.setStatus(Status.CANCEL_STATUS);
+				request.done();
 			}
 		}, 1, TimeUnit.MINUTES);
 	}

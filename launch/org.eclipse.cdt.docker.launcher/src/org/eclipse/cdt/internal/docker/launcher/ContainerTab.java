@@ -736,24 +736,20 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 			setErrorMessage(Messages.ContainerTab_Error_No_Images);
 		}
 		if (c.getName().equals(connection.getName())) {
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					connection.removeImageListener(containerTab);
-					ArrayList<String> imageNames = new ArrayList<>();
-					for (IDockerImage image : finalList) {
-						java.util.List<String> tags = image.repoTags();
-						if (tags != null) {
-							for (String tag : tags) {
-								imageNames.add(tag);
-							}
+			Display.getDefault().syncExec(() -> {
+				connection.removeImageListener(containerTab);
+				ArrayList<String> imageNames = new ArrayList<>();
+				for (IDockerImage image : finalList) {
+					java.util.List<String> tags = image.repoTags();
+					if (tags != null) {
+						for (String tag : tags) {
+							imageNames.add(tag);
 						}
 					}
-					if (!imageCombo.isDisposed())
-						imageCombo.setItems(imageNames.toArray(new String[0]));
-					connection.addImageListener(containerTab);
 				}
-
+				if (!imageCombo.isDisposed())
+					imageCombo.setItems(imageNames.toArray(new String[0]));
+				connection.addImageListener(containerTab);
 			});
 		}
 	}

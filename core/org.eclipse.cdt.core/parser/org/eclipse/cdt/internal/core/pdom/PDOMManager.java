@@ -206,12 +206,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		addIndexerSetupParticipant(new WaitForRefreshJobs());
 		fProjectDescriptionListener = new CProjectDescriptionListener(this);
 		fJobChangeListener = new JobChangeListener(this);
-		fPreferenceChangeListener = new IPreferenceChangeListener() {
-			@Override
-			public void preferenceChange(PreferenceChangeEvent event) {
-				onPreferenceChange(event);
-			}
-		};
+		fPreferenceChangeListener = event -> onPreferenceChange(event);
 		fSetupJob = new PDOMSetupJob(this);
 		fIndexerJob = new PDOMIndexerJob(this);
 		fNotificationJob = createNotifyJob();
@@ -541,9 +536,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					registerIndexer(cproject, indexer);
 					createPolicy(cproject).clearTUs();
 					if (oldIndexer instanceof AbstractPDOMIndexer) {
-						if (IndexerPreferences.preferDefaultLanguage(
-								((AbstractPDOMIndexer) oldIndexer).getProperties()) != IndexerPreferences
-										.preferDefaultLanguage(props)) {
+						if (IndexerPreferences.preferDefaultLanguage(((AbstractPDOMIndexer) oldIndexer)
+								.getProperties()) != IndexerPreferences.preferDefaultLanguage(props)) {
 							enqueue(new NotifyCModelManagerTask(cproject.getProject()));
 						}
 					}
@@ -1089,25 +1083,22 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			if (fStateListeners.isEmpty()) {
 				return;
 			}
-			Runnable notify = new Runnable() {
-				@Override
-				public void run() {
-					fIndexerStateEvent.setState(state);
-					Object[] listeners = fStateListeners.getListeners();
-					for (Object listener2 : listeners) {
-						final IIndexerStateListener listener = (IIndexerStateListener) listener2;
-						SafeRunner.run(new ISafeRunnable() {
-							@Override
-							public void handleException(Throwable exception) {
-								CCorePlugin.log(exception);
-							}
+			Runnable notify = () -> {
+				fIndexerStateEvent.setState(state);
+				Object[] listeners = fStateListeners.getListeners();
+				for (Object listener2 : listeners) {
+					final IIndexerStateListener listener = (IIndexerStateListener) listener2;
+					SafeRunner.run(new ISafeRunnable() {
+						@Override
+						public void handleException(Throwable exception) {
+							CCorePlugin.log(exception);
+						}
 
-							@Override
-							public void run() throws Exception {
-								listener.indexChanged(fIndexerStateEvent);
-							}
-						});
-					}
+						@Override
+						public void run() throws Exception {
+							listener.indexChanged(fIndexerStateEvent);
+						}
+					});
 				}
 			};
 			scheduleNotification(notify);
@@ -1127,25 +1118,22 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 		if (project != null) {
 			final ICProject finalProject = project;
-			Runnable notify = new Runnable() {
-				@Override
-				public void run() {
-					fIndexChangeEvent.setAffectedProject(finalProject, e);
-					Object[] listeners = fChangeListeners.getListeners();
-					for (Object listener2 : listeners) {
-						final IIndexChangeListener listener = (IIndexChangeListener) listener2;
-						SafeRunner.run(new ISafeRunnable() {
-							@Override
-							public void handleException(Throwable exception) {
-								CCorePlugin.log(exception);
-							}
+			Runnable notify = () -> {
+				fIndexChangeEvent.setAffectedProject(finalProject, e);
+				Object[] listeners = fChangeListeners.getListeners();
+				for (Object listener2 : listeners) {
+					final IIndexChangeListener listener = (IIndexChangeListener) listener2;
+					SafeRunner.run(new ISafeRunnable() {
+						@Override
+						public void handleException(Throwable exception) {
+							CCorePlugin.log(exception);
+						}
 
-							@Override
-							public void run() throws Exception {
-								listener.indexChanged(fIndexChangeEvent);
-							}
-						});
-					}
+						@Override
+						public void run() throws Exception {
+							listener.indexChanged(fIndexChangeEvent);
+						}
+					});
 				}
 			};
 			scheduleNotification(notify);
@@ -1528,22 +1516,19 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			fPostponedProjects.remove(cproject);
 			final IndexerSetupParticipant[] participants = fSetupParticipants
 					.toArray(new IndexerSetupParticipant[fSetupParticipants.size()]);
-			Runnable notify = new Runnable() {
-				@Override
-				public void run() {
-					for (final IndexerSetupParticipant p : participants) {
-						SafeRunner.run(new ISafeRunnable() {
-							@Override
-							public void handleException(Throwable exception) {
-								CCorePlugin.log(exception);
-							}
+			Runnable notify = () -> {
+				for (final IndexerSetupParticipant p : participants) {
+					SafeRunner.run(new ISafeRunnable() {
+						@Override
+						public void handleException(Throwable exception) {
+							CCorePlugin.log(exception);
+						}
 
-							@Override
-							public void run() throws Exception {
-								p.onIndexerSetup(cproject);
-							}
-						});
-					}
+						@Override
+						public void run() throws Exception {
+							p.onIndexerSetup(cproject);
+						}
+					});
 				}
 			};
 			scheduleNotification(notify);

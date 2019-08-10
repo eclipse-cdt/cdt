@@ -273,24 +273,20 @@ public class NewContainerTargetWizardPage extends WizardPage
 			setErrorMessage(Messages.NewContainerTargetWizardPage_no_images);
 		}
 		if (c.getName().equals(connection.getName())) {
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					connection.removeImageListener(wizardPage);
-					ArrayList<String> imageNames = new ArrayList<>();
-					for (IDockerImage image : finalList) {
-						java.util.List<String> tags = image.repoTags();
-						if (tags != null) {
-							for (String tag : tags) {
-								imageNames.add(tag);
-							}
+			Display.getDefault().syncExec(() -> {
+				connection.removeImageListener(wizardPage);
+				ArrayList<String> imageNames = new ArrayList<>();
+				for (IDockerImage image : finalList) {
+					java.util.List<String> tags = image.repoTags();
+					if (tags != null) {
+						for (String tag : tags) {
+							imageNames.add(tag);
 						}
 					}
-					if (!imageCombo.isDisposed())
-						imageCombo.setItems(imageNames.toArray(new String[0]));
-					connection.addImageListener(wizardPage);
 				}
-
+				if (!imageCombo.isDisposed())
+					imageCombo.setItems(imageNames.toArray(new String[0]));
+				connection.addImageListener(wizardPage);
 			});
 		}
 	}

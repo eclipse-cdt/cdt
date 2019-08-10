@@ -277,12 +277,7 @@ public class SRecordImporter implements IMemoryImporter {
 		composite.pack();
 		parent.pack();
 
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				validate();
-			}
-		});
+		Display.getDefault().asyncExec(() -> validate());
 
 		return composite;
 	}

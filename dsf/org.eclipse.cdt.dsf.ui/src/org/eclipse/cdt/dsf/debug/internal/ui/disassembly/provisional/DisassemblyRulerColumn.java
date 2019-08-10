@@ -40,14 +40,10 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -393,14 +389,11 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	/**
 	 * Redraw runnable
 	 */
-	private Runnable fRunnable = new Runnable() {
-		@Override
-		public void run() {
-			synchronized (fRunnableLock) {
-				fIsRunnablePosted = false;
-			}
-			redraw();
+	private Runnable fRunnable = () -> {
+		synchronized (fRunnableLock) {
+			fIsRunnablePosted = false;
 		}
+		redraw();
 	};
 	private boolean fAlignRight;
 	private boolean fPaintStyleBackground;
@@ -608,21 +601,15 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
 		fCanvas.setForeground(fForeground);
 
-		fCanvas.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent event) {
-				if (fCachedTextViewer != null)
-					doubleBufferPaint(event.gc);
-			}
+		fCanvas.addPaintListener(event -> {
+			if (fCachedTextViewer != null)
+				doubleBufferPaint(event.gc);
 		});
 
-		fCanvas.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				handleDispose();
-				fCachedTextViewer = null;
-				fCachedTextWidget = null;
-			}
+		fCanvas.addDisposeListener(e -> {
+			handleDispose();
+			fCachedTextViewer = null;
+			fCachedTextWidget = null;
 		});
 
 		fCanvas.addMouseListener(new MouseHandler());

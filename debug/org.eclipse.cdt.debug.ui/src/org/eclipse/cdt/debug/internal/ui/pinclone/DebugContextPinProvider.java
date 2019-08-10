@@ -142,12 +142,9 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	 * @param event debug event
 	 */
 	public void delegateEvent(final DebugContextEvent event) {
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				fActiveContext = event.getContext();
-				fire(event);
-			}
+		Display.getDefault().syncExec(() -> {
+			fActiveContext = event.getContext();
+			fire(event);
 		});
 	}
 }

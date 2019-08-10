@@ -53,65 +53,60 @@ public class GdbStackFramesVMNode extends StackFramesVMNode {
 	}
 
 	private void buildDeltaForFocusChangedEvent(IGDBFocusChangedEvent event, VMDelta parentDelta, RequestMonitor rm) {
-		getSession().getExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				IDMContext ctx = event.getDMContext();
+		getSession().getExecutor().execute(() -> {
+			IDMContext ctx = event.getDMContext();
 
-				// Is IGDBFocusChangedEvent pertinent for this VMNode?
-				if (ctx instanceof IFrameDMContext) {
-					IFrameDMContext newFrameFocus = (IFrameDMContext) ctx;
-					IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(newFrameFocus,
-							IMIExecutionDMContext.class);
-					if (execDmc == null) {
-						rm.done();
-						return;
-					}
+			// Is IGDBFocusChangedEvent pertinent for this VMNode?
+			if (ctx instanceof IFrameDMContext) {
+				IFrameDMContext newFrameFocus = (IFrameDMContext) ctx;
+				IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(newFrameFocus,
+						IMIExecutionDMContext.class);
+				if (execDmc == null) {
+					rm.done();
+					return;
+				}
 
-					IRunControl runControl = getServicesTracker().getService(IRunControl.class);
-					if (runControl == null) {
-						// Required services have not initialized yet.  Ignore the event.
-						rm.done();
-						return;
-					}
+				IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+				if (runControl == null) {
+					// Required services have not initialized yet.  Ignore the event.
+					rm.done();
+					return;
+				}
 
-					if (runControl.isSuspended(execDmc) || runControl.isStepping(execDmc)) {
-						// find the VMC index for the frame that switched, so we can select it correctly.
-						getVMCIndexForDmc(GdbStackFramesVMNode.this, newFrameFocus, parentDelta,
-								new DataRequestMonitor<Integer>(getExecutor(), rm) {
-									@Override
-									protected void handleSuccess() {
-										// change to frameOffset
-										final int frameOffset = getData();
+				if (runControl.isSuspended(execDmc) || runControl.isStepping(execDmc)) {
+					// find the VMC index for the frame that switched, so we can select it correctly.
+					getVMCIndexForDmc(GdbStackFramesVMNode.this, newFrameFocus, parentDelta,
+							new DataRequestMonitor<Integer>(getExecutor(), rm) {
+								@Override
+								protected void handleSuccess() {
+									// change to frameOffset
+									final int frameOffset = getData();
 
-										// Retrieve the list of stack frames
-										getVMProvider().updateNode(GdbStackFramesVMNode.this,
-												new VMChildrenUpdate(parentDelta,
-														getVMProvider().getPresentationContext(), -1, -1,
-														new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
-															@Override
-															public void handleSuccess() {
-																final List<Object> data = getData();
-																if (data != null && data.size() != 0) {
-																	// create the delta to select the
-																	// current stack frame
-																	parentDelta.addNode(data.get(frameOffset),
-																			frameOffset,
-																			IModelDelta.SELECT | IModelDelta.FORCE);
-																}
-																rm.done();
+									// Retrieve the list of stack frames
+									getVMProvider().updateNode(GdbStackFramesVMNode.this,
+											new VMChildrenUpdate(parentDelta, getVMProvider().getPresentationContext(),
+													-1, -1, new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
+														@Override
+														public void handleSuccess() {
+															final List<Object> data = getData();
+															if (data != null && data.size() != 0) {
+																// create the delta to select the
+																// current stack frame
+																parentDelta.addNode(data.get(frameOffset), frameOffset,
+																		IModelDelta.SELECT | IModelDelta.FORCE);
 															}
-														}));
-									}
-								});
-					} else {
-						// thread is running - no delta to produce for the stack frame node
-						rm.done();
-					}
+															rm.done();
+														}
+													}));
+								}
+							});
 				} else {
-					// context not a frame  - nothing to do here
+					// thread is running - no delta to produce for the stack frame node
 					rm.done();
 				}
+			} else {
+				// context not a frame  - nothing to do here
+				rm.done();
 			}
 		});
 	}

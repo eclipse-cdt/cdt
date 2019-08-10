@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56a0bf5f_332a9d5d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/disassembly/dsf/AbstractDisassemblyBackend.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-10T23:20:37Z",
+      "side": 0,
+      "message": "Listing the comment here probably introduces new warning",
+      "revId": "51da3eb3a619c85b31c74d0a1bedacfa94f5db58",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2a79a1_f9243e4b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 839,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-10T23:20:37Z",
+      "side": 0,
+      "message": "This comment is lost",
+      "revId": "51da3eb3a619c85b31c74d0a1bedacfa94f5db58",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "01575b67_fb59da73",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1139,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-10T23:20:37Z",
+      "side": 0,
+      "message": "The cleanup interestingly changed this i to i1",
+      "revId": "51da3eb3a619c85b31c74d0a1bedacfa94f5db58",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b461dbd0_ccad15e1",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraditionalRendering.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1143,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-10T23:20:37Z",
+      "side": 0,
+      "message": "and this i to i2",
+      "revId": "51da3eb3a619c85b31c74d0a1bedacfa94f5db58",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

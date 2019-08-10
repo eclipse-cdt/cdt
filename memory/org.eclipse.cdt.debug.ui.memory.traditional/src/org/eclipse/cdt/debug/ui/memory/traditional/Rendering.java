@@ -54,8 +54,6 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -265,12 +263,9 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		getVerticalBar().addSelectionListener(createVerticalBarSelectinListener());
 
-		this.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent pe) {
-				pe.gc.setBackground(Rendering.this.getTraditionalRendering().getColorBackground());
-				pe.gc.fillRectangle(0, 0, Rendering.this.getBounds().width, Rendering.this.getBounds().height);
-			}
+		this.addPaintListener(pe -> {
+			pe.gc.setBackground(Rendering.this.getTraditionalRendering().getColorBackground());
+			pe.gc.fillRectangle(0, 0, Rendering.this.getBounds().width, Rendering.this.getBounds().height);
 		});
 
 		setLayout();
@@ -569,24 +564,18 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 	protected void handleSuspend(boolean isBreakpointHit) {
 		if (getUpdateMode() == UPDATE_ALWAYS || (getUpdateMode() == UPDATE_ON_BREAKPOINT && isBreakpointHit)) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					archiveDeltas();
-					refresh();
-				}
+			Display.getDefault().asyncExec(() -> {
+				archiveDeltas();
+				refresh();
 			});
 		}
 	}
 
 	protected void handleChange() {
 		if (getUpdateMode() == UPDATE_ALWAYS) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					archiveDeltas();
-					refresh();
-				}
+			Display.getDefault().asyncExec(() -> {
+				archiveDeltas();
+				refresh();
 			});
 		}
 	}
@@ -861,43 +850,40 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				fCache.end = endAddress;
 				fCache.bytes = cachedBytesFinal;
 
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						// generate deltas
-						for (int historyIndex = 0; historyIndex < getHistoryDepth(); historyIndex++) {
-							if (fHistoryCache[historyIndex] != null && fHistoryCache[historyIndex].isValid()) {
-								BigInteger maxStart = startAddress.max(fHistoryCache[historyIndex].start);
-								BigInteger minEnd = endAddress.min(fHistoryCache[historyIndex].end)
-										.subtract(BigInteger.valueOf(1));
+				Display.getDefault().asyncExec(() -> {
+					// generate deltas
+					for (int historyIndex = 0; historyIndex < getHistoryDepth(); historyIndex++) {
+						if (fHistoryCache[historyIndex] != null && fHistoryCache[historyIndex].isValid()) {
+							BigInteger maxStart = startAddress.max(fHistoryCache[historyIndex].start);
+							BigInteger minEnd = endAddress.min(fHistoryCache[historyIndex].end)
+									.subtract(BigInteger.valueOf(1));
 
-								BigInteger overlapLength = minEnd.subtract(maxStart).multiply(addressableSize);
-								if (overlapLength.compareTo(BigInteger.valueOf(0)) > 0) {
-									// there is overlap
+							BigInteger overlapLength = minEnd.subtract(maxStart).multiply(addressableSize);
+							if (overlapLength.compareTo(BigInteger.valueOf(0)) > 0) {
+								// there is overlap
 
-									int offsetIntoOld = (maxStart.subtract(fHistoryCache[historyIndex].start)
-											.multiply(addressableSize)).intValue();
-									int offsetIntoNew = maxStart.subtract(startAddress).multiply(addressableSize)
-											.intValue();
+								int offsetIntoOld = (maxStart.subtract(fHistoryCache[historyIndex].start)
+										.multiply(addressableSize)).intValue();
+								int offsetIntoNew = maxStart.subtract(startAddress).multiply(addressableSize)
+										.intValue();
 
-									for (int i = overlapLength.intValue(); i >= 0; i--) {
-										cachedBytesFinal[offsetIntoNew + i].setChanged(historyIndex,
-												cachedBytesFinal[offsetIntoNew + i]
-														.getValue() != fHistoryCache[historyIndex].bytes[offsetIntoOld
-																+ i].getValue());
-									}
+								for (int i = overlapLength.intValue(); i >= 0; i--) {
+									cachedBytesFinal[offsetIntoNew + i].setChanged(historyIndex,
+											cachedBytesFinal[offsetIntoNew + i]
+													.getValue() != fHistoryCache[historyIndex].bytes[offsetIntoOld + i]
+															.getValue());
 								}
 							}
 						}
-
-						// If the history does not exist, populate the history with the just populated cache. This solves the
-						// use case of 1) connect to target; 2) edit memory before the first suspend debug event; 3) paint
-						// differences in changed color.
-						if (fHistoryCache[0] == null)
-							fHistoryCache[0] = fCache.clone();
-
-						Rendering.this.redrawPanes();
 					}
+
+					// If the history does not exist, populate the history with the just populated cache. This solves the
+					// use case of 1) connect to target; 2) edit memory before the first suspend debug event; 3) paint
+					// differences in changed color.
+					if (fHistoryCache[0] == null)
+						fHistoryCache[0] = fCache.clone();
+
+					Rendering.this.redrawPanes();
 				});
 
 			} catch (Exception e) {
@@ -1623,12 +1609,9 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		fParent.setTargetMemoryLittleEndian(littleEndian);
 		fIsTargetLittleEndian = littleEndian;
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				fireSettingsChanged();
-				layoutPanes();
-			}
+		Display.getDefault().asyncExec(() -> {
+			fireSettingsChanged();
+			layoutPanes();
 		});
 	}
 
@@ -1643,14 +1626,11 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		fIsDisplayLittleEndian = littleEndian;
 
 		fireSettingsChanged();
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (isShowCrossReferenceInfo()) {
-					resolveAddressInfoForCurrentSelection();
-				}
-				layoutPanes();
+		Display.getDefault().asyncExec(() -> {
+			if (isShowCrossReferenceInfo()) {
+				resolveAddressInfoForCurrentSelection();
 			}
+			layoutPanes();
 		});
 	}
 

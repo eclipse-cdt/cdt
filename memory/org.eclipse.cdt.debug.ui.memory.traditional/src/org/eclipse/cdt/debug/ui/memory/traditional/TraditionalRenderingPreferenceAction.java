@@ -41,14 +41,8 @@ public class TraditionalRenderingPreferenceAction extends ActionDelegate impleme
 	}
 
 	protected void showPreferencePage(String id, IPreferencePage page) {
-		BusyIndicator.showWhile(TraditionalRenderingPlugin.getStandardDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				PreferencesUtil
-						.createPreferenceDialogOn(TraditionalRenderingPlugin.getShell(), id, new String[] { id }, null)
-						.open();
-			}
-		});
+		BusyIndicator.showWhile(TraditionalRenderingPlugin.getStandardDisplay(), () -> PreferencesUtil
+				.createPreferenceDialogOn(TraditionalRenderingPlugin.getShell(), id, new String[] { id }, null).open());
 	}
 
 }

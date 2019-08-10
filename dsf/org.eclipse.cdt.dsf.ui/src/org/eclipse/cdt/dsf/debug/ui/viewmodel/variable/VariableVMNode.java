@@ -418,15 +418,12 @@ public class VariableVMNode extends AbstractExpressionVMNode
 			DebugUITools.getPreferenceStore().removePropertyChangeListener(fPreferenceChangeListener);
 		}
 
-		fPreferenceChangeListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND)) {
-					columnIdValueBackground.setBackground(
-							DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB());
-					columnNoColumnsBackground.setBackground(
-							DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB());
-				}
+		fPreferenceChangeListener = event -> {
+			if (event.getProperty().equals(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND)) {
+				columnIdValueBackground.setBackground(
+						DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB());
+				columnNoColumnsBackground.setBackground(
+						DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB());
 			}
 		};
 
@@ -865,22 +862,19 @@ public class VariableVMNode extends AbstractExpressionVMNode
 	@Override
 	public void update(final IExpressionUpdate update) {
 		try {
-			getSession().getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
-					if (expressionService != null) {
-						IExpressionDMContext expressionDMC = createExpression(expressionService,
-								createCompositeDMVMContext(update), update.getExpression().getExpressionText());
+			getSession().getExecutor().execute(() -> {
+				final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
+				if (expressionService != null) {
+					IExpressionDMContext expressionDMC = createExpression(expressionService,
+							createCompositeDMVMContext(update), update.getExpression().getExpressionText());
 
-						VariableExpressionVMC variableVmc = (VariableExpressionVMC) createVMContext(expressionDMC);
-						variableVmc.setExpression(update.getExpression());
+					VariableExpressionVMC variableVmc = (VariableExpressionVMC) createVMContext(expressionDMC);
+					variableVmc.setExpression(update.getExpression());
 
-						update.setExpressionElement(variableVmc);
-						update.done();
-					} else {
-						handleFailedUpdate(update);
-					}
+					update.setExpressionElement(variableVmc);
+					update.done();
+				} else {
+					handleFailedUpdate(update);
 				}
 			});
 		} catch (RejectedExecutionException e) {

@@ -756,12 +756,9 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 		// Need to remove annotations in UI thread.
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		if (display != null && !display.isDisposed()) {
-			display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					enableLineBackgroundPainter();
-					fIPManager.removeAllAnnotations();
-				}
+			display.asyncExec(() -> {
+				enableLineBackgroundPainter();
+				fIPManager.removeAllAnnotations();
 			});
 		}
 	}
@@ -997,20 +994,17 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 				System.out.println("[DsfSourceDisplayAdapter] eventDispatched e=" + e); //$NON-NLS-1$
 			}
 			// trigger source display immediately (should be optional?)
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					Object context = DebugUITools.getDebugContext();
-					if (context instanceof IDMVMContext) {
-						final IDMContext dmc = ((IDMVMContext) context).getDMContext();
-						if (dmc instanceof IFrameDMContext && DMContexts.isAncestorOf(dmc, e.getDMContext())) {
-							IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-							doDisplaySource((IFrameDMContext) dmc, page, false, true);
-							return;
-						}
+			Display.getDefault().asyncExec(() -> {
+				Object context = DebugUITools.getDebugContext();
+				if (context instanceof IDMVMContext) {
+					final IDMContext dmc = ((IDMVMContext) context).getDMContext();
+					if (dmc instanceof IFrameDMContext && DMContexts.isAncestorOf(dmc, e.getDMContext())) {
+						IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+						doDisplaySource((IFrameDMContext) dmc, page, false, true);
+						return;
 					}
-					doneStepping(e.getDMContext());
 				}
+				doneStepping(e.getDMContext());
 			});
 		} else {
 			doneStepping(e.getDMContext());

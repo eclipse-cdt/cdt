@@ -617,12 +617,9 @@ public class ListDialogField extends DialogField {
 	public void postSetSelection(final ISelection selection) {
 		if (isOkToUse(fTableControl)) {
 			Display d = fTableControl.getDisplay();
-			d.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (isOkToUse(fTableControl)) {
-						selectElements(selection);
-					}
+			d.asyncExec(() -> {
+				if (isOkToUse(fTableControl)) {
+					selectElements(selection);
 				}
 			});
 		}

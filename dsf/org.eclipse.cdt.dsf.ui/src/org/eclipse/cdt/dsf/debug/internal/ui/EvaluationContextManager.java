@@ -52,24 +52,20 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	}
 
 	public static void startup() {
-		Runnable r = new Runnable() {
-
-			@Override
-			public void run() {
-				if (fgManager == null) {
-					// FindBugs reported that it is unsafe to set s_resources
-					// before we finish to initialize the object, because of
-					// multi-threading.  This is why we use a temporary variable.
-					EvaluationContextManager manager = new EvaluationContextManager();
-					IWorkbench workbench = PlatformUI.getWorkbench();
-					IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-					for (int i = 0; i < windows.length; i++) {
-						manager.windowOpened(windows[i]);
-					}
-					workbench.addWindowListener(manager);
-
-					fgManager = manager;
+		Runnable r = () -> {
+			if (fgManager == null) {
+				// FindBugs reported that it is unsafe to set s_resources
+				// before we finish to initialize the object, because of
+				// multi-threading.  This is why we use a temporary variable.
+				EvaluationContextManager manager = new EvaluationContextManager();
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+				for (int i = 0; i < windows.length; i++) {
+					manager.windowOpened(windows[i]);
 				}
+				workbench.addWindowListener(manager);
+
+				fgManager = manager;
 			}
 		};
 		Display display = Display.getCurrent();

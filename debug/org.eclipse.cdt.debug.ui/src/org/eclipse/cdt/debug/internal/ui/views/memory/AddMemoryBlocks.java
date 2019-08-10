@@ -123,26 +123,23 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 				msRetrieval.getMemorySpaces(context, new GetMemorySpacesRequest() {
 					@Override
 					public void done() {
-						runOnUIThread(new Runnable() {
-							@Override
-							public void run() {
-								if (isSuccess()) {
-									String[] memorySpaces = getMemorySpaces();
+						runOnUIThread(() -> {
+							if (isSuccess()) {
+								String[] memorySpaces = getMemorySpaces();
 
-									// We shouldn't be using the custom dialog
-									// if there are none or only one memory
-									// spaces involved.
-									// https://bugs.eclipse.org/bugs/show_bug.cgi?id=309032#c50
-									if (memorySpaces.length >= 2) {
-										doAddMemoryBlocks(renderingSite, context, msRetrieval, memorySpaces);
-										return;
-									}
+								// We shouldn't be using the custom dialog
+								// if there are none or only one memory
+								// spaces involved.
+								// https://bugs.eclipse.org/bugs/show_bug.cgi?id=309032#c50
+								if (memorySpaces.length >= 2) {
+									doAddMemoryBlocks(renderingSite, context, msRetrieval, memorySpaces);
+									return;
 								}
-
-								// If we get here, then the custom dialog isn't
-								// necessary. Use the standard (platform) one
-								invokePlatformAction(renderingSite);
 							}
+
+							// If we get here, then the custom dialog isn't
+							// necessary. Use the standard (platform) one
+							invokePlatformAction(renderingSite);
 						});
 					}
 				});

@@ -111,12 +111,7 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 			((MemorySearchResult) search).addListener(new ISearchResultListener() {
 				@Override
 				public void searchResultChanged(SearchResultEvent e) {
-					Display.getDefault().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							fTreeViewer.refresh();
-						}
-					});
+					Display.getDefault().asyncExec(() -> fTreeViewer.refresh());
 				}
 			});
 		}

@@ -64,23 +64,19 @@ public class GdbDebugContextSyncManager implements IDebugContextListener {
 				DsfSession session = DsfSession.getSession(eventSessionId);
 
 				// order GDB to switch thread
-				session.getExecutor().execute(new Runnable() {
-					@Override
-					public void run() {
-						DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(),
-								eventSessionId);
-						IGDBFocusSynchronizer gdbSync = tracker.getService(IGDBFocusSynchronizer.class);
-						tracker.dispose();
+				session.getExecutor().execute(() -> {
+					DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), eventSessionId);
+					IGDBFocusSynchronizer gdbSync = tracker.getService(IGDBFocusSynchronizer.class);
+					tracker.dispose();
 
-						if (gdbSync != null) {
-							gdbSync.setFocus(new IDMContext[] { dmc }, new ImmediateRequestMonitor() {
-								@Override
-								protected void handleFailure() {
-									// do not set error - it's normal in some cases to fail to switch thread
-									// for example in a remote session with the inferior running and in all-stop mode
-								}
-							});
-						}
+					if (gdbSync != null) {
+						gdbSync.setFocus(new IDMContext[] { dmc }, new ImmediateRequestMonitor() {
+							@Override
+							protected void handleFailure() {
+								// do not set error - it's normal in some cases to fail to switch thread
+								// for example in a remote session with the inferior running and in all-stop mode
+							}
+						});
 					}
 				});
 			}

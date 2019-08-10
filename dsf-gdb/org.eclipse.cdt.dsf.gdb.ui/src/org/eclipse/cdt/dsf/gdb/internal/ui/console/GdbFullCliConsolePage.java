@@ -175,17 +175,14 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 
 		// Must use syncExec because the logic within must complete before the rest
 		// of the class methods (specifically getProcess()) is called
-		fMainComposite.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (fTerminalControl != null && !fTerminalControl.isDisposed()) {
-					fTerminalControl.clearTerminal();
-					fTerminalControl.connectTerminal();
+		fMainComposite.getDisplay().syncExec(() -> {
+			if (fTerminalControl != null && !fTerminalControl.isDisposed()) {
+				fTerminalControl.clearTerminal();
+				fTerminalControl.connectTerminal();
 
-					// The actual terminal widget initializes its defaults in the line above,
-					// lets override them with our application defaults right after.
-					setDefaults();
-				}
+				// The actual terminal widget initializes its defaults in the line above,
+				// lets override them with our application defaults right after.
+				setDefaults();
 			}
 		});
 	}

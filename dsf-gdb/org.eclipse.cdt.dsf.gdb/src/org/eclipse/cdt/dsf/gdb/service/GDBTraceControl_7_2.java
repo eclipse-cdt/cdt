@@ -804,12 +804,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		// the number of frames collected.  Having a small interval of
 		// stale data is currently not a big deal, and not user-visible.
 		// Bug 353034
-		getExecutor().schedule(new Runnable() {
-			@Override
-			public void run() {
-				fTraceStatusCache.reset(context);
-			}
-		}, 300, TimeUnit.MILLISECONDS);
+		getExecutor().schedule(() -> fTraceStatusCache.reset(context), 300, TimeUnit.MILLISECONDS);
 
 		fTraceStatusCache.execute(fCommandFactory.createMITraceStatus(context),
 				new DataRequestMonitor<MITraceStatusInfo>(getExecutor(), rm) {

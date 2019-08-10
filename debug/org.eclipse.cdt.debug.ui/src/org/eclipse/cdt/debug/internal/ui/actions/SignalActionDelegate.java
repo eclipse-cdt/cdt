@@ -43,15 +43,11 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 		if (getSignal() != null) {
 			final MultiStatus ms = new MultiStatus(CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED,
 					ActionMessages.getString("SignalActionDelegate.0"), null); //$NON-NLS-1$
-			BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						doAction(getSignal());
-					} catch (DebugException e) {
-						ms.merge(e.getStatus());
-					}
+			BusyIndicator.showWhile(Display.getCurrent(), () -> {
+				try {
+					doAction(getSignal());
+				} catch (DebugException e) {
+					ms.merge(e.getStatus());
 				}
 			});
 			if (!ms.isOK()) {

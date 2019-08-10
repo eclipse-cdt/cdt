@@ -38,8 +38,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -153,23 +151,11 @@ public class CastToArrayActionHandler extends AbstractHandler {
 					ActionMessages.getString("CastToArrayActionDelegate.1")); //$NON-NLS-1$
 			((GridData) label.getLayoutData()).horizontalSpan = 3;
 			fFirstIndexText = ControlFactory.createTextField(composite);
-			fFirstIndexText.addModifyListener(new ModifyListener() {
-
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validateInput();
-				}
-			});
+			fFirstIndexText.addModifyListener(e -> validateInput());
 			label = ControlFactory.createLabel(composite, ActionMessages.getString("CastToArrayActionDelegate.2")); //$NON-NLS-1$
 			((GridData) label.getLayoutData()).horizontalSpan = 3;
 			fLengthText = ControlFactory.createTextField(composite);
-			fLengthText.addModifyListener(new ModifyListener() {
-
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validateInput();
-				}
-			});
+			fLengthText.addModifyListener(e -> validateInput());
 		}
 
 		protected void validateInput() {
@@ -250,16 +236,12 @@ public class CastToArrayActionHandler extends AbstractHandler {
 		if (getCastToArray() == null || getCastToArray().length == 0)
 			return null;
 
-		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					doAction(getCastToArray());
-					setStatus(null);
-				} catch (DebugException e) {
-					setStatus(e.getStatus());
-				}
+		BusyIndicator.showWhile(Display.getCurrent(), () -> {
+			try {
+				doAction(getCastToArray());
+				setStatus(null);
+			} catch (DebugException e) {
+				setStatus(e.getStatus());
 			}
 		});
 		if (getStatus() != null && !getStatus().isOK()) {

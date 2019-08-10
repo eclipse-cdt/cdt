@@ -109,12 +109,8 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		fBlock = null;
 
 		try {
-			fRetrieval.getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					fRetrieval.getSession().addServiceEventListener(DsfMemoryBlock.this, null);
-				}
-			});
+			fRetrieval.getExecutor()
+					.execute(() -> fRetrieval.getSession().addServiceEventListener(DsfMemoryBlock.this, null));
 		} catch (RejectedExecutionException e) {
 			// Session is shut down.
 		}
@@ -565,12 +561,8 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	@Override
 	public void dispose() throws DebugException {
 		try {
-			fRetrieval.getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					fRetrieval.getSession().removeServiceEventListener(DsfMemoryBlock.this);
-				}
-			});
+			fRetrieval.getExecutor()
+					.execute(() -> fRetrieval.getSession().removeServiceEventListener(DsfMemoryBlock.this));
 		} catch (RejectedExecutionException e) {
 			// Session is down.
 		}

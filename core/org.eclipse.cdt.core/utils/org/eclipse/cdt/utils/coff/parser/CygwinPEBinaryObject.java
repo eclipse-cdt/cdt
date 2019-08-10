@@ -70,22 +70,18 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 			autoDisposeAddr2line = getAddr2line();
 			if (autoDisposeAddr2line != null) {
 				starttime = System.currentTimeMillis();
-				Runnable worker = new Runnable() {
+				Runnable worker = () -> {
 
-					@Override
-					public void run() {
-
-						long diff = System.currentTimeMillis() - starttime;
-						while (diff < 10000) {
-							try {
-								Thread.sleep(10000);
-							} catch (InterruptedException e) {
-								break;
-							}
-							diff = System.currentTimeMillis() - starttime;
+					long diff = System.currentTimeMillis() - starttime;
+					while (diff < 10000) {
+						try {
+							Thread.sleep(10000);
+						} catch (InterruptedException e) {
+							break;
 						}
-						stopAddr2Line();
+						diff = System.currentTimeMillis() - starttime;
 					}
+					stopAddr2Line();
 				};
 				new Thread(worker, "Addr2line Reaper").start(); //$NON-NLS-1$
 			}

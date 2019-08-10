@@ -1849,23 +1849,20 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	private void addProcessToLaunch(Process inferior, String groupId, String label) {
 		// Add the inferior to the launch.
 		// This cannot be done on the executor or things deadlock.
-		DebugPlugin.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				// Add the inferior
-				// Need to go through DebugPlugin.newProcess so that we can use
-				// the overrideable process factory to allow others to override.
-				// First set attribute to specify we want to create an inferior process.
-				// Bug 210366
-				ILaunch launch = (ILaunch) getSession().getModelAdapter(ILaunch.class);
-				Map<String, String> attributes = new HashMap<>();
-				attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
-						IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
-				IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label != null ? label : "", //$NON-NLS-1$
-						attributes);
-				// Now set the inferior groupId
-				runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, groupId);
-			}
+		DebugPlugin.getDefault().asyncExec(() -> {
+			// Add the inferior
+			// Need to go through DebugPlugin.newProcess so that we can use
+			// the overrideable process factory to allow others to override.
+			// First set attribute to specify we want to create an inferior process.
+			// Bug 210366
+			ILaunch launch = (ILaunch) getSession().getModelAdapter(ILaunch.class);
+			Map<String, String> attributes = new HashMap<>();
+			attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
+					IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
+			IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label != null ? label : "", //$NON-NLS-1$
+					attributes);
+			// Now set the inferior groupId
+			runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, groupId);
 		});
 	}
 

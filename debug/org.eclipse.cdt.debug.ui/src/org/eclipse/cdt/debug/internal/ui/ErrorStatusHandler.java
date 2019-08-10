@@ -42,13 +42,8 @@ public class ErrorStatusHandler implements IStatusHandler {
 				title = CDebugUIMessages.getString("ErrorStatusHandler.1"); //$NON-NLS-1$
 			}
 			final String title_f = title;
-			CDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					ErrorDialog.openError(CDebugUIPlugin.getActiveWorkbenchShell(), title_f, null, status);
-				}
-			});
+			CDebugUIPlugin.getStandardDisplay().asyncExec(
+					() -> ErrorDialog.openError(CDebugUIPlugin.getActiveWorkbenchShell(), title_f, null, status));
 		}
 		return null;
 	}

@@ -34,13 +34,7 @@ public class DebugAttachedExecutableHandler extends AbstractHandler {
 			final ILaunchConfiguration config = DebugAttachedExecutable.createLaunchConfig(new NullProgressMonitor(),
 					null);
 			if (config != null) {
-				Display.getDefault().syncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
-					}
-				});
+				Display.getDefault().syncExec(() -> DebugUITools.launch(config, ILaunchManager.DEBUG_MODE));
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

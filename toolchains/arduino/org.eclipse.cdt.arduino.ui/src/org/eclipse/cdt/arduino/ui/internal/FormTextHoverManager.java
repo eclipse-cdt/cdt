@@ -133,12 +133,7 @@ public abstract class FormTextHoverManager extends AbstractHoverInformationContr
 
 		@Override
 		public IInformationControlCreator getInformationPresenterControlCreator() {
-			return new IInformationControlCreator() {
-				@Override
-				public IInformationControl createInformationControl(Shell parent) {
-					return new FormTextInformationControl(parent, true);
-				}
-			};
+			return parent -> new FormTextInformationControl(parent, true);
 		}
 
 		public Control getControl() {
@@ -273,12 +268,7 @@ public abstract class FormTextHoverManager extends AbstractHoverInformationContr
 						@Override
 						public void focusLost(FocusEvent event) {
 							if (display != null && !display.isDisposed()) {
-								display.asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										hideInformationControl();
-									}
-								});
+								display.asyncExec(() -> hideInformationControl());
 							}
 						}
 

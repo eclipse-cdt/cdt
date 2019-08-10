@@ -328,20 +328,16 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 * affects these views.
 	 */
 	private void refreshViews() {
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-
-			@Override
-			public void run() {
-				// Refresh interested views
-				IWorkbenchWindow[] windows = CDebugUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
-				IWorkbenchPage page = null;
-				for (int i = 0; i < windows.length; i++) {
-					page = windows[i].getActivePage();
-					if (page != null) {
-						refreshViews(page, IDebugUIConstants.ID_EXPRESSION_VIEW);
-						refreshViews(page, IDebugUIConstants.ID_VARIABLE_VIEW);
-						refreshViews(page, IDebugUIConstants.ID_REGISTER_VIEW);
-					}
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			// Refresh interested views
+			IWorkbenchWindow[] windows = CDebugUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
+			IWorkbenchPage page = null;
+			for (int i = 0; i < windows.length; i++) {
+				page = windows[i].getActivePage();
+				if (page != null) {
+					refreshViews(page, IDebugUIConstants.ID_EXPRESSION_VIEW);
+					refreshViews(page, IDebugUIConstants.ID_VARIABLE_VIEW);
+					refreshViews(page, IDebugUIConstants.ID_REGISTER_VIEW);
 				}
 			}
 		});

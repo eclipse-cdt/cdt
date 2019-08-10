@@ -100,8 +100,6 @@ import org.eclipse.debug.internal.ui.commands.actions.StepReturnCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.SuspendCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.TerminateCommandAction;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.ui.DebugUITools;
@@ -833,32 +831,10 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		if (m_debugViewer == null) {
 			m_debugViewer = DebugViewUtils.getDebugViewer();
 			if (m_debugViewer != null) {
-				m_modelChangedListener = new IModelChangedListener() {
-					@Override
-					public void modelChanged(IModelDelta delta, IModelProxy proxy) {
-						// Execute a refresh after any pending UI updates.
-						GUIUtils.exec(new Runnable() {
-							@Override
-							public void run() {
-								// check if we need to update the debug context
-								updateDebugContext();
-							}
-						});
-					}
-				};
-				m_debugViewSelectionChangedListener = new ISelectionChangedListener() {
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						// Execute a refresh after any pending UI updates.
-						GUIUtils.exec(new Runnable() {
-							@Override
-							public void run() {
-								// Update canvas selection to match to dbg view selection
-								updateCanvasSelectionFromDebugView();
-							}
-						});
-					}
-				};
+				// Execute a refresh after any pending UI updates.
+				m_modelChangedListener = (delta, proxy) -> GUIUtils.exec(() -> updateDebugContext());
+				m_debugViewSelectionChangedListener = event -> GUIUtils
+						.exec(() -> updateCanvasSelectionFromDebugView());
 				m_debugViewer.addModelChangedListener(m_modelChangedListener);
 				m_debugViewer.addSelectionChangedListener(m_debugViewSelectionChangedListener);
 			}
@@ -1128,27 +1104,18 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	/** Sets canvas model. (Also updates canvas selection.) */
 	protected void setCanvasModel(VisualizerModel model) {
 		final VisualizerModel model_f = model;
-		GUIUtils.exec(new Runnable() {
-			@Override
-			public void run() {
-				if (m_canvas != null) {
-					m_canvas.setModel(model_f);
-					// Update the canvas's selection from the current workbench selection.
-					updateCanvasSelectionInternal();
-				}
+		GUIUtils.exec(() -> {
+			if (m_canvas != null) {
+				m_canvas.setModel(model_f);
+				// Update the canvas's selection from the current workbench selection.
+				updateCanvasSelectionInternal();
 			}
 		});
 	}
 
 	/** Updates canvas selection from current workbench selection. */
 	protected void updateCanvasSelection() {
-		GUIUtils.exec(new Runnable() {
-			@Override
-			public void run() {
-				// Update the canvas's selection from the current workbench selection.
-				updateCanvasSelectionInternal();
-			}
-		});
+		GUIUtils.exec(() -> updateCanvasSelectionInternal());
 	}
 
 	/** Updates canvas selection from current workbench selection.
@@ -1481,12 +1448,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 					if (session != null) {
 						DsfExecutor executor = session.getExecutor();
 						if (executor != null) {
-							executor.execute(new Runnable() {
-								@Override
-								public void run() {
-									updateLoads(fDataModel);
-								}
-							});
+							executor.execute(() -> updateLoads(fDataModel));
 						}
 					}
 				}

@@ -72,12 +72,9 @@ public class TraceControlModel {
 	private volatile ITraceTargetDMContext fTargetContext;
 	private TraceControlView fTraceControlView;
 
-	private IDebugContextListener fDebugContextListener = new IDebugContextListener() {
-		@Override
-		public void debugContextChanged(DebugContextEvent event) {
-			if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
-				updateDebugContext();
-			}
+	private IDebugContextListener fDebugContextListener = event -> {
+		if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
+			updateDebugContext();
 		}
 	};
 
@@ -461,13 +458,10 @@ public class TraceControlModel {
 	private void notifyUI(final ITraceStatusDMData2 data) {
 		final TraceControlView v = fTraceControlView;
 		if (v != null) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (v != null) {
-						v.fLastRefreshTime = System.currentTimeMillis();
-						v.updateUI(data);
-					}
+			Display.getDefault().asyncExec(() -> {
+				if (v != null) {
+					v.fLastRefreshTime = System.currentTimeMillis();
+					v.updateUI(data);
 				}
 			});
 		}
@@ -476,12 +470,9 @@ public class TraceControlModel {
 	private void notifyUI(final String message) {
 		final TraceControlView v = fTraceControlView;
 		if (v != null) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (v != null) {
-						v.updateUI(message);
-					}
+			Display.getDefault().asyncExec(() -> {
+				if (v != null) {
+					v.updateUI(message);
 				}
 			});
 		}

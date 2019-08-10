@@ -51,8 +51,6 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -238,12 +236,9 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		getHorizontalBar().addSelectionListener(createHorizontalBarSelectionListener());
 		getVerticalBar().addSelectionListener(createVerticalBarSelectinListener());
 
-		this.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent pe) {
-				pe.gc.setBackground(Rendering.this.getFPRendering().getColorBackground());
-				pe.gc.fillRectangle(0, 0, Rendering.this.getBounds().width, Rendering.this.getBounds().height);
-			}
+		this.addPaintListener(pe -> {
+			pe.gc.setBackground(Rendering.this.getFPRendering().getColorBackground());
+			pe.gc.fillRectangle(0, 0, Rendering.this.getBounds().width, Rendering.this.getBounds().height);
 		});
 
 		setLayout();
@@ -560,24 +555,16 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 	protected void handleSuspend(boolean isBreakpointHit) {
 		if (getUpdateMode() == UPDATE_ALWAYS || (getUpdateMode() == UPDATE_ON_BREAKPOINT && isBreakpointHit)) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					archiveDeltas();
-					refresh();
-				}
+			Display.getDefault().asyncExec(() -> {
+				archiveDeltas();
+				refresh();
 			});
 		}
 	}
 
 	protected void handleChange() {
 		if (getUpdateMode() == UPDATE_ALWAYS) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					refresh();
-				}
-			});
+			Display.getDefault().asyncExec(() -> refresh());
 		}
 	}
 
@@ -859,205 +846,202 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				fCache.end = endAddress;
 				fCache.bytes = cachedBytesFinal;
 
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						// Generate deltas
+				Display.getDefault().asyncExec(() -> {
+					// Generate deltas
 
-						for (int historyIndex = 0; historyIndex < getHistoryDepth(); historyIndex++) {
-							if (fHistoryCache[historyIndex] != null && fHistoryCache[historyIndex].isValid()) {
-								BigInteger maxStart = startAddress.max(fHistoryCache[historyIndex].start);
-								BigInteger minEnd = endAddress.min(fHistoryCache[historyIndex].end)
-										.subtract(BigInteger.ONE);
+					for (int historyIndex = 0; historyIndex < getHistoryDepth(); historyIndex++) {
+						if (fHistoryCache[historyIndex] != null && fHistoryCache[historyIndex].isValid()) {
+							BigInteger maxStart = startAddress.max(fHistoryCache[historyIndex].start);
+							BigInteger minEnd = endAddress.min(fHistoryCache[historyIndex].end)
+									.subtract(BigInteger.ONE);
 
-								BigInteger overlapLength = minEnd.subtract(maxStart);
-								if (overlapLength.compareTo(BigInteger.valueOf(0)) > 0) {
-									// there is overlap
+							BigInteger overlapLength = minEnd.subtract(maxStart);
+							if (overlapLength.compareTo(BigInteger.valueOf(0)) > 0) {
+								// there is overlap
 
-									int offsetIntoOld = maxStart.subtract(fHistoryCache[historyIndex].start).intValue();
-									int offsetIntoNew = maxStart.subtract(startAddress).intValue();
+								int offsetIntoOld = maxStart.subtract(fHistoryCache[historyIndex].start).intValue();
+								int offsetIntoNew = maxStart.subtract(startAddress).intValue();
 
-									for (int i = overlapLength.intValue(); i >= 0; i--) {
-										cachedBytesFinal[offsetIntoNew + i].setChanged(historyIndex,
-												cachedBytesFinal[offsetIntoNew + i]
-														.getValue() != fHistoryCache[historyIndex].bytes[offsetIntoOld
-																+ i].getValue());
-									}
+								for (int i = overlapLength.intValue(); i >= 0; i--) {
+									cachedBytesFinal[offsetIntoNew + i].setChanged(historyIndex,
+											cachedBytesFinal[offsetIntoNew + i]
+													.getValue() != fHistoryCache[historyIndex].bytes[offsetIntoOld + i]
+															.getValue());
+								}
 
-									// There are several scenarios where the history cache must be updated from the data cache, so that when a
-									// cell is edited the font color changes appropriately. The following code deals with the different cases.
+								// There are several scenarios where the history cache must be updated from the data cache, so that when a
+								// cell is edited the font color changes appropriately. The following code deals with the different cases.
 
-									if (historyIndex != 0)
-										continue;
+								if (historyIndex != 0)
+									continue;
 
-									int dataStart = fCache.start.intValue();
-									int dataEnd = fCache.end.intValue();
-									int dataLength = fCache.bytes.length;
+								int dataStart = fCache.start.intValue();
+								int dataEnd = fCache.end.intValue();
+								int dataLength = fCache.bytes.length;
 
-									int historyStart = fHistoryCache[0].start.intValue();
-									int historyEnd = fHistoryCache[0].end.intValue();
-									int historyLength = fHistoryCache[0].bytes.length;
+								int historyStart = fHistoryCache[0].start.intValue();
+								int historyEnd = fHistoryCache[0].end.intValue();
+								int historyLength = fHistoryCache[0].bytes.length;
 
-									// Case 1: The data cache is smaller than the history cache; the data cache's
-									//         address range is fully covered by the history cache.  Do nothing.
+								// Case 1: The data cache is smaller than the history cache; the data cache's
+								//         address range is fully covered by the history cache.  Do nothing.
 
-									if ((dataStart >= historyStart) && (dataEnd <= historyEnd))
-										continue;
+								if ((dataStart >= historyStart) && (dataEnd <= historyEnd))
+									continue;
 
-									// Case 2: The data and history cache's do not overlap at all
+								// Case 2: The data and history cache's do not overlap at all
 
-									if (((dataStart < historyStart) && (dataEnd < historyStart))
-											|| (dataStart > historyEnd)) {
-										// Create a new history cache: Copy the data cache bytes to the history cache
+								if (((dataStart < historyStart) && (dataEnd < historyStart))
+										|| (dataStart > historyEnd)) {
+									// Create a new history cache: Copy the data cache bytes to the history cache
 
-										MemoryUnit newHistoryCache = new MemoryUnit();
+									MemoryUnit newHistoryCache1 = new MemoryUnit();
 
-										newHistoryCache.start = fCache.start;
-										newHistoryCache.end = fCache.end;
-										int newHistoryCacheSize = fCache.bytes.length;
-										newHistoryCache.bytes = new FPMemoryByte[newHistoryCacheSize];
+									newHistoryCache1.start = fCache.start;
+									newHistoryCache1.end = fCache.end;
+									int newHistoryCacheSize1 = fCache.bytes.length;
+									newHistoryCache1.bytes = new FPMemoryByte[newHistoryCacheSize1];
 
-										for (int index = 0; index < newHistoryCacheSize; index++)
-											newHistoryCache.bytes[index] = new FPMemoryByte(
-													fCache.bytes[index].getValue());
+									for (int index1 = 0; index1 < newHistoryCacheSize1; index1++)
+										newHistoryCache1.bytes[index1] = new FPMemoryByte(
+												fCache.bytes[index1].getValue());
 
-										fHistoryCache[0] = newHistoryCache;
+									fHistoryCache[0] = newHistoryCache1;
 
-										continue;
-									}
+									continue;
+								}
 
-									// Case 3: The data cache starts at a lower address than the history cache, but overlaps the history cache
+								// Case 3: The data cache starts at a lower address than the history cache, but overlaps the history cache
 
-									if ((dataStart < historyStart)
-											&& ((dataEnd >= historyStart) && (dataEnd <= historyEnd))) {
-										// Create a new history cache with the missing data from the main cache and append the old history to it.
+								if ((dataStart < historyStart)
+										&& ((dataEnd >= historyStart) && (dataEnd <= historyEnd))) {
+									// Create a new history cache with the missing data from the main cache and append the old history to it.
 
-										int missingDataByteCount = historyStart - dataStart;
-										int historyCacheSize = historyLength;
-										int newHistoryCacheSize = missingDataByteCount + historyLength;
+									int missingDataByteCount1 = historyStart - dataStart;
+									int historyCacheSize1 = historyLength;
+									int newHistoryCacheSize2 = missingDataByteCount1 + historyLength;
 
-										if (missingDataByteCount <= 0 && historyCacheSize <= 0)
-											break;
+									if (missingDataByteCount1 <= 0 && historyCacheSize1 <= 0)
+										break;
 
-										MemoryUnit newHistoryCache = new MemoryUnit();
+									MemoryUnit newHistoryCache2 = new MemoryUnit();
 
-										newHistoryCache.start = fCache.start;
-										newHistoryCache.end = fHistoryCache[0].end;
-										newHistoryCache.bytes = new FPMemoryByte[newHistoryCacheSize];
+									newHistoryCache2.start = fCache.start;
+									newHistoryCache2.end = fHistoryCache[0].end;
+									newHistoryCache2.bytes = new FPMemoryByte[newHistoryCacheSize2];
 
-										// Copy the missing bytes from the beginning of the main cache to the history cache.
+									// Copy the missing bytes from the beginning of the main cache to the history cache.
 
-										for (int index = 0; index < missingDataByteCount; index++)
-											newHistoryCache.bytes[index] = new FPMemoryByte(
-													fCache.bytes[index].getValue());
+									for (int index2 = 0; index2 < missingDataByteCount1; index2++)
+										newHistoryCache2.bytes[index2] = new FPMemoryByte(
+												fCache.bytes[index2].getValue());
 
-										// Copy the remaining bytes from the old history cache to the new history cache
+									// Copy the remaining bytes from the old history cache to the new history cache
 
-										for (int index = 0; index < historyCacheSize; index++)
-											newHistoryCache.bytes[index + missingDataByteCount] = new FPMemoryByte(
-													fHistoryCache[0].bytes[index].getValue());
+									for (int index3 = 0; index3 < historyCacheSize1; index3++)
+										newHistoryCache2.bytes[index3 + missingDataByteCount1] = new FPMemoryByte(
+												fHistoryCache[0].bytes[index3].getValue());
 
-										fHistoryCache[0] = newHistoryCache;
+									fHistoryCache[0] = newHistoryCache2;
 
-										continue;
-									}
+									continue;
+								}
 
-									// Case 4: The data cache starts at a higher address than the history cache
+								// Case 4: The data cache starts at a higher address than the history cache
 
-									if (((dataStart >= historyStart) && (dataStart <= historyEnd))
-											&& (dataEnd > historyEnd)) {
-										// Append the missing main cache bytes to the history cache.
+								if (((dataStart >= historyStart) && (dataStart <= historyEnd))
+										&& (dataEnd > historyEnd)) {
+									// Append the missing main cache bytes to the history cache.
 
-										int missingDataByteCount = dataEnd - historyEnd;
-										int historyCacheSize = historyEnd - historyStart;
-										int newHistoryCacheSize = missingDataByteCount + historyLength;
+									int missingDataByteCount2 = dataEnd - historyEnd;
+									int historyCacheSize2 = historyEnd - historyStart;
+									int newHistoryCacheSize3 = missingDataByteCount2 + historyLength;
 
-										if (missingDataByteCount > 0 && historyCacheSize > 0) {
-											MemoryUnit newHistoryCache = new MemoryUnit();
+									if (missingDataByteCount2 > 0 && historyCacheSize2 > 0) {
+										MemoryUnit newHistoryCache3 = new MemoryUnit();
 
-											newHistoryCache.start = fHistoryCache[0].start;
-											newHistoryCache.end = fCache.end;
-											newHistoryCache.bytes = new FPMemoryByte[newHistoryCacheSize];
+										newHistoryCache3.start = fHistoryCache[0].start;
+										newHistoryCache3.end = fCache.end;
+										newHistoryCache3.bytes = new FPMemoryByte[newHistoryCacheSize3];
 
-											// Copy the old history bytes to the new history cache
+										// Copy the old history bytes to the new history cache
 
-											System.arraycopy(fHistoryCache[0].bytes, 0, newHistoryCache.bytes, 0,
-													historyLength);
+										System.arraycopy(fHistoryCache[0].bytes, 0, newHistoryCache3.bytes, 0,
+												historyLength);
 
-											// Copy the bytes from the main cache that are not in the history cache to the end of the new history cache.
+										// Copy the bytes from the main cache that are not in the history cache to the end of the new history cache.
 
-											for (int index = 0; index < missingDataByteCount; index++) {
-												int srcIndex = dataLength - missingDataByteCount + index;
-												int dstIndex = historyLength + index;
-												newHistoryCache.bytes[dstIndex] = new FPMemoryByte(
-														fCache.bytes[srcIndex].getValue());
-											}
-
-											fHistoryCache[0] = newHistoryCache;
-
-											continue;
+										for (int index4 = 0; index4 < missingDataByteCount2; index4++) {
+											int srcIndex = dataLength - missingDataByteCount2 + index4;
+											int dstIndex = historyLength + index4;
+											newHistoryCache3.bytes[dstIndex] = new FPMemoryByte(
+													fCache.bytes[srcIndex].getValue());
 										}
-									}
 
-									// Case 5 - The data cache is greater than the history cache and fully covers it
-
-									if (dataStart < historyStart && dataEnd > historyEnd) {
-										int start = 0;
-										int end = 0;
-
-										// Create a new history cache to reflect the entire data cache
-
-										MemoryUnit newHistoryCache = new MemoryUnit();
-
-										newHistoryCache.start = fCache.start;
-										newHistoryCache.end = fCache.end;
-										int newHistoryCacheSize = fCache.bytes.length;
-										newHistoryCache.bytes = new FPMemoryByte[newHistoryCacheSize];
-
-										int topByteCount = historyStart - dataStart;
-										int bottomByteCount = dataEnd - historyEnd;
-
-										// Copy the bytes from the beginning of the data cache to the new history cache
-
-										for (int index = 0; index < topByteCount; index++)
-											newHistoryCache.bytes[index] = new FPMemoryByte(
-													fCache.bytes[index].getValue());
-
-										// Copy the old history cache bytes to the new history cache
-
-										start = topByteCount;
-										end = topByteCount + historyLength;
-
-										for (int index = start; index < end; index++)
-											newHistoryCache.bytes[index] = new FPMemoryByte(
-													fCache.bytes[index].getValue());
-
-										// Copy the bytes from the end of the data cache to the new history cache
-
-										start = topByteCount + historyLength;
-										end = topByteCount + historyLength + bottomByteCount;
-
-										for (int index = start; index < end; index++)
-											newHistoryCache.bytes[index] = new FPMemoryByte(
-													fCache.bytes[index].getValue());
-
-										fHistoryCache[0] = newHistoryCache;
+										fHistoryCache[0] = newHistoryCache3;
 
 										continue;
 									}
 								}
+
+								// Case 5 - The data cache is greater than the history cache and fully covers it
+
+								if (dataStart < historyStart && dataEnd > historyEnd) {
+									int start = 0;
+									int end = 0;
+
+									// Create a new history cache to reflect the entire data cache
+
+									MemoryUnit newHistoryCache4 = new MemoryUnit();
+
+									newHistoryCache4.start = fCache.start;
+									newHistoryCache4.end = fCache.end;
+									int newHistoryCacheSize4 = fCache.bytes.length;
+									newHistoryCache4.bytes = new FPMemoryByte[newHistoryCacheSize4];
+
+									int topByteCount = historyStart - dataStart;
+									int bottomByteCount = dataEnd - historyEnd;
+
+									// Copy the bytes from the beginning of the data cache to the new history cache
+
+									for (int index5 = 0; index5 < topByteCount; index5++)
+										newHistoryCache4.bytes[index5] = new FPMemoryByte(
+												fCache.bytes[index5].getValue());
+
+									// Copy the old history cache bytes to the new history cache
+
+									start = topByteCount;
+									end = topByteCount + historyLength;
+
+									for (int index6 = start; index6 < end; index6++)
+										newHistoryCache4.bytes[index6] = new FPMemoryByte(
+												fCache.bytes[index6].getValue());
+
+									// Copy the bytes from the end of the data cache to the new history cache
+
+									start = topByteCount + historyLength;
+									end = topByteCount + historyLength + bottomByteCount;
+
+									for (int index7 = start; index7 < end; index7++)
+										newHistoryCache4.bytes[index7] = new FPMemoryByte(
+												fCache.bytes[index7].getValue());
+
+									fHistoryCache[0] = newHistoryCache4;
+
+									continue;
+								}
 							}
 						}
-
-						// If the history does not exist, populate the history with the just populated
-						// cache.  This solves the use case of (1) connect to target; (2) edit memory
-						// before the first suspend debug event; (3) paint differences in changed color.
-
-						if (fHistoryCache[0] == null)
-							fHistoryCache[0] = fCache.clone();
-
-						Rendering.this.redrawPanes();
 					}
+
+					// If the history does not exist, populate the history with the just populated
+					// cache.  This solves the use case of (1) connect to target; (2) edit memory
+					// before the first suspend debug event; (3) paint differences in changed color.
+
+					if (fHistoryCache[0] == null)
+						fHistoryCache[0] = fCache.clone();
+
+					Rendering.this.redrawPanes();
 				});
 
 			} catch (Exception e) {
@@ -1728,12 +1712,9 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		fParent.setTargetMemoryLittleEndian(littleEndian);
 		fIsTargetLittleEndian = littleEndian;
 
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				fireSettingsChanged();
-				layoutPanes();
-			}
+		Display.getDefault().asyncExec(() -> {
+			fireSettingsChanged();
+			layoutPanes();
 		});
 	}
 
@@ -1747,12 +1728,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		fIsDisplayLittleEndian = isLittleEndian;
 		fireSettingsChanged();
 
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				layoutPanes();
-			}
-		});
+		Display.getDefault().asyncExec(() -> layoutPanes());
 	}
 
 	public int getCharsPerColumn() {

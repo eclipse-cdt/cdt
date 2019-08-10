@@ -65,12 +65,7 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 	 * @param status
 	 */
 	protected void handleError(final IStatus status) {
-		fCallback.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, status); //$NON-NLS-1$
-			}
-		});
+		fCallback.asyncExec(() -> ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, status));
 	}
 
 	/**

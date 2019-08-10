@@ -370,12 +370,7 @@ public class PlainTextExporter implements IMemoryExporter {
 		 *  info. In practice the user never sees the invalid state displayed, because of the
 		 *  speed of the draw of the dialog.
 		 */
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				validate();
-			}
-		});
+		Display.getDefault().asyncExec(() -> validate());
 
 		return composite;
 	}

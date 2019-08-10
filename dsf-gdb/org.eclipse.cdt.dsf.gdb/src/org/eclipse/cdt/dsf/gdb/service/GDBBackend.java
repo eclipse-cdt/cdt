@@ -613,24 +613,21 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		};
 		startGdbJob.schedule();
 
-		fGDBLaunchMonitor.fTimeoutFuture = getExecutor().schedule(new Runnable() {
-			@Override
-			public void run() {
-				// Only process the event if we have not finished yet (hit
-				// the breakpoint).
-				if (!fGDBLaunchMonitor.fLaunched) {
-					fGDBLaunchMonitor.fTimedOut = true;
-					Thread jobThread = startGdbJob.getThread();
-					if (jobThread != null) {
-						jobThread.interrupt();
-					}
-
-					destroy();
-
-					requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-							DebugException.TARGET_REQUEST_FAILED, "Timed out trying to launch GDB.", null)); //$NON-NLS-1$
-					requestMonitor.done();
+		fGDBLaunchMonitor.fTimeoutFuture = getExecutor().schedule(() -> {
+			// Only process the event if we have not finished yet (hit
+			// the breakpoint).
+			if (!fGDBLaunchMonitor.fLaunched) {
+				fGDBLaunchMonitor.fTimedOut = true;
+				Thread jobThread = startGdbJob.getThread();
+				if (jobThread != null) {
+					jobThread.interrupt();
 				}
+
+				destroy();
+
+				requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+						DebugException.TARGET_REQUEST_FAILED, "Timed out trying to launch GDB.", null)); //$NON-NLS-1$
+				requestMonitor.done();
 			}
 		}, fGDBLaunchTimeout, TimeUnit.SECONDS);
 	}

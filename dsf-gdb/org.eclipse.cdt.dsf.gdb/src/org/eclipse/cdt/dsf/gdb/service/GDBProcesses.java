@@ -553,36 +553,32 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 
 				// Add the inferior to the launch.
 				// This cannot be done on the executor or things deadlock.
-				DebugPlugin.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (restart) {
-							// For a restart, remove the old inferior
-							IProcess[] launchProcesses = launch.getProcesses();
-							for (IProcess p : launchProcesses) {
-								// We know there is only one inferior, so just find it.
-								if (p instanceof InferiorRuntimeProcess) {
-									launch.removeProcess(p);
-									break;
-								}
+				DebugPlugin.getDefault().asyncExec(() -> {
+					if (restart) {
+						// For a restart, remove the old inferior
+						IProcess[] launchProcesses = launch.getProcesses();
+						for (IProcess p : launchProcesses) {
+							// We know there is only one inferior, so just find it.
+							if (p instanceof InferiorRuntimeProcess) {
+								launch.removeProcess(p);
+								break;
 							}
 						}
-
-						// Add the inferior
-						// Need to go through DebugPlugin.newProcess so that we can use
-						// the overrideable process factory to allow others to override.
-						// First set attribute to specify we want to create an inferior process.
-						// Bug 210366
-						Map<String, String> attributes = new HashMap<>();
-						attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
-								IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
-						IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label, attributes);
-						// Now set the inferior groupId
-						runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR,
-								MIProcesses.UNIQUE_GROUP_ID);
-
-						rm.done();
 					}
+
+					// Add the inferior
+					// Need to go through DebugPlugin.newProcess so that we can use
+					// the overrideable process factory to allow others to override.
+					// First set attribute to specify we want to create an inferior process.
+					// Bug 210366
+					Map<String, String> attributes = new HashMap<>();
+					attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
+							IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
+					IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label, attributes);
+					// Now set the inferior groupId
+					runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, MIProcesses.UNIQUE_GROUP_ID);
+
+					rm.done();
 				});
 			}
 		});

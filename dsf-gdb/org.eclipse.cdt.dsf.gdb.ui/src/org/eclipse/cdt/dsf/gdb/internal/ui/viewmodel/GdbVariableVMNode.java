@@ -119,28 +119,25 @@ public class GdbVariableVMNode extends VariableVMNode {
 			final IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(getDMContext(),
 					IExpressionDMContext.class);
 			if (exprDmc != null) {
-				getSession().getExecutor().execute(new Runnable() {
-					@Override
-					public void run() {
-						final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
-						if (expressionService != null) {
-							final DataRequestMonitor<IExpressionDMAddress> drm = new DataRequestMonitor<IExpressionDMAddress>(
-									getSession().getExecutor(), null) {
-								@Override
-								public void handleCompleted() {
-									if (isSuccess()) {
-										request.setSize(getData().getSize());
-									}
-									request.setStatus(getStatus());
-									request.done();
+				getSession().getExecutor().execute(() -> {
+					final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
+					if (expressionService != null) {
+						final DataRequestMonitor<IExpressionDMAddress> drm = new DataRequestMonitor<IExpressionDMAddress>(
+								getSession().getExecutor(), null) {
+							@Override
+							public void handleCompleted() {
+								if (isSuccess()) {
+									request.setSize(getData().getSize());
 								}
-							};
+								request.setStatus(getStatus());
+								request.done();
+							}
+						};
 
-							expressionService.getExpressionAddressData(exprDmc, drm);
-						} else {
-							request.setStatus(internalError());
-							request.done();
-						}
+						expressionService.getExpressionAddressData(exprDmc, drm);
+					} else {
+						request.setStatus(internalError());
+						request.done();
 					}
 				});
 			} else {
@@ -161,28 +158,25 @@ public class GdbVariableVMNode extends VariableVMNode {
 			final IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(getDMContext(),
 					IExpressionDMContext.class);
 			if (exprDmc != null) {
-				getSession().getExecutor().execute(new Runnable() {
-					@Override
-					public void run() {
-						final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
-						if (expressionService != null) {
-							final DataRequestMonitor<IExpressionDMAddress> drm = new DataRequestMonitor<IExpressionDMAddress>(
-									getSession().getExecutor(), null) {
-								@Override
-								public void handleCompleted() {
-									if (isSuccess()) {
-										request.setCanCreate(getData().getSize() > 0);
-									}
-									request.setStatus(getStatus());
-									request.done();
+				getSession().getExecutor().execute(() -> {
+					final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
+					if (expressionService != null) {
+						final DataRequestMonitor<IExpressionDMAddress> drm = new DataRequestMonitor<IExpressionDMAddress>(
+								getSession().getExecutor(), null) {
+							@Override
+							public void handleCompleted() {
+								if (isSuccess()) {
+									request.setCanCreate(getData().getSize() > 0);
 								}
-							};
+								request.setStatus(getStatus());
+								request.done();
+							}
+						};
 
-							expressionService.getExpressionAddressData(exprDmc, drm);
-						} else {
-							request.setStatus(internalError());
-							request.done();
-						}
+						expressionService.getExpressionAddressData(exprDmc, drm);
+					} else {
+						request.setStatus(internalError());
+						request.done();
 					}
 				});
 			} else {

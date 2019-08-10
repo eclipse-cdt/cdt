@@ -56,17 +56,13 @@ import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.debug.ui.memory.IResettableMemoryRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.window.Window;
@@ -139,50 +135,37 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	public TraditionalRendering(String id) {
 		super(id);
 
-		JFaceResources.getFontRegistry().addListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(IInternalDebugUIConstants.FONT_NAME)) {
-					TraditionalRendering.this.fRendering
-							.handleFontPreferenceChange(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
-				}
+		JFaceResources.getFontRegistry().addListener(event -> {
+			if (event.getProperty().equals(IInternalDebugUIConstants.FONT_NAME)) {
+				TraditionalRendering.this.fRendering
+						.handleFontPreferenceChange(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
 			}
 		});
 
-		this.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				IMemoryRendering sourceRendering = (IMemoryRendering) event.getSource();
-				if (!sourceRendering.getMemoryBlock().equals(getMemoryBlock()))
-					return;
+		this.addPropertyChangeListener(event -> {
+			IMemoryRendering sourceRendering = (IMemoryRendering) event.getSource();
+			if (!sourceRendering.getMemoryBlock().equals(getMemoryBlock()))
+				return;
 
-				Object address = event.getNewValue();
+			Object address = event.getNewValue();
 
-				if (event.getProperty().equals(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS)
-						&& address instanceof BigInteger) {
-					TraditionalRendering.this.fRendering.ensureVisible((BigInteger) address);
-				}
+			if (event.getProperty().equals(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS)
+					&& address instanceof BigInteger) {
+				TraditionalRendering.this.fRendering.ensureVisible((BigInteger) address);
 			}
 		});
 
-		TraditionalRenderingPlugin.getDefault().getPreferenceStore()
-				.addPropertyChangeListener(new IPropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent event) {
-						disposeColors();
-						allocateColors();
-						applyPreferences();
-					}
-				});
+		TraditionalRenderingPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(event -> {
+			disposeColors();
+			allocateColors();
+			applyPreferences();
+		});
 
-		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR)) {
-					if (TraditionalRendering.this.fRendering != null) {
-						setRenderingPadding((String) event.getNewValue());
-						TraditionalRendering.this.fRendering.redrawPanes();
-					}
+		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(event -> {
+			if (event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR)) {
+				if (TraditionalRendering.this.fRendering != null) {
+					setRenderingPadding((String) event.getNewValue());
+					TraditionalRendering.this.fRendering.redrawPanes();
 				}
 			}
 		});
@@ -240,13 +223,10 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		 * We use the UI dispatch thread to protect the proxy information. Even though I believe the
 		 * dispose routine is always called in the UI dispatch thread. I am going to make sure.
 		 */
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (fModel != null) {
-					fModel.removeModelChangedListener(TraditionalRendering.this);
-					fModel.dispose();
-				}
+		Display.getDefault().asyncExec(() -> {
+			if (fModel != null) {
+				fModel.removeModelChangedListener(TraditionalRendering.this);
+				fModel.dispose();
 			}
 		});
 
@@ -278,12 +258,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 				public void done() {
 					final String[] spaces = isSuccess() ? getMemorySpaces() : new String[0];
 					// remember memory spaces
-					Display.getDefault().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							fMemSpacePreferenceHelper.updateMemorySpaces(spaces);
-						}
-					});
+					Display.getDefault().asyncExec(() -> fMemSpacePreferenceHelper.updateMemorySpaces(spaces));
 				}
 			});
 		}
@@ -293,29 +268,26 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		 */
 		final IModelProxyFactory factory = (IModelProxyFactory) DebugPlugin.getAdapter(block, IModelProxyFactory.class);
 		if (factory != null) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
+			Display.getDefault().asyncExec(() -> {
 
-					/*
-					 * The asynchronous model assumes we have an asynchronous viewer that has an IPresentationContext
-					 * to represent it. The Platform memory subsystem provides a way to create one without a viewewr.
-					 */
-					IMemoryRenderingSite site = container.getMemoryRenderingSite();
-					MemoryViewPresentationContext context = new MemoryViewPresentationContext(site, container,
-							TraditionalRendering.this);
+				/*
+				 * The asynchronous model assumes we have an asynchronous viewer that has an IPresentationContext
+				 * to represent it. The Platform memory subsystem provides a way to create one without a viewewr.
+				 */
+				IMemoryRenderingSite site = container.getMemoryRenderingSite();
+				MemoryViewPresentationContext context = new MemoryViewPresentationContext(site, container,
+						TraditionalRendering.this);
 
-					/*
-					 * Get a new proxy and perform the initialization sequence so we are known the
-					 * the model provider.
-					 */
-					fModel = factory.createModelProxy(block, context);
-					if (fModel != null) {
-						fModel.installed(null);
-						fModel.addModelChangedListener(TraditionalRendering.this);
-					}
-
+				/*
+				 * Get a new proxy and perform the initialization sequence so we are known the
+				 * the model provider.
+				 */
+				fModel = factory.createModelProxy(block, context);
+				if (fModel != null) {
+					fModel.installed(null);
+					fModel.addModelChangedListener(TraditionalRendering.this);
 				}
+
 			});
 		}
 
@@ -746,13 +718,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		{
 			@Override
 			public void run() {
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						TraditionalRendering.this.fRendering
-								.gotoAddress(TraditionalRendering.this.fRendering.fBaseAddress);
-					}
-				});
+				Display.getDefault().asyncExec(() -> TraditionalRendering.this.fRendering
+						.gotoAddress(TraditionalRendering.this.fRendering.fBaseAddress));
 			}
 		};
 
@@ -762,20 +729,17 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		{
 			@Override
 			public void run() {
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						// For compatibility with DSF update modes (hopefully this will either be replaced by an enhanced
-						// platform interface or the caching will move out of the data layer
-						try {
-							Method m = fRendering.getMemoryBlock().getClass().getMethod("clearCache", new Class[0]); //$NON-NLS-1$
-							if (m != null)
-								m.invoke(fRendering.getMemoryBlock(), new Object[0]);
-						} catch (Exception e) {
-						}
-
-						TraditionalRendering.this.fRendering.refresh();
+				Display.getDefault().asyncExec(() -> {
+					// For compatibility with DSF update modes (hopefully this will either be replaced by an enhanced
+					// platform interface or the caching will move out of the data layer
+					try {
+						Method m = fRendering.getMemoryBlock().getClass().getMethod("clearCache", new Class[0]); //$NON-NLS-1$
+						if (m != null)
+							m.invoke(fRendering.getMemoryBlock(), new Object[0]);
+					} catch (Exception e) {
 					}
+
+					TraditionalRendering.this.fRendering.refresh();
 				});
 			}
 		};
@@ -1015,21 +979,18 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 				InputDialog inputDialog = new InputDialog(fRendering.getShell(), "Set Column Count", //$NON-NLS-1$
 						"Please enter column count", //$NON-NLS-1$
 						"", //$NON-NLS-1$
-						new IInputValidator() {
-							@Override
-							public String isValid(String input) {
-								try {
-									int i = Integer.parseInt(input);
-									if (i <= 0)
-										return "Please enter a positive integer"; //$NON-NLS-1$
-									if (i > 200)
-										return "Please enter a positive integer not greater than 200"; //$NON-NLS-1$
-
-								} catch (NumberFormatException x) {
+						input -> {
+							try {
+								int i = Integer.parseInt(input);
+								if (i <= 0)
 									return "Please enter a positive integer"; //$NON-NLS-1$
-								}
-								return null;
+								if (i > 200)
+									return "Please enter a positive integer not greater than 200"; //$NON-NLS-1$
+
+							} catch (NumberFormatException x) {
+								return "Please enter a positive integer"; //$NON-NLS-1$
 							}
+							return null;
 						});
 
 				if (inputDialog.open() != Window.OK) {
@@ -1081,133 +1042,130 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 			}
 		};
 
-		getPopupMenuManager().addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				manager.add(new Separator());
+		getPopupMenuManager().addMenuListener(manager -> {
+			manager.add(new Separator());
 
-				MenuManager sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.PANES")); //$NON-NLS-1$
-				sub.add(displayAddressPaneAction);
-				sub.add(displayBinaryPaneAction);
-				sub.add(displayTextPaneAction);
-				manager.add(sub);
+			MenuManager sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.PANES")); //$NON-NLS-1$
+			sub.add(displayAddressPaneAction);
+			sub.add(displayBinaryPaneAction);
+			sub.add(displayTextPaneAction);
+			manager.add(sub);
 
-				// if there is cross reference info types available
-				// add Actions to allow the user to toggle the visibility for each of them
-				if (fRendering.isShowCrossReferenceInfo()) {
-					Action[] dynamicActions = fRendering.getDynamicActions();
-					if (dynamicActions != null) {
-						sub = new MenuManager(TraditionalRenderingMessages
-								.getString("TraditionalRenderingPreferencePage_ShowCrossRefInfo_Label")); //$NON-NLS-1$
-						for (Action action : dynamicActions) {
-							sub.add(action);
-						}
-
-						manager.add(sub);
+			// if there is cross reference info types available
+			// add Actions to allow the user to toggle the visibility for each of them
+			if (fRendering.isShowCrossReferenceInfo()) {
+				Action[] dynamicActions = fRendering.getDynamicActions();
+				if (dynamicActions != null) {
+					sub = new MenuManager(TraditionalRenderingMessages
+							.getString("TraditionalRenderingPreferencePage_ShowCrossRefInfo_Label")); //$NON-NLS-1$
+					for (Action action : dynamicActions) {
+						sub.add(action);
 					}
+
+					manager.add(sub);
 				}
-
-				sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.ENDIAN")); //$NON-NLS-1$
-				sub.add(displayEndianBigAction);
-				sub.add(displayEndianLittleAction);
-				manager.add(sub);
-
-				sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.TEXT")); //$NON-NLS-1$
-				sub.add(displayCharactersISO8859Action);
-				sub.add(displayCharactersUSASCIIAction);
-				sub.add(displayCharactersUTF8Action);
-				//sub.add(displayCharactersUTF16Action);
-				manager.add(sub);
-
-				sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.CELL_SIZE")); //$NON-NLS-1$
-				sub.add(displaySize1BytesAction);
-				sub.add(displaySize2BytesAction);
-				sub.add(displaySize4BytesAction);
-				sub.add(displaySize8BytesAction);
-				manager.add(sub);
-
-				sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.RADIX")); //$NON-NLS-1$
-				sub.add(displayRadixHexAction);
-				sub.add(displayRadixDecSignedAction);
-				sub.add(displayRadixDecUnsignedAction);
-				sub.add(displayRadixOctAction);
-				sub.add(displayRadixBinAction);
-				manager.add(sub);
-
-				sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.COLUMN_COUNT")); //$NON-NLS-1$
-				sub.add(displayColumnCountAuto);
-				for (int i = 0; i < displayColumnCounts.length; i++)
-					sub.add(displayColumnCounts[i]);
-
-				boolean currentCountIsCustom = fRendering.getColumnsSetting() != 0;
-				for (int i = 0, j = 1; i < MAX_MENU_COLUMN_COUNT && currentCountIsCustom; i++, j *= 2)
-					currentCountIsCustom = (j != fRendering.getColumnsSetting());
-				if (currentCountIsCustom)
-					sub.add(displayColumnCountCustomValue);
-
-				sub.add(displayColumnCountCustom);
-				manager.add(sub);
-
-				final Action updateAlwaysAction = new Action(
-						TraditionalRenderingMessages.getString("TraditionalRendering.UPDATE_ALWAYS"), //$NON-NLS-1$
-						IAction.AS_RADIO_BUTTON) {
-					@Override
-					public void run() {
-						fRendering.setUpdateMode(Rendering.UPDATE_ALWAYS);
-					}
-				};
-				updateAlwaysAction.setChecked(fRendering.getUpdateMode() == Rendering.UPDATE_ALWAYS);
-
-				final Action updateOnBreakpointAction = new Action(
-						TraditionalRenderingMessages.getString("TraditionalRendering.UPDATE_ON_BREAKPOINT"), //$NON-NLS-1$
-						IAction.AS_RADIO_BUTTON) {
-					@Override
-					public void run() {
-						fRendering.setUpdateMode(Rendering.UPDATE_ON_BREAKPOINT);
-					}
-				};
-				updateOnBreakpointAction.setChecked(fRendering.getUpdateMode() == Rendering.UPDATE_ON_BREAKPOINT);
-
-				final Action updateManualAction = new Action(
-						TraditionalRenderingMessages.getString("TraditionalRendering.UPDATE_MANUAL"), //$NON-NLS-1$
-						IAction.AS_RADIO_BUTTON) {
-					@Override
-					public void run() {
-						fRendering.setUpdateMode(Rendering.UPDATE_MANUAL);
-					}
-				};
-				updateManualAction.setChecked(fRendering.getUpdateMode() == Rendering.UPDATE_MANUAL);
-
-				sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.UPDATEMODE")); //$NON-NLS-1$
-				sub.add(updateAlwaysAction);
-				sub.add(updateOnBreakpointAction);
-				sub.add(updateManualAction);
-				manager.add(sub);
-				manager.add(new Separator());
-
-				BigInteger start = fRendering.getSelection().getStart();
-				BigInteger end = fRendering.getSelection().getEnd();
-				copyBinaryAction.setEnabled(start != null && end != null);
-				copyTextAction.setEnabled(start != null && end != null);
-
-				sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.COPY")); //$NON-NLS-1$
-				sub.add(copyBinaryAction);
-				sub.add(copyTextAction);
-				sub.add(copyAddressAction);
-				sub.add(copyAllAction);
-				manager.add(sub);
-
-				copyBinaryAction.checkStatus();
-				copyTextAction.checkStatus();
-				copyAddressAction.checkStatus();
-				copyAllAction.checkStatus();
-
-				manager.add(gotoBaseAddressAction);
-				manager.add(goToAddressAction);
-				manager.add(refreshAction);
-				manager.add(new Separator());
-				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			}
+
+			sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.ENDIAN")); //$NON-NLS-1$
+			sub.add(displayEndianBigAction);
+			sub.add(displayEndianLittleAction);
+			manager.add(sub);
+
+			sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.TEXT")); //$NON-NLS-1$
+			sub.add(displayCharactersISO8859Action);
+			sub.add(displayCharactersUSASCIIAction);
+			sub.add(displayCharactersUTF8Action);
+			//sub.add(displayCharactersUTF16Action);
+			manager.add(sub);
+
+			sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.CELL_SIZE")); //$NON-NLS-1$
+			sub.add(displaySize1BytesAction);
+			sub.add(displaySize2BytesAction);
+			sub.add(displaySize4BytesAction);
+			sub.add(displaySize8BytesAction);
+			manager.add(sub);
+
+			sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.RADIX")); //$NON-NLS-1$
+			sub.add(displayRadixHexAction);
+			sub.add(displayRadixDecSignedAction);
+			sub.add(displayRadixDecUnsignedAction);
+			sub.add(displayRadixOctAction);
+			sub.add(displayRadixBinAction);
+			manager.add(sub);
+
+			sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.COLUMN_COUNT")); //$NON-NLS-1$
+			sub.add(displayColumnCountAuto);
+			for (int i1 = 0; i1 < displayColumnCounts.length; i1++)
+				sub.add(displayColumnCounts[i1]);
+
+			boolean currentCountIsCustom = fRendering.getColumnsSetting() != 0;
+			for (int i2 = 0, j = 1; i2 < MAX_MENU_COLUMN_COUNT && currentCountIsCustom; i2++, j *= 2)
+				currentCountIsCustom = (j != fRendering.getColumnsSetting());
+			if (currentCountIsCustom)
+				sub.add(displayColumnCountCustomValue);
+
+			sub.add(displayColumnCountCustom);
+			manager.add(sub);
+
+			final Action updateAlwaysAction = new Action(
+					TraditionalRenderingMessages.getString("TraditionalRendering.UPDATE_ALWAYS"), //$NON-NLS-1$
+					IAction.AS_RADIO_BUTTON) {
+				@Override
+				public void run() {
+					fRendering.setUpdateMode(Rendering.UPDATE_ALWAYS);
+				}
+			};
+			updateAlwaysAction.setChecked(fRendering.getUpdateMode() == Rendering.UPDATE_ALWAYS);
+
+			final Action updateOnBreakpointAction = new Action(
+					TraditionalRenderingMessages.getString("TraditionalRendering.UPDATE_ON_BREAKPOINT"), //$NON-NLS-1$
+					IAction.AS_RADIO_BUTTON) {
+				@Override
+				public void run() {
+					fRendering.setUpdateMode(Rendering.UPDATE_ON_BREAKPOINT);
+				}
+			};
+			updateOnBreakpointAction.setChecked(fRendering.getUpdateMode() == Rendering.UPDATE_ON_BREAKPOINT);
+
+			final Action updateManualAction = new Action(
+					TraditionalRenderingMessages.getString("TraditionalRendering.UPDATE_MANUAL"), //$NON-NLS-1$
+					IAction.AS_RADIO_BUTTON) {
+				@Override
+				public void run() {
+					fRendering.setUpdateMode(Rendering.UPDATE_MANUAL);
+				}
+			};
+			updateManualAction.setChecked(fRendering.getUpdateMode() == Rendering.UPDATE_MANUAL);
+
+			sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.UPDATEMODE")); //$NON-NLS-1$
+			sub.add(updateAlwaysAction);
+			sub.add(updateOnBreakpointAction);
+			sub.add(updateManualAction);
+			manager.add(sub);
+			manager.add(new Separator());
+
+			BigInteger start = fRendering.getSelection().getStart();
+			BigInteger end = fRendering.getSelection().getEnd();
+			copyBinaryAction.setEnabled(start != null && end != null);
+			copyTextAction.setEnabled(start != null && end != null);
+
+			sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.COPY")); //$NON-NLS-1$
+			sub.add(copyBinaryAction);
+			sub.add(copyTextAction);
+			sub.add(copyAddressAction);
+			sub.add(copyAllAction);
+			manager.add(sub);
+
+			copyBinaryAction.checkStatus();
+			copyTextAction.checkStatus();
+			copyAddressAction.checkStatus();
+			copyAllAction.checkStatus();
+
+			manager.add(gotoBaseAddressAction);
+			manager.add(goToAddressAction);
+			manager.add(refreshAction);
+			manager.add(new Separator());
+			manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		});
 
 	}
@@ -1260,12 +1218,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
 	@Override
 	public void goToAddress(final BigInteger address) throws DebugException {
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				fRendering.gotoAddress(address);
-			}
-		});
+		Display.getDefault().asyncExec(() -> fRendering.gotoAddress(address));
 	}
 
 	protected void setTargetMemoryLittleEndian(boolean littleEndian) {
@@ -1314,27 +1267,21 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
 		if (adapter == IMemoryBlockConnection.class) {
 			if (fConnection == null) {
-				fConnection = new IMemoryBlockConnection() {
-					@Override
-					public void update() {
-						// update UI asynchronously
-						Display display = TraditionalRenderingPlugin.getDefault().getWorkbench().getDisplay();
-						display.asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								try {
-									if (fBigBaseAddress != TraditionalRendering.this.fRendering.getMemoryBlock()
-											.getBigBaseAddress()) {
-										fBigBaseAddress = TraditionalRendering.this.fRendering.getMemoryBlock()
-												.getBigBaseAddress();
-										TraditionalRendering.this.fRendering.gotoAddress(fBigBaseAddress);
-									}
-									TraditionalRendering.this.fRendering.refresh();
-								} catch (DebugException e) {
-								}
+				fConnection = () -> {
+					// update UI asynchronously
+					Display display = TraditionalRenderingPlugin.getDefault().getWorkbench().getDisplay();
+					display.asyncExec(() -> {
+						try {
+							if (fBigBaseAddress != TraditionalRendering.this.fRendering.getMemoryBlock()
+									.getBigBaseAddress()) {
+								fBigBaseAddress = TraditionalRendering.this.fRendering.getMemoryBlock()
+										.getBigBaseAddress();
+								TraditionalRendering.this.fRendering.gotoAddress(fBigBaseAddress);
 							}
-						});
-					}
+							TraditionalRendering.this.fRendering.refresh();
+						} catch (DebugException e) {
+						}
+					});
 				};
 			}
 			return (T) fConnection;

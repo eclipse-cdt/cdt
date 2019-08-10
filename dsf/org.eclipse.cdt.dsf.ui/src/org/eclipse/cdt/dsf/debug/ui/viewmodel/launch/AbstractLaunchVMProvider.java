@@ -83,12 +83,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 					store.getInt(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT));
 		}
 
-		fPreferencesListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(final PropertyChangeEvent event) {
-				handlePropertyChanged(store, event);
-			}
-		};
+		fPreferencesListener = event -> handlePropertyChanged(store, event);
 		store.addPropertyChangeListener(fPreferencesListener);
 
 		final IPreferenceStore cStore = CDebugUIPlugin.getDefault().getPreferenceStore();
@@ -116,15 +111,12 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 		// We're in session's executor thread. Re-dispatch to our executor thread
 		// and then call root layout node.
 		try {
-			getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					if (isDisposed())
-						return;
+			getExecutor().execute(() -> {
+				if (isDisposed())
+					return;
 
-					for (final DebugEvent event : events) {
-						handleEvent(event);
-					}
+				for (final DebugEvent event : events) {
+					handleEvent(event);
 				}
 			});
 		} catch (RejectedExecutionException e) {
@@ -175,15 +167,12 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 					@Override
 					public void run() {
 						if (getSession().isActive()) {
-							getExecutor().execute(new Runnable() {
-								@Override
-								public void run() {
-									// trigger full stack frame update
-									ScheduledFuture<?> future = fRefreshStackFramesFutures.get(exeContext);
-									if (future != null && !isDisposed()) {
-										fRefreshStackFramesFutures.remove(exeContext);
-										handleEvent(new FullStackRefreshEvent(exeContext, suspendEvent), null);
-									}
+							getExecutor().execute(() -> {
+								// trigger full stack frame update
+								ScheduledFuture<?> future = fRefreshStackFramesFutures.get(exeContext);
+								if (future != null && !isDisposed()) {
+									fRefreshStackFramesFutures.remove(exeContext);
+									handleEvent(new FullStackRefreshEvent(exeContext, suspendEvent), null);
 								}
 							});
 						}
@@ -259,16 +248,13 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 		// We're in session's executor thread. Re-dispach to our executor thread
 		// and then call root layout node.
 		try {
-			getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					if (isDisposed())
-						return;
+			getExecutor().execute(() -> {
+				if (isDisposed())
+					return;
 
-					IRootVMNode rootLayoutNode = getRootVMNode();
-					if (rootLayoutNode != null && rootLayoutNode.getDeltaFlags(event) != IModelDelta.NO_CHANGE) {
-						handleEvent(event);
-					}
+				IRootVMNode rootLayoutNode = getRootVMNode();
+				if (rootLayoutNode != null && rootLayoutNode.getDeltaFlags(event) != IModelDelta.NO_CHANGE) {
+					handleEvent(event);
 				}
 			});
 		} catch (RejectedExecutionException e) {

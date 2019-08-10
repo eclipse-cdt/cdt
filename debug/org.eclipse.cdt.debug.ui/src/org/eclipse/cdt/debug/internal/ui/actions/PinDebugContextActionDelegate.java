@@ -312,12 +312,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		if (fAction != null && !fAction.isChecked()) {
 			final boolean pinnable = PinCloneUtils.isPinnable(fPart, event.getContext());
 			if (pinnable != fAction.isEnabled()) {
-				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						fAction.setEnabled(pinnable);
-					}
-				});
+				PlatformUI.getWorkbench().getDisplay().syncExec(() -> fAction.setEnabled(pinnable));
 			}
 		}
 	}

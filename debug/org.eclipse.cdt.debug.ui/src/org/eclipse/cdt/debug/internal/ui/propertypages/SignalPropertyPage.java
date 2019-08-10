@@ -114,24 +114,21 @@ public class SignalPropertyPage extends PropertyPage {
 	public boolean performOk() {
 		boolean result = super.performOk();
 		if (result) {
-			DebugPlugin.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!getSignal().canModify())
-						return;
-					if (getPassButton() != null) {
-						try {
-							getSignal().setPassEnabled(getPassButton().isSelected());
-						} catch (DebugException e) {
-							failed(PropertyPageMessages.getString("SignalPropertyPage.5"), e); //$NON-NLS-1$
-						}
+			DebugPlugin.getDefault().asyncExec(() -> {
+				if (!getSignal().canModify())
+					return;
+				if (getPassButton() != null) {
+					try {
+						getSignal().setPassEnabled(getPassButton().isSelected());
+					} catch (DebugException e1) {
+						failed(PropertyPageMessages.getString("SignalPropertyPage.5"), e1); //$NON-NLS-1$
 					}
-					if (getStopButton() != null) {
-						try {
-							getSignal().setStopEnabled(getStopButton().isSelected());
-						} catch (DebugException e) {
-							failed(PropertyPageMessages.getString("SignalPropertyPage.5"), e); //$NON-NLS-1$
-						}
+				}
+				if (getStopButton() != null) {
+					try {
+						getSignal().setStopEnabled(getStopButton().isSelected());
+					} catch (DebugException e2) {
+						failed(PropertyPageMessages.getString("SignalPropertyPage.5"), e2); //$NON-NLS-1$
 					}
 				}
 			});

@@ -78,12 +78,7 @@ public class SimpleDisplayExecutor implements Executor {
 		final boolean needsPosting = enqueue(command);
 		if (needsPosting) {
 			try {
-				fDisplay.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						runInSwtThread();
-					}
-				});
+				fDisplay.asyncExec(() -> runInSwtThread());
 			} catch (final SWTException e) {
 				if (e.code == SWT.ERROR_DEVICE_DISPOSED) {
 					throw new RejectedExecutionException("Display " + fDisplay + " is disposed", e); //$NON-NLS-1$ //$NON-NLS-2$

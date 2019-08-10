@@ -59,7 +59,6 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -575,26 +574,18 @@ public class MemoryBrowser extends ViewPart
 								renderingFinal.goToAddress(newBase);
 							}
 
-							runOnUIThread(new Runnable() {
-								@Override
-								public void run() {
-									CTabItem selection = activeFolder.getSelection();
-									selection.setData(KEY_EXPRESSION, expression);
-									selection.setData(KEY_EXPRESSION_ADDRESS, newBase);
-									fGotoAddressBar.handleExpressionStatus(Status.OK_STATUS);
-									updateLabel(selection, renderingFinal);
-								}
+							runOnUIThread(() -> {
+								CTabItem selection = activeFolder.getSelection();
+								selection.setData(KEY_EXPRESSION, expression);
+								selection.setData(KEY_EXPRESSION_ADDRESS, newBase);
+								fGotoAddressBar.handleExpressionStatus(Status.OK_STATUS);
+								updateLabel(selection, renderingFinal);
 							});
 						} catch (final DebugException e1) {
 							// widgets update require Display
-							runOnUIThread(new Runnable() {
-								@Override
-								public void run() {
-									fGotoAddressBar.handleExpressionStatus(
-											new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID,
-													Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e1)); //$NON-NLS-1$
-								}
-							});
+							runOnUIThread(() -> fGotoAddressBar
+									.handleExpressionStatus(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID,
+											Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e1)));
 						}
 					}
 				}.start();
@@ -769,12 +760,7 @@ public class MemoryBrowser extends ViewPart
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				MemoryBrowser.this.fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> MemoryBrowser.this.fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(getControl());
 		getControl().setMenu(menu);
 	}
@@ -1097,86 +1083,82 @@ public class MemoryBrowser extends ViewPart
 	 */
 	private void updateTab(final IMemoryBlockRetrieval retrieval, final Object context, final String[] memorySpaces) {
 		// GUI activity must be on the main thread
-		runOnUIThread(new Runnable() {
-			@Override
-			public void run() {
-				if (fGotoAddressBarControl.isDisposed() || fGotoMemorySpaceControl.isDisposed()) {
-					return;
+		runOnUIThread(() -> {
+			if (fGotoAddressBarControl.isDisposed() || fGotoMemorySpaceControl.isDisposed()) {
+				return;
+			}
+
+			fGotoAddressBarControl.setVisible(true);
+
+			// If we've already created a tab folder for this retrieval
+			// object, bring it to the forefront. Otherwise create the
+			// folder.
+			CTabFolder tabFolder = fContextFolders.get(retrieval);
+			if (tabFolder != null) {
+				fStackLayout.topControl = tabFolder;
+				CTabItem tabItem = tabFolder.getSelection();
+				if (tabItem != null) {
+					getSite().getSelectionProvider()
+							.setSelection(new StructuredSelection(tabItem.getData(KEY_RENDERING)));
 				}
+				handleTabActivated(tabItem);
+			} else {
+				tabFolder = createTabFolder(fRenderingsComposite);
+				tabFolder.addSelectionListener(new SelectionListener() {
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+					}
 
-				fGotoAddressBarControl.setVisible(true);
-
-				// If we've already created a tab folder for this retrieval
-				// object, bring it to the forefront. Otherwise create the
-				// folder.
-				CTabFolder tabFolder = fContextFolders.get(retrieval);
-				if (tabFolder != null) {
-					fStackLayout.topControl = tabFolder;
-					CTabItem tabItem = tabFolder.getSelection();
-					if (tabItem != null) {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						CTabItem tabItem = (CTabItem) e.item;
+						updateMemorySpaceControlSelection(tabItem);
+						fGotoAddressBar.loadSavedExpressions(context,
+								fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : null);
 						getSite().getSelectionProvider()
 								.setSelection(new StructuredSelection(tabItem.getData(KEY_RENDERING)));
+						handleTabActivated(tabItem);
 					}
-					handleTabActivated(tabItem);
-				} else {
-					tabFolder = createTabFolder(fRenderingsComposite);
-					tabFolder.addSelectionListener(new SelectionListener() {
-						@Override
-						public void widgetDefaultSelected(SelectionEvent e) {
-						}
+				});
 
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							CTabItem tabItem = (CTabItem) e.item;
-							updateMemorySpaceControlSelection(tabItem);
-							fGotoAddressBar.loadSavedExpressions(context,
-									fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : null);
-							getSite().getSelectionProvider()
-									.setSelection(new StructuredSelection(tabItem.getData(KEY_RENDERING)));
-							handleTabActivated(tabItem);
-						}
-					});
-
-					tabFolder.setData(KEY_RETRIEVAL, retrieval);
-					fContextFolders.put(retrieval, tabFolder);
-					fStackLayout.topControl = tabFolder;
-				}
-				// update debug context to the new selection
-				tabFolder.setData(KEY_CONTEXT, context);
-
-				final CTabFolder activeFolder = tabFolder;
-				if (!activeFolder.equals(tabFolder)) {
-					return;
-				}
-
-				// Don't expose the memory spaces widget if there are none or
-				// only one memory space involved.
-				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=309032#c50
-				if (memorySpaces.length >= 2) {
-					fGotoMemorySpaceControl.setItems(memorySpaces);
-
-					// Add the '----' (N/A) entry unless the retrieval object
-					// says it requires a memory space ID in all cases
-					boolean addNA = true;
-					if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
-						addNA = !((IMemorySpaceAwareMemoryBlockRetrieval) retrieval)
-								.creatingBlockRequiresMemorySpaceID();
-					}
-					if (addNA) {
-						fGotoMemorySpaceControl.add(NA_MEMORY_SPACE_ID, 0);
-					}
-					setMemorySpaceControlVisible(true);
-				} else {
-					fGotoMemorySpaceControl.setItems(new String[0]);
-					setMemorySpaceControlVisible(false);
-				}
-
-				updateMemorySpaceControlSelection(activeFolder.getSelection());
-				fGotoAddressBar.loadSavedExpressions(context,
-						fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : null);
-
-				fStackLayout.topControl.getParent().layout(true);
+				tabFolder.setData(KEY_RETRIEVAL, retrieval);
+				fContextFolders.put(retrieval, tabFolder);
+				fStackLayout.topControl = tabFolder;
 			}
+			// update debug context to the new selection
+			tabFolder.setData(KEY_CONTEXT, context);
+
+			final CTabFolder activeFolder = tabFolder;
+			if (!activeFolder.equals(tabFolder)) {
+				return;
+			}
+
+			// Don't expose the memory spaces widget if there are none or
+			// only one memory space involved.
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=309032#c50
+			if (memorySpaces.length >= 2) {
+				fGotoMemorySpaceControl.setItems(memorySpaces);
+
+				// Add the '----' (N/A) entry unless the retrieval object
+				// says it requires a memory space ID in all cases
+				boolean addNA = true;
+				if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
+					addNA = !((IMemorySpaceAwareMemoryBlockRetrieval) retrieval).creatingBlockRequiresMemorySpaceID();
+				}
+				if (addNA) {
+					fGotoMemorySpaceControl.add(NA_MEMORY_SPACE_ID, 0);
+				}
+				setMemorySpaceControlVisible(true);
+			} else {
+				fGotoMemorySpaceControl.setItems(new String[0]);
+				setMemorySpaceControlVisible(false);
+			}
+
+			updateMemorySpaceControlSelection(activeFolder.getSelection());
+			fGotoAddressBar.loadSavedExpressions(context,
+					fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : null);
+
+			fStackLayout.topControl.getParent().layout(true);
 		});
 	}
 
@@ -1337,18 +1319,15 @@ public class MemoryBrowser extends ViewPart
 	private void releaseTabFolder(final IMemoryBlockRetrieval retrieval) {
 		final CTabFolder folder = fContextFolders.get(retrieval);
 		if (folder != null) {
-			Runnable run = new Runnable() {
-				@Override
-				public void run() {
-					for (CTabItem tab : folder.getItems()) {
-						disposeTab(tab);
-					}
-					fContextFolders.remove(retrieval);
-					folder.dispose();
+			Runnable run = () -> {
+				for (CTabItem tab : folder.getItems()) {
+					disposeTab(tab);
+				}
+				fContextFolders.remove(retrieval);
+				folder.dispose();
 
-					if (fStackLayout.topControl.equals(folder)) {
-						handleUnsupportedSelection();
-					}
+				if (fStackLayout.topControl.equals(folder)) {
+					handleUnsupportedSelection();
 				}
 			};
 			runOnUIThread(run);

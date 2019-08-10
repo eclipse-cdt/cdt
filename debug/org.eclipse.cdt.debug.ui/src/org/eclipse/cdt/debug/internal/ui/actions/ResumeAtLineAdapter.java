@@ -67,14 +67,11 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 					if (target instanceof IAdaptable) {
 						final IResumeAtLine resumeAtLine = ((IAdaptable) target).getAdapter(IResumeAtLine.class);
 						if (resumeAtLine != null && resumeAtLine.canResumeAtLine(path.toPortableString(), lineNumber)) {
-							Runnable r = new Runnable() {
-								@Override
-								public void run() {
-									try {
-										resumeAtLine.resumeAtLine(path.toPortableString(), lineNumber);
-									} catch (DebugException e) {
-										failed(e);
-									}
+							Runnable r = () -> {
+								try {
+									resumeAtLine.resumeAtLine(path.toPortableString(), lineNumber);
+								} catch (DebugException e) {
+									failed(e);
 								}
 							};
 							runInBackground(r);

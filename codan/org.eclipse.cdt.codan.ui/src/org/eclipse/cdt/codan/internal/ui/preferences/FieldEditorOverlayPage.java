@@ -360,13 +360,10 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
 		final PreferenceDialog dialog = new PreferenceDialog(getControl().getShell(), manager);
-		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				dialog.open();
-			}
+		BusyIndicator.showWhile(getControl().getDisplay(), () -> {
+			dialog.create();
+			dialog.setMessage(targetNode.getLabelText());
+			dialog.open();
 		});
 	}
 }

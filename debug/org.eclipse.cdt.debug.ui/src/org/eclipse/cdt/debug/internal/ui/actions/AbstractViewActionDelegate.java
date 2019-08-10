@@ -96,15 +96,11 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate
 	public void run(IAction action) {
 		final MultiStatus ms = new MultiStatus(CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, "", //$NON-NLS-1$
 				null);
-		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					doAction();
-				} catch (DebugException e) {
-					ms.merge(e.getStatus());
-				}
+		BusyIndicator.showWhile(Display.getCurrent(), () -> {
+			try {
+				doAction();
+			} catch (DebugException e) {
+				ms.merge(e.getStatus());
 			}
 		});
 		if (!ms.isOK()) {
@@ -162,14 +158,10 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate
 		if (shell == null || shell.isDisposed()) {
 			return;
 		}
-		Runnable r = new Runnable() {
-
-			@Override
-			public void run() {
-				for (int i = 0; i < events.length; i++) {
-					if (events[i].getSource() != null) {
-						doHandleDebugEvent(events[i]);
-					}
+		Runnable r = () -> {
+			for (int i = 0; i < events.length; i++) {
+				if (events[i].getSource() != null) {
+					doHandleDebugEvent(events[i]);
 				}
 			}
 		};

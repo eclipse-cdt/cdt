@@ -89,14 +89,11 @@ public class ModulePropertyPage extends PropertyPage {
 			final ICModule module = getModule();
 			if (module != null) {
 
-				DebugPlugin.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							module.setSymbolsFileName(path);
-						} catch (DebugException e) {
-							failed(PropertyPageMessages.getString("ModulePropertyPage.15"), e); //$NON-NLS-1$
-						}
+				DebugPlugin.getDefault().asyncExec(() -> {
+					try {
+						module.setSymbolsFileName(path);
+					} catch (DebugException e) {
+						failed(PropertyPageMessages.getString("ModulePropertyPage.15"), e); //$NON-NLS-1$
 					}
 				});
 			}

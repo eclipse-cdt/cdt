@@ -482,12 +482,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 		public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command,
 				DataRequestMonitor<V> rm) {
 
-			final ICommandToken token = new ICommandToken() {
-				@Override
-				public ICommand<? extends ICommandResult> getCommand() {
-					return command;
-				}
-			};
+			final ICommandToken token = () -> command;
 
 			// The class does not buffer commands itself, but sends them directly to the real
 			// MICommandControl service.  Therefore, we must immediately tell our calling cache that the command
@@ -723,49 +718,44 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 							// delete temp file
 							new File(localFile).delete();
 
-							getExecutor().schedule(new Runnable() {
-								@Override
-								public void run() {
-									fCommandControl.queueCommand(
-											fCommandFactory.createCLIRemoteGet(dmc, statFile, localFile),
-											new ImmediateDataRequestMonitor<MIInfo>(rm) {
-												@Override
-												protected void handleCompleted() {
-													if (!isSuccess()) {
-														fLoadRequestOngoing = false;
-														rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-																INTERNAL_ERROR, "Can't get load info for CPU", null)); //$NON-NLS-1$
-														return;
-													}
+							getExecutor().schedule(() -> fCommandControl.queueCommand(
+									fCommandFactory.createCLIRemoteGet(dmc, statFile, localFile),
+									new ImmediateDataRequestMonitor<MIInfo>(rm) {
+										@Override
+										protected void handleCompleted() {
+											if (!isSuccess()) {
+												fLoadRequestOngoing = false;
+												rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR,
+														"Can't get load info for CPU", null)); //$NON-NLS-1$
+												return;
+											}
 
-													// Success - parse the second set of stat counters and compute loads
-													try {
-														procStatParser.parseStatFile(localFile);
-													} catch (Exception e) {
-														rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-																INTERNAL_ERROR, "Can't get load info for CPU", null)); //$NON-NLS-1$
-														fLoadRequestOngoing = false;
-														return;
-													}
-													// delete temp file
-													new File(localFile).delete();
+											// Success - parse the second set of stat counters and compute loads
+											try {
+												procStatParser.parseStatFile(localFile);
+											} catch (Exception e) {
+												rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR,
+														"Can't get load info for CPU", null)); //$NON-NLS-1$
+												fLoadRequestOngoing = false;
+												return;
+											}
+											// delete temp file
+											new File(localFile).delete();
 
-													// Compute load
-													fCachedLoads = procStatParser.getCpuLoad();
-													processLoads(context, rm, fCachedLoads);
+											// Compute load
+											fCachedLoads = procStatParser.getCpuLoad();
+											processLoads(context, rm, fCachedLoads);
 
-													// done with request
-													fLoadRequestOngoing = false;
-													// process any queued request
-													for (Entry<IDMContext, DataRequestMonitor<ILoadInfo>> e : fLoadInfoRequestCache
-															.entrySet()) {
-														processLoads(e.getKey(), e.getValue(), fCachedLoads);
-													}
-													fLoadInfoRequestCache.clear();
-												}
-											});
-								}
-							}, LOAD_SAMPLE_DELAY, TimeUnit.MILLISECONDS);
+											// done with request
+											fLoadRequestOngoing = false;
+											// process any queued request
+											for (Entry<IDMContext, DataRequestMonitor<ILoadInfo>> e : fLoadInfoRequestCache
+													.entrySet()) {
+												processLoads(e.getKey(), e.getValue(), fCachedLoads);
+											}
+											fLoadInfoRequestCache.clear();
+										}
+									}), LOAD_SAMPLE_DELAY, TimeUnit.MILLISECONDS);
 						}
 					});
 			// Local debugging?  Then we can read /proc/stat directly
@@ -781,29 +771,26 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 			}
 
 			// Read /proc/stat file again after a delay
-			getExecutor().schedule(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						procStatParser.parseStatFile(statFile);
-					} catch (Exception e) {
-						rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR,
-								"Can't get load info for CPU", null)); //$NON-NLS-1$
-						fLoadRequestOngoing = false;
-						return;
-					}
-					// compute load
-					fCachedLoads = procStatParser.getCpuLoad();
-					processLoads(context, rm, fCachedLoads);
-
-					// done with request
+			getExecutor().schedule(() -> {
+				try {
+					procStatParser.parseStatFile(statFile);
+				} catch (Exception e1) {
+					rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR,
+							"Can't get load info for CPU", null)); //$NON-NLS-1$
 					fLoadRequestOngoing = false;
-					// process any queued request
-					for (Entry<IDMContext, DataRequestMonitor<ILoadInfo>> e : fLoadInfoRequestCache.entrySet()) {
-						processLoads(e.getKey(), e.getValue(), fCachedLoads);
-					}
-					fLoadInfoRequestCache.clear();
+					return;
 				}
+				// compute load
+				fCachedLoads = procStatParser.getCpuLoad();
+				processLoads(context, rm, fCachedLoads);
+
+				// done with request
+				fLoadRequestOngoing = false;
+				// process any queued request
+				for (Entry<IDMContext, DataRequestMonitor<ILoadInfo>> e2 : fLoadInfoRequestCache.entrySet()) {
+					processLoads(e2.getKey(), e2.getValue(), fCachedLoads);
+				}
+				fLoadInfoRequestCache.clear();
 			}, LOAD_SAMPLE_DELAY, TimeUnit.MILLISECONDS);
 		}
 	}

@@ -68,13 +68,7 @@ public class DebugNewExecutableHandler extends AbstractHandler {
 						public void done(IJobChangeEvent event) {
 						}
 					});
-					Display.getDefault().syncExec(new Runnable() {
-
-						@Override
-						public void run() {
-							DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
-						}
-					});
+					Display.getDefault().syncExec(() -> DebugUITools.launch(config, ILaunchManager.DEBUG_MODE));
 					if (LaunchJobs.getLaunchJob() != null) {
 						try {
 							LaunchJobs.getLaunchJob().join();

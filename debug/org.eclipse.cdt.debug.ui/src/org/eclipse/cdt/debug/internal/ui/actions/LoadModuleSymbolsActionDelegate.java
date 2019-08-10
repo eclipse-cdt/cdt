@@ -59,14 +59,11 @@ public class LoadModuleSymbolsActionDelegate extends ActionDelegate implements I
 		final ICModule module = getModule();
 		if (module != null) {
 
-			DebugPlugin.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						doAction(module);
-					} catch (DebugException e) {
-						failed(e);
-					}
+			DebugPlugin.getDefault().asyncExec(() -> {
+				try {
+					doAction(module);
+				} catch (DebugException e) {
+					failed(e);
 				}
 			});
 		}

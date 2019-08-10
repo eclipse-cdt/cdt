@@ -265,22 +265,18 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						final String executablePath = executable;
 						final String coreFilePath = corefile;
 
-						Display.getDefault().syncExec(new Runnable() {
+						Display.getDefault().syncExec(() -> {
 
-							@Override
-							public void run() {
-
-								CoreFileDialog dialog = new CoreFileDialog(getWindowConfigurer().getWindow().getShell(),
-										0, executablePath, coreFilePath);
-								dialog.setBlockOnOpen(true);
-								if (dialog.open() == IDialogConstants.OK_ID) {
-									CoreFileInfo info2 = dialog.getCoreFileInfo();
-									info.setHostPath(info2.getHostPath());
-									info.setCoreFilePath(info2.getCoreFilePath());
-								} else {
-									ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
-											IStatus.ERROR | IStatus.WARNING);
-								}
+							CoreFileDialog dialog = new CoreFileDialog(getWindowConfigurer().getWindow().getShell(), 0,
+									executablePath, coreFilePath);
+							dialog.setBlockOnOpen(true);
+							if (dialog.open() == IDialogConstants.OK_ID) {
+								CoreFileInfo info2 = dialog.getCoreFileInfo();
+								info.setHostPath(info2.getHostPath());
+								info.setCoreFilePath(info2.getCoreFilePath());
+							} else {
+								ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
+										IStatus.ERROR | IStatus.WARNING);
 							}
 						});
 						// Check and see if we failed above and if so, quit
@@ -318,22 +314,18 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						final String buildLogPath = buildLog;
 						final boolean attach = attachExecutable;
 
-						Display.getDefault().syncExec(new Runnable() {
+						Display.getDefault().syncExec(() -> {
 
-							@Override
-							public void run() {
-
-								RemoteExecutableDialog dialog = new RemoteExecutableDialog(
-										getWindowConfigurer().getWindow().getShell(), executablePath, buildLogPath,
-										addressStr, portStr, attach);
-								dialog.setBlockOnOpen(true);
-								if (dialog.open() == IDialogConstants.OK_ID) {
-									info[0] = dialog.getExecutableInfo();
-								} else {
-									info[0] = null;
-									ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
-											IStatus.ERROR | IStatus.WARNING);
-								}
+							RemoteExecutableDialog dialog = new RemoteExecutableDialog(
+									getWindowConfigurer().getWindow().getShell(), executablePath, buildLogPath,
+									addressStr, portStr, attach);
+							dialog.setBlockOnOpen(true);
+							if (dialog.open() == IDialogConstants.OK_ID) {
+								info[0] = dialog.getExecutableInfo();
+							} else {
+								info[0] = null;
+								ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
+										IStatus.ERROR | IStatus.WARNING);
 							}
 						});
 						// Check and see if we failed above and if so, quit
@@ -364,23 +356,19 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						final String executableArgs = arguments;
 						final String buildLogPath = buildLog;
 
-						Display.getDefault().syncExec(new Runnable() {
+						Display.getDefault().syncExec(() -> {
 
-							@Override
-							public void run() {
-
-								NewExecutableDialog dialog = new NewExecutableDialog(
-										getWindowConfigurer().getWindow().getShell(), 0, executablePath, buildLogPath,
-										executableArgs);
-								dialog.setBlockOnOpen(true);
-								if (dialog.open() == IDialogConstants.OK_ID) {
-									NewExecutableInfo info2 = dialog.getExecutableInfo();
-									info.setHostPath(info2.getHostPath());
-									info.setArguments(info2.getArguments());
-								} else {
-									ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
-											IStatus.ERROR | IStatus.WARNING);
-								}
+							NewExecutableDialog dialog = new NewExecutableDialog(
+									getWindowConfigurer().getWindow().getShell(), 0, executablePath, buildLogPath,
+									executableArgs);
+							dialog.setBlockOnOpen(true);
+							if (dialog.open() == IDialogConstants.OK_ID) {
+								NewExecutableInfo info2 = dialog.getExecutableInfo();
+								info.setHostPath(info2.getHostPath());
+								info.setArguments(info2.getArguments());
+							} else {
+								ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
+										IStatus.ERROR | IStatus.WARNING);
 							}
 						});
 						// Check and see if we failed above and if so, quit
@@ -429,24 +417,20 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					final String buildLogPath = oldBuildLog;
 					// Bring up New Executable dialog with values from
 					// the last launch.
-					Display.getDefault().syncExec(new Runnable() {
+					Display.getDefault().syncExec(() -> {
 
-						@Override
-						public void run() {
-
-							NewExecutableDialog dialog = new NewExecutableDialog(
-									getWindowConfigurer().getWindow().getShell(), 0, executablePath, buildLogPath,
-									executableArgs);
-							dialog.setBlockOnOpen(true);
-							if (dialog.open() == IDialogConstants.OK_ID) {
-								NewExecutableInfo info2 = dialog.getExecutableInfo();
-								info.setHostPath(info2.getHostPath());
-								info.setArguments(info2.getArguments());
-								info.setBuildLog(info2.getBuildLog());
-							} else {
-								ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
-										IStatus.ERROR | IStatus.WARNING);
-							}
+						NewExecutableDialog dialog = new NewExecutableDialog(
+								getWindowConfigurer().getWindow().getShell(), 0, executablePath, buildLogPath,
+								executableArgs);
+						dialog.setBlockOnOpen(true);
+						if (dialog.open() == IDialogConstants.OK_ID) {
+							NewExecutableInfo info2 = dialog.getExecutableInfo();
+							info.setHostPath(info2.getHostPath());
+							info.setArguments(info2.getArguments());
+							info.setBuildLog(info2.getBuildLog());
+						} else {
+							ErrorDialog.openError(null, Messages.DebuggerInitializingProblem, null, errorStatus,
+									IStatus.ERROR | IStatus.WARNING);
 						}
 					});
 					// Check and see if we failed above and if so, quit
@@ -488,13 +472,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						}
 					});
 					monitor.subTask(Messages.LaunchingConfig);
-					Display.getDefault().syncExec(new Runnable() {
-
-						@Override
-						public void run() {
-							DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
-						}
-					});
+					Display.getDefault().syncExec(() -> DebugUITools.launch(config, ILaunchManager.DEBUG_MODE));
 					if (LaunchJobs.getLaunchJob() != null) {
 						try {
 							LaunchJobs.getLaunchJob().join();
@@ -533,14 +511,11 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		final MultiStatus status = new MultiStatus(Activator.PLUGIN_ID, 1, Messages.ProblemSavingWorkbench, null);
 		try {
 			final ProgressMonitorDialog p = new ProgressMonitorDialog(null);
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					try {
-						status.merge(ResourcesPlugin.getWorkspace().save(true, monitor));
-					} catch (CoreException e) {
-						status.merge(e.getStatus());
-					}
+			IRunnableWithProgress runnable = monitor -> {
+				try {
+					status.merge(ResourcesPlugin.getWorkspace().save(true, monitor));
+				} catch (CoreException e) {
+					status.merge(e.getStatus());
 				}
 			};
 			p.run(true, false, runnable);

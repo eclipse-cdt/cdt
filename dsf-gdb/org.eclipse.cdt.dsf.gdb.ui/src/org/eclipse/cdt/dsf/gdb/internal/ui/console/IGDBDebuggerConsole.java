@@ -42,15 +42,12 @@ public interface IGDBDebuggerConsole extends IDebuggerConsole {
 			}
 		}
 
-		session.getExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
-				IGDBFocusSynchronizer gdbSync = tracker.getService(IGDBFocusSynchronizer.class);
-				tracker.dispose();
-				if (gdbSync != null) {
-					gdbSync.sessionSelected();
-				}
+		session.getExecutor().execute(() -> {
+			DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+			IGDBFocusSynchronizer gdbSync = tracker.getService(IGDBFocusSynchronizer.class);
+			tracker.dispose();
+			if (gdbSync != null) {
+				gdbSync.sessionSelected();
 			}
 		});
 	}

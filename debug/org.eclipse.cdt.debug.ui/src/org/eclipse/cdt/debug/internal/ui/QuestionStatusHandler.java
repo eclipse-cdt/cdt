@@ -34,13 +34,8 @@ public class QuestionStatusHandler implements IStatusHandler {
 		if (status != null && source != null && source instanceof IDebugTarget) {
 			final String title = ((IDebugTarget) source).getName();
 			final String message = status.getMessage();
-			CDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					result[0] = MessageDialog.openQuestion(CDebugUIPlugin.getActiveWorkbenchShell(), title, message);
-				}
-			});
+			CDebugUIPlugin.getStandardDisplay().syncExec(() -> result[0] = MessageDialog
+					.openQuestion(CDebugUIPlugin.getActiveWorkbenchShell(), title, message));
 		}
 		return Boolean.valueOf(result[0]);
 	}

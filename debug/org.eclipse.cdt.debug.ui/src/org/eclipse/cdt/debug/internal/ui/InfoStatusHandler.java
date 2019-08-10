@@ -33,13 +33,8 @@ public class InfoStatusHandler implements IStatusHandler {
 		if (status != null && source != null && source instanceof IDebugTarget) {
 			final String title = ((IDebugTarget) source).getName();
 			final String message = status.getMessage();
-			CDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					MessageDialog.openInformation(CDebugUIPlugin.getActiveWorkbenchShell(), title, message);
-				}
-			});
+			CDebugUIPlugin.getStandardDisplay().asyncExec(
+					() -> MessageDialog.openInformation(CDebugUIPlugin.getActiveWorkbenchShell(), title, message));
 		}
 		return null;
 	}

@@ -70,17 +70,13 @@ public class RunToLineAdapter implements IRunToLineTarget {
 					if (target instanceof IAdaptable) {
 						final IRunToLine runToLine = ((IAdaptable) target).getAdapter(IRunToLine.class);
 						if (runToLine != null && runToLine.canRunToLine(path.toPortableString(), lineNumber)) {
-							Runnable r = new Runnable() {
-
-								@Override
-								public void run() {
-									try {
-										runToLine.runToLine(path.toPortableString(), lineNumber,
-												DebugUITools.getPreferenceStore().getBoolean(
-														IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE));
-									} catch (DebugException e) {
-										failed(e);
-									}
+							Runnable r = () -> {
+								try {
+									runToLine.runToLine(path.toPortableString(), lineNumber,
+											DebugUITools.getPreferenceStore().getBoolean(
+													IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE));
+								} catch (DebugException e) {
+									failed(e);
 								}
 							};
 							runInBackground(r);

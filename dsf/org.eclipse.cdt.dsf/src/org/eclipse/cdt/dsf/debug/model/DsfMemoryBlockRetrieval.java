@@ -217,14 +217,11 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 					DEFAULT_ATTR_DEBUGGER_MEMORY_BLOCKS_VALUE);
 			if (memento != null && memento.trim().length() != 0) {
 				// Submit the runnable to install the monitors on dispatch thread.
-				getExecutor().submit(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							createBlocksFromConfiguration(memoryCtx, memento);
-						} catch (CoreException e) {
-							DsfPlugin.getDefault().getLog().log(e.getStatus());
-						}
+				getExecutor().submit(() -> {
+					try {
+						createBlocksFromConfiguration(memoryCtx, memento);
+					} catch (CoreException e) {
+						DsfPlugin.getDefault().getLog().log(e.getStatus());
 					}
 				});
 			}

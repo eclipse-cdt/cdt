@@ -30,35 +30,22 @@ public class GdbStatusHandler implements IStatusHandler {
 	public Object handleStatus(final IStatus status, Object source) throws CoreException {
 		Runnable runnable = null;
 		if (status.getSeverity() == IStatus.ERROR) {
-			runnable = new Runnable() {
-
-				@Override
-				public void run() {
-					Shell parent = GdbUIPlugin.getActiveWorkbenchShell();
-					if (parent != null)
-						MessageDialog.openError(parent, Messages.GdbStatusHandler_Error, status.getMessage());
-				}
+			runnable = () -> {
+				Shell parent = GdbUIPlugin.getActiveWorkbenchShell();
+				if (parent != null)
+					MessageDialog.openError(parent, Messages.GdbStatusHandler_Error, status.getMessage());
 			};
 		} else if (status.getSeverity() == IStatus.WARNING) {
-			runnable = new Runnable() {
-
-				@Override
-				public void run() {
-					Shell parent = GdbUIPlugin.getActiveWorkbenchShell();
-					if (parent != null)
-						MessageDialog.openWarning(parent, Messages.GdbStatusHandler_Warning, status.getMessage());
-				}
+			runnable = () -> {
+				Shell parent = GdbUIPlugin.getActiveWorkbenchShell();
+				if (parent != null)
+					MessageDialog.openWarning(parent, Messages.GdbStatusHandler_Warning, status.getMessage());
 			};
 		} else if (status.getSeverity() == IStatus.INFO) {
-			runnable = new Runnable() {
-
-				@Override
-				public void run() {
-					Shell parent = GdbUIPlugin.getActiveWorkbenchShell();
-					if (parent != null)
-						MessageDialog.openInformation(parent, Messages.GdbStatusHandler_Information,
-								status.getMessage());
-				}
+			runnable = () -> {
+				Shell parent = GdbUIPlugin.getActiveWorkbenchShell();
+				if (parent != null)
+					MessageDialog.openInformation(parent, Messages.GdbStatusHandler_Information, status.getMessage());
 			};
 		}
 		if (runnable != null)

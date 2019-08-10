@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.ui.memory.floatingpoint;singleton:=true
-Bundle-Version: 1.0.1.qualifier
+Bundle-Version: 1.0.100.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.debug.core;bundle-version="3.7.100",
  org.eclipse.debug.ui;bundle-version="3.8.1",

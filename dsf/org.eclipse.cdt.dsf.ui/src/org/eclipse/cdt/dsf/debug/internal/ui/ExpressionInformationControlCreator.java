@@ -400,18 +400,15 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			fViewerUpdateListener = new IViewerUpdateListener() {
 				@Override
 				public void viewerUpdatesComplete() {
-					fViewer.getDisplay().timerExec(100, new Runnable() {
-						@Override
-						public void run() {
-							if (!fViewer.getTree().isDisposed()) {
-								TreeSelection selection = (TreeSelection) fViewer.getSelection();
-								if (selection.isEmpty()) {
-									selection = new TreeSelection(fViewer.getTopElementPath());
-								}
-								fViewer.setSelection(selection);
-								if (fDetailPane != null) {
-									fDetailPane.display(selection);
-								}
+					fViewer.getDisplay().timerExec(100, () -> {
+						if (!fViewer.getTree().isDisposed()) {
+							TreeSelection selection = (TreeSelection) fViewer.getSelection();
+							if (selection.isEmpty()) {
+								selection = new TreeSelection(fViewer.getTopElementPath());
+							}
+							fViewer.setSelection(selection);
+							if (fDetailPane != null) {
+								fDetailPane.display(selection);
 							}
 						}
 					});

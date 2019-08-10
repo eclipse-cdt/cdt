@@ -335,12 +335,9 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 	 * multiple update requests on same tick are batched.
 	 */
 	public void requestUpdate() {
-		GUIUtils.exec(new Runnable() {
-			@Override
-			public void run() {
-				if (m_updateTimer != null) {
-					m_updateTimer.start();
-				}
+		GUIUtils.exec(() -> {
+			if (m_updateTimer != null) {
+				m_updateTimer.start();
 			}
 		});
 	}

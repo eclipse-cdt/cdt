@@ -50,17 +50,14 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -256,12 +253,7 @@ public class ControlFlowGraphView extends ViewPart {
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				ControlFlowGraphView.this.fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> ControlFlowGraphView.this.fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
@@ -334,13 +326,7 @@ public class ControlFlowGraphView extends ViewPart {
 			}
 		};
 		ast.accept(visitor);
-		viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				viewer.setInput(functions);
-			}
-		});
+		viewer.getControl().getDisplay().asyncExec(() -> viewer.setInput(functions));
 	}
 
 	/**
@@ -406,11 +392,6 @@ public class ControlFlowGraphView extends ViewPart {
 	}
 
 	private void hookSingleClickAction() {
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				new ASTHighlighterAction(null).run();
-			}
-		});
+		viewer.addSelectionChangedListener(event -> new ASTHighlighterAction(null).run());
 	}
 }

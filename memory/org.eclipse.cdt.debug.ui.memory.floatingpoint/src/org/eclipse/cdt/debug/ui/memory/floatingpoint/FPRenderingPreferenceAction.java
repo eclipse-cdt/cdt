@@ -36,12 +36,7 @@ public class FPRenderingPreferenceAction extends ActionDelegate implements IView
 	}
 
 	protected void showPreferencePage(String id, IPreferencePage page) {
-		BusyIndicator.showWhile(FPRenderingPlugin.getStandardDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				PreferencesUtil.createPreferenceDialogOn(FPRenderingPlugin.getShell(), id, new String[] { id }, null)
-						.open();
-			}
-		});
+		BusyIndicator.showWhile(FPRenderingPlugin.getStandardDisplay(), () -> PreferencesUtil
+				.createPreferenceDialogOn(FPRenderingPlugin.getShell(), id, new String[] { id }, null).open());
 	}
 }

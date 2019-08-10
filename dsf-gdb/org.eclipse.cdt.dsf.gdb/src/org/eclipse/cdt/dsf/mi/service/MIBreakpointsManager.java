@@ -453,10 +453,8 @@ public class MIBreakpointsManager extends AbstractDsfService
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				// Submit the runnable to plant the breakpoints on dispatch thread.
-				getExecutor().submit(new Runnable() {
-					@Override
-					public void run() {
-						installInitialBreakpoints(dmc, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+				getExecutor().submit(
+						() -> installInitialBreakpoints(dmc, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
 							@Override
 							protected void handleSuccess() {
 								// Notify breakpoints tracking listeners that the tracking is started.
@@ -465,9 +463,7 @@ public class MIBreakpointsManager extends AbstractDsfService
 								}
 								rm.done();
 							}
-						});
-					}
-				});
+						}));
 
 				return Status.OK_STATUS;
 			}
@@ -1765,19 +1761,16 @@ public class MIBreakpointsManager extends AbstractDsfService
 	 * @param bps
 	 */
 	private void clearBreakpointStatus(final ICBreakpoint[] bps, final IBreakpointsTargetDMContext ctx) {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// For every platform breakpoint that has at least one target breakpoint installed
-				// we must decrement the install count, for every target breakpoint.
-				// Note that we cannot simply call resetInstallCount() because another
-				// launch may be using the same platform breakpoint.
-				Map<ICBreakpoint, Vector<IBreakpointDMContext>> breakpoints = fPlatformToBPsMaps.get(ctx);
-				for (ICBreakpoint breakpoint : breakpoints.keySet()) {
-					Vector<IBreakpointDMContext> targetBps = breakpoints.get(breakpoint);
-					for (IBreakpointDMContext targetBp : targetBps) {
-						decrementInstallCount(targetBp, breakpoint, new RequestMonitor(getExecutor(), null));
-					}
+		IWorkspaceRunnable wr = monitor -> {
+			// For every platform breakpoint that has at least one target breakpoint installed
+			// we must decrement the install count, for every target breakpoint.
+			// Note that we cannot simply call resetInstallCount() because another
+			// launch may be using the same platform breakpoint.
+			Map<ICBreakpoint, Vector<IBreakpointDMContext>> breakpoints = fPlatformToBPsMaps.get(ctx);
+			for (ICBreakpoint breakpoint : breakpoints.keySet()) {
+				Vector<IBreakpointDMContext> targetBps = breakpoints.get(breakpoint);
+				for (IBreakpointDMContext targetBp : targetBps) {
+					decrementInstallCount(targetBp, breakpoint, new RequestMonitor(getExecutor(), null));
 				}
 			}
 		};

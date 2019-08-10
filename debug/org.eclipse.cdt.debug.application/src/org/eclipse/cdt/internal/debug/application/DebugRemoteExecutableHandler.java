@@ -47,13 +47,7 @@ public class DebugRemoteExecutableHandler extends AbstractHandler {
 				final ILaunchConfiguration config = DebugRemoteExecutable.createLaunchConfig(new NullProgressMonitor(),
 						buildLog, executable, address, port, attach);
 				if (config != null) {
-					Display.getDefault().syncExec(new Runnable() {
-
-						@Override
-						public void run() {
-							DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
-						}
-					});
+					Display.getDefault().syncExec(() -> DebugUITools.launch(config, ILaunchManager.DEBUG_MODE));
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();

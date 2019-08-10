@@ -963,14 +963,11 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 
 	private void notifyUser(final String message) {
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				Shell parent = DsfUIPlugin.getActiveWorkbenchShell();
-				if (parent != null) {
-					MessageDialog.openInformation(parent, Messages.Information,
-							Messages.RegisterGroupInfo + ": " + message); //$NON-NLS-1$
-				}
+		Runnable runnable = () -> {
+			Shell parent = DsfUIPlugin.getActiveWorkbenchShell();
+			if (parent != null) {
+				MessageDialog.openInformation(parent, Messages.Information,
+						Messages.RegisterGroupInfo + ": " + message); //$NON-NLS-1$
 			}
 		};
 

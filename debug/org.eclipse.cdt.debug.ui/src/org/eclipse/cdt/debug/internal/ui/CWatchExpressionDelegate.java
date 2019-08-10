@@ -35,19 +35,16 @@ public class CWatchExpressionDelegate implements IWatchExpressionDelegate {
 			return;
 		}
 		final ICStackFrame frame = (ICStackFrame) context;
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				IValue value = null;
-				DebugException de = null;
-				try {
-					value = frame.evaluateExpression(expression);
-				} catch (DebugException e) {
-					de = e;
-				}
-				IWatchExpressionResult result = evaluationComplete(expression, value, de);
-				listener.watchEvaluationFinished(result);
+		Runnable runnable = () -> {
+			IValue value = null;
+			DebugException de = null;
+			try {
+				value = frame.evaluateExpression(expression);
+			} catch (DebugException e) {
+				de = e;
 			}
+			IWatchExpressionResult result = evaluationComplete(expression, value, de);
+			listener.watchEvaluationFinished(result);
 		};
 		DebugPlugin.getDefault().asyncExec(runnable);
 	}

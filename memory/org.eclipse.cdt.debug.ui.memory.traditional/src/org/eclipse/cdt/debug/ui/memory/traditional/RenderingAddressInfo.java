@@ -248,26 +248,23 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 							final String[] types = getAddressInfoItemTypes();
 
 							if (!display.isDisposed()) {
-								display.asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										for (String type : types) {
-											if (!fAddressInfoTypeStatusMap.containsKey(type)) {
-												fAddressInfoTypeStatusMap.put(type, Boolean.TRUE);
-											}
+								display.asyncExec(() -> {
+									for (String type : types) {
+										if (!fAddressInfoTypeStatusMap.containsKey(type)) {
+											fAddressInfoTypeStatusMap.put(type, Boolean.TRUE);
 										}
-
-										// The selection has changed, so our Address information may no longer be valid
-										fAddressInfoItems = addressInfoItems;
-										fMapStartAddrToInfoItems.clear();
-										fMapAddrToInfoItems.clear();
-
-										if (fBinaryPane.isVisible()) {
-											redrawPanes();
-										}
-
-										refreshUpdateListener(addrInfo);
 									}
+
+									// The selection has changed, so our Address information may no longer be valid
+									fAddressInfoItems = addressInfoItems;
+									fMapStartAddrToInfoItems.clear();
+									fMapAddrToInfoItems.clear();
+
+									if (fBinaryPane.isVisible()) {
+										redrawPanes();
+									}
+
+									refreshUpdateListener(addrInfo);
 								});
 							}
 						}

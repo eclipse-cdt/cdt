@@ -39,21 +39,11 @@ public class DsfLaunch extends Launch {
 
 	@Override
 	protected void fireChanged() {
-		DebugPlugin.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				DsfLaunch.super.fireChanged();
-			}
-		});
+		DebugPlugin.getDefault().asyncExec(() -> DsfLaunch.super.fireChanged());
 	}
 
 	@Override
 	protected void fireTerminate() {
-		DebugPlugin.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				DsfLaunch.super.fireTerminate();
-			}
-		});
+		DebugPlugin.getDefault().asyncExec(() -> DsfLaunch.super.fireTerminate());
 	}
 }

@@ -104,12 +104,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter {
 
 		for (final IVMProvider provider : providers) {
 			try {
-				provider.getExecutor().execute(new Runnable() {
-					@Override
-					public void run() {
-						provider.dispose();
-					}
-				});
+				provider.getExecutor().execute(() -> provider.dispose());
 			} catch (RejectedExecutionException e) {
 				// Not much we can do at this point.
 			}
@@ -155,16 +150,13 @@ abstract public class AbstractVMAdapter implements IVMAdapter {
 
 	private void updateProvider(final IVMProvider provider, final IViewerUpdate[] updates) {
 		try {
-			provider.getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					if (updates instanceof IHasChildrenUpdate[]) {
-						provider.update((IHasChildrenUpdate[]) updates);
-					} else if (updates instanceof IChildrenCountUpdate[]) {
-						provider.update((IChildrenCountUpdate[]) updates);
-					} else if (updates instanceof IChildrenUpdate[]) {
-						provider.update((IChildrenUpdate[]) updates);
-					}
+			provider.getExecutor().execute(() -> {
+				if (updates instanceof IHasChildrenUpdate[]) {
+					provider.update((IHasChildrenUpdate[]) updates);
+				} else if (updates instanceof IChildrenCountUpdate[]) {
+					provider.update((IChildrenCountUpdate[]) updates);
+				} else if (updates instanceof IChildrenUpdate[]) {
+					provider.update((IChildrenUpdate[]) updates);
 				}
 			});
 		} catch (RejectedExecutionException e) {

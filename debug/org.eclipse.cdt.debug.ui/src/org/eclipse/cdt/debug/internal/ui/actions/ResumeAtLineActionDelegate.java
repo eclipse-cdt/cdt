@@ -119,23 +119,20 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 		if (fAction == null) {
 			return;
 		}
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				boolean enabled = false;
-				if (fPartTarget != null && fTargetElement != null) {
-					IWorkbenchPartSite site = fActivePart.getSite();
-					if (site != null) {
-						ISelectionProvider selectionProvider = site.getSelectionProvider();
-						if (selectionProvider != null) {
-							ISelection selection = selectionProvider.getSelection();
-							enabled = fTargetElement.isSuspended()
-									&& fPartTarget.canResumeAtLine(fActivePart, selection, fTargetElement);
-						}
+		Runnable r = () -> {
+			boolean enabled = false;
+			if (fPartTarget != null && fTargetElement != null) {
+				IWorkbenchPartSite site = fActivePart.getSite();
+				if (site != null) {
+					ISelectionProvider selectionProvider = site.getSelectionProvider();
+					if (selectionProvider != null) {
+						ISelection selection = selectionProvider.getSelection();
+						enabled = fTargetElement.isSuspended()
+								&& fPartTarget.canResumeAtLine(fActivePart, selection, fTargetElement);
 					}
 				}
-				fAction.setEnabled(enabled);
 			}
+			fAction.setEnabled(enabled);
 		};
 		CDebugUIPlugin.getStandardDisplay().asyncExec(r);
 	}

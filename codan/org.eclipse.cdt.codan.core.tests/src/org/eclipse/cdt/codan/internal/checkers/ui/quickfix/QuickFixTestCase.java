@@ -88,14 +88,11 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 
 	@Override
 	public void tearDown() throws Exception {
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchPage[] pages = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages();
-				for (IWorkbenchPage page : pages) {
-					page.closeAllEditors(false);
-					dispatch(0);
-				}
+		Display.getDefault().syncExec(() -> {
+			IWorkbenchPage[] pages = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages();
+			for (IWorkbenchPage page : pages) {
+				page.closeAllEditors(false);
+				dispatch(0);
 			}
 		});
 
@@ -141,19 +138,16 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 	}
 
 	public void doRunQuickFix() {
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 0; i < markers.length; i++) {
-					IMarker marker = markers[i];
-					isApplicableMap.put(marker, quickFix.isApplicable(marker));
-					if (quickFix.isApplicable(marker)) {
-						quickFix.run(marker);
-						dispatch(0);
-					}
+		Display.getDefault().syncExec(() -> {
+			for (int i = 0; i < markers.length; i++) {
+				IMarker marker = markers[i];
+				isApplicableMap.put(marker, quickFix.isApplicable(marker));
+				if (quickFix.isApplicable(marker)) {
+					quickFix.run(marker);
+					dispatch(0);
 				}
-				PlatformUI.getWorkbench().saveAllEditors(false);
 			}
+			PlatformUI.getWorkbench().saveAllEditors(false);
 		});
 
 	}

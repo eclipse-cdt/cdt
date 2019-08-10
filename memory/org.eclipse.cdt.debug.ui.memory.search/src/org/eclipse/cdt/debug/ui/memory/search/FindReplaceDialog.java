@@ -40,8 +40,6 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
@@ -729,52 +727,34 @@ public class FindReplaceDialog extends SelectionDialog {
 		fFormatDecimalButton.addSelectionListener(nonAsciiListener);
 		fFormatByteSequenceButton.addSelectionListener(nonAsciiListener);
 
-		fStartText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				boolean valid = true;
-				try {
-					getStartAddress();
-				} catch (Exception ex) {
-					valid = false;
-				}
-
-				fStartText.setForeground(valid ? Display.getDefault().getSystemColor(SWT.COLOR_BLACK)
-						: Display.getDefault().getSystemColor(SWT.COLOR_RED));
-
-				validate();
+		fStartText.addModifyListener(e -> {
+			boolean valid = true;
+			try {
+				getStartAddress();
+			} catch (Exception ex) {
+				valid = false;
 			}
 
+			fStartText.setForeground(valid ? Display.getDefault().getSystemColor(SWT.COLOR_BLACK)
+					: Display.getDefault().getSystemColor(SWT.COLOR_RED));
+
+			validate();
 		});
 
-		fEndText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				try {
-					getEndAddress();
-					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-				} catch (Exception ex) {
-					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-				}
-
-				validate();
+		fEndText.addModifyListener(e -> {
+			try {
+				getEndAddress();
+				fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+			} catch (Exception ex) {
+				fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 			}
 
+			validate();
 		});
 
-		fFindText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validate();
-			}
-		});
+		fFindText.addModifyListener(e -> validate());
 
-		fReplaceText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validate();
-			}
-		});
+		fReplaceText.addModifyListener(e -> validate());
 
 		composite.setTabList(
 				new Control[] { fFindText, fReplaceText, directionGroup, rangeGroup, formatGroup, optionsGroup, });
@@ -1137,40 +1117,35 @@ public class FindReplaceDialog extends SelectionDialog {
 								final BigInteger finalCurrentPosition = currentPosition;
 								final BigInteger finalStart = start;
 								final BigInteger finalEnd = end;
-								Display.getDefault().asyncExec(new Runnable() {
-
-									@Override
-									public void run() {
-										IMemoryRenderingContainer containers[] = getMemoryView()
-												.getMemoryRenderingContainers();
-										for (int i = 0; i < containers.length; i++) {
-											IMemoryRendering rendering = containers[i].getActiveRendering();
-											if (rendering instanceof IRepositionableMemoryRendering) {
-												try {
-													((IRepositionableMemoryRendering) rendering)
-															.goToAddress(finalCurrentPosition);
-												} catch (DebugException e) {
-													MemorySearchPlugin.logError(
-															Messages.getString(
-																	"FindReplaceDialog.RepositioningMemoryViewFailed"), //$NON-NLS-1$
-															e);
-												}
+								Display.getDefault().asyncExec(() -> {
+									IMemoryRenderingContainer containers[] = getMemoryView()
+											.getMemoryRenderingContainers();
+									for (int i = 0; i < containers.length; i++) {
+										IMemoryRendering rendering = containers[i].getActiveRendering();
+										if (rendering instanceof IRepositionableMemoryRendering) {
+											try {
+												((IRepositionableMemoryRendering) rendering)
+														.goToAddress(finalCurrentPosition);
+											} catch (DebugException e1) {
+												MemorySearchPlugin.logError(
+														Messages.getString(
+																"FindReplaceDialog.RepositioningMemoryViewFailed"), //$NON-NLS-1$
+														e1);
 											}
-											if (rendering != null) {
-												// Temporary, until platform accepts/adds new interface for setting the selection
-												try {
-													Method m = rendering.getClass().getMethod("setSelection", //$NON-NLS-1$
-															new Class[] { BigInteger.class, BigInteger.class });
-													if (m != null)
-														m.invoke(rendering, finalCurrentPosition,
-																finalCurrentPosition.add(searchPhraseLength));
-												} catch (Exception e) {
-													// do nothing
-												}
+										}
+										if (rendering != null) {
+											// Temporary, until platform accepts/adds new interface for setting the selection
+											try {
+												Method m = rendering.getClass().getMethod("setSelection", //$NON-NLS-1$
+														new Class[] { BigInteger.class, BigInteger.class });
+												if (m != null)
+													m.invoke(rendering, finalCurrentPosition,
+															finalCurrentPosition.add(searchPhraseLength));
+											} catch (Exception e2) {
+												// do nothing
 											}
 										}
 									}
-
 								});
 
 								fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, Boolean.TRUE.toString());
@@ -1222,12 +1197,9 @@ public class FindReplaceDialog extends SelectionDialog {
 		};
 
 		if (all && replaceData == null) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					NewSearchUI.activateSearchResultView();
-					NewSearchUI.runQueryInBackground(query);
-				}
+			Display.getDefault().asyncExec(() -> {
+				NewSearchUI.activateSearchResultView();
+				NewSearchUI.runQueryInBackground(query);
 			});
 		} else {
 			Job job = new Job("Searching memory for " + searchPhrase) { //$NON-NLS-1$

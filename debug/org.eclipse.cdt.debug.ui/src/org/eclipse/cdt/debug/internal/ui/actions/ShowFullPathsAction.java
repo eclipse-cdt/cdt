@@ -68,17 +68,14 @@ public class ShowFullPathsAction extends ViewFilterAction {
 			IDebugModelPresentation pres = view.getPresentation(CDIDebugModel.getPluginIdentifier());
 			if (pres != null) {
 				pres.setAttribute(CDebugModelPresentation.DISPLAY_FULL_PATHS, Boolean.valueOf(getValue()));
-				BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
-						getPreferenceStore().setValue(key, getValue());
-						CDebugUIPlugin.getDefault().savePluginPreferences();
+				BusyIndicator.showWhile(viewer.getControl().getDisplay(), () -> {
+					String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
+					getPreferenceStore().setValue(key, getValue());
+					CDebugUIPlugin.getDefault().savePluginPreferences();
 
-						// Refresh the viewer after we've set the preference because
-						// DSF-based debuggers trigger off this preference.
-						viewer.refresh();
-					}
+					// Refresh the viewer after we've set the preference because
+					// DSF-based debuggers trigger off this preference.
+					viewer.refresh();
 				});
 			}
 		}

@@ -99,16 +99,12 @@ public class CastToTypeActionHandler extends AbstractHandler {
 		if (getCastToType() == null || getCastToType().length == 0)
 			return null;
 
-		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					doAction(getCastToType());
-					setStatus(null);
-				} catch (DebugException e) {
-					setStatus(e.getStatus());
-				}
+		BusyIndicator.showWhile(Display.getCurrent(), () -> {
+			try {
+				doAction(getCastToType());
+				setStatus(null);
+			} catch (DebugException e) {
+				setStatus(e.getStatus());
 			}
 		});
 		if (getStatus() != null && !getStatus().isOK()) {

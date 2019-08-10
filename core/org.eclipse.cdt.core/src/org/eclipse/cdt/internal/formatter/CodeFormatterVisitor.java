@@ -1008,20 +1008,17 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		final ListOptions options = createListOptionsForLambdaCapturesParameters(node);
 		ICPPASTCapture[] captures = node.getCaptures();
 		formatList(Arrays.asList(captures), options, true, captures.length > 0 && captures[0].isPackExpansion(), null,
-				new Runnable() {
-					@Override
-					public void run() {
-						if (options.captureDefault == CaptureDefault.BY_COPY) {
-							scribe.printNextToken(Token.tASSIGN, options.fSpaceAfterOpeningParen);
-						} else if (options.captureDefault == CaptureDefault.BY_REFERENCE) {
-							scribe.printNextToken(Token.tAMPER, options.fSpaceAfterOpeningParen);
-						}
+				() -> {
+					if (options.captureDefault == CaptureDefault.BY_COPY) {
+						scribe.printNextToken(Token.tASSIGN, options.fSpaceAfterOpeningParen);
+					} else if (options.captureDefault == CaptureDefault.BY_REFERENCE) {
+						scribe.printNextToken(Token.tAMPER, options.fSpaceAfterOpeningParen);
+					}
 
-						if (options.captureDefault != CaptureDefault.UNSPECIFIED && node.getCaptures().length > 0) {
-							scribe.printNextToken(Token.tCOMMA, options.fSpaceBeforeSeparator);
-							if (options.fSpaceAfterSeparator)
-								scribe.space();
-						}
+					if (options.captureDefault != CaptureDefault.UNSPECIFIED && node.getCaptures().length > 0) {
+						scribe.printNextToken(Token.tCOMMA, options.fSpaceBeforeSeparator);
+						if (options.fSpaceAfterSeparator)
+							scribe.space();
 					}
 				});
 

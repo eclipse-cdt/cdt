@@ -67,14 +67,11 @@ public class MoveToLineAdapter implements IMoveToLineTarget {
 						final IPath path = new Path(fileName);
 						final IMoveToLine moveToLine = ((IAdaptable) target).getAdapter(IMoveToLine.class);
 						if (moveToLine != null && moveToLine.canMoveToLine(path.toPortableString(), lineNumber)) {
-							Runnable r = new Runnable() {
-								@Override
-								public void run() {
-									try {
-										moveToLine.moveToLine(path.toPortableString(), lineNumber);
-									} catch (DebugException e) {
-										failed(e);
-									}
+							Runnable r = () -> {
+								try {
+									moveToLine.moveToLine(path.toPortableString(), lineNumber);
+								} catch (DebugException e) {
+									failed(e);
 								}
 							};
 							runInBackground(r);

@@ -95,12 +95,7 @@ public class GdbPinProvider implements IPinProvider {
 	public GdbPinProvider(DsfSession session) {
 		fSession = session;
 
-		session.getExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				fSession.addServiceEventListener(GdbPinProvider.this, null);
-			}
-		});
+		session.getExecutor().execute(() -> fSession.addServiceEventListener(GdbPinProvider.this, null));
 	}
 
 	/**
@@ -108,12 +103,7 @@ public class GdbPinProvider implements IPinProvider {
 	 */
 	public void dispose() {
 		try {
-			fSession.getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					fSession.removeServiceEventListener(GdbPinProvider.this);
-				}
-			});
+			fSession.getExecutor().execute(() -> fSession.removeServiceEventListener(GdbPinProvider.this));
 		} catch (RejectedExecutionException e) {
 			// Session already gone.
 		}

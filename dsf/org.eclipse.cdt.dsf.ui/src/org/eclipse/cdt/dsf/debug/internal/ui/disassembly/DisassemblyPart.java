@@ -136,12 +136,9 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DropTarget;
@@ -150,7 +147,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -580,12 +576,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		} else if (Control.class.equals(required)) {
 			return fViewer != null ? (T) fViewer.getTextWidget() : null;
 		} else if (IGotoMarker.class.equals(required)) {
-			return (T) new IGotoMarker() {
-				@Override
-				public void gotoMarker(IMarker marker) {
-					DisassemblyPart.this.gotoMarker(marker);
-				}
-			};
+			return (T) (IGotoMarker) marker -> DisassemblyPart.this.gotoMarker(marker);
 		} else if (IColumnSupport.class.equals(required)) {
 			if (fColumnSupport == null)
 				fColumnSupport = createColumnSupport();
@@ -780,25 +771,17 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		hookContextMenu();
 		contributeToActionBars();
 
-		fViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
-			@Override
-			public void verifyKey(VerifyEvent event) {
-				switch (event.keyCode) {
-				case SWT.PAGE_UP:
-				case SWT.PAGE_DOWN:
-				case SWT.ARROW_UP:
-				case SWT.ARROW_DOWN:
-					event.doit = !keyScroll(event.keyCode);
-				}
+		fViewer.getTextWidget().addVerifyKeyListener(event -> {
+			switch (event.keyCode) {
+			case SWT.PAGE_UP:
+			case SWT.PAGE_DOWN:
+			case SWT.ARROW_UP:
+			case SWT.ARROW_DOWN:
+				event.doit = !keyScroll(event.keyCode);
 			}
 		});
 
-		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateSelectionDependentActions();
-			}
-		});
+		fViewer.addSelectionChangedListener(event -> updateSelectionDependentActions());
 
 		fErrorColor = EditorsUI.getSharedTextColors().getColor(
 				PreferenceConverter.getColor(getPreferenceStore(), DisassemblyPreferenceConstants.ERROR_COLOR));
@@ -834,12 +817,9 @@ public abstract class DisassemblyPart extends WorkbenchPart
 	protected void setSite(IWorkbenchPartSite site) {
 		super.setSite(site);
 		site.getPage().addPartListener(fPartListener);
-		fDebugContextListener = new IDebugContextListener() {
-			@Override
-			public void debugContextChanged(DebugContextEvent event) {
-				if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
-					updateDebugContext();
-				}
+		fDebugContextListener = event -> {
+			if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
+				updateDebugContext();
 			}
 		};
 		DebugUITools.addPartDebugContextListener(site, fDebugContextListener);
@@ -1198,12 +1178,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		String id = "#DisassemblyPartContext"; //$NON-NLS-1$
 		MenuManager menuMgr = new MenuManager(id, id);
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				DisassemblyPart.this.fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> DisassemblyPart.this.fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(fViewer.getTextWidget());
 		fViewer.getTextWidget().setMenu(menu);
 		getSite().registerContextMenu(id, menuMgr, fViewer);
@@ -1213,12 +1188,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		String id = "#DisassemblyPartRulerContext"; //$NON-NLS-1$
 		MenuManager menuMgr = new MenuManager(id, id);
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				DisassemblyPart.this.fillRulerContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> DisassemblyPart.this.fillRulerContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(fVerticalRuler.getControl());
 		fVerticalRuler.getControl().setMenu(menu);
 		getSite().registerContextMenu(id, menuMgr, fViewer);
@@ -1442,13 +1412,10 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		assert isGuiThread();
 		if (address != null) {
 			final BigInteger addr = address.getValue();
-			startUpdate(new Runnable() {
-				@Override
-				public void run() {
-					fGotoFramePending = false;
-					fGotoAddressPending = PC_UNKNOWN;
-					gotoAddress(addr);
-				}
+			startUpdate(() -> {
+				fGotoFramePending = false;
+				fGotoAddressPending = PC_UNKNOWN;
+				gotoAddress(addr);
 			});
 		}
 	}
@@ -1560,15 +1527,12 @@ public abstract class DisassemblyPart extends WorkbenchPart
 				&& !fRefreshViewPending && fFocusAddress != PC_UNKNOWN) {
 			fUpdatePending = true;
 			final int updateCount = fUpdateCount;
-			invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					if (updateCount == fUpdateCount) {
-						assert fUpdatePending;
-						if (fUpdatePending) {
-							fUpdatePending = false;
-							updateVisibleArea();
-						}
+			invokeLater(() -> {
+				if (updateCount == fUpdateCount) {
+					assert fUpdatePending;
+					if (fUpdatePending) {
+						fUpdatePending = false;
+						updateVisibleArea();
 					}
 				}
 			});
@@ -1767,13 +1731,10 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		if (fDebugSessionId == null) {
 			return;
 		}
-		startUpdate(new Runnable() {
-			@Override
-			public void run() {
-				if (DEBUG)
-					System.out.println("retrieveDisassembly " + file); //$NON-NLS-1$
-				fBackend.retrieveDisassembly(file, lines, fEndAddress, mixed, fShowSymbols, fShowDisassembly);
-			}
+		startUpdate(() -> {
+			if (DEBUG)
+				System.out.println("retrieveDisassembly " + file); //$NON-NLS-1$
+			fBackend.retrieveDisassembly(file, lines, fEndAddress, mixed, fShowSymbols, fShowDisassembly);
 		});
 	}
 
@@ -2002,12 +1963,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 			prevBackend.dispose();
 		}
 		if (needUpdate && fViewer != null) {
-			startUpdate(new Runnable() {
-				@Override
-				public void run() {
-					debugContextChanged();
-				}
-			});
+			startUpdate(() -> debugContextChanged());
 		}
 	}
 
@@ -2107,45 +2063,37 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		fRunnableQueue.clear();
 		fRefreshViewPending = true;
 		final long refreshViewScheduled = System.currentTimeMillis() + delay;
-		final Runnable refresh = new Runnable() {
-			@Override
-			public void run() {
-				fRefreshViewPending = false;
-				long now = System.currentTimeMillis();
-				if (now >= refreshViewScheduled) {
-					if (DEBUG)
-						System.err.println("*** refreshing view ***"); //$NON-NLS-1$
+		final Runnable refresh = () -> {
+			fRefreshViewPending = false;
+			long now = System.currentTimeMillis();
+			if (now >= refreshViewScheduled) {
+				if (DEBUG)
+					System.err.println("*** refreshing view ***"); //$NON-NLS-1$
 
-					// save viewport position and frame info
-					BigInteger topAddress = getTopAddress();
-					int targetFrame = fTargetFrame;
-					BigInteger frameAddress = fFrameAddress;
-					BigInteger pcAddress = fPCAddress;
+				// save viewport position and frame info
+				BigInteger topAddress = getTopAddress();
+				int targetFrame = fTargetFrame;
+				BigInteger frameAddress = fFrameAddress;
+				BigInteger pcAddress = fPCAddress;
 
-					// clear viewer
-					resetViewer();
-					if (fScrollPos != null) {
-						fScrollPos.isDeleted = true;
-					}
-
-					// restore frame info and viewport
-					fPCAnnotationUpdatePending = true;
-					fTargetFrame = targetFrame;
-					fFrameAddress = frameAddress;
-					fPCAddress = pcAddress;
-					gotoAddress(topAddress);
-				} else {
-					refreshView((int) (refreshViewScheduled - now));
+				// clear viewer
+				resetViewer();
+				if (fScrollPos != null) {
+					fScrollPos.isDeleted = true;
 				}
+
+				// restore frame info and viewport
+				fPCAnnotationUpdatePending = true;
+				fTargetFrame = targetFrame;
+				fFrameAddress = frameAddress;
+				fPCAddress = pcAddress;
+				gotoAddress(topAddress);
+			} else {
+				refreshView((int) (refreshViewScheduled - now));
 			}
 		};
 		if (delay > 0) {
-			invokeLater(delay, new Runnable() {
-				@Override
-				public void run() {
-					doScrollLocked(refresh);
-				}
-			});
+			invokeLater(delay, () -> doScrollLocked(refresh));
 		} else {
 			doScrollLocked(refresh);
 		}
@@ -2610,12 +2558,9 @@ public abstract class DisassemblyPart extends WorkbenchPart
 	private void scheduleDoPending() {
 		if (!fUpdatePending && !fDoPendingPosted) {
 			fDoPendingPosted = true;
-			invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					doPending();
-					fDoPendingPosted = false;
-				}
+			invokeLater(() -> {
+				doPending();
+				fDoPendingPosted = false;
 			});
 		}
 	}
@@ -2678,12 +2623,9 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		final int updateCount = fUpdateCount;
 		if (fUpdatePending) {
 			if (fRunnableQueue.size() == 1) {
-				Runnable doitlater = new Runnable() {
-					@Override
-					public void run() {
-						if (updateCount == fUpdateCount) {
-							doScrollLocked(null);
-						}
+				Runnable doitlater = () -> {
+					if (updateCount == fUpdateCount) {
+						doScrollLocked(null);
 					}
 				};
 				invokeLater(doitlater);
@@ -3113,12 +3055,9 @@ public abstract class DisassemblyPart extends WorkbenchPart
 	 */
 	@Override
 	public void handleTargetSuspended() {
-		asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				updatePC(PC_UNKNOWN);
-				firePropertyChange(PROP_SUSPENDED);
-			}
+		asyncExec(() -> {
+			updatePC(PC_UNKNOWN);
+			firePropertyChange(PROP_SUSPENDED);
 		});
 	}
 
@@ -3127,12 +3066,9 @@ public abstract class DisassemblyPart extends WorkbenchPart
 	 */
 	@Override
 	public void handleTargetResumed() {
-		asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				updatePC(PC_RUNNING);
-				firePropertyChange(PROP_SUSPENDED);
-			}
+		asyncExec(() -> {
+			updatePC(PC_RUNNING);
+			firePropertyChange(PROP_SUSPENDED);
 		});
 	}
 
@@ -3141,17 +3077,9 @@ public abstract class DisassemblyPart extends WorkbenchPart
 	 */
 	@Override
 	public void handleTargetEnded() {
-		asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				fDebugSessionId = null;
-				startUpdate(new Runnable() {
-					@Override
-					public void run() {
-						debugContextChanged();
-					}
-				});
-			}
+		asyncExec(() -> {
+			fDebugSessionId = null;
+			startUpdate(() -> debugContextChanged());
 		});
 	}
 

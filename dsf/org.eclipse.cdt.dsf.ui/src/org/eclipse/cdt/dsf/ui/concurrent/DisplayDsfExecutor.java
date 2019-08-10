@@ -29,8 +29,6 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * DSF executor which uses the display thread to run the submitted runnables
@@ -78,12 +76,9 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 	private DisplayDsfExecutor(Display display) {
 		super("Display DSF Executor"); //$NON-NLS-1$
 		fDisplay = display;
-		fDisplay.addListener(SWT.Dispose, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (event.type == SWT.Dispose) {
-					DisplayDsfExecutor.super.shutdownNow();
-				}
+		fDisplay.addListener(SWT.Dispose, event -> {
+			if (event.type == SWT.Dispose) {
+				DisplayDsfExecutor.super.shutdownNow();
 			}
 		});
 	}
@@ -120,14 +115,11 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 				final Throwable[] e = new Throwable[1];
 
 				try {
-					fDisplay.syncExec(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								v[0] = callable.call();
-							} catch (Throwable exception) {
-								e[0] = exception;
-							}
+					fDisplay.syncExec(() -> {
+						try {
+							v[0] = callable.call();
+						} catch (Throwable exception) {
+							e[0] = exception;
 						}
 					});
 				} catch (SWTException swtException) {
@@ -164,20 +156,12 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 			((DsfExecutable) runnable).setSubmitted();
 		}
 
-		return new Runnable() {
-			@Override
-			public void run() {
-				try {
-					fDisplay.syncExec(new Runnable() {
-						@Override
-						public void run() {
-							runnable.run();
-						}
-					});
-				} catch (SWTException swtException) {
-					if (swtException.code == SWT.ERROR_DEVICE_DISPOSED) {
-						DisplayDsfExecutor.super.shutdownNow();
-					}
+		return () -> {
+			try {
+				fDisplay.syncExec(() -> runnable.run());
+			} catch (SWTException swtException) {
+				if (swtException.code == SWT.ERROR_DEVICE_DISPOSED) {
+					DisplayDsfExecutor.super.shutdownNow();
 				}
 			}
 		};

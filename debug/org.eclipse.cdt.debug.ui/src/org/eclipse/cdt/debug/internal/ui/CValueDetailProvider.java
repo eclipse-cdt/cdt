@@ -38,13 +38,8 @@ public class CValueDetailProvider {
 		if (value instanceof ICValue) {
 			final ICStackFrame frame = CDebugUIUtils.getCurrentStackFrame();
 			if (frame != null) {
-				DebugPlugin.getDefault().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						listener.detailComputed(value, ((ICValue) value).evaluateAsExpression(frame));
-					}
-				});
+				DebugPlugin.getDefault()
+						.asyncExec(() -> listener.detailComputed(value, ((ICValue) value).evaluateAsExpression(frame)));
 			} else { // no valid stack frame, clear detail pane
 				listener.detailComputed(value, ""); //$NON-NLS-1$
 			}

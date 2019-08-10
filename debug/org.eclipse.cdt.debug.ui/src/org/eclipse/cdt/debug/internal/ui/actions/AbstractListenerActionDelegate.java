@@ -49,13 +49,10 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 		if (shell == null || shell.isDisposed()) {
 			return;
 		}
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 0; i < events.length; i++) {
-					if (events[i].getSource() != null) {
-						doHandleDebugEvent(events[i]);
-					}
+		Runnable r = () -> {
+			for (int i = 0; i < events.length; i++) {
+				if (events[i].getSource() != null) {
+					doHandleDebugEvent(events[i]);
 				}
 			}
 		};

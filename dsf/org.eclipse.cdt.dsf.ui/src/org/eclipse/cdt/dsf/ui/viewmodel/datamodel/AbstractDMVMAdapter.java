@@ -50,13 +50,10 @@ abstract public class AbstractDMVMAdapter extends AbstractVMAdapter {
 		fSession = session;
 		// Add ourselves as listener for DM events events.
 		try {
-			session.getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					if (DsfSession.isSessionActive(getSession().getId())) {
-						getSession().addServiceEventListener(AbstractDMVMAdapter.this, null);
-						fRegisteredAsEventListener = true;
-					}
+			session.getExecutor().execute(() -> {
+				if (DsfSession.isSessionActive(getSession().getId())) {
+					getSession().addServiceEventListener(AbstractDMVMAdapter.this, null);
+					fRegisteredAsEventListener = true;
 				}
 			});
 		} catch (RejectedExecutionException e) {
@@ -67,12 +64,9 @@ abstract public class AbstractDMVMAdapter extends AbstractVMAdapter {
 	@Override
 	public void dispose() {
 		try {
-			getSession().getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					if (fRegisteredAsEventListener && getSession().isActive()) {
-						fSession.removeServiceEventListener(AbstractDMVMAdapter.this);
-					}
+			getSession().getExecutor().execute(() -> {
+				if (fRegisteredAsEventListener && getSession().isActive()) {
+					fSession.removeServiceEventListener(AbstractDMVMAdapter.this);
 				}
 			});
 		} catch (RejectedExecutionException e) {

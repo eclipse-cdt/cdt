@@ -80,17 +80,7 @@ public class CDebugImageDescriptorRegistry {
 	}
 
 	private void hookDisplay() {
-		fDisplay.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				getDisplay().disposeExec(new Runnable() {
-					@Override
-					public void run() {
-						dispose();
-					}
-				});
-			}
-		});
+		fDisplay.asyncExec(() -> getDisplay().disposeExec(() -> dispose()));
 	}
 
 	protected Display getDisplay() {

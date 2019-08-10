@@ -467,15 +467,8 @@ public class LaunchShortcut implements ILaunchShortcut {
 			}
 			// issue error message if no connections exist
 			if (connection == null) {
-				Display.getDefault().syncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						MessageDialog.openError(Display.getCurrent().getActiveShell(),
-								Messages.LaunchShortcut_Error_Launching, Messages.LaunchShortcut_No_Connections);
-					}
-
-				});
+				Display.getDefault().syncExec(() -> MessageDialog.openError(Display.getCurrent().getActiveShell(),
+						Messages.LaunchShortcut_Error_Launching, Messages.LaunchShortcut_No_Connections));
 				return null;
 			}
 
@@ -495,15 +488,8 @@ public class LaunchShortcut implements ILaunchShortcut {
 
 			// issue error msg if no images exist
 			if (image == null) {
-				Display.getDefault().syncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						MessageDialog.openError(Display.getCurrent().getActiveShell(),
-								Messages.LaunchShortcut_Error_Launching, Messages.LaunchShortcut_No_Images);
-					}
-
-				});
+				Display.getDefault().syncExec(() -> MessageDialog.openError(Display.getCurrent().getActiveShell(),
+						Messages.LaunchShortcut_Error_Launching, Messages.LaunchShortcut_No_Images));
 				return null;
 			}
 

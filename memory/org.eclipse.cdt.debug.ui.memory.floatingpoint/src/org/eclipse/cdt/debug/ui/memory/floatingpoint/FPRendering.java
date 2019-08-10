@@ -53,17 +53,13 @@ import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.debug.ui.memory.IResettableMemoryRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.window.Window;
@@ -121,49 +117,37 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 	public FPRendering(String id) {
 		super(id);
 
-		JFaceResources.getFontRegistry().addListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(IInternalDebugUIConstants.FONT_NAME)) {
-					FPRendering.this.fRendering
-							.handleFontPreferenceChange(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
-				}
+		JFaceResources.getFontRegistry().addListener(event -> {
+			if (event.getProperty().equals(IInternalDebugUIConstants.FONT_NAME)) {
+				FPRendering.this.fRendering
+						.handleFontPreferenceChange(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
 			}
 		});
 
-		this.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				IMemoryRendering sourceRendering = (IMemoryRendering) event.getSource();
-				if (!sourceRendering.getMemoryBlock().equals(getMemoryBlock()))
-					return;
+		this.addPropertyChangeListener(event -> {
+			IMemoryRendering sourceRendering = (IMemoryRendering) event.getSource();
+			if (!sourceRendering.getMemoryBlock().equals(getMemoryBlock()))
+				return;
 
-				Object address = event.getNewValue();
+			Object address = event.getNewValue();
 
-				if (event.getProperty().equals(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS)
-						&& address instanceof BigInteger) {
-					FPRendering.this.fRendering.ensureVisible((BigInteger) address);
-				}
+			if (event.getProperty().equals(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS)
+					&& address instanceof BigInteger) {
+				FPRendering.this.fRendering.ensureVisible((BigInteger) address);
 			}
 		});
 
-		FPRenderingPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				disposeColors();
-				allocateColors();
-				applyPreferences();
-			}
+		FPRenderingPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(event -> {
+			disposeColors();
+			allocateColors();
+			applyPreferences();
 		});
 
-		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR)) {
-					if (FPRendering.this.fRendering != null) {
-						setRenderingPadding((String) event.getNewValue());
-						FPRendering.this.fRendering.redrawPanes();
-					}
+		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(event -> {
+			if (event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR)) {
+				if (FPRendering.this.fRendering != null) {
+					setRenderingPadding((String) event.getNewValue());
+					FPRendering.this.fRendering.redrawPanes();
 				}
 			}
 		});
@@ -221,13 +205,10 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 		 * We use the UI dispatch thread to protect the proxy information. Even though I believe the
 		 * dispose routine is always called in the UI dispatch thread. I am going to make sure.
 		 */
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (fModel != null) {
-					fModel.removeModelChangedListener(FPRendering.this);
-					fModel.dispose();
-				}
+		Display.getDefault().asyncExec(() -> {
+			if (fModel != null) {
+				fModel.removeModelChangedListener(FPRendering.this);
+				fModel.dispose();
 			}
 		});
 
@@ -246,29 +227,26 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 		 */
 		final IModelProxyFactory factory = (IModelProxyFactory) DebugPlugin.getAdapter(block, IModelProxyFactory.class);
 		if (factory != null) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
+			Display.getDefault().asyncExec(() -> {
 
-					/*
-					 * The asynchronous model assumes we have an asynchronous viewer that has an IPresentationContext
-					 * to represent it. The Platform memory subsystem provides a way to create one without a viewewr.
-					 */
-					IMemoryRenderingSite site = container.getMemoryRenderingSite();
-					MemoryViewPresentationContext context = new MemoryViewPresentationContext(site, container,
-							FPRendering.this);
+				/*
+				 * The asynchronous model assumes we have an asynchronous viewer that has an IPresentationContext
+				 * to represent it. The Platform memory subsystem provides a way to create one without a viewewr.
+				 */
+				IMemoryRenderingSite site = container.getMemoryRenderingSite();
+				MemoryViewPresentationContext context = new MemoryViewPresentationContext(site, container,
+						FPRendering.this);
 
-					/*
-					 * Get a new proxy and perform the initialization sequence so we are known the
-					 * the model provider.
-					 */
-					fModel = factory.createModelProxy(block, context);
-					if (fModel != null) {
-						fModel.installed(null);
-						fModel.addModelChangedListener(FPRendering.this);
-					}
-
+				/*
+				 * Get a new proxy and perform the initialization sequence so we are known the
+				 * the model provider.
+				 */
+				fModel = factory.createModelProxy(block, context);
+				if (fModel != null) {
+					fModel.installed(null);
+					fModel.addModelChangedListener(FPRendering.this);
 				}
+
 			});
 		}
 
@@ -605,12 +583,7 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 		{
 			@Override
 			public void run() {
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						FPRendering.this.fRendering.copyAddressToClipboard();
-					}
-				});
+				Display.getDefault().asyncExec(() -> FPRendering.this.fRendering.copyAddressToClipboard());
 			}
 		};
 
@@ -621,12 +594,8 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 		{
 			@Override
 			public void run() {
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						FPRendering.this.fRendering.gotoAddress(FPRendering.this.fRendering.fBaseAddress);
-					}
-				});
+				Display.getDefault().asyncExec(
+						() -> FPRendering.this.fRendering.gotoAddress(FPRendering.this.fRendering.fBaseAddress));
 			}
 		};
 
@@ -636,21 +605,18 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 		{
 			@Override
 			public void run() {
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						// For compatibility with DSF update modes (hopefully this will either be replaced
-						// by an enhanced platform interface or the caching will move out of the data layer)
+				Display.getDefault().asyncExec(() -> {
+					// For compatibility with DSF update modes (hopefully this will either be replaced
+					// by an enhanced platform interface or the caching will move out of the data layer)
 
-						try {
-							Method m = fRendering.getMemoryBlock().getClass().getMethod("clearCache", new Class[0]); //$NON-NLS-1$
-							if (m != null)
-								m.invoke(fRendering.getMemoryBlock(), new Object[0]);
-						} catch (Exception e) {
-						}
-
-						FPRendering.this.fRendering.refresh();
+					try {
+						Method m = fRendering.getMemoryBlock().getClass().getMethod("clearCache", new Class[0]); //$NON-NLS-1$
+						if (m != null)
+							m.invoke(fRendering.getMemoryBlock(), new Object[0]);
+					} catch (Exception e) {
 					}
+
+					FPRendering.this.fRendering.refresh();
 				});
 			}
 		};
@@ -826,24 +792,20 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 			@Override
 			public void run() {
 				InputDialog inputDialog = new InputDialog(fRendering.getShell(), "Set Column Count", //$NON-NLS-1$
-						"Please enter column count", "", new IInputValidator() //$NON-NLS-1$ //$NON-NLS-2$
-				{
-							@Override
-							public String isValid(String input) {
-								try {
-									int index = Integer.parseInt(input);
+						"Please enter column count", "", input -> {
+							try {
+								int index = Integer.parseInt(input);
 
-									if (index <= 0)
-										return "Please enter a positive integer"; //$NON-NLS-1$
-
-									if (index > 200)
-										return "Please enter a positive integer not greater than 200"; //$NON-NLS-1$
-								} catch (NumberFormatException x) {
+								if (index <= 0)
 									return "Please enter a positive integer"; //$NON-NLS-1$
-								}
 
-								return null;
+								if (index > 200)
+									return "Please enter a positive integer not greater than 200"; //$NON-NLS-1$
+							} catch (NumberFormatException x) {
+								return "Please enter a positive integer"; //$NON-NLS-1$
 							}
+
+							return null;
 						});
 
 				if (inputDialog.open() != Window.OK) {
@@ -927,104 +889,101 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 
 		// Add the right-mouse-click (RMC) context menu items
 
-		getPopupMenuManager().addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				manager.add(new Separator());
+		getPopupMenuManager().addMenuListener(manager -> {
+			manager.add(new Separator());
 
-				MenuManager sub = new MenuManager(FPRenderingMessages.getString("FPRendering.PANES")); //$NON-NLS-1$
+			MenuManager sub = new MenuManager(FPRenderingMessages.getString("FPRendering.PANES")); //$NON-NLS-1$
 
-				sub = new MenuManager(FPRenderingMessages.getString("FPRendering.ENDIAN")); //$NON-NLS-1$
-				sub.add(actionDisplayBigEndian);
-				sub.add(actionDisplayLittleEndian);
-				manager.add(sub);
+			sub = new MenuManager(FPRenderingMessages.getString("FPRendering.ENDIAN")); //$NON-NLS-1$
+			sub.add(actionDisplayBigEndian);
+			sub.add(actionDisplayLittleEndian);
+			manager.add(sub);
 
-				sub = new MenuManager(FPRenderingMessages.getString("FPRendering.NUMBER_TYPE")); //$NON-NLS-1$
-				sub.add(actionFloatingPoint32);
-				sub.add(actionFloatingPoint64);
-				manager.add(sub);
+			sub = new MenuManager(FPRenderingMessages.getString("FPRendering.NUMBER_TYPE")); //$NON-NLS-1$
+			sub.add(actionFloatingPoint32);
+			sub.add(actionFloatingPoint64);
+			manager.add(sub);
 
-				sub = new MenuManager(FPRenderingMessages.getString("FPRendering.PRECISION")); //$NON-NLS-1$
-				sub.add(actionDisplay4Digits);
-				sub.add(actionDisplay8Digits);
-				sub.add(actionDisplay16Digits);
-				manager.add(sub);
+			sub = new MenuManager(FPRenderingMessages.getString("FPRendering.PRECISION")); //$NON-NLS-1$
+			sub.add(actionDisplay4Digits);
+			sub.add(actionDisplay8Digits);
+			sub.add(actionDisplay16Digits);
+			manager.add(sub);
 
-				//              TODO: Add separator for FP group here: manager.add(new Separator());
+			//              TODO: Add separator for FP group here: manager.add(new Separator());
 
-				sub = new MenuManager(FPRenderingMessages.getString("FPRendering.COLUMN_COUNT")); //$NON-NLS-1$
-				sub.add(displayColumnCountAuto);
+			sub = new MenuManager(FPRenderingMessages.getString("FPRendering.COLUMN_COUNT")); //$NON-NLS-1$
+			sub.add(displayColumnCountAuto);
 
-				for (int index = 0; index < displayColumnCounts.length; index++)
-					sub.add(displayColumnCounts[index]);
+			for (int index1 = 0; index1 < displayColumnCounts.length; index1++)
+				sub.add(displayColumnCounts[index1]);
 
-				boolean currentCountIsCustom = fRendering.getColumnsSetting() != 0;
+			boolean currentCountIsCustom = fRendering.getColumnsSetting() != 0;
 
-				for (int index = 0, j = 1; index < MAX_MENU_COLUMN_COUNT && currentCountIsCustom; index++, j *= 2)
-					currentCountIsCustom = (j != fRendering.getColumnsSetting());
+			for (int index2 = 0, j = 1; index2 < MAX_MENU_COLUMN_COUNT && currentCountIsCustom; index2++, j *= 2)
+				currentCountIsCustom = (j != fRendering.getColumnsSetting());
 
-				if (currentCountIsCustom)
-					sub.add(displayColumnCountCustomValue);
+			if (currentCountIsCustom)
+				sub.add(displayColumnCountCustomValue);
 
-				sub.add(displayColumnCountCustom);
-				manager.add(sub);
+			sub.add(displayColumnCountCustom);
+			manager.add(sub);
 
-				// Update modes
+			// Update modes
 
-				int updateMode = getRMCvalue(IFPRConstants.UPDATEMODE_KEY);
+			int updateMode = getRMCvalue(IFPRConstants.UPDATEMODE_KEY);
 
-				final Action updateAlwaysAction = new Action(FPRenderingMessages.getString("FPRendering.UPDATE_ALWAYS"), //$NON-NLS-1$
-						IAction.AS_RADIO_BUTTON) {
-					@Override
-					public void run() {
-						fRendering.setUpdateMode(Rendering.UPDATE_ALWAYS);
-						setRMCvalue(IFPRConstants.UPDATEMODE_KEY, Rendering.UPDATE_ALWAYS);
-					}
-				};
-				updateAlwaysAction.setChecked(updateMode == Rendering.UPDATE_ALWAYS);
+			final Action updateAlwaysAction = new Action(FPRenderingMessages.getString("FPRendering.UPDATE_ALWAYS"), //$NON-NLS-1$
+					IAction.AS_RADIO_BUTTON) {
+				@Override
+				public void run() {
+					fRendering.setUpdateMode(Rendering.UPDATE_ALWAYS);
+					setRMCvalue(IFPRConstants.UPDATEMODE_KEY, Rendering.UPDATE_ALWAYS);
+				}
+			};
+			updateAlwaysAction.setChecked(updateMode == Rendering.UPDATE_ALWAYS);
 
-				final Action updateOnBreakpointAction = new Action(
-						FPRenderingMessages.getString("FPRendering.UPDATE_ON_BREAKPOINT"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
-				{
-					@Override
-					public void run() {
-						fRendering.setUpdateMode(Rendering.UPDATE_ON_BREAKPOINT);
-						setRMCvalue(IFPRConstants.UPDATEMODE_KEY, Rendering.UPDATE_ON_BREAKPOINT);
-					}
-				};
-				updateOnBreakpointAction.setChecked(updateMode == Rendering.UPDATE_ON_BREAKPOINT);
+			final Action updateOnBreakpointAction = new Action(
+					FPRenderingMessages.getString("FPRendering.UPDATE_ON_BREAKPOINT"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
+			{
+				@Override
+				public void run() {
+					fRendering.setUpdateMode(Rendering.UPDATE_ON_BREAKPOINT);
+					setRMCvalue(IFPRConstants.UPDATEMODE_KEY, Rendering.UPDATE_ON_BREAKPOINT);
+				}
+			};
+			updateOnBreakpointAction.setChecked(updateMode == Rendering.UPDATE_ON_BREAKPOINT);
 
-				final Action updateManualAction = new Action(FPRenderingMessages.getString("FPRendering.UPDATE_MANUAL"), //$NON-NLS-1$
-						IAction.AS_RADIO_BUTTON) {
-					@Override
-					public void run() {
-						fRendering.setUpdateMode(Rendering.UPDATE_MANUAL);
-						setRMCvalue(IFPRConstants.UPDATEMODE_KEY, Rendering.UPDATE_MANUAL);
-					}
-				};
-				updateManualAction.setChecked(updateMode == Rendering.UPDATE_MANUAL);
+			final Action updateManualAction = new Action(FPRenderingMessages.getString("FPRendering.UPDATE_MANUAL"), //$NON-NLS-1$
+					IAction.AS_RADIO_BUTTON) {
+				@Override
+				public void run() {
+					fRendering.setUpdateMode(Rendering.UPDATE_MANUAL);
+					setRMCvalue(IFPRConstants.UPDATEMODE_KEY, Rendering.UPDATE_MANUAL);
+				}
+			};
+			updateManualAction.setChecked(updateMode == Rendering.UPDATE_MANUAL);
 
-				// Add menu
+			// Add menu
 
-				sub = new MenuManager(FPRenderingMessages.getString("FPRendering.UPDATEMODE")); //$NON-NLS-1$
-				sub.add(updateAlwaysAction);
-				sub.add(updateOnBreakpointAction);
-				sub.add(updateManualAction);
-				manager.add(sub);
-				manager.add(new Separator());
+			sub = new MenuManager(FPRenderingMessages.getString("FPRendering.UPDATEMODE")); //$NON-NLS-1$
+			sub.add(updateAlwaysAction);
+			sub.add(updateOnBreakpointAction);
+			sub.add(updateManualAction);
+			manager.add(sub);
+			manager.add(new Separator());
 
-				BigInteger start = fRendering.getSelection().getStart();
-				BigInteger end = fRendering.getSelection().getEnd();
-				copyAction.setEnabled(start != null && end != null);
+			BigInteger start = fRendering.getSelection().getStart();
+			BigInteger end = fRendering.getSelection().getEnd();
+			copyAction.setEnabled(start != null && end != null);
 
-				manager.add(copyAction);
-				manager.add(copyAddressAction);
+			manager.add(copyAction);
+			manager.add(copyAddressAction);
 
-				manager.add(gotoBaseAddressAction);
-				manager.add(refreshAction);
-				manager.add(new Separator());
-				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-			}
+			manager.add(gotoBaseAddressAction);
+			manager.add(refreshAction);
+			manager.add(new Separator());
+			manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		});
 	}
 
@@ -1097,12 +1056,7 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 
 	@Override
 	public void goToAddress(final BigInteger address) throws DebugException {
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				fRendering.gotoAddress(address);
-			}
-		});
+		Display.getDefault().asyncExec(() -> fRendering.gotoAddress(address));
 	}
 
 	protected void setTargetMemoryLittleEndian(boolean littleEndian) {
@@ -1145,27 +1099,19 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 
 		if (adapter == IMemoryBlockConnection.class) {
 			if (fConnection == null) {
-				fConnection = new IMemoryBlockConnection() {
-					@Override
-					public void update() {
-						// update UI asynchronously
-						Display display = FPRenderingPlugin.getDefault().getWorkbench().getDisplay();
-						display.asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								try {
-									if (fBigBaseAddress != FPRendering.this.fRendering.getMemoryBlock()
-											.getBigBaseAddress()) {
-										fBigBaseAddress = FPRendering.this.fRendering.getMemoryBlock()
-												.getBigBaseAddress();
-										FPRendering.this.fRendering.gotoAddress(fBigBaseAddress);
-									}
-									FPRendering.this.fRendering.refresh();
-								} catch (DebugException e) {
-								}
+				fConnection = () -> {
+					// update UI asynchronously
+					Display display = FPRenderingPlugin.getDefault().getWorkbench().getDisplay();
+					display.asyncExec(() -> {
+						try {
+							if (fBigBaseAddress != FPRendering.this.fRendering.getMemoryBlock().getBigBaseAddress()) {
+								fBigBaseAddress = FPRendering.this.fRendering.getMemoryBlock().getBigBaseAddress();
+								FPRendering.this.fRendering.gotoAddress(fBigBaseAddress);
 							}
-						});
-					}
+							FPRendering.this.fRendering.refresh();
+						} catch (DebugException e) {
+						}
+					});
 				};
 			}
 

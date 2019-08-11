@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3e42734a_329685f0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-08-11T04:43:32Z",
+      "side": 1,
+      "message": "We also need to check that we are the LHS of the assignment. \"a \u003d b[c]\" is not a write access of \"b\".",
+      "revId": "30ff7ce4b4e80bc6a1e3e692d22ffe0a10a2c34c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

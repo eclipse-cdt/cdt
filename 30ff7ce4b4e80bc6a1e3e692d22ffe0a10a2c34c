@@ -16,6 +16,24 @@
       "revId": "30ff7ce4b4e80bc6a1e3e692d22ffe0a10a2c34c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ccc518fc_b5468a36",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-08-11T06:23:11Z",
+      "side": 1,
+      "message": "Well, I guess it can be, in cases like this:\n\n  int b[10];\n  int\u0026 a \u003d b[1];\n  a \u003d 2;  // modifies b[1]\n\nThis checker is exposing a lot of bugs in VariableReadWriteFlags :)",
+      "parentUuid": "3e42734a_329685f0",
+      "revId": "30ff7ce4b4e80bc6a1e3e692d22ffe0a10a2c34c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

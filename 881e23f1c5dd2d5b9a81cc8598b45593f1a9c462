@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f6ccb821_47ea0cc4",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersConstChecker.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-08-11T16:26:14Z",
+      "side": 1,
+      "message": "Why set classMembersAreWritten if it\u0027s CAST_WRITE?\n\nIn a case like this:\n\n  void bar(int\u0026);\n  \n  struct A {\n    int field;\n\n    void method() {\n      bar(const_cast\u003cint\u0026\u003e(field));\n    }\n  };\n\nI think it would be reasonable to issue the warning \"method should be const\". After all, if it\u0027s not const, you don\u0027t need the const_cast.",
+      "revId": "881e23f1c5dd2d5b9a81cc8598b45593f1a9c462",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

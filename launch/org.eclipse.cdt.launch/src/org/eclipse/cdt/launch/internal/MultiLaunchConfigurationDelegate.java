@@ -377,15 +377,12 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					localMode = mode;
 				}
 				if (!conf.supportsMode(localMode)) {
-					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+					PlatformUI.getWorkbench().getDisplay()
+							.asyncExec(() -> MessageDialog.openError(
+									PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 									LaunchMessages.LaunchUIPlugin_Error,
 									NLS.bind(LaunchMessages.MultiLaunchConfigurationDelegate_Cannot, conf.toString(),
-											localMode));
-						}
-					});
+											localMode)));
 
 					continue;
 				}
@@ -411,14 +408,11 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					postLaunchAction(subLaunch, le.action, le.actionParam, monitor);
 
 				} catch (StackOverflowError e) {
-					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+					PlatformUI.getWorkbench().getDisplay()
+							.asyncExec(() -> MessageDialog.openError(
+									PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 									LaunchMessages.LaunchUIPlugin_Error,
-									NLS.bind(LaunchMessages.MultiLaunchConfigurationDelegate_Loop, conf.toString()));
-						}
-					});
+									NLS.bind(LaunchMessages.MultiLaunchConfigurationDelegate_Loop, conf.toString())));
 				}
 			}
 			if (!launch.hasChildren()) {

@@ -443,14 +443,11 @@ public class CElementContentProvider extends BaseCElementContentProvider
 			if (pendingRefreshes.contains(r))
 				return;
 			pendingRefreshes.add(r);
-			ctrl.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					pendingRefreshes.remove(r);
-					Control ctrl = fViewer.getControl();
-					if (ctrl != null && !ctrl.isDisposed()) {
-						r.refresh();
-					}
+			ctrl.getDisplay().asyncExec(() -> {
+				pendingRefreshes.remove(r);
+				Control ctrl1 = fViewer.getControl();
+				if (ctrl1 != null && !ctrl1.isDisposed()) {
+					r.refresh();
 				}
 			});
 		}

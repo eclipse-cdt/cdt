@@ -87,12 +87,7 @@ public class CallHierarchyUI {
 				protected IStatus run(IProgressMonitor monitor) {
 					final ICElement[] elems = findDefinitions(input);
 					if (elems != null && elems.length > 0) {
-						display.asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								internalOpen(window, elems);
-							}
-						});
+						display.asyncExec(() -> internalOpen(window, elems));
 					}
 					return Status.OK_STATUS;
 				}
@@ -164,12 +159,7 @@ public class CallHierarchyUI {
 							StatusLineHandler.clearStatusLine(editor.getSite());
 							final ICElement[] elems = findDefinitions(project, editorInput, sel);
 							if (elems.length > 0) {
-								display.asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										internalOpen(editor.getSite().getWorkbenchWindow(), elems);
-									}
-								});
+								display.asyncExec(() -> internalOpen(editor.getSite().getWorkbenchWindow(), elems));
 							} else {
 								StatusLineHandler.showStatusLineMessage(editor.getSite(),
 										CHMessages.CallHierarchyUI_openFailureMessage);

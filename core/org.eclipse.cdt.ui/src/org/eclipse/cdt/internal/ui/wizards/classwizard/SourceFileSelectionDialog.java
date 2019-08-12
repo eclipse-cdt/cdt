@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -366,15 +365,12 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 
 	@Override
 	public void create() {
-		BusyIndicator.showWhile(null, new Runnable() {
-			@Override
-			public void run() {
-				superCreate();
-				fViewer.setSelection(new StructuredSelection(getInitialElementSelections()), true);
-				setPathFields(fInitialFolderName, fInitialFileName);
-				fFileNameDialogField.setFocus();
-				doStatusUpdate();
-			}
+		BusyIndicator.showWhile(null, () -> {
+			superCreate();
+			fViewer.setSelection(new StructuredSelection(getInitialElementSelections()), true);
+			setPathFields(fInitialFolderName, fInitialFileName);
+			fFileNameDialogField.setFocus();
+			doStatusUpdate();
 		});
 	}
 
@@ -516,28 +512,24 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 				if (fInput != null) {
 					final ICElement[] foundElem = { /*base_folder*/ null, /*exact_folder*/ null, /*exact_file*/ null };
 					try {
-						fInput.accept(new ICElementVisitor() {
-							@Override
-							public boolean visit(ICElement elem) {
-								IPath path = elem.getPath();
-								if (path.isPrefixOf(folderPath)) {
-									if (foundElem[0] == null
-											|| path.segmentCount() > foundElem[0].getPath().segmentCount()) {
-										foundElem[0] = elem; /*base_folder*/
-									}
-									if (path.equals(folderPath)) {
-										foundElem[1] = elem; /*exact_folder*/
-										if (fInitialFileName == null)
-											return false; // no need to search children
-									} else if (fInitialFileName != null
-											&& elem.getElementName().equals(fInitialFileName)) {
-										foundElem[2] = elem; /*exact_file*/
-										return false; // no need to search children
-									}
-									return true;
+						fInput.accept(elem -> {
+							IPath path = elem.getPath();
+							if (path.isPrefixOf(folderPath)) {
+								if (foundElem[0] == null
+										|| path.segmentCount() > foundElem[0].getPath().segmentCount()) {
+									foundElem[0] = elem; /*base_folder*/
 								}
-								return false;
+								if (path.equals(folderPath)) {
+									foundElem[1] = elem; /*exact_folder*/
+									if (fInitialFileName == null)
+										return false; // no need to search children
+								} else if (fInitialFileName != null && elem.getElementName().equals(fInitialFileName)) {
+									foundElem[2] = elem; /*exact_file*/
+									return false; // no need to search children
+								}
+								return true;
 							}
+							return false;
 						});
 
 						ICElement selectedElement = foundElem[2]; /*exact_file*/

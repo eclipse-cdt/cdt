@@ -89,19 +89,16 @@ public class MIDisassemblyTest extends BaseParametrizedTestCase {
 		super.doBeforeTest();
 
 		fSession = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				// Get a reference to the memory service
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				assert (fServicesTracker != null);
+		Runnable runnable = () -> {
+			// Get a reference to the memory service
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			assert (fServicesTracker != null);
 
-				fDisassembly = fServicesTracker.getService(MIDisassembly.class);
-				assert (fDisassembly != null);
+			fDisassembly = fServicesTracker.getService(MIDisassembly.class);
+			assert (fDisassembly != null);
 
-				fExpressionService = fServicesTracker.getService(IExpressions.class);
-				assert (fExpressionService != null);
-			}
+			fExpressionService = fServicesTracker.getService(IExpressions.class);
+			assert (fExpressionService != null);
 		};
 		fSession.getExecutor().submit(runnable).get();
 

@@ -98,28 +98,25 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		fSession = getGDBLaunch().getSession();
 		Assert.assertNotNull(fSession);
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
+		Runnable runnable = () -> {
 
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				Assert.assertTrue(fServicesTracker != null);
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			Assert.assertTrue(fServicesTracker != null);
 
-				fCommandControl = fServicesTracker.getService(IGDBControl.class);
-				Assert.assertTrue(fCommandControl != null);
+			fCommandControl = fServicesTracker.getService(IGDBControl.class);
+			Assert.assertTrue(fCommandControl != null);
 
-				fMultiRunControl = fServicesTracker.getService(IMultiRunControl.class);
-				Assert.assertTrue(fMultiRunControl != null);
+			fMultiRunControl = fServicesTracker.getService(IMultiRunControl.class);
+			Assert.assertTrue(fMultiRunControl != null);
 
-				fGdbSync = fServicesTracker.getService(IGDBFocusSynchronizer.class);
-				Assert.assertTrue(fGdbSync != null);
+			fGdbSync = fServicesTracker.getService(IGDBFocusSynchronizer.class);
+			Assert.assertTrue(fGdbSync != null);
 
-				IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-				Assert.assertTrue(procService != null);
+			IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+			Assert.assertTrue(procService != null);
 
-				// Register to receive DSF events
-				fSession.addServiceEventListener(ThreadStackFrameSyncTest.this, null);
-			}
+			// Register to receive DSF events
+			fSession.addServiceEventListener(ThreadStackFrameSyncTest.this, null);
 		};
 		fSession.getExecutor().submit(runnable).get();
 	}
@@ -297,22 +294,14 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		// do a few of times
 		for (int i = 0; i < 50; i++) {
 			// have the sync service switch stack frame to 1
-			fSession.getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					fGdbSync.setFocus(new IDMContext[] { frame1 }, new ImmediateRequestMonitor());
-				}
-			});
+			fSession.getExecutor()
+					.execute(() -> fGdbSync.setFocus(new IDMContext[] { frame1 }, new ImmediateRequestMonitor()));
 			Thread.sleep(100);
 			assertEquals("1", getCurrentStackFrameLevel());
 
 			// have the sync service switch stack frame to 0
-			fSession.getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					fGdbSync.setFocus(new IDMContext[] { frame0 }, new ImmediateRequestMonitor());
-				}
-			});
+			fSession.getExecutor()
+					.execute(() -> fGdbSync.setFocus(new IDMContext[] { frame0 }, new ImmediateRequestMonitor()));
 			Thread.sleep(100);
 			assertEquals("0", getCurrentStackFrameLevel());
 		}

@@ -115,12 +115,9 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		fMemoryDmc = (IMemoryDMContext) SyncUtil.getContainerContext();
 		assert (fMemoryDmc != null);
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				fExpService = fServicesTracker.getService(IExpressions.class);
-			}
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			fExpService = fServicesTracker.getService(IExpressions.class);
 		};
 		fSession.getExecutor().submit(runnable).get();
 	}
@@ -526,107 +523,94 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 			// Get the list of available format IDs for this expression and for
 			// each one,
 			// get the value of the expression
-			fExpService.getExecutor().submit(new Runnable() {
-				@Override
-				public void run() {
-					fExpService.getAvailableFormats(exprDMC,
-							new DataRequestMonitor<String[]>(fExpService.getExecutor(), null) {
-								@Override
-								protected void handleCompleted() {
-									if (!isSuccess()) {
-										wait.waitFinished(getStatus());
-									} else {
-										final String[] formatIds = getData();
+			fExpService.getExecutor().submit(() -> fExpService.getAvailableFormats(exprDMC,
+					new DataRequestMonitor<String[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								final String[] formatIds = getData();
 
-										// Now run the current sub-test using each of
-										// the formats available for the type of
-										// the expression in the sub-test.
+								// Now run the current sub-test using each of
+								// the formats available for the type of
+								// the expression in the sub-test.
 
-										for (final String formatId : formatIds) {
-											// Get a FormattedValueCMContext object for
-											// the expression-formatID pair.
-											final FormattedValueDMContext valueDmc = fExpService
-													.getFormattedValueContext(exprDMC, formatId);
+								for (final String formatId : formatIds) {
+									// Get a FormattedValueCMContext object for
+									// the expression-formatID pair.
+									final FormattedValueDMContext valueDmc = fExpService
+											.getFormattedValueContext(exprDMC, formatId);
 
-											// Increment the number of completed
-											// requests to wait for, since we will send
-											// multiple concurrent requests
-											wait.increment();
+									// Increment the number of completed
+									// requests to wait for, since we will send
+									// multiple concurrent requests
+									wait.increment();
 
-											// Evaluate the expression represented by
-											// the FormattedValueDMContext object
-											// This actually evaluates the expression.
-											fExpService.getFormattedExpressionValue(valueDmc,
-													new DataRequestMonitor<FormattedValueDMData>(
-															fExpService.getExecutor(), null) {
-														@Override
-														protected void handleCompleted() {
-															if (!isSuccess()) {
-																wait.waitFinished(getStatus());
-															} else {
+									// Evaluate the expression represented by
+									// the FormattedValueDMContext object
+									// This actually evaluates the expression.
+									fExpService.getFormattedExpressionValue(valueDmc,
+											new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(),
+													null) {
+												@Override
+												protected void handleCompleted() {
+													if (!isSuccess()) {
+														wait.waitFinished(getStatus());
+													} else {
 
-																// Get the
-																// FormattedValueDMData
-																// object from the waiter.
-																FormattedValueDMData exprValueDMData = getData();
+														// Get the
+														// FormattedValueDMData
+														// object from the waiter.
+														FormattedValueDMData exprValueDMData = getData();
 
-																final String[] expectedValues = tests
-																		.get(expressionToEvaluate);
+														final String[] expectedValues = tests.get(expressionToEvaluate);
 
-																// Check the value of the expression for correctness.
-																String actualValue = exprValueDMData
-																		.getFormattedValue();
-																String expectedValue;
+														// Check the value of the expression for correctness.
+														String actualValue = exprValueDMData.getFormattedValue();
+														String expectedValue;
 
-																if (formatId.equals(IFormattedValues.HEX_FORMAT))
-																	expectedValue = expectedValues[0];
-																else if (formatId.equals(IFormattedValues.OCTAL_FORMAT))
-																	expectedValue = expectedValues[1];
-																else if (formatId
-																		.equals(IFormattedValues.BINARY_FORMAT))
-																	expectedValue = expectedValues[2];
-																else if (formatId
-																		.equals(IFormattedValues.DECIMAL_FORMAT))
-																	expectedValue = expectedValues[3];
-																else if (formatId
-																		.equals(IFormattedValues.NATURAL_FORMAT))
-																	expectedValue = expectedValues[4];
-																else if (formatId.equals(MIExpressions.DETAILS_FORMAT))
-																	expectedValue = expectedValues[5];
-																else
-																	expectedValue = "[Unrecognized format ID: "
-																			+ formatId + "]";
+														if (formatId.equals(IFormattedValues.HEX_FORMAT))
+															expectedValue = expectedValues[0];
+														else if (formatId.equals(IFormattedValues.OCTAL_FORMAT))
+															expectedValue = expectedValues[1];
+														else if (formatId.equals(IFormattedValues.BINARY_FORMAT))
+															expectedValue = expectedValues[2];
+														else if (formatId.equals(IFormattedValues.DECIMAL_FORMAT))
+															expectedValue = expectedValues[3];
+														else if (formatId.equals(IFormattedValues.NATURAL_FORMAT))
+															expectedValue = expectedValues[4];
+														else if (formatId.equals(MIExpressions.DETAILS_FORMAT))
+															expectedValue = expectedValues[5];
+														else
+															expectedValue = "[Unrecognized format ID: " + formatId
+																	+ "]";
 
-																if ((exact == false)
-																		&& (formatId
-																				.equals(IFormattedValues.NATURAL_FORMAT)
-																				|| formatId.equals(
-																						MIExpressions.DETAILS_FORMAT))
-																		&& (expectedValue.length() < actualValue
-																				.length())) {
-																	actualValue = actualValue.substring(0,
-																			expectedValue.length());
-																}
-
-																if (actualValue.equalsIgnoreCase(expectedValue)) {
-																	wait.waitFinished();
-																} else {
-																	String errorMsg = "Failed to correctly evalutate '"
-																			+ expressionToEvaluate + "': expected '"
-																			+ expectedValue + "', got '" + actualValue
-																			+ "'";
-																	wait.waitFinished(new Status(IStatus.ERROR,
-																			TestsPlugin.PLUGIN_ID, errorMsg, null));
-																}
-															}
+														if ((exact == false)
+																&& (formatId.equals(IFormattedValues.NATURAL_FORMAT)
+																		|| formatId
+																				.equals(MIExpressions.DETAILS_FORMAT))
+																&& (expectedValue.length() < actualValue.length())) {
+															actualValue = actualValue.substring(0,
+																	expectedValue.length());
 														}
-													});
-										}
-									}
+
+														if (actualValue.equalsIgnoreCase(expectedValue)) {
+															wait.waitFinished();
+														} else {
+															String errorMsg = "Failed to correctly evalutate '"
+																	+ expressionToEvaluate + "': expected '"
+																	+ expectedValue + "', got '" + actualValue + "'";
+															wait.waitFinished(new Status(IStatus.ERROR,
+																	TestsPlugin.PLUGIN_ID, errorMsg, null));
+														}
+													}
+												}
+											});
 								}
-							});
-				}
-			});
+							}
+						}
+					}));
 			wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(wait.getMessage(), wait.isOK());
 		}

@@ -266,24 +266,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	private static Map<IProject, IManagedBuildInfo> fInfoMap = new HashMap<>();
 
-	private static ISorter fToolChainSorter = new ISorter() {
-		@Override
-		public void sort() {
-			resortToolChains();
-		}
-	};
-	private static ISorter fToolSorter = new ISorter() {
-		@Override
-		public void sort() {
-			resortTools();
-		}
-	};
-	private static ISorter fBuilderSorter = new ISorter() {
-		@Override
-		public void sort() {
-			resortBuilders();
-		}
-	};
+	private static ISorter fToolChainSorter = () -> resortToolChains();
+	private static ISorter fToolSorter = () -> resortTools();
+	private static ISorter fBuilderSorter = () -> resortBuilders();
 
 	private static interface ISorter {
 		void sort();
@@ -291,14 +276,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	static {
 		getEnvironmentVariableProvider()
-				.subscribe(fEnvironmentBuildPathsChangeListener = new IEnvironmentBuildPathsChangeListener() {
-					@Override
-					public void buildPathsChanged(IConfiguration configuration, int buildPathType) {
-						//						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE){
-						//							initializePathEntries(configuration,null);
-						//							notifyListeners(configuration,null);
-						//						}
-					}
+				.subscribe(fEnvironmentBuildPathsChangeListener = (configuration, buildPathType) -> {
+					//						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE){
+					//							initializePathEntries(configuration,null);
+					//							notifyListeners(configuration,null);
+					//						}
 				});
 	}
 
@@ -876,7 +858,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				return;
 			}
 		} catch (BuildException e) {return;}
-
+	
 		// Figure out if there is a listener for this change
 		IResource resource = config.getOwner();
 		List listeners = (List) getBuildModelListeners().get(resource);
@@ -1310,14 +1292,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 			final Shell shell = window.getShell();
 			if (shell != null) {
 				final String exceptionMsg = err.getMessage();
-				shell.getDisplay().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						MessageDialog.openError(shell,
+				shell.getDisplay()
+						.syncExec(() -> MessageDialog.openError(shell,
 								ManagedMakeMessages.getResourceString("ManagedBuildManager.error.write_failed_title"), //$NON-NLS-1$
-								ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_WRITE_FAILED, exceptionMsg));
-					}
-				});
+								ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_WRITE_FAILED, exceptionMsg)));
 			}
 		}
 		// If we return an honest status when the operation fails, there are instances when the UI behavior
@@ -1385,10 +1363,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.newDocument();
-
+		
 			// Get the build information for the project
 			ManagedBuildInfo buildInfo = (ManagedBuildInfo) getBuildInfo(project);
-
+		
 			// Save the build info
 			if (buildInfo != null &&
 					!buildInfo.isReadOnly() &&
@@ -1403,7 +1381,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				Element rootElement = doc.createElement(ROOT_NODE_NAME);
 				doc.appendChild(rootElement);
 				buildInfo.serialize(doc, rootElement);
-
+		
 				// Transform the document to something we can save in a file
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -1413,11 +1391,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 				DOMSource source = new DOMSource(doc);
 				StreamResult result = new StreamResult(stream);
 				transformer.transform(source, result);
-
+		
 				// Save the document
 				IFile projectFile = project.getFile(SETTINGS_FILE_NAME);
 				String utfString = stream.toString("UTF-8");	//$NON-NLS-1$
-
+		
 				if (projectFile.exists()) {
 					if (projectFile.isReadOnly()) {
 						// If we are not running headless, and there is a UI Window around, grab it
@@ -1451,7 +1429,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				} else {
 					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
 				}
-
+		
 				// Close the streams
 				stream.close();
 			}
@@ -1472,7 +1450,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			// Save to IFile failed
 		    err = e;
 		}
-
+		
 		if (err != null) {
 			// Put out an error message indicating that the attempted write to the .cdtbuild project file failed
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -1480,7 +1458,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 				window = windows[0];
 			}
-
+		
 			final Shell shell = window.getShell();
 			if (shell != null) {
 				final String exceptionMsg = err.getMessage();
@@ -1558,9 +1536,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 			for (int i=0; i < configs.length; i++) {
 				ManagedBuildManager.performValueHandlerEvent(configs[i], IManagedOptionValueHandler.EVENT_CLOSE);
 			}
-
+		
 			info.setValid(false);
-
+		
 			try {
 				resource.setSessionProperty(buildInfoProperty, null);
 			} catch (CoreException e) {
@@ -1841,7 +1819,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return Status.OK_STATUS;
 		/*
 		ManagedBuildInfo buildInfo = null;
-
+		
 		// Get the build info associated with this project for this session
 		try {
 			buildInfo = findBuildInfo(resource.getProject(), true);
@@ -2127,15 +2105,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 							final Shell shell = window.getShell();
 							final String errMsg = ManagedMakeMessages.getFormattedString(MANIFEST_VERSION_ERROR,
 									extension.getUniqueIdentifier());
-							shell.getDisplay().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									MessageDialog.openError(shell,
+							shell.getDisplay()
+									.asyncExec(() -> MessageDialog.openError(shell,
 											ManagedMakeMessages.getResourceString(
 													"ManagedBuildManager.error.manifest_load_failed_title"), //$NON-NLS-1$
-											errMsg);
-								}
-							});
+											errMsg));
 						} else {
 							// Get the "configuraton elements" defined in the plugin.xml file.
 							// Note that these "configuration elements" are not related to the
@@ -2755,7 +2729,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 					} catch (Exception e) {
 						// TODO:  Issue error reagarding not being able to load the project file (.cdtbuild)
 					}
-
+		
 					try {
 						// Check if the project needs its container initialized
 						initBuildInfoContainer(buildInfo);
@@ -2837,7 +2811,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 */
 	/*	synchronized private static ManagedBuildInfo findBuildInfoSynchronized(IProject project, boolean forceLoad) {
 			ManagedBuildInfo buildInfo = null;
-
+	
 			// Check if there is any build info associated with this project for this session
 			try {
 				buildInfo = (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty);
@@ -2848,7 +2822,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} catch (CoreException e) {
 		//		return null;
 			}
-
+	
 			if(buildInfo == null && forceLoad){
 				// Make sure the extension information is loaded first
 				try {
@@ -2857,11 +2831,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 					e.printStackTrace();
 					return null;
 				}
-
-
+	
+	
 				// Check weather getBuildInfo is called from converter
 				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(project);
-
+	
 				// Nothing in session store, so see if we can load it from cdtbuild
 				if (buildInfo == null) {
 					try {
@@ -2878,7 +2852,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 							IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 							window = windows[0];
 						}
-
+	
 						final Shell shell = window.getShell();
 						final String exceptionMsg = e.getMessage();
 						//using syncExec could cause a dead-lock
@@ -2892,7 +2866,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 							}
 						} );
 					}
-
+	
 					if (buildInfo != null && !buildInfo.isContainerInited()) {
 						//  NOTE:  If this is called inside the above rule, then an IllegalArgumentException can
 						//         occur when the CDT project file is saved - it uses the Workspace Root as the scheduling rule.
@@ -2906,7 +2880,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 					}
 				}
 			}
-
+	
 			return buildInfo;
 		}
 	*/

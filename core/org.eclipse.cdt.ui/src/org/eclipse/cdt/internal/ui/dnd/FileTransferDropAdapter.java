@@ -92,14 +92,11 @@ public class FileTransferDropAdapter extends CDTViewerDropAdapter implements Tra
 		// Run the import operation asynchronously.
 		// Otherwise the drag source (e.g., Windows Explorer) will be blocked
 		// while the operation executes. Fixes bug 35796.
-		Display.getCurrent().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				getShell().forceActive();
-				new CopyFilesAndFoldersOperation(getShell()).copyFiles((String[]) data, target);
-				// Import always performs a copy.
-				event.detail = DND.DROP_COPY;
-			}
+		Display.getCurrent().asyncExec(() -> {
+			getShell().forceActive();
+			new CopyFilesAndFoldersOperation(getShell()).copyFiles((String[]) data, target);
+			// Import always performs a copy.
+			event.detail = DND.DROP_COPY;
 		});
 	}
 

@@ -222,8 +222,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 
 	/**
 	 * This test sets up by first creating a trace file and importing it back
-	 * by calling {@link #testTraceFile} which also calls {@link #createTraceFile}
-
+	 * by calling {@link #testTraceFile} which also calls {@link #createTraceFile}.
 	 * It then verifies that the tracepoint actions and platform tracepoints
 	 * created by {@link #testTraceFile()} are associated with the corresponding target
 	 * tracepoints and are not created a second time.
@@ -352,13 +351,10 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 
 		// Initialize
 		fSession = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
-				fTraceService = fServicesTracker.getService(IGDBTraceControl.class);
-			}
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
+			fTraceService = fServicesTracker.getService(IGDBTraceControl.class);
 		};
 		fSession.getExecutor().submit(runnable).get();
 
@@ -371,48 +367,39 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 
 	private void startTracing() throws Throwable {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-		fSession.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fTraceService.getTraceStatus(fTraceTargetDmc,
-						new DataRequestMonitor<ITraceStatusDMData>(fSession.getExecutor(), null) {
-							@Override
-							@ConfinedToDsfExecutor("fExecutor")
-							protected void handleCompleted() {
-								if (isSuccess() && getData().isTracingSupported()) {
-									fTraceService.startTracing(fTraceTargetDmc,
-											new RequestMonitor(fSession.getExecutor(), null) {
-												@Override
-												@ConfinedToDsfExecutor("fExecutor")
-												protected void handleCompleted() {
-													wait.waitFinished(getStatus());
-												}
-											});
-								} else {
-									wait.waitFinished(getStatus());
-								}
-							}
-						});
-			}
-		});
+		fSession.getExecutor().submit(() -> fTraceService.getTraceStatus(fTraceTargetDmc,
+				new DataRequestMonitor<ITraceStatusDMData>(fSession.getExecutor(), null) {
+					@Override
+					@ConfinedToDsfExecutor("fExecutor")
+					protected void handleCompleted() {
+						if (isSuccess() && getData().isTracingSupported()) {
+							fTraceService.startTracing(fTraceTargetDmc,
+									new RequestMonitor(fSession.getExecutor(), null) {
+										@Override
+										@ConfinedToDsfExecutor("fExecutor")
+										protected void handleCompleted() {
+											wait.waitFinished(getStatus());
+										}
+									});
+						} else {
+							wait.waitFinished(getStatus());
+						}
+					}
+				}));
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
 	}
 
 	private void stopTracing() throws Throwable {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-		fSession.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fTraceService.stopTracing(fTraceTargetDmc, new RequestMonitor(fSession.getExecutor(), null) {
+		fSession.getExecutor().submit(
+				() -> fTraceService.stopTracing(fTraceTargetDmc, new RequestMonitor(fSession.getExecutor(), null) {
 					@Override
 					@ConfinedToDsfExecutor("fExecutor")
 					protected void handleCompleted() {
 						wait.waitFinished(getStatus());
 					}
-				});
-			}
-		});
+				}));
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
 	}
@@ -462,19 +449,14 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 			final Map<String, Object> attributes) throws InterruptedException {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fSession.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.insertBreakpoint(context, attributes,
-						new DataRequestMonitor<IBreakpointDMContext>(fBreakpointService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								wait.setReturnInfo(getData());
-								wait.waitFinished(getStatus());
-							}
-						});
-			}
-		});
+		fSession.getExecutor().submit(() -> fBreakpointService.insertBreakpoint(context, attributes,
+				new DataRequestMonitor<IBreakpointDMContext>(fBreakpointService.getExecutor(), null) {
+					@Override
+					protected void handleCompleted() {
+						wait.setReturnInfo(getData());
+						wait.waitFinished(getStatus());
+					}
+				}));
 
 		// Wait for the result and return the breakpoint context
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -487,18 +469,13 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		final File traceFile = new Path(TRACE_FILE_PATH).toFile();
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fSession.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fTraceService.saveTraceData(fTraceTargetDmc, traceFile.getAbsolutePath(), false,
-						new RequestMonitor(fSession.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								wait.waitFinished(getStatus());
-							}
-						});
-			}
-		});
+		fSession.getExecutor().submit(() -> fTraceService.saveTraceData(fTraceTargetDmc, traceFile.getAbsolutePath(),
+				false, new RequestMonitor(fSession.getExecutor(), null) {
+					@Override
+					protected void handleCompleted() {
+						wait.waitFinished(getStatus());
+					}
+				}));
 
 		// Wait for the result and verify the trace file is created
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);

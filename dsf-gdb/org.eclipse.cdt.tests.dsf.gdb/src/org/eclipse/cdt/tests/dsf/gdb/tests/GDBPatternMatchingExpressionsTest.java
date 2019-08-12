@@ -80,15 +80,12 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 		super.doBeforeTest();
 
 		fSession = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-				fExpService = fServicesTracker.getService(IMIExpressions.class);
+			fExpService = fServicesTracker.getService(IMIExpressions.class);
 
-				fRegService = fServicesTracker.getService(IRegisters2.class);
-			}
+			fRegService = fServicesTracker.getService(IRegisters2.class);
 		};
 		fSession.getExecutor().submit(runnable).get();
 	}

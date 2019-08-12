@@ -237,19 +237,15 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * Activates the view showing testing results.
 	 */
 	private void activateTestingView() {
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					IWorkbenchWindow activeWindow = TestsRunnerPlugin.getDefault().getWorkbench()
-							.getActiveWorkbenchWindow();
-					IViewPart view = activeWindow.getActivePage()
-							.showView(ITestsRunnerConstants.TESTS_RUNNER_RESULTS_VIEW_ID);
-					TestsRunnerPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage()
-							.activate(view);
-				} catch (PartInitException e) {
-					TestsRunnerPlugin.log(e);
-				}
+		Display.getDefault().syncExec(() -> {
+			try {
+				IWorkbenchWindow activeWindow = TestsRunnerPlugin.getDefault().getWorkbench()
+						.getActiveWorkbenchWindow();
+				IViewPart view = activeWindow.getActivePage()
+						.showView(ITestsRunnerConstants.TESTS_RUNNER_RESULTS_VIEW_ID);
+				TestsRunnerPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(view);
+			} catch (PartInitException e) {
+				TestsRunnerPlugin.log(e);
 			}
 		});
 	}

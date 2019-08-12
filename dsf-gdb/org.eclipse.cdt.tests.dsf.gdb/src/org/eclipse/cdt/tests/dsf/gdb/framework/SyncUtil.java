@@ -117,23 +117,19 @@ public class SyncUtil {
 	public static void initialize(DsfSession session) throws Exception {
 		fSession = session;
 
-		Runnable runnable = new Runnable() {
+		Runnable runnable = () -> {
+			DsfServicesTracker tracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-			@Override
-			public void run() {
-				DsfServicesTracker tracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			fGdbControl = tracker.getService(IGDBControl.class);
+			fRunControl = tracker.getService(IMIRunControl.class);
+			fStack = tracker.getService(MIStack.class);
+			fExpressions = tracker.getService(IExpressions.class);
+			fProcessesService = tracker.getService(IGDBProcesses.class);
+			fMemory = tracker.getService(IMemory.class);
+			fCommandFactory = fGdbControl.getCommandFactory();
+			fSourceLookup = tracker.getService(ISourceLookup.class);
 
-				fGdbControl = tracker.getService(IGDBControl.class);
-				fRunControl = tracker.getService(IMIRunControl.class);
-				fStack = tracker.getService(MIStack.class);
-				fExpressions = tracker.getService(IExpressions.class);
-				fProcessesService = tracker.getService(IGDBProcesses.class);
-				fMemory = tracker.getService(IMemory.class);
-				fCommandFactory = fGdbControl.getCommandFactory();
-				fSourceLookup = tracker.getService(ISourceLookup.class);
-
-				tracker.dispose();
-			}
+			tracker.dispose();
 		};
 		fSession.getExecutor().submit(runnable).get();
 	}
@@ -173,47 +169,41 @@ public class SyncUtil {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
 		if (!reverse) {
-			fRunControl.getExecutor().submit(new Runnable() {
-				@Override
-				public void run() {
-					// No need for a RequestMonitor since we will wait for the
-					// ServiceEvent telling us the program has been suspended again
-					switch (stepType) {
-					case STEP_INTO:
-						fGdbControl.queueCommand(fCommandFactory.createMIExecStep(dmc), null);
-						break;
-					case STEP_OVER:
-						fGdbControl.queueCommand(fCommandFactory.createMIExecNext(dmc), null);
-						break;
-					case STEP_RETURN:
-						fGdbControl.queueCommand(
-								fCommandFactory.createMIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
-						break;
-					default:
-						fail("Unsupported step type; " + stepType.toString());
-					}
+			fRunControl.getExecutor().submit(() -> {
+				// No need for a RequestMonitor since we will wait for the
+				// ServiceEvent telling us the program has been suspended again
+				switch (stepType) {
+				case STEP_INTO:
+					fGdbControl.queueCommand(fCommandFactory.createMIExecStep(dmc), null);
+					break;
+				case STEP_OVER:
+					fGdbControl.queueCommand(fCommandFactory.createMIExecNext(dmc), null);
+					break;
+				case STEP_RETURN:
+					fGdbControl.queueCommand(fCommandFactory.createMIExecFinish(fStack.createFrameDMContext(dmc, 0)),
+							null);
+					break;
+				default:
+					fail("Unsupported step type; " + stepType.toString());
 				}
 			});
 		} else {
-			fRunControl.getExecutor().submit(new Runnable() {
-				@Override
-				public void run() {
-					// No need for a RequestMonitor since we will wait for the
-					// ServiceEvent telling us the program has been suspended again
-					switch (stepType) {
-					case STEP_INTO:
-						fGdbControl.queueCommand(fCommandFactory.createMIExecReverseStep(dmc), null);
-						break;
-					case STEP_OVER:
-						fGdbControl.queueCommand(fCommandFactory.createMIExecReverseNext(dmc), null);
-						break;
-					case STEP_RETURN:
-						fGdbControl.queueCommand(
-								fCommandFactory.createMIExecUncall(fStack.createFrameDMContext(dmc, 0)), null);
-						break;
-					default:
-						fail("Unsupported step type; " + stepType.toString());
-					}
+			fRunControl.getExecutor().submit(() -> {
+				// No need for a RequestMonitor since we will wait for the
+				// ServiceEvent telling us the program has been suspended again
+				switch (stepType) {
+				case STEP_INTO:
+					fGdbControl.queueCommand(fCommandFactory.createMIExecReverseStep(dmc), null);
+					break;
+				case STEP_OVER:
+					fGdbControl.queueCommand(fCommandFactory.createMIExecReverseNext(dmc), null);
+					break;
+				case STEP_RETURN:
+					fGdbControl.queueCommand(fCommandFactory.createMIExecUncall(fStack.createFrameDMContext(dmc, 0)),
+							null);
+					break;
+				default:
+					fail("Unsupported step type; " + stepType.toString());
 				}
 			});
 		}
@@ -281,14 +271,9 @@ public class SyncUtil {
 			throws Throwable {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
-		fRunControl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				// No need for a RequestMonitor since we will wait for the
-				// ServiceEvent telling us the program has been suspended again
-				fGdbControl.queueCommand(fCommandFactory.createMIExecContinue(dmc), null);
-			}
-		});
+		// No need for a RequestMonitor since we will wait for the ServiceEvent telling us the program has been suspended again
+		fRunControl.getExecutor()
+				.submit(() -> fGdbControl.queueCommand(fCommandFactory.createMIExecContinue(dmc), null));
 
 		// Wait for the execution to suspend after the step
 		return eventWaitor.waitForEvent(massagedTimeout);
@@ -308,14 +293,9 @@ public class SyncUtil {
 	public static MIRunningEvent resume(final IExecutionDMContext dmc, int massagedTimeout) throws Throwable {
 		final ServiceEventWaitor<MIRunningEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIRunningEvent.class);
 
-		fRunControl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				// No need for a RequestMonitor since we will wait for the
-				// ServiceEvent telling us the program has been resumed
-				fGdbControl.queueCommand(fCommandFactory.createMIExecContinue(dmc), null);
-			}
-		});
+		// No need for a RequestMonitor since we will wait for the ServiceEvent telling us the program has been suspended again
+		fRunControl.getExecutor()
+				.submit(() -> fGdbControl.queueCommand(fCommandFactory.createMIExecContinue(dmc), null));
 
 		// Wait for the execution to start after the step
 		return eventWaitor.waitForEvent(massagedTimeout);
@@ -485,12 +465,7 @@ public class SyncUtil {
 
 	public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
 			throws Throwable {
-		Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
-			@Override
-			public IExpressionDMContext call() throws Exception {
-				return fExpressions.createExpression(parentCtx, expression);
-			}
-		};
+		Callable<IExpressionDMContext> callable = () -> fExpressions.createExpression(parentCtx, expression);
 		return fSession.getExecutor().submit(callable).get();
 	}
 
@@ -541,25 +516,17 @@ public class SyncUtil {
 
 	public static FormattedValueDMContext getFormattedValue(final IFormattedValues service,
 			final IFormattedDataDMContext dmc, final String formatId) throws Throwable {
-		Callable<FormattedValueDMContext> callable = new Callable<FormattedValueDMContext>() {
-			@Override
-			public FormattedValueDMContext call() throws Exception {
-				return service.getFormattedValueContext(dmc, formatId);
-			}
-		};
+		Callable<FormattedValueDMContext> callable = () -> service.getFormattedValueContext(dmc, formatId);
 		return fSession.getExecutor().submit(callable).get();
 	}
 
 	public static IMIExecutionDMContext createExecutionContext(final IContainerDMContext parentCtx, final int threadId)
 			throws Throwable {
-		Callable<IMIExecutionDMContext> callable = new Callable<IMIExecutionDMContext>() {
-			@Override
-			public IMIExecutionDMContext call() throws Exception {
-				String threadIdStr = Integer.toString(threadId);
-				IProcessDMContext processDmc = DMContexts.getAncestorOfType(parentCtx, IProcessDMContext.class);
-				IThreadDMContext threadDmc = fProcessesService.createThreadContext(processDmc, threadIdStr);
-				return fProcessesService.createExecutionContext(parentCtx, threadDmc, threadIdStr);
-			}
+		Callable<IMIExecutionDMContext> callable = () -> {
+			String threadIdStr = Integer.toString(threadId);
+			IProcessDMContext processDmc = DMContexts.getAncestorOfType(parentCtx, IProcessDMContext.class);
+			IThreadDMContext threadDmc = fProcessesService.createThreadContext(processDmc, threadIdStr);
+			return fProcessesService.createExecutionContext(parentCtx, threadDmc, threadIdStr);
 		};
 		return fSession.getExecutor().submit(callable).get();
 	}

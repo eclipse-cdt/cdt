@@ -121,12 +121,8 @@ public class TypeHierarchyUI {
 							IRegion reg = new Region(sel.getOffset(), sel.getLength());
 							final ICElement[] elems = findInput(project, editorInput, reg);
 							if (elems != null && elems.length == 2) {
-								display.asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										openInViewPart(editor.getSite().getWorkbenchWindow(), elems[0], elems[1]);
-									}
-								});
+								display.asyncExec(() -> openInViewPart(editor.getSite().getWorkbenchWindow(), elems[0],
+										elems[1]));
 							} else {
 								StatusLineHandler.showStatusLineMessage(editor.getSite(),
 										Messages.TypeHierarchyUI_OpenFailure_message);

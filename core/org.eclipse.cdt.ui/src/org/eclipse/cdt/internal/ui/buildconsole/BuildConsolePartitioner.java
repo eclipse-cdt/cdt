@@ -482,12 +482,7 @@ public class BuildConsolePartitioner
 
 		Display display = CUIPlugin.getStandardDisplay();
 		if (display != null) {
-			display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					fManager.startConsoleActivity(project);
-				}
-			});
+			display.asyncExec(() -> fManager.startConsoleActivity(project));
 		}
 
 		if (BuildConsolePreferencePage.isClearBuildConsole()) {

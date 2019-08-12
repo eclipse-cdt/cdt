@@ -45,7 +45,6 @@ import org.eclipse.cdt.ui.text.AbstractCScanner;
 import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.ICTokenScanner;
-import org.eclipse.cdt.ui.text.ITokenStore;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -90,13 +89,8 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	public static Set<PresentationReconcilerCPP> presentationReconcilers = ConcurrentHashMap.newKeySet();
 
 	protected ITokenStoreFactory getTokenStoreFactory() {
-		return new ITokenStoreFactory() {
-			@Override
-			public ITokenStore createTokenStore(String[] propertyColorNames) {
-				return new TokenStore(CUIPlugin.getDefault().getTextTools().getColorManager(),
-						CUIPlugin.getDefault().getCombinedPreferenceStore(), propertyColorNames);
-			}
-		};
+		return propertyColorNames -> new TokenStore(CUIPlugin.getDefault().getTextTools().getColorManager(),
+				CUIPlugin.getDefault().getCombinedPreferenceStore(), propertyColorNames);
 	}
 
 	protected ILanguage getLanguage() {
@@ -358,16 +352,13 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 
 		// Using asyncExec() to make sure that by the time Runnable runs,
 		// the Editor is active and we don't get a NPE.
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				// To provide bracket auto-completion support of CEditor in Generic Editor of LSP4E-CPP.
-				TextEditor editor = (TextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-						.getActiveEditor();
-				fBracketInserter = new BracketInserter(editor, true);
-				fBracketInserter.setSourceViewer((SourceViewer) textViewer);
-				((TextViewer) textViewer).prependVerifyKeyListener(fBracketInserter);
-			}
+		Display.getDefault().asyncExec(() -> {
+			// To provide bracket auto-completion support of CEditor in Generic Editor of LSP4E-CPP.
+			TextEditor editor = (TextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.getActiveEditor();
+			fBracketInserter = new BracketInserter(editor, true);
+			fBracketInserter.setSourceViewer((SourceViewer) textViewer);
+			((TextViewer) textViewer).prependVerifyKeyListener(fBracketInserter);
 		});
 	}
 

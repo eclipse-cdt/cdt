@@ -282,12 +282,7 @@ public class CReconciler extends MonoReconciler {
 		CCorePlugin.getIndexManager().addIndexerStateListener(fIndexerListener);
 		CCorePlugin.getIndexManager().addIndexChangeListener(fIndexerListener);
 
-		fTriggerReconcilerJob = new SingletonJob("Trigger Reconciler", new Runnable() { //$NON-NLS-1$
-			@Override
-			public void run() {
-				forceReconciling();
-			}
-		});
+		fTriggerReconcilerJob = new SingletonJob("Trigger Reconciler", () -> forceReconciling()); //$NON-NLS-1$
 	}
 
 	@Override

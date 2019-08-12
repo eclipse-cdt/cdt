@@ -78,12 +78,7 @@ public class RefactoringExecutionHelper {
 				if (status.getSeverity() >= fStopSeverity) {
 					final boolean[] canceled = { false };
 					if (fForked) {
-						fParent.getDisplay().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								canceled[0] = showStatusDialog(status);
-							}
-						});
+						fParent.getDisplay().syncExec(() -> canceled[0] = showStatusDialog(status));
 					} else {
 						canceled[0] = showStatusDialog(status);
 					}
@@ -186,12 +181,7 @@ public class RefactoringExecutionHelper {
 		final ISchedulingRule rule = getSchedulingRule();
 		try {
 			try {
-				Runnable r = new Runnable() {
-					@Override
-					public void run() {
-						manager.beginRule(rule, null);
-					}
-				};
+				Runnable r = () -> manager.beginRule(rule, null);
 				BusyIndicator.showWhile(fParent.getDisplay(), r);
 			} catch (OperationCanceledException e) {
 				throw new InterruptedException(e.getMessage());

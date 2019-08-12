@@ -313,24 +313,21 @@ class THHierarchyModel {
 	synchronized private void onJobDone(final THGraph graph, Job job) {
 		if (fJob == job) {
 			fJob = null;
-			fDisplay.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					fGraph = graph;
-					THGraphNode inputNode = fGraph.getInputNode();
-					if (!fGraph.isFileIndexed()) {
-						fView.setMessage(IndexUI.getFileNotIndexedMessage(fInput));
-					} else if (inputNode == null) {
-						fView.setMessage(Messages.THHierarchyModel_errorComputingHierarchy);
-					} else {
-						if (fTypeToSelect == fInput) {
-							fTypeToSelect = inputNode.getElement();
-						}
-						fInput = inputNode.getElement();
+			fDisplay.asyncExec(() -> {
+				fGraph = graph;
+				THGraphNode inputNode = fGraph.getInputNode();
+				if (!fGraph.isFileIndexed()) {
+					fView.setMessage(IndexUI.getFileNotIndexedMessage(fInput));
+				} else if (inputNode == null) {
+					fView.setMessage(Messages.THHierarchyModel_errorComputingHierarchy);
+				} else {
+					if (fTypeToSelect == fInput) {
+						fTypeToSelect = inputNode.getElement();
 					}
-					computeNodes();
-					notifyEvent(END_OF_COMPUTATION);
+					fInput = inputNode.getElement();
 				}
+				computeNodes();
+				notifyEvent(END_OF_COMPUTATION);
 			});
 		}
 	}

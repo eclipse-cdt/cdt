@@ -78,13 +78,10 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 		super.doLaunch();
 
 		fSession = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-				fExpService = fServicesTracker.getService(IExpressions.class);
-			}
+			fExpService = fServicesTracker.getService(IExpressions.class);
 		};
 		fSession.getExecutor().submit(runnable).get();
 	}

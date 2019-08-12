@@ -53,24 +53,21 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 	@JsonNotification("$cquery/progress")
 	public final void indexingProgress(IndexingProgressStats stats) {
 
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				final String cqueryStatusFieldId = "org.eclipse.cdt.lsp.core.status"; //$NON-NLS-1$
-				final int width = 28;
-				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
-				for (IWorkbenchWindow window : workbenchWindows) {
-					StatusLineManager statusLine = ((WorkbenchWindow) window).getStatusLineManager();
-					StatusLineContributionItem cqueryStatusField = (StatusLineContributionItem) statusLine
-							.find(cqueryStatusFieldId);
-					if (cqueryStatusField == null) {
-						cqueryStatusField = new StatusLineContributionItem(cqueryStatusFieldId, width);
-						statusLine.add(cqueryStatusField);
-					}
-					String msg = stats.getTotalJobs() > 0 ? NLS.bind(Messages.CqueryStateBusy, stats.getTotalJobs())
-							: Messages.CqueryStateIdle;
-					cqueryStatusField.setText(msg);
+		Display.getDefault().asyncExec(() -> {
+			final String cqueryStatusFieldId = "org.eclipse.cdt.lsp.core.status"; //$NON-NLS-1$
+			final int width = 28;
+			IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			for (IWorkbenchWindow window : workbenchWindows) {
+				StatusLineManager statusLine = ((WorkbenchWindow) window).getStatusLineManager();
+				StatusLineContributionItem cqueryStatusField = (StatusLineContributionItem) statusLine
+						.find(cqueryStatusFieldId);
+				if (cqueryStatusField == null) {
+					cqueryStatusField = new StatusLineContributionItem(cqueryStatusFieldId, width);
+					statusLine.add(cqueryStatusField);
 				}
+				String msg = stats.getTotalJobs() > 0 ? NLS.bind(Messages.CqueryStateBusy, stats.getTotalJobs())
+						: Messages.CqueryStateIdle;
+				cqueryStatusField.setText(msg);
 			}
 		});
 	}
@@ -226,14 +223,10 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 			}
 		}
 
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				for (PresentationReconcilerCPP eachReconciler : matchingReconcilers) {
-					TextPresentation presentation = eachReconciler.createPresentation(new Region(0, doc.getLength()),
-							doc);
-					eachReconciler.getTextViewer().changeTextPresentation(presentation, false);
-				}
+		Display.getDefault().asyncExec(() -> {
+			for (PresentationReconcilerCPP eachReconciler : matchingReconcilers) {
+				TextPresentation presentation = eachReconciler.createPresentation(new Region(0, doc.getLength()), doc);
+				eachReconciler.getTextViewer().changeTextPresentation(presentation, false);
 			}
 		});
 	}

@@ -57,7 +57,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -66,11 +65,8 @@ import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
@@ -86,7 +82,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ScrollBar;
@@ -178,27 +173,22 @@ public class CView extends ViewPart
 		}
 	};
 
-	private IPropertyChangeListener workingSetListener = new IPropertyChangeListener() {
+	private IPropertyChangeListener workingSetListener = ev -> {
+		String property = ev.getProperty();
+		Object newValue = ev.getNewValue();
+		Object oldValue = ev.getOldValue();
+		IWorkingSet filterWorkingSet = workingSetFilter.getWorkingSet();
 
-		@Override
-		public void propertyChange(PropertyChangeEvent ev) {
-			String property = ev.getProperty();
-			Object newValue = ev.getNewValue();
-			Object oldValue = ev.getOldValue();
-			IWorkingSet filterWorkingSet = workingSetFilter.getWorkingSet();
-
-			if (property == null) {
-				return;
-			}
-			if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && oldValue == filterWorkingSet) {
-				setWorkingSet(null);
-			} else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property)
-					&& newValue == filterWorkingSet) {
-				updateTitle();
-			} else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property)
-					&& newValue == filterWorkingSet) {
-				getViewer().refresh();
-			}
+		if (property == null) {
+			return;
+		}
+		if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && oldValue == filterWorkingSet) {
+			setWorkingSet(null);
+		} else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property) && newValue == filterWorkingSet) {
+			updateTitle();
+		} else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property)
+				&& newValue == filterWorkingSet) {
+			getViewer().refresh();
 		}
 	};
 
@@ -286,16 +276,12 @@ public class CView extends ViewPart
 		updateActionBars(selection);
 		dragDetected = false;
 		if (isLinkingEnabled()) {
-			getSite().getShell().getDisplay().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					if (dragDetected == false) {
-						// only synchronize with editor when the selection is
-						// not the result
-						// of a drag. Fixes bug 22274.
-						linkToEditor(selection);
-					}
+			getSite().getShell().getDisplay().asyncExec(() -> {
+				if (dragDetected == false) {
+					// only synchronize with editor when the selection is
+					// not the result
+					// of a drag. Fixes bug 22274.
+					linkToEditor(selection);
 				}
 			});
 		}
@@ -375,13 +361,7 @@ public class CView extends ViewPart
 		initDrag();
 		initDrop();
 
-		dragDetectListener = new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-				dragDetected = true;
-			}
-		};
+		dragDetectListener = event -> dragDetected = true;
 		viewer.getControl().addListener(SWT.DragDetect, dragDetectListener);
 
 	}
@@ -440,13 +420,7 @@ public class CView extends ViewPart
 	protected void initContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				CView.this.fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> CView.this.fillContextMenu(manager));
 		TreeViewer viewer = getViewer();
 		Menu menu = menuMgr.createContextMenu(viewer.getTree());
 		viewer.getTree().setMenu(menu);
@@ -481,28 +455,11 @@ public class CView extends ViewPart
 	 * Add listeners to the viewer.
 	 */
 	protected void initListeners(TreeViewer viewer) {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
+		viewer.addDoubleClickListener(event -> handleDoubleClick(event));
 
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClick(event);
-			}
-		});
+		viewer.addSelectionChangedListener(event -> handleSelectionChanged(event));
 
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged(event);
-			}
-		});
-
-		viewer.addOpenListener(new IOpenListener() {
-			@Override
-			public void open(OpenEvent event) {
-				handleOpen(event);
-			}
-		});
+		viewer.addOpenListener(event -> handleOpen(event));
 
 		viewer.getControl().addKeyListener(new KeyAdapter() {
 
@@ -1077,12 +1034,7 @@ public class CView extends ViewPart
 	 * Returns the <code>IShowInSource</code> for this view.
 	 */
 	protected IShowInSource getShowInSource() {
-		return new IShowInSource() {
-			@Override
-			public ShowInContext getShowInContext() {
-				return new ShowInContext(getViewer().getInput(), getViewer().getSelection());
-			}
-		};
+		return () -> new ShowInContext(getViewer().getInput(), getViewer().getSelection());
 	}
 
 	@Override

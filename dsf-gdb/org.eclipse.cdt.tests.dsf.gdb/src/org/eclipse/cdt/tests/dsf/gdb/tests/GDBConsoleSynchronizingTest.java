@@ -89,27 +89,24 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		super.doBeforeTest();
 
 		fSession = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				Assert.assertTrue(fServicesTracker != null);
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			Assert.assertTrue(fServicesTracker != null);
 
-				fCommandControl = fServicesTracker.getService(IGDBControl.class);
-				Assert.assertTrue(fCommandControl != null);
+			fCommandControl = fServicesTracker.getService(IGDBControl.class);
+			Assert.assertTrue(fCommandControl != null);
 
-				fMemoryService = fServicesTracker.getService(IMemory.class);
-				Assert.assertTrue(fMemoryService != null);
+			fMemoryService = fServicesTracker.getService(IMemory.class);
+			Assert.assertTrue(fMemoryService != null);
 
-				fExprService = fServicesTracker.getService(IExpressions.class);
-				Assert.assertTrue(fExprService != null);
+			fExprService = fServicesTracker.getService(IExpressions.class);
+			Assert.assertTrue(fExprService != null);
 
-				fRunControl = fServicesTracker.getService(IRunControl.class);
-				Assert.assertTrue(fRunControl != null);
+			fRunControl = fServicesTracker.getService(IRunControl.class);
+			Assert.assertTrue(fRunControl != null);
 
-				// Register to breakpoint events
-				fSession.addServiceEventListener(GDBConsoleSynchronizingTest.this, null);
-			}
+			// Register to breakpoint events
+			fSession.addServiceEventListener(GDBConsoleSynchronizingTest.this, null);
 		};
 		fSession.getExecutor().submit(runnable).get();
 	}

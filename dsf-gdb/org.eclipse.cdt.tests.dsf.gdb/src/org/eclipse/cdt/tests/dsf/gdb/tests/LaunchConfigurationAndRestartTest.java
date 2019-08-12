@@ -128,14 +128,11 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		super.doLaunch();
 
 		fSession = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-				fExpService = fServicesTracker.getService(IExpressions.class);
-				fGdbControl = fServicesTracker.getService(IGDBControl.class);
-			}
+			fExpService = fServicesTracker.getService(IExpressions.class);
+			fGdbControl = fServicesTracker.getService(IGDBControl.class);
 		};
 		fSession.getExecutor().submit(runnable).get();
 

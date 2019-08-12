@@ -76,12 +76,9 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 
 		final DsfSession session = getGDBLaunch().getSession();
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
-				fMultiRun = fServicesTracker.getService(IMultiRunControl.class);
-			}
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
+			fMultiRun = fServicesTracker.getService(IMultiRunControl.class);
 		};
 		session.getExecutor().submit(runnable).get();
 	}

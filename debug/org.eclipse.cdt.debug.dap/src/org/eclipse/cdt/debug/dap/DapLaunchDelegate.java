@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.dap;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,7 +91,7 @@ public class DapLaunchDelegate extends AbstractCLaunchDelegate2 {
 				throw new IOException(
 						Messages.DapLaunchDelegate_missing_debugAdapter_script + Activator.PLUGIN_ID + debugAdapterJs);
 			}
-			String path = fileURL.getPath();
+			String path = new File(fileURL.toURI()).toString();
 			List<String> debugCmdArgs = Collections.singletonList(path);
 
 			DSPLaunchDelegateLaunchBuilder builder = new DSPLaunchDelegateLaunchBuilder(configuration, mode, launch,
@@ -111,7 +113,7 @@ public class DapLaunchDelegate extends AbstractCLaunchDelegate2 {
 				}
 			};
 			dspLaunchDelegate.launch(builder);
-		} catch (IOException e) {
+		} catch (IOException | URISyntaxException e) {
 			IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
 			Activator.getDefault().getLog().log(errorStatus);
 			Display.getDefault().asyncExec(() -> {

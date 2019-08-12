@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c0fbe05b_f72889ff",
+        "filename": "debug/org.eclipse.cdt.debug.dap/src/org/eclipse/cdt/debug/dap/DapLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-12T22:28:42Z",
+      "side": 1,
+      "message": ":-(",
+      "revId": "a3b07701363c9e4431d5e1f1ca8e95ac433cceb5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

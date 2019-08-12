@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e51b2505_700da1af",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/TraceFileTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-12T14:17:48Z",
+      "side": 1,
+      "message": "new whitespace at end of line -- unfortunately https://ci.eclipse.org/cdt/view/Gerrit/job/cdt-verify-code-cleanliness-pipeline/ broke a while ago and I haven\u0027t fixed it yet as that gerrit check would have failed on this.",
+      "revId": "99e0e36fa46b4537bb048ebd3bf245fe1f5debda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

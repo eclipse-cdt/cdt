@@ -1,0 +1,205 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7efa43a5_10e1e066",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/dialogs/TableTextCellEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-12T14:17:48Z",
+      "side": 0,
+      "message": "lost comment",
+      "revId": "1e42e5f0e1e6591b5b609db0b864affc746ed5bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08d0d1eb_de5e5f84",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/dialogs/cpaths/IncludesSymbolsPropertyPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-12T14:17:48Z",
+      "side": 0,
+      "message": "this got renamed to control1 -- but that may not be a bad idea to have different names in this context",
+      "range": {
+        "startLine": 244,
+        "startChar": 14,
+        "endLine": 244,
+        "endChar": 21
+      },
+      "revId": "1e42e5f0e1e6591b5b609db0b864affc746ed5bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8fd444f7_928eb8f2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/RenameInformationPopup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-12T14:17:48Z",
+      "side": 0,
+      "message": "lost comment",
+      "range": {
+        "startLine": 328,
+        "startChar": 5,
+        "endLine": 328,
+        "endChar": 91
+      },
+      "revId": "1e42e5f0e1e6591b5b609db0b864affc746ed5bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f7cdcd6_04108557",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/CReconciler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-12T14:17:48Z",
+      "side": 0,
+      "message": "lost nls comment",
+      "range": {
+        "startLine": 285,
+        "startChar": 82,
+        "endLine": 285,
+        "endChar": 95
+      },
+      "revId": "1e42e5f0e1e6591b5b609db0b864affc746ed5bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "73260497_cef801e9",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-12T14:17:48Z",
+      "side": 0,
+      "message": "lost comment",
+      "range": {
+        "startLine": 287,
+        "startChar": 4,
+        "endLine": 288,
+        "endChar": 67
+      },
+      "revId": "1e42e5f0e1e6591b5b609db0b864affc746ed5bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4baa63d2_6102c69e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-12T14:17:48Z",
+      "side": 0,
+      "message": "lost comment",
+      "range": {
+        "startLine": 314,
+        "startChar": 4,
+        "endLine": 315,
+        "endChar": 59
+      },
+      "revId": "1e42e5f0e1e6591b5b609db0b864affc746ed5bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9e5d3229_dfdcb295",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIExpressionsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4379,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-12T14:17:48Z",
+      "side": 0,
+      "message": "lost comment",
+      "range": {
+        "startLine": 4377,
+        "startChar": 4,
+        "endLine": 4379,
+        "endChar": 45
+      },
+      "revId": "1e42e5f0e1e6591b5b609db0b864affc746ed5bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0619b506_34ea2db1",
+        "filename": "dsf/org.eclipse.cdt.examples.dsf/src/org/eclipse/cdt/examples/dsf/timers/TimersView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-12T14:17:48Z",
+      "side": 0,
+      "message": "lost comment",
+      "range": {
+        "startLine": 243,
+        "startChar": 6,
+        "endLine": 244,
+        "endChar": 35
+      },
+      "revId": "1e42e5f0e1e6591b5b609db0b864affc746ed5bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "398cba7c_930e7ab3",
+        "filename": "dsf/org.eclipse.cdt.examples.dsf/src/org/eclipse/cdt/examples/dsf/timers/TimersView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-12T14:17:48Z",
+      "side": 0,
+      "message": "lost comment",
+      "range": {
+        "startLine": 284,
+        "startChar": 0,
+        "endLine": 284,
+        "endChar": 31
+      },
+      "revId": "1e42e5f0e1e6591b5b609db0b864affc746ed5bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

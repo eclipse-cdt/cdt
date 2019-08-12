@@ -74,7 +74,6 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -197,14 +196,11 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					// Search for an element in the assembly file.
 					// Some things in assembly files like macro definitions are
 					// modelled in the C model, so those will be found here.
-					fTranslationUnit.accept(new ICElementVisitor() {
-						@Override
-						public boolean visit(ICElement element) throws CoreException {
-							if (element.getElementName().equals(fSelectedText)) {
-								elems.add(element);
-							}
-							return true;
+					fTranslationUnit.accept(element1 -> {
+						if (element1.getElementName().equals(fSelectedText)) {
+							elems.add(element1);
 						}
+						return true;
 					});
 
 					// Search for a binding in the index.
@@ -812,14 +808,11 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		final int offset = fileloc.getNodeOffset();
 		final int length = fileloc.getNodeLength();
 
-		runInUIThread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					fAction.open(path, offset, length);
-				} catch (CoreException e) {
-					CUIPlugin.log(e);
-				}
+		runInUIThread(() -> {
+			try {
+				fAction.open(path, offset, length);
+			} catch (CoreException e) {
+				CUIPlugin.log(e);
 			}
 		});
 		return true;
@@ -834,14 +827,11 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	}
 
 	private void openInclude(IPath path) {
-		runInUIThread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					fAction.open(path, 0, 0);
-				} catch (CoreException e) {
-					CUIPlugin.log(e);
-				}
+		runInUIThread(() -> {
+			try {
+				fAction.open(path, 0, 0);
+			} catch (CoreException e) {
+				CUIPlugin.log(e);
 			}
 		});
 	}
@@ -877,15 +867,11 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		} else if (paths.size() == 1) {
 			openInclude(paths.get(0));
 		} else {
-			runInUIThread(new Runnable() {
-				@Override
-				public void run() {
-					IPath selected = OpenActionUtil.selectPath(paths,
-							CEditorMessages.OpenDeclarationsAction_dialog_title,
-							CEditorMessages.OpenDeclarationsAction_selectMessage);
-					if (selected != null) {
-						openInclude(selected);
-					}
+			runInUIThread(() -> {
+				IPath selected = OpenActionUtil.selectPath(paths, CEditorMessages.OpenDeclarationsAction_dialog_title,
+						CEditorMessages.OpenDeclarationsAction_selectMessage);
+				if (selected != null) {
+					openInclude(selected);
 				}
 			});
 		}

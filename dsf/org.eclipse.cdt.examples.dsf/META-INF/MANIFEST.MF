@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-SymbolicName: org.eclipse.cdt.examples.dsf;singleton:=true
-Bundle-Version: 2.2.1.qualifier
+Bundle-Version: 2.2.100.qualifier
 Bundle-Activator: org.eclipse.cdt.examples.dsf.DsfExamplesPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,

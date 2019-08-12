@@ -276,44 +276,35 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		fName = name;
 		fContextMenuId = contextId;
 
-		runUI(new Runnable() {
+		runUI(() -> {
+			// add console to the Console view
+			fConsole = createBuildConsole(fName, fContextMenuId, iconUrl);
+			ConsolePlugin.getDefault().getConsoleManager()
+					.addConsoles(new org.eclipse.ui.console.IConsole[] { fConsole });
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see java.lang.Runnable#run()
-			 */
-			@Override
-			public void run() {
-				// add console to the Console view
-				fConsole = createBuildConsole(fName, fContextMenuId, iconUrl);
-				ConsolePlugin.getDefault().getConsoleManager()
-						.addConsoles(new org.eclipse.ui.console.IConsole[] { fConsole });
-
-				infoStream.setConsole(fConsole);
-				infoColor = createColor(CUIPlugin.getStandardDisplay(),
-						BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
-				infoStream.setColor(infoColor);
-				outputStream.setConsole(fConsole);
-				outputColor = createColor(CUIPlugin.getStandardDisplay(),
-						BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR);
-				outputStream.setColor(outputColor);
-				errorStream.setConsole(fConsole);
-				errorColor = createColor(CUIPlugin.getStandardDisplay(),
-						BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
-				errorStream.setColor(errorColor);
-				backgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
-						BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
-				fConsole.setBackground(backgroundColor);
-				problemHighlightedColor = createColor(CUIPlugin.getStandardDisplay(),
-						BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR);
-				problemErrorBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
-						BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
-				problemWarningBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
-						BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR);
-				problemInfoBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
-						BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR);
-			}
+			infoStream.setConsole(fConsole);
+			infoColor = createColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
+			infoStream.setColor(infoColor);
+			outputStream.setConsole(fConsole);
+			outputColor = createColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR);
+			outputStream.setColor(outputColor);
+			errorStream.setConsole(fConsole);
+			errorColor = createColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
+			errorStream.setColor(errorColor);
+			backgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
+			fConsole.setBackground(backgroundColor);
+			problemHighlightedColor = createColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR);
+			problemErrorBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
+			problemWarningBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR);
+			problemInfoBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
+					BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR);
 		});
 		CUIPlugin.getWorkspace().addResourceChangeListener(this);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
@@ -382,12 +373,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		if (v == null)
 			return;
 		Display display = Display.getDefault();
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				v.getTextWidget().redraw();
-			}
-		});
+		display.asyncExec(() -> v.getTextWidget().redraw());
 	}
 
 	public IBuildConsoleStreamDecorator getStreamDecorator(int type) throws CoreException {

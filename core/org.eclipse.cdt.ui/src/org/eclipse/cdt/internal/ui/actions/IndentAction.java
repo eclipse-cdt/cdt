@@ -111,47 +111,44 @@ public class IndentAction extends TextEditorAction {
 				return;
 			}
 
-			Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					IRewriteTarget target = getTextEditor().getAdapter(IRewriteTarget.class);
-					if (target != null)
-						target.beginCompoundChange();
+			Runnable runnable = () -> {
+				IRewriteTarget target = getTextEditor().getAdapter(IRewriteTarget.class);
+				if (target != null)
+					target.beginCompoundChange();
 
-					try {
-						CHeuristicScanner scanner = new CHeuristicScanner(document);
-						CIndenter indenter = new CIndenter(document, scanner, getCProject());
-						final boolean multiLine = nLines > 1;
-						boolean hasChanged = false;
-						for (int i = 0; i < nLines; i++) {
-							hasChanged |= indentLine(document, firstLine + i, offset, indenter, scanner, multiLine);
-						}
-
-						// update caret position: move to new position when indenting just one line
-						// keep selection when indenting multiple
-						int newOffset, newLength;
-						if (!fIsTabAction && multiLine) {
-							newOffset = offset;
-							newLength = end.getOffset() - offset;
-						} else {
-							newOffset = fCaretOffset;
-							newLength = 0;
-						}
-
-						// always reset the selection if anything was replaced
-						// but not when we had a single line non-tab invocation
-						if (newOffset != -1 && (hasChanged || newOffset != offset || newLength != length))
-							selectAndReveal(newOffset, newLength);
-
-					} catch (BadLocationException e) {
-						// will only happen on concurrent modification
-						CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK,
-								"ConcurrentModification in IndentAction", e)); //$NON-NLS-1$
-					} finally {
-						document.removePosition(end);
-						if (target != null)
-							target.endCompoundChange();
+				try {
+					CHeuristicScanner scanner = new CHeuristicScanner(document);
+					CIndenter indenter = new CIndenter(document, scanner, getCProject());
+					final boolean multiLine = nLines > 1;
+					boolean hasChanged = false;
+					for (int i = 0; i < nLines; i++) {
+						hasChanged |= indentLine(document, firstLine + i, offset, indenter, scanner, multiLine);
 					}
+
+					// update caret position: move to new position when indenting just one line
+					// keep selection when indenting multiple
+					int newOffset, newLength;
+					if (!fIsTabAction && multiLine) {
+						newOffset = offset;
+						newLength = end.getOffset() - offset;
+					} else {
+						newOffset = fCaretOffset;
+						newLength = 0;
+					}
+
+					// always reset the selection if anything was replaced
+					// but not when we had a single line non-tab invocation
+					if (newOffset != -1 && (hasChanged || newOffset != offset || newLength != length))
+						selectAndReveal(newOffset, newLength);
+
+				} catch (BadLocationException e) {
+					// will only happen on concurrent modification
+					CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK,
+							"ConcurrentModification in IndentAction", e)); //$NON-NLS-1$
+				} finally {
+					document.removePosition(end);
+					if (target != null)
+						target.endCompoundChange();
 				}
 			};
 

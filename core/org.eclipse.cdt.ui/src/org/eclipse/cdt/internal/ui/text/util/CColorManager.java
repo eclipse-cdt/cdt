@@ -80,12 +80,7 @@ public class CColorManager implements IColorManager {
 			colorTable = new HashMap<>(10);
 			fDisplayTable.put(display, colorTable);
 			if (fAutoDisposeOnDisplayDispose) {
-				display.disposeExec(new Runnable() {
-					@Override
-					public void run() {
-						dispose(display);
-					}
-				});
+				display.disposeExec(() -> dispose(display));
 			}
 		}
 

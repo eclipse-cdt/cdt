@@ -48,7 +48,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -98,13 +97,10 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			if (elements != null && !monitor.isCanceled()) {
 				final Shell shell = getShell();
 				if (shell != null && !shell.isDisposed()) {
-					Runnable update = new Runnable() {
-						@Override
-						public void run() {
-							if (!shell.isDisposed() && !monitor.isCanceled()) {
-								setListElements(elements);
-								updateOkState();
-							}
+					Runnable update = () -> {
+						if (!shell.isDisposed() && !monitor.isCanceled()) {
+							setListElements(elements);
+							updateOkState();
 						}
 					};
 					shell.getDisplay().asyncExec(update);
@@ -132,12 +128,9 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			fDone = true;
 			final Shell shell = getShell();
 			if (shell != null && !shell.isDisposed()) {
-				Runnable update = new Runnable() {
-					@Override
-					public void run() {
-						if (!shell.isDisposed() && fDone) {
-							fMonitor.done();
-						}
+				Runnable update = () -> {
+					if (!shell.isDisposed() && fDone) {
+						fMonitor.done();
 					}
 				};
 				shell.getDisplay().asyncExec(update);
@@ -149,13 +142,10 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			fDone = false;
 			final Shell shell = getShell();
 			if (shell != null && !shell.isDisposed()) {
-				Runnable update = new Runnable() {
-					@Override
-					public void run() {
-						if (!shell.isDisposed() && !fDone) {
-							fMonitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress,
-									IProgressMonitor.UNKNOWN);
-						}
+				Runnable update = () -> {
+					if (!shell.isDisposed() && !fDone) {
+						fMonitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress,
+								IProgressMonitor.UNKNOWN);
 					}
 				};
 				shell.getDisplay().asyncExec(update);
@@ -345,12 +335,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	@Override
 	protected Text createFilterText(Composite parent) {
 		final Text result = super.createFilterText(parent);
-		Listener listener = new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				scheduleUpdate(result.getText());
-			}
-		};
+		Listener listener = e -> scheduleUpdate(result.getText());
 		result.addListener(SWT.Modify, listener);
 		return result;
 	}

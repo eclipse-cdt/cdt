@@ -239,15 +239,11 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		super.doLaunch();
 
 		final DsfSession session = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-
-			@Override
-			public void run() {
-				DsfServicesTracker tracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
-				fCommandControl = tracker.getService(IGDBControl.class);
-				fCommandFactory = fCommandControl.getCommandFactory();
-				tracker.dispose();
-			}
+		Runnable runnable = () -> {
+			DsfServicesTracker tracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
+			fCommandControl = tracker.getService(IGDBControl.class);
+			fCommandFactory = fCommandControl.getCommandFactory();
+			tracker.dispose();
 		};
 		session.getExecutor().submit(runnable).get();
 	}

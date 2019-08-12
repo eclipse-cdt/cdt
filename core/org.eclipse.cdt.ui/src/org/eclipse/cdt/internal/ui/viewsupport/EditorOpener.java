@@ -74,12 +74,7 @@ public class EditorOpener {
 
 	private static void showStatus(final IWorkbenchPartSite site, int duration, String msg) {
 		StatusLineHandler.showStatusLineMessage(site, msg);
-		Display.getCurrent().timerExec(duration, new Runnable() {
-			@Override
-			public void run() {
-				StatusLineHandler.clearStatusLine(site);
-			}
-		});
+		Display.getCurrent().timerExec(duration, () -> StatusLineHandler.clearStatusLine(site));
 	}
 
 	private static void selectRegion(IPath filebufferKey, IRegion region, long timestamp, IEditorPart editor) {

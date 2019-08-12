@@ -305,12 +305,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		}
 		if (refresh) {
 			fViewer.getControl().setRedraw(false);
-			BusyIndicator.showWhile(fViewer.getControl().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					fViewer.refresh();
-				}
-			});
+			BusyIndicator.showWhile(fViewer.getControl().getDisplay(), () -> fViewer.refresh());
 			fViewer.getControl().setRedraw(true);
 		}
 	}

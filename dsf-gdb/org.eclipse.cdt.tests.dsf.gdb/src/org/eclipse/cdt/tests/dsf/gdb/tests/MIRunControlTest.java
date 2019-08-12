@@ -109,22 +109,19 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 
 		final DsfSession session = getGDBLaunch().getSession();
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
-				fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
+			fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
 
-				IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-				IProcessDMContext procDmc = procService.createProcessContext(fGDBCtrl.getContext(),
-						MIProcesses.UNIQUE_GROUP_ID);
-				fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
-				IThreadDMContext threadDmc = procService.createThreadContext(procDmc, "1");
-				fThreadExecDmc = procService.createExecutionContext(fContainerDmc, threadDmc, "1");
+			IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+			IProcessDMContext procDmc = procService.createProcessContext(fGDBCtrl.getContext(),
+					MIProcesses.UNIQUE_GROUP_ID);
+			fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+			IThreadDMContext threadDmc = procService.createThreadContext(procDmc, "1");
+			fThreadExecDmc = procService.createExecutionContext(fContainerDmc, threadDmc, "1");
 
-				fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
-				fBackEnd = fServicesTracker.getService(IGDBBackend.class);
-			}
+			fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
+			fBackEnd = fServicesTracker.getService(IGDBBackend.class);
 		};
 		session.getExecutor().submit(runnable).get();
 	}
@@ -221,12 +218,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		/*
 		 * Test getExecutionContexts() when only one thread exist.
 		 */
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fRunCtrl.getExecutionContexts(containerDmc, rm);
-			}
-		});
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl.getExecutionContexts(containerDmc, rm));
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
 
@@ -287,12 +279,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		/*
 		 * Test getExecutionContexts for a valid container DMC
 		 */
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fRunCtrl.getExecutionContexts(containerDmc, rmExecutionCtxts);
-			}
-		});
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl.getExecutionContexts(containerDmc, rmExecutionCtxts));
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
 		wait.waitReset();
@@ -353,12 +340,8 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		/*
 		 * Call getModelData for Execution DMC
 		 */
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fRunCtrl.getExecutionData(((MIRunControl) fRunCtrl).createMIExecutionContext(containerDmc, "1"), rm);
-			}
-		});
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl
+				.getExecutionData(((MIRunControl) fRunCtrl).createMIExecutionContext(containerDmc, "1"), rm));
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
 
@@ -403,12 +386,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		/*
 		 * getModelData for Execution DMC
 		 */
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fRunCtrl.getExecutionData(stoppedEvent.getDMContext(), rm);
-			}
-		});
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl.getExecutionData(stoppedEvent.getDMContext(), rm));
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
 
@@ -450,12 +428,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 				wait.waitFinished(getStatus());
 			}
 		};
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fRunCtrl.getExecutionData(stoppedEvent.getDMContext(), rm);
-			}
-		});
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl.getExecutionData(stoppedEvent.getDMContext(), rm));
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
 
@@ -497,12 +470,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 			}
 		};
 
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fRunCtrl.getExecutionData(fContainerDmc, rm);
-			}
-		});
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl.getExecutionData(fContainerDmc, rm));
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
 
@@ -534,13 +502,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 			}
 		};
 		//        final IContainerDMContext ctxt = new GDBControlDMContext("-1", getClass().getName() + ":" + 1);
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				// Pass an invalid dmc
-				fRunCtrl.getExecutionContexts(fContainerDmc, rm);
-			}
-		});
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl.getExecutionContexts(fContainerDmc, rm));
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 		Assert.assertTrue(wait.getMessage(), !wait.isOK());
 
@@ -585,12 +547,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 
 		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fRunCtrl.resume(containerDmc, rm);
-			}
-		});
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl.resume(containerDmc, rm));
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 
 		try {
@@ -604,12 +561,9 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 
 		wait.waitReset();
 
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
-				wait.waitFinished();
-			}
+		fRunCtrl.getExecutor().submit(() -> {
+			wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
+			wait.waitFinished();
 		});
 
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
@@ -632,12 +586,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		final ServiceEventWaitor<IResumedDMEvent> eventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
 				IResumedDMEvent.class);
 
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fRunCtrl.resume(fContainerDmc, rm);
-			}
-		});
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl.resume(fContainerDmc, rm));
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 		try {
 			eventWaitor.waitForEvent(TestsPlugin.massageTimeout(5000));
@@ -654,12 +603,9 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 
 		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
-				wait.waitFinished();
-			}
+		fRunCtrl.getExecutor().submit(() -> {
+			wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
+			wait.waitFinished();
 		});
 
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
@@ -685,18 +631,13 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME, getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), true,
-						new RequestMonitor(fRunCtrl.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								wait.waitFinished(getStatus());
-							}
-						});
-			}
-		});
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME,
+				getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), true, new RequestMonitor(fRunCtrl.getExecutor(), null) {
+					@Override
+					protected void handleCompleted() {
+						wait.waitFinished(getStatus());
+					}
+				}));
 
 		wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
@@ -705,12 +646,9 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(10000));
 		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
-				wait.waitFinished();
-			}
+		fRunCtrl.getExecutor().submit(() -> {
+			wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
+			wait.waitFinished();
 		});
 
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
@@ -730,17 +668,13 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		// Resume the target
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fRunCtrl.resume(fThreadExecDmc, new RequestMonitor(fRunCtrl.getExecutor(), null) {
+		fRunCtrl.getExecutor()
+				.submit(() -> fRunCtrl.resume(fThreadExecDmc, new RequestMonitor(fRunCtrl.getExecutor(), null) {
 					@Override
 					protected void handleCompleted() {
 						wait.waitFinished(getStatus());
 					}
-				});
-			}
-		});
+				}));
 		wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
 		wait.waitReset();
@@ -752,17 +686,13 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		// interrupts after the threads exit.
 		// Ref: https://sourceware.org/bugzilla/show_bug.cgi?id=17627
 		Thread.sleep(1000);
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fRunCtrl.suspend(fThreadExecDmc, new RequestMonitor(fRunCtrl.getExecutor(), null) {
+		fRunCtrl.getExecutor()
+				.submit(() -> fRunCtrl.suspend(fThreadExecDmc, new RequestMonitor(fRunCtrl.getExecutor(), null) {
 					@Override
 					protected void handleCompleted() {
 						wait.waitFinished(getStatus());
 					}
-				});
-			}
-		});
+				}));
 
 		wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
@@ -773,12 +703,9 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 
 		// Double check that the target is in the suspended state
 		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		fRunCtrl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
-				wait.waitFinished();
-			}
+		fRunCtrl.getExecutor().submit(() -> {
+			wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
+			wait.waitFinished();
 		});
 		wait.waitUntilDone(TestsPlugin.massageTimeout(2000));
 		Assert.assertTrue("Target is running. It should have been suspended", (Boolean) wait.getReturnInfo());

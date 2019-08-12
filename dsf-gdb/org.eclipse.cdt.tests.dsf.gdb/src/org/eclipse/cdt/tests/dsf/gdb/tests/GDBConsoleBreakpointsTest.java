@@ -122,24 +122,21 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 
 		super.doBeforeTest();
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				Assert.assertTrue(fServicesTracker != null);
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			Assert.assertTrue(fServicesTracker != null);
 
-				fCommandControl = fServicesTracker.getService(IGDBControl.class);
-				Assert.assertTrue(fCommandControl != null);
+			fCommandControl = fServicesTracker.getService(IGDBControl.class);
+			Assert.assertTrue(fCommandControl != null);
 
-				fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
-				Assert.assertTrue(fBreakpointService != null);
+			fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
+			Assert.assertTrue(fBreakpointService != null);
 
-				fBreakpointsSynchronizer = fServicesTracker.getService(MIBreakpointsSynchronizer.class);
-				Assert.assertTrue(fBreakpointsSynchronizer != null);
+			fBreakpointsSynchronizer = fServicesTracker.getService(MIBreakpointsSynchronizer.class);
+			Assert.assertTrue(fBreakpointsSynchronizer != null);
 
-				// Register to breakpoint events
-				fSession.addServiceEventListener(GDBConsoleBreakpointsTest.this, null);
-			}
+			// Register to breakpoint events
+			fSession.addServiceEventListener(GDBConsoleBreakpointsTest.this, null);
 		};
 		fSession = getGDBLaunch().getSession();
 		fSession.getExecutor().submit(runnable).get();

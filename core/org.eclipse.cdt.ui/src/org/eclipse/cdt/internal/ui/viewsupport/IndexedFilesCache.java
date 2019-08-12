@@ -240,12 +240,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 			fIsDirty = false;
 			final IWorkbench workbench = PlatformUI.getWorkbench();
 			try {
-				workbench.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						workbench.getDecoratorManager().update(DECORATOR_ID);
-					}
-				});
+				workbench.getDisplay().asyncExec(() -> workbench.getDecoratorManager().update(DECORATOR_ID));
 			} catch (SWTException e) {
 				// in case the display is no longer valid
 			}

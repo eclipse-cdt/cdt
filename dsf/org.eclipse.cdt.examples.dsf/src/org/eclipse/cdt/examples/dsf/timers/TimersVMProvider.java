@@ -56,13 +56,10 @@ public class TimersVMProvider extends AbstractDMVMProvider {
 
 		// Add ourselves as listener for DM events events.
 		try {
-			session.getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					if (DsfSession.isSessionActive(getSession().getId())) {
-						getSession().addServiceEventListener(TimersVMProvider.this, null);
-						fRegisteredEventListener = true;
-					}
+			session.getExecutor().execute(() -> {
+				if (DsfSession.isSessionActive(getSession().getId())) {
+					getSession().addServiceEventListener(TimersVMProvider.this, null);
+					fRegisteredEventListener = true;
 				}
 			});
 		} catch (RejectedExecutionException e) {
@@ -83,13 +80,10 @@ public class TimersVMProvider extends AbstractDMVMProvider {
 		// RejectedExecutionException. We put this here all the same for
 		// completeness sake.
 		try {
-			getSession().getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					if (fRegisteredEventListener && DsfSession.isSessionActive(getSession().getId())) {
-						getSession().removeServiceEventListener(TimersVMProvider.this);
-						fRegisteredEventListener = false;
-					}
+			getSession().getExecutor().execute(() -> {
+				if (fRegisteredEventListener && DsfSession.isSessionActive(getSession().getId())) {
+					getSession().removeServiceEventListener(TimersVMProvider.this);
+					fRegisteredEventListener = false;
 				}
 			});
 		} catch (RejectedExecutionException e) {
@@ -148,13 +142,10 @@ public class TimersVMProvider extends AbstractDMVMProvider {
 			return;
 
 		try {
-			getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					if (isDisposed())
-						return;
-					handleEvent(event);
-				}
+			getExecutor().execute(() -> {
+				if (isDisposed())
+					return;
+				handleEvent(event);
 			});
 		} catch (RejectedExecutionException e) {
 		}
@@ -166,13 +157,10 @@ public class TimersVMProvider extends AbstractDMVMProvider {
 			return;
 
 		try {
-			getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					if (isDisposed())
-						return;
-					handleEvent(event);
-				}
+			getExecutor().execute(() -> {
+				if (isDisposed())
+					return;
+				handleEvent(event);
 			});
 		} catch (RejectedExecutionException e) {
 		}

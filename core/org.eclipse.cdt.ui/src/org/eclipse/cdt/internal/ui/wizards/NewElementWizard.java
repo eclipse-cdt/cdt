@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -50,14 +49,11 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 		if (activePage != null) {
 			final Display display = getShell().getDisplay();
 			if (display != null) {
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							IDE.openEditor(activePage, resource, true);
-						} catch (PartInitException e) {
-							CUIPlugin.log(e);
-						}
+				display.asyncExec(() -> {
+					try {
+						IDE.openEditor(activePage, resource, true);
+					} catch (PartInitException e) {
+						CUIPlugin.log(e);
 					}
 				});
 			}
@@ -89,12 +85,7 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 
 	@Override
 	public boolean performFinish() {
-		IWorkspaceRunnable op = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-				finishPage(monitor);
-			}
-		};
+		IWorkspaceRunnable op = monitor -> finishPage(monitor);
 		try {
 			getContainer().run(canRunForked(), true, new WorkbenchRunnableAdapter(op, getSchedulingRule()));
 		} catch (InvocationTargetException e) {

@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -58,7 +56,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -269,17 +266,14 @@ public class ProjectConverter implements ICProjectConverter {
 
 		final Shell shell = window.getShell();
 		final boolean[] answer = new boolean[1];
-		shell.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				Object ob = PROPS.getProperty(rc, id);
-				if (multiple || ob == null) {
-					PROPS.setProperty(rc, id, Boolean.TRUE);
-					answer[0] = MessageDialog.openQuestion(shell, title, message);
-					PROPS.setProperty(rc, id, answer[0] ? Boolean.TRUE : Boolean.FALSE);
-				} else {
-					answer[0] = ((Boolean) ob).booleanValue();
-				}
+		shell.getDisplay().syncExec(() -> {
+			Object ob = PROPS.getProperty(rc, id);
+			if (multiple || ob == null) {
+				PROPS.setProperty(rc, id, Boolean.TRUE);
+				answer[0] = MessageDialog.openQuestion(shell, title, message);
+				PROPS.setProperty(rc, id, answer[0] ? Boolean.TRUE : Boolean.FALSE);
+			} else {
+				answer[0] = ((Boolean) ob).booleanValue();
 			}
 		});
 		return answer[0];
@@ -294,13 +288,10 @@ public class ProjectConverter implements ICProjectConverter {
 		}
 
 		final Shell shell = window.getShell();
-		shell.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (multiple || PROPS.getProperty(rc, id) == null) {
-					PROPS.setProperty(rc, id, Boolean.TRUE);
-					MessageDialog.openInformation(shell, title, message);
-				}
+		shell.getDisplay().syncExec(() -> {
+			if (multiple || PROPS.getProperty(rc, id) == null) {
+				PROPS.setProperty(rc, id, Boolean.TRUE);
+				MessageDialog.openInformation(shell, title, message);
 			}
 		});
 	}
@@ -311,42 +302,31 @@ public class ProjectConverter implements ICProjectConverter {
 			monitor = new NullProgressMonitor();
 
 		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, des,
-				new ICDescriptorOperation() {
+				(descriptor, monitor1) -> {
+					final IMakeTargetManager mngr = MakeCorePlugin.getDefault().getTargetManager();
 
-					@Override
-					public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-						final IMakeTargetManager mngr = MakeCorePlugin.getDefault().getTargetManager();
+					project.accept(resource -> {
+						if (resource.getType() == IResource.FILE)
+							return false;
 
-						project.accept(new IResourceVisitor() {
+						try {
+							IContainer cr = (IContainer) resource;
+							IMakeTarget targets[] = mngr.getTargets(cr);
+							for (int i = 0; i < targets.length; i++) {
+								IMakeTarget t = targets[i];
+								if (!OLD_MAKE_TARGET_BUIDER_ID.equals(t.getTargetBuilderID()))
+									continue;
 
-							@Override
-							public boolean visit(IResource resource) throws CoreException {
-								if (resource.getType() == IResource.FILE)
-									return false;
-
-								try {
-									IContainer cr = (IContainer) resource;
-									IMakeTarget targets[] = mngr.getTargets(cr);
-									for (int i = 0; i < targets.length; i++) {
-										IMakeTarget t = targets[i];
-										if (!OLD_MAKE_TARGET_BUIDER_ID.equals(t.getTargetBuilderID()))
-											continue;
-
-										IMakeTarget newT = mngr.createTarget(project, t.getName(),
-												NEW_MAKE_TARGET_BUIDER_ID);
-										copySettings(t, newT);
-										mngr.removeTarget(t);
-										mngr.addTarget(cr, newT);
-									}
-								} catch (CoreException e) {
-									ManagedBuilderCorePlugin.log(e);
-								}
-								return true;
+								IMakeTarget newT = mngr.createTarget(project, t.getName(), NEW_MAKE_TARGET_BUIDER_ID);
+								copySettings(t, newT);
+								mngr.removeTarget(t);
+								mngr.addTarget(cr, newT);
 							}
-
-						});
-					}
-
+						} catch (CoreException e) {
+							ManagedBuilderCorePlugin.log(e);
+						}
+						return true;
+					});
 				}, monitor);
 	}
 
@@ -541,32 +521,27 @@ public class ProjectConverter implements ICProjectConverter {
 				}
 
 				final IWorkspace wsp = ResourcesPlugin.getWorkspace();
-				wsp.run(new IWorkspaceRunnable() {
+				wsp.run((IWorkspaceRunnable) monitor1 -> {
+					project.setDescription(eDes, monitor1);
+					CCorePlugin.getDefault().setProjectDescription(project, newDes);
+					Job job = new Job(DataProviderMessages.getString("ProjectConverter.7")) { //$NON-NLS-1$
 
-					@Override
-					public void run(IProgressMonitor monitor) throws CoreException {
-						project.setDescription(eDes, monitor);
-						CCorePlugin.getDefault().setProjectDescription(project, newDes);
-						Job job = new Job(DataProviderMessages.getString("ProjectConverter.7")) { //$NON-NLS-1$
-
-							@Override
-							protected IStatus run(IProgressMonitor monitor) {
-								try {
-									ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project);
-									convertMakeTargetInfo(project, des, monitor);
-									CCorePlugin.getDefault().setProjectDescription(project, des);
-								} catch (CoreException e) {
-									return e.getStatus();
-								}
-								return Status.OK_STATUS;
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							try {
+								ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project);
+								convertMakeTargetInfo(project, des, monitor);
+								CCorePlugin.getDefault().setProjectDescription(project, des);
+							} catch (CoreException e) {
+								return e.getStatus();
 							}
+							return Status.OK_STATUS;
+						}
 
-						};
+					};
 
-						job.setRule(wsp.getRoot());
-						job.schedule();
-					}
-
+					job.setRule(wsp.getRoot());
+					job.schedule();
 				}, wsp.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
 			}
 			return true;

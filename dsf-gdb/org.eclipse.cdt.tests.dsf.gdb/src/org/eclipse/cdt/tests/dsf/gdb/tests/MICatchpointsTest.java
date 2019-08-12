@@ -158,26 +158,23 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 
 		// Get a reference to the breakpoint service
 		fSession = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				assertNotNull(fServicesTracker);
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			assertNotNull(fServicesTracker);
 
-				fRunControl = fServicesTracker.getService(MIRunControl.class);
-				assertNotNull(fRunControl);
+			fRunControl = fServicesTracker.getService(MIRunControl.class);
+			assertNotNull(fRunControl);
 
-				fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
-				assertNotNull(fBreakpointService);
+			fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
+			assertNotNull(fBreakpointService);
 
-				fExpressionService = fServicesTracker.getService(IExpressions.class);
-				assertNotNull(fExpressionService);
+			fExpressionService = fServicesTracker.getService(IExpressions.class);
+			assertNotNull(fExpressionService);
 
-				// Register to receive breakpoint events
-				fRunControl.getSession().addServiceEventListener(MICatchpointsTest.this, null);
+			// Register to receive breakpoint events
+			fRunControl.getSession().addServiceEventListener(MICatchpointsTest.this, null);
 
-				clearEventCounters();
-			}
+			clearEventCounters();
 		};
 		fSession.getExecutor().submit(runnable).get();
 
@@ -201,12 +198,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
 		if (fSession != null) {
-			Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					fRunControl.getSession().removeServiceEventListener(MICatchpointsTest.this);
-				}
-			};
+			Runnable runnable = () -> fRunControl.getSession().removeServiceEventListener(MICatchpointsTest.this);
 			fSession.getExecutor().submit(runnable).get();
 		}
 		// Clear the references (not strictly necessary)
@@ -365,12 +357,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 
 		// Evaluate the expression (asynchronously)
 		fWait.waitReset();
-		fSession.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fExpressionService.getFormattedExpressionValue(formattedValueDMC, drm);
-			}
-		});
+		fSession.getExecutor().submit(() -> fExpressionService.getFormattedExpressionValue(formattedValueDMC, drm));
 
 		// Wait for completion
 		fWait.waitUntilDone(TestsPlugin.massageTimeout(5000));
@@ -411,12 +398,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 
 		// Issue the breakpoint request
 		fWait.waitReset();
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.getBreakpoints(context, drm);
-			}
-		});
+		fBreakpointService.getExecutor().submit(() -> fBreakpointService.getBreakpoints(context, drm));
 
 		// Wait for completion
 		fWait.waitUntilDone(TestsPlugin.massageTimeout(5000));
@@ -453,12 +435,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 
 		// Issue the breakpoint request
 		fWait.waitReset();
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.getBreakpointDMData(breakpoint, drm);
-			}
-		});
+		fBreakpointService.getExecutor().submit(() -> fBreakpointService.getBreakpointDMData(breakpoint, drm));
 
 		// Wait for completion
 		fWait.waitUntilDone(TestsPlugin.massageTimeout(5000));
@@ -496,12 +473,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		};
 
 		// Issue the remove breakpoint request
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.insertBreakpoint(context, attributes, drm);
-			}
-		});
+		fBreakpointService.getExecutor().submit(() -> fBreakpointService.insertBreakpoint(context, attributes, drm));
 
 		// Wait for the result and return the breakpoint id
 		fWait.waitUntilDone(TestsPlugin.massageTimeout(5000));
@@ -534,12 +506,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		};
 
 		// Issue the add breakpoint request
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.removeBreakpoint(breakpoint, rm);
-			}
-		});
+		fBreakpointService.getExecutor().submit(() -> fBreakpointService.removeBreakpoint(breakpoint, rm));
 
 		// Wait for the result
 		fWait.waitUntilDone(TestsPlugin.massageTimeout(5000));
@@ -572,12 +539,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		};
 
 		// Issue the update breakpoint request
-		fBreakpointService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fBreakpointService.updateBreakpoint(breakpoint, delta, rm);
-			}
-		});
+		fBreakpointService.getExecutor().submit(() -> fBreakpointService.updateBreakpoint(breakpoint, delta, rm));
 
 		// Wait for the result
 		fWait.waitUntilDone(TestsPlugin.massageTimeout(5000));

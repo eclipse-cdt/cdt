@@ -101,16 +101,13 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		fSession = getGDBLaunch().getSession();
 		resolveLineTagLocations(SOURCE_NAME, MIRunControlTest.LINE_TAGS);
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				// We obtain the services we need after the new
-				// launch has been performed
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+		Runnable runnable = () -> {
+			// We obtain the services we need after the new
+			// launch has been performed
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-				fRegService = (IRegisters2) fServicesTracker.getService(IRegisters.class);
-				fRunControl = fServicesTracker.getService(IRunControl.class);
-			}
+			fRegService = (IRegisters2) fServicesTracker.getService(IRegisters.class);
+			fRunControl = fServicesTracker.getService(IRunControl.class);
 		};
 
 		fSession.getExecutor().submit(runnable).get();

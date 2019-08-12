@@ -73,14 +73,11 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 
 		final DsfSession session = getGDBLaunch().getSession();
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
 
-				fProcesses = fServicesTracker.getService(IGDBProcesses.class);
-				fControl = fServicesTracker.getService(IGDBControl.class);
-			}
+			fProcesses = fServicesTracker.getService(IGDBProcesses.class);
+			fControl = fServicesTracker.getService(IGDBControl.class);
 		};
 		session.getExecutor().submit(runnable).get();
 
@@ -182,12 +179,9 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 
 		// Don't use a query here.  The terminate, because it kills GDB, may not return right away
 		// but that is ok because we wait for a shutdown event right after
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				IProcessDMContext processDmc = DMContexts.getAncestorOfType(fContainerDmc, IProcessDMContext.class);
-				fProcesses.terminate(processDmc, new ImmediateRequestMonitor());
-			}
+		Runnable runnable = () -> {
+			IProcessDMContext processDmc = DMContexts.getAncestorOfType(fContainerDmc, IProcessDMContext.class);
+			fProcesses.terminate(processDmc, new ImmediateRequestMonitor());
 		};
 		fProcesses.getExecutor().execute(runnable);
 
@@ -265,12 +259,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 
 		// Don't use a query here.  Because GDB will be killed, the call to detach may not return right away
 		// but that is ok because we wait for a shutdown event right after
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fProcesses.detachDebuggerFromProcess(fContainerDmc, new ImmediateRequestMonitor());
-			}
-		};
+		Runnable runnable = () -> fProcesses.detachDebuggerFromProcess(fContainerDmc, new ImmediateRequestMonitor());
 		fProcesses.getExecutor().execute(runnable);
 
 		// The shutdown must happen quickly, which will confirm that it was

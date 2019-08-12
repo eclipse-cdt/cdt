@@ -48,9 +48,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -331,12 +328,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		getSite().registerContextMenu(menuMgr, viewer);
 
 		getSite().setSelectionProvider(viewer);
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged(event);
-			}
-		});
+		viewer.addSelectionChangedListener(event -> handleSelectionChanged(event));
 	}
 
 	@Override
@@ -367,12 +359,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				IndexView.this.fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> IndexView.this.fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
@@ -393,12 +380,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	}
 
 	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				openDefinitionAction.run();
-			}
-		});
+		viewer.addDoubleClickListener(event -> openDefinitionAction.run());
 	}
 
 	private void contributeToActionBars() {
@@ -426,13 +408,10 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	private void requestUpdate() {
 		if (!fUpdateRequested) {
 			fUpdateRequested = true;
-			viewer.getControl().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					fUpdateRequested = false;
-					if (!viewer.getControl().isDisposed()) {
-						contentProvider.recompute();
-					}
+			viewer.getControl().getDisplay().asyncExec(() -> {
+				fUpdateRequested = false;
+				if (!viewer.getControl().isDisposed()) {
+					contentProvider.recompute();
 				}
 			});
 		}

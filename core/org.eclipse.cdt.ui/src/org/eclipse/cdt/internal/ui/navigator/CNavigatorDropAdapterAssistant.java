@@ -33,7 +33,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -114,13 +113,10 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 					// Run the import operation asynchronously.
 					// Otherwise the drag source (e.g., Windows Explorer) will be blocked
 					// while the operation executes. Fixes bug 35796.
-					Display.getCurrent().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							getShell().forceActive();
-							CopyFilesAndFoldersOperation op = new CopyFilesAndFoldersOperation(getShell());
-							op.copyOrLinkFiles(names, destination, dropOperation);
-						}
+					Display.getCurrent().asyncExec(() -> {
+						getShell().forceActive();
+						CopyFilesAndFoldersOperation op = new CopyFilesAndFoldersOperation(getShell());
+						op.copyOrLinkFiles(names, destination, dropOperation);
 					});
 				} else if (event.detail == DND.DROP_COPY || event.detail == DND.DROP_LINK) {
 					return performResourceCopy(dropAdapter, getShell(), resources);
@@ -363,14 +359,11 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 				}
 			}
 			final ICElement[] siblings = neighbours;
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						CoreModel.getDefault().getCModel().copy(cElements, containers, siblings, null, false, monitor);
-					} catch (CModelException e) {
-						throw new InvocationTargetException(e);
-					}
+			IRunnableWithProgress runnable = monitor -> {
+				try {
+					CoreModel.getDefault().getCModel().copy(cElements, containers, siblings, null, false, monitor);
+				} catch (CModelException e) {
+					throw new InvocationTargetException(e);
 				}
 			};
 			run(runnable);
@@ -403,14 +396,11 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 				}
 			}
 			final ICElement[] siblings = neighbours;
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						CoreModel.getDefault().getCModel().move(cElements, containers, siblings, null, false, monitor);
-					} catch (CModelException e) {
-						throw new InvocationTargetException(e);
-					}
+			IRunnableWithProgress runnable = monitor -> {
+				try {
+					CoreModel.getDefault().getCModel().move(cElements, containers, siblings, null, false, monitor);
+				} catch (CModelException e) {
+					throw new InvocationTargetException(e);
 				}
 			};
 			run(runnable);

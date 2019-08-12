@@ -50,11 +50,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.osgi.framework.Bundle;
@@ -314,12 +312,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		String text = PreferencesMessages.CEditorPreferencePage_link;
 		Link link = new Link(parent, SWT.NONE);
 		link.setText(text);
-		link.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				String u = event.text;
-				PreferencesUtil.createPreferenceDialogOn(getShell(), u, null, null);
-			}
+		link.addListener(SWT.Selection, event -> {
+			String u = event.text;
+			PreferencesUtil.createPreferenceDialogOn(getShell(), u, null, null);
 		});
 		// TODO replace by link-specific tooltips when
 		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=88866 gets fixed
@@ -364,12 +359,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		for (String[] element : fAppearanceColorListModel) {
 			fAppearanceColorList.add(element[0]);
 		}
-		fAppearanceColorList.getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				fAppearanceColorList.select(0);
-				handleAppearanceColorListSelection();
-			}
+		fAppearanceColorList.getDisplay().asyncExec(() -> {
+			fAppearanceColorList.select(0);
+			handleAppearanceColorListSelection();
 		});
 	}
 

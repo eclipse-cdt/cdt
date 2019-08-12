@@ -104,29 +104,26 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		fMemoryDmc = (IMemoryDMContext) SyncUtil.getContainerContext();
 		assert (fMemoryDmc != null);
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				// Get a reference to the memory service
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				assert (fServicesTracker != null);
+		Runnable runnable = () -> {
+			// Get a reference to the memory service
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			assert (fServicesTracker != null);
 
-				fRunControl = fServicesTracker.getService(MIRunControl.class);
-				assert (fRunControl != null);
+			fRunControl = fServicesTracker.getService(MIRunControl.class);
+			assert (fRunControl != null);
 
-				fMemoryService = fServicesTracker.getService(IMemory.class);
-				assert (fMemoryService != null);
+			fMemoryService = fServicesTracker.getService(IMemory.class);
+			assert (fMemoryService != null);
 
-				fExpressionService = fServicesTracker.getService(IExpressions.class);
-				assert (fExpressionService != null);
+			fExpressionService = fServicesTracker.getService(IExpressions.class);
+			assert (fExpressionService != null);
 
-				fSession.addServiceEventListener(MIMemoryTest.this, null);
-				fBaseAddress = null;
-				clearEventCounters();
+			fSession.addServiceEventListener(MIMemoryTest.this, null);
+			fBaseAddress = null;
+			clearEventCounters();
 
-				fWordSize = SyncUtil.readAddressableSize(fMemoryDmc);
-				fByteOrder = SyncUtil.getMemoryByteOrder(fMemoryDmc);
-			}
+			fWordSize = SyncUtil.readAddressableSize(fMemoryDmc);
+			fByteOrder = SyncUtil.getMemoryByteOrder(fMemoryDmc);
 		};
 		fSession.getExecutor().submit(runnable).get();
 	}

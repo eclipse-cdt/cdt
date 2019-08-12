@@ -187,23 +187,20 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		super.doBeforeTest();
 		// Get a reference to the breakpoint service
 		fSession = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				assert (fServicesTracker != null);
-				fRunControl = fServicesTracker.getService(MIRunControl.class);
-				assert (fRunControl != null);
-				fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
-				assert (fBreakpointService != null);
-				fExpressionService = fServicesTracker.getService(IExpressions.class);
-				assert (fExpressionService != null);
-				fCommandControl = fServicesTracker.getService(IGDBControl.class);
-				assert (fCommandControl != null);
-				// Register to breakpoint events
-				fRunControl.getSession().addServiceEventListener(MIBreakpointsTest.this, null);
-				clearEventCounters();
-			}
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			assert (fServicesTracker != null);
+			fRunControl = fServicesTracker.getService(MIRunControl.class);
+			assert (fRunControl != null);
+			fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
+			assert (fBreakpointService != null);
+			fExpressionService = fServicesTracker.getService(IExpressions.class);
+			assert (fExpressionService != null);
+			fCommandControl = fServicesTracker.getService(IGDBControl.class);
+			assert (fCommandControl != null);
+			// Register to breakpoint events
+			fRunControl.getSession().addServiceEventListener(MIBreakpointsTest.this, null);
+			clearEventCounters();
 		};
 		fSession.getExecutor().submit(runnable).get();
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();

@@ -46,8 +46,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -146,14 +144,11 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		fProjText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProjText.setLayoutData(gd);
-		fProjText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent evt) {
-				// if project changes, invalidate program name cache
-				fPreviouslyCheckedProgram = null;
-				updateBuildConfigCombo(EMPTY_STRING);
-				updateLaunchConfigurationDialog();
-			}
+		fProjText.addModifyListener(evt -> {
+			// if project changes, invalidate program name cache
+			fPreviouslyCheckedProgram = null;
+			updateBuildConfigCombo(EMPTY_STRING);
+			updateLaunchConfigurationDialog();
 		});
 		fProjButton = createPushButton(projComp, LaunchMessages.Launch_common_Browse_1, null);
 		fProjButton.addSelectionListener(new SelectionAdapter() {
@@ -457,12 +452,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		fCoreText = new Text(coreComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fCoreText.setLayoutData(gd);
-		fCoreText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fCoreText.addModifyListener(evt -> updateLaunchConfigurationDialog());
 		Button browseForCoreButton;
 		browseForCoreButton = createPushButton(coreComp, LaunchMessages.Launch_common_Browse_3, null);
 		browseForCoreButton.addSelectionListener(new SelectionAdapter() {
@@ -515,14 +505,11 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 			display = getShell().getDisplay();
 		}
 		final IBinary[][] ret = new IBinary[1][];
-		BusyIndicator.showWhile(display, new Runnable() {
-			@Override
-			public void run() {
-				try {
-					ret[0] = cproject.getBinaryContainer().getBinaries();
-				} catch (CModelException e) {
-					LaunchUIPlugin.errorDialog("Launch UI internal error", e); //$NON-NLS-1$
-				}
+		BusyIndicator.showWhile(display, () -> {
+			try {
+				ret[0] = cproject.getBinaryContainer().getBinaries();
+			} catch (CModelException e) {
+				LaunchUIPlugin.errorDialog("Launch UI internal error", e); //$NON-NLS-1$
 			}
 		});
 		return ret[0];

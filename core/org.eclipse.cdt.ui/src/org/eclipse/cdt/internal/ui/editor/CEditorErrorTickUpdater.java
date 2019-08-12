@@ -108,12 +108,7 @@ public class CEditorErrorTickUpdater implements IProblemChangedListener {
 	private void postImageChange(final Image newImage) {
 		Shell shell = fCEditor.getEditorSite().getShell();
 		if (shell != null && !shell.isDisposed()) {
-			shell.getDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					fCEditor.updatedTitleImage(newImage);
-				}
-			});
+			shell.getDisplay().syncExec(() -> fCEditor.updatedTitleImage(newImage));
 		}
 	}
 

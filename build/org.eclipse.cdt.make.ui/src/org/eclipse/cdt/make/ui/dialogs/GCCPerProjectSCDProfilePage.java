@@ -27,8 +27,6 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -122,12 +120,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
 
 		// text field
 		bopOpenFileText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
-		bopOpenFileText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				handleModifyOpenFileText();
-			}
-		});
+		bopOpenFileText.addModifyListener(e -> handleModifyOpenFileText());
 		bopLoadButton.setEnabled(loadButtonInitialEnabled && handleModifyOpenFileText());
 
 		// browse button
@@ -181,12 +174,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
 
 		// text field
 		sipRunCommandText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
-		sipRunCommandText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				handleModifyRunCommandText();
-			}
-		});
+		sipRunCommandText.addModifyListener(e -> handleModifyRunCommandText());
 
 		// si browse button
 		Button siBrowseButton = ControlFactory.createPushButton(profileGroup, SI_BROWSE);
@@ -221,12 +209,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
 		// text field
 		sipRunArgsText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
 		((GridData) sipRunArgsText.getLayoutData()).horizontalSpan = 3;
-		sipRunArgsText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				handleModifyRunArgsText();
-			}
-		});
+		sipRunArgsText.addModifyListener(e -> handleModifyRunArgsText());
 
 		// si provider console enabled checkbox
 		String sipConsoleEnabledLabel = MakeUIPlugin
@@ -353,19 +336,14 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
 			public void done(IJobChangeEvent event) {
 				synchronized (lock) {
 					if (!instance.shell.isDisposed()) {
-						instance.shell.getDisplay().asyncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								if (!instance.shell.isDisposed()) {
-									loadButtonInitialEnabled = instance.bopEnabledButton.getSelection()
-											&& handleModifyOpenFileText();
-									instance.bopLoadButton.setEnabled(loadButtonInitialEnabled);
-								} else {
-									loadButtonInitialEnabled = true;
-								}
+						instance.shell.getDisplay().asyncExec(() -> {
+							if (!instance.shell.isDisposed()) {
+								loadButtonInitialEnabled = instance.bopEnabledButton.getSelection()
+										&& handleModifyOpenFileText();
+								instance.bopLoadButton.setEnabled(loadButtonInitialEnabled);
+							} else {
+								loadButtonInitialEnabled = true;
 							}
-
 						});
 					} else {
 						loadButtonInitialEnabled = true;

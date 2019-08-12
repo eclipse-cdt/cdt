@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
@@ -203,12 +202,9 @@ public class TemplateInputDialog extends Dialog {
 	 */
 	public void addTextListener(final Text aText) {
 
-		ModifyListener mListener = new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String nameField = aText.getText();
-				textChanged(nameField);
-			}
+		ModifyListener mListener = e -> {
+			String nameField = aText.getText();
+			textChanged(nameField);
 		};
 
 		aText.addModifyListener(mListener);
@@ -257,14 +253,11 @@ public class TemplateInputDialog extends Dialog {
 	public int popDuplicate() {
 
 		final int[] result = new int[] { 0 };
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				MessageBox mBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_INFORMATION);
-				mBox.setText(TemplatePreferencePage.Message);
-				mBox.setMessage(TemplatePreferencePage.DuplicateEntry);
-				result[0] = mBox.open();
-			}
+		Display.getDefault().syncExec(() -> {
+			MessageBox mBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_INFORMATION);
+			mBox.setText(TemplatePreferencePage.Message);
+			mBox.setMessage(TemplatePreferencePage.DuplicateEntry);
+			result[0] = mBox.open();
 		});
 		return result[0];
 	}

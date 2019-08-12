@@ -85,20 +85,17 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	 */
 	public void contentUpdated() {
 		if (treeViewer != null && !treeViewer.getControl().isDisposed()) {
-			treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!treeViewer.getControl().isDisposed()) {
-						if (fInitialDeltaPending) {
-							fInitialDeltaPending = false;
-							treeViewer.setInput(root);
-						} else {
-							// setting the selection here causes a secondary editor to scroll
-							// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=191358
-							//						final ISelection sel = treeViewer.getSelection();
-							//						treeViewer.setSelection(updateSelection(sel));
-							treeViewer.refresh();
-						}
+			treeViewer.getControl().getDisplay().asyncExec(() -> {
+				if (!treeViewer.getControl().isDisposed()) {
+					if (fInitialDeltaPending) {
+						fInitialDeltaPending = false;
+						treeViewer.setInput(root);
+					} else {
+						// setting the selection here causes a secondary editor to scroll
+						// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=191358
+						//						final ISelection sel = treeViewer.getSelection();
+						//						treeViewer.setSelection(updateSelection(sel));
+						treeViewer.refresh();
 					}
 				}
 			});

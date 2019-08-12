@@ -238,57 +238,47 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 
 	private IRunnableWithProgress getRunnable(boolean _defaults, final boolean onFinish) {
 		final boolean defaults = _defaults;
-		return new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor imonitor) throws InvocationTargetException, InterruptedException {
-				final Exception except[] = new Exception[1];
-				getShell().getDisplay().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
-							@Override
-							public void run(IProgressMonitor monitor)
-									throws InvocationTargetException, InterruptedException {
-								final IProgressMonitor fMonitor;
-								if (monitor == null) {
-									fMonitor = new NullProgressMonitor();
-								} else {
-									fMonitor = monitor;
-								}
-								fMonitor.beginTask(CUIPlugin.getResourceString("CProjectWizard.op_description"), 100); //$NON-NLS-1$
-								fMonitor.worked(10);
-								try {
-									newProject = createIProject(lastProjectName, lastProjectLocation,
-											new SubProgressMonitor(fMonitor, 40));
-									if (newProject != null)
-										fMainPage.h_selected.createProject(newProject, defaults, onFinish,
-												new SubProgressMonitor(fMonitor, 40));
-									fMonitor.worked(10);
-								} catch (CoreException e) {
-									CUIPlugin.log(e);
-								} finally {
-									fMonitor.done();
-								}
-							}
-						});
-						try {
-							getContainer().run(false, true, op);
-						} catch (InvocationTargetException e) {
-							except[0] = e;
-						} catch (InterruptedException e) {
-							except[0] = e;
-						}
+		return imonitor -> {
+			final Exception except[] = new Exception[1];
+			getShell().getDisplay().syncExec(() -> {
+				IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(monitor -> {
+					final IProgressMonitor fMonitor;
+					if (monitor == null) {
+						fMonitor = new NullProgressMonitor();
+					} else {
+						fMonitor = monitor;
+					}
+					fMonitor.beginTask(CUIPlugin.getResourceString("CProjectWizard.op_description"), 100); //$NON-NLS-1$
+					fMonitor.worked(10);
+					try {
+						newProject = createIProject(lastProjectName, lastProjectLocation,
+								new SubProgressMonitor(fMonitor, 40));
+						if (newProject != null)
+							fMainPage.h_selected.createProject(newProject, defaults, onFinish,
+									new SubProgressMonitor(fMonitor, 40));
+						fMonitor.worked(10);
+					} catch (CoreException e) {
+						CUIPlugin.log(e);
+					} finally {
+						fMonitor.done();
 					}
 				});
-				if (except[0] != null) {
-					if (except[0] instanceof InvocationTargetException) {
-						throw (InvocationTargetException) except[0];
-					}
-					if (except[0] instanceof InterruptedException) {
-						throw (InterruptedException) except[0];
-					}
-					throw new InvocationTargetException(except[0]);
+				try {
+					getContainer().run(false, true, op);
+				} catch (InvocationTargetException e1) {
+					except[0] = e1;
+				} catch (InterruptedException e2) {
+					except[0] = e2;
 				}
+			});
+			if (except[0] != null) {
+				if (except[0] instanceof InvocationTargetException) {
+					throw (InvocationTargetException) except[0];
+				}
+				if (except[0] instanceof InterruptedException) {
+					throw (InterruptedException) except[0];
+				}
+				throw new InvocationTargetException(except[0]);
 			}
 		};
 	}
@@ -331,12 +321,7 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle,
 					new SubProgressMonitor(monitor, 25));
 		} else {
-			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-				}
-			};
+			IWorkspaceRunnable runnable = monitor1 -> newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor1);
 			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, new SubProgressMonitor(monitor, 25));
 			newProject = newProjectHandle;
 		}

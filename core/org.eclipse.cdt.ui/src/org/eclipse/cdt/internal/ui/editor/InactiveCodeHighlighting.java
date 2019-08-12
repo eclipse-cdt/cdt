@@ -30,9 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.model.ASTCache;
 import org.eclipse.cdt.internal.ui.LineBackgroundPainter;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -108,12 +106,9 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 						if (fTranslationUnit != null) {
 							final ASTProvider astProvider = CUIPlugin.getDefault().getASTProvider();
 							result = astProvider.runOnAST(fTranslationUnit, ASTProvider.WAIT_IF_OPEN, monitor,
-									new ASTCache.ASTRunnable() {
-										@Override
-										public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
-											reconciled(ast, true, monitor);
-											return Status.OK_STATUS;
-										}
+									(lang, ast) -> {
+										reconciled(ast, true, monitor);
+										return Status.OK_STATUS;
 									});
 						}
 						if (monitor.isCanceled()) {
@@ -200,13 +195,10 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 			return;
 		}
 		final List<Position> newInactiveCodePositions = collectInactiveCodePositions(ast);
-		Runnable updater = new Runnable() {
-			@Override
-			public void run() {
-				if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
-					fLineBackgroundPainter.replaceHighlightPositions(fInactiveCodePositions, newInactiveCodePositions);
-					fInactiveCodePositions = newInactiveCodePositions;
-				}
+		Runnable updater = () -> {
+			if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
+				fLineBackgroundPainter.replaceHighlightPositions(fInactiveCodePositions, newInactiveCodePositions);
+				fInactiveCodePositions = newInactiveCodePositions;
 			}
 		};
 		if (fEditor != null) {

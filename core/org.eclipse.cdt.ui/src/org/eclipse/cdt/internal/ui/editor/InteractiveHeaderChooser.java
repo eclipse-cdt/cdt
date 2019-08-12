@@ -59,17 +59,14 @@ public class InteractiveHeaderChooser implements IHeaderChooser {
 		// Ask the user.
 		final IPath[] elemArray = headers.toArray(new IPath[headers.size()]);
 		final IPath[] selectedElement = new IPath[1];
-		runInUIThread(new Runnable() {
-			@Override
-			public void run() {
-				if (!shell.isDisposed()) {
-					ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new LabelProvider());
-					dialog.setElements(elemArray);
-					dialog.setTitle(title);
-					dialog.setMessage(NLS.bind(CEditorMessages.OrganizeIncludes_choose_header, bindingName));
-					if (dialog.open() == Window.OK) {
-						selectedElement[0] = (IPath) dialog.getFirstResult();
-					}
+		runInUIThread(() -> {
+			if (!shell.isDisposed()) {
+				ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new LabelProvider());
+				dialog.setElements(elemArray);
+				dialog.setTitle(title);
+				dialog.setMessage(NLS.bind(CEditorMessages.OrganizeIncludes_choose_header, bindingName));
+				if (dialog.open() == Window.OK) {
+					selectedElement[0] = (IPath) dialog.getFirstResult();
 				}
 			}
 		});

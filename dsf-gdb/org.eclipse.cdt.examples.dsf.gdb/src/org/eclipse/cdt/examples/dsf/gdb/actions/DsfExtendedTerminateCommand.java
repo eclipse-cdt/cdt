@@ -39,21 +39,18 @@ public class DsfExtendedTerminateCommand extends DsfTerminateCommand {
 			// Make sure we run on the UI thread.
 			// We may not already be on the UI thread, for example, when GdbLaunch.terminate() is called
 			// directly when closing a project.
-			display.syncExec(new Runnable() {
-				@Override
-				public void run() {
-					Shell shell = display.getActiveShell();
-					if (shell != null) {
-						boolean confirmed = MessageDialog.openConfirm(shell,
-								ActionMessages.DsfExtendedTerminateCommand_Confirm_Termination,
-								ActionMessages.DsfExtendedTerminateCommand_Terminate_the_session);
-						if (!confirmed) {
-							request.cancel();
-							return;
-						}
+			display.syncExec(() -> {
+				Shell shell = display.getActiveShell();
+				if (shell != null) {
+					boolean confirmed = MessageDialog.openConfirm(shell,
+							ActionMessages.DsfExtendedTerminateCommand_Confirm_Termination,
+							ActionMessages.DsfExtendedTerminateCommand_Terminate_the_session);
+					if (!confirmed) {
+						request.cancel();
+						return;
 					}
-					DsfExtendedTerminateCommand.super.execute(request);
 				}
+				DsfExtendedTerminateCommand.super.execute(request);
 			});
 		}
 		return false;

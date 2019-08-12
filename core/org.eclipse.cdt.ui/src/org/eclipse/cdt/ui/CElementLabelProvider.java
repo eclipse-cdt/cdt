@@ -100,12 +100,9 @@ public class CElementLabelProvider extends LabelProvider {
 			fWorkbenchLabelProvider = new WorkbenchLabelProvider();
 		} else {
 			// Delay initialization
-			CUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (fCElementLabelProvider != null) {
-						fWorkbenchLabelProvider = new WorkbenchLabelProvider();
-					}
+			CUIPlugin.getStandardDisplay().asyncExec(() -> {
+				if (fCElementLabelProvider != null) {
+					fWorkbenchLabelProvider = new WorkbenchLabelProvider();
 				}
 			});
 		}

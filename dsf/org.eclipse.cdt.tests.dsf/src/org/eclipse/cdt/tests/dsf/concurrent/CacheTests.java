@@ -20,7 +20,6 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -201,19 +200,16 @@ public class CacheTests {
 		assertFalse(fTestCache.isValid());
 
 		// Complete the cache's retrieve data request.
-		fExecutor.submit(new Callable<Object>() {
-			@Override
-			public Object call() {
-				fRetrieveRm.setData(1);
-				fRetrieveRm.done();
+		fExecutor.submit(() -> {
+			fRetrieveRm.setData(1);
+			fRetrieveRm.done();
 
-				// Check that the data is available in the cache immediately
-				// (in the same dispatch cycle).
-				assertEquals(1, (int) fTestCache.getData());
-				assertTrue(fTestCache.isValid());
+			// Check that the data is available in the cache immediately
+			// (in the same dispatch cycle).
+			assertEquals(1, (int) fTestCache.getData());
+			assertTrue(fTestCache.isValid());
 
-				return null;
-			}
+			return null;
 		}).get();
 
 		assertEquals(1, (int) q.get());
@@ -594,10 +590,7 @@ public class CacheTests {
 		// called in a separate dispatch cycle, so we have to wait one cycle of the executor
 		// after is canceled is called.
 		fRetrieveRm.isCanceled();
-		fExecutor.submit(new Runnable() {
-			@Override
-			public void run() {
-			}
+		fExecutor.submit(() -> {
 		}).get();
 		assertTrue(canceledCalled[0]);
 

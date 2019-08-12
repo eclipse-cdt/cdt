@@ -65,14 +65,11 @@ public class MIRunControlReverseTest extends BaseParametrizedTestCase {
 
 		fSession = getGDBLaunch().getSession();
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
-				fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
-				fExpressions = fServicesTracker.getService(IExpressions.class);
-			}
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
+			fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
+			fExpressions = fServicesTracker.getService(IExpressions.class);
 		};
 		fSession.getExecutor().submit(runnable).get();
 	}

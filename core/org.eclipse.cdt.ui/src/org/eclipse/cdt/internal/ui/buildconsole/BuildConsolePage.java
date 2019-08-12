@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -59,7 +58,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
@@ -109,13 +107,7 @@ public class BuildConsolePage extends Page
 	private IProject fProject;
 
 	// text selection listener
-	private ISelectionChangedListener fTextListener = new ISelectionChangedListener() {
-
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			updateSelectionDependentActions();
-		}
-	};
+	private ISelectionChangedListener fTextListener = event -> updateSelectionDependentActions();
 
 	// actions
 	private ClearOutputAction fClearOutputAction;
@@ -181,25 +173,15 @@ public class BuildConsolePage extends Page
 			Control control = getControl();
 			if (control != null && !control.isDisposed()) {
 				Display display = control.getDisplay();
-				display.asyncExec(new Runnable() {
-
-					/*
-					 * (non-Javadoc)
-					 *
-					 * @see java.lang.Runnable#run()
-					 */
-					@Override
-					public void run() {
+				display.asyncExec(() -> {
+					if (isAvailable()) {
+						if (event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE && getProject() != event.getProject()) {
+							return;
+						}
+						setProject(event.getProject());
 						if (isAvailable()) {
-							if (event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE
-									&& getProject() != event.getProject()) {
-								return;
-							}
-							setProject(event.getProject());
-							if (isAvailable()) {
-								setDocument();
-								getConsole().setTitle(getProject());
-							}
+							setDocument();
+							getConsole().setTitle(getProject());
 						}
 					}
 				});
@@ -217,13 +199,7 @@ public class BuildConsolePage extends Page
 
 		MenuManager manager = new MenuManager("#MessageConsole", "#MessageConsole"); //$NON-NLS-1$ //$NON-NLS-2$
 		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(new IMenuListener() {
-
-			@Override
-			public void menuAboutToShow(IMenuManager m) {
-				contextMenuAboutToShow(m);
-			}
-		});
+		manager.addMenuListener(m -> contextMenuAboutToShow(m));
 		fMenu = manager.createContextMenu(getControl());
 		getControl().setMenu(fMenu);
 		IPageSite site = getSite();
@@ -272,13 +248,7 @@ public class BuildConsolePage extends Page
 			IBuildConsoleStreamDecorator stream = (IBuildConsoleStreamDecorator) source;
 			if (stream.getConsole().equals(getConsole()) && getControl() != null) {
 				Display display = getControl().getDisplay();
-				display.asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						getViewer().getTextWidget().redraw();
-					}
-				});
+				display.asyncExec(() -> getViewer().getTextWidget().redraw());
 			}
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT)) {
 			setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));

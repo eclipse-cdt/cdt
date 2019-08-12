@@ -359,14 +359,10 @@ public class UIUpdater {
 		@Override
 		public void testingStarted() {
 			resultsView.updateActionsFromSession();
-			Display.getDefault().syncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					resultsView.setCaption(testingSession.getStatusMessage());
-					progressCountPanel.updateInfoFromSession();
-					testsHierarchyViewer.getTreeViewer().refresh();
-				}
+			Display.getDefault().syncExec(() -> {
+				resultsView.setCaption(testingSession.getStatusMessage());
+				progressCountPanel.updateInfoFromSession();
+				testsHierarchyViewer.getTreeViewer().refresh();
 			});
 			startUpdateUIJob();
 		}
@@ -375,17 +371,13 @@ public class UIUpdater {
 		public void testingFinished() {
 			stopUpdateUIJob();
 			resultsView.updateActionsFromSession();
-			Display.getDefault().syncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					uiChangesCache.applyChanges();
-					resultsView.setCaption(testingSession.getStatusMessage());
-					progressCountPanel.updateInfoFromSession();
-					testsHierarchyViewer.getTreeViewer().refresh();
-					testsHierarchyViewer.getTreeViewer().collapseAll();
-					testsHierarchyViewer.getTreeViewer().expandToLevel(2);
-				}
+			Display.getDefault().syncExec(() -> {
+				uiChangesCache.applyChanges();
+				resultsView.setCaption(testingSession.getStatusMessage());
+				progressCountPanel.updateInfoFromSession();
+				testsHierarchyViewer.getTreeViewer().refresh();
+				testsHierarchyViewer.getTreeViewer().collapseAll();
+				testsHierarchyViewer.getTreeViewer().expandToLevel(2);
 			});
 		}
 	}
@@ -406,14 +398,10 @@ public class UIUpdater {
 				subscribeToSessionEvent();
 
 				resultsView.updateActionsFromSession();
-				Display.getDefault().syncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						progressCountPanel.setTestingSession(testingSession);
-						testsHierarchyViewer.setTestingSession(testingSession);
-						resultsView.setCaption(testingSession != null ? testingSession.getStatusMessage() : ""); //$NON-NLS-1$
-					}
+				Display.getDefault().syncExec(() -> {
+					progressCountPanel.setTestingSession(testingSession);
+					testsHierarchyViewer.setTestingSession(testingSession);
+					resultsView.setCaption(testingSession != null ? testingSession.getStatusMessage() : ""); //$NON-NLS-1$
 				});
 				if (newTestingSession != null && !newTestingSession.isFinished()) {
 					startUpdateUIJob();

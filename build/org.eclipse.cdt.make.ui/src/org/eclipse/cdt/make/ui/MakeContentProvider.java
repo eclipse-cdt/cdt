@@ -236,13 +236,10 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	 * Refresh the whole view.
 	 */
 	private void refreshView() {
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
-					return;
-				viewer.refresh();
-			}
+		Display.getDefault().asyncExec(() -> {
+			if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
+				return;
+			viewer.refresh();
 		});
 	}
 
@@ -250,50 +247,47 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	 * Refresh the project tree or the project subtree (in case of drill-down adapter) in the view.
 	 */
 	private void refreshProjectTree(final IProject project) {
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
-					return;
+		Display.getDefault().asyncExec(() -> {
+			if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
+				return;
 
-				// Get first item of the viewer
-				Object firstItem = null;
-				if (viewer instanceof TreeViewer) {
-					if (((TreeViewer) viewer).getTree().getItemCount() <= 0) {
-						// No items yet, no refresh needed
-						return;
-					} else {
-						firstItem = ((TreeViewer) viewer).getTree().getItem(0).getData();
-					}
-				} else if (viewer instanceof TableViewer) {
-					if (((TableViewer) viewer).getTable().getItemCount() <= 0) {
-						// No items yet, refresh
-						viewer.refresh();
-						return;
-					} else {
-						firstItem = ((TableViewer) viewer).getTable().getItem(0).getData();
-					}
+			// Get first item of the viewer
+			Object firstItem = null;
+			if (viewer instanceof TreeViewer) {
+				if (((TreeViewer) viewer).getTree().getItemCount() <= 0) {
+					// No items yet, no refresh needed
+					return;
+				} else {
+					firstItem = ((TreeViewer) viewer).getTree().getItem(0).getData();
+				}
+			} else if (viewer instanceof TableViewer) {
+				if (((TableViewer) viewer).getTable().getItemCount() <= 0) {
+					// No items yet, refresh
+					viewer.refresh();
+					return;
+				} else {
+					firstItem = ((TableViewer) viewer).getTable().getItem(0).getData();
+				}
+			}
+
+			IContainer parentContainer = null;
+
+			boolean isDrilledDown = !(firstItem instanceof IProject);
+			if (!isDrilledDown) {
+				// view shows projects
+				viewer.refresh(project);
+			} else {
+				// drill-down adapter in the game
+				if (firstItem instanceof IResource) {
+					parentContainer = ((IResource) firstItem).getParent();
+				} else if (firstItem instanceof TargetSourceContainer) {
+					parentContainer = ((TargetSourceContainer) firstItem).getContainer().getParent();
+				} else if (firstItem instanceof IMakeTarget) {
+					parentContainer = ((IMakeTarget) firstItem).getContainer();
 				}
 
-				IContainer parentContainer = null;
-
-				boolean isDrilledDown = !(firstItem instanceof IProject);
-				if (!isDrilledDown) {
-					// view shows projects
-					viewer.refresh(project);
-				} else {
-					// drill-down adapter in the game
-					if (firstItem instanceof IResource) {
-						parentContainer = ((IResource) firstItem).getParent();
-					} else if (firstItem instanceof TargetSourceContainer) {
-						parentContainer = ((TargetSourceContainer) firstItem).getContainer().getParent();
-					} else if (firstItem instanceof IMakeTarget) {
-						parentContainer = ((IMakeTarget) firstItem).getContainer();
-					}
-
-					if (parentContainer != null && project.equals(parentContainer.getProject())) {
-						viewer.refresh();
-					}
+				if (parentContainer != null && project.equals(parentContainer.getProject())) {
+					viewer.refresh();
 				}
 			}
 		});
@@ -428,7 +422,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	/**
 	 * Check if the resource is in the list of source entries.
-
+	
 	 * @param rc - resource to check.
 	 * @return {@code true} if the resource is a source folder, {@code false} otherwise.
 	 *

@@ -249,14 +249,11 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 	}
 
 	protected void refresh() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					doSetInput(getEditorInput());
-				} catch (CoreException e) {
-					CUIPlugin.log(e);
-				}
+		PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+			try {
+				doSetInput(getEditorInput());
+			} catch (CoreException e) {
+				CUIPlugin.log(e);
 			}
 		});
 	}

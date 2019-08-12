@@ -172,13 +172,10 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 				if (shell != null) {
 					Display display = shell.getDisplay();
 					if (display != null) {
-						display.asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								Control control = translationUnitPreview.getControl();
-								if (control != null && !control.isDisposed()) {
-									translationUnitPreview.setPreviewText(text);
-								}
+						display.asyncExec(() -> {
+							Control control = translationUnitPreview.getControl();
+							if (control != null && !control.isDisposed()) {
+								translationUnitPreview.setPreviewText(text);
 							}
 						});
 					}

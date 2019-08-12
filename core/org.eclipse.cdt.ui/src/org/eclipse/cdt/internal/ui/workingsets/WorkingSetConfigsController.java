@@ -20,14 +20,11 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -108,41 +105,37 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 			this.tree.setInput(workspace.getWorkingSets());
 
 			if (!workspace.getWorkingSets().isEmpty()) {
-				tree.getTree().getDisplay().asyncExec(new Runnable() {
+				tree.getTree().getDisplay().asyncExec(() -> {
+					Object initialSelection;
 
-					@Override
-					public void run() {
-						Object initialSelection;
+					ITreeContentProvider content = (ITreeContentProvider) tree.getContentProvider();
 
-						ITreeContentProvider content = (ITreeContentProvider) tree.getContentProvider();
-
-						if ((initialWorkingSet != null)
-								&& Arrays.asList(content.getElements(tree.getInput())).contains(initialWorkingSet)) {
-							initialSelection = initialWorkingSet;
-						} else {
-							// we have a most-recently-used working set. Just
-							// take the first in tree order
-							initialSelection = tree.getTree().getItem(0).getData();
-						}
-
-						Object[] children = content.getChildren(initialSelection);
-						IStructuredSelection sel;
-
-						if ((children == null) || (children.length == 0)) {
-							// Shouldn't happen: there should at least be the
-							// read-only config.
-							// Can only select the initial working set
-							sel = new StructuredSelection(initialSelection);
-						} else {
-							Object[] toSort = new Object[children.length];
-							System.arraycopy(children, 0, toSort, 0, children.length);
-							tree.getComparator().sort(tree, toSort);
-							sel = new StructuredSelection(toSort[0]);
-						}
-
-						// make the selection
-						tree.setSelection(sel, true);
+					if ((initialWorkingSet != null)
+							&& Arrays.asList(content.getElements(tree.getInput())).contains(initialWorkingSet)) {
+						initialSelection = initialWorkingSet;
+					} else {
+						// we have a most-recently-used working set. Just
+						// take the first in tree order
+						initialSelection = tree.getTree().getItem(0).getData();
 					}
+
+					Object[] children = content.getChildren(initialSelection);
+					IStructuredSelection sel;
+
+					if ((children == null) || (children.length == 0)) {
+						// Shouldn't happen: there should at least be the
+						// read-only config.
+						// Can only select the initial working set
+						sel = new StructuredSelection(initialSelection);
+					} else {
+						Object[] toSort = new Object[children.length];
+						System.arraycopy(children, 0, toSort, 0, children.length);
+						tree.getComparator().sort(tree, toSort);
+						sel = new StructuredSelection(toSort[0]);
+					}
+
+					// make the selection
+					tree.setSelection(sel, true);
 				});
 			}
 		}
@@ -288,18 +281,14 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 	private void addConfig() {
 		InputDialog dlg = new InputDialog(tree.getTree().getShell(),
 				WorkingSetMessages.WSConfigsController_addDlg_title, WorkingSetMessages.WSConfigsController_addDlg_msg,
-				WorkingSetMessages.WSConfigsController_addDlg_defaultName, new IInputValidator() {
-
-					@Override
-					public String isValid(String newText) {
-						if (currentWorkingSet.getConfiguration(newText) != null) {
-							return WorkingSetMessages.WSConfigsController_addDlg_nameExists;
-						}
-						if (newText.length() == 0) {
-							return WorkingSetMessages.WSConfigsController_addDlg_emptyName;
-						}
-						return null;
+				WorkingSetMessages.WSConfigsController_addDlg_defaultName, newText -> {
+					if (currentWorkingSet.getConfiguration(newText) != null) {
+						return WorkingSetMessages.WSConfigsController_addDlg_nameExists;
 					}
+					if (newText.length() == 0) {
+						return WorkingSetMessages.WSConfigsController_addDlg_emptyName;
+					}
+					return null;
 				});
 
 		if (dlg.open() == IDialogConstants.OK_ID) {
@@ -331,21 +320,17 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 	private void renameConfig() {
 		InputDialog dlg = new InputDialog(tree.getTree().getShell(),
 				WorkingSetMessages.WSConfigsController_renameDlg_title,
-				WorkingSetMessages.WSConfigsController_renameDlg_msg, currentConfig.getName(), new IInputValidator() {
-
-					@Override
-					public String isValid(String newText) {
-						if (newText.equals(currentConfig.getName())) {
-							return ""; //$NON-NLS-1$
-						}
-						if (currentWorkingSet.getConfiguration(newText) != null) {
-							return WorkingSetMessages.WSConfigsController_addDlg_nameExists;
-						}
-						if (newText.length() == 0) {
-							return WorkingSetMessages.WSConfigsController_addDlg_emptyName;
-						}
-						return null;
+				WorkingSetMessages.WSConfigsController_renameDlg_msg, currentConfig.getName(), newText -> {
+					if (newText.equals(currentConfig.getName())) {
+						return ""; //$NON-NLS-1$
 					}
+					if (currentWorkingSet.getConfiguration(newText) != null) {
+						return WorkingSetMessages.WSConfigsController_addDlg_nameExists;
+					}
+					if (newText.length() == 0) {
+						return WorkingSetMessages.WSConfigsController_addDlg_emptyName;
+					}
+					return null;
 				});
 
 		if (dlg.open() == IDialogConstants.OK_ID) {
@@ -403,14 +388,10 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 
 		try {
 			ProgressMonitorDialog dlg = new ProgressMonitorDialog(tree.getControl().getShell());
-			dlg.run(true, true, new IRunnableWithProgress() {
-
-				@Override
-				public void run(IProgressMonitor monitor) {
-					IStatus status = currentConfig.build(monitor);
-					if (status.matches(IStatus.WARNING | IStatus.ERROR)) {
-						problem[0] = status;
-					}
+			dlg.run(true, true, monitor -> {
+				IStatus status = currentConfig.build(monitor);
+				if (status.matches(IStatus.WARNING | IStatus.ERROR)) {
+					problem[0] = status;
 				}
 			});
 		} catch (Exception e) {

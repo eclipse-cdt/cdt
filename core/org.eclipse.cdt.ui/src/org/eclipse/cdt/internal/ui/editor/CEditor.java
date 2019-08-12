@@ -49,7 +49,6 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.ITranslationUnitHolder;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -137,8 +136,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISelectionValidator;
@@ -199,17 +196,13 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartService;
@@ -840,26 +833,23 @@ public class CEditor extends TextEditor
 			final IDocument document = sourceViewer.getDocument();
 			if (document instanceof IDocumentExtension) {
 				IDocumentExtension extension = (IDocumentExtension) document;
-				extension.registerPostNotificationReplace(null, new IDocumentExtension.IReplace() {
-					@Override
-					public void perform(IDocument d, IDocumentListener owner) {
-						if ((level.fFirstPosition.isDeleted || level.fFirstPosition.length == 0)
-								&& !level.fSecondPosition.isDeleted
-								&& level.fSecondPosition.offset == level.fFirstPosition.offset) {
-							try {
-								document.replace(level.fSecondPosition.offset, level.fSecondPosition.length, null);
-							} catch (BadLocationException e) {
-								CUIPlugin.log(e);
-							}
+				extension.registerPostNotificationReplace(null, (d, owner) -> {
+					if ((level.fFirstPosition.isDeleted || level.fFirstPosition.length == 0)
+							&& !level.fSecondPosition.isDeleted
+							&& level.fSecondPosition.offset == level.fFirstPosition.offset) {
+						try {
+							document.replace(level.fSecondPosition.offset, level.fSecondPosition.length, null);
+						} catch (BadLocationException e1) {
+							CUIPlugin.log(e1);
 						}
+					}
 
-						if (fBracketLevelStack.size() == 0) {
-							document.removePositionUpdater(fUpdater);
-							try {
-								document.removePositionCategory(CATEGORY);
-							} catch (BadPositionCategoryException e) {
-								CUIPlugin.log(e);
-							}
+					if (fBracketLevelStack.size() == 0) {
+						document.removePositionUpdater(fUpdater);
+						try {
+							document.removePositionCategory(CATEGORY);
+						} catch (BadPositionCategoryException e2) {
+							CUIPlugin.log(e2);
 						}
 					}
 				});
@@ -1590,12 +1580,7 @@ public class CEditor extends TextEditor
 				ce = null;
 			}
 			final ISelection selection = ce != null ? new StructuredSelection(ce) : null;
-			return (T) new IShowInSource() {
-				@Override
-				public ShowInContext getShowInContext() {
-					return new ShowInContext(getEditorInput(), selection);
-				}
-			};
+			return (T) (IShowInSource) () -> new ShowInContext(getEditorInput(), selection);
 		} else if (adapterClass.isAssignableFrom(ProjectionAnnotationModel.class)) {
 			if (fProjectionSupport != null) {
 				T adapter = fProjectionSupport.getAdapter(getSourceViewer(), adapterClass);
@@ -1764,13 +1749,10 @@ public class CEditor extends TextEditor
 				if (isEnableScalablilityMode()) {
 					if (PreferenceConstants.SCALABILITY_RECONCILER.equals(property)
 							|| PreferenceConstants.SCALABILITY_SYNTAX_COLOR.equals(property)) {
-						BusyIndicator.showWhile(getSite().getShell().getDisplay(), new Runnable() {
-							@Override
-							public void run() {
-								setOutlinePageInput(fOutlinePage, getEditorInput());
-								asv.unconfigure();
-								asv.configure(getSourceViewerConfiguration());
-							}
+						BusyIndicator.showWhile(getSite().getShell().getDisplay(), () -> {
+							setOutlinePageInput(fOutlinePage, getEditorInput());
+							asv.unconfigure();
+							asv.configure(getSourceViewerConfiguration());
 						});
 						return;
 					}
@@ -2525,19 +2507,16 @@ public class CEditor extends TextEditor
 
 		// bug 291008 - register custom help listener
 		final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench().getHelpSystem();
-		parent.addHelpListener(new HelpListener() {
-			@Override
-			public void helpRequested(HelpEvent e) {
-				IContextProvider provider = CEditor.this.getAdapter(IContextProvider.class);
-				if (provider != null) {
-					IContext context = provider.getContext(CEditor.this);
-					if (context != null) {
-						helpSystem.displayHelp(context);
-						return;
-					}
+		parent.addHelpListener(e -> {
+			IContextProvider provider = CEditor.this.getAdapter(IContextProvider.class);
+			if (provider != null) {
+				IContext context = provider.getContext(CEditor.this);
+				if (context != null) {
+					helpSystem.displayHelp(context);
+					return;
 				}
-				helpSystem.displayHelp(ICHelpContextIds.CEDITOR_VIEW);
 			}
+			helpSystem.displayHelp(ICHelpContextIds.CEDITOR_VIEW);
 		});
 
 		fEditorSelectionChangedListener = new EditorSelectionChangedListener();
@@ -2832,12 +2811,8 @@ public class CEditor extends TextEditor
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.search.results"); //$NON-NLS-1$
-		fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell shell) {
-				return new SourceViewerInformationControl(shell, false, getOrientation(), null);
-			}
-		});
+		fProjectionSupport.setHoverControlCreator(
+				shell -> new SourceViewerInformationControl(shell, false, getOrientation(), null));
 		fProjectionSupport.install();
 
 		fProjectionModelUpdater = CUIPlugin.getDefault().getFoldingStructureProviderRegistry()
@@ -3467,24 +3442,16 @@ public class CEditor extends TextEditor
 	protected void installOccurrencesFinder(boolean forceUpdate) {
 		fMarkOccurrenceAnnotations = true;
 
-		fPostSelectionListenerWithAST = new ISelectionListenerWithAST() {
-			@Override
-			public void selectionChanged(IEditorPart part, ITextSelection selection, IASTTranslationUnit astRoot) {
-				updateOccurrenceAnnotations(selection, astRoot);
-			}
-		};
+		fPostSelectionListenerWithAST = (part, selection, astRoot) -> updateOccurrenceAnnotations(selection, astRoot);
 		SelectionListenerWithASTManager.getDefault().addListener(this, fPostSelectionListenerWithAST);
 		if (forceUpdate && getSelectionProvider() != null) {
 			ICElement inputCElement = getInputCElement();
 			if (inputCElement instanceof ITranslationUnit) {
 				fForcedMarkOccurrencesSelection = getSelectionProvider().getSelection();
 				ASTProvider.getASTProvider().runOnAST(inputCElement, ASTProvider.WAIT_NO, getProgressMonitor(),
-						new ASTRunnable() {
-							@Override
-							public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
-								updateOccurrenceAnnotations((ITextSelection) fForcedMarkOccurrencesSelection, ast);
-								return Status.OK_STATUS;
-							}
+						(lang, ast) -> {
+							updateOccurrenceAnnotations((ITextSelection) fForcedMarkOccurrencesSelection, ast);
+							return Status.OK_STATUS;
 						});
 			}
 		}
@@ -3675,13 +3642,10 @@ public class CEditor extends TextEditor
 		ICElement inputCElement = getInputCElement();
 		if (provideAST && inputCElement instanceof ITranslationUnit) {
 			ASTProvider.getASTProvider().runOnAST(inputCElement, ASTProvider.WAIT_ACTIVE_ONLY, getProgressMonitor(),
-					new ASTRunnable() {
-						@Override
-						public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
-							if (ast != null)
-								fOverrideIndicatorManager.reconciled(ast, true, getProgressMonitor());
-							return Status.OK_STATUS;
-						}
+					(lang, ast) -> {
+						if (ast != null)
+							fOverrideIndicatorManager.reconciled(ast, true, getProgressMonitor());
+						return Status.OK_STATUS;
 					});
 		}
 	}

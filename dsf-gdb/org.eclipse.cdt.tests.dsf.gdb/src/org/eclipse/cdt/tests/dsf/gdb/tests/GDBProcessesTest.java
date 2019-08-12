@@ -60,12 +60,9 @@ public class GDBProcessesTest extends BaseParametrizedTestCase {
 		resolveLineTagLocations(SOURCE_NAME, MIRunControlTest.LINE_TAGS);
 
 		fSession = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				fProcService = fServicesTracker.getService(IMIProcesses.class);
-			}
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			fProcService = fServicesTracker.getService(IMIProcesses.class);
 		};
 		fSession.getExecutor().submit(runnable).get();
 	}

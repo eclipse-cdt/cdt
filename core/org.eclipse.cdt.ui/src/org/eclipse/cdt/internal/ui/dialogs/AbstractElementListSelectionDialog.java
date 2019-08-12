@@ -220,12 +220,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 */
 	@Override
 	public int open() {
-		BusyIndicator.showWhile(null, new Runnable() {
-			@Override
-			public void run() {
-				access$superOpen();
-			}
-		});
+		BusyIndicator.showWhile(null, () -> access$superOpen());
 		return getReturnCode();
 	}
 

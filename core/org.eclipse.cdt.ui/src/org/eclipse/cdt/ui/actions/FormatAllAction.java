@@ -46,7 +46,6 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -274,12 +273,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 			}
 
 			PlatformUI.getWorkbench().getProgressService().run(true, true,
-					new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
-						@Override
-						public void run(IProgressMonitor monitor) {
-							doRunOnMultiple(tus, status, monitor);
-						}
-					})); // workspace lock
+					new WorkbenchRunnableAdapter(monitor -> doRunOnMultiple(tus, status, monitor))); // workspace lock
 			if (!status.isOK()) {
 				String title = ActionMessages.FormatAllAction_multi_status_title;
 				ErrorDialog.openError(getShell(), title, null, status);
@@ -413,12 +407,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 
 	private void formatTranslationUnit(final ITextFileBuffer fileBuffer, final Map<String, Object> options) {
 		if (fileBuffer.isShared()) {
-			getShell().getDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					doFormat(fileBuffer.getDocument(), options);
-				}
-			});
+			getShell().getDisplay().syncExec(() -> doFormat(fileBuffer.getDocument(), options));
 		} else {
 			doFormat(fileBuffer.getDocument(), options); // run in context thread
 		}

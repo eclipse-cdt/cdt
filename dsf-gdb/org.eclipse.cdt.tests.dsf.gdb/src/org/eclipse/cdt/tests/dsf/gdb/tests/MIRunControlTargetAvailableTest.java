@@ -65,14 +65,11 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		final DsfSession session = getGDBLaunch().getSession();
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
-				fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());
+			fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
 
-				fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
-			}
+			fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
 		};
 		session.getExecutor().submit(runnable).get();
 

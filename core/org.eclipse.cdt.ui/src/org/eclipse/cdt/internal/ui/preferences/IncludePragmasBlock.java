@@ -29,9 +29,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
@@ -98,27 +96,19 @@ public class IncludePragmasBlock extends OptionsConfigurationBlock {
 		String text = PreferencesMessages.IncludePragmasBlock_description;
 		Link link = new Link(parent, SWT.NONE);
 		link.setText(text);
-		link.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				BusyIndicator.showWhile(null, new Runnable() {
-					@Override
-					public void run() {
-						try {
-							URL url = new URL(event.text);
-							IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
-							IWebBrowser browser = browserSupport.getExternalBrowser();
-							browser.openURL(url);
-						} catch (PartInitException e) {
-							// TODO(sprigogin): Should we show an error dialog?
-							CUIPlugin.log(e.getStatus());
-						} catch (MalformedURLException e) {
-							CUIPlugin.log(e);
-						}
-					}
-				});
+		link.addListener(SWT.Selection, event -> BusyIndicator.showWhile(null, () -> {
+			try {
+				URL url = new URL(event.text);
+				IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
+				IWebBrowser browser = browserSupport.getExternalBrowser();
+				browser.openURL(url);
+			} catch (PartInitException e1) {
+				// TODO(sprigogin): Should we show an error dialog?
+				CUIPlugin.log(e1.getStatus());
+			} catch (MalformedURLException e2) {
+				CUIPlugin.log(e2);
 			}
-		});
+		}));
 		// TODO replace by link-specific tooltips when
 		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=88866 is fixed
 		link.setToolTipText(PreferencesMessages.IncludePragmasBlock_link_tooltip);

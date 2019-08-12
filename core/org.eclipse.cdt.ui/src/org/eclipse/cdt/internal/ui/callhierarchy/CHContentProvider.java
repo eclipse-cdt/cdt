@@ -137,21 +137,11 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 			}
 
 			if (!IndexUI.isIndexed(index, input)) {
-				getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						fView.reportNotIndexed(input);
-					}
-				});
+				getDisplay().asyncExec(() -> fView.reportNotIndexed(input));
 			} else {
 				element = IndexUI.attemptConvertionToHandle(index, input);
 				final ICElement finalElement = element;
-				getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						fView.reportInputReplacement(input, finalElement);
-					}
-				});
+				getDisplay().asyncExec(() -> fView.reportInputReplacement(input, finalElement));
 			}
 			ITranslationUnit tu = CModelUtil.getTranslationUnit(element);
 			if (!fComputeReferencedBy && element instanceof IMethod) {

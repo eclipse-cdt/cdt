@@ -22,7 +22,6 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
@@ -80,20 +79,13 @@ public class ManageConfigRunner implements IConfigManager {
 	}
 
 	public IRunnableWithProgress getRunnable() {
-		return new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor imonitor) throws InvocationTargetException, InterruptedException {
-				CUIPlugin.getDefault().getShell().getDisplay().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							CoreModel.getDefault().setProjectDescription(prj, des);
-						} catch (CoreException e) {
-							e.printStackTrace();
-						}
+		return new WorkspaceModifyDelegatingOperation(
+				imonitor -> CUIPlugin.getDefault().getShell().getDisplay().syncExec(() -> {
+					try {
+						CoreModel.getDefault().setProjectDescription(prj, des);
+					} catch (CoreException e) {
+						e.printStackTrace();
 					}
-				});
-			}
-		});
+				}));
 	}
 }

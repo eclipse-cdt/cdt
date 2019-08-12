@@ -343,12 +343,7 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
 			if (children != null) {
 				final Object[] finalChildren = children;
 				fChildNodes.put(parentElement, children);
-				fDisplay.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						checkForAutoExpand(finalChildren);
-					}
-				});
+				fDisplay.asyncExec(() -> checkForAutoExpand(finalChildren));
 			}
 		}
 		return children;

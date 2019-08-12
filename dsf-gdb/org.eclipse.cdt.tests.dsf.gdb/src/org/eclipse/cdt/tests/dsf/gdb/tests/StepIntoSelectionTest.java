@@ -106,12 +106,9 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
 
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-				fRunCtrl = fServicesTracker.getService(IRunControl3.class);
-			}
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+			fRunCtrl = fServicesTracker.getService(IRunControl3.class);
 		};
 		fSession = getGDBLaunch().getSession();
 		fSession.getExecutor().submit(runnable).get();

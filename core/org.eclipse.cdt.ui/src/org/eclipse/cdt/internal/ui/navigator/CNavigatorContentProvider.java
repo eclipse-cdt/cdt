@@ -39,11 +39,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
@@ -70,46 +68,35 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		IMemento memento = commonContentExtensionSite.getMemento();
 		restoreState(memento);
 
-		fPropertyChangeListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				boolean refreshViewer = false;
-				String property = event.getProperty();
-				Object newValue = event.getNewValue();
+		fPropertyChangeListener = event -> {
+			boolean refreshViewer = false;
+			String property = event.getProperty();
+			Object newValue = event.getNewValue();
 
-				if (property.equals(PreferenceConstants.PREF_SHOW_CU_CHILDREN)) {
-					boolean showCUChildren = newValue instanceof Boolean ? ((Boolean) newValue).booleanValue() : false;
-					setProvideMembers(showCUChildren);
-					refreshViewer = true;
-				} else if (property.equals(PreferenceConstants.CVIEW_GROUP_INCLUDES)) {
-					boolean groupIncludes = newValue instanceof Boolean ? ((Boolean) newValue).booleanValue() : false;
-					setIncludesGrouping(groupIncludes);
-					refreshViewer = true;
-				} else if (property.equals(PreferenceConstants.CVIEW_GROUP_MACROS)) {
-					boolean groupMacros = newValue instanceof Boolean ? ((Boolean) newValue).booleanValue() : false;
-					setMacroGrouping(groupMacros);
-					refreshViewer = true;
-				}
+			if (property.equals(PreferenceConstants.PREF_SHOW_CU_CHILDREN)) {
+				boolean showCUChildren = newValue instanceof Boolean ? ((Boolean) newValue).booleanValue() : false;
+				setProvideMembers(showCUChildren);
+				refreshViewer = true;
+			} else if (property.equals(PreferenceConstants.CVIEW_GROUP_INCLUDES)) {
+				boolean groupIncludes = newValue instanceof Boolean ? ((Boolean) newValue).booleanValue() : false;
+				setIncludesGrouping(groupIncludes);
+				refreshViewer = true;
+			} else if (property.equals(PreferenceConstants.CVIEW_GROUP_MACROS)) {
+				boolean groupMacros = newValue instanceof Boolean ? ((Boolean) newValue).booleanValue() : false;
+				setMacroGrouping(groupMacros);
+				refreshViewer = true;
+			}
 
-				if (refreshViewer && getViewer() != null) {
-					getViewer().refresh();
-				}
+			if (refreshViewer && getViewer() != null) {
+				getViewer().refresh();
 			}
 		};
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyChangeListener);
 
 		// Note that this listener listens to CCorePlugin preferences
-		fPreferenceChangeListener = new IPreferenceChangeListener() {
-			@Override
-			public void preferenceChange(PreferenceChangeEvent event) {
-				if (event.getKey().equals(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT)) {
-					Display.getDefault().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							getViewer().refresh();
-						}
-					});
-				}
+		fPreferenceChangeListener = event -> {
+			if (event.getKey().equals(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT)) {
+				Display.getDefault().asyncExec(() -> getViewer().refresh());
 			}
 		};
 		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).addPreferenceChangeListener(fPreferenceChangeListener);

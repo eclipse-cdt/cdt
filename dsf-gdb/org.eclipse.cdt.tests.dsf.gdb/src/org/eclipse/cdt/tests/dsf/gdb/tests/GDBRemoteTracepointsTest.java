@@ -167,24 +167,21 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
 
 		fSession = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-				fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
-				fGdbControl = fServicesTracker.getService(IGDBControl.class);
-				fCommandFactory = fGdbControl.getCommandFactory();
+			fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
+			fGdbControl = fServicesTracker.getService(IGDBControl.class);
+			fCommandFactory = fGdbControl.getCommandFactory();
 
-				//        		fTraceService = fServicesTracker.getService(ITraceControl.class);
-				fSession.addServiceEventListener(GDBRemoteTracepointsTest.this, null);
+			//        		fTraceService = fServicesTracker.getService(ITraceControl.class);
+			fSession.addServiceEventListener(GDBRemoteTracepointsTest.this, null);
 
-				// Create a large array to make sure we don't run out
-				fTracepoints = new IBreakpointDMContext[100];
+			// Create a large array to make sure we don't run out
+			fTracepoints = new IBreakpointDMContext[100];
 
-				// Run an initial test to check that everything is ok with GDB
-				checkTraceInitialStatus();
-			}
+			// Run an initial test to check that everything is ok with GDB
+			checkTraceInitialStatus();
 		};
 		fSession.getExecutor().submit(runnable).get();
 

@@ -44,12 +44,8 @@ class EclipsePreferencesAdapter implements IPreferenceStore {
 		@Override
 		public void preferenceChange(final IEclipsePreferences.PreferenceChangeEvent event) {
 			if (Display.getCurrent() == null) {
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						firePropertyChangeEvent(event.getKey(), event.getOldValue(), event.getNewValue());
-					}
-				});
+				Display.getDefault().asyncExec(
+						() -> firePropertyChangeEvent(event.getKey(), event.getOldValue(), event.getNewValue()));
 			} else {
 				firePropertyChangeEvent(event.getKey(), event.getOldValue(), event.getNewValue());
 			}

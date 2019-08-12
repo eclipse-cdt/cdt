@@ -41,12 +41,7 @@ public class IBSetInputJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		if (CCorePlugin.getIndexManager().joinIndexer(IIndexManager.FOREVER, monitor)) {
 			try {
-				fDisplay.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						fViewPart.setInput(fInput);
-					}
-				});
+				fDisplay.asyncExec(() -> fViewPart.setInput(fInput));
 			} catch (SWTException e) {
 				// display may be disposed
 			}

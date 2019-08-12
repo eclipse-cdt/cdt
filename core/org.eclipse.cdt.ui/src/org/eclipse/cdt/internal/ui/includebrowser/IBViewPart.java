@@ -55,21 +55,17 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.LocalSelectionTransfer;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -240,23 +236,17 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
 							final ITranslationUnit alt = CoreModelUtil
 									.findTranslationUnitForLocation(input.getLocation(), input.getCProject());
 							if (alt != null && IndexUI.isIndexed(index, alt)) {
-								display.asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										if (fTreeViewer.getInput() == input) {
-											setInput(alt);
-										}
+								display.asyncExec(() -> {
+									if (fTreeViewer.getInput() == input) {
+										setInput(alt);
 									}
 								});
 							} else {
 								final String msg = IndexUI.getFileNotIndexedMessage(input);
-								display.asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										if (fTreeViewer.getInput() == input) {
-											setMessage(msg);
-											fTreeViewer.setInput(null);
-										}
+								display.asyncExec(() -> {
+									if (fTreeViewer.getInput() == input) {
+										setMessage(msg);
+										fTreeViewer.setInput(null);
 									}
 								});
 							}
@@ -298,16 +288,12 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
 
 		bindingService = PlatformUI.getWorkbench().getService(IBindingService.class);
 		if (bindingService != null) {
-			bindingManagerListener = new IBindingManagerListener() {
-				@Override
-				public void bindingManagerChanged(BindingManagerEvent event) {
-					if (event.isActiveBindingsChanged()) {
-						String keyBinding = bindingService
-								.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_DELETE);
-						if (keyBinding != null) {
-							fRemoveFromViewAction
-									.setText(IBMessages.IBViewPart_RemoveFromView_label + '\t' + keyBinding);
-						}
+			bindingManagerListener = event -> {
+				if (event.isActiveBindingsChanged()) {
+					String keyBinding = bindingService
+							.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_DELETE);
+					if (keyBinding != null) {
+						fRemoveFromViewAction.setText(IBMessages.IBViewPart_RemoveFromView_label + '\t' + keyBinding);
 					}
 				}
 			};
@@ -435,12 +421,7 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
 	private void createContextMenu() {
 		MenuManager manager = new MenuManager();
 		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager m) {
-				onContextMenuAboutToShow(m);
-			}
-		});
+		manager.addMenuListener(m -> onContextMenuAboutToShow(m));
 		Menu menu = manager.createContextMenu(fTreeViewer.getControl());
 		fTreeViewer.getControl().setMenu(menu);
 		IWorkbenchPartSite site = getSite();
@@ -461,12 +442,7 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
 		fTreeViewer.setContentProvider(fContentProvider);
 		fTreeViewer.setLabelProvider(fLabelProvider);
 		fTreeViewer.setAutoExpandLevel(2);
-		fTreeViewer.addOpenListener(new IOpenListener() {
-			@Override
-			public void open(OpenEvent event) {
-				onShowInclude(event.getSelection());
-			}
-		});
+		fTreeViewer.addOpenListener(event -> onShowInclude(event.getSelection()));
 	}
 
 	private void createInfoPage() {

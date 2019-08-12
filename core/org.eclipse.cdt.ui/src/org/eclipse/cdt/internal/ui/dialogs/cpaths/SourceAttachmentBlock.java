@@ -422,15 +422,11 @@ public class SourceAttachmentBlock {
 	 * Creates a runnable that sets the source attachment by modifying the project's classpath or updating a container.
 	 */
 	public IRunnableWithProgress getRunnable(final Shell shell) {
-		return new IRunnableWithProgress() {
-
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					attachSource(shell, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
+		return monitor -> {
+			try {
+				attachSource(shell, monitor);
+			} catch (CoreException e) {
+				throw new InvocationTargetException(e);
 			}
 		};
 	}
@@ -475,14 +471,10 @@ public class SourceAttachmentBlock {
 
 	private boolean putJarOnClasspathDialog(Shell shell) {
 		final boolean[] result = new boolean[1];
-		shell.getDisplay().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				String title = CPathEntryMessages.SourceAttachmentBlock_putoncpdialog_title;
-				String message = CPathEntryMessages.SourceAttachmentBlock_putoncpdialog_message;
-				result[0] = MessageDialog.openQuestion(CUIPlugin.getActiveWorkbenchShell(), title, message);
-			}
+		shell.getDisplay().syncExec(() -> {
+			String title = CPathEntryMessages.SourceAttachmentBlock_putoncpdialog_title;
+			String message = CPathEntryMessages.SourceAttachmentBlock_putoncpdialog_message;
+			result[0] = MessageDialog.openQuestion(CUIPlugin.getActiveWorkbenchShell(), title, message);
 		});
 		return result[0];
 	}

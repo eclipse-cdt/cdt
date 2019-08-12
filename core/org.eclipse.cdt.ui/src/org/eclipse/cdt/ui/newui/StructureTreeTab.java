@@ -838,30 +838,27 @@ public class StructureTreeTab extends AbstractCPropertyTab {
 	@Override
 	public void updateData(ICResourceDescription rcfg) {
 		cfg = rcfg;
-		tree.getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					tree.removeAll();
-					TreeItem ti = new TreeItem(tree, 0);
-					ti.setText(0, Messages.StructureTreeTab_11);
-					tree.update();
-					tree.setRedraw(false);
-					tree.removeAll();
-					switch (combo.getSelectionIndex()) {
-					case 0:
-						update(cfg.getConfiguration().getProjectDescription());
-						break;
-					case 1:
-						update(null, "ICConfigurationDescription", cfg.getConfiguration()); //$NON-NLS-1$
-						break;
-					case 2:
-						update(null, "ICResourceDescription", cfg); //$NON-NLS-1$
-						break;
-					}
-				} finally {
-					tree.setRedraw(true);
+		tree.getDisplay().asyncExec(() -> {
+			try {
+				tree.removeAll();
+				TreeItem ti = new TreeItem(tree, 0);
+				ti.setText(0, Messages.StructureTreeTab_11);
+				tree.update();
+				tree.setRedraw(false);
+				tree.removeAll();
+				switch (combo.getSelectionIndex()) {
+				case 0:
+					update(cfg.getConfiguration().getProjectDescription());
+					break;
+				case 1:
+					update(null, "ICConfigurationDescription", cfg.getConfiguration()); //$NON-NLS-1$
+					break;
+				case 2:
+					update(null, "ICResourceDescription", cfg); //$NON-NLS-1$
+					break;
 				}
+			} finally {
+				tree.setRedraw(true);
 			}
 		});
 	}

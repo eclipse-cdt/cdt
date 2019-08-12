@@ -89,13 +89,10 @@ public class FileBrowserVMProvider extends AbstractVMProvider {
 		// We're in the UI thread.  Re-dispach to VM Adapter executor thread
 		// and then call root layout node.
 		try {
-			getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					if (isDisposed())
-						return;
-					handleEvent(text);
-				}
+			getExecutor().execute(() -> {
+				if (isDisposed())
+					return;
+				handleEvent(text);
 			});
 		} catch (RejectedExecutionException e) {
 			// Ignore.  This exception could be thrown if the provider is being

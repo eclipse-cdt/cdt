@@ -70,16 +70,13 @@ public class AddIncludeAction extends TextEditorAction {
 			@Override
 			public <T> T selectElement(final Collection<T> elements) {
 				final Object[] result = new Object[1];
-				runInUIThread(new Runnable() {
-					@Override
-					public void run() {
-						ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new LabelProvider());
-						dialog.setElements(elements.toArray());
-						dialog.setTitle(CEditorMessages.AddInclude_label);
-						dialog.setMessage(CEditorMessages.AddInclude_description);
-						if (dialog.open() == Window.OK)
-							result[0] = dialog.getFirstResult();
-					}
+				runInUIThread(() -> {
+					ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new LabelProvider());
+					dialog.setElements(elements.toArray());
+					dialog.setTitle(CEditorMessages.AddInclude_label);
+					dialog.setMessage(CEditorMessages.AddInclude_description);
+					if (dialog.open() == Window.OK)
+						result[0] = dialog.getFirstResult();
 				});
 				return (T) result[0];
 			}

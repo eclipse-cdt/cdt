@@ -107,15 +107,12 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
 
 		fSession = getGDBLaunch().getSession();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+		Runnable runnable = () -> {
+			fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-				fExpService = fServicesTracker.getService(IExpressions.class);
-				fSession.addServiceEventListener(MIExpressionsTest.this, null);
-				clearExprChangedData();
-			}
+			fExpService = fServicesTracker.getService(IExpressions.class);
+			fSession.addServiceEventListener(MIExpressionsTest.this, null);
+			clearExprChangedData();
 		};
 		fSession.getExecutor().submit(runnable).get();
 	}
@@ -608,18 +605,13 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		// Write the new value using its formatted value
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fExpService.writeExpression(exprDmc, invalidValueFormatted, format,
-						new RequestMonitor(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								wait.waitFinished(getStatus());
-							}
-						});
-			}
-		});
+		fExpService.getExecutor().submit(() -> fExpService.writeExpression(exprDmc, invalidValueFormatted, format,
+				new RequestMonitor(fExpService.getExecutor(), null) {
+					@Override
+					protected void handleCompleted() {
+						wait.waitFinished(getStatus());
+					}
+				}));
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue("Got an OK status for an error test case.  Should not be able to write value "
@@ -646,49 +638,46 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a[0]");
+		fExpService.getExecutor().submit(() -> {
+			IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a[0]");
 
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("28")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("28")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating natural format", null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating natural format", null));
 								}
 							}
-						});
+						}
+					});
 
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equalsIgnoreCase("0x1c")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equalsIgnoreCase("0x1c")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating hex format", null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating hex format", null));
 								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -718,10 +707,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// First we get the expected value of the array pointer.
 		final IExpressionDMContext addrDmc = SyncUtil.createExpression(frameDmc, "&a");
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fExpService.getFormattedExpressionValue(
+		fExpService.getExecutor()
+				.submit(() -> fExpService.getFormattedExpressionValue(
 						fExpService.getFormattedValueContext(addrDmc, IFormattedValues.NATURAL_FORMAT),
 						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
 							@Override
@@ -732,9 +719,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 								wait.waitFinished(getStatus());
 							}
-						});
-			}
-		});
+						}));
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
@@ -744,76 +729,73 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		wait.waitReset();
 
 		// Now perform the test
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
+		fExpService.getExecutor().submit(() -> {
+			IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
 
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals(actualAddrStr)) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals(actualAddrStr)) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating natural format", null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating natural format", null));
 								}
 							}
-						});
+						}
+					});
 
-				wait.increment();
-				fExpService.getSubExpressions(exprDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else {
-									IExpressionDMContext[] children = getData();
-									int failedIndex = -1;
-									for (int i = 0; i < 2; i++) {
-										if (!children[i].getExpression().equals("a[" + i + "]")) {
-											failedIndex = i;
-										}
-									}
-
-									if (failedIndex != -1) {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed getting child number: " + failedIndex, null));
-									} else {
-										wait.waitFinished();
+			wait.increment();
+			fExpService.getSubExpressions(exprDmc,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								IExpressionDMContext[] children = getData();
+								int failedIndex = -1;
+								for (int i = 0; i < 2; i++) {
+									if (!children[i].getExpression().equals("a[" + i + "]")) {
+										failedIndex = i;
 									}
 								}
-							}
-						});
 
-				// Use different format to avoid triggering the cache
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+								if (failedIndex != -1) {
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed getting child number: " + failedIndex, null));
 								} else {
-									if (getData().getFormattedValue().equals(actualAddrStr)) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating hex format", null));
-									}
+									wait.waitFinished();
 								}
 							}
-						});
-			}
+						}
+					});
+
+			// Use different format to avoid triggering the cache
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals(actualAddrStr)) {
+									wait.waitFinished();
+								} else {
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating hex format", null));
+								}
+							}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -842,10 +824,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// First we get the expected value of the array pointer.
 		final IExpressionDMContext addrDmc = SyncUtil.createExpression(frameDmc, "&a");
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fExpService.getFormattedExpressionValue(
+		fExpService.getExecutor()
+				.submit(() -> fExpService.getFormattedExpressionValue(
 						fExpService.getFormattedValueContext(addrDmc, IFormattedValues.NATURAL_FORMAT),
 						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
 							@Override
@@ -856,9 +836,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 								wait.waitFinished(getStatus());
 							}
-						});
-			}
-		});
+						}));
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
@@ -867,70 +845,66 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		wait.waitReset();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				wait.increment();
-				IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
+		fExpService.getExecutor().submit(() -> {
+			wait.increment();
+			IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
 
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals(actualAddrStr)) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals(actualAddrStr)) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating natural format", null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating natural format", null));
 								}
 							}
-						});
+						}
+					});
 
-				wait.increment();
-				fExpService.getSubExpressionCount(exprDmc,
-						new DataRequestMonitor<Integer>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			wait.increment();
+			fExpService.getSubExpressionCount(exprDmc,
+					new DataRequestMonitor<Integer>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								int count = getData();
+								if (count != 2) {
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed getting count for children.  Got" + count + "instead of 2", null));
 								} else {
-									int count = getData();
-									if (count != 2) {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed getting count for children.  Got" + count + "instead of 2",
-												null));
-									} else {
-										wait.waitFinished();
-									}
+									wait.waitFinished();
 								}
 							}
-						});
+						}
+					});
 
-				// Use different format to avoid triggering the cache
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			// Use different format to avoid triggering the cache
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals(actualAddrStr)) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals(actualAddrStr)) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating hex format", null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating hex format", null));
 								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -960,68 +934,63 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else {
-									if (getData().getFormattedValue().equals("32")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(
-												new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-														"Failed evaluating natural format, got "
-																+ getData().getFormattedValue() + " instead of 32",
-														null));
-									}
-								}
-							}
-						});
-
-				wait.increment();
-				fExpService.writeExpression(exprDmc, "56", IFormattedValues.NATURAL_FORMAT,
-						new RequestMonitor(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else {
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("32")) {
 									wait.waitFinished();
-								}
-							}
-						});
-
-				// Use different format to avoid triggering the cache
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
 								} else {
-									if (getData().getFormattedValue().equals("0x38")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(
-												new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-														"Failed evaluating hex format, got "
-																+ getData().getFormattedValue() + " instead of 0x38",
-														null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating natural format, got " + getData().getFormattedValue()
+													+ " instead of 32",
+											null));
 								}
 							}
-						});
-			}
+						}
+					});
+
+			wait.increment();
+			fExpService.writeExpression(exprDmc, "56", IFormattedValues.NATURAL_FORMAT,
+					new RequestMonitor(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								wait.waitFinished();
+							}
+						}
+					});
+
+			// Use different format to avoid triggering the cache
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("0x38")) {
+									wait.waitFinished();
+								} else {
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating hex format, got " + getData().getFormattedValue()
+													+ " instead of 0x38",
+											null));
+								}
+							}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -1055,113 +1024,107 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("32")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("32")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(
-												new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-														"Failed evaluating natural format, got "
-																+ getData().getFormattedValue() + " instead of 32",
-														null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating natural format, got " + getData().getFormattedValue()
+													+ " instead of 32",
+											null));
 								}
 							}
-						});
+						}
+					});
 
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("0x20")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("0x20")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(
-												new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-														"Failed evaluating hex format, got "
-																+ getData().getFormattedValue() + " instead of 0x20",
-														null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating hex format, got " + getData().getFormattedValue()
+													+ " instead of 0x20",
+											null));
 								}
 							}
-						});
+						}
+					});
 
-				wait.increment();
-				fExpService.getSubExpressionCount(exprDmc,
-						new DataRequestMonitor<Integer>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			wait.increment();
+			fExpService.getSubExpressionCount(exprDmc,
+					new DataRequestMonitor<Integer>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData() != 0) {
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed getting child count; expecting 0 got " + getData(), null));
 								} else {
-									if (getData() != 0) {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed getting child count; expecting 0 got " + getData(), null));
-									} else {
-										wait.waitFinished();
-									}
+									wait.waitFinished();
 								}
 							}
-						});
+						}
+					});
 
-				wait.increment();
-				fExpService.getSubExpressions(exprDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			wait.increment();
+			fExpService.getSubExpressions(exprDmc,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().length != 0) {
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed getting children; expecting 0 got " + getData().length, null));
 								} else {
-									if (getData().length != 0) {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed getting children; expecting 0 got " + getData().length, null));
-									} else {
-										wait.waitFinished();
-									}
+									wait.waitFinished();
 								}
 							}
-						});
+						}
+					});
 
-				// Must use a different format or else the cache will be triggered
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.OCTAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			// Must use a different format or else the cache will be triggered
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.OCTAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("040")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("040")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(
-												new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-														"Failed evaluating hex format, got "
-																+ getData().getFormattedValue() + " instead of 040",
-														null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating hex format, got " + getData().getFormattedValue()
+													+ " instead of 040",
+											null));
 								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -1199,98 +1162,92 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else {
-									if (getData().getFormattedValue().equals("32")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(
-												new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-														"Failed evaluating natural format, got "
-																+ getData().getFormattedValue() + " instead of 32",
-														null));
-									}
-								}
-							}
-						});
-
-				wait.increment();
-				fExpService.writeExpression(exprDmc, "56", IFormattedValues.NATURAL_FORMAT,
-						new RequestMonitor(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else {
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("32")) {
 									wait.waitFinished();
-								}
-							}
-						});
-
-				// Must use a different format or else the cache will be
-				// triggered
-				// This will prove that the write has changed the backend
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.OCTAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
 								} else {
-									if (getData().getFormattedValue().equals("070")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(
-												new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-														"Failed evaluating hex format, got "
-																+ getData().getFormattedValue() + " instead of 070",
-														null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating natural format, got " + getData().getFormattedValue()
+													+ " instead of 32",
+											null));
 								}
 							}
-						});
+						}
+					});
 
-				// Test that the cache is triggered, giving us the old value
-				// This happens because we are calling this operation on the
-				// same executor run call.
-				// NOTE that this is not a problem, because the writeExpression
-				// will eventually
-				// reset the cache (we'll test this below).
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			wait.increment();
+			fExpService.writeExpression(exprDmc, "56", IFormattedValues.NATURAL_FORMAT,
+					new RequestMonitor(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								wait.waitFinished();
+							}
+						}
+					});
+
+			// Must use a different format or else the cache will be
+			// triggered
+			// This will prove that the write has changed the backend
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.OCTAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("070")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("32")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(
-												new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-														"Failed evaluating natural format, got "
-																+ getData().getFormattedValue() + " instead of 32",
-														null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating hex format, got " + getData().getFormattedValue()
+													+ " instead of 070",
+											null));
 								}
 							}
-						});
-			}
+						}
+					});
+
+			// Test that the cache is triggered, giving us the old value
+			// This happens because we are calling this operation on the
+			// same executor run call.
+			// NOTE that this is not a problem, because the writeExpression
+			// will eventually
+			// reset the cache (we'll test this below).
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("32")) {
+									wait.waitFinished();
+								} else {
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating natural format, got " + getData().getFormattedValue()
+													+ " instead of 32",
+											null));
+								}
+							}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -1300,32 +1257,28 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// reset, do a similar
 		// request as above to see that the cache has indeed been reset
 		wait.waitReset();
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("56")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("56")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(
-												new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-														"Failed evaluating natural format, got "
-																+ getData().getFormattedValue() + " instead of 56",
-														null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating natural format, got " + getData().getFormattedValue()
+													+ " instead of 56",
+											null));
 								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -1357,10 +1310,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		// First get the address of 'a' through 'a_ptr'
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fExpService.getFormattedExpressionValue(
+		fExpService.getExecutor()
+				.submit(() -> fExpService.getFormattedExpressionValue(
 						fExpService.getFormattedValueContext(exprDmc2, IFormattedValues.NATURAL_FORMAT),
 						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
 							@Override
@@ -1371,9 +1322,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 								wait.waitFinished(getStatus());
 							}
-						});
-			}
-		});
+						}));
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
@@ -1533,53 +1482,47 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				// First create the var object and all its children
-				IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
+			// First create the var object and all its children
+			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
 
-				fExpService.getSubExpressions(parentDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().length != 2) {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed getting children; expecting 2 got " + getData().length, null));
-								} else {
-									// now get the value of the child
-									final String valueStr = "1";
-									final IExpressionDMContext child = getData()[0];
-									fExpService.getFormattedExpressionValue(
-											fExpService.getFormattedValueContext(child,
-													IFormattedValues.NATURAL_FORMAT),
-											new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(),
-													null) {
-												@Override
-												protected void handleCompleted() {
-													if (!isSuccess()) {
-														wait.waitFinished(getStatus());
-													} else if (getData().getFormattedValue().equals(valueStr)) {
-														wait.waitFinished();
-													} else {
-														wait.waitFinished(new Status(IStatus.ERROR,
-																TestsPlugin.PLUGIN_ID,
-																"Failed evaluating " + child.getExpression() + ", got "
-																		+ getData().getFormattedValue() + " instead of "
-																		+ valueStr,
-																null));
-													}
+			fExpService.getSubExpressions(parentDmc,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().length != 2) {
+								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+										"Failed getting children; expecting 2 got " + getData().length, null));
+							} else {
+								// now get the value of the child
+								final String valueStr = "1";
+								final IExpressionDMContext child = getData()[0];
+								fExpService.getFormattedExpressionValue(
+										fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
+										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+											@Override
+											protected void handleCompleted() {
+												if (!isSuccess()) {
+													wait.waitFinished(getStatus());
+												} else if (getData().getFormattedValue().equals(valueStr)) {
+													wait.waitFinished();
+												} else {
+													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+															"Failed evaluating " + child.getExpression() + ", got "
+																	+ getData().getFormattedValue() + " instead of "
+																	+ valueStr,
+															null));
 												}
+											}
 
-											});
-								}
-
+										});
 							}
-						});
-			}
+
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -1589,53 +1532,47 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		SyncUtil.step(StepType.STEP_RETURN);
 		stoppedEvent = SyncUtil.step(4, StepType.STEP_INTO);
 		final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				// First create the var object and all its children
-				IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc2, "z");
+			// First create the var object and all its children
+			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc2, "z");
 
-				fExpService.getSubExpressions(parentDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().length != 2) {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed getting children; expecting 2 got " + getData().length, null));
-								} else {
-									// now get the value of the child
-									final String valueStr = "2";
-									final IExpressionDMContext child = getData()[0];
-									fExpService.getFormattedExpressionValue(
-											fExpService.getFormattedValueContext(child,
-													IFormattedValues.NATURAL_FORMAT),
-											new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(),
-													null) {
-												@Override
-												protected void handleCompleted() {
-													if (!isSuccess()) {
-														wait.waitFinished(getStatus());
-													} else if (getData().getFormattedValue().equals(valueStr)) {
-														wait.waitFinished();
-													} else {
-														wait.waitFinished(new Status(IStatus.ERROR,
-																TestsPlugin.PLUGIN_ID,
-																"Failed evaluating " + child.getExpression() + ", got "
-																		+ getData().getFormattedValue() + " instead of "
-																		+ valueStr,
-																null));
-													}
+			fExpService.getSubExpressions(parentDmc,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().length != 2) {
+								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+										"Failed getting children; expecting 2 got " + getData().length, null));
+							} else {
+								// now get the value of the child
+								final String valueStr = "2";
+								final IExpressionDMContext child = getData()[0];
+								fExpService.getFormattedExpressionValue(
+										fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
+										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+											@Override
+											protected void handleCompleted() {
+												if (!isSuccess()) {
+													wait.waitFinished(getStatus());
+												} else if (getData().getFormattedValue().equals(valueStr)) {
+													wait.waitFinished();
+												} else {
+													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+															"Failed evaluating " + child.getExpression() + ", got "
+																	+ getData().getFormattedValue() + " instead of "
+																	+ valueStr,
+															null));
 												}
+											}
 
-											});
-								}
-
+										});
 							}
-						});
-			}
+
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -1645,53 +1582,47 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		SyncUtil.step(StepType.STEP_RETURN);
 		stoppedEvent = SyncUtil.step(4, StepType.STEP_INTO);
 		final IFrameDMContext frameDmc3 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				// First create the var object and all its children
-				IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc3, "z");
+			// First create the var object and all its children
+			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc3, "z");
 
-				fExpService.getSubExpressions(parentDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().length != 2) {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed getting children; expecting 2 got " + getData().length, null));
-								} else {
-									// now get the value of the child
-									final String valueStr = "3";
-									final IExpressionDMContext child = getData()[0];
-									fExpService.getFormattedExpressionValue(
-											fExpService.getFormattedValueContext(child,
-													IFormattedValues.NATURAL_FORMAT),
-											new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(),
-													null) {
-												@Override
-												protected void handleCompleted() {
-													if (!isSuccess()) {
-														wait.waitFinished(getStatus());
-													} else if (getData().getFormattedValue().equals(valueStr)) {
-														wait.waitFinished();
-													} else {
-														wait.waitFinished(new Status(IStatus.ERROR,
-																TestsPlugin.PLUGIN_ID,
-																"Failed evaluating " + child.getExpression() + ", got "
-																		+ getData().getFormattedValue() + " instead of "
-																		+ valueStr,
-																null));
-													}
+			fExpService.getSubExpressions(parentDmc,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().length != 2) {
+								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+										"Failed getting children; expecting 2 got " + getData().length, null));
+							} else {
+								// now get the value of the child
+								final String valueStr = "3";
+								final IExpressionDMContext child = getData()[0];
+								fExpService.getFormattedExpressionValue(
+										fExpService.getFormattedValueContext(child, IFormattedValues.NATURAL_FORMAT),
+										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+											@Override
+											protected void handleCompleted() {
+												if (!isSuccess()) {
+													wait.waitFinished(getStatus());
+												} else if (getData().getFormattedValue().equals(valueStr)) {
+													wait.waitFinished();
+												} else {
+													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+															"Failed evaluating " + child.getExpression() + ", got "
+																	+ getData().getFormattedValue() + " instead of "
+																	+ valueStr,
+															null));
 												}
+											}
 
-											});
-								}
-
+										});
 							}
-						});
-			}
+
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -1728,85 +1659,78 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	public void doUpdateTest(final IFrameDMContext frameDmc, final int baseValue) throws Throwable {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				// First create the var object and all its children
-				IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "a");
+			// First create the var object and all its children
+			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "a");
 
-				fExpService.getSubExpressions(parentDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().length != 1) {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed getting children; expecting 1 got " + getData().length, null));
-								} else {
-									// Now list the children of this child
-									fExpService.getSubExpressions(getData()[0],
-											new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(),
-													null) {
-												@Override
-												protected void handleCompleted() {
-													final IExpressionDMContext[] childDmcs = getData();
+			fExpService.getSubExpressions(parentDmc,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().length != 1) {
+								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+										"Failed getting children; expecting 1 got " + getData().length, null));
+							} else {
+								// Now list the children of this child
+								fExpService.getSubExpressions(getData()[0],
+										new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(),
+												null) {
+											@Override
+											protected void handleCompleted() {
+												final IExpressionDMContext[] childDmcs = getData();
 
-													if (!isSuccess()) {
-														wait.waitFinished(getStatus());
-													} else if (childDmcs.length != 2) {
-														wait.waitFinished(
-																new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-																		"Failed getting children; expecting 2 got "
-																				+ childDmcs.length,
-																		null));
-													} else {
-														// now get the value of the two children
-														for (int i = 0; i < 2; i++) {
-															final String valueStr = Integer
-																	.toString(baseValue + i + 10);
-															final int finali = i;
+												if (!isSuccess()) {
+													wait.waitFinished(getStatus());
+												} else if (childDmcs.length != 2) {
+													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+															"Failed getting children; expecting 2 got "
+																	+ childDmcs.length,
+															null));
+												} else {
+													// now get the value of the two children
+													for (int i = 0; i < 2; i++) {
+														final String valueStr = Integer.toString(baseValue + i + 10);
+														final int finali = i;
 
-															wait.increment();
-															fExpService.getFormattedExpressionValue(
-																	fExpService.getFormattedValueContext(childDmcs[i],
-																			IFormattedValues.NATURAL_FORMAT),
-																	new DataRequestMonitor<FormattedValueDMData>(
-																			fExpService.getExecutor(), null) {
-																		@Override
-																		protected void handleCompleted() {
-																			if (!isSuccess()) {
-																				wait.waitFinished(getStatus());
-																			} else if (getData().getFormattedValue()
-																					.equals(valueStr)) {
-																				wait.waitFinished();
-																			} else {
-																				wait.waitFinished(new Status(
-																						IStatus.ERROR,
-																						TestsPlugin.PLUGIN_ID,
-																						"Failed evaluating "
-																								+ childDmcs[finali]
-																										.getExpression()
-																								+ ", got "
-																								+ getData()
-																										.getFormattedValue()
-																								+ " instead of "
-																								+ valueStr,
-																						null));
-																			}
+														wait.increment();
+														fExpService.getFormattedExpressionValue(
+																fExpService.getFormattedValueContext(childDmcs[i],
+																		IFormattedValues.NATURAL_FORMAT),
+																new DataRequestMonitor<FormattedValueDMData>(
+																		fExpService.getExecutor(), null) {
+																	@Override
+																	protected void handleCompleted() {
+																		if (!isSuccess()) {
+																			wait.waitFinished(getStatus());
+																		} else if (getData().getFormattedValue()
+																				.equals(valueStr)) {
+																			wait.waitFinished();
+																		} else {
+																			wait.waitFinished(new Status(IStatus.ERROR,
+																					TestsPlugin.PLUGIN_ID,
+																					"Failed evaluating "
+																							+ childDmcs[finali]
+																									.getExpression()
+																							+ ", got "
+																							+ getData()
+																									.getFormattedValue()
+																							+ " instead of " + valueStr,
+																					null));
 																		}
+																	}
 
-																	});
-														}
+																});
 													}
 												}
-											});
-								}
-
+											}
+										});
 							}
-						});
-			}
+
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -1819,85 +1743,78 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
 		final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				// First create the var object and all its children
-				IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc2, "a");
+			// First create the var object and all its children
+			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc2, "a");
 
-				fExpService.getSubExpressions(parentDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().length != 1) {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed getting children; expecting 1 got " + getData().length, null));
-								} else {
-									// Now list the children of this child
-									fExpService.getSubExpressions(getData()[0],
-											new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(),
-													null) {
-												@Override
-												protected void handleCompleted() {
-													final IExpressionDMContext[] childDmcs = getData();
+			fExpService.getSubExpressions(parentDmc,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().length != 1) {
+								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+										"Failed getting children; expecting 1 got " + getData().length, null));
+							} else {
+								// Now list the children of this child
+								fExpService.getSubExpressions(getData()[0],
+										new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(),
+												null) {
+											@Override
+											protected void handleCompleted() {
+												final IExpressionDMContext[] childDmcs = getData();
 
-													if (!isSuccess()) {
-														wait.waitFinished(getStatus());
-													} else if (childDmcs.length != 2) {
-														wait.waitFinished(
-																new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-																		"Failed getting children; expecting 2 got "
-																				+ childDmcs.length,
-																		null));
-													} else {
-														// now get the value of the two children
-														for (int i = 0; i < 2; i++) {
-															final String valueStr = Integer
-																	.toString(baseValue + i + 20);
-															final int finali = i;
+												if (!isSuccess()) {
+													wait.waitFinished(getStatus());
+												} else if (childDmcs.length != 2) {
+													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+															"Failed getting children; expecting 2 got "
+																	+ childDmcs.length,
+															null));
+												} else {
+													// now get the value of the two children
+													for (int i = 0; i < 2; i++) {
+														final String valueStr = Integer.toString(baseValue + i + 20);
+														final int finali = i;
 
-															wait.increment();
-															fExpService.getFormattedExpressionValue(
-																	fExpService.getFormattedValueContext(childDmcs[i],
-																			IFormattedValues.NATURAL_FORMAT),
-																	new DataRequestMonitor<FormattedValueDMData>(
-																			fExpService.getExecutor(), null) {
-																		@Override
-																		protected void handleCompleted() {
-																			if (!isSuccess()) {
-																				wait.waitFinished(getStatus());
-																			} else if (getData().getFormattedValue()
-																					.equals(valueStr)) {
-																				wait.waitFinished();
-																			} else {
-																				wait.waitFinished(new Status(
-																						IStatus.ERROR,
-																						TestsPlugin.PLUGIN_ID,
-																						"Failed evaluating "
-																								+ childDmcs[finali]
-																										.getExpression()
-																								+ ", got "
-																								+ getData()
-																										.getFormattedValue()
-																								+ " instead of "
-																								+ valueStr,
-																						null));
-																			}
+														wait.increment();
+														fExpService.getFormattedExpressionValue(
+																fExpService.getFormattedValueContext(childDmcs[i],
+																		IFormattedValues.NATURAL_FORMAT),
+																new DataRequestMonitor<FormattedValueDMData>(
+																		fExpService.getExecutor(), null) {
+																	@Override
+																	protected void handleCompleted() {
+																		if (!isSuccess()) {
+																			wait.waitFinished(getStatus());
+																		} else if (getData().getFormattedValue()
+																				.equals(valueStr)) {
+																			wait.waitFinished();
+																		} else {
+																			wait.waitFinished(new Status(IStatus.ERROR,
+																					TestsPlugin.PLUGIN_ID,
+																					"Failed evaluating "
+																							+ childDmcs[finali]
+																									.getExpression()
+																							+ ", got "
+																							+ getData()
+																									.getFormattedValue()
+																							+ " instead of " + valueStr,
+																					null));
 																		}
+																	}
 
-																	});
-														}
+																});
 													}
 												}
-											});
-								}
-
+											}
+										});
 							}
-						});
-			}
+
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -1922,70 +1839,64 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				// First create the var object and all its children
-				IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "f");
+			// First create the var object and all its children
+			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "f");
 
-				fExpService.getSubExpressions(parentDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			fExpService.getSubExpressions(parentDmc,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().length != 5) {
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed getting children; expecting 5 got " + getData().length, null));
 								} else {
-									if (getData().length != 5) {
+									String childStr = "((bar) f)";
+									if (!getData()[0].getExpression().equals(childStr)) {
 										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed getting children; expecting 5 got " + getData().length, null));
+												"Got child " + getData()[0].getExpression() + " instead of " + childStr,
+												null));
 									} else {
-										String childStr = "((bar) f)";
-										if (!getData()[0].getExpression().equals(childStr)) {
-											wait.waitFinished(new Status(
-													IStatus.ERROR, TestsPlugin.PLUGIN_ID, "Got child "
-															+ getData()[0].getExpression() + " instead of " + childStr,
-													null));
-										} else {
-											// Now list the children of the first element
-											fExpService.getSubExpressions(getData()[0],
-													new DataRequestMonitor<IExpressionDMContext[]>(
-															fExpService.getExecutor(), null) {
-														@Override
-														protected void handleCompleted() {
-															if (!isSuccess()) {
-																wait.waitFinished(getStatus());
+										// Now list the children of the first element
+										fExpService.getSubExpressions(getData()[0],
+												new DataRequestMonitor<IExpressionDMContext[]>(
+														fExpService.getExecutor(), null) {
+													@Override
+													protected void handleCompleted() {
+														if (!isSuccess()) {
+															wait.waitFinished(getStatus());
+														} else {
+															if (getData().length != 2) {
+																wait.waitFinished(new Status(IStatus.ERROR,
+																		TestsPlugin.PLUGIN_ID,
+																		"Failed getting children; expecting 2 got "
+																				+ getData().length,
+																		null));
 															} else {
-																if (getData().length != 2) {
+																String childStr = "((((bar) f)).d)";
+																if (!getData()[0].getExpression().equals(childStr)) {
 																	wait.waitFinished(new Status(IStatus.ERROR,
 																			TestsPlugin.PLUGIN_ID,
-																			"Failed getting children; expecting 2 got "
-																					+ getData().length,
+																			"Got child " + getData()[0].getExpression()
+																					+ " instead of " + childStr,
 																			null));
 																} else {
-																	String childStr = "((((bar) f)).d)";
-																	if (!getData()[0].getExpression()
-																			.equals(childStr)) {
-																		wait.waitFinished(new Status(IStatus.ERROR,
-																				TestsPlugin.PLUGIN_ID,
-																				"Got child "
-																						+ getData()[0].getExpression()
-																						+ " instead of " + childStr,
-																				null));
-																	} else {
-																		wait.setReturnInfo(getData()[0]);
-																		wait.waitFinished();
-																	}
+																	wait.setReturnInfo(getData()[0]);
+																	wait.waitFinished();
 																}
 															}
 														}
-													});
-										}
+													}
+												});
 									}
 								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -1994,42 +1905,15 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		wait.waitReset();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				// Now create more than 1000 expressions to trigger the deletion of the children
-				// that were created above
-				for (int i = 0; i < 1100; i++) {
-					IExpressionDMContext dmc = fExpService.createExpression(frameDmc, "a[" + i + "]");
+			// Now create more than 1000 expressions to trigger the deletion of the children
+			// that were created above
+			for (int i = 0; i < 1100; i++) {
+				IExpressionDMContext dmc = fExpService.createExpression(frameDmc, "a[" + i + "]");
 
-					wait.increment();
-					fExpService.getExpressionData(dmc,
-							new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
-								@Override
-								protected void handleCompleted() {
-									if (!isSuccess()) {
-										wait.waitFinished(getStatus());
-									} else {
-										wait.waitFinished();
-									}
-								}
-							});
-				}
-			}
-		});
-
-		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-		assertTrue(wait.getMessage(), wait.isOK());
-		wait.waitReset();
-
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-
-				// Evaluate the expression of a child that we know is deleted to make sure
-				// the expression service can handle that
-				fExpService.getExpressionData(deletedChildDmc,
+				wait.increment();
+				fExpService.getExpressionData(dmc,
 						new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
 							@Override
 							protected void handleCompleted() {
@@ -2042,6 +1926,22 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 						});
 			}
 		});
+
+		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+		assertTrue(wait.getMessage(), wait.isOK());
+		wait.waitReset();
+
+		fExpService.getExecutor().submit(() -> fExpService.getExpressionData(deletedChildDmc,
+				new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
+					@Override
+					protected void handleCompleted() {
+						if (!isSuccess()) {
+							wait.waitFinished(getStatus());
+						} else {
+							wait.waitFinished();
+						}
+					}
+				}));
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
@@ -2069,34 +1969,31 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				// First create the var object and all its children
-				IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
+		fExpService.getExecutor().submit(() -> {
+			// First create the var object and all its children
+			IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
 
-				// This call will create the variable object in natural format and then change
-				// it to binary to fetch the value
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.BINARY_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			// This call will create the variable object in natural format and then change
+			// it to binary to fetch the value
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.BINARY_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("1011")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("1011")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating binary format, expected 1011 but got "
-														+ getData().getFormattedValue(),
-												null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating binary format, expected 1011 but got "
+													+ getData().getFormattedValue(),
+											null));
 								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -2107,34 +2004,31 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
 		final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				// First create the var object and all its children
-				IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc2, "a");
+		fExpService.getExecutor().submit(() -> {
+			// First create the var object and all its children
+			IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc2, "a");
 
-				// This call will create the variable object in natural format and then change
-				// it to binary to fetch the value
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.BINARY_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			// This call will create the variable object in natural format and then change
+			// it to binary to fetch the value
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.BINARY_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("11")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("11")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating binary format, expected 11 but got "
-														+ getData().getFormattedValue(),
-												null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating binary format, expected 11 but got "
+													+ getData().getFormattedValue(),
+											null));
 								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -2172,56 +2066,53 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				// First create the var object and all its children
-				IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
+		fExpService.getExecutor().submit(() -> {
+			// First create the var object and all its children
+			IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
 
-				// check that we have the proper value
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			// check that we have the proper value
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("1.99")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("1.99")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating a, expected 1.99 but got "
-														+ getData().getFormattedValue(),
-												null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating a, expected 1.99 but got "
+													+ getData().getFormattedValue(),
+											null));
 								}
 							}
-						});
+						}
+					});
 
-				// ask for hex to set the format to hex
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			// ask for hex to set the format to hex
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("0x1")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("0x1")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating a, expected 0x1 but got "
-														+ getData().getFormattedValue(),
-												null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating a, expected 0x1 but got "
+													+ getData().getFormattedValue(),
+											null));
 								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -2232,35 +2123,32 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
 		final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				// First create the var object and all its children
-				IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc2, "a");
+		fExpService.getExecutor().submit(() -> {
+			// First create the var object and all its children
+			IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc2, "a");
 
-				// trigger the var-update in the last format (hex)
-				// then request the actual value in natural which should not be taken from the cache
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			// trigger the var-update in the last format (hex)
+			// then request the actual value in natural which should not be taken from the cache
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("1.22")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("1.22")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating natural format, expected 1.22 but got "
-														+ getData().getFormattedValue(),
-												null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating natural format, expected 1.22 but got "
+													+ getData().getFormattedValue(),
+											null));
 								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -2296,38 +2184,58 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
+			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
 
-				fExpService.getSubExpressions(parentDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().length != 1) {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed getting children; expecting 1 got " + getData().length, null));
-								} else {
-									// check that we have the proper value
-									// This will cache the value 1 in the natural format cache
-									final String valueStr = "1";
-									globalExpressionCtx1 = getData()[0];
+			fExpService.getSubExpressions(parentDmc,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().length != 1) {
+								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+										"Failed getting children; expecting 1 got " + getData().length, null));
+							} else {
+								// check that we have the proper value
+								// This will cache the value 1 in the natural format cache
+								final String valueStr = "1";
+								globalExpressionCtx1 = getData()[0];
 
-									wait.increment();
-									fExpService.getFormattedExpressionValue(
-											fExpService.getFormattedValueContext(globalExpressionCtx1,
-													IFormattedValues.NATURAL_FORMAT),
-											new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(),
-													null) {
-												@Override
-												protected void handleCompleted() {
-													if (!isSuccess()) {
-														wait.waitFinished(getStatus());
-													} else if (getData().getFormattedValue().equals(valueStr)) {
+								wait.increment();
+								fExpService.getFormattedExpressionValue(
+										fExpService.getFormattedValueContext(globalExpressionCtx1,
+												IFormattedValues.NATURAL_FORMAT),
+										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+											@Override
+											protected void handleCompleted() {
+												if (!isSuccess()) {
+													wait.waitFinished(getStatus());
+												} else if (getData().getFormattedValue().equals(valueStr)) {
+													wait.waitFinished();
+												} else {
+													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+															"Failed evaluating " + globalExpressionCtx1.getExpression()
+																	+ ", got " + getData().getFormattedValue()
+																	+ " instead of " + valueStr,
+															null));
+												}
+											}
+										});
+
+								// ask for decimal to set the format to decimal
+								wait.increment();
+								fExpService.getFormattedExpressionValue(
+										fExpService.getFormattedValueContext(globalExpressionCtx1,
+												IFormattedValues.DECIMAL_FORMAT),
+										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+											@Override
+											protected void handleCompleted() {
+												if (!isSuccess()) {
+													wait.waitFinished(getStatus());
+												} else {
+													if (getData().getFormattedValue().equals(valueStr)) {
 														wait.waitFinished();
 													} else {
 														wait.waitFinished(new Status(IStatus.ERROR,
@@ -2339,39 +2247,12 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 																null));
 													}
 												}
-											});
+											}
+										});
 
-									// ask for decimal to set the format to decimal
-									wait.increment();
-									fExpService.getFormattedExpressionValue(
-											fExpService.getFormattedValueContext(globalExpressionCtx1,
-													IFormattedValues.DECIMAL_FORMAT),
-											new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(),
-													null) {
-												@Override
-												protected void handleCompleted() {
-													if (!isSuccess()) {
-														wait.waitFinished(getStatus());
-													} else {
-														if (getData().getFormattedValue().equals(valueStr)) {
-															wait.waitFinished();
-														} else {
-															wait.waitFinished(new Status(IStatus.ERROR,
-																	TestsPlugin.PLUGIN_ID,
-																	"Failed evaluating "
-																			+ globalExpressionCtx1.getExpression()
-																			+ ", got " + getData().getFormattedValue()
-																			+ " instead of " + valueStr,
-																	null));
-														}
-													}
-												}
-											});
-
-								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -2381,33 +2262,30 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// Now step to change the value of "a" in natural but it remains the same in decimal
 		SyncUtil.step(1, StepType.STEP_OVER);
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				// trigger the var-update in the last format (decimal)
-				// then request the actual value in natural which should not be taken from the cache
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			// trigger the var-update in the last format (decimal)
+			// then request the actual value in natural which should not be taken from the cache
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().getFormattedValue().equals("1.22")) {
+									wait.waitFinished();
 								} else {
-									if (getData().getFormattedValue().equals("1.22")) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed evaluating natural format, expected 1.22 but got "
-														+ getData().getFormattedValue(),
-												null));
-									}
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed evaluating natural format, expected 1.22 but got "
+													+ getData().getFormattedValue(),
+											null));
 								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -2429,52 +2307,46 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		// Ask for one value to create the var object
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				// First create the var object and all its children
-				IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
+		fExpService.getExecutor().submit(() -> {
+			// First create the var object and all its children
+			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
 
-				wait.increment();
-				fExpService.getSubExpressions(parentDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().length != 1) {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed getting children; expecting 1 got " + getData().length, null));
-								} else {
-									// now get the value of the child
-									final String valueStr = "01";
-									globalExpressionCtx1 = getData()[0];
-									fExpService.getFormattedExpressionValue(
-											fExpService.getFormattedValueContext(globalExpressionCtx1,
-													IFormattedValues.OCTAL_FORMAT),
-											new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(),
-													null) {
-												@Override
-												protected void handleCompleted() {
-													if (!isSuccess()) {
-														wait.waitFinished(getStatus());
-													} else if (getData().getFormattedValue().equals(valueStr)) {
-														wait.waitFinished();
-													} else {
-														wait.waitFinished(new Status(IStatus.ERROR,
-																TestsPlugin.PLUGIN_ID,
-																"Failed evaluating "
-																		+ globalExpressionCtx1.getExpression()
-																		+ ", got " + getData().getFormattedValue()
-																		+ " instead of " + valueStr,
-																null));
-													}
+			wait.increment();
+			fExpService.getSubExpressions(parentDmc,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().length != 1) {
+								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+										"Failed getting children; expecting 1 got " + getData().length, null));
+							} else {
+								// now get the value of the child
+								final String valueStr = "01";
+								globalExpressionCtx1 = getData()[0];
+								fExpService.getFormattedExpressionValue(
+										fExpService.getFormattedValueContext(globalExpressionCtx1,
+												IFormattedValues.OCTAL_FORMAT),
+										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+											@Override
+											protected void handleCompleted() {
+												if (!isSuccess()) {
+													wait.waitFinished(getStatus());
+												} else if (getData().getFormattedValue().equals(valueStr)) {
+													wait.waitFinished();
+												} else {
+													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+															"Failed evaluating " + globalExpressionCtx1.getExpression()
+																	+ ", got " + getData().getFormattedValue()
+																	+ " instead of " + valueStr,
+															null));
 												}
-											});
-								}
+											}
+										});
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -2484,50 +2356,49 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// Now do two reads in two different formats
 		// We need to make sure that the locking properly works although we are calling
 		// the internal update method, which does affect the state of the object
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.BINARY_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								final String valueStr = "1";
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().getFormattedValue().equals(valueStr)) {
-									wait.waitFinished();
-								} else {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed evaluating " + globalExpressionCtx1.getExpression() + ", got "
-													+ getData().getFormattedValue() + " instead of " + valueStr,
-											null));
-								}
+		fExpService.getExecutor().submit(() -> {
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.BINARY_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							final String valueStr = "1";
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().getFormattedValue().equals(valueStr)) {
+								wait.waitFinished();
+							} else {
+								wait.waitFinished(
+										new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+												"Failed evaluating " + globalExpressionCtx1.getExpression() + ", got "
+														+ getData().getFormattedValue() + " instead of " + valueStr,
+												null));
 							}
-						});
+						}
+					});
 
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.HEX_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								final String valueStr = "0x1";
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().getFormattedValue().equals(valueStr)) {
-									wait.waitFinished();
-								} else {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed evaluating " + globalExpressionCtx1.getExpression() + ", got "
-													+ getData().getFormattedValue() + " instead of " + valueStr,
-											null));
-								}
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.HEX_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							final String valueStr = "0x1";
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().getFormattedValue().equals(valueStr)) {
+								wait.waitFinished();
+							} else {
+								wait.waitFinished(
+										new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+												"Failed evaluating " + globalExpressionCtx1.getExpression() + ", got "
+														+ getData().getFormattedValue() + " instead of " + valueStr,
+												null));
 							}
+						}
 
-						});
-			}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -2553,52 +2424,46 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				// First create the var object and its child
-				globalExpressionCtx1 = fExpService.createExpression(frameDmc, "z");
+		fExpService.getExecutor().submit(() -> {
+			// First create the var object and its child
+			globalExpressionCtx1 = fExpService.createExpression(frameDmc, "z");
 
-				wait.increment();
-				fExpService.getSubExpressions(globalExpressionCtx1,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().length != 1) {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed getting children; expecting 1 got " + getData().length, null));
-								} else {
-									// now get the value of the child
-									final String valueStr = "1";
-									globalExpressionCtx2 = getData()[0];
-									fExpService.getFormattedExpressionValue(
-											fExpService.getFormattedValueContext(globalExpressionCtx2,
-													IFormattedValues.NATURAL_FORMAT),
-											new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(),
-													null) {
-												@Override
-												protected void handleCompleted() {
-													if (!isSuccess()) {
-														wait.waitFinished(getStatus());
-													} else if (getData().getFormattedValue().equals(valueStr)) {
-														wait.waitFinished();
-													} else {
-														wait.waitFinished(new Status(IStatus.ERROR,
-																TestsPlugin.PLUGIN_ID,
-																"Failed evaluating "
-																		+ globalExpressionCtx2.getExpression()
-																		+ ", got " + getData().getFormattedValue()
-																		+ " instead of " + valueStr,
-																null));
-													}
+			wait.increment();
+			fExpService.getSubExpressions(globalExpressionCtx1,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().length != 1) {
+								wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+										"Failed getting children; expecting 1 got " + getData().length, null));
+							} else {
+								// now get the value of the child
+								final String valueStr = "1";
+								globalExpressionCtx2 = getData()[0];
+								fExpService.getFormattedExpressionValue(
+										fExpService.getFormattedValueContext(globalExpressionCtx2,
+												IFormattedValues.NATURAL_FORMAT),
+										new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+											@Override
+											protected void handleCompleted() {
+												if (!isSuccess()) {
+													wait.waitFinished(getStatus());
+												} else if (getData().getFormattedValue().equals(valueStr)) {
+													wait.waitFinished();
+												} else {
+													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+															"Failed evaluating " + globalExpressionCtx2.getExpression()
+																	+ ", got " + getData().getFormattedValue()
+																	+ " instead of " + valueStr,
+															null));
 												}
-											});
-								}
+											}
+										});
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
@@ -2610,80 +2475,77 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		// Now step to another method to make the previous variable objects out-of-scope
 		// then first request the child and then the parent.  We want to test this order
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								final String valueStr = "2";
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().getFormattedValue().equals(valueStr)) {
-									wait.waitFinished();
-								} else {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed evaluating " + globalExpressionCtx2.getExpression() + ", got "
-													+ getData().getFormattedValue() + " instead of " + valueStr,
-											null));
-								}
+		fExpService.getExecutor().submit(() -> {
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							final String valueStr = "2";
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().getFormattedValue().equals(valueStr)) {
+								wait.waitFinished();
+							} else {
+								wait.waitFinished(
+										new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+												"Failed evaluating " + globalExpressionCtx2.getExpression() + ", got "
+														+ getData().getFormattedValue() + " instead of " + valueStr,
+												null));
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 		assertTrue(wait.getMessage(), wait.isOK());
 		wait.waitReset();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								final String valueStr = "{...}";
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().getFormattedValue().equals(valueStr)) {
-									wait.waitFinished();
-								} else {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed evaluating " + globalExpressionCtx1.getExpression() + ", got "
-													+ getData().getFormattedValue() + " instead of " + valueStr,
-											null));
-								}
+		fExpService.getExecutor().submit(() -> {
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							final String valueStr = "{...}";
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().getFormattedValue().equals(valueStr)) {
+								wait.waitFinished();
+							} else {
+								wait.waitFinished(
+										new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+												"Failed evaluating " + globalExpressionCtx1.getExpression() + ", got "
+														+ getData().getFormattedValue() + " instead of " + valueStr,
+												null));
 							}
-						});
+						}
+					});
 
-				// Ask a second time but in a different format, to avoid the cache
-				wait.increment();
-				fExpService.getFormattedExpressionValue(
-						fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.DECIMAL_FORMAT),
-						new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								final String valueStr = "{...}";
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
-								} else if (getData().getFormattedValue().equals(valueStr)) {
-									wait.waitFinished();
-								} else {
-									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed evaluating " + globalExpressionCtx1.getExpression() + ", got "
-													+ getData().getFormattedValue() + " instead of " + valueStr,
-											null));
-								}
+			// Ask a second time but in a different format, to avoid the cache
+			wait.increment();
+			fExpService.getFormattedExpressionValue(
+					fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.DECIMAL_FORMAT),
+					new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							final String valueStr = "{...}";
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else if (getData().getFormattedValue().equals(valueStr)) {
+								wait.waitFinished();
+							} else {
+								wait.waitFinished(
+										new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+												"Failed evaluating " + globalExpressionCtx1.getExpression() + ", got "
+														+ getData().getFormattedValue() + " instead of " + valueStr,
+												null));
 							}
-						});
+						}
+					});
 
-			}
 		});
 
 		wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
@@ -2807,53 +2669,50 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				final int exprCount = 5;
-				final IExpressionDMContext dmcs[] = new IExpressionDMContext[exprCount];
-				final boolean expectedValues[] = new boolean[exprCount];
+			final int exprCount = 5;
+			final IExpressionDMContext dmcs[] = new IExpressionDMContext[exprCount];
+			final boolean expectedValues[] = new boolean[exprCount];
 
-				int exprIndex = 0;
-				dmcs[exprIndex] = fExpService.createExpression(frameDmc, "a");
-				expectedValues[exprIndex] = true;
-				exprIndex++;
-				dmcs[exprIndex] = fExpService.createExpression(frameDmc, "b");
-				expectedValues[exprIndex] = true;
-				exprIndex++;
-				dmcs[exprIndex] = fExpService.createExpression(frameDmc, "c");
-				expectedValues[exprIndex] = false;
-				exprIndex++;
-				dmcs[exprIndex] = fExpService.createExpression(frameDmc, "d");
-				expectedValues[exprIndex] = false;
-				exprIndex++;
-				dmcs[exprIndex] = fExpService.createExpression(frameDmc, "d[1]");
-				expectedValues[exprIndex] = true;
-				exprIndex++;
+			int exprIndex = 0;
+			dmcs[exprIndex] = fExpService.createExpression(frameDmc, "a");
+			expectedValues[exprIndex] = true;
+			exprIndex++;
+			dmcs[exprIndex] = fExpService.createExpression(frameDmc, "b");
+			expectedValues[exprIndex] = true;
+			exprIndex++;
+			dmcs[exprIndex] = fExpService.createExpression(frameDmc, "c");
+			expectedValues[exprIndex] = false;
+			exprIndex++;
+			dmcs[exprIndex] = fExpService.createExpression(frameDmc, "d");
+			expectedValues[exprIndex] = false;
+			exprIndex++;
+			dmcs[exprIndex] = fExpService.createExpression(frameDmc, "d[1]");
+			expectedValues[exprIndex] = true;
+			exprIndex++;
 
-				for (int index = 0; index < exprCount; index++) {
-					final int finalIndex = index;
-					wait.increment();
-					fExpService.canWriteExpression(dmcs[finalIndex],
-							new DataRequestMonitor<Boolean>(fExpService.getExecutor(), null) {
-								@Override
-								protected void handleCompleted() {
-									if (!isSuccess()) {
-										wait.waitFinished(getStatus());
-									} else if (getData() == expectedValues[finalIndex]) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed establishing proper canWrite for  "
-														+ dmcs[finalIndex].getExpression() + ", got " + getData()
-														+ " instead of " + expectedValues[finalIndex],
-												null));
-									}
-
+			for (int index = 0; index < exprCount; index++) {
+				final int finalIndex = index;
+				wait.increment();
+				fExpService.canWriteExpression(dmcs[finalIndex],
+						new DataRequestMonitor<Boolean>(fExpService.getExecutor(), null) {
+							@Override
+							protected void handleCompleted() {
+								if (!isSuccess()) {
+									wait.waitFinished(getStatus());
+								} else if (getData() == expectedValues[finalIndex]) {
+									wait.waitFinished();
+								} else {
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed establishing proper canWrite for  "
+													+ dmcs[finalIndex].getExpression() + ", got " + getData()
+													+ " instead of " + expectedValues[finalIndex],
+											null));
 								}
-							});
-				}
+
+							}
+						});
 			}
 		});
 
@@ -2874,44 +2733,41 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				final int exprCount = 2;
-				final IExpressionDMContext dmcs[] = new IExpressionDMContext[exprCount];
-				final boolean expectedValues[] = new boolean[exprCount];
+			final int exprCount = 2;
+			final IExpressionDMContext dmcs[] = new IExpressionDMContext[exprCount];
+			final boolean expectedValues[] = new boolean[exprCount];
 
-				int exprIndex = 0;
-				dmcs[exprIndex] = fExpService.createExpression(frameDmc, "&a");
-				expectedValues[exprIndex] = false;
-				exprIndex++;
-				dmcs[exprIndex] = fExpService.createExpression(frameDmc, "1");
-				expectedValues[exprIndex] = false;
-				exprIndex++;
+			int exprIndex = 0;
+			dmcs[exprIndex] = fExpService.createExpression(frameDmc, "&a");
+			expectedValues[exprIndex] = false;
+			exprIndex++;
+			dmcs[exprIndex] = fExpService.createExpression(frameDmc, "1");
+			expectedValues[exprIndex] = false;
+			exprIndex++;
 
-				for (int index = 0; index < exprCount; index++) {
-					final int finalIndex = index;
-					wait.increment();
-					fExpService.canWriteExpression(dmcs[finalIndex],
-							new DataRequestMonitor<Boolean>(fExpService.getExecutor(), null) {
-								@Override
-								protected void handleCompleted() {
-									if (!isSuccess()) {
-										wait.waitFinished(getStatus());
-									} else if (getData() == expectedValues[finalIndex]) {
-										wait.waitFinished();
-									} else {
-										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed establishing proper canWrite for  "
-														+ dmcs[finalIndex].getExpression() + ", got " + getData()
-														+ " instead of " + expectedValues[finalIndex],
-												null));
-									}
-
+			for (int index = 0; index < exprCount; index++) {
+				final int finalIndex = index;
+				wait.increment();
+				fExpService.canWriteExpression(dmcs[finalIndex],
+						new DataRequestMonitor<Boolean>(fExpService.getExecutor(), null) {
+							@Override
+							protected void handleCompleted() {
+								if (!isSuccess()) {
+									wait.waitFinished(getStatus());
+								} else if (getData() == expectedValues[finalIndex]) {
+									wait.waitFinished();
+								} else {
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed establishing proper canWrite for  "
+													+ dmcs[finalIndex].getExpression() + ", got " + getData()
+													+ " instead of " + expectedValues[finalIndex],
+											null));
 								}
-							});
-				}
+
+							}
+						});
 			}
 		});
 
@@ -2957,107 +2813,94 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 			// Get the list of available format IDs for this expression and for
 			// each one,
 			// get the value of the expression
-			fExpService.getExecutor().submit(new Runnable() {
-				@Override
-				public void run() {
-					fExpService.getAvailableFormats(exprDMC,
-							new DataRequestMonitor<String[]>(fExpService.getExecutor(), null) {
-								@Override
-								protected void handleCompleted() {
-									if (!isSuccess()) {
-										wait.waitFinished(getStatus());
-									} else {
-										final String[] formatIds = getData();
+			fExpService.getExecutor().submit(() -> fExpService.getAvailableFormats(exprDMC,
+					new DataRequestMonitor<String[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								final String[] formatIds = getData();
 
-										// Now run the current sub-test using each of
-										// the formats available for the type of
-										// the expression in the sub-test.
+								// Now run the current sub-test using each of
+								// the formats available for the type of
+								// the expression in the sub-test.
 
-										for (final String formatId : formatIds) {
-											// Get a FormattedValueCMContext object for
-											// the expression-formatID pair.
-											final FormattedValueDMContext valueDmc = fExpService
-													.getFormattedValueContext(exprDMC, formatId);
+								for (final String formatId : formatIds) {
+									// Get a FormattedValueCMContext object for
+									// the expression-formatID pair.
+									final FormattedValueDMContext valueDmc = fExpService
+											.getFormattedValueContext(exprDMC, formatId);
 
-											// Increment the number of completed
-											// requests to wait for, since we will send
-											// multiple concurrent requests
-											wait.increment();
+									// Increment the number of completed
+									// requests to wait for, since we will send
+									// multiple concurrent requests
+									wait.increment();
 
-											// Evaluate the expression represented by
-											// the FormattedValueDMContext object
-											// This actually evaluates the expression.
-											fExpService.getFormattedExpressionValue(valueDmc,
-													new DataRequestMonitor<FormattedValueDMData>(
-															fExpService.getExecutor(), null) {
-														@Override
-														protected void handleCompleted() {
-															if (!isSuccess()) {
-																wait.waitFinished(getStatus());
-															} else {
+									// Evaluate the expression represented by
+									// the FormattedValueDMContext object
+									// This actually evaluates the expression.
+									fExpService.getFormattedExpressionValue(valueDmc,
+											new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(),
+													null) {
+												@Override
+												protected void handleCompleted() {
+													if (!isSuccess()) {
+														wait.waitFinished(getStatus());
+													} else {
 
-																// Get the
-																// FormattedValueDMData
-																// object from the waiter.
-																FormattedValueDMData exprValueDMData = getData();
+														// Get the
+														// FormattedValueDMData
+														// object from the waiter.
+														FormattedValueDMData exprValueDMData = getData();
 
-																final String[] expectedValues = tests
-																		.get(expressionToEvaluate);
+														final String[] expectedValues = tests.get(expressionToEvaluate);
 
-																// Check the value of the expression for correctness.
-																String actualValue = exprValueDMData
-																		.getFormattedValue();
-																String expectedValue;
+														// Check the value of the expression for correctness.
+														String actualValue = exprValueDMData.getFormattedValue();
+														String expectedValue;
 
-																if (formatId.equals(IFormattedValues.HEX_FORMAT))
-																	expectedValue = expectedValues[0];
-																else if (formatId.equals(IFormattedValues.OCTAL_FORMAT))
-																	expectedValue = expectedValues[1];
-																else if (formatId
-																		.equals(IFormattedValues.BINARY_FORMAT))
-																	expectedValue = expectedValues[2];
-																else if (formatId
-																		.equals(IFormattedValues.DECIMAL_FORMAT))
-																	expectedValue = expectedValues[3];
-																else if (formatId
-																		.equals(IFormattedValues.NATURAL_FORMAT))
-																	expectedValue = expectedValues[4];
-																else if (formatId.equals(MIExpressions.DETAILS_FORMAT))
-																	expectedValue = expectedValues[5];
-																else
-																	expectedValue = "[Unrecognized format ID: "
-																			+ formatId + "]";
+														if (formatId.equals(IFormattedValues.HEX_FORMAT))
+															expectedValue = expectedValues[0];
+														else if (formatId.equals(IFormattedValues.OCTAL_FORMAT))
+															expectedValue = expectedValues[1];
+														else if (formatId.equals(IFormattedValues.BINARY_FORMAT))
+															expectedValue = expectedValues[2];
+														else if (formatId.equals(IFormattedValues.DECIMAL_FORMAT))
+															expectedValue = expectedValues[3];
+														else if (formatId.equals(IFormattedValues.NATURAL_FORMAT))
+															expectedValue = expectedValues[4];
+														else if (formatId.equals(MIExpressions.DETAILS_FORMAT))
+															expectedValue = expectedValues[5];
+														else
+															expectedValue = "[Unrecognized format ID: " + formatId
+																	+ "]";
 
-																if ((exact == false)
-																		&& (formatId
-																				.equals(IFormattedValues.NATURAL_FORMAT)
-																				|| formatId.equals(
-																						MIExpressions.DETAILS_FORMAT))
-																		&& (expectedValue.length() < actualValue
-																				.length())) {
-																	actualValue = actualValue.substring(0,
-																			expectedValue.length());
-																}
-
-																if (actualValue.equalsIgnoreCase(expectedValue)) {
-																	wait.waitFinished();
-																} else {
-																	String errorMsg = "Failed to correctly evalutate '"
-																			+ expressionToEvaluate + "': expected '"
-																			+ expectedValue + "', got '" + actualValue
-																			+ "'";
-																	wait.waitFinished(new Status(IStatus.ERROR,
-																			TestsPlugin.PLUGIN_ID, errorMsg, null));
-																}
-															}
+														if ((exact == false)
+																&& (formatId.equals(IFormattedValues.NATURAL_FORMAT)
+																		|| formatId
+																				.equals(MIExpressions.DETAILS_FORMAT))
+																&& (expectedValue.length() < actualValue.length())) {
+															actualValue = actualValue.substring(0,
+																	expectedValue.length());
 														}
-													});
-										}
-									}
+
+														if (actualValue.equalsIgnoreCase(expectedValue)) {
+															wait.waitFinished();
+														} else {
+															String errorMsg = "Failed to correctly evalutate '"
+																	+ expressionToEvaluate + "': expected '"
+																	+ expectedValue + "', got '" + actualValue + "'";
+															wait.waitFinished(new Status(IStatus.ERROR,
+																	TestsPlugin.PLUGIN_ID, errorMsg, null));
+														}
+													}
+												}
+											});
 								}
-							});
-				}
-			});
+							}
+						}
+					}));
 			wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 			assertTrue(wait.getMessage(), wait.isOK());
 			assertTrue("ExprChangedEvent problem: expected 0, received " + getExprChangedCount(),
@@ -3084,22 +2927,17 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fExpService.getExpressionAddressData(dmc,
-						new DataRequestMonitor<IExpressionDMAddress>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (isSuccess()) {
-									wait.setReturnInfo(getData());
-								}
+		fExpService.getExecutor().submit(() -> fExpService.getExpressionAddressData(dmc,
+				new DataRequestMonitor<IExpressionDMAddress>(fExpService.getExecutor(), null) {
+					@Override
+					protected void handleCompleted() {
+						if (isSuccess()) {
+							wait.setReturnInfo(getData());
+						}
 
-								wait.waitFinished(getStatus());
-							}
-						});
-			}
-		});
+						wait.waitFinished(getStatus());
+					}
+				}));
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
@@ -3169,22 +3007,16 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-
-				fExpService.getSubExpressions(parentDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (isSuccess()) {
-									wait.setReturnInfo(getData());
-								}
-								wait.waitFinished(getStatus());
-							}
-						});
-			}
-		});
+		fExpService.getExecutor().submit(() -> fExpService.getSubExpressions(parentDmc,
+				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+					@Override
+					protected void handleCompleted() {
+						if (isSuccess()) {
+							wait.setReturnInfo(getData());
+						}
+						wait.waitFinished(getStatus());
+					}
+				}));
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
@@ -3216,22 +3048,16 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-
-				fExpService.getSubExpressions(parentDmc, startIndex, length,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (isSuccess()) {
-									wait.setReturnInfo(getData());
-								}
-								wait.waitFinished(getStatus());
-							}
-						});
-			}
-		});
+		fExpService.getExecutor().submit(() -> fExpService.getSubExpressions(parentDmc, startIndex, length,
+				new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+					@Override
+					protected void handleCompleted() {
+						if (isSuccess()) {
+							wait.setReturnInfo(getData());
+						}
+						wait.waitFinished(getStatus());
+					}
+				}));
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
@@ -4267,71 +4093,65 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				// First create the var object and all its children
-				IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "f");
+			// First create the var object and all its children
+			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "f");
 
-				fExpService.getSubExpressions(parentDmc,
-						new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
-							@Override
-							protected void handleCompleted() {
-								if (!isSuccess()) {
-									wait.waitFinished(getStatus());
+			fExpService.getSubExpressions(parentDmc,
+					new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+						@Override
+						protected void handleCompleted() {
+							if (!isSuccess()) {
+								wait.waitFinished(getStatus());
+							} else {
+								if (getData().length != 5) {
+									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+											"Failed getting children; expecting 5 got " + getData().length, null));
 								} else {
-									if (getData().length != 5) {
+									String childStr = "((class bar) f)";
+									if (!getData()[0].getExpression().equals(childStr)) {
 										wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-												"Failed getting children; expecting 5 got " + getData().length, null));
+												"Got child " + getData()[0].getExpression() + " instead of " + childStr,
+												null));
 									} else {
-										String childStr = "((class bar) f)";
-										if (!getData()[0].getExpression().equals(childStr)) {
-											wait.waitFinished(new Status(
-													IStatus.ERROR, TestsPlugin.PLUGIN_ID, "Got child "
-															+ getData()[0].getExpression() + " instead of " + childStr,
-													null));
-										} else {
-											// Now list the children of the
-											// first element
-											fExpService.getSubExpressions(getData()[0],
-													new DataRequestMonitor<IExpressionDMContext[]>(
-															fExpService.getExecutor(), null) {
-														@Override
-														protected void handleCompleted() {
-															if (!isSuccess()) {
-																wait.waitFinished(getStatus());
+										// Now list the children of the
+										// first element
+										fExpService.getSubExpressions(getData()[0],
+												new DataRequestMonitor<IExpressionDMContext[]>(
+														fExpService.getExecutor(), null) {
+													@Override
+													protected void handleCompleted() {
+														if (!isSuccess()) {
+															wait.waitFinished(getStatus());
+														} else {
+															if (getData().length != 2) {
+																wait.waitFinished(new Status(IStatus.ERROR,
+																		TestsPlugin.PLUGIN_ID,
+																		"Failed getting children; expecting 2 got "
+																				+ getData().length,
+																		null));
 															} else {
-																if (getData().length != 2) {
+																String childStr = "((((class bar) f)).d)";
+																if (!getData()[0].getExpression().equals(childStr)) {
 																	wait.waitFinished(new Status(IStatus.ERROR,
 																			TestsPlugin.PLUGIN_ID,
-																			"Failed getting children; expecting 2 got "
-																					+ getData().length,
+																			"Got child " + getData()[0].getExpression()
+																					+ " instead of " + childStr,
 																			null));
 																} else {
-																	String childStr = "((((class bar) f)).d)";
-																	if (!getData()[0].getExpression()
-																			.equals(childStr)) {
-																		wait.waitFinished(new Status(IStatus.ERROR,
-																				TestsPlugin.PLUGIN_ID,
-																				"Got child "
-																						+ getData()[0].getExpression()
-																						+ " instead of " + childStr,
-																				null));
-																	} else {
-																		wait.setReturnInfo(getData()[0]);
-																		wait.waitFinished();
-																	}
+																	wait.setReturnInfo(getData()[0]);
+																	wait.waitFinished();
 																}
 															}
 														}
-													});
-										}
+													}
+												});
 									}
 								}
 							}
-						});
-			}
+						}
+					});
 		});
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -4340,44 +4160,16 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		wait.waitReset();
 
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
+		fExpService.getExecutor().submit(() -> {
 
-				// Now create more than 1000 expressions to trigger the deletion
-				// of the children
-				// that were created above
-				for (int i = 0; i < 1100; i++) {
-					IExpressionDMContext dmc = fExpService.createExpression(frameDmc, "a[" + i + "]");
+			// Now create more than 1000 expressions to trigger the deletion
+			// of the children
+			// that were created above
+			for (int i = 0; i < 1100; i++) {
+				IExpressionDMContext dmc = fExpService.createExpression(frameDmc, "a[" + i + "]");
 
-					wait.increment();
-					fExpService.getExpressionData(dmc,
-							new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
-								@Override
-								protected void handleCompleted() {
-									if (!isSuccess()) {
-										wait.waitFinished(getStatus());
-									} else {
-										wait.waitFinished();
-									}
-								}
-							});
-				}
-			}
-		});
-
-		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-		assertTrue(wait.getMessage(), wait.isOK());
-		wait.waitReset();
-
-		fExpService.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-
-				// Evaluate the expression of a child that we know is deleted to
-				// make sure
-				// the expression service can handle that
-				fExpService.getExpressionData(deletedChildDmc,
+				wait.increment();
+				fExpService.getExpressionData(dmc,
 						new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
 							@Override
 							protected void handleCompleted() {
@@ -4390,6 +4182,22 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 						});
 			}
 		});
+
+		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+		assertTrue(wait.getMessage(), wait.isOK());
+		wait.waitReset();
+
+		fExpService.getExecutor().submit(() -> fExpService.getExpressionData(deletedChildDmc,
+				new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
+					@Override
+					protected void handleCompleted() {
+						if (!isSuccess()) {
+							wait.waitFinished(getStatus());
+						} else {
+							wait.waitFinished();
+						}
+					}
+				}));
 
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());

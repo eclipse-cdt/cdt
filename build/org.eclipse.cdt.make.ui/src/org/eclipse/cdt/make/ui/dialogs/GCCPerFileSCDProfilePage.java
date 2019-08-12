@@ -27,8 +27,6 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -115,12 +113,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
 
 		// text field
 		bopOpenFileText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
-		bopOpenFileText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				handleModifyOpenFileText();
-			}
-		});
+		bopOpenFileText.addModifyListener(e -> handleModifyOpenFileText());
 		bopLoadButton.setEnabled(loadButtonInitialEnabled && handleModifyOpenFileText());
 
 		// browse button
@@ -231,19 +224,14 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
 				//lock.acquire();
 				synchronized (lock) {
 					if (!instance.shell.isDisposed()) {
-						instance.shell.getDisplay().asyncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								if (!instance.shell.isDisposed()) {
-									loadButtonInitialEnabled = instance.bopEnabledButton.getSelection()
-											&& handleModifyOpenFileText();
-									instance.bopLoadButton.setEnabled(loadButtonInitialEnabled);
-								} else {
-									loadButtonInitialEnabled = true;
-								}
+						instance.shell.getDisplay().asyncExec(() -> {
+							if (!instance.shell.isDisposed()) {
+								loadButtonInitialEnabled = instance.bopEnabledButton.getSelection()
+										&& handleModifyOpenFileText();
+								instance.bopLoadButton.setEnabled(loadButtonInitialEnabled);
+							} else {
+								loadButtonInitialEnabled = true;
 							}
-
 						});
 					} else {
 						loadButtonInitialEnabled = true;

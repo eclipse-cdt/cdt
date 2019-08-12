@@ -261,20 +261,17 @@ public class LaunchUtils {
 	 */
 	public static void enableActivity(final String activityID, final boolean enableit) {
 		if (PlatformUI.isWorkbenchRunning()) {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
-					IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
-					Set<String> enabledActivityIds = new HashSet<>(activityManager.getEnabledActivityIds());
-					boolean changed = false;
-					if (enableit)
-						changed = enabledActivityIds.add(activityID);
-					else
-						changed = enabledActivityIds.remove(activityID);
-					if (changed)
-						workbenchActivitySupport.setEnabledActivityIds(enabledActivityIds);
-				}
+			PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+				IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+				IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
+				Set<String> enabledActivityIds = new HashSet<>(activityManager.getEnabledActivityIds());
+				boolean changed = false;
+				if (enableit)
+					changed = enabledActivityIds.add(activityID);
+				else
+					changed = enabledActivityIds.remove(activityID);
+				if (changed)
+					workbenchActivitySupport.setEnabledActivityIds(enabledActivityIds);
 			});
 		}
 	}

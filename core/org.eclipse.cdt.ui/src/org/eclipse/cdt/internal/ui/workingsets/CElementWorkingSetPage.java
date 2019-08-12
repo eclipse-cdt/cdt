@@ -39,15 +39,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -111,12 +108,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 		fWorkingSetName = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fWorkingSetName.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		fWorkingSetName.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validateInput();
-			}
-		});
+		fWorkingSetName.addModifyListener(e -> validateInput());
 		fWorkingSetName.setFocus();
 
 		label = new Label(composite, SWT.WRAP);
@@ -143,12 +135,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 		fTree.setInput(CoreModel.create(CUIPlugin.getWorkspace().getRoot()));
 
-		fTree.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				handleCheckStateChange(event);
-			}
-		});
+		fTree.addCheckStateListener(event -> handleCheckStateChange(event));
 
 		fTree.addTreeListener(new ITreeViewerListener() {
 			@Override
@@ -159,12 +146,8 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 			public void treeExpanded(TreeExpansionEvent event) {
 				final Object element = event.getElement();
 				if (fTree.getGrayed(element) == false)
-					BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-						@Override
-						public void run() {
-							setSubtreeChecked(element, fTree.getChecked(element), false);
-						}
-					});
+					BusyIndicator.showWhile(getShell().getDisplay(),
+							() -> setSubtreeChecked(element, fTree.getChecked(element), false));
 			}
 		});
 
@@ -230,19 +213,16 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * @param event the checked state change event.
 	 */
 	void handleCheckStateChange(final CheckStateChangedEvent event) {
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				IAdaptable element = (IAdaptable) event.getElement();
-				boolean state = event.getChecked();
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			IAdaptable element = (IAdaptable) event.getElement();
+			boolean state = event.getChecked();
 
-				fTree.setGrayed(element, false);
-				if (isExpandable(element)) {
-					setSubtreeChecked(element, state, true);
-				}
-				updateParentState(element, state);
-				validateInput();
+			fTree.setGrayed(element, false);
+			if (isExpandable(element)) {
+				setSubtreeChecked(element, state, true);
 			}
+			updateParentState(element, state);
+			validateInput();
 		});
 	}
 
@@ -289,76 +269,72 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * working set, if any.
 	 */
 	private void initializeCheckedState() {
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				Object[] elements;
-				if (fWorkingSet == null) {
-					// Use current part's selection for initialization
-					IWorkbenchPage page = CUIPlugin.getActivePage();
-					if (page == null)
-						return;
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			Object[] elements;
+			if (fWorkingSet == null) {
+				// Use current part's selection for initialization
+				IWorkbenchPage page = CUIPlugin.getActivePage();
+				if (page == null)
+					return;
 
-					IWorkbenchPart part = CUIPlugin.getActivePage().getActivePart();
-					if (part == null)
-						return;
+				IWorkbenchPart part = CUIPlugin.getActivePage().getActivePart();
+				if (part == null)
+					return;
 
-					try {
-						elements = SelectionConverter.getStructuredSelection(part).toArray();
-						for (int i = 0; i < elements.length; i++) {
-							if (elements[i] instanceof IResource) {
-								ICElement ce = ((IResource) elements[i]).getAdapter(ICElement.class);
-								if (ce != null && ce.exists()
-										&& ce.getCProject().isOnSourceRoot((IResource) elements[i]))
-									elements[i] = ce;
+				try {
+					elements = SelectionConverter.getStructuredSelection(part).toArray();
+					for (int i1 = 0; i1 < elements.length; i1++) {
+						if (elements[i1] instanceof IResource) {
+							ICElement ce = ((IResource) elements[i1]).getAdapter(ICElement.class);
+							if (ce != null && ce.exists() && ce.getCProject().isOnSourceRoot((IResource) elements[i1]))
+								elements[i1] = ce;
+						}
+					}
+				} catch (CModelException e) {
+					return;
+				}
+			} else
+				elements = fWorkingSet.getElements();
+
+			for (int i2 = 0; i2 < elements.length; i2++) {
+				Object element1 = elements[i2];
+				if (element1 instanceof IResource) {
+					IProject project = ((IResource) element1).getProject();
+					if (!project.isAccessible()) {
+						elements[i2] = project;
+					} else {
+						// for backwards compatibility: adapt to ICElement if possible
+						if (CoreModel.hasCNature(project)) {
+							ICElement cElement = CoreModel.getDefault().create((IResource) element1);
+							if (cElement != null) {
+								elements[i2] = cElement;
 							}
 						}
-					} catch (CModelException e) {
-						return;
 					}
-				} else
-					elements = fWorkingSet.getElements();
-
-				for (int i = 0; i < elements.length; i++) {
-					Object element = elements[i];
-					if (element instanceof IResource) {
-						IProject project = ((IResource) element).getProject();
-						if (!project.isAccessible()) {
-							elements[i] = project;
-						} else {
-							// for backwards compatibility: adapt to ICElement if possible
-							if (CoreModel.hasCNature(project)) {
-								ICElement cElement = CoreModel.getDefault().create((IResource) element);
-								if (cElement != null) {
-									elements[i] = cElement;
-								}
-							}
-						}
-					} else if (element instanceof ICElement) {
-						ICProject cProject = ((ICElement) element).getCProject();
-						if (cProject != null && !cProject.getProject().isAccessible())
-							elements[i] = cProject.getProject();
-					}
+				} else if (element1 instanceof ICElement) {
+					ICProject cProject = ((ICElement) element1).getCProject();
+					if (cProject != null && !cProject.getProject().isAccessible())
+						elements[i2] = cProject.getProject();
 				}
-				fTree.setCheckedElements(elements);
-				HashSet<Object> parents = new HashSet<>();
-				for (Object element : elements) {
-					if (isExpandable(element))
-						setSubtreeChecked(element, true, true);
-
-					if (element instanceof IAdaptable) {
-						IResource resource = ((IAdaptable) element).getAdapter(IResource.class);
-						if (resource != null && !resource.isAccessible())
-							continue;
-					}
-					Object parent = fTreeContentProvider.getParent(element);
-					if (parent != null)
-						parents.add(parent);
-				}
-
-				for (Object object : parents)
-					updateObjectState(object, true);
 			}
+			fTree.setCheckedElements(elements);
+			HashSet<Object> parents = new HashSet<>();
+			for (Object element2 : elements) {
+				if (isExpandable(element2))
+					setSubtreeChecked(element2, true, true);
+
+				if (element2 instanceof IAdaptable) {
+					IResource resource = ((IAdaptable) element2).getAdapter(IResource.class);
+					if (resource != null && !resource.isAccessible())
+						continue;
+				}
+				Object parent = fTreeContentProvider.getParent(element2);
+				if (parent != null)
+					parents.add(parent);
+			}
+
+			for (Object object : parents)
+				updateObjectState(object, true);
 		});
 	}
 

@@ -30,7 +30,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -191,15 +190,11 @@ public class IncludesSymbolsPropertyPage extends PropertyPage
 			getSettings().put(INDEX, fIncludesSymbolsBlock.getPageIndex());
 
 			Shell shell = getControl().getShell();
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						fIncludesSymbolsBlock.configureCProject(monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+			IRunnableWithProgress runnable = monitor -> {
+				try {
+					fIncludesSymbolsBlock.configureCProject(monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
 				}
 			};
 			IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
@@ -237,17 +232,13 @@ public class IncludesSymbolsPropertyPage extends PropertyPage
 		if (event.hasContentChanged()) {
 			Control control = getControl();
 			if (control != null && !control.isDisposed()) {
-				control.getDisplay().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						Control control = getControl();
-						if (control != null && !control.isDisposed()) {
-							try {
-								fIncludesSymbolsBlock.init(getCElement(), fIncludesSymbolsBlock.getRawCPath());
-							} catch (CModelException e) {
-								CUIPlugin.log(e);
-							}
+				control.getDisplay().asyncExec(() -> {
+					Control control1 = getControl();
+					if (control1 != null && !control1.isDisposed()) {
+						try {
+							fIncludesSymbolsBlock.init(getCElement(), fIncludesSymbolsBlock.getRawCPath());
+						} catch (CModelException e) {
+							CUIPlugin.log(e);
 						}
 					}
 				});

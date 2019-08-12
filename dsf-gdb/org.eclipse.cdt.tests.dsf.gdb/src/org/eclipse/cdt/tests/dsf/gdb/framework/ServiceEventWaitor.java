@@ -72,12 +72,7 @@ public class ServiceEventWaitor<V> {
 		assert eventClass != null;
 		fSession = session;
 		fEventTypeClass = eventClass;
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				fSession.addServiceEventListener(ServiceEventWaitor.this, null);
-			}
-		};
+		Runnable runnable = () -> fSession.addServiceEventListener(ServiceEventWaitor.this, null);
 		try {
 			fSession.getExecutor().submit(runnable).get();
 		} catch (InterruptedException e) {
@@ -91,12 +86,7 @@ public class ServiceEventWaitor<V> {
 	protected void finalize() throws Throwable {
 		super.finalize();
 		if (fEventTypeClass != null) {
-			Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					fSession.removeServiceEventListener(ServiceEventWaitor.this);
-				}
-			};
+			Runnable runnable = () -> fSession.removeServiceEventListener(ServiceEventWaitor.this);
 			fSession.getExecutor().submit(runnable).get();
 		}
 	}

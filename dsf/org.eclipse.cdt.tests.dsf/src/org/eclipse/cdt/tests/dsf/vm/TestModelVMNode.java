@@ -71,64 +71,52 @@ public class TestModelVMNode extends AbstractVMNode
 
 	@Override
 	public void update(final IHasChildrenUpdate[] updates) {
-		getTestProvider().getDsfExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				for (IHasChildrenUpdate update : updates) {
-					if (update.getElement() instanceof TestElementVMContext) {
-						TestElement element = ((TestElementVMContext) update.getElement()).getElement();
-						update.setHasChilren(element.getChildren().length != 0);
-					}
-					update.done();
+		getTestProvider().getDsfExecutor().execute(() -> {
+			for (IHasChildrenUpdate update : updates) {
+				if (update.getElement() instanceof TestElementVMContext) {
+					TestElement element = ((TestElementVMContext) update.getElement()).getElement();
+					update.setHasChilren(element.getChildren().length != 0);
 				}
+				update.done();
 			}
 		});
 	}
 
 	@Override
 	public void update(final IChildrenCountUpdate[] updates) {
-		getTestProvider().getDsfExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				for (IChildrenCountUpdate update : updates) {
-					if (update.getElement() instanceof TestElementVMContext) {
-						TestElement element = ((TestElementVMContext) update.getElement()).getElement();
-						update.setChildCount(element.getChildren().length);
-					}
-					update.done();
+		getTestProvider().getDsfExecutor().execute(() -> {
+			for (IChildrenCountUpdate update : updates) {
+				if (update.getElement() instanceof TestElementVMContext) {
+					TestElement element = ((TestElementVMContext) update.getElement()).getElement();
+					update.setChildCount(element.getChildren().length);
 				}
+				update.done();
 			}
 		});
 	}
 
 	@Override
 	public void update(final IChildrenUpdate[] updates) {
-		getTestProvider().getDsfExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				for (IChildrenUpdate update : updates) {
-					if (update.getElement() instanceof TestElementVMContext) {
-						TestElement element = ((TestElementVMContext) update.getElement()).getElement();
-						fillUpdateWithTestElements(update, element.getChildren());
-					}
-					update.done();
+		getTestProvider().getDsfExecutor().execute(() -> {
+			for (IChildrenUpdate update : updates) {
+				if (update.getElement() instanceof TestElementVMContext) {
+					TestElement element = ((TestElementVMContext) update.getElement()).getElement();
+					fillUpdateWithTestElements(update, element.getChildren());
 				}
+				update.done();
 			}
 		});
 	}
 
 	@Override
 	public void update(final IPropertiesUpdate[] updates) {
-		getTestProvider().getDsfExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				for (IPropertiesUpdate update : updates) {
-					if (update.getElement() instanceof TestElementVMContext) {
-						TestElement element = ((TestElementVMContext) update.getElement()).getElement();
-						update.setProperty(PROP_TEST_ELEMENT_LABEL, element.getLabel());
-					}
-					update.done();
+		getTestProvider().getDsfExecutor().execute(() -> {
+			for (IPropertiesUpdate update : updates) {
+				if (update.getElement() instanceof TestElementVMContext) {
+					TestElement element = ((TestElementVMContext) update.getElement()).getElement();
+					update.setProperty(PROP_TEST_ELEMENT_LABEL, element.getLabel());
 				}
+				update.done();
 			}
 		});
 	}

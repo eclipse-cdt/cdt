@@ -55,19 +55,16 @@ public class ToggleFileCreator {
 			return context.getDefaultAnswer();
 		}
 		final boolean[] answer = new boolean[1];
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				Shell shell = CUIPlugin.getDefault().getWorkbench().getWorkbenchWindows()[0].getShell();
-				String functionName;
-				if (context.getDeclaration() != null) {
-					functionName = context.getDeclaration().getRawSignature();
-				} else {
-					functionName = context.getDefinition().getDeclarator().getRawSignature();
-				}
-				answer[0] = MessageDialog.openQuestion(shell, Messages.ToggleFileCreator_NewImplFile,
-						NLS.bind(Messages.ToggleFileCreator_CreateNewFilePrompt, getNewFileName(), functionName));
+		Runnable r = () -> {
+			Shell shell = CUIPlugin.getDefault().getWorkbench().getWorkbenchWindows()[0].getShell();
+			String functionName;
+			if (context.getDeclaration() != null) {
+				functionName = context.getDeclaration().getRawSignature();
+			} else {
+				functionName = context.getDefinition().getDeclarator().getRawSignature();
 			}
+			answer[0] = MessageDialog.openQuestion(shell, Messages.ToggleFileCreator_NewImplFile,
+					NLS.bind(Messages.ToggleFileCreator_CreateNewFilePrompt, getNewFileName(), functionName));
 		};
 		PlatformUI.getWorkbench().getDisplay().syncExec(r);
 		return answer[0];

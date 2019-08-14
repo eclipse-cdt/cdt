@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "90dbe4a4_90297f14",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/coff/Coff64.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-14T21:32:31Z",
+      "side": 1,
+      "message": "This should be Space Codesign Systems and others.",
+      "revId": "81da112ffd0fae6410826141aebd50d40201f856",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "18429bab_7a8156da",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/coff/Coff64.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-14T21:32:31Z",
+      "side": 1,
+      "message": "this should be \"Space Codesign Systems - Initial API and implementation\"",
+      "revId": "81da112ffd0fae6410826141aebd50d40201f856",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fe70da78_5600ee7a",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/coff/Coff64.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-14T21:32:31Z",
+      "side": 1,
+      "message": "commented out code",
+      "revId": "81da112ffd0fae6410826141aebd50d40201f856",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

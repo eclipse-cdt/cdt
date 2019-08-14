@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2019 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     QNX Software Systems - initial API and implementation
+ *     Space Codesign Systems - Initial API and implementation
+ *     QNX Software Systems - initial CygwinPEBinaryShared class
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
@@ -19,13 +20,11 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEBinaryShared64}.
- * This class is planned for removal in next major release.
+ * @since 6.9
  */
-@Deprecated
-public class CygwinPEBinaryShared extends CygwinPEBinaryObject implements IBinaryShared {
+public class CygwinPEBinaryShared64 extends CygwinPEBinaryObject64 implements IBinaryShared {
 
-	protected CygwinPEBinaryShared(IBinaryParser parser, IPath path) {
+	protected CygwinPEBinaryShared64(IBinaryParser parser, IPath path) {
 		super(parser, path, IBinaryFile.SHARED);
 	}
 

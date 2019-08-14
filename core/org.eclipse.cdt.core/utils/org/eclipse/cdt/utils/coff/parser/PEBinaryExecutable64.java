@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2019 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     QNX Software Systems - initial API and implementation
+ *     Space Codesign Systems - Initial API and implementation
+ *     QNX Software Systems - initial PEBinaryExecutable class
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
@@ -19,18 +20,11 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEBinaryExecutable64}.
- * This class is planned for removal in next major release.
+ * @since 6.9
  */
-@Deprecated
-public class CygwinPEBinaryExecutable extends CygwinPEBinaryObject implements IBinaryExecutable {
+public class PEBinaryExecutable64 extends PEBinaryObject64 implements IBinaryExecutable {
 
-	/**
-	 * @param parser
-	 * @param path
-	 * @param executable
-	 */
-	public CygwinPEBinaryExecutable(IBinaryParser parser, IPath path, int executable) {
+	public PEBinaryExecutable64(IBinaryParser parser, IPath path) {
 		super(parser, path, IBinaryFile.EXECUTABLE);
 	}
 

@@ -72,6 +72,8 @@
          </run>
       </cextension>
    </extension>
+   <!-- Deprecated as of CDT 6.9. Use 64 bit version PEParser64 instead. 
+   This class is planned for removal in next major release. -->
    <extension
          id="PE"
          name="%PEWindowsParser.name"
@@ -83,12 +85,34 @@
       </cextension>
    </extension>
    <extension
+         id="PE64"
+         name="%PE64WindowsParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.coff.parser.PEParser64">
+         </run>
+      </cextension>
+   </extension>
+   <!-- Deprecated as of CDT 6.9. Use 64 bit version CygwinPEParser64 instead. 
+   This class is planned for removal in next major release. -->
+   <extension
          id="Cygwin_PE"
          name="%CygwinPEParser.name"
          point="org.eclipse.cdt.core.BinaryParser">
       <cextension>
          <run
                class="org.eclipse.cdt.utils.coff.parser.CygwinPEParser">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+         id="Cygwin_PE64"
+         name="%CygwinPE64Parser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.coff.parser.CygwinPEParser64">
          </run>
       </cextension>
    </extension>

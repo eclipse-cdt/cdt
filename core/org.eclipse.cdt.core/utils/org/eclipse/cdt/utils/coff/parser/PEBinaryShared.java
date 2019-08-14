@@ -18,6 +18,11 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.core.runtime.IPath;
 
+/**
+ * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link PEBinaryShared64}.
+ * This class is planned for removal in next major release.
+ */
+@Deprecated
 public class PEBinaryShared extends PEBinaryObject implements IBinaryShared {
 
 	public PEBinaryShared(IBinaryParser parser, IPath p) {

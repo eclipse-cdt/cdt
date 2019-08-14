@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Nokia and others.
+ * Copyright (c) 2007, 2019 Nokia and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.ICompileOptionsFinder;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
 import org.eclipse.cdt.utils.coff.PE;
+import org.eclipse.cdt.utils.coff.PE64;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Section;
@@ -76,6 +77,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	 * @since 5.1
 	 */
 	public DwarfReader(PE exe) throws IOException {
+		super(exe);
+	}
+
+	/**
+	 * @since 6.9
+	 */
+	public DwarfReader(PE64 exe) throws IOException {
 		super(exe);
 	}
 

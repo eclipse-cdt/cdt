@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2019 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     QNX Software Systems - Initial API and implementation
- *     Anton Leherbauer (Wind River Systems)
+ *     Space Codesign Systems - Initial API and implementation
+ *     QNX Software Systems - Initial CygwinPEParser class
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
@@ -21,11 +21,9 @@ import org.eclipse.cdt.utils.ICygwinToolsFactroy;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEParser64}.
- * This class is planned for removal in next major release.
+ * @since 6.9
  */
-@Deprecated
-public class CygwinPEParser extends PEParser {
+public class CygwinPEParser64 extends PEParser64 {
 
 	private DefaultCygwinToolFactory toolFactory;
 
@@ -39,27 +37,27 @@ public class CygwinPEParser extends PEParser {
 
 	@Override
 	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
-		return new CygwinPEBinaryArchive(this, path);
+		return new CygwinPEBinaryArchive64(this, path);
 	}
 
 	@Override
 	protected IBinaryExecutable createBinaryExecutable(IPath path) {
-		return new CygwinPEBinaryExecutable(this, path, IBinaryFile.EXECUTABLE);
+		return new CygwinPEBinaryExecutable64(this, path, IBinaryFile.EXECUTABLE);
 	}
 
 	@Override
 	protected IBinaryObject createBinaryCore(IPath path) {
-		return new CygwinPEBinaryObject(this, path, IBinaryFile.CORE);
+		return new CygwinPEBinaryObject64(this, path, IBinaryFile.CORE);
 	}
 
 	@Override
 	protected IBinaryObject createBinaryObject(IPath path) {
-		return new CygwinPEBinaryObject(this, path, IBinaryFile.OBJECT);
+		return new CygwinPEBinaryObject64(this, path, IBinaryFile.OBJECT);
 	}
 
 	@Override
 	protected IBinaryShared createBinaryShared(IPath path) {
-		return new CygwinPEBinaryShared(this, path);
+		return new CygwinPEBinaryShared64(this, path);
 	}
 
 	protected DefaultCygwinToolFactory createToolFactory() {

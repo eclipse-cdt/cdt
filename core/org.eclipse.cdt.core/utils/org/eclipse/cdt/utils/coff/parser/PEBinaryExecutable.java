@@ -18,6 +18,11 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.core.runtime.IPath;
 
+/**
+ * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link PEBinaryExecutable64}.
+ * This class is planned for removal in next major release.
+ */
+@Deprecated
 public class PEBinaryExecutable extends PEBinaryObject implements IBinaryExecutable {
 
 	public PEBinaryExecutable(IBinaryParser parser, IPath path) {

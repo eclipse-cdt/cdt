@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2019 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     QNX Software Systems - Initial API and implementation
+ *     Space Codesign Systems - Initial API and implementation
+ *     QNX Software Systems - Initial PEBinaryObject class
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
@@ -30,27 +31,25 @@ import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.Symbol;
-import org.eclipse.cdt.utils.coff.Coff;
-import org.eclipse.cdt.utils.coff.PE;
+import org.eclipse.cdt.utils.coff.Coff64;
+import org.eclipse.cdt.utils.coff.PE64;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link PEBinaryObject64}.
- * This class is planned for removal in next major release.
+ * @since 6.9
  */
-@Deprecated
-public class PEBinaryObject extends BinaryObjectAdapter {
+public class PEBinaryObject64 extends BinaryObjectAdapter {
 
 	BinaryObjectInfo info;
 	IAddressFactory addressFactory;
 	ISymbol[] symbols;
 	AR.ARHeader header;
 
-	public PEBinaryObject(IBinaryParser parser, IPath path, AR.ARHeader header) {
+	public PEBinaryObject64(IBinaryParser parser, IPath path, AR.ARHeader header) {
 		super(parser, path, IBinaryFile.OBJECT);
 	}
 
-	public PEBinaryObject(IBinaryParser parser, IPath p, int type) {
+	public PEBinaryObject64(IBinaryParser parser, IPath p, int type) {
 		super(parser, p, type);
 	}
 
@@ -106,17 +105,17 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
-		if (adapter.equals(PE.class)) {
+		if (adapter.equals(PE64.class)) {
 			try {
 				if (header != null) {
-					return (T) new PE(getPath().toOSString(), header.getObjectDataOffset());
+					return (T) new PE64(getPath().toOSString(), header.getObjectDataOffset());
 				}
-				return (T) new PE(getPath().toOSString());
+				return (T) new PE64(getPath().toOSString());
 			} catch (IOException e) {
 			}
 		}
 		if (adapter.equals(ISymbolReader.class)) {
-			PE pe = getAdapter(PE.class);
+			PE64 pe = getAdapter(PE64.class);
 			if (pe != null) {
 				return (T) pe.getSymbolReader();
 			}
@@ -124,15 +123,15 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		return super.getAdapter(adapter);
 	}
 
-	protected PE getPE() throws IOException {
+	protected PE64 getPE() throws IOException {
 		if (header != null) {
-			return new PE(getPath().toOSString(), header.getObjectDataOffset());
+			return new PE64(getPath().toOSString(), header.getObjectDataOffset());
 		}
-		return new PE(getPath().toOSString());
+		return new PE64(getPath().toOSString());
 	}
 
 	protected void loadAll() throws IOException {
-		PE pe = null;
+		PE64 pe = null;
 		try {
 			pe = getPE();
 			loadInfo(pe);
@@ -145,7 +144,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void loadInfo() throws IOException {
-		PE pe = null;
+		PE64 pe = null;
 		try {
 			pe = getPE();
 			loadInfo(pe);
@@ -156,15 +155,15 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		}
 	}
 
-	protected void loadInfo(PE pe) throws IOException {
+	protected void loadInfo(PE64 pe) throws IOException {
 		info = new BinaryObjectInfo();
-		PE.Attribute attribute = getPE().getAttribute();
+		PE64.Attribute attribute = getPE().getAttribute();
 		info.isLittleEndian = attribute.isLittleEndian();
 		info.hasDebug = attribute.hasDebug();
 		info.cpu = attribute.getCPU();
 	}
 
-	protected void loadSymbols(PE pe) throws IOException {
+	protected void loadSymbols(PE64 pe) throws IOException {
 		ArrayList<Symbol> list = new ArrayList<>();
 		loadSymbols(pe, list);
 		symbols = list.toArray(NO_SYMBOLS);
@@ -172,14 +171,14 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		list.clear();
 	}
 
-	protected void loadSymbols(PE pe, List<Symbol> list) throws IOException {
-		Coff.Symbol[] peSyms = pe.getSymbols();
+	protected void loadSymbols(PE64 pe, List<Symbol> list) throws IOException {
+		Coff64.Symbol[] peSyms = pe.getSymbols();
 		byte[] table = pe.getStringTable();
 		addSymbols(peSyms, table, list);
 	}
 
-	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, List<Symbol> list) {
-		for (org.eclipse.cdt.utils.coff.Coff.Symbol peSym : peSyms) {
+	protected void addSymbols(Coff64.Symbol[] peSyms, byte[] table, List<Symbol> list) {
+		for (org.eclipse.cdt.utils.coff.Coff64.Symbol peSym : peSyms) {
 			if (peSym.isFunction() || peSym.isPointer() || peSym.isArray()) {
 				String name = peSym.getName(table);
 				if (name == null || name.trim().length() == 0 || !Character.isJavaIdentifierStart(name.charAt(0))) {

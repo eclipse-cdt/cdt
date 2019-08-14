@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2019 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     QNX Software Systems - initial API and implementation
+ *     Space Codesign Systems - Initial API and implementation
+ *     QNX Software Systems - initial CygwinSymbol class
  *******************************************************************************/
 /*
  * Created on Jul 6, 2004
@@ -32,12 +33,7 @@ import org.eclipse.core.runtime.IPath;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-/**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinSymbol64}.
- * This class is planned for removal in next major release.
- */
-@Deprecated
-class CygwinSymbol extends Symbol {
+class CygwinSymbol64 extends Symbol {
 
 	/**
 	 * @param binary
@@ -49,8 +45,8 @@ class CygwinSymbol extends Symbol {
 	 * @param startLine
 	 * @param endLine
 	 */
-	public CygwinSymbol(CygwinPEBinaryObject binary, String name, int type, IAddress addr, long size, IPath sourceFile,
-			int startLine, int endLine) {
+	public CygwinSymbol64(CygwinPEBinaryObject64 binary, String name, int type, IAddress addr, long size,
+			IPath sourceFile, int startLine, int endLine) {
 		super(binary, name, type, addr, size, sourceFile, startLine, endLine);
 	}
 
@@ -61,7 +57,7 @@ class CygwinSymbol extends Symbol {
 	 * @param addr
 	 * @param size
 	 */
-	public CygwinSymbol(CygwinPEBinaryObject binary, String name, int type, IAddress addr, long size) {
+	public CygwinSymbol64(CygwinPEBinaryObject64 binary, String name, int type, IAddress addr, long size) {
 		super(binary, name, type, addr, size);
 	}
 
@@ -71,7 +67,7 @@ class CygwinSymbol extends Symbol {
 	@Override
 	public int getLineNumber(long offset) {
 		int line = -1;
-		Addr2line addr2line = ((CygwinPEBinaryObject) binary).getAddr2line(true);
+		Addr2line addr2line = ((CygwinPEBinaryObject64) binary).getAddr2line(true);
 		if (addr2line != null) {
 			try {
 				return addr2line.getLineNumber(getAddress().add(offset));

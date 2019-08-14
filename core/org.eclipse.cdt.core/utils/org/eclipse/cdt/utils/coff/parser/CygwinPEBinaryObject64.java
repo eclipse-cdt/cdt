@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2019 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     QNX Software Systems - initial API and implementation
+ *     Space Codesign Systems - Initial API and implementation
+ *     QNX Software Systems - initial CygwinPEBinaryObject class
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
@@ -33,20 +34,15 @@ import org.eclipse.cdt.utils.ICygwinToolsFactroy;
 import org.eclipse.cdt.utils.NM;
 import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.cdt.utils.Symbol;
-import org.eclipse.cdt.utils.coff.Coff;
-import org.eclipse.cdt.utils.coff.PE;
+import org.eclipse.cdt.utils.coff.Coff64;
+import org.eclipse.cdt.utils.coff.PE64;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-/*
- * CygwinPEBinaryObject
- */
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEBinaryObject64}.
- * This class is planned for removal in next major release.
+ * @since 6.9
  */
-@Deprecated
-public class CygwinPEBinaryObject extends PEBinaryObject {
+public class CygwinPEBinaryObject64 extends PEBinaryObject64 {
 
 	private Addr2line autoDisposeAddr2line;
 	private Addr2line symbolLoadingAddr2line;
@@ -59,11 +55,11 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 * @param path
 	 * @param header
 	 */
-	public CygwinPEBinaryObject(IBinaryParser parser, IPath path, ARHeader header) {
+	public CygwinPEBinaryObject64(IBinaryParser parser, IPath path, ARHeader header) {
 		super(parser, path, header);
 	}
 
-	public CygwinPEBinaryObject(IBinaryParser parser, IPath path, int type) {
+	public CygwinPEBinaryObject64(IBinaryParser parser, IPath path, int type) {
 		super(parser, path, type);
 	}
 
@@ -168,7 +164,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	}
 
 	@Override
-	protected void loadSymbols(PE pe) throws IOException {
+	protected void loadSymbols(PE64 pe) throws IOException {
 		symbolLoadingAddr2line = getAddr2line(false);
 		symbolLoadingCPPFilt = getCPPFilt();
 		symbolLoadingCygPath = getCygPath();
@@ -244,7 +240,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 					IPath file = filename != null ? new Path(filename) : Path.EMPTY;
 					int startLine = symbolLoadingAddr2line.getLineNumber(addr);
 					int endLine = symbolLoadingAddr2line.getLineNumber(addr.add(size - 1));
-					list.add(new CygwinSymbol(this, name, type, addr, size, file, startLine, endLine));
+					list.add(new CygwinSymbol64(this, name, type, addr, size, file, startLine, endLine));
 				} catch (IOException e) {
 					symbolLoadingAddr2line.dispose();
 					symbolLoadingAddr2line = null;
@@ -254,8 +250,8 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	}
 
 	@Override
-	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, List<Symbol> list) {
-		for (Coff.Symbol peSym : peSyms) {
+	protected void addSymbols(Coff64.Symbol[] peSyms, byte[] table, List<Symbol> list) {
+		for (Coff64.Symbol peSym : peSyms) {
 			if (peSym.isFunction() || peSym.isPointer() || peSym.isArray()) {
 				String name = peSym.getName(table);
 				if (name == null || name.trim().length() == 0 || !Character.isJavaIdentifierStart(name.charAt(0))) {
@@ -294,15 +290,15 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 						IPath file = filename != null ? new Path(filename) : Path.EMPTY;
 						int startLine = symbolLoadingAddr2line.getLineNumber(addr);
 						int endLine = symbolLoadingAddr2line.getLineNumber(addr.add(size - 1));
-						list.add(new CygwinSymbol(this, name, type, addr, size, file, startLine, endLine));
+						list.add(new CygwinSymbol64(this, name, type, addr, size, file, startLine, endLine));
 					} catch (IOException e) {
 						symbolLoadingAddr2line.dispose();
 						symbolLoadingAddr2line = null;
 						// the symbol still needs to be added
-						list.add(new CygwinSymbol(this, name, type, addr, size));
+						list.add(new CygwinSymbol64(this, name, type, addr, size));
 					}
 				} else {
-					list.add(new CygwinSymbol(this, name, type, addr, size));
+					list.add(new CygwinSymbol64(this, name, type, addr, size));
 				}
 
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2019 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     QNX Software Systems - initial API and implementation
+ *     Space Codesign Systems - Initial API and implementation
+ *     QNX Software Systems - initial CygwinPEBinaryArchive class
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
@@ -21,25 +22,23 @@ import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEBinaryArchive64}.
- * This class is planned for removal in next major release.
+ * @since 6.9
  */
-@Deprecated
-public class CygwinPEBinaryArchive extends PEBinaryArchive {
+public class CygwinPEBinaryArchive64 extends PEBinaryArchive64 {
 
 	/**
 	 * @param parser
 	 * @param path
 	 * @throws IOException
 	 */
-	public CygwinPEBinaryArchive(PEParser parser, IPath path) throws IOException {
+	public CygwinPEBinaryArchive64(PEParser64 parser, IPath path) throws IOException {
 		super(parser, path);
 	}
 
 	@Override
 	protected void addArchiveMembers(ARHeader[] headers, ArrayList<IBinaryObject> children2) {
 		for (int i = 0; i < headers.length; i++) {
-			IBinaryObject bin = new CygwinPEBinaryObject(getBinaryParser(), getPath(), headers[i]);
+			IBinaryObject bin = new CygwinPEBinaryObject64(getBinaryParser(), getPath(), headers[i]);
 			children.add(bin);
 		}
 	}

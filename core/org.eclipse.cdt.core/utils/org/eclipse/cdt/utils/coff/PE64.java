@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 QNX Software Systems and others.
+ * Copyright (c) 2000, 2019 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     QNX Software Systems - Initial API and implementation
- *     Markus Schorn (Wind River Systems)
+ *     Space Codesign Systems - Initial API and implementation
+ *     QNX Software Systems - Initial PE class
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.coff;
@@ -22,16 +22,16 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.Addr32Factory;
-import org.eclipse.cdt.utils.coff.Coff.FileHeader;
-import org.eclipse.cdt.utils.coff.Coff.OptionalHeader;
-import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
-import org.eclipse.cdt.utils.coff.Coff.Symbol;
+import org.eclipse.cdt.utils.coff.Coff64.FileHeader;
+import org.eclipse.cdt.utils.coff.Coff64.OptionalHeader;
+import org.eclipse.cdt.utils.coff.Coff64.SectionHeader;
+import org.eclipse.cdt.utils.coff.Coff64.Symbol;
 import org.eclipse.cdt.utils.coff.Exe.ExeHeader;
 import org.eclipse.cdt.utils.debug.dwarf.DwarfReader;
 import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 
 /**
- * The PE file header consists of an MS-DOS stub, the PE signalture, the COFF file Header
+ * The PE file header consists of an MS-DOS stub, the PE signature, the COFF file Header
  * and an Optional Header.
  * <pre>
  *  +-------------------+
@@ -66,14 +66,9 @@ import org.eclipse.cdt.utils.debug.stabs.StabsReader;
  *  |                   |
  *  +-------------------+
  * </pre>
+ * @since 6.9
  */
-
-/**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link PE64}.
- * This class is planned for removal in next major release.
- */
-@Deprecated
-public class PE {
+public class PE64 {
 
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	RandomAccessFile rfile;
@@ -82,7 +77,8 @@ public class PE {
 	DOSHeader dosHeader;
 	FileHeader fileHeader;
 	OptionalHeader optionalHeader;
-	NTOptionalHeader ntHeader;
+	NTOptionalHeader64 ntHeader64;
+	NTOptionalHeader32 ntHeader32;
 	ImageDataDirectory[] dataDirectories;
 	SectionHeader[] scnhdrs;
 	Symbol[] symbolTable;
@@ -209,7 +205,101 @@ public class PE {
 		public int Size;
 	}
 
-	public static class NTOptionalHeader {
+	public static class NTOptionalHeader64 {
+
+		public final static int NTHDRSZ = 216;
+		public long ImageBase; // 8 bytes.
+		public int SectionAlignment; // 4 bytes.
+		public int FileAlignment; // 4 bytes.
+		public short MajorOperatingSystemVersion; // 2 bytes.
+		public short MinorOperatingSystemVersion; // 2 bytes.
+		public short MajorImageVersion; // 2 bytes.
+		public short MinorImageVersion; // 2 bytes.
+		public short MajorSubsystemVersion; // 2 bytes.
+		public short MinorSubsystemVersion; // 2 bytes.
+		public byte[] Reserved = new byte[4]; // 4 bytes.
+		public int SizeOfImage; // 4 bytes.
+		public int SizeOfHeaders; // 4 bytes.
+		public int CheckSum; // 4 bytes.
+		public short Subsystem; // 2 bytes.
+		public short DLLCharacteristics; // 2 bytes.
+		public long SizeOfStackReserve; // 8 bytes.
+		public long SizeOfStackCommit; // 8 bytes.
+		public long SizeOfHeapReserve; // 8 bytes.
+		public long SizeOfHeapCommit; // 8 bytes.
+		public int LoaderFlags; // 4 bytes.
+		public int NumberOfRvaAndSizes; // 4 bytes.
+		public IMAGE_DATA_DIRECTORY DataDirectory[];
+
+		public NTOptionalHeader64(RandomAccessFile file) throws IOException {
+			this(file, file.getFilePointer());
+		}
+
+		public NTOptionalHeader64(RandomAccessFile file, long offset) throws IOException {
+			file.seek(offset);
+			byte[] hdr = new byte[NTHDRSZ];
+			file.readFully(hdr);
+			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, true);
+			ImageBase = memory.getLong();
+			SectionAlignment = memory.getInt();
+			FileAlignment = memory.getInt();
+			MajorOperatingSystemVersion = memory.getShort();
+			MinorOperatingSystemVersion = memory.getShort();
+			MajorImageVersion = memory.getShort();
+			MinorImageVersion = memory.getShort();
+			MajorSubsystemVersion = memory.getShort();
+			MinorSubsystemVersion = memory.getShort();
+			memory.getBytes(Reserved);
+			SizeOfImage = memory.getInt();
+			SizeOfHeaders = memory.getInt();
+			CheckSum = memory.getInt();
+			Subsystem = memory.getShort();
+			DLLCharacteristics = memory.getShort();
+			SizeOfStackReserve = memory.getLong();
+			SizeOfStackCommit = memory.getLong();
+			SizeOfHeapReserve = memory.getLong();
+			SizeOfHeapCommit = memory.getLong();
+			LoaderFlags = memory.getInt();
+			NumberOfRvaAndSizes = memory.getInt();
+
+			DataDirectory = new IMAGE_DATA_DIRECTORY[NumberOfRvaAndSizes]; // 8*16=128 bytes
+			for (int i = 0; i < NumberOfRvaAndSizes; i++) {
+				DataDirectory[i] = new IMAGE_DATA_DIRECTORY();
+				DataDirectory[i].VirtualAddress = memory.getInt();
+				DataDirectory[i].Size = memory.getInt();
+			}
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder buffer = new StringBuilder();
+			buffer.append("NT OPTIONAL HEADER VALUES").append(NL); //$NON-NLS-1$
+			buffer.append("ImageBase = ").append(ImageBase).append(NL); //$NON-NLS-1$
+			buffer.append("SexctionAlignement = ").append(SectionAlignment).append(NL); //$NON-NLS-1$
+			buffer.append("FileAlignment = ").append(FileAlignment).append(NL); //$NON-NLS-1$
+			buffer.append("MajorOSVersion = ").append(MajorOperatingSystemVersion).append(NL); //$NON-NLS-1$
+			buffer.append("MinorOSVersion = ").append(MinorOperatingSystemVersion).append(NL); //$NON-NLS-1$
+			buffer.append("MajorImageVersion = ").append(MajorImageVersion).append(NL); //$NON-NLS-1$
+			buffer.append("MinorImageVersion = ").append(MinorImageVersion).append(NL); //$NON-NLS-1$
+			buffer.append("MajorSubVersion = ").append(MajorSubsystemVersion).append(NL); //$NON-NLS-1$
+			buffer.append("MinorSubVersion = ").append(MinorSubsystemVersion).append(NL); //$NON-NLS-1$
+			buffer.append("Reserved = ").append(Reserved).append(NL); //$NON-NLS-1$
+			buffer.append("SizeOfImage = ").append(SizeOfImage).append(NL); //$NON-NLS-1$
+			buffer.append("SizeOfHeaders = ").append(SizeOfHeaders).append(NL); //$NON-NLS-1$
+			buffer.append("CheckSum = ").append(CheckSum).append(NL); //$NON-NLS-1$
+			buffer.append("Subsystem = ").append(Subsystem).append(NL); //$NON-NLS-1$
+			buffer.append("DLL = ").append(DLLCharacteristics).append(NL); //$NON-NLS-1$
+			buffer.append("StackReserve = ").append(SizeOfStackReserve).append(NL); //$NON-NLS-1$
+			buffer.append("StackCommit = ").append(SizeOfStackCommit).append(NL); //$NON-NLS-1$
+			buffer.append("HeapReserve = ").append(SizeOfHeapReserve).append(NL); //$NON-NLS-1$
+			buffer.append("HeapCommit = ").append(SizeOfHeapCommit).append(NL); //$NON-NLS-1$
+			buffer.append("LoaderFlags = ").append(LoaderFlags).append(NL); //$NON-NLS-1$
+			buffer.append("#Rva size = ").append(NumberOfRvaAndSizes).append(NL); //$NON-NLS-1$
+			return buffer.toString();
+		}
+	}
+
+	public static class NTOptionalHeader32 {
 
 		public final static int NTHDRSZ = 196;
 		public int ImageBase; // 4 bytes.
@@ -235,11 +325,11 @@ public class PE {
 		public int NumberOfRvaAndSizes; // 4 bytes.
 		public IMAGE_DATA_DIRECTORY DataDirectory[];
 
-		public NTOptionalHeader(RandomAccessFile file) throws IOException {
+		public NTOptionalHeader32(RandomAccessFile file) throws IOException {
 			this(file, file.getFilePointer());
 		}
 
-		public NTOptionalHeader(RandomAccessFile file, long offset) throws IOException {
+		public NTOptionalHeader32(RandomAccessFile file, long offset) throws IOException {
 			file.seek(offset);
 			byte[] hdr = new byte[NTHDRSZ];
 			file.readFully(hdr);
@@ -357,15 +447,15 @@ public class PE {
 		}
 	}
 
-	public PE(String filename) throws IOException {
+	public PE64(String filename) throws IOException {
 		this(filename, 0);
 	}
 
-	public PE(String filename, long pos) throws IOException {
+	public PE64(String filename, long pos) throws IOException {
 		this(filename, pos, true);
 	}
 
-	public PE(String filename, long pos, boolean filter) throws IOException {
+	public PE64(String filename, long pos, boolean filter) throws IOException {
 		try {
 			rfile = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 			this.filename = filename;
@@ -386,7 +476,7 @@ public class PE {
 				rfile.seek(pos);
 			}
 
-			fileHeader = new Coff.FileHeader(rfile, rfile.getFilePointer());
+			fileHeader = new Coff64.FileHeader(rfile, rfile.getFilePointer());
 
 			// Check if this a valid machine.
 			if (!isValidMachine(fileHeader.f_magic)) {
@@ -394,8 +484,12 @@ public class PE {
 			}
 
 			if (fileHeader.f_opthdr > 0) {
-				optionalHeader = new Coff.OptionalHeader(rfile, rfile.getFilePointer());
-				ntHeader = new NTOptionalHeader(rfile, rfile.getFilePointer());
+				optionalHeader = new Coff64.OptionalHeader(rfile, rfile.getFilePointer());
+
+				if (optionalHeader.is64Bits())
+					ntHeader64 = new NTOptionalHeader64(rfile, rfile.getFilePointer());
+				else
+					ntHeader32 = new NTOptionalHeader32(rfile, rfile.getFilePointer());
 			}
 		} finally {
 			if (rfile != null) {
@@ -564,7 +658,7 @@ public class PE {
 		if (idx < data.length) {
 			byte[] bytes = new byte[data.length - idx];
 			System.arraycopy(data, idx, bytes, 0, data.length - idx);
-			Coff.FileHeader filehdr = new Coff.FileHeader(bytes, true);
+			Coff64.FileHeader filehdr = new Coff64.FileHeader(bytes, true);
 			if (isValidMachine(filehdr.f_magic)) {
 				return getAttributes(filehdr);
 			}
@@ -573,7 +667,7 @@ public class PE {
 	}
 
 	public static Attribute getAttribute(String file) throws IOException {
-		PE pe = new PE(file);
+		PE64 pe = new PE64(file);
 		Attribute attrib = pe.getAttribute();
 		pe.dispose();
 		return attrib;
@@ -611,8 +705,12 @@ public class PE {
 		return optionalHeader;
 	}
 
-	public NTOptionalHeader getNTOptionalHeader() {
-		return ntHeader;
+	public NTOptionalHeader64 getNTOptionalHeader64() {
+		return ntHeader64;
+	}
+
+	public NTOptionalHeader32 getNTOptionalHeader32() {
+		return ntHeader32;
 	}
 
 	public ImageDataDirectory[] getImageDataDirectories() throws IOException {
@@ -622,7 +720,14 @@ public class PE {
 			if (dosHeader != null) {
 				offset = dosHeader.e_lfanew + 4/*NT SIG*/;
 			}
-			offset += FileHeader.FILHSZ + OptionalHeader.AOUTHDRSZ + NTOptionalHeader.NTHDRSZ;
+
+			int ntHeaderSize = 0;
+			if (ntHeader64 != null)
+				ntHeaderSize = NTOptionalHeader64.NTHDRSZ;
+			else if (ntHeader32 != null)
+				ntHeaderSize = NTOptionalHeader32.NTHDRSZ;
+
+			offset += FileHeader.FILHSZ + getOptionalHeader().getSize() + ntHeaderSize;
 			accessFile.seek(offset);
 			dataDirectories = new ImageDataDirectory[PEConstants.IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 			byte[] data = new byte[dataDirectories.length * (4 + 4)];
@@ -656,7 +761,8 @@ public class PE {
 	public Symbol[] getSymbols() throws IOException {
 		if (symbolTable == null) {
 			SectionHeader[] secHeaders = getSectionHeaders();
-			NTOptionalHeader ntHeader = getNTOptionalHeader();
+			NTOptionalHeader64 ntHeader64 = getNTOptionalHeader64();
+			NTOptionalHeader32 ntHeader32 = getNTOptionalHeader32();
 
 			RandomAccessFile accessFile = getRandomAccessFile();
 			long offset = fileHeader.f_symptr;
@@ -669,8 +775,10 @@ public class PE {
 					newSym.n_value += secHeaders[newSym.n_scnum - 1].s_vaddr;
 
 				// convert to absolute address.
-				if (ntHeader != null)
-					newSym.n_value += ntHeader.ImageBase;
+				if (ntHeader64 != null)
+					newSym.n_value += ntHeader64.ImageBase;
+				else if (ntHeader32 != null)
+					newSym.n_value += ntHeader32.ImageBase;
 
 				symbolTable[i] = newSym;
 			}
@@ -716,8 +824,10 @@ public class PE {
 		if (optionalHeader != null) {
 			buffer.append(optionalHeader);
 		}
-		if (ntHeader != null) {
-			buffer.append(ntHeader);
+		if (ntHeader64 != null) {
+			buffer.append(ntHeader64);
+		} else if (ntHeader32 != null) {
+			buffer.append(ntHeader32);
 		}
 		try {
 			ImageDataDirectory[] dirs = getImageDataDirectories();
@@ -749,7 +859,7 @@ public class PE {
 
 		try {
 			byte[] bytes = getStringTable();
-			String[] strings = Coff.getStringTable(bytes);
+			String[] strings = Coff64.getStringTable(bytes);
 			for (int i = 0; i < strings.length; i++) {
 				buffer.append(strings[i]);
 			}
@@ -772,17 +882,36 @@ public class PE {
 
 		try {
 			// the debug directory is the 6th entry
-			NTOptionalHeader ntHeader = getNTOptionalHeader();
-			if (ntHeader == null || ntHeader.NumberOfRvaAndSizes < IMAGE_DIRECTORY_ENTRY_DEBUG)
+			NTOptionalHeader64 ntHeader64 = getNTOptionalHeader64();
+			NTOptionalHeader32 ntHeader32 = getNTOptionalHeader32();
+			if (ntHeader32 == null && ntHeader64 == null)
 				return null;
 
-			int debugDir = ntHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress;
-			if (debugDir == 0)
-				return null;
+			int debugDir = 0, debugFormats = 0;
 
-			int debugFormats = ntHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].Size / 28;
-			if (debugFormats == 0)
-				return null;
+			if (ntHeader64 != null) {
+				if (ntHeader64.NumberOfRvaAndSizes < IMAGE_DIRECTORY_ENTRY_DEBUG)
+					return null;
+
+				debugDir = ntHeader64.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress;
+				if (debugDir == 0)
+					return null;
+
+				debugFormats = ntHeader64.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].Size / 28;
+				if (debugFormats == 0)
+					return null;
+			} else if (ntHeader32 != null) {
+				if (ntHeader32.NumberOfRvaAndSizes < IMAGE_DIRECTORY_ENTRY_DEBUG)
+					return null;
+
+				debugDir = ntHeader32.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress;
+				if (debugDir == 0)
+					return null;
+
+				debugFormats = ntHeader32.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].Size / 28;
+				if (debugFormats == 0)
+					return null;
+			}
 
 			SectionHeader[] sections = getSectionHeaders();
 
@@ -797,7 +926,7 @@ public class PE {
 
 					// loop through the debug directories looking for CodeView (type 2)
 					for (int j = 0; j < debugFormats; j++) {
-						PE.IMAGE_DEBUG_DIRECTORY dir = new PE.IMAGE_DEBUG_DIRECTORY(accessFile, fileOffset);
+						PE64.IMAGE_DEBUG_DIRECTORY dir = new PE64.IMAGE_DEBUG_DIRECTORY(accessFile, fileOffset);
 
 						if ((2 == dir.Type) && (dir.SizeOfData > 0)) {
 							// CodeView found, seek to actual data

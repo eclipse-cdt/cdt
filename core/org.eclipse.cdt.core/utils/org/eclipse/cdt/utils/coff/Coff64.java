@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 QNX Software Systems and others.
+ * Copyright (c) 2000, 2019 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     QNX Software Systems - Initial API and implementation
+ *     Space Codesign Systems - Initial API and implementation
+ *     QNX Software Systems - Initial Coff class
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff;
 
@@ -27,11 +28,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import com.ibm.icu.text.DateFormat;
 
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link Coff64}.
- * This class is planned for removal in next major release.
+ * @since 6.9
  */
-@Deprecated
-public class Coff {
+public class Coff64 {
 
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	FileHeader filehdr;
@@ -128,16 +127,87 @@ public class Coff {
 	}
 
 	public static class OptionalHeader {
-		public final static int AOUTHDRSZ = 28;
+		public short magic; /* 2 bytes: type of file */
+		public OptionalHeader64 optionalHeader64;
+		public OptionalHeader32 optionalHeader32;
 
-		public short magic; /* 2 bytes: type of file                         */
-		public short vstamp; /* 2 bytes: version stamp                        */
-		public int tsize; /* 4 bytes: text size in bytes, padded to FW bdry*/
-		public int dsize; /* 4 bytes: initialized data "  "                */
-		public int bsize; /* 4 bytes: uninitialized data "   "             */
-		public int entry; /* 4 bytes: entry pt.                            */
-		public int text_start; /* 4 bytes: base of text used for this file      */
-		public int data_start; /* 4 bytes: base of data used for this file      */
+		private final static int MAGICSZ = 2;
+		private boolean is64Bits;
+
+		public static class OptionalHeader64 {
+			public final static int AOUTHDRSZ = 22;
+
+			public short vstamp; /* 2 bytes: version stamp                        */
+			public int tsize; /* 4 bytes: text size in bytes, padded to FW bdry*/
+			public int dsize; /* 4 bytes: initialized data "  "                */
+			public int bsize; /* 4 bytes: uninitialized data "   "             */
+			public int entry; /* 4 bytes: entry pt.                            */
+			public int text_start; /* 4 bytes: base of text used for this file      */
+
+			public OptionalHeader64(RandomAccessFile file, long offset) throws IOException {
+				file.seek(offset);
+				byte[] hdr = new byte[AOUTHDRSZ];
+				file.readFully(hdr);
+				ReadMemoryAccess memory = new ReadMemoryAccess(hdr, true);
+				vstamp = memory.getShort();
+				tsize = memory.getInt();
+				dsize = memory.getInt();
+				bsize = memory.getInt();
+				entry = memory.getInt();
+				text_start = memory.getInt();
+			}
+
+			@Override
+			public String toString() {
+				StringBuilder buffer = new StringBuilder();
+				buffer.append("vstamp     = ").append(vstamp).append(NL); //$NON-NLS-1$
+				buffer.append("tsize      = ").append(tsize).append(NL); //$NON-NLS-1$
+				buffer.append("dsize      = ").append(dsize).append(NL); //$NON-NLS-1$
+				buffer.append("bsize      = ").append(bsize).append(NL); //$NON-NLS-1$
+				buffer.append("entry      = ").append(entry).append(NL); //$NON-NLS-1$
+				buffer.append("text_start = ").append(text_start).append(NL); //$NON-NLS-1$
+				return buffer.toString();
+			}
+		}
+
+		public static class OptionalHeader32 {
+			public final static int AOUTHDRSZ = 26;
+
+			public short vstamp; /* 2 bytes: version stamp                        */
+			public int tsize; /* 4 bytes: text size in bytes, padded to FW bdry*/
+			public int dsize; /* 4 bytes: initialized data "  "                */
+			public int bsize; /* 4 bytes: uninitialized data "   "             */
+			public int entry; /* 4 bytes: entry pt.                            */
+			public int text_start; /* 4 bytes: base of text used for this file      */
+			public int data_start; /* 4 bytes: base of data used for this file      */
+
+			public OptionalHeader32(RandomAccessFile file, long offset) throws IOException {
+				file.seek(offset);
+				byte[] hdr = new byte[AOUTHDRSZ];
+				file.readFully(hdr);
+				ReadMemoryAccess memory = new ReadMemoryAccess(hdr, true);
+				vstamp = memory.getShort();
+				tsize = memory.getInt();
+				dsize = memory.getInt();
+				bsize = memory.getInt();
+				entry = memory.getInt();
+				text_start = memory.getInt();
+				data_start = memory.getInt();
+			}
+
+			@Override
+			public String toString() {
+				StringBuilder buffer = new StringBuilder();
+				buffer.append("vstamp     = ").append(vstamp).append(NL); //$NON-NLS-1$
+				buffer.append("tsize      = ").append(tsize).append(NL); //$NON-NLS-1$
+				buffer.append("dsize      = ").append(dsize).append(NL); //$NON-NLS-1$
+				buffer.append("bsize      = ").append(bsize).append(NL); //$NON-NLS-1$
+				buffer.append("entry      = ").append(entry).append(NL); //$NON-NLS-1$
+				buffer.append("text_start = ").append(text_start).append(NL); //$NON-NLS-1$
+				buffer.append("data_start = ").append(data_start).append(NL); //$NON-NLS-1$
+				return buffer.toString();
+			}
+		}
 
 		public OptionalHeader(RandomAccessFile file) throws IOException {
 			this(file, file.getFilePointer() + FileHeader.FILHSZ);
@@ -145,17 +215,18 @@ public class Coff {
 
 		public OptionalHeader(RandomAccessFile file, long offset) throws IOException {
 			file.seek(offset);
-			byte[] hdr = new byte[AOUTHDRSZ];
+			byte[] hdr = new byte[MAGICSZ];
 			file.readFully(hdr);
 			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, true);
 			magic = memory.getShort();
-			vstamp = memory.getShort();
-			tsize = memory.getInt();
-			dsize = memory.getInt();
-			bsize = memory.getInt();
-			entry = memory.getInt();
-			text_start = memory.getInt();
-			data_start = memory.getInt();
+
+			if (magic == 523) { // 64 bit executable
+				optionalHeader64 = new OptionalHeader64(file, file.getFilePointer());
+				is64Bits = true;
+			} else if (magic == 267) { // 32 bit executable
+				optionalHeader32 = new OptionalHeader32(file, file.getFilePointer());
+				is64Bits = false;
+			}
 		}
 
 		@Override
@@ -163,14 +234,24 @@ public class Coff {
 			StringBuilder buffer = new StringBuilder();
 			buffer.append("OPTIONAL HEADER VALUES").append(NL); //$NON-NLS-1$
 			buffer.append("magic      = ").append(magic).append(NL); //$NON-NLS-1$
-			buffer.append("vstamp     = ").append(vstamp).append(NL); //$NON-NLS-1$
-			buffer.append("tsize      = ").append(tsize).append(NL); //$NON-NLS-1$
-			buffer.append("dsize      = ").append(dsize).append(NL); //$NON-NLS-1$
-			buffer.append("bsize      = ").append(bsize).append(NL); //$NON-NLS-1$
-			buffer.append("entry      = ").append(entry).append(NL); //$NON-NLS-1$
-			buffer.append("text_start = ").append(text_start).append(NL); //$NON-NLS-1$
-			buffer.append("data_start = ").append(data_start).append(NL); //$NON-NLS-1$
+
+			if (is64Bits())
+				buffer.append(optionalHeader64.toString());
+			else
+				buffer.append(optionalHeader32.toString());
+
 			return buffer.toString();
+		}
+
+		public boolean is64Bits() {
+			return is64Bits;
+		}
+
+		public int getSize() {
+			if (is64Bits())
+				return OptionalHeader64.AOUTHDRSZ;
+			else
+				return OptionalHeader32.AOUTHDRSZ;
 		}
 	}
 
@@ -689,14 +770,6 @@ public class Coff {
 		} catch (IOException e) {
 		}
 
-		//		try {
-		//			String[] strings = getStringTable(getStringTable());
-		//			for (int i = 0; i < strings.length; i++) {
-		//				buffer.append(strings[i]);
-		//			}
-		//		} catch (IOException e) {
-		//			e.printStackTrace();
-		//		}
 		return buffer.toString();
 	}
 
@@ -712,11 +785,11 @@ public class Coff {
 		return aList.toArray(new String[0]);
 	}
 
-	public Coff(String filename) throws IOException {
+	public Coff64(String filename) throws IOException {
 		this(new RandomAccessFile(filename, "r"), 0); //$NON-NLS-1$
 	}
 
-	public Coff(RandomAccessFile file, long offset) throws IOException {
+	public Coff64(RandomAccessFile file, long offset) throws IOException {
 		commonSetup(file, offset);
 	}
 
@@ -737,7 +810,7 @@ public class Coff {
 
 	public static void main(String[] args) {
 		try {
-			Coff coff = new Coff(args[0]);
+			Coff64 coff = new Coff64(args[0]);
 			System.out.println(coff);
 		} catch (IOException e) {
 			e.printStackTrace();

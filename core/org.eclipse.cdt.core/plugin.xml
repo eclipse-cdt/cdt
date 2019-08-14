@@ -83,6 +83,16 @@
       </cextension>
    </extension>
    <extension
+         id="PE64"
+         name="%PE64WindowsParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.coff.parser.PEParser64">
+         </run>
+      </cextension>
+   </extension>
+   <extension
          id="Cygwin_PE"
          name="%CygwinPEParser.name"
          point="org.eclipse.cdt.core.BinaryParser">

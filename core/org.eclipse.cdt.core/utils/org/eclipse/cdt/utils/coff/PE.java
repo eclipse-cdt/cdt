@@ -75,12 +75,12 @@ public class PE {
 	ExeHeader exeHeader;
 	DOSHeader dosHeader;
 	FileHeader fileHeader;
-	OptionalHeader optionalHeader;
-	NTOptionalHeader ntHeader;
 	ImageDataDirectory[] dataDirectories;
 	SectionHeader[] scnhdrs;
 	Symbol[] symbolTable;
 	byte[] stringTable;
+	private OptionalHeader optionalHeader;
+	private NTOptionalHeader ntHeader;
 
 	public static class Attribute {
 		public static final int PE_TYPE_EXE = 1;

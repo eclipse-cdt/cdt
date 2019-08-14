@@ -30,12 +30,12 @@ public class Coff {
 
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	FileHeader filehdr;
-	OptionalHeader opthdr;
 	RandomAccessFile rfile;
 	long startingOffset;
 	byte[] string_table;
 	SectionHeader[] scnhdrs;
 	Symbol[] symbols;
+	private OptionalHeader opthdr;
 
 	public static class FileHeader {
 		public final static int FILHSZ = 20;

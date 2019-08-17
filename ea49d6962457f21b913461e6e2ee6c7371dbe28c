@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79813068_aa09630e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-17T20:03:30Z",
+      "side": 1,
+      "message": "Feel free to make these updates if you want, but they are not needed as now git is used as the record of Contributors.",
+      "revId": "ea49d6962457f21b913461e6e2ee6c7371dbe28c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "29dbff1d_4e554c7f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIAsyncErrorProcessor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-17T20:03:30Z",
+      "side": 1,
+      "message": "I believe this line can be replaced with DMContexts.getAncestorOfType(ctx, IExecutionDMContext.class)",
+      "revId": "ea49d6962457f21b913461e6e2ee6c7371dbe28c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

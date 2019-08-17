@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Mentor Graphics - Initial API and implementation
+ * Umair Sair (Mentor Graphics) - Debugging is stuck when "command aborted" occurs on step return (bug 550165)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -90,10 +92,11 @@ public class MIAsyncErrorProcessor implements IEventProcessor {
 	public void commandDone(ICommandToken token, ICommandResult result) {
 		if (token.getCommand() instanceof MICommand<?> && result instanceof MIInfo && ((MIInfo) result).isRunning()) {
 			IDMContext ctx = ((MICommand<MIInfo>) token.getCommand()).getContext();
-			if (ctx instanceof IExecutionDMContext) {
+			IExecutionDMContext execDMCtx = DMContexts.getAncestorOfType(ctx, IExecutionDMContext.class);
+			if (execDMCtx != null) {
 				MIResultRecord rr = ((MIInfo) result).getMIOutput().getMIResultRecord();
 				if (rr != null) {
-					fRunCommands.put((IExecutionDMContext) ctx, Integer.valueOf(rr.getToken()));
+					fRunCommands.put(execDMCtx, Integer.valueOf(rr.getToken()));
 				}
 			}
 		}

@@ -20,6 +20,7 @@ import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.MIRunControlNonStopTargetAvai
 import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.OperationsWhileTargetIsRunningNonStopTest;
 import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.StepIntoSelectionNonStopTest;
 import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.ThreadStackFrameSyncTest;
+import org.eclipse.cdt.tests.dsf.mi.service.command.MIAsyncErrorProcessorTests;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -45,7 +46,7 @@ import org.junit.runners.Suite;
 		OperationsWhileTargetIsRunningNonStopTest.class, StepIntoSelectionNonStopTest.class,
 		GDBRemoteTracepointsTest.class, TraceFileTest.class, GDBConsoleSynchronizingTest.class, MIMemoryTest.class,
 		MIDisassemblyTest.class, GDBProcessesTest.class, PostMortemCoreTest.class, CommandTimeoutTest.class,
-		ThreadStackFrameSyncTest.class, CommandLineArgsTest.class,
+		ThreadStackFrameSyncTest.class, CommandLineArgsTest.class, MIAsyncErrorProcessorTests.class
 		/* Add your test class here */
 })
 public class SuiteGdb {

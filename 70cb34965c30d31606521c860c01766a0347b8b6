@@ -52,6 +52,24 @@
       "revId": "70cb34965c30d31606521c860c01766a0347b8b6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1c7d8827_082e0fa5",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/mi/service/command/MIAsyncErrorProcessorTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 171781
+      },
+      "writtenOn": "2019-08-18T18:17:50Z",
+      "side": 1,
+      "message": "I have updated the test cases. Only one Thread.sleep is left as we don\u0027t want to wait for any condition in this case, just want to let target running before checking the state.",
+      "parentUuid": "1d784563_f857a3a1",
+      "revId": "70cb34965c30d31606521c860c01766a0347b8b6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

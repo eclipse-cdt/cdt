@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a08ab3f_83f1f1cf",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/mi/service/command/MIAsyncErrorProcessorTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-08-18T13:03:22Z",
+      "side": 1,
+      "message": "This needs to be changed to a \"wait\" in some way. On the build machine these timeouts are massaged to 50x this value. There are a few Thread.sleeps in the testsuite, but they are simply not massaged.",
+      "revId": "70cb34965c30d31606521c860c01766a0347b8b6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

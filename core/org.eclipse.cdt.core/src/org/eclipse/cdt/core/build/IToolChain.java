@@ -79,6 +79,29 @@ public interface IToolChain extends IAdaptable {
 	String getName();
 
 	/**
+	 * Return a toolchain specific part of the build configuration name. This should be enough
+	 * to ensure the build config generated proper code for the selected target.
+	 *
+	 * As a default implementation, we do what the CMakeBuildConfigationProvider did which has
+	 * been copied to a number of other providers, i.e. use the os and arch.
+	 *
+	 * @return fragment to be used in the build config name
+	 * @since 6.9
+	 */
+	default String getBuildConfigNameFragment() {
+		String os = getProperty(ATTR_OS);
+		String arch = getProperty(ATTR_ARCH);
+
+		if (os != null) {
+			return os + '.' + arch;
+		} else if (arch != null) {
+			return arch;
+		} else {
+			return ""; //$NON-NLS-1$
+		}
+	}
+
+	/**
 	 * The type id for the toolchain. The combination of type id and toolchain id
 	 * uniquely identify the toolchain in the system.
 	 *

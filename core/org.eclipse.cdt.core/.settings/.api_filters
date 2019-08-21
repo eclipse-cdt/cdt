@@ -41,10 +41,10 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/cdt/core/build/IToolChain.java" type="org.eclipse.cdt.core.build.IToolChain">
-        <filter id="404000815">
+        <filter comment="It is unlikely toolchains would have added a method with this name." id="404000815">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.build.IToolChain"/>
-                <message_argument value="getTypeId()"/>
+                <message_argument value="getBuildConfigNameFragment()"/>
             </message_arguments>
         </filter>
     </resource>

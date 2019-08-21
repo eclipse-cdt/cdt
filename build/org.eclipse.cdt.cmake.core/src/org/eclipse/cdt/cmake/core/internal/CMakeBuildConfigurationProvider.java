@@ -116,13 +116,10 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 			configName.append('.');
 			configName.append(osConfigName);
 		} else {
-			if (os != null) {
+			String fragment = toolChain.getBuildConfigNameFragment();
+			if (fragment != null && !fragment.isEmpty()) {
 				configName.append('.');
-				configName.append(os);
-			}
-			if (arch != null && !arch.isEmpty()) {
-				configName.append('.');
-				configName.append(arch);
+				configName.append(fragment);
 			}
 		}
 		String name = configName.toString();

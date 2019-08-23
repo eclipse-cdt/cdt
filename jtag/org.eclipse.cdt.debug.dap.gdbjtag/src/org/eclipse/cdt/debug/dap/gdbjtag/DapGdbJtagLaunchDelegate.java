@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2019 Kichwa Coders and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     John Dallaway - Use 'reset and halt' command (Bug 535163)
+ *******************************************************************************/
 package org.eclipse.cdt.debug.dap.gdbjtag;
 
 import java.net.URI;
@@ -222,26 +235,38 @@ public class DapGdbJtagLaunchDelegate extends DapLaunchDelegate {
 	private void addInitCommands(Map<String, Object> params, IGDBJtagDevice jtagDevice, Map<String, Object> attributes)
 			throws CoreException {
 
+		boolean doReset = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_DO_RESET,
+				IGDBJtagConstants.DEFAULT_DO_RESET);
+		boolean doHalt = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_DO_HALT,
+				IGDBJtagConstants.DEFAULT_DO_HALT);
+		int defaultDelay = jtagDevice.getDefaultDelay();
+		int delay = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_DELAY, defaultDelay);
+		List<String> resetAndHaltCommands = new ArrayList<>();
+		jtagDevice.doResetAndHalt(resetAndHaltCommands);
+		boolean useResetAndHalt = doReset && doHalt && (0 == delay) && !resetAndHaltCommands.isEmpty();
+
 		List<String> commands = new ArrayList<>();
-		if (CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_DO_RESET, IGDBJtagConstants.DEFAULT_DO_RESET)) {
+		if (doReset) {
 			int size = commands.size();
-			jtagDevice.doReset(commands);
+			if (useResetAndHalt) {
+				commands.addAll(resetAndHaltCommands);
+			} else {
+				jtagDevice.doReset(commands);
+			}
 			if (size == commands.size()) {
 				throw newCoreException(
 						String.format("Reset command not defined for device '%s'", getGDBJtagDeviceName(attributes)));
 			}
 		}
-		if (CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_DO_RESET, IGDBJtagConstants.DEFAULT_DO_RESET)) {
-			int defaultDelay = jtagDevice.getDefaultDelay();
-			int delay = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_DELAY, defaultDelay);
+		if (doReset && (0 != delay)) {
 			int size = commands.size();
 			jtagDevice.doDelay(delay, commands);
-			if (size == commands.size() && (delay != 0)) {
+			if (size == commands.size()) {
 				throw newCoreException(
 						String.format("Delay command not defined for device '%s'", getGDBJtagDeviceName(attributes)));
 			}
 		}
-		if (CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_DO_HALT, IGDBJtagConstants.DEFAULT_DO_HALT)) {
+		if (doHalt && !useResetAndHalt) {
 			int size = commands.size();
 			jtagDevice.doHalt(commands);
 			if (size == commands.size()) {

@@ -22,6 +22,7 @@
  *     John Dallaway - Test for reset/delay/halt command not defined (Bug 361881)
  *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
  *     John Dallaway - Report download progress (Bug 543149)
+ *     John Dallaway - Use 'reset and halt' command (Bug 535163)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -412,7 +413,11 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_RESET,
 				IGDBJtagConstants.DEFAULT_DO_RESET)) {
 			List<String> commands = new ArrayList<>();
-			fGdbJtagDevice.doReset(commands);
+			if (useResetAndHalt()) {
+				fGdbJtagDevice.doResetAndHalt(commands);
+			} else {
+				fGdbJtagDevice.doReset(commands);
+			}
 			if (commands.isEmpty()) {
 				setError(String.format(Messages.getString("GDBJtagDebugger.reset_not_defined"), getGDBJtagDeviceName()), //$NON-NLS-1$
 						rm);
@@ -437,9 +442,11 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			List<String> commands = new ArrayList<>();
 			int delay = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DELAY, defaultDelay);
 			fGdbJtagDevice.doDelay(delay, commands);
-			if (commands.isEmpty() && (delay != 0)) {
-				setError(String.format(Messages.getString("GDBJtagDebugger.delay_not_defined"), getGDBJtagDeviceName()), //$NON-NLS-1$
-						rm);
+			if (0 == delay) {
+				rm.done();
+			} else if (commands.isEmpty()) {
+				setError(String.format(Messages.getString("GDBJtagDebugger.delay_not_defined"), //$NON-NLS-1$
+						getGDBJtagDeviceName()), rm);
 			} else {
 				queueCommands(commands, rm);
 			}
@@ -454,7 +461,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	/** @since 8.2 */
 	@Execute
 	public void stepHaltBoard(final RequestMonitor rm) {
-		if (CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_HALT,
+		if (!useResetAndHalt() && CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_HALT,
 				IGDBJtagConstants.DEFAULT_DO_HALT)) {
 			List<String> commands = new ArrayList<>();
 			fGdbJtagDevice.doHalt(commands);
@@ -770,6 +777,21 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			sb.append(it.next());
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * Determine if reset and halt should be issued as one command
+	 */
+	private boolean useResetAndHalt() {
+		final boolean doReset = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_RESET,
+				IGDBJtagConstants.DEFAULT_DO_RESET);
+		final boolean doHalt = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DO_HALT,
+				IGDBJtagConstants.DEFAULT_DO_HALT);
+		final int defaultDelay = fGdbJtagDevice.getDefaultDelay();
+		final int delay = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_DELAY, defaultDelay);
+		final List<String> resetAndHaltCommands = new ArrayList<>();
+		fGdbJtagDevice.doResetAndHalt(resetAndHaltCommands);
+		return doReset && doHalt && (0 == delay) && !resetAndHaltCommands.isEmpty();
 	}
 
 	/**

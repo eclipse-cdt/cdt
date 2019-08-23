@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 QNX Software Systems and others.
+ * Copyright (c) 2008, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
+ *     John Dallaway - Support 'reset and halt' command, bug 535163
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
@@ -26,13 +27,13 @@ import java.util.Collection;
 public interface IGDBJtagDevice {
 
 	/**
-	 * Device reset command
+	 * Device reset and run commands
 	 *
 	 * @param commands
 	 *            implementation should populate the collection with the gdb
-	 *            commands that will reset the device, or leave the collection
-	 *            as-is if that operation is either unsupported or not
-	 *            applicable
+	 *            commands that will reset the device and let it run, or leave
+	 *            the collection as-is if that operation is either unsupported
+	 *            or not applicable
 	 */
 	public void doReset(Collection<String> commands);
 
@@ -67,6 +68,20 @@ public interface IGDBJtagDevice {
 	 *            applicable
 	 */
 	public void doHalt(Collection<String> commands);
+
+	/**
+	 * Device reset and immediate halt as a single command
+	 *
+	 * @param commands
+	 *            implementation should populate the collection with the
+	 *            single gdb command that will reset and halt the target, or
+	 *            leave the collection as-is if that operation is either
+	 *            unsupported or not applicable
+	 * @since 9.3
+	 */
+	default void doResetAndHalt(Collection<String> commands) {
+		/* override where supported by debugger */
+	}
 
 	/**
 	 * Commands to connect to remote JTAG device

@@ -4653,6 +4653,24 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		parseAndCheckBindings();
 	}
 
+	//	class Mat {};
+	//
+	//	template <typename T>
+	//	class Mat_ {};
+	//
+	//	class MatExpr {
+	//	public:
+	//	    operator Mat();
+	//
+	//	    template <typename T>
+	//	    operator Mat_<T>();
+	//	};
+	//
+	//	Mat x = MatExpr();
+	public void testOverloadedConversionOperators_550397() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+
 	//	template<unsigned int> struct ST{};
 	//	template<template<unsigned int> class T> class CT {};
 	//	typedef CT<ST> TDef;

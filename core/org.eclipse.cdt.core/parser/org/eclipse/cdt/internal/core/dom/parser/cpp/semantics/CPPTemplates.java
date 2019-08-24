@@ -2455,8 +2455,9 @@ public class CPPTemplates {
 					result = new ICPPFunction[functions.length];
 					System.arraycopy(functions, 0, result, 0, i);
 				}
-				result[i++] = inst;
+				result[i] = inst;
 			}
+			i++;
 			if (done)
 				break;
 		}

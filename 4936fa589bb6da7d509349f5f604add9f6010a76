@@ -87,6 +87,24 @@
     },
     {
       "key": {
+        "uuid": "66af4369_300babae",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T18:05:26Z",
+      "side": 1,
+      "message": "It looks like that doesn\u0027t actually compile.\n\nYou can have a similar situation with a lambda, but the lambda needs to capture the enclosing local. Does the name of a capture resolve to an ICPPField? If so, then we don\u0027t need to do anything extra to handle this case.",
+      "parentUuid": "9f72789a_a7a20b36",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "97a709ca_11dd0f7a",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
         "patchSetId": 4

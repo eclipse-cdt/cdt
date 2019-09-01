@@ -105,6 +105,24 @@
     },
     {
       "key": {
+        "uuid": "328fbe73_f90b62bb",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T18:10:59Z",
+      "side": 1,
+      "message": "I checked, and the name of a lambda capture does _not_ resolve to an ICPPField.\n\nSo, we need to make sure we handle this case correctly. Here is an example that compiles:\n\n    void foo() {\n\tint local;\n\t\n\tauto s \u003d [\u0026local]() {\n\t    return \u0026local;  // ok\n\t};\n\t\n\tint* ptr \u003d s();\n    }",
+      "parentUuid": "66af4369_300babae",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "97a709ca_11dd0f7a",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
         "patchSetId": 4

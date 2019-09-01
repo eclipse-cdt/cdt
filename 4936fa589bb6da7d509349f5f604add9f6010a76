@@ -1,0 +1,242 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d28fae38_bbb2bdc8",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "I think it should be a warning, to match what compilers do.",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e6279142_081ad355",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "Please use CamelCase for the enumeration name.\n\n(I prefer CamelCase for the enumerator names too, but existing usage is somewhat mixed.)",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "40422ae8_48c52b77",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "Analyzer",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a86ab57d_a028bbdb",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "The \"op !\u003d null\" is redundant in this check.",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f72789a_a7a20b36",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "It\u0027s not enough to check for the scope being local, because local scopes can be nested due to local classes:\n\n    void foo() {\n\tint local;\n\t\n\tstruct S {\n\t    int* bar() {\n\t\treturn \u0026local;  // ok\n\t    }\n\t};\n\t\n\tS s;\n\t\n\tint* ptr \u003d s.bar();\n    }\n\nWe need to check that the local scope is that of the function whose return statement we\u0027re analyzing.",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97a709ca_11dd0f7a",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "Likewise, \"op !\u003d null\" is redundant.",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a966232_b43648b3",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "We can check binding.isStatic() sooner and early-exit.",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "907d48cf_4b2f6ba6",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "analyzer",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "933df691_586f13a6",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "As in the const/static checker, we want to check for a pointer / reference based on the IType, not based on pointer operators, to handle typedefs.",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2415865b_964af412",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "ret.getReturnValue() -\u003e returnValue",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bff8b049_b75d5694",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/ReturnCheckerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 536,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "Since these test cases are together with other test cases in ReturnChecker, and the test name doesn\u0027t suggest it\u0027s testing for returning a dangling pointer / reference, it\u0027s not obvious what this is testing.\n\nPerhaps include the bug number in the test names, or alternatively put them into a new file?",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "559c9876_0d4c62f6",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/ReturnCheckerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "Should this be \u0027cond ? \u0026a : \u0026b\u0027?",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2f7bb166_86776d06",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/ReturnCheckerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "This is not valid syntax. The valid syntax would be:\n\n    void (Test::*bar())(double*) {\n\n(Please file a bug about the codan test suite passing test cases with syntax errors. It should check for that and fail the test.)",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8da90819_2d323edb",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/ReturnCheckerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-01T17:57:03Z",
+      "side": 1,
+      "message": "Also not valid. You need:\n\n    return \u0026Test::foo;",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

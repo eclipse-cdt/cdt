@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "62dd394a_ee8e77e1",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 7
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-02T23:22:43Z",
+      "side": 1,
+      "message": "I think \"Function or method is blacklisted\" is more idiomatic.",
+      "revId": "144df3fdb6baf041d6d28ad9c9aef4b1040f070c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "52d9ac5a_846650f1",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 7
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-02T23:22:43Z",
+      "side": 1,
+      "message": "I think it makes sense to include the function name in the error message. This can be done by making the message pattern have a parameter, like this:\n\n  Function or method \u0027\u0027{0}\u0027\u0027 is blacklisted\n\nand then passing in the method name as an extra argument to reportProblem().",
+      "revId": "144df3fdb6baf041d6d28ad9c9aef4b1040f070c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d511fdb7_2d0b97d0",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/BlacklistChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-02T23:22:43Z",
+      "side": 1,
+      "message": "As this is recomputed on each call to processAst(), we don\u0027t need to store it as a field. (We can pass it into isInBlackList() as a parameter, although after the refactoring I suggest below, we can probably just inline isInBlackList()).",
+      "revId": "144df3fdb6baf041d6d28ad9c9aef4b1040f070c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a325857b_ae8f1860",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/BlacklistChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-02T23:22:43Z",
+      "side": 1,
+      "message": "We can extract a helper function \"String getBindingQualifiedName(IBinding)\" to simplify the code here a bit.",
+      "revId": "144df3fdb6baf041d6d28ad9c9aef4b1040f070c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

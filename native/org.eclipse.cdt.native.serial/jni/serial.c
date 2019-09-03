@@ -256,6 +256,24 @@ JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong jhandle, jb
 #ifndef __MINGW32__
 	jbyte buff[256];
 	int n = size < sizeof(buff) ? size : sizeof(buff);
+	struct timeval tv;
+	fd_set rfds;
+	int retval;
+
+	FD_ZERO(&rfds);
+	FD_SET(jhandle, &rfds);
+
+	tv.tv_sec = 0;
+	tv.tv_usec = 20;
+	do {
+		retval = select(jhandle + 1, &rfds, NULL, NULL, &tv);
+	} while (retval < 0 && errno == EINTR);
+
+	if (retval < 0) {
+		/* timeout => nothing in buffer */
+		return -1;
+	}
+
 	n = read(jhandle, buff, n);
 	if (n > 0) {
 		(*env)->SetByteArrayRegion(env, bytes, offset, n, buff);

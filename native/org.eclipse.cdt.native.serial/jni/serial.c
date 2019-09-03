@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     STMicroelectronics
  *******************************************************************************/
 #ifdef __APPLE__
 #include <sys/types.h>
@@ -194,6 +195,7 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	switch (parity) {
 	case 0: // None
 		dcb.fParity = FALSE;
+		dcb.Parity = NOPARITY;
 		break;
 	case 1: // Even
 		dcb.fParity = TRUE;

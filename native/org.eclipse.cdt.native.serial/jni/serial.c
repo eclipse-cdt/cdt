@@ -56,9 +56,11 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	if (fd < 0) {
 		char msg[256];
 		sprintf(msg, "Error opening %s", cportName);
+		(*env)->ReleaseStringUTFChars(env, portName, cportName);
 		throwIOException(env, msg);
 		return fd;
 	}
+	(*env)->ReleaseStringUTFChars(env, portName, cportName);
 
 	// Turn off all flags
 	fcntl(fd, F_SETFL, 0);

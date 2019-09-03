@@ -131,6 +131,15 @@ public class SerialPort {
 		public void close() throws IOException {
 			SerialPort.this.close();
 		}
+
+		@Override
+		public int available() throws IOException {
+			if (isOpen()) {
+				return available0(handle);
+			} else {
+				return 0;
+			}
+		}
 	};
 
 	private OutputStream outputStream = new OutputStream() {
@@ -207,6 +216,8 @@ public class SerialPort {
 	private native void close0(long handle) throws IOException;
 
 	private native int read1(long handle, byte[] b, int off, int len) throws IOException;
+
+	private native int available0(long handle) throws IOException;
 
 	private native void write0(long handle, int b) throws IOException;
 

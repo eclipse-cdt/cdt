@@ -26,6 +26,7 @@
 #include <string.h>
 #include <strings.h>
 #include <errno.h>
+#include <sys/ioctl.h>
 #else
 #define WIN32_LEAN_AND_MEAN
 #define UNICODE
@@ -248,6 +249,32 @@ JNIEXPORT void JNICALL FUNC(close0)(JNIEnv *env, jobject jobj, jlong handle)
 #else
 	CloseHandle((HANDLE)(unsigned)handle);
 #endif
+#endif
+}
+
+JNIEXPORT jint JNICALL FUNC(available0)(JNIEnv * env, jobject jobj, jlong jhandle)
+{
+#ifndef __MINGW32__
+	int result = 0;
+	if (ioctl(jhandle, FIONREAD, &result ) < 0) {
+		throwIOException(env, "Error calling ioctl");
+		return 0;
+	}
+	return result;
+#else
+	COMSTAT stat;
+	DWORD errCode;
+#ifdef _WIN64
+	HANDLE handle = (HANDLE)jhandle;
+#else
+	HANDLE handle = (HANDLE)(unsigned)jhandle;
+#endif
+
+	if (ClearCommError(handle, &errCode, &stat) == 0) {
+		throwIOException(env, "Error calling ClearCommError");
+		return -1;
+	}
+	return (int)stat.cbInQue;
 #endif
 }
 

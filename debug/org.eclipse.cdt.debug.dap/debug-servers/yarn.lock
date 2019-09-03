@@ -4,7 +4,7 @@
 
 "cdt-gdb-adapter@https://ci.eclipse.org/cdt/view/all/job/cdt-gdb-adapter-master/lastSuccessfulBuild/artifact/cdt-gdb-adapter-v0.0.13.tgz":
   version "0.0.13"
-  resolved "https://ci.eclipse.org/cdt/view/all/job/cdt-gdb-adapter-master/lastSuccessfulBuild/artifact/cdt-gdb-adapter-v0.0.13.tgz#7964b9d9f01ec5488fe279369d39ec91f11d3d8e"
+  resolved "https://ci.eclipse.org/cdt/view/all/job/cdt-gdb-adapter-master/lastSuccessfulBuild/artifact/cdt-gdb-adapter-v0.0.13.tgz#177b674b04459a660b6b800137bfd23e89ffa278"
   dependencies:
     node-addon-api "^1.6.2"
     vscode-debugadapter "^1.32.1"
@@ -27,14 +27,14 @@ node-addon-api@^1.6.2:
   integrity sha512-2+DuKodWvwRTrCfKOeR24KIc5unKjOh8mz17NCzVnHWfjAdDqbfbjqh7gUT+BkXBRQM52+xCHciKWonJ3CbJMQ==
 
 vscode-debugadapter@^1.32.1:
-  version "1.35.0"
-  resolved "https://registry.yarnpkg.com/vscode-debugadapter/-/vscode-debugadapter-1.35.0.tgz#d16dc32e93920a26ec5d6fe2330ba283600bcddb"
-  integrity sha512-Au90Iowj6TuD5uDMaTnxOjl/9hQN0Yoky1TV1Cjjr7jPdxTQpALBRW09Y2LzkIXUVICXlAqxWL9zL8BpzI30jg==
+  version "1.36.0"
+  resolved "https://registry.yarnpkg.com/vscode-debugadapter/-/vscode-debugadapter-1.36.0.tgz#c5b9d4be20ac1831ab5bdc7ef483219cbcb475db"
+  integrity sha512-SYDoXAU4c54ZiHdz+Ib1mOZF876S1+dFrNJooa7VAg8sK4wTS0GJQGdqK52B5Hylff9bJJsPVTPIsI2+f9Zwjg==
   dependencies:
     mkdirp "^0.5.1"
-    vscode-debugprotocol "1.35.0"
+    vscode-debugprotocol "1.36.0"
 
-vscode-debugprotocol@1.35.0:
-  version "1.35.0"
-  resolved "https://registry.yarnpkg.com/vscode-debugprotocol/-/vscode-debugprotocol-1.35.0.tgz#565140cd42945e30c6c85cafb38c631457d4a46c"
-  integrity sha512-+OMm11R1bGYbpIJ5eQIkwoDGFF4GvBz3Ztl6/VM+/RNNb2Gjk2c0Ku+oMmfhlTmTlPCpgHBsH4JqVCbUYhu5bA==
+vscode-debugprotocol@1.36.0:
+  version "1.36.0"
+  resolved "https://registry.yarnpkg.com/vscode-debugprotocol/-/vscode-debugprotocol-1.36.0.tgz#88e6246045480a9cc643e819b597396eaa9d0f4b"
+  integrity sha512-F0MfcUkF88TfNf4iQbcmC+K9rA+zsrQpEz1XpTKidy5sMq8sYsJGUadYDGmmktfjRX+S/ebjHgM+YV/2qm6lVQ==

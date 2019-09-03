@@ -1924,7 +1924,7 @@
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.base"
 				 	  name="%PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.Cygwin_PE"            					  
+                      binaryParser="org.eclipse.cdt.core.Cygwin_PE64"            					  
 					  osList="win32"					  
 					  archList="all">
 				  </targetPlatform>
@@ -1994,7 +1994,7 @@
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.mingw.base"
 				 	  name="%PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.PE"            					  
+                      binaryParser="org.eclipse.cdt.core.PE64"            					  
 					  osList="win32"					  
 					  archList="all">
 				  </targetPlatform>

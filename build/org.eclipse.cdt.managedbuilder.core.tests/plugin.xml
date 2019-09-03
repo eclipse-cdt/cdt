@@ -54,7 +54,7 @@
             defaultExtension="toor"
             isAbstract="false"
             makeCommand="make"
-            binaryParser="org.eclipse.cdt.core.PE"
+            binaryParser="org.eclipse.cdt.core.PE64"
             makeArguments="-k"
             osList="win32">
          <tool
@@ -204,7 +204,7 @@
             isTest="true"
             defaultExtension="bus"
             isAbstract="false"
-            binaryParser="org.eclipse.cdt.core.PE"
+            binaryParser="org.eclipse.cdt.core.PE64"
             archList="x86,ppc"
             parent="test.root"
             makeArguments="-d"
@@ -374,7 +374,7 @@
             isTest="true"
             errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
             name="Test Error Parsers"
-            binaryParser="org.eclipse.cdt.core.PE"
+            binaryParser="org.eclipse.cdt.core.PE64"
             isAbstract="false"
             id="test.error.parsers">
          <tool
@@ -1225,7 +1225,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.exe.debug"
 		              name="Dbg Platform"
-		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE64"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 	              </targetPlatform>
@@ -1298,7 +1298,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.exe.release"
 		              name="Rel Platform"		             
-		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE64"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">		              
 		          </targetPlatform>
@@ -3646,7 +3646,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testenv.platform.exe.debug"
 		              name="Dbg Platform"
-		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE64"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 	              </targetPlatform>
@@ -3711,7 +3711,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testenv.platform.exe.release"
 		              name="Rel Platform"		             
-		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE64"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">		              
 		          </targetPlatform>
@@ -3819,7 +3819,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testenv.platform.exe.five"
 		              name="Dbg Platform"
-		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE64"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 	              </targetPlatform>
@@ -3873,7 +3873,7 @@
       		<targetPlatform
       			id="TopTC.platform"
       			name="TopTC Platform"
-      			binaryParser="org.eclipse.cdt.core.PE"/>
+      			binaryParser="org.eclipse.cdt.core.PE64"/>
       		<builder
       			id="TopTC.managedbuilder"
       			name="TopTC Builder"/>
@@ -4018,7 +4018,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testMultipleVersions.platform.exe.debug"
 		              name="Debug IA32 Platform"
-		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE64"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 	              </targetPlatform>
@@ -4058,7 +4058,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testMultipleVersions.platform.exe.release"
 		              name="Release IA32 Platform"		             
-		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE64"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">		              
 		          </targetPlatform>
@@ -4159,7 +4159,7 @@
 		          <targetPlatform
 		              id="target.testProjectConverterConvenienceRoutines.platform.exe.debug"
 		              name="Debug IA32 Platform"
-		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE64"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 	              </targetPlatform>
@@ -4741,7 +4741,7 @@
 				<targetPlatform
 		            id="cdt.test.fortran.platform.executable.release"
 		            name="Platform.Executable.Release"
-		            binaryParser="org.eclipse.cdt.core.PE"
+		            binaryParser="org.eclipse.cdt.core.PE64"
 		            osList="win32"
 		            archList="x86">		              
 		        </targetPlatform>
@@ -4785,7 +4785,7 @@
                 <targetPlatform
 		            id="cdt.test.fortran.platform.executable.debug"
 		            name="Platform.Executable.Debug"		            
-		            binaryParser="org.eclipse.cdt.core.PE"
+		            binaryParser="org.eclipse.cdt.core.PE64"
 		            osList="win32"
 		            archList="x86">		              
 		        </targetPlatform>
@@ -5097,7 +5097,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.enablement.platform.exe.debug"
 		              name="Dbg Platform"
-		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE64"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 	              </targetPlatform>
@@ -8470,7 +8470,7 @@
                   <targetPlatform
 					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.platform.cygwin.base"
 				 	  name="Test 4.0 PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.Cygwin_PE"            					  
+                      binaryParser="org.eclipse.cdt.core.Cygwin_PE64"            					  
 					  osList="win32"					  
 					  archList="all">
 				  </targetPlatform>

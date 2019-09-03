@@ -226,7 +226,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		// TODO be smarter and use the id which should be the target
 		switch (Platform.getOS()) {
 		case Platform.OS_WIN32:
-			return CCorePlugin.PLUGIN_ID + ".PE"; //$NON-NLS-1$
+			return CCorePlugin.PLUGIN_ID + ".PE64"; //$NON-NLS-1$
 		case Platform.OS_MACOSX:
 			return CCorePlugin.PLUGIN_ID + ".MachO64"; //$NON-NLS-1$
 		default:

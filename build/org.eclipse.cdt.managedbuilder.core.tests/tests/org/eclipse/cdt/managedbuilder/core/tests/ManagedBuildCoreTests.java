@@ -80,7 +80,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		int expectedSizeOSList = 5;
 		String[] expectedArchList = { "all" };
 		String expectedBinaryParser = "org.eclipse.cdt.core.ELF";
-		String expectedBinaryParser2 = "org.eclipse.cdt.core.PE";
+		String expectedBinaryParser2 = "org.eclipse.cdt.core.PE64";
 		String[] expectedPlatformName = { "Dbg Platform", "Rel Platform" };
 		String expectedCommand = "make";
 		String expectedArguments = "-k";

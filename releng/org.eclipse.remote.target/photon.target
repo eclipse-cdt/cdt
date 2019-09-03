@@ -13,17 +13,17 @@
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.sdk.ide" version="0.0.0"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.12/"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.13milestones/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.cdt.core" version="0.0.0"/>
 <unit id="org.eclipse.cdt.native.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.native.serial" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/"/>
+<repository location="https://download.eclipse.org/tools/cdt/builds/9.9/cdt-9.9.0-simrel-2019-09-m3"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tm.terminal.control" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tm/terminal/builds/development/nightly/"/>
+<repository location="https://download.eclipse.org/tm/updates/4.5.102-SNAPSHOT/repository/"/>
 </location>
 </locations>
 </target>

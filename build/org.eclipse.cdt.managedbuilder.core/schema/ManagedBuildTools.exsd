@@ -514,7 +514,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="binaryParser" type="string">
             <annotation>
                <documentation>
-                  Set this to the ID of the binary parser for the output format of your target. Currently there are only 2 choices: org.eclipse.cdt.core.ELF for *nix targets, and &quot;org.eclipse.cdt.core.PE&quot; for targets that build for Windows, like Cygwin.
+                  Set this to the ID of the binary parser for the output format of your target. Currently there are only 2 choices: org.eclipse.cdt.core.ELF for *nix targets, and &quot;org.eclipse.cdt.core.PE64&quot; for targets that build for Windows, like Cygwin.
                </documentation>
             </annotation>
          </attribute>

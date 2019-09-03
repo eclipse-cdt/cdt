@@ -891,7 +891,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	private void checkRootProjectType(IProjectType type) throws BuildException {
 		// Project stuff
 		String expectedCleanCmd = "del /myworld";
-		String expectedParserId = "org.eclipse.cdt.core.PE";
+		String expectedParserId = "org.eclipse.cdt.core.PE64";
 		String[] expectedOSList = { "win32" };
 		String[] expectedArchList = { "all" };
 		assertTrue(type.isTestProjectType());
@@ -1123,7 +1123,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	 */
 	private void checkRootManagedProject(IManagedProject managedProj, String testValue) throws BuildException {
 		String expectedCleanCmd = "del /myworld";
-		String expectedParserId = "org.eclipse.cdt.core.PE";
+		String expectedParserId = "org.eclipse.cdt.core.PE64";
 		String[] expectedOSList = { "win32" };
 		String[] expectedArchList = { "all" };
 		assertTrue(managedProj.getProjectType().isTestProjectType());
@@ -1571,7 +1571,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Make sure the binary parser is hard-coded and available
 		IToolChain toolChain = configs[0].getToolChain();
 		ITargetPlatform targetPlatform = toolChain.getTargetPlatform();
-		assertEquals("org.eclipse.cdt.core.PE", targetPlatform.getBinaryParserList()[0]);
+		assertEquals("org.eclipse.cdt.core.PE64", targetPlatform.getBinaryParserList()[0]);
 		String[] expectedOSList = { "win32", "linux", "solaris" };
 		assertTrue(Arrays.equals(expectedOSList, toolChain.getOSList()));
 		// Make sure the list is overridden
@@ -1880,7 +1880,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	 */
 	private void checkErrorParsersProject(IManagedProject proj) throws BuildException {
 		// Target stuff
-		String expectedBinParserId = "org.eclipse.cdt.core.PE";
+		String expectedBinParserId = "org.eclipse.cdt.core.PE64";
 		IConfiguration[] configs = proj.getConfigurations();
 		IToolChain toolChain = configs[0].getToolChain();
 		ITargetPlatform targetPlatform = toolChain.getTargetPlatform();

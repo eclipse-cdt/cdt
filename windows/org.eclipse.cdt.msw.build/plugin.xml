@@ -258,7 +258,7 @@
             targetTool="org.eclipse.cdt.msvc.link;org.eclipse.cdt.msvc.lib">
          <targetPlatform
                archList="all"
-               binaryParser="org.eclipse.cdt.core.PE"
+               binaryParser="org.eclipse.cdt.core.PE64"
                id="org.eclipse.cdt.msvc.targetPlatform"
                osList="win32">
          </targetPlatform>

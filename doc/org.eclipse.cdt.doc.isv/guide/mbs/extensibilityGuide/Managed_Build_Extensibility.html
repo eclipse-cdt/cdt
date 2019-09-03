@@ -316,14 +316,14 @@ between these components.</p>
 <p class="subsection">1.2.1 External Users</p>
 <p>From the perspective of the build system, there are two external users. The 
 first is the end-user who interacts with it through the UI elements described in 
-§ 5. The UI includes a new project wizard that relies on the build system to 
+ï¿½ 5. The UI includes a new project wizard that relies on the build system to 
 tell it what kinds of new projects can be created. When the project has been 
 created, the project property page uses the information in the build system to 
 populate its display. The user can change the information associated with the 
 tools for a project through the property page and the build system is 
 responsible for saving those changes between sessions. The second external user 
 is the tool integrator who adds information about their tool-chain to a plug-in 
-manifest as described in the tutorial in § 6. The tool integrator is the primary audience for this document.
+manifest as described in the tutorial in ï¿½ 6. The tool integrator is the primary audience for this document.
 </p>
 <p class="subsection">1.2.2 Internal Users</p>
 <p>There are three internal clients of the information in the managed
@@ -351,7 +351,7 @@ and symbols to the parser. Of the two, the user-supplied include paths and
 defines are trivial as they are entered by the user through the UI. The built-in 
 compiler settings on the other hand, are quite a bit harder to decipher and the 
 solution will vary from tool to tool. A discussion of the possible solutions is 
-provided in § 6.12.<br>
+provided in ï¿½ 6.12.<br>
 <p class="subsection">1.2.4 Tool Definitions and Settings Storage</p>
 A key feature of the managed build system is that it is extensible.
 Tool integrators
@@ -456,15 +456,15 @@ MBS begins when she creates a new Managed Make project.&nbsp; The user picks the
 of project to create from the list of project types defined in the installed 
 manifest files.&nbsp; The list of project types is, by default, filtered by:</p>
 <p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in; margin-right: 0in; margin-top: 6.0pt; margin-bottom: .0001pt">
-<span style="font-family: Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="font-family: Symbol">ï¿½<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span>The project type must contain at least one default configuration 
 that uses a tool-chain that supports the host operating system and architecture.</p>
 <p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in; margin-right: 0in; margin-top: 6.0pt; margin-bottom: .0001pt">
-<span style="font-family: Symbol; ">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="font-family: Symbol; ">ï¿½<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span>If the project type implements the method 
 of verifying that its support has been installed, the method must return TRUE.</p>
 <p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in; margin-right: 0in; margin-top: 6.0pt; margin-bottom: .0001pt">
-<span style="font-family: Symbol; color: red">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="font-family: Symbol; color: red">ï¿½<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span style="color:red">The user may remove installed and 
 possibly-installed (i.e. the project type does NOT implement the method of 
 verifying that its support has been installed) project types from future 
@@ -478,11 +478,11 @@ of configurations defined in the project type.&nbsp;
 Different configurations can use different tool-chains. The list of 
 configurations is, by default, filtered by:</p>
 <p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in; margin-right: 0in; margin-top: 6.0pt; margin-bottom: .0001pt">
-<span style="font-family: Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="font-family: Symbol">ï¿½<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span>The tool-chain used by the configuration must support the host 
 operating system and architecture.</p>
 <p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in; margin-right: 0in; margin-top: 6.0pt; margin-bottom: .0001pt">
-<span style="font-family: Symbol; ">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="font-family: Symbol; ">ï¿½<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span>If the tool-chain implements the method of 
 verifying that its support has been installed, the method must return TRUE.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">The user may turn off 
@@ -759,11 +759,11 @@ at least one configuration defined for it. A configuration must define (or
 inherit) a set of tool-chain definitions that work together to produce the build 
 goal as an output.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">A projectType may define a project 
-level environment variable provider in the <em>projectEnvironmentSupplier</em> attribute.&nbsp; See § 
+level environment variable provider in the <em>projectEnvironmentSupplier</em> attribute.&nbsp; See ï¿½ 
 7.6 for additional information.<br>
 </p>
 <p class="MsoNormal" style="margin-top:6.0pt">A projectType may define a project 
-level macro provider in the <em>projectMacroSupplier</em> attribute.&nbsp; See § 
+level macro provider in the <em>projectMacroSupplier</em> attribute.&nbsp; See ï¿½ 
 7.8 for additional information.<br>
 </p>
 <p class="subsection">3.2.1 Schema</p>
@@ -1276,15 +1276,15 @@ definition and specify the id with version number of the tool chain definition
 to convert to in the <em>convertToId</em> attribute.&nbsp; If changes to the project 
 information need to be performed by the conversion, the tool chain must provide 
 a converter extension to perform the conversion.&nbsp; If no converter extension is 
-provided, then there won&rsquo;t be any conversion.&nbsp; See § 8.2 for additional 
+provided, then there won&rsquo;t be any conversion.&nbsp; See ï¿½ 8.2 for additional 
 information.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">A tool-chain may define a 
-configuration level environment variable provider in the <em>configurationEnvironmentSupplier</em> attribute.&nbsp; See § 
+configuration level environment variable provider in the <em>configurationEnvironmentSupplier</em> attribute.&nbsp; See ï¿½ 
 7.6 for additional information.<br>
 </p>
 <p class="MsoNormal" style="margin-top:6.0pt">A tool-chain may define a 
 configuration 
-level macro provider in the <em>configurationMacroSupplier</em> attribute.&nbsp; See § 
+level macro provider in the <em>configurationMacroSupplier</em> attribute.&nbsp; See ï¿½ 
 7.8 for additional information.<br>
 </p>
 <p class="MsoNormal" style="margin-top:6.0pt">A tool-chain may be associated 
@@ -1514,7 +1514,7 @@ the schema table below.</p>
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
       Specifies a comma delimited list of versions of this tool-chain that can 
-		be loaded without invoking a converter.&nbsp; See § 8.2 for additional 
+		be loaded without invoking a converter.&nbsp; See ï¿½ 8.2 for additional 
 		information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -1531,7 +1531,7 @@ the schema table below.</p>
  valign="top" height="49">
       The identifier of a tool-chain, that tool-chains loaded using this 
 		definition should be converted to. MBS will invoke the proper converter.&nbsp; 
-		See § 8.2 for additional information.</td>
+		See ï¿½ 8.2 for additional information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -1622,7 +1622,7 @@ specify the id with version number of the new builder to convert to in the <em>
 convertToId</em> attribute.&nbsp; If changes to the project information need to be 
 performed by the conversion, the tool chain definition must provide a converter 
 extension to perform the conversion.&nbsp; If no converter extension is provided, 
-then there won&rsquo;t be any conversion.&nbsp; See § 8.2 for additional information.</p>
+then there won&rsquo;t be any conversion.&nbsp; See ï¿½ 8.2 for additional information.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Additional builder attributes are described in 
 the schema table below.</p>
 <p class="subsection">3.6.1 Schema</p>
@@ -1747,7 +1747,7 @@ track of this specific builder.</td>
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       The name of a class that implements IManagedBuilderMakefileGenerator.&nbsp; 
-		See § 7.2 for additional information.</td>
+		See ï¿½ 7.2 for additional information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2061,7 +2061,7 @@ track of this specific builder.</td>
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       Specifies a comma delimited list of versions of this Builder that can be 
-		loaded without invoking a converter.&nbsp; See § 8.2 for additional 
+		loaded without invoking a converter.&nbsp; See ï¿½ 8.2 for additional 
 		information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -2078,7 +2078,7 @@ track of this specific builder.</td>
  valign="top">
       The identifier of a Builder that Builders loaded using this definition 
 		should be converted to. MBS will invoke the proper converter.&nbsp; See 
-		§ 8.2 for additional information.</td>
+		ï¿½ 8.2 for additional information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2251,7 +2251,7 @@ implementer must specify that in the <em>outputFlag</em> attribute.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">The <em>commandLineGenerator</em> 
 attribute allows the implementer to specify a class that implements the <code>IManagedCommandLineGenerator</code>
 interface.&nbsp; An explanation of how to replace the default command line 
-generator can be found in § 7.4. </p>
+generator can be found in ï¿½ 7.4. </p>
 <p class="MsoNormal" style="margin-top:6.0pt">MBS supports multiple versions of 
 a tool.&nbsp; The <em>versionsSupported</em><strong> </strong>attribute contains a list of 
 supported versions of a particular tool. This indicates that there is no need to 
@@ -2262,7 +2262,7 @@ version number of the tool to convert to in the <em>convertToId</em> attribute.&
 If changes to the project information need to be performed by the conversion, 
 the tool chain must provide a converter extension to perform the conversion.&nbsp; If 
 no converter extension is provided, then there won&rsquo;t be any conversion.&nbsp; 
-See § 8.2 for additional information.</p>
+See ï¿½ 8.2 for additional information.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Additional tool attributes are 
 described in the schema table below.</p>
 <p class="subsection">3.8.1 Schema</p>
@@ -2572,7 +2572,7 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       Specifies a comma delimited list of versions of this tool that can be 
-		loaded without invoking a converter.&nbsp; See § 8.2 for additional 
+		loaded without invoking a converter.&nbsp; See ï¿½ 8.2 for additional 
 		information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -2588,7 +2588,7 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       The identifier of a tool that tools loaded using this definition should be 
-		converted to. MBS will invoke the proper converter.&nbsp; See § 8.2 for 
+		converted to. MBS will invoke the proper converter.&nbsp; See ï¿½ 8.2 for 
 		additional information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -3868,7 +3868,7 @@ needed.</td>
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">The name of a class that implements the IManagedOptionValueHandler 
 		interface.&nbsp; This interface is used to dynamically manage the value 
-		of an option.&nbsp; See § 7.11. </td>
+		of an option.&nbsp; See ï¿½ 7.11. </td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
@@ -3894,7 +3894,7 @@ needed.</td>
 		runtime whether the option is visible, enabled, and used in command line 
 		generation. This class must implement the IOptionApplicability 
 		interface. If no calculator is specified then the option is always 
-		visible, enabled, and used in command line generation.&nbsp; See § 7.12. </td>
+		visible, enabled, and used in command line generation.&nbsp; See ï¿½ 7.12. </td>
       <td
  style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
@@ -4467,7 +4467,7 @@ presents to the user. The figure below shows how the list of project types is
 populated with any projectType whose <var>isTest</var> and <var>isAbstract</var>
 attribute are set to <code>false</code>. The value of the projectType's <var>name</var>
 attribute is
-used to populate the drop-down list-box selection widget. See § 2.1.1 for a 
+used to populate the drop-down list-box selection widget. See ï¿½ 2.1.1 for a 
 description of creating a new project.&nbsp; Similarly,
 the configuration
 check list is populated with all the defined configurations associated
@@ -4738,7 +4738,7 @@ shows the fragment for&nbsp; <span style="font-family: monospace;">Class1</span>
  title="" alt="Generated dependency makefile fragment"
  name="Generated Dependencies"></p>
 <p>
-Additional dependency calculator modes are supported by the MBS.&nbsp; See § 
+Additional dependency calculator modes are supported by the MBS.&nbsp; See ï¿½ 
 7.3.</p>
 <p class="subsection">5.1.4 Support Makefiles</p>
 <p>There are two other makefiles that are generated and included in the
@@ -5043,7 +5043,7 @@ example.toolchain.targetplatform</code>.</li></a></a>
 you will be using to create your example projects on. For example, if
 you
 are running this tutorial on Linux or Solaris, enter the value <code>org.eclipse.cdt.core.ELF</code>.
-If you are running the tutorial on Windows, enter the value <code>org.eclipse.cdt.core.PE</code>.</li>
+If you are running the tutorial on Windows, enter the value <code>org.eclipse.cdt.core.PE64</code>.</li>
 </ol>
 <p style="font-weight: normal;" class="subsection">
 <strong>
@@ -5312,7 +5312,7 @@ attribute set to true.</p>
 <p><strong>Environment include paths:&nbsp; </strong>Your build definition may specify a 
 envVarBuildPath element with the <strong>pathType</strong> attribute set to &quot;buildpathInclude&quot;.&nbsp; 
 If specified, MBS will read the environment variable(s) for additional include 
-paths.&nbsp; See § 3.17 for additional information regarding the envVarBuildPath 
+paths.&nbsp; See ï¿½ 3.17 for additional information regarding the envVarBuildPath 
 element.</p>
 <p class="subsection">6.13.3 User-Specified
 Libraries and Object
@@ -6804,7 +6804,7 @@ interface shown below.&nbsp; The class name is assigned to the projectType eleme
 configurationNameProvider attribute. </a></p>
 <p class="MsoNormal">Consider the following usage for a configuration name 
 provider.&nbsp; You support multiple versions of your tool-chain within the same 
-version of CDT (see § 8.2 for a discussion of supporting multiple versions).&nbsp; 
+version of CDT (see ï¿½ 8.2 for a discussion of supporting multiple versions).&nbsp; 
 For the purpose of this example, assume they are versions 1.0 and 2.0.&nbsp; You 
 provide default &quot;debug&quot; and &quot;release&quot; configurations for each version of your 
 tool-chain.&nbsp; You have a choice when assigning names to these default 
@@ -7103,7 +7103,7 @@ public boolean isOptionEnabled(<br>
 <p class="subsection"><a name="_TocSectionDynamic_13">7.13 Defining a Dynamic Element Provider</a></p>
 <p>Tool integrators may supply a dynamic element provider to dynamically provide the definitions that are otherwise specified in the buildDefinitions 
 extension point.&nbsp; To specify a dynamic element provider, your build 
-definitions must define a dynamicElementProvider element as described in § 3.19. </p>
+definitions must define a dynamicElementProvider element as described in ï¿½ 3.19. </p>
 <p class="subsection"><a name="_TocSectionDynamic_14">7.14 Adding Custom Pages to the New Project Wizard</a></p>
 
 
@@ -7299,8 +7299,8 @@ element is provided per toolchain supported by the page.</P>
 <P class="MsoNormal">If no projectType elements are specified, then it
 is assumed that the page potentially applies to all projectTypes,
 although it may still be excluded based on <A
-	name="OLE_LINK5"><SPAN style="mso-bookmark:OLE_LINK6">toolchain (§<SPAN
-	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>7.14.1.1.3</SPAN>) </SPAN></A>or project nature (§<SPAN
+	name="OLE_LINK5"><SPAN style="mso-bookmark:OLE_LINK6">toolchain (ï¿½<SPAN
+	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>7.14.1.1.3</SPAN>) </SPAN></A>or project nature (ï¿½<SPAN
 	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>7.14.1.1.4</SPAN>).</P>
 <P>projectType Element Schema:</P>
 <TABLE class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0"
@@ -7359,8 +7359,8 @@ provided per toolchain supported by the page.</P>
 <P class="MsoNormal"><A name="OLE_LINK1"><SPAN
 	style="mso-bookmark:OLE_LINK2">If no toolchain elements are specified,
 then it is assumed that the page potentially applies to all toolchains,
-although it may still be excluded based on project type (§<SPAN
-	style='mso-field-code:" REF _Ref99249701 \\r \\h "'>7.14.1.1.2</SPAN>) or project nature (§<SPAN
+although it may still be excluded based on project type (ï¿½<SPAN
+	style='mso-field-code:" REF _Ref99249701 \\r \\h "'>7.14.1.1.2</SPAN>) or project nature (ï¿½<SPAN
 	style='mso-field-code:
 " REF _Ref98746447 \\r \\h "'>7.14.1.1.4</SPAN>)</SPAN></A></P>
 <P class="MsoNormal">
@@ -7478,8 +7478,8 @@ natures that might be supported by MBS in the future (e.g. someday there
 might be a Fortran nature).</P>
 <P class="MsoNormal">If no natureID elements are specified, then it is
 assumed that the page potentially applies to all project natures,
-although it may still be excluded based on project type (§<SPAN
-	style='mso-field-code:" REF _Ref99249701 \\r \\h "'>7.14.1.1.2</SPAN>) or toolchain (§<SPAN
+although it may still be excluded based on project type (ï¿½<SPAN
+	style='mso-field-code:" REF _Ref99249701 \\r \\h "'>7.14.1.1.2</SPAN>) or toolchain (ï¿½<SPAN
 	style='mso-field-code:" REF _Ref98746447 \\r \\h "'>7.14.1.1.3</SPAN>)</P>
 <P>natureID element Schema:</P>
 <TABLE class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0"

@@ -1222,7 +1222,7 @@
             superClass="cdt.managedbuild.toolchain.llvm.clang.base">
          <targetPlatform
                archList="all"
-               binaryParser="org.eclipse.cdt.core.Cygwin_PE"
+               binaryParser="org.eclipse.cdt.core.Cygwin_PE64"
                id="cdt.managedbuild.target.llvm.win32.cygwin.platform.base"
                isAbstract="true"
                name="%PlatformName.Dbg"
@@ -1241,7 +1241,7 @@
             superClass="cdt.managedbuild.toolchain.llvm.clang.base">
          <targetPlatform
                archList="all"
-               binaryParser="org.eclipse.cdt.core.PE"
+               binaryParser="org.eclipse.cdt.core.PE64"
                id="cdt.managedbuild.target.llvm.win32.mingw.platform.base"
                isAbstract="true"
                name="%PlatformName.Dbg"
@@ -1347,7 +1347,7 @@
             superClass="cdt.managedbuild.toolchain.llvm.gnu.base">
          <targetPlatform
                archList="all"
-               binaryParser="org.eclipse.cdt.core.Cygwin_PE"
+               binaryParser="org.eclipse.cdt.core.Cygwin_PE64"
                id="cdt.managedbuild.target.llvm.gnu.win32.cygwin.platform.base"
                isAbstract="true"
                name="%PlatformName.Dbg"
@@ -1366,7 +1366,7 @@
             superClass="cdt.managedbuild.toolchain.llvm.gnu.base">
          <targetPlatform
                archList="all"
-               binaryParser="org.eclipse.cdt.core.PE"
+               binaryParser="org.eclipse.cdt.core.PE64"
                id="cdt.managedbuild.target.llvm.gnu.win32.mingw.platform.base"
                isAbstract="true"
                name="%PlatformName.Dbg"
@@ -1432,7 +1432,7 @@
             superClass="cdt.managedbuild.toolchain.llvm.with.static.compiler.base">
          <targetPlatform
                archList="all"
-               binaryParser="org.eclipse.cdt.core.PE"
+               binaryParser="org.eclipse.cdt.core.PE64"
                id="cdt.managedbuild.target.llvm.static.compiler.win32.platform.base"
                isAbstract="true"
                name="%PlatformName.Dbg"
@@ -1498,7 +1498,7 @@
             superClass="cdt.managedbuild.toolchain.llvm.jit.base">
          <targetPlatform
                archList="all"
-               binaryParser="org.eclipse.cdt.core.PE"
+               binaryParser="org.eclipse.cdt.core.PE64"
                id="cdt.managedbuild.target.llvm.jit.win32.platform.base"
                isAbstract="true"
                name="%PlatformName.Dbg"

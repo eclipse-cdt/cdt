@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6bcd28b2_a11eee30",
+        "filename": "native/org.eclipse.cdt.native.serial/jni/serial.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-09-04T13:14:25Z",
+      "side": 1,
+      "message": "This has the side effect of clearing comms error, which I suppose is fine, but is different than linux. It may need to be reevaluated if someone want to pass error info up to Java in the future.",
+      "revId": "96d32ee03c110b3596a5e30ae6f560d4d0567f9f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

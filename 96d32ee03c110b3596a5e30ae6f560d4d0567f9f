@@ -16,6 +16,24 @@
       "revId": "96d32ee03c110b3596a5e30ae6f560d4d0567f9f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37500cfb_4a401e9a",
+        "filename": "native/org.eclipse.cdt.native.serial/jni/serial.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2019-09-05T15:51:30Z",
+      "side": 1,
+      "message": "I do not now any other way to peek the buffer to see if there is any new data. Do you know another way?\nCan this question be postponed to when/if there is a need for passing the error info to Java?",
+      "parentUuid": "6bcd28b2_a11eee30",
+      "revId": "96d32ee03c110b3596a5e30ae6f560d4d0567f9f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

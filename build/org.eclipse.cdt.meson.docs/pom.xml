@@ -11,7 +11,7 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <version>1.0.100-SNAPSHOT</version>
+  <version>1.0.200-SNAPSHOT</version>
   <artifactId>org.eclipse.cdt.meson.docs</artifactId>
   <packaging>eclipse-plugin</packaging>
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="59">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="60">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
@@ -19,7 +19,7 @@
 <unit id="org.junit.source" version="0.0.0"/>
 <unit id="org.mockito" version="0.0.0"/>
 <unit id="org.slf4j.impl.log4j12" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/S20190827152740/repository/"/>
+<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190827152740/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.epp.logging.aeri.feature.feature.group" version="0.0.0"/>
@@ -51,12 +51,12 @@
 <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.test.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/eclipse/updates/4.13milestones/S-4.13RC1-201908281800/"/>
+<repository location="https://download.eclipse.org/eclipse/updates/4.13milestones/S-4.13RC2-201909071130/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.launchbar.remote.feature.group" version="0.0.0"/>
-<repository location="https://ci.eclipse.org/cdt/view/LaunchBar/job/launchbar-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
+<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.0-simrel-2019-09-m1/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.linuxtools.docker.feature.feature.group" version="0.0.0"/>
@@ -64,7 +64,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/S-3.15.0.M2-20190801034436/repository/"/>
+<repository location="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/S-3.15.0.RC1-20190830034720/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>
@@ -85,12 +85,12 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tm4e.feature.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tm4e/snapshots/"/>
+<repository location="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.lsp4e" version="0.0.0"/>
 <unit id="org.eclipse.lsp4e.debug" version="0.0.0"/>
-<repository location="http://download.eclipse.org/lsp4e/snapshots/"/>
+<repository location="https://download.eclipse.org/lsp4e/releases/0.11.0/"/>
 </location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>

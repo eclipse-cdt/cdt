@@ -186,7 +186,7 @@
         <repositoryList
             name="Photon">
           <repository
-              url="https://download.eclipse.org/tools/orbit/downloads/drops/S20190827152740/repository/"/>
+              url="https://download.eclipse.org/tools/orbit/downloads/drops/R20190827152740/repository/"/>
           <repository
               url="https://download.eclipse.org/technology/swtbot/releases/2.7.0/"/>
           <repository
@@ -196,13 +196,13 @@
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
-              url="https://download.eclipse.org/eclipse/updates/4.13milestones/S-4.13RC1-201908281800/"/>
+              url="https://download.eclipse.org/eclipse/updates/4.13milestones/S-4.13RC2-201909071130/"/>
           <repository
-              url="https://ci.eclipse.org/cdt/view/LaunchBar/job/launchbar-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
+              url="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.0-simrel-2019-09-m1/"/>
           <repository
               url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
           <repository
-              url="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/S-3.15.0.M2-20190801034436/repository/"/>
+              url="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/S-3.15.0.RC1-20190830034720/repository/"/>
           <repository
               url="http://download.eclipse.org/technology/epp/logging/stable/"/>
           <repository
@@ -210,9 +210,9 @@
           <repository
               url="http://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.template-1.1.1-simrel-2018-12a/"/>
           <repository
-              url="http://download.eclipse.org/tm4e/snapshots/"/>
+              url="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
           <repository
-              url="http://download.eclipse.org/lsp4e/snapshots/"/>
+              url="https://download.eclipse.org/lsp4e/releases/0.11.0/"/>
         </repositoryList>
       </targlet>
     </setupTask>

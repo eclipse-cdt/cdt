@@ -541,8 +541,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IType a2 = getCompositeType(a);
 			ICPPEvaluation[] b2 = getCompositeEvaluationArray(b);
 			if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
-				e = new EvalTypeId(a2, compositeTemplateDefinition, e.representsNewExpression(), e.usesBracedInitList(),
-						b2);
+				e = new EvalTypeId(a2, compositeTemplateDefinition, e.representsNewExpression(), b2);
 			return e;
 		}
 		if (eval instanceof EvalUnary) {

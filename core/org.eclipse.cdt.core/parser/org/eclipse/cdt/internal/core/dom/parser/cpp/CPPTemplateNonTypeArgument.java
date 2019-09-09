@@ -100,7 +100,7 @@ public final class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 				if (fEvaluation instanceof EvalPackExpansion) {
 					evaluation = ((EvalPackExpansion) fEvaluation).getExpansionPattern();
 				} else {
-					evaluation = new EvalTypeId(t, fEvaluation.getTemplateDefinition(), false, false, fEvaluation);
+					evaluation = new EvalTypeId(t, fEvaluation.getTemplateDefinition(), false, fEvaluation);
 				}
 				return new CPPTemplateNonTypeArgument(evaluation);
 			}

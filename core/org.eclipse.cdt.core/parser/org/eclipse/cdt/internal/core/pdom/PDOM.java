@@ -302,10 +302,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *
 	 *  CDT 9.9 development (version not supported on the 9.8.x branch)
 	 *  215.0 - Corruption due to wrong record size in field/variable template partial specialization, bug 549028.
+	 *  216.0 - Removed usesBracedInitList, bug 549036.
 	 */
-	private static final int MIN_SUPPORTED_VERSION = version(215, 0);
-	private static final int MAX_SUPPORTED_VERSION = version(215, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(215, 0);
+	private static final int MIN_SUPPORTED_VERSION = version(216, 0);
+	private static final int MAX_SUPPORTED_VERSION = version(216, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(216, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

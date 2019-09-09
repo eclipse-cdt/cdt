@@ -257,6 +257,10 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 
 	public static ICPPEvaluation[] extractArguments(IASTInitializer initializer, ICPPConstructor constructor) {
 		ICPPEvaluation[] args = extractArguments(initializer);
+		if (initializer instanceof ICPPASTInitializerList) {
+			ICPPASTInitializerList initList = (ICPPASTInitializerList) initializer;
+			args = evaluateArguments(initList.getClauses());
+		}
 		if (args.length == 1 && constructor.getParameters().length > 1 && args[0] instanceof EvalInitList) {
 			EvalInitList evalInitList = (EvalInitList) args[0];
 			args = evalInitList.getClauses();
@@ -272,7 +276,9 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 			return evaluateArguments(ctorInitializer.getArguments());
 		} else if (initializer instanceof ICPPASTInitializerList) {
 			ICPPASTInitializerList initList = (ICPPASTInitializerList) initializer;
-			return evaluateArguments(initList.getClauses());
+			ICPPEvaluation[] args = evaluateArguments(initList.getClauses());
+			// the function name is misleading now (doesn't extract...)
+			return new EvalInitList[] { new EvalInitList(args, initList) };
 		} else if (initializer instanceof IASTEqualsInitializer) {
 			IASTEqualsInitializer equalsInitalizer = (IASTEqualsInitializer) initializer;
 			IASTInitializerClause initClause = equalsInitalizer.getInitializerClause();

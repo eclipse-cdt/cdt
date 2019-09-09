@@ -13393,4 +13393,18 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		BindingAssertionHelper bh = getAssertionHelper();
 		bh.assertImplicitName("t{1};", 1, IProblemBinding.class);
 	}
+
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//
+	//	struct A {
+	//	    A(std::initializer_list<int> list)
+	//	    {}
+	//	};
+	//
+	//	auto a = A{1, 2};
+	public void testClassFromInitList_549036() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
 }

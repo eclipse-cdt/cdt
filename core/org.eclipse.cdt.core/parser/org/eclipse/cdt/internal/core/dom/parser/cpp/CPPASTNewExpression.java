@@ -308,7 +308,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 					arguments[i] = ((ICPPASTInitializerClause) args[i]).getEvaluation();
 				}
 			}
-			fEvaluation = EvalTypeId.createForNewExpression(t, this, false, arguments);
+			fEvaluation = EvalTypeId.createForNewExpression(t, this, arguments);
 		}
 		return fEvaluation;
 	}

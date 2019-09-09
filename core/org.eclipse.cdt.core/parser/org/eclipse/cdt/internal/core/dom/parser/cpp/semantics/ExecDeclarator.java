@@ -119,7 +119,7 @@ public final class ExecDeclarator implements ICPPExecution {
 
 		if (isValueInitialization(computedInitializerEval)) {
 			ICPPEvaluation defaultValue = new EvalTypeId(type, computedInitializerEval.getTemplateDefinition(), false,
-					false, ICPPEvaluation.EMPTY_ARRAY);
+					ICPPEvaluation.EMPTY_ARRAY);
 			return new EvalFixed(type, defaultValue.getValueCategory(), defaultValue.getValue());
 		}
 

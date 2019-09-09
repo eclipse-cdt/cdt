@@ -59,9 +59,7 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 		} else if (initializer instanceof ICPPASTConstructorInitializer) {
 			IBinding constructor = CPPSemantics.findImplicitlyCalledConstructor(chainInitializer);
 			if (constructor == null) {
-				boolean usesBracedInitList = (initializer instanceof ICPPASTInitializerList);
-				return new EvalTypeId(member.getType(), point, usesBracedInitList,
-						EvalConstructor.extractArguments(initializer));
+				return new EvalTypeId(member.getType(), point, EvalConstructor.extractArguments(initializer));
 			} else if (constructor instanceof IProblemBinding) {
 				return EvalFixed.INCOMPLETE;
 			}

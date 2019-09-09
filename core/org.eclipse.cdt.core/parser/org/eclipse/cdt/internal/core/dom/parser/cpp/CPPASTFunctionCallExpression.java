@@ -329,7 +329,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 					args[i] = ((ICPPASTInitializerClause) fArguments[i]).getEvaluation();
 				}
 
-				return new EvalTypeId((IType) b, this, false, args);
+				return new EvalTypeId((IType) b, this, args);
 			}
 		}
 		return null;

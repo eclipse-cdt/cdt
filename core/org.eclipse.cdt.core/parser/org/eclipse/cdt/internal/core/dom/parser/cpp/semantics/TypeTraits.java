@@ -586,7 +586,7 @@ public class TypeTraits {
 			// Value category is xvalue because declval() returns an rvalue reference.
 			arguments[i] = new EvalFixed(argumentTypes[i], ValueCategory.XVALUE, IntegralValue.UNKNOWN);
 		}
-		EvalTypeId eval = new EvalTypeId(type, pointOfDefinition, false, false, arguments);
+		EvalTypeId eval = new EvalTypeId(type, pointOfDefinition, false, arguments);
 		ICPPFunction constructor = eval.getConstructor();
 		if (!(constructor instanceof ICPPMethod)) {
 			return false;

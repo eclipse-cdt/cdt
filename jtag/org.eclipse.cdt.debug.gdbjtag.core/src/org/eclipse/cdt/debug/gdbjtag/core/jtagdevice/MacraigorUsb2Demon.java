@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 QNX Software Systems and others.
+ * Copyright (c) 2008, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
+ *     John Dallaway - Provide 'reset and halt' command, bug 550963
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
@@ -22,28 +23,24 @@ import java.util.Collection;
  */
 public class MacraigorUsb2Demon extends DefaultGDBJtagDeviceImpl {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#getDefaultPortNumber()
-	 */
 	@Override
 	public String getDefaultPortNumber() {
-		return "8888";
+		return "8888"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doDelay(int, java.util.Collection)
-	 */
 	@Override
 	public void doDelay(int delay, Collection<String> commands) {
-		super.addCmd(commands, "monitor sleep " + String.valueOf(delay));
+		addCmd(commands, "monitor sleep " + String.valueOf(delay)); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doReset(java.util.Collection)
-	 */
 	@Override
 	public void doReset(Collection<String> commands) {
-		super.addCmd(commands, "monitor resetrun");
+		addCmd(commands, "monitor resetrun"); //$NON-NLS-1$
+	}
+
+	@Override
+	public void doResetAndHalt(Collection<String> commands) {
+		addCmd(commands, "monitor reset"); //$NON-NLS-1$
 	}
 
 }

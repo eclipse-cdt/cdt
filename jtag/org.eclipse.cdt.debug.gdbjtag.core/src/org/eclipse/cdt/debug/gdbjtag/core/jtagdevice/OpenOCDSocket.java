@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 QNX Software Systems and others.
+ * Copyright (c) 2008, 2019 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     John Dallaway - OpenOCD extensions, bug 494059
+ *     John Dallaway - Provide 'reset and halt' command, bug 550963
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
@@ -22,20 +23,19 @@ import java.util.Collection;
  */
 public class OpenOCDSocket extends DefaultGDBJtagDeviceImpl {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#getDefaultPortNumber()
-	 */
 	@Override
 	public String getDefaultPortNumber() {
 		return "3333"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doDelay(int, java.util.Collection)
-	 */
 	@Override
 	public void doDelay(int delay, Collection<String> commands) {
 		addCmd(commands, "monitor sleep " + String.valueOf(delay * 1000)); //$NON-NLS-1$
+	}
+
+	@Override
+	public void doResetAndHalt(Collection<String> commands) {
+		addCmd(commands, "monitor reset halt"); //$NON-NLS-1$
 	}
 
 }

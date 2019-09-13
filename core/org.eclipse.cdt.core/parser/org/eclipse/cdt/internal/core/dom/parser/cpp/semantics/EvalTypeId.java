@@ -300,8 +300,17 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			ICPPClassType classType = (ICPPClassType) simplifiedType;
 			ICPPEvaluation[] arguments = fArguments;
 			ICPPConstructor[] constructors = classType.getConstructors();
-			if (arguments.length == 1 && arguments[0] instanceof EvalInitList && !fUsesBracedInitList) {
+			if (fUsesBracedInitList && arguments.length > 0) {
 				// List-initialization of a class (dcl.init.list-3).
+				// e.g. A{1,2}
+				ICPPConstructor[] ctors = getInitializerListConstructors(constructors);
+				if (ctors.length != 0) {
+					constructors = ctors;
+					arguments = new EvalInitList[] { new EvalInitList(arguments, getTemplateDefinition()) };
+				}
+			} else if (arguments.length == 1 && arguments[0] instanceof EvalInitList && !fUsesBracedInitList) {
+				// List-initialization of a class (dcl.init.list-3).
+				// e.g. A({1,2})
 				if (TypeTraits.isAggregateClass(classType)) {
 					// Pretend that aggregate initialization is calling the default constructor.
 					return findDefaultConstructor(classType, constructors);

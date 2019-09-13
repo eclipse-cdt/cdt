@@ -271,8 +271,15 @@ public class TypeTraits {
 		// 8.1.5.1 p.2 (N4659): The closure type is not an aggregate type.
 		if (classType instanceof CPPClosureType)
 			return false;
-		if (classType.getBases().length > 0)
-			return false;
+		if (classType.getBases().length > 0) {
+			// c++17 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0017r1.html
+			for (ICPPBase base : classType.getBases()) {
+				if (base.isVirtual())
+					return false;
+				if (base.getVisibility() == ICPPBase.v_private || base.getVisibility() == ICPPBase.v_protected)
+					return false;
+			}
+		}
 		ICPPMethod[] methods = classType.getDeclaredMethods();
 		for (ICPPMethod m : methods) {
 			if (m instanceof ICPPConstructor)

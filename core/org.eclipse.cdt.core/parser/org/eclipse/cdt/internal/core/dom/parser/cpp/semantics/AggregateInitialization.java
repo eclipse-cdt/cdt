@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -131,6 +132,15 @@ class AggregateInitialization {
 	 */
 	private Cost checkInitializationOfElements(IType type, Cost worstCost) throws DOMException {
 		if (type instanceof ICPPClassType && isAggregate(type)) {
+			ICPPBase[] bases = ((ICPPClassType) type).getBases();
+			for (ICPPBase base : bases) {
+				Cost cost = checkElement(base.getBaseClassType(), null, worstCost);
+				if (!cost.converts())
+					return cost;
+				if (cost.compareTo(worstCost) > 0) {
+					worstCost = cost;
+				}
+			}
 			ICPPField[] fields = getFieldsForAggregateInitialization((ICPPClassType) type);
 			for (ICPPField field : fields) {
 				Cost cost = checkElement(field.getType(), field.getInitialValue(), worstCost);

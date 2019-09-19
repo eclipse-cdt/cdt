@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="60">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="62">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
@@ -51,7 +51,7 @@
 <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.test.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/eclipse/updates/4.13milestones/S-4.13RC2-201909071130/"/>
+<repository location="https://download.eclipse.org/eclipse/updates/4.13/R-4.13-201909161045/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
@@ -64,7 +64,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/S-3.15.0.RC1-20190830034720/repository/"/>
+<repository location="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/R-3.15.0-20190830034720/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>

@@ -196,13 +196,13 @@
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
-              url="https://download.eclipse.org/eclipse/updates/4.13milestones/S-4.13RC2-201909071130/"/>
+              url="https://download.eclipse.org/eclipse/updates/4.13/R-4.13-201909161045/"/>
           <repository
               url="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.0-simrel-2019-09-m1/"/>
           <repository
-              url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
+              url="http://download.eclipse.org/linuxtools/updates-docker-nightly-4.4/"/>
           <repository
-              url="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/S-3.15.0.RC1-20190830034720/repository/"/>
+              url="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/R-3.15.0-20190830034720/repository/"/>
           <repository
               url="http://download.eclipse.org/technology/epp/logging/stable/"/>
           <repository

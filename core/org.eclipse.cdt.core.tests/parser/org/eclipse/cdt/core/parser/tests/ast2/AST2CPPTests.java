@@ -13393,4 +13393,16 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		BindingAssertionHelper bh = getAssertionHelper();
 		bh.assertImplicitName("t{1};", 1, IProblemBinding.class);
 	}
+
+	//  struct MyStruct {
+	//      union {
+	//          int num;
+	//      };
+	//  };
+	//  int main() {
+	//      MyStruct test = { 0 };
+	//  }
+	public void testAggregateInitOfAnonymousUnion_549362() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
 }

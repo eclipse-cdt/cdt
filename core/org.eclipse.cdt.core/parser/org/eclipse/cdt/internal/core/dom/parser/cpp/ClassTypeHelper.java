@@ -239,11 +239,28 @@ public class ClassTypeHelper {
 		IASTDeclaration[] decls = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : decls) {
 			if (decl instanceof IASTSimpleDeclaration) {
-				IASTDeclarator[] dtors = ((IASTSimpleDeclaration) decl).getDeclarators();
-				for (IASTDeclarator dtor : dtors) {
-					binding = ASTQueries.findInnermostDeclarator(dtor).getName().resolveBinding();
-					if (binding instanceof ICPPField)
-						result = ArrayUtil.appendAt(result, resultSize++, (ICPPField) binding);
+				IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) decl;
+				IASTDeclarator[] dtors = simpleDecl.getDeclarators();
+				if (dtors.length == 0) {
+					// check for union-like classes [class.union.anon]
+					ICPPClassType nestedClass = getNestedClass(simpleDecl);
+					if (nestedClass != null && nestedClass.getName().length() == 0) {
+						if (nestedClass.getFields().length > 0) {
+							// TODO(havogt): Here we add only the first field of the anonymous union to the result
+							// (as needed for aggregate initialization, see [dcl.init.aggr](c++17)p.16).
+							// A proper solution will probably need to return a new implementation of ICPPField for anonymous unions.
+							// TODO(havogt): This branch is also taken for anonymous structs (GNU extension), in that case
+							// it should add all fields of the anonymous struct.
+							binding = nestedClass.getFields()[0];
+							result = ArrayUtil.appendAt(result, resultSize++, (ICPPField) binding);
+						}
+					}
+				} else {
+					for (IASTDeclarator dtor : dtors) {
+						binding = ASTQueries.findInnermostDeclarator(dtor).getName().resolveBinding();
+						if (binding instanceof ICPPField)
+							result = ArrayUtil.appendAt(result, resultSize++, (ICPPField) binding);
+					}
 				}
 			} else if (decl instanceof ICPPASTUsingDeclaration) {
 				IASTName n = ((ICPPASTUsingDeclaration) decl).getName();
@@ -260,6 +277,7 @@ public class ClassTypeHelper {
 			}
 		}
 		return ArrayUtil.trim(result, resultSize);
+
 	}
 
 	/**
@@ -551,6 +569,23 @@ public class ClassTypeHelper {
 		return true;
 	}
 
+	/**
+	 * @param decl
+	 * @return if decl declares a nested class: return the class; else return null.
+	 */
+	public static ICPPClassType getNestedClass(IASTSimpleDeclaration decl) {
+		IBinding binding = null;
+		IASTDeclSpecifier declSpec = decl.getDeclSpecifier();
+		if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
+			binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
+		} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier && decl.getDeclarators().length == 0) {
+			binding = ((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding();
+		}
+		if (binding instanceof ICPPClassType)
+			return (ICPPClassType) binding;
+		return null;
+	}
+
 	public static ICPPClassType[] getNestedClasses(ICPPInternalClassTypeMixinHost host) {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
@@ -571,16 +606,10 @@ public class ClassTypeHelper {
 			while (decl instanceof ICPPASTTemplateDeclaration)
 				decl = ((ICPPASTTemplateDeclaration) decl).getDeclaration();
 			if (decl instanceof IASTSimpleDeclaration) {
-				IBinding binding = null;
-				IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) decl).getDeclSpecifier();
-				if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-					binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
-				} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier
-						&& ((IASTSimpleDeclaration) decl).getDeclarators().length == 0) {
-					binding = ((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding();
+				ICPPClassType nestedClass = getNestedClass((IASTSimpleDeclaration) decl);
+				if (nestedClass != null) {
+					result = ArrayUtil.appendAt(result, resultSize++, nestedClass);
 				}
-				if (binding instanceof ICPPClassType)
-					result = ArrayUtil.appendAt(result, resultSize++, (ICPPClassType) binding);
 			}
 		}
 		return ArrayUtil.trim(result, resultSize);

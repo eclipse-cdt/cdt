@@ -70,6 +70,24 @@
     },
     {
       "key": {
+        "uuid": "d9629687_265982c8",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-09-22T11:33:09Z",
+      "side": 1,
+      "message": "op is no redudant indeed I receive a warning if I remove it.",
+      "parentUuid": "a86ab57d_a028bbdb",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9f72789a_a7a20b36",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
         "patchSetId": 4
@@ -123,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "53dccc5c_c51a96c4",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-09-22T11:33:09Z",
+      "side": 1,
+      "message": "I confirm what I said for lambda expressions.",
+      "parentUuid": "328fbe73_f90b62bb",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "97a709ca_11dd0f7a",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
         "patchSetId": 4
@@ -134,6 +170,24 @@
       "writtenOn": "2019-09-01T17:57:03Z",
       "side": 1,
       "message": "Likewise, \"op !\u003d null\" is redundant.",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ad027fa_46728baa",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-09-22T11:33:09Z",
+      "side": 1,
+      "message": "op is no redudant indeed I receive a warning if I remove it.",
+      "parentUuid": "97a709ca_11dd0f7a",
       "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -202,6 +256,24 @@
       "writtenOn": "2019-09-01T17:57:03Z",
       "side": 1,
       "message": "ret.getReturnValue() -\u003e returnValue",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "23c8e516_e8c63724",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-09-22T11:33:09Z",
+      "side": 1,
+      "message": "returnValue is declared as IASTInitializerClause and it\u0027s initialized with ret.getReturnArgument().",
+      "parentUuid": "2415865b_964af412",
       "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

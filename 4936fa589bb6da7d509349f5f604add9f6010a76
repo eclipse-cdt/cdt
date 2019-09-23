@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "46b97eaa_67ec09b7",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-23T00:59:07Z",
+      "side": 1,
+      "message": "Since you are adding this @SuppressWarnings(\"restriction\"), the ones on the individual methods in this class can be removed.",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e6279142_081ad355",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
         "patchSetId": 4
@@ -82,6 +99,24 @@
       "side": 1,
       "message": "op is no redudant indeed I receive a warning if I remove it.",
       "parentUuid": "a86ab57d_a028bbdb",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4c566319_4f73c909",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-23T00:59:07Z",
+      "side": 1,
+      "message": "Ok, it\u0027s fine to keep then.",
+      "parentUuid": "d9629687_265982c8",
       "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -153,6 +188,24 @@
       "side": 1,
       "message": "I confirm what I said for lambda expressions.",
       "parentUuid": "328fbe73_f90b62bb",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a54eeb48_8e4cc1cb",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-23T00:59:07Z",
+      "side": 1,
+      "message": "Thanks. Let\u0027s still add the above example as a testcase.",
+      "parentUuid": "53dccc5c_c51a96c4",
       "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ebe8f3b4_cf74ff92",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/plugin.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 508,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-09-23T05:10:24Z",
+      "side": 1,
+      "message": "you are right, just an error, this checker must be off by default",
+      "parentUuid": "4f096ccc_12de4485",
+      "revId": "8380e770d9451b7480257537768a01edca9de9fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "57665f43_92f7ef33",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/FloatCompareChecker.java",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2019-09-23T00:45:19Z",
       "side": 1,
       "message": "We can make CPPVisitor.areEquivalentBindings() public and use it here.\n\n(We can do the same thing in ClassMembersInitializationChecker.java.)",
+      "revId": "8380e770d9451b7480257537768a01edca9de9fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c2f6222c_9fe43a7b",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/FloatCompareChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-09-23T05:10:24Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "57665f43_92f7ef33",
       "revId": "8380e770d9451b7480257537768a01edca9de9fb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

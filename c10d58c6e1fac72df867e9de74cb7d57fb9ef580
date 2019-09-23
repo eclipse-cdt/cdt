@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9182e4ef_d6346b0e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/TypeTraits.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-23T00:08:28Z",
+      "side": 1,
+      "message": "Don\u0027t the base classes have to be aggregates as well?",
+      "revId": "c10d58c6e1fac72df867e9de74cb7d57fb9ef580",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -69,6 +69,40 @@
       "revId": "8380e770d9451b7480257537768a01edca9de9fb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2c994c05_9aee35cd",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/FloatCompareChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-24T05:19:04Z",
+      "side": 1,
+      "message": "This can be implemented more generally as \"expr1.getEvaluation().isEquivalentTo(expr2.getEvaluation())\". That would also handle other expression types like \"obj.get_distance()\".",
+      "revId": "8380e770d9451b7480257537768a01edca9de9fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d56f20d_d8b9a4bf",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/FloatCompareChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-24T05:19:04Z",
+      "side": 1,
+      "message": "The body of this branch is basically identical to the first branch. We can collapse the two branches into one by making the condition:\n\n   (leftOp \u003d\u003d cond1Test \u0026\u0026 rightOp \u003d\u003d cond2Test) ||\n   (rightOp \u003d\u003d cond1Test \u0026\u0026 leftOp \u003d\u003d cond2Test)",
+      "revId": "8380e770d9451b7480257537768a01edca9de9fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

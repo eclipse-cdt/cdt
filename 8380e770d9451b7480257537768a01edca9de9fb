@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "14adec42_bca40184",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/FloatCompareChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-09-26T16:50:53Z",
+      "side": 1,
+      "message": "getEvaluation is not defined for IASTExpression, can you provide a bit more context here?",
+      "parentUuid": "2c994c05_9aee35cd",
+      "revId": "8380e770d9451b7480257537768a01edca9de9fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6d56f20d_d8b9a4bf",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/FloatCompareChecker.java",
         "patchSetId": 8

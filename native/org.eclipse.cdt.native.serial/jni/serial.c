@@ -157,6 +157,9 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 
 	// ignore parity
 	options.c_iflag |= IGNPAR;
+	
+	// turn off those bits in the input flag that fiddle with CR and NL
+	options.c_iflag &= ~(ICRNL | INLCR | IGNCR);
 
 	options.c_cc[VMIN]     = 0;   // min chars to read
 	options.c_cc[VTIME]    = 2;   // 10ths second timeout

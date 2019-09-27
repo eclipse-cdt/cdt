@@ -351,6 +351,24 @@
     },
     {
       "key": {
+        "uuid": "e3d75eb7_84b5b82e",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ReturnChecker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2019-09-27T16:24:23Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "adf26099_db31b705",
+      "revId": "4936fa589bb6da7d509349f5f604add9f6010a76",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bff8b049_b75d5694",
         "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/ReturnCheckerTest.java",
         "patchSetId": 4

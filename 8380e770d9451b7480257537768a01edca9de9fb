@@ -107,6 +107,41 @@
     },
     {
       "key": {
+        "uuid": "558077de_175a5206",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/FloatCompareChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-27T04:47:52Z",
+      "side": 1,
+      "message": "Ah, right, evaluations are C++-only.\n\nI guess we can keep the existing logic for C then. I would still recommend using ICPPEvaluation.isEquivalentTo() for C++ (we can check \"expr1 instanceof ICPPASTExpression \u0026\u0026 expr2 instanceof ICPPASTExpression\").",
+      "parentUuid": "14adec42_bca40184",
+      "revId": "8380e770d9451b7480257537768a01edca9de9fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ee4d9d4_ccdc2e7f",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/FloatCompareChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-09-27T04:47:52Z",
+      "side": 1,
+      "message": "Needs a null check.",
+      "revId": "8380e770d9451b7480257537768a01edca9de9fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6d56f20d_d8b9a4bf",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/FloatCompareChecker.java",
         "patchSetId": 8

@@ -14,6 +14,7 @@ Export-Package: org.eclipse.cdt.managedbuilder.core.tests,
  org.eclipse.cdt.projectmodel.tests
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
+ org.junit.jupiter.api,
  org.eclipse.core.resources,
  org.eclipse.ui,
  org.eclipse.ui.ide,
@@ -25,3 +26,4 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: org.eclipse.cdt.managedbuilder.core.tests
+Import-Package: com.google.gson

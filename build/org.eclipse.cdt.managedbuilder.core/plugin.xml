@@ -645,6 +645,12 @@
             parameter="(g?cc)|([gc]\+\+)|(clang)"
             prefer-non-shared="true">
       </provider>
+      <provider
+            class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.CompilationDatabaseParser"
+            id="org.eclipse.cdt.managedbuilder.core.CompilationDatabaseParser"
+            name="%CompilationDatabaseParser.name"
+            prefer-non-shared="true">
+      </provider>
    </extension>
    <extension
          id="scanner.discovery.problem"

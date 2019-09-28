@@ -884,6 +884,13 @@
             ui-clear-entries="true"
             ui-edit-entries="false">
       </class-association>
+      <class-association
+            class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.CompilationDatabaseParser"
+            icon="icons/obj16/log_obj.gif"
+            page="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.CompilationDatabaseParserOptionPage"
+            ui-clear-entries="true"
+            ui-edit-entries="false">
+      </class-association>
    </extension>
    <extension
          point="org.eclipse.cdt.core.CBuildConsole">

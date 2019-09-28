@@ -229,4 +229,20 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 		a.assertReadWriteFlags("variadic(waldo)", "waldo", READ);
 		a.assertReadWriteFlags("variadic(&waldo)", "waldo", READ | WRITE);
 	}
+
+	//	int arr[5];
+	//	int test() {
+	//		arr[0];
+	//		arr[0] = 1;
+	//		int a;
+	//		a = arr[0];
+	//		return arr[0];
+	//	}
+	public void testArraySubscript() throws Exception {
+		AssertionHelper a = getCPPAssertionHelper();
+		a.assertReadWriteFlags("arr[0];", "arr", READ);
+		a.assertReadWriteFlags("arr[0] = 1", "arr", READ | WRITE);
+		a.assertReadWriteFlags("a = arr[0];", "arr", READ);
+		a.assertReadWriteFlags("return arr[0];", "arr", READ);
+	}
 }

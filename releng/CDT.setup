@@ -123,6 +123,10 @@
         <requirement
             name="org.junit.source"/>
         <requirement
+            name="org.junit.jupiter.api"/>
+        <requirement
+            name="org.junit.jupiter.api.source"/>
+        <requirement
             name="org.mockito"/>
         <requirement
             name="org.hamcrest"/>

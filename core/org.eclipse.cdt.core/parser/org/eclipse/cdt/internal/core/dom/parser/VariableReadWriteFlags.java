@@ -55,6 +55,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
@@ -100,6 +102,8 @@ public abstract class VariableReadWriteFlags {
 			}
 		} else if (grand instanceof ICPPASTStructuredBindingDeclaration) {
 			return rwInStructuredBinding((ICPPASTStructuredBindingDeclaration) grand);
+		} else if (grand instanceof IASTReturnStatement) {
+			return READ;
 		}
 		return READ | WRITE; // fallback
 	}
@@ -132,6 +136,24 @@ public abstract class VariableReadWriteFlags {
 		}
 	}
 
+	private boolean isAssignment(IASTBinaryExpression node) {
+		switch (node.getOperator()) {
+		case IASTBinaryExpression.op_assign:
+		case IASTBinaryExpression.op_binaryAndAssign:
+		case IASTBinaryExpression.op_binaryOrAssign:
+		case IASTBinaryExpression.op_binaryXorAssign:
+		case IASTBinaryExpression.op_divideAssign:
+		case IASTBinaryExpression.op_minusAssign:
+		case IASTBinaryExpression.op_moduloAssign:
+		case IASTBinaryExpression.op_multiplyAssign:
+		case IASTBinaryExpression.op_plusAssign:
+		case IASTBinaryExpression.op_shiftLeftAssign:
+		case IASTBinaryExpression.op_shiftRightAssign:
+			return true;
+		}
+		return false;
+	}
+
 	protected int rwInExpression(IASTExpression expr, IASTNode node, int indirection) {
 		if (expr instanceof IASTIdExpression) {
 			return rwAnyNode(expr, indirection);
@@ -151,6 +173,11 @@ public abstract class VariableReadWriteFlags {
 		if (expr instanceof IASTArraySubscriptExpression) {
 			if (indirection > 0 && node.getPropertyInParent() == IASTArraySubscriptExpression.ARRAY) {
 				return rwAnyNode(expr, indirection - 1);
+			}
+			if (expr.getParent() instanceof IASTBinaryExpression
+					&& expr.getPropertyInParent() == IASTBinaryExpression.OPERAND_ONE
+					&& isAssignment((IASTBinaryExpression) expr.getParent())) {
+				return READ | WRITE;
 			}
 			return READ;
 		}
@@ -208,7 +235,34 @@ public abstract class VariableReadWriteFlags {
 			if (args[i] == argument) {
 				final IASTExpression functionNameExpression = funcCall.getFunctionNameExpression();
 				if (functionNameExpression != null) {
-					final IType type = functionNameExpression.getExpressionType();
+					IType type = functionNameExpression.getExpressionType();
+					if (functionNameExpression instanceof IASTIdExpression) {
+						IBinding b = ((IASTIdExpression) functionNameExpression).getName().resolveBinding();
+						if (b instanceof ICPPDeferredFunction) {
+							ICPPFunction[] candidates = ((ICPPDeferredFunction) b).getCandidates();
+							if (candidates != null) {
+								int res = 0;
+								for (ICPPFunction f : candidates) {
+									type = f.getType();
+									if (type instanceof IFunctionType) {
+										res |= rwArgumentForFunctionCall((IFunctionType) type, i, args[i], indirection);
+									} else if (funcCall instanceof IASTImplicitNameOwner) {
+										IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) funcCall)
+												.getImplicitNames();
+										if (implicitNames.length == 1) {
+											IASTImplicitName name = implicitNames[0];
+											IBinding binding = name.resolveBinding();
+											if (binding instanceof IFunction) {
+												res |= rwArgumentForFunctionCall(((IFunction) binding).getType(), i,
+														args[i], indirection);
+											}
+										}
+									}
+								}
+								return res;
+							}
+						}
+					}
 					if (type instanceof IFunctionType) {
 						return rwArgumentForFunctionCall((IFunctionType) type, i, args[i], indirection);
 					} else if (funcCall instanceof IASTImplicitNameOwner) {

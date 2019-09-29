@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.parser.AbstractScannerExtensionConfiguration;
 public class ScannerExtensionConfiguration extends AbstractScannerExtensionConfiguration {
 
 	private ScannerExtensionConfiguration() {
+		addMacro("__STDC__", "1");
 	}
 
 	public static ScannerExtensionConfiguration createC() {

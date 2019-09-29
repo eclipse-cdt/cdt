@@ -127,6 +127,11 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		addKeyword(Keywords.c_COMPLEX, IToken.t__Complex);
 		addKeyword(Keywords.c_IMAGINARY, IToken.t__Imaginary);
 
+		if (compiler != CompilerType.MSVC) {
+			// MSVC only defines this when compiling in C mode and /Za is used.
+			addMacro("__STDC__", "1");
+		}
+
 		if (compiler == CompilerType.GCC) {
 			if (version >= VERSION_4_2) {
 				addKeyword(GCCKeywords.cp_decimal32, IGCCToken.t_decimal32);

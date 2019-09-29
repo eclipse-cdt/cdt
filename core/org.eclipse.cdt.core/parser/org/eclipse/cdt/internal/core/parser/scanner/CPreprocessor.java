@@ -103,7 +103,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			Integer.toString(getCDTVersion()).toCharArray());
 	private static final ObjectStyleMacro __cplusplus = new ObjectStyleMacro("__cplusplus".toCharArray(), //$NON-NLS-1$
 			"201103L".toCharArray()); //$NON-NLS-1$
-	private static final ObjectStyleMacro __STDC__ = new ObjectStyleMacro("__STDC__".toCharArray(), ONE); //$NON-NLS-1$
 	private static final ObjectStyleMacro __STDC_HOSTED__ = new ObjectStyleMacro("__STDC_HOSTED__".toCharArray(), ONE); //$NON-NLS-1$
 	private static final ObjectStyleMacro __STDC_VERSION__ = new ObjectStyleMacro("__STDC_VERSION__".toCharArray(), //$NON-NLS-1$
 			"199901L".toCharArray()); //$NON-NLS-1$
@@ -507,7 +506,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private void setupMacroDictionary(IScannerExtensionConfiguration config, IScannerInfo info, ParserLanguage lang) {
 		// Built-in macros
 		fMacroDictionary.put(__CDT_PARSER__.getNameCharArray(), __CDT_PARSER__);
-		fMacroDictionary.put(__STDC__.getNameCharArray(), __STDC__);
 		fMacroDictionary.put(__FILE__.getNameCharArray(), __FILE__);
 		fMacroDictionary.put(__DATE__.getNameCharArray(), __DATE__);
 		fMacroDictionary.put(__TIME__.getNameCharArray(), __TIME__);

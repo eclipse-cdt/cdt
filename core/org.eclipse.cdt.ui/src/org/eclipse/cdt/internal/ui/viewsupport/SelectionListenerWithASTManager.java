@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -134,7 +135,7 @@ public class SelectionListenerWithASTManager {
 						// Try to acquire the lock
 						while (!monitor.isCanceled() && !fJobLock.acquire(10)) {
 						}
-						if (!monitor.isCanceled() && isSelectionValid(selection)) {
+						if (!monitor.isCanceled() && isSelectionValid(selection) && PlatformUI.isWorkbenchRunning()) {
 							return calculateASTandInform(workingCopy, selection, monitor);
 						}
 					} catch (InterruptedException e) {

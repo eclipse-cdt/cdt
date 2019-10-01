@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "951d8fa8_4b07627a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-01T04:35:33Z",
+      "side": 1,
+      "message": "Please make the commit message more specific. There is a lot we could potentially check about variable initialization :)",
+      "revId": "b70c0a35ce82efef750861044efa31cc70223ce6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "760effbb_4dc1545b",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 6
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-01T04:35:33Z",
+      "side": 1,
+      "message": "Variables -\u003e Variable",
+      "revId": "b70c0a35ce82efef750861044efa31cc70223ce6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f2386211_365d1123",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 6
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-01T04:35:33Z",
+      "side": 1,
+      "message": "Please be more specific: multiple declarations on one line. (Otherwise, someone might think it diagnoses e.g. multiple declarations of the same variable.)",
+      "revId": "b70c0a35ce82efef750861044efa31cc70223ce6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b66db811_f4246d05",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/plugin.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-01T04:35:33Z",
+      "side": 1,
+      "message": "Consider giving this class a more specific name, such as VariableInitializationChecker.",
+      "revId": "b70c0a35ce82efef750861044efa31cc70223ce6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "93ff0878_7828b61f",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/plugin.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 591,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-01T04:35:33Z",
+      "side": 1,
+      "message": "Likewise for this id. StaticVariableInHeaderProblem?",
+      "revId": "b70c0a35ce82efef750861044efa31cc70223ce6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b815f299_7e31045b",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VariablesChecker.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-01T04:35:33Z",
+      "side": 1,
+      "message": "So for sc_extern and sc_typedef it\u0027s fine to declare two in one line? And sc_static in non-header files?\n\nWhy not just separate the multiple declaration check and make it unconditional of the storage class?",
+      "revId": "b70c0a35ce82efef750861044efa31cc70223ce6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e712a2f7_87bad896",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VariablesChecker.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-01T04:35:33Z",
+      "side": 1,
+      "message": "Why do catch handlers need special treatment?",
+      "revId": "b70c0a35ce82efef750861044efa31cc70223ce6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "072596a2_95cb434d",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/VariablesCheckerTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-01T04:35:33Z",
+      "side": 1,
+      "message": "It would be good to have another test with isHeader()\u003dfalse, which checks that STATIC_ID does not trigger in a non-header file.",
+      "revId": "b70c0a35ce82efef750861044efa31cc70223ce6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "74b0dab1_8084b61e",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/VariablesCheckerTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-01T04:35:33Z",
+      "side": 1,
+      "message": "Missing semicolon.\n\nAs mentioned in another review, we really should not silently accept codan testcases that don\u0027t parse. Please do file a bug about this.",
+      "revId": "b70c0a35ce82efef750861044efa31cc70223ce6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

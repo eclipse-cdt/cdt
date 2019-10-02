@@ -103,6 +103,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
@@ -13418,5 +13419,23 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	auto a = A{1, 2};
 	public void testClassFromInitList_549036() throws Exception {
 		parseAndCheckImplicitNameBindings();
+	}
+
+	//	int a = 42, b = 42;
+	//	float c = 3.14, d = 3.14;
+	//	char e[] = "waldo", f[] = "waldo";
+	public void testLiteralExpressionEquivalence_551689() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPASTExpression a = helper.assertNode("a = 42", "42");
+		ICPPASTExpression b = helper.assertNode("b = 42", "42");
+		assertTrue(a.getEvaluation().isEquivalentTo(b.getEvaluation()));
+
+		ICPPASTExpression c = helper.assertNode("c = 3.14", "3.14");
+		ICPPASTExpression d = helper.assertNode("d = 3.14", "3.14");
+		assertTrue(c.getEvaluation().isEquivalentTo(d.getEvaluation()));
+
+		ICPPASTExpression e = helper.assertNode("e[] = \"waldo\"", "\"waldo\"");
+		ICPPASTExpression f = helper.assertNode("f[] = \"waldo\"", "\"waldo\"");
+		assertTrue(e.getEvaluation().isEquivalentTo(f.getEvaluation()));
 	}
 }

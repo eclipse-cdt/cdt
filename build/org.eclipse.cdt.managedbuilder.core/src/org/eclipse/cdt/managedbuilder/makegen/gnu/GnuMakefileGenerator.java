@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
@@ -110,6 +112,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private static final IPath DOT_SLASH_PATH = new Path("./"); //$NON-NLS-1$
+
+	private Pattern doubleQuotedOption = Pattern.compile("--?[a-zA-Z]+.*?\\\".*?\\\".*"); //$NON-NLS-1$
+	private Pattern singleQuotedOption = Pattern.compile("--?[a-zA-Z]+.*?'.*?'.*"); //$NON-NLS-1$
 
 	/**
 	 * This class walks the delta supplied by the build system to determine
@@ -3482,6 +3487,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 					String nextToken = tokenIter.next();
 					token += WHITESPACE + nextToken;
 					if (!nextToken.endsWith("\\")) { //$NON-NLS-1$
+						//$NON-NLS-1$
 						break;
 					}
 				}
@@ -4478,7 +4484,23 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 */
 	/* see https://bugs.eclipse.org/bugs/show_bug.cgi?id=129782 */
 	public String ensurePathIsGNUMakeTargetRuleCompatibleSyntax(String path) {
-		return escapeWhitespaces(ensureUnquoted(path));
+		boolean isQuotedOption = false;
+		if (path.startsWith("-")) { //$NON-NLS-1$
+			isQuotedOption = checkIfQuotedOption(path);
+		}
+		if (!isQuotedOption)
+			return escapeWhitespaces(ensureUnquoted(path));
+		return path;
+	}
+
+	private boolean checkIfQuotedOption(String path) {
+		Matcher m1 = doubleQuotedOption.matcher(path);
+		if (m1.matches())
+			return true;
+		Matcher m2 = singleQuotedOption.matcher(path);
+		if (m2.matches())
+			return true;
+		return false;
 	}
 
 	/**

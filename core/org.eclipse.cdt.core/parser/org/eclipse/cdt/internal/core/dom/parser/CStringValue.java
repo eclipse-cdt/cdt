@@ -251,6 +251,6 @@ public final class CStringValue implements IValue {
 			return false;
 		}
 		CStringValue o = (CStringValue) other;
-		return fFixedValue.equals(o.fFixedValue);
+		return CharArrayUtils.equals(fFixedValue, o.fFixedValue);
 	}
 }

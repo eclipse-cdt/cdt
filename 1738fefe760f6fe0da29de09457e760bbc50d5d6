@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a8a08b1b_80920a66",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2019-10-02T14:34:12Z",
+      "side": 1,
+      "message": "Agreed.  Fixed.  I also added support for options that start with --",
+      "parentUuid": "18c86fdd_c736ef4f",
+      "range": {
+        "startLine": 116,
+        "startChar": 65,
+        "endLine": 116,
+        "endChar": 71
+      },
+      "revId": "1738fefe760f6fe0da29de09457e760bbc50d5d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "29314076_9feff7ed",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 1
@@ -36,6 +60,24 @@
       "writtenOn": "2019-10-02T13:54:33Z",
       "side": 1,
       "message": "this line NLS broke",
+      "revId": "1738fefe760f6fe0da29de09457e760bbc50d5d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ac58868_f1b80fad",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3489,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2019-10-02T14:34:12Z",
+      "side": 1,
+      "message": "I guess I hit the enter key and pushed the NLS comment to the next line.  Fixed.",
+      "parentUuid": "29314076_9feff7ed",
       "revId": "1738fefe760f6fe0da29de09457e760bbc50d5d6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

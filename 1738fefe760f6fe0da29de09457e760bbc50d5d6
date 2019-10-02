@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "18c86fdd_c736ef4f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-10-02T13:54:33Z",
+      "side": 1,
+      "message": "I\u0027m not sure what [0-9]* adds to the RE, the .* next should capture the same thing?",
+      "range": {
+        "startLine": 116,
+        "startChar": 65,
+        "endLine": 116,
+        "endChar": 71
+      },
+      "revId": "1738fefe760f6fe0da29de09457e760bbc50d5d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "29314076_9feff7ed",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3489,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-10-02T13:54:33Z",
+      "side": 1,
+      "message": "this line NLS broke",
+      "revId": "1738fefe760f6fe0da29de09457e760bbc50d5d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

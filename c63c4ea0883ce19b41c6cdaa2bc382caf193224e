@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f969942_3faaf665",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/c/GCCScannerExtensionConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-02T05:29:49Z",
+      "side": 1,
+      "message": "Can we move GPPScannerExtensionConfiguration.CompilerType into GNUScannerExtensionConfiguration (and make it protected) instead?",
+      "revId": "c63c4ea0883ce19b41c6cdaa2bc382caf193224e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c213507_bc796596",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPScannerExtensionConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-02T05:29:49Z",
+      "side": 1,
+      "message": "It\u0027s kind of weird that CompilerType.MSVC is an option for \"GNU\" languages.\n\nBased on their usage in CDT, GCCLanguage and GPPLanguage and their associated parser/scanner configurations might as well just be called CLanguage and CPPLanguage.\n\n(Not asking for a change in this patch, just making an observation.)",
+      "revId": "c63c4ea0883ce19b41c6cdaa2bc382caf193224e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

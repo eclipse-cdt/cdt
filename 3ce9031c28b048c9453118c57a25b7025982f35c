@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e31bf3ec_2887aec3",
+        "filename": "native/org.eclipse.cdt.native.serial/jni/serial.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-10-02T16:35:40Z",
+      "side": 1,
+      "message": "Does this turn off the flag set in the line above? Or is IGNPAR the same as any of these others.",
+      "revId": "3ce9031c28b048c9453118c57a25b7025982f35c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

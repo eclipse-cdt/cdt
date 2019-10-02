@@ -182,6 +182,6 @@ public final class FloatingPointValue implements IValue {
 			return false;
 		}
 		FloatingPointValue o = (FloatingPointValue) other;
-		return fFixedValue.equals(o.fFixedValue);
+		return CharArrayUtils.equals(fFixedValue, o.fFixedValue);
 	}
 }

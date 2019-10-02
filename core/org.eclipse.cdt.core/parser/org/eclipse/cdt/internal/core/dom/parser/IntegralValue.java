@@ -297,6 +297,6 @@ public class IntegralValue implements IValue {
 			return false;
 		}
 		IntegralValue o = (IntegralValue) other;
-		return fFixedValue.equals(o.fFixedValue);
+		return CharArrayUtils.equals(fFixedValue, o.fFixedValue);
 	}
 }

@@ -16,6 +16,24 @@
       "revId": "3ce9031c28b048c9453118c57a25b7025982f35c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "24c8a8bf_8432785b",
+        "filename": "native/org.eclipse.cdt.native.serial/jni/serial.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 256717
+      },
+      "writtenOn": "2019-10-03T12:52:19Z",
+      "side": 1,
+      "message": "No, IGNPAR just ignores the parity errors. Basically, if it is set then bytes with parity errors will be ignored.\n\nThe other flags that we turned off:\nICRNL -\u003e maps CR to NL,\nINLCR -\u003e maps NL to CR and,\nIGNCR -\u003e ignores CR, CR won\u0027t be read",
+      "parentUuid": "e31bf3ec_2887aec3",
+      "revId": "3ce9031c28b048c9453118c57a25b7025982f35c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

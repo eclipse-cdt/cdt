@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3f08cb5d_a7c866b4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/c/GCCScannerExtensionConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-10-03T04:14:31Z",
+      "side": 1,
+      "message": "I\u0027m hesitant to do that because I would like to actually remove MSVC once I figure out adding a new language for it and its own scanner configuration. Removing MSVC would then be an api break.",
+      "parentUuid": "1f969942_3faaf665",
+      "revId": "c63c4ea0883ce19b41c6cdaa2bc382caf193224e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c213507_bc796596",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPScannerExtensionConfiguration.java",
         "patchSetId": 2

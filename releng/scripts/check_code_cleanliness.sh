@@ -84,6 +84,11 @@ git ls-files  -- \*\*/.project ':!core/org.eclipse.cdt.core/.project' | while re
 done
 
 ##
+# Make sure that natives are up to date
+##
+make -C native/org.eclipse.cdt.native.serial/jni rebuild
+
+##
 # Check that none of the above caused any changes
 ##
 if test -z "$(git status -s)"; then

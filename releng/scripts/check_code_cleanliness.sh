@@ -84,6 +84,11 @@ git ls-files  -- \*\*/.project ':!core/org.eclipse.cdt.core/.project' | while re
 done
 
 ##
+# Make sure that natives are up to date
+##
+(cd native/org.eclipse.cdt.native.serial && mvn --batch-mode -Dnative=all -DuseSimrelRepo  process-resources)
+
+##
 # Check that none of the above caused any changes
 ##
 if test -z "$(git status -s)"; then

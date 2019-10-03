@@ -45,12 +45,12 @@ Makefile text
 # (These should not normally be checked in, exceptions for pre-compiled libraries and tests)
 *.o binary
 *.d text
-*.dll binary
+*.dll binary diff=dll
 *.a binary
 *.exe binary
 *.out binary
 *.app binary
-*.jnilib binary
+*.jnilib binary diff=hex
 *.so binary
 
 # Web/Javascript/Node

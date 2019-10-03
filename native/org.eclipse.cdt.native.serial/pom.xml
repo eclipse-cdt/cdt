@@ -23,11 +23,87 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <version>1.1.200-SNAPSHOT</version>
+  <version>1.1.300-SNAPSHOT</version>
   <artifactId>org.eclipse.cdt.native.serial</artifactId>
   <packaging>eclipse-plugin</packaging>
 
 	<profiles>
+		<profile>
+			<id>build-native.all</id>
+			<activation>
+				<property>
+					<name>native</name>
+					<value>all</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" failOnError="true" dir="./jni">
+											<arg value="rebuild" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>build-native.docker</id>
+			<activation>
+				<property>
+					<name>native</name>
+					<value>docker</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="docker" newenvironment="false" failOnError="true">
+										<!-- docker run -\-rm -t -v $(git rev-parse -\-show-toplevel):/work -w /work/$(git rev-parse -\-show-prefix) quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest  make -C jni rebuild -->
+											<arg value="run" />
+											<arg value="--rm" />
+											<arg value="-t" />
+											<arg value="-v" />
+											<arg value="${project.basedir}/../..:/work" />
+											<arg value="-w" />
+											<arg value="/work/native/org.eclipse.cdt.native.serial" />
+											<arg value="quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest" />
+											<arg value="make" />
+											<arg value="-C" />
+											<arg value="jni" />
+											<arg value="rebuild" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>build-native.linux.x86_64</id>
 			<activation>

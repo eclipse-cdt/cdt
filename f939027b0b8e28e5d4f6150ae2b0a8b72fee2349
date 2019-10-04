@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58b86ba0_72f7090b",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-04T03:40:53Z",
+      "side": 1,
+      "message": "If the intention is to test an assignment-expression with an array subscript expression on the RHS, this line isn\u0027t doing that: this is a declaration, not an assignment expression.\n\nInstead we\u0027d want:\n\n  int a;\n  a \u003d arr[0];",
+      "revId": "f939027b0b8e28e5d4f6150ae2b0a8b72fee2349",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "540a2c26_f81b4871",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-04T03:40:53Z",
+      "side": 1,
+      "message": "What is the motivation for this change? A relevant test case would be nice.",
+      "revId": "f939027b0b8e28e5d4f6150ae2b0a8b72fee2349",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4c95ac6_7a13cbd9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-04T03:40:53Z",
+      "side": 1,
+      "message": "I presume that this block of code is intended to handle the following example from https://git.eclipse.org/r/#/c/139367:\n\n    template \u003ctypename S, typename T\u003e\n    void g(S, T);\n    \n    struct A {\n\tint field;\n\t\n\t// False positive: \"Class member \u0027field\u0027 cannot be written in constant \n\t// method \u0027method3\u0027\"\n\ttemplate \u003ctypename S\u003e\n\tvoid method3(S s) const {\n\t    g(s, field);\n\t}\n    };\n\nUnfortunately, while this approach will get this particular testcase right, it\u0027s not correct for dependent calls in general.\n\nThe problem is that, if we call rwArgumentForFunctionCall(IFunctionType, ...) with the type of a function template, we\u0027re going to end up calling rwAssignmentToType(IType) with the type of its parameters. The correctness of that will depend on checks such as \"type instanceof ICPPReferenceType\". However, if the parameter type is dependent (say, a CPPTemplateParameter), it may or may not instantiate to a reference type -- we don\u0027t know, and therefore cannot give an accurate answer.\n\nI think a robust approach here could be:\n\n* Add a new read/write flag, \"UNKNOWN\"\n* If we encounter a dependent type, return \"UNKNOWN\"\n* Consumers of VariableReadWriteFlags can handle \"UNKNOWN\" in a manner appropriate to them. For example, for the static / const checker, the appropriate handling would be to issue _neither_ the \"this cannot be const\" _nor_ the \"this should be const\" diagnostic.",
+      "revId": "f939027b0b8e28e5d4f6150ae2b0a8b72fee2349",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

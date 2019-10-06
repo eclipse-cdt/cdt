@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2288e96d_a5b0970b",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VariableInitializationChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-06T16:16:03Z",
+      "side": 1,
+      "message": "Since getParent() is defined on IASTNode, there is no need to actually cast to IASTDeclarationStatement on the line above: we can just no declaration.getParent().getParent() here.",
+      "revId": "89e0f92d152ab8ba768633c4b653307227cf5f67",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4f6393c0_1da1cb78",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/VariablesCheckerTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-06T16:16:03Z",
+      "side": 1,
+      "message": "This is not valid syntax. You\u0027re probably thinking of if-with-initializer:\n\n  if (int i \u003d 0; i \u003c 0)\n\nnote the semicolon rather than comma.\n\nThe above doesn\u0027t contain a declaration with multiple declarators. However, it\u0027s possible to have one:\n\n  if (int i \u003d 0, j \u003d 0; i + j \u003c 0)",
+      "revId": "89e0f92d152ab8ba768633c4b653307227cf5f67",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90924d8b_2d293bf7",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/VariablesCheckerTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-06T16:16:03Z",
+      "side": 1,
+      "message": "Same issue as above.",
+      "revId": "89e0f92d152ab8ba768633c4b653307227cf5f67",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

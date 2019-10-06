@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c5ad5b70_9da52081",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-06T02:29:39Z",
+      "side": 1,
+      "message": "Still don\u0027t understand this change.",
+      "revId": "896ddac556310271f36b54963755ba6430c7078b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

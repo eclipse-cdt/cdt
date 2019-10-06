@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d63583b_3cc58e30",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-06T07:19:32Z",
+      "side": 1,
+      "message": "Please remove \"and template functions\" from the commit message.",
+      "revId": "e3a44dc776b644f9882c85b6772a01324d27a231",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

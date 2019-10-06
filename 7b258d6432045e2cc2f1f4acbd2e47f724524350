@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ef5cab5_52d4db37",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VariableInitializationChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-06T02:53:30Z",
+      "side": 1,
+      "message": "There is not much point to this check: if decls.length is zero, the loop would just iterate zero times.",
+      "revId": "7b258d6432045e2cc2f1f4acbd2e47f724524350",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bfb21dc3_f16e0a0c",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VariableInitializationChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-06T02:53:30Z",
+      "side": 1,
+      "message": "Do we want to diagnose multiple declarations in a for initializer, such as :\n\n  for (int i \u003d 0, j \u003d 1; ...)\n\n?\n\nI think that\u0027s a fairly common pattern, especially with iterators, e.g.:\n\n  for (auto begin \u003d vec.begin, end \u003d vec.end();\n       begin !\u003d end; ++begin) {\n     ...\n  }\n\nbecause this avoids evaluating vec.end() on every iteration.",
+      "revId": "7b258d6432045e2cc2f1f4acbd2e47f724524350",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "73a5fe15_28334d67",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/VariablesCheckerTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-06T02:53:30Z",
+      "side": 1,
+      "message": "Don\u0027t we need to set it back to true at the end of the test case?",
+      "revId": "7b258d6432045e2cc2f1f4acbd2e47f724524350",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

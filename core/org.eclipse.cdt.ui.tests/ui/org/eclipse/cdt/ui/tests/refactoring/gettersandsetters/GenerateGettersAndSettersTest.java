@@ -20,8 +20,11 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GenerateGettersAndSettersRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterContext;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import junit.framework.Test;
 
@@ -1576,7 +1579,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//class getClass {
 	//private:
-	//	int /*$*/mClass/*$$*/;
+	//	int /*$*/class_/*$$*/;
 	//};
 	//#endif /* A_H_ */
 	//====================
@@ -1586,20 +1589,20 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//class getClass {
 	//public:
 	//	int getClass1() const {
-	//		return mClass;
+	//		return class_;
 	//	}
 	//
 	//	void setClass(int clazz) {
-	//		mClass = clazz;
+	//		class_ = clazz;
 	//	}
 	//
 	//private:
-	//	int mClass;
+	//	int class_;
 	//};
 	//#endif /* A_H_ */
 	public void testAvoidingReservedNames_Bug352258() throws Exception {
-		selectedGetters = new String[] { "mClass" };
-		selectedSetters = new String[] { "mClass" };
+		selectedGetters = new String[] { "class_" };
+		selectedSetters = new String[] { "class_" };
 		assertRefactoringSuccess();
 	}
 
@@ -1669,5 +1672,89 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 		definitionSeparate = true;
 		selectedGetters = new String[] { "a" };
 		assertRefactoringSuccess();
+	}
+
+	//Bug551761.h
+	//#ifndef BUG551761_H_
+	//#define BUG551761_H_
+	//
+	//class Bug551761 {
+	//private:
+	//	int /*$*/aVar/*$$*/;
+	//};
+	//
+	//#endif /* BUG551761_H_ */
+	//
+	//====================
+	//#ifndef BUG551761_H_
+	//#define BUG551761_H_
+	//
+	//class Bug551761 {
+	//public:
+	//	int getAVar() const {
+	//		return aVar;
+	//	}
+	//
+	//	void setAVar(int aVar) {
+	//		this->aVar = aVar;
+	//	}
+	//
+	//private:
+	//	int aVar;
+	//};
+	//
+	//#endif /* BUG551761_H_ */
+	//
+	public void testSingleLetterPrefix_Bug551761() throws Exception {
+		selectedGetters = new String[] { "aVar" };
+		selectedSetters = new String[] { "aVar" };
+		assertRefactoringSuccess();
+	}
+
+	//Bug551761b.h
+	//#ifndef BUG551761B_H_
+	//#define BUG551761B_H_
+	//
+	//class Bug551761b {
+	//private:
+	//	int /*$*/m_member/*$$*/;
+	//};
+	//
+	//#endif /* BUG551761B_H_ */
+	//
+	//====================
+	//#ifndef BUG551761B_H_
+	//#define BUG551761B_H_
+	//
+	//class Bug551761b {
+	//public:
+	//	int getMember() const {
+	//		return m_member;
+	//	}
+	//
+	//	void setMember(int member) {
+	//		m_member = member;
+	//	}
+	//
+	//private:
+	//	int m_member;
+	//};
+	//
+	//#endif /* BUG551761B_H_ */
+	//
+	public void testSingleLetterPrefix_Bug551761b() throws Exception {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
+		String oldValue = node.get(PreferenceConstants.NAME_STYLE_FIELD_PREFIX, null);
+		try {
+			node.put(PreferenceConstants.NAME_STYLE_FIELD_PREFIX, "m");
+			selectedGetters = new String[] { "m_member" };
+			selectedSetters = new String[] { "m_member" };
+			assertRefactoringSuccess();
+		} finally {
+			if (oldValue == null)
+				node.remove(PreferenceConstants.NAME_STYLE_FIELD_PREFIX);
+			else
+				node.put(PreferenceConstants.NAME_STYLE_FIELD_PREFIX, oldValue);
+		}
 	}
 }

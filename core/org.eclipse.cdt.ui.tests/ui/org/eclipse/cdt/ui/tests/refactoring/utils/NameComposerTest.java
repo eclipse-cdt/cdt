@@ -17,7 +17,10 @@ import static org.eclipse.cdt.internal.corext.codemanipulation.StubUtility.trimF
 import static org.eclipse.cdt.internal.ui.util.NameComposer.createByExample;
 
 import org.eclipse.cdt.internal.ui.util.NameComposer;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import junit.framework.TestCase;
 
@@ -68,11 +71,7 @@ public class NameComposerTest extends TestCase {
 	public void testTrimFieldName() {
 		assertEquals("f", trimFieldName("f_"));
 		assertEquals("F", trimFieldName("F_"));
-		assertEquals("oo", trimFieldName("F_oo"));
-		assertEquals("o", trimFieldName("f_o"));
 
-		assertEquals("M", trimFieldName("a_M_"));
-		assertEquals("bs", trimFieldName("a_bs_"));
 		assertEquals("foo_bar", trimFieldName("foo_bar"));
 		assertEquals("foo_bar", trimFieldName("foo_bar_"));
 
@@ -80,15 +79,9 @@ public class NameComposerTest extends TestCase {
 
 		assertEquals("foo", trimFieldName("foo"));
 		assertEquals("foo", trimFieldName("_foo"));
-		assertEquals("bar", trimFieldName("_f_bar"));
 
 		assertEquals("f", trimFieldName("f__"));
 		assertEquals("f", trimFieldName("__f"));
-		assertEquals("O__b", trimFieldName("fO__b"));
-		assertEquals("Oo", trimFieldName("fOo"));
-		assertEquals("O", trimFieldName("fO"));
-		assertEquals("MyStatic", trimFieldName("sMyStatic"));
-		assertEquals("MyMember", trimFieldName("mMyMember"));
 
 		assertEquals("8", trimFieldName("_8"));
 
@@ -100,8 +93,18 @@ public class NameComposerTest extends TestCase {
 		assertEquals("Id", trimFieldName("Id"));
 		assertEquals("ID", trimFieldName("ID"));
 		assertEquals("IDS", trimFieldName("IDS"));
-		assertEquals("ID", trimFieldName("bID"));
-		assertEquals("Id", trimFieldName("MId"));
 		assertEquals("IdA", trimFieldName("IdA"));
+
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
+		String oldValue = node.get(PreferenceConstants.NAME_STYLE_FIELD_PREFIX, null);
+		try {
+			node.put(PreferenceConstants.NAME_STYLE_FIELD_PREFIX, "m");
+			assertEquals("MyMember", trimFieldName("mMyMember"));
+		} finally {
+			if (oldValue == null)
+				node.remove(PreferenceConstants.NAME_STYLE_FIELD_PREFIX);
+			else
+				node.put(PreferenceConstants.NAME_STYLE_FIELD_PREFIX, oldValue);
+		}
 	}
 }

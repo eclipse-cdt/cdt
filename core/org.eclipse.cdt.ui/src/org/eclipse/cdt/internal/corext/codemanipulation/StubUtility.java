@@ -41,7 +41,6 @@ import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
 import org.eclipse.cdt.internal.corext.template.c.FileTemplateContext;
 import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
 import org.eclipse.cdt.internal.corext.util.Strings;
-import org.eclipse.cdt.internal.ui.text.CBreakIterator;
 import org.eclipse.cdt.internal.ui.util.NameComposer;
 import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -73,8 +72,6 @@ import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.templates.TemplatePersistenceData;
-
-import com.ibm.icu.text.BreakIterator;
 
 public class StubUtility {
 	private static final String[] EMPTY = {};
@@ -935,38 +932,30 @@ public class StubUtility {
 
 	/**
 	 * Returns the trimmed field name. Leading and trailing non-alphanumeric characters are trimmed.
-	 * If the first word of the name consists of a single letter and the name contains more than
-	 * one word, the first word is removed.
+	 * If the field name starts with the prefix defined in the coding style, the prefix is removed.
 	 *
 	 * @param fieldName a field name to trim
 	 * @return the trimmed field name
 	 */
 	public static String trimFieldName(String fieldName) {
-		CBreakIterator iterator = new CBreakIterator();
-		iterator.setText(fieldName);
+		IPreferencesService preferences = Platform.getPreferencesService();
+		String prefix = preferences.getString(CUIPlugin.PLUGIN_ID, PreferenceConstants.NAME_STYLE_FIELD_PREFIX, "", //$NON-NLS-1$
+				null);
+		if (fieldName.startsWith(prefix))
+			fieldName = fieldName.substring(prefix.length());
+
 		int firstWordStart = -1;
-		int firstWordEnd = -1;
-		int secondWordStart = -1;
 		int lastWordEnd = -1;
-		int end;
-		for (int start = iterator.first(); (end = iterator.next()) != BreakIterator.DONE; start = end) {
-			if (Character.isLetterOrDigit(fieldName.charAt(start))) {
-				int pos = end;
-				while (--pos >= start && !Character.isLetterOrDigit(fieldName.charAt(pos))) {
+		for (int i = 0; i < fieldName.length(); ++i) {
+			if (Character.isLetterOrDigit(fieldName.charAt(i))) {
+				int pos = i + 1;
+				while (--pos >= i && !Character.isLetterOrDigit(fieldName.charAt(pos))) {
 				}
 				lastWordEnd = pos + 1;
 				if (firstWordStart < 0) {
-					firstWordStart = start;
-					firstWordEnd = lastWordEnd;
-				} else if (secondWordStart < 0) {
-					secondWordStart = start;
+					firstWordStart = i;
 				}
 			}
-		}
-		// Skip the first word if it consists of a single letter and the name contains more than
-		// one word.
-		if (firstWordStart >= 0 && firstWordStart + 1 == firstWordEnd && secondWordStart >= 0) {
-			firstWordStart = secondWordStart;
 		}
 		if (firstWordStart < 0) {
 			return fieldName;

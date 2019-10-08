@@ -1576,7 +1576,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//
 	//class getClass {
 	//private:
-	//	int /*$*/mClass/*$$*/;
+	//	int /*$*/class_/*$$*/;
 	//};
 	//#endif /* A_H_ */
 	//====================
@@ -1586,20 +1586,20 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//class getClass {
 	//public:
 	//	int getClass1() const {
-	//		return mClass;
+	//		return class_;
 	//	}
 	//
 	//	void setClass(int clazz) {
-	//		mClass = clazz;
+	//		class_ = clazz;
 	//	}
 	//
 	//private:
-	//	int mClass;
+	//	int class_;
 	//};
 	//#endif /* A_H_ */
 	public void testAvoidingReservedNames_Bug352258() throws Exception {
-		selectedGetters = new String[] { "mClass" };
-		selectedSetters = new String[] { "mClass" };
+		selectedGetters = new String[] { "class_" };
+		selectedSetters = new String[] { "class_" };
 		assertRefactoringSuccess();
 	}
 
@@ -1670,4 +1670,42 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 		selectedGetters = new String[] { "a" };
 		assertRefactoringSuccess();
 	}
+
+	//Bug551761.h
+	//#ifndef BUG551761_H_
+	//#define BUG551761_H_
+	//
+	//class Bug551761 {
+	//private:
+	//	int /*$*/aVar/*$$*/;
+	//};
+	//
+	//#endif /* BUG551761_H_ */
+	//
+	//====================
+	//#ifndef BUG551761_H_
+	//#define BUG551761_H_
+	//
+	//class Bug551761 {
+	//public:
+	//	int getAVar() const {
+	//		return aVar;
+	//	}
+	//
+	//	void setAVar(int aVar) {
+	//		this->aVar = aVar;
+	//	}
+	//
+	//private:
+	//	int aVar;
+	//};
+	//
+	//#endif /* BUG551761_H_ */
+	//
+	public void testSingleLetterPrefix_Bug551761() throws Exception {
+		selectedGetters = new String[] { "aVar" };
+		selectedSetters = new String[] { "aVar" };
+		assertRefactoringSuccess();
+	}
+
 }

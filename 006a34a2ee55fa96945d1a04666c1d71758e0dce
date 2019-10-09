@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9dc4746e_fda619d3",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/gettersandsetters/GenerateGettersAndSettersTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-10-09T02:19:28Z",
+      "side": 1,
+      "message": "we should probably test the prefix case. I think it should be possible to\n\n- save the current prefix pref\ntry {\n- set the prefix pref to \"m\"\n- run the test\n} finally {\n- restore original pref\n}",
+      "revId": "006a34a2ee55fa96945d1a04666c1d71758e0dce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

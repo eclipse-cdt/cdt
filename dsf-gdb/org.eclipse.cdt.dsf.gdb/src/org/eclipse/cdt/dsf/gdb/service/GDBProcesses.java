@@ -261,7 +261,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 												return;
 											}
 											memory.initializeMemoryData(memContext, memoryDataRm);
-										};
+										}
 									},
 
 									// Start tracking breakpoints.
@@ -273,7 +273,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 											IContainerDMContext containerDmc = DMContexts.getAncestorOfType(ctx,
 													IContainerDMContext.class);
 											bpmService.startTrackingBpForProcess(containerDmc, trackBpRm);
-										};
+										}
 									} };
 
 							@Override

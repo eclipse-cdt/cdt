@@ -41,21 +41,21 @@ public class BufferedCommandControl implements ICommandControl {
 			for (ICommandListener processor : fCommandProcessors) {
 				processor.commandQueued(token);
 			}
-		};
+		}
 
 		@Override
 		public void commandRemoved(ICommandToken token) {
 			for (ICommandListener processor : fCommandProcessors) {
 				processor.commandRemoved(token);
 			}
-		};
+		}
 
 		@Override
 		public void commandSent(final ICommandToken token) {
 			for (ICommandListener processor : fCommandProcessors) {
 				processor.commandSent(token);
 			}
-		};
+		}
 
 		@Override
 		public void commandDone(final ICommandToken token, final ICommandResult result) {
@@ -65,9 +65,9 @@ public class BufferedCommandControl implements ICommandControl {
 					for (ICommandListener processor : fCommandProcessors) {
 						processor.commandDone(token, result);
 					}
-				};
+				}
 			});
-		};
+		}
 	};
 
 	private IEventListener fEventListener = new IEventListener() {
@@ -79,7 +79,7 @@ public class BufferedCommandControl implements ICommandControl {
 					for (IEventListener processor : fEventProcessors) {
 						processor.eventReceived(output);
 					}
-				};
+				}
 			});
 		}
 	};

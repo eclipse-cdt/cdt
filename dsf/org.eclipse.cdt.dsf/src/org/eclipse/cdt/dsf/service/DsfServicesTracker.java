@@ -120,7 +120,7 @@ public class DsfServicesTracker {
 						@Override
 						public void run() {
 							handleUnregisterEvent(event);
-						};
+						}
 					});
 				} catch (RejectedExecutionException e) {
 					// Same situation as when the session is not active

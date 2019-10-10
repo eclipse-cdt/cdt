@@ -313,7 +313,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 			String type = (String) properties.get(PROP_VARIABLE_BASIC_TYPE);
 			return IExpressionDMData.BasicType.pointer.name().equals(type)
 					|| IExpressionDMData.BasicType.function.name().equals(type);
-		};
+		}
 	};
 
 	/**
@@ -331,7 +331,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 			String type = (String) properties.get(PROP_VARIABLE_BASIC_TYPE);
 			return IExpressionDMData.BasicType.array.name().equals(type)
 					|| IExpressionDMData.BasicType.composite.name().equals(type);
-		};
+		}
 	};
 
 	/**
@@ -348,7 +348,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 		public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 			String type = (String) properties.get(PROP_VARIABLE_BASIC_TYPE);
 			return type != null;
-		};
+		}
 	};
 
 	public final static LabelImage PARTITION_LABEL_IMAGE = new LabelImage(CDebugImages.DESC_OBJS_ARRAY_PARTITION) {
@@ -360,7 +360,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 		public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 			String type = (String) properties.get(PROP_VARIABLE_BASIC_TYPE);
 			return INDEXED_PARTITION_TYPE.equals(type);
-		};
+		}
 	};
 
 	protected IElementLabelProvider createLabelProvider() {

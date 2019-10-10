@@ -60,7 +60,7 @@ public class VariableVMProvider extends AbstractElementVMProvider {
 				@Override
 				public void run() {
 					handleEvent(event);
-				};
+				}
 			});
 		}
 	};

@@ -668,13 +668,13 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				boolean isBuiltinEmpty = false;
 
 				if (element.getAttribute(IS_VALUE_EMPTY) != null) {
-					Boolean isEmpty = new Boolean(element.getAttribute(IS_VALUE_EMPTY));
+					Boolean isEmpty = Boolean.valueOf(element.getAttribute(IS_VALUE_EMPTY));
 					if (isEmpty.booleanValue()) {
 						isValueEmpty = true;
 					}
 				}
 				if (element.getAttribute(IS_BUILTIN_EMPTY) != null) {
-					Boolean isEmpty = new Boolean(element.getAttribute(IS_BUILTIN_EMPTY));
+					Boolean isEmpty = Boolean.valueOf(element.getAttribute(IS_BUILTIN_EMPTY));
 					if (isEmpty.booleanValue()) {
 						isBuiltinEmpty = true;
 					}

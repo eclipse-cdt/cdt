@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.pda.service;
 
-import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -77,12 +76,8 @@ public class PDAVirtualMachineDMContext extends PlatformObject
 		return getProgram();
 	}
 
-	/**
-	 * @see AbstractDMContext#getAdapter(Class)
-	 */
 	@Override
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapterType) {
+	public <T> T getAdapter(Class<T> adapterType) {
 		Object retVal = null;
 		DsfSession session = DsfSession.getSession(fSessionId);
 		if (session != null) {
@@ -91,7 +86,7 @@ public class PDAVirtualMachineDMContext extends PlatformObject
 		if (retVal == null) {
 			retVal = super.getAdapter(adapterType);
 		}
-		return retVal;
+		return adapterType.cast(retVal);
 	}
 
 }

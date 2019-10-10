@@ -31,8 +31,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class PDAEditorAdapterFactory implements IAdapterFactory {
 
 	@Override
-	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adaptableObject instanceof PDAEditor) {
 			ITextEditor editorPart = (ITextEditor) adaptableObject;
 			IResource resource = editorPart.getEditorInput().getAdapter(IResource.class);
@@ -40,7 +39,7 @@ public class PDAEditorAdapterFactory implements IAdapterFactory {
 				String extension = resource.getFileExtension();
 				if (extension != null && extension.equals("pda")) {
 					if (adapterType.equals(IToggleBreakpointsTarget.class)) {
-						return new PDABreakpointAdapter();
+						return adapterType.cast(new PDABreakpointAdapter());
 					}
 				}
 			}
@@ -49,8 +48,7 @@ public class PDAEditorAdapterFactory implements IAdapterFactory {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { IToggleBreakpointsTarget.class };
 	}
 }

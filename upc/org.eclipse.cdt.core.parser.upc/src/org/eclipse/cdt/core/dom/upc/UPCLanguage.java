@@ -66,11 +66,10 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	private static final ICLanguageKeywords upcKeywords = new UPCLanguageKeywords(
 			ScannerExtensionConfiguration.createC());
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (ICLanguageKeywords.class.equals(adapter))
-			return upcKeywords;
+			return adapter.cast(upcKeywords);
 
 		return super.getAdapter(adapter);
 	}

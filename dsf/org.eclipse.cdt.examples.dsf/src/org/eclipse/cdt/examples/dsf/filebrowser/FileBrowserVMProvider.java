@@ -37,10 +37,9 @@ public class FileBrowserVMProvider extends AbstractVMProvider {
 		 * The input object provides the viewer access to the viewer model adapter.
 		 */
 		@Override
-		@SuppressWarnings("unchecked")
-		public Object getAdapter(Class adapter) {
+		public <T> T getAdapter(Class<T> adapter) {
 			if (adapter.isInstance(getVMAdapter())) {
-				return getVMAdapter();
+				return adapter.cast(getVMAdapter());
 			}
 			return null;
 		}

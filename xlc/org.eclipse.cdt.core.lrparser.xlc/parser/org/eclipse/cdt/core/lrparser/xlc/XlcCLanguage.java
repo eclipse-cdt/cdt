@@ -63,11 +63,10 @@ public class XlcCLanguage extends GCCLanguage {
 		return XlcCScannerExtensionConfiguration.getInstance();
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (ICLanguageKeywords.class.equals(adapter))
-			return XlcKeywords.ALL_C_KEYWORDS;
+			return adapter.cast(XlcKeywords.ALL_C_KEYWORDS);
 
 		return super.getAdapter(adapter);
 	}

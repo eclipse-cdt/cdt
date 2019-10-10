@@ -37,8 +37,7 @@ import org.eclipse.debug.ui.contexts.ISuspendTrigger;
 public class PDAAdapterFactory implements IAdapterFactory {
 	// This IAdapterFactory method returns adapters for the PDA launch object only.
 	@Override
-	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (!(adaptableObject instanceof PDALaunch))
 			return null;
 
@@ -58,18 +57,17 @@ public class PDAAdapterFactory implements IAdapterFactory {
 
 		// Returns the adapter type for the launch object.
 		if (adapterType.equals(IElementContentProvider.class))
-			return adapterSet.fViewModelAdapter;
+			return adapterType.cast(adapterSet.fViewModelAdapter);
 		else if (adapterType.equals(IModelProxyFactory.class))
-			return adapterSet.fViewModelAdapter;
+			return adapterType.cast(adapterSet.fViewModelAdapter);
 		else if (adapterType.equals(ISuspendTrigger.class))
-			return adapterSet.fSuspendTrigger;
+			return adapterType.cast(adapterSet.fSuspendTrigger);
 		else
 			return null;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class };
 	}
 

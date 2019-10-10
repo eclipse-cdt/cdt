@@ -42,7 +42,6 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		IFolderLayout folder1 = layout.createFolder("topLeft", IPageLayout.LEFT, (float) 0.25, editorArea); //$NON-NLS-1$
 		folder1.addView(ProjectExplorer.VIEW_ID);
 		folder1.addPlaceholder(CUIPlugin.CVIEW_ID);
-		folder1.addPlaceholder(IPageLayout.ID_RES_NAV);
 		folder1.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 
 		IFolderLayout folder2 = layout.createFolder("bottom", IPageLayout.BOTTOM, (float) 0.75, editorArea); //$NON-NLS-1$
@@ -68,7 +67,6 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
 		layout.addShowViewShortcut(CUIPlugin.CVIEW_ID);
-		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 		layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 

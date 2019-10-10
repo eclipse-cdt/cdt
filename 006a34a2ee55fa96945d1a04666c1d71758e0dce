@@ -16,6 +16,24 @@
       "revId": "006a34a2ee55fa96945d1a04666c1d71758e0dce",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "31b5dac3_bf972d65",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/gettersandsetters/GenerateGettersAndSettersTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-10-10T05:43:05Z",
+      "side": 1,
+      "message": "I wanted to add a separate testcase to exercise the skip prefix mode, because this test case has a different purpose.\nSee my question in the comment. I just don\u0027t know how to set the preference and I didn\u0027t want to spend time. So would be nice if you can give me a pointer how to do this.",
+      "parentUuid": "9dc4746e_fda619d3",
+      "revId": "006a34a2ee55fa96945d1a04666c1d71758e0dce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

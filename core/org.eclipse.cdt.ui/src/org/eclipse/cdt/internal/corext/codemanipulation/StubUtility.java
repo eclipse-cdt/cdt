@@ -67,12 +67,12 @@ import org.eclipse.jface.text.templates.TemplateBuffer;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateVariable;
-import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.swt.SWT;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.templates.TemplatePersistenceData;
 
 import com.ibm.icu.text.BreakIterator;
 

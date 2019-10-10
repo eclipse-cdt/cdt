@@ -21,9 +21,9 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 

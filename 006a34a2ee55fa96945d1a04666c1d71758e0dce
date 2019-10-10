@@ -34,6 +34,24 @@
       "revId": "006a34a2ee55fa96945d1a04666c1d71758e0dce",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "076fbf5f_a07dd64c",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/gettersandsetters/GenerateGettersAndSettersTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2019-10-10T21:40:15Z",
+      "side": 1,
+      "message": "Sorry I hadn\u0027t seen the other comment. Here is a modified version of this test, the idea should be the same for a new one.\n\nIEclipsePreferences node \u003d InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);\nString oldValue \u003d node.get(PreferenceConstants.NAME_STYLE_FIELD_PREFIX, null);\ntry {\n    node.put(PreferenceConstants.NAME_STYLE_FIELD_PREFIX, \"m\");\n    selectedGetters \u003d new String[] { \"mClass\" };\n    selectedSetters \u003d new String[] { \"mClass\" };\n    assertRefactoringSuccess();\n} finally {\n    if (oldValue \u003d\u003d null)\n        node.remove(PreferenceConstants.NAME_STYLE_FIELD_PREFIX);\n    else\n        node.put(PreferenceConstants.NAME_STYLE_FIELD_PREFIX, oldValue);\n}",
+      "parentUuid": "31b5dac3_bf972d65",
+      "revId": "006a34a2ee55fa96945d1a04666c1d71758e0dce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

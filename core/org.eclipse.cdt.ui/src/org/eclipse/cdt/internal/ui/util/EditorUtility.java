@@ -575,7 +575,7 @@ public class EditorUtility {
 	 */
 	public static String getEditorID(String name) {
 		try {
-			IEditorDescriptor descriptor = IDE.getEditorDescriptor(name);
+			IEditorDescriptor descriptor = IDE.getEditorDescriptor(name, true, false);
 			if (descriptor != null) {
 				return descriptor.getId();
 			}

@@ -500,19 +500,19 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *            The list of projects to sort.
 	 * @return A new list of projects, ordered by build order.
 	 */
-	private List getBuildOrder(List resourceCollection) {
+	private List<IProject> getBuildOrder(List<IProject> resourceCollection) {
 		String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
 		if (orderedNames != null) {
-			List orderedProjs = new ArrayList(resourceCollection.size());
+			List<IProject> orderedProjs = new ArrayList<>(resourceCollection.size());
 			//Projects may not be in the build order but should be built if
 			// selected
-			List unorderedProjects = new ArrayList(resourceCollection.size());
+			List<IProject> unorderedProjects = new ArrayList<>(resourceCollection.size());
 			unorderedProjects.addAll(resourceCollection);
 
 			for (int i = 0; i < orderedNames.length; i++) {
 				String projectName = orderedNames[i];
 				for (int j = 0; j < resourceCollection.size(); j++) {
-					IProject proj = (IProject) resourceCollection.get(j);
+					IProject proj = resourceCollection.get(j);
 					if (proj.getName().equals(projectName)) {
 						orderedProjs.add(proj);
 						unorderedProjects.remove(proj);
@@ -527,9 +527,9 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 		// Try the project prerequisite order then
 		IProject[] projects = new IProject[resourceCollection.size()];
-		projects = (IProject[]) resourceCollection.toArray(projects);
+		projects = resourceCollection.toArray(projects);
 		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
-		ArrayList orderedProjs = new ArrayList();
+		ArrayList<IProject> orderedProjs = new ArrayList<>();
 		orderedProjs.addAll(Arrays.asList(po.projects));
 		return orderedProjs;
 	}
@@ -806,9 +806,9 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			ICProject cProject = CDebugUtils.getCProject(configuration);
 			if (cProject != null) {
 				project = cProject.getProject();
-				HashSet projectSet = new HashSet();
+				HashSet<IProject> projectSet = new HashSet<>();
 				getReferencedProjectSet(project, projectSet);
-				orderedProjects = getBuildOrder(new ArrayList(projectSet));
+				orderedProjects = getBuildOrder(new ArrayList<>(projectSet));
 			}
 			monitor.worked(scale);
 

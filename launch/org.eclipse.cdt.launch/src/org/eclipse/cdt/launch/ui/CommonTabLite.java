@@ -140,9 +140,6 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 		}
 	};
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -292,9 +289,6 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 		return (IContainer) getWorkspaceRoot().findMember(containerPath);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		boolean isShared = !configuration.isLocal();
@@ -324,7 +318,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 		fFavoritesTable.setInput(config);
 		fFavoritesTable.setCheckedElements(new Object[] {});
 		try {
-			List groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, new ArrayList());
+			List<String> groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, new ArrayList<>());
 			if (groups.isEmpty()) {
 				// check old attributes for backwards compatible
 				if (config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false)) {
@@ -335,10 +329,10 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 				}
 			}
 			if (!groups.isEmpty()) {
-				List list = new ArrayList();
-				Iterator iterator = groups.iterator();
+				List<LaunchGroupExtension> list = new ArrayList<>();
+				Iterator<String> iterator = groups.iterator();
 				while (iterator.hasNext()) {
-					String id = (String) iterator.next();
+					String id = iterator.next();
 					LaunchGroupExtension extension = getLaunchConfigurationManager().getLaunchGroup(id);
 					if (extension != null) {
 						list.add(extension);
@@ -391,7 +385,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 			boolean run = config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
 			if (debug || run) {
 				// old attributes
-				List groups = new ArrayList();
+				List<LaunchGroupExtension> groups = new ArrayList<>();
 				int num = 0;
 				if (debug) {
 					groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
@@ -417,11 +411,11 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 			}
 			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String) null);
 			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, (String) null);
-			List groups = null;
+			List<String> groups = null;
 			for (int i = 0; i < checked.length; i++) {
 				LaunchGroupExtension group = (LaunchGroupExtension) checked[i];
 				if (groups == null) {
-					groups = new ArrayList();
+					groups = new ArrayList<>();
 				}
 				groups.add(group.getIdentifier());
 			}
@@ -438,9 +432,6 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setMessage(null);
@@ -469,27 +460,18 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setContainer(null);
 		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, config, true, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		updateConfigFromLocalShared(configuration);
 		updateConfigFromFavorites(configuration);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return LaunchConfigurationsMessages.CommonTab__Common_15;
@@ -505,32 +487,20 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 		return "org.eclipse.debug.ui.commonTab"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
-	 */
 	@Override
 	public boolean canSave() {
 		return validateLocalShared();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
@@ -543,7 +513,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
-			List possibleGroups = new ArrayList();
+			List<ILaunchGroup> possibleGroups = new ArrayList<>();
 			ILaunchConfiguration configuration = (ILaunchConfiguration) inputElement;
 			for (int i = 0; i < groups.length; i++) {
 				ILaunchGroup extension = groups[i];

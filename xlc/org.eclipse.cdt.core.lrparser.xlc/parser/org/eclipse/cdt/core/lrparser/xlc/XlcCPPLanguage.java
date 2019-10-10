@@ -87,11 +87,10 @@ public class XlcCPPLanguage extends GPPLanguage {
 		return XlcCPPScannerExtensionConfiguration.getInstance();
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (ICLanguageKeywords.class.equals(adapter))
-			return XlcKeywords.ALL_CPP_KEYWORDS;
+			return adapter.cast(XlcKeywords.ALL_CPP_KEYWORDS);
 
 		return super.getAdapter(adapter);
 	}

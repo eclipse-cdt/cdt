@@ -217,7 +217,7 @@ public class ExclusionInclusionEntryDialog extends StatusDialog {
 
 	public static IPath[] chooseExclusionPattern(Shell shell, IContainer currentSourceFolder, String title,
 			String message, IPath initialPath, boolean multiSelection) {
-		Class[] acceptedClasses = new Class[] { IFolder.class, IFile.class, IProject.class };
+		Class<?>[] acceptedClasses = new Class[] { IFolder.class, IFile.class, IProject.class };
 		ISelectionStatusValidator validator = new TypedElementSelectionValidator(acceptedClasses, multiSelection);
 		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);
 		ILabelProvider lp = new WorkbenchLabelProvider();

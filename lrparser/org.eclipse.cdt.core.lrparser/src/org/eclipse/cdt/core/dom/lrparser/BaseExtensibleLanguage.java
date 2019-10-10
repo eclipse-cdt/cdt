@@ -216,7 +216,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 					if(e instanceof TemplateIDErrorException){
 						//IScanner completePreprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 						//IParser<IASTTranslationUnit> completeParser = getCompleteParser(preprocessor, index, parserProperties);
-
+					
 						ISecondaryParser<IASTTranslationUnit> completeParser = getCompleteParser((ITokenStream)parser, preprocessor, index, parserProperties);
 						//completeParser.setAction(parser.getAction());
 						//((ISecondaryParser)completeParser).setTokenMap((ITokenStream)parser);
@@ -461,15 +461,14 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	private ICLanguageKeywords cLanguageKeywords = new CLanguageKeywords(getParserLanguage(),
 			getScannerExtensionConfiguration());
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (ICLanguageKeywords.class.equals(adapter))
-			return cLanguageKeywords;
+			return adapter.cast(cLanguageKeywords);
 		if (IPDOMLinkageFactory.class.equals(adapter)) {
 			if (getParserLanguage().isCPP())
-				return new PDOMCPPLinkageFactory();
-			return new PDOMCLinkageFactory();
+				return adapter.cast(new PDOMCPPLinkageFactory());
+			return adapter.cast(new PDOMCLinkageFactory());
 		}
 
 		return super.getAdapter(adapter);

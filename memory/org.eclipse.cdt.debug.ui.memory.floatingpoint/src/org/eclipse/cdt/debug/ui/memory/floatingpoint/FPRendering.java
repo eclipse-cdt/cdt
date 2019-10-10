@@ -1069,7 +1069,7 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
 			if (this.fWorkbenchAdapter == null) {
 				this.fWorkbenchAdapter = new IWorkbenchAdapter() {
@@ -1094,7 +1094,7 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 					}
 				};
 			}
-			return this.fWorkbenchAdapter;
+			return adapter.cast(this.fWorkbenchAdapter);
 		}
 
 		if (adapter == IMemoryBlockConnection.class) {
@@ -1115,7 +1115,7 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 				};
 			}
 
-			return fConnection;
+			return adapter.cast(fConnection);
 		}
 
 		return super.getAdapter(adapter);

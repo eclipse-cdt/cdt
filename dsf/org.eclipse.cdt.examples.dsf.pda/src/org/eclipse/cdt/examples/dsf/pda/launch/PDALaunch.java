@@ -252,9 +252,8 @@ public class PDALaunch extends DsfLaunch {
 				}));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		// Force adapters to be loaded.  Otherwise the adapter manager may not find
 		// the model proxy adapter for DSF-based debug elements.
 		Platform.getAdapterManager().loadAdapter(this, adapter.getName());

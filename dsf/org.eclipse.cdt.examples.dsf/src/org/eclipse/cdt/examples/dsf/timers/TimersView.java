@@ -139,10 +139,9 @@ public class TimersView extends ViewPart {
 			 * The input object provides the viewer access to the viewer model adapter.
 			 */
 			@Override
-			@SuppressWarnings("unchecked")
-			public Object getAdapter(Class adapter) {
+			public <T> T getAdapter(Class<T> adapter) {
 				if (adapter.isInstance(fTimersVMAdapter)) {
-					return fTimersVMAdapter;
+					return adapter.cast(fTimersVMAdapter);
 				}
 				return null;
 			}

@@ -114,8 +114,7 @@ public class PDAServicesShutdownSequence extends Sequence {
 		return fSteps;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void shutdownService(Class clazz, final RequestMonitor requestMonitor) {
+	private void shutdownService(Class<?> clazz, final RequestMonitor requestMonitor) {
 		IDsfService service = (IDsfService) fTracker.getService(clazz);
 		if (service != null) {
 			service.shutdown(new RequestMonitor(getExecutor(), requestMonitor) {

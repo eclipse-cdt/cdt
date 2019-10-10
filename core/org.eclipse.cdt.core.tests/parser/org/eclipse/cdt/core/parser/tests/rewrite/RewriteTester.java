@@ -120,7 +120,7 @@ public class RewriteTester extends TestSuite {
 
 	private static RewriteBaseTest createTestClass(String className, String testName, List<TestSourceFile> files)
 			throws Exception {
-		try {
+		try { 
 			Class<?> refClass = Class.forName(className);
 			Constructor<?> ct = refClass.getConstructor(new Class[] { String.class, List.class });
 			RewriteBaseTest test = (RewriteBaseTest) ct.newInstance(new Object[] { testName, files });

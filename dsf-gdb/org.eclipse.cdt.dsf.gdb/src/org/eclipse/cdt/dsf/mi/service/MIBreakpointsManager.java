@@ -238,7 +238,7 @@ public class MIBreakpointsManager extends AbstractDsfService
 
 	private Map<ICBreakpoint, IMarker> fBreakpointMarkerProblems = new HashMap<>();
 
-	private ListenerList fTrackingListeners = new ListenerList();
+	private ListenerList<IMIBreakpointsTrackingListener> fTrackingListeners = new ListenerList<>();
 
 	///////////////////////////////////////////////////////////////////////////
 	// String constants
@@ -569,8 +569,8 @@ public class MIBreakpointsManager extends AbstractDsfService
 				fBPToPlatformMaps.remove(dmc);
 				fPlatformToBPThreadsMaps.remove(dmc);
 				// Notify breakpoints tracking listeners that the tracking is stopped.
-				for (Object o : fTrackingListeners.getListeners()) {
-					((IMIBreakpointsTrackingListener) o).breakpointTrackingStopped(dmc);
+				for (IMIBreakpointsTrackingListener o : fTrackingListeners) {
+					o.breakpointTrackingStopped(dmc);
 				}
 				rm.done();
 			}

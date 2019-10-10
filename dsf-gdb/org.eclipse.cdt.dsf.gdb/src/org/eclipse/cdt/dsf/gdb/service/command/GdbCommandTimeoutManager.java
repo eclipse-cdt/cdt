@@ -225,11 +225,11 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 	private BlockingQueue<QueueEntry> fCommandQueue = new LinkedBlockingQueue<>();
 	private CustomTimeoutsMap fCustomTimeouts = new CustomTimeoutsMap();
 
-	private ListenerList fListeners;
+	private ListenerList<ICommandTimeoutListener> fListeners;
 
 	public GdbCommandTimeoutManager(ICommandControl commandControl) {
 		fCommandControl = commandControl;
-		fListeners = new ListenerList();
+		fListeners = new ListenerList<>();
 	}
 
 	public void initialize() {
@@ -263,16 +263,10 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 		fCustomTimeouts.clear();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.command.ICommandListener#commandQueued(org.eclipse.cdt.dsf.debug.service.command.ICommandToken)
-	 */
 	@Override
 	public void commandQueued(ICommandToken token) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.command.ICommandListener#commandSent(org.eclipse.cdt.dsf.debug.service.command.ICommandToken)
-	 */
 	@Override
 	public void commandSent(ICommandToken token) {
 		if (!isTimeoutEnabled())
@@ -295,16 +289,10 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.command.ICommandListener#commandRemoved(org.eclipse.cdt.dsf.debug.service.command.ICommandToken)
-	 */
 	@Override
 	public void commandRemoved(ICommandToken token) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.command.ICommandListener#commandDone(org.eclipse.cdt.dsf.debug.service.command.ICommandToken, org.eclipse.cdt.dsf.debug.service.command.ICommandResult)
-	 */
 	@Override
 	public void commandDone(ICommandToken token, ICommandResult result) {
 		if (!isTimeoutEnabled())
@@ -326,9 +314,6 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
-	 */
 	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		String property = event.getKey();
@@ -381,8 +366,8 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 				commandText = commandText.substring(0, commandText.length() - 1);
 			printDebugMessage(String.format("Command '%s' is timed out", commandText)); //$NON-NLS-1$
 		}
-		for (Object l : fListeners.getListeners()) {
-			((ICommandTimeoutListener) l).commandTimedOut(token);
+		for (ICommandTimeoutListener l : fListeners) {
+			l.commandTimedOut(token);
 		}
 	}
 

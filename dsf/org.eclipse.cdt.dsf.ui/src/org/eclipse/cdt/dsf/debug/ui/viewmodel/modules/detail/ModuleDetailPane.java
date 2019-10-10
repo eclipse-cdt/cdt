@@ -67,10 +67,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.progress.WorkbenchJob;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  *
@@ -342,14 +342,14 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
 	private void createActions() {
 		TextViewerAction textAction = new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
 		textAction.configureAction(MessagesForDetailPane.DetailPane_Select_All, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
+		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECT_ALL);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction,
 				IDsfDebugHelpContextIds.DETAIL_PANE_SELECT_ALL_ACTION);
 		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
 
 		textAction = new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
 		textAction.configureAction(MessagesForDetailPane.DetailPane_Copy, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugHelpContextIds.DETAIL_PANE_COPY_ACTION);
 		setAction(DETAIL_COPY_ACTION, textAction);
 

@@ -58,11 +58,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.progress.WorkbenchJob;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  *
@@ -307,14 +307,14 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
 
 		TextViewerAction textAction = new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
 		textAction.configureAction("Select &All", "", ""); //$NON-NLS-2$ //$NON-NLS-3$
-		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
+		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECT_ALL);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction,
 				ICDebugHelpContextIds.MODULE_DETAIL_PANE_SELECT_ALL_ACTION);
 		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
 
 		textAction = new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
 		textAction.configureAction("&Copy", "", ""); //$NON-NLS-2$ //$NON-NLS-3$
-		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction,
 				ICDebugHelpContextIds.MODULE_DETAIL_PANE_COPY_ACTION);
 		setAction(DETAIL_COPY_ACTION, textAction);

@@ -88,18 +88,12 @@ public class CBreakIterator extends BreakIterator {
 		private static final char INIT = '\0';
 		private static final char EXIT = '\1';
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#init()
-		 */
 		@Override
 		protected void init() {
 			super.init();
 			fState = INIT;
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#consume(char)
-		 */
 		@Override
 		protected boolean consume(char ch) {
 			if (!isValid(ch) || fState == EXIT)
@@ -125,9 +119,6 @@ public class CBreakIterator extends BreakIterator {
 	}
 
 	static final class Identifier extends Run {
-		/*
-		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#isValid(char)
-		 */
 		@Override
 		protected boolean isValid(char ch) {
 			return Character.isJavaIdentifierPart(ch);
@@ -162,18 +153,12 @@ public class CBreakIterator extends BreakIterator {
 				{ S_EXIT, S_EXIT, S_EXIT, S_UNDERSCORE, S_EXIT }, // S_UNDERSCORE
 		};
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#init()
-		 */
 		@Override
 		protected void init() {
 			super.init();
 			fState = S_INIT;
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#consumes(char)
-		 */
 		@Override
 		protected boolean consume(char ch) {
 			int kind = getKind(ch);
@@ -213,9 +198,6 @@ public class CBreakIterator extends BreakIterator {
 			return K_INVALID;
 		}
 
-		/*
-		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#isValid(char)
-		 */
 		@Override
 		protected boolean isValid(char ch) {
 			return Character.isJavaIdentifierPart(ch);
@@ -223,9 +205,6 @@ public class CBreakIterator extends BreakIterator {
 	}
 
 	static final class Other extends Run {
-		/*
-		 * @see org.eclipse.cdt.internal.ui.text.CBreakIterator.Run#isValid(char)
-		 */
 		@Override
 		protected boolean isValid(char ch) {
 			return !Character.isWhitespace(ch) && !Character.isJavaIdentifierPart(ch);
@@ -255,26 +234,17 @@ public class CBreakIterator extends BreakIterator {
 		fIndex = fIterator.current();
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#current()
-	 */
 	@Override
 	public int current() {
 		return fIndex;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#first()
-	 */
 	@Override
 	public int first() {
 		fIndex = fIterator.first();
 		return fIndex;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#following(int)
-	 */
 	@Override
 	public int following(int offset) {
 		// work around too eager IAEs in standard implementation
@@ -341,17 +311,11 @@ public class CBreakIterator extends BreakIterator {
 		return run;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#getText()
-	 */
 	@Override
 	public CharacterIterator getText() {
 		return fIterator.getText();
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#isBoundary(int)
-	 */
 	@Override
 	public boolean isBoundary(int offset) {
 		if (offset == getText().getBeginIndex())
@@ -359,35 +323,23 @@ public class CBreakIterator extends BreakIterator {
 		return following(offset - 1) == offset;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#last()
-	 */
 	@Override
 	public int last() {
 		fIndex = fIterator.last();
 		return fIndex;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#next()
-	 */
 	@Override
 	public int next() {
 		fIndex = following(fIndex);
 		return fIndex;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#next(int)
-	 */
 	@Override
 	public int next(int n) {
 		return fIterator.next(n);
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#preceding(int)
-	 */
 	@Override
 	public int preceding(int offset) {
 		if (offset == getText().getBeginIndex())
@@ -410,18 +362,12 @@ public class CBreakIterator extends BreakIterator {
 		return last;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#previous()
-	 */
 	@Override
 	public int previous() {
 		fIndex = preceding(fIndex);
 		return fIndex;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#setText(java.lang.String)
-	 */
 	@Override
 	public void setText(String newText) {
 		setText((CharSequence) newText);
@@ -431,15 +377,13 @@ public class CBreakIterator extends BreakIterator {
 	 * Creates a break iterator given a char sequence.
 	 * @param newText the new text
 	 */
+	@Override
 	public void setText(CharSequence newText) {
 		fText = newText;
 		fIterator.setText(new SequenceCharacterIterator(newText));
 		first();
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#setText(java.text.CharacterIterator)
-	 */
 	@Override
 	public void setText(CharacterIterator newText) {
 		if (newText instanceof CharSequence) {

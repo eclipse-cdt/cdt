@@ -44,27 +44,18 @@ public class CWordIterator extends BreakIterator {
 		first();
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#first()
-	 */
 	@Override
 	public int first() {
 		fIndex = fIterator.first();
 		return fIndex;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#last()
-	 */
 	@Override
 	public int last() {
 		fIndex = fIterator.last();
 		return fIndex;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#next(int)
-	 */
 	@Override
 	public int next(int n) {
 		int next = 0;
@@ -74,27 +65,18 @@ public class CWordIterator extends BreakIterator {
 		return next;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#next()
-	 */
 	@Override
 	public int next() {
 		fIndex = following(fIndex);
 		return fIndex;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#previous()
-	 */
 	@Override
 	public int previous() {
 		fIndex = preceding(fIndex);
 		return fIndex;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#preceding(int)
-	 */
 	@Override
 	public int preceding(int offset) {
 		int first = fIterator.preceding(offset);
@@ -106,9 +88,6 @@ public class CWordIterator extends BreakIterator {
 		return first;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#following(int)
-	 */
 	@Override
 	public int following(int offset) {
 		int first = fIterator.following(offset);
@@ -190,17 +169,11 @@ public class CWordIterator extends BreakIterator {
 		return true;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#current()
-	 */
 	@Override
 	public int current() {
 		return fIndex;
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#getText()
-	 */
 	@Override
 	public CharacterIterator getText() {
 		return fIterator.getText();
@@ -210,23 +183,18 @@ public class CWordIterator extends BreakIterator {
 	 * Sets the text as <code>CharSequence</code>.
 	 * @param newText the new text
 	 */
+	@Override
 	public void setText(CharSequence newText) {
 		fIterator.setText(newText);
 		first();
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#setText(java.text.CharacterIterator)
-	 */
 	@Override
 	public void setText(CharacterIterator newText) {
 		fIterator.setText(newText);
 		first();
 	}
 
-	/*
-	 * @see com.ibm.icu.text.BreakIterator#setText(java.lang.String)
-	 */
 	@Override
 	public void setText(String newText) {
 		setText((CharSequence) newText);

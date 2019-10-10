@@ -33,7 +33,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -143,19 +142,6 @@ public class TreeListDialogField<T> extends DialogField {
 	public void setDownButtonIndex(int downButtonIndex) {
 		Assert.isTrue(downButtonIndex < fButtonLabels.length);
 		fDownButtonIndex = downButtonIndex;
-	}
-
-	/**
-	 * Sets the viewerSorter.
-	 *
-	 * @param viewerSorter
-	 *        The viewerSorter to set
-	 *
-	 * @deprecated Use {@link #setViewerComparator(ViewerComparator)} instead.
-	 */
-	@Deprecated
-	public void setViewerSorter(ViewerSorter viewerSorter) {
-		setViewerComparator(viewerSorter);
 	}
 
 	/**

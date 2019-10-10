@@ -355,9 +355,6 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		super.cancelPressed();
 	}
 
-	/*
-	 * @see SelectionStatusDialog#computeResult()
-	 */
 	@Override
 	protected void computeResult() {
 		setResult(((IStructuredSelection) fViewer.getSelection()).toList());
@@ -378,9 +375,6 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		super.create();
 	}
 
-	/*
-	 * @see Dialog#createDialogArea(Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -434,7 +428,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		fViewer.setLabelProvider(fLabelProvider);
 		fViewer.addSelectionChangedListener(fFieldsAdapter);
 
-		fViewer.setSorter(new CElementSorter());
+		fViewer.setComparator(new CElementSorter());
 		fViewer.addFilter(new Filter());
 
 		Tree tree = fViewer.getTree();
@@ -455,9 +449,6 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		return fViewer;
 	}
 
-	/**
-	 * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
-	 */
 	@Override
 	protected void handleShellCloseEvent() {
 		super.handleShellCloseEvent();

@@ -24,8 +24,8 @@ import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CElementSorter;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
@@ -39,7 +39,7 @@ public class SourceFolderSelectionDialog extends ElementTreeSelectionDialog {
 			ICProject.class };
 	private static final ViewerFilter fFilter = new TypedViewerFilter(FILTER_CLASSES);
 
-	private static final ViewerSorter fSorter = new CElementSorter();
+	private static final ViewerComparator fSorter = new CElementSorter();
 
 	public SourceFolderSelectionDialog(Shell parent) {
 		super(parent, createLabelProvider(), createContentProvider());

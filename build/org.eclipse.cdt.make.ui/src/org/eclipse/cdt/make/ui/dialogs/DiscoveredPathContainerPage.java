@@ -152,23 +152,17 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 		fDiscoveredContainerList.setLabelText(MakeUIPlugin.getResourceString(CONTAINER_LIST_LABEL));
 
 		fDiscoveredContainerList.setTreeExpansionLevel(2);
-		fDiscoveredContainerList.setViewerSorter(new DiscoveredElementSorter());
+		fDiscoveredContainerList.setViewerComparator(new DiscoveredElementSorter());
 		dirty = false;
 		deletedEntries = new ArrayList<>();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		deregisterActionHandlers();
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.ICPathContainerPage#initialize(org.eclipse.cdt.core.model.ICProject, org.eclipse.cdt.core.model.IPathEntry[])
-	 */
 	@Override
 	public void initialize(ICProject project, IPathEntry[] currentEntries) {
 		fCProject = project;
@@ -179,9 +173,6 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.ICPathContainerPage#finish()
-	 */
 	@Override
 	public boolean finish() {
 		if (!dirty) {
@@ -274,17 +265,11 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.ICPathContainerPage#getContainerEntries()
-	 */
 	@Override
 	public IContainerEntry[] getNewContainers() {
 		return new IContainerEntry[] { fPathEntry };
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.ICPathContainerPage#setSelection(org.eclipse.cdt.core.model.IPathEntry)
-	 */
 	@Override
 	public void setSelection(IContainerEntry containerEntry) {
 		if (containerEntry != null) {
@@ -377,9 +362,6 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 		return container;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
@@ -463,28 +445,17 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 	private class DiscoveredContainerAdapter implements IDialogFieldListener, ITreeListAdapter<DiscoveredElement> {
 		private final Object[] EMPTY_ARR = new Object[0];
 
-		// ---------- IDialogFieldListener --------
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener#dialogFieldChanged(org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField)
-		 */
 		@Override
 		public void dialogFieldChanged(DialogField field) {
 			// TODO Auto-generated method stub
 
 		}
 
-		// -------- IListAdapter --------
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#customButtonPressed(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, int)
-		 */
 		@Override
 		public void customButtonPressed(TreeListDialogField<DiscoveredElement> field, int index) {
 			containerPageCustomButtonPressed(field, index);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#selectionChanged(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField)
-		 */
 		@Override
 		public void selectionChanged(TreeListDialogField<DiscoveredElement> field) {
 			if (copyTextAction != null) {
@@ -493,27 +464,18 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 			containerPageSelectionChanged(field);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#doubleClicked(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField)
-		 */
 		@Override
 		public void doubleClicked(TreeListDialogField<DiscoveredElement> field) {
 			// TODO Auto-generated method stub
 
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#keyPressed(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, org.eclipse.swt.events.KeyEvent)
-		 */
 		@Override
 		public void keyPressed(TreeListDialogField<DiscoveredElement> field, KeyEvent event) {
 			// TODO Auto-generated method stub
 
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#getChildren(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, java.lang.Object)
-		 */
 		@Override
 		public Object[] getChildren(TreeListDialogField<DiscoveredElement> field, Object element) {
 			if (element instanceof DiscoveredElement) {
@@ -523,9 +485,6 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 			return EMPTY_ARR;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#getParent(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, java.lang.Object)
-		 */
 		@Override
 		public Object getParent(TreeListDialogField<DiscoveredElement> field, Object element) {
 			if (element instanceof DiscoveredElement) {
@@ -535,9 +494,6 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#hasChildren(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, java.lang.Object)
-		 */
 		@Override
 		public boolean hasChildren(TreeListDialogField<DiscoveredElement> field, Object element) {
 			if (element instanceof DiscoveredElement) {
@@ -842,9 +798,6 @@ public class DiscoveredPathContainerPage extends WizardPage implements IPathEntr
 			return rc;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			if (discoveredEntry != null) {

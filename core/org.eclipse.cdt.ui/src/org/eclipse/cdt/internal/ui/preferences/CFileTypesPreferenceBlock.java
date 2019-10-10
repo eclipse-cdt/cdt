@@ -42,7 +42,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -73,7 +73,7 @@ public class CFileTypesPreferenceBlock {
 	private Button fBtnNew;
 	private Button fBtnRemove;
 
-	private class AssocSorter extends ViewerSorter {
+	private class AssocComparator extends ViewerComparator {
 		@Override
 		public int category(Object element) {
 			if (element instanceof CFileTypeAssociation) {
@@ -275,7 +275,7 @@ public class CFileTypesPreferenceBlock {
 
 		fAssocViewer = new TableViewer(table);
 
-		fAssocViewer.setSorter(new AssocSorter());
+		fAssocViewer.setComparator(new AssocComparator());
 		fAssocViewer.setContentProvider(new AssocContentProvider());
 		fAssocViewer.setLabelProvider(new AssocLabelProvider());
 		fAssocViewer.setInput(getCFileTypeAssociations());

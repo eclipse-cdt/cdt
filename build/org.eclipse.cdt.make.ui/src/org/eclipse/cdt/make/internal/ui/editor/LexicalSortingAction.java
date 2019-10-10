@@ -22,7 +22,7 @@ import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 public class LexicalSortingAction extends Action {
 	private static final String ACTION_NAME = "LexicalSortingAction"; //$NON-NLS-1$
@@ -52,7 +52,7 @@ public class LexicalSortingAction extends Action {
 
 	private void valueChanged(boolean on, boolean store) {
 		setChecked(on);
-		fTreeViewer.setSorter(on ? fSorter : null);
+		fTreeViewer.setComparator(on ? fSorter : null);
 
 		String key = ACTION_NAME + ".tooltip" + (on ? ".on" : ".off"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setToolTipText(MakeUIPlugin.getResourceString(key));
@@ -61,7 +61,7 @@ public class LexicalSortingAction extends Action {
 		}
 	}
 
-	private class LexicalMakefileSorter extends ViewerSorter {
+	private class LexicalMakefileSorter extends ViewerComparator {
 		@Override
 		public int category(Object obj) {
 			if (obj instanceof IDirective) {

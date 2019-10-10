@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -51,7 +51,7 @@ public class CPathContainerSelectionPage extends WizardPage {
 		}
 	}
 
-	private static class CPathContainerSorter extends ViewerSorter {
+	private static class CPathContainerSorter extends ViewerComparator {
 
 		@Override
 		public int category(Object element) {
@@ -87,15 +87,12 @@ public class CPathContainerSelectionPage extends WizardPage {
 		validatePage();
 	}
 
-	/* (non-Javadoc)
-	 * @see IDialogPage#createControl(Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		fListViewer = new TableViewer(parent, SWT.SINGLE | SWT.BORDER);
 		fListViewer.setLabelProvider(new CPathContainerLabelProvider());
 		fListViewer.setContentProvider(new ListContentProvider());
-		fListViewer.setSorter(new CPathContainerSorter());
+		fListViewer.setComparator(new CPathContainerSorter());
 		fListViewer.setInput(Arrays.asList(fContainers));
 		fListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
@@ -145,17 +142,11 @@ public class CPathContainerSelectionPage extends WizardPage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IWizardPage#canFlipToNextPage()
-	 */
 	@Override
 	public boolean canFlipToNextPage() {
 		return isPageComplete(); // avoid the getNextPage call to prevent potential plugin load
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
-	 */
 	@Override
 	public void setVisible(boolean visible) {
 		if (!visible && fListViewer != null) {

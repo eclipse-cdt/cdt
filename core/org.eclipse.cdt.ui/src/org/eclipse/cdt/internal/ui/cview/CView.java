@@ -341,7 +341,7 @@ public class CView extends ViewPart
 	 * Initializes the sorter.
 	 */
 	void initCElementSorter() {
-		viewer.setSorter(new CElementSorter());
+		viewer.setComparator(new CElementSorter());
 	}
 
 	/**

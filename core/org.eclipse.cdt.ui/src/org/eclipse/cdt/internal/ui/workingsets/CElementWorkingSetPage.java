@@ -130,7 +130,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS | CElementImageProvider.SMALL_ICONS);
 
 		fTree.setLabelProvider(new DecoratingCLabelProvider(cElementLabelProvider));
-		fTree.setSorter(new CElementSorter());
+		fTree.setComparator(new CElementSorter());
 		fTree.setUseHashlookup(true);
 
 		fTree.setInput(CoreModel.create(CUIPlugin.getWorkspace().getRoot()));

@@ -24,8 +24,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.views.navigator.SortAndFilterActionGroup;
-import org.eclipse.ui.views.navigator.WorkspaceActionGroup;
 
 /**
  * This is the action group for all the view actions.
@@ -34,8 +32,6 @@ import org.eclipse.ui.views.navigator.WorkspaceActionGroup;
  * @see GotoActionGroup
  * @see OpenFileGroup
  * @see RefactorActionGroup
- * @see SortAndFilterActionGroup
- * @see WorkspaceActionGroup
  *
  */
 public abstract class CViewActionGroup extends ActionGroup {

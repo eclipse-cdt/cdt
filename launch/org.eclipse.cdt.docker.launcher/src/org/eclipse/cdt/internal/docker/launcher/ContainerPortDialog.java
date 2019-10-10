@@ -15,10 +15,10 @@
 package org.eclipse.cdt.internal.docker.launcher;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -79,7 +79,6 @@ public class ContainerPortDialog extends Dialog {
 		return new Point(400, super.getInitialSize().y);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		final int COLUMNS = 2;
@@ -111,14 +110,15 @@ public class ContainerPortDialog extends Dialog {
 				.applyTo(errorMessageLabel);
 
 		// listening to changes
-		final ISWTObservableValue containerPortObservable = WidgetProperties.text(SWT.Modify)
+		final ISWTObservableValue<String> containerPortObservable = WidgetProperties.text(SWT.Modify)
 				.observe(containerPortText);
 		dbc.bindValue(containerPortObservable, BeanProperties
 				.value(ContainerPortDialogModel.class, ContainerPortDialogModel.CONTAINER_PORT).observe(model));
-		final ISWTObservableValue hostAddressObservable = WidgetProperties.text(SWT.Modify).observe(hostAddressText);
+		final ISWTObservableValue<String> hostAddressObservable = WidgetProperties.text(SWT.Modify)
+				.observe(hostAddressText);
 		dbc.bindValue(hostAddressObservable, BeanProperties
 				.value(ContainerPortDialogModel.class, ContainerPortDialogModel.HOST_ADDRESS).observe(model));
-		final ISWTObservableValue hostPortObservable = WidgetProperties.text(SWT.Modify).observe(hostPortText);
+		final ISWTObservableValue<String> hostPortObservable = WidgetProperties.text(SWT.Modify).observe(hostPortText);
 		dbc.bindValue(hostPortObservable, BeanProperties
 				.value(ContainerPortDialogModel.class, ContainerPortDialogModel.HOST_PORT).observe(model));
 
@@ -128,7 +128,7 @@ public class ContainerPortDialog extends Dialog {
 		return container;
 	}
 
-	private IValueChangeListener<?> onContainerPortSettingsChanged() {
+	private IValueChangeListener<String> onContainerPortSettingsChanged() {
 		return event -> validateInput();
 	}
 

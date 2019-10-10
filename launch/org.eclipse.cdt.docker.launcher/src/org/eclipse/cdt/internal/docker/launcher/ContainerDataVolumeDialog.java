@@ -23,13 +23,13 @@ import org.eclipse.cdt.internal.docker.launcher.ContainerPropertyVolumesModel.Mo
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
@@ -173,7 +173,8 @@ public class ContainerDataVolumeDialog extends Dialog {
 		readOnlyButton.setToolTipText(WizardMessages.getString("ContainerDataVolumeDialog.readOnlyButtonTooltip")); //$NON-NLS-1$
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).span(COLUMNS - 2, 1).grab(true, false)
 				.applyTo(readOnlyButton);
-		final ISWTObservableValue readOnlyButtonObservable = WidgetProperties.selection().observe(readOnlyButton);
+		final ISWTObservableValue<Boolean> readOnlyButtonObservable = WidgetProperties.buttonSelection()
+				.observe(readOnlyButton);
 		dbc.bindValue(readOnlyButtonObservable,
 				BeanProperties.value(DataVolumeModel.class, DataVolumeModel.READ_ONLY_VOLUME).observe(model));
 		// browse for file
@@ -205,7 +206,7 @@ public class ContainerDataVolumeDialog extends Dialog {
 		containerSelectionComboViewer.setInput(this.containerNames);
 		final IObservableValue selectedContainerObservable = BeanProperties
 				.value(DataVolumeModel.class, DataVolumeModel.CONTAINER_MOUNT).observe(model);
-		dbc.bindValue(WidgetProperties.selection().observe(containerSelectionCombo), selectedContainerObservable);
+		dbc.bindValue(WidgetProperties.comboSelection().observe(containerSelectionCombo), selectedContainerObservable);
 		new ContentProposalAdapter(containerSelectionCombo, new ComboContentAdapter() {
 			@Override
 			public void insertControlContents(Control control, String text, int cursorPosition) {
@@ -255,7 +256,7 @@ public class ContainerDataVolumeDialog extends Dialog {
 	 * @return
 	 */
 	private Binding bindButton(final Button button, final MountType mountType, final Control... controls) {
-		return dbc.bindValue(WidgetProperties.selection().observe(button),
+		return dbc.bindValue(WidgetProperties.buttonSelection().observe(button),
 				BeanProperties.value(DataVolumeModel.class, DataVolumeModel.MOUNT_TYPE).observe(model),
 				new UpdateValueStrategy() {
 					@Override

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -68,18 +69,6 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns an image descriptor for the image file at the given plug-in
-	 * relative path
-	 *
-	 * @param path
-	 *        the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
-
-	/**
 	 *
 	 * @param key - key is usually plug-in relative path to image like icons/xxx.gif
 	 * @return Image loaded from key location or from registry cache, it will be stored in plug-in registry and disposed when plug-in unloads
@@ -88,7 +77,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 		ImageRegistry registry = getImageRegistry();
 		Image image = registry.get(key);
 		if (image == null) {
-			ImageDescriptor descriptor = imageDescriptorFromPlugin(PLUGIN_ID, key);
+			ImageDescriptor descriptor = ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, key).get();
 			if (descriptor == null) {
 				ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 				return sharedImages.getImage(key);

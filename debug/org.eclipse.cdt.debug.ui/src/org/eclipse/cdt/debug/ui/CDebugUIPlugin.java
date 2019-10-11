@@ -48,6 +48,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Color;
@@ -362,7 +363,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+		return ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, path).get();
 	}
 
 	/**
@@ -374,7 +375,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		ImageRegistry registry = getImageRegistry();
 		Image image = registry.get(key);
 		if (image == null) {
-			ImageDescriptor descriptor = imageDescriptorFromPlugin(PLUGIN_ID, key);
+			ImageDescriptor descriptor = ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, key).get();
 			if (descriptor == null) {
 				ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 				return sharedImages.getImage(key);

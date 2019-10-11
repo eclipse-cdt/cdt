@@ -24,17 +24,17 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A label provider that marks all translation units that are currently part of the index.
  */
 public class IndexedFilesLabelProvider implements ILightweightLabelDecorator {
-	private static final ImageDescriptor INDEXED = AbstractUIPlugin.imageDescriptorFromPlugin(CUIPlugin.PLUGIN_ID,
-			"$nl$/icons/ovr16/indexedFile.gif"); //$NON-NLS-1$
+	private static final ImageDescriptor INDEXED = ResourceLocator
+			.imageDescriptorFromBundle(CUIPlugin.PLUGIN_ID, "$nl$/icons/ovr16/indexedFile.gif").get(); //$NON-NLS-1$
 
 	public IndexedFilesLabelProvider() {
 	}

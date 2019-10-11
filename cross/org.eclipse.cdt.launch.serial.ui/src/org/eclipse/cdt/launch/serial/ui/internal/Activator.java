@@ -12,6 +12,7 @@ package org.eclipse.cdt.launch.serial.ui.internal;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -35,7 +36,7 @@ public class Activator extends AbstractUIPlugin {
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		super.initializeImageRegistry(reg);
 
-		reg.put(IMG_CDT_LOGO, imageDescriptorFromPlugin(PLUGIN_ID, "icons/cdt_logo_16.png")); //$NON-NLS-1$
+		reg.put(IMG_CDT_LOGO, ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, "icons/cdt_logo_16.png").get()); //$NON-NLS-1$
 	}
 
 	public static Image getImage(String key) {

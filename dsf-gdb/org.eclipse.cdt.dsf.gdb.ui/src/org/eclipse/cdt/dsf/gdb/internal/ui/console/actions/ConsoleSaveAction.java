@@ -23,6 +23,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.console.ConsoleMessages;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.IConsoleImagesConst;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -40,8 +41,8 @@ public class ConsoleSaveAction extends Action {
 	public ConsoleSaveAction(TextConsole console) {
 		super();
 		setToolTipText(ConsoleMessages.ConsoleMessages_save_action_tooltip);
-		setImageDescriptor(
-				GdbUIPlugin.imageDescriptorFromPlugin(GdbUIPlugin.PLUGIN_ID, IConsoleImagesConst.IMG_SAVE_CONSOLE));
+		setImageDescriptor(ResourceLocator
+				.imageDescriptorFromBundle(GdbUIPlugin.PLUGIN_ID, IConsoleImagesConst.IMG_SAVE_CONSOLE).get());
 		fConsole = console;
 	}
 

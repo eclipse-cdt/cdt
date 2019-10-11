@@ -17,6 +17,7 @@ package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -42,7 +43,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class AddressBarContributionItem extends ContributionItem {
 	private Combo addressBox;
@@ -185,8 +185,8 @@ public class AddressBarContributionItem extends ContributionItem {
 
 		warningLabel = new Label(top, SWT.NONE);
 
-		warningImage = AbstractUIPlugin.imageDescriptorFromPlugin(DsfUIPlugin.PLUGIN_ID, "icons/address_warning.gif") //$NON-NLS-1$
-				.createImage();
+		warningImage = ResourceLocator.imageDescriptorFromBundle(DsfUIPlugin.PLUGIN_ID, "icons/address_warning.gif") //$NON-NLS-1$
+				.get().createImage();
 		warningLabel.setImage(warningImage);
 		warningLabel.setToolTipText(warningText);
 		setWarningIconVisible(false);

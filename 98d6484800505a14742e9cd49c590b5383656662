@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b15884c0_c5fbb68b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/togglefunction/ToggleNodeHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 164180
+      },
+      "writtenOn": "2019-10-11T21:24:17Z",
+      "side": 1,
+      "message": "A bit hacky this cast...\nWhy is IASTFunctionDefinition not a IASTAttributeOwner? Is it a C vs C++ thing?",
+      "revId": "98d6484800505a14742e9cd49c590b5383656662",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

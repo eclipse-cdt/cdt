@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -52,7 +53,7 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 
 		ImageRegistry imageRegistry = getImageRegistry();
-		imageRegistry.put(IMG_QT_16, imageDescriptorFromPlugin(PLUGIN_ID, "icons/qt16.png")); //$NON-NLS-1$
+		imageRegistry.put(IMG_QT_16, ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, "icons/qt16.png").get()); //$NON-NLS-1$
 
 		// Use a save participant to grab any changed resources while this
 		// plugin was inactive

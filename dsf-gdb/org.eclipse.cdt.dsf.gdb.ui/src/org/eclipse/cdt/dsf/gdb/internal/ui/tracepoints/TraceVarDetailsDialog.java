@@ -22,6 +22,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.tracepoints.TraceControlView.FailedTr
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceVariableDMData;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -43,7 +44,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public final class TraceVarDetailsDialog extends Dialog {
 
@@ -163,8 +163,8 @@ public final class TraceVarDetailsDialog extends Dialog {
 		warningIconLabel = new Label(createButtonComposite, SWT.NONE);
 		warningIconLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 
-		warningImage = AbstractUIPlugin.imageDescriptorFromPlugin(GdbUIPlugin.PLUGIN_ID, "icons/full/obj16/warning.gif") //$NON-NLS-1$
-				.createImage();
+		warningImage = ResourceLocator.imageDescriptorFromBundle(GdbUIPlugin.PLUGIN_ID, "icons/full/obj16/warning.gif") //$NON-NLS-1$
+				.get().createImage();
 		warningIconLabel.setImage(warningImage);
 		warningIconLabel.setVisible(false);
 

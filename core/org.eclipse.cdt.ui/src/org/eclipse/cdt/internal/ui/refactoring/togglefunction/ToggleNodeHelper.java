@@ -24,6 +24,8 @@ import java.util.Stack;
 import org.eclipse.cdt.core.dom.ast.ASTNodeFactoryFactory;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -99,6 +101,7 @@ public class ToggleNodeHelper extends NodeHelper {
 		IASTDeclSpecifier newDeclSpec = oldDefinition.getDeclSpecifier().copy(CopyStyle.withLocations);
 		IASTSimpleDeclaration newDeclaration = factory.newSimpleDeclaration(newDeclSpec);
 		newDeclaration.addDeclarator(newDeclarator);
+		copyAttributes(newDeclaration, oldDefinition);
 		return newDeclaration;
 	}
 
@@ -520,5 +523,29 @@ public class ToggleNodeHelper extends NodeHelper {
 					ICPPASTNamespaceDefinition.class);
 		}
 		return namespaces;
+	}
+
+	public static void copyAttributes(IASTFunctionDefinition newDef, IASTFunctionDefinition oldDef) {
+		if (oldDef instanceof IASTAttributeOwner && newDef instanceof IASTAttributeOwner) {
+			copyAttributes((IASTAttributeOwner) newDef, (IASTAttributeOwner) oldDef);
+		}
+	}
+
+	public static void copyAttributes(IASTFunctionDefinition newDef, IASTAttributeOwner oldOwner) {
+		if (newDef instanceof IASTAttributeOwner) {
+			copyAttributes((IASTAttributeOwner) newDef, oldOwner);
+		}
+	}
+
+	public static void copyAttributes(IASTAttributeOwner newOwner, IASTFunctionDefinition oldDef) {
+		if (oldDef instanceof IASTAttributeOwner) {
+			copyAttributes(newOwner, (IASTAttributeOwner) oldDef);
+		}
+	}
+
+	public static void copyAttributes(IASTAttributeOwner newOwner, IASTAttributeOwner oldOwner) {
+		for (IASTAttributeSpecifier a : oldOwner.getAttributeSpecifiers()) {
+			newOwner.addAttributeSpecifier(a);
+		}
 	}
 }

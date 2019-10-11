@@ -14,14 +14,11 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
@@ -100,13 +97,10 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 	}
 
 	private IASTSimpleDeclaration getNewDeclaration() {
-		INodeFactory factory = context.getDefinitionAST().getASTNodeFactory();
-		IASTDeclSpecifier newDeclSpecifier = context.getDefinition().getDeclSpecifier().copy(CopyStyle.withLocations);
-		newDeclSpecifier.setInline(false);
-		IASTSimpleDeclaration newDeclaration = factory.newSimpleDeclaration(newDeclSpecifier);
-		IASTFunctionDeclarator newDeclarator = context.getDefinition().getDeclarator().copy(CopyStyle.withLocations);
-		newDeclaration.addDeclarator(newDeclarator);
+		IASTSimpleDeclaration newDeclaration = ToggleNodeHelper
+				.createDeclarationFromDefinition(context.getDefinition());
 		newDeclaration.setParent(context.getDefinition().getParent());
+		newDeclaration.getDeclSpecifier().setInline(false);
 		return newDeclaration;
 	}
 }

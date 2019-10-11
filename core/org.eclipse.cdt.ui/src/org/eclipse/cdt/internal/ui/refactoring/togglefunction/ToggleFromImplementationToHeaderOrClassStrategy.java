@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -98,6 +99,7 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 				context.getDefinition().getDeclarator().copy(CopyStyle.withLocations),
 				context.getDefinition().copy(CopyStyle.withLocations));
 		newDefinition.setParent(otherAst);
+		ToggleNodeHelper.copyAttributes(newDefinition, context.getDefinition());
 		headerRewrite.insertBefore(otherAst.getTranslationUnit(), null, newDefinition, infoText);
 		restoreBody(headerRewrite, newDefinition, modifications);
 		for (IASTComment comment : leadingComments) {
@@ -110,6 +112,10 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 		IASTFunctionDefinition newDefinition = ToggleNodeHelper.createInClassDefinition(context.getDeclaration(),
 				context.getDefinition(), context.getDeclarationAST());
 		newDefinition.setParent(getParent());
+		if (context.getDeclaration().getParent() instanceof IASTSimpleDeclaration) {
+			ToggleNodeHelper.copyAttributes(newDefinition,
+					(IASTSimpleDeclaration) context.getDeclaration().getParent());
+		}
 		restoreBody(headerRewrite, newDefinition, modifications);
 		headerRewrite.replace(context.getDeclaration().getParent(), newDefinition, infoText);
 		for (IASTComment comment : leadingComments) {

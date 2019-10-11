@@ -3669,4 +3669,136 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	public void testToggleWithCommentsInSameFile_486036() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//Test.h
+	//#ifndef FOO_H_
+	//#define FOO_H_
+	//
+	//[[nodiscard]] int /*$*/foo/*$$*/() {
+	//	return 42;
+	//}
+	//
+	//#endif /* FOO_H_ */
+	//
+	//====================
+	//#ifndef FOO_H_
+	//#define FOO_H_
+	//
+	//[[nodiscard]] int foo();
+	//
+	//#endif /* FOO_H_ */
+	//
+
+	//Test.cpp
+	//#include "test.h"
+	//
+	//====================
+	//#include "test.h"
+	//
+	//int foo() {
+	//	return 42;
+	//}
+	public void testToggleWithAttribute_549965() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	// AClass.h
+	//#ifndef ACLASS_H_
+	//#define ACLASS_H_
+	//
+	//class AClass {
+	//public:
+	//	[[nodiscard]] void /*$*/my_method/*$$*/() {
+	//	}
+	//};
+	//
+	//#endif /* ACLASS_H_ */
+	//
+	//====================
+	//#ifndef ACLASS_H_
+	//#define ACLASS_H_
+	//
+	//class AClass {
+	//public:
+	//	[[nodiscard]] void my_method();
+	//};
+	//
+	//inline void AClass::my_method() {
+	//}
+	//
+	//#endif /* ACLASS_H_ */
+	//
+	public void testToggleWithAttribute_549965b() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//AClass.h
+	//#ifndef ACLASS_H_
+	//#define ACLASS_H_
+	//
+	//class AClass {
+	//public:
+	//	[[nodiscard]] void /*$*/my_method/*$$*/();
+	//};
+	//
+	//inline void AClass::my_method() {
+	//}
+	//
+	//#endif /* ACLASS_H_ */
+	//
+	//====================
+	//#ifndef ACLASS_H_
+	//#define ACLASS_H_
+	//
+	//class AClass {
+	//public:
+	//	[[nodiscard]] void my_method();
+	//};
+	//#endif /* ACLASS_H_ */
+	//
+
+	//AClass.cpp
+	//#include "AClass.h"
+	//
+	//====================
+	//#include "AClass.h"
+	//
+	//void AClass::my_method() {
+	//}
+	public void testToggleWithAttribute_549965c() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	// AClass.h
+	//#ifndef ACLASS_H_
+	//#define ACLASS_H_
+	//
+	//class AClass {
+	//public:
+	//	[[nodiscard]] void /*$*/my_method/*$$*/();
+	//};
+	//#endif /* ACLASS_H_ */
+	//
+	//====================
+	//#ifndef ACLASS_H_
+	//#define ACLASS_H_
+	//
+	//class AClass {
+	//public:
+	//	[[nodiscard]] void my_method() {
+	//	}
+	//};
+	//#endif /* ACLASS_H_ */
+	//
+
+	//AClass.cpp
+	//#include "AClass.h"
+	//
+	//void AClass::my_method() {
+	//}
+	//====================
+	//#include "AClass.h"
+	public void testToggleWithAttribute_549965d() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

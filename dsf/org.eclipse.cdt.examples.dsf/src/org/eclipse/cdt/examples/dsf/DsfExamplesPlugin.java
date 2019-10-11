@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf;
 
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -47,10 +47,11 @@ public class DsfExamplesPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		fgBundleContext = context;
 		super.start(context);
-		getImageRegistry().put(IMG_ALARM, imageDescriptorFromPlugin(PLUGIN_ID, IMG_ALARM));
-		getImageRegistry().put(IMG_ALARM_TRIGGERED, imageDescriptorFromPlugin(PLUGIN_ID, IMG_ALARM_TRIGGERED));
-		getImageRegistry().put(IMG_TIMER, imageDescriptorFromPlugin(PLUGIN_ID, IMG_TIMER));
-		getImageRegistry().put(IMG_REMOVE, imageDescriptorFromPlugin(PLUGIN_ID, IMG_REMOVE));
+		getImageRegistry().put(IMG_ALARM, ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, IMG_ALARM).get());
+		getImageRegistry().put(IMG_ALARM_TRIGGERED,
+				ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, IMG_ALARM_TRIGGERED).get());
+		getImageRegistry().put(IMG_TIMER, ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, IMG_TIMER).get());
+		getImageRegistry().put(IMG_REMOVE, ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, IMG_REMOVE).get());
 	}
 
 	@Override
@@ -71,17 +72,6 @@ public class DsfExamplesPlugin extends AbstractUIPlugin {
 
 	public static BundleContext getBundleContext() {
 		return fgBundleContext;
-	}
-
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 
 }

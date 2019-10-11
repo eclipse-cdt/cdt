@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -66,7 +67,7 @@ public class ControlFlowGraphPlugin extends AbstractUIPlugin {
 		ImageRegistry registry = getImageRegistry();
 		ImageDescriptor descriptor = registry.getDescriptor(key);
 		if (descriptor == null) {
-			descriptor = imageDescriptorFromPlugin(PLUGIN_ID, key);
+			descriptor = ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, key).get();
 			registry.put(key, descriptor);
 		}
 		return descriptor;
@@ -76,7 +77,7 @@ public class ControlFlowGraphPlugin extends AbstractUIPlugin {
 		ImageRegistry registry = getImageRegistry();
 		Image image = registry.get(key);
 		if (image == null) {
-			ImageDescriptor descriptor = imageDescriptorFromPlugin(PLUGIN_ID, key);
+			ImageDescriptor descriptor = ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, key).get();
 			registry.put(key, descriptor);
 			image = registry.get(key);
 		}

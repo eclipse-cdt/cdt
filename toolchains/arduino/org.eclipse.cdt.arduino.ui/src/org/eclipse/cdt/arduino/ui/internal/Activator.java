@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -49,10 +50,11 @@ public class Activator extends AbstractUIPlugin {
 	@Override
 	protected ImageRegistry createImageRegistry() {
 		ImageRegistry registry = super.createImageRegistry();
-		registry.put(IMG_ARDUINO, imageDescriptorFromPlugin(PLUGIN_ID, "icons/cprojects.gif")); //$NON-NLS-1$
-		registry.put(IMG_CONNECTION_TYPE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arduino.png")); //$NON-NLS-1$
-		registry.put(IMG_ADD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/list-add.gif")); //$NON-NLS-1$
-		registry.put(IMG_DELETE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/list-delete.gif")); //$NON-NLS-1$
+		registry.put(IMG_ARDUINO, ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, "icons/cprojects.gif").get()); //$NON-NLS-1$
+		registry.put(IMG_CONNECTION_TYPE,
+				ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, "icons/arduino.png").get()); //$NON-NLS-1$
+		registry.put(IMG_ADD, ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, "icons/list-add.gif").get()); //$NON-NLS-1$
+		registry.put(IMG_DELETE, ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, "icons/list-delete.gif").get()); //$NON-NLS-1$
 		return registry;
 	}
 

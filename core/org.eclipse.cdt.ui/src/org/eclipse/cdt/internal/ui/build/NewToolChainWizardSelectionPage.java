@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
@@ -30,7 +31,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class NewToolChainWizardSelectionPage extends WizardPage {
 
@@ -62,8 +62,8 @@ public class NewToolChainWizardSelectionPage extends WizardPage {
 
 				String iconFile = element.getAttribute("icon"); //$NON-NLS-1$
 				if (iconFile != null) {
-					ImageDescriptor desc = CUIPlugin.imageDescriptorFromPlugin(element.getNamespaceIdentifier(),
-							iconFile);
+					ImageDescriptor desc = ResourceLocator
+							.imageDescriptorFromBundle(element.getNamespaceIdentifier(), iconFile).get();
 					if (desc != null) {
 						item.setImage(desc.createImage());
 					}
@@ -107,7 +107,7 @@ public class NewToolChainWizardSelectionPage extends WizardPage {
 		if (descImage == null) {
 			return null;
 		}
-		return AbstractUIPlugin.imageDescriptorFromPlugin(element.getNamespaceIdentifier(), descImage);
+		return ResourceLocator.imageDescriptorFromBundle(element.getNamespaceIdentifier(), descImage).get();
 	}
 
 	@Override

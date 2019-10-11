@@ -71,6 +71,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -100,7 +101,6 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * It is a parent for all standard CDT property pages
@@ -567,7 +567,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 	 *   which do not share ICProjectDescription instance.
 	 *   But some changes may be saved wrong if they are affected
 	 *   by data from another property pages (Discovery options etc).
-
+	
 	 *   To enable 2nd mode, just create the following file:
 	 *   <workspace>/.metadata/.plugins/org.eclipse.cdt.ui/apply_mode
 	 */
@@ -1199,9 +1199,9 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 		URL url = null;
 		String iconName = config.getAttribute(IMAGE_NAME);
 		if (iconName != null) {
-			idesc = AbstractUIPlugin.imageDescriptorFromPlugin(
+			idesc = ResourceLocator.imageDescriptorFromBundle(
 					Platform.getBundle(config.getDeclaringExtension().getContributor().getName()).getSymbolicName(),
-					iconName);
+					iconName).get();
 		}
 		if (idesc == null)
 			return null;

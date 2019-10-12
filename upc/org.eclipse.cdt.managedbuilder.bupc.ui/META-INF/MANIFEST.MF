@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.bupc.ui;singleton:=true
-Bundle-Version: 1.0.4.qualifier
+Bundle-Version: 1.0.100.qualifier
 Bundle-ClassPath: org.eclipse.cdt.managedbuilder.bupc.ui
 Bundle-Activator: org.eclipse.cdt.managedbuilder.bupc.ui.UPCWizardsPlugin
 Require-Bundle: org.eclipse.cdt.ui,

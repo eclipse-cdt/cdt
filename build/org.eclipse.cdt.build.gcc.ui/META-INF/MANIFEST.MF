@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GCC ToolChain Support UI
 Bundle-SymbolicName: org.eclipse.cdt.build.gcc.ui;singleton:=true
-Bundle-Version: 1.0.1.qualifier
+Bundle-Version: 1.0.100.qualifier
 Bundle-Activator: org.eclipse.cdt.build.gcc.ui.internal.Activator
 Bundle-Vendor: Eclipse CDT
 Require-Bundle: org.eclipse.ui,

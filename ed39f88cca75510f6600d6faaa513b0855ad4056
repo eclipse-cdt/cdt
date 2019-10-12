@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "34c79a76_3a84aa87",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VariableInitializationChecker.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-12T16:23:36Z",
+      "side": 1,
+      "message": "This will never be true, since we just checked that node is instanceof IASTDeclarationStatement above.",
+      "revId": "ed39f88cca75510f6600d6faaa513b0855ad4056",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

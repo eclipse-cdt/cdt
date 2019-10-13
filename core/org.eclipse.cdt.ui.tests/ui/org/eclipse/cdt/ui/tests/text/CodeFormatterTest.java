@@ -4699,4 +4699,13 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testStructuredBindingInSwitchInitStatement() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define PROTO(X) X
+	//void foo PROTO((char* b));
+
+	//#define PROTO(X) X
+	//void foo PROTO((char* b));
+	public void testMacroInFunctionParameters_Bug550096() throws Exception {
+		assertFormatterResult();
+	}
 }

@@ -1612,6 +1612,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(ICPPASTFunctionDeclarator node) {
 		final List<ICPPASTParameterDeclaration> parameters = Arrays.asList(node.getParameters());
+		/*boolean allInMacro = true;
+		for (ICPPASTParameterDeclaration p : parameters) {
+			if (!enclosedInMacroExpansion(p))
+				allInMacro = false;
+		}
+		if (allInMacro)
+			return PROCESS_SKIP;*/
 		final ListOptions options = createListOptionsForFunctionDeclarationParameters();
 		Runnable tailFormatter = scribe.takeTailFormatter();
 		formatList(parameters, options, true, node.takesVarArgs(),
@@ -2483,8 +2490,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	private void formatList(List<?> elements, ListOptions options, boolean encloseInParen, boolean addEllipsis,
 			Runnable tailFormatter, Runnable prefix) {
-		if (encloseInParen)
-			scribe.printNextToken(options.leftToken, options.fSpaceBeforeOpeningParen);
+		if (encloseInParen) {
+			if (peekNextToken() == options.leftToken)
+				scribe.printNextToken(options.leftToken, options.fSpaceBeforeOpeningParen);
+		}
 
 		final int elementsLength = elements.size();
 		if (encloseInParen) {

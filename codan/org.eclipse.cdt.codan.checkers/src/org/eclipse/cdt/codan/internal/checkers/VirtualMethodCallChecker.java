@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -104,8 +105,10 @@ public class VirtualMethodCallChecker extends AbstractIndexAstChecker {
 					IASTExpression fNameExp = fCall.getFunctionNameExpression();
 					IBinding fBinding = null;
 					IASTNode problemNode = expression;
+					boolean isQualified = false;
 					if (fNameExp instanceof IASTIdExpression) {
 						IASTIdExpression fName = (IASTIdExpression) fNameExp;
+						isQualified = fName.getName() instanceof ICPPASTQualifiedName;
 						fBinding = fName.getName().resolveBinding();
 					} else if (fNameExp instanceof IASTFieldReference) {
 						IASTFieldReference fName = (IASTFieldReference) fNameExp;
@@ -115,7 +118,7 @@ public class VirtualMethodCallChecker extends AbstractIndexAstChecker {
 					}
 					if (fBinding instanceof ICPPMethod) {
 						ICPPMethod method = (ICPPMethod) fBinding;
-						if (method.isPureVirtual() || ClassTypeHelper.isVirtual(method)) {
+						if (method.isPureVirtual() || (!isQualified && ClassTypeHelper.isVirtual(method))) {
 							reportProblem(VIRTUAL_CALL_ID, problemNode);
 						}
 					}

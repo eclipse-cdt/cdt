@@ -33,11 +33,11 @@ public class VirtualMethodCallCheckerTest extends CheckerTestCase {
 
 	//class Foo {
 	//public:
-	//Foo();
-	//~Foo();
-	//virtual void bar();
-	//virtual void pure() = 0;
-	//virtual void notpure();
+	//	Foo();
+	//	~Foo();
+	//	virtual void bar();
+	//	virtual void pure() = 0;
+	//	virtual void notpure();
 	//};
 	//Foo::Foo() {
 	//	pure();
@@ -53,11 +53,11 @@ public class VirtualMethodCallCheckerTest extends CheckerTestCase {
 
 	//class Foo {
 	//public:
-	//Foo();
-	//~Foo();
-	//virtual void bar();
-	//virtual void pure() = 0;
-	//virtual void notpure();
+	//	Foo();
+	//	~Foo();
+	//	virtual void bar();
+	//	virtual void pure() = 0;
+	//	virtual void notpure();
 	//};
 	//Foo::Foo() {
 	//	notpure();
@@ -73,11 +73,11 @@ public class VirtualMethodCallCheckerTest extends CheckerTestCase {
 
 	//class Foo {
 	//public:
-	//Foo();
-	//~Foo();
-	//virtual void bar();
-	//virtual void pure() = 0;
-	//virtual void notpure();
+	//	Foo();
+	//	~Foo();
+	//	virtual void bar();
+	//	virtual void pure() = 0;
+	//	virtual void notpure();
 	//};
 	//Foo::Foo() {
 	//}
@@ -93,11 +93,11 @@ public class VirtualMethodCallCheckerTest extends CheckerTestCase {
 
 	//class Foo {
 	//public:
-	//Foo();
-	//~Foo();
-	//virtual void bar();
-	//virtual void pure() = 0;
-	//virtual void notpure();
+	//	Foo();
+	//	~Foo();
+	//	virtual void bar();
+	//	virtual void pure() = 0;
+	//	virtual void notpure();
 	//};
 	//Foo::Foo() {
 	//}
@@ -113,11 +113,11 @@ public class VirtualMethodCallCheckerTest extends CheckerTestCase {
 
 	//class Foo {
 	//public:
-	//Foo();
-	//~Foo();
-	//virtual void bar();
-	//virtual void pure() = 0;
-	//virtual void notpure();
+	//	Foo();
+	//	~Foo();
+	//	virtual void bar();
+	//	virtual void pure() = 0;
+	//	virtual void notpure();
 	//};
 	//Foo::Foo() {
 	//}
@@ -138,7 +138,7 @@ public class VirtualMethodCallCheckerTest extends CheckerTestCase {
 	//};
 	//class B {
 	//private:
-	//A a;
+	//	A a;
 	//public:
 	//	B() { a.v(); }
 	//};
@@ -149,7 +149,7 @@ public class VirtualMethodCallCheckerTest extends CheckerTestCase {
 
 	//class B {
 	//private:
-	//A a;
+	//	A a;
 	//public:
 	//	B() { this->v(); }
 	//	virtual void v() {}
@@ -161,7 +161,7 @@ public class VirtualMethodCallCheckerTest extends CheckerTestCase {
 
 	//class B {
 	//private:
-	//A a;
+	//	A a;
 	//public:
 	//	B() { (*this).v(); }
 	//	virtual void v() {}
@@ -181,7 +181,7 @@ public class VirtualMethodCallCheckerTest extends CheckerTestCase {
 	//};
 	public void testVirtualMethodChildClass() throws Exception {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLine(7, ERR_VIRTUAL_ID);
+		checkNoErrorsOfKind(ERR_VIRTUAL_ID);
 	}
 
 	//class Foo {
@@ -209,7 +209,7 @@ public class VirtualMethodCallCheckerTest extends CheckerTestCase {
 	//	A(int a) : a(a) { }
 	//	virtual void foo();
 	//private:
-	//	  int a;
+	//	int a;
 	//};
 	public void testVirtualMethodDelCtor() throws Exception {
 		loadCodeAndRun(getAboveComment());
@@ -244,5 +244,65 @@ public class VirtualMethodCallCheckerTest extends CheckerTestCase {
 	public void testVirtualMethodNested() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4, 9);
+	}
+
+	//class Foo {
+	//public:
+	//	Foo();
+	//	~Foo();
+	//	virtual void bar();
+	//	virtual void pure() = 0;
+	//	virtual void notpure();
+	//};
+	//Foo::Foo() {
+	//	Foo::pure();
+	//}
+	//Foo::~Foo() {
+	//}
+	//Foo::bar() {
+	//}
+	public void testWithQualifiedPureInCtor_Bug552076() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(10, ERR_VIRTUAL_ID);
+	}
+
+	//class Foo {
+	//public:
+	//	Foo();
+	//	~Foo();
+	//	virtual void bar();
+	//	virtual void pure() = 0;
+	//	virtual void notpure();
+	//};
+	//Foo::Foo() {
+	//	Foo::notpure();
+	//}
+	//Foo::~Foo() {
+	//}
+	//Foo::bar() {
+	//}
+	public void testWithQualifiedNotPureInCtor_Bug552076() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(ERR_VIRTUAL_ID);
+	}
+
+	//class Foo {
+	//public:
+	//	Foo();
+	//	~Foo();
+	//	virtual void bar();
+	//	virtual void pure() = 0;
+	//	virtual void notpure();
+	//};
+	//Foo::Foo() {
+	//	this->Foo::notpure();
+	//}
+	//Foo::~Foo() {
+	//}
+	//Foo::bar() {
+	//}
+	public void testWithQualifiedNotPureInCtorField_Bug552076() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(ERR_VIRTUAL_ID);
 	}
 }

@@ -35,7 +35,7 @@
 
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
-		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/9.8/cdt-9.8.1/</comparator.repo>
+		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/9.9/cdt-9.9.0/</comparator.repo>
 		<!-- these parameters are to control baseline replace and compare. On a local build you want
 		     to avoid baseline replace and compare, especially if you have different versions of Java than
 			 the baseline was built with. This is the default.

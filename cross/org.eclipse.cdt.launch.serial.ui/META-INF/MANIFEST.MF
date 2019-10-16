@@ -2,6 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Ui
 Bundle-SymbolicName: org.eclipse.cdt.launch.serial.ui;singleton:=true
+Bundle-Vendor: Eclipse CDT
 Bundle-Version: 1.0.200.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",

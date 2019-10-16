@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: org.eclipse.cdt.autotools.docs;singleton:=true
-Bundle-Version: 2.0.200.qualifier
+Bundle-Version: 2.0.300.qualifier
 Bundle-Vendor: %provider
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.help,

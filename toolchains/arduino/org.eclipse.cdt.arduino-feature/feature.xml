@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.arduino"
       label="%featureName"
-      version="9.9.0.qualifier"
+      version="9.10.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.arduino.ui"
       license-feature="org.eclipse.license"
@@ -25,7 +25,7 @@
       <import feature="org.eclipse.remote.serial" version="1.0.0"/>
       <import feature="org.eclipse.remote" version="2.0.0"/>
       <import feature="org.eclipse.remote.console" version="2.0.0"/>
-      <import feature="org.eclipse.cdt" version="9.9.0"/>
+      <import feature="org.eclipse.cdt" version="9.10.0"/>
       <import feature="org.eclipse.launchbar.remote" version="1.0.0"/>
    </requires>
 

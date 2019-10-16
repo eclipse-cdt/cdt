@@ -67,8 +67,8 @@ public class GDBJtagLaunchTest extends BaseParametrizedTestCase {
 				setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, X86_64_INIT);
 			}
 		} else {
-			setLaunchAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, "file " + TEST_PROGRAM_NAME); //$NON-NLS-1$
-			setLaunchAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, "run"); //$NON-NLS-1$
+			setLaunchAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, "# Commented line\nfile " + TEST_PROGRAM_NAME); //$NON-NLS-1$
+			setLaunchAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, "# Commented line\nrun"); //$NON-NLS-1$
 		}
 	}
 

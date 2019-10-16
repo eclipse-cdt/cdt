@@ -2,6 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests
 Bundle-SymbolicName: org.eclipse.cdt.arduino.core.tests
+Bundle-Vendor: Eclipse CDT
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.eclipse.cdt.arduino.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

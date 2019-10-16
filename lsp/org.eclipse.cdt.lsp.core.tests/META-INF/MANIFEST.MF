@@ -2,6 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: "Tests for LSP4E C/C++ Support"
 Bundle-SymbolicName: org.eclipse.cdt.lsp.core.tests
+Bundle-Vendor: Eclipse CDT
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: org.eclipse.cdt.lsp.core.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

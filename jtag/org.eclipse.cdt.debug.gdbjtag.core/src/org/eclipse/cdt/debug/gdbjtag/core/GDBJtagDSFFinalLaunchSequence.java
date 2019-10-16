@@ -489,6 +489,11 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			if (userCmd.length() > 0) {
 				String[] commands = userCmd.split("\\r?\\n"); //$NON-NLS-1$
 
+				// Remove empty or commented lines
+				commands = Arrays.stream(commands)
+						.filter(line -> !line.trim().isEmpty() && !line.trim().startsWith("#")) //$NON-NLS-1$
+						.toArray(String[]::new);
+
 				CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
 				crm.setDoneCount(commands.length);
 				for (int i = 0; i < commands.length; ++i) {
@@ -714,6 +719,11 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			if (userCmd.length() > 0) {
 				userCmd = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(userCmd);
 				String[] commands = userCmd.split("\\r?\\n"); //$NON-NLS-1$
+
+				// Remove empty or commented lines
+				commands = Arrays.stream(commands)
+						.filter(line -> !line.trim().isEmpty() && !line.trim().startsWith("#")) //$NON-NLS-1$
+						.toArray(String[]::new);
 
 				CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
 				crm.setDoneCount(commands.length);

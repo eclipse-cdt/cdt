@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 Kichwa Coders and others.
+ * Copyright (c) 2016, 2019 Kichwa Coders and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -67,8 +67,9 @@ public class GDBJtagLaunchTest extends BaseParametrizedTestCase {
 				setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, X86_64_INIT);
 			}
 		} else {
-			setLaunchAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, "file " + TEST_PROGRAM_NAME); //$NON-NLS-1$
-			setLaunchAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, "run"); //$NON-NLS-1$
+			String comments = "# Commented line\n\n  \n  # Commented indented line\n";
+			setLaunchAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, comments + "file " + TEST_PROGRAM_NAME); //$NON-NLS-1$
+			setLaunchAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, comments + "run"); //$NON-NLS-1$
 		}
 	}
 

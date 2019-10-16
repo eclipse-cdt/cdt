@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GDB Hardware Debugging Tests
 Bundle-SymbolicName: org.eclipse.cdt.debug.gdbjtag.core.tests;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.100.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.gdbjtag.core.tests.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.tests.dsf.gdb;bundle-version="2.3.0",

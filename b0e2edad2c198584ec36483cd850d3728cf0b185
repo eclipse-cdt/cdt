@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c59f2bb_dc14c57d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/VirtualMethodCallChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-17T04:12:29Z",
+      "side": 1,
+      "message": "A field reference can also be qualified: a-\u003eB::C. Not something you see often, but it\u0027s valid.",
+      "revId": "b0e2edad2c198584ec36483cd850d3728cf0b185",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "413f1143_03246866",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/VirtualMethodCallCheckerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2019-10-17T04:12:29Z",
+      "side": 1,
+      "message": "Please indent test code, it makes it easier to read and understand its structure.",
+      "revId": "b0e2edad2c198584ec36483cd850d3728cf0b185",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

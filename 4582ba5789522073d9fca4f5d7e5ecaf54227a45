@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "91952064_7fc3999a",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core.tests/src/org/eclipse/cdt/debug/gdbjtag/core/tests/launch/GDBJtagLaunchTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2019-10-18T17:21:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34dee232_f256b634",
+      "revId": "4582ba5789522073d9fca4f5d7e5ecaf54227a45",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a4f2bcad_8acc7b7d",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core.tests/src/org/eclipse/cdt/debug/gdbjtag/core/tests/launch/GDBJtagLaunchTest.java",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2019-10-18T11:14:49Z",
       "side": 1,
       "message": "Change year to 2019",
+      "range": {
+        "startLine": 2,
+        "startChar": 23,
+        "endLine": 2,
+        "endChar": 27
+      },
+      "revId": "4582ba5789522073d9fca4f5d7e5ecaf54227a45",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9d12d47a_faf6c2b3",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core.tests/src/org/eclipse/cdt/debug/gdbjtag/core/tests/launch/GDBJtagLaunchTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2019-10-18T17:21:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a4f2bcad_8acc7b7d",
       "range": {
         "startLine": 2,
         "startChar": 23,
@@ -81,6 +123,54 @@
         "startChar": 60,
         "endLine": 71,
         "endChar": 61
+      },
+      "revId": "4582ba5789522073d9fca4f5d7e5ecaf54227a45",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "32629252_57c5fc63",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core.tests/src/org/eclipse/cdt/debug/gdbjtag/core/tests/launch/GDBJtagLaunchTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2019-10-18T17:21:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "91d36710_1bffcab5",
+      "range": {
+        "startLine": 71,
+        "startChar": 60,
+        "endLine": 71,
+        "endChar": 61
+      },
+      "revId": "4582ba5789522073d9fca4f5d7e5ecaf54227a45",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "58a53c9b_a6d12f2a",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core.tests/src/org/eclipse/cdt/debug/gdbjtag/core/tests/launch/GDBJtagLaunchTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2019-10-18T17:21:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cbcde43f_74c53107",
+      "range": {
+        "startLine": 71,
+        "startChar": 76,
+        "endLine": 71,
+        "endChar": 78
       },
       "revId": "4582ba5789522073d9fca4f5d7e5ecaf54227a45",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",

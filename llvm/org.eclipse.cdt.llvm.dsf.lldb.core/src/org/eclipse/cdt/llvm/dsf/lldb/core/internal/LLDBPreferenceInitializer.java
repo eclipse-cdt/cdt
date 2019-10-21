@@ -26,11 +26,12 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
  */
 public class LLDBPreferenceInitializer extends AbstractPreferenceInitializer {
 
-	private static final String XCODE_BUNDLED_LLDB_PATH = "/Applications/Xcode.app/Contents/Developer/usr/bin/lldb-mi"; //$NON-NLS-1$
+	private static final String XCODE_BUNDLED_LLDB_MI_PATH = "/Applications/Xcode.app/Contents/Developer/usr/bin/lldb-mi"; //$NON-NLS-1$
 
 	private static String getDefaultCommand() {
-		if (Platform.getOS().equals(Platform.OS_MACOSX) && new File(XCODE_BUNDLED_LLDB_PATH).exists()) {
-			return XCODE_BUNDLED_LLDB_PATH;
+		// Note: As of Xcode 11.1, lldb-mi is not included anymore
+		if (Platform.getOS().equals(Platform.OS_MACOSX) && new File(XCODE_BUNDLED_LLDB_MI_PATH).exists()) {
+			return XCODE_BUNDLED_LLDB_MI_PATH;
 		}
 		return ILLDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT;
 	}

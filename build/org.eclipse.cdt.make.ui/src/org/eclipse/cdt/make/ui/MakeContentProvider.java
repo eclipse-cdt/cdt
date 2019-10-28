@@ -422,7 +422,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	/**
 	 * Check if the resource is in the list of source entries.
-	
+
 	 * @param rc - resource to check.
 	 * @return {@code true} if the resource is a source folder, {@code false} otherwise.
 	 *

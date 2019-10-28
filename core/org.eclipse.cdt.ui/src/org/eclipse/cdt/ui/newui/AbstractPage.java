@@ -567,7 +567,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 	 *   which do not share ICProjectDescription instance.
 	 *   But some changes may be saved wrong if they are affected
 	 *   by data from another property pages (Discovery options etc).
-	
+
 	 *   To enable 2nd mode, just create the following file:
 	 *   <workspace>/.metadata/.plugins/org.eclipse.cdt.ui/apply_mode
 	 */

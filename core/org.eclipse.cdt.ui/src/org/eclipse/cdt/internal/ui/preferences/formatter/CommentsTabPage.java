@@ -99,8 +99,7 @@ public class CommentsTabPage extends FormatterTabPage {
 		//		createPrefFalseTrue(globalGroup, numColumns, FormatterMessages.CommentsTabPage_do_not_join_lines, DefaultCodeFormatterConstants.FORMATTER_JOIN_LINES_IN_COMMENTS, true);
 
 		// Line comment group
-		final Group commentGroup = createGroup(numColumns, composite,
-				FormatterMessages.CommentsTabPage_group1_title);
+		final Group commentGroup = createGroup(numColumns, composite, FormatterMessages.CommentsTabPage_group1_title);
 		//		final CheckboxPreference singleLineCommentsOnFirstColumn= createPrefFalseTrue(lineCommentGroup, numColumns, FormatterMessages.CommentsTabPage_format_line_comments_on_first_column, DefaultCodeFormatterConstants.FORMATTER_COMMENT_FORMAT_LINE_COMMENT_STARTING_ON_FIRST_COLUMN, false);
 		//		((GridData) singleLineCommentsOnFirstColumn.getControl().getLayoutData()).horizontalIndent= indent;
 		createPrefFalseTrue(commentGroup, numColumns, FormatterMessages.CommentsTabPage_block_comment,

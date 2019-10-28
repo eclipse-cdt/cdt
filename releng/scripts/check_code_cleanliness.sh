@@ -15,7 +15,7 @@ set -e
 ##
 # Format code
 ##
-: ${ECLIPSE:=~/buildtools/eclipse-SDK-4.9/eclipse}
+: ${ECLIPSE:=~/buildtools/eclipse-SDK-4.13/eclipse}
 test ! -e check_code_cleanliness_workspace
 ${ECLIPSE} \
     -consolelog -nosplash -application org.eclipse.jdt.core.JavaCodeFormatter \

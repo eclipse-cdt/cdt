@@ -409,7 +409,7 @@ public class AutoconfParser {
 				}
 				throw new BlockEndCondition(token);
 
-				// 1. Check for end of statement
+			// 1. Check for end of statement
 			case ITokenConstants.EOL:
 			case ITokenConstants.SEMI:
 				return;
@@ -462,7 +462,7 @@ public class AutoconfParser {
 						INVALID_FI);
 				throw new BlockEndCondition(token);
 
-				// 4. Look for for/while loops
+			// 4. Look for for/while loops
 			case ITokenConstants.SH_FOR:
 				checkLineStart(token, atStart);
 				parseBlock(parent, token, new AutoconfForElement());
@@ -489,7 +489,7 @@ public class AutoconfParser {
 						AutoconfUntilElement.class, AutoconfSelectElement.class }, INVALID_DONE);
 				throw new BlockEndCondition(token);
 
-				// 5. Look for case statements
+			// 5. Look for case statements
 			case ITokenConstants.SH_CASE:
 				checkLineStart(token, atStart);
 				parseCaseBlock(parent, token, new AutoconfCaseElement());
@@ -507,7 +507,7 @@ public class AutoconfParser {
 						new Class[] { AutoconfCaseElement.class, AutoconfCaseConditionElement.class }, INVALID_ESAC);
 				throw new BlockEndCondition(token);
 
-				// 6. Check for HERE documents
+			// 6. Check for HERE documents
 			case ITokenConstants.SH_HERE:
 			case ITokenConstants.SH_HERE_DASH:
 
@@ -584,7 +584,7 @@ public class AutoconfParser {
 			case ITokenConstants.EOF:
 				throw new BlockEndCondition(token);
 
-				// 2. Check macro expansions
+			// 2. Check macro expansions
 			case ITokenConstants.WORD:
 				token = checkMacro(parent, token);
 				break;

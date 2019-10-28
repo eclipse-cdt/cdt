@@ -216,7 +216,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 					if(e instanceof TemplateIDErrorException){
 						//IScanner completePreprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 						//IParser<IASTTranslationUnit> completeParser = getCompleteParser(preprocessor, index, parserProperties);
-					
+
 						ISecondaryParser<IASTTranslationUnit> completeParser = getCompleteParser((ITokenStream)parser, preprocessor, index, parserProperties);
 						//completeParser.setAction(parser.getAction());
 						//((ISecondaryParser)completeParser).setTokenMap((ITokenStream)parser);

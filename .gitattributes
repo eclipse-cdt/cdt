@@ -64,6 +64,8 @@ package-list text
 *.xml text
 *.xsd text
 *.xsl text
+yarn.lock text
+*.lock text
 
 # Images
 *.gif binary

@@ -65,6 +65,7 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 		 * Custom type, represented by string input field by default
 		 */
 		TYPE_CUSTOM("custom"); //$NON-NLS-1$
+
 		private String literal;
 
 		private PreferenceType(String literal) {

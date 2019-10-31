@@ -26,5 +26,4 @@ public interface ICDTDebugProtocolServer extends IDebugProtocolServer {
 	default CompletableFuture<MemoryContents> memory(MemoryRequestArguments args) {
 		throw new UnsupportedOperationException();
 	}
-
 }

@@ -50,6 +50,19 @@ public class DisassemblyUtils {
 	}
 
 	public static BigInteger decodeAddress(String string) {
+		// Handle case where address has type info, such as:
+		// {int (const char *, ...)} 0x7ffff7a48e80 <__printf>
+		if (string.startsWith("{")) { //$NON-NLS-1$
+			int indexOf = string.indexOf('}');
+			if (indexOf >= 0 && indexOf < string.length()) {
+				string = string.substring(indexOf + 1);
+			}
+			indexOf = string.indexOf('<');
+			if (indexOf >= 0) {
+				string = string.substring(0, indexOf);
+			}
+			string = string.trim();
+		}
 		if (string.startsWith("0x")) { //$NON-NLS-1$
 			return new BigInteger(string.substring(2), 16);
 		}

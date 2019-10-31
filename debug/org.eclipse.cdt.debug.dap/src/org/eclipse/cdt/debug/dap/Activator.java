@@ -12,7 +12,9 @@
 package org.eclipse.cdt.debug.dap;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.lsp4e.debug.debugmodel.DSPDebugElement;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -29,6 +31,8 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+
+		Platform.getAdapterManager().registerAdapters(new DapDisassemblyBackendFactory(), DSPDebugElement.class);
 	}
 
 	@Override

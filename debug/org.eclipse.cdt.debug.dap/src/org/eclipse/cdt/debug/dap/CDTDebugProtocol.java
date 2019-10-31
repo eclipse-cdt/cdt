@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.dap;
 
+import java.util.Objects;
+
+import org.eclipse.lsp4j.debug.DisassembleArguments;
+import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
+import org.eclipse.lsp4j.debug.util.Preconditions;
 import org.eclipse.lsp4j.jsonrpc.validation.NonNull;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
@@ -32,11 +37,8 @@ public class CDTDebugProtocol {
 			return this.body;
 		}
 
-		public void setBody(@NonNull final MemoryContents address) {
-			if (address == null) {
-				throw new IllegalArgumentException("Property must not be null: body"); //$NON-NLS-1$
-			}
-			this.body = address;
+		public void setBody(@NonNull final MemoryContents body) {
+			this.body = Preconditions.checkNotNull(body, "body"); //$NON-NLS-1$
 		}
 
 		@Override
@@ -93,11 +95,8 @@ public class CDTDebugProtocol {
 			return this.data;
 		}
 
-		public void setData(@NonNull final String address) {
-			if (address == null) {
-				throw new IllegalArgumentException("Property must not be null: data"); //$NON-NLS-1$
-			}
-			this.data = address;
+		public void setData(@NonNull final String data) {
+			this.data = Preconditions.checkNotNull(data, "data"); //$NON-NLS-1$
 		}
 
 		@Pure
@@ -107,10 +106,7 @@ public class CDTDebugProtocol {
 		}
 
 		public void setAddress(@NonNull final String address) {
-			if (address == null) {
-				throw new IllegalArgumentException("Property must not be null: address"); //$NON-NLS-1$
-			}
-			this.address = address;
+			this.address = Preconditions.checkNotNull(address, "address"); //$NON-NLS-1$
 		}
 
 		@Override
@@ -177,10 +173,7 @@ public class CDTDebugProtocol {
 		}
 
 		public void setAddress(@NonNull final String address) {
-			if (address == null) {
-				throw new IllegalArgumentException("Property must not be null: address"); //$NON-NLS-1$
-			}
-			this.address = address;
+			this.address = Preconditions.checkNotNull(address, "address"); //$NON-NLS-1$
 		}
 
 		@Pure
@@ -190,10 +183,7 @@ public class CDTDebugProtocol {
 		}
 
 		public void setLength(@NonNull final Long length) {
-			if (length == null) {
-				throw new IllegalArgumentException("Property must not be null: length"); //$NON-NLS-1$
-			}
-			this.length = length;
+			this.length = Preconditions.checkNotNull(length, "length"); //$NON-NLS-1$
 		}
 
 		@Pure
@@ -201,11 +191,8 @@ public class CDTDebugProtocol {
 			return this.offset;
 		}
 
-		public void setOffset(@NonNull final Long length) {
-			if (length == null) {
-				throw new IllegalArgumentException("Property must not be null: offset"); //$NON-NLS-1$
-			}
-			this.offset = length;
+		public void setOffset(final Long offset) {
+			this.offset = offset;
 		}
 
 		@Override
@@ -256,6 +243,60 @@ public class CDTDebugProtocol {
 				return false;
 			return true;
 		}
+	}
 
+	/**
+	 * An extension to standard {@link DisassembleArguments} that can
+	 * be passed to {@link IDebugProtocolServer#disassemble(DisassembleArguments)}
+	 *
+	 * When endMemoryReference is provided, the disassemble command will return
+	 * the minimum number of instructions to get to the end address or number
+	 * of lines (instructionCount), whichever is smaller.
+	 */
+	public static class CDTDisassembleArguments extends DisassembleArguments {
+
+		private String endMemoryReference;
+
+		@Pure
+		public String getEndMemoryReference() {
+			return this.endMemoryReference;
+		}
+
+		public void setEndMemoryReference(final String endMemoryReference) {
+			this.endMemoryReference = endMemoryReference;
+		}
+
+		@Override
+		@Pure
+		public String toString() {
+			ToStringBuilder b = new ToStringBuilder(this);
+			b.add("memoryReference", this.getMemoryReference()); //$NON-NLS-1$
+			b.add("offset", this.getOffset()); //$NON-NLS-1$
+			b.add("instructionOffset", this.getInstructionOffset()); //$NON-NLS-1$
+			b.add("instructionCount", this.getInstructionCount()); //$NON-NLS-1$
+			b.add("resolveSymbols", this.getResolveSymbols()); //$NON-NLS-1$
+			b.add("endMemoryReference", this.endMemoryReference); //$NON-NLS-1$
+			return b.toString();
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + Objects.hash(endMemoryReference);
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (!super.equals(obj))
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			CDTDisassembleArguments other = (CDTDisassembleArguments) obj;
+			return Objects.equals(endMemoryReference, other.endMemoryReference);
+		}
 	}
 }

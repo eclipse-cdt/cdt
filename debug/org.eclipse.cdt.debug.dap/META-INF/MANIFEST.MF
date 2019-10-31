@@ -28,7 +28,8 @@ Require-Bundle: org.apache.commons.io,
  org.eclipse.lsp4j.jsonrpc.debug,
  com.google.guava,
  org.eclipse.xtext.xbase.lib,
- org.eclipse.cdt.dsf.gdb;bundle-version="5.7.200"
+ org.eclipse.cdt.dsf.gdb;bundle-version="5.7.200",
+ org.eclipse.cdt.debug.ui
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.debug.dap
 Bundle-Activator: org.eclipse.cdt.debug.dap.Activator

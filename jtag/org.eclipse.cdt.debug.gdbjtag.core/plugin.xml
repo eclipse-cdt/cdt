@@ -58,6 +58,11 @@
             name="%OpenOCDSocket.name">
       </device>
       <device
+            class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.PEMicro"
+            id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.PEMicro"
+            name="%PEMicro.name">
+      </device>
+      <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.SeggerJLink"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.SeggerJLink"
             name="%SeggerJLink.name">

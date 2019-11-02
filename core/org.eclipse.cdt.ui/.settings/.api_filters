@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.ui" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.cdt.ui.actions.DeleteResConfigsAction">
+        <filter comment="DeleteResConfigsAction has been deprecated since CDT 8.0" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.actions.DeleteResConfigsAction"/>
+                <message_argument value="org.eclipse.cdt.ui_6.6.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.cdt.ui.actions.ExcludeFromBuildAction">
+        <filter comment="ExcludeFromBuildAction has been deprecated since CDT 8.0" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.actions.ExcludeFromBuildAction"/>
+                <message_argument value="org.eclipse.cdt.ui_6.6.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

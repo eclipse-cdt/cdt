@@ -87,7 +87,7 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	}
 
 	/**
-	 * @since 6.9
+	 * @since 6.10
 	 */
 	@SuppressWarnings("nls")
 	public GCCScannerExtensionConfiguration(CompilerType compiler, int version) {

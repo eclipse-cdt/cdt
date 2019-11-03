@@ -11373,4 +11373,16 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testGlobalConstWorksAsConstExpression_545756() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template <class C, C... Chars>
+	//	unsigned int operator""_test() {
+	//	    return sizeof...(Chars);
+	//	}
+	//
+	//	void foo() {
+	//	  auto len = "test"_test;
+	//	}
+	public void testStringLiteralOperatorTemplate_536986() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
 }

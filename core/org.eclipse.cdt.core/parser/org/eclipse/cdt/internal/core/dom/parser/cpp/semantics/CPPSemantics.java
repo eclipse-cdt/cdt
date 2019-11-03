@@ -231,6 +231,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMethod;
@@ -3453,11 +3454,10 @@ public class CPPSemantics {
 				data.setFunctionArguments(false, createArgForType(exp, charArray));
 				ret = resolveFunction(data, funcs, true, false);
 
-				//
 				char[] stringLiteral = exp.getValue(); // The string literal that was passed to the operator
 
 				// The string literal is passed to the operator as chars:
-				// "literal"_op -> operator "" _op<'l', 'i', 't', 'e', 'r', 'a', 'l'>();
+				// 12345_op -> operator "" _op<'1', '2', '3', '4', '5'>();
 				ICPPTemplateArgument args[] = new ICPPTemplateArgument[stringLiteral.length];
 				for (int k = 0; k < stringLiteral.length; k++) {
 					args[k] = new CPPTemplateNonTypeArgument(
@@ -3492,13 +3492,48 @@ public class CPPSemantics {
 				 * str (i.e., its length excluding the terminating null character).
 				 * L is treated as operator "" X(str, len)
 				 */
-				CPPPointerType strType = new CPPPointerType(
-						new CPPBasicType(((CPPASTLiteralExpression) exp).getBasicCharKind(), 0, null), true, false,
-						false);
+				IType charType = new CPPBasicType(((CPPASTLiteralExpression) exp).getBasicCharKind(), 0, null);
+				CPPPointerType strType = new CPPPointerType(charType, true, false, false);
 				IASTInitializerClause[] initializer = new IASTInitializerClause[] { createArgForType(exp, strType),
 						createArgForType(null, CPPBasicType.UNSIGNED_INT) };
 				data.setFunctionArguments(false, initializer);
 				ret = resolveFunction(data, funcs, true, false);
+
+				// GNU extension: allow literal operator templates for string literals.
+				// The implementation follows the proposed spec in
+				// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3599.html.
+				char[] stringLiteral = exp.getValue(); // The string literal that was passed to the operator
+
+				// The operator template is expected to take the character type as its first argument,
+				// followed by the characters as non-type arguments.
+				// "literal"_op -> operator "" _op<char, 'l', 'i', 't', 'e', 'r', 'a', 'l'>();
+				ICPPTemplateArgument args[] = new ICPPTemplateArgument[stringLiteral.length + 1];
+				args[0] = new CPPTemplateTypeArgument(charType);
+				for (int k = 0; k < stringLiteral.length; k++) {
+					args[k + 1] = new CPPTemplateNonTypeArgument(
+							new EvalFixed(CPPBasicType.CHAR, PRVALUE, IntegralValue.create(stringLiteral[k])));
+				}
+
+				data = new LookupData(((CPPASTLiteralExpression) exp).getOperatorName(), args, exp);
+				IBinding litTpl = resolveFunction(data, tplFunctions, true, false);
+
+				// Do we have valid template and non-template bindings?
+				if (ret != null && !(ret instanceof IProblemBinding)) {
+					// Do we have valid template and non-template bindings?
+					if (litTpl instanceof ICPPFunctionInstance) {
+						// Ambiguity? It has two valid options, and the spec says it shouldn't
+						return new ProblemBinding(data.getLookupName(), exp, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
+								tplFunctions);
+					}
+				} else {
+					if (litTpl instanceof ICPPFunctionInstance) {
+						// Only the template binding is valid
+						ret = litTpl;
+					} else {
+						// Couldn't find a valid operator
+						return ret;
+					}
+				}
 			} else if (kind == IASTLiteralExpression.lk_char_constant) {
 				/*
 				 * 2.14.8.6

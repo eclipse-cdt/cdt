@@ -36,6 +36,7 @@
           <product>org.eclipse.cdt.debug.application.product</product>
           <application>org.eclipse.cdt.debug.application.app</application>
           <argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
+					<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
           <includes>
              <include>**/AllTests.*</include>
           </includes>

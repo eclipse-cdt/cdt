@@ -59,7 +59,7 @@
 				<configuration>
 					<useUIHarness>false</useUIHarness>
 					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} -ea -Xms256m -Xmx512m -Dcdt.tests.dsf.gdb.path=${dsf.gdb.tests.gdbPath} -Ddsf.gdb.tests.timeout.multiplier=${dsf.gdb.tests.timeout.multiplier} -Dcdt.tests.dsf.gdb.versions=${cdt.tests.dsf.gdb.versions}</argLine>
-					<appArgLine>-debug ./dsf.debug.options</appArgLine>
+					<appArgLine>-debug ./dsf.debug.options -pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
 					<includes>
 						<include>**/${dsf.gdb.tests.gdbTestSuite}</include>
 					</includes>

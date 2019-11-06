@@ -438,6 +438,7 @@
 						<useUIHarness>true</useUIHarness>
 						<useUIThread>true</useUIThread>
 						<argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
+						<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
 					</configuration>
 				</plugin>
 				</plugins>
@@ -460,6 +461,7 @@
 						<useUIHarness>true</useUIHarness>
 						<useUIThread>false</useUIThread>
 						<argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
+						<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
 					</configuration>
 				</plugin>
 				</plugins>
@@ -808,6 +810,7 @@
 						</dependencies>
 						<product>org.eclipse.platform.ide</product>
 						<argLine>${tycho.testArgLine} ${base.test.vmargs}</argLine>
+						<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
 					</configuration>
 				</plugin>
 				<plugin>

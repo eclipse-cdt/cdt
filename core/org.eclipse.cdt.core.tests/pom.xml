@@ -44,6 +44,7 @@
 					<useUIHarness>false</useUIHarness>
 					<!-- Core tests actually use eclipse.ui classes, see CProjectHelper -->
 					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} ${extra.vmargs}</argLine>
+					<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
 					<includes>
 						<include>**/AutomatedIntegrationSuite.*</include>
 					</includes>

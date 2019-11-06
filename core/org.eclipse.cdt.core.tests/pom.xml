@@ -17,6 +17,7 @@
 
 	<properties>
 		<extra.vmargs></extra.vmargs>
+		<skipTests>${cdt-ui.skip.tests}</skipTests>
 	</properties>
 
 	<profiles>

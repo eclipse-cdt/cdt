@@ -15,7 +15,11 @@
 	<name>CDT Parent</name>
 
 	<properties>
-		<required-maven-version>3.3.1</required-maven-version>
+		<!-- Maven 3.6.1 and 3.6.2 do not work with Tycho, see Bug 551674
+		     CDT enforces a minimum of 3.6.0 because that is what CDT's CI
+			 runs with. It may work with older versions, but this is not
+			 tested or supported. -->
+		<required-maven-version>[3.6.0]</required-maven-version>
 		<tycho-version>1.4.0</tycho-version>
 		<tycho-extras-version>1.4.0</tycho-extras-version>
 		<cbi-plugins.version>1.1.7</cbi-plugins.version>
@@ -594,6 +598,32 @@
 	<build>
 		<plugins>
 			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.0.0-M2</version>
+				<executions>
+				<execution>
+					<id>enforce-maven-version</id>
+					<goals>
+						<goal>enforce</goal>
+					</goals>
+					<configuration>
+						<rules>
+							<requireMavenVersion>
+								<version>${required-maven-version}</version>
+							</requireMavenVersion>
+							<requireJavaVersion>
+								<version>1.8</version>
+							</requireJavaVersion>
+						</rules>
+						<fail>true</fail>
+						<failFast>true</failFast>
+					</configuration>
+				</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>2.4</version>
@@ -933,31 +963,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<inherited>true</inherited>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.0.0-M2</version>
-				<executions>
-				<execution>
-					<id>enforce-maven-version</id>
-					<goals>
-					<goal>enforce</goal>
-					</goals>
-					<configuration>
-					<rules>
-						<requireMavenVersion>
-						<version>${required-maven-version}</version>
-						</requireMavenVersion>
-						<requireJavaVersion>
-						<version>1.8</version>
-						</requireJavaVersion>
-					</rules>
-					<fail>true</fail>
-					</configuration>
-				</execution>
-				</executions>
-			</plugin>
+
 			</plugins>
 		</pluginManagement>
 	</build>

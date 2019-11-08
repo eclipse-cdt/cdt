@@ -25,7 +25,7 @@
 		<cbi-plugins.version>1.1.7</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
-		<simrel-site>https://download.eclipse.org/releases/2019-09</simrel-site>
+		<simrel-site>https://download.eclipse.org/releases/2019-12</simrel-site>
 		<repo-path>tools/cdt/builds/master/nightly</repo-path>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>

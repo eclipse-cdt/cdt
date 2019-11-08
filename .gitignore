@@ -6,3 +6,5 @@
 .nfs*
 .polyglot.build.properties
 check_code_cleanliness_workspace/
+.META-INF_MANIFEST.MF
+.polyglot..META-INF_MANIFEST.MF

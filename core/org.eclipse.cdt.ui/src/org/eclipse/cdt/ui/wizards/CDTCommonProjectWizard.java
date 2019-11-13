@@ -258,7 +258,7 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 									new SubProgressMonitor(fMonitor, 40));
 						fMonitor.worked(10);
 					} catch (CoreException e) {
-						CUIPlugin.log(e);
+						CUIPlugin.errorDialog(getShell(), title, message, e, true);
 					} finally {
 						fMonitor.done();
 					}

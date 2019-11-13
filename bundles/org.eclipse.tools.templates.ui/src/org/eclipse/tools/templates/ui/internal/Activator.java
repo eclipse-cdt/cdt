@@ -10,6 +10,8 @@ package org.eclipse.tools.templates.ui.internal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -17,6 +19,7 @@ import org.osgi.framework.BundleContext;
  * The activator class controls the plug-in life cycle
  */
 public class Activator extends AbstractUIPlugin {
+	public static final String PLUGIN_ID = "org.eclipse.tools.templates.ui"; //$NON-NLS-1$
 
 	private static Activator plugin;
 
@@ -50,6 +53,59 @@ public class Activator extends AbstractUIPlugin {
 		} else {
 			plugin.getLog().log(new Status(IStatus.ERROR, getId(), e.getLocalizedMessage(), e));
 		}
+	}
+
+	/**
+	 * Creates an error status.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static Status createErrorStatus(String message) {
+		return createErrorStatus(message, null);
+	}
+
+	/**
+	 * Creates an error status.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static Status createErrorStatus(String message, Throwable e) {
+		return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, e);
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void log(IStatus status) {
+		plugin.getLog().log(status);
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void log(String message, Throwable e) {
+		log(createErrorStatus(message, e));
+	}
+
+	/**
+	 * Utility method with conventions
+	 */
+	public static void errorDialog(Shell shell, String title, String message, Throwable t, boolean logError) {
+		if (logError)
+			log(message, t);
+
+		IStatus status;
+		if (t instanceof CoreException) {
+			status = ((CoreException) t).getStatus();
+			// if the 'message' resource string and the IStatus' message are the same,
+			// don't show both in the dialog
+			if (status != null && message.equals(status.getMessage())) {
+				message = null;
+			}
+		} else {
+			status = new Status(IStatus.ERROR, PLUGIN_ID, -1, "Internal Error: ", t); //$NON-NLS-1$
+		}
+		ErrorDialog.openError(shell, title, message, status);
 	}
 
 }

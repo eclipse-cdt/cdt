@@ -99,8 +99,10 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 					return ResourcesPlugin.getWorkspace().getRoot();
 				}
 			});
-		} catch (InterruptedException | InvocationTargetException e) {
-			throw new RuntimeException(e);
+		} catch (InterruptedException e) {
+			Activator.errorDialog(getShell(), "Error Creating Project", "Project cannot be created", e, true);
+		} catch (InvocationTargetException e) {
+			Activator.errorDialog(getShell(), "Error Creating Project", "Project cannot be created", e.getTargetException(), true);
 		}
 		return true;
 	}

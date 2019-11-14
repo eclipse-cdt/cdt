@@ -34,8 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IConsoleParser;
@@ -67,6 +65,7 @@ import org.eclipse.cdt.internal.core.build.Messages;
 import org.eclipse.cdt.internal.core.model.BinaryRunner;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.parser.ParserSettings2;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
@@ -840,50 +839,8 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	 * @return List of arg Strings
 	 */
 	private List<String> stripArgs(String argString) {
-		Pattern p0 = Pattern.compile("('(.*?)').*"); //$NON-NLS-1$
-		Pattern p1 = Pattern.compile("([\\-](\\w|[\\-])+[=]\\\".*?\\\").*"); //$NON-NLS-1$
-		Pattern p2 = Pattern.compile("([\\-](\\w|[\\-])+[=]'.*?').*"); //$NON-NLS-1$
-		Pattern p3 = Pattern.compile("([\\-](\\w|[\\-])+[=][^\\s]+).*"); //$NON-NLS-1$
-		Pattern p4 = Pattern.compile("([^\\s]+).*"); //$NON-NLS-1$
-		boolean finished = false;
-		List<String> args = new ArrayList<>();
-		while (!finished) {
-			Matcher m0 = p0.matcher(argString);
-			if (m0.matches()) {
-				argString = argString.replaceFirst("'.*?'", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
-				String s = m0.group(2).trim(); // strip single quotes
-				args.add(s);
-			} else {
-				Matcher m1 = p1.matcher(argString);
-				if (m1.matches()) {
-					argString = argString.replaceFirst("[\\-](\\w|[\\-])+[=]\\\".*?\\\"", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
-					String s = m1.group(1).trim();
-					args.add(s);
-				} else {
-					Matcher m2 = p2.matcher(argString);
-					if (m2.matches()) {
-						argString = argString.replaceFirst("[\\-](\\w|[\\-])+[=]'.*?'", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
-						String s = m2.group(1).trim();
-						args.add(s);
-					} else {
-						Matcher m3 = p3.matcher(argString);
-						if (m3.matches()) {
-							argString = argString.replaceFirst("[\\-](\\w|[\\-])+[=][^\\s]+", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
-							args.add(m3.group(1).trim());
-						} else {
-							Matcher m4 = p4.matcher(argString);
-							if (m4.matches()) {
-								argString = argString.replaceFirst("[^\\s]+", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
-								args.add(m4.group(1).trim());
-							} else {
-								finished = true;
-							}
-						}
-					}
-				}
-			}
-		}
-		return args;
+		String[] args = CommandLineUtil.argumentsToArrayUnixStyle(argString);
+		return new ArrayList<>(Arrays.asList(args));
 	}
 
 	private boolean infoChanged = false;

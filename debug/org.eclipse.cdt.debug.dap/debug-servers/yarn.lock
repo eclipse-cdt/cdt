@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"cdt-gdb-adapter@https://ci.eclipse.org/cdt/view/all/job/cdt-gdb-adapter-master/lastSuccessfulBuild/artifact/cdt-gdb-adapter-v0.0.13.tgz":
-  version "0.0.13"
-  resolved "https://ci.eclipse.org/cdt/view/all/job/cdt-gdb-adapter-master/lastSuccessfulBuild/artifact/cdt-gdb-adapter-v0.0.13.tgz#239ccf57dc5403d7365ca073f44e1038be525f21"
+"cdt-gdb-adapter@https://ci.eclipse.org/cdt/view/all/job/cdt-gdb-adapter-master/lastSuccessfulBuild/artifact/cdt-gdb-adapter-v0.0.14-next.tgz":
+  version "0.0.14-next"
+  resolved "https://ci.eclipse.org/cdt/view/all/job/cdt-gdb-adapter-master/lastSuccessfulBuild/artifact/cdt-gdb-adapter-v0.0.14-next.tgz#cb5a6d8509173510c311b96e2e57791ff3a20a31"
   dependencies:
     node-addon-api "^1.6.2"
     vscode-debugadapter "^1.37.1"

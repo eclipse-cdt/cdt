@@ -43,11 +43,11 @@ public class Template {
 
 	public ImageDescriptor getIcon() {
 		String iconPath = element.getAttribute("icon"); //$NON-NLS-1$
-		
+
 		if (iconPath == null) {
 			return null;
 		}
-			
+
 		return AbstractUIPlugin.imageDescriptorFromPlugin(element.getNamespaceIdentifier(), iconPath);
 	}
 

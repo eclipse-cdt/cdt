@@ -37,14 +37,14 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 
 	/**
 	 * The generator to be called when the wizard is finished.
-	 * 
+	 *
 	 * @return generator
 	 */
 	protected abstract IGenerator getGenerator();
-	
+
 	/**
 	 * Populate the model.
-	 * 
+	 *
 	 * @param model
 	 * @deprecated The subclass should initialize the generator with information in the
 	 *             getGenerator() method.
@@ -56,7 +56,7 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 
 	/**
 	 * Perform additional UI actions after the generation is complete.
-	 * 
+	 *
 	 * @param generator
 	 */
 	protected void postProcess(IGenerator generator) {
@@ -102,7 +102,8 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 		} catch (InterruptedException e) {
 			Activator.errorDialog(getShell(), "Error Creating Project", "Project cannot be created", e, true);
 		} catch (InvocationTargetException e) {
-			Activator.errorDialog(getShell(), "Error Creating Project", "Project cannot be created", e.getTargetException(), true);
+			Activator.errorDialog(getShell(), "Error Creating Project", "Project cannot be created",
+					e.getTargetException(), true);
 		}
 		return true;
 	}

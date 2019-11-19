@@ -68,7 +68,7 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 	}
 
 	protected abstract Bundle getSourceBundle();
-	
+
 	protected Class<? extends TemplateManifest> getManifestClass() {
 		return TemplateManifest.class;
 	}
@@ -157,13 +157,13 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 			Template template = templateConfig.getTemplate(templateFile);
 			template.process(model, out);
 		} catch (IOException | TemplateException e) {
-			throw new CoreException(
-					new Status(IStatus.ERROR, Activator.getId(), String.format(Messages.FMGenerator_2, templateFile), e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(),
+					String.format(Messages.FMGenerator_2, templateFile), e));
 		}
 	}
 
-	public void generateFile(String templateFile, Map<String, Object> model, final IFile outputFile, IProgressMonitor monitor)
-			throws CoreException {
+	public void generateFile(String templateFile, Map<String, Object> model, final IFile outputFile,
+			IProgressMonitor monitor) throws CoreException {
 		try (StringWriter writer = new StringWriter()) {
 			loadFile(templateFile, model, writer);
 			try (ByteArrayInputStream in = new ByteArrayInputStream(
@@ -176,7 +176,8 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 				}
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), String.format(Messages.FMGenerator_3, templateFile), e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(),
+					String.format(Messages.FMGenerator_3, templateFile), e));
 		}
 	}
 

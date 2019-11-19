@@ -54,7 +54,7 @@ public class NewWizard extends Wizard implements INewWizard {
 
 	/**
 	 * Initialize the template wizard that comes next.
-	 * 
+	 *
 	 * @param nextWizard
 	 *            the next wizard to show
 	 */

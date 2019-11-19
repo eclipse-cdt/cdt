@@ -21,7 +21,7 @@ public interface IGenerator {
 
 	/**
 	 * Generate.
-	 * 
+	 *
 	 * @param model
 	 * @param monitor
 	 * @throws CoreException
@@ -36,16 +36,16 @@ public interface IGenerator {
 
 	/**
 	 * Generate.
-	 * 
+	 *
 	 * @param monitor
 	 * @throws CoreException
 	 */
 	default void generate(IProgressMonitor monitor) throws CoreException {
-	};
+	}
 
 	/**
 	 * Return which files should be opened in the workbench when the generation is complete.
-	 * 
+	 *
 	 * @return files to open
 	 */
 	default IFile[] getFilesToOpen() {

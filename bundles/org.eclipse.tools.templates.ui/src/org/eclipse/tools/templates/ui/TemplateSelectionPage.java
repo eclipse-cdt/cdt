@@ -114,7 +114,7 @@ public class TemplateSelectionPage extends WizardPage {
 		templateTable.setTemplates(templates);
 		tagList.setInput(tags);
 		tagList.getList().select(0); // All
-		
+
 		form.setWeights(new int[] { 20, 80 });
 	}
 

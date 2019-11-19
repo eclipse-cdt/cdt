@@ -118,15 +118,14 @@ public class TemplateTable implements Listener {
 			if (data.length > 0) {
 				Display display = table.getDisplay();
 				FontData d = data[0];
-				FontData normal = new FontData(d.getName(), d.getHeight(),
-						d.getStyle() | SWT.ITALIC);
+				FontData normal = new FontData(d.getName(), d.getHeight(), d.getStyle() | SWT.ITALIC);
 				fontDefault = new Font(display, normal);
 				FontData bold = new FontData(d.getName(), Math.round(d.getHeight() * 1.15F), d.getStyle() | SWT.BOLD);
 				fontBold = new Font(display, bold);
 			}
 		}
 	}
-	
+
 	private void computeItemArea(Event event) {
 		GC gc = event.gc;
 		FontMetrics metrics = gc.getFontMetrics();
@@ -143,7 +142,7 @@ public class TemplateTable implements Listener {
 		if (w instanceof TableItem) {
 			TableItem item = (TableItem) w;
 			Template template = (Template) item.getData();
-			
+
 			// image
 			ImageDescriptor imageDesc = template.getIcon();
 			Image image = images.get(imageDesc);
@@ -154,15 +153,15 @@ public class TemplateTable implements Listener {
 			if (image != null) {
 				gc.drawImage(image, event.x, event.y + Math.max(0, (event.height - 48) / 2));
 			}
-			
+
 			int imageWidth = 48 + 6; // icon plus margin
-			
+
 			// name in bold
 			gc.setFont(fontBold);
 			String name = template.getLabel();
 			Point nameExtent = gc.textExtent(name, SWT.DRAW_TRANSPARENT);
 			gc.drawText(name, event.x + imageWidth, event.y, SWT.DRAW_TRANSPARENT);
-			
+
 			// description in one or two lines
 			String description = template.getDescription();
 			if (description != null) {

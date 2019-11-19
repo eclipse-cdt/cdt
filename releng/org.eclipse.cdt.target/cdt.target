@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="63">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="64">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
@@ -21,7 +21,7 @@
 <unit id="org.junit.jupiter.api.source" version="0.0.0"/>
 <unit id="org.mockito" version="0.0.0"/>
 <unit id="org.slf4j.impl.log4j12" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20190827152740/repository/"/>
+<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/S20191118194249/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.epp.logging.aeri.feature.feature.group" version="0.0.0"/>
@@ -58,7 +58,7 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.launchbar.remote.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.0-simrel-2019-09-m1/"/>
+<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1-simrel-2019-12-m3/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.linuxtools.docker.feature.feature.group" version="0.0.0"/>
@@ -83,7 +83,7 @@
 <unit id="org.eclipse.tools.templates.freemarker.java11.source" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.ui.source" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.template-1.1.1-simrel-2018-12a/"/>
+<repository location="https://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.templates-1.1.2-simrel-2019-12-m3/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tm4e.feature.feature.group" version="0.0.0"/>

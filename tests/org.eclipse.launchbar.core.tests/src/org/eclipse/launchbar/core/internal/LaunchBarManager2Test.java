@@ -130,7 +130,7 @@ public class LaunchBarManager2Test {
 
 	protected ILaunchConfigurationProvider mockConfigProviderElement(String descriptorTypeId, int priority,
 			ILaunchDescriptor descriptor, ILaunchTarget target, ILaunchConfiguration config, Object launchObj)
-					throws CoreException {
+			throws CoreException {
 		ILaunchConfigurationProvider provider = mock(ILaunchConfigurationProvider.class);
 		mockProviderElement(descriptorTypeId, priority, provider);
 		doReturn(config.getType()).when(provider).getLaunchConfigurationType(descriptor, target);

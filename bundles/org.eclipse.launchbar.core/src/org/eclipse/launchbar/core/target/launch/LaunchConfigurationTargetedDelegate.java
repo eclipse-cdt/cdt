@@ -20,10 +20,10 @@ import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
  * An implementation of the ILaunchConfigurationTargetedDelegate.
- * 
+ *
  * Implements the ILaunchConfigurationDelegate2 interfaces to pick out the
  * default target and pass it the targeted delegate methods.
- * 
+ *
  * The default for the targeted delegate methods is to call the non targeted
  * methods in the super class.
  *

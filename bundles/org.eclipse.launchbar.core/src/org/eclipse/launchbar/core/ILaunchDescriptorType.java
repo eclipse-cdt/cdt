@@ -22,13 +22,13 @@ public interface ILaunchDescriptorType {
 
 	/**
 	 * Return a descriptor for the given launch object.
-	 * 
+	 *
 	 * May return null to essentially eat the element so no other types create a
 	 * descriptor for it.
-	 * 
+	 *
 	 * The enablement expression for a given launch object must pass for this
 	 * clause to be executed.
-	 * 
+	 *
 	 * @param descriptor
 	 *            launch object for descriptor
 	 * @return the best descriptor
@@ -38,7 +38,7 @@ public interface ILaunchDescriptorType {
 
 	/**
 	 * Does this descriptor type support launching on targets other than Local?
-	 * 
+	 *
 	 * @return supports targets
 	 * @throws CoreException
 	 * @since 2.1

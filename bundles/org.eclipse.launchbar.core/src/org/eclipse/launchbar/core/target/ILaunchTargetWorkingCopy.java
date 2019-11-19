@@ -17,14 +17,14 @@ public interface ILaunchTargetWorkingCopy extends ILaunchTarget {
 
 	/**
 	 * Get the original launch target.
-	 * 
+	 *
 	 * @return the original launch target
 	 */
 	ILaunchTarget getOriginal();
 
 	/**
 	 * Gives the target a new ID. The save method will return a new target with the given name.e
-	 * 
+	 *
 	 * @param id
 	 *            new target ID
 	 */
@@ -32,7 +32,7 @@ public interface ILaunchTargetWorkingCopy extends ILaunchTarget {
 
 	/**
 	 * Set an attribute.
-	 * 
+	 *
 	 * @param key
 	 *            key
 	 * @param value
@@ -42,7 +42,7 @@ public interface ILaunchTargetWorkingCopy extends ILaunchTarget {
 
 	/**
 	 * Save the changes to the original working copy.
-	 * 
+	 *
 	 * @return original launch target unless the id was changed in which case returns a new target
 	 */
 	ILaunchTarget save();

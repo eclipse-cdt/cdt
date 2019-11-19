@@ -48,7 +48,7 @@ public class LaunchConfigProviderInfo {
 		} else {
 			supportsNullTarget = false;
 		}
-		
+
 		this.element = element;
 
 		IConfigurationElement[] enabledExpressions = element.getChildren("enablement");//$NON-NLS-1$
@@ -84,7 +84,7 @@ public class LaunchConfigProviderInfo {
 	public boolean supportsNullTarget() {
 		return supportsNullTarget;
 	}
-	
+
 	public ILaunchConfigurationProvider getProvider() {
 		if (provider == null) {
 			try {

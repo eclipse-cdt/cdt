@@ -79,7 +79,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 		@SuppressWarnings("unchecked")
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			return ((Comparator)getComparator()).compare(e1, e2);
+			return ((Comparator) getComparator()).compare(e1, e2);
 		}
 	}
 
@@ -157,7 +157,6 @@ public class LaunchBarListViewer extends StructuredViewer {
 		}
 	};
 
-
 	private class ListItem extends Composite {
 		protected final Object element;
 		private Label icon;
@@ -170,6 +169,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 		public String toString() {
 			return "[" + index + "] " + labelProvider.getText(element); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+
 		public ListItem(Composite parent, int style, Object element, int index, ILabelProvider labelProvider) {
 			super(parent, style);
 			this.element = element;
@@ -226,7 +226,6 @@ public class LaunchBarListViewer extends StructuredViewer {
 			// add traverse listnener to control which will have keyboard focus
 			addTraverseListener(listItemTraverseListener);
 			addKeyListener(lisItemKeyListener);
-
 
 			layout(true);
 		}
@@ -292,8 +291,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 				gc.setAntialias(SWT.ON);
 				gc.setInterpolation(SWT.HIGH);
 				// resize to 16 pixels
-				gc.drawImage(image, 0, 0, image.getBounds().width,
-						image.getBounds().height, 0, 0, 16, 16);
+				gc.drawImage(image, 0, 0, image.getBounds().width, image.getBounds().height, 0, 0, 16, 16);
 				gc.dispose();
 				image = buttonImage;
 				disposeImage = true;
@@ -376,7 +374,6 @@ public class LaunchBarListViewer extends StructuredViewer {
 			public void mouseDoubleClick(MouseEvent e) {
 				// ignore
 			}
-
 
 		});
 		sash.setToolTipText(Messages.LaunchBarListViewer_0);

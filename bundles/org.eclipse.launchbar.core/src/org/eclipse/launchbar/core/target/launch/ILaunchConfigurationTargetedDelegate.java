@@ -28,7 +28,7 @@ public interface ILaunchConfigurationTargetedDelegate extends ILaunchConfigurati
 	 * launch object should be created by the debug platform. If a launch object
 	 * is returned, its launch mode must match that of the mode specified in
 	 * this method call.
-	 * 
+	 *
 	 * @param configuration
 	 *            the configuration being launched
 	 * @param mode
@@ -53,7 +53,7 @@ public interface ILaunchConfigurationTargetedDelegate extends ILaunchConfigurati
 	 * <code>ILaunchConfiguration.launch(String mode, IProgressMonitor monitor, boolean build)</code>
 	 * .
 	 * </p>
-	 * 
+	 *
 	 * @param configuration
 	 *            the configuration being launched
 	 * @param mode
@@ -82,7 +82,7 @@ public interface ILaunchConfigurationTargetedDelegate extends ILaunchConfigurati
 	 * a final chance for this launch delegate to abort a launch if required.
 	 * For example, a delegate could cancel a launch if it discovered
 	 * compilation errors that would prevent the launch from succeeding.
-	 * 
+	 *
 	 * @param configuration
 	 *            the configuration being launched
 	 * @param mode
@@ -108,7 +108,7 @@ public interface ILaunchConfigurationTargetedDelegate extends ILaunchConfigurati
 	 * Returns whether a launch should proceed. This method is called first in
 	 * the launch sequence providing an opportunity for this launch delegate to
 	 * abort the launch.
-	 * 
+	 *
 	 * @param configuration
 	 *            configuration being launched
 	 * @param mode

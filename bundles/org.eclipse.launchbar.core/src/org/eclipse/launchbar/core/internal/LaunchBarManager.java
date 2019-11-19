@@ -333,7 +333,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 				}
 			}
 		}
-		
+
 		// not found
 		return null;
 	}
@@ -753,7 +753,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		}
 		return false;
 	}
-	
+
 	@Override
 	public ILaunchTarget getActiveLaunchTarget() {
 		return activeLaunchTarget;
@@ -833,11 +833,11 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		if (descriptor == null) {
 			return null;
 		}
-		
+
 		if (descriptor instanceof DefaultLaunchDescriptor) {
 			return descriptor.getAdapter(ILaunchConfiguration.class);
 		}
-		
+
 		String descTypeId = getDescriptorTypeId(descriptor.getType());
 		for (LaunchConfigProviderInfo providerInfo : configProviders.get(descTypeId)) {
 			try {

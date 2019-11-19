@@ -37,7 +37,7 @@ public interface ILaunchTargetUIManager {
 
 	/**
 	 * Open a dialog to edit the specified launch target.
-	 * 
+	 *
 	 * @param target
 	 *            launch target to edit
 	 */

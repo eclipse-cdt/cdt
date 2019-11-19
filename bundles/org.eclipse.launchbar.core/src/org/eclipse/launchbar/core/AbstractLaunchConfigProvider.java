@@ -51,7 +51,8 @@ public abstract class AbstractLaunchConfigProvider implements ILaunchConfigurati
 	}
 
 	@Override
-	public boolean launchDescriptorMatches(ILaunchDescriptor descriptor, ILaunchConfiguration configuration, ILaunchTarget target) throws CoreException {
+	public boolean launchDescriptorMatches(ILaunchDescriptor descriptor, ILaunchConfiguration configuration,
+			ILaunchTarget target) throws CoreException {
 		ILaunchConfiguration lc = descriptor.getAdapter(ILaunchConfiguration.class);
 		if (lc == null)
 			return false;

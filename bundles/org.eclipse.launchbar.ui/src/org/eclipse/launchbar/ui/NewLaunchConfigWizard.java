@@ -53,7 +53,7 @@ public class NewLaunchConfigWizard extends Wizard implements ILaunchConfiguratio
 	@Override
 	public void setContainer(IWizardContainer wizardContainer) {
 		super.setContainer(wizardContainer);
-		
+
 		if (wizardContainer != null) {
 			// Edit page wants to know when it's about to change to itself
 			((WizardDialog) wizardContainer).addPageChangingListener(editPage);

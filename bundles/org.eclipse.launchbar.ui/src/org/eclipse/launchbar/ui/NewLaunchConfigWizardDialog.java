@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Wizard Dialog for Launch Bar's new Launch Configuration Wizard.
- * 
+ *
  * @since 2.3
  */
 public class NewLaunchConfigWizardDialog extends WizardDialog {
@@ -43,7 +43,7 @@ public class NewLaunchConfigWizardDialog extends WizardDialog {
 	protected String getDialogSettingsSectionName() {
 		return Activator.PLUGIN_ID + ".LAUNCH_CONFIGURATIONS_DIALOG_SECTION"; //$NON-NLS-1$
 	}
-	
+
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = Activator.getDefault().getDialogSettings();
@@ -53,14 +53,14 @@ public class NewLaunchConfigWizardDialog extends WizardDialog {
 		}
 		return section;
 	}
-	
+
 	@Override
 	protected Point getInitialSize() {
 		try {
 			// Check if we've saved the height before
 			getDialogBoundsSettings().getInt("DIALOG_HEIGHT"); //$NON-NLS-1$
 			return super.getInitialSize();
-		} catch(NumberFormatException nfe) {
+		} catch (NumberFormatException nfe) {
 			// Nope, return the default size
 			return DEFAULT_INITIAL_DIALOG_SIZE;
 		}

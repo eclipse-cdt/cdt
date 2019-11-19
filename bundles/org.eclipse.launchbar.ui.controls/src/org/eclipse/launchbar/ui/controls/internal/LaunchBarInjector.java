@@ -75,7 +75,7 @@ public class LaunchBarInjector {
 					|| event.getProperty().equals(Activator.PREF_ENABLE_BUILDBUTTON)) {
 				IPreferenceStore store1 = Activator.getDefault().getPreferenceStore();
 				boolean enabled2 = store1.getBoolean(Activator.PREF_ENABLE_LAUNCHBAR);
-				if (enabled2){
+				if (enabled2) {
 					injectIntoAll(false);
 					injectIntoAll(true);
 				}
@@ -114,12 +114,12 @@ public class LaunchBarInjector {
 			if (!LaunchBarControl.CLASS_URI.equals(launchBarElement.getContributionURI())) {
 				launchBarElement.setContributionURI(LaunchBarControl.CLASS_URI);
 			}
-			
+
 			// remove it if we're disabled
 			if (!enabled) {
 				trimBar.getChildren().remove(launchBarElement);
 				// This seems to be a bug in the platform but for now, dispose of the widget
-				Widget widget = (Widget)launchBarElement.getWidget();
+				Widget widget = (Widget) launchBarElement.getWidget();
 				widget.dispose();
 			}
 			// either way, we're done

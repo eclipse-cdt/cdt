@@ -57,7 +57,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 	private boolean initing;
 
 	public static final int ID_DUPLICATE = IDialogConstants.CLIENT_ID + 1;
-	public static final int ID_DELETE    = IDialogConstants.CLIENT_ID + 2;
+	public static final int ID_DELETE = IDialogConstants.CLIENT_ID + 2;
 
 	public LaunchBarLaunchConfigDialog(Shell shell, ILaunchConfigurationWorkingCopy workingCopy,
 			ILaunchDescriptor descriptor, ILaunchMode mode, ILaunchTarget target,
@@ -98,9 +98,11 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 			String descName = labelProvider != null ? labelProvider.getText(descriptor) : descriptor.getName();
 			String typeName = workingCopy.getType().getName();
 			if (supportsTargets) {
-				setTitle(String.format(Messages.LaunchBarLaunchConfigDialog_Edit2, typeName, descName, mode.getLabel(), target.getId()));
+				setTitle(String.format(Messages.LaunchBarLaunchConfigDialog_Edit2, typeName, descName, mode.getLabel(),
+						target.getId()));
 			} else {
-				setTitle(String.format(Messages.LaunchBarLaunchConfigDialog_Edit1, typeName, descName, mode.getLabel()));
+				setTitle(
+						String.format(Messages.LaunchBarLaunchConfigDialog_Edit1, typeName, descName, mode.getLabel()));
 			}
 		} catch (CoreException e) {
 			Activator.log(e);
@@ -217,12 +219,12 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 
 		// insert our buttons ahead of the OK/Cancel buttons
 		configButtons.moveAbove(okCancelButtons);
-		
+
 		return buttonBar;
 	}
 
 	protected Control createConfigButtons(Composite parent) {
-        ((GridLayout) parent.getLayout()).numColumns++;
+		((GridLayout) parent.getLayout()).numColumns++;
 		Composite composite = new Composite(parent, SWT.NONE);
 		// create a layout with spacing and margins appropriate for the font size.
 		GridLayout layout = new GridLayout();
@@ -233,8 +235,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		composite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER
-				| GridData.VERTICAL_ALIGN_CENTER);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_CENTER);
 		composite.setLayoutData(data);
 		composite.setFont(parent.getFont());
 
@@ -253,13 +254,13 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		} else {
 			deleteText = Messages.LaunchBarLaunchConfigDialog_Reset;
 		}
-		
+
 		// TODO if the descriptor is not a launch config, this should really say Reset
 		createButton(composite, ID_DELETE, deleteText, false);
-	
+
 		return composite;
 	}
-	
+
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == ID_DUPLICATE) {
@@ -270,7 +271,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 			super.buttonPressed(buttonId);
 		}
 	}
-	
+
 	protected void deletePressed() {
 		String title, message;
 		if (descriptor instanceof DefaultLaunchDescriptor) {
@@ -280,7 +281,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 			title = Messages.LaunchBarLaunchConfigDialog_ResetTitle;
 			message = Messages.LaunchBarLaunchConfigDialog_ResetConfirm;
 		}
-		
+
 		if (MessageDialog.openConfirm(getShell(), title, String.format(message, workingCopy.getName()))) {
 			setReturnCode(ID_DELETE);
 			close();
@@ -291,14 +292,14 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		setReturnCode(ID_DUPLICATE);
 		close();
 	}
-	
+
 	@Override
 	protected void okPressed() {
 		String newName = nameText.getText().trim();
 		if (!newName.equals(originalName)) {
 			workingCopy.rename(newName);
 		}
-		
+
 		if (buildTabGroup != null) {
 			buildTabGroup.performApply(workingCopy);
 		}

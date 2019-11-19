@@ -79,8 +79,8 @@ public interface ILaunchConfigurationProvider {
 	 * @return launch configuration
 	 * @throws CoreException
 	 */
-	boolean launchDescriptorMatches(ILaunchDescriptor descriptor, ILaunchConfiguration configuration, ILaunchTarget target)
-			throws CoreException;
+	boolean launchDescriptorMatches(ILaunchDescriptor descriptor, ILaunchConfiguration configuration,
+			ILaunchTarget target) throws CoreException;
 
 	/**
 	 * A launch configuration has been added. Provider can inspect it and

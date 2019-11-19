@@ -23,7 +23,7 @@ public class Transition implements Runnable {
 	private int current;
 	private int to;
 	private int incr;
-	
+
 	public Transition(Control control, int current, int tick) {
 		this.control = control;
 		this.current = current;
@@ -38,7 +38,7 @@ public class Transition implements Runnable {
 		if (!done())
 			Display.getCurrent().timerExec(tick, this);
 	}
-	
+
 	public void to(int to) {
 		if (current == to)
 			return;

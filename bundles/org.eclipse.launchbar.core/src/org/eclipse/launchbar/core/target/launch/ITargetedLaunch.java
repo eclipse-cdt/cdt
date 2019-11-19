@@ -20,7 +20,7 @@ public interface ITargetedLaunch extends ILaunch {
 
 	/**
 	 * The target this launch will or is running on.
-	 * 
+	 *
 	 * @return launch target
 	 */
 	ILaunchTarget getLaunchTarget();

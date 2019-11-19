@@ -64,7 +64,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Return the OSGi service with the given service interface.
-	 * 
+	 *
 	 * @param service
 	 *            service interface
 	 * @return the specified service or null if it's not registered

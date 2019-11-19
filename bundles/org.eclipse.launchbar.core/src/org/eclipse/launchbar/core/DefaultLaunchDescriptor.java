@@ -19,7 +19,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 /**
  * A special launch descriptor that managed configurations that aren't owned by other
  * descriptors.
- *  
+ *
  * @since 2.3
  */
 public class DefaultLaunchDescriptor extends PlatformObject implements ILaunchDescriptor {

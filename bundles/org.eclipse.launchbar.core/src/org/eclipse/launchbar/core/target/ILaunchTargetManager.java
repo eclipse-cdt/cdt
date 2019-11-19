@@ -14,7 +14,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * The manager for the launch targets. It is registered as an OSGi service.
- * 
+ *
  * @noimplement not to be implemented by clients
  */
 public interface ILaunchTargetManager {
@@ -29,14 +29,14 @@ public interface ILaunchTargetManager {
 
 	/**
 	 * The list of all launch targets.
-	 * 
+	 *
 	 * @return list of launch targets
 	 */
 	ILaunchTarget[] getLaunchTargets();
 
 	/**
 	 * The list of launch targets with a given type id.
-	 * 
+	 *
 	 * @param typeId
 	 *            the launch target type id
 	 * @return list of launch targets
@@ -45,7 +45,7 @@ public interface ILaunchTargetManager {
 
 	/**
 	 * Return the launch target with the given typeId and name
-	 * 
+	 *
 	 * @param typeId
 	 *            type of the launch target
 	 * @param id
@@ -56,7 +56,7 @@ public interface ILaunchTargetManager {
 
 	/**
 	 * Return the status of the launch target.
-	 * 
+	 *
 	 * @param target
 	 *            the launch target
 	 * @return status
@@ -65,7 +65,7 @@ public interface ILaunchTargetManager {
 
 	/**
 	 * Add a launch target with the given typeId, id, and name.
-	 * 
+	 *
 	 * @param typeId
 	 *            type id of the launch target
 	 * @param id
@@ -76,7 +76,7 @@ public interface ILaunchTargetManager {
 
 	/**
 	 * Removes a launch target.
-	 * 
+	 *
 	 * @param target
 	 *            the launch target to remove
 	 */
@@ -84,14 +84,14 @@ public interface ILaunchTargetManager {
 
 	/**
 	 * The status of the launch target has changed.
-	 * 
+	 *
 	 * @param target
 	 */
 	void targetStatusChanged(ILaunchTarget target);
 
 	/**
 	 * What is the default target to use for this launch configuration.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration or null if not set
 	 * @return default target for this launch configuration
@@ -100,7 +100,7 @@ public interface ILaunchTargetManager {
 
 	/**
 	 * Set the default target for the given launch configuration.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @param target
@@ -110,14 +110,14 @@ public interface ILaunchTargetManager {
 
 	/**
 	 * Add a listener.
-	 * 
+	 *
 	 * @param listener
 	 */
 	void addListener(ILaunchTargetListener listener);
 
 	/**
 	 * Remove a listener.
-	 * 
+	 *
 	 * @param listener
 	 */
 	void removeListener(ILaunchTargetListener listener);

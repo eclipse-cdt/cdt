@@ -95,7 +95,7 @@ public abstract class RemoteLaunchTargetProvider implements ILaunchTargetProvide
 					IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) connection;
 					IRemoteConnection original = ((IRemoteConnectionWorkingCopy) connection).getOriginal();
 					target = targetManager.getLaunchTarget(getTypeId(), original.getName());
-					if (target != null ) {
+					if (target != null) {
 						targetManager.removeLaunchTarget(target);
 					}
 					initLaunchTarget(targetManager.addLaunchTarget(getTypeId(), wc.getName()));

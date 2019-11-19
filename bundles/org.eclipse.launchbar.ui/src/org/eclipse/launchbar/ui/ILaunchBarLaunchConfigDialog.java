@@ -24,7 +24,7 @@ public interface ILaunchBarLaunchConfigDialog extends ILaunchConfigurationDialog
 	/**
 	 * The target associated with the edit session, usually the active target when the session was
 	 * started.
-	 * 
+	 *
 	 * @return launch target
 	 */
 	ILaunchTarget getLaunchTarget();

@@ -77,7 +77,7 @@ public interface ILaunchTarget extends IAdaptable {
 
 	/**
 	 * Returns a read-only map of the attributes.
-	 * 
+	 *
 	 * @return the attributes for this target
 	 * @since 2.1
 	 */

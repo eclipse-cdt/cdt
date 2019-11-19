@@ -56,7 +56,8 @@ public class Pair<S, T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		@SuppressWarnings("unchecked") Pair<S, T> other = (Pair<S, T>) obj;
+		@SuppressWarnings("unchecked")
+		Pair<S, T> other = (Pair<S, T>) obj;
 		if (first == null) {
 			if (other.first != null)
 				return false;

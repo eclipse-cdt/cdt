@@ -25,7 +25,7 @@ import org.eclipse.launchbar.core.internal.Activator;
 /**
  * A special descriptor type that managed configurations that aren't owned by
  * other descriptor types.
- * 
+ *
  * @since 2.3
  */
 public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
@@ -43,7 +43,7 @@ public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
 
 	/**
 	 * Used to filter out private and external tools builders
-	 * 
+	 *
 	 * @param config
 	 * @return
 	 * @throws CoreException

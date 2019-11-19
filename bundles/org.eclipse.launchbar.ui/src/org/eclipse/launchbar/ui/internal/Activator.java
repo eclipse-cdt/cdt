@@ -11,7 +11,7 @@
  * Contributors:
  *     Doug Schaefer
  *     Torkild U. Resheim - add preference to control target selector
- *     Vincent Guignot - Ingenico - add preference to control Build button     
+ *     Vincent Guignot - Ingenico - add preference to control Build button
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 

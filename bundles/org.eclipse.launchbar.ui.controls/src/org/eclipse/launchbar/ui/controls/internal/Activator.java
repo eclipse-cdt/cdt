@@ -42,12 +42,12 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		
+
 		ImageRegistry imageRegistry = getImageRegistry();
 		imageRegistry.put(IMG_BUTTON_BACKGROUND, imageDescriptorFromPlugin(PLUGIN_ID, "icons/bgButton.png")); //$NON-NLS-1$
 		imageRegistry.put(IMG_BUTTON_BUILD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/build_16.png")); //$NON-NLS-1$

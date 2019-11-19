@@ -19,7 +19,7 @@ public interface ILaunchTargetProvider {
 
 	/**
 	 * Fetch the status for the launch target.
-	 * 
+	 *
 	 * @param target
 	 *            the launch target
 	 * @return status of the launch target

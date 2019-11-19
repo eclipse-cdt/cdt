@@ -17,7 +17,7 @@ public interface ILaunchTargetListener {
 
 	/**
 	 * A launch target was added.
-	 * 
+	 *
 	 * @param target
 	 *            the new launch target
 	 */
@@ -26,7 +26,7 @@ public interface ILaunchTargetListener {
 
 	/**
 	 * A launch target was removed.
-	 * 
+	 *
 	 * @param target
 	 *            the target about to be removed.
 	 */
@@ -36,7 +36,7 @@ public interface ILaunchTargetListener {
 	/**
 	 * The status of a target has changed. Query the target to find out what the
 	 * new status is.
-	 * 
+	 *
 	 * @param target
 	 *            the target whose status has changed
 	 */

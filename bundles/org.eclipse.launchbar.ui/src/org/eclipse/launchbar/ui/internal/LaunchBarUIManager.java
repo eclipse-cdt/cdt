@@ -74,13 +74,14 @@ public class LaunchBarUIManager implements ILaunchBarUIManager {
 						String descriptorTypeId = element.getAttribute("launchDescriptorType"); //$NON-NLS-1$
 						ExecutableExtension<ILaunchConfigurationTabGroup> tabGroup = new ExecutableExtension<>(element,
 								"tabGroup"); //$NON-NLS-1$
-						
-						Map<String, ExecutableExtension<ILaunchConfigurationTabGroup>> descGroup = buildTabGroups.get(launchConfigTypeId);
+
+						Map<String, ExecutableExtension<ILaunchConfigurationTabGroup>> descGroup = buildTabGroups
+								.get(launchConfigTypeId);
 						if (descGroup == null) {
 							descGroup = new HashMap<>();
 							buildTabGroups.put(launchConfigTypeId, descGroup);
 						}
-						
+
 						descGroup.put(descriptorTypeId, tabGroup);
 					}
 				}
@@ -138,12 +139,12 @@ public class LaunchBarUIManager implements ILaunchBarUIManager {
 					workingCopy.doSave();
 				}
 				break;
-			case LaunchBarLaunchConfigDialog.ID_DUPLICATE:
-				{
-					String newName = DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(workingCopy.getName());
-					ILaunchConfigurationWorkingCopy newWorkingCopy = workingCopy.copy(newName);
-					newWorkingCopy.doSave();
-				}
+			case LaunchBarLaunchConfigDialog.ID_DUPLICATE: {
+				String newName = DebugPlugin.getDefault().getLaunchManager()
+						.generateLaunchConfigurationName(workingCopy.getName());
+				ILaunchConfigurationWorkingCopy newWorkingCopy = workingCopy.copy(newName);
+				newWorkingCopy.doSave();
+			}
 				break;
 			case LaunchBarLaunchConfigDialog.ID_DELETE:
 				config.delete();

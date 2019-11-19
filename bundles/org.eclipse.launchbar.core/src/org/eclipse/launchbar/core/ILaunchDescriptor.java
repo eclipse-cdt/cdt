@@ -24,14 +24,14 @@ public interface ILaunchDescriptor extends IAdaptable {
 	/**
 	 * Name to show in the launch descriptor selector. Names must be unique for
 	 * all descriptors of a given type.
-	 * 
+	 *
 	 * @return name of the launch descriptor
 	 */
 	String getName();
 
 	/**
 	 * The type of launch descriptor.
-	 * 
+	 *
 	 * @return provider
 	 */
 	ILaunchDescriptorType getType();

@@ -74,7 +74,7 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Creates a filter control, to be fully function attachListViewer must be called shortly after
-	 * 
+	 *
 	 * @param parent
 	 */
 	public FilterControl(Composite parent) {
@@ -113,7 +113,7 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Create the filtered tree's controls. Subclasses should override.
-	 * 
+	 *
 	 * @param parent
 	 * @param treeStyle
 	 */
@@ -129,7 +129,7 @@ public class FilterControl extends Composite {
 	/**
 	 * Create the filter controls. By default, a text and corresponding tool bar button that clears the contents of the text is
 	 * created. Subclasses may override.
-	 * 
+	 *
 	 * @param parent
 	 *            parent <code>Composite</code> of the filter controls
 	 * @return the <code>Composite</code> that contains the filter controls
@@ -149,7 +149,7 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Create the refresh job for the receiver.
-	 * 
+	 *
 	 */
 	private void createRefreshJob() {
 		refreshJob = doCreateRefreshJob();
@@ -170,9 +170,9 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Creates a workbench job that will refresh the tree based on the current filter text. Subclasses may override.
-	 * 
+	 *
 	 * @return a workbench job that can be scheduled to refresh the tree
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected WorkbenchJob doCreateRefreshJob() {
@@ -211,38 +211,33 @@ public class FilterControl extends Composite {
 	/**
 	 * Creates the filter text and adds listeners. This method calls {@link #doCreateFilterText(Composite)} to create the text
 	 * control. Subclasses should override {@link #doCreateFilterText(Composite)} instead of overriding this method.
-	 * 
+	 *
 	 * @param parent
 	 *            <code>Composite</code> of the filter text
 	 */
 	protected void createFilterText(Composite parent) {
 		filterText = doCreateFilterText(parent);
-		filterText.getAccessible().addAccessibleListener(
-				new AccessibleAdapter() {
-					@Override
-					public void getName(AccessibleEvent e) {
-						String filterTextString = filterText.getText();
-						if (filterTextString.length() == 0
-								|| filterTextString.equals(initialText)) {
-							e.result = initialText;
-						} else {
-							e.result = NLS.bind(
-									Messages.FilterControl_1,
-									new String[] {
-											filterTextString,
-											String.valueOf(getFilteredItemsCount()) });
-						}
-					}
+		filterText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				String filterTextString = filterText.getText();
+				if (filterTextString.length() == 0 || filterTextString.equals(initialText)) {
+					e.result = initialText;
+				} else {
+					e.result = NLS.bind(Messages.FilterControl_1,
+							new String[] { filterTextString, String.valueOf(getFilteredItemsCount()) });
+				}
+			}
 
-					/**
-					 * Return the number of filtered items
-					 * 
-					 * @return int
-					 */
-					private int getFilteredItemsCount() {
-						return listViewer.getItemCount();
-					}
-				});
+			/**
+			 * Return the number of filtered items
+			 *
+			 * @return int
+			 */
+			private int getFilteredItemsCount() {
+				return listViewer.getItemCount();
+			}
+		});
 		filterText.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -314,8 +309,7 @@ public class FilterControl extends Composite {
 	}
 
 	protected Text doCreateFilterText(Composite parent) {
-		return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH
-				| SWT.ICON_CANCEL);
+		return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
 	}
 
 	/**
@@ -335,9 +329,9 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Return the time delay that should be used when scheduling the filter refresh job. Subclasses may override.
-	 * 
+	 *
 	 * @return a time delay in milliseconds before the job should run
-	 * 
+	 *
 	 */
 	protected long getRefreshJobDelay() {
 		return 200;
@@ -345,7 +339,7 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Set the background for the widgets that support the filter text area.
-	 * 
+	 *
 	 * @param background
 	 *            background <code>Color</code> to set
 	 */
@@ -366,7 +360,7 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Set the text in the filter control.
-	 * 
+	 *
 	 * @param string
 	 */
 	protected void setFilterText(String string) {
@@ -382,7 +376,7 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Get the tree viewer of the receiver.
-	 * 
+	 *
 	 * @return the tree viewer
 	 */
 	public LaunchBarListViewer getViewer() {
@@ -391,7 +385,7 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Get the filter text for the receiver, if it was created. Otherwise return <code>null</code>.
-	 * 
+	 *
 	 * @return the filter Text, or null if it was not created
 	 */
 	public Text getFilterControl() {
@@ -400,7 +394,7 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Convenience method to return the text of the filter control. If the text widget is not created, then null is returned.
-	 * 
+	 *
 	 * @return String in the text, or null if the text does not exist
 	 */
 	protected String getFilterString() {
@@ -410,7 +404,7 @@ public class FilterControl extends Composite {
 	/**
 	 * Set the text that will be shown until the first focus. A default value is provided, so this method only need be called if
 	 * overriding the default initial text is desired.
-	 * 
+	 *
 	 * @param text
 	 *            initial text to appear in text field
 	 */
@@ -437,7 +431,7 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Select all text in the filter text field.
-	 * 
+	 *
 	 */
 	protected void selectAll() {
 		if (filterText != null) {
@@ -447,7 +441,7 @@ public class FilterControl extends Composite {
 
 	/**
 	 * Get the initial text for the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	protected String getInitialText() {
@@ -456,8 +450,7 @@ public class FilterControl extends Composite {
 
 	private void updatePatternText() {
 		String text = getFilterString();
-		boolean initial = initialText != null
-				&& initialText.equals(text);
+		boolean initial = initialText != null && initialText.equals(text);
 		if (initial) {
 			patternText = null;
 		} else if (text != null) {

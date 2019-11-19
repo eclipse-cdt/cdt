@@ -190,7 +190,7 @@ public class NewLaunchConfigTypePage2 extends WizardPage {
 			setPageComplete(false);
 			return;
 		}
-		
+
 		ILaunchConfigurationType type = (ILaunchConfigurationType) selection[0].getData();
 		editPage.setLaunchConfigType(type);
 		setPageComplete(true);

@@ -56,14 +56,14 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
 	 * Add a listener that can react to launch bar changes
-	 * 
+	 *
 	 * @param listener
 	 */
 	void addListener(ILaunchBarListener listener);
 
 	/**
 	 * Remove a listener
-	 * 
+	 *
 	 * @param listener
 	 */
 	void removeListener(ILaunchBarListener listener);
@@ -71,7 +71,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 	/**
 	 * Return the type id for the given launch descriptor type. This is defined in
 	 * the extension point that defines the type.
-	 * 
+	 *
 	 * @param descType descriptor type
 	 * @return the type id for the descriptor type
 	 */
@@ -79,7 +79,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
 	 * Returns the active launch descriptor.
-	 * 
+	 *
 	 * @return active launch descriptor
 	 * @throws CoreException
 	 */
@@ -87,7 +87,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
 	 * Returns the active launch mode.
-	 * 
+	 *
 	 * @return active launch mode
 	 * @throws CoreException
 	 */
@@ -95,7 +95,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
 	 * Returns the active launch target.
-	 * 
+	 *
 	 * @return active launch target
 	 * @throws CoreException
 	 */
@@ -104,7 +104,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 	/**
 	 * Returns the active launch configuration as derived from the active descriptor
 	 * and target.
-	 * 
+	 *
 	 * @return active launch configuration
 	 * @throws CoreException
 	 */
@@ -113,7 +113,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 	/**
 	 * Returns the launch configuration derived from the given launch descriptor and
 	 * target.
-	 * 
+	 *
 	 * @param desc   launch descriptor
 	 * @param target launch target
 	 * @return launch configuration
@@ -125,7 +125,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 	 * Returns the launch configuration type used for configurations that are
 	 * derived from the given launch descriptor and launch target without creating a
 	 * launch configuration.
-	 * 
+	 *
 	 * @param desc   launch descriptor
 	 * @param target launch target
 	 * @return launch configuration type
@@ -136,7 +136,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
 	 * Returns all know launch descriptors.
-	 * 
+	 *
 	 * @return launch descriptors
 	 * @throws CoreException
 	 */
@@ -144,7 +144,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
 	 * Set the active launch descriptor.
-	 * 
+	 *
 	 * @param desc launch descriptor
 	 * @throws CoreException
 	 */
@@ -152,7 +152,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
 	 * Return all launch modes for the active launch descriptor and active launch target.
-	 * 
+	 *
 	 * @return launch modes
 	 * @throws CoreException
 	 */
@@ -160,7 +160,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
 	 * Set the active launch mode.
-	 * 
+	 *
 	 * @param mode launch mode
 	 * @throws CoreException
 	 */
@@ -168,8 +168,8 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
 	 * Return all launch targets supported by the given launch descriptor.
-	 * 
-	 * @param desc launch descriptor 
+	 *
+	 * @param desc launch descriptor
 	 * @return launch targets
 	 * @throws CoreException
 	 */
@@ -177,7 +177,7 @@ public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
 	 * Set the active launch target.
-	 * 
+	 *
 	 * @param target launch target
 	 * @throws CoreException
 	 */

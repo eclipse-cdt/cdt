@@ -69,7 +69,7 @@ public class Messages extends NLS {
 	public static String LaunchBarLaunchConfigDialog_ResetTitle;
 	public static String LaunchBarLaunchConfigDialog_DeleteConfirm;
 	public static String LaunchBarLaunchConfigDialog_ResetConfirm;
-	
+
 	public static String LaunchConfigurationNotFound;
 	public static String LaunchConfigurationNotFoundDesc;
 

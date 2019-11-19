@@ -44,7 +44,7 @@ public class LaunchTargetManager implements ILaunchTargetManager, ILaunchTargetM
 
 	private static final String DELIMETER1 = ","; //$NON-NLS-1$
 	private static final String DELIMETER2 = ":"; //$NON-NLS-1$
-	private static final String SLASH = "/";  //$NON-NLS-1$
+	private static final String SLASH = "/"; //$NON-NLS-1$
 	private static final String SLASH_REPLACER = ";"; //$NON-NLS-1$
 
 	private Preferences getTargetsPref() {
@@ -108,7 +108,7 @@ public class LaunchTargetManager implements ILaunchTargetManager, ILaunchTargetM
 						// Use children going forward
 						prefs.remove(typeId);
 					}
-					
+
 					prefs.flush();
 				}
 			} catch (BackingStoreException e) {
@@ -222,7 +222,7 @@ public class LaunchTargetManager implements ILaunchTargetManager, ILaunchTargetM
 			return null;
 		}
 	}
-	
+
 	@Override
 	public ILaunchTarget addLaunchTarget(String typeId, String id) {
 		ILaunchTarget target = addLaunchTargetNoNotify(typeId, id);
@@ -250,11 +250,12 @@ public class LaunchTargetManager implements ILaunchTargetManager, ILaunchTargetM
 			// Remove the attribute node
 			try {
 				// Bug 536889 - calculate the node name to remove, replacing slashes with a replacement character
-				getTargetsPref().node(typeId + DELIMETER1 + target.getId().replaceAll(SLASH, SLASH_REPLACER)).removeNode();
+				getTargetsPref().node(typeId + DELIMETER1 + target.getId().replaceAll(SLASH, SLASH_REPLACER))
+						.removeNode();
 			} catch (BackingStoreException e) {
 				Activator.log(e);
 			}
-			
+
 			synchronized (listeners) {
 				for (ILaunchTargetListener listener : listeners) {
 					listener.launchTargetRemoved(target);

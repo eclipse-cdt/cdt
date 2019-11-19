@@ -91,7 +91,7 @@ public class LaunchTargetWorkingCopy extends PlatformObject implements ILaunchTa
 				}
 				manager.removeLaunchTarget(original);
 			}
-			
+
 			// set the changed attributes
 			for (Map.Entry<String, String> entry : changes.entrySet()) {
 				String key = entry.getKey();

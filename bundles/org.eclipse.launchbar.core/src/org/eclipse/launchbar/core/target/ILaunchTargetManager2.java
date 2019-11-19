@@ -12,14 +12,14 @@ package org.eclipse.launchbar.core.target;
 
 /**
  * Launch target manager extensions.
- * 
+ *
  * @noimplement not to be implemented by clients
  */
 public interface ILaunchTargetManager2 {
-	
+
 	/**
 	 * Add a launch target with the given typeId, id, and name but no notification.
-	 * 
+	 *
 	 * @param typeId
 	 *            type id of the launch target
 	 * @param id
@@ -27,6 +27,5 @@ public interface ILaunchTargetManager2 {
 	 * @return the created launch target
 	 */
 	ILaunchTarget addLaunchTargetNoNotify(String typeId, String id);
-
 
 }

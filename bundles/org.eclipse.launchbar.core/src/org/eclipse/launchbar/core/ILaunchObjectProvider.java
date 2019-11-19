@@ -17,13 +17,13 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * An extension that serves up objects to feed launch descriptors.
- * 
+ *
  */
 public interface ILaunchObjectProvider {
 
 	/**
 	 * Add initial launch objects and set up listeners for new ones.
-	 * 
+	 *
 	 * @param launchbar
 	 *            manager
 	 * @throws CoreException
@@ -34,5 +34,5 @@ public interface ILaunchObjectProvider {
 	 * Shutting down, remove any listeners.
 	 */
 	void dispose();
-	
+
 }

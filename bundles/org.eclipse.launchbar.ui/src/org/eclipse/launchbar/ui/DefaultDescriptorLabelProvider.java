@@ -27,7 +27,7 @@ import org.eclipse.launchbar.core.internal.Activator;
 import org.eclipse.swt.graphics.Image;
 
 public class DefaultDescriptorLabelProvider extends LabelProvider {
-	
+
 	private Map<ImageDescriptor, Image> images = new HashMap<>();
 
 	@Override
@@ -37,7 +37,7 @@ public class DefaultDescriptorLabelProvider extends LabelProvider {
 			image.dispose();
 		}
 	}
-	
+
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof ILaunchDescriptor) {

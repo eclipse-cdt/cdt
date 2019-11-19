@@ -77,7 +77,7 @@ public class StopActiveCommandHandler extends AbstractHandler {
 					} catch (CoreException e) {
 						return e.getStatus();
 					}
-				};
+				}
 			}.schedule();
 		}
 	}

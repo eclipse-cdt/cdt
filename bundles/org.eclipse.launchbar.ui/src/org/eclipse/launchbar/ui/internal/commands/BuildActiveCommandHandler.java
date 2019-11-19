@@ -142,7 +142,7 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 					}.schedule();
 
 					return Status.OK_STATUS;
-				};
+				}
 			}.schedule();
 
 		} catch (CoreException e) {

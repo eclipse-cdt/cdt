@@ -146,7 +146,7 @@ public class PerTargetLaunchConfigProviderTest {
 			return config;
 		}
 
-	};
+	}
 
 	@Test
 	public void testPopulateLaunchConfiguration() throws CoreException {

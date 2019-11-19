@@ -32,6 +32,7 @@ public class Activator extends Plugin {
 	private static LaunchTargetManager launchTargetManager;
 	private static LaunchBarManager launchBarManager;
 
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
 		plugin = this;
@@ -43,6 +44,7 @@ public class Activator extends Plugin {
 		bundleContext.registerService(ILaunchBarManager.class, launchBarManager, null);
 	}
 
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);
 		plugin = null;

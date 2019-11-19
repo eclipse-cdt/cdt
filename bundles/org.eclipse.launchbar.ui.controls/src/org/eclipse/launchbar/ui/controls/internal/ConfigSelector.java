@@ -189,7 +189,7 @@ public class ConfigSelector extends CSelector {
 							} catch (CoreException e) {
 								return e.getStatus();
 							}
-						};
+						}
 					}.schedule();
 				}
 			}

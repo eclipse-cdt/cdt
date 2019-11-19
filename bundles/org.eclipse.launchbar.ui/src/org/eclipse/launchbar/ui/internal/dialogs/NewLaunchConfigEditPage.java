@@ -207,7 +207,7 @@ public class NewLaunchConfigEditPage extends WizardPage implements IPageChanging
 		public ILaunchConfigurationWorkingCopy getWorkingCopy() {
 			return super.getWorkingCopy();
 		}
-	};
+	}
 
 	public LaunchGroupExtension getLaunchGroup() {
 		if (workingCopy == null)

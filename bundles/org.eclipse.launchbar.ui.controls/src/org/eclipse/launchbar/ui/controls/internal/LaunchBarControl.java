@@ -165,7 +165,7 @@ public class LaunchBarControl implements ILaunchBarListener {
 				} catch (Exception ex) {
 					Activator.log(ex);
 				}
-			};
+			}
 		});
 		button.addDisposeListener(e -> image.dispose());
 		return button;

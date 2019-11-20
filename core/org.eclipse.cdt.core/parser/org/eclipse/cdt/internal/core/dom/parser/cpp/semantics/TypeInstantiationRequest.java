@@ -80,7 +80,7 @@ public class TypeInstantiationRequest {
 			return true;
 		if (type1 == null || type2 == null)
 			return false;
-		return type1.isSameType(type1);
+		return type1.isSameType(type2);
 	}
 
 	private boolean equals(ICPPTemplateParameterMap map1, ICPPTemplateParameterMap map2) {

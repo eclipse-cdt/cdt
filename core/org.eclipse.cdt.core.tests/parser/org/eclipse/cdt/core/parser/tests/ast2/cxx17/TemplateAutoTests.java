@@ -75,4 +75,37 @@ public class TemplateAutoTests extends AST2CPPTestBase {
 	public void testTemplateNontypeParameterTypeDeductionParsing_519361_3() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template <typename T, T>
+	//	struct meta { using type = int; };
+	//
+	//	template <typename T>
+	//	struct remove_noexcept { using type = T; };
+	//
+	//	template <typename T>
+	//	using remove_noexcept_t = typename remove_noexcept<T>::type;
+	//
+	//	template <auto Key>
+	//	struct K : meta<remove_noexcept_t<decltype(Key)>,Key>{};
+	//
+	//	template <auto Key>
+	//	struct W {
+	//	  using type = typename K<Key>::type;
+	//	};
+	//
+	//	template <typename T>
+	//	struct M {};
+	//
+	//	struct A {
+	//	    int foo;
+	//	};
+	//	typedef M<W<&A::foo>::type> M1; // typedef #1
+	//
+	//	struct B {
+	//	    int foo;
+	//	};
+	//	typedef M<W<&B::foo>::type> M2; // typedef #2
+	public void testInstantiationCacheConflict_553141() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -132,8 +132,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 
 		String[] hosts = settings.getArray(HOSTS_TAG);
 		if (hosts != null) {
-			for (int i = 0; i < hosts.length; i++) {
-				String hostEntry = hosts[i];
+			for (String hostEntry : hosts) {
 				String[] hostString = hostEntry.split("\\|");//$NON-NLS-1$
 				String hostName = hostString[0];
 				if (hostString.length == 2) {

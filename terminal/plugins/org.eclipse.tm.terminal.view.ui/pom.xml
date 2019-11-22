@@ -22,6 +22,6 @@
   </parent>
 
   <artifactId>org.eclipse.tm.terminal.view.ui</artifactId>
-  <version>4.5.102-SNAPSHOT</version>
+  <version>4.5.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

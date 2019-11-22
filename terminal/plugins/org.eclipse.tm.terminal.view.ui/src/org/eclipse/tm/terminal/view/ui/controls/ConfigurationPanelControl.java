@@ -237,8 +237,8 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 		Assert.isNotNull(parent);
 
 		if (configurationPanelKeys != null) {
-			for (int i = 0; i < configurationPanelKeys.length; i++) {
-				IConfigurationPanel configPanel = getConfigurationPanel(configurationPanelKeys[i]);
+			for (String configurationPanelKey : configurationPanelKeys) {
+				IConfigurationPanel configPanel = getConfigurationPanel(configurationPanelKey);
 				Assert.isNotNull(configPanel);
 				configPanel.setupPanel(parent);
 			}

@@ -42,7 +42,7 @@ public class TerminalService implements ITerminalService {
 	/**
 	 * The registered terminal tab dispose listeners.
 	 */
-	private final ListenerList terminalTabListeners = new ListenerList();
+	private final ListenerList<ITerminalTabListener> terminalTabListeners = new ListenerList<ITerminalTabListener>();
 
 	// Flag to remember if the terminal view has been restored or not.
 	private boolean fRestoringView;
@@ -120,10 +120,8 @@ public class TerminalService implements ITerminalService {
 		if (terminalTabListeners.isEmpty()) return;
 
 		// Get the list or currently registered listeners
-		Object[] l = terminalTabListeners.getListeners();
 		// Loop the registered terminal tab listeners and invoke the proper method
-		for (int i = 0; i < l.length; i++) {
-			final ITerminalTabListener listener = (ITerminalTabListener) l[i];
+		for (final ITerminalTabListener listener : terminalTabListeners) {
 			ISafeRunnable job = new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {

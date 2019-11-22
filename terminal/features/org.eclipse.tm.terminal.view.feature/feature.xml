@@ -8,11 +8,10 @@
    
     SPDX-License-Identifier: EPL-2.0
  -->
-
 <feature
       id="org.eclipse.tm.terminal.view.feature"
       label="%featureName"
-      version="4.5.100.qualifier"
+      version="4.5.200.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.tm.terminal.view.core"
       license-feature="org.eclipse.license"

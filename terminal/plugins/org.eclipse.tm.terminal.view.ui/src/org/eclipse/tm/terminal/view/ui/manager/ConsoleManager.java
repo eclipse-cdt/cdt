@@ -234,11 +234,7 @@ public class ConsoleManager {
 	private IViewPart getTerminalsViewWithSecondaryId(String id, String secondaryId, boolean restore) {
 		Assert.isNotNull(id);
 
-		IWorkbenchPage page = getActiveWorkbenchPage();
-
-		IViewReference[] refs = page.getViewReferences();
-		for (int i = 0; i < refs.length; i++) {
-			IViewReference ref = refs[i];
+		for (IViewReference ref : getActiveWorkbenchPage().getViewReferences()) {
 			if (ref.getId().equals(id)) {
 				if (ANY_SECONDARY_ID.equals(secondaryId)
 								|| secondaryId == null && ref.getSecondaryId() == null
@@ -289,13 +285,10 @@ public class ConsoleManager {
 	public String getNextTerminalSecondaryId(String id) {
 		Assert.isNotNull(id);
 
-		IWorkbenchPage page = getActiveWorkbenchPage();
 		Map<String, IViewReference> terminalViews = new HashMap<String, IViewReference>();
 
 		int maxNumber = 0;
-		IViewReference[] refs = page.getViewReferences();
-		for (int i = 0; i < refs.length; i++) {
-			IViewReference ref = refs[i];
+		for (IViewReference ref : getActiveWorkbenchPage().getViewReferences()) {
 			if (ref.getId().equals(id)) {
 				if (ref.getSecondaryId() != null) {
 					terminalViews.put(ref.getSecondaryId(), ref);
@@ -533,9 +526,7 @@ public class ConsoleManager {
 
 		IWorkbenchPage page = getActiveWorkbenchPage();
 		if (page != null) {
-			IViewReference[] refs = page.getViewReferences();
-			for (int i = 0; i < refs.length; i++) {
-				IViewReference ref = refs[i];
+			for (IViewReference ref : page.getViewReferences()) {
 				IViewPart part = ref != null ? ref.getView(false) : null;
 				if (part instanceof ITerminalsView) {
 					CTabFolder tabFolder = (CTabFolder) part.getAdapter(CTabFolder.class);
@@ -576,8 +567,7 @@ public class ConsoleManager {
 		IWorkbenchPage page = getActiveWorkbenchPage();
 		if (page != null) {
 			IViewReference[] refs = page.getViewReferences();
-			for (int i = 0; i < refs.length; i++) {
-				IViewReference ref = refs[i];
+			for (IViewReference ref : refs) {
 				if (ref.getId().equals(id)) {
 					IViewPart part = ref.getView(true);
 					if (part instanceof ITerminalsView) {

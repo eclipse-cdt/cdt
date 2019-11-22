@@ -47,9 +47,7 @@ public class NoteCompositeHelper {
 		@Override
 		public void setEnabled(boolean enabled) {
 			super.setEnabled(enabled);
-			Control[] childs = getChildren();
-			for (int iChild = 0; iChild < childs.length; iChild++) {
-				Control child = childs[iChild];
+			for (Control child : getChildren()) {
 				child.setEnabled(enabled);
 			}
 		}

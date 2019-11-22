@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal.view.ui;singleton:=true
-Bundle-Version: 4.5.102.qualifier
+Bundle-Version: 4.5.200.qualifier
 Bundle-Activator: org.eclipse.tm.terminal.view.ui.activator.UIPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.400",

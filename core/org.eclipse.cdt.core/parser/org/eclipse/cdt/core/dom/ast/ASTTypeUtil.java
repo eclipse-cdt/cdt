@@ -649,8 +649,9 @@ public class ASTTypeUtil {
 				// requirement of appendStringReference().
 				if (cachedResult.length() > TYPE_STRING_LENGTH_THRESHOLD) {
 					appendStringReference(cachedResult, result);
+				} else {
+					result.append(cachedResult);
 				}
-				result.append(cachedResult);
 				return;
 			}
 		}

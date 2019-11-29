@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ada090a6_9df16383",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/ASTTypeUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-11-29T15:09:01Z",
+      "side": 1,
+      "message": "Nate, RE Bug 553613.",
+      "revId": "48d5342815f83539aa5d7d5fc354d61cfedf31b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

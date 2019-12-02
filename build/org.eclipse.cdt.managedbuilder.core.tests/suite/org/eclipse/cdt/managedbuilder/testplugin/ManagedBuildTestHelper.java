@@ -698,8 +698,7 @@ public class ManagedBuildTestHelper {
 
 	private static ArrayList<String> getContents(IPath fullPath) {
 		ArrayList<String> lines = new ArrayList<>();
-		try {
-			BufferedReader in = new BufferedReader(new FileReader(fullPath.toFile()));
+		try (BufferedReader in = new BufferedReader(new FileReader(fullPath.toFile()))) {
 			String line;
 			do {
 				line = in.readLine();
@@ -876,7 +875,8 @@ public class ManagedBuildTestHelper {
 		return buff;
 	}
 
-	static public IPath copyFilesToTempDir(IPath srcDir, IPath tmpRootDir, IPath tmpSubDir, IPath[] files) {
+	static public IPath copyFilesToTempDir(IPath srcDir, IPath tmpRootDir, IPath tmpSubDir, IPath[] files)
+			throws IOException {
 		IPath tmpSrcDir = null;
 		tmpSrcDir = tmpRootDir.append(tmpSubDir);
 		if (tmpRootDir.toString().equalsIgnoreCase(tmpSrcDir.toString())) {
@@ -898,46 +898,31 @@ public class ManagedBuildTestHelper {
 			for (int i = 0; i < files.length; i++) {
 				IPath file = files[i];
 				IPath srcFile = srcDir.append(file);
-				FileReader srcReader = null;
-				try {
-					srcReader = new FileReader(srcFile.toFile());
-				} catch (Exception e) {
-					Assert.fail("File " + file.toString() + " could not be read.");
-					return null;
+				try (FileReader srcReader = new FileReader(srcFile.toFile())) {
+					if (file.segmentCount() > 1) {
+						IPath newDir = tmpSrcDir;
+						do {
+							IPath dir = file.uptoSegment(1);
+							newDir = newDir.append(dir);
+							file = file.removeFirstSegments(1);
+							newDir.toFile().mkdir();
+							if (!newDir.toFile().exists()) {
+								Assert.fail("Can't create temporary directory " + tmpSrcDirFile.toString());
+							}
+						} while (file.segmentCount() > 1);
+					}
+					IPath destFile = tmpSrcDir.append(files[i]);
+					try (FileWriter writer = new FileWriter(destFile.toFile())) {
+						int c;
+						do {
+							c = srcReader.read();
+							if (c == -1)
+								break;
+							writer.write(c);
+						} while (c != -1);
+					}
 				}
-				if (file.segmentCount() > 1) {
-					IPath newDir = tmpSrcDir;
-					do {
-						IPath dir = file.uptoSegment(1);
-						newDir = newDir.append(dir);
-						file = file.removeFirstSegments(1);
-						newDir.toFile().mkdir();
-						if (!newDir.toFile().exists()) {
-							Assert.fail("Can't create temporary directory " + tmpSrcDirFile.toString());
-						}
-					} while (file.segmentCount() > 1);
-				}
-				IPath destFile = tmpSrcDir.append(files[i]);
-				FileWriter writer = null;
-				try {
-					writer = new FileWriter(destFile.toFile());
-				} catch (Exception e) {
-					Assert.fail("File " + files[i].toString() + " could not be written.");
-					return null;
-				}
-				try {
-					int c;
-					do {
-						c = srcReader.read();
-						if (c == -1)
-							break;
-						writer.write(c);
-					} while (c != -1);
-					srcReader.close();
-					writer.close();
-				} catch (Exception e) {
-					Assert.fail("File " + file.toString() + " could not be copied.");
-				}
+
 			}
 		}
 

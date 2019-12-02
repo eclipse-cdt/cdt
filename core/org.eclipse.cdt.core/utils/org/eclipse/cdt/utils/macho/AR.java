@@ -29,12 +29,17 @@ import org.eclipse.cdt.core.CCorePlugin;
  *  class operations.
  *  @see ARHeader
  */
-public class AR {
+public class AR implements AutoCloseable {
 
 	protected String filename;
 	protected ERandomAccessFile efile;
 	protected long strtbl_pos = -1;
 	private ARHeader[] headers;
+
+	@Override
+	public void close() {
+		dispose();
+	}
 
 	public void dispose() {
 		try {

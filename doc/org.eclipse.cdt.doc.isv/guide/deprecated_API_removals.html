@@ -46,6 +46,7 @@
     <li><a href="#terminal">TM Terminal has major changes to support new color and preference functionality.</a></li>
     <li><a href="#casesensitive">Environment Variables are always case sensitive in CDT.</a></li>
     <li><a href="#escaping">Environment variables no longer support \${ to avoid expanding.</a></li>
+    <li><a href="#autocloseable">The binary parsers are now implement Autocloseable</a></li>
   </ol>
   <p>
     Planned Removals after June 2022
@@ -301,6 +302,27 @@
     <li>org.eclipse.cdt.managedbuilder.core.IBuilder.isVariableCaseSensitive() removed.</li>
     <li>org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider.isVariableCaseSensitive() removed.</li>
     <li>org.eclipse.cdt.core.envvar.IEnvironmentVariableManager.isVariableCaseSensitive() removed.</li></li>
+  </ul>
+
+
+  <h3>15. <a name="autocloseable">The binary parsers are now implement AutoCloseable</a></h3>
+  <p>
+    The binary parsers part of CDT core now implement the AutoCloseable interface and can be used
+    in try-with-resources blocks. See list below for all the classes that are now AutoCloseable. See <a
+    href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=553674" target="_blank">Bug 553674</a>.
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.utils.coff.Exe</li>
+    <li>org.eclipse.cdt.utils.coff.PE</li>
+    <li>org.eclipse.cdt.utils.coff.PE64</li>
+    <li>org.eclipse.cdt.utils.coff.PEArchive</li>
+    <li>org.eclipse.cdt.utils.elf.Elf</li>
+    <li>org.eclipse.cdt.utils.elf.ElfHelper</li>
+    <li>org.eclipse.cdt.utils.AR</li>
+    <li>org.eclipse.cdt.utils.elf.AR</li>
+    <li>org.eclipse.cdt.utils.som.AR</li>
+    <li>org.eclipse.cdt.utils.xcoff.AR</li>
+    <li>org.eclipse.cdt.utils.macho.AR</li>
   </ul>
 
   <hr>

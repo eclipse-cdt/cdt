@@ -39,7 +39,9 @@ public class SOMBinaryArchive extends BinaryFile implements IBinaryArchive {
 	 */
 	public SOMBinaryArchive(IBinaryParser parser, IPath path) throws IOException {
 		super(parser, path, IBinaryFile.ARCHIVE);
-		new AR(path.toOSString()).dispose(); // check file type
+		try (AR ar = new AR(path.toOSString())) {
+			// create the object just to check file type
+		}
 		children = new ArrayList<>(5);
 	}
 

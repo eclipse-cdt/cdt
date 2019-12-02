@@ -151,17 +151,19 @@ public class PDABackend extends AbstractDsfService {
 								Thread.sleep(1000);
 							} catch (InterruptedException e) {
 							}
-							Socket socket = new Socket("localhost", fRequestPort);
-							fRequestOutputStream = socket.getOutputStream();
-							fRequestInputStream = socket.getInputStream();
+							try (Socket socket = new Socket("localhost", fRequestPort)) {
+								fRequestOutputStream = socket.getOutputStream();
+								fRequestInputStream = socket.getInputStream();
+							}
 							// give interpreter a chance to open next socket
 							try {
 								Thread.sleep(1000);
 							} catch (InterruptedException e) {
 							}
 
-							socket = new Socket("localhost", fEventPort);
-							fEventInputStream = socket.getInputStream();
+							try (Socket socket = new Socket("localhost", fEventPort)) {
+								fEventInputStream = socket.getInputStream();
+							}
 
 						} catch (UnknownHostException e) {
 							rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, REQUEST_FAILED,

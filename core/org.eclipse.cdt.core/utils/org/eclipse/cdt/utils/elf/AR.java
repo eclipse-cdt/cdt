@@ -31,12 +31,17 @@ import org.eclipse.cdt.utils.ERandomAccessFile;
  *  @see ARHeader
  */
 @Deprecated
-public class AR {
+public class AR implements AutoCloseable {
 
 	protected String filename;
 	protected ERandomAccessFile efile;
 	protected long strtbl_pos = -1;
 	private ARHeader[] headers;
+
+	@Override
+	public void close() {
+		dispose();
+	}
 
 	public void dispose() {
 		try {
@@ -207,11 +212,10 @@ public class AR {
 				efile.seek(elf_offset);
 				efile.read(temp);
 			} else {
-				efile = new ERandomAccessFile(filename, "r"); //$NON-NLS-1$
-				efile.seek(elf_offset);
-				efile.read(temp);
-				efile.close();
-				efile = null;
+				try (ERandomAccessFile tempfile = new ERandomAccessFile(filename, "r")) { //$NON-NLS-1$
+					tempfile.seek(elf_offset);
+					tempfile.read(temp);
+				}
 			}
 			return temp;
 		}
@@ -237,6 +241,7 @@ public class AR {
 		String hdr = efile.readLine();
 		if (hdr == null || hdr.compareTo("!<arch>") != 0) { //$NON-NLS-1$
 			efile.close();
+			efile = null;
 			throw new IOException(CCorePlugin.getResourceString("Util.exception.invalidArchive")); //$NON-NLS-1$
 		}
 	}

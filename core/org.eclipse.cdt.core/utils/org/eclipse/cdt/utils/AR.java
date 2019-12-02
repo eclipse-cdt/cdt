@@ -30,12 +30,17 @@ import org.eclipse.cdt.core.CCorePlugin;
  *  class operations.
  *  @see ARHeader
  */
-public class AR {
+public class AR implements AutoCloseable {
 
 	protected String filename;
 	protected ERandomAccessFile efile;
 	protected long strtbl_pos = -1;
 	private ARHeader[] headers;
+
+	@Override
+	public void close() {
+		dispose();
+	}
 
 	public void dispose() {
 		try {
@@ -197,11 +202,10 @@ public class AR {
 				efile.seek(obj_offset);
 				efile.read(temp);
 			} else {
-				efile = new ERandomAccessFile(filename, "r"); //$NON-NLS-1$
-				efile.seek(obj_offset);
-				efile.read(temp);
-				efile.close();
-				efile = null;
+				try (ERandomAccessFile tempfile = new ERandomAccessFile(filename, "r")) { //$NON-NLS-1$
+					tempfile.seek(obj_offset);
+					tempfile.read(temp);
+				}
 			}
 			return temp;
 		}

@@ -131,33 +131,21 @@ public class PEBinaryObject64 extends BinaryObjectAdapter {
 	}
 
 	protected void loadAll() throws IOException {
-		PE64 pe = null;
-		try {
-			pe = getPE();
+		try (PE64 pe = getPE()) {
 			loadInfo(pe);
 			loadSymbols(pe);
-		} finally {
-			if (pe != null) {
-				pe.dispose();
-			}
 		}
 	}
 
 	protected void loadInfo() throws IOException {
-		PE64 pe = null;
-		try {
-			pe = getPE();
+		try (PE64 pe = getPE()) {
 			loadInfo(pe);
-		} finally {
-			if (pe != null) {
-				pe.dispose();
-			}
 		}
 	}
 
 	protected void loadInfo(PE64 pe) throws IOException {
 		info = new BinaryObjectInfo();
-		PE64.Attribute attribute = getPE().getAttribute();
+		PE64.Attribute attribute = pe.getAttribute();
 		info.isLittleEndian = attribute.isLittleEndian();
 		info.hasDebug = attribute.hasDebug();
 		info.cpu = attribute.getCPU();

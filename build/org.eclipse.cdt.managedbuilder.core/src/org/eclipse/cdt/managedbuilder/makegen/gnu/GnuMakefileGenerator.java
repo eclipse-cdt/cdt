@@ -3442,18 +3442,18 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			return false;
 
 		// Get the contents of the dependency file
+		StringBuffer inBuffer;
 		InputStream contentStream = makefile.getContents(false);
-		Reader in = new InputStreamReader(contentStream);
-		StringBuffer inBuffer = null;
-		int chunkSize = contentStream.available();
-		inBuffer = new StringBuffer(chunkSize);
-		char[] readBuffer = new char[chunkSize];
-		int n = in.read(readBuffer);
-		while (n > 0) {
-			inBuffer.append(readBuffer);
-			n = in.read(readBuffer);
+		try (Reader in = new InputStreamReader(contentStream)) {
+			int chunkSize = contentStream.available();
+			inBuffer = new StringBuffer(chunkSize);
+			char[] readBuffer = new char[chunkSize];
+			int n = in.read(readBuffer);
+			while (n > 0) {
+				inBuffer.append(readBuffer);
+				n = in.read(readBuffer);
+			}
 		}
-		contentStream.close();
 
 		// The rest of this operation is equally expensive, so
 		// if we are doing an incremental build, only update the
@@ -3613,6 +3613,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			save(outBuffer, makefile);
 			return true;
 		}
+
 		return false;
 	}
 

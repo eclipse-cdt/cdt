@@ -26,13 +26,18 @@ import org.eclipse.cdt.utils.elf.Elf.Symbol;
  *
  * @see Elf
  */
-public class ElfHelper {
+public class ElfHelper implements AutoCloseable {
 
 	private Elf elf;
 	private Elf.Symbol[] dynsyms;
 	private Elf.Symbol[] symbols;
 	private Elf.Section[] sections;
 	private Elf.Dynamic[] dynamics;
+
+	@Override
+	public void close() {
+		dispose();
+	}
 
 	public void dispose() {
 		if (elf != null) {

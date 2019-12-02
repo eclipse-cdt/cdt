@@ -30,12 +30,17 @@ import org.eclipse.cdt.core.CCorePlugin;
  *  @see ARHeader
  */
 @Deprecated
-public class PEArchive {
+public class PEArchive implements AutoCloseable {
 
 	protected String filename;
 	protected RandomAccessFile rfile;
 	protected long strtbl_pos = -1;
 	private ARHeader[] headers;
+
+	@Override
+	public void close() {
+		dispose();
+	}
 
 	public void dispose() {
 		try {

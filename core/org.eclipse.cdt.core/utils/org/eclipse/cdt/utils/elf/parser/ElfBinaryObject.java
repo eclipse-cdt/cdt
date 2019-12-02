@@ -123,27 +123,15 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void loadAll() throws IOException {
-		ElfHelper helper = null;
-		try {
-			helper = getElfHelper();
+		try (ElfHelper helper = getElfHelper()) {
 			loadInfo(helper);
 			loadSymbols(helper);
-		} finally {
-			if (helper != null) {
-				helper.dispose();
-			}
 		}
 	}
 
 	protected void loadInfo() throws IOException {
-		ElfHelper helper = null;
-		try {
-			helper = getElfHelper();
+		try (ElfHelper helper = getElfHelper()) {
 			loadInfo(helper);
-		} finally {
-			if (helper != null) {
-				helper.dispose();
-			}
 		}
 	}
 

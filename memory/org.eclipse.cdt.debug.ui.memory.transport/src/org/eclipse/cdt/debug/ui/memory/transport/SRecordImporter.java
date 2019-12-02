@@ -356,133 +356,139 @@ public class SRecordImporter implements IMemoryImporter {
 					if (!fProperties.getBoolean(TRANSFER_CUSTOM_START_ADDRESS))
 						offset = BigInteger.ZERO;
 
-					BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));
+					try (BufferedReader reader = new BufferedReader(
+							new InputStreamReader(new FileInputStream(fInputFile)))) {
 
-					BigInteger jobs = BigInteger.valueOf(fInputFile.length());
-					BigInteger factor = BigInteger.ONE;
-					if (jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0) {
-						factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
-						jobs = jobs.divide(factor);
-					}
-
-					monitor.beginTask(Messages.getString("Importer.ProgressTitle"), jobs.intValue()); //$NON-NLS-1$
-
-					String line = reader.readLine();
-					int lineNo = 1; // line error reporting
-					while (line != null && !monitor.isCanceled()) {
-						String recordType = line.substring(0, 2);
-						int recordCount = 0;
-						try {
-							recordCount = Integer.parseInt(line.substring(2, 4), 16);
-						} catch (NumberFormatException ex) {
-							return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED,
-									String.format(Messages.getString("SRecordImporter.InvalidLineLength"), lineNo), ex); //$NON-NLS-1$
+						BigInteger jobs = BigInteger.valueOf(fInputFile.length());
+						BigInteger factor = BigInteger.ONE;
+						if (jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0) {
+							factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
+							jobs = jobs.divide(factor);
 						}
 
-						int bytesRead = 4 + recordCount;
-						int position = 4;
-						int addressSize = 0;
+						monitor.beginTask(Messages.getString("Importer.ProgressTitle"), jobs.intValue()); //$NON-NLS-1$
 
-						BigInteger recordAddress = null;
-
-						if ("S3".equals(recordType)) //$NON-NLS-1$
-							addressSize = 4;
-						else if ("S1".equals(recordType)) //$NON-NLS-1$
-							addressSize = 2;
-						else if ("S2".equals(recordType)) //$NON-NLS-1$
-							addressSize = 3;
-						else if ("S0".equals(recordType) || "S5".equals(recordType) || "S7".equals(recordType)
-								|| "S8".equals(recordType) || "S9".equals(recordType)) //$NON-NLS-1$
-						{ // ignore S0, S5, S7, S8 and S9 records
-							line = reader.readLine();
-							lineNo++;
-							continue;
-						}
-						try {
-							recordAddress = new BigInteger(line.substring(position, position + addressSize * 2), 16);
-						} catch (NumberFormatException ex) {
-							return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED,
-									String.format(Messages.getString("SRecordImporter.InvalidAddress"), lineNo), ex); //$NON-NLS-1$
-						}
-						recordCount -= addressSize;
-						position += addressSize * 2;
-
-						if (offset == null)
-							offset = fStartAddress.subtract(recordAddress);
-
-						recordAddress = recordAddress.add(offset);
-
-						byte data[] = new byte[recordCount - CHECKSUM_LENGTH];
-						for (int i = 0; i < data.length; i++) {
+						String line = reader.readLine();
+						int lineNo = 1; // line error reporting
+						while (line != null && !monitor.isCanceled()) {
+							String recordType = line.substring(0, 2);
+							int recordCount = 0;
 							try {
-								data[i] = new BigInteger(line.substring(position++, position++ + 1), 16).byteValue();
+								recordCount = Integer.parseInt(line.substring(2, 4), 16);
 							} catch (NumberFormatException ex) {
 								return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
 										DebugException.REQUEST_FAILED,
-										String.format(Messages.getString("SRecordImporter.InvalidData"), lineNo), ex); //$NON-NLS-1$
-							}
-						}
-
-						/*
-						 * The least significant byte of the one's complement of the sum of the values
-						 * represented by the pairs of characters making up the records length, address,
-						 * and the code/data fields.
-						 */
-						StringBuilder buf = new StringBuilder(line.substring(2));
-						byte checksum = 0;
-
-						for (int i = 0; i < buf.length(); i += 2) {
-							BigInteger value = null;
-							try {
-								value = new BigInteger(buf.substring(i, i + 2), 16);
-							} catch (NumberFormatException ex) {
-								return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-										DebugException.REQUEST_FAILED,
-										String.format(Messages.getString("SRecordImporter.InvalidChecksum"), lineNo), //$NON-NLS-1$
+										String.format(Messages.getString("SRecordImporter.InvalidLineLength"), lineNo), //$NON-NLS-1$
 										ex);
 							}
-							checksum += value.byteValue();
+
+							int bytesRead = 4 + recordCount;
+							int position = 4;
+							int addressSize = 0;
+
+							BigInteger recordAddress = null;
+
+							if ("S3".equals(recordType)) //$NON-NLS-1$
+								addressSize = 4;
+							else if ("S1".equals(recordType)) //$NON-NLS-1$
+								addressSize = 2;
+							else if ("S2".equals(recordType)) //$NON-NLS-1$
+								addressSize = 3;
+							else if ("S0".equals(recordType) || "S5".equals(recordType) || "S7".equals(recordType)
+									|| "S8".equals(recordType) || "S9".equals(recordType)) //$NON-NLS-1$
+							{ // ignore S0, S5, S7, S8 and S9 records
+								line = reader.readLine();
+								lineNo++;
+								continue;
+							}
+							try {
+								recordAddress = new BigInteger(line.substring(position, position + addressSize * 2),
+										16);
+							} catch (NumberFormatException ex) {
+								return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+										DebugException.REQUEST_FAILED,
+										String.format(Messages.getString("SRecordImporter.InvalidAddress"), lineNo), //$NON-NLS-1$
+										ex);
+							}
+							recordCount -= addressSize;
+							position += addressSize * 2;
+
+							if (offset == null)
+								offset = fStartAddress.subtract(recordAddress);
+
+							recordAddress = recordAddress.add(offset);
+
+							byte data[] = new byte[recordCount - CHECKSUM_LENGTH];
+							for (int i = 0; i < data.length; i++) {
+								try {
+									data[i] = new BigInteger(line.substring(position++, position++ + 1), 16)
+											.byteValue();
+								} catch (NumberFormatException ex) {
+									return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+											DebugException.REQUEST_FAILED,
+											String.format(Messages.getString("SRecordImporter.InvalidData"), lineNo), //$NON-NLS-1$
+											ex);
+								}
+							}
+
+							/*
+							 * The least significant byte of the one's complement of the sum of the values
+							 * represented by the pairs of characters making up the records length, address,
+							 * and the code/data fields.
+							 */
+							StringBuilder buf = new StringBuilder(line.substring(2));
+							byte checksum = 0;
+
+							for (int i = 0; i < buf.length(); i += 2) {
+								BigInteger value = null;
+								try {
+									value = new BigInteger(buf.substring(i, i + 2), 16);
+								} catch (NumberFormatException ex) {
+									return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+											DebugException.REQUEST_FAILED,
+											String.format(Messages.getString("SRecordImporter.InvalidChecksum"), //$NON-NLS-1$
+													lineNo), ex);
+								}
+								checksum += value.byteValue();
+							}
+
+							/*
+							 * Since we included the checksum in the checksum calculation the checksum
+							 * ( if correct ) will always be 0xFF which is -1 using the signed byte size
+							 * calculation here.
+							 */
+							if (checksum != (byte) -1) {
+								reader.close();
+								monitor.done();
+								return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+										Messages.getString("SRecordImporter.ChecksumFalure") + line); //$NON-NLS-1$
+							}
+
+							if (scrollToAddress == null)
+								scrollToAddress = recordAddress;
+
+							// FIXME error on incorrect checksum
+
+							memoryWriter.write(
+									recordAddress.subtract(((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress()),
+									data);
+
+							BigInteger jobCount = BigInteger.valueOf(bytesRead).divide(factor);
+							monitor.worked(jobCount.intValue());
+
+							line = reader.readLine();
+							lineNo++;
 						}
 
-						/*
-						 * Since we included the checksum in the checksum calculation the checksum
-						 * ( if correct ) will always be 0xFF which is -1 using the signed byte size
-						 * calculation here.
-						 */
-						if (checksum != (byte) -1) {
-							reader.close();
-							monitor.done();
-							return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									Messages.getString("SRecordImporter.ChecksumFalure") + line); //$NON-NLS-1$
-						}
+						if (!monitor.isCanceled())
+							memoryWriter.flush();
 
-						if (scrollToAddress == null)
-							scrollToAddress = recordAddress;
+						reader.close();
+						monitor.done();
 
-						// FIXME error on incorrect checksum
-
-						memoryWriter.write(
-								recordAddress.subtract(((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress()),
-								data);
-
-						BigInteger jobCount = BigInteger.valueOf(bytesRead).divide(factor);
-						monitor.worked(jobCount.intValue());
-
-						line = reader.readLine();
-						lineNo++;
+						if (fScrollToStart)
+							fParentDialog.scrollRenderings(scrollToAddress);
 					}
-
-					if (!monitor.isCanceled())
-						memoryWriter.flush();
-
-					reader.close();
-					monitor.done();
-
-					if (fScrollToStart)
-						fParentDialog.scrollRenderings(scrollToAddress);
-
 				} catch (IOException ex) {
 					MemoryTransportPlugin.getDefault().getLog()
 							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),

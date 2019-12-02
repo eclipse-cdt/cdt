@@ -398,8 +398,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		}
 
 		//Iterate through each key/value property we discover
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 
 			String line, key, value;
 			while ((line = reader.readLine()) != null) {

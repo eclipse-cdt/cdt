@@ -31,9 +31,9 @@ public class DebugAddr2line {
 	DebugSymsRequestor symreq;
 
 	public DebugAddr2line(String file) throws IOException {
-		Elf elf = new Elf(file);
-		init(elf);
-		elf.dispose();
+		try (Elf elf = new Elf(file)) {
+			init(elf);
+		}
 	}
 
 	public DebugAddr2line(Elf elf) throws IOException {

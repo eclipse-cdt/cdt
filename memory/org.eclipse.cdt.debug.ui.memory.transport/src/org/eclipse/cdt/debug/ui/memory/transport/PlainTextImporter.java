@@ -271,13 +271,12 @@ public class PlainTextImporter implements IMemoryImporter {
 
 			@Override
 			public IStatus run(IProgressMonitor monitor) {
-				try {
+				try (BufferedReader reader = new BufferedReader(
+						new InputStreamReader(new FileInputStream(fInputFile)))) {
 					BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock,
 							BUFFER_LENGTH);
 
 					BigInteger scrollToAddress = null;
-
-					BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));
 
 					BigInteger jobs = BigInteger.valueOf(fInputFile.length());
 					BigInteger factor = BigInteger.ONE;

@@ -68,14 +68,12 @@ public class Stabs {
 
 		// we support Elf and PE executable formats.  try Elf
 		// and then PE.
-		try {
-			Elf exe = new Elf(file);
+		try (Elf exe = new Elf(file)) {
 			init(exe);
-			exe.dispose();
 		} catch (IOException e) {
-			PE exe = new PE(file);
-			init(exe);
-			exe.dispose();
+			try (PE exe = new PE(file)) {
+				init(exe);
+			}
 		}
 	}
 

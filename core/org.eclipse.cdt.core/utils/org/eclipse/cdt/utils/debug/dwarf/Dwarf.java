@@ -186,9 +186,9 @@ public class Dwarf {
 	boolean printEnabled = true;
 
 	public Dwarf(String file) throws IOException {
-		Elf exe = new Elf(file);
-		init(exe);
-		exe.dispose();
+		try (Elf exe = new Elf(file)) {
+			init(exe);
+		}
 	}
 
 	public Dwarf(Elf exe) throws IOException {
@@ -238,8 +238,9 @@ public class Dwarf {
 						}
 						if (debugFile.exists()) {
 							// if the debug file exists from above, open it and get the section info from it
-							Elf debugInfo = new Elf(debugFile.getCanonicalPath());
-							sections = debugInfo.getSections();
+							try (Elf debugInfo = new Elf(debugFile.getCanonicalPath())) {
+								sections = debugInfo.getSections();
+							}
 							debugInfoPath = new Path(debugFile.getCanonicalPath());
 						}
 					}
@@ -264,17 +265,17 @@ public class Dwarf {
 						}
 						File altFile = altPath.toFile();
 						if (altFile.exists()) {
-							Elf altInfo = new Elf(altFile.getCanonicalPath());
-							Elf.Section[] altSections = altInfo.getSections();
-							for (Section altSection : altSections) {
-								String altName = altSection.toString();
-								for (String element : DWARF_ALT_SCNNAMES) {
-									if (altName.equals(element)) {
-										try {
-											dwarfAltSections.put(element, altSection.mapSectionData());
-										} catch (Exception e) {
-											e.printStackTrace();
-											CCorePlugin.log(e);
+							try (Elf altInfo = new Elf(altFile.getCanonicalPath())) {
+								Elf.Section[] altSections = altInfo.getSections();
+								for (Section altSection : altSections) {
+									String altName = altSection.toString();
+									for (String element : DWARF_ALT_SCNNAMES) {
+										if (altName.equals(element)) {
+											try {
+												dwarfAltSections.put(element, altSection.mapSectionData());
+											} catch (Exception e) {
+												CCorePlugin.log(e);
+											}
 										}
 									}
 								}

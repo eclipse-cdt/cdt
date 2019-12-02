@@ -198,11 +198,8 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 	}
 
 	private static PHdr[] getPHdrs(IPath path) throws IOException {
-		Elf elf = new Elf(path.toOSString());
-		try {
+		try (Elf elf = new Elf(path.toOSString())) {
 			return elf.getPHdrs();
-		} finally {
-			elf.dispose();
 		}
 	}
 }

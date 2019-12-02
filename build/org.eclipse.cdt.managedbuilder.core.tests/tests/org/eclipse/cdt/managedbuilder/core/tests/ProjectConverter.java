@@ -28,8 +28,7 @@ public class ProjectConverter implements IConvertManagedBuildObject {
 		String tmpDir = System.getProperty("java.io.tmpdir");
 
 		File outputFile = new File(tmpDir + "/converterOutput.txt");
-		try {
-			FileWriter out = new FileWriter(outputFile);
+		try (FileWriter out = new FileWriter(outputFile)) {
 			out.write("---------- Start-------");
 			out.write("Converter for the build object : '" + buildObj.getName() + "' is invoked.");
 			out.write("From Id : " + fromId);

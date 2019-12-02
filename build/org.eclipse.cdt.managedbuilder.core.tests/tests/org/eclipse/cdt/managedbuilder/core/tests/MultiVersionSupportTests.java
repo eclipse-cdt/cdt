@@ -409,11 +409,12 @@ public class MultiVersionSupportTests extends TestCase {
 
 			String expectedContent = "Converter for CDT 2.0 Project is invoked"; //$NON-NLS-1$
 
-			BufferedReader data = new BufferedReader(new FileReader(inputFile));
-			String actualContent;
+			try (BufferedReader data = new BufferedReader(new FileReader(inputFile))) {
+				String actualContent;
 
-			if ((actualContent = data.readLine()) != null) {
-				assertEquals(actualContent, expectedContent);
+				if ((actualContent = data.readLine()) != null) {
+					assertEquals(actualContent, expectedContent);
+				}
 			}
 
 		} catch (IOException e) {
@@ -434,11 +435,12 @@ public class MultiVersionSupportTests extends TestCase {
 
 			String expectedContent = "Converter for CDT 2.1 Project is invoked"; //$NON-NLS-1$
 
-			BufferedReader data = new BufferedReader(new FileReader(inputFile));
-			String actualContent;
+			try (BufferedReader data = new BufferedReader(new FileReader(inputFile))) {
+				String actualContent;
 
-			if ((actualContent = data.readLine()) != null) {
-				assertEquals(actualContent, expectedContent);
+				if ((actualContent = data.readLine()) != null) {
+					assertEquals(actualContent, expectedContent);
+				}
 			}
 
 		} catch (IOException e) {
@@ -459,11 +461,12 @@ public class MultiVersionSupportTests extends TestCase {
 
 			String expectedContent = "The converter for the projectType testProject_1.0.0 is invoked"; //$NON-NLS-1$
 
-			BufferedReader data = new BufferedReader(new FileReader(inputFile));
-			String actualContent;
+			try (BufferedReader data = new BufferedReader(new FileReader(inputFile))) {
+				String actualContent;
 
-			if ((actualContent = data.readLine()) != null) {
-				assertEquals(actualContent, expectedContent);
+				if ((actualContent = data.readLine()) != null) {
+					assertEquals(actualContent, expectedContent);
+				}
 			}
 
 		} catch (IOException e) {

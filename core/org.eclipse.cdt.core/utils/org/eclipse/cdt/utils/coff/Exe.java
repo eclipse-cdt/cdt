@@ -18,11 +18,12 @@ import java.io.RandomAccessFile;
 
 import org.eclipse.cdt.core.CCorePlugin;
 
-public class Exe {
+public class Exe implements AutoCloseable {
 
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	protected RandomAccessFile rfile;
 	ExeHeader ehdr;
+	private String file;
 
 	static public class ExeHeader {
 
@@ -160,12 +161,13 @@ public class Exe {
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append(rfile).append(NL);
+		buffer.append(file).append(NL);
 		buffer.append(ehdr);
 		return buffer.toString();
 	}
 
 	public Exe(String file) throws IOException {
+		this.file = file;
 		rfile = new RandomAccessFile(file, "r"); //$NON-NLS-1$
 		try {
 			ehdr = new ExeHeader(rfile);
@@ -173,6 +175,15 @@ public class Exe {
 			if (ehdr == null) {
 				rfile.close();
 			}
+		}
+	}
+
+	@Override
+	public void close() throws Exception {
+		if (rfile != null) {
+			rfile.close();
+			rfile = null;
+			ehdr = null;
 		}
 	}
 

@@ -37,7 +37,7 @@ import org.eclipse.cdt.utils.Addr64Factory;
 import org.eclipse.cdt.utils.ERandomAccessFile;
 import org.eclipse.cdt.utils.debug.dwarf.DwarfReader;
 
-public class Elf {
+public class Elf implements AutoCloseable {
 	public final static int ELF32_ADDR_SIZE = 4;
 	public final static int ELF32_OFF_SIZE = 4;
 	public final static int ELF64_ADDR_SIZE = 8;
@@ -945,26 +945,30 @@ public class Elf {
 	}
 
 	public static Attribute getAttributes(String file) throws IOException {
-		Elf elf = new Elf(file);
-		Attribute attrib = elf.getAttributes();
-		elf.dispose();
-		return attrib;
+		try (Elf elf = new Elf(file)) {
+			Attribute attrib = elf.getAttributes();
+			return attrib;
+		}
 	}
 
 	public static Attribute getAttributes(byte[] array) throws IOException {
 
-		Elf emptyElf = new Elf();
-		emptyElf.ehdr = emptyElf.new ELFhdr(array);
-		emptyElf.sections = new Elf.Section[0];
-		Attribute attrib = emptyElf.getAttributes();
-		emptyElf.dispose();
-
-		return attrib;
+		try (Elf emptyElf = new Elf()) {
+			emptyElf.ehdr = emptyElf.new ELFhdr(array);
+			emptyElf.sections = new Elf.Section[0];
+			Attribute attrib = emptyElf.getAttributes();
+			return attrib;
+		}
 	}
 
 	public static boolean isElfHeader(byte[] e_ident) {
 		return e_ident != null && e_ident.length >= 4 && e_ident[ELFhdr.EI_MAG0] == 0x7f
 				&& e_ident[ELFhdr.EI_MAG1] == 'E' && e_ident[ELFhdr.EI_MAG2] == 'L' && e_ident[ELFhdr.EI_MAG3] == 'F';
+	}
+
+	@Override
+	public void close() {
+		dispose();
 	}
 
 	public void dispose() {

@@ -32,9 +32,11 @@ public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 
 	private ArrayList<IBinaryObject> children;
 
-	public ElfBinaryArchive(IBinaryParser parser, IPath p) throws IOException {
-		super(parser, p, IBinaryFile.ARCHIVE);
-		new AR(p.toOSString()).dispose(); // check file type
+	public ElfBinaryArchive(IBinaryParser parser, IPath path) throws IOException {
+		super(parser, path, IBinaryFile.ARCHIVE);
+		try (AR ar = new AR(path.toOSString())) {
+			// check file type
+		}
 		children = new ArrayList<>(5);
 	}
 

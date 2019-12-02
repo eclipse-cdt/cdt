@@ -73,7 +73,7 @@ import org.eclipse.cdt.utils.debug.stabs.StabsReader;
  * This class is planned for removal in next major release.
  */
 @Deprecated
-public class PE {
+public class PE implements AutoCloseable {
 
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	RandomAccessFile rfile;
@@ -573,10 +573,14 @@ public class PE {
 	}
 
 	public static Attribute getAttribute(String file) throws IOException {
-		PE pe = new PE(file);
-		Attribute attrib = pe.getAttribute();
-		pe.dispose();
-		return attrib;
+		try (PE pe = new PE(file)) {
+			return pe.getAttribute();
+		}
+	}
+
+	@Override
+	public void close() throws IOException {
+		dispose();
 	}
 
 	public void dispose() throws IOException {

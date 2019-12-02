@@ -698,8 +698,7 @@ public class ManagedBuildTestHelper {
 
 	private static ArrayList<String> getContents(IPath fullPath) {
 		ArrayList<String> lines = new ArrayList<>();
-		try {
-			BufferedReader in = new BufferedReader(new FileReader(fullPath.toFile()));
+		try (BufferedReader in = new BufferedReader(new FileReader(fullPath.toFile()))) {
 			String line;
 			do {
 				line = in.readLine();
@@ -923,6 +922,10 @@ public class ManagedBuildTestHelper {
 					writer = new FileWriter(destFile.toFile());
 				} catch (Exception e) {
 					Assert.fail("File " + files[i].toString() + " could not be written.");
+					try {
+						srcReader.close();
+					} catch (IOException e1) {
+					}
 					return null;
 				}
 				try {

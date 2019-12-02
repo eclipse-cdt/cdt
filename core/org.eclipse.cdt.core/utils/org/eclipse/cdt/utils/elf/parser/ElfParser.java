@@ -190,10 +190,19 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 
 		try {
 			/* No PHdr.PT_INTERP found in the hints meaning we need to read the file itself */
-			return Arrays.stream(new Elf(path.toOSString()).getPHdrs()).anyMatch(phdr -> phdr.p_type == PHdr.PT_INTERP);
+			return Arrays.stream(getPHdrs(path)).anyMatch(phdr -> phdr.p_type == PHdr.PT_INTERP);
 		} catch (IOException e) {
 			CCorePlugin.log(e);
 		}
 		return false;
+	}
+
+	private static PHdr[] getPHdrs(IPath path) throws IOException {
+		Elf elf = new Elf(path.toOSString());
+		try {
+			return elf.getPHdrs();
+		} finally {
+			elf.dispose();
+		}
 	}
 }

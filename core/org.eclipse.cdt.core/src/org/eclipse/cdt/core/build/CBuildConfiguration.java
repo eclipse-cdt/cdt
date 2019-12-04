@@ -448,7 +448,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 			String[] path = pathStr.split(File.pathSeparator);
 			for (String dir : path) {
 				Path commandPath = Paths.get(dir, command);
-				if (Files.exists(commandPath)) {
+				if (Files.exists(commandPath) && commandPath.toFile().isFile()) {
 					return commandPath;
 				} else {
 					if (Platform.getOS().equals(Platform.OS_WIN32)

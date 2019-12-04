@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
@@ -1748,7 +1749,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 			consume();
 			n = getNodeFactory().newName(t.getCharImage());
 			setRange(n, t.getOffset(), t.getEndOffset());
-			createCompletionNode(t).addName(n);
+			ASTCompletionNode node = createCompletionNode(t);
+			if (node != null)
+				node.addName(n);
 			return n;
 
 		default:

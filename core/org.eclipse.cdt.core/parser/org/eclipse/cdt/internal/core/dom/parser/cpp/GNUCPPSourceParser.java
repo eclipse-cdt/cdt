@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2016 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -462,7 +462,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		switch (nt.getType()) {
 		case IToken.tEOC:
 		case IToken.tCOMPLETION:
-			createCompletionNode(nt).addName(name);
+			ASTCompletionNode node = createCompletionNode(nt);
+			if (node != null)
+				node.addName(name);
 			break;
 		}
 		return name;

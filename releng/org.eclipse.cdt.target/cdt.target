@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="66">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="67">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
@@ -92,7 +92,7 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.lsp4e" version="0.0.0"/>
 <unit id="org.eclipse.lsp4e.debug" version="0.0.0"/>
-<repository location="http://download.eclipse.org/lsp4e/snapshots/"/>
+<repository location="https://download.eclipse.org/lsp4e/releases/0.12.0/"/>
 </location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>

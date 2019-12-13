@@ -66,9 +66,9 @@
         xsi:type="pde:APIBaselineTask"
         id="baseline"
         name="CDT"
-        version="9.7"
+        version="9.9"
         location="${workspace.location/../api.baseline}"
-        remoteURI="https://download.eclipse.org/tools/cdt/builds/9.7/cdt-9.7.0-simrel-2019-03-rc2a/cdt-9.7.0-simrel-2019-03-rc2a.zip"/>
+        remoteURI="https://download.eclipse.org/tools/cdt/releases/9.9/cdt-9.9.0/"/>
     <setupTask
         xsi:type="git:GitCloneTask"
         id="git.clone.cdt"

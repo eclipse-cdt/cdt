@@ -59,16 +59,82 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="Photon"
+      defaultValue="2019-12"
       storageURI="scope://Workspace"/>
+  <setupTask
+      xsi:type="setup.targlets:TargletTask"
+      id="api.baseline.targlet"
+      targetName="Modular API Baseline Target"
+      activateTarget="false">
+    <targlet
+        name="${scope.project.label}"
+        activeRepositoryList="CDT Latest Released">
+      <requirement
+          name="org.eclipse.cdt.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.arduino.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.autotools.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.build.crossgcc.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.bupc.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.core.lrparser.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.core.parser.upc.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.debug.gdbjtag.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.debug.standalone.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.debug.ui.memory.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.docker.launcher.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.gnu.multicorevisualizer.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.examples.dsf.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.launch.remote.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.managedbuilder.llvm.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.msw.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.qt.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.testsrunner.feature.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.visualizer.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.xlc.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.launchbar.feature.group"/>
+      <requirement
+          name="org.eclipse.launchbar.remote.feature.group"/>
+      <repositoryList
+          name="CDT Latest Released">
+        <repository
+            url="https://download.eclipse.org/releases/2019-09/"/>
+        <repository
+            url="https://download.eclipse.org/tools/orbit/downloads/2019-09/"/>
+        <repository
+            url="https://download.eclipse.org/tools/cdt/releases/9.9/cdt-9.9.0/"/>
+        <repository
+            url="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.0/"/>
+      </repositoryList>
+    </targlet>
+  </setupTask>
   <stream name="master">
     <setupTask
-        xsi:type="pde:APIBaselineTask"
-        id="baseline"
-        name="CDT"
-        version="9.9"
-        location="${workspace.location/../api.baseline}"
-        remoteURI="https://download.eclipse.org/tools/cdt/releases/9.9/cdt-9.9.0/"/>
+        xsi:type="pde:APIBaselineFromTargetTask"
+        predecessor="api.baseline.targlet"
+        name="Modular API Baseline"
+        targetName="Modular API Baseline Target"
+        version="0.0.0">
+      <description>An API baseline based on the target platform named 'Modular API Baseline Target'</description>
+    </setupTask>
     <setupTask
         xsi:type="git:GitCloneTask"
         id="git.clone.cdt"
@@ -99,7 +165,9 @@
           name="CDT"
           activeRepositoryList="${eclipse.target.platform}">
         <requirement
-            name="org.eclipse.platform.feature.group"/>
+            name="org.eclipse.license.feature.group"/>
+        <requirement
+            name="com.google.gson"/>
         <requirement
             name="com.sun.xml.bind"/>
         <requirement
@@ -109,29 +177,39 @@
         <requirement
             name="javax.xml.stream"/>
         <requirement
-            name="org.apache.log4j"/>
+            name="net.sourceforge.lpg.lpgjavaruntime"/>
         <requirement
-            name="org.apache.log4j.source"/>
+            name="org.antlr.runtime"/>
         <requirement
             name="org.apache.commons.compress"/>
         <requirement
+            name="org.apache.log4j"/>
+        <requirement
             name="org.assertj"/>
         <requirement
-            name="net.sourceforge.lpg.lpgjavaruntime"/>
-        <requirement
-            name="org.junit"/>
-        <requirement
-            name="org.junit.source"/>
-        <requirement
-            name="org.junit.jupiter.api"/>
-        <requirement
-            name="org.junit.jupiter.api.source"/>
-        <requirement
-            name="org.mockito"/>
+            name="org.freemarker"/>
         <requirement
             name="org.hamcrest"/>
         <requirement
             name="org.hamcrest.core"/>
+        <requirement
+            name="org.junit"/>
+        <requirement
+            name="org.junit.jupiter.api"/>
+        <requirement
+            name="org.mockito"/>
+        <requirement
+            name="org.slf4j.impl.log4j12"/>
+        <requirement
+            name="org.eclipse.equinox.executable.feature.group"/>
+        <requirement
+            name="org.eclipse.jdt.annotation"/>
+        <requirement
+            name="org.eclipse.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.test.feature.group"/>
+        <requirement
+            name="org.eclipse.epp.logging.aeri.feature.feature.group"/>
         <requirement
             name="org.eclipse.swtbot.eclipse.feature.group"/>
         <requirement
@@ -139,25 +217,11 @@
         <requirement
             name="org.eclipse.swtbot.eclipse.test.junit.feature.group"/>
         <requirement
-            name="org.eclipse.rse.feature.group"/>
-        <requirement
-            name="org.eclipse.test.feature.group"/>
+            name="org.eclipse.remote.console.feature.group"/>
         <requirement
             name="org.eclipse.remote.feature.group"/>
         <requirement
-            name="org.eclipse.license.feature.group"/>
-        <requirement
-            name="com.google.gson"/>
-        <requirement
             name="org.eclipse.remote.serial.feature.group"/>
-        <requirement
-            name="org.eclipse.remote.console.feature.group"/>
-        <requirement
-            name="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group"/>
-        <requirement
-            name="org.eclipse.tm.terminal.control"/>
-        <requirement
-            name="org.eclipse.tm.terminal.feature.feature.group"/>
         <requirement
             name="org.eclipse.launchbar.feature.group"/>
         <requirement
@@ -165,50 +229,52 @@
         <requirement
             name="org.eclipse.linuxtools.docker.feature.feature.group"/>
         <requirement
-            name="org.freemarker"/>
+            name="org.eclipse.wst.xml_ui.feature.feature.group"/>
         <requirement
-            name="org.bouncycastle.bcpkix"/>
+            name="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group"/>
         <requirement
-            name="org.bouncycastle.bcprov"/>
+            name="org.eclipse.tm.terminal.control"/>
         <requirement
-            name="org.antlr.runtime"/>
+            name="org.eclipse.tm.terminal.feature.feature.group"/>
+        <requirement
+            name="org.eclipse.tools.templates.core"/>
         <requirement
             name="org.eclipse.tools.templates.freemarker"/>
         <requirement
+            name="org.eclipse.tools.templates.freemarker.java11"/>
+        <requirement
             name="org.eclipse.tools.templates.ui"/>
         <requirement
-            name="org.eclipse.ui.trace"/>
-        <requirement
-            name="tm-feature.feature.group"/>
+            name="org.eclipse.tm4e.feature.feature.group"/>
         <requirement
             name="org.eclipse.lsp4e"/>
         <requirement
-            name="org.eclipse.epp.logging.aeri.feature.feature.group"/>
+            name="org.eclipse.lsp4e.debug"/>
         <sourceLocator
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
         <repositoryList
-            name="Photon">
+            name="2019-12">
           <repository
-              url="https://download.eclipse.org/tools/orbit/downloads/drops/R20190827152740/repository/"/>
+              url="https://download.eclipse.org/cbi/updates/license/"/>
+          <repository
+              url="https://download.eclipse.org/tools/orbit/downloads/2019-12/"/>
+          <repository
+              url="https://download.eclipse.org/releases/2019-12/"/>
+          <repository
+              url="https://download.eclipse.org/eclipse/updates/4.14/"/>
+          <repository
+              url="http://download.eclipse.org/technology/epp/logging/stable/"/>
           <repository
               url="https://download.eclipse.org/technology/swtbot/releases/2.7.0/"/>
           <repository
               url="https://download.eclipse.org/tools/ptp/builds/remote/3.0.1/"/>
-          <repository
-              url="https://download.eclipse.org/releases/2019-09/"/>
-          <repository
-              url="http://download.eclipse.org/cbi/updates/license"/>
-          <repository
-              url="https://download.eclipse.org/eclipse/updates/4.13/R-4.13-201909161045/"/>
           <repository
               url="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1-simrel-2019-12-m3/"/>
           <repository
               url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
           <repository
               url="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/R-3.15.0-20190830034720/repository/"/>
-          <repository
-              url="http://download.eclipse.org/technology/epp/logging/stable/"/>
           <repository
               url="http://download.eclipse.org/tm/terminal/updates/4.4milestones/"/>
           <repository

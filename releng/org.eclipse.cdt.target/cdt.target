@@ -1,5 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt" sequenceNumber="64">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target name="cdt" sequenceNumber="64">
 <locations>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.license.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/cbi/updates/license/"/>
+</location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
 <unit id="com.sun.xml.bind" version="0.0.0"/>
@@ -10,18 +16,22 @@
 <unit id="org.antlr.runtime" version="0.0.0"/>
 <unit id="org.apache.commons.compress" version="0.0.0"/>
 <unit id="org.apache.log4j" version="0.0.0"/>
-<unit id="org.apache.log4j.source" version="0.0.0"/>
 <unit id="org.assertj" version="0.0.0"/>
 <unit id="org.freemarker" version="0.0.0"/>
 <unit id="org.hamcrest" version="0.0.0"/>
 <unit id="org.hamcrest.core" version="0.0.0"/>
 <unit id="org.junit" version="0.0.0"/>
-<unit id="org.junit.source" version="0.0.0"/>
 <unit id="org.junit.jupiter.api" version="0.0.0"/>
-<unit id="org.junit.jupiter.api.source" version="0.0.0"/>
 <unit id="org.mockito" version="0.0.0"/>
 <unit id="org.slf4j.impl.log4j12" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/S20191118194249/repository/"/>
+<repository location="https://download.eclipse.org/tools/orbit/downloads/2019-12/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.jdt.annotation" version="0.0.0"/>
+<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.test.feature.group" version="0.0.0"/>
+<repository location="https://download.eclipse.org/releases/2019-12/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.epp.logging.aeri.feature.feature.group" version="0.0.0"/>
@@ -38,22 +48,6 @@
 <unit id="org.eclipse.remote.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.remote.serial.feature.group" version="0.0.0"/>
 <repository location="https://download.eclipse.org/tools/ptp/builds/remote/3.0.1/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<!-- Needed for org.eclipse.emf.edit -->
-<!-- Need to pull in org.eclipse.cdt.utils.pty for org.eclipse.remote.core to build -->
-<!-- This slows down the build significantly, it should be removed when it becomes possible. -->
-<repository location="https://download.eclipse.org/releases/2019-09/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.license.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/cbi/updates/license/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.test.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/eclipse/updates/4.13/R-4.13-201909161045/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
@@ -76,13 +70,9 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.tools.templates.core" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.core.source" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.freemarker.java11" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.freemarker.source" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.freemarker.java11.source" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.ui.source" version="0.0.0"/>
 <repository location="https://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.templates-1.1.2-simrel-2019-12-m3/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">

@@ -1,0 +1,180 @@
+# Notices for Eclipse C/C++ Development Tools
+
+This content is produced and maintained by the Eclipse C/C++ Development Tools
+project.
+
+* Project home: https://projects.eclipse.org/projects/tools.cdt
+
+## Trademarks
+
+Eclipse C/C++ Development Tools, C/C++ Development Tools, Eclipse CDT, and CDT
+are trademarks of the Eclipse Foundation.
+
+## Copyright
+
+All content is the property of the respective authors or their employers. For
+more information regarding authorship of content, please consult the listed
+source code repository logs.
+
+## Declared Project Licenses
+
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v. 2.0 which is available at
+http://www.eclipse.org/legal/epl-2.0.
+
+SPDX-License-Identifier: EPL-2.0
+
+## Source Code
+
+The project maintains the following source code repositories:
+
+* https://git.eclipse.org/r/plugins/gitiles/cdt/org.eclipse.cdt
+* https://git.eclipse.org/r/plugins/gitiles/cdt/org.eclipse.cdt.edc
+* https://git.eclipse.org/r/plugins/gitiles/cdt/org.eclipse.cdt.master
+* https://git.eclipse.org/r/plugins/gitiles/cdt/org.eclipse.launchbar
+* https://git.eclipse.org/r/plugins/gitiles/cdt/org.eclipse.tools.templates
+* https://github.com/eclipse-cdt/cdt-gdb-adapter
+* https://github.com/eclipse-cdt/cdt-gdb-vscode
+* https://github.com/eclipse-cdt/cdt-vscode
+* https://github.com/eclipse-cdt/cdt-infra
+
+## Third-party Content
+
+This project leverages the following third party content.
+
+acorn (2.6.4)
+
+* License: MIT License
+
+antlr (4.5.1)
+
+* License: New BSD license
+* Project: antlr.org
+* Source:
+   http://search.maven.org/remotecontent?filepath=org/antlr/antlr4-runtime/4.5.1-1/antlr4-runtime-4.5.1-1-sources.jar
+
+Apache Commons Compress (1.6)
+
+* License: Apache License 2.0
+
+Apache Commons Lang (3.1.0)
+
+* License: Apache License, 2.0
+
+freemarker (2.3.22)
+
+* License: Apache License, 2.0
+* Project: http://freemarker.org/
+* Source:
+   http://search.maven.org/remotecontent?filepath=org/freemarker/freemarker/2.3.22/freemarker-2.3.22-sources.jar
+
+Google Gson (2.2.4)
+
+* License: Apache License 2.0
+
+Google Guava (15.0.0)
+
+* License: Apache License, 2.0
+
+hamcrest - all (1.1)
+
+* License: New BSD license
+
+Ispell English Word Lists (a zip file with word lists): (3.1.20)
+
+* License: iSpell Open Source License (based on Apache 1.1)
+
+Jabsorb (1.3.1)
+
+* License: Apache License, 2.0 + JSON License
+
+jcl104-over-slf4j (1.4.3)
+
+* License: Apache License, 2.0
+
+log4j (1.2.15)
+
+* License: Apache License, 2.0
+
+LPG parser generator (1.1)
+
+* License: Eclipse Public License
+
+meson.json SHA 550c704 (n/a)
+
+* License: Apache-2.0
+* Project: https://github.com/TingPing/language-meson
+* Source:
+   https://github.com/TingPing/language-meson/blob/master/grammars/meson.json
+
+ninja.tmLanguage SHA 250e7af (n/a)
+
+* License: LicenseRef-Php_Tmbundle
+* Project: https://github.com/textmate/ninja.tmbundle
+* Source:
+   https://github.com/textmate/ninja.tmbundle/blob/master/Syntaxes/Ninja.tmLanguage
+
+node-bindings (n/a)
+
+* License: MIT
+
+node-tar (n/a)
+
+* License: MIT AND ISC
+* Source: https://github.com/npm/node-tar
+
+react (16.8)
+
+* License: MIT
+
+request (n/a)
+
+* License: MIT AND BSD-3-Clause AND Apache-2.0 AND BSD-2-Clause AND
+   Public-Domain AND ISC AND X11 AND Unlicense AND BSD-2-Clause-FreeBSD AND
+   (AFL-2.1 OR BSD-3-Clause) AND (GPL-2.0 OR MIT) AND MPL-2.0 
+* Source: https://github.com/request/request
+
+slf4j log4j12 (1.7.2)
+
+* License: MIT License
+
+slf4j-api (1.5.6)
+
+* License: MIT license, + MIT License with no endorsement clause
+
+slf4j-log4j12 (1.5.6)
+
+* License: MIT license, + MIT License with no endorsement clause
+
+tern (0.16.0)
+
+* License: MIT License
+
+TrueZip (6.6)
+
+* License: Apache License, 2.0
+
+vscode-debugadapter (n/a)
+
+* License: MIT
+
+vscode-languageclient (5.3.0)
+
+* License: MIT AND ISC
+
+winpty Version: 10/2013 *Subset* (n/a)
+
+* License: MIT License
+
+winpty Version: 12/2013 (n/a)
+
+* License: MIT License
+
+## Cryptography
+
+Content may contain encryption software. The country in which you are currently
+may have restrictions on the import, possession, and use, and/or re-export to
+another country, of encryption software. BEFORE using any encryption software,
+please check the country's laws, regulations and policies concerning the import,
+possession, or use, and re-export of encryption software, to see if this is
+permitted.

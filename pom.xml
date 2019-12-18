@@ -255,6 +255,21 @@
 		<module>xlc/org.eclipse.cdt.xlc.sdk.branding</module>
 		<module>xlc/org.eclipse.cdt.xlc.sdk-feature</module>
 
+		<module>launchbar/org.eclipse.launchbar</module>
+		<module>launchbar/org.eclipse.launchbar.core</module>
+		<module>launchbar/org.eclipse.launchbar.core.tests</module>
+		<module>launchbar/org.eclipse.launchbar.remote</module>
+		<module>launchbar/org.eclipse.launchbar.remote.core</module>
+		<module>launchbar/org.eclipse.launchbar.remote.ui</module>
+		<module>launchbar/org.eclipse.launchbar.ui</module>
+		<module>launchbar/org.eclipse.launchbar.ui.controls</module>
+		<module>launchbar/org.eclipse.launchbar.ui.tests</module>
+
+		<module>tools.templates/org.eclipse.tools.templates.core</module>
+		<module>tools.templates/org.eclipse.tools.templates.freemarker</module>
+		<module>tools.templates/org.eclipse.tools.templates.freemarker.java11</module>
+		<module>tools.templates/org.eclipse.tools.templates.ui</module>
+
 		<module>releng/org.eclipse.cdt.native-feature</module>
 		<module>releng/org.eclipse.cdt</module>
 		<module>releng/org.eclipse.cdt.platform.branding</module>

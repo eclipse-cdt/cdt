@@ -4,6 +4,7 @@
       label="%featureName"
       version="2.4.1.qualifier"
       provider-name="%providerName"
+      plugin="org.eclipse.launchbar.ui"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 

@@ -16,6 +16,24 @@
       "revId": "abce607a6597a216e223c4b7f4dd85a2287a09f3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0100646_2800cebe",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2019-12-18T15:34:10Z",
+      "side": 1,
+      "message": "Good point, I need to try to remove the Orbit repo",
+      "parentUuid": "2d26f6df_a711a30c",
+      "revId": "abce607a6597a216e223c4b7f4dd85a2287a09f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c64f1ac_a408f823",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-18T16:45:41Z",
+      "side": 0,
+      "message": "Can you preserve this comment please.\n\nIdeally this will be fixed by someone at some point!",
+      "revId": "0e789adba80ab939106507966af15d7110335581",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

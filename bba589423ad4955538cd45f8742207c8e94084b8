@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4335d4ea_d0c77742",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-18T16:45:41Z",
+      "side": 1,
+      "message": "Seq# needs to change with content changes. It normally changes automatically when using the PDE editor.",
+      "revId": "bba589423ad4955538cd45f8742207c8e94084b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf4bc2a3_e231dbdc",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-18T16:45:41Z",
+      "side": 1,
+      "message": "These platform items need to come from https://download.eclipse.org/eclipse/downloads/ rather than simrel. We really should not be depending on simrel in our target platform at all - but there are issues with that as commented.",
+      "revId": "bba589423ad4955538cd45f8742207c8e94084b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2d26f6df_a711a30c",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-18T15:22:45Z",
+      "side": 1,
+      "message": "Why this? All the dependencies we need should be published to simrel or else there is a problem with simrel.",
+      "revId": "abce607a6597a216e223c4b7f4dd85a2287a09f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "74514a98_8fdc0162",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-19T20:25:45Z",
+      "side": 1,
+      "message": "PS You don\u0027t need the [CDT] in the commit message, to my eyes it just makes the commit message longer than it needs to be.",
+      "range": {
+        "startLine": 7,
+        "startChar": 13,
+        "endLine": 7,
+        "endChar": 18
+      },
+      "revId": "98e9ff182d8fea9681ca0afd215751da2825a79d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "26873590_150a0e56",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CUIPlugin.java",
         "patchSetId": 1

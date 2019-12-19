@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b3310d5_c75eb9d6",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 4
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-19T15:06:16Z",
+      "side": 1,
+      "message": ":-) Thanks - but this does mean that another update is needed to cdt.target to keep them in sync. Also as this isn\u0027t a baseline target change it can be deferred to another commit.\n\nThat said, assuming https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d558439 is approved the launchbar and tools.templates can be removed from the target platform.",
+      "revId": "71060417bfc48c3482ff0e55d53afe3e9b609b3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

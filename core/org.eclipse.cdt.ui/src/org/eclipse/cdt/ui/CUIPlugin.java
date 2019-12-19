@@ -292,7 +292,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	public static IWorkbenchPage getActivePage() {
@@ -459,7 +459,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * The code template context type registry for the C editor.
 	 * @since 5.0
 	 */
-	private ContextTypeRegistry fCodeTemplateContextTypeRegistry;
+	private ContributionContextTypeRegistry fCodeTemplateContextTypeRegistry;
 
 	/**
 	 * The code template store for the C editor.
@@ -805,7 +805,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static IEditorPart[] getDirtyEditors() {
 		Set<IEditorInput> inputs = new HashSet<>();
 		List<IEditorPart> result = new ArrayList<>(0);
-		IWorkbench workbench = getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
 			for (IWorkbenchPage page : window.getPages()) {
 				for (IEditorReference editorRef : page.getEditorReferences()) {
@@ -828,7 +828,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public static IEditorPart[] getInstanciatedEditors() {
 		List<IEditorPart> result = new ArrayList<>(0);
-		IWorkbench workbench = getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {
 			IWorkbenchPage[] pages = window.getPages();
@@ -1093,7 +1093,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		if (getActiveWorkbenchShell() != null) {
 			return getActiveWorkbenchShell();
 		}
-		IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		return windows[0].getShell();
 	}
 

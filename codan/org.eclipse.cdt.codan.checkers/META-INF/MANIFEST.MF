@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.checkers;singleton:=true
-Bundle-Version: 3.3.300.qualifier
+Bundle-Version: 3.3.400.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.checkers.CodanCheckersActivator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,

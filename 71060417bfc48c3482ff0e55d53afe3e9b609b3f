@@ -16,6 +16,24 @@
       "revId": "71060417bfc48c3482ff0e55d53afe3e9b609b3f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ec42994_d6ef83a5",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 4
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2019-12-19T15:23:35Z",
+      "side": 1,
+      "message": "Clearly I\u0027m not fully up to speed on this. If you prefer to abandon this change, feel free.",
+      "parentUuid": "1b3310d5_c75eb9d6",
+      "revId": "71060417bfc48c3482ff0e55d53afe3e9b609b3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26873590_150a0e56",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CUIPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-19T20:24:46Z",
+      "side": 1,
+      "message": "+1",
+      "revId": "98e9ff182d8fea9681ca0afd215751da2825a79d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e3d3c3c2_5e32ab67",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CUIPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 798,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-19T20:24:46Z",
+      "side": 1,
+      "message": "+1",
+      "revId": "98e9ff182d8fea9681ca0afd215751da2825a79d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d3b30516_d17c075a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CUIPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 821,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-19T20:24:46Z",
+      "side": 1,
+      "message": "+1",
+      "revId": "98e9ff182d8fea9681ca0afd215751da2825a79d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "44e2a77e_55648f3a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CUIPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1086,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-19T20:24:46Z",
+      "side": 1,
+      "message": "+1",
+      "revId": "98e9ff182d8fea9681ca0afd215751da2825a79d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

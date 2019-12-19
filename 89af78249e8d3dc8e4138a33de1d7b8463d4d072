@@ -39,6 +39,30 @@
       "revId": "89af78249e8d3dc8e4138a33de1d7b8463d4d072",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a6fc252a_3dbd8b74",
+        "filename": "lsp/org.eclipse.cdt.lsp.core.tests/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2019-12-19T19:41:33Z",
+      "side": 1,
+      "message": "Oops! I need to recheck",
+      "parentUuid": "1d9f62b9_5beff3d0",
+      "range": {
+        "startLine": 13,
+        "startChar": 1,
+        "endLine": 13,
+        "endChar": 4
+      },
+      "revId": "89af78249e8d3dc8e4138a33de1d7b8463d4d072",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

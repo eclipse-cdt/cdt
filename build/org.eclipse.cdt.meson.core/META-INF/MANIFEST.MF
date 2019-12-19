@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: org.eclipse.cdt.meson.core;singleton:=true
-Bundle-Version: 1.0.200.qualifier
+Bundle-Version: 1.0.300.qualifier
 Bundle-Activator: org.eclipse.cdt.meson.core.Activator
 Bundle-Vendor: %provider
 Require-Bundle: org.eclipse.core.runtime,

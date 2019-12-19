@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt-baseline" sequenceNumber="17">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt-baseline" sequenceNumber="18">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.cdt.gnu.build.source.feature.group" version="0.0.0"/>
@@ -43,15 +43,15 @@
 <unit id="org.eclipse.cdt.autotools.source.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.core" version="0.0.0"/>
 <unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/cdt/releases/9.9/cdt-9.9.0/"/>
+<repository location="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.launchbar.remote.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.0/"/>
+<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<repository location="https://download.eclipse.org/releases/2019-09/"/>
+<repository location="https://download.eclipse.org/releases/2019-12/"/>
 </location>
 </locations>
 </target>

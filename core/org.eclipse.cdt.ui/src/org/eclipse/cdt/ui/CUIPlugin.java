@@ -42,7 +42,6 @@ import org.eclipse.cdt.internal.corext.template.c.DocCommentContextType;
 import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
 import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
@@ -82,7 +81,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.ISharedTextColors;
-import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -292,7 +290,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	public static IWorkbenchPage getActivePage() {
@@ -341,14 +339,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public static void logError(String message) {
 		log(message, null);
-	}
-
-	/**
-	 * @deprecated Use {@link #logError(String)}
-	 */
-	@Deprecated
-	public void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, ICStatusConstants.INTERNAL_ERROR, message, null));
 	}
 
 	/**
@@ -459,7 +449,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * The code template context type registry for the C editor.
 	 * @since 5.0
 	 */
-	private ContextTypeRegistry fCodeTemplateContextTypeRegistry;
+	private ContributionContextTypeRegistry fCodeTemplateContextTypeRegistry;
 
 	/**
 	 * The code template store for the C editor.
@@ -805,7 +795,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static IEditorPart[] getDirtyEditors() {
 		Set<IEditorInput> inputs = new HashSet<>();
 		List<IEditorPart> result = new ArrayList<>(0);
-		IWorkbench workbench = getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
 			for (IWorkbenchPage page : window.getPages()) {
 				for (IEditorReference editorRef : page.getEditorReferences()) {
@@ -828,7 +818,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public static IEditorPart[] getInstanciatedEditors() {
 		List<IEditorPart> result = new ArrayList<>(0);
-		IWorkbench workbench = getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {
 			IWorkbenchPage[] pages = window.getPages();
@@ -998,7 +988,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @return the template context type registry for the C plugin
 	 * @since 3.0
 	 */
-	public ContextTypeRegistry getTemplateContextRegistry() {
+	public ContributionContextTypeRegistry getTemplateContextRegistry() {
 		if (fContextTypeRegistry == null) {
 			fContextTypeRegistry = new ContributionContextTypeRegistry(EDITOR_ID);
 			fContextTypeRegistry.addContextType(CContextType.ID);
@@ -1035,7 +1025,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 *         templates
 	 * @since 5.0
 	 */
-	public ContextTypeRegistry getCodeTemplateContextRegistry() {
+	public ContributionContextTypeRegistry getCodeTemplateContextRegistry() {
 		if (fCodeTemplateContextTypeRegistry == null) {
 			fCodeTemplateContextTypeRegistry = new ContributionContextTypeRegistry("org.eclipse.cdt.ui.codeTemplates"); //$NON-NLS-1$
 
@@ -1093,7 +1083,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		if (getActiveWorkbenchShell() != null) {
 			return getActiveWorkbenchShell();
 		}
-		IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		return windows[0].getShell();
 	}
 

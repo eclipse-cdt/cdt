@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6b984de_416a7930",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 9
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-19T14:41:09Z",
+      "side": 1,
+      "message": "+1 - this is the most irritating part of the build. When I last looked at it I couldn\u0027t resolve the issue trivially.",
+      "revId": "c5d86c70cbf134a257e600fe0a69e58ffd1aa4b9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "85a32143_33765f26",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 9
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-19T14:41:09Z",
+      "side": 1,
+      "message": "This will be fixed by https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d558439",
+      "revId": "c5d86c70cbf134a257e600fe0a69e58ffd1aa4b9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

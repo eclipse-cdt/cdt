@@ -156,7 +156,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 
 		if (LaunchUtils.getIsPostMortemTracing(config) && !isPostMortemTracingSupportedInGdbVersion(gdbVersion)) {
 			throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
-					"Post-mortem tracing is not supported for GDB " + gdbVersion + ", GDB " + NON_STOP_FIRST_VERSION //$NON-NLS-1$//$NON-NLS-2$
+					"Post-mortem tracing is not supported for GDB " + gdbVersion + ", GDB " + TRACING_FIRST_VERSION //$NON-NLS-1$//$NON-NLS-2$
 							+ " or higher is required.", //$NON-NLS-1$
 					null));
 		}
@@ -465,7 +465,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 	 * @since 4.0
 	 */
 	protected boolean isNonStopSupportedInGdbVersion(String version) {
-		if (NON_STOP_FIRST_VERSION.compareTo(version) <= 0) {// XXX: 7.2 > 7.11 !!!
+		if (LaunchUtils.compareVersions(NON_STOP_FIRST_VERSION, version) <= 0) {
 			return true;
 		}
 		return false;
@@ -477,7 +477,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 	 * @since 4.0
 	 */
 	protected boolean isPostMortemTracingSupportedInGdbVersion(String version) {
-		if (TRACING_FIRST_VERSION.compareTo(version) <= 0
+		if (LaunchUtils.compareVersions(TRACING_FIRST_VERSION, version) <= 0
 				// This feature will be available for GDB 7.2. But until that GDB is itself available
 				// there is a pre-release that has a version of 6.8.50.20090414
 				|| "6.8.50.20090414".equals(version)) { //$NON-NLS-1$

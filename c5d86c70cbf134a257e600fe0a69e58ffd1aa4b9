@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "5c0218b6_18fe76de",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 9
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-19T14:50:44Z",
+      "side": 1,
+      "message": "I missed that this seq# wasn\u0027t updated. Because there is no significant change here we can probably get away with it. Note that John is working on upping the version in https://git.eclipse.org/r/#/c/154791/",
+      "revId": "c5d86c70cbf134a257e600fe0a69e58ffd1aa4b9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d6b984de_416a7930",
         "filename": "releng/org.eclipse.cdt.target/cdt.target",
         "patchSetId": 9

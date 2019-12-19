@@ -1,29 +1,29 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.cdt.lsp.core
 Bundle-ManifestVersion: 2
-Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.lsp.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Bundle-Name: %Bundle-Name
+Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.apache.commons.io,
+Require-Bundle: com.google.gson;bundle-version="2.8.2",
+ org.apache.commons.io,
  org.eclipse.core.runtime,
- org.eclipse.lsp4e,
- org.eclipse.ui.genericeditor;bundle-version="1.0.0",
- org.eclipse.jface.text,
- org.eclipse.cdt.ui,
- org.eclipse.cdt.core,
- org.eclipse.jface,
- org.eclipse.ui,
- org.eclipse.lsp4j,
  org.eclipse.core.commands,
  org.eclipse.core.expressions,
  org.eclipse.core.resources,
- com.google.gson;bundle-version="2.8.2",
- org.eclipse.lsp4j.jsonrpc
-Bundle-Vendor: %Bundle-Vendor
+ org.eclipse.jface,
+ org.eclipse.jface.text,
+ org.eclipse.ui,
+ org.eclipse.ui.genericeditor;bundle-version="1.0.0",
+ org.eclipse.lsp4j,
+ org.eclipse.lsp4e,
+ org.eclipse.lsp4j.jsonrpc,
+ org.eclipse.cdt.core,
+ org.eclipse.cdt.ui
+Import-Package: org.eclipse.ui.editors.text,
+ org.eclipse.ui.texteditor
 Export-Package: org.eclipse.cdt.lsp.core,
  org.eclipse.cdt.lsp.core.cquery
 Bundle-Activator: org.eclipse.cdt.lsp.core.Activator
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.ui.editors.text,
- org.eclipse.ui.texteditor
-Automatic-Module-Name: org.eclipse.cdt.lsp.core

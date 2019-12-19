@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4b24a38_e2f1de30",
+        "filename": "lsp/org.eclipse.cdt.lsp.core.tests/.classpath",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-19T19:39:07Z",
+      "side": 1,
+      "message": "+1 :-)",
+      "revId": "89af78249e8d3dc8e4138a33de1d7b8463d4d072",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1d9f62b9_5beff3d0",
+        "filename": "lsp/org.eclipse.cdt.lsp.core.tests/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-19T19:39:07Z",
+      "side": 1,
+      "message": "minor nit. there are a bunch of the copyright headers that have your name tabbed unlike the line above it. This is one example.",
+      "range": {
+        "startLine": 13,
+        "startChar": 1,
+        "endLine": 13,
+        "endChar": 4
+      },
+      "revId": "89af78249e8d3dc8e4138a33de1d7b8463d4d072",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

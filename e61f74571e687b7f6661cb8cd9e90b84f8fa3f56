@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e5e5013_ae627502",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/internal/core/LspCoreMessages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-20T19:06:03Z",
+      "side": 1,
+      "message": "So is this the magic that makes the Externalize Strings wizard work? That is very good to know!",
+      "range": {
+        "startLine": 17,
+        "startChar": 29,
+        "endLine": 17,
+        "endChar": 41
+      },
+      "revId": "e61f74571e687b7f6661cb8cd9e90b84f8fa3f56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

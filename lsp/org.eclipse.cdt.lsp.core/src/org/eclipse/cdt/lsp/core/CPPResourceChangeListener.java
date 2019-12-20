@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2017 Ericsson and others.
+ * Copyright (c) 2017-2019 Ericsson and others.
  *
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License 2.0
- * which accompanies this distribution, and is available at
- * https://www.eclipse.org/legal/epl-2.0/
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0/.
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Ericsson - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558516
  *******************************************************************************/
 
 package org.eclipse.cdt.lsp.core;
@@ -22,13 +25,14 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.lsp4e.LanguageServerWrapper;
 import org.eclipse.lsp4e.LanguageServersRegistry;
 import org.eclipse.lsp4e.LanguageServersRegistry.LanguageServerDefinition;
 import org.eclipse.lsp4e.LanguageServiceAccessor;
-import org.eclipse.lsp4e.LanguageServerWrapper;
 import org.eclipse.lsp4j.DidChangeWatchedFilesParams;
 import org.eclipse.lsp4j.FileChangeType;
 import org.eclipse.lsp4j.FileEvent;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A resource listener used to generate FileEvents, as part of the LSP. This
@@ -114,7 +118,7 @@ final class CPPResourceChangeListener implements IResourceChangeListener {
 		} else if (delta.getKind() == IResourceDelta.REMOVED) {
 			changeType = FileChangeType.Deleted;
 		} else {
-			throw new IllegalStateException("Unsupported resource delta kind: " + delta.getKind()); //$NON-NLS-1$
+			throw new IllegalStateException(NLS.bind("Unsupported resource delta kind: {0}", delta.getKind())); //$NON-NLS-1$
 		}
 
 		return new FileEvent(locationURI.toString(), changeType);

@@ -1,12 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2018 Manish Khurana , Nathan Ridge and others.
+ * Copyright (c) 2018-2019 Manish Khurana, Nathan Ridge and others.
  *
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License 2.0
- * which accompanies this distribution, and is available at
- * https://www.eclipse.org/legal/epl-2.0/
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0/.
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Manish Khurana <mkmanishkhurana98@gmail.com> - initial API and implementation
+ *     Nathan Ridge <zeratul976@hotmail.com> - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558516
  *******************************************************************************/
 
 package org.eclipse.cdt.lsp.core.cquery;
@@ -29,6 +33,7 @@ public class ExtendedSymbolKindType {
 	int value;
 	transient boolean isProtocolSymbol;
 
+	//FIXME: let's rework this example of "Exception-driven programming"
 	public ExtendedSymbolKindType(int _v) {
 		try {
 			SymbolKind.forValue(_v);
@@ -40,7 +45,7 @@ public class ExtendedSymbolKindType {
 				value = _v;
 				isProtocolSymbol = false;
 			} catch (IllegalArgumentException y) {
-				throw new IllegalArgumentException("Illegal value for SymbolKind"); //$NON-NLS-1$
+				throw y;
 			}
 		}
 	}

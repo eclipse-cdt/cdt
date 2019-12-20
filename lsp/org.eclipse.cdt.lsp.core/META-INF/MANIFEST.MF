@@ -23,7 +23,9 @@ Require-Bundle: com.google.gson;bundle-version="2.8.2",
  org.eclipse.cdt.ui
 Import-Package: org.eclipse.ui.editors.text,
  org.eclipse.ui.texteditor
-Export-Package: org.eclipse.cdt.lsp.core,
- org.eclipse.cdt.lsp.core.cquery
+Export-Package: org.eclipse.cdt.lsp.core;x-internal:=true,
+ org.eclipse.cdt.lsp.core.cquery;x-internal:=true,
+ org.eclipse.cdt.lsp.internal.core;x-internal:=true,
+ org.eclipse.cdt.lsp.internal.ui;x-internal:=true
 Bundle-Activator: org.eclipse.cdt.lsp.core.Activator
 Bundle-ActivationPolicy: lazy

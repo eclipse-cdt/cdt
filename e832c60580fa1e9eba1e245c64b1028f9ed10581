@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "823175f4_b14cf113",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/core/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-20T19:06:03Z",
+      "side": 1,
+      "message": "The project handbook does show it, but in Note 4 underneath https://www.eclipse.org/projects/handbook/#ip-copyright-headers it says \" (this section may be excluded).\"\n\nThe reason it does not have to be included anymore is that Git is now seen as the source for who contributors are, rather than the source file.",
+      "parentUuid": "0c31732b_a5c9b9af",
+      "revId": "e832c60580fa1e9eba1e245c64b1028f9ed10581",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "75058e35_65f8c6e2",
         "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/core/CPPResourceChangeListener.java",
         "patchSetId": 1

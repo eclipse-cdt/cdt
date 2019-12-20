@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2018 Manish Khurana , Nathan Ridge and others.
+ * Copyright (c) 2018-2019 Manish Khurana, Nathan Ridge and others.
  *
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License 2.0
- * which accompanies this distribution, and is available at
- * https://www.eclipse.org/legal/epl-2.0/
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0/.
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ *     Manish Khurana <mkmanishkhurana98@gmail.com> - initial API and implementation
+ *     Nathan Ridge <zeratul976@hotmail.com> - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558516
  *******************************************************************************/
 
 package org.eclipse.cdt.lsp.core;
@@ -21,6 +24,7 @@ import org.eclipse.cdt.lsp.core.cquery.CqueryInactiveRegions;
 import org.eclipse.cdt.lsp.core.cquery.CquerySemanticHighlights;
 import org.eclipse.cdt.lsp.core.cquery.HighlightSymbol;
 import org.eclipse.cdt.lsp.core.cquery.IndexingProgressStats;
+import org.eclipse.cdt.lsp.internal.core.LspCoreMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
@@ -65,8 +69,8 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 					cqueryStatusField = new StatusLineContributionItem(cqueryStatusFieldId, width);
 					statusLine.add(cqueryStatusField);
 				}
-				String msg = stats.getTotalJobs() > 0 ? NLS.bind(Messages.CqueryStateBusy, stats.getTotalJobs())
-						: Messages.CqueryStateIdle;
+				String msg = stats.getTotalJobs() > 0 ? NLS.bind(LspCoreMessages.Server2ClientProtocolExtension_cquery_busy, stats.getTotalJobs())
+						: LspCoreMessages.Server2ClientProtocolExtension_cquery_idle;
 				cqueryStatusField.setText(msg);
 			}
 		});

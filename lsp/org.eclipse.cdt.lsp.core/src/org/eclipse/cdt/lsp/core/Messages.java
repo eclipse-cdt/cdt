@@ -11,17 +11,19 @@
 
 package org.eclipse.cdt.lsp.core;
 
+import org.eclipse.cdt.lsp.internal.core.LspCoreMessages;
+import org.eclipse.cdt.lsp.internal.ui.LspUiMessages;
 import org.eclipse.osgi.util.NLS;
 
+@Deprecated
 public class Messages extends NLS {
-	public static String PreferencePageDescription;
-	public static String ServerChoiceLabel;
-	public static String ServerPathLabel;
-	public static String ServerOptionsLabel;
-	public static String CqueryStateIdle;
-	public static String CqueryStateBusy;
 
-	static {
-		NLS.initializeMessages(Messages.class.getName(), Messages.class);
-	}
+	public static String PreferencePageDescription = LspUiMessages.CPPLanguageServerPreferencePage_description;
+	public static String ServerChoiceLabel = LspUiMessages.CPPLanguageServerPreferencePage_server_selector;
+	public static String ServerPathLabel = LspUiMessages.CPPLanguageServerPreferencePage_server_path;
+	public static String ServerOptionsLabel = LspUiMessages.CPPLanguageServerPreferencePage_server_options;
+
+	public static String CqueryStateIdle = LspCoreMessages.Server2ClientProtocolExtension_cquery_idle;
+	public static String CqueryStateBusy = LspCoreMessages.Server2ClientProtocolExtension_cquery_busy;
+
 }

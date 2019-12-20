@@ -1,12 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2017 Ericsson and others.
+ * Copyright (c) 2017-2019 Ericsson and others.
  *
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License 2.0
- * which accompanies this distribution, and is available at
- * https://www.eclipse.org/legal/epl-2.0/
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0/.
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ *     Ericsson - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558516
  *******************************************************************************/
 
 package org.eclipse.cdt.lsp.core;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.eclipse.cdt.lsp.internal.core.LspCoreMessages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -49,7 +52,7 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 		} else if (store.getString(PreferenceConstants.P_SERVER_CHOICE).equals(CLANGD_ID)) {
 			languageServer = new ClangdLanguageServer();
 		} else {
-			throw new UnsupportedOperationException("Unsupported Language Server"); //$NON-NLS-1$
+			throw new UnsupportedOperationException(LspCoreMessages.CPPStreamConnectionProvider_e_unsupported);
 		}
 		File defaultLSLocation = getDefaultLSLocation(store.getString(PreferenceConstants.P_SERVER_CHOICE));
 		if (defaultLSLocation != null) {

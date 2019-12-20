@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "38107bff_18153bd6",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-20T18:20:02Z",
+      "side": 1,
+      "message": "+1 on exporting internal packages.",
+      "revId": "e832c60580fa1e9eba1e245c64b1028f9ed10581",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "69e98e11_4efcf9bc",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/core/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-20T18:20:02Z",
+      "side": 1,
+      "message": "Adding contributors is fine, but unneeded.",
+      "revId": "e832c60580fa1e9eba1e245c64b1028f9ed10581",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "75058e35_65f8c6e2",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/core/CPPResourceChangeListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-20T18:20:02Z",
+      "side": 1,
+      "message": "Rather than changing license headers piecemeal, how about fixing them all at the same time. You can adapt the existing script perhaps: https://github.com/eclipse-cdt/cdt/blob/master/releng/scripts/change_to_eplv2.sh",
+      "revId": "e832c60580fa1e9eba1e245c64b1028f9ed10581",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "89d233fc_f2f946f9",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/core/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-20T18:20:02Z",
+      "side": 1,
+      "message": "LSP plug-ins are not API yet - you can just delete these AFAIK.",
+      "revId": "e832c60580fa1e9eba1e245c64b1028f9ed10581",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

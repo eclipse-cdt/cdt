@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "0c31732b_a5c9b9af",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/core/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2019-12-20T18:45:23Z",
+      "side": 1,
+      "message": "I added all as I added myself\nI\u0027m using Project Handbook as a reference and already found some divergence.\nThank you!",
+      "parentUuid": "69e98e11_4efcf9bc",
+      "revId": "e832c60580fa1e9eba1e245c64b1028f9ed10581",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "75058e35_65f8c6e2",
         "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/core/CPPResourceChangeListener.java",
         "patchSetId": 1
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "e17e5b0c_1181cf59",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/core/CPPResourceChangeListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2019-12-20T18:45:23Z",
+      "side": 1,
+      "message": "I need to have a look on it",
+      "parentUuid": "75058e35_65f8c6e2",
+      "revId": "e832c60580fa1e9eba1e245c64b1028f9ed10581",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "89d233fc_f2f946f9",
         "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/core/Messages.java",
         "patchSetId": 1
@@ -64,6 +100,24 @@
       "writtenOn": "2019-12-20T18:20:02Z",
       "side": 1,
       "message": "LSP plug-ins are not API yet - you can just delete these AFAIK.",
+      "revId": "e832c60580fa1e9eba1e245c64b1028f9ed10581",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8275fe1e_26a84b7c",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/core/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2019-12-20T18:45:23Z",
+      "side": 1,
+      "message": "Cool! Thank you",
+      "parentUuid": "89d233fc_f2f946f9",
       "revId": "e832c60580fa1e9eba1e245c64b1028f9ed10581",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

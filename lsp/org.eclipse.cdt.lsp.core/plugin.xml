@@ -61,15 +61,6 @@
       </presentationReconciler>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="org.eclipse.cdt.lsp.core.CPPLanguageServerPreferencePage"
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            id="org.eclipse.cdt.lsp.core.CPPLanguageServerPreferencePage"
-            name="%PreferencePageTitle">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
             class="org.eclipse.cdt.lsp.core.PreferenceInitializer">

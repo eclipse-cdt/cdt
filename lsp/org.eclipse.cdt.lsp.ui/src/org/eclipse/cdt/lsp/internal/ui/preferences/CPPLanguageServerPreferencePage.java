@@ -13,10 +13,13 @@
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558516
  *******************************************************************************/
 
-package org.eclipse.cdt.lsp.core;
+package org.eclipse.cdt.lsp.internal.ui.preferences;
 
 import java.io.File;
 
+import org.eclipse.cdt.lsp.core.CPPStreamConnectionProvider;
+import org.eclipse.cdt.lsp.core.PreferenceConstants;
+import org.eclipse.cdt.lsp.internal.ui.LspUiActivator;
 import org.eclipse.cdt.lsp.internal.ui.LspUiMessages;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -39,7 +42,7 @@ public class CPPLanguageServerPreferencePage extends FieldEditorPreferencePage i
 
 	public CPPLanguageServerPreferencePage() {
 		super(GRID);
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		setPreferenceStore(LspUiActivator.getDefault().getLspCorePreferences());
 		setDescription(LspUiMessages.CPPLanguageServerPreferencePage_description);
 	}
 

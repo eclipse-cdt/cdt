@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+	Copyright (c) 2019 ArSysOp and others
+
+	This program and the accompanying materials are made available under the
+	terms of the Eclipse Public License 2.0 which is available at
+	https://www.eclipse.org/legal/epl-2.0/.
+
+	SPDX-License-Identifier: EPL-2.0
+
+	Contributors:
+		Alexander Fedorov <alexander.fedorov@arsysop.ru> - initial API and implementation
+-->
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.cdt.lsp.internal.ui.preferences.CPPLanguageServerPreferencePage"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            id="org.eclipse.cdt.lsp.ui.preferencePages.languageServer"
+            name="%preferencePages.languageServer.name">
+      </page>
+   </extension>
+</plugin>

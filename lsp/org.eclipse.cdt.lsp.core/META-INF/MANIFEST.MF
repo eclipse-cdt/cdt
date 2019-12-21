@@ -2,12 +2,11 @@ Manifest-Version: 1.0
 Automatic-Module-Name: org.eclipse.cdt.lsp.core
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.cdt.lsp.core;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Name: %Bundle-Name
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.gson;bundle-version="2.8.2",
- org.apache.commons.io,
  org.eclipse.core.runtime,
  org.eclipse.core.commands,
  org.eclipse.core.expressions,

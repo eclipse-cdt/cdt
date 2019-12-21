@@ -22,7 +22,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.eclipse.cdt.lsp.internal.core.LspCoreMessages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -136,26 +135,22 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			command = new String[] { "cmd", "/c", "where " + selectedLanguageServer }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		BufferedReader reader = null;
 		try {
 			Process p = Runtime.getRuntime().exec(command);
-			reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			res = reader.readLine();
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+				res = reader.readLine();
+			}
 		} catch (IOException e) {
+			//FIXME: rework this branch , it may contain valuable information to understand the problem
 			e.printStackTrace();
-		} finally {
-			IOUtils.closeQuietly(reader);
 		}
-
 		if (res == null) {
 			return null;
 		}
-
 		File f = new File(res);
 		if (f.canExecute()) {
 			return f;
 		}
-
 		return null;
 	}
 }

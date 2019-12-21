@@ -193,6 +193,7 @@
 		<module>lrparser/org.eclipse.cdt.core.lrparser.sdk.feature</module>
 
 		<module>lsp/org.eclipse.cdt.lsp.core</module>
+		<module>lsp/org.eclipse.cdt.lsp.ui</module>
 		<module>lsp/org.eclipse.cdt.lsp-feature</module>
 
 		<module>memory/org.eclipse.cdt.debug.ui.memory.memorybrowser</module>

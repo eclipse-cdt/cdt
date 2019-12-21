@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "428ccb9e_10bdf926",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/.classpath",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-21T21:56:09Z",
+      "side": 1,
+      "message": "Intentional?",
+      "revId": "ec69227efaa45ce5b5aa1a397f9b8ab0a4b95a36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "daf661a2_816fc1f1",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/build.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-21T21:56:09Z",
+      "side": 1,
+      "message": "Ditto",
+      "revId": "ec69227efaa45ce5b5aa1a397f9b8ab0a4b95a36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "91e63c6b_2987fab6",
+        "filename": "lsp/org.eclipse.cdt.lsp.ui/.classpath",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-21T21:56:09Z",
+      "side": 1,
+      "message": "Ditto",
+      "revId": "ec69227efaa45ce5b5aa1a397f9b8ab0a4b95a36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b752ac3b_d417971f",
+        "filename": "lsp/org.eclipse.cdt.lsp.ui/build.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-21T21:56:09Z",
+      "side": 1,
+      "message": "Ditto",
+      "revId": "ec69227efaa45ce5b5aa1a397f9b8ab0a4b95a36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d336ac9_d6bfff98",
+        "filename": "lsp/org.eclipse.cdt.lsp.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-21T21:56:09Z",
+      "side": 1,
+      "message": "Should id be changed to UI too?",
+      "revId": "ec69227efaa45ce5b5aa1a397f9b8ab0a4b95a36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "75a9d204_57ce6d17",
+        "filename": "lsp/org.eclipse.cdt.lsp.ui/src/org/eclipse/cdt/lsp/internal/ui/preferences/CPPLanguageServerPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-21T21:56:09Z",
+      "side": 1,
+      "message": "I don\u0027t think bundle should be referencing activator in other bundle. At least not with name Activator, perhaps rename to LspCorePlugin or something if it does need to be referenced.",
+      "revId": "ec69227efaa45ce5b5aa1a397f9b8ab0a4b95a36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

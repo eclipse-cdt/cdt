@@ -139,6 +139,7 @@ cdtOptions text
 .euml2 text
 .gitattributes text
 .gitignore text
+.gitkeep text
 *.patch text
 *.src text
 *.tmLanguage text

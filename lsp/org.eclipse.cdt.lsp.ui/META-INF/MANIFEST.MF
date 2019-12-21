@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.cdt.lsp.ui
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.eclipse.cdt.lsp.ui
+Bundle-Version: 0.1.0.qualifier
+Bundle-Name: %Bundle-Name
+Bundle-Vendor: %Bundle-Vendor
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.cdt.lsp.core;bundle-version="[1.1.0,2.0.0)"

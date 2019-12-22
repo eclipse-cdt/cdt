@@ -116,11 +116,21 @@
       <repositoryList
           name="CDT Latest Released">
         <repository
-            url="https://download.eclipse.org/releases/2019-12/"/>
-        <repository
             url="https://download.eclipse.org/tools/orbit/downloads/2019-12/"/>
         <repository
+            url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.20/"/>
+        <repository
+            url="https://download.eclipse.org/eclipse/updates/4.14/"/>
+        <repository
+            url="https://download.eclipse.org/mylyn/releases/3.24/"/>
+        <repository
+            url="https://download.eclipse.org/mylyn/docs/releases/3.0.33/"/>
+<!-- OMG! We have circular dependency that invloves 'java.package; org.eclipse.cdt.utils.pty 0.0.0' -->
+        <repository
             url="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/"/>
+<!-- We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group -->
+        <repository
+            url="https://download.eclipse.org/tools/gef/updates/releases/5.3.0_gef-master_5721/"/>
         <repository
             url="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1/"/>
       </repositoryList>
@@ -260,9 +270,19 @@
           <repository
               url="https://download.eclipse.org/tools/orbit/downloads/2019-12/"/>
           <repository
-              url="https://download.eclipse.org/releases/2019-12/"/>
+              url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.20/"/>
           <repository
               url="https://download.eclipse.org/eclipse/updates/4.14/"/>
+          <repository
+              url="https://download.eclipse.org/mylyn/releases/3.24/"/>
+          <repository
+              url="https://download.eclipse.org/mylyn/docs/releases/3.0.35/"/>
+<!-- OMG! We have circular dependency that invloves 'java.package; org.eclipse.cdt.utils.pty 0.0.0' -->
+          <repository
+              url="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/"/>
+<!-- We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group -->
+          <repository
+              url="https://download.eclipse.org/tools/gef/updates/releases/5.2.0_gef-master_5609/"/>
           <repository
               url="http://download.eclipse.org/technology/epp/logging/stable/"/>
           <repository

@@ -116,9 +116,15 @@
       <repositoryList
           name="CDT Latest Released">
         <repository
-            url="https://download.eclipse.org/releases/2019-12/"/>
-        <repository
             url="https://download.eclipse.org/tools/orbit/downloads/2019-12/"/>
+        <repository
+            url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.20/"/>
+        <repository
+            url="https://download.eclipse.org/eclipse/updates/4.14/"/>
+        <repository
+            url="https://download.eclipse.org/mylyn/releases/3.24/"/>
+        <repository
+            url="https://download.eclipse.org/mylyn/docs/releases/3.0.33/"/>
         <repository
             url="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/"/>
         <repository
@@ -260,9 +266,13 @@
           <repository
               url="https://download.eclipse.org/tools/orbit/downloads/2019-12/"/>
           <repository
-              url="https://download.eclipse.org/releases/2019-12/"/>
+              url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.20/"/>
           <repository
               url="https://download.eclipse.org/eclipse/updates/4.14/"/>
+          <repository
+              url="https://download.eclipse.org/mylyn/releases/3.24/"/>
+          <repository
+              url="https://download.eclipse.org/mylyn/docs/releases/3.0.35/"/>
           <repository
               url="http://download.eclipse.org/technology/epp/logging/stable/"/>
           <repository

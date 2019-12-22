@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="cdt-baseline" sequenceNumber="18">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target name="cdt-baseline" sequenceNumber="19">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.cdt.sdk.feature.group" version="0.0.0"/>
@@ -29,7 +31,16 @@
 <repository location="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<repository location="https://download.eclipse.org/releases/2019-12/"/>
+<repository location="https://download.eclipse.org/modeling/emf/emf/builds/release/2.20/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<repository location="https://download.eclipse.org/eclipse/updates/4.14/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<repository location="https://download.eclipse.org/mylyn/releases/3.24/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<repository location="https://download.eclipse.org/mylyn/docs/releases/3.0.33/"/>
 </location>
 </locations>
 </target>

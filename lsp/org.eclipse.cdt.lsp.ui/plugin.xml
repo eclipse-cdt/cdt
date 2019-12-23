@@ -22,4 +22,34 @@
             name="%preferencePages.languageServer.name">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editorContentTypeBinding
+            contentTypeId="org.eclipse.cdt.lsp.core"
+            editorId="org.eclipse.ui.genericeditor.GenericEditor">
+      </editorContentTypeBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.autoEditStrategies">
+      <autoEditStrategy
+            class="org.eclipse.cdt.lsp.internal.ui.text.AutoIndentStrategyCPP"
+            contentType="org.eclipse.cdt.lsp.core">
+      </autoEditStrategy>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.presentationReconcilers">
+      <presentationReconciler
+            class="org.eclipse.cdt.lsp.core.PresentationReconcilerCPP"
+            contentType="org.eclipse.cdt.lsp.core">
+      </presentationReconciler>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.lsp.core.CDocumentSetupParticipant"
+         name="%cDocumentSetupParticipant"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
+            contentTypeId="org.eclipse.cdt.lsp.core">
+      </participant>
+   </extension>
 </plugin>

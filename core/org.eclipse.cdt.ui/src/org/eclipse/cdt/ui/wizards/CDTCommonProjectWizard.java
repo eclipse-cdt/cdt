@@ -45,7 +45,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -252,10 +252,10 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 					fMonitor.worked(10);
 					try {
 						newProject = createIProject(lastProjectName, lastProjectLocation,
-								new SubProgressMonitor(fMonitor, 40));
+								SubMonitor.convert(fMonitor, 40));
 						if (newProject != null)
 							fMainPage.h_selected.createProject(newProject, defaults, onFinish,
-									new SubProgressMonitor(fMonitor, 40));
+									SubMonitor.convert(fMonitor, 40));
 						fMonitor.worked(10);
 					} catch (CoreException e) {
 						CUIPlugin.errorDialog(getShell(), title, message, e, true);
@@ -319,19 +319,19 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 			if (location != null)
 				description.setLocationURI(location);
 			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle,
-					new SubProgressMonitor(monitor, 25));
+					SubMonitor.convert(monitor, 25));
 		} else {
 			IWorkspaceRunnable runnable = monitor1 -> newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor1);
-			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, new SubProgressMonitor(monitor, 25));
+			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, SubMonitor.convert(monitor, 25));
 			newProject = newProjectHandle;
 		}
 
 		// Open the project if we have to
 		if (!newProject.isOpen()) {
-			newProject.open(new SubProgressMonitor(monitor, 25));
+			newProject.open(SubMonitor.convert(monitor, 25));
 		}
 
-		continueCreationMonitor = new SubProgressMonitor(monitor, 25);
+		continueCreationMonitor = SubMonitor.convert(monitor, 25);
 		IProject proj = continueCreation(newProject);
 
 		monitor.done();

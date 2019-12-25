@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.resource.ResourceChange;
 
@@ -83,7 +83,7 @@ public abstract class AbstractCElementRenameChange extends ResourceChange {
 			IResource resource = getResource();
 			IPath newPath = createNewPath();
 			Change result = createUndoChange(resource.getModificationStamp());
-			doRename(new SubProgressMonitor(pm, 1));
+			doRename(SubMonitor.convert(pm, 1));
 			if (fStampToRestore != IResource.NULL_STAMP) {
 				IResource newResource = ResourcesPlugin.getWorkspace().getRoot().findMember(newPath);
 				newResource.revertModificationStamp(fStampToRestore);

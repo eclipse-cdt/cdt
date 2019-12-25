@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 
@@ -140,11 +140,11 @@ public class NewSourceFileGenerator {
 				int containerWork = totalWork / 2;
 				createFileWork = totalWork / 2;
 				ContainerGenerator generator = new ContainerGenerator(containerPath);
-				generator.generateContainer(new SubProgressMonitor(monitor, containerWork));
+				generator.generateContainer(SubMonitor.convert(monitor, containerWork));
 			}
 		}
 
-		createFile(newFile, contents, force, new SubProgressMonitor(monitor, createFileWork));
+		createFile(newFile, contents, force, SubMonitor.convert(monitor, createFileWork));
 		monitor.done();
 
 		return newFile;

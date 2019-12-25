@@ -23,7 +23,7 @@ import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -160,7 +160,7 @@ public abstract class TabFolderOptionBlock {
 			while (iter.hasNext()) {
 				ICOptionPage tab = iter.next();
 				try {
-					tab.performApply(new SubProgressMonitor(monitor, 1));
+					tab.performApply(SubMonitor.convert(monitor, 1));
 				} catch (CoreException e) {
 					CUIPlugin.errorDialog(composite.getShell(), CUIMessages.TabFolderOptionBlock_error,
 							CUIMessages.TabFolderOptionBlock_error_settingOptions, e, true);

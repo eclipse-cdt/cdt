@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -73,8 +73,7 @@ public class RefactoringExecutionHelper {
 				pm.beginTask("", fForked && !fForkChangeExecution ? 7 : 11); //$NON-NLS-1$
 				pm.subTask(""); //$NON-NLS-1$
 
-				final RefactoringStatus status = fRefactoring.checkAllConditions(
-						new SubProgressMonitor(pm, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				final RefactoringStatus status = fRefactoring.checkAllConditions(SubMonitor.convert(pm, 4));
 				if (status.getSeverity() >= fStopSeverity) {
 					final boolean[] canceled = { false };
 					if (fForked) {
@@ -87,16 +86,13 @@ public class RefactoringExecutionHelper {
 					}
 				}
 
-				fChange = fRefactoring
-						.createChange(new SubProgressMonitor(pm, 2, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-				fChange.initializeValidationData(
-						new SubProgressMonitor(pm, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				fChange = fRefactoring.createChange(SubMonitor.convert(pm, 2));
+				fChange.initializeValidationData(SubMonitor.convert(pm, 1));
 
 				fPerformChangeOperation = createPerformChangeOperation(fChange);
 
 				if (!fForked || fForkChangeExecution)
-					fPerformChangeOperation
-							.run(new SubProgressMonitor(pm, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+					fPerformChangeOperation.run(SubMonitor.convert(pm, 4));
 			} finally {
 				pm.done();
 			}

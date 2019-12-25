@@ -25,7 +25,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.swt.SWT;
@@ -175,7 +175,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 			try {
 				IProjectDescription description = project.getDescription();
 				description.setReferencedProjects(refProjects);
-				project.setDescription(description, new SubProgressMonitor(monitor, 1));
+				project.setDescription(description, SubMonitor.convert(monitor, 1));
 			} catch (CoreException e) {
 			}
 		}

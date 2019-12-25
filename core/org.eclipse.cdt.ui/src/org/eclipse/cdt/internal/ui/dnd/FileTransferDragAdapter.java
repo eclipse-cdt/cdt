@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -106,7 +106,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 
 				for (IResource resource : roots) {
 					try {
-						resource.refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(monitor, 1));
+						resource.refreshLocal(IResource.DEPTH_ONE, SubMonitor.convert(monitor, 1));
 					} catch (CoreException e) {
 						status.add(e.getStatus());
 					}

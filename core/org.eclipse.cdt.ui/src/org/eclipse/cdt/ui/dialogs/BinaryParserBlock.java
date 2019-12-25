@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -255,7 +255,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 					for (int i = 0; i < selected.size(); i++) {
 						ICOptionPage page = getBinaryParserPage(selected.get(i).getID());
 						if (page != null && page.getControl() != null) {
-							page.performApply(new SubProgressMonitor(monitor, 1));
+							page.performApply(SubMonitor.convert(monitor, 1));
 						}
 					}
 				}
@@ -274,7 +274,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 			for (int i = 0; i < selected.size(); i++) {
 				ICOptionPage page = getBinaryParserPage(selected.get(i).getID());
 				if (page != null && page.getControl() != null) {
-					page.performApply(new SubProgressMonitor(monitor, 1));
+					page.performApply(SubMonitor.convert(monitor, 1));
 				}
 			}
 		}

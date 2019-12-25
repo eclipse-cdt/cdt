@@ -53,7 +53,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -380,7 +380,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 				ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 				try {
 					try {
-						manager.connect(path, LocationKind.IFILE, new SubProgressMonitor(monitor, 1));
+						manager.connect(path, LocationKind.IFILE, SubMonitor.convert(monitor, 1));
 
 						monitor.subTask(path.makeRelative().toString());
 						ITextFileBuffer fileBuffer = manager.getTextFileBuffer(path, LocationKind.IFILE);
@@ -389,12 +389,12 @@ public class FormatAllAction extends SelectionDispatchAction {
 						formatTranslationUnit(fileBuffer, lastOptions);
 
 						if (fileBuffer.isDirty() && !wasDirty) {
-							fileBuffer.commit(new SubProgressMonitor(monitor, 2), false);
+							fileBuffer.commit(SubMonitor.convert(monitor, 2), false);
 						} else {
 							monitor.worked(2);
 						}
 					} finally {
-						manager.disconnect(path, LocationKind.IFILE, new SubProgressMonitor(monitor, 1));
+						manager.disconnect(path, LocationKind.IFILE, SubMonitor.convert(monitor, 1));
 					}
 				} catch (CoreException e) {
 					status.add(e.getStatus());

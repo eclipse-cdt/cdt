@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -224,7 +224,7 @@ public abstract class CRenameProcessorDelegate {
 		}
 		IStatus stat = txtSearch.searchWord(filesToSearch.toArray(new IFile[filesToSearch.size()]), getSearchScope(),
 				file, getSelectedWorkingSet(), getManager().getCCppPatterns(), getArgument().getName(),
-				new SubProgressMonitor(monitor, 1), fMatches);
+				SubMonitor.convert(monitor, 1), fMatches);
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
@@ -233,7 +233,7 @@ public abstract class CRenameProcessorDelegate {
 			return result;
 		}
 		selectMatchesByLocation(fMatches);
-		analyzeTextMatches(renameBindings, fMatches, new SubProgressMonitor(monitor, 1), result);
+		analyzeTextMatches(renameBindings, fMatches, SubMonitor.convert(monitor, 1), result);
 		if (result.hasFatalError()) {
 			return result;
 		}

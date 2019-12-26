@@ -116,23 +116,35 @@
       <repositoryList
           name="CDT Latest Released">
         <repository
-            url="https://download.eclipse.org/tools/orbit/downloads/2019-12/"/>
+            url="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/"/>
+        <repository
+            url="https://download.eclipse.org/tools/ptp/builds/remote/3.0.1/"/>
         <repository
             url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.20/"/>
-        <repository
-            url="https://download.eclipse.org/eclipse/updates/4.14/"/>
         <repository
             url="https://download.eclipse.org/mylyn/releases/3.24/"/>
         <repository
             url="https://download.eclipse.org/mylyn/docs/releases/3.0.33/"/>
 <!-- OMG! We have circular dependency that invloves 'java.package; org.eclipse.cdt.utils.pty 0.0.0' -->
-        <repository
-            url="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/"/>
 <!-- We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group -->
         <repository
             url="https://download.eclipse.org/tools/gef/updates/legacy/integration/5.0.0_gef-legacy-master_2166/"/>
         <repository
+            url="https://download.eclipse.org/eclipse/updates/4.14/"/>
+        <repository
             url="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1/"/>
+        <repository
+            url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
+        <repository
+            url="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/R-3.15.0-20190830034720/repository/"/>
+        <repository
+            url="http://download.eclipse.org/tm/terminal/updates/4.4milestones/"/>
+        <repository
+            url="https://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.templates-1.1.2-simrel-2019-12-m3/"/>
+        <repository
+            url="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
+        <repository
+            url="http://download.eclipse.org/lsp4e/snapshots/"/>
       </repositoryList>
     </targlet>
   </setupTask>

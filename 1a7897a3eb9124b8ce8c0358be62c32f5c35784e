@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c35e134d_18baf056",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-26T22:51:44Z",
+      "side": 1,
+      "message": "This isn\u0027t the correct URL - it may not be very different code but this is the URL for Linuxtools that will be part of 2020-03, the baseline should have the version that was in 2019-12. I believe you want https://download.eclipse.org/linuxtools/update-docker-4.5.0/",
+      "revId": "1a7897a3eb9124b8ce8c0358be62c32f5c35784e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f400a3e_ea14521b",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-26T22:51:44Z",
+      "side": 1,
+      "message": "Same here I think you want https://download.eclipse.org/lsp4e/releases/0.13.0/",
+      "revId": "1a7897a3eb9124b8ce8c0358be62c32f5c35784e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

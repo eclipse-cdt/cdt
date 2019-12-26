@@ -4,6 +4,7 @@
    <extension-point id="toolChainProvider" name="%extension-point.name" schema="schema/toolChainProvider.exsd"/>
    <extension
          id="mesonNature"
+         name="%mesonnature.name"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run

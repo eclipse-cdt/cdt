@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="toolChainProvider" name="CMake ToolChain File Provider" schema="schema/toolChainProvider.exsd"/>
+   <extension-point id="toolChainProvider" name="%cmaketoolChainProvider.name" schema="schema/toolChainProvider.exsd"/>
    <extension
          id="cmakeNature"
+         name="%cmakenature.name"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run

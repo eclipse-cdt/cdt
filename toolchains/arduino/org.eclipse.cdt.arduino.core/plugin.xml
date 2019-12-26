@@ -70,6 +70,7 @@
    </extension>
    <extension
          id="arduinoNature"
+         name="%arduinonature.name"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run

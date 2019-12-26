@@ -3,6 +3,7 @@
 <plugin>
    <extension
          id="autotoolsNature"
+         name="%autotoolsNature.name"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run

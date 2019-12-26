@@ -42,6 +42,9 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <repository location="https://download.eclipse.org/mylyn/docs/releases/3.0.33/"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<repository location="https://download.eclipse.org/releases/2019-12/"/>
+</location>
 <!-- OMG! We have circular dependency that invloves 'java.package; org.eclipse.cdt.utils.pty 0.0.0' -->
 <!-- but nothing to add here as we already have CDT repo above -->
 <!-- We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group -->

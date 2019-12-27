@@ -29,7 +29,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -448,15 +448,17 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask(CUIPlugin.getResourceString(KEY_TITLE), 1);
-			convertProjects(selection, monitor, projectID);
+			SubMonitor submonitor = SubMonitor.convert(monitor, 1);
+			submonitor.subTask(CUIPlugin.getResourceString(KEY_TITLE));
+			convertProjects(selection, submonitor.split(1), projectID);
 		}
 	}
 
 	public void doRun(IProgressMonitor monitor, String projectID, String bsId) throws CoreException {
-		if (bsId == null)
-			doRun(monitor, projectID);
-		else {
+		if (bsId == null) {
+			SubMonitor submonitor = SubMonitor.convert(monitor, 1);
+			doRun(submonitor.split(1), projectID);
+		} else {
 			Object[] selection = getCheckedElements();
 			if (selection != null) {
 				int totalSelected = selection.length;
@@ -465,8 +467,9 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 					if (monitor == null) {
 						monitor = new NullProgressMonitor();
 					}
-					monitor.beginTask(CUIPlugin.getResourceString(KEY_TITLE), 1);
-					convertProjects(selection, bsId, monitor);
+					SubMonitor submonitor = SubMonitor.convert(monitor, 1);
+					submonitor.subTask(CUIPlugin.getResourceString(KEY_TITLE));
+					convertProjects(selection, bsId, submonitor.split(1));
 				}
 			}
 		}
@@ -482,26 +485,21 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	 * @throws CoreException
 	 */
 	private void convertProjects(Object[] selected, IProgressMonitor monitor, String projectID) throws CoreException {
-		monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), selected.length);
-		try {
-			for (Object element : selected) {
-				IProject project = (IProject) element;
-				convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
-			}
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, selected.length);
+		subMonitor.subTask(CUIPlugin.getResourceString(KEY_CONVERTING));
+		for (Object element : selected) {
+			IProject project = (IProject) element;
+			convertProject(project, subMonitor.split(1), projectID);
 		}
+
 	}
 
 	private void convertProjects(Object[] selected, String bsId, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), selected.length);
-		try {
-			for (Object element : selected) {
-				IProject project = (IProject) element;
-				convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
-			}
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, selected.length);
+		subMonitor.subTask(CUIPlugin.getResourceString(KEY_CONVERTING));
+		for (Object element : selected) {
+			IProject project = (IProject) element;
+			convertProject(project, bsId, subMonitor.split(1));
 		}
 	}
 
@@ -534,36 +532,38 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	 */
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
 		// Add the correct nature
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		if (convertToC) {
 			if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
-				addCNature(project, monitor, true);
+				addCNature(project, subMonitor.split(1), true);
 			} else {
 				if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
 					// remove the C++ nature
-					CCProjectNature.removeCCNature(project, monitor);
+					CCProjectNature.removeCCNature(project, subMonitor.split(1));
 				}
 			}
 		} else {
 			if (convertToCC && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-				addCCNature(project, monitor, true);
+				addCCNature(project, subMonitor.split(1), true);
 			}
 		}
 	}
 
 	public void convertProject(IProject project, String bsId, IProgressMonitor monitor) throws CoreException {
 		// Add the correct nature
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		if (convertToC) {
 			if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
-				addCNature(project, monitor, true);
+				addCNature(project, subMonitor.split(1), true);
 			} else {
 				if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
 					// remove the C++ nature
-					CCProjectNature.removeCCNature(project, monitor);
+					CCProjectNature.removeCCNature(project, subMonitor.split(1));
 				}
 			}
 		} else {
 			if (convertToCC && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-				addCCNature(project, monitor, true);
+				addCCNature(project, subMonitor.split(1), true);
 			}
 		}
 	}
@@ -571,24 +571,26 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	protected void addCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException {
 		if (getWizard() instanceof ConversionWizard) {
 			ConversionWizard cw = (ConversionWizard) getWizard();
+			SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 			if (cw.getBuildSystemId() != null)
-				CCorePlugin.getDefault().convertProjectToNewC(project, cw.getBuildSystemId(), monitor);
+				CCorePlugin.getDefault().convertProjectToNewC(project, cw.getBuildSystemId(), subMonitor.split(1));
 			else
-				CCorePlugin.getDefault().convertProjectToC(project, monitor, cw.getProjectID());
+				CCorePlugin.getDefault().convertProjectToC(project, subMonitor.split(1), cw.getProjectID());
 		}
 	}
 
 	protected void addCCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder)
 			throws CoreException {
 		if (getWizard() instanceof ConversionWizard) {
+			SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 			if (project.hasNature(CProjectNature.C_NATURE_ID)) {
-				CCorePlugin.getDefault().convertProjectFromCtoCC(project, monitor);
+				CCorePlugin.getDefault().convertProjectFromCtoCC(project, subMonitor.split(1));
 			} else {
 				ConversionWizard cw = (ConversionWizard) getWizard();
 				if (cw.getBuildSystemId() != null)
-					CCorePlugin.getDefault().convertProjectToNewCC(project, cw.getBuildSystemId(), monitor);
+					CCorePlugin.getDefault().convertProjectToNewCC(project, cw.getBuildSystemId(), subMonitor.split(1));
 				else
-					CCorePlugin.getDefault().convertProjectToCC(project, monitor, cw.getProjectID());
+					CCorePlugin.getDefault().convertProjectToCC(project, subMonitor.split(1), cw.getProjectID());
 			}
 		}
 	}

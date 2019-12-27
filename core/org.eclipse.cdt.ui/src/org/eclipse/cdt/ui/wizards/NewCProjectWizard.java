@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -215,20 +215,24 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 			getShell().getDisplay().syncExec(() -> {
 				IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(monitor -> {
 					final IProgressMonitor fMonitor;
+
 					if (monitor == null) {
 						fMonitor = new NullProgressMonitor();
 					} else {
 						fMonitor = monitor;
 					}
-					fMonitor.beginTask(CUIPlugin.getResourceString(OP_DESC), 3);
-					doRunPrologue(new SubProgressMonitor(fMonitor, 1));
+					SubMonitor subMonitor = SubMonitor.convert(fMonitor, 3);
+					subMonitor.subTask(CUIPlugin.getResourceString(OP_DESC));
+					doRunPrologue(subMonitor.split(1));
+					subMonitor.setWorkRemaining(2);
 					try {
-						doRun(new SubProgressMonitor(fMonitor, 1));
+						doRun(subMonitor.split(1));
+						subMonitor.setWorkRemaining(1);
 					} catch (CoreException e) {
 						except[0] = e;
 					}
-					doRunEpilogue(new SubProgressMonitor(fMonitor, 1));
-					fMonitor.done();
+					doRunEpilogue(subMonitor.split(1));
+					subMonitor.setWorkRemaining(0);
 				});
 				try {
 					getContainer().run(false, true, op);

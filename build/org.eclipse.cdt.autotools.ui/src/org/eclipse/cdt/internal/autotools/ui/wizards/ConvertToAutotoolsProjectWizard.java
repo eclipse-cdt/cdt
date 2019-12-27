@@ -25,6 +25,7 @@ import org.eclipse.cdt.ui.wizards.conversion.ConversionWizard;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
@@ -186,8 +187,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 
 	@Override
 	protected void doRunPrologue(IProgressMonitor monitor) {
-		// Auto-generated method stub
-
+		monitor.done();
 	}
 
 	@Override
@@ -204,11 +204,12 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 
 		// execute any operations specified by custom pages
 		IRunnableWithProgress operations[] = MBSCustomPageManager.getOperations();
-
+		
 		if (operations != null) {
+			SubMonitor submonitor = SubMonitor.convert(monitor, operations.length);
 			for (int k = 0; k < operations.length; k++) {
 				try {
-					operations[k].run(monitor);
+					operations[k].run(submonitor.split(1));
 				} catch (InvocationTargetException | InterruptedException e) {
 					//TODO: what should we do?
 				}

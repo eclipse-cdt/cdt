@@ -34,6 +34,24 @@
       "revId": "e63c017b3fef8a438c88e18915b41b78bd2d977f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "708d5b7c_11714151",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T19:59:13Z",
+      "side": 0,
+      "message": "Definitely used by PDE - also CDT fits easily in 512MB - but there are code paths and stuff that require more. Note that the EPP has xmx of 1g, in dev we should try to keep tighter.\n\nHowever the most important place it is used is while creating junit plug-in tests. However I think that these may have -ea by default these days.\n\nThat said - all the above can be solved in numerous ways and I am not at all attached to keeping it here.\n\nWe should have a separate commit for this - and it should be updated in both target file and cdt.setup to keep them aligned.",
+      "parentUuid": "fbdf9489_c9b4ea10",
+      "revId": "e63c017b3fef8a438c88e18915b41b78bd2d977f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,7 +1,81 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="66">
+<target name="cdt" sequenceNumber="67">
 <locations>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.license.feature.group" version="0.0.0"/>
+<repository location="https://download.eclipse.org/cbi/updates/license/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.jdt.annotation" version="0.0.0"/>
+<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.test.feature.group" version="0.0.0"/>
+<repository location="https://download.eclipse.org/eclipse/updates/4.14/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.linuxtools.docker.feature.feature.group" version="0.0.0"/>
+<repository location="https://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.lsp4e" version="0.0.0"/>
+<unit id="org.eclipse.lsp4e.debug" version="0.0.0"/>
+<repository location="http://download.eclipse.org/lsp4e/snapshots/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<repository location="https://download.eclipse.org/modeling/emf/emf/builds/release/2.20/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<repository location="https://download.eclipse.org/mylyn/docs/releases/3.0.35/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<repository location="https://download.eclipse.org/mylyn/releases/3.24/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.epp.logging.aeri.feature.feature.group" version="0.0.0"/>
+<repository location="https://download.eclipse.org/technology/epp/logging/stable/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.swtbot.eclipse.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.swtbot.eclipse.test.junit.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.swtbot.feature.group" version="0.0.0"/>
+<repository location="https://download.eclipse.org/technology/swtbot/releases/2.7.0/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.tm.terminal.control" version="0.0.0"/>
+<unit id="org.eclipse.tm.terminal.feature.feature.group" version="0.0.0"/>
+<repository location="https://download.eclipse.org/tm/terminal/updates/4.4milestones/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.tm4e.feature.feature.group" version="0.0.0"/>
+<repository location="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.launchbar.remote.feature.group" version="0.0.0"/>
+<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<!-- OMG! We have circular dependency that involves 'java.package; org.eclipse.cdt.utils.pty 0.0.0' -->
+<repository location="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<!-- normalize org.eclipse.cdt\releng\org.eclipse.cdt.repo\category.xml to remove .source IUs below -->
+<unit id="org.eclipse.tools.templates.core" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.core.source" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.freemarker.java11" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.freemarker.source" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.freemarker.java11.source" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>
+<unit id="org.eclipse.tools.templates.ui.source" version="0.0.0"/>
+<repository location="https://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.templates-1.1.2-simrel-2019-12-m3/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<!-- We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group -->
+<repository location="https://download.eclipse.org/tools/gef/updates/legacy/integration/5.0.0_gef-legacy-master_2166"/>
+</location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
 <unit id="com.sun.xml.bind" version="0.0.0"/>
@@ -23,88 +97,14 @@
 <repository location="https://download.eclipse.org/tools/orbit/downloads/2019-12/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.epp.logging.aeri.feature.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/technology/epp/logging/stable/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.swtbot.eclipse.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.swtbot.eclipse.test.junit.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.swtbot.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/technology/swtbot/releases/2.7.0/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.remote.console.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.remote.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.remote.serial.feature.group" version="0.0.0"/>
 <repository location="https://download.eclipse.org/tools/ptp/builds/remote/3.0.1/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<repository location="https://download.eclipse.org/modeling/emf/emf/builds/release/2.20/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<repository location="https://download.eclipse.org/mylyn/releases/3.24/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<repository location="https://download.eclipse.org/mylyn/docs/releases/3.0.35/"/>
-</location>
-<!-- OMG! We have circular dependency that invloves 'java.package; org.eclipse.cdt.utils.pty 0.0.0' -->
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<repository location="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<!-- We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group -->
-<repository location="https://download.eclipse.org/tools/gef/updates/legacy/integration/5.0.0_gef-legacy-master_2166"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.license.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/cbi/updates/license/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.jdt.annotation" version="0.0.0"/>
-<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.test.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/eclipse/updates/4.14/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.launchbar.remote.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1-simrel-2019-12-m3/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.linuxtools.docker.feature.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="0.0.0"/>
 <repository location="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/R-3.15.0-20190830034720/repository/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.tm.terminal.control" version="0.0.0"/>
-<unit id="org.eclipse.tm.terminal.feature.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tm/terminal/updates/4.4milestones/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<!-- normalize org.eclipse.cdt\releng\org.eclipse.cdt.repo\category.xml to remove .source IUs below -->
-<unit id="org.eclipse.tools.templates.core" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.core.source" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.freemarker.java11" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.freemarker.source" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.freemarker.java11.source" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.ui.source" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.templates-1.1.2-simrel-2019-12-m3/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.tm4e.feature.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.lsp4e" version="0.0.0"/>
-<unit id="org.eclipse.lsp4e.debug" version="0.0.0"/>
-<repository location="http://download.eclipse.org/lsp4e/snapshots/"/>
 </location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>

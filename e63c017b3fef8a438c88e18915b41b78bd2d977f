@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a4197eeb_73d51fdf",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T19:40:47Z",
+      "side": 0,
+      "message": "This part has been lost. I don\u0027t know how important most of the args are, but the -ea should be there for sure so that devs run with assertions on by default. This change also does not match cdt.setup (I marked the corresponding line there)",
+      "revId": "e63c017b3fef8a438c88e18915b41b78bd2d977f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

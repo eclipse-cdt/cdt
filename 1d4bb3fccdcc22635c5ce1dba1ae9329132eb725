@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b330a5f2_3261e667",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T19:40:47Z",
+      "side": 1,
+      "message": "here it is in cdt.setup",
+      "revId": "1d4bb3fccdcc22635c5ce1dba1ae9329132eb725",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

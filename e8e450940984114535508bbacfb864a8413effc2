@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "5b7f858a_cf80311f",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/ConvertToAutotoolsProjectWizard.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "new warning for this line",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "14963807_66c1030d",
         "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/ConvertToAutotoolsProjectWizard.java",
         "patchSetId": 3
@@ -13,6 +30,285 @@
       "writtenOn": "2019-12-27T15:47:26Z",
       "side": 1,
       "message": "This trailing whitespace is what caused the build failure.",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "38c45c41_3ac1d464",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/ConvertToAutotoolsProjectWizard.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "ditto3",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10f48191_66044957",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewCProjectWizard.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "this convert includes the appropriate null checks, so you can now remove lines 217-223 above and pass monitor directly into convert",
+      "range": {
+        "startLine": 224,
+        "startChar": 40,
+        "endLine": 224,
+        "endChar": 47
+      },
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c02c301_735407f4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewCProjectWizard.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "ditto2",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "754e4ee1_cf1a2df6",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewCProjectWizard.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "IIUC setting work remaining when you have just split above is unneeded as you aren\u0027t changing the total work done.\n\n(other cases of same marked with ditto1)",
+      "range": {
+        "startLine": 227,
+        "startChar": 0,
+        "endLine": 227,
+        "endChar": 36
+      },
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eeb74d7e_e804f233",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewCProjectWizard.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "ditto1",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ecaac760_f9fe5755",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewCProjectWizard.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "ditto1",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "62477889_d2931d49",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "subtask !\u003d task therefore these two lines should be:\n\nSubMonitor.convert(monitor, /title/, 1);\n\n(other cases of same marked with ditto2)",
+      "range": {
+        "startLine": 452,
+        "startChar": 14,
+        "endLine": 452,
+        "endChar": 21
+      },
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e142651_30b96a15",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "I suppose there is nothing wrong with this, but there is no need either, is there?\n\n(other cases of the same marked with ditto3)",
+      "range": {
+        "startLine": 459,
+        "startChar": 0,
+        "endLine": 459,
+        "endChar": 58
+      },
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5d16b722_b8a3802e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "ditto2",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6d299ac_3df7209d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "ditto2",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f887159e_385f92e4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "ditto2",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6655aaef_af5d2f7e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 535,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "ditto3",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf6d55c8_c6a20bb2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "ditto3",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "86ceb5e5_1632a438",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 574,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "ditto3",
+      "revId": "e8e450940984114535508bbacfb864a8413effc2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b8412ab_df04818c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 585,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-27T17:36:04Z",
+      "side": 1,
+      "message": "ditto3",
       "revId": "e8e450940984114535508bbacfb864a8413effc2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

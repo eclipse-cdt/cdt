@@ -16,6 +16,24 @@
       "revId": "e63c017b3fef8a438c88e18915b41b78bd2d977f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fbdf9489_c9b4ea10",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2019-12-27T19:46:24Z",
+      "side": 0,
+      "message": "We need to investigate it. I removed it because it looks really outdated and I cannot imagine how CDT runtime workspace can fit in 512M. Also I\u0027m not sure that it is used by PDE. I can just return it if you insist or better we will have a separete task for this.",
+      "parentUuid": "a4197eeb_73d51fdf",
+      "revId": "e63c017b3fef8a438c88e18915b41b78bd2d977f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

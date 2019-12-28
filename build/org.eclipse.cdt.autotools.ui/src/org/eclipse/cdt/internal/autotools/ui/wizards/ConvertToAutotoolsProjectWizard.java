@@ -186,8 +186,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 
 	@Override
 	protected void doRunPrologue(IProgressMonitor monitor) {
-		// Auto-generated method stub
-
+		monitor.done();
 	}
 
 	@Override
@@ -206,9 +205,10 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 		IRunnableWithProgress operations[] = MBSCustomPageManager.getOperations();
 
 		if (operations != null) {
+			SubMonitor submonitor = SubMonitor.convert(monitor, operations.length);
 			for (int k = 0; k < operations.length; k++) {
 				try {
-					operations[k].run(monitor);
+					operations[k].run(submonitor.split(1));
 				} catch (InvocationTargetException | InterruptedException e) {
 					//TODO: what should we do?
 				}

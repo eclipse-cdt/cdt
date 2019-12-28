@@ -134,14 +134,28 @@
         <repository
             url="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1/"/>
         <repository
-<!-- OMG! We have circular dependency that involves 'java.package; org.eclipse.cdt.utils.pty 0.0.0' -->
-<!-- but it gets resolved here as we have CDT repo below -->
-            url="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/"/>
+            url="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/">
+          <annotation>
+            <detail
+                key="description">
+              <value>
+                OMG! We have circular dependency that involves 'java.package; org.eclipse.cdt.utils.pty 0.0.0'
+                but it gets resolved here as we have CDT repo below.
+              </value>
+            </detail>
+          </annotation>
+        </repository>
         <repository
             url="https://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.templates-1.1.2-simrel-2019-12-m3/"/>
         <repository
-<!-- We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group -->
-            url="https://download.eclipse.org/tools/gef/updates/legacy/integration/5.0.0_gef-legacy-master_2166/"/>
+            url="https://download.eclipse.org/tools/gef/updates/legacy/integration/5.0.0_gef-legacy-master_2166/">
+          <annotation>
+            <detail
+                key="description">
+              <value>We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group</value>
+            </detail>
+          </annotation>
+        </repository>
         <repository
             url="https://download.eclipse.org/tools/ptp/builds/remote/3.0.1/"/>
         <repository
@@ -303,13 +317,25 @@
           <repository
               url="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1-simrel-2019-12-m3/"/>
           <repository
-<!-- OMG! We have circular dependency that invloves 'java.package; org.eclipse.cdt.utils.pty 0.0.0' -->
-              url="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/"/>
+              url="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/">
+            <annotation>
+              <detail
+                  key="description">
+                <value>OMG! We have circular dependency that involves 'java.package; org.eclipse.cdt.utils.pty 0.0.0'</value>
+              </detail>
+            </annotation>
+          </repository>
           <repository
               url="https://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.templates-1.1.2-simrel-2019-12-m3/"/>
           <repository
-<!-- We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group -->
-              url="https://download.eclipse.org/tools/gef/updates/legacy/integration/5.0.0_gef-legacy-master_2166/"/>
+              url="https://download.eclipse.org/tools/gef/updates/legacy/integration/5.0.0_gef-legacy-master_2166/">
+            <annotation>
+              <detail
+                  key="description">
+                <value>We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group</value>
+              </detail>
+            </annotation>
+          </repository>
           <repository
               url="https://download.eclipse.org/tools/orbit/downloads/2019-12/"/>
           <repository

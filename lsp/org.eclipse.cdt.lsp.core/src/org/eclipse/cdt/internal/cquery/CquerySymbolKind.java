@@ -13,13 +13,12 @@
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558516
  *******************************************************************************/
 
-package org.eclipse.cdt.lsp.core.cquery;
+package org.eclipse.cdt.internal.cquery;
 
-import org.eclipse.cdt.lsp.internal.core.LspCoreMessages;
 import org.eclipse.osgi.util.NLS;
 
-public enum StorageClass {
-	Invalid(0), None(1), Extern(2), Static(3), PrivateExtern(4), Auto(5), Register(6);
+public enum CquerySymbolKind {
+	Unknown(0), TypeAlias(252), Parameter(253), StaticMethod(254), Macro(255);
 
 	private int value;
 
@@ -27,15 +26,24 @@ public enum StorageClass {
 		return value;
 	}
 
-	StorageClass(int value) {
+	private CquerySymbolKind(int value) {
 		this.value = value;
 	}
 
-	public static StorageClass forValue(int value) {
-		StorageClass[] allValues = StorageClass.values();
-		if (value < 1 || value > allValues.length) {
-			throw new IllegalArgumentException(NLS.bind(LspCoreMessages.StorageClass_e_illegal_value, value));
+	public static CquerySymbolKind forValue(int value) {
+		switch (value) {
+		case 0:
+			return CquerySymbolKind.Unknown;
+		case 252:
+			return CquerySymbolKind.TypeAlias;
+		case 253:
+			return CquerySymbolKind.Parameter;
+		case 254:
+			return CquerySymbolKind.StaticMethod;
+		case 255:
+			return CquerySymbolKind.Macro;
+		default:
+			throw new IllegalArgumentException(NLS.bind(CqueryMessages.CquerySymbolKind_e_illegal_value, value));
 		}
-		return allValues[value - 1];
 	}
 }

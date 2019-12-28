@@ -13,10 +13,11 @@
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558516
  *******************************************************************************/
 
-package org.eclipse.cdt.lsp.core.cquery;
+package org.eclipse.cdt.cquery;
 
 import java.lang.reflect.Type;
 
+import org.eclipse.cdt.internal.cquery.CquerySymbolKind;
 import org.eclipse.lsp4j.SymbolKind;
 
 import com.google.gson.JsonDeserializationContext;

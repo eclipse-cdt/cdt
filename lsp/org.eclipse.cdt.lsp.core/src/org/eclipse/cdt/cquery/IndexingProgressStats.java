@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.lsp.core.cquery;
+package org.eclipse.cdt.cquery;
 
 public class IndexingProgressStats {
 	private int indexRequestCount;

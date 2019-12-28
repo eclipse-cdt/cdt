@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.cquery.core.CqueryLanguageServer;
 import org.eclipse.cdt.lsp.internal.core.LspCoreMessages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -45,6 +46,7 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 
 	public static final String CQUERY_ID = "cquery"; //$NON-NLS-1$
 
+	//FIXME: AF: the list of available servers should be extracted from some service
 	public CPPStreamConnectionProvider() throws UnsupportedOperationException {
 		List<String> commands = new ArrayList<>();
 		if (store.getString(PreferenceConstants.P_SERVER_CHOICE).equals(CQUERY_ID)) {

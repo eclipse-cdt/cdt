@@ -19,13 +19,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.cquery.CqueryInactiveRegions;
+import org.eclipse.cdt.cquery.CquerySemanticHighlights;
+import org.eclipse.cdt.cquery.HighlightSymbol;
+import org.eclipse.cdt.cquery.IndexingProgressStats;
+import org.eclipse.cdt.internal.cquery.CqueryMessages;
+import org.eclipse.cdt.internal.cquery.ui.HighlightingNames;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
-import org.eclipse.cdt.lsp.core.cquery.CqueryInactiveRegions;
-import org.eclipse.cdt.lsp.core.cquery.CquerySemanticHighlights;
-import org.eclipse.cdt.lsp.core.cquery.HighlightSymbol;
-import org.eclipse.cdt.lsp.core.cquery.IndexingProgressStats;
-import org.eclipse.cdt.lsp.internal.core.LspCoreMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
@@ -52,6 +53,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
+//FIXME: AF: currently this extension is cquery-specific and it should be contributed from cquery-specific part
 @SuppressWarnings("restriction")
 public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
@@ -71,8 +73,8 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 					statusLine.add(cqueryStatusField);
 				}
 				String msg = stats.getTotalJobs() > 0
-						? NLS.bind(LspCoreMessages.Server2ClientProtocolExtension_cquery_busy, stats.getTotalJobs())
-						: LspCoreMessages.Server2ClientProtocolExtension_cquery_idle;
+						? NLS.bind(CqueryMessages.Server2ClientProtocolExtension_cquery_busy, stats.getTotalJobs())
+						: CqueryMessages.Server2ClientProtocolExtension_cquery_idle;
 				cqueryStatusField.setText(msg);
 			}
 		});
@@ -170,7 +172,7 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
 		for (HighlightSymbol highlight : highlights.getSymbols()) {
 
-			String highlightingName = HighlightSymbol.getHighlightingName(highlight.getKind(),
+			String highlightingName = HighlightingNames.getHighlightingName(highlight.getKind(),
 					highlight.getParentKind(), highlight.getStorage(), highlight.getRole());
 			String colorKey = PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + highlightingName
 					+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX;

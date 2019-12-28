@@ -10,21 +10,24 @@
  * Contributors:
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - initial API and implementatin
  *******************************************************************************/
-package org.eclipse.cdt.lsp.internal.core;
+package org.eclipse.cdt.internal.cquery;
 
 import org.eclipse.osgi.util.NLS;
 
-public class LspCoreMessages extends NLS {
+public class CqueryMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.lsp.internal.core.LspCoreMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.cquery.CqueryMessages"; //$NON-NLS-1$
 
 	static {
 		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, LspCoreMessages.class);
+		NLS.initializeMessages(BUNDLE_NAME, CqueryMessages.class);
 	}
 
-	public static String CPPStreamConnectionProvider_e_unsupported;
+	public static String CquerySymbolKind_e_illegal_value;
+	public static String Server2ClientProtocolExtension_cquery_busy;
+	public static String Server2ClientProtocolExtension_cquery_idle;
+	public static String StorageClass_e_illegal_value;
 
-	private LspCoreMessages() {
+	private CqueryMessages() {
 	}
 }

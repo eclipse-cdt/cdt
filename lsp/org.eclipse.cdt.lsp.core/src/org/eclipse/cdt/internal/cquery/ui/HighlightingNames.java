@@ -1,32 +1,28 @@
 /*******************************************************************************
- * Copyright (c) 2018 Manish Khurana , Nathan Ridge and others.
+ * Copyright (c) 2018-2019 Manish Khurana, Nathan Ridge and others.
  *
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License 2.0
- * which accompanies this distribution, and is available at
- * https://www.eclipse.org/legal/epl-2.0/
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0/.
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-
-package org.eclipse.cdt.lsp.core.cquery;
+package org.eclipse.cdt.internal.cquery.ui;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.cquery.ExtendedSymbolKindType;
+import org.eclipse.cdt.cquery.StorageClass;
+import org.eclipse.cdt.cquery.SymbolRole;
+import org.eclipse.cdt.internal.cquery.CquerySymbolKind;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
-import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.SymbolKind;
 
-public class HighlightSymbol {
-	private int stableId;
-	private ExtendedSymbolKindType parentKind;
-	private ExtendedSymbolKindType kind;
-	private StorageClass storage;
-	private List<Range> ranges;
-	private Integer role;
-	public static Map<Integer, String> semanticHighlightSymbolsMap = new HashMap<>();
+//FIXME: AF: rework this compilation unit from a container of static functions to a normal type
+public class HighlightingNames {
+
+	private static Map<Integer, String> semanticHighlightSymbolsMap = new HashMap<>();
 
 	static {
 		semanticHighlightSymbolsMap.put(SymbolKind.Namespace.getValue(), SemanticHighlightings.NAMESPACE);
@@ -41,10 +37,6 @@ public class HighlightSymbol {
 		semanticHighlightSymbolsMap.put(CquerySymbolKind.StaticMethod.getValue(),
 				SemanticHighlightings.STATIC_METHOD_INVOCATION);
 		semanticHighlightSymbolsMap.put(CquerySymbolKind.Macro.getValue(), SemanticHighlightings.MACRO_DEFINITION);
-	}
-
-	public static boolean isDeclaration(int role) {
-		return (role & SymbolRole.Declaration) != 0 || (role & SymbolRole.Definition) != 0;
 	}
 
 	public static String getHighlightingName(ExtendedSymbolKindType kind, ExtendedSymbolKindType parentKind,
@@ -82,37 +74,8 @@ public class HighlightSymbol {
 		return highlightingName;
 	}
 
-	public HighlightSymbol(int stableId, ExtendedSymbolKindType parentKind, ExtendedSymbolKindType kind,
-			StorageClass storage, Integer role, List<Range> ranges) {
-		this.stableId = stableId;
-		this.parentKind = parentKind;
-		this.kind = kind;
-		this.storage = storage;
-		this.role = role;
-		this.ranges = ranges;
+	private static boolean isDeclaration(int role) {
+		return (role & SymbolRole.Declaration) != 0 || (role & SymbolRole.Definition) != 0;
 	}
 
-	public int getStableId() {
-		return stableId;
-	}
-
-	public ExtendedSymbolKindType getParentKind() {
-		return parentKind;
-	}
-
-	public ExtendedSymbolKindType getKind() {
-		return kind;
-	}
-
-	public StorageClass getStorage() {
-		return storage;
-	}
-
-	public Integer getRole() {
-		return role;
-	}
-
-	public List<Range> getRanges() {
-		return ranges;
-	}
 }

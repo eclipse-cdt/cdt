@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eclipse.cdt.lsp.core.cquery;
+package org.eclipse.cdt.cquery;
 
 /**
  * A class to contain constants that represent different roles

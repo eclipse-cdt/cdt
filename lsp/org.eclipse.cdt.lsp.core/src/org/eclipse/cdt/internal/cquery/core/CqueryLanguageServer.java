@@ -9,11 +9,12 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.lsp.core;
+package org.eclipse.cdt.internal.cquery.core;
 
 import java.net.URI;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.lsp.core.ICPPLanguageServer;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;

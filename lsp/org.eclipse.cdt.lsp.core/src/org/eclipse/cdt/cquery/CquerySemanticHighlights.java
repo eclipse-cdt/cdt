@@ -9,27 +9,25 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.lsp.core.cquery;
+package org.eclipse.cdt.cquery;
 
 import java.net.URI;
 import java.util.List;
 
-import org.eclipse.lsp4j.Range;
-
-public class CqueryInactiveRegions {
+public class CquerySemanticHighlights {
 	private URI uri;
-	private List<Range> inactiveRegions;
-
-	public CqueryInactiveRegions(URI uri, List<Range> inactiveRegions) {
-		this.uri = uri;
-		this.inactiveRegions = inactiveRegions;
-	}
+	private List<HighlightSymbol> symbols;
 
 	public URI getUri() {
 		return uri;
 	}
 
-	public List<Range> getInactiveRegions() {
-		return inactiveRegions;
+	public List<HighlightSymbol> getSymbols() {
+		return symbols;
+	}
+
+	public CquerySemanticHighlights(URI uri, List<HighlightSymbol> symbols) {
+		this.uri = uri;
+		this.symbols = symbols;
 	}
 }

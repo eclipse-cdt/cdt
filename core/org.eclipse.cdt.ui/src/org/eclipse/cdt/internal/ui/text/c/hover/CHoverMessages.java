@@ -20,6 +20,7 @@ import org.eclipse.osgi.util.NLS;
 public final class CHoverMessages extends NLS {
 
 	public static String AbstractAnnotationHover_action_configureAnnotationPreferences;
+	public static String AbstractAnnotationHover_annotation_text_null_message;
 	public static String AbstractAnnotationHover_message_singleQuickFix;
 	public static String AbstractAnnotationHover_message_multipleQuickFix;
 

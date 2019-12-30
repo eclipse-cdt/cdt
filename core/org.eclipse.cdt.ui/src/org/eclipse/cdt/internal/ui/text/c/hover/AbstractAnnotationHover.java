@@ -320,7 +320,14 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 			StyledText text = new StyledText(composite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
 			GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 			text.setLayoutData(data);
-			text.setText(annotation.getText());
+			String annotationText = annotation.getText();
+			if (annotationText == null) {
+				// This shouldn't happen, but it really does sometimes. See Bug 447622
+				// Therefore we have to provide a sensible fallback
+				text.setText(CHoverMessages.AbstractAnnotationHover_annotation_text_null_message);
+			} else {
+				text.setText(annotationText);
+			}
 		}
 
 		private void createCompletionProposalsControl(Composite parent, ICompletionProposal[] proposals) {

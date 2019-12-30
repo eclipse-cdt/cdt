@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f4e90816_418fc8cf",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewCProjectWizard.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-30T15:31:27Z",
+      "side": 1,
+      "message": "Sorry, I missed this in PS4 when I said everything else was ok - this is still a case of ditto2 - i.e. the string should be passed to the convert call.",
+      "revId": "58b96f64370cad9f5ae177e858def1f1bd093485",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19d37f00_3c7e7d8c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-30T15:31:27Z",
+      "side": 1,
+      "message": "This PS introduced a bunch of new unrelated comment changes.",
+      "revId": "58b96f64370cad9f5ae177e858def1f1bd093485",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79bc684b_5fb0c2fd",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 559,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-30T15:31:27Z",
+      "side": 1,
+      "message": "Sort of the same thing here - this is an unrelated change.",
+      "revId": "58b96f64370cad9f5ae177e858def1f1bd093485",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

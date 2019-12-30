@@ -28,8 +28,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -75,7 +74,8 @@ import org.eclipse.ui.ide.IDE;
  *
  *
  * @author Judy N. Green
- * @since Aug 6, 2002 <p>
+ * @since Aug 6, 2002
+ *        <p>
  */
 public abstract class ConvertProjectWizardPage extends WizardPage {
 
@@ -145,8 +145,7 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Method addToMainPage allows subclasses to add
-	 * elements to the main page.
+	 * Method addToMainPage allows subclasses to add elements to the main page.
 	 *
 	 */
 	protected void addToMainPage(Composite container) {
@@ -307,8 +306,8 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	}
 
 	/*
-	 * Method updateSelectionButtons, enables/disables buttons
-	 * dependent on what is selected
+	 * Method updateSelectionButtons, enables/disables buttons dependent on what is
+	 * selected
 	 */
 
 	protected void updateSelectionButtons() {
@@ -323,8 +322,7 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	}
 
 	/*
-	 * Method  getButtonGridData creates
-	 * and returns a GridData for the given button
+	 * Method getButtonGridData creates and returns a GridData for the given button
 	 *
 	 * @GridData
 	 */
@@ -338,8 +336,8 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	/**
 	 * Returns whether this page's controls currently all contain valid values.
 	 *
-	 * @return <code>true</code> if the user has selected at  least one
-	 *         candidate project.
+	 * @return <code>true</code> if the user has selected at least one candidate
+	 *         project.
 	 */
 	protected boolean validatePage() {
 
@@ -368,8 +366,8 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Provides labels for the listed items.  In this case it returns each
-	 * project's name
+	 * Provides labels for the listed items. In this case it returns each project's
+	 * name
 	 */
 	public class ProjectLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
@@ -391,8 +389,8 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Returns a list of open projects that are determined to be candidates
-	 * through the method isCandidate().<br>
+	 * Returns a list of open projects that are determined to be candidates through
+	 * the method isCandidate().<br>
 	 *
 	 * Note: Only Projects that are open will be considered for conversion.
 	 *
@@ -432,8 +430,7 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 
 	/**
 	 * doRun can be overwritten in subclasses to change behaviour, but this is
-	 * generally not required. It is called from the corresponding Conversion
-	 * Wizard
+	 * generally not required. It is called from the corresponding Conversion Wizard
 	 *
 	 * @param monitor
 	 * @param projectID
@@ -445,36 +442,29 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 		int totalSelected = selection.length;
 
 		if (totalSelected > 0) {
-			if (monitor == null) {
-				monitor = new NullProgressMonitor();
-			}
-			monitor.beginTask(CUIPlugin.getResourceString(KEY_TITLE), 1);
-			convertProjects(selection, monitor, projectID);
+			SubMonitor submonitor = SubMonitor.convert(monitor, CUIPlugin.getResourceString(KEY_TITLE), 1);
+			convertProjects(selection, submonitor.split(1), projectID);
 		}
 	}
 
 	public void doRun(IProgressMonitor monitor, String projectID, String bsId) throws CoreException {
-		if (bsId == null)
+		if (bsId == null) {
 			doRun(monitor, projectID);
-		else {
+		} else {
 			Object[] selection = getCheckedElements();
 			if (selection != null) {
 				int totalSelected = selection.length;
-
 				if (totalSelected > 0) {
-					if (monitor == null) {
-						monitor = new NullProgressMonitor();
-					}
-					monitor.beginTask(CUIPlugin.getResourceString(KEY_TITLE), 1);
-					convertProjects(selection, bsId, monitor);
+					SubMonitor submonitor = SubMonitor.convert(monitor, CUIPlugin.getResourceString(KEY_TITLE), 1);
+					convertProjects(selection, bsId, submonitor.split(1));
 				}
 			}
 		}
 	}
 
 	/**
-	 * convertProjects calls the convertProject() method on each project
-	 * passed to it.
+	 * convertProjects calls the convertProject() method on each project passed to
+	 * it.
 	 *
 	 * @param selected
 	 * @param monitor
@@ -482,31 +472,26 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	 * @throws CoreException
 	 */
 	private void convertProjects(Object[] selected, IProgressMonitor monitor, String projectID) throws CoreException {
-		monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), selected.length);
-		try {
-			for (Object element : selected) {
-				IProject project = (IProject) element;
-				convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
-			}
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, CUIPlugin.getResourceString(KEY_CONVERTING),
+				selected.length);
+		for (Object element : selected) {
+			IProject project = (IProject) element;
+			convertProject(project, subMonitor.split(1), projectID);
 		}
+
 	}
 
 	private void convertProjects(Object[] selected, String bsId, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), selected.length);
-		try {
-			for (Object element : selected) {
-				IProject project = (IProject) element;
-				convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
-			}
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, CUIPlugin.getResourceString(KEY_CONVERTING),
+				selected.length);
+		for (Object element : selected) {
+			IProject project = (IProject) element;
+			convertProject(project, bsId, subMonitor.split(1));
 		}
 	}
 
 	/**
-	 * Method finish we always finish successfully  :)
+	 * Method finish we always finish successfully :)
 	 *
 	 * @return boolean
 	 */
@@ -571,10 +556,11 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	protected void addCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException {
 		if (getWizard() instanceof ConversionWizard) {
 			ConversionWizard cw = (ConversionWizard) getWizard();
-			if (cw.getBuildSystemId() != null)
+			if (cw.getBuildSystemId() != null) {
 				CCorePlugin.getDefault().convertProjectToNewC(project, cw.getBuildSystemId(), monitor);
-			else
+			} else {
 				CCorePlugin.getDefault().convertProjectToC(project, monitor, cw.getProjectID());
+			}
 		}
 	}
 

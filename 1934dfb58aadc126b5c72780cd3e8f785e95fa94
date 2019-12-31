@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "71456022_5eacba12",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-31T13:28:14Z",
+      "side": 1,
+      "message": "Optional for committers on the project :-) Committers have \"signed off\" all their commit by being committers.\n\nIn fact gerrit won\u0027t let you upload a change without the signed off header if you are required to have one.",
+      "revId": "1934dfb58aadc126b5c72780cd3e8f785e95fa94",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

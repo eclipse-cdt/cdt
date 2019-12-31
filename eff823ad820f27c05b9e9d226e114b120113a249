@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "37a931c8_93a33a52",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSWizardHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 581,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-31T13:57:43Z",
+      "side": 1,
+      "message": "I don\u0027t think it really matters in this case - and it probably never matters as long as the new values are sensible as they are here. However this change means that old implementation had 70% of the monitor in setProjectDescription and 30% in the post work, you have changed that split to 50%/50%. \n\nFor example, sometimes the % amount becomes important as it becomes part of bug reports, see for example Bug 540795 which is \"Attach hangs at 97%\". \n\nTo be clear I don\u0027t have any problem with the change you have made here, I just thought I would provide some history.\n\n(cont...)",
+      "revId": "eff823ad820f27c05b9e9d226e114b120113a249",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "02889fe0_9d7b975a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSWizardHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-31T13:57:43Z",
+      "side": 1,
+      "message": "(cont...)\n\nThe second part of this is that this change means the processing in this loop falls from 50% of the total work of createProject() to ~17%.\n\nHowever the reality here is if the individual pieces of work were really important here (that means this is genuinely a long running bit of work) then there should be cancellation checking in this loop.",
+      "revId": "eff823ad820f27c05b9e9d226e114b120113a249",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf457b28_b7266cc0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/CCProjectWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-31T13:57:43Z",
+      "side": 1,
+      "message": "This is a good catch - I have no idea why (since inception) this was not caught. \n\nIdeally again this would be part of a different commit. And in that one I would probably point you at Bug 552481 which was an example of when an exception should have been shown to the user was silently logged.\n\nShould this one be CUIPlugin.errorDialog(...) too? See comment tagged ABC.",
+      "revId": "eff823ad820f27c05b9e9d226e114b120113a249",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04dbe373_bb337341",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/CDTCommonProjectWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-31T13:57:43Z",
+      "side": 1,
+      "message": "ABC - other comment pointing here.",
+      "revId": "eff823ad820f27c05b9e9d226e114b120113a249",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "de821ca3_9057bb25",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/CDTCommonProjectWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-31T13:57:43Z",
+      "side": 1,
+      "message": "(This is the only change that I reject the gerrit on.)\n\nThere is a better way of doing this - you don\u0027t need to keep track of the tickRemaining yourself.\n\nThe original amounts look correct to me, but sometimes don\u0027t use the whole 100%. The original code relied on the .done() to \"finish\" the monitor. In the SubMonitor case the done is implicit, so you don\u0027t need to worry about not using all 100% of the monitor, however you can call done if you want.\n\nThe reason I don\u0027t like this code is that it isn\u0027t easy to just tell if the code is correct. If someone adds an additional step they can cause the tickRemaining to fall to or below 0. It is essentially an error and if you have tracing on (https://i.imgur.com/awyHvCa.png) it will log the error.\n\nTherefore I recommend using the existing splits amounts, or even change the initial convert to 4 and splitting by 1 each time.\n\nIf you want the monitor to complete within this method you can call subMonitor.done() - from the docs \"[callee] Will not promise to call done() on the monitor, although it is allowed to do so.\"",
+      "revId": "eff823ad820f27c05b9e9d226e114b120113a249",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

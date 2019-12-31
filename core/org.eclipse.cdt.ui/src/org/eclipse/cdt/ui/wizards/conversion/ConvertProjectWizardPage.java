@@ -28,8 +28,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -445,11 +444,8 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 		int totalSelected = selection.length;
 
 		if (totalSelected > 0) {
-			if (monitor == null) {
-				monitor = new NullProgressMonitor();
-			}
-			monitor.beginTask(CUIPlugin.getResourceString(KEY_TITLE), 1);
-			convertProjects(selection, monitor, projectID);
+			SubMonitor submonitor = SubMonitor.convert(monitor, CUIPlugin.getResourceString(KEY_TITLE), 1);
+			convertProjects(selection, submonitor.split(1), projectID);
 		}
 	}
 
@@ -462,11 +458,8 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 				int totalSelected = selection.length;
 
 				if (totalSelected > 0) {
-					if (monitor == null) {
-						monitor = new NullProgressMonitor();
-					}
-					monitor.beginTask(CUIPlugin.getResourceString(KEY_TITLE), 1);
-					convertProjects(selection, bsId, monitor);
+					SubMonitor submonitor = SubMonitor.convert(monitor, CUIPlugin.getResourceString(KEY_TITLE), 1);
+					convertProjects(selection, bsId, submonitor.split(1));
 				}
 			}
 		}
@@ -482,26 +475,20 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 	 * @throws CoreException
 	 */
 	private void convertProjects(Object[] selected, IProgressMonitor monitor, String projectID) throws CoreException {
-		monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), selected.length);
-		try {
-			for (Object element : selected) {
-				IProject project = (IProject) element;
-				convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
-			}
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, CUIPlugin.getResourceString(KEY_CONVERTING),
+				selected.length);
+		for (Object element : selected) {
+			IProject project = (IProject) element;
+			convertProject(project, subMonitor.split(1), projectID);
 		}
 	}
 
 	private void convertProjects(Object[] selected, String bsId, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), selected.length);
-		try {
-			for (Object element : selected) {
-				IProject project = (IProject) element;
-				convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
-			}
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, CUIPlugin.getResourceString(KEY_CONVERTING),
+				selected.length);
+		for (Object element : selected) {
+			IProject project = (IProject) element;
+			convertProject(project, bsId, subMonitor.split(1));
 		}
 	}
 

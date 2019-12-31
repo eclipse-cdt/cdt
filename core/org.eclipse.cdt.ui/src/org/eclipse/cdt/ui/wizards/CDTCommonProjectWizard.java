@@ -45,7 +45,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -242,25 +242,18 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 			final Exception except[] = new Exception[1];
 			getShell().getDisplay().syncExec(() -> {
 				IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(monitor -> {
-					final IProgressMonitor fMonitor;
-					if (monitor == null) {
-						fMonitor = new NullProgressMonitor();
-					} else {
-						fMonitor = monitor;
-					}
-					fMonitor.beginTask(CUIPlugin.getResourceString("CProjectWizard.op_description"), 100); //$NON-NLS-1$
-					fMonitor.worked(10);
+
+					SubMonitor subMonitor = SubMonitor.convert(monitor,
+							CUIPlugin.getResourceString("CProjectWizard.op_description"), 100);//$NON-NLS-1$
+					subMonitor.worked(10);
 					try {
-						newProject = createIProject(lastProjectName, lastProjectLocation,
-								new SubProgressMonitor(fMonitor, 40));
-						if (newProject != null)
-							fMainPage.h_selected.createProject(newProject, defaults, onFinish,
-									new SubProgressMonitor(fMonitor, 40));
-						fMonitor.worked(10);
+						newProject = createIProject(lastProjectName, lastProjectLocation, subMonitor.split(40));
+						if (newProject != null) {
+							fMainPage.h_selected.createProject(newProject, defaults, onFinish, subMonitor.split(40));
+						}
+						subMonitor.worked(10);
 					} catch (CoreException e) {
 						CUIPlugin.errorDialog(getShell(), title, message, e, true);
-					} finally {
-						fMonitor.done();
 					}
 				});
 				try {
@@ -301,9 +294,9 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 	@Override
 	public IProject createIProject(final String name, final URI location, IProgressMonitor monitor)
 			throws CoreException {
-
-		monitor.beginTask(Messages.CDTCommonProjectWizard_creatingProject, 100);
-
+		int tickRemaining = 100;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.CDTCommonProjectWizard_creatingProject,
+				tickRemaining);
 		if (newProject != null)
 			return newProject;
 
@@ -316,27 +309,25 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 			//			workspaceDesc.setAutoBuilding(false);
 			//			workspace.setDescription(workspaceDesc);
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
-			if (location != null)
+			if (location != null) {
 				description.setLocationURI(location);
-			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle,
-					new SubProgressMonitor(monitor, 25));
+			}
+			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, subMonitor.split(50));
+			tickRemaining -= 50;
 		} else {
 			IWorkspaceRunnable runnable = monitor1 -> newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor1);
-			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, new SubProgressMonitor(monitor, 25));
+			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, subMonitor.split(50));
+			tickRemaining -= 50;
 			newProject = newProjectHandle;
 		}
 
 		// Open the project if we have to
 		if (!newProject.isOpen()) {
-			newProject.open(new SubProgressMonitor(monitor, 25));
+			newProject.open(subMonitor.split(25));
+			tickRemaining -= 25;
 		}
-
-		continueCreationMonitor = new SubProgressMonitor(monitor, 25);
-		IProject proj = continueCreation(newProject);
-
-		monitor.done();
-
-		return proj;
+		continueCreationMonitor = subMonitor.split(tickRemaining);
+		return continueCreation(newProject);
 	}
 
 	protected abstract IProject continueCreation(IProject prj);

@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a1388c25_9f7b9070",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 950,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-31T14:56:44Z",
+      "side": 1,
+      "message": "Using CBreakIterator now seems overkill now that NAME_STYLE_FIELD_PREFIX is being used.\n\nCan this whole block be changed to something much simpler?",
+      "revId": "0b9335480f1feb1399e9c0f344e425deb05db2ba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a43a2c27_69096866",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 953,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-31T14:56:44Z",
+      "side": 1,
+      "message": "In particular this value is never needed anymore, so no need to calculate it now.",
+      "range": {
+        "startLine": 953,
+        "startChar": 6,
+        "endLine": 953,
+        "endChar": 21
+      },
+      "revId": "0b9335480f1feb1399e9c0f344e425deb05db2ba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

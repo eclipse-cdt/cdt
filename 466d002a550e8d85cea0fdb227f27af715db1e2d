@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b45fc4f9_63de00c7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.gnu.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1388,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2019-12-31T13:03:45Z",
+      "side": 1,
+      "message": "I don\u0027t think you can/should change the IDs as it will  break existing projects.",
+      "revId": "466d002a550e8d85cea0fdb227f27af715db1e2d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

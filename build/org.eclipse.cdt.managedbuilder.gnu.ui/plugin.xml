@@ -1383,9 +1383,19 @@
 					  id="gnu.cpp.compiler.dialect.c++11">
 			  </enumeratedOptionValue>
 			  <enumeratedOptionValue
-					  name="%Option.Posix.Dialect.c++1y"
+					  name="%Option.Posix.Dialect.c++14"
 					  command="-std=c++1y"
-					  id="gnu.cpp.compiler.dialect.c++1y">
+					  id="gnu.cpp.compiler.dialect.c++14">
+			  </enumeratedOptionValue>
+			  <enumeratedOptionValue
+					  name="%Option.Posix.Dialect.c++17"
+					  command="-std=c++17"
+					  id="gnu.cpp.compiler.dialect.c++17">
+			  </enumeratedOptionValue>
+			  <enumeratedOptionValue
+					  name="%Option.Posix.Dialect.c++2a"
+					  command="-std=c++2a"
+					  id="gnu.cpp.compiler.dialect.c++2a">
 			  </enumeratedOptionValue>
 		  </option>
 		  <option

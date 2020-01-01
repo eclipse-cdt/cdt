@@ -1217,6 +1217,46 @@
 			  tip="%Option.codecovTip"
 			  valueType="boolean">
 		  </option>
+		  		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Debug.sanitaddress"
+		      category="gnu.cpp.compiler.category.debug"
+		      command="-fsanitize-address"
+		      id="gnu.c.compiler.option.debugging.sanitaddress"
+		      valueType="boolean">
+		  </option>
+ 		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Debug.sanitpointers"
+		      category="gnu.cpp.compiler.category.debug"
+		      command="-fsanitize-pointer-compare -fsanitize=pointer-subtract"
+		      id="gnu.c.compiler.option.debugging.sanitpointers"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Debug.sanitthread"
+		      category="gnu.cpp.compiler.category.debug"
+		      command="-fsanitize=thread"
+		      id="gnu.c.compiler.option.debugging.sanitthread"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Debug.sanitleak"
+		      category="gnu.cpp.compiler.category.debug"
+		      command="-fsanitize=leak"
+		      id="gnu.c.compiler.option.debugging.sanitleak"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Debug.sanitundefined"
+		      category="gnu.cpp.compiler.category.debug"
+		      command="-fsanitize=undefined"
+		      id="gnu.c.compiler.option.debugging.sanitundef"
+		      valueType="boolean">
+		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.c.compiler"
 			  name="%OptionCategory.Warn"
@@ -1286,6 +1326,110 @@
 			  id="gnu.c.compiler.option.warnings.wconversion"
 			  valueType="boolean">
 		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wcastalign"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wcast-align"
+		      id="gnu.c.compiler.option.warnings.wcastalign"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wcastqual"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wcast-qual"
+		      id="gnu.c.compiler.option.warnings.wcastqual"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wdisabledopt"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wdisabled-optimization"
+		      id="gnu.c.compiler.option.warnings.wdisabledopt"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wlogicalop"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wlogical-op"
+		      id="gnu.c.compiler.option.warnings.wlogicalop"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wmissingdecl"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wmissing-declarations"
+		      id="gnu.c.compiler.option.warnings.wmissingdecl"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wmissingincdir"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wmissing-include-dirs"
+		      id="gnu.c.compiler.option.warnings.wmissingincdir"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wredundantdecl"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wredundant-decls"
+		      id="gnu.c.compiler.option.warnings.wredundantdecl"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wshadow"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wshadow"
+		      id="gnu.c.compiler.option.warnings.wshadow"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wsignconv"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wsign-conversion"
+		      id="gnu.c.compiler.option.warnings.wsignconv"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wswitchdef"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wswitch-default"
+		      id="gnu.c.compiler.option.warnings.wswitchdef"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wundef"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wundef"
+		      id="gnu.c.compiler.option.warnings.wundef"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wwritestring"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wwrite-strings"
+		      id="gnu.c.compiler.option.warnings.wwritestrings"
+		      valueType="boolean">
+		  </option>
+  		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wfloatequal"
+		      category="gnu.c.compiler.category.warnings"
+		      command="-Wfloat-equal"
+		      id="gnu.c.compiler.option.warnings.wfloatequal"
+		      valyeType="boolean">
+		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.c.compiler"
 			  name="%OptionCategory.Misc"
@@ -1321,6 +1465,22 @@
 			  id="gnu.c.compiler.option.misc.pic"
 			  name="%Option.PIC"
 			  valueType="boolean">
+		  </option>
+		  <option
+		      category="gnu.c.compiler.category.other"
+		      command="-fstack-protector-all -Wformat=2 -Wformat-security -Wstrict-overflow"
+		      defaultValue="false"
+		      id="gnu.c.compiler.option.misc.hardening"
+		      name="%Option.Security"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      category="gnu.c.compiler.category.other"
+		      command="-fPIE"
+		      defaultValue="false"
+		      id="gnu.c.compiler.option.misc.randomization"
+		      name="%Option.Randomization"
+		      valueType="boolean">
 		  </option>
           <inputType
               sourceContentType="org.eclipse.cdt.core.cSource"
@@ -1605,6 +1765,46 @@
 			  tip="%Option.codecovTip"
 			  valueType="boolean">
 		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Debug.sanitaddress"
+		      category="gnu.cpp.compiler.category.debug"
+		      command="-fsanitize-address"
+		      id="gnu.cpp.compiler.option.debugging.sanitaddress"
+		      valueType="boolean">
+		  </option>
+ 		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Debug.sanitpointers"
+		      category="gnu.cpp.compiler.category.debug"
+		      command="-fsanitize-pointer-compare -fsanitize=pointer-subtract"
+		      id="gnu.cpp.compiler.option.debugging.sanitpointers"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Debug.sanitthread"
+		      category="gnu.cpp.compiler.category.debug"
+		      command="-fsanitize=thread"
+		      id="gnu.cpp.compiler.option.debugging.sanitthread"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Debug.sanitleak"
+		      category="gnu.cpp.compiler.category.debug"
+		      command="-fsanitize=leak"
+		      id="gnu.cpp.compiler.option.debugging.sanitleak"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Debug.sanitundefined"
+		      category="gnu.cpp.compiler.category.debug"
+		      command="-fsanitize=undefined"
+		      id="gnu.cpp.compiler.option.debugging.sanitundef"
+		      valueType="boolean">
+		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.cpp.compiler"
 			  name="%OptionCategory.Warn"
@@ -1674,6 +1874,158 @@
 			  id="gnu.cpp.compiler.option.warnings.wconversion"
 			  valueType="boolean">
 		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wcastalign"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wcast-align"
+		      id="gnu.cpp.compiler.option.warnings.wcastalign"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wcastqual"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wcast-qual"
+		      id="gnu.cpp.compiler.option.warnings.wcastqual"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wctordtorprivacy"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wctor-dtor-privacy"
+		      id="gnu.cpp.compiler.option.warnings.wctordtorprivacy"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wdisabledopt"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wdisabled-optimization"
+		      id="gnu.cpp.compiler.option.warnings.wdisabledopt"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wlogicalop"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wlogical-op"
+		      id="gnu.cpp.compiler.option.warnings.wlogicalop"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wmissingdecl"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wmissing-declarations"
+		      id="gnu.cpp.compiler.option.warnings.wmissingdecl"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wmissingincdir"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wmissing-include-dirs"
+		      id="gnu.cpp.compiler.option.warnings.wmissingincdir"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wnoexccept"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wnoexcept"
+		      id="gnu.cpp.compiler.option.warnings.wnoexccept"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.woldstylecast"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wold-style-cast"
+		      id="gnu.cpp.compiler.option.warnings.woldstylecast"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.woverloadedvirtual"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Woverloaded-virtual"
+		      id="gnu.cpp.compiler.option.warnings.woverloadedvirtual"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wredundantdecl"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wredundant-decls"
+		      id="gnu.cpp.compiler.option.warnings.wredundantdecl"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wshadow"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wshadow"
+		      id="gnu.cpp.compiler.option.warnings.wshadow"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wsignconv"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wsign-conversion"
+		      id="gnu.cpp.compiler.option.warnings.wsignconv"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wsignpromo"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wsign-promo"
+		      id="gnu.cpp.compiler.option.warnings.wsignpromo"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wstrictnullsent"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wstrict-null-sentinel"
+		      id="gnu.cpp.compiler.option.warnings.wstrictnullsent"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wswitchdef"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wswitch-default"
+		      id="gnu.cpp.compiler.option.warnings.wswitchdef"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wundef"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wundef"
+		      id="gnu.cpp.compiler.option.warnings.wundef"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.weffcpp"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Weffc++"
+		      id="gnu.cpp.compiler.option.warnings.weffcpp"
+		      valueType="boolean">
+		  </option>
+		  <option
+		      defaultValue="false"
+		      name="%Option.Posix.Warn.wfloatequal"
+		      category="gnu.cpp.compiler.category.warnings"
+		      command="-Wfloat-equal"
+		      id="gnu.cpp.compiler.option.warnings.wfloatequal"
+		      valueType="boolean">
+		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.cpp.compiler"
 			  name="%OptionCategory.Misc"
@@ -1701,6 +2053,22 @@
 			  id="gnu.cpp.compiler.option.other.pic"
 			  name="%Option.PIC"
 			  valueType="boolean">
+		  </option>
+	      <option
+		      category="gnu.cpp.compiler.category.other"
+		      command="-fstack-protector-all -Wformat=2 -Wformat-security -Wstrict-overflow"
+		      defaultValue="false"
+		      id="gnu.cpp.compiler.option.misc.hardening"
+		      name="%Option.Security"
+		      valueType="boolean">
+		  </option>
+		  <option
+              category="gnu.cpp.compiler.category.other"
+		      command="-fPIE"
+		      defaultValue="false"
+		      id="gnu.cpp.compiler.option.misc.randomization"
+		      name="%Option.Randomization"
+		      valueType="boolean">
 		  </option>
           <inputType
               sourceContentType="org.eclipse.cdt.core.cxxSource"

@@ -876,6 +876,46 @@
                name="%Option.Posix.Debug.Other"
                valueType="string">
          </option>
+         <option
+               defaultValue="false"
+               category="llvm.c_cpp.compiler.category.debug"
+               id="llvm.c_cpp.compiler.option.debugging.sanitaddress"
+               command="-fsanitize=address"
+               name="%Option.Posix.Debug.sanitaddress"
+               valueType="boolean">
+         </option>
+         <option
+               defaultValue="false"
+               category="llvm.c_cpp.compiler.category.debug"
+               id="llvm.c_cpp.compiler.option.debugging.sanitpointers"
+               command="-fsanitize=pointer-compare -fsanitize=pointer-subtract"
+               name="%Option.Posix.Debug.sanitpointers"
+               valueType="boolean">
+         </option>
+         <option
+               defaultValue="false"
+               category="llvm.c_cpp.compiler.category.debug"
+               id="llvm.c_cpp.compiler.option.debugging.sanitthread"
+               command="-fsanitize=thread"
+               name="%Option.Posix.Debug.sanitthread"
+               valueType="boolean">
+         </option>
+         <option
+               defaultValue="false"
+               category="llvm.c_cpp.compiler.category.debug"
+               id="llvm.c_cpp.compiler.option.debugging.sanitleak"
+               command="-fsanitize=leak"
+               name="%Option.Posix.Debug.sanitleak"
+               valueType="boolean">
+         </option>
+         <option
+               defaultValue="false"
+               category="llvm.c_cpp.compiler.category.debug"
+               id="llvm.c_cpp.compiler.option.debugging.sanitundefined"
+               command="-fsanitize=undefined"
+               name="%Option.Posix.Debug.sanitundefined"
+               valueType="boolean">
+         </option>
          <optionCategory
                id="llvm.c_cpp.compiler.category.warnings"
                name="%OptionCategory.Warn"
@@ -927,6 +967,62 @@
                defaultValue="false"
                id="llvm.c_cpp.compiler.option.warnings.toerrors"
                name="%Option.Posix.Warn.toerrs"
+               valueType="boolean">
+         </option>
+         <option
+               category="llvm.c_cpp.compiler.category.warnings"
+               command="-Wfloat-equal"
+               defaultValue="false"
+               id="llvm.c_cpp.compiler.option.warnings.wfloatequal"
+               name="%Option.Posix.Warn.wfloatequal"
+               valueType="boolean">
+         </option>
+         <option
+               category="llvm.c_cpp.compiler.category.warnings"
+               command="-Wcast-align"
+               defaultValue="false"
+               id="llvm.c_cpp.compiler.option.warnings.wcastalign"
+               name="%Option.Posix.Warn.wcastalign"
+               valueType="boolean">
+         </option>
+         <option
+               category="llvm.c_cpp.compiler.category.warnings"
+               command="-Wcast-qual"
+               defaultValue="false"
+               id="llvm.c_cpp.compiler.option.warnings.wcastqual"
+               name="%Option.Posix.Warn.wcastqual"
+               valueType="boolean">
+         </option>
+         <option
+               category="llvm.c_cpp.compiler.category.warnings"
+               command="-Wold-style-cast"
+               defaultValue="false"
+               id="llvm.c_cpp.compiler.option.warnings.woldstylecast"
+               name="%Option.Posix.Warn.woldstylecast"
+               valueType="boolean">
+         </option>
+         <option
+               category="llvm.c_cpp.compiler.category.warnings"
+               command="-Wsign-conversion"
+               defaultValue="false"
+               id="llvm.c_cpp.compiler.option.warnings.wsignconv"
+               name="%Option.Posix.Warn.wsignconv"
+               valueType="boolean">
+         </option>
+         <option
+               category="llvm.c_cpp.compiler.category.warnings"
+               command="-Wundef"
+               defaultValue="false"
+               id="llvm.c_cpp.compiler.option.warnings.wundef"
+               name="%Option.Posix.Warn.wundef"
+               valueType="boolean">
+         </option>
+         <option
+               category="llvm.c_cpp.compiler.category.warnings"
+               command="-Weffc++"
+               defaultValue="false"
+               id="llvm.c_cpp.compiler.option.warnings.weffcpp"
+               name="%Option.Posix.Warn.weffcpp"
                valueType="boolean">
          </option>
          <optionCategory

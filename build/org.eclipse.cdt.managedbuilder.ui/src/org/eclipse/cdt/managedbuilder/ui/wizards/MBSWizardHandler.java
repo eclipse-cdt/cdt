@@ -60,7 +60,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -576,15 +578,11 @@ public class MBSWizardHandler extends CWizardHandler {
 	@Override
 	public void createProject(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor)
 			throws CoreException {
-		try {
-			monitor.beginTask("", 100); //$NON-NLS-1$
-			setProjectDescription(project, defaults, onFinish, monitor);
-			doTemplatesPostProcess(project);
-			doCustom(project);
-			monitor.worked(30);
-		} finally {
-			monitor.done();
-		}
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+		setProjectDescription(project, defaults, onFinish, subMonitor.split(70));
+		doTemplatesPostProcess(project);
+		doCustom(project);
+		monitor.worked(30);
 	}
 
 	@Override
@@ -594,10 +592,11 @@ public class MBSWizardHandler extends CWizardHandler {
 
 	private void setProjectDescription(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor)
 			throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 3);
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-		monitor.worked(10);
+		subMonitor.worked(1);
 		cfgs = getCfgItems(false);
 		if (cfgs == null || cfgs.length == 0)
 			cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
@@ -609,15 +608,15 @@ public class MBSWizardHandler extends CWizardHandler {
 		Configuration cf = (Configuration) cfgs[0].getConfiguration();
 		ManagedProject mProj = new ManagedProject(project, cf.getProjectType());
 		info.setManagedProject(mProj);
-		monitor.worked(10);
+
 		cfgs = CfgHolder.unique(cfgs);
 		cfgs = CfgHolder.reorder(cfgs);
 
 		ICConfigurationDescription cfgDebug = null;
 		ICConfigurationDescription cfgFirst = null;
+		subMonitor.worked(1);
 
-		int work = 50 / cfgs.length;
-
+		SubMonitor cfgMonitor = SubMonitor.convert(subMonitor.split(1), cfgs.length);
 		for (CfgHolder cfg : cfgs) {
 			cf = (Configuration) cfg.getConfiguration();
 			String id = ManagedBuildManager.calculateChildId(cf.getId(), null);
@@ -640,7 +639,10 @@ public class MBSWizardHandler extends CWizardHandler {
 				cfgDebug = cfgDes;
 			if (cfgFirst == null) // select at least first configuration
 				cfgFirst = cfgDes;
-			monitor.worked(work);
+			if (cfgMonitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+			cfgMonitor.worked(1);
 		}
 		mngr.setProjectDescription(project, des);
 	}

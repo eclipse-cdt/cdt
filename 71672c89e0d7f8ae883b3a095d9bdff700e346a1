@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f62464ed_36da4812",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSWizardHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 585,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-02T15:14:35Z",
+      "side": 1,
+      "message": "Is this the correct monitor to do the \"worked\" on? I missed this in PS1 review.",
+      "revId": "71672c89e0d7f8ae883b3a095d9bdff700e346a1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f0ad75d2_2de9dc7f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSWizardHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-02T15:14:35Z",
+      "side": 1,
+      "message": "This is not how to do this according to https://www.eclipse.org/articles/Article-Progress-Monitors/article.html Cancellation section.",
+      "revId": "71672c89e0d7f8ae883b3a095d9bdff700e346a1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

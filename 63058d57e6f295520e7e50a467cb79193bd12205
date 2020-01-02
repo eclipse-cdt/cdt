@@ -16,6 +16,24 @@
       "revId": "63058d57e6f295520e7e50a467cb79193bd12205",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63b26d46_64458366",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 952,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-02T16:35:05Z",
+      "side": 1,
+      "message": "Before start was equal to end at each iteration and end was just \"next\", it means this inner loop was already useless as you said with one exception: the char returned by next method wasn\u0027t just the position + 1, but something more due break line or other. Since we removed the iterator, it means we can just skip this inner loop.",
+      "parentUuid": "409c4755_c6aea80a",
+      "revId": "63058d57e6f295520e7e50a467cb79193bd12205",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

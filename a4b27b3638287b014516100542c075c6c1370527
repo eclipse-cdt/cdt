@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b40ad72c_f102593f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 949,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-02T17:08:33Z",
+      "side": 1,
+      "message": "That is a much simpler loop now - thanks.",
+      "revId": "a4b27b3638287b014516100542c075c6c1370527",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

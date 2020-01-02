@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "84f76ac9_59f08d04",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSWizardHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-02T21:19:51Z",
+      "side": 1,
+      "message": "I\u0027m not sure why you want an explicit check cancelled here? It wasn\u0027t in PS3.\n\nThe split call on the same line has an implicit check, quoting from doc \"cancellation checks are be performed implicitly by SubMonitor.split(...)\" - so the only reason to call checkCanceled according to docs is \"In some rare cases, you really need to perform an explicit cancellation check at a specific time and can\u0027t rely on the sparse cancellation checks done by split\" - I don\u0027t think this code counts.\n\nIf you want to improve cancellation handling in CDT that would be great. I suspect you will find plenty to do on that topic, but please leave it for another bug.",
+      "revId": "08be1551671c6caa0e589dd319dcc32856153fde",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

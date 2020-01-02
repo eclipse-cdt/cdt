@@ -67,5 +67,10 @@
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.SeggerJLink"
             name="%SeggerJLink.name">
       </device>
+      <device
+            class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.STLink"
+            id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.STLink"
+            name="%STLink.name">
+      </device>
    </extension>
 </plugin>

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "89ebd1d5_f68f2d64",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-03T14:36:20Z",
+      "side": 1,
+      "message": "I only noticed this after merging - but this should not have been in commit message. i.e. the commit, compared to the parent commit, does not remove any explicit cancellation checks.\n\nPlease leave review comments in the review instead of adding them to the commit message.",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 37
+      },
+      "revId": "b74f56878c081a9f5b5d033c55bb992658c33119",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

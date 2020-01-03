@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6c87195c_227dd9e0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewSourceFileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-03T16:15:52Z",
+      "side": 1,
+      "message": "If you aren\u0027t doing anything with the monitor, you can just pass it to the child method in the future. The good thing is that Submonitor.convert and split have optimizations to return themselves anyway in cases like this IIUC",
+      "revId": "9cbe95695c92ad5616209519e30ca53960926a3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

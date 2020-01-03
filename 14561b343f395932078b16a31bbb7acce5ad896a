@@ -16,6 +16,24 @@
       "revId": "14561b343f395932078b16a31bbb7acce5ad896a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "173f9d0f_05eb2407",
+        "filename": "build/org.eclipse.cdt.cmake.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-03T14:38:12Z",
+      "side": 1,
+      "message": "There is none - feel free to enforce one. If you do, you can add checks to https://github.com/eclipse-cdt/cdt-infra/blob/master/scripts/check_code_cleanliness.sh to make sure that it doesn\u0027t regress (either with some bashisms, or if Eclipse PDE has a warning/error option turning that on)",
+      "parentUuid": "2f189d44_e8adfa02",
+      "revId": "14561b343f395932078b16a31bbb7acce5ad896a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

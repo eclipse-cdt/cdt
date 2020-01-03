@@ -34,7 +34,7 @@
 
 		<!-- When changing this value, consider also bumping the version numbers of all the docs plug-ins so that compare&replace does not
 		     replace the the newly built docs because the only change is in the filtered out index/* resources. -->
-		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.13/</help-docs-eclipserun-repo>
+		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.14/</help-docs-eclipserun-repo>
 
 
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>

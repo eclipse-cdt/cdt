@@ -28,9 +28,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 
@@ -120,43 +119,35 @@ public class NewSourceFileGenerator {
 
 	private static IFile createNewFile(IPath newFilePath, InputStream contents, boolean force, IProgressMonitor monitor)
 			throws CoreException {
-		int totalWork = 100;
-		int createFileWork = totalWork;
-
-		monitor.beginTask(NewFileWizardMessages.NewSourceFileGenerator_createFile_task, totalWork);
-
+		SubMonitor subMonitor = SubMonitor.convert(monitor,
+				NewFileWizardMessages.NewSourceFileGenerator_createFile_task, 100);
 		IWorkspaceRoot root = CUIPlugin.getWorkspace().getRoot();
 		IFile newFile = root.getFileForLocation(newFilePath);
 		if (newFile == null)
 			newFile = root.getFile(newFilePath);
 		if (newFile.exists()) {
-			monitor.done();
 			return newFile;
 		}
 
 		if (newFilePath.segmentCount() > 1) {
 			IPath containerPath = newFilePath.removeLastSegments(1);
 			if (root.getContainerForLocation(containerPath) == null) {
-				int containerWork = totalWork / 2;
-				createFileWork = totalWork / 2;
 				ContainerGenerator generator = new ContainerGenerator(containerPath);
-				generator.generateContainer(new SubProgressMonitor(monitor, containerWork));
+				generator.generateContainer(subMonitor.split(50));
 			}
 		}
-
-		createFile(newFile, contents, force, new SubProgressMonitor(monitor, createFileWork));
-		monitor.done();
-
+		createFile(newFile, contents, force, subMonitor.split(50));
 		return newFile;
 	}
 
 	private static void createFile(IFile fileHandle, InputStream contents, boolean force, IProgressMonitor monitor)
 			throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		if (contents == null)
 			contents = new ByteArrayInputStream(new byte[0]);
 
 		try {
-			fileHandle.create(contents, force, monitor);
+			fileHandle.create(contents, force, subMonitor.split(1));
 		} catch (CoreException e) {
 			// If the file already existed locally, just refresh to get contents
 			if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)
@@ -164,8 +155,5 @@ public class NewSourceFileGenerator {
 			else
 				throw e;
 		}
-
-		if (monitor.isCanceled())
-			throw new OperationCanceledException();
 	}
 }

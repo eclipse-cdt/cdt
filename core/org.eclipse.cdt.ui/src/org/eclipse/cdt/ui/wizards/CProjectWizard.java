@@ -19,8 +19,7 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * The wizard to create new MBS C Project.
@@ -38,16 +37,10 @@ public class CProjectWizard extends CDTCommonProjectWizard {
 
 	@Override
 	protected IProject continueCreation(IProject prj) {
-		if (continueCreationMonitor == null) {
-			continueCreationMonitor = new NullProgressMonitor();
-		}
-
+		SubMonitor subMonitor = SubMonitor.convert(continueCreationMonitor, Messages.CProjectWizard_0, 1);
 		try {
-			continueCreationMonitor.beginTask(Messages.CProjectWizard_0, 1);
-			CProjectNature.addCNature(prj, new SubProgressMonitor(continueCreationMonitor, 1));
+			CProjectNature.addCNature(prj, subMonitor.split(1));
 		} catch (CoreException e) {
-		} finally {
-			continueCreationMonitor.done();
 		}
 		return prj;
 	}

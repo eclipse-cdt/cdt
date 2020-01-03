@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b5310762_65923add",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/plugin.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 612,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-03T14:45:25Z",
+      "side": 1,
+      "message": "defaulting to off",
+      "revId": "dd69cacdcd13c84aad0f389be32fd9ce5361a35b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "12ab256b_57583f57",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSWizardHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 119114
+      },
+      "writtenOn": "2020-01-03T07:49:06Z",
+      "side": 1,
+      "message": "Hi Jonah, I think I\u0027ve split the 33% of total work for project configuration creating procedure if this does not fit please recommend.",
+      "parentUuid": "02889fe0_9d7b975a",
+      "revId": "eff823ad820f27c05b9e9d226e114b120113a249",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf457b28_b7266cc0",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/CCProjectWizard.java",
         "patchSetId": 1

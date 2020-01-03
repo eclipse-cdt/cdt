@@ -3,9 +3,9 @@
 
 
 cdt-gdb-adapter@^0.0.15-next.20191209022935.3b94420.0:
-  version "0.0.15-next.20191209022935.3b94420.0"
-  resolved "https://registry.yarnpkg.com/cdt-gdb-adapter/-/cdt-gdb-adapter-0.0.15-next.20191209022935.3b94420.0.tgz#c905cc2bee76ff866f2a30dd76181bcbca5370ab"
-  integrity sha512-n3YHtih5ZlECnyhzt7ErjRdUprwHxuwfV2vOf3TXXkr8iZeFodoIB7mN1wQ8kpfrPG61wbwJyVC2nw3ceMu7Qg==
+  version "0.0.15-next.20191227235231.2160d3c.0"
+  resolved "https://registry.yarnpkg.com/cdt-gdb-adapter/-/cdt-gdb-adapter-0.0.15-next.20191227235231.2160d3c.0.tgz#2b19b54cbbbd295de285830e67537574b44aba27"
+  integrity sha512-Yjdh6Klgiv+gq2TBw6b2qv+DV3GPGt6r2Pp+t2nd+1XGW8WlmfJa2HeWxSZKT+lGE+W70ZpRoZ3oreT5T2mS7g==
   dependencies:
     node-addon-api "^1.6.2"
     vscode-debugadapter "^1.37.1"

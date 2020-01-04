@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6707bfe6_6d6752d9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/IDocCustomizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-04T17:57:29Z",
+      "side": 1,
+      "message": "As CustomizeOptions as a nested class I would be inclined to do the same for this interface.",
+      "revId": "80eb3895d35a16adeb7fcc1246681fb35c87ff79",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

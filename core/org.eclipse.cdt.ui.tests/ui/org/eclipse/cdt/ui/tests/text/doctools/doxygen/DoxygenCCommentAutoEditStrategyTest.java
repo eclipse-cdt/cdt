@@ -300,65 +300,70 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		// or when there is a comment after the signature but before the brace, both need defining
 	}
 
-	// /*!X
-	// enum A { B, C };
+	///*!X
+	//enum A { B, C };
 
-	// /*!
-	//  * X
-	//  */
-	// enum A { B, C };
+	///*!
+	// * X@enum A
+	// * @brief&
+	// */
+	//enum A { B, C };
 	public void testAutoDocCommentContent11() throws CoreException {
 		assertAutoEditBehaviour();
 	}
 
-	// /**X
-	// enum A { B,
-	//     C };
+	///**X
+	//enum A { B,
+	//    C };
 
-	// /**
-	//  * X
-	//  */
-	// enum A { B,//!< B
-	//     C };   //!< C
+	///**
+	// * X@enum A
+	// * @brief&
+	// */
+	//enum A { B,//!< B
+	//    C };   //!< C
 	public void testAutoDocCommentContent13() throws CoreException {
 		assertAutoEditBehaviour();
 	}
 
-	// /**X
-	// enum A { B,
-	//     C };//!< C
+	///**X
+	//enum A { B,
+	//    C };//!< C
 
-	// /**
-	//  * X
-	//  */
-	// enum A { B,//!< B
-	//     C };//!< C
+	///**
+	// * X@enum A
+	// * @brief&
+	// */
+	//enum A { B,//!< B
+	//    C };//!< C
 	public void testAutoDocCommentContent14() throws CoreException {
 		assertAutoEditBehaviour();
 	}
 
-	// /**X
-	// enum A { B,//!< B
-	//     C };
+	///**X
+	//enum A { B,//!< B
+	//    C };
 
-	// /**
-	//  * X
-	//  */
-	// enum A { B,//!< B
-	//     C };//!< C
+	///**
+	// * X@enum A
+	// * @brief&
+	// */
+	//enum A { B,//!< B
+	//    C };//!< C
 	public void testAutoDocCommentContent15() throws CoreException {
 		assertAutoEditBehaviour();
 	}
 
-	// /**X
-	// enum A { B,
-	// 		C };
+	///**X
+	//enum A { B,
+	//		C };
 
-	// /**
-	//  * X
-	//  */
-	// enum A { B,//!< B
-	// 		C };  //!< C
+	///**
+	// * X@enum A
+	// * @brief&
+	// */
+	//enum A { B,//!< B
+	//		C };  //!< C
 	public void _testAutoDocCommentContent16() throws CoreException {
 		/*
 		 * Indenting in the presence of tabs is not handled at the moment.
@@ -687,6 +692,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 
 		int caretExpected = expected.indexOf('X');
 		expected = expected.replaceFirst("X", "");
+		expected = expected.replace("&", " ");
 
 		DoxygenMultilineAutoEditStrategy ds = new DoxygenMultilineAutoEditStrategy() {
 			@Override

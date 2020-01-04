@@ -152,16 +152,16 @@ public class DoxygenSingleAutoEditStrategy extends DoxygenMultilineAutoEditStrat
 	}
 
 	private StringBuilder getDeclarationLines(IDocument doc, int offset) throws BadLocationException {
-		IASTDeclaration dec = null;
+		IASTNode dec = null;
 		IASTTranslationUnit ast = getAST();
 
 		if (ast != null) {
-			dec = findFollowingDeclaration(ast, offset);
+			dec = findNextDocumentNode(ast, offset);
 			if (dec == null) {
 				IASTNodeSelector ans = ast.getNodeSelector(ast.getFilePath());
 				IASTNode node = ans.findEnclosingNode(offset, 0);
 				if (node instanceof IASTDeclaration) {
-					dec = (IASTDeclaration) node;
+					dec = node;
 				}
 			}
 		}
@@ -169,7 +169,7 @@ public class DoxygenSingleAutoEditStrategy extends DoxygenMultilineAutoEditStrat
 		if (dec != null) {
 			ITypedRegion partition = TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING /* this! */, offset,
 					false);
-			return customizeAfterNewLineForDeclaration(doc, dec, partition);
+			return customizeForDeclaration(doc, dec, partition, null);
 		}
 		return null;
 	}

@@ -211,7 +211,11 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 						if (dec != null) {
 							ITypedRegion partition = TextUtilities.getPartition(doc,
 									ICPartitions.C_PARTITIONING /* this! */, offset, false);
-							StringBuilder content = customizeAfterNewLineForDeclaration(doc, dec, partition);
+							CustomizeAfterNewLineOptions options = new CustomizeAfterNewLineOptions();
+							StringBuilder content = customizeAfterNewLineForDeclaration(doc, dec, partition, options);
+							if (commentAtStart && !options.keepFirstLine) {
+								buf.setLength(buf.length() - MULTILINE_MID.length() - lineDelim.length());
+							}
 							buf.append(indent(content, indentation + MULTILINE_MID, lineDelim));
 						}
 					} finally {
@@ -233,9 +237,28 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 		}
 	}
 
+	/**
+	 * @since 6.7
+	 */
+	public static class CustomizeAfterNewLineOptions {
+		public boolean keepFirstLine;
+
+		public CustomizeAfterNewLineOptions() {
+			keepFirstLine = true;
+		}
+	}
+
+	/**
+	 * @since 6.7
+	 */
+	protected StringBuilder customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec, ITypedRegion region,
+			CustomizeAfterNewLineOptions options) {
+		return new StringBuilder();
+	}
+
 	protected StringBuilder customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec,
 			ITypedRegion region) {
-		return new StringBuilder();
+		return customizeAfterNewLineForDeclaration(doc, dec, region, null);
 	}
 
 	/*

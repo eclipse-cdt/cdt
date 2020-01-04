@@ -211,7 +211,17 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 						if (dec != null) {
 							ITypedRegion partition = TextUtilities.getPartition(doc,
 									ICPartitions.C_PARTITIONING /* this! */, offset, false);
-							StringBuilder content = customizeAfterNewLineForDeclaration(doc, dec, partition);
+							StringBuilder content = null;
+							if (this instanceof IDocCustomizer) {
+								IDocCustomizer customizer = (IDocCustomizer) this;
+								CustomizeOptions options = new CustomizeOptions();
+								content = customizer.customizeAfterNewLineForDeclaration(doc, dec, partition, options);
+								if (!options.keepFirstLine) {
+									buf.setLength(buf.length() - MULTILINE_MID.length() - lineDelim.length());
+								}
+							} else {
+								content = customizeAfterNewLineForDeclaration(doc, dec, partition);
+							}
 							buf.append(indent(content, indentation + MULTILINE_MID, lineDelim));
 						}
 					} finally {
@@ -233,6 +243,22 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 		}
 	}
 
+	/**
+	 * @since 6.7
+	 */
+	public static class CustomizeOptions {
+		public boolean keepFirstLine;
+
+		public CustomizeOptions() {
+			keepFirstLine = true;
+		}
+	}
+
+	/**
+	 * @deprecated This class is deprecated, clients should implement IDocCustomizer
+	 * interface instead.
+	 */
+	@Deprecated
 	protected StringBuilder customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec,
 			ITypedRegion region) {
 		return new StringBuilder();

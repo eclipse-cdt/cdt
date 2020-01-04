@@ -338,8 +338,8 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// ///X
 	// enum A { B, C };
 
-	// ///
-	// /// X
+	// /// X@enum A
+	// /// @brief&
 	// enum A { B, C };
 	public void testAutoDocCommentContent11() throws CoreException {
 		assertAutoEditBehaviour();
@@ -349,8 +349,8 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// enum A { B,
 	//     C };
 
-	// ///
-	// /// X
+	// /// X@enum A
+	// /// @brief&
 	// enum A { B,//!< B
 	//     C };   //!< C
 	public void testAutoDocCommentContent13() throws CoreException {
@@ -361,8 +361,8 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// enum A { B,
 	//     C };//!< C
 
-	// ///
-	// /// X
+	// /// X@enum A
+	// /// @brief&
 	// enum A { B,//!< B
 	//     C };//!< C
 	public void testAutoDocCommentContent14() throws CoreException {
@@ -373,8 +373,8 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// enum A { B,//!< B
 	//     C };
 
-	// ///
-	// /// X
+	// /// X@enum A
+	// /// @brief&
 	// enum A { B,//!< B
 	//     C };//!< C
 	public void testAutoDocCommentContent15() throws CoreException {
@@ -385,8 +385,8 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// enum A { B,
 	// 		C };
 
-	// ///
-	// /// X
+	// /// X@enum A
+	// /// @brief&
 	// enum A { B,//!< B
 	// 		C };  //!< C
 	public void _testAutoDocCommentContent16() throws CoreException {
@@ -678,6 +678,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 
 		int caretExpected = expected.indexOf('X');
 		expected = expected.replaceFirst("X", "");
+		expected = expected.replace("&", " ");
 
 		DoxygenSingleAutoEditStrategy ds = new DoxygenSingleAutoEditStrategy() {
 			@Override

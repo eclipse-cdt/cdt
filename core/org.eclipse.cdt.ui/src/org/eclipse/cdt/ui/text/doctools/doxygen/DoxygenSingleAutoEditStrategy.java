@@ -43,6 +43,17 @@ public class DoxygenSingleAutoEditStrategy extends DoxygenMultilineAutoEditStrat
 	private static String fgDefaultLineDelim = "\n"; //$NON-NLS-1$
 
 	public DoxygenSingleAutoEditStrategy() {
+		super(true);
+	}
+
+	/**
+	 * Constructor to define doxygen style.
+	 * @param javadoc True to create tags starting with @, false to create tags
+	 * starting with \
+	 * @since 6.7
+	 */
+	public DoxygenSingleAutoEditStrategy(boolean javadoc) {
+		super(javadoc);
 	}
 
 	/**

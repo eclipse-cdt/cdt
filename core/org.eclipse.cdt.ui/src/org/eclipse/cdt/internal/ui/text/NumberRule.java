@@ -58,7 +58,7 @@ public class NumberRule implements IRule {
 					// hexnumber starting with [+-]?0[xX]
 					do {
 						ch = scanner.read();
-					} while (isHexNumberPart((char) ch));
+					} while (isHexDigitOrSeparator(ch));
 					scanner.unread();
 					return token;
 				}
@@ -72,12 +72,12 @@ public class NumberRule implements IRule {
 				// need at least one digit
 				do {
 					ch = scanner.read();
-				} while (Character.isDigit((char) ch));
+				} while (isDecDigitOrSeparator(ch));
 				if (ch == '.' && startCh != '.') {
 					// fraction
 					do {
 						ch = scanner.read();
-					} while (Character.isDigit((char) ch));
+					} while (isDecDigitOrSeparator(ch));
 				}
 				if (ch == 'e' || ch == 'E') {
 					// exponent
@@ -85,7 +85,7 @@ public class NumberRule implements IRule {
 					if (ch == '-' || ch == '+' || Character.isDigit((char) ch)) {
 						do {
 							ch = scanner.read();
-						} while (Character.isDigit((char) ch));
+						} while (isDecDigitOrSeparator(ch));
 					}
 				}
 				scanner.unread();
@@ -108,12 +108,20 @@ public class NumberRule implements IRule {
 	}
 
 	/**
+	 * Checks if part of decimal number;
+	 * @param ch Char to check.
+	 * @return <b>true</b>
+	 */
+	private boolean isDecDigitOrSeparator(int ch) {
+		return Character.isDigit((char) ch) || (ch == '\'');
+	}
+
+	/**
 	 * Checks if part of hex number;
 	 * @param ch Char to check.
 	 * @return <b>true</b>
 	 */
-	private boolean isHexNumberPart(int ch) {
-		return Character.isDigit((char) ch) || ch == 'a' || ch == 'b' || ch == 'c' || ch == 'd' || ch == 'e'
-				|| ch == 'f' || ch == 'A' || ch == 'B' || ch == 'C' || ch == 'D' || ch == 'E' || ch == 'F';
+	private boolean isHexDigitOrSeparator(int ch) {
+		return Character.isDigit((char) ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F') || (ch == '\'');
 	}
 }

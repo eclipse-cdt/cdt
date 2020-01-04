@@ -125,6 +125,14 @@ public class NumberRuleTest extends TestCase {
 		assertNoNumber("+ 9");
 	}
 
+	public void testSeparators() {
+		assertNumber("1'123'456");
+		assertNumber("0x1000'1000");
+		assertNumber("0111'1000");
+		assertNumber("0xAABB'CCDD");
+		assertNoNumber("'");
+	}
+
 	/**
 	 * Validate that given string is recognized as a number.
 	 * @param string

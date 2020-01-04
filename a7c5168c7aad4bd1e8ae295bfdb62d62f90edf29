@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ffef0d32_43ddd528",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/dialogs/cpaths/AbstractPathOptionBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-04T14:31:14Z",
+      "side": 1,
+      "message": "please remove this line - this comment adds no value anymore. It was used to track progress when the same monitor was used between here and configureCProject\n\nAs the rest of the commit is fine, you can remove it in a further commit with your next cleanup if you want.",
+      "revId": "a7c5168c7aad4bd1e8ae295bfdb62d62f90edf29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf6883c5_f17b1b0b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/dialogs/cpaths/AbstractPathOptionBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-04T14:31:14Z",
+      "side": 1,
+      "message": "this 10 ...",
+      "revId": "a7c5168c7aad4bd1e8ae295bfdb62d62f90edf29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125fec5e_cd50c37e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/dialogs/cpaths/AbstractPathOptionBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-04T14:31:14Z",
+      "side": 1,
+      "message": "... replaced the 10 here - so there is no reason for this one to be a 10, it can just be 1.",
+      "revId": "a7c5168c7aad4bd1e8ae295bfdb62d62f90edf29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

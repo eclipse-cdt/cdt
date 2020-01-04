@@ -62,6 +62,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	private static final int BACKSLASH_BACKSLASH = 7; // postfix for STRING, CHARACTER
 	private static final int RAW_STRING_R = 8; // prefix for RAW_STRING
 	private static final int IDENT = 9;
+	private static final int NUMBER = 10;
 
 	/** The scanner. */
 	private final BufferedDocumentScanner fScanner = new BufferedDocumentScanner(1000); // faster implementation
@@ -311,6 +312,11 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					}
 
 				case '\'':
+					if (fLast == NUMBER) {
+						// C++14 digit separator
+						fTokenOffset++;
+						break;
+					}
 					fLast = NONE; // ignore fLast
 					if (fTokenLength > 0) {
 						return preFix(CCODE, CHARACTER, NONE, 1);
@@ -373,9 +379,13 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					break;
 				default:
 					if ('a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_') {
-						fLast = IDENT;
+						if (fLast != NUMBER)
+							fLast = IDENT;
 						fTokenOffset++;
 					} else if ('0' <= ch && ch <= '9' && fLast == IDENT) {
+						fTokenOffset++;
+					} else if (('0' <= ch && ch <= '9') || ch == '.') {
+						fLast = NUMBER;
 						fTokenOffset++;
 					} else {
 						consume();

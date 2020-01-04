@@ -68,6 +68,15 @@ public class NumberRuleTest extends TestCase {
 		assertNumber("-123456789");
 		assertNumber("+123456789");
 
+		// binary numbers
+		assertNumber("0b0");
+		assertNumber("-0b0");
+		assertNumber("+0b1");
+		assertNumber("-0B0");
+		assertNumber("+0B1");
+		assertNumber("+0b01010101");
+		assertNumber("+0b10101010");
+
 		// hex numbers
 		assertNumber("0xaffe");
 		assertNumber("-0xaffe");
@@ -107,6 +116,9 @@ public class NumberRuleTest extends TestCase {
 		assertNoNumber("x");
 		assertNoNumber(".x");
 		assertNoNumber("-x");
+		assertNoNumber("b");
+		assertNoNumber(".b");
+		assertNoNumber("-b");
 		assertNoNumber("e");
 		assertNoNumber(".e");
 		assertNoNumber("-e");
@@ -123,6 +135,15 @@ public class NumberRuleTest extends TestCase {
 		assertNoNumber("-z0");
 		assertNoNumber("- 0");
 		assertNoNumber("+ 9");
+	}
+
+	public void testSeparators() {
+		assertNumber("0b1'100'100'100");
+		assertNumber("1'123'456");
+		assertNumber("0x1000'1000");
+		assertNumber("0111'1000");
+		assertNumber("0xAABB'CCDD");
+		assertNoNumber("'");
 	}
 
 	/**

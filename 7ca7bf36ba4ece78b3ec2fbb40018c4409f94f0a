@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf5b16b4_9fbf9d3d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-04T13:42:31Z",
+      "side": 1,
+      "message": "surround with instanceof check",
+      "revId": "7ca7bf36ba4ece78b3ec2fbb40018c4409f94f0a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "986e7bd6_a9c3c204",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-04T13:42:31Z",
+      "side": 1,
+      "message": "define this in a new interface",
+      "revId": "7ca7bf36ba4ece78b3ec2fbb40018c4409f94f0a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cfdfbd6b_e0b818a8",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-04T13:42:31Z",
+      "side": 1,
+      "message": "deprecate this",
+      "revId": "7ca7bf36ba4ece78b3ec2fbb40018c4409f94f0a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a6b77d7_7806d4b2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-04T13:42:31Z",
+      "side": 1,
+      "message": "Supporting this format is great - worthy of its own N\u0026N entry!",
+      "revId": "7ca7bf36ba4ece78b3ec2fbb40018c4409f94f0a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5d90f7d9_ca8006f4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-04T13:42:31Z",
+      "side": 1,
+      "message": "Please document what should be used instead.",
+      "revId": "7ca7bf36ba4ece78b3ec2fbb40018c4409f94f0a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "56eb8bf3_d7d35968",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-04T13:42:31Z",
+      "side": 1,
+      "message": "remove dead and incorrect comment",
+      "revId": "7ca7bf36ba4ece78b3ec2fbb40018c4409f94f0a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e758f54_58520827",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenSingleAutoEditStrategy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-04T13:42:31Z",
+      "side": 1,
+      "message": "personal style on my part - have only one constructor do super() - so have this one do this(true or false).",
+      "revId": "7ca7bf36ba4ece78b3ec2fbb40018c4409f94f0a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

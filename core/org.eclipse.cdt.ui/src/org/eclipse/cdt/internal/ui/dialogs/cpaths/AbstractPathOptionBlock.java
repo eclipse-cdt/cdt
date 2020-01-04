@@ -36,9 +36,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * Abstract block for C/C++ Project Paths page for 3.X projects.
@@ -295,8 +294,8 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	protected void internalConfigureCProject(List<CPElement> cPathEntries, IProgressMonitor monitor)
 			throws CoreException, InterruptedException {
 		// 10 monitor steps to go
-
-		monitor.worked(2);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 10);
+		subMonitor.worked(2);
 
 		IPathEntry[] entries = getCProject().getRawPathEntries();
 
@@ -332,26 +331,15 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 				cpath.add(entrie);
 			}
 		}
-		monitor.worked(1);
-
-		getCProject().setRawPathEntries(cpath.toArray(new IPathEntry[cpath.size()]),
-				new SubProgressMonitor(monitor, 7));
+		subMonitor.worked(1);
+		getCProject().setRawPathEntries(cpath.toArray(new IPathEntry[cpath.size()]), subMonitor.split(7));
 	}
 
 	// -------- creation -------------------------------
 
 	public void configureCProject(IProgressMonitor monitor) throws CoreException, InterruptedException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		monitor.setTaskName(CPathEntryMessages.CPathsBlock_operationdesc_c);
-		monitor.beginTask("", 10); //$NON-NLS-1$
-
-		try {
-			internalConfigureCProject(getCPaths(), monitor);
-			initializeTimeStamps();
-		} finally {
-			monitor.done();
-		}
+		SubMonitor subMonitor = SubMonitor.convert(monitor, CPathEntryMessages.CPathsBlock_operationdesc_c, 10);
+		internalConfigureCProject(getCPaths(), subMonitor.split(10));
+		initializeTimeStamps();
 	}
 }

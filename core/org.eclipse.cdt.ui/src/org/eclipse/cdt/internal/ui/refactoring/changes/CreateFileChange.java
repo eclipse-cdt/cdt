@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.resource.ResourceChange;
@@ -93,11 +93,12 @@ public class CreateFileChange extends ResourceChange {
 
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(pm, 2);
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		InputStream is = new ByteArrayInputStream(source.getBytes());
-		file.create(is, false, new SubProgressMonitor(pm, 1));
+		file.create(is, false, subMonitor.split(1));
 		if (encoding != null) {
-			file.setCharset(encoding, new SubProgressMonitor(pm, 1));
+			file.setCharset(encoding, subMonitor.split(1));
 		}
 		return new DeleteFileChange(file.getFullPath());
 	}

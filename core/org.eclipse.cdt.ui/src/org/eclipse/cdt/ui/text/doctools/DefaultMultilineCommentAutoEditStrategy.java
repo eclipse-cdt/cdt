@@ -24,7 +24,9 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
@@ -63,6 +65,14 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	protected static final String MULTILINE_END = "*/"; //$NON-NLS-1$
 	private static String fgDefaultLineDelim = "\n"; //$NON-NLS-1$
 	private ICProject fProject;
+
+	/**
+	 * @since 6.7
+	 */
+	public interface IDocCustomizer {
+		StringBuilder customizeForDeclaration(IDocument doc, IASTNode dec, ITypedRegion region,
+				CustomizeOptions options);
+	}
 
 	public DefaultMultilineCommentAutoEditStrategy() {
 		this(null);
@@ -183,7 +193,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 					buf.append(lineDelim);
 
 					// as we are auto-closing, the comment becomes eligible for auto-doc'ing
-					IASTDeclaration dec = null;
+					IASTNode dec = null;
 					IIndex index = null;
 					ITranslationUnit unit = getTranslationUnitForActiveEditor();
 					if (unit != null) {
@@ -197,22 +207,49 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 					try {
 						IASTTranslationUnit ast = getAST(unit, index);
 
-						if (ast != null) {
-							dec = findFollowingDeclaration(ast, offset);
-							if (dec == null) {
-								IASTNodeSelector ans = ast.getNodeSelector(ast.getFilePath());
-								IASTNode node = ans.findEnclosingNode(offset, 0);
-								if (node instanceof IASTDeclaration) {
-									dec = (IASTDeclaration) node;
+						if (this instanceof IDocCustomizer) {
+							if (ast != null) {
+								dec = findNextDocumentNode(ast, offset);
+								if (dec == null) {
+									IASTNodeSelector ans = ast.getNodeSelector(ast.getFilePath());
+									IASTNode node = ans.findEnclosingNode(offset, 0);
+									if (node instanceof IASTDeclaration) {
+										dec = node;
+									}
 								}
 							}
-						}
 
-						if (dec != null) {
-							ITypedRegion partition = TextUtilities.getPartition(doc,
-									ICPartitions.C_PARTITIONING /* this! */, offset, false);
-							StringBuilder content = customizeAfterNewLineForDeclaration(doc, dec, partition);
-							buf.append(indent(content, indentation + MULTILINE_MID, lineDelim));
+							if (dec != null) {
+								ITypedRegion partition = TextUtilities.getPartition(doc,
+										ICPartitions.C_PARTITIONING /* this! */, offset, false);
+								StringBuilder content = null;
+								IDocCustomizer customizer = (IDocCustomizer) this;
+								CustomizeOptions options = new CustomizeOptions();
+								content = customizer.customizeForDeclaration(doc, dec, partition, options);
+								if (!options.addNewLine) {
+									buf.setLength(buf.length() - MULTILINE_MID.length() - lineDelim.length());
+								}
+								buf.append(indent(content, indentation + MULTILINE_MID, lineDelim));
+							}
+						} else {
+							if (ast != null) {
+								dec = findFollowingDeclaration(ast, offset);
+								if (dec == null) {
+									IASTNodeSelector ans = ast.getNodeSelector(ast.getFilePath());
+									IASTNode node = ans.findEnclosingNode(offset, 0);
+									if (node instanceof IASTDeclaration) {
+										dec = node;
+									}
+								}
+							}
+
+							if (dec != null) {
+								ITypedRegion partition = TextUtilities.getPartition(doc,
+										ICPartitions.C_PARTITIONING /* this! */, offset, false);
+								StringBuilder content = null;
+								content = customizeAfterNewLineForDeclaration(doc, (IASTDeclaration) dec, partition);
+								buf.append(indent(content, indentation + MULTILINE_MID, lineDelim));
+							}
 						}
 					} finally {
 						if (index != null) {
@@ -233,6 +270,28 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 		}
 	}
 
+	/**
+	 * Options set by IDocCustomize
+	 * @since 6.7
+	 */
+	public static class CustomizeOptions {
+		/**
+		 * Child of IDocCustomize can decide to add a new line
+		 * before their comment body or not. By default a new
+		 * line is added.
+		 */
+		public boolean addNewLine;
+
+		public CustomizeOptions() {
+			addNewLine = true;
+		}
+	}
+
+	/**
+	 * @deprecated This class is deprecated, clients should implement IDocCustomizer
+	 * interface instead.
+	 */
+	@Deprecated
 	protected StringBuilder customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec,
 			ITypedRegion region) {
 		return new StringBuilder();
@@ -242,6 +301,102 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * Utilities
 	 */
 
+	private static class SearchVisitor extends ASTVisitor {
+
+		public SearchVisitor(int offset) {
+			shouldVisitTranslationUnit = true;
+			shouldVisitDeclarations = true;
+			shouldVisitNamespaces = true;
+			this.offset = offset;
+		}
+
+		private int nearestOffset = Integer.MAX_VALUE;
+		private int offset;
+		private IASTDeclaration target;
+
+		public int getNearest() {
+			return nearestOffset;
+		}
+
+		public IASTDeclaration getTarget() {
+			return target;
+		}
+
+		@Override
+		public int visit(ICPPASTNamespaceDefinition namespace) {
+			IASTNodeLocation loc = namespace.getFileLocation();
+			if (loc != null) {
+				int candidateOffset = loc.getNodeOffset();
+				if (offset <= candidateOffset && candidateOffset <= nearestOffset) {
+					nearestOffset = candidateOffset;
+					target = namespace;
+					return PROCESS_ABORT;
+				}
+			}
+			return PROCESS_CONTINUE;
+		}
+
+		/**
+		 * Holds the
+		 */
+		IASTDeclaration stopWhenLeaving;
+
+		@Override
+		public int visit(IASTDeclaration declaration) {
+			IASTNodeLocation loc = declaration.getFileLocation();
+			if (loc != null) {
+				int candidateOffset = loc.getNodeOffset();
+				int candidateEndOffset = candidateOffset + loc.getNodeLength();
+
+				if (offset <= candidateOffset && candidateOffset <= nearestOffset) {
+					nearestOffset = candidateOffset;
+					target = declaration;
+					return PROCESS_ABORT;
+				}
+
+				boolean candidateEnclosesOffset = (offset >= candidateOffset) && (offset < candidateEndOffset);
+				if (candidateEnclosesOffset) {
+					stopWhenLeaving = declaration;
+				}
+			}
+			return PROCESS_CONTINUE;
+		}
+
+		@Override
+		public int leave(IASTDeclaration declaration) {
+			if (declaration == stopWhenLeaving)
+				return PROCESS_ABORT;
+			return PROCESS_CONTINUE;
+		}
+	}
+
+	/**
+	 * Locates the {@link IASTNode} most immediately following the specified offset
+	 * @param unit the translation unit, or null (in which case the result will also be null)
+	 * @param offset the offset to begin the search from
+	 * @return the {@link IASTNode} most immediately following the specified offset, or null if there
+	 * is no node suitable for documentation, i.e. a declaration or a macro definition
+	 * @since 6.7
+	 */
+	public static IASTNode findNextDocumentNode(IASTTranslationUnit unit, final int offset) {
+		IASTNode bestNode = null;
+		if (unit != null) {
+			IASTPreprocessorMacroDefinition[] macros = unit.getMacroDefinitions();
+			SearchVisitor av = new SearchVisitor(offset);
+			unit.accept(av);
+			int nearest = av.getNearest();
+			bestNode = av.getTarget();
+			for (IASTPreprocessorMacroDefinition m : macros) {
+				if (m.getExpansionLocation() != null && m.getExpansionLocation().getNodeOffset() < nearest
+						&& offset <= m.getExpansionLocation().getNodeOffset()) {
+					bestNode = m;
+					nearest = m.getExpansionLocation().getNodeOffset();
+				}
+			}
+		}
+		return bestNode;
+	}
+
 	/**
 	 * Locates the {@link IASTDeclaration} most immediately following the specified offset
 	 * @param unit the translation unit, or null (in which case the result will also be null)
@@ -250,48 +405,11 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * is no {@link IASTDeclaration}
 	 */
 	public static IASTDeclaration findFollowingDeclaration(IASTTranslationUnit unit, final int offset) {
-		final IASTDeclaration[] dec = new IASTDeclaration[1];
-		final ASTVisitor av = new ASTVisitor() {
-			{
-				shouldVisitTranslationUnit = true;
-				shouldVisitDeclarations = true;
-			}
-
-			/**
-			 * Holds the
-			 */
-			IASTDeclaration stopWhenLeaving;
-
-			@Override
-			public int visit(IASTDeclaration declaration) {
-				IASTNodeLocation loc = declaration.getFileLocation();
-				if (loc != null) {
-					int candidateOffset = loc.getNodeOffset();
-					int candidateEndOffset = candidateOffset + loc.getNodeLength();
-
-					if (offset <= candidateOffset) {
-						dec[0] = declaration;
-						return PROCESS_ABORT;
-					}
-
-					boolean candidateEnclosesOffset = (offset >= candidateOffset) && (offset < candidateEndOffset);
-					if (candidateEnclosesOffset) {
-						stopWhenLeaving = declaration;
-					}
-				}
-				return PROCESS_CONTINUE;
-			}
-
-			@Override
-			public int leave(IASTDeclaration declaration) {
-				if (declaration == stopWhenLeaving)
-					return PROCESS_ABORT;
-				return PROCESS_CONTINUE;
-			}
-		};
-
+		IASTDeclaration[] dec = new IASTDeclaration[1];
 		if (unit != null) {
+			SearchVisitor av = new SearchVisitor(offset);
 			unit.accept(av);
+			dec[0] = av.getTarget();
 		}
 		return dec[0];
 	}

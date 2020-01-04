@@ -169,7 +169,7 @@ public class DoxygenSingleAutoEditStrategy extends DoxygenMultilineAutoEditStrat
 		if (dec != null) {
 			ITypedRegion partition = TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING /* this! */, offset,
 					false);
-			return customizeAfterNewLineForDeclaration(doc, dec, partition);
+			return customizeForDeclaration(doc, dec, partition, null);
 		}
 		return null;
 	}

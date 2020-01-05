@@ -51,9 +51,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -338,70 +337,57 @@ public class FormatAllAction extends SelectionDispatchAction {
 
 	private void doRunOnMultiple(ITranslationUnit[] tus, MultiStatus status, IProgressMonitor monitor)
 			throws OperationCanceledException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		monitor.setTaskName(ActionMessages.FormatAllAction_operation_description);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, ActionMessages.FormatAllAction_operation_description,
+				tus.length * 4);
+		Map<String, Object> lastOptions = null;
+		ICProject lastProject = null;
 
-		monitor.beginTask("", tus.length * 4); //$NON-NLS-1$
-		try {
-			Map<String, Object> lastOptions = null;
-			ICProject lastProject = null;
-
-			for (int i = 0; i < tus.length; i++) {
-				ITranslationUnit tu = tus[i];
-				IPath path = tu.getPath();
-				if (lastProject == null || lastOptions == null || !lastProject.equals(tu.getCProject())) {
-					lastProject = tu.getCProject();
-					lastOptions = getFomatterSettings(lastProject);
-				}
-
-				ILanguage language = null;
-				try {
-					language = tu.getLanguage();
-				} catch (CoreException exc) {
-					// use fallback CPP
-					language = GPPLanguage.getDefault();
-				}
-
-				// use working copy if available
-				ITranslationUnit wc = CDTUITools.getWorkingCopyManager().findSharedWorkingCopy(tu);
-				if (wc != null) {
-					tu = wc;
-				}
-				lastOptions.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
-				lastOptions.put(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE, language);
-				lastOptions.put(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE, tu.getResource());
-
-				if (monitor.isCanceled()) {
-					throw new OperationCanceledException();
-				}
-
-				ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-				try {
-					try {
-						manager.connect(path, LocationKind.IFILE, new SubProgressMonitor(monitor, 1));
-
-						monitor.subTask(path.makeRelative().toString());
-						ITextFileBuffer fileBuffer = manager.getTextFileBuffer(path, LocationKind.IFILE);
-						boolean wasDirty = fileBuffer.isDirty();
-
-						formatTranslationUnit(fileBuffer, lastOptions);
-
-						if (fileBuffer.isDirty() && !wasDirty) {
-							fileBuffer.commit(new SubProgressMonitor(monitor, 2), false);
-						} else {
-							monitor.worked(2);
-						}
-					} finally {
-						manager.disconnect(path, LocationKind.IFILE, new SubProgressMonitor(monitor, 1));
-					}
-				} catch (CoreException e) {
-					status.add(e.getStatus());
-				}
+		for (int i = 0; i < tus.length; i++) {
+			ITranslationUnit tu = tus[i];
+			IPath path = tu.getPath();
+			if (lastProject == null || lastOptions == null || !lastProject.equals(tu.getCProject())) {
+				lastProject = tu.getCProject();
+				lastOptions = getFomatterSettings(lastProject);
 			}
-		} finally {
-			monitor.done();
+
+			ILanguage language = null;
+			try {
+				language = tu.getLanguage();
+			} catch (CoreException exc) {
+				// use fallback CPP
+				language = GPPLanguage.getDefault();
+			}
+
+			// use working copy if available
+			ITranslationUnit wc = CDTUITools.getWorkingCopyManager().findSharedWorkingCopy(tu);
+			if (wc != null) {
+				tu = wc;
+			}
+			lastOptions.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
+			lastOptions.put(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE, language);
+			lastOptions.put(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE, tu.getResource());
+
+			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+			try {
+				try {
+					manager.connect(path, LocationKind.IFILE, subMonitor.split(1));
+					subMonitor.subTask(path.makeRelative().toString());
+					ITextFileBuffer fileBuffer = manager.getTextFileBuffer(path, LocationKind.IFILE);
+					boolean wasDirty = fileBuffer.isDirty();
+
+					formatTranslationUnit(fileBuffer, lastOptions);
+
+					if (fileBuffer.isDirty() && !wasDirty) {
+						fileBuffer.commit(subMonitor.split(2), false);
+					} else {
+						subMonitor.worked(2);
+					}
+				} finally {
+					manager.disconnect(path, LocationKind.IFILE, subMonitor.split(1));
+				}
+			} catch (CoreException e) {
+				status.add(e.getStatus());
+			}
 		}
 	}
 

@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -69,37 +69,25 @@ public class RefactoringExecutionHelper {
 
 		@Override
 		public void run(IProgressMonitor pm) throws CoreException {
-			try {
-				pm.beginTask("", fForked && !fForkChangeExecution ? 7 : 11); //$NON-NLS-1$
-				pm.subTask(""); //$NON-NLS-1$
-
-				final RefactoringStatus status = fRefactoring.checkAllConditions(
-						new SubProgressMonitor(pm, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-				if (status.getSeverity() >= fStopSeverity) {
-					final boolean[] canceled = { false };
-					if (fForked) {
-						fParent.getDisplay().syncExec(() -> canceled[0] = showStatusDialog(status));
-					} else {
-						canceled[0] = showStatusDialog(status);
-					}
-					if (canceled[0]) {
-						throw new OperationCanceledException();
-					}
+			int totalWork = fForked && !fForkChangeExecution ? 7 : 11;
+			SubMonitor subMonitor = SubMonitor.convert(pm, totalWork);
+			final RefactoringStatus status = fRefactoring.checkAllConditions(subMonitor.split(4));
+			if (status.getSeverity() >= fStopSeverity) {
+				final boolean[] canceled = { false };
+				if (fForked) {
+					fParent.getDisplay().syncExec(() -> canceled[0] = showStatusDialog(status));
+				} else {
+					canceled[0] = showStatusDialog(status);
 				}
-
-				fChange = fRefactoring
-						.createChange(new SubProgressMonitor(pm, 2, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-				fChange.initializeValidationData(
-						new SubProgressMonitor(pm, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-				fPerformChangeOperation = createPerformChangeOperation(fChange);
-
-				if (!fForked || fForkChangeExecution)
-					fPerformChangeOperation
-							.run(new SubProgressMonitor(pm, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-			} finally {
-				pm.done();
+				if (canceled[0]) {
+					throw new OperationCanceledException();
+				}
 			}
+			fChange = fRefactoring.createChange(subMonitor.split(2));
+			fChange.initializeValidationData(subMonitor.split(1));
+			fPerformChangeOperation = createPerformChangeOperation(fChange);
+			if (!fForked || fForkChangeExecution)
+				fPerformChangeOperation.run(subMonitor.split(4));
 		}
 
 		/**

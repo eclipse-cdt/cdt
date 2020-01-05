@@ -2229,6 +2229,12 @@ public final class CIndenter {
 			while (skipPointerOperators()) {
 				nextToken();
 			}
+			// skip template type specification of function return type
+			if (fToken == Symbols.TokenGREATERTHAN) {
+				if (!skipScope())
+					return false;
+				nextToken();
+			}
 			switch (fToken) {
 			case Symbols.TokenIDENT:
 				return true;

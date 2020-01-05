@@ -1043,4 +1043,15 @@ public class CIndenterTest extends BaseUITestCase {
 						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
 		assertIndenterResult();
 	}
+
+	//vector<int> f()
+	//{
+	//}
+
+	//vector<int> f()
+	//{
+	//}
+	public void testIndentationAfterFunctionHeaderWithReturnTypeTemplateSpecification_Bug537568() throws Exception {
+		assertIndenterResult();
+	}
 }

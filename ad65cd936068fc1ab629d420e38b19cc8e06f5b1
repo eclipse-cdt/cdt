@@ -22,6 +22,30 @@
       "revId": "ad65cd936068fc1ab629d420e38b19cc8e06f5b1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4c924e37_261fc81f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/FastCPartitionScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 4198
+      },
+      "writtenOn": "2020-01-05T21:19:36Z",
+      "side": 1,
+      "message": "To prevent interpreting quotes as part of character literals we need to check that it is not inside a number literals. This is are check for starting of number literal. C/C++ number literals can starts with digit or dot. For example, .0123\u0027456 - is are valid C++ floating point number. Also, for simplicity I\u0027ve decided to follow rules for \"preprocessing numbers\" from C++17 (section 5.9). So next characters can be digit or identifier-nondigit.",
+      "parentUuid": "35ffcb07_da7eeeac",
+      "range": {
+        "startLine": 387,
+        "startChar": 44,
+        "endLine": 387,
+        "endChar": 53
+      },
+      "revId": "ad65cd936068fc1ab629d420e38b19cc8e06f5b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

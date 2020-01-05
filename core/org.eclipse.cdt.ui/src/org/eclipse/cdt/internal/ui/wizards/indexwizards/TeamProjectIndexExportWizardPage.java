@@ -31,7 +31,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -327,7 +327,7 @@ public class TeamProjectIndexExportWizardPage extends WizardPage implements List
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				monitor.beginTask("", projects.length); //$NON-NLS-1$
+				SubMonitor subMonitor = SubMonitor.convert(monitor, projects.length);
 				for (ICProject project : projects) {
 					TeamPDOMExportOperation op = new TeamPDOMExportOperation(project);
 					op.setTargetLocation(dest);
@@ -335,7 +335,7 @@ public class TeamProjectIndexExportWizardPage extends WizardPage implements List
 						op.setOptions(TeamPDOMExportOperation.EXPORT_OPTION_RESOURCE_SNAPSHOT);
 					}
 					try {
-						op.run(new SubProgressMonitor(monitor, 1));
+						op.run(subMonitor.split(1));
 					} catch (CoreException e) {
 						status.merge(e.getStatus());
 					}

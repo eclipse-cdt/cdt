@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "35ffcb07_da7eeeac",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/FastCPartitionScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-05T20:55:56Z",
+      "side": 1,
+      "message": "Is this correct - if it is I don\u0027t understand it. I would appreciate it if you can tell me the difference it makes?",
+      "range": {
+        "startLine": 387,
+        "startChar": 44,
+        "endLine": 387,
+        "endChar": 53
+      },
+      "revId": "ad65cd936068fc1ab629d420e38b19cc8e06f5b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

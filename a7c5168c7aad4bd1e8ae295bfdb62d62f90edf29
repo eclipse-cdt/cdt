@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9d3e8cd5_12b8e3dc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/RefactoringExecutionHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 119114
+      },
+      "writtenOn": "2020-01-06T14:42:26Z",
+      "side": 0,
+      "message": "I think the \"PREPEND_MAIN_LABEL_TO_SUBTASK\" style option does not applicable for SubMonitor.",
+      "parentUuid": "db08c85a_f3e36f1b",
+      "range": {
+        "startLine": 77,
+        "startChar": 36,
+        "endLine": 77,
+        "endChar": 84
+      },
+      "revId": "a7c5168c7aad4bd1e8ae295bfdb62d62f90edf29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1fda5d2b_c69be827",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/actions/FormatAllAction.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2020-01-05T21:14:26Z",
       "side": 0,
       "message": "fairly minor - but I expect most of the time that the else branch is taken, i.e. running format all on multiple files (normally a whole project or folder) the files are all not dirty, so the progress monitor in this case will be quite out of whack by the end.\n\nSee case 2 of \"3.4 Skipping elements in a loop\" from https://www.eclipse.org/articles/Article-Progress-Monitors/article.html\n\nNote that FormatAllAction is one of those that really is a (very) long running operation, so it would be nice if the progress bar showed overall progress.\n\nAs I said at the top, fairly minor, and I don\u0027t know if the current progress monitor on this action is very accurate anyway.",
+      "range": {
+        "startLine": 393,
+        "startChar": 6,
+        "endLine": 394,
+        "endChar": 25
+      },
+      "revId": "a7c5168c7aad4bd1e8ae295bfdb62d62f90edf29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0bad28cf_b19b0dcf",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/actions/FormatAllAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 119114
+      },
+      "writtenOn": "2020-01-06T14:42:26Z",
+      "side": 0,
+      "message": "Sorry, I missed this line, I will revert this line, due to general process   should  be according to the total count of work",
+      "parentUuid": "1fda5d2b_c69be827",
       "range": {
         "startLine": 393,
         "startChar": 6,

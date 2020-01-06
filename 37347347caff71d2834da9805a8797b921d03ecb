@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e2c614a_6d1f649f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/RefactoringExecutionHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-06T14:22:00Z",
+      "side": 1,
+      "message": "Have you had a chance to look into my question from PS1:\n\n\"this is the first commit that has used this feature - does it transfer to SubMonitor?\" (this being SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK)",
+      "range": {
+        "startLine": 74,
+        "startChar": 68,
+        "endLine": 74,
+        "endChar": 87
+      },
+      "revId": "37347347caff71d2834da9805a8797b921d03ecb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

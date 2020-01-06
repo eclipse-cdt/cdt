@@ -193,6 +193,7 @@
 
 		<module>lrparser/org.eclipse.cdt.core.lrparser</module>
 		<module>lrparser/org.eclipse.cdt.core.lrparser.feature</module>
+		<module>lrparser/org.eclipse.cdt.core.lrparser.sdk.branding</module>
 		<module>lrparser/org.eclipse.cdt.core.lrparser.sdk.feature</module>
 
 		<module>lsp/org.eclipse.cdt.lsp.core</module>
@@ -227,6 +228,7 @@
 
 		<module>upc/org.eclipse.cdt.core.parser.upc</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.feature</module>
+		<module>upc/org.eclipse.cdt.core.parser.upc.sdk.branding</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.sdk.feature</module>
 
 		<module>upc/org.eclipse.cdt.managedbuilder.bupc.ui</module>
@@ -250,10 +252,12 @@
 		<module>xlc/org.eclipse.cdt.managedbuilder.xlc.ui</module>
 		<module>xlc/org.eclipse.cdt.managedbuilder.xlupc.ui</module>
 		<module>xlc/org.eclipse.cdt.xlc.feature</module>
+		<module>xlc/org.eclipse.cdt.xlc.sdk.branding</module>
 		<module>xlc/org.eclipse.cdt.xlc.sdk-feature</module>
 
 		<module>releng/org.eclipse.cdt.native-feature</module>
 		<module>releng/org.eclipse.cdt</module>
+		<module>releng/org.eclipse.cdt.platform.branding</module>
 		<module>releng/org.eclipse.cdt.platform-feature</module>
 		<module>releng/org.eclipse.cdt-feature</module>
 		<module>releng/org.eclipse.cdt.sdk</module>

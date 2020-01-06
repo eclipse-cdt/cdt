@@ -224,8 +224,6 @@
         <requirement
             name="org.assertj"/>
         <requirement
-            name="org.eclipse.epp.logging.aeri.feature.feature.group"/>
-        <requirement
             name="org.eclipse.equinox.executable.feature.group"/>
         <requirement
             name="org.eclipse.jdt.annotation"/>
@@ -306,8 +304,6 @@
               url="https://download.eclipse.org/mylyn/docs/releases/3.0.35/"/>
           <repository
               url="https://download.eclipse.org/mylyn/releases/3.24/"/>
-          <repository
-              url="https://download.eclipse.org/technology/epp/logging/stable/"/>
           <repository
               url="https://download.eclipse.org/technology/swtbot/releases/2.7.0/"/>
           <repository

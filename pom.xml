@@ -66,6 +66,9 @@
 		<skipTests>${cdt-other.skip.tests}</skipTests>
 		<dsf.gdb.tests.gdbPath>/shared/common/gdb/gdb-all/bin</dsf.gdb.tests.gdbPath>
 		<cdt.tests.dsf.gdb.versions>gdb.8.3</cdt.tests.dsf.gdb.versions>
+		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
+	    <buildId>${buildTimestamp}</buildId>
 	</properties>
 
 	<licenses>
@@ -473,6 +476,25 @@
 			</build>
 		</profile>
 		<profile>
+			<id>about-mappings</id>
+			<activation>
+				<file>
+					<exists>about.mappings</exists>
+				</file>
+			</activation>
+			<build>
+				<resources>
+          <resource>
+			<directory>.</directory>
+				<filtering>true</filtering>
+					<includes>
+						<include>about.mappings</include>
+					</includes>
+				</resource>
+			</resources>
+			</build>
+		</profile>
+		<profile>
 			<id>skip-all-tests</id>
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
@@ -807,6 +829,14 @@
 						<sourceReferences>
 							<generate>true</generate>
 						</sourceReferences>
+						<additionalFileSets>
+							<fileSet>
+								<directory>${project.build.outputDirectory}</directory>
+								<includes>
+									<include>about.mappings</include>
+								</includes>
+							</fileSet>
+						</additionalFileSets>
 					</configuration>
 					<dependencies>
 						<dependency>
@@ -870,6 +900,7 @@
 						<ignoredPatterns>
 							<pattern>META-INF/ECLIPSE_.RSA</pattern>
 							<pattern>META-INF/ECLIPSE_.SF</pattern>
+							<pattern>about.mappings</pattern>
 							<pattern>index/*</pattern>
 						</ignoredPatterns>
 					</configuration>

@@ -29,9 +29,6 @@ import org.eclipse.cdt.meson.core.MesonNature;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.epp.logging.aeri.core.ISystemSettings;
-import org.eclipse.epp.logging.aeri.core.SendMode;
-import org.eclipse.epp.logging.aeri.core.SystemControl;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
@@ -71,8 +68,6 @@ public class NewManualNinjaTest {
 
 	@Before
 	public void before() {
-		ISystemSettings settings = SystemControl.getSystemSettings();
-		settings.setSendMode(SendMode.NEVER);
 		bot.resetWorkbench();
 	}
 

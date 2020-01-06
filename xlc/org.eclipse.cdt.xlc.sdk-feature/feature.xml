@@ -4,6 +4,7 @@
       label="%featureName"
       version="9.11.0.qualifier"
       provider-name="%providerName"
+      plugin="org.eclipse.cdt.xlc.sdk.branding"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
@@ -26,5 +27,12 @@
    <includes
          id="org.eclipse.cdt.xlc.feature"
          version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.xlc.sdk.branding"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

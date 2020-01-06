@@ -4,7 +4,6 @@
       label="%featureName"
       version="9.11.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.cdt.core.parser.upc.source"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
@@ -27,5 +26,12 @@
    <includes
          id="org.eclipse.cdt.core.parser.upc.feature"
          version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.parser.upc.sdk"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

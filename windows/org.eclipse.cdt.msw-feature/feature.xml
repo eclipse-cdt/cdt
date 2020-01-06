@@ -4,6 +4,7 @@
       label="C/C++ Visual C++ Support"
       version="9.11.0.qualifier"
       provider-name="Eclipse CDT"
+      plugin="org.eclipse.cdt.msw.build"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 

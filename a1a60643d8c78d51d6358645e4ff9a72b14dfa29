@@ -46,6 +46,30 @@
       "revId": "a1a60643d8c78d51d6358645e4ff9a72b14dfa29",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87accc55_be96a1fa",
+        "filename": "build/org.eclipse.cdt.autotools.ui/about.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-07T12:48:31Z",
+      "side": 1,
+      "message": "Genuinely not getting it... The file is copyright IBM because that is who wrote it, the feature blurb is everyone.",
+      "parentUuid": "abb44bec_ddbae62b",
+      "range": {
+        "startLine": 2,
+        "startChar": 2,
+        "endLine": 2,
+        "endChar": 53
+      },
+      "revId": "a1a60643d8c78d51d6358645e4ff9a72b14dfa29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

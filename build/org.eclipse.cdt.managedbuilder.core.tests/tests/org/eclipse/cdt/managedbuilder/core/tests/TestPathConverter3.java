@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2006 Siemens AG.
+ * Copyright (c) 2006 Siemens AG.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0

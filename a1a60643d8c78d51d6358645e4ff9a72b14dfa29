@@ -70,6 +70,30 @@
       "revId": "a1a60643d8c78d51d6358645e4ff9a72b14dfa29",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6397f358_47320479",
+        "filename": "build/org.eclipse.cdt.autotools.ui/about.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-07T12:52:23Z",
+      "side": 1,
+      "message": "I can change it all to generic version though. Note that your generic version does not match handbook.",
+      "parentUuid": "87accc55_be96a1fa",
+      "range": {
+        "startLine": 2,
+        "startChar": 2,
+        "endLine": 2,
+        "endChar": 53
+      },
+      "revId": "a1a60643d8c78d51d6358645e4ff9a72b14dfa29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

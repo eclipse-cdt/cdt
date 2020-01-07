@@ -22,6 +22,30 @@
       "revId": "a1a60643d8c78d51d6358645e4ff9a72b14dfa29",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "53f45552_8f119052",
+        "filename": "build/org.eclipse.cdt.autotools.ui/about.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-07T12:47:06Z",
+      "side": 1,
+      "message": "\"Eclipse contributors and others\" looks better, see https://wiki.eclipse.org/Eclipse/Release_checklist for example",
+      "parentUuid": "abb44bec_ddbae62b",
+      "range": {
+        "startLine": 2,
+        "startChar": 2,
+        "endLine": 2,
+        "endChar": 53
+      },
+      "revId": "a1a60643d8c78d51d6358645e4ff9a72b14dfa29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

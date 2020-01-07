@@ -118,6 +118,30 @@
       "revId": "a1a60643d8c78d51d6358645e4ff9a72b14dfa29",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b7db59cb_894860fa",
+        "filename": "build/org.eclipse.cdt.autotools.ui/about.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-07T12:58:33Z",
+      "side": 1,
+      "message": "Yes, today handbook can be satisfied by the manual work only. One need to analyze the contributions and select the first one from the list. And then estimate the contribution of others and decide on either listing them all by name or just add \"and others\". Automatable in theory, but I\u0027m not ready to invest it :)",
+      "parentUuid": "6397f358_47320479",
+      "range": {
+        "startLine": 2,
+        "startChar": 2,
+        "endLine": 2,
+        "endChar": 53
+      },
+      "revId": "a1a60643d8c78d51d6358645e4ff9a72b14dfa29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

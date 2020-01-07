@@ -142,6 +142,30 @@
       "revId": "a1a60643d8c78d51d6358645e4ff9a72b14dfa29",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5094c21c_19e0f070",
+        "filename": "build/org.eclipse.cdt.autotools.ui/about.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-07T13:11:58Z",
+      "side": 1,
+      "message": "My ref to handbook was it says use \"Contributors to the Eclipse Foundation\" as opposed to \"Eclipse contributors and others\" so I was wondering why different format for platform than the Handbook?\n\nIBM wrote the file, yes the description of what about.properties is - I suppose I could just delete that all.\n\n(I seem to be sounding resistant/grumbly, it is not intentional - I am just trying to take advantage of the knowledge you have in license/copyrights, especially as the Eclipse Passage person I think you have knowledge here. The copying of files has come up many times in the past and I have never been very satisfied with the outcomes.)",
+      "parentUuid": "b7db59cb_894860fa",
+      "range": {
+        "startLine": 2,
+        "startChar": 2,
+        "endLine": 2,
+        "endChar": 53
+      },
+      "revId": "a1a60643d8c78d51d6358645e4ff9a72b14dfa29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

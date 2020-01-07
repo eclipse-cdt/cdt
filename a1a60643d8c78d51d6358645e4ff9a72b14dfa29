@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "abb44bec_ddbae62b",
+        "filename": "build/org.eclipse.cdt.autotools.ui/about.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-07T11:52:39Z",
+      "side": 1,
+      "message": "This owner does not correspond to the owner below. And also does not correspond to the owner of enclosed sources.\nI would rather expect Kichwa Coders here who provided the script that fix the branding",
+      "range": {
+        "startLine": 2,
+        "startChar": 2,
+        "endLine": 2,
+        "endChar": 53
+      },
+      "revId": "a1a60643d8c78d51d6358645e4ff9a72b14dfa29",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

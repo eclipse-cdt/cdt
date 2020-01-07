@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 Kichwa Coders Ltd. and others.
+ * Copyright (c) 2014, 2017 Kichwa Coders Ltd and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0

@@ -1,0 +1,112 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d5e4ed1a_f360dabe",
+        "filename": "releng/scripts/check_features.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-07T12:31:45Z",
+      "side": 1,
+      "message": "I suggest to use special releng subdir to store all the template resources.",
+      "revId": "b91a1fb66f01bedd7a29159e8de2ee410775513b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b53573e_117f1b42",
+        "filename": "releng/scripts/check_features.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-07T12:31:45Z",
+      "side": 1,
+      "message": "I suggest to use special releng subdir to store all the template resources.",
+      "revId": "b91a1fb66f01bedd7a29159e8de2ee410775513b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "94b1bbc7_ae883ff5",
+        "filename": "releng/scripts/check_features.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-07T12:31:45Z",
+      "side": 1,
+      "message": "I suggest to use special releng subdir to store all the template resources.",
+      "revId": "b91a1fb66f01bedd7a29159e8de2ee410775513b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7662d202_7540f896",
+        "filename": "releng/scripts/check_features.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-07T12:31:45Z",
+      "side": 1,
+      "message": "I suggest to use special releng subdir to store all the template resources.",
+      "revId": "b91a1fb66f01bedd7a29159e8de2ee410775513b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "25859d23_6f176b44",
+        "filename": "releng/scripts/check_features.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-07T12:31:45Z",
+      "side": 1,
+      "message": "Eclipse contributors and others\n?\n\nIt looks consistent with the text below and neutral enough to resolve any concerns. And also this is how the platform agreed to go ATM https://wiki.eclipse.org/Eclipse/Release_checklist",
+      "range": {
+        "startLine": 59,
+        "startChar": 27,
+        "endLine": 59,
+        "endChar": 53
+      },
+      "revId": "b91a1fb66f01bedd7a29159e8de2ee410775513b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d4d14c8_ef7a5cce",
+        "filename": "releng/scripts/check_features.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-07T12:31:45Z",
+      "side": 1,
+      "message": "I suggest to use special releng subdir to store all the template resources.",
+      "revId": "b91a1fb66f01bedd7a29159e8de2ee410775513b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

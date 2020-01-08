@@ -24,8 +24,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.swt.SWT;
@@ -168,18 +167,11 @@ public class ReferenceBlock extends AbstractCOptionPage {
 		IProject[] refProjects = getReferencedProjects();
 		if (refProjects != null) {
 			IProject project = getContainer().getProject();
-			if (monitor == null) {
-				monitor = new NullProgressMonitor();
-			}
-			monitor.beginTask(CUIMessages.ReferenceBlock_task_ReferenceProjects, 1);
-			try {
-				IProjectDescription description = project.getDescription();
-				description.setReferencedProjects(refProjects);
-				project.setDescription(description, new SubProgressMonitor(monitor, 1));
-			} catch (CoreException e) {
-			}
+			SubMonitor subMonitor = SubMonitor.convert(monitor, CUIMessages.ReferenceBlock_task_ReferenceProjects, 1);
+			IProjectDescription description = project.getDescription();
+			description.setReferencedProjects(refProjects);
+			project.setDescription(description, subMonitor.split(1));
 		}
-
 	}
 
 	@Override

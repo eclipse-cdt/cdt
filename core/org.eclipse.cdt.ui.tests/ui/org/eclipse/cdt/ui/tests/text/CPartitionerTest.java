@@ -1195,9 +1195,10 @@ public class CPartitionerTest extends TestCase {
 
 	public void testNumberSeparators() {
 		try {
-			fDocument.replace(0, fDocument.getLength(), "1'123'456\n0x1000'1000\n0111'1000\n0xAABB'CCDD");
+			fDocument.replace(0, fDocument.getLength(),
+					"0b1'100'100'100\n1'123'456\n0x1000'1000\n0111'1000\n0xAABB'CCDD");
 			ITypedRegion[] result = fDocument.computePartitioning(0, fDocument.getLength());
-			TypedRegion[] expectation = { new TypedRegion(0, 43, IDocument.DEFAULT_CONTENT_TYPE) };
+			TypedRegion[] expectation = { new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE) };
 			checkPartitioning(expectation, result);
 		} catch (BadLocationException x) {
 			assertTrue(false);

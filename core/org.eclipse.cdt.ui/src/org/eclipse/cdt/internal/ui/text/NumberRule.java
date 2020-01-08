@@ -61,6 +61,13 @@ public class NumberRule implements IRule {
 					} while (isHexDigitOrSeparator(ch));
 					scanner.unread();
 					return token;
+				} else if (xCh == 'b' || xCh == 'B') {
+					// binary number starting with [+-]?0[bB]
+					do {
+						ch = scanner.read();
+					} while (isBinDigitOrSeparator(ch));
+					scanner.unread();
+					return token;
 				}
 				scanner.unread();
 				// assert ch == '0';
@@ -105,6 +112,15 @@ public class NumberRule implements IRule {
 	 */
 	private boolean isNumberStart(int ch) {
 		return ch == '-' || ch == '+' || ch == '.' || Character.isDigit((char) ch);
+	}
+
+	/**
+	 * Checks if part of binary number;
+	 * @param ch Char to check.
+	 * @return <b>true</b>
+	 */
+	private boolean isBinDigitOrSeparator(int ch) {
+		return ch == '0' || ch == '1' || ch == '\'';
 	}
 
 	/**

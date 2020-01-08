@@ -45,7 +45,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 import org.eclipse.search.core.text.TextSearchRequestor;
@@ -262,6 +262,7 @@ public class TextSearchWrapper {
 	 */
 	public IStatus searchWord(IFile[] filesToSearch, int scope, IFile scopeAnchor, String workingSet, String[] patterns,
 			String word, IProgressMonitor monitor, final List<CRefactoringMatch> target) {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		int startPos = target.size();
 		TextSearchEngine engine = TextSearchEngine.create();
 		StringBuilder searchPattern = new StringBuilder(word.length() + 8);
@@ -285,14 +286,15 @@ public class TextSearchWrapper {
 				return true;
 			}
 		};
-		IStatus result = engine.search(searchscope, requestor, pattern, new SubProgressMonitor(monitor, 95));
-		categorizeMatches(target.subList(startPos, target.size()), new SubProgressMonitor(monitor, 5));
+		IStatus result = engine.search(searchscope, requestor, pattern, subMonitor.split(95));
+		categorizeMatches(target.subList(startPos, target.size()), subMonitor.split(5));
 
 		return result;
 	}
 
 	public void categorizeMatches(List<CRefactoringMatch> matches, IProgressMonitor monitor) {
-		monitor.beginTask(RenameMessages.TextSearch_monitor_categorizeMatches, matches.size());
+		SubMonitor subMonitor = SubMonitor.convert(monitor, RenameMessages.TextSearch_monitor_categorizeMatches,
+				matches.size());
 		IFile file = null;
 		ArrayList<int[]> locations = null;
 		for (Iterator<CRefactoringMatch> iter = matches.iterator(); iter.hasNext();) {
@@ -304,7 +306,7 @@ public class TextSearchWrapper {
 				computeLocations(file, locations);
 			}
 			match.setLocation(findLocation(match, locations));
-			monitor.worked(1);
+			subMonitor.worked(1);
 		}
 	}
 

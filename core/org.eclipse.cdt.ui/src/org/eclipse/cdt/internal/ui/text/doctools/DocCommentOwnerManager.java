@@ -60,6 +60,11 @@ public class DocCommentOwnerManager {
 	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;
 	private static final String WORKSPACE_DOC_TOOL_NODE = "doctool"; //$NON-NLS-1$
 	private static final String PREFKEY_WORKSPACE_DEFAULT = "workspace.default"; //$NON-NLS-1$
+	/**
+	 * Default id for built-in CDT doxygen ui comment owner.
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_CDT_DOC_ONWER_ID = "org.eclipse.cdt.ui.doxygen"; //$NON-NLS-1$
 
 	private static DocCommentOwnerManager singleton;
 

@@ -16,6 +16,7 @@
 package org.eclipse.cdt.ui.tests.text.doctools.doxygen;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.doctools.DoxygenPreferences;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.text.AbstractAutoEditTest;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -62,6 +64,16 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		super.setUp();
 		fOptions = CCorePlugin.getOptions();
 		fCProject = CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null);
+		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, DoxygenPreferences.DEF_DOXYGEN_USE_BRIEF_TAG);
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF,
+				DoxygenPreferences.DEF_DOXYGEN_NEW_LINE_AFTER_BRIEF);
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS,
+				DoxygenPreferences.DEF_DOXYGEN_USE_PRE_POST_TAGS);
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS,
+				DoxygenPreferences.DEF_DOXYGEN_USE_JAVADOC_TAGS);
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS,
+				DoxygenPreferences.DEF_DOXYGEN_USE_STRUCTURED_COMMANDS);
 	}
 
 	/*
@@ -671,6 +683,79 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// ~Test();
 	// };
 	public void testAutoDocCommentDestructor() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
+	///**X
+	//void foo() {}
+
+	///**
+	// * X@brief ${whitespace_eol}
+	// * ${whitespace_eol}
+	// */
+	//void foo() {}
+	public void testAutoDocCommentBrief() throws CoreException {
+		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
+		assertAutoEditBehaviour();
+	}
+
+	///**X
+	//void foo() {}
+
+	///**
+	// * X@brief ${whitespace_eol}
+	// */
+	//void foo() {}
+	public void testAutoDocCommentBriefNoNewLine() throws CoreException {
+		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF, false);
+		assertAutoEditBehaviour();
+	}
+
+	///**X
+	//void foo() {}
+
+	///**
+	// * X@fn void foo()
+	// */
+	//void foo() {}
+	public void testAutoDocCommentStructured() throws CoreException {
+		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS, true);
+		assertAutoEditBehaviour();
+	}
+
+	///**X
+	//void foo() {}
+
+	///**
+	// * X\brief ${whitespace_eol}
+	// * ${whitespace_eol}
+	// */
+	//void foo() {}
+	public void testAutoDocCommentNoJavadoc() throws CoreException {
+		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS, false);
+		assertAutoEditBehaviour();
+	}
+
+	///**X
+	//void foo() {}
+
+	///**
+	// * X@brief ${whitespace_eol}
+	// * ${whitespace_eol}
+	// * @pre ${whitespace_eol}
+	// * @post ${whitespace_eol}
+	// */
+	//void foo() {}
+	public void testAutoDocCommentPrePostTags() throws CoreException {
+		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
+		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS, true);
 		assertAutoEditBehaviour();
 	}
 

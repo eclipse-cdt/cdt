@@ -20,6 +20,7 @@ import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -84,5 +85,19 @@ public class DocCommentOwnerCombo extends Composite {
 	@Override
 	public void setEnabled(boolean enabled) {
 		fCombo.setEnabled(enabled);
+	}
+
+	/**
+	 * @since 6.7
+	 */
+	public void addSelectionListener(SelectionListener listener) {
+		fCombo.addSelectionListener(listener);
+	}
+
+	/**
+	 * @since 6.7
+	 */
+	public void removeSelectionListener(SelectionListener listener) {
+		fCombo.removeSelectionListener(listener);
 	}
 }

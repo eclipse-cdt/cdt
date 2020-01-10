@@ -363,12 +363,14 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 			fAppearanceColorList.select(0);
 			handleAppearanceColorListSelection();
 		});
+		fDocCommentOwnerComposite.loadValues();
 	}
 
 	@Override
 	public boolean performOk() {
 		DocCommentOwnerManager.getInstance()
 				.setWorkspaceCommentOwner(fDocCommentOwnerComposite.getSelectedDocCommentOwner());
+		fDocCommentOwnerComposite.performOk();
 		return super.performOk();
 	}
 

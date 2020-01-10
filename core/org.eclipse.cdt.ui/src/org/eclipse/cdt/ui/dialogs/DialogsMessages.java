@@ -54,6 +54,11 @@ class DialogsMessages extends NLS {
 	public static String DocCommentOwnerBlock_SelectDocToolDescription;
 	public static String DocCommentOwnerCombo_None;
 	public static String DocCommentOwnerComposite_DocumentationToolGroupTitle;
+	public static String DocCommentOwnerComposite_UseBriefTagTitle;
+	public static String DocCommentOwnerComposite_UseStructuralCommandsTitle;
+	public static String DocCommentOwnerComposite_UseTagJavadocStyleTitle;
+	public static String DocCommentOwnerComposite_NewLineAfterBriefTitle;
+	public static String DocCommentOwnerComposite_AddPrePostTagsTitle;
 	public static String RegexErrorParserOptionPage_ConsumeNo;
 	public static String RegexErrorParserOptionPage_ConsumeYes;
 	public static String RegexErrorParserOptionPage_DescriptionColumn;

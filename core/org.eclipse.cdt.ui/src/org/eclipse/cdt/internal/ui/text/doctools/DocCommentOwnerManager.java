@@ -28,6 +28,7 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -60,6 +61,62 @@ public class DocCommentOwnerManager {
 	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;
 	private static final String WORKSPACE_DOC_TOOL_NODE = "doctool"; //$NON-NLS-1$
 	private static final String PREFKEY_WORKSPACE_DEFAULT = "workspace.default"; //$NON-NLS-1$
+	/**
+	 * Default id for built-in CDT doxygen ui comment owner.
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_CDT_DOC_ONWER_ID = "org.eclipse.cdt.ui.doxygen"; //$NON-NLS-1$
+	/**
+	 * Use always brief tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_USE_BRIEF_TAG = "doxygen_use_brief_tag"; //$NON-NLS-1$
+	/**
+	 * Use always structured commands in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_USE_STRUCTURAL_COMMANDS = "doxygen_use_structural_commands"; //$NON-NLS-1$
+	/**
+	 * Use always javadoc tag style in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_USE_JAVADOC_TAGS = "doxygen_use_javadoc_tags"; //$NON-NLS-1$
+	/**
+	 * Use always a new line after brief tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_NEW_LINE_AFTER_BRIEF = "doxygen_new_line_after_brief"; //$NON-NLS-1$
+	/**
+	 * Use always a pre tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_USE_PRE_POST_TAGS = "doxygen_use_pre_tag"; //$NON-NLS-1$
+
+	/**
+	 * Default use always brief tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final boolean DEF_DOXYGEN_USE_BRIEF_TAG = false;
+	/**
+	 * Default use always structured commands in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final boolean DEF_DOXYGEN_USE_STRUCTURED_COMMANDS = false;
+	/**
+	 * Default use always javadoc tag style in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final boolean DEF_DOXYGEN_USE_JAVADOC_TAGS = true;
+	/**
+	 * Default use always a new line after brief tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final boolean DEF_DOXYGEN_NEW_LINE_AFTER_BRIEF = true;
+	/**
+	 * Default use always a pre tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final boolean DEF_DOXYGEN_USE_PRE_POST_TAGS = false;
 
 	private static DocCommentOwnerManager singleton;
 
@@ -86,6 +143,49 @@ public class DocCommentOwnerManager {
 			// this could occur if a plug-in is no longer available
 			fWorkspaceOwner = NullDocCommentOwner.INSTANCE;
 		}
+	}
+
+	/**
+	 * Get boolean preferences in the project scope
+	 * @param key A preference key
+	 * @param project A no null project
+	 * @param defaultValue A default value
+	 * @return The preference value
+	 */
+	public boolean getBooleanPref(String key, IProject project, boolean defaultValue) {
+		Preferences prefs = new ProjectScope(project).getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
+		return prefs.getBoolean(key, defaultValue);
+	}
+
+	/**
+	 * Put boolean preferences in the project scope
+	 * @param key A preference key
+	 * @param project A no null project
+	 * @param defaultValue A default value
+	 */
+	public void putBooleanPref(String key, IProject project, boolean value) {
+		Preferences prefs = new ProjectScope(project).getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
+		prefs.putBoolean(key, value);
+	}
+
+	/**
+	 * Get boolean preferences in the instance scope
+	 * @param key A preference key
+	 * @param defaultValue A default value
+	 */
+	public boolean getBooleanPref(String key, boolean defaultValue) {
+		Preferences prefs = InstanceScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
+		return prefs.getBoolean(key, defaultValue);
+	}
+
+	/**
+	 * Put boolean preferences in the instance scope
+	 * @param key A preference key
+	 * @param defaultValue A default value
+	 */
+	public void putBooleanPref(String key, boolean value) {
+		Preferences prefs = InstanceScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
+		prefs.putBoolean(key, value);
 	}
 
 	/**

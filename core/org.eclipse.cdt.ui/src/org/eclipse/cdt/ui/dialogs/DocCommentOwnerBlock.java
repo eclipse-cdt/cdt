@@ -92,18 +92,20 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 		fDocComboComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 
 		fCheckbox.setSelection(fManager.projectDefinesOwnership(getProject()));
+		fDocComboComposite.loadValues(getProject());
 		handleCheckBox();
 	}
 
 	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
+		IProject project = getProject();
 		if (!fCheckbox.getSelection())
-			fManager.setCommentOwner(getProject(), null, true);
+			fManager.setCommentOwner(project, null, true);
 		else {
 			IDocCommentOwner newOwner = fDocComboComposite.getSelectedDocCommentOwner();
-			IProject p = getProject();
-			fManager.setCommentOwner(p, newOwner, true);
+			fManager.setCommentOwner(project, newOwner, true);
 		}
+		fDocComboComposite.performOk(project);
 	}
 
 	public IProject getProject() {

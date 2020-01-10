@@ -15,6 +15,7 @@
 package org.eclipse.cdt.ui.text.doctools.doxygen;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -47,7 +48,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
+import org.eclipse.cdt.internal.ui.text.doctools.DoxygenPreferences;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -70,6 +73,8 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	private static final String STRUCT = "struct "; //$NON-NLS-1$
 	private static final String UNION = "union "; //$NON-NLS-1$
 	private static final String BRIEF = "brief "; //$NON-NLS-1$
+	private static final String PRE = "pre "; //$NON-NLS-1$
+	private static final String POST = "post "; //$NON-NLS-1$
 	private static final String PARAM = "param "; //$NON-NLS-1$
 	private static final String FUNC = "fn "; //$NON-NLS-1$
 	private static final String TPARAM = "tparam "; //$NON-NLS-1$
@@ -82,17 +87,53 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	protected boolean documentPureVirtuals = true;
 	protected boolean documentDeclarations = true;
 
-	private boolean javadocStyle = true;
-	private boolean useStructuralCommands = false;
-	private boolean useBriefTag = false;
-
 	private String fLineDelimiter;
+	private boolean useBriefTag;
+	private boolean useStructuralCommands;
+	private boolean useJavadocStyle;
+	private boolean newLineAfterBrief;
+	private boolean usePrePostTag;
 
 	public DoxygenMultilineAutoEditStrategy() {
 	}
 
+	private void refreshPreferences() {
+		Optional<IProject> project = getProject();
+		DoxygenPreferences pref = new DoxygenPreferences(project);
+		newLineAfterBrief = pref.getBooleanPref(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF,
+				DoxygenPreferences.DEF_DOXYGEN_NEW_LINE_AFTER_BRIEF);
+		useBriefTag = pref.getBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG,
+				DoxygenPreferences.DEF_DOXYGEN_USE_BRIEF_TAG);
+		useJavadocStyle = pref.getBooleanPref(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS,
+				DoxygenPreferences.DEF_DOXYGEN_USE_JAVADOC_TAGS);
+		usePrePostTag = pref.getBooleanPref(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS,
+				DoxygenPreferences.DEF_DOXYGEN_USE_PRE_POST_TAGS);
+		useStructuralCommands = pref.getBooleanPref(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS,
+				DoxygenPreferences.DEF_DOXYGEN_USE_STRUCTURED_COMMANDS);
+	}
+
 	private String getPrefix() {
-		return javadocStyle ? PREFIX_JAVADOC : PREFIX_NO_JAVADOC;
+		return useJavadocStyle ? PREFIX_JAVADOC : PREFIX_NO_JAVADOC;
+	}
+
+	private StringBuilder getBriefTag() {
+		StringBuilder result = new StringBuilder();
+		if (useBriefTag) {
+			result.append(getPrefix()).append(BRIEF).append(getLineDelimiter());
+			if (newLineAfterBrief) {
+				result.append(getLineDelimiter());
+			}
+		}
+		return result;
+	}
+
+	private StringBuilder getPrePostTag() {
+		StringBuilder result = new StringBuilder();
+		if (usePrePostTag) {
+			result.append(getPrefix()).append(PRE).append(getLineDelimiter()).append(getPrefix()).append(POST)
+					.append(getLineDelimiter());
+		}
+		return result;
 	}
 
 	/**
@@ -129,9 +170,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 				break;
 			}
 		}
-		if (useBriefTag)
-			result.append(getPrefix()).append(BRIEF).append(getLineDelimiter()).append(getLineDelimiter())
-					.append(getLineDelimiter()).append(documentTemplateParameters(templateParams));
+		result.append(getBriefTag()).append(documentTemplateParameters(templateParams));
 		return result;
 	}
 
@@ -148,13 +187,11 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 		StringBuilder result = new StringBuilder();
 
 		if (useStructuralCommands) {
-			result.append(getPrefix()).append(FUNC).append(ASTStringUtil.getSignatureString(ds, decl))
-					.append(getLineDelimiter());
+			result.append(getPrefix()).append(FUNC).append(ASTStringUtil.getSignatureString(ds, null)).append(" ") //$NON-NLS-1$
+					.append(ASTStringUtil.getSimpleName(decl.getName()))
+					.append(ASTStringUtil.getSignatureString(null, decl)).append(getLineDelimiter());
 		}
-		if (useBriefTag) {
-			result.append(getPrefix()).append(BRIEF).append(getLineDelimiter()).append(getLineDelimiter())
-					.append(getLineDelimiter()).append(documentTemplateParameters(templateParams));
-		}
+		result.append(getBriefTag()).append(getPrePostTag()).append(documentTemplateParameters(templateParams));
 
 		result.append(documentTemplateParameters(templateParams));
 		result.append(documentFunctionParameters(getParameterDecls(decl)));
@@ -283,6 +320,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	@Override
 	public StringBuilder customizeForDeclaration(IDocument doc, IASTNode declToDocument, ITypedRegion partition,
 			CustomizeOptions options) {
+		refreshPreferences();
 		fLineDelimiter = TextUtilities.getDefaultLineDelimiter(doc);
 
 		if (declToDocument instanceof ICPPASTLinkageSpecification) {
@@ -385,10 +423,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 		if (useStructuralCommands)
 			result.append(getPrefix()).append(DEF).append(new String(dec.getName().getSimpleID()))
 					.append(getLineDelimiter());
-		if (useBriefTag)
-			result.append(getPrefix()).append(BRIEF).append(getLineDelimiter()).append(getLineDelimiter())
-					.append(getLineDelimiter());
-		return result;
+		return result.append(getBriefTag());
 	}
 
 	/**
@@ -402,10 +437,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 		if (useStructuralCommands)
 			result.append(getPrefix()).append(NAMESPACE).append(new String(dec.getName().getSimpleID()))
 					.append(getLineDelimiter());
-		if (useBriefTag)
-			result.append(getPrefix()).append(BRIEF).append(getLineDelimiter()).append(getLineDelimiter())
-					.append(getLineDelimiter());
-		return result;
+		return result.append(getBriefTag());
 	}
 
 	/**
@@ -419,10 +451,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 		if (useStructuralCommands)
 			result.append(getPrefix()).append(ENUM).append(new String(dec.getName().getSimpleID()))
 					.append(getLineDelimiter());
-		if (useBriefTag)
-			result.append(getPrefix()).append(BRIEF).append(getLineDelimiter()).append(getLineDelimiter())
-					.append(getLineDelimiter());
-		return result;
+		return result.append(getBriefTag());
 	}
 
 	/**

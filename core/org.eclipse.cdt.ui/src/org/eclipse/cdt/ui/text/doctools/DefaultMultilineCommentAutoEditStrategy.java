@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentCommand;
@@ -83,6 +84,15 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 */
 	public DefaultMultilineCommentAutoEditStrategy(ICProject project) {
 		fProject = project;
+	}
+
+	/**
+	 * @since 6.7
+	 */
+	protected IProject getProject() {
+		if (fProject != null)
+			return fProject.getProject();
+		return null;
 	}
 
 	/**

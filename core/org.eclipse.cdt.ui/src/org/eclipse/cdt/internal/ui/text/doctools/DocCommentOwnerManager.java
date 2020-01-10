@@ -28,6 +28,7 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -61,6 +62,58 @@ public class DocCommentOwnerManager {
 	private static final String WORKSPACE_DOC_TOOL_NODE = "doctool"; //$NON-NLS-1$
 	private static final String PREFKEY_WORKSPACE_DEFAULT = "workspace.default"; //$NON-NLS-1$
 
+	/**
+	 * Use always brief tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_USE_BRIEF_TAG = "doxygen_use_brief_tag"; //$NON-NLS-1$
+	/**
+	 * Use always structured commands in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_USE_STRUCTURED_COMMANDS = "doxygen_use_structured_commands"; //$NON-NLS-1$
+	/**
+	 * Use always javadoc tag style in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_USE_JAVADOC_TAGS = "doxygen_use_javadoc_tags"; //$NON-NLS-1$
+	/**
+	 * Use always a new line after brief tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_NEW_LINE_AFTER_BRIEF = "doxygen_new_line_after_brief"; //$NON-NLS-1$
+	/**
+	 * Use always a pre tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final String DOXYGEN_USE_PRE_POST_TAGS = "doxygen_use_pre_tag"; //$NON-NLS-1$
+
+	/**
+	 * Default use always brief tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final boolean DEF_DOXYGEN_USE_BRIEF_TAG = false;
+	/**
+	 * Default use always structured commands in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final boolean DEF_DOXYGEN_USE_STRUCTURED_COMMANDS = false;
+	/**
+	 * Default use always javadoc tag style in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final boolean DEF_DOXYGEN_USE_JAVADOC_TAGS = true;
+	/**
+	 * Default use always a new line after brief tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final boolean DEF_DOXYGEN_NEW_LINE_AFTER_BRIEF = true;
+	/**
+	 * Default use always a pre tag in auto-generation of doxygen comment
+	 * @since 6.7
+	 */
+	public static final boolean DEF_DOXYGEN_USE_PRE_POST_TAGS = false;
+
 	private static DocCommentOwnerManager singleton;
 
 	public static DocCommentOwnerManager getInstance() {
@@ -86,6 +139,11 @@ public class DocCommentOwnerManager {
 			// this could occur if a plug-in is no longer available
 			fWorkspaceOwner = NullDocCommentOwner.INSTANCE;
 		}
+	}
+
+	public Preferences getPreferences(IProject project) {
+		return project == null ? InstanceScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE)
+				: new ProjectScope(project).getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
 	}
 
 	/**

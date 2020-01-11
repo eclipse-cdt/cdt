@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d8c3debb_61d19531",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-11T10:29:46Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "c75c3939_45d8a130",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a24e212d_a0af5fde",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2020-01-11T07:42:21Z",
       "side": 1,
       "message": "Invoking with null argument is an evil, please provide another method without arguments if it makes sense.",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4857727d_ced23dea",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-11T10:29:46Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "a24e212d_a0af5fde",
       "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "29fe59a2_6f6270de",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DocCommentOwnerManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-11T10:29:46Z",
+      "side": 1,
+      "message": "I could say the same for this class and comment owner preference already present. No idea, I just added new options.",
+      "parentUuid": "9d844fe3_3b637ece",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc00d7c5_fe6d3401",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DocCommentOwnerManager.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2020-01-11T07:42:21Z",
       "side": 1,
       "message": "This utility method looks misplaced a bit. It should be either more generic to accept a node id or more concrete to return the pref values. In any case it wants to be extracted to another \"actor\" who can help DocCommentOwnerManager with preferences.",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "971bc140_e7af2e1f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DocCommentOwnerManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-11T10:29:46Z",
+      "side": 1,
+      "message": "Ok, I can change the method to return something more specific.",
+      "parentUuid": "fc00d7c5_fe6d3401",
       "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "726f95f7_2a31d03b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/DocCommentOwnerComposite.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-11T10:29:46Z",
+      "side": 1,
+      "message": "I can refactor this piece of code adding a new method taking the button and the string preference in order to initialize the values.",
+      "parentUuid": "88f8d94f_d475b60b",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d5952ba3_4e5194b1",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2020-01-11T07:42:21Z",
       "side": 1,
       "message": "passing null and returning null is an evil, please use. If the project is really optional (it doesn\u0027t look so) - please return Optional\u003cIProject\u003e, if it expected to be - please throw IllegalStateException",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e786d1a6_5d4c2320",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-11T10:29:46Z",
+      "side": 1,
+      "message": "The project here can be null. The project is passed by \nCSourceViewerConfiguration class getAutoEditStrategies() method. I remember where Optional has been declared too performance heavy and I just followed CDT style where simply null is used where needed. I could change it however.",
+      "parentUuid": "d5952ba3_4e5194b1",
       "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "772bd323_163a3373",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-11T10:29:46Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "bbcc79a0_da864eca",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f1851d49_18b11a5f",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
         "patchSetId": 1
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "916dacc9_b76571ce",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-11T10:29:46Z",
+      "side": 1,
+      "message": "Typo, I need to remove it.",
+      "parentUuid": "f1851d49_18b11a5f",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b4a7132_f64bb7f0",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
         "patchSetId": 1
@@ -149,6 +293,24 @@
       "writtenOn": "2020-01-11T07:42:21Z",
       "side": 1,
       "message": "The right way is:\n1) add preference listeners for the options duting create\n2) read the preferences\n3) remove preference listener during dispose",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64522de2_10adca1d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-11T10:29:46Z",
+      "side": 1,
+      "message": "I\u0027m agree with you but in order to use a listener we need a clear add/remove moment and I can\u0027t see any \"dispose\" methods here. If you already know where we can add a \"remove listener\" please let me know.",
+      "parentUuid": "5b4a7132_f64bb7f0",
       "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

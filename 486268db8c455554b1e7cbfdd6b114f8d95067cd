@@ -16,6 +16,24 @@
       "revId": "486268db8c455554b1e7cbfdd6b114f8d95067cd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "26802435_dabb22a6",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DocCommentOwnerManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-11T15:49:33Z",
+      "side": 1,
+      "message": "Ok, so a recap: I create another class called DoxygenPreferences with a constructor accepting optional\u003cIProject\u003e and with two methods, getBoolean, putBoolean, ok I can try.",
+      "parentUuid": "b53f1c2f_cb827dd8",
+      "revId": "486268db8c455554b1e7cbfdd6b114f8d95067cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

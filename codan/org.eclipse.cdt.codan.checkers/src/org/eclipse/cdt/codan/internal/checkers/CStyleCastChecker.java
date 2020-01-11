@@ -11,17 +11,38 @@
 package org.eclipse.cdt.codan.internal.checkers;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 public class CStyleCastChecker extends AbstractIndexAstChecker {
 	public static final String ERR_ID = "org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem"; //$NON-NLS-1$
+	public static final String PARAM_MACRO = "checkMacro"; //$NON-NLS-1$
+	private boolean checkMacro = true;
+
+	@Override
+	public void initPreferences(IProblemWorkingCopy problem) {
+		super.initPreferences(problem);
+		addPreference(problem, PARAM_MACRO, CheckersMessages.Copyright_regex, true);
+	}
+
+	private boolean enclosedInMacroExpansion(IASTExpression statement) {
+		if (!checkMacro)
+			return false;
+		IASTNodeLocation[] locations = statement.getNodeLocations();
+		return locations.length == 1 && locations[0] instanceof IASTMacroExpansionLocation;
+	}
 
 	@Override
 	public void processAst(IASTTranslationUnit ast) {
+		final IProblem pt = getProblemById(ERR_ID, getFile());
+		checkMacro = (boolean) getPreference(pt, PARAM_MACRO);
 		if (ast.getLinkage().getLinkageID() == ILinkage.CPP_LINKAGE_ID) {
 			ast.accept(new ASTVisitor() {
 				{
@@ -30,7 +51,7 @@ public class CStyleCastChecker extends AbstractIndexAstChecker {
 
 				@Override
 				public int visit(IASTExpression expression) {
-					if (expression instanceof IASTCastExpression) {
+					if (expression instanceof IASTCastExpression && !enclosedInMacroExpansion(expression)) {
 						if (((IASTCastExpression) expression).getOperator() == IASTCastExpression.op_cast)
 							reportProblem(ERR_ID, expression);
 					}

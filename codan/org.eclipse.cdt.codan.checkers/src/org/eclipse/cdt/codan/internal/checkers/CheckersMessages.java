@@ -43,10 +43,9 @@ public class CheckersMessages extends NLS {
 	public static String UnusedSymbolInFileScopeChecker_CharacterSequence;
 	public static String UnusedSymbolInFileScopeChecker_Exceptions;
 	public static String SymbolShadowingChecker_CheckFunctionParameters;
-
 	public static String Copyright_regex;
-
 	public static String ShallowCopyChecker_OnlyNew;
+	public static String CStyleCastCheck_checkInMacro;
 
 	static {
 		NLS.initializeMessages(CheckersMessages.class.getName(), CheckersMessages.class);

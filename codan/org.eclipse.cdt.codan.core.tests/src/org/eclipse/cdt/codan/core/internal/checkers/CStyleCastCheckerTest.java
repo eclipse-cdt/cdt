@@ -47,4 +47,14 @@ public class CStyleCastCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ERR_ID);
 	}
+
+	//#define CAST(X) (void)X
+	//void bar() {
+	//  int b;
+	//	CAST(b);
+	//};
+	public void testInMacro() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(ERR_ID);
+	}
 }

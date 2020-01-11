@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c75c3939_45d8a130",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T07:42:21Z",
+      "side": 1,
+      "message": "Invoking with null argument is an evil, please provide another method without arguments if it makes sense",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a24e212d_a0af5fde",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T07:42:21Z",
+      "side": 1,
+      "message": "Invoking with null argument is an evil, please provide another method without arguments if it makes sense.",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9d844fe3_3b637ece",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DocCommentOwnerManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T07:42:21Z",
+      "side": 1,
+      "message": "The question is: if we use \".core\" namespace to store values - why we declare preference constants in the \".ui\" bundle?",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc00d7c5_fe6d3401",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DocCommentOwnerManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T07:42:21Z",
+      "side": 1,
+      "message": "This utility method looks misplaced a bit. It should be either more generic to accept a node id or more concrete to return the pref values. In any case it wants to be extracted to another \"actor\" who can help DocCommentOwnerManager with preferences.",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "88f8d94f_d475b60b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/DocCommentOwnerComposite.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T07:42:21Z",
+      "side": 1,
+      "message": "I would expect preference listeners to process the selection. Also this code may be shoter If we have a \"function\" (Button, String) - it may be used both here and as a preference listener",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d5952ba3_4e5194b1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T07:42:21Z",
+      "side": 1,
+      "message": "passing null and returning null is an evil, please use. If the project is really optional (it doesn\u0027t look so) - please return Optional\u003cIProject\u003e, if it expected to be - please throw IllegalStateException",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bbcc79a0_da864eca",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T07:42:21Z",
+      "side": 1,
+      "message": "please add brackets",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f1851d49_18b11a5f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T07:42:21Z",
+      "side": 1,
+      "message": "cached field value is not used for some reason",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b4a7132_f64bb7f0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T07:42:21Z",
+      "side": 1,
+      "message": "The right way is:\n1) add preference listeners for the options duting create\n2) read the preferences\n3) remove preference listener during dispose",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

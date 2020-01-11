@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "46acf713_2c73b3aa",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DocCommentOwnerManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T12:25:03Z",
+      "side": 1,
+      "message": "Please don\u0027t take it personally. I just want to highlight this issue, may be we can fix it later.",
+      "parentUuid": "29fe59a2_6f6270de",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc00d7c5_fe6d3401",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DocCommentOwnerManager.java",
         "patchSetId": 1
@@ -212,6 +230,24 @@
     },
     {
       "key": {
+        "uuid": "6c937790_be2e224d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T12:25:03Z",
+      "side": 1,
+      "message": "I don\u0027t believe that Optional will introduce any _additional_ performance degradation here. Reading through the usages I can say that we do not need ICProject here at all. Instead of that we need someone to return the relevant value of \"FORMATTER_COMMENT_BLOCK\" option for us. Why I was triggered here - because we are adding new API method, and this new method tries to workaround the desigh issue instead of solving it. Again, we do not need any \"project\" here, we need a kind of \"option supplier\" that will resolve the value according to the current scope.",
+      "parentUuid": "e786d1a6_5d4c2320",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bbcc79a0_da864eca",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
         "patchSetId": 1
@@ -311,6 +347,24 @@
       "side": 1,
       "message": "I\u0027m agree with you but in order to use a listener we need a clear add/remove moment and I can\u0027t see any \"dispose\" methods here. If you already know where we can add a \"remove listener\" please let me know.",
       "parentUuid": "5b4a7132_f64bb7f0",
+      "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3724a76f_d050f122",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T12:25:03Z",
+      "side": 1,
+      "message": "Hmm. Yes, you are right, nobody cares to let us clear allocated resources for some reason. Well, again the kind of \"Preference Supplier\" may incapsulate caching and listening strategy. We can have another ticket/gerrit to introduce one.",
+      "parentUuid": "64522de2_10adca1d",
       "revId": "505b3c6ef7ecd19516c37a33841c85313553d391",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

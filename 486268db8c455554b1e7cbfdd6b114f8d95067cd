@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b53f1c2f_cb827dd8",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DocCommentOwnerManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-11T12:25:03Z",
+      "side": 1,
+      "message": "Let\u0027s make it even better.\nPlease extract these four methods to a separate type with constructor that accepts Optional\u003cIProject\u003e in constructor. The type will resolve the right Preference node in its constructor and then it will have just two methods:\ngetBoolean(key default);\nputBoolean(key, value);\n\nThis way we can greatly reduce code duplications - clients will not need to check project for null anymore.\n\nYou can go further and create very useful type DoxigenPreferences that will encapsulate all the work with preference service and that will have named according to preference names. This improvement may be done with the separate bugzilla/gerrit.",
+      "revId": "486268db8c455554b1e7cbfdd6b114f8d95067cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

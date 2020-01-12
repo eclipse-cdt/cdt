@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.tests.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.checkers.CStyleCastChecker;
 import org.eclipse.cdt.codan.internal.checkers.UsingInHeaderChecker;
@@ -25,6 +26,11 @@ public class CStyleCastCheckerTest extends CheckerTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		enableProblems(ERR_ID);
+	}
+
+	private void setCheckInMacro(boolean val) {
+		IProblemPreference pref = getPreference(CStyleCastChecker.ERR_ID, CStyleCastChecker.PARAM_MACRO);
+		pref.setValue(val);
 	}
 
 	@Override
@@ -54,6 +60,17 @@ public class CStyleCastCheckerTest extends CheckerTestCase {
 	//	CAST(b);
 	//};
 	public void testInMacro() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(4, ERR_ID);
+	}
+
+	//#define CAST(X) (void)X
+	//void bar() {
+	//  int b;
+	//	CAST(b);
+	//};
+	public void testInMacroOptionOff() throws Exception {
+		setCheckInMacro(false);
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ERR_ID);
 	}

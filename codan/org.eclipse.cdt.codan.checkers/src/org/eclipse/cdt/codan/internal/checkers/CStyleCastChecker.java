@@ -29,12 +29,10 @@ public class CStyleCastChecker extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_MACRO, CheckersMessages.Copyright_regex, true);
+		addPreference(problem, PARAM_MACRO, CheckersMessages.CStyleCastCheck_checkInMacro, true);
 	}
 
 	private boolean enclosedInMacroExpansion(IASTExpression statement) {
-		if (!checkMacro)
-			return false;
 		IASTNodeLocation[] locations = statement.getNodeLocations();
 		return locations.length == 1 && locations[0] instanceof IASTMacroExpansionLocation;
 	}
@@ -51,7 +49,8 @@ public class CStyleCastChecker extends AbstractIndexAstChecker {
 
 				@Override
 				public int visit(IASTExpression expression) {
-					if (expression instanceof IASTCastExpression && !enclosedInMacroExpansion(expression)) {
+					if (expression instanceof IASTCastExpression
+							&& (checkMacro || !enclosedInMacroExpansion(expression))) {
 						if (((IASTCastExpression) expression).getOperator() == IASTCastExpression.op_cast)
 							reportProblem(ERR_ID, expression);
 					}

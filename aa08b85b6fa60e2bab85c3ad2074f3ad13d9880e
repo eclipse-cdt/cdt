@@ -34,6 +34,24 @@
       "revId": "aa08b85b6fa60e2bab85c3ad2074f3ad13d9880e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4b06f3fa_5daa4d18",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CModelBuilder2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-01-12T20:57:20Z",
+      "side": 0,
+      "message": "I suggest keeping the code and changing the default preference of the \"old\" cdt.ui annotation to disabled. The Codan one would be the new default enabled one. Then clients of cdt.ui that don\u0027t have codan would be free to change the default through plugin_customization.ini or other means. This would require a note in the release notes but would be an Ok tradeoff IMO.",
+      "parentUuid": "99da8819_a7cac4e8",
+      "revId": "aa08b85b6fa60e2bab85c3ad2074f3ad13d9880e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

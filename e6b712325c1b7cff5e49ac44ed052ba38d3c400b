@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d56c5cf_95171610",
+        "filename": "build/org.eclipse.cdt.managedbuilder.gnu.ui/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 1382,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-01-12T20:29:14Z",
+      "side": 1,
+      "message": "I wonder when we should change this to -std\u003dc++11. Maybe we should have an official range of supported version of GCC, like there is for GDB now",
+      "revId": "e6b712325c1b7cff5e49ac44ed052ba38d3c400b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

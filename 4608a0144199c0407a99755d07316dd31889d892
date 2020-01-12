@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e55c567_a749dc68",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/SyntaxProblemChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-12T20:34:52Z",
+      "side": 1,
+      "message": "If we do not expect getLaunchModePreference(problem) to change between two calls it is reasonable to extract it to the local variable",
+      "revId": "4608a0144199c0407a99755d07316dd31889d892",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "121babf8_8b295171",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/SyntaxProblemChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-12T20:34:52Z",
+      "side": 1,
+      "message": "Let\u0027s avoid such kind of \"reusing\" local variables - it couples the code and reduce readability without any real benefits",
+      "revId": "4608a0144199c0407a99755d07316dd31889d892",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

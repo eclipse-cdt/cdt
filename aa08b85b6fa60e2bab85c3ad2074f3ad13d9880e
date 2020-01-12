@@ -16,6 +16,24 @@
       "revId": "aa08b85b6fa60e2bab85c3ad2074f3ad13d9880e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99da8819_a7cac4e8",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CModelBuilder2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-12T20:34:52Z",
+      "side": 0,
+      "message": "Yes, this change looks questionable. However I suspect it is important part of PS idea.",
+      "parentUuid": "727b7a0a_3e8fd559",
+      "revId": "aa08b85b6fa60e2bab85c3ad2074f3ad13d9880e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "727b7a0a_3e8fd559",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CModelBuilder2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-01-12T20:10:45Z",
+      "side": 0,
+      "message": "I\u0027m not sure this should be removed. Clients of cdt.ui that do not use codan would lose functionality.",
+      "revId": "aa08b85b6fa60e2bab85c3ad2074f3ad13d9880e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

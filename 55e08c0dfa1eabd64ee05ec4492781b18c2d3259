@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2a790714_664ee468",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/SymbolShadowingChecker.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-01-12T20:16:31Z",
+      "side": 1,
+      "message": "what about PDOMCGlobalScope? Do we need to check it? I think the unit tests only cover c++ not c.",
+      "revId": "55e08c0dfa1eabd64ee05ec4492781b18c2d3259",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

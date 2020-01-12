@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a2cbf7a_5295f2ce",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/CStyleCastChecker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-01-12T18:10:14Z",
+      "side": 1,
+      "message": "wrong string",
+      "revId": "abb0b06e2f60cdf3867a3ad8d87b8dd1d0f468fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "202fe4e9_6febc1d1",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/CStyleCastChecker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-01-12T18:10:14Z",
+      "side": 1,
+      "message": "this check doesn\u0027t fit the implied semantic of the name this method name \"enclosedInMacroExpansion\". It would be a bit clearer if it was taken out. Probably this var can be kept as a local var in processAst and be used directly in the condition.\nIn fact, there is a bug here but it\u0027s not obvious just by looking at this method without looking at the callsite. In process AST, we want to always report errors if checkMacro is true.\nBecause processAst calls !enclosedInMacroExpansion(expression), this means the check would need to be\nif (checkMacro)\n  return false;\n\nWhich makes little sense given the name of this method. See comment in processAst for alternative.",
+      "revId": "abb0b06e2f60cdf3867a3ad8d87b8dd1d0f468fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4039eada_640bc494",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/CStyleCastChecker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-01-12T18:10:14Z",
+      "side": 1,
+      "message": "I would suggest instead\nif (expression instanceof IASTCastExpression \u0026\u0026 (checkMacro || !enclosedInMacroExpansion(expression)))\n\ncombined with the removal of the checkMacro part in enclosedInMacroExpansion",
+      "revId": "abb0b06e2f60cdf3867a3ad8d87b8dd1d0f468fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c947c60_30775c31",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/CStyleCastCheckerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-01-12T18:10:14Z",
+      "side": 1,
+      "message": "there should be a test to make sure the error is reported when inside the macro and the preference allows reporting it",
+      "revId": "abb0b06e2f60cdf3867a3ad8d87b8dd1d0f468fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "92765349_bc3cd5ed",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/CStyleCastCheckerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-01-12T18:10:14Z",
+      "side": 1,
+      "message": "if the preference is true by default, why doesn\u0027t it report an error here? See other comment in checker",
+      "revId": "abb0b06e2f60cdf3867a3ad8d87b8dd1d0f468fd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

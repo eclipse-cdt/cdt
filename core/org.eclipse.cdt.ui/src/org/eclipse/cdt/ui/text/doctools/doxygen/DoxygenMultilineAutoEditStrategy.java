@@ -18,6 +18,7 @@ package org.eclipse.cdt.ui.text.doctools.doxygen;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -68,7 +69,15 @@ import org.eclipse.jface.text.TextUtilities;
  */
 public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAutoEditStrategy
 		implements DefaultMultilineCommentAutoEditStrategy.IDocCustomizer {
-	private static final String SINGLELINE_COMMENT_PRECEDING = "//!< "; //$NON-NLS-1$
+	private static final String SINGLELINE_COMMENT_PRECEDING_1 = "//!< "; //$NON-NLS-1$
+	private static final String SINGLELINE_COMMENT_PRECEDING_2 = "/// "; //$NON-NLS-1$
+	private static final String SINGLELINE_COMMENT_PRECEDING_3 = "/*!< "; //$NON-NLS-1$
+	private static final String SINGLELINE_COMMENT_PRECEDING_4 = "/**< "; //$NON-NLS-1$
+	private static final String STYLE_1 = "//!"; //$NON-NLS-1$
+	private static final String STYLE_2 = "///"; //$NON-NLS-1$
+	private static final Pattern STYLE_3 = Pattern.compile("\\/\\*+!"); //$NON-NLS-1$
+	private static final Pattern STYLE_4 = Pattern.compile("\\/\\*\\*+"); //$NON-NLS-1$
+	private static final String SINGLELINE_COMMENT_ENDING = " */"; //$NON-NLS-1$
 	private static final String CLASS = "class "; //$NON-NLS-1$
 	private static final String ENUM = "enum "; //$NON-NLS-1$
 	private static final String THROW = "throw "; //$NON-NLS-1$
@@ -407,7 +416,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 		}
 
 		try {
-			alterDoc(doc, declToDocument);
+			alterDoc(doc, declToDocument, partition);
 		} catch (BadLocationException ble) {
 			/*ignore*/
 		}
@@ -497,9 +506,27 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	/*
 	 * Add post-declaration comments to enumerators, after initializing a doc-comment on an enumeration
 	 */
-	private void alterDoc(IDocument doc, IASTNode dec) throws BadLocationException {
+	private void alterDoc(IDocument doc, IASTNode dec, ITypedRegion partition) throws BadLocationException {
 		if (dec instanceof IASTSimpleDeclaration
 				&& ((IASTSimpleDeclaration) dec).getDeclSpecifier() instanceof IASTEnumerationSpecifier) {
+
+			String partComment = doc.get(partition.getOffset(), partition.getLength());
+			String preceding;
+			String ending = ""; //$NON-NLS-1$
+			if (partComment.endsWith(STYLE_1)) {
+				preceding = SINGLELINE_COMMENT_PRECEDING_1;
+			} else if (partComment.endsWith(STYLE_2)) {
+				preceding = SINGLELINE_COMMENT_PRECEDING_2;
+			} else if (STYLE_3.matcher(partComment).find()) {
+				preceding = SINGLELINE_COMMENT_PRECEDING_3;
+				ending = SINGLELINE_COMMENT_ENDING;
+			} else if (STYLE_4.matcher(partComment).find()) {
+				preceding = SINGLELINE_COMMENT_PRECEDING_4;
+				ending = SINGLELINE_COMMENT_ENDING;
+			} else {
+				preceding = SINGLELINE_COMMENT_PRECEDING_1;
+			}
+
 			IASTEnumerationSpecifier spc = (IASTEnumerationSpecifier) ((IASTSimpleDeclaration) dec).getDeclSpecifier();
 			IASTEnumerator[] enms = spc.getEnumerators();
 
@@ -534,7 +561,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 				IASTNodeLocation loc = enumerator.getName().getFileLocation();
 				if (loc != null) {
 					int nodeOffset = loc.getNodeOffset() + loc.getNodeLength();
-					String cmt = SINGLELINE_COMMENT_PRECEDING + enumerator.getName();
+					String cmt = preceding + enumerator.getName() + ending;
 					IRegion line = doc.getLineInformationOfOffset(nodeOffset);
 					if (!doc.get(line.getOffset(), line.getLength()).contains("//")) { //$NON-NLS-1$
 						noCollisions &= entries.add(new Entry(line.getOffset(), line.getLength(), cmt));

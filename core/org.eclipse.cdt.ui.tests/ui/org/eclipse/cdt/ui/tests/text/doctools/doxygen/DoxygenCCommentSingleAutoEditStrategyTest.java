@@ -351,8 +351,8 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 
 	// ///
 	// /// X
-	// enum A { B,//!< B
-	//     C };   //!< C
+	// enum A { B,/// B
+	//     C };   /// C
 	public void testAutoDocCommentContent13() throws CoreException {
 		assertAutoEditBehaviour();
 	}
@@ -363,7 +363,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 
 	// ///
 	// /// X
-	// enum A { B,//!< B
+	// enum A { B,/// B
 	//     C };//!< C
 	public void testAutoDocCommentContent14() throws CoreException {
 		assertAutoEditBehaviour();
@@ -376,7 +376,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// ///
 	// /// X
 	// enum A { B,//!< B
-	//     C };//!< C
+	//     C };/// C
 	public void testAutoDocCommentContent15() throws CoreException {
 		assertAutoEditBehaviour();
 	}
@@ -495,6 +495,42 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	//  /// X@param vs
 	//	void foo(void vs[]) {}
 	public void testAutoDocCommentContent21_238852_d() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
+	// //!X
+	// enum A { B,
+	//     C };
+
+	// //!
+	// //! X
+	// enum A { B,//!< B
+	//     C };   //!< C
+	public void testAutoDocCommentContent22() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
+	// //!X
+	// enum A { B,
+	//     C };//!< C
+
+	// //!
+	// //! X
+	// enum A { B,//!< B
+	//     C };//!< C
+	public void testAutoDocCommentContent23() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
+	// //!X
+	// enum A { B,//!< B
+	//     C };
+
+	// //!
+	// //! X
+	// enum A { B,//!< B
+	//     C };//!< C
+	public void testAutoDocCommentContent24() throws CoreException {
 		assertAutoEditBehaviour();
 	}
 

@@ -42,7 +42,17 @@ find * -name feature.xml -not -path */target/* | while read feature_xml; do
         cp releng/templates/feature/about.ini $plugin_dir
     fi
 
-    feature_start_year=$(git log --reverse --format='%ad' --date="format:%Y" -- $feature_xml $plugin_dir | head -1)
+    case $feature_xml in
+    launchbar*)
+        # The git history does not show the proper start year for launchbar because of Bug 558439
+        # Note, we can't simply use --follow because that causes other features to have a too
+        # early copyright year.
+        feature_start_year=2014
+        ;;
+    *)
+        feature_start_year=$(git log --reverse --format='%ad' --date="format:%Y" -- $feature_xml $plugin_dir | head -1)
+        ;;
+    esac
     feature_end_year=$(git log --format='%ad' --date="format:%Y" -- $feature_xml $plugin_dir | head -1)
     feature_name=$(grep featureName= $feature_dir/feature.properties | sed '-es,featureName=,,')
     export feature_start_year feature_end_year feature_name

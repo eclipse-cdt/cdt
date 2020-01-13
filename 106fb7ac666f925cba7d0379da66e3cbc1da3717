@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e6686b1e_37e6b762",
+        "filename": "releng/scripts/check_code_cleanliness.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-13T20:06:32Z",
+      "side": 1,
+      "message": "I plan to do the same for this script as I already did for check_features script at Alexander F\u0027s suggestion which is to stop using the core project and use a template directory instead. \n\nThat will be the subject of a further commit, this one maintains status quo, but brings the code back from cdt-infra to cdt\u0027s repo.",
+      "revId": "106fb7ac666f925cba7d0379da66e3cbc1da3717",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

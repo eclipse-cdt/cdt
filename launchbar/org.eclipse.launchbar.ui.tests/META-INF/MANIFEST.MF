@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Launch Bar UI Tests
 Bundle-SymbolicName: org.eclipse.launchbar.ui.tests
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.100.qualifier
 Bundle-Vendor: Eclipse CDT
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

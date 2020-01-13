@@ -2,6 +2,7 @@
 <site>
    <category-def name="main" label="CDT Main Features"/>
    <category-def name="extra" label="CDT Optional Features"/>
+   <category-def name="launchbar" label="LaunchBar"/>
    <feature url="features/org.eclipse.cdt_0.0.0.qualifier.jar" id="org.eclipse.cdt" version="0.0.0">
       <category name="main"/>
    </feature>
@@ -172,6 +173,18 @@
    </feature>
    <feature url="features/org.eclipse.cdt.launch.serial.feature.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.launch.serial.feature.source" version="0.0.0">
       <category name="extra"/>
+   </feature>
+   <feature id="org.eclipse.launchbar">
+      <category name="launchbar"/>
+   </feature>
+   <feature id="org.eclipse.launchbar.source">
+      <category name="launchbar"/>
+   </feature>
+   <feature id="org.eclipse.launchbar.remote">
+      <category name="launchbar"/>
+   </feature>
+   <feature id="org.eclipse.launchbar.remote.source">
+      <category name="launchbar"/>
    </feature>
    <iu id="org.eclipse.cdt.util" version="0.0.0"/>
    <iu id="org.eclipse.cdt.util.source" version="0.0.0"/>

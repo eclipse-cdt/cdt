@@ -10,6 +10,6 @@
 		<version>9.11.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>org.eclipse.cdt.tools.template-parent</artifactId>
+	<artifactId>org.eclipse.cdt.launchbar-parent</artifactId>
 	<packaging>pom</packaging>
 </project>

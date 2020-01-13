@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: LaunchBar UI
+Bundle-SymbolicName: org.eclipse.launchbar.ui;singleton:=true
+Bundle-Version: 2.3.0.qualifier
+Bundle-Activator: org.eclipse.launchbar.ui.internal.Activator
+Bundle-Vendor: Eclipse CDT
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.debug.ui,
+ org.eclipse.launchbar.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-Localization: plugin
+Export-Package: org.eclipse.launchbar.ui,
+ org.eclipse.launchbar.ui.internal;x-internal:=true,
+ org.eclipse.launchbar.ui.internal.commands;x-internal:=true,
+ org.eclipse.launchbar.ui.internal.dialogs;x-internal:=true,
+ org.eclipse.launchbar.ui.target
+Automatic-Module-Name: org.eclipse.launchbar.ui

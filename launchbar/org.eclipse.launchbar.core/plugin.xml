@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="launchBarContributions" name="Launch Bar Contributions" schema="schema/launchBarContributions.exsd"/>
+   <extension-point id="launchTargetTypes" name="Launch Target Types" schema="schema/launchTargetTypes.exsd"/>
+   <extension
+         point="org.eclipse.launchbar.core.launchBarContributions">
+      <objectProvider
+            class="org.eclipse.launchbar.core.internal.ProjectLaunchObjectProvider"
+            id="org.eclipse.launchbar.core.objectProvider.project">
+      </objectProvider>
+      <descriptorType
+            class="org.eclipse.launchbar.core.DefaultLaunchDescriptorType"
+            id="org.eclipse.launchbar.core.descriptorType.default"     
+            priority="0">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.debug.core.ILaunchConfiguration">
+            </instanceof></enablement>
+      </descriptorType>
+      <configProvider
+            class="org.eclipse.launchbar.core.DefaultLaunchConfigProvider"
+            descriptorType="org.eclipse.launchbar.core.descriptorType.default"
+            priority="0">
+            <enablement>
+            </enablement>
+      </configProvider>
+   </extension>
+   <extension
+         point="org.eclipse.launchbar.core.launchTargetTypes">
+      <launchTargetType
+            id="org.eclipse.launchbar.core.launchTargetType.local"
+            provider="org.eclipse.launchbar.core.internal.target.LocalLaunchTargetProvider">
+      </launchTargetType>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.launchbar.core.internal.target.LaunchTargetPropertyTester"
+            id="org.eclipse.launchbar.core.targetPropertyTester"
+            namespace="org.eclipse.launchbar.core"
+            properties="launchTargetType"
+            type="org.eclipse.launchbar.core.target.ILaunchTarget">
+      </propertyTester>
+   </extension>
+
+</plugin>

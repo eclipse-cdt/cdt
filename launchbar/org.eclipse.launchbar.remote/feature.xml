@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.launchbar.remote"
       label="%featureName"
-      version="2.4.1.qualifier"
+      version="2.4.100.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.launchbar.remote.ui"
       license-feature="org.eclipse.license"

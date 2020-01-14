@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2020 Symbian Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,8 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools.doxygen;
 
@@ -99,16 +101,17 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 
 	private void refreshPreferences() {
 		Optional<IProject> project = getProject();
-		DoxygenPreferences pref = new DoxygenPreferences(project);
-		newLineAfterBrief = pref.getBooleanPref(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF,
+		DoxygenPreferences pref = project.isPresent() ? new DoxygenPreferences(project.get())
+				: new DoxygenPreferences();
+		newLineAfterBrief = pref.getBoolean(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF,
 				DoxygenPreferences.DEF_DOXYGEN_NEW_LINE_AFTER_BRIEF);
-		useBriefTag = pref.getBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG,
+		useBriefTag = pref.getBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG,
 				DoxygenPreferences.DEF_DOXYGEN_USE_BRIEF_TAG);
-		useJavadocStyle = pref.getBooleanPref(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS,
+		useJavadocStyle = pref.getBoolean(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS,
 				DoxygenPreferences.DEF_DOXYGEN_USE_JAVADOC_TAGS);
-		usePrePostTag = pref.getBooleanPref(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS,
+		usePrePostTag = pref.getBoolean(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS,
 				DoxygenPreferences.DEF_DOXYGEN_USE_PRE_POST_TAGS);
-		useStructuralCommands = pref.getBooleanPref(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS,
+		useStructuralCommands = pref.getBoolean(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS,
 				DoxygenPreferences.DEF_DOXYGEN_USE_STRUCTURED_COMMANDS);
 	}
 

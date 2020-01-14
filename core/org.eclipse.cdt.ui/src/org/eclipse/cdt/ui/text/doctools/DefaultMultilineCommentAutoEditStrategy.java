@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2020 Symbian Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,8 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools;
 
@@ -93,8 +95,9 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * @since 6.7
 	 */
 	protected Optional<IProject> getProject() {
-		if (fProject != null)
+		if (fProject != null) {
 			return Optional.of(fProject.getProject());
+		}
 		return Optional.empty();
 	}
 

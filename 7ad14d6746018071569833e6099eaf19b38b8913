@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2c093225_ac296478",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DoxygenPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-14T19:36:02Z",
+      "side": 0,
+      "message": "Thank you for removing Optional as a field...",
+      "revId": "7ad14d6746018071569833e6099eaf19b38b8913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

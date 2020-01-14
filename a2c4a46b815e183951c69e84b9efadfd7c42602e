@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c6887cc2_5f3e017c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DoxygenPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-14T19:36:02Z",
+      "side": 1,
+      "message": "I recommend not having API comments on non-API code. \n\nI see that all the new fields have it too, I would probably remove them all and not add @noreference",
+      "revId": "a2c4a46b815e183951c69e84b9efadfd7c42602e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e627bfed_91409f53",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DoxygenPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-14T19:36:02Z",
+      "side": 1,
+      "message": "... following that same guidelines, remove the Optional in the constructor.",
+      "revId": "a2c4a46b815e183951c69e84b9efadfd7c42602e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0999caea_bb78e3c1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/DocCommentOwnerBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-14T19:36:02Z",
+      "side": 1,
+      "message": "Don\u0027t bother with this FIXME - I don\u0027t mean to say don\u0027t fix it, just don\u0027t have the comment unless you are planning to fix it in a new patchset for this bug.",
+      "revId": "a2c4a46b815e183951c69e84b9efadfd7c42602e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7b352cc_150edd2c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/DocCommentOwnerComposite.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-14T19:36:02Z",
+      "side": 1,
+      "message": "ditto on FIXME",
+      "revId": "a2c4a46b815e183951c69e84b9efadfd7c42602e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

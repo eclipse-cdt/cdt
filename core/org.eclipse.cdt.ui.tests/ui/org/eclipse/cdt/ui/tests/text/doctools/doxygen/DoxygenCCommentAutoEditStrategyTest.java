@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2020 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,8 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Andrew Ferguson (Symbian)
+ *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.doctools.doxygen;
 
@@ -65,14 +67,12 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		fOptions = CCorePlugin.getOptions();
 		fCProject = CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null);
 		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, DoxygenPreferences.DEF_DOXYGEN_USE_BRIEF_TAG);
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF,
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, DoxygenPreferences.DEF_DOXYGEN_USE_BRIEF_TAG);
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF,
 				DoxygenPreferences.DEF_DOXYGEN_NEW_LINE_AFTER_BRIEF);
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS,
-				DoxygenPreferences.DEF_DOXYGEN_USE_PRE_POST_TAGS);
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS,
-				DoxygenPreferences.DEF_DOXYGEN_USE_JAVADOC_TAGS);
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS,
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS, DoxygenPreferences.DEF_DOXYGEN_USE_PRE_POST_TAGS);
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS, DoxygenPreferences.DEF_DOXYGEN_USE_JAVADOC_TAGS);
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS,
 				DoxygenPreferences.DEF_DOXYGEN_USE_STRUCTURED_COMMANDS);
 	}
 
@@ -696,7 +696,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//void foo() {}
 	public void testAutoDocCommentBrief() throws CoreException {
 		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
 		assertAutoEditBehaviour();
 	}
 
@@ -709,8 +709,8 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//void foo() {}
 	public void testAutoDocCommentBriefNoNewLine() throws CoreException {
 		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF, false);
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF, false);
 		assertAutoEditBehaviour();
 	}
 
@@ -723,7 +723,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//void foo() {}
 	public void testAutoDocCommentStructured() throws CoreException {
 		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS, true);
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS, true);
 		assertAutoEditBehaviour();
 	}
 
@@ -737,8 +737,8 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//void foo() {}
 	public void testAutoDocCommentNoJavadoc() throws CoreException {
 		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS, false);
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS, false);
 		assertAutoEditBehaviour();
 	}
 
@@ -754,8 +754,8 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//void foo() {}
 	public void testAutoDocCommentPrePostTags() throws CoreException {
 		DoxygenPreferences pref = new DoxygenPreferences(Optional.empty());
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
-		pref.putBooleanPref(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS, true);
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
+		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS, true);
 		assertAutoEditBehaviour();
 	}
 

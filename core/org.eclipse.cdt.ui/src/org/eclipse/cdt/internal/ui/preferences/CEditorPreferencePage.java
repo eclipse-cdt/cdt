@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -30,6 +32,7 @@ import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.doctools.DoxygenPreferences;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.dialogs.DocCommentOwnerComposite;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
@@ -85,11 +88,13 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 	private DocCommentOwnerComposite fDocCommentOwnerComposite;
 	// TODO(sprigogin): Remove once compatibility with Platform 4.4 is no longer required.
 	private final boolean formattingScopeForEmptySelectionSupported;
+	private final DoxygenPreferences doxygenPreferences;
 
 	public CEditorPreferencePage() {
 		super();
 		Bundle jfaceText = Platform.getBundle("org.eclipse.jface.text"); //$NON-NLS-1$
 		formattingScopeForEmptySelectionSupported = jfaceText.getVersion().compareTo(new Version(3, 10, 0)) >= 0;
+		doxygenPreferences = new DoxygenPreferences();
 	}
 
 	@Override
@@ -363,14 +368,14 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 			fAppearanceColorList.select(0);
 			handleAppearanceColorListSelection();
 		});
-		fDocCommentOwnerComposite.loadValues();
+		fDocCommentOwnerComposite.initialize(doxygenPreferences);
 	}
 
 	@Override
 	public boolean performOk() {
 		DocCommentOwnerManager.getInstance()
 				.setWorkspaceCommentOwner(fDocCommentOwnerComposite.getSelectedDocCommentOwner());
-		fDocCommentOwnerComposite.performOk();
+		fDocCommentOwnerComposite.apply(doxygenPreferences);
 		return super.performOk();
 	}
 

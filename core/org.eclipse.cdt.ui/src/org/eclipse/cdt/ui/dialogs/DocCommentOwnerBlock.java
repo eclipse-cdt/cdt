@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2020 Symbian Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,11 +9,16 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
+import java.util.Optional;
+
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.doctools.DoxygenPreferences;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
@@ -87,12 +92,15 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 		String dsc = DialogsMessages.DocCommentOwnerBlock_SelectDocToolDescription;
 		String msg = DialogsMessages.DocCommentOwnerBlock_DocToolLabel;
 
-		IDocCommentOwner prjOwner = DocCommentOwnerManager.getInstance().getCommentOwner(getProject());
+		IProject project = getProject();
+		IDocCommentOwner prjOwner = DocCommentOwnerManager.getInstance().getCommentOwner(project);
 		fDocComboComposite = new DocCommentOwnerComposite(pane, prjOwner, dsc, msg);
 		fDocComboComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 
-		fCheckbox.setSelection(fManager.projectDefinesOwnership(getProject()));
-		fDocComboComposite.loadValues(getProject());
+		fCheckbox.setSelection(fManager.projectDefinesOwnership(project));
+		//FIXME: convert this to a final field replacing getProject() with immutable field
+		DoxygenPreferences preferences = new DoxygenPreferences(Optional.ofNullable(project));
+		fDocComboComposite.initialize(preferences);
 		handleCheckBox();
 	}
 
@@ -105,7 +113,8 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 			IDocCommentOwner newOwner = fDocComboComposite.getSelectedDocCommentOwner();
 			fManager.setCommentOwner(project, newOwner, true);
 		}
-		fDocComboComposite.performOk(project);
+		DoxygenPreferences preferences = new DoxygenPreferences(Optional.ofNullable(project));
+		fDocComboComposite.apply(preferences);
 	}
 
 	public IProject getProject() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Norbert Ploett (Siemens AG)
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> Bug 559193
  *******************************************************************************/
 package org.eclipse.cdt.core.suite;
 
@@ -20,6 +21,7 @@ import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManagerTests;
 import org.eclipse.cdt.core.internal.efsextension.tests.EFSExtensionTests;
 import org.eclipse.cdt.core.internal.errorparsers.tests.ErrorParserTests;
+import org.eclipse.cdt.core.internal.tests.OptionsTest;
 import org.eclipse.cdt.core.internal.tests.PositionTrackerTests;
 import org.eclipse.cdt.core.internal.tests.ResourceLookupTests;
 import org.eclipse.cdt.core.internal.tests.StringBuilderTest;
@@ -82,6 +84,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(AllCoreTests.suite());
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());
+		suite.addTest(OptionsTest.suite());
 		suite.addTest(PositionTrackerTests.suite());
 		suite.addTest(ResourceLookupTests.suite());
 		suite.addTest(StringBuilderTest.suite());

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e8617c53_1780a437",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DoxygenPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-15T08:29:36Z",
+      "side": 1,
+      "message": "Is it an already definded policy?\nI\u0027m OK to perform a clean-up based on a formal requirements for tags that are not applicable for internal packages.\nHowever, I do not see any strong violations here - in theory there may be \"friends\" in downstream who relies on that.",
+      "parentUuid": "c6887cc2_5f3e017c",
+      "revId": "a2c4a46b815e183951c69e84b9efadfd7c42602e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e627bfed_91409f53",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DoxygenPreferences.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "ccd4effa_9f46ee15",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/doctools/DoxygenPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-15T08:29:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e627bfed_91409f53",
+      "revId": "a2c4a46b815e183951c69e84b9efadfd7c42602e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0999caea_bb78e3c1",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/DocCommentOwnerBlock.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2020-01-14T19:36:02Z",
       "side": 1,
       "message": "Don\u0027t bother with this FIXME - I don\u0027t mean to say don\u0027t fix it, just don\u0027t have the comment unless you are planning to fix it in a new patchset for this bug.",
+      "revId": "a2c4a46b815e183951c69e84b9efadfd7c42602e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9eff5a3e_7b86bd36",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/DocCommentOwnerBlock.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-15T08:29:36Z",
+      "side": 1,
+      "message": "Reworked.",
+      "parentUuid": "0999caea_bb78e3c1",
       "revId": "a2c4a46b815e183951c69e84b9efadfd7c42602e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -81,6 +135,30 @@
       "writtenOn": "2020-01-15T07:20:31Z",
       "side": 1,
       "message": "Same comment here, usually a FIXME comment is a \"forever\" comment in the code without a fix :) Unless you are planning to change it in near future. As you said you could return a map from DoxygenPreferences and make the DEF_* fields private if you want.",
+      "range": {
+        "startLine": 58,
+        "startChar": 3,
+        "endLine": 58,
+        "endChar": 56
+      },
+      "revId": "a2c4a46b815e183951c69e84b9efadfd7c42602e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fbcaa431_494cf3ea",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/DocCommentOwnerComposite.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-15T08:29:36Z",
+      "side": 1,
+      "message": "extracted to https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d559193",
+      "parentUuid": "83c01ecf_3e8d8962",
       "range": {
         "startLine": 58,
         "startChar": 3,

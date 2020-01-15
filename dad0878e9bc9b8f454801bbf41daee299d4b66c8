@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6bd920f8_9b87765c",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/doctools/doxygen/DoxygenCCommentSingleAutoEditStrategyTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-15T18:57:19Z",
+      "side": 1,
+      "message": "should this be ///\u003c \n\n(same for below)",
+      "range": {
+        "startLine": 354,
+        "startChar": 15,
+        "endLine": 354,
+        "endChar": 19
+      },
+      "revId": "dad0878e9bc9b8f454801bbf41daee299d4b66c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1dadafc6_206c2b12",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/doxygen/DoxygenMultilineAutoEditStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-15T18:57:19Z",
+      "side": 1,
+      "message": "should this actually be \"///\u003c \" to indicate comment is after member?",
+      "range": {
+        "startLine": 73,
+        "startChar": 62,
+        "endLine": 73,
+        "endChar": 68
+      },
+      "revId": "dad0878e9bc9b8f454801bbf41daee299d4b66c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

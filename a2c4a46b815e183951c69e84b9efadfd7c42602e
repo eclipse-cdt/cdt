@@ -67,6 +67,29 @@
       "revId": "a2c4a46b815e183951c69e84b9efadfd7c42602e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "83c01ecf_3e8d8962",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/DocCommentOwnerComposite.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-01-15T07:20:31Z",
+      "side": 1,
+      "message": "Same comment here, usually a FIXME comment is a \"forever\" comment in the code without a fix :) Unless you are planning to change it in near future. As you said you could return a map from DoxygenPreferences and make the DEF_* fields private if you want.",
+      "range": {
+        "startLine": 58,
+        "startChar": 3,
+        "endLine": 58,
+        "endChar": 56
+      },
+      "revId": "a2c4a46b815e183951c69e84b9efadfd7c42602e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

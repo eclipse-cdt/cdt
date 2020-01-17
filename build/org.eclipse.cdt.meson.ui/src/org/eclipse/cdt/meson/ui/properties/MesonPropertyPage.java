@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016,2018 IAR Systems AB
+ * Copyright (c) 2016,2020 IAR Systems AB
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,6 +53,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Property page for Meson projects.  For unconfigured projects, we use the meson command and parse
  * the output of the --help option.  Otherwise, we use the meson configure command to find current
@@ -89,28 +93,40 @@ public class MesonPropertyPage extends PropertyPage {
 			configured = buildPath.toFile().exists();
 			if (configured) {
 
-				ICommandLauncher launcher = CommandLauncherManager.getInstance()
-						.getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
-				launcher.setProject(project);
-				if (launcher instanceof ICBuildCommandLauncher) {
-					((ICBuildCommandLauncher) launcher).setBuildConfiguration(buildConfig);
-				}
-				Process p = launcher.execute(new Path("meson"), new String[] { "configure", buildDir }, //$NON-NLS-1$ //$NON-NLS-2$
-						new String[0], sourceDir, new NullProgressMonitor());
-				if (p != null) {
-					ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-					ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-					int rc = -1;
-					try {
-						if (launcher.waitAndRead(stdout, stderr, new NullProgressMonitor()) == ICommandLauncher.OK) {
-							p.waitFor();
-						}
-						rc = p.exitValue();
-					} catch (InterruptedException e) {
-						// ignore for now
+				IPath infoPath = new Path(buildDir).append("meson-info"); //$NON-NLS-1$
+				boolean newerMeson = infoPath.toFile().exists();
+				if (newerMeson) {
+					IPath optionsPath = infoPath.append("intro-buildoptions.json"); //$NON-NLS-1$
+					if (optionsPath.toFile().exists()) {
+						componentList = parseInfoOptions(optionsPath, composite);
+					} else {
+						return null;
 					}
-					if (rc == 0) {
-						componentList = parseConfigureOutput(stdout, composite);
+				} else {
+					ICommandLauncher launcher = CommandLauncherManager.getInstance()
+							.getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
+					launcher.setProject(project);
+					if (launcher instanceof ICBuildCommandLauncher) {
+						((ICBuildCommandLauncher) launcher).setBuildConfiguration(buildConfig);
+					}
+					Process p = launcher.execute(new Path("meson"), new String[] { "configure", buildDir }, //$NON-NLS-1$ //$NON-NLS-2$
+							new String[0], sourceDir, new NullProgressMonitor());
+					if (p != null) {
+						ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+						ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+						int rc = -1;
+						try {
+							if (launcher.waitAndRead(stdout, stderr,
+									new NullProgressMonitor()) == ICommandLauncher.OK) {
+								p.waitFor();
+							}
+							rc = p.exitValue();
+						} catch (InterruptedException e) {
+							// ignore for now
+						}
+						if (rc == 0) {
+							componentList = parseConfigureOutput(stdout, composite);
+						}
 					}
 				}
 			} else {
@@ -249,7 +265,7 @@ public class MesonPropertyPage extends PropertyPage {
 			args.add("configure"); //$NON-NLS-1$
 			for (IMesonPropertyPageControl control : componentList) {
 				if (control.isValueChanged()) {
-					args.add(control.getConfiguredString()); //$NON-NLS-1$ //$NON-NLS-2$
+					args.add(control.getConfiguredString());
 				}
 			}
 			if (args.size() == 2) {
@@ -268,7 +284,7 @@ public class MesonPropertyPage extends PropertyPage {
 				}
 				args.add(buildDir);
 				Process p = launcher.execute(new Path("meson"), args.toArray(new String[0]), new String[0], sourceDir, //$NON-NLS-1$
-						new NullProgressMonitor()); //$NON-NLS-2$
+						new NullProgressMonitor());
 				int rc = -1;
 				IConsole console = CCorePlugin.getDefault().getConsole();
 				console.start(project);
@@ -345,12 +361,12 @@ public class MesonPropertyPage extends PropertyPage {
 		try {
 			String output = stdout.toString(StandardCharsets.UTF_8.name()).replaceAll("\\r?\\n\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
 			String[] lines = output.split("--"); //$NON-NLS-1$
-			Pattern optionPattern = Pattern.compile("(([a-z-]+)\\s+(([A-Z_][A-Z_]+))?\\s*(\\{.*?\\})?([^\\[\\]]*))");
-			Pattern descPattern1 = Pattern.compile("([^\\.]+).*");
-			Pattern descPattern = Pattern.compile("([^\\(]*)(\\(default\\:\\s+([^\\)]+)\\).*)");
+			Pattern optionPattern = Pattern.compile("(([a-z-]+)\\s+(([A-Z_][A-Z_]+))?\\s*(\\{.*?\\})?([^\\[\\]]*))"); //$NON-NLS-1$
+			Pattern descPattern1 = Pattern.compile("([^\\.]+).*"); //$NON-NLS-1$
+			Pattern descPattern = Pattern.compile("([^\\(]*)(\\(default\\:\\s+([^\\)]+)\\).*)"); //$NON-NLS-1$
 			for (String line : lines) {
 				Matcher optionMatcher = optionPattern.matcher(line);
-				if (optionMatcher.matches() && !optionMatcher.group(2).equals("help")) {
+				if (optionMatcher.matches() && !optionMatcher.group(2).equals("help")) { //$NON-NLS-1$
 					if (optionMatcher.group(3) != null) {
 						String defaultValue = argMap.get(optionMatcher.group(2));
 						String description = optionMatcher.group(6);
@@ -409,7 +425,7 @@ public class MesonPropertyPage extends PropertyPage {
 			Pattern optionWithValuesPattern = Pattern.compile(Messages.MesonPropertyPage_option_with_values_pattern);
 			Pattern optionLine = Pattern.compile("(\\w+)\\s+([\\w,\\-,/]+)\\s+(.*)$"); //$NON-NLS-1$
 			Pattern optionWithValuesLine = Pattern
-					.compile("(\\w+)\\s+([\\w,\\-,/]+)\\s+\\[([\\w,\\-,/]+)((,\\s+[\\w,\\-]+)*)\\]\\s+(.*)$");
+					.compile("(\\w+)\\s+([\\w,\\-,/]+)\\s+\\[([\\w,\\-,/]+)((,\\s+[\\w,\\-]+)*)\\]\\s+(.*)$"); //$NON-NLS-1$
 			Pattern compilerOrLinkerArgs = Pattern.compile(Messages.MesonPropertyPage_compiler_or_link_args);
 			Pattern argLine = Pattern.compile("(\\w+)\\s+\\[([^\\]]*)\\]"); //$NON-NLS-1$
 			Pattern groupPattern = Pattern.compile("(([^:]*)):"); //$NON-NLS-1$
@@ -550,7 +566,7 @@ public class MesonPropertyPage extends PropertyPage {
 							String description = m4.group(6);
 							String[] values = new String[] { possibleValue };
 							if (!extraValues.isEmpty()) {
-								values = extraValues.split(",\\s+");
+								values = extraValues.split(",\\s+"); //$NON-NLS-1$
 								values[0] = possibleValue;
 							}
 							IMesonPropertyPageControl control = new MesonPropertyCombo(parent, name, values, value,
@@ -576,4 +592,89 @@ public class MesonPropertyPage extends PropertyPage {
 		return controls;
 	}
 
+	List<IMesonPropertyPageControl> parseInfoOptions(IPath optionsPath, Composite composite) {
+		List<IMesonPropertyPageControl> controls = new ArrayList<>();
+		ObjectMapper mapper = new ObjectMapper();
+		Composite parent = composite;
+		try {
+			JsonNode root = mapper.readTree(optionsPath.toFile());
+			if (!root.isArray()) {
+				return null;
+			}
+			String lastSection = ""; //$NON-NLS-1$
+			for (JsonNode node : root) {
+				IMesonPropertyPageControl control = null;
+				String type = node.path("type").asText(); //$NON-NLS-1$
+				String section = node.path("section").asText(); //$NON-NLS-1$
+				String name = null;
+				String value = null;
+				String description = null;
+				if (!section.equals(lastSection)) {
+					Group group = new Group(composite, SWT.BORDER);
+					group.setLayout(new GridLayout(2, true));
+					group.setLayoutData(new GridData(GridData.FILL_BOTH));
+					String sectionName = section + " options:"; //$NON-NLS-1$
+					sectionName = sectionName.substring(0, 1).toUpperCase() + sectionName.substring(1);
+					group.setText(sectionName);
+					parent = group;
+					lastSection = section;
+				}
+				switch (type) {
+				case "combo": //$NON-NLS-1$
+					name = node.path("name").asText(); //$NON-NLS-1$
+					value = node.path("value").asText(); //$NON-NLS-1$
+					description = node.path("description").asText(); //$NON-NLS-1$
+					JsonNode choices = node.path("choices"); //$NON-NLS-1$
+					ArrayList<String> choiceList = new ArrayList<>();
+					for (JsonNode choiceNode : choices) {
+						String choice = choiceNode.asText();
+						choiceList.add(choice);
+					}
+					control = new MesonPropertyCombo(parent, name, choiceList.toArray(new String[0]), value,
+							description);
+					controls.add(control);
+					break;
+				case "boolean": //$NON-NLS-1$
+					name = node.path("name").asText(); //$NON-NLS-1$
+					value = node.path("value").asText(); //$NON-NLS-1$
+					description = node.path("description").asText(); //$NON-NLS-1$
+					control = new MesonPropertyCheckbox(parent, name, Boolean.getBoolean(value), description);
+					controls.add(control);
+					break;
+				case "string": //$NON-NLS-1$
+					name = node.path("name").asText(); //$NON-NLS-1$
+					value = node.path("value").asText(); //$NON-NLS-1$
+					description = node.path("description").asText(); //$NON-NLS-1$
+					control = new MesonPropertyText(parent, name, value, description);
+					controls.add(control);
+					break;
+				case "array": //$NON-NLS-1$
+					name = node.path("name").asText(); //$NON-NLS-1$
+					value = new String(""); //$NON-NLS-1$
+					for (JsonNode val : node.path("value")) { ////$NON-NLS-1$
+						if (!value.isEmpty()) {
+							value += ","; //$NON-NLS-1$
+						}
+						value += val.asText();
+					}
+					description = node.path("description").asText(); //$NON-NLS-1$
+					control = new MesonPropertyText(parent, name, value, description);
+					controls.add(control);
+					break;
+				case "integer": //$NON-NLS-1$
+					name = node.path("name").asText(); //$NON-NLS-1$
+					value = node.path("value").asText(); //$NON-NLS-1$
+					description = node.path("description").asText(); //$NON-NLS-1$
+					control = new MesonPropertyInteger(parent, this, name, value, description);
+					controls.add(control);
+					break;
+				}
+			}
+		} catch (JsonProcessingException e) {
+			Activator.log(e);
+		} catch (IOException e) {
+			Activator.log(e);
+		}
+		return controls;
+	}
 }

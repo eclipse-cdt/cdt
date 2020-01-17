@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Red Hat Inc. and others.
+ * Copyright (c) 2018, 2020 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ public class MesonPropertyCombo implements IMesonPropertyPageControl {
 		this.initialValue = initialValue;
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(name);
+		label.setToolTipText(tooltip);
 		label.setLayoutData(new GridData());
 		combo = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
 		GridData data = new GridData(GridData.FILL_BOTH);

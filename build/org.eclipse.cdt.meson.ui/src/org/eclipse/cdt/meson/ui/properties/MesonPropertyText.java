@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Red Hat Inc. and others.
+ * Copyright (c) 2018, 2020 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,13 +33,13 @@ public class MesonPropertyText implements IMesonPropertyPageControl {
 		this.initialValue = initialValue;
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(name);
+		label.setToolTipText(tooltip);
 		label.setLayoutData(new GridData());
 		text = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
 		text.setLayoutData(data);
 		text.setText(initialValue);
-		text.setToolTipText(tooltip);
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class MesonPropertyText implements IMesonPropertyPageControl {
 		if (value != null && !value.isEmpty()) {
 			return "--" + getFieldName() + "=" + getFieldValue(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override

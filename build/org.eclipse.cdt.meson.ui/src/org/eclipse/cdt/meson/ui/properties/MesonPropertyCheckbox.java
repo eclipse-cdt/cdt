@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Red Hat Inc. and others.
+ * Copyright (c) 2018, 2020 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,7 +40,14 @@ public class MesonPropertyCheckbox implements IMesonPropertyPageControl {
 		data2.grabExcessHorizontalSpace = true;
 		data2.horizontalSpan = 1;
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(tooltip);
+		String labelText = tooltip;
+		if (tooltip.length() > 15) {
+			int period = labelText.indexOf("."); //$NON-NLS-1$
+			if (period > 0 && period < tooltip.length() - 1) {
+				labelText = tooltip.substring(0, period + 1);
+			}
+		}
+		label.setText(labelText);
 		label.setLayoutData(data2);
 	}
 

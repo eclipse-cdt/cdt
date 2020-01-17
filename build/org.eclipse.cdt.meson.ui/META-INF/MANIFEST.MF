@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: org.eclipse.cdt.meson.ui;singleton:=true
-Bundle-Version: 1.0.300.qualifier
+Bundle-Version: 1.0.400.qualifier
 Bundle-Vendor: %vendorName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: org.eclipse.cdt.meson.ui.Activator
@@ -19,5 +19,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",
  org.eclipse.core.resources;bundle-version="3.12.0",
  org.eclipse.debug.core;bundle-version="3.11.0",
  org.eclipse.cdt.launch;bundle-version="9.2.0",
- org.eclipse.debug.ui;bundle-version="3.12.50"
+ org.eclipse.debug.ui;bundle-version="3.12.50",
+ com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider;bundle-version="2.9.9",
+ com.fasterxml.jackson.core.jackson-databind;bundle-version="2.9.93",
+ com.fasterxml.jackson.core.jackson-core;bundle-version="2.9.9"
 Automatic-Module-Name: org.eclipse.cdt.meson.ui

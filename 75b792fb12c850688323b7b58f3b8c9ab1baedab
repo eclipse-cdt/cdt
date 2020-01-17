@@ -1,0 +1,158 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b473f6f9_8a487cd0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-17T15:59:06Z",
+      "side": 1,
+      "message": "Description of commit does not match contents",
+      "range": {
+        "startLine": 7,
+        "startChar": 1,
+        "endLine": 7,
+        "endChar": 63
+      },
+      "revId": "75b792fb12c850688323b7b58f3b8c9ab1baedab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "98c11623_0207aae7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-17T15:59:06Z",
+      "side": 1,
+      "message": "These seem more like deltas to previous commits in same gerrit.",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 45
+      },
+      "revId": "75b792fb12c850688323b7b58f3b8c9ab1baedab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cb859656_15cbc42b",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/internal/tests/OptionsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-17T15:59:06Z",
+      "side": 1,
+      "message": "Junit4 style tests?",
+      "revId": "75b792fb12c850688323b7b58f3b8c9ab1baedab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84cd8b43_75f806e0",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/internal/tests/OptionsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-17T15:59:06Z",
+      "side": 1,
+      "message": "I don\u0027t understand this - assertEquals call should be unreachable correct?",
+      "range": {
+        "startLine": 47,
+        "startChar": 3,
+        "endLine": 47,
+        "endChar": 15
+      },
+      "revId": "75b792fb12c850688323b7b58f3b8c9ab1baedab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a339742_efb6b581",
+        "filename": "core/org.eclipse.cdt.core.tests/suite/org/eclipse/cdt/core/suite/AutomatedIntegrationSuite.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-17T15:59:06Z",
+      "side": 1,
+      "message": "suite.addTest(new JUnit4TestAdapter(OptionsTest.class));",
+      "revId": "75b792fb12c850688323b7b58f3b8c9ab1baedab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b0d7055_3a32b85c",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/internal/core/options/OptionMetadata.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-17T15:59:06Z",
+      "side": 1,
+      "message": "Some API docs please",
+      "revId": "75b792fb12c850688323b7b58f3b8c9ab1baedab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a901dae5_ebe442c9",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/internal/core/options/OptionStorage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-17T15:59:06Z",
+      "side": 1,
+      "message": "Some API docs please.\n\nIn particular that UnsupportedOperationException can be raised and whether inputs/outputs are nullable.",
+      "revId": "75b792fb12c850688323b7b58f3b8c9ab1baedab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c715a326_e99733c5",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/internal/core/options/OptionStorage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-17T15:59:06Z",
+      "side": 1,
+      "message": "If result is nullable, Optional\u003cV\u003e return type?",
+      "revId": "75b792fb12c850688323b7b58f3b8c9ab1baedab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

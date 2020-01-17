@@ -45,7 +45,7 @@
 		<swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
 
 		<!-- TODO: remove dep on simrel site -->
-		<platform-release-site>http://download.eclipse.org/staging/2018-12/</platform-release-site>
+		<platform-release-site>http://download.eclipse.org/staging/2020-03/</platform-release-site>
 
 	</properties>
 

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
@@ -81,6 +82,8 @@ public abstract class VariableReadWriteFlags {
 			return READ; // dimension
 		} else if (parent instanceof IASTInitializerList) {
 			return rwInInitializerList((IASTInitializerList) parent, indirection);
+		} else if (parent instanceof IASTDeclSpecifier) {
+			return READ;
 		}
 		return READ | WRITE; // fallback
 	}

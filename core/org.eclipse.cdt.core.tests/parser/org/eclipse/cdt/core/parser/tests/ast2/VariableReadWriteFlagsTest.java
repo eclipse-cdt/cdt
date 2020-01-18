@@ -245,4 +245,16 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 		a.assertReadWriteFlags("a = arr[0];", "arr", READ);
 		a.assertReadWriteFlags("return arr[0];", "arr", READ);
 	}
+
+	//	class Test {
+	//  public:
+	//     int v;
+	//     void test() const {
+	//         decltype(v) o = 14;
+	//     }
+	//  };
+	public void testDeclType() throws Exception {
+		AssertionHelper a = getCPPAssertionHelper();
+		a.assertReadWriteFlags("decltype(v) o = 14;", "v", READ);
+	}
 }

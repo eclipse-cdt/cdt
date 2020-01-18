@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "53e1b207_d454df55",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-18T19:57:56Z",
+      "side": 1,
+      "message": "Some projects use that as a rule. I subscribe to should read\n\nIf applied, this commit will your subject line here\n\nhttps://chris.beams.io/posts/git-commit/",
+      "parentUuid": "7793c524_9f3f16df",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 63
+      },
+      "revId": "d720a6996d6cd1d98c8489657b0e46ec2d2fcbee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "13281dae_b6cff007",
         "filename": "core/org.eclipse.cdt.core/options/org/eclipse/cdt/core/options/OsgiPreferenceStorage.java",
         "patchSetId": 6

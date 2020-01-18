@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7793c524_9f3f16df",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-18T19:27:09Z",
+      "side": 1,
+      "message": "I was thinking that the first line should repeat the bug title - may be I\u0027m wrong.\nAnd I still think the content of commmit is described while referenced bug contains all the discussions",
+      "parentUuid": "48cefc9b_54dec1a4",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 63
+      },
+      "revId": "d720a6996d6cd1d98c8489657b0e46ec2d2fcbee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "13281dae_b6cff007",
         "filename": "core/org.eclipse.cdt.core/options/org/eclipse/cdt/core/options/OsgiPreferenceStorage.java",
         "patchSetId": 6
@@ -36,6 +60,24 @@
       "writtenOn": "2020-01-18T19:11:03Z",
       "side": 1,
       "message": "None of the tests test loading non-default value, this can be shown by replacing this if/else block with:\n\n\t\tif (consumable(valueClass)) {\n\t\t\treturn defaultValue;\n\t\t}\n\nand you will see all tests still pass.",
+      "revId": "d720a6996d6cd1d98c8489657b0e46ec2d2fcbee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c441366_29ac7aad",
+        "filename": "core/org.eclipse.cdt.core/options/org/eclipse/cdt/core/options/OsgiPreferenceStorage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-18T19:27:09Z",
+      "side": 1,
+      "message": "Agreed \"covered, but not tested\", need to use the same approach as for saving.",
+      "parentUuid": "13281dae_b6cff007",
       "revId": "d720a6996d6cd1d98c8489657b0e46ec2d2fcbee",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "298519ee_8ce0623e",
+        "filename": "core/org.eclipse.cdt.core/META-INF/MANIFEST.MF",
+        "patchSetId": 8
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-18T21:21:21Z",
+      "side": 1,
+      "message": "Now that you have split this package, should this one be strictly internal?",
+      "revId": "8dae0221143c2f437657268952d4017ebafa1b16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c4bc353_b2ae1c51",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/internal/tests/OsgiPreferenceStorageTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-18T19:11:03Z",
+      "side": 1,
+      "message": "Minor style issue: you could use assertTrue/assertFalse",
+      "range": {
+        "startLine": 47,
+        "startChar": 2,
+        "endLine": 47,
+        "endChar": 14
+      },
+      "revId": "b06dc8cf48684af8d4a6b95dd87a8abde4390bf2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b09a62d_a9140bee",
+        "filename": "core/org.eclipse.cdt.core/.classpath",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-18T19:11:03Z",
+      "side": 1,
+      "message": "+1 - i think this is the best solution rather than adding to existing src dirs.",
+      "revId": "b06dc8cf48684af8d4a6b95dd87a8abde4390bf2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "40632dc4_ef81ab41",
+        "filename": "core/org.eclipse.cdt.core/options/org/eclipse/cdt/core/options/OsgiPreferenceStorage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-18T19:11:03Z",
+      "side": 1,
+      "message": "static?",
+      "range": {
+        "startLine": 33,
+        "startChar": 29,
+        "endLine": 33,
+        "endChar": 36
+      },
+      "revId": "b06dc8cf48684af8d4a6b95dd87a8abde4390bf2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70607af4_f8348a26",
+        "filename": "core/org.eclipse.cdt.core/options/org/eclipse/cdt/core/options/OsgiPreferenceStorage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-18T19:11:03Z",
+      "side": 1,
+      "message": "Minor style issue: get rid of all the returns and have an else at the end",
+      "range": {
+        "startLine": 87,
+        "startChar": 3,
+        "endLine": 87,
+        "endChar": 10
+      },
+      "revId": "b06dc8cf48684af8d4a6b95dd87a8abde4390bf2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

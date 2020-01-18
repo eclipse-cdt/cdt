@@ -40,7 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalVariable;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPGlobalScope;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMGlobalScope;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")
@@ -141,7 +141,7 @@ public class SymbolShadowingChecker extends AbstractIndexAstChecker {
 				if (scope.getKind() != EScopeKind.eLocal)
 					return PROCESS_CONTINUE;
 				scope = scope.getParent();
-				while (scope != null && !(scope instanceof IProblemBinding) && !(scope instanceof PDOMCPPGlobalScope)) {
+				while (scope != null && !(scope instanceof IProblemBinding) && !(scope instanceof PDOMGlobalScope)) {
 					IBinding[] scopeBindings = scope.find(declarator.getName().toString(),
 							declarator.getTranslationUnit());
 

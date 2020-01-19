@@ -860,4 +860,36 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrorsOfKind(ER_ID);
 	}
+
+	//int main() {
+	//	int a, b;
+	//
+	//	switch (a) {
+	//	case 0:
+	//		switch (b) {
+	//		default: return 1;
+	//		}
+	//	case 1:
+	//		switch (b) {
+	//		case 1: return 1;
+	//		case 2: return 1;
+	//		case 3: return 1;
+	//		}
+	//	case 2:
+	//		switch (b) {
+	//		case 1: return 1;
+	//		case 2: return 1;
+	//		case 3: return 1;
+	//		default: return 1;
+	//		}
+	//	default:
+	//		return 1;
+	//	}
+	//	return 0;
+	//}
+	public void testWithSwitchInCase_Bug485246() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(ER_ID);
+	}
+
 }

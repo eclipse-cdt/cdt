@@ -175,34 +175,37 @@ public class CaseBreakChecker extends AbstractIndexAstChecker {
 		 * @param body
 		 * @return
 		 */
-		public boolean isFallThroughStamement(IASTStatement body, boolean inLoop) {
+		public boolean isFallThroughStamement(IASTStatement body, boolean checkOnlyExit) {
 			if (body == null)
 				return true;
 			if (body instanceof IASTCompoundStatement) {
 				IASTStatement[] statements = ((IASTCompoundStatement) body).getStatements();
 				if (statements.length > 0) {
-					return isFallThroughStamement(statements[statements.length - 1], inLoop);
+					return isFallThroughStamement(statements[statements.length - 1], checkOnlyExit);
 				}
 				return true;
 			} else if (body instanceof IASTDoStatement) {
 				IASTDoStatement dos = (IASTDoStatement) body;
 				return isFallThroughStamement(dos.getBody(), true);
+			} else if (body instanceof IASTSwitchStatement) {
+				IASTSwitchStatement switchs = (IASTSwitchStatement) body;
+				return isFallThroughStamement(switchs.getBody(), true);
 			} else if (body instanceof IASTForStatement) {
 				IASTForStatement fors = (IASTForStatement) body;
 				return isFallThroughStamement(fors.getBody(), true);
 			} else if (body instanceof IASTWhileStatement) {
 				IASTWhileStatement whiles = (IASTWhileStatement) body;
 				return isFallThroughStamement(whiles.getBody(), true);
-			} else if (inLoop && isExitStatement(body)) {
+			} else if (checkOnlyExit && isExitStatement(body)) {
 				return false;
-			} else if (!inLoop && isBreakOrExitStatement(body)) {
+			} else if (!checkOnlyExit && isBreakOrExitStatement(body)) {
 				return false;
 			} else if (body instanceof IASTExpressionStatement) {
 				return true;
 			} else if (body instanceof IASTIfStatement) {
 				IASTIfStatement ifs = (IASTIfStatement) body;
-				return isFallThroughStamement(ifs.getThenClause(), inLoop)
-						|| isFallThroughStamement(ifs.getElseClause(), inLoop);
+				return isFallThroughStamement(ifs.getThenClause(), checkOnlyExit)
+						|| isFallThroughStamement(ifs.getElseClause(), checkOnlyExit);
 			}
 			return true; // TODO
 		}

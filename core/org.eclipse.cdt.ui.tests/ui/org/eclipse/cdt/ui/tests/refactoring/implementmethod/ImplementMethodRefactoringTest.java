@@ -864,4 +864,17 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 		expectedFinalInfos = 1;
 		assertRefactoringSuccess();
 	}
+
+	//A.h
+	//
+	///*$*/int PrintfToStdStr(const char *pszFmt, ...);/*$$*/
+	//
+
+	//A.cpp
+	//====================
+	//int PrintfToStdStr(const char *pszFmt, ...) {
+	//}
+	public void testFreeFunctionWithVarArgs_Bug384793() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

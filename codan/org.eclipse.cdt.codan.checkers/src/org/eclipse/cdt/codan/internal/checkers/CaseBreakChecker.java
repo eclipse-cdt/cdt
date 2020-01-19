@@ -31,8 +31,10 @@ import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
@@ -43,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.parser.StandardAttributes;
 import org.eclipse.cdt.core.parser.util.AttributeUtil;
 
@@ -80,8 +83,12 @@ public class CaseBreakChecker extends AbstractIndexAstChecker {
 		 *         - "exit"
 		 */
 		protected boolean isBreakOrExitStatement(IASTStatement statement) {
-			return (statement instanceof IASTBreakStatement) || statement instanceof IASTReturnStatement
-					|| statement instanceof IASTContinueStatement || statement instanceof IASTGotoStatement
+			return (statement instanceof IASTBreakStatement) || statement instanceof IASTContinueStatement
+					|| isExitStatement(statement);
+		}
+
+		protected boolean isExitStatement(IASTStatement statement) {
+			return statement instanceof IASTReturnStatement || statement instanceof IASTGotoStatement
 					|| CxxAstUtils.isThrowStatement(statement) || CxxAstUtils.isExitStatement(statement);
 		}
 
@@ -127,7 +134,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker {
 							if (curr instanceof IASTNullStatement && (prev != prevCase)) {
 								curr = prev;
 							}
-							if (!isProducedByMacroExpansion(prevCase) && isFallThroughStamement(curr)) {
+							if (!isProducedByMacroExpansion(prevCase) && isFallThroughStamement(curr, false)) {
 								IASTComment comment = null;
 								if (next != null) {
 									comment = getLeadingComment(next);
@@ -168,22 +175,34 @@ public class CaseBreakChecker extends AbstractIndexAstChecker {
 		 * @param body
 		 * @return
 		 */
-		public boolean isFallThroughStamement(IASTStatement body) {
+		public boolean isFallThroughStamement(IASTStatement body, boolean inLoop) {
 			if (body == null)
 				return true;
 			if (body instanceof IASTCompoundStatement) {
 				IASTStatement[] statements = ((IASTCompoundStatement) body).getStatements();
 				if (statements.length > 0) {
-					return isFallThroughStamement(statements[statements.length - 1]);
+					return isFallThroughStamement(statements[statements.length - 1], inLoop);
 				}
 				return true;
-			} else if (isBreakOrExitStatement(body)) {
+			} else if (body instanceof IASTDoStatement) {
+				IASTDoStatement dos = (IASTDoStatement) body;
+				return isFallThroughStamement(dos.getBody(), true);
+			} else if (body instanceof IASTForStatement) {
+				IASTForStatement fors = (IASTForStatement) body;
+				return isFallThroughStamement(fors.getBody(), true);
+			} else if (body instanceof IASTWhileStatement) {
+				IASTWhileStatement whiles = (IASTWhileStatement) body;
+				return isFallThroughStamement(whiles.getBody(), true);
+			} else if (inLoop && isExitStatement(body)) {
+				return false;
+			} else if (!inLoop && isBreakOrExitStatement(body)) {
 				return false;
 			} else if (body instanceof IASTExpressionStatement) {
 				return true;
 			} else if (body instanceof IASTIfStatement) {
 				IASTIfStatement ifs = (IASTIfStatement) body;
-				return isFallThroughStamement(ifs.getThenClause()) || isFallThroughStamement(ifs.getElseClause());
+				return isFallThroughStamement(ifs.getThenClause(), inLoop)
+						|| isFallThroughStamement(ifs.getElseClause(), inLoop);
 			}
 			return true; // TODO
 		}

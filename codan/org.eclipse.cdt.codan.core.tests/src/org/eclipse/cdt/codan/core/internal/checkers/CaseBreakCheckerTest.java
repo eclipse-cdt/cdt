@@ -809,4 +809,55 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(9, 14);
 	}
+
+	//int main(int argc) {
+	//	switch(argc)
+	//	{
+	//	case 12:
+	//		for(;;) {
+	//			throw 12;
+	//		}
+	//	default:
+	//		break;
+	//	}
+	//	return 0;
+	//}
+	public void testWithForInCase_Bug515464() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(ER_ID);
+	}
+
+	//int main(int argc) {
+	//	switch(argc)
+	//	{
+	//	case 12:
+	//		while(1) {
+	//			throw 12;
+	//		}
+	//	default:
+	//		break;
+	//	}
+	//	return 0;
+	//}
+	public void testWithWhileInCase_Bug515464() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(ER_ID);
+	}
+
+	//int main(int argc) {
+	//	switch(argc)
+	//	{
+	//	case 12:
+	//		do {
+	//			throw 12;
+	//		} while(0);
+	//	default:
+	//		break;
+	//	}
+	//	return 0;
+	//}
+	public void testWithDoInCase_Bug515464() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(ER_ID);
+	}
 }

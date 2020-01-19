@@ -45,6 +45,8 @@ Export-Package: org.eclipse.cdt.core,
  org.eclipse.cdt.core.templateengine,
  org.eclipse.cdt.core.templateengine.process,
  org.eclipse.cdt.core.templateengine.process.processes,
+ org.eclipse.cdt.doxygen;x-friends:="org.eclipse.cdt.ui",
+ org.eclipse.cdt.doxygen.core;x-friends:="org.eclipse.cdt.ui",
  org.eclipse.cdt.internal.core;
   x-friends:="org.eclipse.cdt.codan.core.cxx,
    org.eclipse.cdt.debug.core,
@@ -82,7 +84,7 @@ Export-Package: org.eclipse.cdt.core,
    org.eclipse.cdt.debug.ui,
    org.eclipse.cdt.codan.ui",
  org.eclipse.cdt.internal.core.model.ext;x-friends:="org.eclipse.cdt.ui",
- org.eclipse.cdt.internal.core.options;x-friends:="org.eclipse.cdt.ui",
+ org.eclipse.cdt.internal.core.options;x-internal:=true,
  org.eclipse.cdt.internal.core.parser;x-internal:=true,
  org.eclipse.cdt.internal.core.parser.problem;x-internal:=true,
  org.eclipse.cdt.internal.core.parser.scanner;x-friends:="org.eclipse.cdt.ui",
@@ -129,6 +131,7 @@ Require-Bundle: org.eclipse.cdt.core.native;bundle-version="[5.10.100,6.0.0)";vi
  org.eclipse.core.runtime;bundle-version="[3.16.0,4.0.0)",
  org.eclipse.core.variables;bundle-version="[3.4.600,4.0.0)",
  org.eclipse.ltk.core.refactoring;bundle-version="[3.10.200,4.0.0)",
+ org.eclipse.osgi.services;bundle-version="[3.8.0,4.0.0)",
  org.eclipse.text;bundle-version="[3.9.0,4.0.0)",
  com.ibm.icu;bundle-version="4.4.2",
  com.google.gson,
@@ -137,4 +140,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.xml.bind;version="2.2.0"
 Automatic-Module-Name: org.eclipse.cdt.core
+Service-Component: OSGI-INF/*.xml
 

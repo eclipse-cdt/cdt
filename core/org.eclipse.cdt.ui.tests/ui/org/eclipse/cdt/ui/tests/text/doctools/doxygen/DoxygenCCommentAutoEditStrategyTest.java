@@ -13,7 +13,7 @@
  *     Sergey Prigogin (Google)
  *     Andrew Ferguson (Symbian)
  *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134, Bug 559193
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.doctools.doxygen;
 
@@ -23,12 +23,14 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.options.OptionStorage;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.doxygen.DoxygenMetadata;
+import org.eclipse.cdt.doxygen.core.DoxygenPreferences;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.doctools.DoxygenPreferences;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.text.AbstractAutoEditTest;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -36,6 +38,7 @@ import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 import org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenMultilineAutoEditStrategy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -48,6 +51,9 @@ import junit.framework.Test;
 public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	private HashMap<String, String> fOptions;
 	protected ICProject fCProject;
+	private DoxygenPreferences doxygenPreferences;
+	private OptionStorage workspaceStorage;
+	private DoxygenMetadata doxygenMetadata;
 
 	/**
 	 * @param name
@@ -65,14 +71,12 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		super.setUp();
 		fOptions = CCorePlugin.getOptions();
 		fCProject = CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null);
-		DoxygenPreferences pref = new DoxygenPreferences();
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, DoxygenPreferences.DEF_DOXYGEN_USE_BRIEF_TAG);
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF,
-				DoxygenPreferences.DEF_DOXYGEN_NEW_LINE_AFTER_BRIEF);
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS, DoxygenPreferences.DEF_DOXYGEN_USE_PRE_POST_TAGS);
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS, DoxygenPreferences.DEF_DOXYGEN_USE_JAVADOC_TAGS);
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS,
-				DoxygenPreferences.DEF_DOXYGEN_USE_STRUCTURED_COMMANDS);
+		DoxygenPreferences doxygenPreferences = EclipseContextFactory
+				.getServiceContext(CCorePlugin.getDefault().getBundle().getBundleContext())
+				.get(DoxygenPreferences.class);
+		doxygenMetadata = doxygenPreferences.metadata();
+		workspaceStorage = doxygenPreferences.workspaceStorage();
+		doxygenMetadata.booleanOptions().forEach(o -> workspaceStorage.save(o.defaultValue(), o));
 	}
 
 	/*
@@ -733,8 +737,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// */
 	//void foo() {}
 	public void testAutoDocCommentBrief() throws CoreException {
-		DoxygenPreferences pref = new DoxygenPreferences();
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
+		workspaceStorage.save(true, doxygenMetadata.useBriefTagOption());
 		assertAutoEditBehaviour();
 	}
 
@@ -746,9 +749,8 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// */
 	//void foo() {}
 	public void testAutoDocCommentBriefNoNewLine() throws CoreException {
-		DoxygenPreferences pref = new DoxygenPreferences();
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF, false);
+		workspaceStorage.save(true, doxygenMetadata.useBriefTagOption());
+		workspaceStorage.save(false, doxygenMetadata.newLineAfterBriefOption());
 		assertAutoEditBehaviour();
 	}
 
@@ -760,8 +762,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// */
 	//void foo() {}
 	public void testAutoDocCommentStructured() throws CoreException {
-		DoxygenPreferences pref = new DoxygenPreferences();
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS, true);
+		workspaceStorage.save(true, doxygenMetadata.useStructuralCommandsOption());
 		assertAutoEditBehaviour();
 	}
 
@@ -774,9 +775,8 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// */
 	//void foo() {}
 	public void testAutoDocCommentNoJavadoc() throws CoreException {
-		DoxygenPreferences pref = new DoxygenPreferences();
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS, false);
+		workspaceStorage.save(true, doxygenMetadata.useBriefTagOption());
+		workspaceStorage.save(false, doxygenMetadata.useJavadocStyleOption());
 		assertAutoEditBehaviour();
 	}
 
@@ -791,9 +791,8 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// */
 	//void foo() {}
 	public void testAutoDocCommentPrePostTags() throws CoreException {
-		DoxygenPreferences pref = new DoxygenPreferences();
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG, true);
-		pref.putBoolean(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS, true);
+		workspaceStorage.save(true, doxygenMetadata.useBriefTagOption());
+		workspaceStorage.save(true, doxygenMetadata.usePrePostTagOption());
 		assertAutoEditBehaviour();
 	}
 

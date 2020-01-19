@@ -825,4 +825,43 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 		assertRefactoringSuccess();
 	}
 
+	//A.h
+	//template <int N>
+	//struct Waldo {
+	//    /*$*/void find();/*$$*/
+	//};
+	//
+	//====================
+	//template <int N>
+	//struct Waldo {
+	//    void find();
+	//};
+	//
+	//template<int N>
+	//inline void Waldo<N>::find() {
+	//}
+	public void testTemplateParameters_Bug510289() throws Exception {
+		expectedFinalInfos = 1;
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//template <template<class> class N>
+	//struct Waldo {
+	//    /*$*/void find();/*$$*/
+	//};
+	//
+	//====================
+	//template <template<class> class N>
+	//struct Waldo {
+	//    void find();
+	//};
+	//
+	//template<template<class > class N>
+	//inline void Waldo<N>::find() {
+	//}
+	public void testTemplateTemplateParameters_Bug510289() throws Exception {
+		expectedFinalInfos = 1;
+		assertRefactoringSuccess();
+	}
 }

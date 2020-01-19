@@ -26,8 +26,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleTypeTemplateParameter;
@@ -117,6 +119,26 @@ public class NamespaceHelper {
 
 					CPPASTNamedTypeSpecifier namedTypeSpecifier = new CPPASTNamedTypeSpecifier();
 					namedTypeSpecifier.setName(simpleTypeTemplateParameter.getName().copy(CopyStyle.withLocations));
+					id.setDeclSpecifier(namedTypeSpecifier);
+
+					templateId.addTemplateArgument(id);
+				} else if (templateParameter instanceof ICPPASTParameterDeclaration) {
+					ICPPASTParameterDeclaration parDecl = (ICPPASTParameterDeclaration) templateParameter;
+
+					CPPASTTypeId id = new CPPASTTypeId();
+
+					CPPASTNamedTypeSpecifier namedTypeSpecifier = new CPPASTNamedTypeSpecifier();
+					namedTypeSpecifier.setName(parDecl.getDeclarator().getName().copy(CopyStyle.withLocations));
+					id.setDeclSpecifier(namedTypeSpecifier);
+
+					templateId.addTemplateArgument(id);
+				} else if (templateParameter instanceof ICPPASTTemplatedTypeTemplateParameter) {
+					ICPPASTTemplatedTypeTemplateParameter parDecl = (ICPPASTTemplatedTypeTemplateParameter) templateParameter;
+
+					CPPASTTypeId id = new CPPASTTypeId();
+
+					CPPASTNamedTypeSpecifier namedTypeSpecifier = new CPPASTNamedTypeSpecifier();
+					namedTypeSpecifier.setName(parDecl.getName().copy(CopyStyle.withLocations));
 					id.setDeclSpecifier(namedTypeSpecifier);
 
 					templateId.addTemplateArgument(id);

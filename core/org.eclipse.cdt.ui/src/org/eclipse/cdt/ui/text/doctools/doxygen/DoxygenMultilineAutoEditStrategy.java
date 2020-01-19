@@ -12,7 +12,7 @@
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134, Bug 559193
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools.doxygen;
 
@@ -49,17 +49,20 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.doxygen.DoxygenOptions;
+import org.eclipse.cdt.doxygen.core.DoxygenConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
-import org.eclipse.cdt.internal.ui.text.doctools.DoxygenPreferences;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * {@link IAutoEditStrategy} for adding Doxygen tags for comments.
@@ -105,23 +108,23 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	private boolean newLineAfterBrief;
 	private boolean usePrePostTag;
 
+	private final DoxygenConfiguration doxygenConfiguration;
+
 	public DoxygenMultilineAutoEditStrategy() {
+		doxygenConfiguration = EclipseContextFactory
+				.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
+				.get(DoxygenConfiguration.class);
 	}
 
 	private void refreshPreferences() {
 		Optional<IProject> project = getProject();
-		DoxygenPreferences pref = project.isPresent() ? new DoxygenPreferences(project.get())
-				: new DoxygenPreferences();
-		newLineAfterBrief = pref.getBoolean(DoxygenPreferences.DOXYGEN_NEW_LINE_AFTER_BRIEF,
-				DoxygenPreferences.DEF_DOXYGEN_NEW_LINE_AFTER_BRIEF);
-		useBriefTag = pref.getBoolean(DoxygenPreferences.DOXYGEN_USE_BRIEF_TAG,
-				DoxygenPreferences.DEF_DOXYGEN_USE_BRIEF_TAG);
-		useJavadocStyle = pref.getBoolean(DoxygenPreferences.DOXYGEN_USE_JAVADOC_TAGS,
-				DoxygenPreferences.DEF_DOXYGEN_USE_JAVADOC_TAGS);
-		usePrePostTag = pref.getBoolean(DoxygenPreferences.DOXYGEN_USE_PRE_POST_TAGS,
-				DoxygenPreferences.DEF_DOXYGEN_USE_PRE_POST_TAGS);
-		useStructuralCommands = pref.getBoolean(DoxygenPreferences.DOXYGEN_USE_STRUCTURAL_COMMANDS,
-				DoxygenPreferences.DEF_DOXYGEN_USE_STRUCTURED_COMMANDS);
+		DoxygenOptions options = project.isPresent() ? doxygenConfiguration.projectOptions(project.get())
+				: doxygenConfiguration.workspaceOptions();
+		newLineAfterBrief = options.newLineAfterBrief();
+		useBriefTag = options.useBriefTags();
+		useJavadocStyle = options.useJavadocStyle();
+		usePrePostTag = options.usePrePostTag();
+		useStructuralCommands = options.useStructuralCommands();
 	}
 
 	private String getPrefix() {

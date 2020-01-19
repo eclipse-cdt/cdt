@@ -11,17 +11,18 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134, Bug 559193
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
+import org.eclipse.cdt.doxygen.core.DoxygenPreferences;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
-import org.eclipse.cdt.internal.ui.text.doctools.DoxygenPreferences;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -32,6 +33,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Project property page for setting documentation comment owner.
@@ -49,8 +51,13 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 	protected Button fCheckbox;
 	protected Link fLink;
 
+	private final DoxygenPreferences doxygenPreferences;
+
 	public DocCommentOwnerBlock() {
 		fManager = DocCommentOwnerManager.getInstance();
+		doxygenPreferences = EclipseContextFactory
+				.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
+				.get(DoxygenPreferences.class);
 	}
 
 	void handleCheckBox() {
@@ -93,11 +100,11 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 		IProject project = getProject();
 		IDocCommentOwner prjOwner = DocCommentOwnerManager.getInstance().getCommentOwner(project);
 		fDocComboComposite = new DocCommentOwnerComposite(pane, prjOwner, dsc, msg);
+		fDocComboComposite.setDoxygenMetadata(doxygenPreferences.metadata());
 		fDocComboComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
 
 		fCheckbox.setSelection(fManager.projectDefinesOwnership(project));
-		DoxygenPreferences preferences = new DoxygenPreferences(project);
-		fDocComboComposite.initialize(preferences);
+		fDocComboComposite.initialize(doxygenPreferences.projectStorage(project));
 		handleCheckBox();
 	}
 
@@ -110,8 +117,7 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 			IDocCommentOwner newOwner = fDocComboComposite.getSelectedDocCommentOwner();
 			fManager.setCommentOwner(project, newOwner, true);
 		}
-		DoxygenPreferences preferences = new DoxygenPreferences(project);
-		fDocComboComposite.apply(preferences);
+		fDocComboComposite.apply(doxygenPreferences.projectStorage(project));
 	}
 
 	public IProject getProject() {

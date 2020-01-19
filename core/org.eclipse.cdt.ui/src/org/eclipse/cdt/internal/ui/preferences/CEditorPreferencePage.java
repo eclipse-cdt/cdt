@@ -15,7 +15,7 @@
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
  *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134, Bug 559193
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -26,18 +26,19 @@ import static org.eclipse.cdt.ui.PreferenceConstants.FORMATTING_SCOPE_STATEMENT;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.doxygen.core.DoxygenPreferences;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
-import org.eclipse.cdt.internal.ui.text.doctools.DoxygenPreferences;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.dialogs.DocCommentOwnerComposite;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -59,6 +60,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
 
 /**
@@ -94,7 +96,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		super();
 		Bundle jfaceText = Platform.getBundle("org.eclipse.jface.text"); //$NON-NLS-1$
 		formattingScopeForEmptySelectionSupported = jfaceText.getVersion().compareTo(new Version(3, 10, 0)) >= 0;
-		doxygenPreferences = new DoxygenPreferences();
+		doxygenPreferences = EclipseContextFactory
+				.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
+				.get(DoxygenPreferences.class);
 	}
 
 	@Override
@@ -350,6 +354,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		String msg = PreferencesMessages.CEditorPreferencePage_WorkspaceDefaultLabel;
 		IDocCommentOwner workspaceOwner = DocCommentOwnerManager.getInstance().getWorkspaceCommentOwner();
 		fDocCommentOwnerComposite = new DocCommentOwnerComposite(contents, workspaceOwner, dsc, msg);
+		fDocCommentOwnerComposite.setDoxygenMetadata(doxygenPreferences.metadata());
 		fDocCommentOwnerComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 
 		initialize();
@@ -368,14 +373,14 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 			fAppearanceColorList.select(0);
 			handleAppearanceColorListSelection();
 		});
-		fDocCommentOwnerComposite.initialize(doxygenPreferences);
+		fDocCommentOwnerComposite.initialize(doxygenPreferences.workspaceStorage());
 	}
 
 	@Override
 	public boolean performOk() {
 		DocCommentOwnerManager.getInstance()
 				.setWorkspaceCommentOwner(fDocCommentOwnerComposite.getSelectedDocCommentOwner());
-		fDocCommentOwnerComposite.apply(doxygenPreferences);
+		fDocCommentOwnerComposite.apply(doxygenPreferences.workspaceStorage());
 		return super.performOk();
 	}
 

@@ -326,6 +326,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		createdMethodDeclarator = nodeFactory.newFunctionDeclarator(qName);
 		createdMethodDeclarator.setConst(functionDeclarator.isConst());
 		createdMethodDeclarator.setRefQualifier(functionDeclarator.getRefQualifier());
+		createdMethodDeclarator.setVarArgs(functionDeclarator.takesVarArgs());
 		for (IASTPointerOperator pop : functionDeclarator.getPointerOperators()) {
 			createdMethodDeclarator.addPointerOperator(pop.copy(CopyStyle.withLocations));
 		}

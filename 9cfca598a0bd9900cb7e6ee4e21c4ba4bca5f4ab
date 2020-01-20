@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ed8e61b_d1dd51b7",
+        "filename": "core/org.eclipse.cdt.core/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-20T19:09:16Z",
+      "side": 1,
+      "message": "Is the idea internal for now, like options package?",
+      "revId": "9cfca598a0bd9900cb7e6ee4e21c4ba4bca5f4ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6f4c814d_d23b6435",
+        "filename": "core/org.eclipse.cdt.core/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-20T19:09:16Z",
+      "side": 1,
+      "message": ":-)",
+      "revId": "9cfca598a0bd9900cb7e6ee4e21c4ba4bca5f4ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eef574ca_a2109844",
+        "filename": "core/org.eclipse.cdt.core/doxygen/org/eclipse/cdt/doxygen/DoxygenMetadata.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-20T19:09:16Z",
+      "side": 1,
+      "message": "Is this a stable return order? i.e. can caller assume that the order returned is the order it should be displayed to the user?",
+      "revId": "9cfca598a0bd9900cb7e6ee4e21c4ba4bca5f4ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

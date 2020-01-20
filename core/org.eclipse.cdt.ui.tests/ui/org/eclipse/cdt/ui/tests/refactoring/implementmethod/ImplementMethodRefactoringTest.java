@@ -877,4 +877,22 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	public void testFreeFunctionWithVarArgs_Bug384793() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//class TestClass {
+	//public:
+	//	enum Inner {
+	//		ENUM_1,
+	//		ENUM_2
+	//	};
+	//	/*$*/Inner foo();/*$$*/
+	//};
+	//
+
+	//A.cpp
+	//====================
+	//TestClass::Inner TestClass::foo() {
+	//}
+	public void testWithInnerEnum_Bug452809() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
@@ -306,6 +308,17 @@ public class ImplementMethodRefactoring extends CRefactoring {
 				.getDeclarators()[0];
 		IASTNode declarationParent = methodDeclaration.getParent();
 
+		/**
+		 * In C++ it's possible that we used something declared inside a class for example,
+		 * so we are going to implement this method just cloning the decl specifier of declaration
+		 * we could miss the fully qualified name.
+		 */
+		if (declSpecifier instanceof ICPPASTNamedTypeSpecifier) {
+			ICPPASTQualifiedName qName = createQualifiedNameFor((IASTNamedTypeSpecifier) declSpecifier,
+					functionDeclarator, declarationParent, insertLocation, functionOffset);
+			((IASTNamedTypeSpecifier) declSpecifier).setName(qName);
+		}
+
 		if (declSpecifier instanceof ICPPASTDeclSpecifier) {
 			((ICPPASTDeclSpecifier) declSpecifier).setVirtual(false);
 			((ICPPASTDeclSpecifier) declSpecifier).setExplicit(false);
@@ -371,6 +384,26 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			IASTNode declarationParent, InsertLocation insertLocation, int functionOffset) throws CoreException {
 		int insertOffset = insertLocation.getInsertPosition();
 		return NameHelper.createQualifiedNameFor(functionDeclarator.getName(), tu,
+				functionOffset >= 0 ? functionOffset : functionDeclarator.getFileLocation().getNodeOffset(),
+				insertLocation.getTranslationUnit(), insertOffset, refactoringContext);
+	}
+
+	/**
+	 * Create the fully qualified name for the declaration specifier
+	 * @param declSpec The declaration specifier
+	 * @param functionDeclarator The function declaration
+	 * @param declarationParent Parent of declaration
+	 * @param insertLocation Insert position
+	 * @param functionOffset A function offset to determine fully qualified names. A negative number
+	 * can be used to use the node offset of method as returned by getFileLocation().getNodeOffset()
+	 * @return The fully qualified name
+	 * @throws CoreException
+	 */
+	private ICPPASTQualifiedName createQualifiedNameFor(IASTNamedTypeSpecifier declSpec,
+			IASTFunctionDeclarator functionDeclarator, IASTNode declarationParent, InsertLocation insertLocation,
+			int functionOffset) throws CoreException {
+		int insertOffset = insertLocation.getInsertPosition();
+		return NameHelper.createQualifiedNameFor(declSpec.getName(), tu,
 				functionOffset >= 0 ? functionOffset : functionDeclarator.getFileLocation().getNodeOffset(),
 				insertLocation.getTranslationUnit(), insertOffset, refactoringContext);
 	}

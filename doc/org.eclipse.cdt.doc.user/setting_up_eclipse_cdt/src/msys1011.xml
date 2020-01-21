@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:lang="en-US" xml:id="msys">
+  <title>MSYS 1.0.11</title>
+  <para>Unfortunately MinGW is not enough. We also need the MSYS tools
+        from the same download page. Go there again, to the "Current" section
+        and look for "MSYS Base System". Again, look for the file ending in
+        .exe, as this time: "MSYS-1.0.11.exe". You may have to expand the
+        "Release Candidate" section. Or you may use the link here to <link xlink:href="http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe">MSYS-1.0.11.exe</link>.
+        Download it and start it. You should get a window like this:</para>
+  <figure xml:id="msys1011install">
+    <title>MSYS install</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="setup1.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>If you accept all the default options, after a while there
+        should be a black and white window, similar to this:</para>
+  <figure xml:id="msys1011postinstall">
+    <title>MSYS asking for post-install</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="setup9.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>To continue the install type in y and then Enter. The next
+        question reads like this:</para>
+  <figure xml:id="msys1011mingw">
+    <title>MSYS asking for MinGW</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="setupa.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>Which you can also answer with y Enter. The next question is a
+        little bit more tricky:</para>
+  <figure xml:id="msys1011mingwpath">
+    <title>MSYS asking for path to MinGW</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="setupb.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>What they want to know is where you installed MinGW to and that
+        you replace all backward slashes (\) by forward slashes (/). If you
+        followed the instructions, the answer here will be:</para>
+  <programlisting>C:/MinGW</programlisting>
+  <para>Caveat: If you have not used the default paths, but instead have
+        installed MinGW in a different location, such as
+        <computeroutput>C:/Program Files/MinGW</computeroutput>, where the
+        path contains spaces and / or is longer than 8 characters you may have
+        to replace that particular path component with its DOS short pathname,
+        such as <computeroutput>C:/PROGRA~1/mingw</computeroutput>.</para>
+  <para>Caveat2: The installer may be case sensitive. Please make sure
+        you have written MinGW in the same capitalization as during your first
+        install, in some cases you will have to enter
+        <computeroutput>c:/mingw</computeroutput> (note
+        capitalization!).</para>
+  <para>The very last question just asks you to press a key:</para>
+  <figure xml:id="msys1011correctly">
+    <title>MSYS installing correctly</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="setupc.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>Where you can press any key you like to continue. Setup will
+        come back and ask you if you want to read a welcome note and the
+        README file. You probably don't want either one, but it does not hurt
+        to look. Anyways, once you hit "Finish" you are done with the setup.
+        Now you have to set up your Path environment variable.</para>
+  <figure xml:id="msys1011done">
+    <title>MSYS is done</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="setupd.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+</section>

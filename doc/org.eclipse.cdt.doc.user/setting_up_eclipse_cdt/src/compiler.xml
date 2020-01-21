@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:lang="en-US" xml:id="compiler">
+  <title>Setting up a compiler</title>
+  <para>Unfortunately Eclipse only provides the Integrated Development
+    Environment (IDE) but it is missing the actual compiler. To install a
+    compiler, please follow the instructions for your operating system.</para>
+  <section xml:id="wincompiler">
+    <title>Windows compiler</title>
+    <para>Windows doesn't come with a build-in compiler. You could try to
+      install Visual Studio, but it is tricky to get that working with
+      Eclipse. Therefore we will install <link xlink:href="http://www.mingw.org/wiki/msys">MSYS</link>. MSYS is part of
+      the <link xlink:href="http://www.mingw.org/">MinGW</link> suite, which
+      provides free development tools for Windows.</para>
+    <para>You will have to follow these 4 steps:</para>
+    <itemizedlist>
+      <listitem>
+        <para>Download and install MinGW</para>
+      </listitem>
+      <listitem>
+        <para>Download and install MSYS</para>
+      </listitem>
+      <listitem>
+        <para>Set your path environment variable</para>
+      </listitem>
+      <listitem>
+        <para>Restart Eclipse if it was started.</para>
+      </listitem>
+    </itemizedlist>
+    <xi:include href="mingwgetinst.xml"/>
+    <xi:include href="envwin.xml"/>
+  </section>
+  <section xml:id="linux">
+    <title>Linux / Unix Compiler</title>
+    <para>In most Linux and Unix distributions the compiler is already
+      installed. Check if you can run</para>
+    <programlisting>g++ --version</programlisting>
+    <para>and either</para>
+    <programlisting>make --version</programlisting>
+    <para>or</para>
+    <programlisting>gmake --version</programlisting>
+    <para>If both of them (<command>g++</command> and either
+      <command>make</command> or <command>gmake</command>) work then you are
+      already done. If not, please install those. This may be very different
+      depending on which Linux or Unix distribution you have. Install the
+      tools and continue with <xref linkend="eclipse"/>.</para>
+  </section>
+  <xi:include href="macosx.xml"/>
+</section>

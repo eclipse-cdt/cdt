@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="68">
+<target name="cdt" sequenceNumber="69">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
@@ -11,7 +11,7 @@
 <unit id="org.eclipse.jdt.annotation" version="0.0.0"/>
 <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.test.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/eclipse/updates/4.14/"/>
+<repository location="https://download.eclipse.org/eclipse/updates/4.15milestones/S-4.15M1-202001100905/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.linuxtools.docker.feature.feature.group" version="0.0.0"/>
@@ -54,7 +54,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <!-- OMG! We have circular dependency that involves 'java.package; org.eclipse.cdt.utils.pty 0.0.0' -->
-<repository location="https://download.eclipse.org/tools/cdt/releases/9.10/cdt-9.10.0/"/>
+<repository location="https://download.eclipse.org/tools/cdt/builds/9.11/cdt-9.11.0-2020-03-m1/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <!-- normalize org.eclipse.cdt\releng\org.eclipse.cdt.repo\category.xml to remove .source IUs below -->

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="69">
+<target name="cdt" sequenceNumber="70">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
@@ -48,25 +48,10 @@
 <repository location="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.launchbar.remote.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <!-- OMG! We have circular dependency that involves 'java.package; org.eclipse.cdt.utils.pty 0.0.0' -->
 <repository location="https://download.eclipse.org/tools/cdt/builds/9.11/cdt-9.11.0-2020-03-m1/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<!-- normalize org.eclipse.cdt\releng\org.eclipse.cdt.repo\category.xml to remove .source IUs below -->
-<unit id="org.eclipse.tools.templates.core" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.core.source" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.freemarker.java11" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.freemarker.source" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.freemarker.java11.source" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>
-<unit id="org.eclipse.tools.templates.ui.source" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.templates-1.1.2-simrel-2019-12-m3/"/>
+<!-- We explicitly have CDT in target platform so that developers can develop org.eclipse.cdt.core/ui without requiring all the projects from CDT in their workspace. -->
+	<unit id="org.eclipse.cdt.feature.group" version="9.11.0.202001140305"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <!-- We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group -->

@@ -148,18 +148,7 @@
         <repository
             url="https://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.templates-1.1.2-simrel-2019-12-m3/"/>
         <repository
-            url="https://download.eclipse.org/tools/gef/updates/legacy/integration/5.0.0_gef-legacy-master_2166/">
-          <annotation>
-            <detail
-                key="description">
-              <value>We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group</value>
-            </detail>
-          </annotation>
-        </repository>
-        <repository
             url="https://download.eclipse.org/tools/ptp/builds/remote/3.0.1/"/>
-        <repository
-            url="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/R-3.15.0-20190830034720/repository/"/>
       </repositoryList>
     </targlet>
   </setupTask>
@@ -320,20 +309,9 @@
             </annotation>
           </repository>
           <repository
-              url="https://download.eclipse.org/tools/gef/updates/legacy/integration/5.0.0_gef-legacy-master_2166/">
-            <annotation>
-              <detail
-                  key="description">
-                <value>We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group</value>
-              </detail>
-            </annotation>
-          </repository>
-          <repository
               url="https://download.eclipse.org/tools/orbit/downloads/2020-03/"/>
           <repository
               url="https://download.eclipse.org/tools/ptp/builds/remote/3.0.1/"/>
-          <repository
-              url="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/R-3.15.0-20190830034720/repository/"/>
         </repositoryList>
       </targlet>
     </setupTask>

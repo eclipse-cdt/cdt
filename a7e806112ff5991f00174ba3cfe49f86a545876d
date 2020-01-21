@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0f4c6f81_2a7ba362",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-21T20:13:56Z",
+      "side": 0,
+      "message": "update this too",
+      "range": {
+        "startLine": 93,
+        "startChar": 73,
+        "endLine": 93,
+        "endChar": 80
+      },
+      "revId": "a7e806112ff5991f00174ba3cfe49f86a545876d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

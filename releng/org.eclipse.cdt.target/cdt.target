@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="70">
+<target name="cdt" sequenceNumber="71">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
@@ -52,10 +52,6 @@
 <repository location="https://download.eclipse.org/tools/cdt/builds/9.11/cdt-9.11.0-2020-03-m1/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<!-- We need GEF (!) for org.eclipse.wst.xml_ui.feature.feature.group -->
-<repository location="https://download.eclipse.org/tools/gef/updates/legacy/integration/5.0.0_gef-legacy-master_2166"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
 <unit id="com.sun.xml.bind" version="0.0.0"/>
 <unit id="javax.activation" version="0.0.0"/>
@@ -80,10 +76,6 @@
 <unit id="org.eclipse.remote.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.remote.serial.feature.group" version="0.0.0"/>
 <repository location="https://download.eclipse.org/tools/ptp/builds/remote/3.0.1/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/webtools/downloads/drops/R3.15.0/R-3.15.0-20190830034720/repository/"/>
 </location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>

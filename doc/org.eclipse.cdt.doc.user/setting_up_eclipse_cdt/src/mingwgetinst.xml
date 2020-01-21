@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0" xml:id="mingw_plus_msys">
+  <title>MinGW + MSYS</title>
+  <para>First, you need to download MinGW. You can either click through the
+  websites mentioned above or go directly to the <link xlink:href="https://sourceforge.net/projects/mingw/files/">MinGW download
+  area</link>. Look for the Section "Automated MinGW Installer", then
+  "mingw-get-inst". There, download the newest subdirectory. and in there
+  download the file ending in .exe. The file name should be something like
+  "mingw-get-inst-20110802.exe". You can also download <link xlink:href="http://sourceforge.net/projects/mingw/files/Automated%20MinGW%20Installer/mingw-get-inst/mingw-get-inst-20110802/mingw-get-inst-20110802.exe/download">mingw-get-inst-200110802.exe</link>
+  from the link given here.</para>
+  <para>Make sure you install the program with Administrator Priviledges.
+  Right-click on the downloaded file, and select "Run as
+  Administrator".</para>
+  <figure xml:id="mingwgetinst1">
+    <title>MinGW-Get-Inst Setup</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="mingwgetinst1.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>Make sure the second screen tells you that this is an Administrator
+  install. If you don't get this screen, select "Cancel" and re-start as
+  administrator.</para>
+  <figure xml:id="mingwgetinst2">
+    <title>Make sure you do an Administrator install</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="mingwgetinst2.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>The next screen asks you if you want up-to-date versions of the files.
+  Tell the installer that you want do download the newest catalog data.</para>
+  <figure xml:id="mingwgetinst3">
+    <title>Select the latest version</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="mingwgetinst3.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+    <para>Next, you have to accept the License.</para>
+    <figure xml:id="mingwgetinstlicense">
+      <title>MinGW License</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="mingwgetinst4.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+      <para>The following screen allows you to select a directory to install
+      to. The default directory <computeroutput>C:\MinGW</computeroutput> is
+      fine. You can select almost anything you like.</para>
+      <note>
+        <para>Do not select a path containing spaces! This will lead to
+        trouble later on!</para>
+      </note>
+      <figure xml:id="mingwgetinstpath">
+        <title>Select a path for MinGW and MSYS</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="mingwgetinst5.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+    </figure>
+    <para>Next, you're asked if you want to create a start menu entry. This is
+    a good idea for checking the install, so do it.</para>
+    <figure xml:id="mingwgetinstmenu">
+      <title>Create a start menu entry</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="mingwgetinst6.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+      <para>On the next screen, you again have to change things. You have to
+      select "C++Compiler" and "MSYS Basic System". These two are necessary to
+      run the compiler and the build-system on Windows.</para>
+      <figure xml:id="mingwgetinstselect">
+        <title>Select "C++ Compiler" and "MSYS Basic System"</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="mingwgetinst7.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+    </figure>
+    <para>The next screen lets you check the installation. Make sure it looks
+    like this screenshot.</para>
+    <figure xml:id="mingwgetinstconfirm">
+      <title>Please check if the right options are selected</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="mingwgetinst8.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+  </figure>
+  <para>After selecting "Install", you have to wait for the installation
+  process to complete.</para>
+  <figure xml:id="mingwgetinstcatalogue">
+    <title>Installer updating its catalogue files</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="mingwgetinst9.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <figure xml:id="mingwgetinstdownload">
+    <title>Downloading and installing</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="mingwgetinst10.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <figure xml:id="mingwgetinstcomplete">
+    <title>Installation complete</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="mingwgetinst11.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+    <para>Once the installation is complete, hit "Finish".</para>
+  </figure>
+  <para>Checkpoint: You should be able to start MSYS by going to Start /
+  Programs / MinGW / MinGW Shell. A console window should open. There, the
+  following commands should give you some output:</para>
+  <programlisting>gcc --version
+g++ --version
+make --version</programlisting>
+  <para>Close the MSYS shell again. We'll make sure that these tools are
+  available for all Windows programs in the next section.</para>
+</section>

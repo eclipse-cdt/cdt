@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<info xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:lang="en-US">
+  <title>Setting up Eclipse CDT</title>
+  <subtitle>On Windows, Linux/Unix, OS X</subtitle>
+  <author>
+    <personname>
+      <firstname>Max</firstname>
+      <surname>Berger</surname>
+    </personname>
+    <email>max@berger.name</email>
+  </author>
+  <copyright>
+    <year>2005</year>
+    <year>2006</year>
+    <year>2007</year>
+    <year>2008</year>
+    <year>2009</year>
+    <year>2010</year>
+    <year>2011</year>
+    <year>2012</year>
+    <year>2013</year>
+    <year>2014</year>
+    <holder>Max Berger</holder>
+  </copyright>
+  <legalnotice xml:id="legalnotice">
+    <para>This howto has been avaiable under different versions at different times.</para>
+    <para>This document is licensed under the Eclipse Public License - v2.0 (EPL v2.0), or any later version. 
+    Please see https://www.eclipse.org/legal/epl-2.0/ for details.
+    </para>
+    <para>Versions between August 2011 and December 2019 where proprietary. They are not be copied, distributed, published, or larger
+    parts being cited without the consent of the author. Small excerpts may be cited if proper attribution including a link to the authors website is given. All rights
+    reserved.</para>
+    <para>Previous versions of this document (prior to August 2011) where
+    published under the GNU Free Documentation License (GFDL), Version 1.2.
+    Please refer to the appropriate document version should you want to chose
+    that license. Please note that the GFDL does not apply to newer versions,
+    e.g. this version of the document!</para>
+  </legalnotice>
+</info>

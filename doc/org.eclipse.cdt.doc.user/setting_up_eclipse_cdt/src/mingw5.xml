@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:lang="en-US" xml:id="mingw5">
+  <title>MinGW 5.x</title>
+  <para>First, you need to download MinGW. You can either click through
+        the websites mentioned above or go directly to the <link xlink:href="https://sourceforge.net/projects/mingw/files/">MinGW
+        download area</link>. Look for the Package "Automated MinGW
+        Installer". There, download the file ending in .exe. The file name
+        should be something like "MinGW-5.1.4.exe". You can also download
+        <link xlink:href="http://downloads.sourceforge.net/mingw/MinGW-5.1.4.exe?modtime=1209244789&amp;big_mirror=1">MinGW
+        Version 5.1.4</link> from the link given here.</para>
+  <para>You may also download an older version, and follow the
+        instructions given in <xref linkend="older"/>:</para>
+  <itemizedlist>
+    <listitem>
+      <para>You may download <link xlink:href="http://prdownloads.sourceforge.net/mingw/MinGW-4.1.0.exe?download">MinGW
+            4</link> and follow the instructions in <xref linkend="mingw4"/>.</para>
+    </listitem>
+    <listitem>
+      <para>You may download <link xlink:href="http://prdownloads.sourceforge.net/mingw/MinGW-3.1.0-1.exe?download">MinGW
+            3</link> and follow the instructions in <xref linkend="mingw3"/>.</para>
+    </listitem>
+  </itemizedlist>
+  <para>Most of the options in the MinGW 5 installer are pretty
+        straightforward. I will point out some of the more tricky
+        options.</para>
+  <para>The first one of such options is which "MinGW" package to
+        install. Any of those should work just fine, but I would recommend
+        <computeroutput>Current</computeroutput>.</para>
+  <figure xml:id="mingw5install">
+    <title>MinGW 5 install</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Mingw5_1.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>MinGW will ask which components to install. Either select
+        <computeroutput>All</computeroutput> or at least make sure that you
+        have the <computeroutput>g++ compiler</computeroutput> checked. This
+        is needed for C++ support.</para>
+  <figure xml:id="mingw5install2">
+    <title>MinGW 5 install (2)</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Mingw5_2.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>When asked for the install folder, please do not change it. You
+        will have a lot of trouble later on, especially if you chose a path
+        that contains spaces.</para>
+  <figure xml:id="mingw5install3">
+    <title>MinGW 5 install (3)</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Mingw5_3.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>That's already it for MinGW. There are two more steps: MSYS and
+        the Environment Variables.</para>
+  <para>Checkpoint: To test if everything worked, please reboot. Then
+        open up a terminal. (Start/Run, type CMD). Try these commands:</para>
+  <programlisting>gcc --version
+</programlisting>
+  <para>should print the version of gcc. If you get a "File not found",
+        try logging out and logging back in, or even rebooting your computer.
+        If it still does not work, you have not installed MinGW correctly. You
+        may also need to set your environment variables manually (see
+        below).</para>
+  <programlisting>g++ --version</programlisting>
+  <para>should print the version for g++. You did select the "g++
+        compiler" I hope. If not, install again!</para>
+</section>

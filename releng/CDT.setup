@@ -311,8 +311,6 @@
           <repository
               url="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
           <repository
-              url="https://download.eclipse.org/tools/cdt/launchbar/2.4/launchbar-2.4.1-simrel-2019-12-m3/"/>
-          <repository
               url="https://download.eclipse.org/tools/cdt/builds/9.11/cdt-9.11.0-2020-03-m1/">
             <annotation>
               <detail
@@ -321,8 +319,6 @@
               </detail>
             </annotation>
           </repository>
-          <repository
-              url="https://download.eclipse.org/tools/cdt/tools.templates/1.1/tools.templates-1.1.2-simrel-2019-12-m3/"/>
           <repository
               url="https://download.eclipse.org/tools/gef/updates/legacy/integration/5.0.0_gef-legacy-master_2166/">
             <annotation>

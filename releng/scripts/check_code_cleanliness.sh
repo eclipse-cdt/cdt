@@ -56,7 +56,9 @@ git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
     d=`dirname $i`;
     if test ! -e $d/feature.xml; then
         mkdir -p $d/.settings
-        cp $COREPROJECT/.settings/org.eclipse.jdt.* $COREPROJECT/.settings/org.eclipse.pde.* $d/.settings
+        cp $COREPROJECT/.settings/org.eclipse.jdt.* $d/.settings
+        cp $COREPROJECT/.settings/org.eclipse.pde.prefs $d/.settings
+        cp $COREPROJECT/.settings/org.eclipse.pde.api.tools.prefs $d/.settings        
         # For test plug-ins we are more lenient so don't warn on some items
         if echo $i | grep '\.tests[/\.]' > /dev/null; then
             sed -i \

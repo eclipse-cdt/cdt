@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "66f55cfd_ac47b401",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/dialogs/DocCommentOwnerComposite.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-22T22:05:18Z",
+      "side": 1,
+      "message": ":-) for private and not leaking API like fDocCombo",
+      "revId": "13ddacb772cac19948bae06843e04317af873088",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

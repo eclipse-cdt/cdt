@@ -11,7 +11,7 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - ongoing support
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
@@ -22,7 +22,6 @@ import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -33,7 +32,9 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @deprecated scheduled for deletion, replaced with {@link Combo}
  */
+@Deprecated
 public class DocCommentOwnerCombo extends Composite {
 	protected Combo fCombo;
 	protected IDocCommentOwner fOwners[], fInitialOwner;
@@ -89,17 +90,4 @@ public class DocCommentOwnerCombo extends Composite {
 		fCombo.setEnabled(enabled);
 	}
 
-	/**
-	 * @since 6.7
-	 */
-	public void addSelectionListener(SelectionListener listener) {
-		fCombo.addSelectionListener(listener);
-	}
-
-	/**
-	 * @since 6.7
-	 */
-	public void removeSelectionListener(SelectionListener listener) {
-		fCombo.removeSelectionListener(listener);
-	}
 }

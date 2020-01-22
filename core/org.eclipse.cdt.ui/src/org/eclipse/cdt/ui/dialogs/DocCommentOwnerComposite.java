@@ -11,17 +11,20 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134, Bug 559193
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - ongoing support
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.options.OptionMetadata;
 import org.eclipse.cdt.core.options.OptionStorage;
 import org.eclipse.cdt.doxygen.DoxygenMetadata;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -30,6 +33,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -41,14 +45,23 @@ import org.eclipse.swt.widgets.Label;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DocCommentOwnerComposite extends Composite {
+	/**
+	 * @deprecated will throw {@link NullPointerException} on attempt to access
+	 */
+	@Deprecated
 	protected DocCommentOwnerCombo fDocCombo;
-	protected Label desc, comboLabel;
+	protected Label desc;
+	protected Label comboLabel;
 	protected Group group;
+
+	private Combo combo;
+	private final IDocCommentOwner fOwners[];
 
 	private final Map<OptionMetadata<Boolean>, Button> buttons;
 
 	public DocCommentOwnerComposite(Composite parent, IDocCommentOwner initialOwner, String description, String label) {
 		super(parent, SWT.NONE);
+		fOwners = getNontestOwners();
 		buttons = new LinkedHashMap<>();
 		GridLayout gl = new GridLayout();
 		gl.marginHeight = gl.marginWidth = 0;
@@ -66,12 +79,42 @@ public class DocCommentOwnerComposite extends Composite {
 
 		comboLabel = new Label(group, SWT.NONE);
 		comboLabel.setText(label);
+		combo = createCombo(group, initialOwner);
+		combo.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> recheckButtons()));
+		selectDocumentOwner(initialOwner, combo);
+	}
 
-		fDocCombo = new DocCommentOwnerCombo(group, SWT.NONE, initialOwner) {
-		};
-		gd = GridDataFactory.fillDefaults().grab(true, false).create();
-		fDocCombo.setLayoutData(gd);
-		fDocCombo.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> recheckButtons()));
+	private Combo createCombo(Composite parent, IDocCommentOwner initialOwner) {
+		String[] items = new String[fOwners.length + 1];
+		items[0] = DialogsMessages.DocCommentOwnerCombo_None;
+		for (int i = 0; i < fOwners.length; i++) {
+			items[i + 1] = fOwners[i].getName();
+		}
+		Combo created = ControlFactory.createSelectCombo(parent, items, DialogsMessages.DocCommentOwnerCombo_None);
+		return created;
+	}
+
+	private void selectDocumentOwner(IDocCommentOwner owner, Combo created) {
+		for (int i = 0; i < fOwners.length; i++) {
+			if (fOwners[i].getID().equals(owner.getID())) {
+				created.select(i + 1);
+				return;
+			}
+		}
+		created.select(0);
+	}
+
+	/**
+	 * @return the array of registered doc-comment owners, filtering out those from the
+	 * test plug-in.
+	 */
+	private IDocCommentOwner[] getNontestOwners() {
+		List<IDocCommentOwner> result = new ArrayList<>();
+		for (IDocCommentOwner owner : DocCommentOwnerManager.getInstance().getRegisteredOwners()) {
+			if (owner.getID().indexOf(".test.") == -1) //$NON-NLS-1$
+				result.add(owner);
+		}
+		return result.toArray(new IDocCommentOwner[result.size()]);
 	}
 
 	/**
@@ -101,7 +144,8 @@ public class DocCommentOwnerComposite extends Composite {
 	}
 
 	public IDocCommentOwner getSelectedDocCommentOwner() {
-		return fDocCombo.getSelectedDocCommentOwner();
+		int index = combo.getSelectionIndex();
+		return index == 0 ? NullDocCommentOwner.INSTANCE : fOwners[index - 1];
 	}
 
 	/**
@@ -134,14 +178,14 @@ public class DocCommentOwnerComposite extends Composite {
 	public void setEnabled(boolean enabled) {
 		desc.setEnabled(enabled);
 		comboLabel.setEnabled(enabled);
-		fDocCombo.setEnabled(enabled);
+		combo.setEnabled(enabled);
 		group.setEnabled(enabled);
 		recheckButtons();
 	}
 
 	void recheckButtons() {
-		boolean doxygenEnabled = fDocCombo.isEnabled() && DocCommentOwnerManager.DOXYGEN_CDT_DOC_ONWER_ID
-				.equals(fDocCombo.getSelectedDocCommentOwner().getID());
+		boolean doxygenEnabled = combo.isEnabled()
+				&& DocCommentOwnerManager.DOXYGEN_CDT_DOC_ONWER_ID.equals(getSelectedDocCommentOwner().getID());
 		buttons.values().forEach(b -> b.setEnabled(doxygenEnabled));
 	}
 

@@ -51,11 +51,6 @@ public class RemoteTreeViewer extends TreeViewer {
 			setSystem(true);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (getControl().isDisposed() || element == null) {
@@ -114,7 +109,6 @@ public class RemoteTreeViewer extends TreeViewer {
 
 		/**
 		 * Constucts a job to select the given element.
-		 * 
 		 */
 		public SelectionJob() {
 			super("Selection"); //$NON-NLS-1$
@@ -122,11 +116,6 @@ public class RemoteTreeViewer extends TreeViewer {
 			setSystem(true);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (getControl().isDisposed() || selection == null) {
@@ -253,46 +242,26 @@ public class RemoteTreeViewer extends TreeViewer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public synchronized void add(Object parentElement, Object childElement) {
 		super.add(parentElement, childElement);
 		runDeferredUpdates();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
-	public synchronized void add(Object parentElement, Object[] childElements) {
+	public synchronized void add(Object parentElement, Object... childElements) {
 		super.add(parentElement, childElements);
 		runDeferredUpdates();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object)
-	 */
 	@Override
 	public synchronized void remove(Object element) {
 		validateDeferredUpdates(element);
 		super.remove(element);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
-	 */
 	@Override
-	public synchronized void remove(Object[] elements) {
+	public synchronized void remove(Object... elements) {
 		for (Object element : elements) {
 			validateDeferredUpdates(element);
 		}

@@ -610,25 +610,7 @@ public class Conversions {
 		data.setFunctionArguments(false, expandedArgs);
 		data.fNoNarrowing = true;
 
-		// 13.3.3.1.4
-		ICPPConstructor[] filteredConstructors = constructors;
-		if (expandedArgs.length == 1) {
-			filteredConstructors = new ICPPConstructor[constructors.length];
-			int j = 0;
-			for (ICPPConstructor ctor : constructors) {
-				if (ctor.getRequiredArgumentCount() < 2) {
-					IType[] ptypes = ctor.getType().getParameterTypes();
-					if (ptypes.length > 0) {
-						IType ptype = getNestedType(ptypes[0], TDEF | REF | CVTYPE);
-						if (!t.isSameType(ptype)) {
-							filteredConstructors[j++] = ctor;
-						}
-					}
-				}
-			}
-		}
-
-		final IBinding result = CPPSemantics.resolveFunction(data, filteredConstructors, true, false);
+		final IBinding result = CPPSemantics.resolveFunction(data, constructors, true, false);
 		final Cost c;
 		if (result instanceof ICPPMethod) {
 			if (!isDirect && ((ICPPMethod) result).isExplicit()) {

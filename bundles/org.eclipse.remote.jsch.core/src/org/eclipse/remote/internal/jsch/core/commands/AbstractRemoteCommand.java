@@ -82,7 +82,7 @@ public abstract class AbstractRemoteCommand<T> {
 			if (fWorkPercentFactor < 0) {
 				taskName.append(MessageFormat.format(Messages.AbstractRemoteCommand_format1, new Object[] { workToDate, size }));
 			} else {
-				Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
+				Double workPercent = Double.valueOf(fWorkPercentFactor * fWorkToDate);
 				taskName.append(MessageFormat.format(Messages.AbstractRemoteCommand_format2,
 						new Object[] { workToDate, size, fMaxWork, fMaxWorkSize, workPercent }));
 			}

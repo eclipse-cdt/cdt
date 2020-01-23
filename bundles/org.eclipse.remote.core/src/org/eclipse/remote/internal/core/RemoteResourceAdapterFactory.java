@@ -32,8 +32,7 @@ public class RemoteResourceAdapterFactory implements IAdapterFactory {
 
 	private Map<String, RemoteResourceFactory> fResourceFactory;
 
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType == IRemoteResource.class) {
 			if (adaptableObject instanceof IResource) {
 				loadExtensions();
@@ -43,21 +42,20 @@ public class RemoteResourceAdapterFactory implements IAdapterFactory {
 						if (resource.getProject().hasNature(nature)) {
 							RemoteResourceFactory factory = fResourceFactory.get(nature);
 							if (factory != null) {
-								return factory.getRemoteResource(resource);
+								return adapterType.cast(factory.getRemoteResource(resource));
 							}
 						}
 					} catch (CoreException e) {
 						// Treat as failure
 					}
 				}
-				return new LocalResource(resource);
+				return adapterType.cast(new LocalResource(resource));
 			}
 		}
 		return null;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { IRemoteResource.class };
 	}
 

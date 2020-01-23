@@ -107,11 +107,10 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IWorkbenchAdapter.class.equals(adapter)) {
-			return this;
+			return adapter.cast(this);
 		}
 		return null;
 	}
@@ -146,14 +145,13 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 	 *            type to adapt to
 	 * @return a representation of sourceObject that is assignable to the adapter type, or null if no such representation exists
 	 */
-	@SuppressWarnings("rawtypes")
-	protected Object getAdapter(Object sourceObject, Class adapterType) {
+	protected <T> T getAdapter(Object sourceObject, Class<T> adapterType) {
 		Assert.isNotNull(adapterType);
 		if (sourceObject == null) {
 			return null;
 		}
 		if (adapterType.isInstance(sourceObject)) {
-			return sourceObject;
+			return adapterType.cast(sourceObject);
 		}
 
 		if (sourceObject instanceof IAdaptable) {
@@ -163,14 +161,14 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 			if (result != null) {
 				// Sanity-check
 				Assert.isTrue(adapterType.isInstance(result));
-				return result;
+				return adapterType.cast(result);
 			}
 		}
 
 		if (!(sourceObject instanceof PlatformObject)) {
 			Object result = Platform.getAdapterManager().getAdapter(sourceObject, adapterType);
 			if (result != null) {
-				return result;
+				return adapterType.cast(result);
 			}
 		}
 

@@ -420,7 +420,7 @@ public class ProxyConnectionPage extends WizardPage {
 		if (data instanceof GridData) {
 			GC gc = new GC(text);
 			FontMetrics fm = gc.getFontMetrics();
-			int width = chars * fm.getAverageCharWidth();
+			int width = (int) (chars * fm.getAverageCharacterWidth());
 			gc.dispose();
 			((GridData) data).widthHint = width;
 		}

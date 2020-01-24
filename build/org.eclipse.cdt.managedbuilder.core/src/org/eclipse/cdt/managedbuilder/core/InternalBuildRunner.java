@@ -110,14 +110,13 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 					new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
 			IBuildDescription des = BuildDescriptionManager.createBuildDescription(configuration, cBS, delta, flags);
-			DescriptionBuilder dBuilder = null;
-			if (!isParallel) {
-				dBuilder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr, cBS);
-				if (dBuilder.getNumCommands() <= 0) {
-					buildRunnerHelper.printLine(ManagedMakeMessages
-							.getFormattedString("ManagedMakeBuilder.message.no.build", project.getName())); //$NON-NLS-1$
-					return false;
-				}
+			DescriptionBuilder dBuilder;
+
+			dBuilder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr, cBS);
+			if (dBuilder.getNumCommands() <= 0) {
+				buildRunnerHelper.printLine(ManagedMakeMessages
+						.getFormattedString("ManagedMakeBuilder.message.no.build", project.getName())); //$NON-NLS-1$
+				return false;
 			}
 
 			buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, TICKS_DELETE_MARKERS,
@@ -139,8 +138,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			int status;
 			epm.deferDeDuplication();
 			try {
-
-				if (dBuilder != null) {
+				if (!isParallel) {
 					status = dBuilder.build(stdout, stderr, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				} else {

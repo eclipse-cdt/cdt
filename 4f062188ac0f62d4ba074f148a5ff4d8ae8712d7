@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d60a8b2b_aa18b48e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-24T10:19:44Z",
+      "side": 1,
+      "message": "Can you fix your name in git please?",
+      "revId": "4f062188ac0f62d4ba074f148a5ff4d8ae8712d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

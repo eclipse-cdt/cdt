@@ -16,6 +16,23 @@
       "revId": "4f062188ac0f62d4ba074f148a5ff4d8ae8712d7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "52ed8226_a387ac5e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/InternalBuildRunner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-24T11:15:49Z",
+      "side": 1,
+      "message": "Minor style comment: let\u0027s initialize it just here",
+      "revId": "4f062188ac0f62d4ba074f148a5ff4d8ae8712d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

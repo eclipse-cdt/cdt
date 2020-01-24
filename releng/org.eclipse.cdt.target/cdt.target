@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="71">
+<target name="cdt" sequenceNumber="72">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
@@ -77,7 +77,7 @@
 <unit id="org.eclipse.remote.console.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.remote.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.remote.serial.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/ptp/builds/remote/3.0.1/"/>
+<repository location="https://download.eclipse.org/tools/ptp/builds/remote/3.0/2020-03-M2/"/>
 </location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>

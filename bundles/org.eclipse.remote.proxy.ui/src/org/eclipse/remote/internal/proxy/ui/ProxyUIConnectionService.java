@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Oak Ridge National Laboratory and others.
+ * Copyright (c) 2016, 2020 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@ package org.eclipse.remote.internal.proxy.ui;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -61,17 +60,14 @@ public class ProxyUIConnectionService extends AbstractRemoteUIConnectionService 
 	@Override
 	public void openConnectionWithProgress(Shell shell, IRunnableContext context, final IRemoteConnection connection) {
 		if (!connection.isOpen()) {
-			IRunnableWithProgress op = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						connection.open(monitor);
-					} catch (RemoteConnectionException e) {
-						throw new InvocationTargetException(e);
-					}
-					if (monitor.isCanceled()) {
-						throw new InterruptedException();
-					}
+			IRunnableWithProgress op = monitor -> {
+				try {
+					connection.open(monitor);
+				} catch (RemoteConnectionException e) {
+					throw new InvocationTargetException(e);
+				}
+				if (monitor.isCanceled()) {
+					throw new InterruptedException();
 				}
 			};
 			try {

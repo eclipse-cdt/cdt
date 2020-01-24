@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems, and others.
+ * Copyright (c) 2015, 2020 QNX Software Systems, and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,7 @@ package org.eclipse.remote.serial.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
@@ -59,14 +57,11 @@ public class SerialPortConnectionsUI extends AbstractRemoteUIConnectionService {
 	@Override
 	public void openConnectionWithProgress(Shell shell, IRunnableContext context, final IRemoteConnection connection) {
 		try {
-			context.run(false, true, new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						connection.open(monitor);
-					} catch (RemoteConnectionException e) {
-						Activator.log(e.getStatus());
-					}
+			context.run(false, true, monitor -> {
+				try {
+					connection.open(monitor);
+				} catch (RemoteConnectionException e) {
+					Activator.log(e.getStatus());
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e) {

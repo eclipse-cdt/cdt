@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Oak Ridge National Laboratory and others.
+ * Copyright (c) 2016, 2020 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,13 +84,10 @@ public class ProxyUserAuthenticator implements IUserAuthenticatorService {
 			}
 		}
 
-		display.syncExec(new Runnable() {
-			@Override
-			public void run() {
-				final MessageDialog dialog = new MessageDialog(display.getActiveShell(), title, null /* title image */, message,
-						promptType, buttons, defaultResponseIndex);
-				retval[0] = dialog.open();
-			}
+		display.syncExec(() -> {
+			final MessageDialog dialog = new MessageDialog(display.getActiveShell(), title, null /* title image */, message,
+					promptType, buttons, defaultResponseIndex);
+			retval[0] = dialog.open();
 		});
 		return promptResponses[retval[0]];
 	}

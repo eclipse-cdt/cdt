@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems, and others.
+ * Copyright (c) 2015, 2020 QNX Software Systems, and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.remote.telnet.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -60,17 +59,14 @@ public class TelnetConnectionsUI extends AbstractRemoteUIConnectionService {
 	@Override
 	public void openConnectionWithProgress(Shell shell, IRunnableContext context, final IRemoteConnection connection) {
 		try {
-			IRunnableWithProgress op = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						connection.open(monitor);
-					} catch (RemoteConnectionException e) {
-						throw new InvocationTargetException(e);
-					}
-					if (monitor.isCanceled()) {
-						throw new InterruptedException();
-					}
+			IRunnableWithProgress op = monitor -> {
+				try {
+					connection.open(monitor);
+				} catch (RemoteConnectionException e) {
+					throw new InvocationTargetException(e);
+				}
+				if (monitor.isCanceled()) {
+					throw new InterruptedException();
 				}
 			};
 			if (context != null) {

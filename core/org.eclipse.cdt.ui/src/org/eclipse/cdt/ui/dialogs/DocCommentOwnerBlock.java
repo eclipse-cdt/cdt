@@ -11,11 +11,12 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Marco Stornelli <marco.stornelli@gmail.com> - Bug 333134
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 333134, Bug 559193
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - ongoing support
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.cdt.doxygen.core.DoxygenPreferences;
+import org.eclipse.cdt.internal.ui.dialogs.DocCommentOwnerArea;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -45,12 +46,17 @@ import org.osgi.framework.FrameworkUtil;
 public class DocCommentOwnerBlock extends AbstractCOptionPage {
 	private static String EDITOR_PREF_PAGE_ID = "org.eclipse.cdt.ui.preferences.CEditorPreferencePage"; //$NON-NLS-1$
 
+	/**
+	 * @deprecated will throw {@link NullPointerException} on attempt to access
+	 */
+	@Deprecated
 	protected DocCommentOwnerComposite fDocComboComposite;
 	protected DocCommentOwnerManager fManager;
 
 	protected Button fCheckbox;
 	protected Link fLink;
 
+	private DocCommentOwnerArea docCommentOwnerArea;
 	private final DoxygenPreferences doxygenPreferences;
 
 	public DocCommentOwnerBlock() {
@@ -61,7 +67,7 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 	}
 
 	void handleCheckBox() {
-		fDocComboComposite.setEnabled(fCheckbox.getSelection());
+		docCommentOwnerArea.setEnabled(fCheckbox.getSelection());
 		fLink.setVisible(!fCheckbox.getSelection());
 	}
 
@@ -96,15 +102,11 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 
 		String dsc = DialogsMessages.DocCommentOwnerBlock_SelectDocToolDescription;
 		String msg = DialogsMessages.DocCommentOwnerBlock_DocToolLabel;
-
 		IProject project = getProject();
-		IDocCommentOwner prjOwner = DocCommentOwnerManager.getInstance().getCommentOwner(project);
-		fDocComboComposite = new DocCommentOwnerComposite(pane, prjOwner, dsc, msg);
-		fDocComboComposite.setDoxygenMetadata(doxygenPreferences.metadata());
-		fDocComboComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
-
+		docCommentOwnerArea = new DocCommentOwnerArea(pane, doxygenPreferences.metadata(), dsc, msg);
 		fCheckbox.setSelection(fManager.projectDefinesOwnership(project));
-		fDocComboComposite.initialize(doxygenPreferences.projectStorage(project));
+		IDocCommentOwner prjOwner = DocCommentOwnerManager.getInstance().getCommentOwner(project);
+		docCommentOwnerArea.initialize(prjOwner, doxygenPreferences.projectStorage(project));
 		handleCheckBox();
 	}
 
@@ -114,10 +116,10 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 		if (!fCheckbox.getSelection())
 			fManager.setCommentOwner(project, null, true);
 		else {
-			IDocCommentOwner newOwner = fDocComboComposite.getSelectedDocCommentOwner();
+			IDocCommentOwner newOwner = docCommentOwnerArea.getSelectedDocCommentOwner();
 			fManager.setCommentOwner(project, newOwner, true);
 		}
-		fDocComboComposite.apply(doxygenPreferences.projectStorage(project));
+		docCommentOwnerArea.apply(doxygenPreferences.projectStorage(project));
 	}
 
 	public IProject getProject() {

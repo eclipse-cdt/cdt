@@ -40,11 +40,6 @@ public class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
 		this.userAuthenticatorService = userAuthenticatorService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.jcraft.jsch.UserInfo#getPassphrase()
-	 */
 	@Override
 	public String getPassphrase() {
 		if (logging) {
@@ -53,11 +48,6 @@ public class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
 		return hostService.getPassphrase();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.jcraft.jsch.UserInfo#getPassword()
-	 */
 	@Override
 	public String getPassword() {
 		if (logging) {
@@ -66,12 +56,6 @@ public class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
 		return hostService.getPassword();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.jcraft.jsch.UIKeyboardInteractive#promptKeyboardInteractive(java.lang.String, java.lang.String,
-	 * java.lang.String, java.lang.String[], boolean[])
-	 */
 	@Override
 	public String[] promptKeyboardInteractive(String destination, String name, String instruction, String[] prompt,
 			boolean[] echo) {
@@ -94,11 +78,6 @@ public class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.jcraft.jsch.UserInfo#promptPassphrase(java.lang.String)
-	 */
 	@Override
 	public boolean promptPassphrase(String message) {
 		if (logging) {
@@ -120,11 +99,6 @@ public class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.jcraft.jsch.UserInfo#promptPassword(java.lang.String)
-	 */
 	@Override
 	public boolean promptPassword(String message) {
 		if (logging) {
@@ -142,11 +116,6 @@ public class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.jcraft.jsch.UserInfo#promptYesNo(java.lang.String)
-	 */
 	@Override
 	public boolean promptYesNo(String message) {
 		if (logging) {
@@ -161,11 +130,6 @@ public class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.jcraft.jsch.UserInfo#showMessage(java.lang.String)
-	 */
 	@Override
 	public void showMessage(String message) {
 		if (logging) {

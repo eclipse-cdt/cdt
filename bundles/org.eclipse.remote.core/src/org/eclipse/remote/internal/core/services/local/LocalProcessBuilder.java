@@ -59,11 +59,6 @@ public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 		this(connection, Arrays.asList(command));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.AbstractRemoteProcessBuilder#directory()
-	 */
 	@Override
 	public IFileStore directory() {
 		IFileStore dir = super.directory();
@@ -77,34 +72,16 @@ public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 		return dir;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.AbstractRemoteProcessBuilder#environment()
-	 */
 	@Override
 	public Map<String, String> environment() {
 		return fRemoteEnv;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.AbstractRemoteProcessBuilder#getSupportedFlags
-	 * ()
-	 */
 	@Override
 	public int getSupportedFlags() {
 		return NONE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcessBuilder#start(int)
-	 */
 	@Override
 	public IRemoteProcess start(int flags) throws IOException {
 		String commandArray[] = command().toArray(new String[0]);

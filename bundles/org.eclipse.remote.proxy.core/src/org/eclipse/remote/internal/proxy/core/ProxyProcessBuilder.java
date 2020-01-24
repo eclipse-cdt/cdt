@@ -56,13 +56,6 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 		redirectErrorStream(true);
 	}
 
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.AbstractRemoteProcessBuilder#environment()
-	 */
 	@Override
 	public Map<String, String> environment() {
 		if (remoteEnv == null) {
@@ -71,23 +64,11 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 		return remoteEnv;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.AbstractRemoteProcessBuilder#getSupportedFlags
-	 * ()
-	 */
 	@Override
 	public int getSupportedFlags() {
 		return NONE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcessBuilder#start(int)
-	 */
 	@Override
 	public IRemoteProcess start(int flags) throws IOException {
 		final ProxyConnection conn = getRemoteConnection().getService(ProxyConnection.class);

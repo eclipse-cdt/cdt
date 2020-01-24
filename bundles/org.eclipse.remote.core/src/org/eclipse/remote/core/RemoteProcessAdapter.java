@@ -27,62 +27,32 @@ public class RemoteProcessAdapter extends Process {
 		fProcess = process;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#destroy()
-	 */
 	@Override
 	public void destroy() {
 		fProcess.destroy();
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#exitValue()
-	 */
 	@Override
 	public int exitValue() {
 		return fProcess.exitValue();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getErrorStream()
-	 */
 	@Override
 	public InputStream getErrorStream() {
 		return fProcess.getErrorStream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getInputStream()
-	 */
 	@Override
 	public InputStream getInputStream() {
 		return fProcess.getInputStream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getOutputStream()
-	 */
 	@Override
 	public OutputStream getOutputStream() {
 		return fProcess.getOutputStream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#waitFor()
-	 */
 	@Override
 	public int waitFor() throws InterruptedException {
 		return fProcess.waitFor();

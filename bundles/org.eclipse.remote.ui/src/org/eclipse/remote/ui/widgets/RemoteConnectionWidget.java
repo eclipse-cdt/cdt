@@ -558,11 +558,6 @@ public class RemoteConnectionWidget extends Composite {
 		fWidgetListener.setEnabled(enabled);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.widgets.Control#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		return fEnabled;
@@ -626,11 +621,6 @@ public class RemoteConnectionWidget extends Composite {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.widgets.Control#setEnabled(boolean)
-	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		fEnabled = enabled;

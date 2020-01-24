@@ -110,54 +110,29 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 		return SecurePreferencesFactory.getDefault().node(RemoteCorePlugin.getUniqueIdentifier()).node("connections"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesManager#getConnectionType(java.lang.String)
-	 */
 	@Override
 	public IRemoteConnectionType getConnectionType(String id) {
 		init();
 		return connectionTypeMap.get(id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesManager#getConnectionType(java.net.URI)
-	 */
 	@Override
 	public IRemoteConnectionType getConnectionType(URI uri) {
 		init();
 		return schemeMap.get(uri.getScheme());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesManager#getLocalConnectionType()
-	 */
 	@Override
 	public IRemoteConnectionType getLocalConnectionType() {
 		return getConnectionType(LOCAL_SERVICES_ID);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesManager#getAllConnectionTypes()
-	 */
 	@Override
 	public List<IRemoteConnectionType> getAllConnectionTypes() {
 		init();
 		return new ArrayList<IRemoteConnectionType>(connectionTypeMap.values());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesManager#getConnectionTypesSupporting(java.lang.Class[])
-	 */
 	@Override
 	@SafeVarargs
 	public final List<IRemoteConnectionType> getConnectionTypesSupporting(Class<? extends IRemoteConnection.Service>... services) {
@@ -173,11 +148,6 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 		return connTypes;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesManager#getConnectionTypesByService(java.lang.Class[])
-	 */
 	@Override
 	@SafeVarargs
 	public final List<IRemoteConnectionType> getConnectionTypesByService(Class<? extends IRemoteConnectionType.Service>... services) {
@@ -193,11 +163,6 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 		return connTypes;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesManager#getRemoteConnectionTypes()
-	 */
 	@Override
 	public List<IRemoteConnectionType> getRemoteConnectionTypes() {
 		init();
@@ -211,11 +176,6 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 		return connTypes;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesManager#getAllRemoteConnections()
-	 */
 	@Override
 	public List<IRemoteConnection> getAllRemoteConnections() {
 		List<IRemoteConnection> connections = new ArrayList<>();
@@ -225,12 +185,6 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 		return connections;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesManager#addRemoteConnectionChangeListener(org.eclipse.remote.core.
-	 * IRemoteConnectionChangeListener)
-	 */
 	@Override
 	public void addRemoteConnectionChangeListener(IRemoteConnectionChangeListener listener) {
 		synchronized (listeners) {
@@ -238,12 +192,6 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesManager#removeRemoteConnectionChangeListener(org.eclipse.remote.core.
-	 * IRemoteConnectionChangeListener)
-	 */
 	@Override
 	public void removeRemoteConnectionChangeListener(IRemoteConnectionChangeListener listener) {
 		synchronized (listeners) {
@@ -251,12 +199,6 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteServicesManager#fireRemoteConnectionChangeEvent(org.eclipse.remote.core.
-	 * RemoteConnectionChangeEvent)
-	 */
 	@Override
 	public void fireRemoteConnectionChangeEvent(RemoteConnectionChangeEvent event) {
 		List<IRemoteConnectionChangeListener> iListeners;

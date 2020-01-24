@@ -62,11 +62,6 @@ public class RemoteTreeContentManager {
 			setSystem(true);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			while (!fElementQueue.isEmpty() && !monitor.isCanceled()) {
@@ -104,23 +99,11 @@ public class RemoteTreeContentManager {
 			fParent = parent;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.progress.IElementCollector#add(java.lang.Object,
-		 * org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public void add(Object element, IProgressMonitor monitor) {
 			add(new Object[] { element }, monitor);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.progress.IElementCollector#add(java.lang.Object[],
-		 * org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public void add(Object[] elements, IProgressMonitor monitor) {
 			Object[] filtered = fViewer.filter(elements);
@@ -133,11 +116,6 @@ public class RemoteTreeContentManager {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.progress.IElementCollector#done()
-		 */
 		@Override
 		public void done() {
 			prune(fParent, offset);
@@ -219,11 +197,6 @@ public class RemoteTreeContentManager {
 			return;
 		}
 		WorkbenchJob updateJob = new WorkbenchJob("IncrementalDeferredTreeContentManager") { //$NON-NLS-1$
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
 			@Override
 			public IStatus runInUIThread(IProgressMonitor updateMonitor) {
 				// Cancel the job if the tree viewer got closed
@@ -250,11 +223,6 @@ public class RemoteTreeContentManager {
 	 */
 	protected void prune(final Object parent, final int offset) {
 		WorkbenchJob updateJob = new WorkbenchJob("DeferredTree") { //$NON-NLS-1$
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
 			@Override
 			public IStatus runInUIThread(IProgressMonitor updateMonitor) {
 				// Cancel the job if the tree viewer got closed
@@ -282,11 +250,6 @@ public class RemoteTreeContentManager {
 		}
 		// Clear the placeholder if it is still there
 		WorkbenchJob clearJob = new WorkbenchJob("DeferredTreeContentManager_ClearJob") { //$NON-NLS-1$
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (!placeholder.isRemoved()) {
@@ -304,12 +267,6 @@ public class RemoteTreeContentManager {
 		clearJob.schedule();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.progress.DeferredTreeContentManager#getFetchJobName(java.lang.Object,
-	 * org.eclipse.ui.progress.IDeferredWorkbenchAdapter)
-	 */
 	protected String getFetchJobName(Object parent, IDeferredWorkbenchAdapter adapter) {
 		return "RemoteTreeContentManager"; //$NON-NLS-1$
 	}

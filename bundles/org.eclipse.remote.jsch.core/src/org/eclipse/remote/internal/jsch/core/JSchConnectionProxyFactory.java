@@ -58,21 +58,11 @@ public class JSchConnectionProxyFactory {
 			this.monitor = monitor;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.Proxy#close()
-		 */
 		@Override
 		public void close() {
 			process.destroy();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.Proxy#connect(com.jcraft.jsch.SocketFactory, java.lang.String, int, int)
-		 */
 		@Override
 		public void connect(SocketFactory socket_factory, String host, int port, int timeout) throws IOException {
 			assert !connectCalled : "connect should only be called once"; //$NON-NLS-1$
@@ -167,31 +157,16 @@ public class JSchConnectionProxyFactory {
 			}.start();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.Proxy#getInputStream()
-		 */
 		@Override
 		public InputStream getInputStream() {
 			return process.getInputStream();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.Proxy#getOutputStream()
-		 */
 		@Override
 		public OutputStream getOutputStream() {
 			return process.getOutputStream();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.Proxy#getSocket()
-		 */
 		@Override
 		public Socket getSocket() {
 			return null;
@@ -212,21 +187,11 @@ public class JSchConnectionProxyFactory {
 			this.monitor = monitor;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.Proxy#close()
-		 */
 		@Override
 		public void close() {
 			channel.disconnect();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.Proxy#connect(com.jcraft.jsch.SocketFactory, java.lang.String, int, int)
-		 */
 		@Override
 		public void connect(SocketFactory socket_factory, String host, int port, int timeout) throws Exception {
 			assert !connectCalled : "connect should only be called once"; //$NON-NLS-1$
@@ -244,11 +209,6 @@ public class JSchConnectionProxyFactory {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.Proxy#getInputStream()
-		 */
 		@Override
 		public InputStream getInputStream() {
 			try {
@@ -259,11 +219,6 @@ public class JSchConnectionProxyFactory {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.Proxy#getOutputStream()
-		 */
 		@Override
 		public OutputStream getOutputStream() {
 			try {
@@ -274,11 +229,6 @@ public class JSchConnectionProxyFactory {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see com.jcraft.jsch.Proxy#getSocket()
-		 */
 		@Override
 		public Socket getSocket() {
 			return null;

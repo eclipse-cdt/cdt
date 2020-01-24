@@ -68,53 +68,27 @@ public class JSchFileSystem extends FileSystem {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.filesystem.IFileSystem#attributes()
-	 */
 	@Override
 	public int attributes() {
 		// Attributes supported by JSch IFileService
 		return EFS.ATTRIBUTE_READ_ONLY | EFS.ATTRIBUTE_EXECUTABLE | EFS.ATTRIBUTE_SYMLINK | EFS.ATTRIBUTE_LINK_TARGET;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.filesystem.provider.FileSystem#canDelete()
-	 */
 	@Override
 	public boolean canDelete() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.filesystem.provider.FileSystem#canWrite()
-	 */
 	@Override
 	public boolean canWrite() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.filesystem.provider.FileSystem#getStore(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public IFileStore getStore(IPath path) {
 		return EFS.getNullFileSystem().getStore(path);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.filesystem.provider.FileSystem#getStore(java.net.URI)
-	 */
 	@Override
 	public IFileStore getStore(URI uri) {
 		try {

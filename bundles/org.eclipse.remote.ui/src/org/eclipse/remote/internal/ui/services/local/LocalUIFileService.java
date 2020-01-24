@@ -47,13 +47,6 @@ public class LocalUIFileService implements IRemoteUIFileService {
 		return connectionType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteFileManager#browseDirectory(org.eclipse
-	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public String browseDirectory(Shell shell, String message, String filterPath, int flags) {
 		DirectoryDialog dialog = new DirectoryDialog(shell);
@@ -73,13 +66,6 @@ public class LocalUIFileService implements IRemoteUIFileService {
 		return path;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteFileManager#browseFile(org.eclipse
-	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public String browseFile(Shell shell, String message, String filterPath, int flags) {
 		FileDialog dialog = new FileDialog(shell, SWT.SINGLE);
@@ -99,13 +85,6 @@ public class LocalUIFileService implements IRemoteUIFileService {
 		return path;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteFileManager#browseFile(org.eclipse
-	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public List<String> browseFiles(Shell shell, String message, String filterPath, int flags) {
 		FileDialog dialog = new FileDialog(shell, SWT.MULTI);
@@ -125,34 +104,16 @@ public class LocalUIFileService implements IRemoteUIFileService {
 		return Arrays.asList(dialog.getFileNames());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.ui.IRemoteUIFileManager#getConnection()
-	 */
 	@Override
 	public IRemoteConnection getConnection() {
 		return connection;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.ui.IRemoteUIFileManager#setConnection(org.eclipse
-	 * .remote.core.IRemoteConnection)
-	 */
 	@Override
 	public void setConnection(IRemoteConnection connection) {
 		this.connection = connection;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.ui.IRemoteUIFileManager#showConnections(boolean)
-	 */
 	@Override
 	public void showConnections(boolean enable) {
 		// Not implemented

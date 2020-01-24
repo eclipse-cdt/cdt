@@ -120,11 +120,6 @@ public abstract class AbstractRemoteCommand<T> {
 			return fPool.submit(this);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.concurrent.Callable#call()
-		 */
 		@Override
 		public abstract T1 call() throws JSchException, IOException, RemoteConnectionException;
 
@@ -192,11 +187,6 @@ public abstract class AbstractRemoteCommand<T> {
 			return fPool.submit(this);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.concurrent.Callable#call()
-		 */
 		@Override
 		public abstract T1 call() throws JSchException, SftpException, IOException;
 

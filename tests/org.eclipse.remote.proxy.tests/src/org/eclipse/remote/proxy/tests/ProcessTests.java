@@ -232,11 +232,6 @@ public class ProcessTests extends TestCase {
 		assertFalse(p.isAlive());
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		if (connection == null) {
@@ -257,11 +252,6 @@ public class ProcessTests extends TestCase {
 		}		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 	}

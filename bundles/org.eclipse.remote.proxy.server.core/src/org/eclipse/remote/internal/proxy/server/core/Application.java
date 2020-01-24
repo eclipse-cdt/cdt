@@ -19,9 +19,6 @@ import org.eclipse.remote.proxy.protocol.core.Protocol;
 public class Application implements IApplication {
 	private Server server = new Server();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
-	 */
 	public Object start(IApplicationContext context) throws Exception {
 		String[] args = (String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 		for (String arg : args) {
@@ -36,9 +33,6 @@ public class Application implements IApplication {
 		return IApplication.EXIT_OK;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
 	public void stop() {
 		// Nothing
 	}

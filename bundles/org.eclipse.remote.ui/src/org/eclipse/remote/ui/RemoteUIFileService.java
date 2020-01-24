@@ -50,13 +50,6 @@ public class RemoteUIFileService implements IRemoteUIFileService {
 		return connectionType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ptp.remote.core.IRemoteFileManager#browseDirectory(org.eclipse
-	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public String browseDirectory(Shell shell, String message, String filterPath, int flags) {
 		RemoteResourceBrowser browser = new RemoteResourceBrowser(shell, SWT.SINGLE);
@@ -76,13 +69,6 @@ public class RemoteUIFileService implements IRemoteUIFileService {
 		return resource.toURI().getPath();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ptp.remote.core.IRemoteFileManager#browseFile(org.eclipse
-	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public String browseFile(Shell shell, String message, String filterPath, int flags) {
 		RemoteResourceBrowser browser = new RemoteResourceBrowser(shell, SWT.SINGLE);
@@ -102,13 +88,6 @@ public class RemoteUIFileService implements IRemoteUIFileService {
 		return resource.toURI().getPath();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ptp.remote.core.IRemoteFileManager#browseFile(org.eclipse
-	 * .swt.widgets.Shell, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public List<String> browseFiles(Shell shell, String message, String filterPath, int flags) {
 		RemoteResourceBrowser browser = new RemoteResourceBrowser(shell, SWT.MULTI);
@@ -128,34 +107,16 @@ public class RemoteUIFileService implements IRemoteUIFileService {
 		return paths;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ptp.remote.ui.IRemoteUIFileManager#getConnection()
-	 */
 	@Override
 	public IRemoteConnection getConnection() {
 		return connection;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ptp.remote.ui.IRemoteUIFileManager#setConnection(org.eclipse
-	 * .ptp.remote.core.IRemoteConnection)
-	 */
 	@Override
 	public void setConnection(IRemoteConnection connection) {
 		this.connection = connection;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ptp.remote.ui.IRemoteUIFileManager#showConnections(boolean)
-	 */
 	@Override
 	public void showConnections(boolean enable) {
 		showConnections = enable;

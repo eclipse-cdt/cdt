@@ -68,11 +68,6 @@ public class GetInputStreamCommand extends AbstractRemoteCommand<InputStream> {
 					return stream.read();
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.io.InputStream#close()
-				 */
 				@Override
 				public void close() throws IOException {
 					stream.close();
@@ -85,71 +80,36 @@ public class GetInputStreamCommand extends AbstractRemoteCommand<InputStream> {
 					}
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.io.InputStream#read(byte[])
-				 */
 				@Override
 				public int read(byte[] b) throws IOException {
 					return stream.read(b);
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.io.InputStream#read(byte[], int, int)
-				 */
 				@Override
 				public int read(byte[] b, int off, int len) throws IOException {
 					return stream.read(b, off, len);
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.io.InputStream#skip(long)
-				 */
 				@Override
 				public long skip(long n) throws IOException {
 					return stream.skip(n);
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.io.InputStream#available()
-				 */
 				@Override
 				public int available() throws IOException {
 					return stream.available();
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.io.InputStream#mark(int)
-				 */
 				@Override
 				public synchronized void mark(int readlimit) {
 					stream.mark(readlimit);
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.io.InputStream#reset()
-				 */
 				@Override
 				public synchronized void reset() throws IOException {
 					stream.reset();
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.io.InputStream#markSupported()
-				 */
 				@Override
 				public boolean markSupported() {
 					return stream.markSupported();

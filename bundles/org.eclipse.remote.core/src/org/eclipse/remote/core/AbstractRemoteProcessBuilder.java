@@ -46,134 +46,65 @@ public abstract class AbstractRemoteProcessBuilder implements IRemoteProcessBuil
 		this(connection, Arrays.asList(command));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcessBuilder#command()
-	 */
 	@Override
 	public List<String> command() {
 		return fCommandArgs;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteProcessBuilder#command(java.util.List)
-	 */
 	@Override
 	public IRemoteProcessBuilder command(List<String> command) {
 		fCommandArgs = command;
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteProcessBuilder#command(java.lang.String
-	 * )
-	 */
 	@Override
 	public IRemoteProcessBuilder command(String... command) {
 		fCommandArgs = Arrays.asList(command);
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcessBuilder#directory()
-	 */
 	@Override
 	public IFileStore directory() {
 		return fRemoteDir;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteProcessBuilder#directory(org.eclipse
-	 * .core.filesystem.IFileStore)
-	 */
 	@Override
 	public IRemoteProcessBuilder directory(IFileStore directory) {
 		fRemoteDir = directory;
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcessBuilder#environment()
-	 */
 	@Override
 	public abstract Map<String, String> environment();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteProcessBuilder#getSupportedFlags()
-	 */
 	/**
 	 * @since 5.0
 	 */
 	@Override
 	public abstract int getSupportedFlags();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteProcessBuilder#redirectErrorStream()
-	 */
 	@Override
 	public boolean redirectErrorStream() {
 		return fRedirectErrorStream;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteProcessBuilder#redirectErrorStream
-	 * (boolean)
-	 */
 	@Override
 	public IRemoteProcessBuilder redirectErrorStream(boolean redirectErrorStream) {
 		this.fRedirectErrorStream = redirectErrorStream;
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcessBuilder#start()
-	 */
 	@Override
 	public IRemoteProcess start() throws IOException {
 		return start(NONE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcessBuilder#start(int)
-	 */
 	/**
 	 * @since 5.0
 	 */
 	@Override
 	public abstract IRemoteProcess start(int flags) throws IOException;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder res = new StringBuilder();
@@ -184,11 +115,6 @@ public abstract class AbstractRemoteProcessBuilder implements IRemoteProcessBuil
 		return res.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcessBuilder#getRemoteConnection()
-	 */
 	/**
 	 * @since 2.0
 	 */

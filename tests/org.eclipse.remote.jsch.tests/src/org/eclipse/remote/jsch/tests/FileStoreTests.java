@@ -200,11 +200,6 @@ public class FileStoreTests extends TestCase {
 		assertEquals(expected, fi.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
@@ -252,11 +247,6 @@ public class FileStoreTests extends TestCase {
 		fLocalDir.mkdir(EFS.NONE, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		fRemoteDir.delete(EFS.NONE, new NullProgressMonitor());

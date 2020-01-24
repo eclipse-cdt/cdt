@@ -37,13 +37,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ide.fileSystem.FileSystemContributor;
 
 public class JSchFileSystemContributor extends FileSystemContributor {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.ide.fileSystem.FileSystemContributor#browseFileSystem(
-	 * java.lang.String, org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	public URI browseFileSystem(String initialPath, Shell shell) {
 		IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
@@ -61,13 +54,6 @@ public class JSchFileSystemContributor extends FileSystemContributor {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.ide.fileSystem.FileSystemContributor#getURI(java.lang.
-	 * String)
-	 */
 	@Override
 	public URI getURI(String string) {
 		try {

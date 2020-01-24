@@ -160,12 +160,6 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	 * 
 	 */
 	private class EventHandler extends SelectionAdapter {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-		 */
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source;

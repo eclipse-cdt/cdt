@@ -44,12 +44,6 @@ public class JSchProcess implements IRemoteProcessControlService, IRemoteProcess
 	private Thread fStderrReader;
 
 	public static class Factory implements IRemoteProcess.Service.Factory {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.remote.core.IRemoteProcess.Service.Factory#getService(org.eclipse.remote.core.IRemoteProcess,
-		 * java.lang.Class)
-		 */
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends IRemoteProcess.Service> T getService(IRemoteProcess remoteProcess, Class<T> service) {
@@ -146,21 +140,11 @@ public class JSchProcess implements IRemoteProcessControlService, IRemoteProcess
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#destroy()
-	 */
 	@Override
 	public void destroy() {
 		fChannel.disconnect();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#exitValue()
-	 */
 	@Override
 	public int exitValue() {
 		if(!isCompleted()) {
@@ -169,31 +153,16 @@ public class JSchProcess implements IRemoteProcessControlService, IRemoteProcess
 		return fChannel.getExitStatus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getErrorStream()
-	 */
 	@Override
 	public InputStream getErrorStream() {
 		return fProcStderr;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getInputStream()
-	 */
 	@Override
 	public InputStream getInputStream() {
 		return fProcStdout;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getOutputStream()
-	 */
 	@Override
 	public OutputStream getOutputStream() {
 		try {
@@ -203,11 +172,6 @@ public class JSchProcess implements IRemoteProcessControlService, IRemoteProcess
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#waitFor()
-	 */
 	@Override
 	public int waitFor() throws InterruptedException {
 		while (!isCompleted()) {
@@ -216,31 +180,16 @@ public class JSchProcess implements IRemoteProcessControlService, IRemoteProcess
 		return exitValue();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.RemoteProcess#isCompleted()
-	 */
 	@Override
 	public boolean isCompleted() {
 		return fChannel.isClosed();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcess.Service#getRemoteProcess()
-	 */
 	@Override
 	public IRemoteProcess getRemoteProcess() {
 		return fProcess;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcessTerminalService#setTerminalSize(int, int, int, int)
-	 */
 	@Override
 	public void setTerminalSize(int cols, int rows, int width, int height) {
 		if (fChannel instanceof ChannelExec) {
@@ -250,11 +199,6 @@ public class JSchProcess implements IRemoteProcessControlService, IRemoteProcess
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcessSignalService#sendSignal(int)
-	 */
 	@Override
 	public void sendSignal(int signal) throws RemoteConnectionException {
 		if (signal >= 0 && signal <= USR2) {

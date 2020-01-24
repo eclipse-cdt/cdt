@@ -30,11 +30,6 @@ public class RemoteResourceComparator extends ViewerComparator {
 		return ascending;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public int compare(Viewer viewer, Object o1, Object o2) {
 		if (o1 instanceof IFileInfo && o2 instanceof IFileInfo) {

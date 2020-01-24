@@ -34,12 +34,6 @@ public class JSchCommandShellService implements IRemoteCommandShellService {
 	}
 
 	public static class Factory implements IRemoteConnection.Service.Factory {
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.remote.core.IRemoteConnection.Service.Factory#getService(org.eclipse.remote.core.IRemoteConnection,
-		 * java.lang.Class)
-		 */
 		@Override
 		@SuppressWarnings("unchecked")
 		public <T extends IRemoteConnection.Service> T getService(IRemoteConnection connection, Class<T> service) {

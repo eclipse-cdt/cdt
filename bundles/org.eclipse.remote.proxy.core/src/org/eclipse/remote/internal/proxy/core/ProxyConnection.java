@@ -95,23 +95,12 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.remote.core.IRemoteConnection.Service#getRemoteConnection()
-	 */
 	@Override
 	public IRemoteConnection getRemoteConnection() {
 		return fRemoteConnection;
 	}
 
 	public static class Factory implements IRemoteConnection.Service.Factory {
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.remote.core.IRemoteConnection.Service.Factory#getService(org.eclipse.remote.core.IRemoteConnection,
-		 * java.lang.Class)
-		 */
 		@Override
 		@SuppressWarnings("unchecked")
 		public <T extends IRemoteConnection.Service> T getService(IRemoteConnection connection, Class<T> service) {
@@ -142,11 +131,6 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.remote.core.IRemoteConnectionControlService#close()
-	 */
 	@Override
 	public synchronized void close() {
 		if (isOpen) {
@@ -156,21 +140,11 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.remote.core.IRemoteConnectionControlService#isOpen()
-	 */
 	@Override
 	public boolean isOpen() {
 		return isOpen;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.remote.core.IRemoteConnectionControlService#open(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void open(IProgressMonitor monitor) throws RemoteConnectionException {
 		SubMonitor subMon = SubMonitor.convert(monitor, Messages.ProxyConnection_0, 20);

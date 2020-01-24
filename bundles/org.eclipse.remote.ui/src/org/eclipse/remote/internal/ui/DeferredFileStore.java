@@ -60,12 +60,6 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 		fParent = parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object,
-	 * org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
 		ArrayList<DeferredFileStore> children = new ArrayList<DeferredFileStore>();
@@ -175,11 +169,6 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-	 */
 	@Override
 	public Object[] getChildren(Object o) {
 		try {
@@ -205,11 +194,6 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 		return fFileStore;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		fetchInfo();
@@ -229,41 +213,21 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 		return fImage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-	 */
 	@Override
 	public String getLabel(Object o) {
 		return fFileStore.getName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object o) {
 		return fParent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
-	 */
 	@Override
 	public ISchedulingRule getRule(Object object) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
-	 */
 	@Override
 	public boolean isContainer() {
 		fetchInfo();

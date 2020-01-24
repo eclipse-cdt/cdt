@@ -138,12 +138,6 @@ public class ProxyConnectionPage extends WizardPage {
 		fDefaultServerButton.setText("Use default server");
 		fDefaultServerButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
 		fDefaultServerButton.addSelectionListener(new SelectionAdapter() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validateFields();

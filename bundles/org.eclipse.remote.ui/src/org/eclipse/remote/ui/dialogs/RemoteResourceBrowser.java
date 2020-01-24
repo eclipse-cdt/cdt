@@ -82,13 +82,6 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 		setType(FILE_BROWSER | DIRECTORY_BROWSER);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createButton(org.eclipse.swt.widgets
-	 * .Composite, int, java.lang.String, boolean)
-	 */
 	@Override
 	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 		Button button = super.createButton(parent, id, label, defaultButton);
@@ -98,13 +91,6 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 		return button;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
@@ -127,13 +113,6 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 		return contents;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite main = (Composite) super.createDialogArea(parent);
@@ -238,11 +217,6 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 		return new ArrayList<IFileStore>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
-	 */
 	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException,
 			InterruptedException {

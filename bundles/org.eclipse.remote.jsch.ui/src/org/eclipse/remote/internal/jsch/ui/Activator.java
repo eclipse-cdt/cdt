@@ -97,13 +97,6 @@ public class Activator extends AbstractUIPlugin {
 		return fJSchService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -113,13 +106,6 @@ public class Activator extends AbstractUIPlugin {
 		getImageRegistry().put(IMG_CONNECTION_TYPE, imageDescriptorFromPlugin(PLUGIN_ID, "/icons/ssh.png")); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;

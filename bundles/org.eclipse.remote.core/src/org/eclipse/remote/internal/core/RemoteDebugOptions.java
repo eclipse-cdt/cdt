@@ -50,11 +50,6 @@ public class RemoteDebugOptions implements DebugOptionsListener {
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
-	 */
 	@Override
 	public void optionsChanged(DebugOptions options) {
 		fDebugOptions = options;

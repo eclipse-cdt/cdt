@@ -24,12 +24,6 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 	private IWorkingSet workingSet;
 	private RemoteTreeContentManager manager;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object,
-	 * java.lang.Object)
-	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput != null) {
@@ -40,11 +34,6 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 		super.inputChanged(viewer, oldInput, newInput);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.model.BaseWorkbenchContentProvider#hasChildren(java.lang.Object)
-	 */
 	@Override
 	public boolean hasChildren(Object element) {
 		if (manager != null /* && manager.isDeferredAdapter(element) */) {
@@ -73,11 +62,6 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 		return workingSet;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.model.WorkbenchContentProvider#getChildren(java.lang.Object)
-	 */
 	@Override
 	public Object[] getChildren(Object element) {
 		if (manager != null) {

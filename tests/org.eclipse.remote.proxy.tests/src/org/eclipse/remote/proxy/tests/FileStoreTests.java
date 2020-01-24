@@ -237,11 +237,6 @@ public class FileStoreTests extends TestCase {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		if (connection == null) {
@@ -275,11 +270,6 @@ public class FileStoreTests extends TestCase {
 		localDir.mkdir(EFS.NONE, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		remoteParent.delete(EFS.NONE, new NullProgressMonitor());

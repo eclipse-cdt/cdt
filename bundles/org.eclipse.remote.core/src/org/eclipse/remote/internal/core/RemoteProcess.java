@@ -36,11 +36,6 @@ public class RemoteProcess extends Process implements IRemoteProcess {
 		this.builder = builder;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#destroy()
-	 */
 	@Override
 	public void destroy() {
 		IRemoteProcessControlService controlService = getService(IRemoteProcessControlService.class);
@@ -49,11 +44,6 @@ public class RemoteProcess extends Process implements IRemoteProcess {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#exitValue()
-	 */
 	@Override
 	public int exitValue() {
 		IRemoteProcessControlService controlService = getService(IRemoteProcessControlService.class);
@@ -63,11 +53,6 @@ public class RemoteProcess extends Process implements IRemoteProcess {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getErrorStream()
-	 */
 	@Override
 	public InputStream getErrorStream() {
 		IRemoteProcessControlService controlService = getService(IRemoteProcessControlService.class);
@@ -77,11 +62,6 @@ public class RemoteProcess extends Process implements IRemoteProcess {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getInputStream()
-	 */
 	@Override
 	public InputStream getInputStream() {
 		IRemoteProcessControlService controlService = getService(IRemoteProcessControlService.class);
@@ -91,11 +71,6 @@ public class RemoteProcess extends Process implements IRemoteProcess {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getOutputStream()
-	 */
 	@Override
 	public OutputStream getOutputStream() {
 		IRemoteProcessControlService controlService = getService(IRemoteProcessControlService.class);
@@ -130,11 +105,6 @@ public class RemoteProcess extends Process implements IRemoteProcess {
 		return servicesMap.get(service.getName()) != null || getConnectionType().hasProcessService(service);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#waitFor()
-	 */
 	@Override
 	public int waitFor() throws InterruptedException {
 		IRemoteProcessControlService controlService = getService(IRemoteProcessControlService.class);
@@ -144,11 +114,6 @@ public class RemoteProcess extends Process implements IRemoteProcess {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcess#isCompleted()
-	 */
 	@Override
 	public boolean isCompleted() {
 		IRemoteProcessControlService controlService = getService(IRemoteProcessControlService.class);
@@ -161,21 +126,11 @@ public class RemoteProcess extends Process implements IRemoteProcess {
 	/**
 	 * @since 2.0
 	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcess#getRemoteConnection()
-	 */
 	@Override
 	public IRemoteConnection getRemoteConnection() {
 		return connection;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcess#getProcessBuilder()
-	 */
 	@Override
 	public IRemoteProcessBuilder getProcessBuilder() {
 		return builder;

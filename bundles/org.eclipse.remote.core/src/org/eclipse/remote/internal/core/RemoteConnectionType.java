@@ -87,41 +87,21 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		return remoteServicesManager.getSecurePreferenceNode().node(id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#getRemoteServicesManager()
-	 */
 	@Override
 	public IRemoteServicesManager getRemoteServicesManager() {
 		return remoteServicesManager;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#getId()
-	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#getName()
-	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#getScheme()
-	 */
 	@Override
 	public String getScheme() {
 		return scheme;
@@ -142,11 +122,6 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		return canRemove;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#getService(java.lang.Class)
-	 */
 	@Override
 	public  <T extends Service> T getService(Class<T> service) {
 		synchronized (serviceDefinitionMap) {
@@ -177,11 +152,6 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#hasService(java.lang.Class)
-	 */
 	@Override
 	public <T extends Service> boolean hasService(Class<T> service) {
 		synchronized (serviceDefinitionMap) {
@@ -224,11 +194,6 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#hasConnectionService(java.lang.Class)
-	 */
 	@Override
 	public <T extends IRemoteConnection.Service> boolean hasConnectionService(Class<T> service) {
 		synchronized (connectionServiceDefinitionMap) {
@@ -270,11 +235,6 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#hasProcessService(java.lang.Class)
-	 */
 	@Override
 	public <T extends IRemoteProcess.Service> boolean hasProcessService(Class<T> service) {
 		synchronized (processServiceDefinitionMap) {
@@ -327,11 +287,6 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		remoteServicesManager.fireRemoteConnectionChangeEvent(event);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#getConnection(java.lang.String)
-	 */
 	@Override
 	public IRemoteConnection getConnection(String name) {
 		synchronized (connections) {
@@ -357,11 +312,6 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#getConnections()
-	 */
 	@Override
 	public List<IRemoteConnection> getConnections() {
 		synchronized (connections) {
@@ -369,11 +319,6 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#newConnection(java.lang.String)
-	 */
 	@Override
 	public IRemoteConnectionWorkingCopy newConnection(String name) throws RemoteConnectionException {
 		synchronized (connections) {
@@ -396,11 +341,6 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#removeConnection(org.eclipse.remote.core.IRemoteConnection)
-	 */
 	@Override
 	public void removeConnection(IRemoteConnection connection) throws RemoteConnectionException {
 		synchronized (connections) {

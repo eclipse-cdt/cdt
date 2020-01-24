@@ -52,21 +52,11 @@ public class RemoteConnection implements IRemoteConnection {
 		this.name = name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getConnectionType()
-	 */
 	@Override
 	public IRemoteConnectionType getConnectionType() {
 		return connectionType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getService(java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Service> T getService(Class<T> service) {
@@ -81,21 +71,11 @@ public class RemoteConnection implements IRemoteConnection {
 		return obj;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#hasService(java.lang.Class)
-	 */
 	@Override
 	public <T extends Service> boolean hasService(Class<T> service) {
 		return servicesMap.get(service.getName()) != null || connectionType.hasConnectionService(service);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getName()
-	 */
 	@Override
 	public String getName() {
 		return name;
@@ -146,21 +126,11 @@ public class RemoteConnection implements IRemoteConnection {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getAttribute(java.lang.String)
-	 */
 	@Override
 	public String getAttribute(String key) {
 		return getPreferences().get(key, EMPTY_STRING);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getSecureAttribute(java.lang.String)
-	 */
 	@Override
 	public String getSecureAttribute(String key) {
 		try {
@@ -171,21 +141,11 @@ public class RemoteConnection implements IRemoteConnection {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getWorkingCopy()
-	 */
 	@Override
 	public IRemoteConnectionWorkingCopy getWorkingCopy() {
 		return new RemoteConnectionWorkingCopy(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getProperty(java.lang.String)
-	 */
 	@Override
 	public String getProperty(String key) {
 		IRemoteConnectionPropertyService propertyService = getService(IRemoteConnectionPropertyService.class);
@@ -196,11 +156,6 @@ public class RemoteConnection implements IRemoteConnection {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#open(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void open(IProgressMonitor monitor) throws RemoteConnectionException {
 		IRemoteConnectionControlService controlService = getService(IRemoteConnectionControlService.class);
@@ -209,11 +164,6 @@ public class RemoteConnection implements IRemoteConnection {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#close()
-	 */
 	@Override
 	public void close() {
 		IRemoteConnectionControlService controlService = getService(IRemoteConnectionControlService.class);
@@ -222,11 +172,6 @@ public class RemoteConnection implements IRemoteConnection {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#isOpen()
-	 */
 	@Override
 	public boolean isOpen() {
 		IRemoteConnectionControlService controlService = getService(IRemoteConnectionControlService.class);
@@ -238,36 +183,16 @@ public class RemoteConnection implements IRemoteConnection {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteConnection#addConnectionChangeListener(org.eclipse.remote.core.IRemoteConnectionChangeListener
-	 * )
-	 */
 	@Override
 	public void addConnectionChangeListener(IRemoteConnectionChangeListener listener) {
 		fListeners.add(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteConnection#removeConnectionChangeListener(org.eclipse.remote.core.
-	 * IRemoteConnectionChangeListener
-	 * )
-	 */
 	@Override
 	public void removeConnectionChangeListener(IRemoteConnectionChangeListener listener) {
 		fListeners.remove(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#fireConnectionChangeEvent(int)
-	 */
 	@Override
 	public void fireConnectionChangeEvent(final int type) {
 		RemoteConnectionChangeEvent event = new RemoteConnectionChangeEvent(this, type);
@@ -278,11 +203,6 @@ public class RemoteConnection implements IRemoteConnection {
 		connectionType.getRemoteServicesManager().fireRemoteConnectionChangeEvent(event);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return name + " - " + connectionType.getName(); //$NON-NLS-1$

@@ -55,11 +55,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		this.connectionType = (RemoteConnectionType) original.getConnectionType();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getName()
-	 */
 	@Override
 	public String getName() {
 		if (newName != null) {
@@ -73,11 +68,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setName(java.lang.String)
-	 */
 	@Override
 	public void setName(String name) {
 		// set it only if it's changed
@@ -86,11 +76,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getAttribute(java.lang.String)
-	 */
 	@Override
 	public String getAttribute(String key) {
 		String value = newAttributes.get(key);
@@ -105,11 +90,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		return RemoteConnection.EMPTY_STRING;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setAttribute(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void setAttribute(String key, String value) {
 		// set only if it's changed or value is null
@@ -118,11 +98,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getSecureAttribute(java.lang.String)
-	 */
 	@Override
 	public String getSecureAttribute(String key) {
 		String value = newSecureAttributes.get(key);
@@ -137,11 +112,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		return RemoteConnection.EMPTY_STRING;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setSecureAttribute(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void setSecureAttribute(String key, String value) {
 		// set only if it's changed or value is null
@@ -150,13 +120,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteConnection#addConnectionChangeListener(org.eclipse.remote.core.IRemoteConnectionChangeListener
-	 * )
-	 */
 	@Override
 	public void addConnectionChangeListener(IRemoteConnectionChangeListener listener) {
 		if (original != null) {
@@ -166,13 +129,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteConnection#removeConnectionChangeListener(org.eclipse.remote.core.IRemoteConnectionChangeListener
-	 * )
-	 */
 	@Override
 	public void removeConnectionChangeListener(IRemoteConnectionChangeListener listener) {
 		if (original != null) {
@@ -182,11 +138,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#fireConnectionChangeEvent(int)
-	 */
 	@Override
 	public void fireConnectionChangeEvent(int type) {
 		if (original != null && type != RemoteConnectionChangeEvent.CONNECTION_RENAMED) {
@@ -200,41 +151,21 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getConnectionType()
-	 */
 	@Override
 	public IRemoteConnectionType getConnectionType() {
 		return connectionType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getWorkingCopy()
-	 */
 	@Override
 	public IRemoteConnectionWorkingCopy getWorkingCopy() {
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getService(java.lang.Class)
-	 */
 	@Override
 	public <T extends Service> T getService(Class<T> service) {
 		return connectionType.getConnectionService(this, service);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#hasService(java.lang.Class)
-	 */
 	@Override
 	public <T extends Service> boolean hasService(Class<T> service) {
 		if (original != null) {
@@ -244,31 +175,16 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#getOriginal()
-	 */
 	@Override
 	public IRemoteConnection getOriginal() {
 		return original;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		return newName != null || !newAttributes.isEmpty() || !newSecureAttributes.isEmpty();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#save()
-	 */
 	@Override
 	public IRemoteConnection save() throws RemoteConnectionException {
 		if (newName != null && original != null) {
@@ -336,11 +252,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		return original;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#open(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void open(IProgressMonitor monitor) throws RemoteConnectionException {
 		if (original != null) {
@@ -354,11 +265,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#close()
-	 */
 	@Override
 	public void close() {
 		if (original != null) {
@@ -372,11 +278,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#isOpen()
-	 */
 	@Override
 	public boolean isOpen() {
 		if (original != null) {
@@ -392,11 +293,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnection#getProperty(java.lang.String)
-	 */
 	@Override
 	public String getProperty(String key) {
 		if (original != null) {

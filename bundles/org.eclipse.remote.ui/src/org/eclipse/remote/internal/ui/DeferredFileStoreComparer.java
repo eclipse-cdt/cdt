@@ -14,11 +14,6 @@ import org.eclipse.jface.viewers.IElementComparer;
 
 public class DeferredFileStoreComparer implements IElementComparer {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IElementComparer#equals(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o1, Object o2) {
 		if (o1 == o2) {
@@ -40,11 +35,6 @@ public class DeferredFileStoreComparer implements IElementComparer {
 		return c1.getFileStore().equals(c2.getFileStore());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IElementComparer#hashCode(java.lang.Object)
-	 */
 	@Override
 	public int hashCode(Object element) {
 		if (element instanceof DeferredFileStore) {

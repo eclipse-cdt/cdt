@@ -35,12 +35,6 @@ public class ProxyProcess implements IRemoteProcessControlService, IRemoteProces
 	private volatile boolean isCompleted;
 	
 	public static class Factory implements IRemoteProcess.Service.Factory {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.remote.core.IRemoteProcess.Service.Factory#getService(org.eclipse.remote.core.IRemoteProcess,
-		 * java.lang.Class)
-		 */
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends IRemoteProcess.Service> T getService(IRemoteProcess remoteProcess, Class<T> service) {
@@ -98,11 +92,6 @@ public class ProxyProcess implements IRemoteProcessControlService, IRemoteProces
 		cmdThread.start();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#destroy()
-	 */
 	@Override
 	public void destroy() {
 		try {
@@ -113,11 +102,6 @@ public class ProxyProcess implements IRemoteProcessControlService, IRemoteProces
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#exitValue()
-	 */
 	@Override
 	public int exitValue() {
 		if (!isCompleted) {
@@ -126,11 +110,6 @@ public class ProxyProcess implements IRemoteProcessControlService, IRemoteProces
 		return exitValue;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getErrorStream()
-	 */
 	@Override
 	public InputStream getErrorStream() {
 		if (stdErrChan == null) {
@@ -149,42 +128,22 @@ public class ProxyProcess implements IRemoteProcessControlService, IRemoteProces
 		return stdErrChan.getInputStream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getInputStream()
-	 */
 	@Override
 	public InputStream getInputStream() {
 		return stdIOChan.getInputStream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getOutputStream()
-	 */
 	@Override
 	public OutputStream getOutputStream() {
 		return stdIOChan.getOutputStream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#waitFor()
-	 */
 	@Override
 	public int waitFor() throws InterruptedException {
 		cmdThread.join();
 		return exitValue;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.RemoteProcess#isCompleted()
-	 */
 	@Override
 	public boolean isCompleted() {
 		return isCompleted;

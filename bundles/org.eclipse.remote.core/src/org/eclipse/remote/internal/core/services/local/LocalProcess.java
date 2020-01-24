@@ -36,12 +36,6 @@ public class LocalProcess implements IRemoteProcessControlService, IRemoteProces
 	private volatile boolean isCompleted;
 
 	public static class Factory implements IRemoteProcess.Service.Factory {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.remote.core.IRemoteProcess.Service.Factory#getService(org.eclipse.remote.core.IRemoteProcess,
-		 * java.lang.Class)
-		 */
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends IRemoteProcess.Service> T getService(IRemoteProcess remoteProcess, Class<T> service) {
@@ -161,71 +155,36 @@ public class LocalProcess implements IRemoteProcessControlService, IRemoteProces
 		completedChecker.start();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#destroy()
-	 */
 	@Override
 	public void destroy() {
 		localProcess.destroy();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#exitValue()
-	 */
 	@Override
 	public int exitValue() {
 		return localProcess.exitValue();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getErrorStream()
-	 */
 	@Override
 	public InputStream getErrorStream() {
 		return procStderr;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getInputStream()
-	 */
 	@Override
 	public InputStream getInputStream() {
 		return procStdout;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#getOutputStream()
-	 */
 	@Override
 	public OutputStream getOutputStream() {
 		return localProcess.getOutputStream();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Process#waitFor()
-	 */
 	@Override
 	public int waitFor() throws InterruptedException {
 		return localProcess.waitFor();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.RemoteProcess#isCompleted()
-	 */
 	@Override
 	public boolean isCompleted() {
 		return isCompleted;

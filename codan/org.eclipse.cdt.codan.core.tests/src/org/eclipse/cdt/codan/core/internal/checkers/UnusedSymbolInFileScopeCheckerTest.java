@@ -384,4 +384,12 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
+
+	// [[maybe_unused]] static int v1;
+	// [[maybe_unused]] int f1();
+	// [[maybe_unused]] extern int f2();
+	public void testAttributeCpp17Unused() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
 }

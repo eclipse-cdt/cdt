@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.parser.StandardAttributes;
 import org.eclipse.cdt.core.parser.util.AttributeUtil;
 
 /**
@@ -72,7 +73,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	 * Various attributes that when present for a symbol should make it considered as used.
 	 */
 	private static final String[] USAGE_ATTRIBUTES = new String[] { "__unused__", "unused", "constructor", //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			"destructor" }; //$NON-NLS-1$
+			"destructor", StandardAttributes.MAYBE_UNUSED }; //$NON-NLS-1$
 
 	private Map<IBinding, IASTDeclarator> externFunctionDeclarations = new HashMap<>();
 	private Map<IBinding, IASTDeclarator> staticFunctionDeclarations = new HashMap<>();
@@ -145,7 +146,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) element;
 
 						IASTDeclSpecifier declSpec = simpleDeclaration.getDeclSpecifier();
-						boolean hasUsageAttrib = hasUsageAttribute(declSpec);
+						boolean hasUsageAttrib = hasUsageAttribute(declSpec) || hasUsageAttribute(simpleDeclaration);
 						IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 						for (IASTDeclarator decl : declarators) {
 							IASTName astName = decl.getName();

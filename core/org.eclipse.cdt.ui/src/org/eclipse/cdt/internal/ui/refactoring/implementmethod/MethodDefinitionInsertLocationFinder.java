@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -29,11 +31,18 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
+import org.eclipse.cdt.internal.ui.refactoring.utils.NamespaceHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -111,7 +120,48 @@ public class MethodDefinitionInsertLocationFinder {
 				ITranslationUnit partner = SourceHeaderPartnerFinder.getPartnerTranslationUnit(declarationTu,
 						refactoringContext);
 				if (partner != null) {
-					insertLocation.setParentNode(refactoringContext.getAST(partner, null), partner);
+					if (methodDeclarationLocation == null) {
+						insertLocation.setParentNode(refactoringContext.getAST(partner, null), partner);
+						return insertLocation;
+					}
+					final ICPPASTName[] names = NamespaceHelper.getSurroundingNamespace(declarationTu,
+							methodDeclarationLocation.getNodeOffset(), refactoringContext);
+					IASTTranslationUnit ast = refactoringContext.getAST(partner, null);
+					IASTNode[] target = new IASTNode[1];
+					if (ast != null) {
+						ast.accept(new ASTVisitor() {
+							{
+								shouldVisitNamespaces = true;
+							}
+
+							@Override
+							public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
+								IASTName name = namespaceDefinition.getName();
+								IBinding binding = name.resolveBinding();
+								if (!(binding instanceof ICPPNamespace))
+									return PROCESS_CONTINUE;
+								try {
+									char[][] qualNames = ((ICPPNamespace) binding).getQualifiedNameCharArray();
+									if (qualNames.length != names.length - 1)
+										return PROCESS_CONTINUE;
+									for (int i = 0; i < names.length - 1; ++i) {
+										if (!CharArrayUtils.equals(qualNames[i], names[i].getSimpleID()))
+											return PROCESS_CONTINUE;
+									}
+								} catch (DOMException e) {
+									e.printStackTrace();
+									return PROCESS_CONTINUE;
+								}
+								target[0] = namespaceDefinition;
+								return PROCESS_ABORT;
+							}
+						});
+					}
+					if (target[0] != null) {
+						insertLocation.setParentNode(target[0], partner);
+					} else {
+						insertLocation.setParentNode(ast, partner);
+					}
 				}
 			} else {
 				insertLocation.setParentNode(parent.getTranslationUnit(), declarationTu);

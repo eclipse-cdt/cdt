@@ -897,4 +897,26 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	public void testWithInnerEnum_Bug452809() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//A.h
+	//
+	//namespace N {
+	//struct A {
+	//	/*$*/void waldo();/*$$*/
+	//};
+	//}
+
+	//A.cpp
+	//#include "A.h"
+	//namespace N {}
+	//====================
+	//#include "A.h"
+	//namespace N {
+	//void A::waldo() {
+	//}
+	//
+	//}
+	public void testNamespaceAlreadyInDefinition_Bug434677() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

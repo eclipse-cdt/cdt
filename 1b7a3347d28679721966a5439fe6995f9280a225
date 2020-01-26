@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "064cd86a_82a776b2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-26T17:14:17Z",
+      "side": 1,
+      "message": "Btw this should be \u0027Also-by\u0027 rather than signed off by (you don\u0027t need to sign off commits as your committer agreement signs them all off)",
+      "revId": "1b7a3347d28679721966a5439fe6995f9280a225",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

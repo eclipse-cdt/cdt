@@ -1195,6 +1195,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		// name
 		enumerator.getName().accept(this);
 
+		formatAttributes(enumerator, true, false, ICPPASTAttributeList.TYPE_FILTER);
+
 		// optional value assignment
 		final IASTExpression value = enumerator.getValue();
 		if (value != null) {

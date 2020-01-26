@@ -4708,4 +4708,13 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testMacroInFunctionParameters_Bug550096() throws Exception {
 		assertFormatterResult();
 	}
+
+	//enum {A[[maybe_unused]],B[[maybe_unused]]=42};
+
+	//enum {
+	//	A [[maybe_unused]], B [[maybe_unused]] = 42
+	//};
+	public void testEnumWithAttributes_Bug559545() throws Exception {
+		assertFormatterResult();
+	}
 }

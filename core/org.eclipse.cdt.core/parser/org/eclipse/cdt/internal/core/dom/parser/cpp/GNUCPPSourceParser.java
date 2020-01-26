@@ -1540,7 +1540,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IGCCToken.t___alignof__:
 			return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(),
 					IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, ctx, strat);
-
+		case IGCCToken.tTT_integer_pack:
+			return unaryExpression(IASTUnaryExpression.op_integerPack, ctx, strat);
 		case IGCCToken.tTT_has_nothrow_assign:
 		case IGCCToken.tTT_has_nothrow_constructor:
 		case IGCCToken.tTT_has_nothrow_copy:

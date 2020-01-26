@@ -11385,4 +11385,19 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testStringLiteralOperatorTemplate_536986() throws Exception {
 		parseAndCheckImplicitNameBindings();
 	}
+
+	//	template <int...>
+	//	struct integer_sequence {};
+	//
+	//	template <int N>
+	//	using make_integer_sequence = integer_sequence<__integer_pack(N)...>;
+	//
+	//	using type1 = integer_sequence<0, 1, 2>;
+	//	using type2 = make_integer_sequence<3>;
+	public void testIntegerPack_553794() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ITypedef type1 = helper.assertNonProblem("type1");
+		ITypedef type2 = helper.assertNonProblem("type2");
+		assertSameType(type1, type2);
+	}
 }

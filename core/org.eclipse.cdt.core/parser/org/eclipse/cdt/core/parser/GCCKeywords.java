@@ -90,4 +90,7 @@ public class GCCKeywords {
 
 	/** @since 6.6 */
 	public static final char[] cp__is_constructible = "__is_constructible".toCharArray();
+
+	/** @since 6.10 */
+	public static final char[] cp__integer_pack = "__integer_pack".toCharArray();
 }

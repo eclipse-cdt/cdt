@@ -175,6 +175,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			}
 			if (version >= VERSION_8_0) {
 				addKeyword(GCCKeywords.cp__is_constructible, IGCCToken.tTT_is_constructible);
+				addKeyword(GCCKeywords.cp__integer_pack, IGCCToken.tTT_integer_pack);
 			}
 		} else if (compiler == CompilerType.Clang) {
 			// As documented at
@@ -201,6 +202,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			addKeyword(GCCKeywords.cp__is_trivially_constructible, IGCCToken.tTT_is_trivially_constructible);
 			addKeyword(GCCKeywords.cp__is_trivially_assignable, IGCCToken.tTT_is_trivially_assignable);
 			addKeyword(GCCKeywords.cp__is_constructible, IGCCToken.tTT_is_constructible);
+			addKeyword(GCCKeywords.cp__integer_pack, IGCCToken.tTT_integer_pack);
 		} else if (compiler == CompilerType.MSVC) {
 			// As documented at
 			// https://docs.microsoft.com/en-us/cpp/extensions/compiler-support-for-type-traits-cpp-component-extensions?view=vs-2017

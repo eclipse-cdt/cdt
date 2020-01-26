@@ -19,6 +19,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_alignOf;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_amper;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_bracketedPrimary;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_integerPack;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_minus;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_noexcept;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_not;
@@ -156,6 +157,8 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return fArgument.referencesTemplateParameter();
 		case op_throw:
 			return false;
+		case op_integerPack:
+			return true;
 		default:
 			return fArgument.isValueDependent();
 		}
@@ -242,6 +245,8 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return CPPVisitor.get_type_info();
 		case op_throw:
 			return CPPSemantics.VOID_TYPE;
+		case op_integerPack:
+			return fArgument.getType();
 		case op_amper:
 			if (fAddressOfQualifiedNameBinding instanceof ICPPMember) {
 				ICPPMember member = (ICPPMember) fAddressOfQualifiedNameBinding;
@@ -394,6 +399,10 @@ public class EvalUnary extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
+		if (fOperator == op_integerPack && context.getPackOffset() != -1) {
+			return new EvalFixed(getType(), ValueCategory.PRVALUE, IntegralValue.create(context.getPackOffset()));
+		}
+
 		ICPPEvaluation argument = fArgument.instantiate(context, maxDepth);
 		IBinding binding = fAddressOfQualifiedNameBinding;
 		if (binding instanceof ICPPUnknownBinding) {
@@ -520,6 +529,15 @@ public class EvalUnary extends CPPDependentEvaluation {
 
 	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		if (fOperator == op_integerPack) {
+			ICPPEvaluation instantiatedArg = fArgument.instantiate(new InstantiationContext(tpMap),
+					IntegralValue.MAX_RECURSION_DEPTH);
+			IValue value = instantiatedArg.getValue();
+			if (value.numberValue() != null) {
+				return (int) value.numberValue().longValue();
+			}
+			return CPPTemplates.PACK_SIZE_DEFER;
+		}
 		return fArgument.determinePackSize(tpMap);
 	}
 

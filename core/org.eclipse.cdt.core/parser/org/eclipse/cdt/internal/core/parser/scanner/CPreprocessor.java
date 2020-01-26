@@ -2322,6 +2322,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			addTypeTraitPrimitive("is_trivially_copyable", GCCKeywords.cp__is_trivially_copyable);
 			addTypeTraitPrimitive("is_union", GCCKeywords.cp__is_union);
 			addTypeTraitPrimitive("underlying_type", GCCKeywords.cp__underlying_type);
+
+			// TODO: If at some point we add support for __has_builtin, "__integer_pack"
+			//       should be added to the list of supported builtins.
 		}
 		return sSupportedFeatures;
 	}

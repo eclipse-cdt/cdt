@@ -29,7 +29,7 @@
 = Updating This Document =
 				
 This document is maintained in a collaborative wiki.  If you wish to update or modify this document please visit 
-http://wiki.eclipse.org/CDT/Autotools/User_Guide
+https://wiki.eclipse.org/CDT/Autotools/User_Guide
             </pageAppendum>
 		</mediawiki-to-eclipse-help>
 		<replace file="CDT/Autotools/User_Guide/User-Guide.html" token="{{#eclipseproject:tools.cdt}}" value=""/>

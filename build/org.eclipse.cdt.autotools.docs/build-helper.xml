@@ -16,7 +16,7 @@
             Generate Eclipse help content for the CDT autotools user guide
     </description>
 
-	<property name="autotools.help.doc.url.base" value="http://wiki.eclipse.org"/>
+	<property name="autotools.help.doc.url.base" value="https://wiki.eclipse.org"/>
 	<property name="autotools.wiki.url.base" value="${autotools.help.doc.url.base}/CDT/Autotools"/>
 	<property name="imageFolder" value="images"/>
 

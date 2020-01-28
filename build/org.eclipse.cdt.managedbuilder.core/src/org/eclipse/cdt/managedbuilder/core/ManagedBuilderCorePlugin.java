@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildStateManager;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DbgUtil;
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ProjectConverter;
@@ -250,6 +251,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			String builder = Platform.getDebugOption(BUILDER);
 			if (builder != null) {
 				GeneratedMakefileBuilder.VERBOSE = builder.equalsIgnoreCase("true"); //$NON-NLS-1$
+				Builder.VERBOSE = builder.equalsIgnoreCase("true"); //$NON-NLS-1$
 			}
 			String buildModel = Platform.getDebugOption(BUILD_MODEL);
 			if (buildModel != null) {

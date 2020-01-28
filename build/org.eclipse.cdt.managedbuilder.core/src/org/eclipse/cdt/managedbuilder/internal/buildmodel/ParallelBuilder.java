@@ -30,6 +30,7 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.resources.IProject;
@@ -245,37 +246,63 @@ public class ParallelBuilder {
 	static public int build(IBuildDescription des, IPath cwd, GenDirInfo dirs, OutputStream out, OutputStream err,
 			IProgressMonitor monitor, boolean resumeOnErrors, boolean buildIncrementally,
 			IResourceRebuildStateContainer rs) {
+		outputTrace(out, "Starting build"); //$NON-NLS-1$
 		int status = IBuildModelBuilder.STATUS_OK;
+		outputTrace(out, "Obtaining configuration from build description"); //$NON-NLS-1$
 		IConfiguration cfg = des.getConfiguration();
-		if (dirs == null)
+		if (dirs == null) {
+			outputTrace(out, "Creating generated directory information"); //$NON-NLS-1$
 			dirs = new GenDirInfo(cfg);
-		if (cwd == null)
+		}
+		if (cwd == null) {
+			outputTrace(out, "Getting default build directory"); //$NON-NLS-1$
 			cwd = des.getDefaultBuildDirLocation();
+		}
 		int threads = 1;
 		if (cfg instanceof Configuration) {
 			threads = ((Configuration) cfg).getParallelNumber();
 		}
 
+		outputTrace(out, "Creating ParallelBuilder"); //$NON-NLS-1$
 		ParallelBuilder builder = new ParallelBuilder(cwd, dirs, out, err, monitor, resumeOnErrors, buildIncrementally,
 				rs, des);
 
+		outputTrace(out, "Starting Pre Build Step"); //$NON-NLS-1$
 		status = builder.executePreBuildStep();
 		if (status != IBuildModelBuilder.STATUS_OK) {
+			outputTrace(out, "Finished Pre Build Step with not-ok status: " + status); //$NON-NLS-1$
 			return status;
 		}
+		outputTrace(out, "Finished Pre Build Step with ok status"); //$NON-NLS-1$
 
+		outputTrace(out, "Initializing Rebuild States"); //$NON-NLS-1$
 		builder.initRebuildStates();
+		outputTrace(out, "Enqueing all build description steps"); //$NON-NLS-1$
 		builder.enqueueAll(des);
+		outputTrace(out, "Sorting Build Queue"); //$NON-NLS-1$
 		builder.sortQueue();
 		monitor.beginTask("", builder.queue.size()); //$NON-NLS-1$
+		outputTrace(out, "Creating Build Process Manager"); //$NON-NLS-1$
 		BuildProcessManager buildProcessManager = new BuildProcessManager(out, err, true, threads);
+		outputTrace(out, "Dispatching to Build Process Manager"); //$NON-NLS-1$
 		status = builder.dispatch(buildProcessManager);
+		outputTrace(out, "Getting number of threads used by Build Process Manager"); //$NON-NLS-1$
 		lastThreadsUsed = buildProcessManager.getThreadsUsed();
 		monitor.done();
 
 		if (status == IBuildModelBuilder.STATUS_OK) {
+			outputTrace(out, "Finished Build Steps with ok status"); //$NON-NLS-1$
+			outputTrace(out, "Clearing Rebuild States"); //$NON-NLS-1$
 			builder.clearRebuildStates();
+			outputTrace(out, "Starting Post Build Step"); //$NON-NLS-1$
 			status = builder.executePostBuildStep();
+			if (status != IBuildModelBuilder.STATUS_OK) {
+				outputTrace(out, "Finished Post Build Step with not-ok status: " + status); //$NON-NLS-1$
+			} else {
+				outputTrace(out, "Finished Post Build Step with ok status"); //$NON-NLS-1$
+			}
+		} else {
+			outputTrace(out, "Finished Build Step with not-ok status: " + status); //$NON-NLS-1$
 		}
 
 		return status;
@@ -676,6 +703,10 @@ public class ParallelBuilder {
 		putAll(fRebuildStateContainer, outres, 0, false);
 		IBuildResource inres[] = step.getInputResources();
 		putAll(fRebuildStateContainer, inres, 0, false);
+	}
+
+	private static void outputTrace(OutputStream out, String message) {
+		Builder.outputTrace(out, "[ParallelBuilder]", message); //$NON-NLS-1$
 	}
 
 }

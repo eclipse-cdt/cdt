@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -83,6 +85,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.osgi.framework.Version;
 
 public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider<Builder>, IRealBuildObjectAssociation {
+	public static boolean VERBOSE;
 	public static final int UNLIMITED_JOBS = Integer.MAX_VALUE;
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -2888,5 +2891,45 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	protected IResourceInfo getParentResourceInfo() {
 		// There are no resources associated with builders
 		return null;
+	}
+
+	/**
+	 * copied from org.eclipse.cdt.dsf.gdb.internal.GdbPlugin.getDebugTime()
+	 */
+	public static String getDebugTime() {
+		StringBuilder traceBuilder = new StringBuilder();
+
+		// Record the time
+		long time = System.currentTimeMillis();
+		long seconds = (time / 1000) % 1000;
+		if (seconds < 100)
+			traceBuilder.append('0');
+		if (seconds < 10)
+			traceBuilder.append('0');
+		traceBuilder.append(seconds);
+		traceBuilder.append(',');
+		long millis = time % 1000;
+		if (millis < 100)
+			traceBuilder.append('0');
+		if (millis < 10)
+			traceBuilder.append('0');
+		traceBuilder.append(millis);
+		return traceBuilder.toString();
+	}
+
+	/**
+	 * Trace the message if VERBOSE is true. Caution, if the message is non-trivial
+	 * to generate wrap the trace call in the VERBOSE check too.
+	 */
+	public static void outputTrace(OutputStream out, String header, String message) {
+		if (VERBOSE) {
+			try {
+				String msg = String.format("%s %s %s\n", getDebugTime(), header, message); //$NON-NLS-1$
+				out.write(msg.getBytes());
+				out.flush();
+			} catch (IOException e) {
+				// do nothing
+			}
+		}
 	}
 }

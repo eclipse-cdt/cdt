@@ -36,6 +36,7 @@ import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IConfigurationBuildState;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IProjectBuildState;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.ParallelBuilder;
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceDelta;
@@ -109,9 +110,17 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			buildRunnerHelper.prepareStreams(epm, parsers, console,
 					new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
+			OutputStream stdout = buildRunnerHelper.getOutputStream();
+			OutputStream stderr = buildRunnerHelper.getErrorStream();
+
+			outputTrace(stdout, "Console Streams Prepared"); //$NON-NLS-1$
+
+			outputTrace(stdout, "Creating Build Description from Manager"); //$NON-NLS-1$
 			IBuildDescription des = BuildDescriptionManager.createBuildDescription(configuration, cBS, delta, flags);
+			outputTrace(stdout, "Finished creating DescriptionBuilder"); //$NON-NLS-1$
 			DescriptionBuilder dBuilder = null;
 			if (!isParallel) {
+				outputTrace(stdout, "Creating DescriptionBuilder"); //$NON-NLS-1$
 				dBuilder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr, cBS);
 				if (dBuilder.getNumCommands() <= 0) {
 					buildRunnerHelper.printLine(ManagedMakeMessages
@@ -120,34 +129,40 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 				}
 			}
 
+			outputTrace(stdout, "Starting to remove old markers"); //$NON-NLS-1$
 			buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, TICKS_DELETE_MARKERS,
 					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			outputTrace(stdout, "Finished removing old markers"); //$NON-NLS-1$
 
 			if (buildIncrementaly) {
+				outputTrace(stdout, "Showing incremental build message"); //$NON-NLS-1$
 				buildRunnerHelper.greeting(IncrementalProjectBuilder.INCREMENTAL_BUILD, cfgName, toolchainName,
 						isConfigurationSupported);
 			} else {
+				outputTrace(stdout, "Showing rebuild message"); //$NON-NLS-1$
 				buildRunnerHelper.greeting(ManagedMakeMessages.getResourceString("ManagedMakeBuider.type.rebuild"), //$NON-NLS-1$
 						cfgName, toolchainName, isConfigurationSupported);
 			}
 			buildRunnerHelper.printLine(
 					ManagedMakeMessages.getResourceString("ManagedMakeBuilder.message.internal.builder.header.note")); //$NON-NLS-1$
 
-			OutputStream stdout = buildRunnerHelper.getOutputStream();
-			OutputStream stderr = buildRunnerHelper.getErrorStream();
-
 			int status;
+			outputTrace(stdout, "Deferring De-Duplication of error messages"); //$NON-NLS-1$
 			epm.deferDeDuplication();
 			try {
 
 				if (dBuilder != null) {
+					outputTrace(stdout, "Starting build"); //$NON-NLS-1$
 					status = dBuilder.build(stdout, stderr, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+					outputTrace(stdout, "Finished build"); //$NON-NLS-1$
 				} else {
+					outputTrace(stdout, "Starting parallel build"); //$NON-NLS-1$
 					status = ParallelBuilder.build(des, null, null, stdout, stderr,
 							new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND,
 									SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK),
 							resumeOnErr, buildIncrementaly, cBS);
+					outputTrace(stdout, "Finished parallel build"); //$NON-NLS-1$
 					// Bug 403670:
 					// Make sure the build configuration's rebuild status is updated with the result of
 					// this successful build.  In the non-parallel case this happens within dBuilder.build
@@ -186,5 +201,9 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 		}
 
 		return false;
+	}
+
+	private static void outputTrace(OutputStream out, String message) {
+		Builder.outputTrace(out, "[InternalBuildRunner]", message); //$NON-NLS-1$
 	}
 }

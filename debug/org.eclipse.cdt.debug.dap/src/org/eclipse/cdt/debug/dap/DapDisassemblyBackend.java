@@ -125,7 +125,7 @@ public class DapDisassemblyBackend extends AbstractDisassemblyBackend {
 			int lines, boolean mixed, boolean showSymbols, boolean showDisassembly, int linesHint) {
 		CDTDisassembleArguments args = new CDTDisassembleArguments();
 		args.setMemoryReference("0x" + startAddress.toString(16)); //$NON-NLS-1$
-		args.setInstructionCount((long) lines);
+		args.setInstructionCount(lines);
 		args.setEndMemoryReference("1+0x" + endAddress.toString(16)); //$NON-NLS-1$
 		CompletableFuture<DisassembleResponse> future = dspStackFrame.getDebugProtocolServer().disassemble(args);
 		future.thenAcceptAsync(res -> {
@@ -188,7 +188,7 @@ public class DapDisassemblyBackend extends AbstractDisassemblyBackend {
 				if (location != null) {
 					file = location.getPath();
 				}
-				Long line = instruction.getLine();
+				Integer line = instruction.getLine();
 				int lineNumber = (line == null ? 0 : line.intValue()) - 1;
 				BigInteger address = getAddress(instruction);
 				if (startAddress == null) {

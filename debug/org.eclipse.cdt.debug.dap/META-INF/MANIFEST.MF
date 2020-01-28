@@ -4,29 +4,15 @@ Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.debug.dap;singleton:=true
 Bundle-Version: 1.1.100.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.apache.commons.io,
- org.eclipse.core.runtime,
- org.eclipse.lsp4e;bundle-version="0.11.0",
- org.eclipse.ui.genericeditor;bundle-version="1.0.0",
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface.text,
- org.eclipse.cdt.ui,
- org.eclipse.cdt.core,
- org.eclipse.jface,
  org.eclipse.ui,
- org.eclipse.lsp4j;bundle-version="0.7.2",
- org.eclipse.core.commands,
- org.eclipse.core.expressions,
- org.eclipse.core.resources,
- com.google.gson;bundle-version="2.8.2",
  org.eclipse.lsp4j.jsonrpc,
  org.eclipse.cdt.launch,
  org.eclipse.lsp4e.debug;bundle-version="0.11.0",
- org.eclipse.debug.core,
  org.eclipse.debug.ui,
- org.eclipse.cdt.debug.core,
  org.eclipse.lsp4j.debug,
  org.eclipse.lsp4j.jsonrpc.debug,
- com.google.guava,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.cdt.dsf.gdb;bundle-version="5.7.200",
  org.eclipse.cdt.debug.ui
@@ -34,7 +20,5 @@ Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.debug.dap
 Bundle-Activator: org.eclipse.cdt.debug.dap.Activator
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.ui.editors.text,
- org.eclipse.ui.texteditor
 Automatic-Module-Name: org.eclipse.cdt.debug.dap
 Eclipse-BundleShape: dir

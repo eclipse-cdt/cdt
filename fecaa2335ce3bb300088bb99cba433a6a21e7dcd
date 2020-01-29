@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8b94063b_9033f277",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-29T22:34:55Z",
+      "side": 1,
+      "message": "I think this should be 8.8 with a cooresponding bump in MANIFEST.MF.",
+      "revId": "fecaa2335ce3bb300088bb99cba433a6a21e7dcd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

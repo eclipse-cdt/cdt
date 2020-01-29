@@ -59,8 +59,9 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 	/**
 	 * Finds a tool handling given language in the tool-chain of the provider.
 	 * This returns the first tool found.
+	 * @since 8.8
 	 */
-	private ITool getTool(String languageId) {
+	protected ITool getTool(String languageId) {
 		if (languageId == null) {
 			return null;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2020 Andrew Gvozdev and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,16 @@
  *
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 559707
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -28,6 +31,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableManagerToolChain;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Abstract parser capable to execute compiler command printing built-in compiler
@@ -58,18 +62,18 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 
 	/**
 	 * Finds a tool handling given language in the tool-chain of the provider.
-	 * This returns the first tool found.
+	 * This returns the first tool found or empty {@link Optional}.
 	 * @since 8.8
 	 */
-	protected ITool getTool(String languageId) {
+	protected Optional<ITool> languageTool(String languageId) {
 		if (languageId == null) {
-			return null;
+			return Optional.empty();
 		}
 
 		if (currentCfgDescription == null) {
 			ITool tool = toolMap.get(languageId);
 			if (tool != null) {
-				return tool;
+				return Optional.of(tool);
 			}
 		}
 
@@ -100,7 +104,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 			ManagedBuilderCorePlugin
 					.error("Unable to find tool in toolchain=" + toolchainId + " for language=" + languageId); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return tool;
+		return Optional.ofNullable(tool);
 	}
 
 	/**
@@ -123,79 +127,85 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 
 	@Override
 	protected String getCompilerCommand(String languageId) {
-		ITool tool = getTool(languageId);
-		String compilerCommand = tool != null ? tool.getToolCommand() : ""; //$NON-NLS-1$
-		if (compilerCommand.isEmpty()) {
-			ManagedBuilderCorePlugin.error("Unable to find compiler command in toolchain=" + getToolchainId()); //$NON-NLS-1$
+		Optional<String> found = languageTool(languageId)//
+				.flatMap(t -> Optional.of(t.getToolCommand()));
+		if (!found.isPresent()) {
+			ManagedBuilderCorePlugin
+					.error(NLS.bind("Unable to find compiler command in toolchain={0}", getToolchainId())); //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 		}
-		return compilerCommand;
+		return found.get();
 	}
 
 	@Override
 	protected String getSpecFileExtension(String languageId) {
-		String ext = null;
-		ITool tool = getTool(languageId);
-		String[] srcFileExtensions = tool != null ? tool.getAllInputExtensions() : null;
-		if (srcFileExtensions != null && srcFileExtensions.length > 0) {
-			ext = srcFileExtensions[0];
+		Optional<String> found = languageTool(languageId)//
+				.flatMap(t -> Optional.of(t.getAllInputExtensions()))//
+				.flatMap(e -> Arrays.asList(e).stream().findFirst());
+		if (!found.isPresent()) {
+			ManagedBuilderCorePlugin.error(NLS.bind("Unable to find file extension for language {0}", languageId)); //$NON-NLS-1$
+			return null;
 		}
-		if (ext == null || ext.isEmpty()) {
-			ManagedBuilderCorePlugin.error("Unable to find file extension for language " + languageId); //$NON-NLS-1$
+		String firstInput = found.get();
+		if (firstInput == null || firstInput.isEmpty()) {
+			//this looks like either invalid configuration settings or API issue
+			ManagedBuilderCorePlugin.error(NLS.bind("Unable to find file extension for language {0}", languageId)); //$NON-NLS-1$
 		}
-		return ext;
+		return firstInput;
 	}
 
 	@Override
 	protected String getToolOptions(String languageId) {
-		String flags = ""; //$NON-NLS-1$
-		ITool tool = getTool(languageId);
-		if (tool != null) {
-			IOption[] options = tool.getOptions();
-			for (IOption option : options) {
-				if (option.isForScannerDiscovery()) {
-					try {
-						String optionValue = null;
-						switch (option.getBasicValueType()) {
-						case IOption.BOOLEAN:
-							if (option.getBooleanValue()) {
-								optionValue = option.getCommand();
-							} else {
-								optionValue = option.getCommandFalse();
-							}
-							break;
-						case IOption.ENUMERATED:
-							optionValue = option.getEnumCommand(option.getSelectedEnum());
-							break;
-						case IOption.STRING:
-							optionValue = option.getCommand() + option.getStringValue();
-							break;
-						case IOption.STRING_LIST:
-							String[] values = option.getBasicStringListValue();
-							if (values != null) {
-								optionValue = ""; //$NON-NLS-1$
-								String cmd = option.getCommand();
-								for (String value : values) {
-									if (!value.isEmpty() && !value.equals(EMPTY_QUOTED_STRING)) {
-										optionValue = optionValue + cmd + value + ' ';
-									}
+		Optional<IOption[]> found = languageTool(languageId).flatMap(t -> Optional.of(t.getOptions()));
+		if (!found.isPresent()) {
+			return ""; //$NON-NLS-1$
+		}
+		StringBuilder flags = new StringBuilder();
+		IOption[] options = found.get();
+		for (IOption option : options) {
+			if (option.isForScannerDiscovery()) {
+				try {
+					String optionValue = null;
+					switch (option.getBasicValueType()) {
+					case IOption.BOOLEAN:
+						if (option.getBooleanValue()) {
+							optionValue = option.getCommand();
+						} else {
+							optionValue = option.getCommandFalse();
+						}
+						break;
+					case IOption.ENUMERATED:
+						optionValue = option.getEnumCommand(option.getSelectedEnum());
+						break;
+					case IOption.STRING:
+						optionValue = option.getCommand() + option.getStringValue();
+						break;
+					case IOption.STRING_LIST:
+						String[] values = option.getBasicStringListValue();
+						if (values != null) {
+							optionValue = ""; //$NON-NLS-1$
+							String cmd = option.getCommand();
+							for (String value : values) {
+								if (!value.isEmpty() && !value.equals(EMPTY_QUOTED_STRING)) {
+									optionValue = optionValue + cmd + value + ' ';
 								}
 							}
-							break;
-						case IOption.TREE:
-							optionValue = option.getCommand(option.getStringValue());
-							break;
-						default:
 						}
-						if (optionValue != null) {
-							flags = flags + ' ' + optionValue.trim();
-						}
-					} catch (BuildException e) {
-						ManagedBuilderCorePlugin.log(e);
+						break;
+					case IOption.TREE:
+						optionValue = option.getCommand(option.getStringValue());
+						break;
+					default:
 					}
+					if (optionValue != null) {
+						flags.append(' ').append(optionValue.trim());
+					}
+				} catch (BuildException e) {
+					ManagedBuilderCorePlugin.log(e);
 				}
 			}
 		}
-		return flags.trim();
+		return flags.toString().trim();
 	}
 
 	@Override

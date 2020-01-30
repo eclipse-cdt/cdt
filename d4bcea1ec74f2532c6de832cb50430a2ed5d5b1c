@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be96e9f7_af25e97c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-30T15:28:43Z",
+      "side": 1,
+      "message": "If I am reading this right, this check is different than what was before - it used to do this error message on empty string, now it only does it on null string. As you have probably figured out, getToolCommand returns empty strings and never null as there would be a NPE here instead. So the test has changed from erroring on (getTool \u003d\u003d null || getToolCommand.isEmpty()) to just (getTool \u003d\u003d null).\n\n\nHowever, as the return value has not changed I am fine enough with this change - but I will pause before merging to make sure that is what you intended.",
+      "revId": "d4bcea1ec74f2532c6de832cb50430a2ed5d5b1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "272d13d5_eb7e26c3",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-30T15:28:43Z",
+      "side": 1,
+      "message": "this is why outside of Eclipse IDE ecosystem I prefer google java formatter - it handles these types of chain formatting better without having to resort to dummy comments.",
+      "range": {
+        "startLine": 142,
+        "startChar": 51,
+        "endLine": 142,
+        "endChar": 53
+      },
+      "revId": "d4bcea1ec74f2532c6de832cb50430a2ed5d5b1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0481b0b1_6bd1c4b6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-30T15:28:43Z",
+      "side": 1,
+      "message": "I think these errors are for authors of these overly complex XML files that describe MBS - so I think your comment is correct.",
+      "range": {
+        "startLine": 151,
+        "startChar": 28,
+        "endLine": 151,
+        "endChar": 58
+      },
+      "revId": "d4bcea1ec74f2532c6de832cb50430a2ed5d5b1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2cf0f4f4_79048b49",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-30T15:28:43Z",
+      "side": 1,
+      "message": "+1",
+      "revId": "d4bcea1ec74f2532c6de832cb50430a2ed5d5b1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "89f4af46_a18ca125",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-30T15:39:21Z",
+      "side": 1,
+      "message": "I assume we are not trying to judge here the compiler command value for validity. Unlike below - array with null or empty values looks generally invalid.\nHowever I may be wrong - the API is unclear here.",
+      "parentUuid": "be96e9f7_af25e97c",
+      "revId": "d4bcea1ec74f2532c6de832cb50430a2ed5d5b1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "272d13d5_eb7e26c3",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
         "patchSetId": 1

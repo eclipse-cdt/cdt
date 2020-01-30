@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "ef08ddeb_fe6b7eee",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-01-30T16:29:08Z",
+      "side": 1,
+      "message": "I think, like below, compiler command being blank shows an error in the plugin.xml that a developer has provided. So these errors *should* be seen by CDT extenders and not ever by users.\n\nHowever, there are places users can also set the ITool\u0027s command to blank string. Whether anyone does this legitimately or not is a mystery to me.",
+      "parentUuid": "89f4af46_a18ca125",
+      "revId": "d4bcea1ec74f2532c6de832cb50430a2ed5d5b1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "272d13d5_eb7e26c3",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
         "patchSetId": 1

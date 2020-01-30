@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e8043ec_13bb61ea",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-01-30T10:17:20Z",
+      "side": 1,
+      "message": "How about more modern until it gets published with M2\nprotected Optional\u003cITool\u003e languageTool(String languageId) \n?\n\nreturning null is definitely bad practice and should be avoided",
+      "revId": "a0963136f8196eb4aadf9f49b5f29a902009cf30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

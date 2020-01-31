@@ -72,26 +72,29 @@ public class ProcessLauncherDelegate extends AbstractLauncherDelegate {
 		Assert.isNotNull(properties);
 
 		// Check for the terminal connector id
-		String connectorId = (String)properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
-		if (connectorId == null) connectorId = "org.eclipse.tm.terminal.connector.process.ProcessConnector"; //$NON-NLS-1$
+		String connectorId = (String) properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
+		if (connectorId == null)
+			connectorId = "org.eclipse.tm.terminal.connector.process.ProcessConnector"; //$NON-NLS-1$
 
 		// Extract the process properties
-		String image = (String)properties.get(ITerminalsConnectorConstants.PROP_PROCESS_PATH);
-		String arguments = (String)properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ARGS);
-		Process process = (Process)properties.get(ITerminalsConnectorConstants.PROP_PROCESS_OBJ);
-		PTY pty = (PTY)properties.get(ITerminalsConnectorConstants.PROP_PTY_OBJ);
+		String image = (String) properties.get(ITerminalsConnectorConstants.PROP_PROCESS_PATH);
+		String arguments = (String) properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ARGS);
+		Process process = (Process) properties.get(ITerminalsConnectorConstants.PROP_PROCESS_OBJ);
+		PTY pty = (PTY) properties.get(ITerminalsConnectorConstants.PROP_PTY_OBJ);
 		Object value = properties.get(ITerminalsConnectorConstants.PROP_LOCAL_ECHO);
-		boolean localEcho = value instanceof Boolean ? ((Boolean)value).booleanValue() : false;
-		String lineSeparator = (String)properties.get(ITerminalsConnectorConstants.PROP_LINE_SEPARATOR);
-		ITerminalServiceOutputStreamMonitorListener[] stdoutListeners = (ITerminalServiceOutputStreamMonitorListener[])properties.get(ITerminalsConnectorConstants.PROP_STDOUT_LISTENERS);
-		ITerminalServiceOutputStreamMonitorListener[] stderrListeners = (ITerminalServiceOutputStreamMonitorListener[])properties.get(ITerminalsConnectorConstants.PROP_STDERR_LISTENERS);
-		String workingDir = (String)properties.get(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR);
+		boolean localEcho = value instanceof Boolean ? ((Boolean) value).booleanValue() : false;
+		String lineSeparator = (String) properties.get(ITerminalsConnectorConstants.PROP_LINE_SEPARATOR);
+		ITerminalServiceOutputStreamMonitorListener[] stdoutListeners = (ITerminalServiceOutputStreamMonitorListener[]) properties
+				.get(ITerminalsConnectorConstants.PROP_STDOUT_LISTENERS);
+		ITerminalServiceOutputStreamMonitorListener[] stderrListeners = (ITerminalServiceOutputStreamMonitorListener[]) properties
+				.get(ITerminalsConnectorConstants.PROP_STDERR_LISTENERS);
+		String workingDir = (String) properties.get(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR);
 
 		String[] envp = null;
-		if (properties.containsKey(ITerminalsConnectorConstants.PROP_PROCESS_ENVIRONMENT) &&
-						properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ENVIRONMENT) != null &&
-						properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ENVIRONMENT) instanceof String[]){
-			envp = (String[])properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ENVIRONMENT);
+		if (properties.containsKey(ITerminalsConnectorConstants.PROP_PROCESS_ENVIRONMENT)
+				&& properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ENVIRONMENT) != null
+				&& properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ENVIRONMENT) instanceof String[]) {
+			envp = (String[]) properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ENVIRONMENT);
 		}
 
 		Assert.isTrue(image != null || process != null);
@@ -114,7 +117,8 @@ public class ProcessLauncherDelegate extends AbstractLauncherDelegate {
 
 		if (properties.containsKey(ITerminalsConnectorConstants.PROP_PROCESS_MERGE_ENVIRONMENT)) {
 			value = properties.get(ITerminalsConnectorConstants.PROP_PROCESS_MERGE_ENVIRONMENT);
-			processSettings.setMergeWithNativeEnvironment(value instanceof Boolean ? ((Boolean)value).booleanValue() : false);
+			processSettings
+					.setMergeWithNativeEnvironment(value instanceof Boolean ? ((Boolean) value).booleanValue() : false);
 		}
 
 		// And save the settings to the store

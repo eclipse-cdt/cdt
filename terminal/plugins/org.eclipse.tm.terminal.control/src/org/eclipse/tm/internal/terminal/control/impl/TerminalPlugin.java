@@ -31,14 +31,15 @@ import org.osgi.framework.BundleContext;
 
 public class TerminalPlugin extends AbstractUIPlugin {
 	private static TerminalPlugin plugin;
-	public static final String  PLUGIN_ID  = "org.eclipse.tm.terminal.control"; //$NON-NLS-1$
-	public static final String  HELP_VIEW  = PLUGIN_ID + ".terminal_view"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.tm.terminal.control"; //$NON-NLS-1$
+	public static final String HELP_VIEW = PLUGIN_ID + ".terminal_view"; //$NON-NLS-1$
 
 	/**
 	 * The constructor.
 	 */
 	public TerminalPlugin() {
 	}
+
 	/**
 	 * Returns the shared instance.
 	 */
@@ -50,7 +51,7 @@ public class TerminalPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void start(BundleContext context) throws Exception {
+	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 	}
@@ -59,7 +60,7 @@ public class TerminalPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
 	}
@@ -73,20 +74,24 @@ public class TerminalPlugin extends AbstractUIPlugin {
 	}
 
 	@Override
-    protected void initializeImageRegistry(ImageRegistry imageRegistry) {
+	protected void initializeImageRegistry(ImageRegistry imageRegistry) {
 		try {
 			// Local toolbars
-			putImageInRegistry(imageRegistry, ImageConsts.IMAGE_CLCL_CLEAR_ALL, ImageConsts.IMAGE_DIR_LOCALTOOL + "clear_co.gif"); //$NON-NLS-1$
+			putImageInRegistry(imageRegistry, ImageConsts.IMAGE_CLCL_CLEAR_ALL,
+					ImageConsts.IMAGE_DIR_LOCALTOOL + "clear_co.gif"); //$NON-NLS-1$
 			// Enabled local toolbars
-			putImageInRegistry(imageRegistry, ImageConsts.IMAGE_ELCL_CLEAR_ALL, ImageConsts.IMAGE_DIR_ELCL + "clear_co.gif"); //$NON-NLS-1$
+			putImageInRegistry(imageRegistry, ImageConsts.IMAGE_ELCL_CLEAR_ALL,
+					ImageConsts.IMAGE_DIR_ELCL + "clear_co.gif"); //$NON-NLS-1$
 			// Disabled local toolbars
-			putImageInRegistry(imageRegistry, ImageConsts.IMAGE_DLCL_CLEAR_ALL, ImageConsts.IMAGE_DIR_DLCL + "clear_co.gif"); //$NON-NLS-1$
+			putImageInRegistry(imageRegistry, ImageConsts.IMAGE_DLCL_CLEAR_ALL,
+					ImageConsts.IMAGE_DIR_DLCL + "clear_co.gif"); //$NON-NLS-1$
 		} catch (MalformedURLException malformedURLException) {
 			malformedURLException.printStackTrace();
 		}
 	}
 
-	protected void putImageInRegistry(ImageRegistry imageRegistry, String strKey, String relativePath) throws MalformedURLException {
+	protected void putImageInRegistry(ImageRegistry imageRegistry, String strKey, String relativePath)
+			throws MalformedURLException {
 		URL url = TerminalPlugin.getDefault().getBundle().getEntry(relativePath);
 		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(url);
 		imageRegistry.put(strKey, imageDescriptor);

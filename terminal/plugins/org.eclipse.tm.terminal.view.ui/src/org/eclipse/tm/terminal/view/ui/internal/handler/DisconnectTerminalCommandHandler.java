@@ -31,28 +31,28 @@ public class DisconnectTerminalCommandHandler extends AbstractHandler {
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@SuppressWarnings("cast")
-    @Override
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		CTabItem item = null;
 
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-			Object element = ((IStructuredSelection)selection).getFirstElement();
-			if (element instanceof CTabItem && ((CTabItem)element).getData() instanceof ITerminalViewControl) {
-				item = (CTabItem)element;
+			Object element = ((IStructuredSelection) selection).getFirstElement();
+			if (element instanceof CTabItem && ((CTabItem) element).getData() instanceof ITerminalViewControl) {
+				item = (CTabItem) element;
 			}
 		}
 
 		if (item == null && HandlerUtil.getActivePart(event) instanceof ITerminalsView) {
-			ITerminalsView view = (ITerminalsView)HandlerUtil.getActivePart(event);
-			TabFolderManager mgr = (TabFolderManager)view.getAdapter(TabFolderManager.class);
+			ITerminalsView view = (ITerminalsView) HandlerUtil.getActivePart(event);
+			TabFolderManager mgr = (TabFolderManager) view.getAdapter(TabFolderManager.class);
 			if (mgr != null && mgr.getActiveTabItem() != null) {
 				item = mgr.getActiveTabItem();
 			}
 		}
 
 		if (item != null && item.getData() instanceof ITerminalViewControl) {
-			ITerminalViewControl terminal = (ITerminalViewControl)item.getData();
+			ITerminalViewControl terminal = (ITerminalViewControl) item.getData();
 			if (terminal != null && !terminal.isDisposed()) {
 				terminal.disconnectTerminal();
 			}

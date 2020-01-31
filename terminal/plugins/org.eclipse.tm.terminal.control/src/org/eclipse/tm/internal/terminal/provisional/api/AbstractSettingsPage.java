@@ -40,16 +40,16 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage#addListener(org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage.Listener)
 	 */
 	public void addListener(Listener listener) {
-    	Assert.isNotNull(listener);
-    	listeners.add(listener);
+		Assert.isNotNull(listener);
+		listeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage#removeListener(org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage.Listener)
 	 */
 	public void removeListener(Listener listener) {
-    	Assert.isNotNull(listener);
-    	listeners.remove(listener);
+		Assert.isNotNull(listener);
+		listeners.remove(listener);
 	}
 
 	/**
@@ -61,8 +61,9 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 		Object[] list = listeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
 			Object l = list[i];
-			if (!(l instanceof Listener)) continue;
-			((Listener)l).onSettingsPageChanged(control);
+			if (!(l instanceof Listener))
+				continue;
+			((Listener) l).onSettingsPageChanged(control);
 		}
 	}
 
@@ -120,7 +121,8 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 	 */
 	protected final ControlDecoration createControlDecoration(Control control) {
 		Assert.isNotNull(control);
-		if (!hasDecoration) return null;
+		if (!hasDecoration)
+			return null;
 		ControlDecoration controlDecoration = new ControlDecoration(control, getControlDecorationPosition());
 		controlDecoration.setShowOnlyOnFocus(false);
 		control.setData("controlDecoration", controlDecoration); //$NON-NLS-1$
@@ -149,7 +151,7 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 	protected final void updateControlDecoration(Control control, String message, int messageType) {
 		Assert.isNotNull(control);
 
-		ControlDecoration controlDecoration = (ControlDecoration)control.getData("controlDecoration"); //$NON-NLS-1$
+		ControlDecoration controlDecoration = (ControlDecoration) control.getData("controlDecoration"); //$NON-NLS-1$
 		if (controlDecoration != null) {
 			// The description is the same as the message
 			controlDecoration.setDescriptionText(message);
@@ -173,8 +175,7 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 
 			if (message == null || messageType == IMessageProvider.NONE) {
 				controlDecoration.hide();
-			}
-			else {
+			} else {
 				controlDecoration.show();
 			}
 		}

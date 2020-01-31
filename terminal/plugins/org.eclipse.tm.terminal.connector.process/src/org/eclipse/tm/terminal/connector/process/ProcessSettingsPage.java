@@ -69,7 +69,8 @@ public class ProcessSettingsPage extends AbstractSettingsPage {
 		// The entry fields shall be properly aligned
 		Composite panel = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
-		layout.marginWidth = 0; layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		panel.setLayout(layout);
 		panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -80,7 +81,8 @@ public class ProcessSettingsPage extends AbstractSettingsPage {
 		// Text field and browse button are aligned it their own panel
 		Composite innerPanel = new Composite(panel, SWT.NONE);
 		layout = new GridLayout(2, false);
-		layout.marginWidth = 0; layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		innerPanel.setLayout(layout);
 		innerPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -127,7 +129,8 @@ public class ProcessSettingsPage extends AbstractSettingsPage {
 	 */
 	protected void onBrowseButtonSelected(SelectionEvent e) {
 		// Determine the shell
-		Shell shell = e != null ? e.widget.getDisplay().getActiveShell() : PlatformUI.getWorkbench().getDisplay().getActiveShell();
+		Shell shell = e != null ? e.widget.getDisplay().getActiveShell()
+				: PlatformUI.getWorkbench().getDisplay().getActiveShell();
 
 		// create a standard file dialog
 		FileDialog dialog = new FileDialog(shell, SWT.OPEN);
@@ -141,7 +144,8 @@ public class ProcessSettingsPage extends AbstractSettingsPage {
 			IPath filePath = new Path(selectedFile);
 			// If the selected file points to an directory, use the directory as is
 			IPath filterPath = filePath.toFile().isDirectory() ? filePath : filePath.removeLastSegments(1);
-			String filterFileName = filePath.toFile().isDirectory() || !filePath.toFile().exists() ? null : filePath.lastSegment();
+			String filterFileName = filePath.toFile().isDirectory() || !filePath.toFile().exists() ? null
+					: filePath.lastSegment();
 
 			if (!filterPath.isEmpty()) {
 				dialog.setFilterPath(filterPath.toString());
@@ -152,7 +156,8 @@ public class ProcessSettingsPage extends AbstractSettingsPage {
 		} else {
 			Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
 			if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
-				dialog.setFilterPath(org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString());
+				dialog.setFilterPath(
+						org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString());
 			}
 		}
 

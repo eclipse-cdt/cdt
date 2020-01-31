@@ -44,18 +44,18 @@ import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
  * </p>
  */
 public final class Logger {
-    public static final String TRACE_DEBUG_LOG					= "org.eclipse.tm.terminal.control/debug/log"; //$NON-NLS-1$
-    public static final String TRACE_DEBUG_LOG_CHAR				= "org.eclipse.tm.terminal.control/debug/log/char"; //$NON-NLS-1$
-    public static final String TRACE_DEBUG_LOG_VT100BACKEND		= "org.eclipse.tm.terminal.control/debug/log/VT100Backend"; //$NON-NLS-1$
+	public static final String TRACE_DEBUG_LOG = "org.eclipse.tm.terminal.control/debug/log"; //$NON-NLS-1$
+	public static final String TRACE_DEBUG_LOG_CHAR = "org.eclipse.tm.terminal.control/debug/log/char"; //$NON-NLS-1$
+	public static final String TRACE_DEBUG_LOG_VT100BACKEND = "org.eclipse.tm.terminal.control/debug/log/VT100Backend"; //$NON-NLS-1$
 
-    private static PrintStream logStream;
+	private static PrintStream logStream;
 
 	static {
 		// Any of the three known debugging options turns on the creation of the log file
 		boolean createLogFile = TerminalPlugin.isOptionEnabled(TRACE_DEBUG_LOG)
-									|| TerminalPlugin.isOptionEnabled(TRACE_DEBUG_LOG_CHAR)
-									|| TerminalPlugin.isOptionEnabled(TRACE_DEBUG_LOG_VT100BACKEND);
-		
+				|| TerminalPlugin.isOptionEnabled(TRACE_DEBUG_LOG_CHAR)
+				|| TerminalPlugin.isOptionEnabled(TRACE_DEBUG_LOG_VT100BACKEND);
+
 		// Log only if tracing is enabled
 		if (createLogFile && TerminalPlugin.getDefault() != null) {
 			IPath logFile = Platform.getStateLocation(TerminalPlugin.getDefault().getBundle());
@@ -80,48 +80,64 @@ public final class Logger {
 	 */
 	public static final String encode(String message) {
 		boolean encoded = false;
-		StringBuffer buf = new StringBuffer(message.length()+32);
-		for (int i=0; i<message.length(); i++) {
-			char c=message.charAt(i);
-			switch(c) {
-				case '\\':
-				case '\'':
-					buf.append('\\'); buf.append(c); encoded=true;
-					break;
-				case '\r':
-					buf.append('\\'); buf.append('r'); encoded=true;
-					break;
-				case '\n':
-					buf.append('\\'); buf.append('n'); encoded=true;
-					break;
-				case '\t':
-					buf.append('\\'); buf.append('t'); encoded=true;
-					break;
-				case '\f':
-					buf.append('\\'); buf.append('f'); encoded=true;
-					break;
-				case '\b':
-					buf.append('\\'); buf.append('b'); encoded=true;
-					break;
-				default:
-					if (c <= '\u000f') {
-						buf.append('\\'); buf.append('x'); buf.append('0');
-						buf.append(Integer.toHexString(c));
-						encoded=true;
-					} else if (c>=' ' && c<'\u007f') {
-						buf.append(c);
-					} else if (c <= '\u00ff') {
-							buf.append('\\'); buf.append('x');
-							buf.append(Integer.toHexString(c));
-							encoded=true;
-					} else {
-						buf.append('\\'); buf.append('u');
-						if (c<='\u0fff') {
-							buf.append('0');
-						}
-						buf.append(Integer.toHexString(c));
-						encoded=true;
+		StringBuffer buf = new StringBuffer(message.length() + 32);
+		for (int i = 0; i < message.length(); i++) {
+			char c = message.charAt(i);
+			switch (c) {
+			case '\\':
+			case '\'':
+				buf.append('\\');
+				buf.append(c);
+				encoded = true;
+				break;
+			case '\r':
+				buf.append('\\');
+				buf.append('r');
+				encoded = true;
+				break;
+			case '\n':
+				buf.append('\\');
+				buf.append('n');
+				encoded = true;
+				break;
+			case '\t':
+				buf.append('\\');
+				buf.append('t');
+				encoded = true;
+				break;
+			case '\f':
+				buf.append('\\');
+				buf.append('f');
+				encoded = true;
+				break;
+			case '\b':
+				buf.append('\\');
+				buf.append('b');
+				encoded = true;
+				break;
+			default:
+				if (c <= '\u000f') {
+					buf.append('\\');
+					buf.append('x');
+					buf.append('0');
+					buf.append(Integer.toHexString(c));
+					encoded = true;
+				} else if (c >= ' ' && c < '\u007f') {
+					buf.append(c);
+				} else if (c <= '\u00ff') {
+					buf.append('\\');
+					buf.append('x');
+					buf.append(Integer.toHexString(c));
+					encoded = true;
+				} else {
+					buf.append('\\');
+					buf.append('u');
+					if (c <= '\u0fff') {
+						buf.append('0');
 					}
+					buf.append(Integer.toHexString(c));
+					encoded = true;
+				}
 			}
 		}
 		if (encoded) {
@@ -135,14 +151,14 @@ public final class Logger {
 	 * @return true if logging is enabled.
 	 */
 	public static final boolean isLogEnabled() {
-		return (logStream!=null);
+		return (logStream != null);
 	}
 
 	/**
 	 * Logs the specified message. Do not append a newline to parameter
 	 * <i>message</i>. This method does that for you.
 	 *
-     * @param message           A String containing the message to log.
+	 * @param message           A String containing the message to log.
 	 */
 	public static final void log(String message) {
 		if (logStream != null) {
@@ -156,7 +172,7 @@ public final class Logger {
 			String methodName = caller.getMethodName();
 			className = className.substring(className.lastIndexOf('.') + 1);
 
-            logStream.println(className + "." + methodName + ":" + lineNumber + ": " + message);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			logStream.println(className + "." + methodName + ":" + lineNumber + ": " + message); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			logStream.flush();
 		}
 	}
@@ -168,14 +184,15 @@ public final class Logger {
 	public static final void logException(Exception ex) {
 		// log in eclipse error log
 		if (TerminalPlugin.getDefault() != null) {
-			TerminalPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
+			TerminalPlugin.getDefault().getLog()
+					.log(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
 		} else {
 			ex.printStackTrace();
 		}
 		// Additional Tracing for debug purposes:
 		// Read my own stack to get the class name, method name, and line number
 		// of where this method was called
-		if(logStream!=null) {
+		if (logStream != null) {
 			StackTraceElement caller = new Throwable().getStackTrace()[1];
 			int lineNumber = caller.getLineNumber();
 			String className = caller.getClassName();
@@ -188,8 +205,7 @@ public final class Logger {
 				tmpStream = logStream;
 			}
 
-			tmpStream.println(className
-					+ "." + methodName + ":" + lineNumber + ": " + //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			tmpStream.println(className + "." + methodName + ":" + lineNumber + ": " + //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 					"Caught exception: " + ex); //$NON-NLS-1$
 			ex.printStackTrace(tmpStream);
 		}

@@ -33,14 +33,14 @@ public final class TerminalServiceFactory {
 		Bundle bundle = Platform.getBundle("org.eclipse.tm.terminal.view.ui"); //$NON-NLS-1$
 		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 			try {
-	            Class<?> clazz = bundle.loadClass("org.eclipse.tm.terminal.view.ui.services.TerminalService"); //$NON-NLS-1$
-	            instance = (ITerminalService) clazz.newInstance();
-            }
-            catch (Exception e) {
-            	if (Platform.inDebugMode()) {
-            		Platform.getLog(bundle).log(new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(), Messages.TerminalServiceFactory_error_serviceImplLoadFailed, e));
-            	}
-            }
+				Class<?> clazz = bundle.loadClass("org.eclipse.tm.terminal.view.ui.services.TerminalService"); //$NON-NLS-1$
+				instance = (ITerminalService) clazz.newInstance();
+			} catch (Exception e) {
+				if (Platform.inDebugMode()) {
+					Platform.getLog(bundle).log(new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(),
+							Messages.TerminalServiceFactory_error_serviceImplLoadFailed, e));
+				}
+			}
 		}
 	}
 

@@ -127,7 +127,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 		@Override
 		public void mouseDown(MouseEvent e) {
 			// Left button down -> select mode starts
-			if (e.button == 1) selectMode = true;
+			if (e.button == 1)
+				selectMode = true;
 		}
 
 		/* (non-Javadoc)
@@ -138,18 +139,17 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			if (e.button == 1 && selectMode) {
 				selectMode = false;
 				// Fire a selection changed event with the terminal controls selection
-		        try {
-		            Display display = PlatformUI.getWorkbench().getDisplay();
-		            display.asyncExec(new Runnable() {
+				try {
+					Display display = PlatformUI.getWorkbench().getDisplay();
+					display.asyncExec(new Runnable() {
 						@Override
 						public void run() {
 							fireSelectionChanged(new StructuredSelection(getTerminal().getSelection()));
 						}
 					});
-		        }
-		        catch (Exception ex) {
-		            // if display is disposed, silently ignore.
-		        }
+				} catch (Exception ex) {
+					// if display is disposed, silently ignore.
+				}
 			}
 		}
 
@@ -173,7 +173,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 		// Attach a selection listener to the tab folder
 		selectionListener = doCreateTabFolderSelectionListener(this);
-		if (getTabFolder() != null) getTabFolder().addSelectionListener(selectionListener);
+		if (getTabFolder() != null)
+			getTabFolder().addSelectionListener(selectionListener);
 	}
 
 	/**
@@ -202,7 +203,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 * @return The tab folder or <code>null</code>.
 	 */
 	@SuppressWarnings("cast")
-    protected final CTabFolder getTabFolder() {
+	protected final CTabFolder getTabFolder() {
 		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
 	}
 
@@ -220,7 +221,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 */
 	public void dispose() {
 		// Dispose the selection listener
-		if (getTabFolder() != null && !getTabFolder().isDisposed()) getTabFolder().removeSelectionListener(selectionListener);
+		if (getTabFolder() != null && !getTabFolder().isDisposed())
+			getTabFolder().removeSelectionListener(selectionListener);
 		// Dispose the tab command field handler
 		for (TabCommandFieldHandler handler : commandFieldHandler.values()) {
 			handler.dispose();
@@ -240,7 +242,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 * @return The created tab item or <code>null</code> if failed.
 	 */
 	@SuppressWarnings({ "unused", "cast" })
-	public CTabItem createTabItem(String title, String encoding, ITerminalConnector connector, Object data, Map<String, Boolean> flags) {
+	public CTabItem createTabItem(String title, String encoding, ITerminalConnector connector, Object data,
+			Map<String, Boolean> flags) {
 		Assert.isNotNull(title);
 		Assert.isNotNull(connector);
 
@@ -258,7 +261,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			item.setText(title);
 			// Set the tab icon
 			Image image = getTabItemImage(connector, data);
-			if (image != null) item.setImage(image);
+			if (image != null)
+				item.setImage(image);
 
 			// Setup the tab item listeners
 			setupTerminalTabListeners(item);
@@ -273,11 +277,13 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			tabFolder.getParent().layout(true);
 
 			// Create the terminal control
-			ITerminalViewControl terminal = TerminalViewControlFactory.makeControl(doCreateTerminalTabTerminalListener(this, item), composite, new ITerminalConnector[] { connector }, true);
+			ITerminalViewControl terminal = TerminalViewControlFactory.makeControl(
+					doCreateTerminalTabTerminalListener(this, item), composite, new ITerminalConnector[] { connector },
+					true);
 			if (terminal instanceof ITerminalControl) {
 				Object value = flags != null ? flags.get(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT) : null;
-				boolean noReconnect = value instanceof Boolean ? ((Boolean)value).booleanValue() : false;
-				((ITerminalControl)terminal).setConnectOnEnterIfClosed(!noReconnect);
+				boolean noReconnect = value instanceof Boolean ? ((Boolean) value).booleanValue() : false;
+				((ITerminalControl) terminal).setConnectOnEnterIfClosed(!noReconnect);
 			}
 
 			// Add middle mouse button paste support
@@ -285,11 +291,15 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			// Add the "selection" listener to the terminal control
 			new TerminalControlSelectionListener(terminal);
 			// Configure the terminal encoding
-			try { terminal.setEncoding(encoding); } catch (UnsupportedEncodingException e) { /* ignored on purpose */ }
+			try {
+				terminal.setEncoding(encoding);
+			} catch (UnsupportedEncodingException e) {
+				/* ignored on purpose */ }
 			// Associated the terminal with the tab item
 			item.setData(terminal);
 			// Associated the custom data node with the tab item (if any)
-			if (data != null) item.setData("customData", data); //$NON-NLS-1$
+			if (data != null)
+				item.setData("customData", data); //$NON-NLS-1$
 
 			// Overwrite the text canvas help id
 			String contextHelpId = getParentView().getContextHelpId();
@@ -298,9 +308,10 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			}
 
 			// Set the context menu
-			TabFolderMenuHandler menuHandler = (TabFolderMenuHandler) getParentView().getAdapter(TabFolderMenuHandler.class);
+			TabFolderMenuHandler menuHandler = (TabFolderMenuHandler) getParentView()
+					.getAdapter(TabFolderMenuHandler.class);
 			if (menuHandler != null) {
-				Menu menu = (Menu)menuHandler.getAdapter(Menu.class);
+				Menu menu = (Menu) menuHandler.getAdapter(Menu.class);
 				if (menu != null) {
 					// One weird occurrence of IllegalArgumentException: Widget has wrong parent.
 					// Inspecting the code, this seem extremely unlikely. The terminal is created
@@ -335,8 +346,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	}
 
 	/**
- 	 * Used for DnD of terminal tab items between terminal views
- 	 * <p>
+	 * Used for DnD of terminal tab items between terminal views
+	 * <p>
 	 * Create a new tab item in the "dropped" terminal view using the
 	 * information stored in the given item.
 	 *
@@ -344,13 +355,13 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 * @return The new dropped tab item.
 	 */
 	@SuppressWarnings({ "unchecked", "cast" })
-    public CTabItem cloneTabItemAfterDrop(CTabItem oldItem) {
+	public CTabItem cloneTabItemAfterDrop(CTabItem oldItem) {
 		Assert.isNotNull(oldItem);
 
-		ITerminalViewControl terminal = (ITerminalViewControl)oldItem.getData();
+		ITerminalViewControl terminal = (ITerminalViewControl) oldItem.getData();
 		ITerminalConnector connector = terminal.getTerminalConnector();
 		Object data = oldItem.getData("customData"); //$NON-NLS-1$
-		Map<String, Object> properties = (Map<String, Object>)oldItem.getData("properties"); //$NON-NLS-1$
+		Map<String, Object> properties = (Map<String, Object>) oldItem.getData("properties"); //$NON-NLS-1$
 		String title = oldItem.getText();
 
 		// The result tab item
@@ -367,7 +378,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			item.setText(title);
 			// Set the tab icon
 			Image image = getTabItemImage(connector, data);
-			if (image != null) item.setImage(image);
+			if (image != null)
+				item.setImage(image);
 
 			// Setup the tab item listeners
 			setupTerminalTabListeners(item);
@@ -391,7 +403,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 			// change the "parent".
 			Assert.isTrue(terminal instanceof ITerminalControl);
-			((ITerminalControl)terminal).setupTerminal(composite);
+			((ITerminalControl) terminal).setupTerminal(composite);
 
 			// Add middle mouse button paste support
 			addMiddleMouseButtonPasteSupport(terminal);
@@ -399,9 +411,11 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			item.setData(terminal);
 
 			// Associate the custom data node with the tab item (if any)
-			if (data != null) item.setData("customData", data); //$NON-NLS-1$
+			if (data != null)
+				item.setData("customData", data); //$NON-NLS-1$
 			// Associate the properties with the tab item (if any)
-			if (properties != null) item.setData("properties", properties); //$NON-NLS-1$
+			if (properties != null)
+				item.setData("properties", properties); //$NON-NLS-1$
 
 			// Overwrite the text canvas help id
 			String contextHelpId = getParentView().getContextHelpId();
@@ -410,9 +424,10 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			}
 
 			// Set the context menu
-			TabFolderMenuHandler menuHandler = (TabFolderMenuHandler) getParentView().getAdapter(TabFolderMenuHandler.class);
+			TabFolderMenuHandler menuHandler = (TabFolderMenuHandler) getParentView()
+					.getAdapter(TabFolderMenuHandler.class);
 			if (menuHandler != null) {
-				Menu menu = (Menu)menuHandler.getAdapter(Menu.class);
+				Menu menu = (Menu) menuHandler.getAdapter(Menu.class);
 				if (menu != null) {
 					// One weird occurrence of IllegalArgumentException: Widget has wrong parent.
 					// Inspecting the code, this seem extremely unlikely. The terminal is created
@@ -437,7 +452,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 			// needed to get the focus and cursor
 			Assert.isTrue(terminal instanceof ITerminalControl);
-			((ITerminalControl)terminal).setState(oldState);
+			((ITerminalControl) terminal).setState(oldState);
 
 			// Fire selection changed event
 			fireSelectionChanged();
@@ -447,15 +462,15 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 		return item;
 	}
 
-
 	protected void addMiddleMouseButtonPasteSupport(final ITerminalViewControl terminal) {
-		terminal.getControl().addMouseListener(new MouseAdapter(){
+		terminal.getControl().addMouseListener(new MouseAdapter() {
 			@Override
-            public void mouseDown(MouseEvent e) {
+			public void mouseDown(MouseEvent e) {
 				// paste when the middle button is clicked
 				if (e.button == 2) {
 					Clipboard clipboard = terminal.getClipboard();
-					if (clipboard.isDisposed()) return;
+					if (clipboard.isDisposed())
+						return;
 					int clipboardType = DND.SELECTION_CLIPBOARD;
 					if (clipboard.getAvailableTypes(clipboardType).length == 0)
 						// use normal clipboard if selection clipboard is not available
@@ -466,7 +481,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 				}
 			}
 		});
-    }
+	}
 
 	/**
 	 * Generate a unique title string based on the given proposal.
@@ -490,7 +505,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			titles.add(item.getText());
 		}
 		// Make the proposal unique be appending (<n>) against all known titles.
-		while (titles.contains(title)) title = proposal + " (" + ++index + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		while (titles.contains(title))
+			title = proposal + " (" + ++index + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		return title;
 	}
@@ -565,12 +581,14 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 		// Get the tab folder
 		CTabFolder tabFolder = getTabFolder();
-		if (tabFolder == null) return null;
+		if (tabFolder == null)
+			return null;
 
 		// Loop all existing tab items and try to find a matching title
 		for (CTabItem item : tabFolder.getItems()) {
 			// Disposed items cannot be matched
-			if (item.isDisposed()) continue;
+			if (item.isDisposed())
+				continue;
 			// Get the title from the current tab item
 			String itemTitle = item.getText();
 			// The terminal console state might be signaled to the user via the
@@ -578,7 +596,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			itemTitle = itemTitle.replaceFirst("^<.*>\\s*", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			if (itemTitle.startsWith(title)) {
 				// The title string matches -> double check with the terminal connector
-				ITerminalViewControl terminal = (ITerminalViewControl)item.getData();
+				ITerminalViewControl terminal = (ITerminalViewControl) item.getData();
 				ITerminalConnector connector2 = terminal.getTerminalConnector();
 				// If the connector id and name matches -> check on the settings
 				if (connector.getId().equals(connector2.getId()) && connector.getName().equals(connector2.getName())) {
@@ -589,7 +607,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 					String summary = connector.getSettingsSummary();
 					String summary2 = connector2.getSettingsSummary();
 					// If we have matching settings -> we've found the matching item
-					if (summary.equals(summary2)) return item;
+					if (summary.equals(summary2))
+						return item;
 				}
 			}
 		}
@@ -607,7 +626,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 		// Get the tab folder
 		CTabFolder tabFolder = getTabFolder();
-		if (tabFolder == null) return;
+		if (tabFolder == null)
+			return;
 
 		// Set the given tab item as selection to the tab folder
 		tabFolder.setSelection(item);
@@ -623,7 +643,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	public CTabItem getActiveTabItem() {
 		// Get the tab folder
 		CTabFolder tabFolder = getTabFolder();
-		if (tabFolder == null) return null;
+		if (tabFolder == null)
+			return null;
 
 		return tabFolder.getSelection();
 	}
@@ -634,12 +655,14 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	public void removeTerminatedItems() {
 		// Get the tab folder
 		CTabFolder tabFolder = getTabFolder();
-		if (tabFolder == null) return;
+		if (tabFolder == null)
+			return;
 
 		// Loop the items and check for terminated status
-		for (CTabItem item: tabFolder.getItems()) {
+		for (CTabItem item : tabFolder.getItems()) {
 			// Disposed items cannot be matched
-			if (item.isDisposed()) continue;
+			if (item.isDisposed())
+				continue;
 			// Check if the item is terminated
 			if (isTerminatedTabItem(item)) {
 				// item is terminated -> dispose
@@ -657,7 +680,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 */
 	protected boolean isTerminatedTabItem(CTabItem item) {
 		// Null items or disposed items cannot be matched
-		if (item == null || item.isDisposed()) return false;
+		if (item == null || item.isDisposed())
+			return false;
 
 		// First, match the item title. If it contains "<terminated>", the item can be removed
 		String itemTitle = item.getText();
@@ -666,7 +690,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 		}
 		// Second, check if the associated terminal control is closed
 		// The title string matches -> double check with the terminal connector
-		ITerminalViewControl terminal = (ITerminalViewControl)item.getData();
+		ITerminalViewControl terminal = (ITerminalViewControl) item.getData();
 		if (terminal != null && terminal.getState() == TerminalState.CLOSED) {
 			return true;
 		}
@@ -682,7 +706,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 */
 	public final TabCommandFieldHandler getTabCommandFieldHandler(CTabItem item) {
 		// Null items or disposed items cannot be matched
-		if (item == null || item.isDisposed()) return null;
+		if (item == null || item.isDisposed())
+			return null;
 
 		TabCommandFieldHandler handler = commandFieldHandler.get(item);
 		if (handler == null) {
@@ -714,10 +739,12 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 */
 	protected void disposeTabCommandFieldHandler(CTabItem item) {
 		// Null items or disposed items cannot be matched
-		if (item == null || item.isDisposed()) return;
+		if (item == null || item.isDisposed())
+			return;
 
 		TabCommandFieldHandler handler = commandFieldHandler.remove(item);
-		if (handler != null) handler.dispose();
+		if (handler != null)
+			handler.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -725,7 +752,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 */
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		if (listener != null && !selectionChangedListeners.contains(listener)) selectionChangedListeners.add(listener);
+		if (listener != null && !selectionChangedListeners.contains(listener))
+			selectionChangedListeners.add(listener);
 	}
 
 	/* (non-Javadoc)
@@ -733,7 +761,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 */
 	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		if (listener != null) selectionChangedListeners.remove(listener);
+		if (listener != null)
+			selectionChangedListeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
@@ -752,10 +781,13 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	public void setSelection(ISelection selection) {
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			// The first selection element which is a CTabItem will become the active item
-			Iterator<?> iterator = ((IStructuredSelection)selection).iterator();
+			Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 			while (iterator.hasNext()) {
 				Object candidate = iterator.next();
-				if (candidate instanceof CTabItem) { bringToTop((CTabItem)candidate); return; }
+				if (candidate instanceof CTabItem) {
+					bringToTop((CTabItem) candidate);
+					return;
+				}
 			}
 		}
 		// fire a changed event in any case
@@ -781,7 +813,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 		updateStatusLine();
 		CTabItem item = getActiveTabItem();
 		if (item != null && !item.isDisposed()) {
-			ITerminalViewControl terminal = (ITerminalViewControl)item.getData();
+			ITerminalViewControl terminal = (ITerminalViewControl) item.getData();
 			if (terminal != null && !terminal.isDisposed()) {
 				fireSelectionChanged(new StructuredSelection(terminal.getSelection()));
 			}
@@ -810,7 +842,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 		CTabItem item = getActiveTabItem();
 		if (item != null && !item.isDisposed()) {
-			ITerminalViewControl terminal = (ITerminalViewControl)item.getData();
+			ITerminalViewControl terminal = (ITerminalViewControl) item.getData();
 			if (terminal != null && !terminal.isDisposed()) {
 				StringBuilder buffer = new StringBuilder();
 
@@ -839,21 +871,24 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 * @return The string representation.
 	 */
 	@SuppressWarnings("unchecked")
-    protected String state2msg(CTabItem item, TerminalState state) {
+	protected String state2msg(CTabItem item, TerminalState state) {
 		Assert.isNotNull(item);
 		Assert.isNotNull(state);
 
 		// Determine the terminal properties of the tab folder
-		Map<String, Object> properties = (Map<String, Object>)item.getData("properties"); //$NON-NLS-1$
+		Map<String, Object> properties = (Map<String, Object>) item.getData("properties"); //$NON-NLS-1$
 
 		// Get he current terminal state as string
 		String stateStr = state.toString();
 		// Lookup a matching text representation of the state
 		String key = "TabFolderManager_state_" + stateStr.replaceAll("\\.", " ").trim().toLowerCase(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String stateMsg = null;
-		if (properties != null) stateMsg = properties.get(key) instanceof String ? (String) properties.get(key) : null;
-		if (stateMsg == null) stateMsg = Messages.getString(key);
-		if (stateMsg == null) stateMsg = stateStr;
+		if (properties != null)
+			stateMsg = properties.get(key) instanceof String ? (String) properties.get(key) : null;
+		if (stateMsg == null)
+			stateMsg = Messages.getString(key);
+		if (stateMsg == null)
+			stateMsg = stateStr;
 
 		return stateMsg;
 	}

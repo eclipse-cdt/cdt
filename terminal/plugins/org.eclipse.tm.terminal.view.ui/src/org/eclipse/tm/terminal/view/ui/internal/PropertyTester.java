@@ -20,7 +20,6 @@ import org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView;
 import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager;
 import org.eclipse.tm.terminal.view.ui.tabs.TabFolderManager;
 
-
 /**
  * Terminal property tester implementation.
  */
@@ -34,22 +33,25 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 
 		if ("hasApplicableLauncherDelegates".equals(property)) { //$NON-NLS-1$
-			ISelection selection = receiver instanceof ISelection ? (ISelection)receiver : new StructuredSelection(receiver);
-			return expectedValue.equals(Boolean.valueOf(LauncherDelegateManager.getInstance().getApplicableLauncherDelegates(selection).length > 0));
+			ISelection selection = receiver instanceof ISelection ? (ISelection) receiver
+					: new StructuredSelection(receiver);
+			return expectedValue.equals(Boolean.valueOf(
+					LauncherDelegateManager.getInstance().getApplicableLauncherDelegates(selection).length > 0));
 		}
 
 		if ("canDisconnect".equals(property) && receiver instanceof ITerminalsView) { //$NON-NLS-1$
 			CTabItem tabItem = null;
 
-			TabFolderManager manager = (TabFolderManager) ((ITerminalsView)receiver).getAdapter(TabFolderManager.class);
+			TabFolderManager manager = (TabFolderManager) ((ITerminalsView) receiver)
+					.getAdapter(TabFolderManager.class);
 			if (manager != null) {
 				tabItem = manager.getActiveTabItem();
 			}
 
 			if (tabItem != null && !tabItem.isDisposed() && tabItem.getData() instanceof ITerminalViewControl) {
-	            ITerminalViewControl terminal = (ITerminalViewControl)tabItem.getData();
-	            TerminalState state = terminal.getState();
-	            return expectedValue.equals(Boolean.valueOf(state != TerminalState.CLOSED));
+				ITerminalViewControl terminal = (ITerminalViewControl) tabItem.getData();
+				TerminalState state = terminal.getState();
+				return expectedValue.equals(Boolean.valueOf(state != TerminalState.CLOSED));
 			}
 			return false;
 		}

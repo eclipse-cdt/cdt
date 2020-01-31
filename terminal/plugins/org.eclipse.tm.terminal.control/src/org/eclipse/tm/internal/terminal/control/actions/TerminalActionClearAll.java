@@ -26,19 +26,15 @@ public class TerminalActionClearAll extends AbstractTerminalAction {
 	public TerminalActionClearAll() {
 		super(TerminalActionClearAll.class.getName());
 
-		setupAction(ActionMessages.CLEARALL, ActionMessages.CLEARALL,
-				ImageConsts.IMAGE_CLCL_CLEAR_ALL,
-				ImageConsts.IMAGE_ELCL_CLEAR_ALL,
-				ImageConsts.IMAGE_DLCL_CLEAR_ALL, false);
+		setupAction(ActionMessages.CLEARALL, ActionMessages.CLEARALL, ImageConsts.IMAGE_CLCL_CLEAR_ALL,
+				ImageConsts.IMAGE_ELCL_CLEAR_ALL, ImageConsts.IMAGE_DLCL_CLEAR_ALL, false);
 	}
 
 	public TerminalActionClearAll(ITerminalViewControl target) {
 		super(target, TerminalActionClearAll.class.getName());
 
-		setupAction(ActionMessages.CLEARALL, ActionMessages.CLEARALL,
-				ImageConsts.IMAGE_CLCL_CLEAR_ALL,
-				ImageConsts.IMAGE_ELCL_CLEAR_ALL,
-				ImageConsts.IMAGE_DLCL_CLEAR_ALL, false);
+		setupAction(ActionMessages.CLEARALL, ActionMessages.CLEARALL, ImageConsts.IMAGE_CLCL_CLEAR_ALL,
+				ImageConsts.IMAGE_ELCL_CLEAR_ALL, ImageConsts.IMAGE_DLCL_CLEAR_ALL, false);
 	}
 
 	public void run() {

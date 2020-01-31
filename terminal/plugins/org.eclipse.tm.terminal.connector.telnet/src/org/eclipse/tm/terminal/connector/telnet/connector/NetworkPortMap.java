@@ -22,17 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NetworkPortMap {
-	public static final String  PROP_NAMETGTCONS              = "tgtcons"; //$NON-NLS-1$
-	public static final String  PROP_NAMETELNET                = "telnet"; //$NON-NLS-1$
-	public static final String  PROP_VALUENET                  = "1233"; //$NON-NLS-1$
-	public static final String  PROP_VALUETGTCONS             = "1232"; //$NON-NLS-1$
-	public static final String  PROP_VALUETELNET               = "23"; //$NON-NLS-1$
+	public static final String PROP_NAMETGTCONS = "tgtcons"; //$NON-NLS-1$
+	public static final String PROP_NAMETELNET = "telnet"; //$NON-NLS-1$
+	public static final String PROP_VALUENET = "1233"; //$NON-NLS-1$
+	public static final String PROP_VALUETGTCONS = "1232"; //$NON-NLS-1$
+	public static final String PROP_VALUETELNET = "23"; //$NON-NLS-1$
 
-	String[][] fPortMap=new String[][] {
+	String[][] fPortMap = new String[][] {
 			// portName, port
-			{PROP_NAMETGTCONS, PROP_VALUETGTCONS},
-			{PROP_NAMETELNET, PROP_VALUETELNET}
-	};
+			{ PROP_NAMETGTCONS, PROP_VALUETGTCONS }, { PROP_NAMETELNET, PROP_VALUETELNET } };
 
 	public String getDefaultNetworkPort() {
 		return PROP_VALUETELNET;
@@ -40,7 +38,7 @@ public class NetworkPortMap {
 
 	public String findPortName(String strPort) {
 		for (int i = 0; i < fPortMap.length; i++) {
-			if(fPortMap[i][1].equals(strPort))
+			if (fPortMap[i][1].equals(strPort))
 				return fPortMap[i][0];
 		}
 		return null;
@@ -48,14 +46,14 @@ public class NetworkPortMap {
 
 	public String findPort(String strPortName) {
 		for (int i = 0; i < fPortMap.length; i++) {
-			if(fPortMap[i][0].equals(strPortName))
+			if (fPortMap[i][0].equals(strPortName))
 				return fPortMap[i][1];
 		}
 		return null;
 	}
 
 	public List<String> getNameTable() {
-		List<String>  names=new ArrayList<String>();
+		List<String> names = new ArrayList<String>();
 		for (int i = 0; i < fPortMap.length; i++) {
 			names.add(fPortMap[i][0]);
 		}

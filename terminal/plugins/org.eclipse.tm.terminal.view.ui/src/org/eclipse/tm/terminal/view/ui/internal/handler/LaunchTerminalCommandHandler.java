@@ -57,7 +57,7 @@ public class LaunchTerminalCommandHandler extends AbstractHandler {
 			String date = format.format(new Date(start));
 
 			UIPlugin.getTraceHandler().trace("Started at " + date + " (" + start + ")", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-												ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalCommandHandler.this);
+					ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalCommandHandler.this);
 		}
 
 		// Get the active shell
@@ -67,65 +67,70 @@ public class LaunchTerminalCommandHandler extends AbstractHandler {
 
 		if (commandId.equals("org.eclipse.tm.terminal.view.ui.command.launchToolbar")) { //$NON-NLS-1$
 			if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-				UIPlugin.getTraceHandler().trace("(a) Attempt to open launch terminal settings dialog after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-													ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalCommandHandler.this);
+				UIPlugin.getTraceHandler().trace("(a) Attempt to open launch terminal settings dialog after " //$NON-NLS-1$
+						+ (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$
+						ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalCommandHandler.this);
 			}
 
 			LaunchTerminalSettingsDialog dialog = new LaunchTerminalSettingsDialog(shell, start);
 
-			if(isValidSelection(selection)){
+			if (isValidSelection(selection)) {
 				dialog.setSelection(selection);
 			}
 			if (dialog.open() == Window.OK) {
 				// Get the terminal settings from the dialog
 				Map<String, Object> properties = dialog.getSettings();
 				if (properties != null) {
-					String delegateId = (String)properties.get(ITerminalsConnectorConstants.PROP_DELEGATE_ID);
+					String delegateId = (String) properties.get(ITerminalsConnectorConstants.PROP_DELEGATE_ID);
 					Assert.isNotNull(delegateId);
-					ILauncherDelegate delegate = LauncherDelegateManager.getInstance().getLauncherDelegate(delegateId, false);
+					ILauncherDelegate delegate = LauncherDelegateManager.getInstance().getLauncherDelegate(delegateId,
+							false);
 					Assert.isNotNull(delegateId);
 					delegate.execute(properties, null);
 				}
 			}
-		}
-		else {
+		} else {
 			if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-				UIPlugin.getTraceHandler().trace("Getting applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-													ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalCommandHandler.this);
+				UIPlugin.getTraceHandler().trace(
+						"Getting applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+						ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalCommandHandler.this);
 			}
 
 			// Check if the dialog needs to be shown at all
-			ILauncherDelegate[] delegates = LauncherDelegateManager.getInstance().getApplicableLauncherDelegates(selection);
+			ILauncherDelegate[] delegates = LauncherDelegateManager.getInstance()
+					.getApplicableLauncherDelegates(selection);
 
 			if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-				UIPlugin.getTraceHandler().trace("Got applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-													ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalCommandHandler.this);
+				UIPlugin.getTraceHandler().trace(
+						"Got applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+						ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalCommandHandler.this);
 			}
 
 			if (delegates.length > 1 || (delegates.length == 1 && delegates[0].needsUserConfiguration())) {
 				if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-					UIPlugin.getTraceHandler().trace("(b) Attempt to open launch terminal settings dialog after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-														ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalCommandHandler.this);
+					UIPlugin.getTraceHandler().trace("(b) Attempt to open launch terminal settings dialog after " //$NON-NLS-1$
+							+ (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$
+							ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalCommandHandler.this);
 				}
 
 				// Create the launch terminal settings dialog
 				LaunchTerminalSettingsDialog dialog = new LaunchTerminalSettingsDialog(shell, start);
-				if(isValidSelection(selection)){
+				if (isValidSelection(selection)) {
 					dialog.setSelection(selection);
 				}
 				if (dialog.open() == Window.OK) {
 					// Get the terminal settings from the dialog
 					Map<String, Object> properties = dialog.getSettings();
 					if (properties != null) {
-						String delegateId = (String)properties.get(ITerminalsConnectorConstants.PROP_DELEGATE_ID);
+						String delegateId = (String) properties.get(ITerminalsConnectorConstants.PROP_DELEGATE_ID);
 						Assert.isNotNull(delegateId);
-						ILauncherDelegate delegate = LauncherDelegateManager.getInstance().getLauncherDelegate(delegateId, false);
+						ILauncherDelegate delegate = LauncherDelegateManager.getInstance()
+								.getLauncherDelegate(delegateId, false);
 						Assert.isNotNull(delegateId);
 						delegate.execute(properties, null);
 					}
 				}
-			}
-			else if (delegates.length == 1) {
+			} else if (delegates.length == 1) {
 				ILauncherDelegate delegate = delegates[0];
 				Map<String, Object> properties = new HashMap<String, Object>();
 

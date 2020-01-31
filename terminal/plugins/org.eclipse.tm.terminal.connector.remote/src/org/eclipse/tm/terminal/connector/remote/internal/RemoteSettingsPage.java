@@ -40,7 +40,8 @@ public class RemoteSettingsPage extends AbstractSettingsPage {
 		if (fTerminalSettings != null && fRemoteConnectionWidget != null && !fRemoteConnectionWidget.isDisposed()) {
 			if (fRemoteConnectionWidget.getConnection() != null) {
 				if (fRemoteConnectionWidget.getConnection().getConnectionType() != null) {
-					fTerminalSettings.setConnectionTypeId(fRemoteConnectionWidget.getConnection().getConnectionType().getId());
+					fTerminalSettings
+							.setConnectionTypeId(fRemoteConnectionWidget.getConnection().getConnectionType().getId());
 				}
 				fTerminalSettings.setConnectionName(fRemoteConnectionWidget.getConnection().getName());
 			}
@@ -50,7 +51,8 @@ public class RemoteSettingsPage extends AbstractSettingsPage {
 	@Override
 	public void loadSettings() {
 		if (fTerminalSettings != null && fRemoteConnectionWidget != null && !fRemoteConnectionWidget.isDisposed()) {
-			fRemoteConnectionWidget.setConnection(fTerminalSettings.getConnectionTypeId(), fTerminalSettings.getConnectionName());
+			fRemoteConnectionWidget.setConnection(fTerminalSettings.getConnectionTypeId(),
+					fTerminalSettings.getConnectionName());
 		}
 	}
 

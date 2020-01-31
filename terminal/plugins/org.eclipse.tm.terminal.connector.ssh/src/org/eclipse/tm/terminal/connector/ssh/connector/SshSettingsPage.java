@@ -37,10 +37,11 @@ public class SshSettingsPage extends AbstractSettingsPage {
 	private Text fPassword;
 
 	public SshSettingsPage(SshSettings settings) {
-		fTerminalSettings=settings;
+		fTerminalSettings = settings;
 	}
+
 	@Override
-    public void saveSettings() {
+	public void saveSettings() {
 		fTerminalSettings.setHost(fHostText.getText());
 		fTerminalSettings.setUser(fUser.getText());
 		fTerminalSettings.setPassword(fPassword.getText());
@@ -50,23 +51,25 @@ public class SshSettingsPage extends AbstractSettingsPage {
 	}
 
 	@Override
-    public void loadSettings() {
-		if(fTerminalSettings!=null) {
-			fHostText.setText(get(fTerminalSettings.getHost(),""));//$NON-NLS-1$
-			fTimeout.setText(get(fTerminalSettings.getTimeoutString(),"0"));//$NON-NLS-1$
-			fKeepalive.setText(get(fTerminalSettings.getKeepaliveString(),"300"));//$NON-NLS-1$
-			fUser.setText(get(fTerminalSettings.getUser(),""));//$NON-NLS-1$
+	public void loadSettings() {
+		if (fTerminalSettings != null) {
+			fHostText.setText(get(fTerminalSettings.getHost(), ""));//$NON-NLS-1$
+			fTimeout.setText(get(fTerminalSettings.getTimeoutString(), "0"));//$NON-NLS-1$
+			fKeepalive.setText(get(fTerminalSettings.getKeepaliveString(), "300"));//$NON-NLS-1$
+			fUser.setText(get(fTerminalSettings.getUser(), ""));//$NON-NLS-1$
 			fPort.setText(get(fTerminalSettings.getPortString(), String.valueOf(ISshSettings.DEFAULT_SSH_PORT)));
-			fPassword.setText(get(fTerminalSettings.getPassword(),""));//$NON-NLS-1$
+			fPassword.setText(get(fTerminalSettings.getPassword(), ""));//$NON-NLS-1$
 		}
 	}
+
 	String get(String value, String def) {
-		if(value==null || value.length()==0)
+		if (value == null || value.length() == 0)
 			return def;
 		return value;
 	}
+
 	@Override
-    public boolean validateSettings() {
+	public boolean validateSettings() {
 		String message = null;
 		int messageType = IMessageProvider.NONE;
 		boolean valid = true;
@@ -75,7 +78,10 @@ public class SshSettingsPage extends AbstractSettingsPage {
 			String m = "Please enter a host IP or name."; //$NON-NLS-1$
 			int mt = IMessageProvider.INFORMATION;
 			updateControlDecoration(fHostText, m, mt);
-			if (mt > messageType) { message = m; messageType = mt; }
+			if (mt > messageType) {
+				message = m;
+				messageType = mt;
+			}
 
 			valid = false;
 		} else {
@@ -85,7 +91,10 @@ public class SshSettingsPage extends AbstractSettingsPage {
 			String m = "Please enter a username."; //$NON-NLS-1$
 			int mt = IMessageProvider.INFORMATION;
 			updateControlDecoration(fUser, m, mt);
-			if (mt > messageType) { message = m; messageType = mt; }
+			if (mt > messageType) {
+				message = m;
+				messageType = mt;
+			}
 
 			valid = false;
 		} else {
@@ -97,7 +106,10 @@ public class SshSettingsPage extends AbstractSettingsPage {
 				String m = "Invalid network port. Must be between 0 and 65535."; //$NON-NLS-1$
 				int mt = IMessageProvider.ERROR;
 				updateControlDecoration(fPort, m, mt);
-				if (mt > messageType) { message = m; messageType = mt; }
+				if (mt > messageType) {
+					message = m;
+					messageType = mt;
+				}
 
 				valid = false;
 			} else {
@@ -108,7 +120,10 @@ public class SshSettingsPage extends AbstractSettingsPage {
 				String m = "Invalid timeout. Must be greater than 0."; //$NON-NLS-1$
 				int mt = IMessageProvider.ERROR;
 				updateControlDecoration(fTimeout, m, mt);
-				if (mt > messageType) { message = m; messageType = mt; }
+				if (mt > messageType) {
+					message = m;
+					messageType = mt;
+				}
 
 				valid = false;
 			} else {
@@ -119,7 +134,10 @@ public class SshSettingsPage extends AbstractSettingsPage {
 				String m = "Invalid keep alive. Must be greater than 0."; //$NON-NLS-1$
 				int mt = IMessageProvider.ERROR;
 				updateControlDecoration(fKeepalive, m, mt);
-				if (mt > messageType) { message = m; messageType = mt; }
+				if (mt > messageType) {
+					message = m;
+					messageType = mt;
+				}
 
 				valid = false;
 			} else {
@@ -132,8 +150,9 @@ public class SshSettingsPage extends AbstractSettingsPage {
 		setMessage(message, messageType);
 		return valid;
 	}
+
 	@Override
-    public void createControl(Composite parent) {
+	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout(2, false);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -144,13 +163,14 @@ public class SshSettingsPage extends AbstractSettingsPage {
 
 		fHostText = createTextField(composite, SshMessages.HOST);
 		fUser = createTextField(composite, SshMessages.USER);
-		fPassword = createTextField(composite, SshMessages.PASSWORD,SWT.PASSWORD);
+		fPassword = createTextField(composite, SshMessages.PASSWORD, SWT.PASSWORD);
 		fTimeout = createTextField(composite, SshMessages.TIMEOUT);
 		fKeepalive = createTextField(composite, SshMessages.KEEPALIVE);
 		fKeepalive.setToolTipText(SshMessages.KEEPALIVE_Tooltip);
 		fPort = createTextField(composite, SshMessages.PORT);
 		loadSettings();
 	}
+
 	private Text createTextField(Composite composite, String labelTxt, int textOptions) {
 		GridData gridData;
 		// Add label
@@ -159,17 +179,18 @@ public class SshSettingsPage extends AbstractSettingsPage {
 
 		// Add control
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		final Text text= new Text(composite, SWT.BORDER | textOptions);
+		final Text text = new Text(composite, SWT.BORDER | textOptions);
 		text.setLayoutData(gridData);
 		text.addModifyListener(new ModifyListener() {
 			@Override
-            public void modifyText(ModifyEvent e) {
+			public void modifyText(ModifyEvent e) {
 				fireListeners(text);
 			}
 		});
 		createControlDecoration(text);
 		return text;
 	}
+
 	private Text createTextField(Composite composite, String labelTxt) {
 		return createTextField(composite, labelTxt, 0);
 	}

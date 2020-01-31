@@ -44,9 +44,9 @@ public class NewTerminalViewAction extends AbstractTerminalAction {
 
 		//this.view = view;
 		setupAction(Messages.NewTerminalViewAction_menu, Messages.NewTerminalViewAction_tooltip,
-						UIPlugin.getImageDescriptor(ImageConsts.ACTION_NewTerminalView_Hover),
-						UIPlugin.getImageDescriptor(ImageConsts.ACTION_NewTerminalView_Enabled),
-						UIPlugin.getImageDescriptor(ImageConsts.ACTION_NewTerminalView_Disabled), true);
+				UIPlugin.getImageDescriptor(ImageConsts.ACTION_NewTerminalView_Hover),
+				UIPlugin.getImageDescriptor(ImageConsts.ACTION_NewTerminalView_Enabled),
+				UIPlugin.getImageDescriptor(ImageConsts.ACTION_NewTerminalView_Disabled), true);
 		setEnabled(true);
 	}
 
@@ -54,22 +54,24 @@ public class NewTerminalViewAction extends AbstractTerminalAction {
 	 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#run()
 	 */
 	@SuppressWarnings("cast")
-    @Override
+	@Override
 	public void run() {
-		ICommandService service = (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);
-		Command command = service != null ? service.getCommand("org.eclipse.tm.terminal.view.ui.command.newview") : null; //$NON-NLS-1$
+		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		Command command = service != null ? service.getCommand("org.eclipse.tm.terminal.view.ui.command.newview") //$NON-NLS-1$
+				: null;
 		if (command != null && command.isDefined() && command.isEnabled()) {
 			try {
 				ParameterizedCommand pCmd = ParameterizedCommand.generateCommand(command, null);
 				Assert.isNotNull(pCmd);
-				IHandlerService handlerSvc = (IHandlerService)PlatformUI.getWorkbench().getService(IHandlerService.class);
+				IHandlerService handlerSvc = (IHandlerService) PlatformUI.getWorkbench()
+						.getService(IHandlerService.class);
 				Assert.isNotNull(handlerSvc);
 				handlerSvc.executeCommandInContext(pCmd, null, handlerSvc.getCurrentState());
 			} catch (Exception e) {
 				// If the platform is in debug mode, we print the exception to the log view
 				if (Platform.inDebugMode()) {
 					IStatus status = new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(),
-												Messages.AbstractTriggerCommandHandler_error_executionFailed, e);
+							Messages.AbstractTriggerCommandHandler_error_executionFailed, e);
 					UIPlugin.getDefault().getLog().log(status);
 				}
 			}

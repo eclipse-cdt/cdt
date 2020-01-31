@@ -104,20 +104,20 @@ public interface ITerminalConnector extends IAdaptable {
 	 */
 	boolean isLocalEcho();
 
-    /**
-     * Notify the remote site that the size of the terminal has changed.
-     * @param newWidth
-     * @param newHeight
-     */
-    void setTerminalSize(int newWidth, int newHeight);
+	/**
+	 * Notify the remote site that the size of the terminal has changed.
+	 * @param newWidth
+	 * @param newHeight
+	 */
+	void setTerminalSize(int newWidth, int newHeight);
 
-    /**
-     * @return the terminal to remote stream (bytes written to this stream will
-     * be sent to the remote site). For the stream in the other direction (remote to
-     * terminal see {@link ITerminalControl#getRemoteToTerminalOutputStream()}
+	/**
+	 * @return the terminal to remote stream (bytes written to this stream will
+	 * be sent to the remote site). For the stream in the other direction (remote to
+	 * terminal see {@link ITerminalControl#getRemoteToTerminalOutputStream()}
 	 * @since org.eclipse.tm.terminal 2.0
-     */
-    OutputStream getTerminalToRemoteStream();
+	 */
+	OutputStream getTerminalToRemoteStream();
 
 	/**
 	 * Load the state of this connection. Is typically called before
@@ -134,7 +134,7 @@ public interface ITerminalConnector extends IAdaptable {
 	 * @param store
 	 */
 	void save(ISettingsStore store);
-	
+
 	/**
 	 * Set or reset the settings store to the default values.
 	 */

@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2015, 2018 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
- * https://www.eclipse.org/legal/epl-2.0/ 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.remote.internal;
 
@@ -45,7 +45,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static Activator getDefault() {
@@ -54,7 +54,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in relative path.
-	 * 
+	 *
 	 * @param path
 	 *            the path
 	 * @return the image descriptor
@@ -65,7 +65,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Create log entry from an IStatus
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -75,7 +75,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Create log entry from a string
-	 * 
+	 *
 	 * @param msg
 	 *            message to log
 	 */
@@ -85,7 +85,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Create log entry from a Throwable
-	 * 
+	 *
 	 * @param e
 	 *            throwable to log
 	 */
@@ -97,7 +97,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Generate a unique identifier
-	 * 
+	 *
 	 * @return unique identifier string
 	 */
 	public static String getUniqueIdentifier() {

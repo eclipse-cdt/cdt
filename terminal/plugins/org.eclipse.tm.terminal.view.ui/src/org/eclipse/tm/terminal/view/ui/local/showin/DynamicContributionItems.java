@@ -51,7 +51,8 @@ public class DynamicContributionItems extends CompoundContributionItem implement
 		this.serviceLocator = serviceLocator;
 
 		// Get the local terminal launcher delegate
-		delegate = LauncherDelegateManager.getInstance().getLauncherDelegate("org.eclipse.tm.terminal.connector.local.launcher.local", false); //$NON-NLS-1$
+		delegate = LauncherDelegateManager.getInstance()
+				.getLauncherDelegate("org.eclipse.tm.terminal.connector.local.launcher.local", false); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -79,7 +80,8 @@ public class DynamicContributionItems extends CompoundContributionItem implement
 						ImageData id = icon != null ? ExternalExecutablesManager.loadImage(icon) : null;
 						if (id != null) {
 							ImageDescriptor desc = ImageDescriptor.createFromImageData(id);
-							if (desc != null) action.setImageDescriptor(desc);
+							if (desc != null)
+								action.setImageDescriptor(desc);
 						}
 
 						IContributionItem item = new ActionContributionItem(action);
@@ -113,16 +115,20 @@ public class DynamicContributionItems extends CompoundContributionItem implement
 
 				ISelectionService service = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService();
 				ISelection selection = service != null ? service.getSelection() : null;
-				if (selection != null && selection.isEmpty()) selection = null;
+				if (selection != null && selection.isEmpty())
+					selection = null;
 
 				Map<String, Object> properties = new HashMap<String, Object>();
 				properties.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, delegate.getId());
-		    	if (selection != null) properties.put(ITerminalsConnectorConstants.PROP_SELECTION, selection);
-		    	properties.put(ITerminalsConnectorConstants.PROP_PROCESS_PATH, path);
-		    	if (args != null) properties.put(ITerminalsConnectorConstants.PROP_PROCESS_ARGS, args);
-		    	properties.put(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE, Boolean.valueOf(translate));
+				if (selection != null)
+					properties.put(ITerminalsConnectorConstants.PROP_SELECTION, selection);
+				properties.put(ITerminalsConnectorConstants.PROP_PROCESS_PATH, path);
+				if (args != null)
+					properties.put(ITerminalsConnectorConstants.PROP_PROCESS_ARGS, args);
+				properties.put(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE,
+						Boolean.valueOf(translate));
 
-		    	delegate.execute(properties, null);
+				delegate.execute(properties, null);
 			}
 		};
 

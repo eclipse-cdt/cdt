@@ -218,15 +218,19 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 			@Override
 			public void handleEvent(Event event) {
 				// Only handle events where a CTabFolder is the source
-				if (!(event.widget instanceof CTabFolder)) return;
+				if (!(event.widget instanceof CTabFolder))
+					return;
 				// TabFolderManager must be created
-				if (tabFolderManager == null) return;
+				if (tabFolderManager == null)
+					return;
 
 				// only for own tab folders
-				if (event.widget != tabFolderControl) return;
+				if (event.widget != tabFolderControl)
+					return;
 
 				// Skip drag if DnD is still ongoing (bug 443787)
-				if (tabFolderControl.getData(DND.DRAG_SOURCE_KEY) != null) return;
+				if (tabFolderControl.getData(DND.DRAG_SOURCE_KEY) != null)
+					return;
 
 				final CTabFolder draggedFolder = (CTabFolder) event.widget;
 
@@ -280,8 +284,7 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 				// only if the drop target is different then the drag source
 				if (TerminalTransfer.getInstance().getTabFolderManager() == tabFolderManager) {
 					event.detail = DND.DROP_NONE;
-				}
-				else {
+				} else {
 					event.detail = DND.DROP_MOVE;
 				}
 			}
@@ -314,7 +317,8 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 					// dispose tab item control
 					final Control control = draggedItem.getControl();
 					draggedItem.setControl(null);
-					if (control != null) control.dispose();
+					if (control != null)
+						control.dispose();
 
 					// need to remove the dispose listener first
 					DisposeListener disposeListener = (DisposeListener) draggedItem.getData("disposeListener"); //$NON-NLS-1$
@@ -357,8 +361,8 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	 */
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
-	    super.init(site, memento);
-	    restoreState(memento);
+		super.init(site, memento);
+		restoreState(memento);
 	}
 
 	/* (non-Javadoc)
@@ -433,7 +437,8 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	protected void doConfigurePageBookControl(PageBook pagebook) {
 		Assert.isNotNull(pagebook);
 
-		if (getContextHelpId() != null) PlatformUI.getWorkbench().getHelpSystem().setHelp(pagebook, getContextHelpId());
+		if (getContextHelpId() != null)
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(pagebook, getContextHelpId());
 	}
 
 	/**
@@ -493,16 +498,18 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 
 		// Set the tab gradient coloring from the global preferences
 		if (useGradientTabBackgroundColor()) {
-			tabFolder.setSelectionBackground(new Color[] {
-													JFaceResources.getColorRegistry().get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"), //$NON-NLS-1$
-													JFaceResources.getColorRegistry().get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END") //$NON-NLS-1$
-												}, new int[] { 100 }, true);
+			tabFolder.setSelectionBackground(
+					new Color[] { JFaceResources.getColorRegistry().get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"), //$NON-NLS-1$
+							JFaceResources.getColorRegistry().get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END") //$NON-NLS-1$
+					}, new int[] { 100 }, true);
 		}
 		// Apply the tab folder selection foreground color
-		tabFolder.setSelectionForeground(JFaceResources.getColorRegistry().get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
+		tabFolder.setSelectionForeground(
+				JFaceResources.getColorRegistry().get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
 
 		// Set the tab style from the global preferences
-		tabFolder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+		tabFolder.setSimple(
+				PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 
 		// Attach the mouse listener
 		tabFolder.addMouseListener(new MouseAdapter() {
@@ -511,7 +518,8 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 				if (e.button == 2) {
 					// middle mouse button click - close tab
 					CTabItem item = tabFolder.getItem(new Point(e.x, e.y));
-					if (item != null) item.dispose();
+					if (item != null)
+						item.dispose();
 				}
 			}
 		});
@@ -585,7 +593,8 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	 */
 	@Override
 	public void setFocus() {
-		if (pageBookControl != null) pageBookControl.setFocus();
+		if (pageBookControl != null)
+			pageBookControl.setFocus();
 	}
 
 	/* (non-Javadoc)
@@ -593,8 +602,8 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	 */
 	@Override
 	public void switchToEmptyPageControl() {
-		if (pageBookControl != null && !pageBookControl.isDisposed()
-						&& emptyPageControl != null && !emptyPageControl.isDisposed()) {
+		if (pageBookControl != null && !pageBookControl.isDisposed() && emptyPageControl != null
+				&& !emptyPageControl.isDisposed()) {
 			pageBookControl.showPage(emptyPageControl);
 		}
 	}
@@ -604,8 +613,8 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	 */
 	@Override
 	public void switchToTabFolderControl() {
-		if (pageBookControl != null && !pageBookControl.isDisposed()
-						&& tabFolderControl != null && !tabFolderControl.isDisposed()) {
+		if (pageBookControl != null && !pageBookControl.isDisposed() && tabFolderControl != null
+				&& !tabFolderControl.isDisposed()) {
 			pageBookControl.showPage(tabFolderControl);
 		}
 	}
@@ -614,7 +623,7 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (CTabFolder.class.isAssignableFrom(adapter)) {
 			return tabFolderControl;
@@ -641,8 +650,9 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-	    if (memento == null) return;
-	    mementoHandler.saveState(this, memento);
+		if (memento == null)
+			return;
+		mementoHandler.saveState(this, memento);
 	}
 
 	/**
@@ -651,7 +661,8 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	 * @param memento The memento or <code>null</code>.
 	 */
 	public void restoreState(IMemento memento) {
-		if (memento == null) return;
+		if (memento == null)
+			return;
 		mementoHandler.restoreState(this, memento);
 	}
 
@@ -659,7 +670,7 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
 	@SuppressWarnings("cast")
-    @Override
+	@Override
 	public boolean show(ShowInContext context) {
 		if (context != null) {
 			// Get the selection from the context
@@ -673,7 +684,8 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 				// org.eclipse.egit.ui.internal.history.HistoryPageInput
 				if ("org.eclipse.egit.ui.internal.history.HistoryPageInput".equals(input.getClass().getName())) { //$NON-NLS-1$
 					Bundle bundle = Platform.getBundle("org.eclipse.egit.ui"); //$NON-NLS-1$
-					if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
+					if (bundle != null && bundle.getState() != Bundle.UNINSTALLED
+							&& bundle.getState() != Bundle.STOPPING) {
 						selection = GitShowInContextHandler.getSelection(input);
 					}
 				}
@@ -686,48 +698,65 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 				// Build a new structured selection with the adapted elements
 				List<Object> elements = new ArrayList<Object>();
 
-				Iterator<?> iterator = ((IStructuredSelection)selection).iterator();
+				Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 				while (iterator.hasNext() && isValid) {
 					Object element = iterator.next();
 					Object adapted = null;
 
 					if (element instanceof File) {
-						if (!elements.contains(element)) elements.add(element);
+						if (!elements.contains(element))
+							elements.add(element);
 						continue;
 					}
-					adapted = element instanceof IAdaptable ? ((IAdaptable)element).getAdapter(File.class) : null;
-					if (adapted == null) adapted = Platform.getAdapterManager().getAdapter(element, File.class);
-					if (adapted == null) adapted = Platform.getAdapterManager().loadAdapter(element, File.class.getName());
+					adapted = element instanceof IAdaptable ? ((IAdaptable) element).getAdapter(File.class) : null;
+					if (adapted == null)
+						adapted = Platform.getAdapterManager().getAdapter(element, File.class);
+					if (adapted == null)
+						adapted = Platform.getAdapterManager().loadAdapter(element, File.class.getName());
 					if (adapted != null) {
-						if (!elements.contains(adapted)) elements.add(adapted);
+						if (!elements.contains(adapted))
+							elements.add(adapted);
 						continue;
 					}
 
 					if (element instanceof IPath) {
-						if (!elements.contains(element)) elements.add(element);
+						if (!elements.contains(element))
+							elements.add(element);
 						continue;
 					}
-					adapted = element instanceof IAdaptable ? ((IAdaptable)element).getAdapter(IPath.class) : null;
-					if (adapted == null) adapted = Platform.getAdapterManager().getAdapter(element, IPath.class);
-					if (adapted == null) adapted = Platform.getAdapterManager().loadAdapter(element, IPath.class.getName());
+					adapted = element instanceof IAdaptable ? ((IAdaptable) element).getAdapter(IPath.class) : null;
+					if (adapted == null)
+						adapted = Platform.getAdapterManager().getAdapter(element, IPath.class);
+					if (adapted == null)
+						adapted = Platform.getAdapterManager().loadAdapter(element, IPath.class.getName());
 					if (adapted != null) {
-						if (!elements.contains(adapted)) elements.add(adapted);
+						if (!elements.contains(adapted))
+							elements.add(adapted);
 						continue;
 					}
 
 					Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-					if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
+					if (bundle != null && bundle.getState() != Bundle.UNINSTALLED
+							&& bundle.getState() != Bundle.STOPPING) {
 						if (element instanceof org.eclipse.core.resources.IResource) {
-							if (!elements.contains(element)) elements.add(element);
+							if (!elements.contains(element))
+								elements.add(element);
 							continue;
 						}
 
-						adapted = element instanceof IAdaptable ? ((IAdaptable)element).getAdapter(org.eclipse.core.resources.IResource.class) : null;
-						if (adapted == null) adapted = Platform.getAdapterManager().getAdapter(element, org.eclipse.core.resources.IResource.class);
-						if (adapted == null) adapted = Platform.getAdapterManager().loadAdapter(element, org.eclipse.core.resources.IResource.class.getName());
+						adapted = element instanceof IAdaptable
+								? ((IAdaptable) element).getAdapter(org.eclipse.core.resources.IResource.class)
+								: null;
+						if (adapted == null)
+							adapted = Platform.getAdapterManager().getAdapter(element,
+									org.eclipse.core.resources.IResource.class);
+						if (adapted == null)
+							adapted = Platform.getAdapterManager().loadAdapter(element,
+									org.eclipse.core.resources.IResource.class.getName());
 					}
 					if (adapted != null) {
-						if (!elements.contains(adapted)) elements.add(adapted);
+						if (!elements.contains(adapted))
+							elements.add(adapted);
 						continue;
 					}
 
@@ -735,12 +764,14 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 					// "org.eclipse.egit.ui.internal.repository.tree...."
 					if (element.getClass().getName().startsWith("org.eclipse.egit.ui.internal.repository.tree")) { //$NON-NLS-1$
 						bundle = Platform.getBundle("org.eclipse.egit.ui"); //$NON-NLS-1$
-						if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
+						if (bundle != null && bundle.getState() != Bundle.UNINSTALLED
+								&& bundle.getState() != Bundle.STOPPING) {
 							adapted = GitShowInContextHandler.getPath(element);
 						}
 					}
 					if (adapted != null) {
-						if (!elements.contains(adapted)) elements.add(adapted);
+						if (!elements.contains(adapted))
+							elements.add(adapted);
 						continue;
 					}
 
@@ -749,14 +780,18 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 
 				// If the selection is valid, fire the command to open the local terminal
 				if (isValid) {
-					selection =  new StructuredSelection(elements);
-					ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
-					Command command = service != null ? service.getCommand("org.eclipse.tm.terminal.connector.local.command.launch") : null; //$NON-NLS-1$
+					selection = new StructuredSelection(elements);
+					ICommandService service = (ICommandService) PlatformUI.getWorkbench()
+							.getService(ICommandService.class);
+					Command command = service != null
+							? service.getCommand("org.eclipse.tm.terminal.connector.local.command.launch") //$NON-NLS-1$
+							: null;
 					if (command != null && command.isDefined() && command.isEnabled()) {
 						try {
 							ParameterizedCommand pCmd = ParameterizedCommand.generateCommand(command, null);
 							Assert.isNotNull(pCmd);
-							IHandlerService handlerSvc = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+							IHandlerService handlerSvc = (IHandlerService) PlatformUI.getWorkbench()
+									.getService(IHandlerService.class);
 							Assert.isNotNull(handlerSvc);
 							IEvaluationContext ctx = handlerSvc.getCurrentState();
 							ctx = new EvaluationContext(ctx, selection);
@@ -766,7 +801,7 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 							// If the platform is in debug mode, we print the exception to the log view
 							if (Platform.inDebugMode()) {
 								IStatus status = new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(),
-															Messages.AbstractTriggerCommandHandler_error_executionFailed, e);
+										Messages.AbstractTriggerCommandHandler_error_executionFailed, e);
 								UIPlugin.getDefault().getLog().log(status);
 							}
 						}
@@ -775,6 +810,6 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 				}
 			}
 		}
-	    return false;
+		return false;
 	}
 }

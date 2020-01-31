@@ -17,9 +17,11 @@ import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 
 public interface ITextCanvasModel {
 	void addCellCanvasModelListener(ITextCanvasModelListener listener);
+
 	void removeCellCanvasModelListener(ITextCanvasModelListener listener);
 
 	ITerminalTextDataReadOnly getTerminalText();
+
 	/**
 	 * This is is
 	 * @param startLine
@@ -33,6 +35,7 @@ public interface ITextCanvasModel {
 	 * @return true when the cursor is shown (used for blinking cursors)
 	 */
 	boolean isCursorOn();
+
 	/**
 	 * Show/Hide the cursor.
 	 * @param visible
@@ -48,6 +51,7 @@ public interface ITextCanvasModel {
 	 * @return the line of the cursor
 	 */
 	int getCursorLine();
+
 	/**
 	 * @return the column of the cursor
 	 */
@@ -58,6 +62,7 @@ public interface ITextCanvasModel {
 	 * {@link Point#x} is the column and {@link Point#y} is the line.
 	 */
 	Point getSelectionStart();
+
 	/**
 	 * @return the end of the selection or null if nothing is selected
 	 * {@link Point#x} is the column and {@link Point#y} is the line.
@@ -67,6 +72,7 @@ public interface ITextCanvasModel {
 	Point getSelectionAnchor();
 
 	void setSelectionAnchor(Point anchor);
+
 	/**
 	 * Sets the selection. A negative startLine clears the selection.
 	 * @param startLine

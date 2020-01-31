@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2018 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
- * https://www.eclipse.org/legal/epl-2.0/ 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
@@ -23,25 +23,25 @@ public class LoggingOutputStream extends FilterOutputStream {
 	}
 
 	public void write(byte[] b, int off, int len) throws IOException {
-		if(Logger.isLogEnabled())
+		if (Logger.isLogEnabled())
 			Logger.log("Received " + len + " bytes: '" + //$NON-NLS-1$ //$NON-NLS-2$
 					Logger.encode(new String(b, 0, len)) + "'"); //$NON-NLS-1$
-		
+
 		// we cannot call super.write, because this would call our write
 		// which logs character by character.....
 		//super.write(b, off, len);
 		if ((off | len | (b.length - (len + off)) | (off + len)) < 0)
-		    throw new IndexOutOfBoundsException();
+			throw new IndexOutOfBoundsException();
 
-		for (int i = 0 ; i < len ; i++) {
-		    super.write(b[off + i]);
+		for (int i = 0; i < len; i++) {
+			super.write(b[off + i]);
 		}
 	}
 
 	public void write(int b) throws IOException {
-		if(Logger.isLogEnabled())
+		if (Logger.isLogEnabled())
 			Logger.log("Received " + 1 + " bytes: '" + //$NON-NLS-1$ //$NON-NLS-2$
-					Logger.encode(new String(new byte[]{(byte)b}, 0, 1)) + "'"); //$NON-NLS-1$
+					Logger.encode(new String(new byte[] { (byte) b }, 0, 1)) + "'"); //$NON-NLS-1$
 		super.write(b);
 	}
 

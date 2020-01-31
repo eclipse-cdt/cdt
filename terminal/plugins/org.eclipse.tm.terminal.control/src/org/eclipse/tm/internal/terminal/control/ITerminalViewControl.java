@@ -50,13 +50,15 @@ public interface ITerminalViewControl {
 	 */
 	String getEncoding();
 
-    boolean isEmpty();
-    /**
-     * Sets the Terminal font
-     * @deprecated use {@link #setFont(String)} in order to support bold and italic variants of the given font
-     * @param font
-     */
+	boolean isEmpty();
+
+	/**
+	 * Sets the Terminal font
+	 * @deprecated use {@link #setFont(String)} in order to support bold and italic variants of the given font
+	 * @param font
+	 */
 	void setFont(Font font);
+
 	/**
 	 * Sets the font for the Terminal, using a JFace symbolic font name, such
 	 * that bold and italic variants can be leveraged.
@@ -64,51 +66,74 @@ public interface ITerminalViewControl {
 	 * @param fontName
 	 */
 	void setFont(String fontName);
+
 	void setInvertedColors(boolean invert);
+
 	Font getFont();
+
 	/**
 	 * @return the text control
 	 */
 	Control getControl();
+
 	/**
 	 * @return the root of all controls
 	 */
 	Control getRootControl();
-    boolean isDisposed();
-    void selectAll();
-    void clearTerminal();
-    void copy();
-    void paste();
-    String getSelection();
-    TerminalState getState();
-    Clipboard getClipboard();
-    void disconnectTerminal();
-    void disposeTerminal();
-    String getSettingsSummary();
-    ITerminalConnector[] getConnectors();
-    void setFocus();
-    ITerminalConnector getTerminalConnector();
-    void setConnector(ITerminalConnector connector);
-    void connectTerminal();
-    /**
-     * @param write a single character to terminal
-     */
-    void sendKey(char arg0);
+
+	boolean isDisposed();
+
+	void selectAll();
+
+	void clearTerminal();
+
+	void copy();
+
+	void paste();
+
+	String getSelection();
+
+	TerminalState getState();
+
+	Clipboard getClipboard();
+
+	void disconnectTerminal();
+
+	void disposeTerminal();
+
+	String getSettingsSummary();
+
+	ITerminalConnector[] getConnectors();
+
+	void setFocus();
+
+	ITerminalConnector getTerminalConnector();
+
+	void setConnector(ITerminalConnector connector);
+
+	void connectTerminal();
+
+	/**
+	 * @param write a single character to terminal
+	 */
+	void sendKey(char arg0);
+
 	/**
 	 * @param string write string to terminal
 	 */
 	public boolean pasteString(String string);
 
-    boolean isConnected();
+	boolean isConnected();
 
-    /**
-     * @param inputField null means no input field is shown
-     */
-    void setCommandInputField(ICommandInputField inputField);
-    /**
-     * @return null or the current input field
-     */
-    ICommandInputField getCommandInputField();
+	/**
+	 * @param inputField null means no input field is shown
+	 */
+	void setCommandInputField(ICommandInputField inputField);
+
+	/**
+	 * @return null or the current input field
+	 */
+	ICommandInputField getCommandInputField();
 
 	/**
 	 * @return the maximum number of lines to display
@@ -121,13 +146,16 @@ public interface ITerminalViewControl {
 	 * in the terminal view. -1 means unlimited.
 	 */
 	public void setBufferLineLimit(int bufferLineLimit);
+
 	boolean isScrollLock();
+
 	void setScrollLock(boolean on);
-	
+
 	/**
 	 * @since 4.1
 	 */
 	void addMouseListener(ITerminalMouseListener listener);
+
 	/**
 	 * @since 4.1
 	 */

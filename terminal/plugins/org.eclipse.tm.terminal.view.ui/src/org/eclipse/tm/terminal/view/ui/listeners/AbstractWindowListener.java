@@ -32,36 +32,36 @@ public abstract class AbstractWindowListener implements IWindowListener {
 	private boolean initialized = false;
 
 	/**
-     * Constructor
-     */
-    public AbstractWindowListener() {
-    	// Create the part listener instance
-    	partListener = createPartListener();
-    	// Create the perspective listener instance
-    	perspectiveListener = createPerspectiveListener();
-    }
+	 * Constructor
+	 */
+	public AbstractWindowListener() {
+		// Create the part listener instance
+		partListener = createPartListener();
+		// Create the perspective listener instance
+		perspectiveListener = createPerspectiveListener();
+	}
 
-    /**
-     * Creates a new part listener instance.
-     * <p>
-     * <b>Note:</b> The default implementation returns <code>null</code>.
-     *
-     * @return The part listener instance or <code>null</code>.
-     */
-    protected IPartListener2 createPartListener() {
-    	return null;
-    }
+	/**
+	 * Creates a new part listener instance.
+	 * <p>
+	 * <b>Note:</b> The default implementation returns <code>null</code>.
+	 *
+	 * @return The part listener instance or <code>null</code>.
+	 */
+	protected IPartListener2 createPartListener() {
+		return null;
+	}
 
-    /**
-     * Creates a new perspective listener instance.
-     * <p>
-     * <b>Note:</b> The default implementation returns <code>null</code>.
-     *
-     * @return The perspective listener instance or <code>null</code>.
-     */
-    protected IPerspectiveListener createPerspectiveListener() {
-    	return null;
-    }
+	/**
+	 * Creates a new perspective listener instance.
+	 * <p>
+	 * <b>Note:</b> The default implementation returns <code>null</code>.
+	 *
+	 * @return The perspective listener instance or <code>null</code>.
+	 */
+	protected IPerspectiveListener createPerspectiveListener() {
+		return null;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
@@ -91,7 +91,8 @@ public abstract class AbstractWindowListener implements IWindowListener {
 				window.getPartService().removePartListener(partListener);
 			}
 
-			if (perspectiveListener != null) window.removePerspectiveListener(perspectiveListener);
+			if (perspectiveListener != null)
+				window.removePerspectiveListener(perspectiveListener);
 		}
 	}
 
@@ -113,7 +114,8 @@ public abstract class AbstractWindowListener implements IWindowListener {
 				IWorkbenchPage page = window.getActivePage();
 				if (page != null) {
 					IWorkbenchPartReference partRef = page.getActivePartReference();
-					if (partRef != null) partListener.partActivated(partRef);
+					if (partRef != null)
+						partListener.partActivated(partRef);
 				}
 			}
 
@@ -122,7 +124,8 @@ public abstract class AbstractWindowListener implements IWindowListener {
 				window.addPerspectiveListener(perspectiveListener);
 				// Signal the active perspective to the perspective listener after registration
 				if (window.getActivePage() != null) {
-					perspectiveListener.perspectiveActivated(window.getActivePage(), window.getActivePage().getPerspective());
+					perspectiveListener.perspectiveActivated(window.getActivePage(),
+							window.getActivePage().getPerspective());
 				}
 			}
 

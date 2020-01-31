@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.ui.interfaces;
 
-
-
 /**
  * A container to deal with configuration panels.
  *

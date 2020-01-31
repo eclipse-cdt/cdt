@@ -73,7 +73,7 @@ public class WorkbenchPartListener implements IPartListener2 {
 		if ("org.eclipse.tm.terminal.view.ui.TerminalsView".equals(partRef.getId())) { //$NON-NLS-1$
 			IWorkbenchPart part = partRef.getPart(false);
 			if (part != null && part.getSite() != null) {
-				IContextService service = (IContextService)part.getSite().getService(IContextService.class);
+				IContextService service = (IContextService) part.getSite().getService(IContextService.class);
 				if (service != null) {
 					IContextActivation activation = service.activateContext(partRef.getId());
 					if (activation != null) {
@@ -95,7 +95,7 @@ public class WorkbenchPartListener implements IPartListener2 {
 		if ("org.eclipse.tm.terminal.view.ui.TerminalsView".equals(partRef.getId())) { //$NON-NLS-1$
 			IWorkbenchPart part = partRef.getPart(false);
 			if (part != null && part.getSite() != null) {
-				IContextService service = (IContextService)part.getSite().getService(IContextService.class);
+				IContextService service = (IContextService) part.getSite().getService(IContextService.class);
 				if (service != null) {
 					IContextActivation activation = activations.remove(partRef);
 					if (activation != null) {

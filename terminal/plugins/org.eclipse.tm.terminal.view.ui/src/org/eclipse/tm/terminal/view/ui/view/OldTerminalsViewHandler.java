@@ -50,7 +50,7 @@ public class OldTerminalsViewHandler extends ViewPart {
 	protected void replaceWithTerminalsView() {
 		if (fReplaced)
 			return;
-	    IViewSite site = getViewSite();
+		IViewSite site = getViewSite();
 		final IWorkbenchPage page = site.getPage();
 
 		site.getShell().getDisplay().asyncExec(new Runnable() {
@@ -63,8 +63,8 @@ public class OldTerminalsViewHandler extends ViewPart {
 					// Show the new view
 					try {
 						page.showView(IUIConstants.ID, null, IWorkbenchPage.VIEW_CREATE);
-					}
-					catch (PartInitException e) { /* ignored on purpose */ }
+					} catch (PartInitException e) {
+						/* ignored on purpose */ }
 
 					// Hide ourself in the current perspective
 					page.hideView(OldTerminalsViewHandler.this);
@@ -79,18 +79,23 @@ public class OldTerminalsViewHandler extends ViewPart {
 								replaceWithTerminalsView();
 							}
 						}
+
 						@Override
 						public void partOpened(IWorkbenchPartReference partRef) {
 						}
+
 						@Override
 						public void partInputChanged(IWorkbenchPartReference partRef) {
 						}
+
 						@Override
 						public void partHidden(IWorkbenchPartReference partRef) {
 						}
+
 						@Override
 						public void partDeactivated(IWorkbenchPartReference partRef) {
 						}
+
 						@Override
 						public void partClosed(IWorkbenchPartReference partRef) {
 							if (partRef.getPart(false) == OldTerminalsViewHandler.this) {
@@ -102,9 +107,11 @@ public class OldTerminalsViewHandler extends ViewPart {
 								replaceWithTerminalsView();
 							}
 						}
+
 						@Override
 						public void partBroughtToTop(IWorkbenchPartReference partRef) {
 						}
+
 						@Override
 						public void partActivated(IWorkbenchPartReference partRef) {
 						}
@@ -112,7 +119,7 @@ public class OldTerminalsViewHandler extends ViewPart {
 				}
 			}
 		});
-    }
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()

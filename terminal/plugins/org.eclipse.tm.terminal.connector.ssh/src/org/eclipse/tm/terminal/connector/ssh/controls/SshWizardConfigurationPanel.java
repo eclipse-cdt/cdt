@@ -50,7 +50,7 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 	private static final String SAVE_USER = "saveUser"; //$NON-NLS-1$
 	private static final String SAVE_PASSWORD = "savePassword"; //$NON-NLS-1$
 
-    private SshSettings sshSettings;
+	private SshSettings sshSettings;
 	private ISettingsPage sshSettingsPage;
 	private Button userButton;
 	private Button passwordButton;
@@ -61,8 +61,8 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 	 * @param container The configuration panel container or <code>null</code>.
 	 */
 	public SshWizardConfigurationPanel(IConfigurationPanelContainer container) {
-	    super(container);
-    }
+		super(container);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
@@ -75,7 +75,8 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 		panel.setLayoutData(data);
 
 		// Create the host selection combo
-		if (isWithoutSelection()) createHostsUI(panel, true);
+		if (isWithoutSelection())
+			createHostsUI(panel, true);
 
 		SshConnector conn = new SshConnector();
 		sshSettings = (SshSettings) conn.getSshSettings();
@@ -84,7 +85,7 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 
 		sshSettingsPage = new SshSettingsPage(sshSettings);
 		if (sshSettingsPage instanceof AbstractSettingsPage) {
-			((AbstractSettingsPage)sshSettingsPage).setHasControlDecoration(true);
+			((AbstractSettingsPage) sshSettingsPage).setHasControlDecoration(true);
 		}
 		sshSettingsPage.createControl(panel);
 
@@ -92,7 +93,8 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 		sshSettingsPage.addListener(new ISettingsPage.Listener() {
 			@Override
 			public void onSettingsPageChanged(Control control) {
-				if (getContainer() != null) getContainer().validate();
+				if (getContainer() != null)
+					getContainer().validate();
 			}
 		});
 
@@ -110,34 +112,42 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 	 */
 	@Override
 	public void setupData(Map<String, Object> data) {
-		if (data == null || sshSettings == null || sshSettingsPage == null) return;
+		if (data == null || sshSettings == null || sshSettingsPage == null)
+			return;
 
-		String value = (String)data.get(ITerminalsConnectorConstants.PROP_IP_HOST);
-		if (value != null) sshSettings.setHost(value);
+		String value = (String) data.get(ITerminalsConnectorConstants.PROP_IP_HOST);
+		if (value != null)
+			sshSettings.setHost(value);
 
 		Object v = data.get(ITerminalsConnectorConstants.PROP_IP_PORT);
 		value = v != null ? v.toString() : null;
-		if (value != null) sshSettings.setPort(value);
+		if (value != null)
+			sshSettings.setPort(value);
 
 		v = data.get(ITerminalsConnectorConstants.PROP_TIMEOUT);
 		value = v != null ? v.toString() : null;
-		if (value != null) sshSettings.setTimeout(value);
+		if (value != null)
+			sshSettings.setTimeout(value);
 
 		v = data.get(ITerminalsConnectorConstants.PROP_SSH_KEEP_ALIVE);
 		value = v != null ? v.toString() : null;
-		if (value != null) sshSettings.setKeepalive(value);
+		if (value != null)
+			sshSettings.setKeepalive(value);
 
-		value = (String)data.get(ITerminalsConnectorConstants.PROP_SSH_PASSWORD);
-		if (value != null) sshSettings.setPassword(value);
+		value = (String) data.get(ITerminalsConnectorConstants.PROP_SSH_PASSWORD);
+		if (value != null)
+			sshSettings.setPassword(value);
 
-		value = (String)data.get(ITerminalsConnectorConstants.PROP_SSH_USER);
-		if (value != null) sshSettings.setUser(value);
+		value = (String) data.get(ITerminalsConnectorConstants.PROP_SSH_USER);
+		if (value != null)
+			sshSettings.setUser(value);
 
-		value = (String)data.get(ITerminalsConnectorConstants.PROP_ENCODING);
-		if (value != null) setEncoding(value);
+		value = (String) data.get(ITerminalsConnectorConstants.PROP_ENCODING);
+		if (value != null)
+			setEncoding(value);
 
 		sshSettingsPage.loadSettings();
-    }
+	}
 
 	/**
 	 * Returns the default user name.
@@ -151,7 +161,8 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 			ITerminalContextPropertiesProvider provider = TerminalContextPropertiesProviderFactory.getProvider(element);
 			if (provider != null) {
 				Object user = provider.getProperty(element, IContextPropertiesConstants.PROP_DEFAULT_USER);
-				if (user instanceof String) return ((String) user).trim();
+				if (user instanceof String)
+					return ((String) user).trim();
 			}
 		}
 
@@ -163,20 +174,22 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 	 */
 	@Override
 	public void extractData(Map<String, Object> data) {
-		if (data == null) return;
+		if (data == null)
+			return;
 
-    	// set the terminal connector id for ssh
-    	data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, "org.eclipse.tm.terminal.connector.ssh.SshConnector"); //$NON-NLS-1$
+		// set the terminal connector id for ssh
+		data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID,
+				"org.eclipse.tm.terminal.connector.ssh.SshConnector"); //$NON-NLS-1$
 
-    	sshSettingsPage.saveSettings();
-		data.put(ITerminalsConnectorConstants.PROP_IP_HOST,sshSettings.getHost());
+		sshSettingsPage.saveSettings();
+		data.put(ITerminalsConnectorConstants.PROP_IP_HOST, sshSettings.getHost());
 		data.put(ITerminalsConnectorConstants.PROP_IP_PORT, Integer.valueOf(sshSettings.getPort()));
 		data.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.valueOf(sshSettings.getTimeout()));
 		data.put(ITerminalsConnectorConstants.PROP_SSH_KEEP_ALIVE, Integer.valueOf(sshSettings.getKeepalive()));
 		data.put(ITerminalsConnectorConstants.PROP_SSH_PASSWORD, sshSettings.getPassword());
 		data.put(ITerminalsConnectorConstants.PROP_SSH_USER, sshSettings.getUser());
 		data.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
-    }
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#fillSettingsForHost(java.lang.String)
@@ -185,8 +198,8 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 	protected void fillSettingsForHost(String host) {
 		boolean saveUser = true;
 		boolean savePassword = false;
-		if (host != null && host.length() != 0){
-			if (hostSettingsMap.containsKey(host)){
+		if (host != null && host.length() != 0) {
+			if (hostSettingsMap.containsKey(host)) {
 				Map<String, String> hostSettings = hostSettingsMap.get(host);
 				if (hostSettings.get(ITerminalsConnectorConstants.PROP_IP_HOST) != null) {
 					sshSettings.setHost(hostSettings.get(ITerminalsConnectorConstants.PROP_IP_HOST));
@@ -206,7 +219,7 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 				if (hostSettings.get(SAVE_PASSWORD) != null) {
 					savePassword = new Boolean(hostSettings.get(SAVE_PASSWORD)).booleanValue();
 				}
-				if (!savePassword){
+				if (!savePassword) {
 					sshSettings.setPassword(""); //$NON-NLS-1$
 				} else {
 					String password = accessSecurePassword(sshSettings.getHost());
@@ -218,7 +231,8 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 				String encoding = hostSettings.get(ITerminalsConnectorConstants.PROP_ENCODING);
 				if (encoding == null || "null".equals(encoding)) { //$NON-NLS-1$
 					String defaultEncoding = getSelectionEncoding();
-					encoding = defaultEncoding != null && !"".equals(defaultEncoding.trim()) ? defaultEncoding.trim() : "ISO-8859-1"; //$NON-NLS-1$ //$NON-NLS-2$
+					encoding = defaultEncoding != null && !"".equals(defaultEncoding.trim()) ? defaultEncoding.trim() //$NON-NLS-1$
+							: "ISO-8859-1"; //$NON-NLS-1$
 				}
 				setEncoding(encoding);
 			} else {
@@ -238,10 +252,10 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractExtendedConfigurationPanel#doSaveWidgetValues(org.eclipse.jface.dialogs.IDialogSettings, java.lang.String)
 	 */
 	@Override
-    public void doSaveWidgetValues(IDialogSettings settings, String idPrefix) {
-    	saveSettingsForHost(true);
-    	super.doSaveWidgetValues(settings, idPrefix);
-    }
+	public void doSaveWidgetValues(IDialogSettings settings, String idPrefix) {
+		saveSettingsForHost(true);
+		super.doSaveWidgetValues(settings, idPrefix);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#saveSettingsForHost(boolean)
@@ -252,20 +266,20 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 		boolean savePassword = passwordButton.getSelection();
 		String host = getHostFromSettings();
 		if (host != null && host.length() != 0) {
-			if (hostSettingsMap.containsKey(host)){
+			if (hostSettingsMap.containsKey(host)) {
 				Map<String, String> hostSettings = hostSettingsMap.get(host);
 				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_HOST, sshSettings.getHost());
 				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_PORT, Integer.toString(sshSettings.getPort()));
 				hostSettings.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.toString(sshSettings.getTimeout()));
-				hostSettings.put(ITerminalsConnectorConstants.PROP_SSH_KEEP_ALIVE, Integer.toString(sshSettings.getKeepalive()));
+				hostSettings.put(ITerminalsConnectorConstants.PROP_SSH_KEEP_ALIVE,
+						Integer.toString(sshSettings.getKeepalive()));
 				if (saveUser) {
 					if (sshSettings.getUser() != null) {
 						hostSettings.put(ITerminalsConnectorConstants.PROP_SSH_USER, sshSettings.getUser());
 					} else {
 						hostSettings.remove(ITerminalsConnectorConstants.PROP_SSH_USER);
 					}
-				}
-				else {
+				} else {
 					hostSettings.remove(ITerminalsConnectorConstants.PROP_SSH_USER);
 				}
 
@@ -280,18 +294,20 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 				hostSettings.put(SAVE_USER, Boolean.toString(saveUser));
 				hostSettings.put(SAVE_PASSWORD, Boolean.toString(savePassword));
 
-				if (savePassword && sshSettings.getPassword() != null && sshSettings.getPassword().length() != 0){
+				if (savePassword && sshSettings.getPassword() != null && sshSettings.getPassword().length() != 0) {
 					saveSecurePassword(host, sshSettings.getPassword());
 				}
 
 				// maybe unchecked the password button - so try to remove a saved password - if any
-				if (!savePassword) removeSecurePassword(host);
+				if (!savePassword)
+					removeSecurePassword(host);
 			} else if (add) {
 				Map<String, String> hostSettings = new HashMap<String, String>();
 				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_HOST, sshSettings.getHost());
 				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_PORT, Integer.toString(sshSettings.getPort()));
 				hostSettings.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.toString(sshSettings.getTimeout()));
-				hostSettings.put(ITerminalsConnectorConstants.PROP_SSH_KEEP_ALIVE, Integer.toString(sshSettings.getKeepalive()));
+				hostSettings.put(ITerminalsConnectorConstants.PROP_SSH_KEEP_ALIVE,
+						Integer.toString(sshSettings.getKeepalive()));
 				if (saveUser) {
 					if (sshSettings.getUser() != null) {
 						hostSettings.put(ITerminalsConnectorConstants.PROP_SSH_USER, sshSettings.getUser());
@@ -302,7 +318,7 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 				hostSettings.put(SAVE_PASSWORD, Boolean.toString(savePassword));
 				hostSettingsMap.put(host, hostSettings);
 
-				if (savePassword && sshSettings.getPassword() != null && sshSettings.getPassword().length() != 0){
+				if (savePassword && sshSettings.getPassword() != null && sshSettings.getPassword().length() != 0) {
 					saveSecurePassword(host, sshSettings.getPassword());
 				}
 			}
@@ -328,8 +344,8 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 			if (node != null) {
 				try {
 					node.put("password", password, true); //$NON-NLS-1$
-				}
-				catch (StorageException ex) { /* ignored on purpose */ }
+				} catch (StorageException ex) {
+					/* ignored on purpose */ }
 			}
 		}
 	}
@@ -353,8 +369,8 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 				String password = null;
 				try {
 					password = node.get("password", null); //$NON-NLS-1$
-				}
-				catch (StorageException ex) { /* ignored on purpose */ }
+				} catch (StorageException ex) {
+					/* ignored on purpose */ }
 
 				return password;
 			}
@@ -385,7 +401,7 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#isValid()
 	 */
 	@Override
-    public boolean isValid(){
+	public boolean isValid() {
 		return isEncodingValid() && sshSettingsPage.validateSettings();
 	}
 
@@ -393,10 +409,10 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#getHostFromSettings()
 	 */
 	@Override
-    protected String getHostFromSettings() {
+	protected String getHostFromSettings() {
 		sshSettingsPage.saveSettings();
-	    return sshSettings.getHost();
-    }
+		return sshSettings.getHost();
+	}
 
 	private void createSaveButtonsUI(final Composite parent, boolean separator) {
 		Assert.isNotNull(parent);

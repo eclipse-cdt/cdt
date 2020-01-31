@@ -38,7 +38,6 @@ import org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
-
 /**
  * Terminal tab folder toolbar handler.
  */
@@ -67,10 +66,9 @@ public class TabFolderToolbarHandler extends PlatformObject {
 			// The VlmConsoleTabFolderManager is listening to the selection changes of the
 			// TabFolder and fires selection changed events.
 			if (enable && event.getSource() instanceof TabFolderManager) {
-				enable = event.getSelection() instanceof StructuredSelection
-				&& !event.getSelection().isEmpty()
-				&& (((StructuredSelection)event.getSelection()).getFirstElement() instanceof CTabItem
-					|| ((StructuredSelection)event.getSelection()).getFirstElement() instanceof String);
+				enable = event.getSelection() instanceof StructuredSelection && !event.getSelection().isEmpty()
+						&& (((StructuredSelection) event.getSelection()).getFirstElement() instanceof CTabItem
+								|| ((StructuredSelection) event.getSelection()).getFirstElement() instanceof String);
 			}
 
 			updateToolbarItems(enable);
@@ -103,7 +101,7 @@ public class TabFolderToolbarHandler extends PlatformObject {
 	 * @return The tab folder or <code>null</code>.
 	 */
 	@SuppressWarnings("cast")
-    protected final CTabFolder getTabFolder() {
+	protected final CTabFolder getTabFolder() {
 		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
 	}
 
@@ -113,7 +111,7 @@ public class TabFolderToolbarHandler extends PlatformObject {
 	 * @return The currently active terminal control or <code>null</code>.
 	 */
 	@SuppressWarnings("cast")
-    public ITerminalViewControl getActiveTerminalViewControl() {
+	public ITerminalViewControl getActiveTerminalViewControl() {
 		ITerminalViewControl terminal = null;
 
 		// Get the active tab item from the tab folder manager
@@ -122,7 +120,7 @@ public class TabFolderToolbarHandler extends PlatformObject {
 			// If we have the active tab item, we can get the active terminal control
 			CTabItem activeTabItem = manager.getActiveTabItem();
 			if (activeTabItem != null && !activeTabItem.isDisposed()) {
-				terminal = (ITerminalViewControl)activeTabItem.getData();
+				terminal = (ITerminalViewControl) activeTabItem.getData();
 			}
 		}
 
@@ -135,7 +133,8 @@ public class TabFolderToolbarHandler extends PlatformObject {
 	public void dispose() {
 		// Dispose the selection changed listener
 		if (selectionChangedListener != null) {
-			getParentView().getViewSite().getSelectionProvider().removeSelectionChangedListener(selectionChangedListener);
+			getParentView().getViewSite().getSelectionProvider()
+					.removeSelectionChangedListener(selectionChangedListener);
 			selectionChangedListener = null;
 		}
 
@@ -232,7 +231,7 @@ public class TabFolderToolbarHandler extends PlatformObject {
 		});
 
 		// Create and add the scroll lock action
-		add (new TabScrollLockAction() {
+		add(new TabScrollLockAction() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
 			 */
@@ -257,15 +256,15 @@ public class TabFolderToolbarHandler extends PlatformObject {
 			 */
 			@Override
 			public void updateAction(boolean aboutToShow) {
-			    super.updateAction(aboutToShow);
-			    if (getTarget() != null && getTarget().getState() != TerminalState.CONNECTED) {
-			    	setEnabled(false);
-			    }
+				super.updateAction(aboutToShow);
+				if (getTarget() != null && getTarget().getState() != TerminalState.CONNECTED) {
+					setEnabled(false);
+				}
 			}
 		});
 
 		// Create and add the toggle command input field action
-		add (new ToggleCommandFieldAction(getParentView()) {
+		add(new ToggleCommandFieldAction(getParentView()) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
 			 */
@@ -276,7 +275,7 @@ public class TabFolderToolbarHandler extends PlatformObject {
 		});
 
 		// Create and add the new terminal view action
-		add (new NewTerminalViewAction(getParentView()) {
+		add(new NewTerminalViewAction(getParentView()) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
 			 */
@@ -308,19 +307,19 @@ public class TabFolderToolbarHandler extends PlatformObject {
 		for (AbstractTerminalAction action : toolbarActions) {
 			// Add a separator before the clear all action or if the action is a separator
 			if (action instanceof TabScrollLockAction
-				|| (action instanceof AbstractAction && ((AbstractAction)action).isSeparator())) {
+					|| (action instanceof AbstractAction && ((AbstractAction) action).isSeparator())) {
 				manager.insertAfter("anchor", new Separator()); //$NON-NLS-1$
 			}
 			// skip new terminal view action for now
-			if (action instanceof NewTerminalViewAction){
-				newTerminalAction = (NewTerminalViewAction)action;
+			if (action instanceof NewTerminalViewAction) {
+				newTerminalAction = (NewTerminalViewAction) action;
 				continue;
 			}
 			// Add the action itself
 			manager.insertAfter("anchor", action); //$NON-NLS-1$
 		}
 		// now add to the end
-		if (newTerminalAction != null){
+		if (newTerminalAction != null) {
 			manager.add(newTerminalAction);
 		}
 	}
@@ -340,8 +339,7 @@ public class TabFolderToolbarHandler extends PlatformObject {
 			// Workaround by forcing the action to get disabled with setEnabled.
 			if (control == null && !(action instanceof NewTerminalViewAction)) {
 				action.setEnabled(false);
-			}
-			else {
+			} else {
 				action.updateAction(enabled);
 			}
 		}

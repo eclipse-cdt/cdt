@@ -54,8 +54,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 	private final List<AbstractTerminalAction> contextMenuActions = new ArrayList<AbstractTerminalAction>();
 
 	// The list of invalid context menu contributions "startsWith" expressions
-	/* default */ static final String[] INVALID_CONTRIBUTIONS_STARTS_WITH = {
-		"org.eclipse.cdt", "org.eclipse.ui.edit" //$NON-NLS-1$ //$NON-NLS-2$
+	/* default */ static final String[] INVALID_CONTRIBUTIONS_STARTS_WITH = { "org.eclipse.cdt", "org.eclipse.ui.edit" //$NON-NLS-1$ //$NON-NLS-2$
 	};
 
 	/**
@@ -89,7 +88,8 @@ public class TabFolderMenuHandler extends PlatformObject {
 		 * @param manager The menu manager or <code>null</code>
 		 */
 		private void removeInvalidContributions(IMenuManager manager) {
-			if (manager == null) return;
+			if (manager == null)
+				return;
 
 			IContributionItem[] items = manager.getItems();
 			for (IContributionItem item : items) {
@@ -132,7 +132,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 	 * @return The tab folder or <code>null</code>.
 	 */
 	@SuppressWarnings("cast")
-    protected final CTabFolder getTabFolder() {
+	protected final CTabFolder getTabFolder() {
 		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
 	}
 
@@ -141,9 +141,15 @@ public class TabFolderMenuHandler extends PlatformObject {
 	 */
 	public void dispose() {
 		// Dispose the context menu
-		if (contextMenu != null) { contextMenu.dispose(); contextMenu = null; }
+		if (contextMenu != null) {
+			contextMenu.dispose();
+			contextMenu = null;
+		}
 		// Dispose the context menu manager
-		if (contextMenuManager != null) { contextMenuManager.dispose(); contextMenuManager = null; }
+		if (contextMenuManager != null) {
+			contextMenuManager.dispose();
+			contextMenuManager = null;
+		}
 		// Clear all actions
 		contextMenuActions.clear();
 	}
@@ -189,7 +195,8 @@ public class TabFolderMenuHandler extends PlatformObject {
 		doFillContextMenu(contextMenuManager);
 
 		// Register to the view site to open the menu for contributions
-		getParentView().getSite().registerContextMenu(contextMenuManager, getParentView().getSite().getSelectionProvider());
+		getParentView().getSite().registerContextMenu(contextMenuManager,
+				getParentView().getSite().getSelectionProvider());
 
 		// Create and associated the menu listener
 		contextMenuManager.addMenuListener(new MenuListener());
@@ -209,7 +216,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 	 * Create the context menu actions.
 	 */
 	@SuppressWarnings("cast")
-    protected void doCreateContextMenuActions() {
+	protected void doCreateContextMenuActions() {
 		// Create and add the copy action
 		add(new TerminalActionCopy() {
 			/* (non-Javadoc)
@@ -224,7 +231,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 		// Create and add the paste action
 		add(new TerminalActionPaste() {
 			@SuppressWarnings({ "unchecked" })
-            @Override
+			@Override
 			public void run() {
 				// Determine if pasting to the active tab require backslash translation
 				boolean needsTranslation = false;
@@ -234,10 +241,12 @@ public class TabFolderMenuHandler extends PlatformObject {
 					// If we have the active tab item, we can get the active terminal control
 					CTabItem activeTabItem = manager.getActiveTabItem();
 					if (activeTabItem != null) {
-						Map<String, Object> properties = (Map<String, Object>)activeTabItem.getData("properties"); //$NON-NLS-1$
-						if (properties != null && properties.containsKey(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE)) {
-							Object value = properties.get(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE);
-							needsTranslation = value instanceof Boolean ? ((Boolean)value).booleanValue() : false;
+						Map<String, Object> properties = (Map<String, Object>) activeTabItem.getData("properties"); //$NON-NLS-1$
+						if (properties != null && properties
+								.containsKey(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE)) {
+							Object value = properties
+									.get(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE);
+							needsTranslation = value instanceof Boolean ? ((Boolean) value).booleanValue() : false;
 						}
 					}
 				}
@@ -256,8 +265,9 @@ public class TabFolderMenuHandler extends PlatformObject {
 					}
 				}
 
-			    super.run();
+				super.run();
 			}
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
 			 */
@@ -282,10 +292,10 @@ public class TabFolderMenuHandler extends PlatformObject {
 			 */
 			@Override
 			public void updateAction(boolean aboutToShow) {
-			    super.updateAction(aboutToShow);
-			    if (getTarget() != null && getTarget().getState() != TerminalState.CONNECTED) {
-			    	setEnabled(false);
-			    }
+				super.updateAction(aboutToShow);
+				if (getTarget() != null && getTarget().getState() != TerminalState.CONNECTED) {
+					setEnabled(false);
+				}
 			}
 		});
 
@@ -301,7 +311,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 		});
 
 		// Create and add the select encoding action
-		add (new SelectEncodingAction((TabFolderManager) getParentView().getAdapter(TabFolderManager.class)) {
+		add(new SelectEncodingAction((TabFolderManager) getParentView().getAdapter(TabFolderManager.class)) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
 			 */
@@ -318,7 +328,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 	 * @return The currently active terminal control or <code>null</code>.
 	 */
 	@SuppressWarnings("cast")
-    protected ITerminalViewControl getActiveTerminalViewControl() {
+	protected ITerminalViewControl getActiveTerminalViewControl() {
 		ITerminalViewControl terminal = null;
 
 		// Get the active tab item from the tab folder manager
@@ -327,7 +337,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 			// If we have the active tab item, we can get the active terminal control
 			CTabItem activeTabItem = manager.getActiveTabItem();
 			if (activeTabItem != null) {
-				terminal = (ITerminalViewControl)activeTabItem.getData();
+				terminal = (ITerminalViewControl) activeTabItem.getData();
 			}
 		}
 

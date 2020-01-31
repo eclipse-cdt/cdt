@@ -42,12 +42,8 @@ public class SelectEncodingAction extends AbstractTerminalAction {
 		Assert.isNotNull(tabFolderManager);
 		this.tabFolderManager = tabFolderManager;
 
-        setupAction(Messages.SelectEncodingAction_menu,
-                    Messages.SelectEncodingAction_tooltip,
-                    (ImageDescriptor)null,
-                    (ImageDescriptor)null,
-                    (ImageDescriptor)null,
-                    true);
+		setupAction(Messages.SelectEncodingAction_menu, Messages.SelectEncodingAction_tooltip, (ImageDescriptor) null,
+				(ImageDescriptor) null, (ImageDescriptor) null, true);
 	}
 
 	/* (non-Javadoc)
@@ -56,7 +52,8 @@ public class SelectEncodingAction extends AbstractTerminalAction {
 	@Override
 	public void run() {
 		ITerminalViewControl target = getTarget();
-		if (target == null) return;
+		if (target == null)
+			return;
 
 		EncodingSelectionDialog dialog = new EncodingSelectionDialog(null);
 		dialog.setEncoding(target.getEncoding());
@@ -64,8 +61,9 @@ public class SelectEncodingAction extends AbstractTerminalAction {
 			try {
 				target.setEncoding(dialog.getEncoding());
 				tabFolderManager.updateStatusLine();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
 			}
-			catch (UnsupportedEncodingException e) { e.printStackTrace(); }
 		}
 	}
 
@@ -74,8 +72,7 @@ public class SelectEncodingAction extends AbstractTerminalAction {
 	 */
 	@Override
 	public void updateAction(boolean aboutToShow) {
-		setEnabled(aboutToShow
-						&& getTarget() != null && getTarget().getState() == TerminalState.CONNECTED);
+		setEnabled(aboutToShow && getTarget() != null && getTarget().getState() == TerminalState.CONNECTED);
 	}
 
 }

@@ -6,7 +6,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -103,7 +103,8 @@ public class ArgumentParser {
 					 * string. Allows escaping.
 					 */
 					iterator.next(); // Skip quote
-					quoted_reader: while ((iterator.current() != CharacterIterator.DONE) && (iterator.current() != '"')) {
+					quoted_reader: while ((iterator.current() != CharacterIterator.DONE)
+							&& (iterator.current() != '"')) {
 						char innerChar = iterator.current();
 						switch (innerChar) {
 						case '\\':
@@ -177,7 +178,7 @@ public class ArgumentParser {
 	/**
 	 * Convert all tokens in a full command line that can be executed in a
 	 * shell.
-	 * 
+	 *
 	 * @param fullEscape
 	 *            If every special character shall be escaped. If false, only
 	 *            white spaces are escaped and the shell will interpret the
@@ -254,7 +255,7 @@ public class ArgumentParser {
 
 	/**
 	 * Returns a List of all entries of the command line.
-	 * 
+	 *
 	 * @return The Array
 	 */
 	public String[] getTokenArray() {
@@ -263,7 +264,7 @@ public class ArgumentParser {
 
 	/**
 	 * Returns a List of all entries of the command line.
-	 * 
+	 *
 	 * @return The List
 	 */
 	public List<String> getTokenList() {
@@ -273,7 +274,7 @@ public class ArgumentParser {
 	/**
 	 * Returns the command of the command line, assuming that the first entry is
 	 * always the command.
-	 * 
+	 *
 	 * @return The command or null if the command lines has no command nor
 	 *         arguments.
 	 */
@@ -287,7 +288,7 @@ public class ArgumentParser {
 	/**
 	 * Returns the command of the command line, assuming that the first entry is
 	 * always the command.
-	 * 
+	 *
 	 * @return The command or null if the command lines has no command nor
 	 *         arguments.
 	 * @param fullEscape
@@ -305,7 +306,7 @@ public class ArgumentParser {
 	/**
 	 * Returns a list of all arguments, assuming that the first entry is the
 	 * command name.
-	 * 
+	 *
 	 * @return The Array or null if the command lines has no command nor
 	 *         arguments.
 	 */
@@ -319,7 +320,7 @@ public class ArgumentParser {
 	/**
 	 * Returns a list of all arguments, assuming that the first entry is the
 	 * command name.
-	 * 
+	 *
 	 * @return The List or null if the command lines has no command nor
 	 *         arguments.
 	 */
@@ -332,7 +333,7 @@ public class ArgumentParser {
 
 	/**
 	 * Returns the total number of entries.
-	 * 
+	 *
 	 * @return the total number of entries
 	 */
 	public int getSize() {

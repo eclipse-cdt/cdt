@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2018 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
- * https://www.eclipse.org/legal/epl-2.0/ 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
@@ -19,14 +19,14 @@ public class TerminalMessages extends NLS {
 		NLS.initializeMessages(TerminalMessages.class.getName(), TerminalMessages.class);
 	}
 
-    public static String TerminalError;
-    public static String SocketError;
-    public static String IOError;
-    public static String CannotConnectTo;
-    public static String NotInitialized;
+	public static String TerminalError;
+	public static String SocketError;
+	public static String IOError;
+	public static String CannotConnectTo;
+	public static String NotInitialized;
 
-    //Preference Page
-    public static String INVERT_COLORS;
-    public static String BUFFERLINES;
+	//Preference Page
+	public static String INVERT_COLORS;
+	public static String BUFFERLINES;
 
 }

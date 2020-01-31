@@ -54,21 +54,23 @@ public class TabDisposeListener implements DisposeListener {
 		// If a tab item gets disposed, we have to dispose the terminal as well
 		if (e.getSource() instanceof CTabItem) {
 			// Get the terminal control (if any) from the tab item
-			Object candidate = ((CTabItem)e.getSource()).getData();
+			Object candidate = ((CTabItem) e.getSource()).getData();
 			if (candidate instanceof ITerminalViewControl) {
-				ITerminalViewControl terminal = (ITerminalViewControl)candidate;
+				ITerminalViewControl terminal = (ITerminalViewControl) candidate;
 				// Keep the context menu from being disposed
 				terminal.getControl().setMenu(null);
 				terminal.disposeTerminal();
 			}
 			// Dispose the command input field handler
-			parentTabFolderManager.disposeTabCommandFieldHandler((CTabItem)e.getSource());
+			parentTabFolderManager.disposeTabCommandFieldHandler((CTabItem) e.getSource());
 			// Dispose the tab item control
 			Control control = ((CTabItem) e.getSource()).getControl();
-			if (control != null) control.dispose();
+			if (control != null)
+				control.dispose();
 
 			// If all items got removed, we have to switch back to the empty page control
-			if (parentTabFolderManager.getTabFolder() != null && parentTabFolderManager.getTabFolder().getItemCount() == 0) {
+			if (parentTabFolderManager.getTabFolder() != null
+					&& parentTabFolderManager.getTabFolder().getItemCount() == 0) {
 				parentTabFolderManager.getParentView().switchToEmptyPageControl();
 			}
 			// Fire selection changed event
@@ -76,7 +78,8 @@ public class TabDisposeListener implements DisposeListener {
 			// Fire the terminal console disposed event
 			ITerminalService service = TerminalServiceFactory.getService();
 			if (service instanceof TerminalService) {
-				((TerminalService)service).fireTerminalTabEvent(TerminalService.TAB_DISPOSED, e.getSource(), ((CTabItem)e.getSource()).getData("customData")); //$NON-NLS-1$
+				((TerminalService) service).fireTerminalTabEvent(TerminalService.TAB_DISPOSED, e.getSource(),
+						((CTabItem) e.getSource()).getData("customData")); //$NON-NLS-1$
 			}
 		}
 	}

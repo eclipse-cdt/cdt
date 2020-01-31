@@ -9,7 +9,7 @@
  *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
- * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.speedtest;
 
@@ -27,33 +27,35 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 public class SpeedTestConnector extends TerminalConnectorImpl {
-	final SpeedTestSettings fSettings=new SpeedTestSettings();
+	final SpeedTestSettings fSettings = new SpeedTestSettings();
 	InputStream fInputStream;
 	OutputStream fOutputStream;
 	SpeedTestConnection fConnection;
+
 	public SpeedTestConnector() {
 	}
+
 	synchronized public void connect(ITerminalControl control) {
 		super.connect(control);
 		fControl.setState(TerminalState.CONNECTING);
-		String file=fSettings.getInputFile();
+		String file = fSettings.getInputFile();
 		try {
-			fInputStream=new BufferedInputStream(new FileInputStream(file));
+			fInputStream = new BufferedInputStream(new FileInputStream(file));
 		} catch (FileNotFoundException e) {
 			disconnect();
-			fControl.setMsg(file+": "+e.getLocalizedMessage());
+			fControl.setMsg(file + ": " + e.getLocalizedMessage());
 			return;
 		}
-		fOutputStream=System.out;
+		fOutputStream = System.out;
 		fControl.setTerminalTitle(fSettings.getInputFile());
-		fConnection=new SpeedTestConnection(fInputStream,fSettings,fControl);
+		fConnection = new SpeedTestConnection(fInputStream, fSettings, fControl);
 		fConnection.start();
 	}
 
 	synchronized public void doDisconnect() {
-		if(fConnection!=null){
+		if (fConnection != null) {
 			fConnection.interrupt();
-			fConnection=null;
+			fConnection = null;
 		}
 		if (fInputStream != null) {
 			try {
@@ -62,7 +64,7 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 				Logger.logException(exception);
 			}
 		}
-		fInputStream=null;
+		fInputStream = null;
 		if (fOutputStream != null) {
 			try {
 				fOutputStream.close();
@@ -70,8 +72,9 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 				Logger.logException(exception);
 			}
 		}
-		fOutputStream=null;
+		fOutputStream = null;
 	}
+
 	synchronized public InputStream getInputStream() {
 		return fInputStream;
 	}
@@ -88,9 +91,9 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 	public void setDefaultSettings() {
 		fSettings.load(new NullSettingsStore());
 	}
-	
+
 	public void load(ISettingsStore store) {
-		 fSettings.load(store);
+		fSettings.load(store);
 	}
 
 	public void save(ISettingsStore store) {

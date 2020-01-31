@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Terminal emulator test cases. 
+ * Terminal emulator test cases.
  * Runs in emulator package to allow access to default visible items.
  */
 public class AllTests extends TestCase {

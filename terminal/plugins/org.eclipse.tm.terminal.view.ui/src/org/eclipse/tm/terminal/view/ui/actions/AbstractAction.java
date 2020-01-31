@@ -78,7 +78,7 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 	@Override
 	public void run() {
 		// Get the active tab item from the tab folder manager
-		TabFolderManager manager = (TabFolderManager)getParent().getAdapter(TabFolderManager.class);
+		TabFolderManager manager = (TabFolderManager) getParent().getAdapter(TabFolderManager.class);
 		if (manager != null) {
 			// If we have the active tab item, we can get the active terminal control
 			CTabItem activeTabItem = manager.getActiveTabItem();
@@ -100,16 +100,18 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 	@SuppressWarnings("cast")
 	protected void executeCommand(Object data) {
 		// Get the command service from the workbench
-		ICommandService service = (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (service != null && getCommandId() != null) {
 			// Get the command
 			final Command command = service.getCommand(getCommandId());
 			if (command != null && command.isDefined()) {
-				IHandlerService handlerSvc = (IHandlerService)PlatformUI.getWorkbench().getService(IHandlerService.class);
+				IHandlerService handlerSvc = (IHandlerService) PlatformUI.getWorkbench()
+						.getService(IHandlerService.class);
 				Assert.isNotNull(handlerSvc);
 
 				// Construct a selection element
-				IStructuredSelection selection = data != null ? new StructuredSelection(data) : new StructuredSelection();
+				IStructuredSelection selection = data != null ? new StructuredSelection(data)
+						: new StructuredSelection();
 				// Construct the application context
 				EvaluationContext context = new EvaluationContext(handlerSvc.getCurrentState(), selection);
 				// Apply the selection to the "activeMenuSelection" and "selection" variable too
@@ -125,8 +127,9 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 					handlerSvc.executeCommandInContext(pCmd, null, context);
 				} catch (Exception e) {
 					IStatus status = new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(),
-												NLS.bind(Messages.AbstractAction_error_commandExecutionFailed, getCommandId(), e.getLocalizedMessage()),
-												e);
+							NLS.bind(Messages.AbstractAction_error_commandExecutionFailed, getCommandId(),
+									e.getLocalizedMessage()),
+							e);
 					UIPlugin.getDefault().getLog().log(status);
 				}
 			}
@@ -155,7 +158,7 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 			// The action will be enabled if we can determine the VLM target object
 			enabled = false;
 			// Get the active tab item from the tab folder manager
-			TabFolderManager manager = (TabFolderManager)getParent().getAdapter(TabFolderManager.class);
+			TabFolderManager manager = (TabFolderManager) getParent().getAdapter(TabFolderManager.class);
 			if (manager != null) {
 				// If we have the active tab item, we can get the active terminal control
 				CTabItem activeTabItem = manager.getActiveTabItem();

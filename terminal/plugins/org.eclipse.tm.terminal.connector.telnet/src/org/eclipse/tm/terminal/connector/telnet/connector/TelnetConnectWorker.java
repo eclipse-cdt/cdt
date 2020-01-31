@@ -32,13 +32,15 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 class TelnetConnectWorker extends Thread {
 	private final ITerminalControl fControl;
 	private final TelnetConnector fConn;
-	protected TelnetConnectWorker(TelnetConnector conn,ITerminalControl control) {
+
+	protected TelnetConnectWorker(TelnetConnector conn, ITerminalControl control) {
 		fControl = control;
 		fConn = conn;
 		fControl.setState(TerminalState.CONNECTING);
 	}
+
 	@Override
-    public void run() {
+	public void run() {
 		// Retry the connect with after a little pause in case the
 		// remote telnet server isn't ready. ConnectExceptions might
 		// happen if the telnet server process did not initialized itself.
@@ -48,14 +50,18 @@ class TelnetConnectWorker extends Thread {
 
 		while (remaining >= 0) {
 			// Pause before we re-try if the remaining tries are less than the initial value
-			if (remaining < 10) try { Thread.sleep(500); } catch (InterruptedException e) { /* ignored on purpose */ }
+			if (remaining < 10)
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					/* ignored on purpose */ }
 
 			try {
 				int nTimeout = fConn.getTelnetSettings().getTimeout() * 1000;
 				String strHost = fConn.getTelnetSettings().getHost();
 				int nPort = fConn.getTelnetSettings().getNetworkPort();
 				InetSocketAddress address = new InetSocketAddress(strHost, nPort);
-				Socket socket=new Socket();
+				Socket socket = new Socket();
 
 				socket.connect(address, nTimeout);
 
@@ -74,7 +80,7 @@ class TelnetConnectWorker extends Thread {
 
 				fConn.setSocket(socket);
 
-				TelnetConnection connection=new TelnetConnection(fConn, socket);
+				TelnetConnection connection = new TelnetConnection(fConn, socket);
 				socket.setKeepAlive(true);
 				fConn.setTelnetConnection(connection);
 				connection.start();
@@ -85,21 +91,22 @@ class TelnetConnectWorker extends Thread {
 				// the DNS will fix itself
 				remaining = 0;
 				//Construct error message and signal failed
-				String txt="Unknown host: " + ex.getMessage(); //$NON-NLS-1$
-				connectFailed(txt,"Unknown host: " + ex.getMessage() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+				String txt = "Unknown host: " + ex.getMessage(); //$NON-NLS-1$
+				connectFailed(txt, "Unknown host: " + ex.getMessage() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (SocketTimeoutException socketTimeoutException) {
 				// Time out occurred. No re-try in this case either. Time out can
 				// be increased by the user. Multiplying the timeout with the remaining
 				// counter is not desired.
 				remaining = 0;
 				// Construct error message and signal failed
-				connectFailed(socketTimeoutException.getMessage(), "Connection Error!\n" + socketTimeoutException.getMessage()); //$NON-NLS-1$
+				connectFailed(socketTimeoutException.getMessage(),
+						"Connection Error!\n" + socketTimeoutException.getMessage()); //$NON-NLS-1$
 			} catch (ConnectException connectException) {
 				// In case of a ConnectException, do a re-try. The server could have been
 				// simply not ready yet and the worker would give up to early. If the terminal
 				// control is already closed (disconnected), don't print "Connection refused" errors
 				if (remaining == 0 && TerminalState.CLOSED != fControl.getState()) {
-					connectFailed(connectException.getMessage(),"Connection refused!"); //$NON-NLS-1$
+					connectFailed(connectException.getMessage(), "Connection refused!"); //$NON-NLS-1$
 				}
 			} catch (Exception exception) {
 				// Any other exception on connect. No re-try in this case either
@@ -107,7 +114,7 @@ class TelnetConnectWorker extends Thread {
 				// Log the exception
 				Logger.logException(exception);
 				// And signal failed
-				connectFailed(exception.getMessage(),""); //$NON-NLS-1$
+				connectFailed(exception.getMessage(), ""); //$NON-NLS-1$
 			} finally {
 				remaining--;
 			}

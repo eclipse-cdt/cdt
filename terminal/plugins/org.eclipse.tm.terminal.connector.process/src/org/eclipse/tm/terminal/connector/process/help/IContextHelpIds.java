@@ -13,7 +13,6 @@ package org.eclipse.tm.terminal.connector.process.help;
 
 import org.eclipse.tm.terminal.connector.process.activator.UIPlugin;
 
-
 /**
  * Context help id definitions.
  */

@@ -36,7 +36,7 @@ import org.eclipse.tm.terminal.view.ui.panels.AbstractExtendedConfigurationPanel
  */
 public class TelnetWizardConfigurationPanel extends AbstractExtendedConfigurationPanel {
 
-    public TelnetSettings telnetSettings;
+	public TelnetSettings telnetSettings;
 	private ISettingsPage telnetSettingsPage;
 
 	/**
@@ -45,8 +45,8 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 	 * @param container The configuration panel container or <code>null</code>.
 	 */
 	public TelnetWizardConfigurationPanel(IConfigurationPanelContainer container) {
-	    super(container);
-    }
+		super(container);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
@@ -59,7 +59,8 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		panel.setLayoutData(data);
 
 		// Create the host selection combo
-		if (isWithoutSelection()) createHostsUI(panel, true);
+		if (isWithoutSelection())
+			createHostsUI(panel, true);
 
 		TelnetConnector conn = new TelnetConnector();
 		telnetSettings = (TelnetSettings) conn.getTelnetSettings();
@@ -69,7 +70,7 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 		telnetSettingsPage = new TelnetSettingsPage(telnetSettings);
 		if (telnetSettingsPage instanceof AbstractSettingsPage) {
-			((AbstractSettingsPage)telnetSettingsPage).setHasControlDecoration(true);
+			((AbstractSettingsPage) telnetSettingsPage).setHasControlDecoration(true);
 		}
 		telnetSettingsPage.createControl(panel);
 
@@ -78,7 +79,8 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 			@Override
 			public void onSettingsPageChanged(Control control) {
-				if (getContainer() != null) getContainer().validate();
+				if (getContainer() != null)
+					getContainer().validate();
 			}
 		});
 
@@ -93,54 +95,62 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 	 */
 	@Override
 	public void setupData(Map<String, Object> data) {
-		if (data == null || telnetSettings == null || telnetSettingsPage == null) return;
+		if (data == null || telnetSettings == null || telnetSettingsPage == null)
+			return;
 
-		String value = (String)data.get(ITerminalsConnectorConstants.PROP_IP_HOST);
-		if (value != null) telnetSettings.setHost(value);
+		String value = (String) data.get(ITerminalsConnectorConstants.PROP_IP_HOST);
+		if (value != null)
+			telnetSettings.setHost(value);
 
 		Object v = data.get(ITerminalsConnectorConstants.PROP_IP_PORT);
 		value = v != null ? v.toString() : null;
-		if (value != null) telnetSettings.setNetworkPort(value);
+		if (value != null)
+			telnetSettings.setNetworkPort(value);
 
 		v = data.get(ITerminalsConnectorConstants.PROP_TIMEOUT);
 		value = v != null ? v.toString() : null;
-		if (value != null) telnetSettings.setTimeout(value);
+		if (value != null)
+			telnetSettings.setTimeout(value);
 
 		v = data.get(ITerminalsConnectorConstants.PROP_TELNET_EOL);
 		value = v != null ? v.toString() : null;
-		if (value != null) telnetSettings.setEndOfLine(value);
+		if (value != null)
+			telnetSettings.setEndOfLine(value);
 
-		value = (String)data.get(ITerminalsConnectorConstants.PROP_ENCODING);
-		if (value != null) setEncoding(value);
+		value = (String) data.get(ITerminalsConnectorConstants.PROP_ENCODING);
+		if (value != null)
+			setEncoding(value);
 
 		telnetSettingsPage.loadSettings();
-    }
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#extractData(java.util.Map)
 	 */
 	@Override
 	public void extractData(Map<String, Object> data) {
-		if (data == null) return;
+		if (data == null)
+			return;
 
-    	// set the terminal connector id for ssh
-    	data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, "org.eclipse.tm.terminal.connector.telnet.TelnetConnector"); //$NON-NLS-1$
+		// set the terminal connector id for ssh
+		data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID,
+				"org.eclipse.tm.terminal.connector.telnet.TelnetConnector"); //$NON-NLS-1$
 
-    	telnetSettingsPage.saveSettings();
-		data.put(ITerminalsConnectorConstants.PROP_IP_HOST,telnetSettings.getHost());
+		telnetSettingsPage.saveSettings();
+		data.put(ITerminalsConnectorConstants.PROP_IP_HOST, telnetSettings.getHost());
 		data.put(ITerminalsConnectorConstants.PROP_IP_PORT, Integer.valueOf(telnetSettings.getNetworkPort()));
 		data.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.valueOf(telnetSettings.getTimeout()));
 		data.put(ITerminalsConnectorConstants.PROP_TELNET_EOL, telnetSettings.getEndOfLine());
 		data.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
-    }
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#fillSettingsForHost(java.lang.String)
 	 */
 	@Override
-	protected void fillSettingsForHost(String host){
-		if (host != null && host.length() != 0){
-			if (hostSettingsMap.containsKey(host)){
+	protected void fillSettingsForHost(String host) {
+		if (host != null && host.length() != 0) {
+			if (hostSettingsMap.containsKey(host)) {
 				Map<String, String> hostSettings = hostSettingsMap.get(host);
 				if (hostSettings.get(ITerminalsConnectorConstants.PROP_IP_HOST) != null) {
 					telnetSettings.setHost(hostSettings.get(ITerminalsConnectorConstants.PROP_IP_HOST));
@@ -171,18 +181,20 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#saveSettingsForHost(boolean)
 	 */
 	@Override
-	protected void saveSettingsForHost(boolean add){
+	protected void saveSettingsForHost(boolean add) {
 		String host = getHostFromSettings();
-		if(host != null && host.length() != 0) {
+		if (host != null && host.length() != 0) {
 			Map<String, String> hostSettings = hostSettingsMap.get(host);
 			if (hostSettings == null && !add) {
-				hostSettings=new HashMap<String, String>();
+				hostSettings = new HashMap<String, String>();
 				hostSettingsMap.put(host, hostSettings);
 			}
 			if (hostSettings != null) {
 				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_HOST, telnetSettings.getHost());
-				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_PORT, Integer.toString(telnetSettings.getNetworkPort()));
-				hostSettings.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.toString(telnetSettings.getTimeout()));
+				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_PORT,
+						Integer.toString(telnetSettings.getNetworkPort()));
+				hostSettings.put(ITerminalsConnectorConstants.PROP_TIMEOUT,
+						Integer.toString(telnetSettings.getTimeout()));
 				hostSettings.put(ITerminalsConnectorConstants.PROP_TELNET_EOL, telnetSettings.getEndOfLine());
 				if (getEncoding() != null) {
 					hostSettings.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
@@ -195,7 +207,7 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#isValid()
 	 */
 	@Override
-    public boolean isValid(){
+	public boolean isValid() {
 		return isEncodingValid() && telnetSettingsPage.validateSettings();
 	}
 
@@ -203,17 +215,17 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#doSaveWidgetValues(org.eclipse.jface.dialogs.IDialogSettings, java.lang.String)
 	 */
 	@Override
-    public void doSaveWidgetValues(IDialogSettings settings, String idPrefix) {
-    	saveSettingsForHost(true);
-    	super.doSaveWidgetValues(settings, idPrefix);
-    }
+	public void doSaveWidgetValues(IDialogSettings settings, String idPrefix) {
+		saveSettingsForHost(true);
+		super.doSaveWidgetValues(settings, idPrefix);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#getHostFromSettings()
 	 */
 	@Override
-    protected String getHostFromSettings() {
+	protected String getHostFromSettings() {
 		telnetSettingsPage.saveSettings();
-	    return telnetSettings.getHost();
-    }
+		return telnetSettings.getHost();
+	}
 }

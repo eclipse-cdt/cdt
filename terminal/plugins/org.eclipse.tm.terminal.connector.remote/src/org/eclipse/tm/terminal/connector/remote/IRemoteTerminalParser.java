@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2015, 2018 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
- * https://www.eclipse.org/legal/epl-2.0/ 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.remote;
 
@@ -16,7 +16,7 @@ public interface IRemoteTerminalParser {
 	/**
 	 * Initialize the remote shell. This method will be called after the connection has been initialized. Implementors can assume
 	 * that the connection is open when this is called.
-	 * 
+	 *
 	 * @param connection
 	 *            terminal shell connection
 	 * @return IRemoteProcess a remote process corresponding to the remote shell
@@ -28,7 +28,7 @@ public interface IRemoteTerminalParser {
 	/**
 	 * Parse the input stream. This method will be called with a buffer of characters read from the input stream. If the method
 	 * returns true, the characters will be displayed in the terminal view, otherwise they will be ignored.
-	 * 
+	 *
 	 * @param buf
 	 *            buffer containing characters from the terminal input stream
 	 * @return true if the characters should be displayed in the terminal

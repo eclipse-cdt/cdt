@@ -48,79 +48,79 @@ public class EncodingSelectionDialog extends TrayDialog {
 		 *
 		 * @param container The configuration panel container or <code>null</code>.
 		 */
-        public EncodingPanel(IConfigurationPanelContainer container) {
-	        super(container);
-        }
+		public EncodingPanel(IConfigurationPanelContainer container) {
+			super(container);
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
-         */
-        @Override
-        public void setupPanel(Composite parent) {
-    		Composite panel = new Composite(parent, SWT.NONE);
-    		panel.setLayout(new GridLayout());
-    		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-    		panel.setLayoutData(data);
+		/* (non-Javadoc)
+		 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
+		 */
+		@Override
+		public void setupPanel(Composite parent) {
+			Composite panel = new Composite(parent, SWT.NONE);
+			panel.setLayout(new GridLayout());
+			GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+			panel.setLayoutData(data);
 
-    		// Create the encoding selection combo
-    		createEncodingUI(panel, false);
-    		if (EncodingSelectionDialog.this.encoding != null) {
-    			setEncoding(EncodingSelectionDialog.this.encoding);
-    		}
+			// Create the encoding selection combo
+			createEncodingUI(panel, false);
+			if (EncodingSelectionDialog.this.encoding != null) {
+				setEncoding(EncodingSelectionDialog.this.encoding);
+			}
 
-    		setControl(panel);
-        }
+			setControl(panel);
+		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#saveSettingsForHost(boolean)
 		 */
-        @Override
-        protected void saveSettingsForHost(boolean add) {
-        }
+		@Override
+		protected void saveSettingsForHost(boolean add) {
+		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#fillSettingsForHost(java.lang.String)
 		 */
-        @Override
-        protected void fillSettingsForHost(String host) {
-        }
+		@Override
+		protected void fillSettingsForHost(String host) {
+		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#getHostFromSettings()
 		 */
-        @Override
-        protected String getHostFromSettings() {
-	        return null;
-        }
+		@Override
+		protected String getHostFromSettings() {
+			return null;
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#getEncoding()
-         */
-        @Override
-        public String getEncoding() {
-            return super.getEncoding();
-        }
+		/* (non-Javadoc)
+		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#getEncoding()
+		 */
+		@Override
+		public String getEncoding() {
+			return super.getEncoding();
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#setEncoding(java.lang.String)
-         */
-        @Override
-        public void setEncoding(String encoding) {
-            super.setEncoding(encoding);
-        }
+		/* (non-Javadoc)
+		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#setEncoding(java.lang.String)
+		 */
+		@Override
+		public void setEncoding(String encoding) {
+			super.setEncoding(encoding);
+		}
 	}
 
 	/**
-     * Constructor.
-     *
+	 * Constructor.
+	 *
 	 * @param shell The parent shell or <code>null</code>.
-     */
-    public EncodingSelectionDialog(Shell shell) {
-	    super(shell);
+	 */
+	public EncodingSelectionDialog(Shell shell) {
+		super(shell);
 
 		this.contextHelpId = IContextHelpIds.ENCODING_SELECTION_DIALOG;
 		setHelpAvailable(true);
-    }
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
@@ -135,11 +135,13 @@ public class EncodingSelectionDialog extends TrayDialog {
 		Control control = super.createDialogArea(parent);
 		// Setup the inner panel as scrollable composite
 		if (control instanceof Composite) {
-			ScrolledComposite sc = new ScrolledComposite((Composite)control, SWT.V_SCROLL);
+			ScrolledComposite sc = new ScrolledComposite((Composite) control, SWT.V_SCROLL);
 
 			GridLayout layout = new GridLayout(1, true);
-			layout.marginHeight = 0; layout.marginWidth = 0;
-			layout.verticalSpacing = 0; layout.horizontalSpacing = 0;
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			layout.verticalSpacing = 0;
+			layout.horizontalSpacing = 0;
 
 			sc.setLayout(layout);
 			sc.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
@@ -168,22 +170,23 @@ public class EncodingSelectionDialog extends TrayDialog {
 	 *
 	 * @param parent The parent composite. Must not be <code>null</code>.
 	 */
-    protected void createDialogAreaContent(Composite parent) {
-    	Assert.isNotNull(parent);
+	protected void createDialogAreaContent(Composite parent) {
+		Assert.isNotNull(parent);
 
-    	setDialogTitle(Messages.EncodingSelectionDialog_title);
+		setDialogTitle(Messages.EncodingSelectionDialog_title);
 
-        Composite panel = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(2, false);
-        layout.marginHeight = 0; layout.marginWidth = 0;
-        panel.setLayout(layout);
-        panel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		Composite panel = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		panel.setLayout(layout);
+		panel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 
-        encodingPanel = new EncodingPanel(null);
-        encodingPanel.setupPanel(panel);
+		encodingPanel = new EncodingPanel(null);
+		encodingPanel.setupPanel(panel);
 
-        applyDialogFont(panel);
-    }
+		applyDialogFont(panel);
+	}
 
 	/**
 	 * Sets the title for this dialog.
@@ -199,34 +202,35 @@ public class EncodingSelectionDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
-    @Override
-    protected void okPressed() {
-    	// Save the selected encoding
-    	if (encodingPanel != null) encoding = encodingPanel.getEncoding();
-        super.okPressed();
-    }
+	@Override
+	protected void okPressed() {
+		// Save the selected encoding
+		if (encodingPanel != null)
+			encoding = encodingPanel.getEncoding();
+		super.okPressed();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
-     */
-    @Override
-    protected void cancelPressed() {
-    	// Reset the encoding
-    	encoding = null;
-        super.cancelPressed();
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
+	 */
+	@Override
+	protected void cancelPressed() {
+		// Reset the encoding
+		encoding = null;
+		super.cancelPressed();
+	}
 
-    /**
-     * Set the encoding to default to on creating the dialog.
-     */
-    public final void setEncoding(String encoding) {
-    	this.encoding = encoding;
-    }
+	/**
+	 * Set the encoding to default to on creating the dialog.
+	 */
+	public final void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
 
-    /**
-     * Returns the selected encoding or <code>null</code>.
-     */
-    public final String getEncoding() {
-    	return encoding;
-    }
+	/**
+	 * Returns the selected encoding or <code>null</code>.
+	 */
+	public final String getEncoding() {
+		return encoding;
+	}
 }

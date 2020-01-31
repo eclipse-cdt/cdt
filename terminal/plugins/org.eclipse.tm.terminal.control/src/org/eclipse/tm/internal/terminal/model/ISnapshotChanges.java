@@ -48,7 +48,7 @@ public interface ISnapshotChanges {
 
 	/**
 	 * Mark all lines changed
-	 * @param height if no window is set this is the number of 
+	 * @param height if no window is set this is the number of
 	 * lines that are marked as changed
 	 */
 	void setAllChanged(int height);
@@ -66,18 +66,20 @@ public interface ISnapshotChanges {
 	boolean hasLineChanged(int line);
 
 	void markDimensionsChanged();
+
 	boolean hasDimensionsChanged();
+
 	void markCursorChanged();
 
 	/**
 	 * @return true if the terminal data has changed
 	 */
 	boolean hasTerminalChanged();
+
 	/**
 	 * mark the terminal as changed
 	 */
 	void setTerminalChanged();
-
 
 	void copyChangedLines(ITerminalTextData dest, ITerminalTextData source);
 
@@ -86,7 +88,9 @@ public interface ISnapshotChanges {
 	 * @param size number of lines to follow
 	 */
 	void setInterestWindow(int startLine, int size);
+
 	int getInterestWindowStartLine();
+
 	int getInterestWindowSize();
 
 }

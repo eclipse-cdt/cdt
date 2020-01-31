@@ -36,24 +36,29 @@ public class SshConnector extends TerminalConnectorImpl {
 	private final SshSettings fSettings;
 	private int fWidth;
 	private int fHeight;
+
 	public SshConnector() {
 		this(new SshSettings());
 	}
+
 	public SshConnector(SshSettings settings) {
-		fSettings=settings;
+		fSettings = settings;
 	}
+
 	@Override
-    public void initialize() throws Exception {
-		fJsch=new JSch();
+	public void initialize() throws Exception {
+		fJsch = new JSch();
 	}
+
 	@Override
-    public void connect(ITerminalControl control) {
+	public void connect(ITerminalControl control) {
 		super.connect(control);
-		fConnection = new SshConnection(this,control);
+		fConnection = new SshConnection(this, control);
 		fConnection.start();
 	}
+
 	@Override
-    synchronized public void doDisconnect() {
+	synchronized public void doDisconnect() {
 		fConnection.disconnect();
 		if (getInputStream() != null) {
 			try {
@@ -71,28 +76,34 @@ public class SshConnector extends TerminalConnectorImpl {
 			}
 		}
 	}
+
 	@Override
-    public void setTerminalSize(int newWidth, int newHeight) {
-		if(fChannel!=null && (newWidth!=fWidth || newHeight!=fHeight)) {
+	public void setTerminalSize(int newWidth, int newHeight) {
+		if (fChannel != null && (newWidth != fWidth || newHeight != fHeight)) {
 			//avoid excessive communications due to change size requests by caching previous size
-			fChannel.setPtySize(newWidth, newHeight, 8*newWidth, 8*newHeight);
-			fWidth=newWidth;
-			fHeight=newHeight;
+			fChannel.setPtySize(newWidth, newHeight, 8 * newWidth, 8 * newHeight);
+			fWidth = newWidth;
+			fHeight = newHeight;
 		}
 	}
+
 	public InputStream getInputStream() {
 		return fInputStream;
 	}
+
 	@Override
-    public OutputStream getTerminalToRemoteStream() {
+	public OutputStream getTerminalToRemoteStream() {
 		return fOutputStream;
 	}
+
 	void setInputStream(InputStream inputStream) {
 		fInputStream = inputStream;
 	}
+
 	void setOutputStream(OutputStream outputStream) {
 		fOutputStream = outputStream;
 	}
+
 	/**
 	 * Return the SSH Settings.
 	 *
@@ -102,31 +113,38 @@ public class SshConnector extends TerminalConnectorImpl {
 	public ISshSettings getSshSettings() {
 		return fSettings;
 	}
+
 	@Override
 	public void setDefaultSettings() {
 		fSettings.load(new NullSettingsStore());
 	}
+
 	@Override
-    public String getSettingsSummary() {
+	public String getSettingsSummary() {
 		return fSettings.getSummary();
 	}
+
 	@Override
-    public void load(ISettingsStore store) {
+	public void load(ISettingsStore store) {
 		fSettings.load(store);
 	}
+
 	@Override
-    public void save(ISettingsStore store) {
+	public void save(ISettingsStore store) {
 		fSettings.save(store);
 	}
+
 	protected JSch getJsch() {
 		return fJsch;
 	}
+
 	ChannelShell getChannel() {
 		return fChannel;
 	}
+
 	void setChannel(ChannelShell channel) {
 		fChannel = channel;
-		fWidth=-1;
-		fHeight=-1;
+		fWidth = -1;
+		fHeight = -1;
 	}
 }

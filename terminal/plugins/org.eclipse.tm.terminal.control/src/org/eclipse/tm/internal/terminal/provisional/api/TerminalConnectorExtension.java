@@ -41,19 +41,20 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
 public class TerminalConnectorExtension {
 	static private ITerminalConnector makeConnector(final IConfigurationElement config) {
 		String id = config.getAttribute("id"); //$NON-NLS-1$
-		if(id==null || id.length()==0)
-			id=config.getAttribute("class"); //$NON-NLS-1$
-		String name= config.getAttribute("name"); //$NON-NLS-1$
-		if(name==null || name.length()==0) {
-			name=id;
+		if (id == null || id.length() == 0)
+			id = config.getAttribute("class"); //$NON-NLS-1$
+		String name = config.getAttribute("name"); //$NON-NLS-1$
+		if (name == null || name.length() == 0) {
+			name = id;
 		}
 		String hidden = config.getAttribute("hidden"); //$NON-NLS-1$
 		boolean isHidden = hidden != null ? new Boolean(hidden).booleanValue() : false;
-		TerminalConnector.Factory factory=new TerminalConnector.Factory(){
+		TerminalConnector.Factory factory = new TerminalConnector.Factory() {
 			public TerminalConnectorImpl makeConnector() throws Exception {
-				return (TerminalConnectorImpl)config.createExecutableExtension("class"); //$NON-NLS-1$
-			}};
-		return new TerminalConnector(factory,id,name, isHidden);
+				return (TerminalConnectorImpl) config.createExecutableExtension("class"); //$NON-NLS-1$
+			}
+		};
+		return new TerminalConnector(factory, id, name, isHidden);
 	}
 
 	/**
@@ -68,14 +69,16 @@ public class TerminalConnectorExtension {
 	 * @since org.eclipse.tm.terminal 2.0
 	 */
 	public static ITerminalConnector makeTerminalConnector(String id) {
-		IConfigurationElement[] config = RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.control.connectors"); //$NON-NLS-1$
+		IConfigurationElement[] config = RegistryFactory.getRegistry()
+				.getConfigurationElementsFor("org.eclipse.tm.terminal.control.connectors"); //$NON-NLS-1$
 		for (int i = 0; i < config.length; i++) {
-			if(id.equals(config[i].getAttribute("id"))) { //$NON-NLS-1$
+			if (id.equals(config[i].getAttribute("id"))) { //$NON-NLS-1$
 				return makeConnector(config[i]);
 			}
 		}
 		return null;
 	}
+
 	/**
 	 * Return a list of available terminal connectors (connection types).
 	 *
@@ -89,8 +92,9 @@ public class TerminalConnectorExtension {
 	 * @since org.eclipse.tm.terminal 2.0 return value is ITerminalConnector[]
 	 */
 	public static ITerminalConnector[] makeTerminalConnectors() {
-		IConfigurationElement[] config = RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.control.connectors"); //$NON-NLS-1$
-		List<ITerminalConnector> result=new ArrayList<ITerminalConnector>();
+		IConfigurationElement[] config = RegistryFactory.getRegistry()
+				.getConfigurationElementsFor("org.eclipse.tm.terminal.control.connectors"); //$NON-NLS-1$
+		List<ITerminalConnector> result = new ArrayList<ITerminalConnector>();
 		for (int i = 0; i < config.length; i++) {
 			result.add(makeConnector(config[i]));
 		}

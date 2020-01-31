@@ -33,10 +33,10 @@ public class StreamsSettings {
 	private boolean localEcho = true;
 	// The line separator setting
 	private String lineSeparator = null;
-    // The list of stdout output listeners
-    private ITerminalServiceOutputStreamMonitorListener[] stdoutListeners = null;
-    // The list of stderr output listeners
-    private ITerminalServiceOutputStreamMonitorListener[] stderrListeners = null;
+	// The list of stdout output listeners
+	private ITerminalServiceOutputStreamMonitorListener[] stdoutListeners = null;
+	// The list of stderr output listeners
+	private ITerminalServiceOutputStreamMonitorListener[] stderrListeners = null;
 
 	/**
 	 * Sets the stdin stream instance.
@@ -175,11 +175,13 @@ public class StreamsSettings {
 		localEcho = Boolean.parseBoolean(store.get("LocalEcho", Boolean.FALSE.toString())); //$NON-NLS-1$
 		lineSeparator = store.get("LineSeparator", null); //$NON-NLS-1$
 		if (store instanceof SettingsStore) {
-			stdin = (OutputStream)((SettingsStore)store).getSettings().get("stdin"); //$NON-NLS-1$
-			stdout = (InputStream)((SettingsStore)store).getSettings().get("stdout"); //$NON-NLS-1$
-			stderr = (InputStream)((SettingsStore)store).getSettings().get("stderr"); //$NON-NLS-1$
-			stdoutListeners = (ITerminalServiceOutputStreamMonitorListener[])((SettingsStore)store).getSettings().get("StdOutListeners"); //$NON-NLS-1$
-			stderrListeners = (ITerminalServiceOutputStreamMonitorListener[])((SettingsStore)store).getSettings().get("StdErrListeners"); //$NON-NLS-1$
+			stdin = (OutputStream) ((SettingsStore) store).getSettings().get("stdin"); //$NON-NLS-1$
+			stdout = (InputStream) ((SettingsStore) store).getSettings().get("stdout"); //$NON-NLS-1$
+			stderr = (InputStream) ((SettingsStore) store).getSettings().get("stderr"); //$NON-NLS-1$
+			stdoutListeners = (ITerminalServiceOutputStreamMonitorListener[]) ((SettingsStore) store).getSettings()
+					.get("StdOutListeners"); //$NON-NLS-1$
+			stderrListeners = (ITerminalServiceOutputStreamMonitorListener[]) ((SettingsStore) store).getSettings()
+					.get("StdErrListeners"); //$NON-NLS-1$
 		}
 	}
 
@@ -193,11 +195,11 @@ public class StreamsSettings {
 		store.put("LocalEcho", Boolean.toString(localEcho)); //$NON-NLS-1$
 		store.put("LineSeparator", lineSeparator); //$NON-NLS-1$
 		if (store instanceof SettingsStore) {
-			((SettingsStore)store).getSettings().put("stdin", stdin); //$NON-NLS-1$
-			((SettingsStore)store).getSettings().put("stdout", stdout); //$NON-NLS-1$
-			((SettingsStore)store).getSettings().put("stderr", stderr); //$NON-NLS-1$
-			((SettingsStore)store).getSettings().put("StdOutListeners", stdoutListeners); //$NON-NLS-1$
-			((SettingsStore)store).getSettings().put("StdErrListeners", stderrListeners); //$NON-NLS-1$
+			((SettingsStore) store).getSettings().put("stdin", stdin); //$NON-NLS-1$
+			((SettingsStore) store).getSettings().put("stdout", stdout); //$NON-NLS-1$
+			((SettingsStore) store).getSettings().put("stderr", stderr); //$NON-NLS-1$
+			((SettingsStore) store).getSettings().put("StdOutListeners", stdoutListeners); //$NON-NLS-1$
+			((SettingsStore) store).getSettings().put("StdErrListeners", stderrListeners); //$NON-NLS-1$
 		}
 	}
 }

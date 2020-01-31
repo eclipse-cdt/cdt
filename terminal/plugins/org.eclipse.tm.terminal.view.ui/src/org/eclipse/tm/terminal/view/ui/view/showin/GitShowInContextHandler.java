@@ -33,7 +33,7 @@ public class GitShowInContextHandler {
 	 * @param input The input element. Must not be <code>null</code>.
 	 * @return The selection or <code>null</code>.
 	 */
-    public static ISelection getSelection(Object input) {
+	public static ISelection getSelection(Object input) {
 		Assert.isNotNull(input);
 
 		List<Object> elements = new ArrayList<Object>();
@@ -67,21 +67,21 @@ public class GitShowInContextHandler {
 		return elements.isEmpty() ? null : new StructuredSelection(elements);
 	}
 
-    /**
-     * Returns the path of the given element.
-     *
-     * @param element The element. Must not be <code>null</code>.
-     * @return The path or <code>null</code>.
-     */
-    public static IPath getPath(Object element) {
-    	Assert.isNotNull(element);
+	/**
+	 * Returns the path of the given element.
+	 *
+	 * @param element The element. Must not be <code>null</code>.
+	 * @return The path or <code>null</code>.
+	 */
+	public static IPath getPath(Object element) {
+		Assert.isNotNull(element);
 
-    	IPath path = null;
+		IPath path = null;
 
-    	if (element instanceof org.eclipse.egit.ui.internal.repository.tree.RepositoryTreeNode) {
-    		path = ((org.eclipse.egit.ui.internal.repository.tree.RepositoryTreeNode<?>)element).getPath();
-    	}
+		if (element instanceof org.eclipse.egit.ui.internal.repository.tree.RepositoryTreeNode) {
+			path = ((org.eclipse.egit.ui.internal.repository.tree.RepositoryTreeNode<?>) element).getPath();
+		}
 
-    	return path;
-    }
+		return path;
+	}
 }

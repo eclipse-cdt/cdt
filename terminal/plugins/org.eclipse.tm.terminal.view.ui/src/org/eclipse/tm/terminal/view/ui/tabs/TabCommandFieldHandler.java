@@ -66,7 +66,7 @@ public class TabCommandFieldHandler implements IDisposable, IAdaptable {
 		if (CTabItem.class.equals(adapter)) {
 			return item;
 		}
-	    return null;
+		return null;
 	}
 
 	/**
@@ -97,8 +97,9 @@ public class TabCommandFieldHandler implements IDisposable, IAdaptable {
 
 		// Apply to the terminal control
 		Assert.isTrue(!item.isDisposed());
-		ITerminalViewControl terminal = (ITerminalViewControl)item.getData();
-		if (terminal != null) terminal.setCommandInputField(field);
+		ITerminalViewControl terminal = (ITerminalViewControl) item.getData();
+		if (terminal != null)
+			terminal.setCommandInputField(field);
 	}
 
 }

@@ -108,7 +108,9 @@ public interface ITerminalTextDataSnapshot extends ITerminalTextDataReadOnly {
 		 */
 		void snapshotOutOfDate(ITerminalTextDataSnapshot snapshot);
 	}
+
 	void addListener(SnapshotOutOfDateListener listener);
+
 	void removeListener(SnapshotOutOfDateListener listener);
 
 	/**
@@ -116,6 +118,7 @@ public interface ITerminalTextDataSnapshot extends ITerminalTextDataReadOnly {
 	 * has been called no new snapshot data is collected.
 	 */
 	void detach();
+
 	/**
 	 * @return true if the data has changed since the previous snapshot.
 	 */
@@ -129,7 +132,9 @@ public interface ITerminalTextDataSnapshot extends ITerminalTextDataReadOnly {
 	 * @param size number of lines to track. A size of -1 means track all.
 	 */
 	void setInterestWindow(int startLine, int size);
+
 	int getInterestWindowStartLine();
+
 	int getInterestWindowSize();
 
 	/**
@@ -195,6 +200,7 @@ public interface ITerminalTextDataSnapshot extends ITerminalTextDataReadOnly {
 	 * window of interest)
 	 */
 	boolean hasTerminalChanged();
+
 	/**
 	 * If {@link #updateSnapshot(boolean)} was called with <code>true</code>, then this method
 	 * returns the top of the scroll region.

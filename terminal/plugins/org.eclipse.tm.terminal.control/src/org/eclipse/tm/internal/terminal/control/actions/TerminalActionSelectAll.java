@@ -27,15 +27,13 @@ public class TerminalActionSelectAll extends AbstractTerminalAction {
 	public TerminalActionSelectAll() {
 		super(TerminalActionSelectAll.class.getName());
 
-		setupAction(ActionMessages.SELECTALL, ActionMessages.SELECTALL,
-				(ImageDescriptor) null, null, null, false);
+		setupAction(ActionMessages.SELECTALL, ActionMessages.SELECTALL, (ImageDescriptor) null, null, null, false);
 	}
 
 	public TerminalActionSelectAll(ITerminalViewControl target) {
 		super(target, TerminalActionSelectAll.class.getName());
 
-		setupAction(ActionMessages.SELECTALL, ActionMessages.SELECTALL,
-				(ImageDescriptor) null, null, null, false);
+		setupAction(ActionMessages.SELECTALL, ActionMessages.SELECTALL, (ImageDescriptor) null, null, null, false);
 	}
 
 	public void run() {

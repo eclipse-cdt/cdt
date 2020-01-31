@@ -9,7 +9,7 @@
  *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
- * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.provisional.api.provider;
 
@@ -29,7 +29,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
  */
 public abstract class TerminalConnectorImpl {
 
- 	/**
+	/**
 	 * The TerminalControl associated with this connector.
 	 * Required for advertising state changes when needed.
 	 */
@@ -49,12 +49,12 @@ public abstract class TerminalConnectorImpl {
 
 	/**
 	 * Connect using the current state of the settings.
-	 * 
+	 *
 	 * This method is designed to be overridden by actual implementations, in
 	 * order to open the streams required for communicating with the remote
 	 * side. Extenders must call <code>super.connect(control)</code> as the
 	 * first thing they are doing.
-	 * 
+	 *
 	 * @param control Used to inform the UI about state changes and messages
 	 *            from the connection.
 	 */
@@ -81,11 +81,11 @@ public abstract class TerminalConnectorImpl {
 		// Do nothing by default
 	}
 
-    /**
-     * @return the terminal to remote stream (bytes written to this stream will
-     * be sent to the remote site). For the stream in the other direction (remote to
-     * terminal see {@link ITerminalControl#getRemoteToTerminalOutputStream()}
-     */
+	/**
+	 * @return the terminal to remote stream (bytes written to this stream will
+	 * be sent to the remote site). For the stream in the other direction (remote to
+	 * terminal see {@link ITerminalControl#getRemoteToTerminalOutputStream()}
+	 */
 	abstract public OutputStream getTerminalToRemoteStream();
 
 	/**
@@ -140,7 +140,7 @@ public abstract class TerminalConnectorImpl {
 		// do nothing by default
 	}
 
-    /**
+	/**
 	 * Notify the remote site that the size of the terminal has changed.
 	 *
 	 * Concrete connectors should override this if they have the possibility to

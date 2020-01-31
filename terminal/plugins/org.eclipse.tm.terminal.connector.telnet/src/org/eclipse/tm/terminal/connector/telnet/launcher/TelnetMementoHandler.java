@@ -33,12 +33,16 @@ public class TelnetMementoHandler implements IMementoHandler {
 
 		// Do not write the terminal title to the memento -> needs to
 		// be recreated at the time of restoration.
-		memento.putString(ITerminalsConnectorConstants.PROP_IP_HOST, (String)properties.get(ITerminalsConnectorConstants.PROP_IP_HOST));
+		memento.putString(ITerminalsConnectorConstants.PROP_IP_HOST,
+				(String) properties.get(ITerminalsConnectorConstants.PROP_IP_HOST));
 		Object value = properties.get(ITerminalsConnectorConstants.PROP_IP_PORT);
-		memento.putInteger(ITerminalsConnectorConstants.PROP_IP_PORT, value instanceof Integer ? ((Integer)value).intValue() : -1);
+		memento.putInteger(ITerminalsConnectorConstants.PROP_IP_PORT,
+				value instanceof Integer ? ((Integer) value).intValue() : -1);
 		value = properties.get(ITerminalsConnectorConstants.PROP_TIMEOUT);
-		memento.putInteger(ITerminalsConnectorConstants.PROP_TIMEOUT, value instanceof Integer ? ((Integer)value).intValue() : -1);
-		memento.putString(ITerminalsConnectorConstants.PROP_ENCODING, (String)properties.get(ITerminalsConnectorConstants.PROP_ENCODING));
+		memento.putInteger(ITerminalsConnectorConstants.PROP_TIMEOUT,
+				value instanceof Integer ? ((Integer) value).intValue() : -1);
+		memento.putString(ITerminalsConnectorConstants.PROP_ENCODING,
+				(String) properties.get(ITerminalsConnectorConstants.PROP_ENCODING));
 	}
 
 	/* (non-Javadoc)
@@ -50,9 +54,13 @@ public class TelnetMementoHandler implements IMementoHandler {
 		Assert.isNotNull(properties);
 
 		// Restore the terminal properties from the memento
-		properties.put(ITerminalsConnectorConstants.PROP_IP_HOST, memento.getString(ITerminalsConnectorConstants.PROP_IP_HOST));
-		properties.put(ITerminalsConnectorConstants.PROP_IP_PORT, memento.getInteger(ITerminalsConnectorConstants.PROP_IP_PORT));
-		properties.put(ITerminalsConnectorConstants.PROP_TIMEOUT, memento.getInteger(ITerminalsConnectorConstants.PROP_TIMEOUT));
-		properties.put(ITerminalsConnectorConstants.PROP_ENCODING, memento.getString(ITerminalsConnectorConstants.PROP_ENCODING));
+		properties.put(ITerminalsConnectorConstants.PROP_IP_HOST,
+				memento.getString(ITerminalsConnectorConstants.PROP_IP_HOST));
+		properties.put(ITerminalsConnectorConstants.PROP_IP_PORT,
+				memento.getInteger(ITerminalsConnectorConstants.PROP_IP_PORT));
+		properties.put(ITerminalsConnectorConstants.PROP_TIMEOUT,
+				memento.getInteger(ITerminalsConnectorConstants.PROP_TIMEOUT));
+		properties.put(ITerminalsConnectorConstants.PROP_ENCODING,
+				memento.getString(ITerminalsConnectorConstants.PROP_ENCODING));
 	}
 }

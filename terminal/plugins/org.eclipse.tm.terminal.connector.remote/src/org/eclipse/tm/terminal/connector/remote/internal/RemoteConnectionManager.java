@@ -64,7 +64,7 @@ public class RemoteConnectionManager extends Job {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -79,15 +79,15 @@ public class RemoteConnectionManager extends Job {
 				remoteConnection = connType.getConnection(connector.getRemoteSettings().getConnectionName());
 			}
 			if (remoteConnection == null) {
-				return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(),
-						NLS.bind(Messages.RemoteConnectionManager_0, connector.getRemoteSettings().getConnectionName()));
+				return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), NLS
+						.bind(Messages.RemoteConnectionManager_0, connector.getRemoteSettings().getConnectionName()));
 			}
 
 			if (!remoteConnection.isOpen()) {
 				remoteConnection.open(monitor);
 				if (!remoteConnection.isOpen()) {
-					return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(),
-							NLS.bind(Messages.RemoteConnectionManager_1, connector.getRemoteSettings().getConnectionName()));
+					return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), NLS.bind(
+							Messages.RemoteConnectionManager_1, connector.getRemoteSettings().getConnectionName()));
 				}
 			}
 
@@ -104,7 +104,8 @@ public class RemoteConnectionManager extends Job {
 				String terminalShellCommand = prefs.get(IRemoteTerminalConstants.PREF_TERMINAL_SHELL_COMMAND, ""); //$NON-NLS-1$
 				if ("".equals(terminalShellCommand) //$NON-NLS-1$
 						&& remoteConnection.hasService(IRemoteCommandShellService.class)) {
-					IRemoteCommandShellService cmdShellSvc = remoteConnection.getService(IRemoteCommandShellService.class);
+					IRemoteCommandShellService cmdShellSvc = remoteConnection
+							.getService(IRemoteCommandShellService.class);
 					synchronized (this) {
 						remoteProcess = cmdShellSvc.getCommandShell(IRemoteProcessBuilder.ALLOCATE_PTY);
 					}
@@ -117,7 +118,8 @@ public class RemoteConnectionManager extends Job {
 							.getProcessBuilder(new ArgumentParser(terminalShellCommand).getTokenList());
 					remoteProcess = processBuilder.start(IRemoteProcessBuilder.ALLOCATE_PTY);
 				} else {
-					return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), Messages.RemoteConnectionManager_2);
+					return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(),
+							Messages.RemoteConnectionManager_2);
 				}
 			}
 
@@ -164,7 +166,7 @@ public class RemoteConnectionManager extends Job {
 
 	/**
 	 * Read the data from the connection and display it in the terminal.
-	 * 
+	 *
 	 * @param in
 	 * @throws IOException
 	 */

@@ -51,7 +51,7 @@ public abstract class AbstractConfigurationPanel implements IConfigurationPanel 
 	 */
 	@Override
 	public IConfigurationPanelContainer getContainer() {
-	    return container;
+		return container;
 	}
 
 	/* (non-Javadoc)
@@ -159,15 +159,15 @@ public abstract class AbstractConfigurationPanel implements IConfigurationPanel 
 	}
 
 	/**
-     * @return Returns the enabled state.
-     */
-    public boolean isEnabled() {
-	    return enabled;
-    }
+	 * @return Returns the enabled state.
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#isValid()
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#isValid()
+	 */
 	@Override
 	public boolean isValid() {
 		setMessage(null, NONE);
@@ -184,21 +184,21 @@ public abstract class AbstractConfigurationPanel implements IConfigurationPanel 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#extractData(java.util.Map)
 	 */
-    @Override
-    public void extractData(Map<String, Object> data) {
-    }
+	@Override
+	public void extractData(Map<String, Object> data) {
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupData(java.util.Map)
-     */
-    @Override
-    public void setupData(Map<String, Object> data) {
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupData(java.util.Map)
+	 */
+	@Override
+	public void setupData(Map<String, Object> data) {
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#updateData(java.util.Map)
-     */
-    @Override
-    public void updateData(Map<String, Object> data) {
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#updateData(java.util.Map)
+	 */
+	@Override
+	public void updateData(Map<String, Object> data) {
+	}
 }

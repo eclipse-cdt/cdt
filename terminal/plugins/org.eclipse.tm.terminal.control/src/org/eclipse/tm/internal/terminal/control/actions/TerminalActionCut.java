@@ -27,19 +27,17 @@ public class TerminalActionCut extends AbstractTerminalAction {
 	public TerminalActionCut() {
 		super(TerminalActionCut.class.getName());
 		ISharedImages si = PlatformUI.getWorkbench().getSharedImages();
-		setupAction(ActionMessages.CUT, ActionMessages.CUT, si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_CUT), si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_CUT), si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED), true);
+		setupAction(ActionMessages.CUT, ActionMessages.CUT, si.getImageDescriptor(ISharedImages.IMG_TOOL_CUT),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_CUT),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED), true);
 	}
 
 	public TerminalActionCut(ITerminalViewControl target) {
 		super(target, TerminalActionCut.class.getName());
 		ISharedImages si = PlatformUI.getWorkbench().getSharedImages();
-		setupAction(ActionMessages.CUT, ActionMessages.CUT, si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_CUT), si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_CUT), si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED), true);
+		setupAction(ActionMessages.CUT, ActionMessages.CUT, si.getImageDescriptor(ISharedImages.IMG_TOOL_CUT),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_CUT),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED), true);
 	}
 
 	public void run() {

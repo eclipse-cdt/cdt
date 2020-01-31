@@ -30,13 +30,19 @@ public interface ITelnetSettings {
 	static final String EOL_CRLF = "CR+LF"; //$NON-NLS-1$
 
 	String getHost();
+
 	int getNetworkPort();
+
 	int getTimeout();
+
 	/**
 	 * @since 4.2
 	 */
 	String getEndOfLine();
+
 	String getSummary();
+
 	void load(ISettingsStore store);
+
 	void save(ISettingsStore store);
 }

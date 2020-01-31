@@ -92,24 +92,26 @@ public class SshLauncherDelegate extends AbstractLauncherDelegate {
 	 *
 	 * @return The terminal title string or <code>null</code>.
 	 */
-    private String getTerminalTitle(Map<String, Object> properties) {
+	private String getTerminalTitle(Map<String, Object> properties) {
 		// Try to see if the user set a title explicitly via the properties map.
 		String title = getDefaultTerminalTitle(properties);
-		if (title != null) return title;
+		if (title != null)
+			return title;
 
 		//No title,try to calculate the title
-		String host = (String)properties.get(ITerminalsConnectorConstants.PROP_IP_HOST);
-		String user = (String)properties.get(ITerminalsConnectorConstants.PROP_SSH_USER);
+		String host = (String) properties.get(ITerminalsConnectorConstants.PROP_IP_HOST);
+		String user = (String) properties.get(ITerminalsConnectorConstants.PROP_SSH_USER);
 		Object value = properties.get(ITerminalsConnectorConstants.PROP_IP_PORT);
 		String port = value != null ? value.toString() : null;
 
-		if (host != null && user!= null) {
+		if (host != null && user != null) {
 			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 			String date = format.format(new Date(System.currentTimeMillis()));
 			if (port != null && Integer.valueOf(port).intValue() != ISshSettings.DEFAULT_SSH_PORT) {
-				return NLS.bind(Messages.SshLauncherDelegate_terminalTitle_port, new String[]{user, host, port, date});
+				return NLS.bind(Messages.SshLauncherDelegate_terminalTitle_port,
+						new String[] { user, host, port, date });
 			}
-			return NLS.bind(Messages.SshLauncherDelegate_terminalTitle, new String[]{user, host, date});
+			return NLS.bind(Messages.SshLauncherDelegate_terminalTitle, new String[] { user, host, date });
 		}
 
 		return Messages.SshLauncherDelegate_terminalTitle_default;
@@ -118,40 +120,42 @@ public class SshLauncherDelegate extends AbstractLauncherDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
-    @Override
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IMementoHandler.class.equals(adapter)) {
 			return mementoHandler;
 		}
-	    return super.getAdapter(adapter);
+		return super.getAdapter(adapter);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#createTerminalConnector(java.util.Map)
 	 */
-    @Override
+	@Override
 	public ITerminalConnector createTerminalConnector(Map<String, Object> properties) {
-    	Assert.isNotNull(properties);
+		Assert.isNotNull(properties);
 
-    	// Check for the terminal connector id
-    	String connectorId = (String)properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
-		if (connectorId == null) connectorId = "org.eclipse.tm.terminal.connector.ssh.SshConnector"; //$NON-NLS-1$
+		// Check for the terminal connector id
+		String connectorId = (String) properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
+		if (connectorId == null)
+			connectorId = "org.eclipse.tm.terminal.connector.ssh.SshConnector"; //$NON-NLS-1$
 
 		// Extract the ssh properties
-		String host = (String)properties.get(ITerminalsConnectorConstants.PROP_IP_HOST);
+		String host = (String) properties.get(ITerminalsConnectorConstants.PROP_IP_HOST);
 		Object value = properties.get(ITerminalsConnectorConstants.PROP_IP_PORT);
 		String port = value != null ? value.toString() : null;
 		value = properties.get(ITerminalsConnectorConstants.PROP_TIMEOUT);
 		String timeout = value != null ? value.toString() : null;
 		value = properties.get(ITerminalsConnectorConstants.PROP_SSH_KEEP_ALIVE);
 		String keepAlive = value != null ? value.toString() : null;
-		String password = (String)properties.get(ITerminalsConnectorConstants.PROP_SSH_PASSWORD);
-		String user = (String)properties.get(ITerminalsConnectorConstants.PROP_SSH_USER);
+		String password = (String) properties.get(ITerminalsConnectorConstants.PROP_SSH_PASSWORD);
+		String user = (String) properties.get(ITerminalsConnectorConstants.PROP_SSH_USER);
 
 		int portOffset = 0;
 		if (properties.get(ITerminalsConnectorConstants.PROP_IP_PORT_OFFSET) instanceof Integer) {
-			portOffset = ((Integer)properties.get(ITerminalsConnectorConstants.PROP_IP_PORT_OFFSET)).intValue();
-			if (portOffset < 0) portOffset = 0;
+			portOffset = ((Integer) properties.get(ITerminalsConnectorConstants.PROP_IP_PORT_OFFSET)).intValue();
+			if (portOffset < 0)
+				portOffset = 0;
 		}
 
 		// The real port to connect to is port + portOffset

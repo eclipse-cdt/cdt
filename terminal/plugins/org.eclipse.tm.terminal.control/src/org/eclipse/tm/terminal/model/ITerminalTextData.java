@@ -37,6 +37,7 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	void setDimensions(int height, int width);
 
 	void setMaxHeight(int height);
+
 	int getMaxHeight();
 
 	/**
@@ -67,7 +68,6 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * @param style the style or null
 	 */
 	void setChars(int line, int column, char[] chars, int start, int len, Style style);
-
 
 	/**
 	 * Cleans the entire line.
@@ -116,18 +116,21 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * will be scrolled. Else a line will be added.
 	 */
 	void addLine();
+
 	/**
 	 * Copies the entire source into this and changes the size accordingly
 	 * @param source
 	 */
 	void copy(ITerminalTextData source);
+
 	/**
 	 * Copy a sourceLine from source to this at destLine.
 	 * @param source
 	 * @param sourceLine
 	 * @param destLine
 	 */
-	void copyLine(ITerminalTextData source,int sourceLine, int destLine);
+	void copyLine(ITerminalTextData source, int sourceLine, int destLine);
+
 	/**
 	 * Copy <code>length</code> lines from source starting at sourceLine into this starting at
 	 * destLine.
@@ -136,13 +139,14 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * @param destStartLine
 	 * @param length
 	 */
-	void copyRange(ITerminalTextData source, int sourceStartLine, int destStartLine,int length);
+	void copyRange(ITerminalTextData source, int sourceStartLine, int destStartLine, int length);
 
 	void setCursorLine(int line);
+
 	void setCursorColumn(int column);
 
 	/**
-	 * Makes this line a wrapped line which logically continues on next line. 
+	 * Makes this line a wrapped line which logically continues on next line.
 	 *
 	 * @param line
 	 * @since 3.3

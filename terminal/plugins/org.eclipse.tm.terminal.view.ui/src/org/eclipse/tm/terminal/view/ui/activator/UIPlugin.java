@@ -116,7 +116,8 @@ public class UIPlugin extends AbstractUIPlugin {
 
 			@Override
 			public boolean preShutdown(IWorkbench workbench, boolean forced) {
-				if (workbench != null && workbench.getActiveWorkbenchWindow() != null && workbench.getActiveWorkbenchWindow().getActivePage() != null) {
+				if (workbench != null && workbench.getActiveWorkbenchWindow() != null
+						&& workbench.getActiveWorkbenchWindow().getActivePage() != null) {
 					// Find all "Terminal" views
 					IViewReference[] refs = workbench.getActiveWorkbenchWindow().getActivePage().getViewReferences();
 					for (IViewReference ref : refs) {
@@ -135,16 +136,17 @@ public class UIPlugin extends AbstractUIPlugin {
 							final List<CTabItem> saveables = new ArrayList<CTabItem>();
 
 							// Get the tab folder
-							CTabFolder tabFolder = (CTabFolder)((TerminalsView)part).getAdapter(CTabFolder.class);
+							CTabFolder tabFolder = (CTabFolder) ((TerminalsView) part).getAdapter(CTabFolder.class);
 							if (tabFolder != null && !tabFolder.isDisposed()) {
 								// Get the list of tab items
 								CTabItem[] items = tabFolder.getItems();
 								// Loop the tab items and find the still connected ones
 								for (CTabItem item : items) {
 									// Ignore disposed items
-									if (item.isDisposed()) continue;
+									if (item.isDisposed())
+										continue;
 									// Get the terminal view control
-									ITerminalViewControl terminal = (ITerminalViewControl)item.getData();
+									ITerminalViewControl terminal = (ITerminalViewControl) item.getData();
 									if (terminal == null || terminal.getState() != TerminalState.CONNECTED) {
 										continue;
 									}
@@ -154,8 +156,10 @@ public class UIPlugin extends AbstractUIPlugin {
 							}
 
 							// Push the determined saveable items to the memento handler
-							TerminalsViewMementoHandler mementoHandler = (TerminalsViewMementoHandler)((TerminalsView)part).getAdapter(TerminalsViewMementoHandler.class);
-							if (mementoHandler != null) mementoHandler.setSaveables(saveables);
+							TerminalsViewMementoHandler mementoHandler = (TerminalsViewMementoHandler) ((TerminalsView) part)
+									.getAdapter(TerminalsViewMementoHandler.class);
+							if (mementoHandler != null)
+								mementoHandler.setSaveables(saveables);
 						}
 					}
 				}
@@ -179,14 +183,15 @@ public class UIPlugin extends AbstractUIPlugin {
 	void activateContexts() {
 		if (Display.getCurrent() != null) {
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if (window != null && windowListener != null) windowListener.windowOpened(window);
-		}
-		else {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable(){
+			if (window != null && windowListener != null)
+				windowListener.windowOpened(window);
+		} else {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
 					activateContexts();
-				}});
+				}
+			});
 		}
 	}
 
@@ -203,7 +208,10 @@ public class UIPlugin extends AbstractUIPlugin {
 		plugin = null;
 		scopedPreferences = null;
 		traceHandler = null;
-		if (listener != null) { PlatformUI.getWorkbench().removeWorkbenchListener(listener); listener = null; }
+		if (listener != null) {
+			PlatformUI.getWorkbench().removeWorkbenchListener(listener);
+			listener = null;
+		}
 		super.stop(context);
 	}
 

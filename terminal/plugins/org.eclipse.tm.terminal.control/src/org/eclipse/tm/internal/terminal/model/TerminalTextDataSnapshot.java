@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2018 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
- * https://www.eclipse.org/legal/epl-2.0/ 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.tm.terminal.model.LineSegment;
 import org.eclipse.tm.terminal.model.Style;
 
 /**
- * The public methods of this class have to be called from one thread! 
+ * The public methods of this class have to be called from one thread!
  *
  * Threading considerations:
  * This class is <b>not threadsafe</b>!
@@ -47,7 +47,7 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	// snapshot does not need internal synchronisation
 	final TerminalTextDataWindow fSnapshot;
 	// this variable is synchronized on fTerminal!
-	private SnapshotOutOfDateListener[] fListener=new SnapshotOutOfDateListener[0];
+	private SnapshotOutOfDateListener[] fListener = new SnapshotOutOfDateListener[0];
 	// this variable is synchronized on fTerminal!
 	private boolean fListenersNeedNotify;
 	private int fInterestWindowSize;
@@ -60,9 +60,10 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 		fCurrentChanges.setTerminalChanged();
 		fFutureChanges = new SnapshotChanges(fTerminal.getHeight());
 		fFutureChanges.markLinesChanged(0, fTerminal.getHeight());
-		fListenersNeedNotify=true;
-		fInterestWindowSize=-1;
+		fListenersNeedNotify = true;
+		fInterestWindowSize = -1;
 	}
+
 	/**
 	 * This is used in asserts to throw an {@link RuntimeException}.
 	 * This is useful for tests.
@@ -71,7 +72,7 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	private boolean throwRuntimeException() {
 		throw new RuntimeException();
 	}
-	
+
 	public void detach() {
 		fTerminal.removeSnapshot(this);
 	}
@@ -82,6 +83,7 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 			return fFutureChanges.hasChanged();
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.model.ITerminalTextDataSnapshot#snapshot()
 	 */
@@ -89,12 +91,12 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 		// make sure terminal does not change while we make the snapshot
 		synchronized (fTerminal) {
 			// let's make the future changes current
-			fCurrentChanges=fFutureChanges;
-			fFutureChanges=new SnapshotChanges(fTerminal.getHeight());
+			fCurrentChanges = fFutureChanges;
+			fFutureChanges = new SnapshotChanges(fTerminal.getHeight());
 			fFutureChanges.setInterestWindow(fInterestWindowStartLine, fInterestWindowSize);
 			// and update the snapshot
-			if(fSnapshot.getHeight()!=fTerminal.getHeight()||fSnapshot.getWidth()!=fTerminal.getWidth()) {
-				if(fInterestWindowSize==-1)
+			if (fSnapshot.getHeight() != fTerminal.getHeight() || fSnapshot.getWidth() != fTerminal.getWidth()) {
+				if (fInterestWindowSize == -1)
 					fSnapshot.setWindow(0, fTerminal.getHeight());
 				// if the dimensions have changed, we need a full copy
 				fSnapshot.copy(fTerminal);
@@ -102,17 +104,17 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 				fCurrentChanges.setAllChanged(fTerminal.getHeight());
 			} else {
 				// first we do the scroll on the copy
-				int start=fCurrentChanges.getScrollWindowStartLine();
-				int lines=Math.min(fCurrentChanges.getScrollWindowSize(), fSnapshot.getHeight()-start);
+				int start = fCurrentChanges.getScrollWindowStartLine();
+				int lines = Math.min(fCurrentChanges.getScrollWindowSize(), fSnapshot.getHeight() - start);
 				fSnapshot.scroll(start, lines, fCurrentChanges.getScrollWindowShift());
 				// and then create the snapshot of the changed lines
 				fCurrentChanges.copyChangedLines(fSnapshot, fTerminal);
 			}
-			fListenersNeedNotify=true;
+			fListenersNeedNotify = true;
 			fSnapshot.setCursorLine(fTerminal.getCursorLine());
 			fSnapshot.setCursorColumn(fTerminal.getCursorColumn());
 		}
-		if(!detectScrolling) {
+		if (!detectScrolling) {
 			// let's pretend there was no scrolling and
 			// convert the scrolling into line changes
 			fCurrentChanges.convertScrollingIntoChanges();
@@ -138,12 +140,14 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	public int getWidth() {
 		return fSnapshot.getWidth();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.model.ITerminalTextDataSnapshot#getFirstChangedLine()
 	 */
 	public int getFirstChangedLine() {
 		return fCurrentChanges.getFirstChangedLine();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.model.ITerminalTextDataSnapshot#getLastChangedLine()
 	 */
@@ -154,9 +158,11 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	public boolean hasLineChanged(int line) {
 		return fCurrentChanges.hasLineChanged(line);
 	}
+
 	public boolean hasDimensionsChanged() {
 		return fCurrentChanges.hasDimensionsChanged();
 	}
+
 	public boolean hasTerminalChanged() {
 		return fCurrentChanges.hasTerminalChanged();
 	}
@@ -167,19 +173,21 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	public int getScrollWindowStartLine() {
 		return fCurrentChanges.getScrollWindowStartLine();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.model.ITerminalTextDataSnapshot#getScrollChangeN()
 	 */
 	public int getScrollWindowSize() {
 		return fCurrentChanges.getScrollWindowSize();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.model.ITerminalTextDataSnapshot#getScrollChangeShift()
 	 */
 	public int getScrollWindowShift() {
 		return fCurrentChanges.getScrollWindowShift();
 	}
-	
+
 	/**
 	 * Announces a change in line line
 	 * @param line
@@ -190,22 +198,24 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 		fFutureChanges.setTerminalChanged();
 		notifyListers();
 	}
+
 	/**
 	 * Announces a change of n lines beginning with line line
 	 * @param line
 	 * @param n
 	 */
-	void markLinesChanged(int line,int n) {
-		fFutureChanges.markLinesChanged(line,n);
+	void markLinesChanged(int line, int n) {
+		fFutureChanges.markLinesChanged(line, n);
 		fFutureChanges.setTerminalChanged();
 		notifyListers();
 	}
-	
+
 	void markDimensionsChanged() {
 		fFutureChanges.markDimensionsChanged();
 		fFutureChanges.setTerminalChanged();
 		notifyListers();
 	}
+
 	void markCursorChanged() {
 		fFutureChanges.markCursorChanged();
 		fFutureChanges.setTerminalChanged();
@@ -218,86 +228,87 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	 * @param shift
 	 */
 	void scroll(int startLine, int size, int shift) {
-		fFutureChanges.scroll(startLine,size,shift);
+		fFutureChanges.scroll(startLine, size, shift);
 		fFutureChanges.setTerminalChanged();
 		notifyListers();
 	}
+
 	/**
 	 * Notifies listeners about the change
 	 */
 	private void notifyListers() {
 		// this code has to be called from a block synchronized on fTerminal
 		synchronized (fTerminal) {
-			if(fListenersNeedNotify) {
+			if (fListenersNeedNotify) {
 				for (int i = 0; i < fListener.length; i++) {
 					fListener[i].snapshotOutOfDate(this);
 				}
-				fListenersNeedNotify=false;
+				fListenersNeedNotify = false;
 			}
 		}
 	}
+
 	public ITerminalTextDataSnapshot makeSnapshot() {
 		return fSnapshot.makeSnapshot();
 	}
 
 	synchronized public void addListener(SnapshotOutOfDateListener listener) {
-		List<SnapshotOutOfDateListener> list=new ArrayList<SnapshotOutOfDateListener>();
+		List<SnapshotOutOfDateListener> list = new ArrayList<SnapshotOutOfDateListener>();
 		list.addAll(Arrays.asList(fListener));
 		list.add(listener);
-		fListener=list.toArray(new SnapshotOutOfDateListener[list.size()]);
+		fListener = list.toArray(new SnapshotOutOfDateListener[list.size()]);
 	}
 
 	synchronized public void removeListener(SnapshotOutOfDateListener listener) {
-		List<SnapshotOutOfDateListener> list=new ArrayList<SnapshotOutOfDateListener>();
+		List<SnapshotOutOfDateListener> list = new ArrayList<SnapshotOutOfDateListener>();
 		list.addAll(Arrays.asList(fListener));
 		list.remove(listener);
-		fListener=list.toArray(new SnapshotOutOfDateListener[list.size()]);
+		fListener = list.toArray(new SnapshotOutOfDateListener[list.size()]);
 	}
+
 	public String toString() {
 		return fSnapshot.toString();
 	}
 
-
 	public int getInterestWindowSize() {
 		return fInterestWindowSize;
 	}
-
 
 	public int getInterestWindowStartLine() {
 		return fInterestWindowStartLine;
 	}
 
 	public void setInterestWindow(int startLine, int size) {
-		assert startLine>=0 || throwRuntimeException();
-		assert size>=0 || throwRuntimeException();
-		fInterestWindowStartLine=startLine;
-		fInterestWindowSize=size;
+		assert startLine >= 0 || throwRuntimeException();
+		assert size >= 0 || throwRuntimeException();
+		fInterestWindowStartLine = startLine;
+		fInterestWindowSize = size;
 		fSnapshot.setWindow(startLine, size);
 		fFutureChanges.setInterestWindow(startLine, size);
 		notifyListers();
 	}
 
-
 	public char[] getChars(int line) {
 		return fSnapshot.getChars(line);
 	}
 
-
 	public Style[] getStyles(int line) {
 		return fSnapshot.getStyles(line);
 	}
+
 	public int getCursorColumn() {
 		return fSnapshot.getCursorColumn();
 	}
+
 	public int getCursorLine() {
 		return fSnapshot.getCursorLine();
 	}
+
 	public ITerminalTextData getTerminalTextData() {
 		return fTerminal;
 	}
+
 	public boolean isWrappedLine(int line) {
 		return fSnapshot.isWrappedLine(line);
 	}
 }
-
-

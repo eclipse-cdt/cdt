@@ -62,26 +62,28 @@ public class UserValidationDialog extends TrayDialog {
 	 */
 	public UserValidationDialog(Shell parentShell, String location, String defaultName, String message) {
 		super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.defaultUsername = defaultName;
 		this.domain = location;
 		this.message = message;
 	}
+
 	/**
 	 * @see Window#configureShell
 	 */
 	@Override
-    protected void configureShell(Shell newShell) {
+	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(SshMessages.UserValidationDialog_required);
 		// set F1 help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, ISshConstants.HELP_USER_VALIDATION_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, ISshConstants.HELP_USER_VALIDATION_DIALOG);
 	}
+
 	/**
 	 * @see Window#create
 	 */
 	@Override
-    public void create() {
+	public void create() {
 		super.create();
 		// add some default values
 		usernameField.setText(defaultUsername);
@@ -100,7 +102,7 @@ public class UserValidationDialog extends TrayDialog {
 	 * @see Dialog#createDialogArea
 	 */
 	@Override
-    protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent) {
 		Composite top = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -142,7 +144,8 @@ public class UserValidationDialog extends TrayDialog {
 			if (isUsernameMutable) {
 				label.setText(NLS.bind(SshMessages.UserValidationDialog_labelUser, new String[] { domain }));
 			} else {
-				label.setText(NLS.bind(SshMessages.UserValidationDialog_labelPassword, (new Object[]{defaultUsername, domain})));
+				label.setText(NLS.bind(SshMessages.UserValidationDialog_labelPassword,
+						(new Object[] { defaultUsername, domain })));
 			}
 			data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 			data.horizontalSpan = 2;
@@ -152,7 +155,7 @@ public class UserValidationDialog extends TrayDialog {
 		createUsernameFields(main);
 		createPasswordFields(main);
 
-		if(domain != null) {
+		if (domain != null) {
 			allowCachingButton = new Button(main, SWT.CHECK);
 			allowCachingButton.setText(SshMessages.UserValidationDialog_6);
 			data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
@@ -160,7 +163,7 @@ public class UserValidationDialog extends TrayDialog {
 			allowCachingButton.setLayoutData(data);
 			allowCachingButton.addSelectionListener(new SelectionAdapter() {
 				@Override
-                public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(SelectionEvent e) {
 					allowCaching = allowCachingButton.getSelection();
 				}
 			});
@@ -175,7 +178,8 @@ public class UserValidationDialog extends TrayDialog {
 			warningComposite.setLayoutData(data);
 			Label warningLabel = new Label(warningComposite, SWT.NONE);
 			warningLabel.setImage(getImage(DLG_IMG_MESSAGE_WARNING));
-			warningLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING));
+			warningLabel.setLayoutData(
+					new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING));
 			Label warningText = new Label(warningComposite, SWT.WRAP);
 			warningText.setText(SshMessages.UserValidationDialog_7);
 			data = new GridData(GridData.FILL_HORIZONTAL);
@@ -183,7 +187,7 @@ public class UserValidationDialog extends TrayDialog {
 			warningText.setLayoutData(data);
 		}
 
-        Dialog.applyDialogFont(parent);
+		Dialog.applyDialogFont(parent);
 
 		return main;
 	}
@@ -202,6 +206,7 @@ public class UserValidationDialog extends TrayDialog {
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
 		passwordField.setLayoutData(data);
 	}
+
 	/**
 	 * Creates the three widgets that represent the user name entry area.
 	 *
@@ -255,12 +260,13 @@ public class UserValidationDialog extends TrayDialog {
 	 * </p>
 	 */
 	@Override
-    protected void okPressed() {
+	protected void okPressed() {
 		password = passwordField.getText();
 		username = usernameField.getText();
 
 		super.okPressed();
 	}
+
 	/**
 	 * Sets whether or not the username field should be mutable.
 	 * This method must be called before create(), otherwise it
@@ -276,8 +282,8 @@ public class UserValidationDialog extends TrayDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#close()
 	 */
 	@Override
-    public boolean close() {
-		if(keyLockImage != null) {
+	public boolean close() {
+		if (keyLockImage != null) {
 			keyLockImage.dispose();
 		}
 		return super.close();

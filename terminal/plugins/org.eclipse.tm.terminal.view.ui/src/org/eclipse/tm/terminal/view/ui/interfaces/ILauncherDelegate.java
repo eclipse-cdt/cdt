@@ -95,5 +95,5 @@ public interface ILauncherDelegate extends IExecutableExtension, IAdaptable {
 	 * @param properties The terminal properties. Must not be <code>null</code>.
 	 * @return The terminal connector or <code>null</code>.
 	 */
-    public ITerminalConnector createTerminalConnector(Map<String, Object> properties);
+	public ITerminalConnector createTerminalConnector(Map<String, Object> properties);
 }

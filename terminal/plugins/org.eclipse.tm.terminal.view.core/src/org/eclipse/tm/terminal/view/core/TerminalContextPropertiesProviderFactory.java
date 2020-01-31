@@ -63,7 +63,8 @@ public final class TerminalContextPropertiesProviderFactory {
 		 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 		 */
 		@Override
-		public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+		public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+				throws CoreException {
 			Assert.isNotNull(config);
 			this.configElement = config;
 
@@ -71,17 +72,17 @@ public final class TerminalContextPropertiesProviderFactory {
 			// Throws an exception if the attribute value is empty or null.
 			clazz = config.getAttribute("class"); //$NON-NLS-1$
 			if (clazz == null || "".equals(clazz.trim())) { //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR,
-										CoreBundleActivator.getUniqueIdentifier(),
-										NLS.bind(Messages.Extension_error_missingRequiredAttribute, "class", config.getContributor().getName()))); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(),
+						NLS.bind(Messages.Extension_error_missingRequiredAttribute, "class", //$NON-NLS-1$
+								config.getContributor().getName())));
 			}
 
 			// Read the "enablement" sub element of the extension
 			IConfigurationElement[] children = configElement.getChildren("enablement"); //$NON-NLS-1$
 			if (children == null || children.length == 0) {
-				throw new CoreException(new Status(IStatus.ERROR,
-								CoreBundleActivator.getUniqueIdentifier(),
-								NLS.bind(Messages.Extension_error_missingRequiredAttribute, "enablement", config.getContributor().getName()))); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(),
+						NLS.bind(Messages.Extension_error_missingRequiredAttribute, "enablement", //$NON-NLS-1$
+								config.getContributor().getName())));
 			}
 			// Only one "enablement" element is expected
 			expression = ExpressionConverter.getDefault().perform(children[0]);
@@ -96,15 +97,16 @@ public final class TerminalContextPropertiesProviderFactory {
 					// Create the service class instance via the configuration element
 					Object provider = configElement.createExecutableExtension("class"); //$NON-NLS-1$
 					if (provider instanceof ITerminalContextPropertiesProvider) {
-						this.provider = (ITerminalContextPropertiesProvider)provider;
-					}
-					else {
-						IStatus status = new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(), "Terminal context properties provider '" + provider.getClass().getName() + "' not of type ITerminalContextPropertiesProvider."); //$NON-NLS-1$ //$NON-NLS-2$
+						this.provider = (ITerminalContextPropertiesProvider) provider;
+					} else {
+						IStatus status = new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(),
+								"Terminal context properties provider '" + provider.getClass().getName() //$NON-NLS-1$
+										+ "' not of type ITerminalContextPropertiesProvider."); //$NON-NLS-1$
 						Platform.getLog(CoreBundleActivator.getContext().getBundle()).log(status);
 					}
-				}
-				catch (CoreException e) {
-					IStatus status = new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(), "Cannot create terminal context properties provider '" + clazz + "'.", e); //$NON-NLS-1$ //$NON-NLS-2$
+				} catch (CoreException e) {
+					IStatus status = new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(),
+							"Cannot create terminal context properties provider '" + clazz + "'.", e); //$NON-NLS-1$ //$NON-NLS-2$
 					Platform.getLog(CoreBundleActivator.getContext().getBundle()).log(status);
 				}
 			}
@@ -138,7 +140,8 @@ public final class TerminalContextPropertiesProviderFactory {
 				try {
 					enabled = enablement.evaluate(evalContext).equals(EvaluationResult.TRUE);
 				} catch (CoreException e) {
-					IStatus status = new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(), e.getLocalizedMessage(), e);
+					IStatus status = new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(),
+							e.getLocalizedMessage(), e);
 					Platform.getLog(CoreBundleActivator.getContext().getBundle()).log(status);
 				}
 			}
@@ -155,7 +158,6 @@ public final class TerminalContextPropertiesProviderFactory {
 			return expression;
 		}
 	}
-
 
 	/**
 	 * Creates a new terminal context properties provider proxy instance and initialize it.
@@ -180,7 +182,8 @@ public final class TerminalContextPropertiesProviderFactory {
 	 * Load the terminal context properties provider contributions.
 	 */
 	private static void loadContributions() {
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.tm.terminal.view.core.contextPropertiesProviders"); //$NON-NLS-1$
+		IExtensionPoint ep = Platform.getExtensionRegistry()
+				.getExtensionPoint("org.eclipse.tm.terminal.view.core.contextPropertiesProviders"); //$NON-NLS-1$
 		if (ep != null) {
 			IExtension[] extensions = ep.getExtensions();
 			if (extensions != null) {
@@ -216,7 +219,7 @@ public final class TerminalContextPropertiesProviderFactory {
 				loadContributions();
 				contributionsLoaded = true;
 			}
-        }
+		}
 
 		for (Proxy proxy : contributions) {
 			if (proxy.isEnabled(context)) {

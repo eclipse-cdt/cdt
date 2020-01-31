@@ -131,30 +131,30 @@ public interface ITerminalControl {
 	 * the terminal connection if the user hits ENTER in a closed terminal.
 	 * <p>
 	 * Reconnect on ENTER if terminal is closed is enabled by default.
-	 * 
+	 *
 	 * @param on <code>True</code> to enable the reconnect, <code>false</code> to disable it.
 	 */
 	void setConnectOnEnterIfClosed(boolean on);
-	
+
 	/**
 	 * Returns if or if not the terminal view control should try to reconnect
 	 * the terminal connection if the user hits ENTER in a closed terminal.
-	 * 
+	 *
 	 * @return <code>True</code> the reconnect is enabled, <code>false</code> if disabled.
 	 */
 	boolean isConnectOnEnterIfClosed();
-	
+
 	/**
 	 * Enables VT100 line wrapping mode (default is off).
 	 * This corresponds to the VT100 'eat_newline_glitch' terminal capability.
 	 * If enabled, writing to the rightmost column does not cause
 	 * an immediate wrap to the next line. Instead the line wrap occurs on the
 	 * next output character.
-	 * 
+	 *
 	 * @param enable  whether to enable or disable VT100 line wrapping mode
 	 */
 	void setVT100LineWrapping(boolean enable);
-	
+
 	/**
 	 * @return whether VT100 line wrapping mode is enabled
 	 */

@@ -38,7 +38,7 @@ public class RemoteConnector extends TerminalConnectorImpl {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#connect(org.eclipse.tm.internal.terminal.
 	 * provisional.api.ITerminalControl)
@@ -53,7 +53,7 @@ public class RemoteConnector extends TerminalConnectorImpl {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#doDisconnect()
 	 */
 	@Override
@@ -67,7 +67,7 @@ public class RemoteConnector extends TerminalConnectorImpl {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#getSettingsSummary()
 	 */
 	@Override
@@ -77,7 +77,7 @@ public class RemoteConnector extends TerminalConnectorImpl {
 
 	/**
 	 * Return the Remote Settings.
-	 * 
+	 *
 	 * @return the settings for a concrete connection.
 	 */
 	public IRemoteSettings getRemoteSettings() {
@@ -86,7 +86,7 @@ public class RemoteConnector extends TerminalConnectorImpl {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#getTerminalToRemoteStream()
 	 */
 	@Override
@@ -119,7 +119,7 @@ public class RemoteConnector extends TerminalConnectorImpl {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#setTerminalSize(int, int)
 	 */
 	@Override

@@ -57,7 +57,8 @@ public class StreamsConnector extends AbstractStreamsConnector implements IDispo
 		setStderrListeners(settings.getStdErrListeners());
 
 		// connect the streams
-		connectStreams(control, settings.getStdinStream(), settings.getStdoutStream(), settings.getStderrStream(), settings.isLocalEcho(), settings.getLineSeparator());
+		connectStreams(control, settings.getStdinStream(), settings.getStdoutStream(), settings.getStderrStream(),
+				settings.isLocalEcho(), settings.getLineSeparator());
 
 		// Set the terminal control state to CONNECTED
 		control.setState(TerminalState.CONNECTED);
@@ -103,7 +104,7 @@ public class StreamsConnector extends AbstractStreamsConnector implements IDispo
 
 	@Override
 	public void setDefaultSettings() {
-	    settings.load(new NullSettingsStore());
+		settings.load(new NullSettingsStore());
 	}
 
 	/* (non-Javadoc)

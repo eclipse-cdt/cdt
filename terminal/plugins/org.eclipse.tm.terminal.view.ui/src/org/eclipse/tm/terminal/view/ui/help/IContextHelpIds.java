@@ -14,7 +14,6 @@ package org.eclipse.tm.terminal.view.ui.help;
 
 import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 
-
 /**
  * UI Context help id definitions.
  *

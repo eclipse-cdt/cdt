@@ -144,7 +144,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 					if (text != null && !"".equals(text.trim())) { //$NON-NLS-1$
 						IPath p = new Path(text.trim());
 						valid = p.toFile().isFile() && p.toFile().canRead() && p.toFile().canExecute();
-						if (!valid) message = Messages.PreferencePage_command_invalid;
+						if (!valid)
+							message = Messages.PreferencePage_command_invalid;
 					}
 
 					setValid(valid);
@@ -159,7 +160,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			commandBrowseButton.setLayoutData(layoutData);
 			commandBrowseButton.addSelectionListener(new SelectionAdapter() {
 				@Override
-                public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(SelectionEvent e) {
 					FileDialog dialog = new FileDialog(parent.getShell(), SWT.OPEN);
 
 					String text = command.getText();
@@ -182,14 +183,16 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				}
 			});
 
-			String cmd = UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX);
+			String cmd = UIPlugin.getScopedPreferences()
+					.getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX);
 			if (cmd != null && !"".equals(cmd)) { //$NON-NLS-1$
 				command.setText(new Path(cmd).toOSString());
 			}
 
 			Composite argsPanel = new Composite(group, SWT.NONE);
 			GridLayout layout = new GridLayout(2, false);
-			layout.marginHeight = 0; layout.marginWidth = 0;
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
 			argsPanel.setLayout(layout);
 			layoutData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 			layoutData.horizontalSpan = 2;
@@ -201,12 +204,14 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			arguments = new Text(argsPanel, SWT.SINGLE | SWT.BORDER);
 			arguments.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-			String args = UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS);
+			String args = UIPlugin.getScopedPreferences()
+					.getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS);
 			if (args != null && !"".equals(args)) { //$NON-NLS-1$
 				arguments.setText(args);
 			}
 
-			NoteCompositeHelper.createNoteComposite(group.getFont(), group, Messages.PreferencePage_command_note_label, Messages.PreferencePage_command_note_text);
+			NoteCompositeHelper.createNoteComposite(group.getFont(), group, Messages.PreferencePage_command_note_label,
+					Messages.PreferencePage_command_note_text);
 		}
 
 		Group group = new Group(panel, SWT.NONE);
@@ -217,9 +222,12 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		workingDir = new Combo(group, SWT.DROP_DOWN);
 		Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
 		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
-			workingDir.setItems(new String[] { Messages.PreferencePage_workingDir_userhome_label, Messages.PreferencePage_workingDir_eclipsehome_label, Messages.PreferencePage_workingDir_eclipsews_label });
+			workingDir.setItems(new String[] { Messages.PreferencePage_workingDir_userhome_label,
+					Messages.PreferencePage_workingDir_eclipsehome_label,
+					Messages.PreferencePage_workingDir_eclipsews_label });
 		} else {
-			workingDir.setItems(new String[] { Messages.PreferencePage_workingDir_userhome_label, Messages.PreferencePage_workingDir_eclipsehome_label });
+			workingDir.setItems(new String[] { Messages.PreferencePage_workingDir_userhome_label,
+					Messages.PreferencePage_workingDir_eclipsehome_label });
 		}
 		workingDir.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		workingDir.select(0);
@@ -231,9 +239,9 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 				String text = workingDir.getText();
 				if (text != null && !"".equals(text.trim()) //$NON-NLS-1$
-							&& !Messages.PreferencePage_workingDir_userhome_label.equals(text)
-							&& !Messages.PreferencePage_workingDir_eclipsehome_label.equals(text)
-							&& !Messages.PreferencePage_workingDir_eclipsews_label.equals(text)) {
+						&& !Messages.PreferencePage_workingDir_userhome_label.equals(text)
+						&& !Messages.PreferencePage_workingDir_eclipsehome_label.equals(text)
+						&& !Messages.PreferencePage_workingDir_eclipsews_label.equals(text)) {
 					try {
 						// Resolve possible dynamic variables
 						IStringVariableManager vm = VariablesPlugin.getDefault().getStringVariableManager();
@@ -241,7 +249,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 						IPath p = new Path(resolved);
 						valid = p.toFile().canRead() && p.toFile().isDirectory();
-						if (!valid) message = Messages.PreferencePage_workingDir_invalid;
+						if (!valid)
+							message = Messages.PreferencePage_workingDir_invalid;
 					} catch (CoreException ex) {
 						valid = false;
 						message = ex.getLocalizedMessage();
@@ -267,7 +276,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 				// HOME
 				String home = System.getProperty("user.home"); //$NON-NLS-1$
-				if (home != null && !"".equals(home)) uh = new Path(home); //$NON-NLS-1$
+				if (home != null && !"".equals(home)) //$NON-NLS-1$
+					uh = new Path(home);
 
 				// ECLIPSE_HOME
 				String eclipseHomeLocation = System.getProperty("eclipse.home.location"); //$NON-NLS-1$
@@ -276,17 +286,19 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 						URI uri = URIUtil.fromString(eclipseHomeLocation);
 						File f = URIUtil.toFile(uri);
 						eh = new Path(f.getAbsolutePath());
-					} catch (URISyntaxException ex) { /* ignored on purpose */ }
+					} catch (URISyntaxException ex) {
+						/* ignored on purpose */ }
 				}
 
 				// ECLIPSE_WORKSPACE
 				Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
 				if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
-			        if (org.eclipse.core.resources.ResourcesPlugin.getWorkspace() != null
-			        	            && org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot() != null
-			        	            && org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation() != null) {
-			        	ew = org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation();
-			        }
+					if (org.eclipse.core.resources.ResourcesPlugin.getWorkspace() != null
+							&& org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot() != null
+							&& org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot()
+									.getLocation() != null) {
+						ew = org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation();
+					}
 				}
 
 				DirectoryDialog dialog = new DirectoryDialog(parent.getShell(), SWT.OPEN);
@@ -338,7 +350,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			variablesButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					org.eclipse.debug.ui.StringVariableSelectionDialog dialog = new org.eclipse.debug.ui.StringVariableSelectionDialog(getShell());
+					org.eclipse.debug.ui.StringVariableSelectionDialog dialog = new org.eclipse.debug.ui.StringVariableSelectionDialog(
+							getShell());
 					dialog.open();
 					String expression = dialog.getVariableExpression();
 					if (expression != null) {
@@ -355,17 +368,21 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		}
 
 		String initialCwd = UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD);
-		if (initialCwd == null || IPreferenceKeys.PREF_INITIAL_CWD_USER_HOME.equals(initialCwd) || "".equals(initialCwd.trim())) { //$NON-NLS-1$
+		if (initialCwd == null || IPreferenceKeys.PREF_INITIAL_CWD_USER_HOME.equals(initialCwd)
+				|| "".equals(initialCwd.trim())) { //$NON-NLS-1$
 			workingDir.select(0);
-		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME.equals(initialCwd) || "${eclipse_home}".equals(initialCwd)) { //$NON-NLS-1$
+		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME.equals(initialCwd)
+				|| "${eclipse_home}".equals(initialCwd)) { //$NON-NLS-1$
 			workingDir.select(1);
-		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS.equals(initialCwd) || "${workspace_loc}".equals(initialCwd)) { //$NON-NLS-1$
+		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS.equals(initialCwd)
+				|| "${workspace_loc}".equals(initialCwd)) { //$NON-NLS-1$
 			workingDir.select(2);
 		} else {
 			workingDir.setText(new Path(initialCwd).toOSString());
 		}
 
-		NoteCompositeHelper.createNoteComposite(group.getFont(), group, Messages.PreferencePage_workingDir_note_label, Messages.PreferencePage_workingDir_note_text);
+		NoteCompositeHelper.createNoteComposite(group.getFont(), group, Messages.PreferencePage_workingDir_note_label,
+				Messages.PreferencePage_workingDir_note_text);
 
 		group = new Group(panel, SWT.NONE);
 		group.setText(Messages.PreferencePage_executables_label);
@@ -378,10 +395,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-        TableColumn column = new TableColumn(table, SWT.LEFT);
-        column.setText(Messages.PreferencePage_executables_column_name_label);
-        column = new TableColumn(table, SWT.LEFT);
-        column.setText(Messages.PreferencePage_executables_column_path_label);
+		TableColumn column = new TableColumn(table, SWT.LEFT);
+		column.setText(Messages.PreferencePage_executables_column_name_label);
+		column = new TableColumn(table, SWT.LEFT);
+		column.setText(Messages.PreferencePage_executables_column_path_label);
 
 		ColumnViewerToolTipSupport.enableFor(viewer);
 
@@ -396,7 +413,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 		Composite buttonsPanel = new Composite(group, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0; layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		buttonsPanel.setLayout(layout);
 		buttonsPanel.setLayoutData(new GridData(SWT.LEAD, SWT.BEGINNING, false, false));
 
@@ -427,14 +445,15 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		editButton.setLayoutData(layoutData);
 		editButton.addSelectionListener(new SelectionAdapter() {
 			@SuppressWarnings("unchecked")
-            @Override
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ISelection s = viewer.getSelection();
 				if (s instanceof IStructuredSelection && !s.isEmpty()) {
-					Object element = ((IStructuredSelection)s).getFirstElement();
+					Object element = ((IStructuredSelection) s).getFirstElement();
 					if (element instanceof Map) {
-						final Map<String, String> m = (Map<String, String>)element;
-						ExternalExecutablesDialog dialog = new ExternalExecutablesDialog(PreferencePage.this.getShell(), true);
+						final Map<String, String> m = (Map<String, String>) element;
+						ExternalExecutablesDialog dialog = new ExternalExecutablesDialog(PreferencePage.this.getShell(),
+								true);
 						dialog.setExecutableData(m);
 						if (dialog.open() == Window.OK) {
 							Map<String, String> executableData = dialog.getExecutableData();
@@ -456,15 +475,15 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		removeButton.setLayoutData(layoutData);
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@SuppressWarnings("unchecked")
-            @Override
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ISelection s = viewer.getSelection();
 				if (s instanceof IStructuredSelection && !s.isEmpty()) {
-					Iterator<?> iterator = ((IStructuredSelection)s).iterator();
+					Iterator<?> iterator = ((IStructuredSelection) s).iterator();
 					while (iterator.hasNext()) {
 						Object element = iterator.next();
 						if (element instanceof Map) {
-							Map<String, Object> m = (Map<String, Object>)element;
+							Map<String, Object> m = (Map<String, Object>) element;
 							executables.remove(m);
 						}
 						viewer.refresh();
@@ -476,8 +495,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		viewer.setContentProvider(new IStructuredContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
-				if (inputElement instanceof List && !((List<?>)inputElement).isEmpty()) {
-					return ((List<?>)inputElement).toArray();
+				if (inputElement instanceof List && !((List<?>) inputElement).isEmpty()) {
+					return ((List<?>) inputElement).toArray();
 				}
 				return NO_ELEMENTS;
 			}
@@ -496,27 +515,27 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			@Override
 			public String getColumnText(Object element, int columnIndex) {
 				if (element instanceof Map) {
-                    Map<String, Object> m = (Map<String, Object>)element;
+					Map<String, Object> m = (Map<String, Object>) element;
 
-                    switch (columnIndex) {
-                    case 0:
-                    	return (String)m.get(IExternalExecutablesProperties.PROP_NAME);
-                    case 1:
-                    	return (String)m.get(IExternalExecutablesProperties.PROP_PATH);
-                    }
+					switch (columnIndex) {
+					case 0:
+						return (String) m.get(IExternalExecutablesProperties.PROP_NAME);
+					case 1:
+						return (String) m.get(IExternalExecutablesProperties.PROP_PATH);
+					}
 				}
 				return null;
 			}
 
 			@SuppressWarnings("unchecked")
-            @Override
+			@Override
 			public Image getColumnImage(Object element, int columnIndex) {
 				Image i = null;
 
 				if (element instanceof Map) {
 					switch (columnIndex) {
 					case 0:
-	                    Map<String, Object> m = (Map<String, Object>)element;
+						Map<String, Object> m = (Map<String, Object>) element;
 						String icon = (String) m.get(IExternalExecutablesProperties.PROP_ICON);
 						if (icon != null) {
 							i = images.get(icon);
@@ -524,8 +543,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 								ImageData id = ExternalExecutablesManager.loadImage(icon);
 								if (id != null) {
 									ImageDescriptor d = ImageDescriptor.createFromImageData(id);
-									if (d != null) i = d.createImage();
-									if (i != null) images.put(icon, i);
+									if (d != null)
+										i = d.createImage();
+									if (i != null)
+										images.put(icon, i);
 								}
 							}
 						}
@@ -557,7 +578,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		});
 
 		List<Map<String, String>> l = ExternalExecutablesManager.load();
-		if (l != null) executables.addAll(l);
+		if (l != null)
+			executables.addAll(l);
 
 		viewer.setInput(executables);
 
@@ -585,7 +607,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			ISelection selection = viewer.getSelection();
 
 			boolean hasSelection = selection != null && !selection.isEmpty();
-			int count = selection instanceof IStructuredSelection ? ((IStructuredSelection)selection).size() : 0;
+			int count = selection instanceof IStructuredSelection ? ((IStructuredSelection) selection).size() : 0;
 
 			editButton.setEnabled(hasSelection && count == 1);
 			removeButton.setEnabled(hasSelection && count > 0);
@@ -606,12 +628,16 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			arguments.setText(""); //$NON-NLS-1$
 		}
 
-		String initialCwd = UIPlugin.getScopedPreferences().getDefaultString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD);
-		if (initialCwd == null || IPreferenceKeys.PREF_INITIAL_CWD_USER_HOME.equals(initialCwd) || "".equals(initialCwd.trim())) { //$NON-NLS-1$
+		String initialCwd = UIPlugin.getScopedPreferences()
+				.getDefaultString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD);
+		if (initialCwd == null || IPreferenceKeys.PREF_INITIAL_CWD_USER_HOME.equals(initialCwd)
+				|| "".equals(initialCwd.trim())) { //$NON-NLS-1$
 			workingDir.select(0);
-		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME.equals(initialCwd) || "${eclipse_home}".equals(initialCwd)) { //$NON-NLS-1$
+		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME.equals(initialCwd)
+				|| "${eclipse_home}".equals(initialCwd)) { //$NON-NLS-1$
 			workingDir.select(1);
-		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS.equals(initialCwd) || "${workspace_loc}".equals(initialCwd)) { //$NON-NLS-1$
+		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS.equals(initialCwd)
+				|| "${workspace_loc}".equals(initialCwd)) { //$NON-NLS-1$
 			workingDir.select(2);
 		} else {
 			workingDir.setText(new Path(initialCwd).toOSString());
@@ -619,10 +645,11 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 		executables.clear();
 		List<Map<String, String>> l = ExternalExecutablesManager.load();
-		if (l != null) executables.addAll(l);
+		if (l != null)
+			executables.addAll(l);
 		viewer.refresh();
 
-	    super.performDefaults();
+		super.performDefaults();
 	}
 
 	/* (non-Javadoc)
@@ -633,19 +660,23 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		if (!Platform.OS_WIN32.equals(Platform.getOS())) {
 			String text = command.getText();
 			IPath p = new Path(text.trim());
-			UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX, p.toFile().isFile() && p.toFile().canRead() && p.toFile().canExecute() ? p.toOSString() : null);
+			UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX,
+					p.toFile().isFile() && p.toFile().canRead() && p.toFile().canExecute() ? p.toOSString() : null);
 
 			text = arguments.getText();
-			UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS, !"".equals(text.trim()) ? text.trim() : null); //$NON-NLS-1$
+			UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS,
+					!"".equals(text.trim()) ? text.trim() : null); //$NON-NLS-1$
 		}
 
 		String text = workingDir.getText();
 		if (text == null || Messages.PreferencePage_workingDir_userhome_label.equals(text) || "".equals(text.trim())) { //$NON-NLS-1$
 			UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD, null);
 		} else if (Messages.PreferencePage_workingDir_eclipsehome_label.equals(text)) {
-			UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD, IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME);
+			UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD,
+					IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME);
 		} else if (Messages.PreferencePage_workingDir_eclipsews_label.equals(text)) {
-			UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD, IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS);
+			UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD,
+					IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS);
 		} else {
 			try {
 				// Resolve possible dynamic variables
@@ -653,7 +684,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				String resolved = vm.performStringSubstitution(text.trim());
 
 				IPath p = new Path(resolved);
-				UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD, p.toFile().canRead() && p.toFile().isDirectory() ? text.trim() : null);
+				UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD,
+						p.toFile().canRead() && p.toFile().isDirectory() ? text.trim() : null);
 			} catch (CoreException e) {
 				if (Platform.inDebugMode()) {
 					UIPlugin.getDefault().getLog().log(e.getStatus());
@@ -663,7 +695,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 		ExternalExecutablesManager.save(executables);
 
-	    return super.performOk();
+		return super.performOk();
 	}
 
 	/* (non-Javadoc)
@@ -675,6 +707,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			i.dispose();
 		}
 		images.clear();
-	    super.dispose();
+		super.dispose();
 	}
 }

@@ -29,20 +29,18 @@ public class TerminalActionCopy extends AbstractTerminalAction {
 		super(TerminalActionCopy.class.getName());
 		setActionDefinitionId("org.eclipse.tm.terminal.copy"); //$NON-NLS-1$
 		ISharedImages si = PlatformUI.getWorkbench().getSharedImages();
-		setupAction(ActionMessages.COPY, ActionMessages.COPY, si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY), si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY), si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED), true);
+		setupAction(ActionMessages.COPY, ActionMessages.COPY, si.getImageDescriptor(ISharedImages.IMG_TOOL_COPY),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_COPY),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED), true);
 	}
 
 	public TerminalActionCopy(ITerminalViewControl target) {
 		super(target, TerminalActionCopy.class.getName());
 		setActionDefinitionId("org.eclipse.tm.terminal.copy"); //$NON-NLS-1$
 		ISharedImages si = PlatformUI.getWorkbench().getSharedImages();
-		setupAction(ActionMessages.COPY, ActionMessages.COPY, si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY), si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY), si
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED), true);
+		setupAction(ActionMessages.COPY, ActionMessages.COPY, si.getImageDescriptor(ISharedImages.IMG_TOOL_COPY),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_COPY),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED), true);
 	}
 
 	public void run() {

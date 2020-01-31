@@ -13,7 +13,7 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - extracted from TerminalProperties 
+ * Michael Scharf (Wind River) - extracted from TerminalProperties
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.telnet.connector;

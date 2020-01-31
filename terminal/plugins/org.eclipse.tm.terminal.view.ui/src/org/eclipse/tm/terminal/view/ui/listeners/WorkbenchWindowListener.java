@@ -24,6 +24,6 @@ public class WorkbenchWindowListener extends AbstractWindowListener {
 	 */
 	@Override
 	protected IPartListener2 createPartListener() {
-    	return new WorkbenchPartListener();
+		return new WorkbenchPartListener();
 	}
 }

@@ -48,10 +48,11 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 	private final TelnetSettings fTerminalSettings;
 
 	public TelnetSettingsPage(TelnetSettings settings) {
-		fTerminalSettings=settings;
+		fTerminalSettings = settings;
 	}
+
 	@Override
-    public void saveSettings() {
+	public void saveSettings() {
 		fTerminalSettings.setHost(fHostText.getText());
 		fTerminalSettings.setTimeout(fTimeout.getText());
 		fTerminalSettings.setNetworkPort(getNetworkPort());
@@ -59,31 +60,34 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 	}
 
 	@Override
-    public void loadSettings() {
-		if(fTerminalSettings!=null) {
+	public void loadSettings() {
+		if (fTerminalSettings != null) {
 			setHost(fTerminalSettings.getHost());
 			setTimeout(fTerminalSettings.getTimeoutString());
 			setNetworkPort(fTerminalSettings.getNetworkPortString());
 			setEndOfLine(fTerminalSettings.getEndOfLine());
 		}
 	}
+
 	private void setHost(String strHost) {
-		if(strHost==null)
-			strHost=""; //$NON-NLS-1$
+		if (strHost == null)
+			strHost = ""; //$NON-NLS-1$
 		fHostText.setText(strHost);
 
 	}
+
 	private void setTimeout(String timeout) {
-		if(timeout==null || timeout.length()==0)
-			timeout="5"; //$NON-NLS-1$
+		if (timeout == null || timeout.length() == 0)
+			timeout = "5"; //$NON-NLS-1$
 		fTimeout.setText(timeout);
 
 	}
+
 	private void setNetworkPort(String strNetworkPort) {
-		if (strNetworkPort!=null) {
+		if (strNetworkPort != null) {
 			String strPortName = getNetworkPortMap().findPortName(strNetworkPort);
-			if(strPortName==null) {
-				strPortName=strNetworkPort; //fallback to verbatim port if not found
+			if (strPortName == null) {
+				strPortName = strNetworkPort; //fallback to verbatim port if not found
 			}
 			int nIndex = fNetworkPortCombo.indexOf(strPortName);
 
@@ -94,23 +98,28 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 			}
 		}
 	}
+
 	private String getNetworkPort() {
 		String portText = fNetworkPortCombo.getText().trim();
 		String mappedPort = getNetworkPortMap().findPort(portText);
-		return mappedPort!=null ? mappedPort : portText;
+		return mappedPort != null ? mappedPort : portText;
 	}
+
 	private NetworkPortMap getNetworkPortMap() {
 		return fTerminalSettings.getProperties().getNetworkPortMap();
 	}
+
 	private void setEndOfLine(String eol) {
 		int idx = fEndOfLineCombo.indexOf(eol);
 		fEndOfLineCombo.select(idx >= 0 ? idx : 0);
 	}
+
 	private String getEndOfLine() {
 		return fEndOfLineCombo.getText();
 	}
+
 	@Override
-    public boolean validateSettings() {
+	public boolean validateSettings() {
 		String message = null;
 		int messageType = IMessageProvider.NONE;
 		boolean valid = true;
@@ -119,7 +128,10 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 			String m = "Please enter a host IP or name."; //$NON-NLS-1$
 			int mt = IMessageProvider.INFORMATION;
 			updateControlDecoration(fHostText, m, mt);
-			if (mt > messageType) { message = m; messageType = mt; }
+			if (mt > messageType) {
+				message = m;
+				messageType = mt;
+			}
 
 			valid = false;
 		} else {
@@ -132,7 +144,10 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 				String m = "Invalid network port. Must be between 0 and 65535."; //$NON-NLS-1$
 				int mt = IMessageProvider.ERROR;
 				updateControlDecoration(fNetworkPortCombo, m, mt);
-				if (mt > messageType) { message = m; messageType = mt; }
+				if (mt > messageType) {
+					message = m;
+					messageType = mt;
+				}
 
 				valid = false;
 			} else {
@@ -144,7 +159,10 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 				String m = "Invalid timeout. Must be greater than 0."; //$NON-NLS-1$
 				int mt = IMessageProvider.ERROR;
 				updateControlDecoration(fTimeout, m, mt);
-				if (mt > messageType) { message = m; messageType = mt; }
+				if (mt > messageType) {
+					message = m;
+					messageType = mt;
+				}
 
 				valid = false;
 			} else {
@@ -160,7 +178,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 	}
 
 	@Override
-    public void createControl(Composite parent) {
+	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout(2, false);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -179,7 +197,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		fHostText.setLayoutData(gridData);
 		fHostText.addModifyListener(new ModifyListener() {
 			@Override
-            public void modifyText(ModifyEvent e) {
+			public void modifyText(ModifyEvent e) {
 				fireListeners(fHostText);
 			}
 		});
@@ -195,13 +213,13 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		fNetworkPortCombo.setLayoutData(gridData);
 		fNetworkPortCombo.addModifyListener(new ModifyListener() {
 			@Override
-            public void modifyText(ModifyEvent e) {
+			public void modifyText(ModifyEvent e) {
 				fireListeners(fNetworkPortCombo);
 			}
 		});
 		fNetworkPortCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
-            public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e) {
 				fireListeners(fNetworkPortCombo);
 			}
 		});
@@ -216,7 +234,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		fTimeout.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTimeout.addModifyListener(new ModifyListener() {
 			@Override
-            public void modifyText(ModifyEvent e) {
+			public void modifyText(ModifyEvent e) {
 				fireListeners(fTimeout);
 			}
 		});
@@ -228,7 +246,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		fEndOfLineCombo.setLayoutData(gridData);
 		fEndOfLineCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
-            public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e) {
 				fireListeners(fEndOfLineCombo);
 			}
 		});
@@ -236,6 +254,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 
 		loadSettings();
 	}
+
 	private void loadCombo(Combo ctlCombo, List<String> table) {
 		for (Iterator<String> iter = table.iterator(); iter.hasNext();) {
 			String label = iter.next();

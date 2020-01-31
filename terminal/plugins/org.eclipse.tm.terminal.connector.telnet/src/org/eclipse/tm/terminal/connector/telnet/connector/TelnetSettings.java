@@ -24,13 +24,14 @@ import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
  * @noreference This class is not intended to be referenced by clients.
  */
 public class TelnetSettings implements ITelnetSettings {
-    protected String fHost;
-    protected String fNetworkPort;
-    protected String fTimeout;
-    protected String fEndOfLine = EOL_CRNUL;
-    private final TelnetProperties fProperties=new TelnetProperties();
+	protected String fHost;
+	protected String fNetworkPort;
+	protected String fTimeout;
+	protected String fEndOfLine = EOL_CRNUL;
+	private final TelnetProperties fProperties = new TelnetProperties();
+
 	@Override
-    public String getHost() {
+	public String getHost() {
 		return fHost;
 	}
 
@@ -43,7 +44,7 @@ public class TelnetSettings implements ITelnetSettings {
 	}
 
 	@Override
-    public int getNetworkPort() {
+	public int getNetworkPort() {
 		try {
 			return Integer.parseInt(fNetworkPort);
 		} catch (NumberFormatException numberFormatException) {
@@ -56,20 +57,20 @@ public class TelnetSettings implements ITelnetSettings {
 	}
 
 	@Override
-    public String getSummary() {
+	public String getSummary() {
 		return getHost() + ":" + getNetworkPortString(); //$NON-NLS-1$
 	}
 
 	@Override
-    public void load(ISettingsStore store) {
+	public void load(ISettingsStore store) {
 		fHost = store.get("Host", fProperties.getDefaultHost());//$NON-NLS-1$
 		fNetworkPort = store.get("NetworkPort", fProperties.getDefaultNetworkPort());//$NON-NLS-1$
-		fTimeout = store.get("Timeout","10");//$NON-NLS-1$ //$NON-NLS-2$
+		fTimeout = store.get("Timeout", "10");//$NON-NLS-1$ //$NON-NLS-2$
 		fEndOfLine = store.get("EndOfLine", EOL_CRNUL);//$NON-NLS-1$
 	}
 
 	@Override
-    public void save(ISettingsStore store) {
+	public void save(ISettingsStore store) {
 		store.put("Host", fHost);//$NON-NLS-1$
 		store.put("NetworkPort", fNetworkPort);//$NON-NLS-1$
 		store.put("Timeout", fTimeout);//$NON-NLS-1$
@@ -79,14 +80,16 @@ public class TelnetSettings implements ITelnetSettings {
 	public TelnetProperties getProperties() {
 		return fProperties;
 	}
+
 	@Override
-    public int getTimeout() {
+	public int getTimeout() {
 		try {
 			return Integer.parseInt(fTimeout);
 		} catch (NumberFormatException numberFormatException) {
 			return 10;
 		}
 	}
+
 	public String getTimeoutString() {
 		return fTimeout;
 	}

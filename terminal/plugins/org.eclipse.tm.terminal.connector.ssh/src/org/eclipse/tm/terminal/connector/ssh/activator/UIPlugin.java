@@ -70,28 +70,28 @@ public class UIPlugin extends AbstractUIPlugin {
 		return traceHandler;
 	}
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 	//<copied code from org.eclipse.team.cvs.ssh2/CVSSSH2Plugin (Copyright IBM)>
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	@SuppressWarnings("unchecked")
-    @Override
-    public void start(BundleContext context) throws Exception {
+	@Override
+	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 
-	    tracker = new ServiceTracker(getBundle().getBundleContext(), IJSchService.class.getName(), null);
-	    tracker.open();
+		tracker = new ServiceTracker(getBundle().getBundleContext(), IJSchService.class.getName(), null);
+		tracker.open();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context) throws Exception {
 		try {
 			SshConnection.shutdown();
 			tracker.close();
@@ -106,13 +106,13 @@ public class UIPlugin extends AbstractUIPlugin {
 	 * @return An instance of IJSchService, or <code>null</code> if no
 	 * 		IJschService service is available.
 	 */
-    public IJSchService getJSchService() {
-        return (IJSchService)tracker.getService();
-    }
+	public IJSchService getJSchService() {
+		return (IJSchService) tracker.getService();
+	}
 
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 	//<copied code from org.eclipse.team.cvs.ssh2/CVSSSH2Plugin (Copyright IBM)>
-    //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)

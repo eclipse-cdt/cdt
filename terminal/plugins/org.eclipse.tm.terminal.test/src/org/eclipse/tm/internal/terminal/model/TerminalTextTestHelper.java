@@ -22,11 +22,12 @@ public class TerminalTextTestHelper {
 	static public String toSimple(ITerminalTextDataReadOnly term) {
 		return toSimple(toMultiLineText(term));
 	}
+
 	static public String toMultiLineText(ITerminalTextDataReadOnly term) {
-		StringBuffer buff=new StringBuffer();
-		int width=term.getWidth();
+		StringBuffer buff = new StringBuffer();
+		int width = term.getWidth();
 		for (int line = 0; line < term.getHeight(); line++) {
-			if(line>0)
+			if (line > 0)
 				buff.append("\n"); //$NON-NLS-1$
 			for (int column = 0; column < width; column++) {
 				buff.append(term.getChar(line, column));
@@ -34,6 +35,7 @@ public class TerminalTextTestHelper {
 		}
 		return buff.toString();
 	}
+
 	static public String toSimple(String str) {
 		//return str.replaceAll("\000", " ").replaceAll("\n", "");
 		// <J2ME CDC-1.1 Foundation-1.1 variant>
@@ -54,54 +56,58 @@ public class TerminalTextTestHelper {
 		return buf.toString();
 		// </J2ME CDC-1.1 Foundation-1.1 variant>
 	}
+
 	/**
 	 * @param term
 	 * @param s each character is one line
 	 */
 	static public void fillSimple(ITerminalTextData term, String s) {
-		Style style=Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false, false, false);
+		Style style = Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false,
+				false, false);
 		term.setDimensions(s.length(), 1);
 		for (int i = 0; i < s.length(); i++) {
-			char c=s.charAt(i);
-			term.setChar(i, 0, c, style.setForground(StyleColor.getStyleColor(""+c)));
+			char c = s.charAt(i);
+			term.setChar(i, 0, c, style.setForground(StyleColor.getStyleColor("" + c)));
 		}
 	}
+
 	/**
 	 * @param term
 	 * @param s lines separated by \n. The terminal will automatically
 	 * resized to fit the text.
 	 */
 	static public void fill(ITerminalTextData term, String s) {
-		int width=0;
-		int len=0;
-		int height=0;
+		int width = 0;
+		int len = 0;
+		int height = 0;
 		for (int i = 0; i < s.length(); i++) {
-			char c=s.charAt(i);
-			if(c=='\n') {
-				width=Math.max(width,len);
-				len=0;
+			char c = s.charAt(i);
+			if (c == '\n') {
+				width = Math.max(width, len);
+				len = 0;
 			} else {
-				if(len==0)
+				if (len == 0)
 					height++;
 				len++;
 			}
 		}
-		width=Math.max(width,len);
+		width = Math.max(width, len);
 		term.setDimensions(height, width);
-		fill(term,0,0,s);
+		fill(term, 0, 0, s);
 	}
 
 	static public void fill(ITerminalTextData term, int column, int line, String s) {
-		int xx=column;
-		int yy=line;
-		Style style=Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false, false, false);
+		int xx = column;
+		int yy = line;
+		Style style = Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false,
+				false, false);
 		for (int i = 0; i < s.length(); i++) {
-			char c=s.charAt(i);
-			if(c=='\n') {
+			char c = s.charAt(i);
+			if (c == '\n') {
 				yy++;
-				xx=column;
+				xx = column;
 			} else {
-				term.setChar(yy, xx, c, style.setForground(StyleColor.getStyleColor(""+c)));
+				term.setChar(yy, xx, c, style.setForground(StyleColor.getStyleColor("" + c)));
 				xx++;
 			}
 		}

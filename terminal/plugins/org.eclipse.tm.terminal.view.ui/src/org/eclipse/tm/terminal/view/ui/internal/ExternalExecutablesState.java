@@ -44,11 +44,11 @@ public class ExternalExecutablesState extends AbstractSourceProvider {
 	}
 
 	public void enable() {
-		fireSourceChanged(ISources.WORKBENCH, CONFIGURED_STATE, "TRUE");		 //$NON-NLS-1$
+		fireSourceChanged(ISources.WORKBENCH, CONFIGURED_STATE, "TRUE"); //$NON-NLS-1$
 	}
 
 	public void disable() {
-		fireSourceChanged(ISources.WORKBENCH, CONFIGURED_STATE, "FALSE");		 //$NON-NLS-1$
+		fireSourceChanged(ISources.WORKBENCH, CONFIGURED_STATE, "FALSE"); //$NON-NLS-1$
 	}
 
 	@Override

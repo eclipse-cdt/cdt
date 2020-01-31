@@ -13,7 +13,6 @@ package org.eclipse.tm.terminal.connector.process;
 
 import org.eclipse.core.runtime.Assert;
 
-
 /**
  * Process monitor implementation.
  */
@@ -27,82 +26,84 @@ public class ProcessMonitor {
 	// Flag to mark the monitor disposed
 	private boolean disposed;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param processConnector The parent process connector. Must not be <code>null</code>.
+	 */
+	public ProcessMonitor(ProcessConnector processConnector) {
+		super();
 
-    /**
-     * Constructor.
-     *
-     * @param processConnector The parent process connector. Must not be <code>null</code>.
-     */
-    public ProcessMonitor(ProcessConnector processConnector) {
-        super();
-
-        Assert.isNotNull(processConnector);
+		Assert.isNotNull(processConnector);
 		this.processConnector = processConnector;
 
 		// Query the monitored process for easier access
 		this.process = processConnector.getProcess();
-    }
+	}
 
-    /**
-     * Dispose the process monitor.
-     */
+	/**
+	 * Dispose the process monitor.
+	 */
 	public void dispose() {
-    	// Set the disposed status
-    	disposed = true;
-    	// Not initialized -> return immediately
-    	if (thread == null) return;
+		// Set the disposed status
+		disposed = true;
+		// Not initialized -> return immediately
+		if (thread == null)
+			return;
 
-    	// Copy the reference
-    	final Thread oldThread = thread;
-    	// Unlink the monitor from the thread
-    	thread = null;
-    	// And interrupt the writer thread
-    	oldThread.interrupt();
-    }
+		// Copy the reference
+		final Thread oldThread = thread;
+		// Unlink the monitor from the thread
+		thread = null;
+		// And interrupt the writer thread
+		oldThread.interrupt();
+	}
 
-    /**
-     * Starts the terminal output stream monitor.
-     */
-    public void startMonitoring() {
-    	// If already initialized -> return immediately
-    	if (thread != null) return;
+	/**
+	 * Starts the terminal output stream monitor.
+	 */
+	public void startMonitoring() {
+		// If already initialized -> return immediately
+		if (thread != null)
+			return;
 
-    	// Create a new runnable which is constantly reading from the stream
-    	Runnable runnable = new Runnable() {
-    		@Override
+		// Create a new runnable which is constantly reading from the stream
+		Runnable runnable = new Runnable() {
+			@Override
 			public void run() {
-    			monitorProcess();
-    		}
-    	};
+				monitorProcess();
+			}
+		};
 
-    	// Create the monitor thread
-    	thread = new Thread(runnable, "Terminal Process Monitor Thread"); //$NON-NLS-1$
+		// Create the monitor thread
+		thread = new Thread(runnable, "Terminal Process Monitor Thread"); //$NON-NLS-1$
 
-    	// Configure the monitor thread
-        thread.setDaemon(true);
+		// Configure the monitor thread
+		thread.setDaemon(true);
 
-        // Start the processing
-        thread.start();
-    }
+		// Start the processing
+		thread.start();
+	}
 
-    /**
-     * Monitors the associated system process, waiting for it to terminate,
-     * and notifies the associated process monitor's.
-     */
+	/**
+	 * Monitors the associated system process, waiting for it to terminate,
+	 * and notifies the associated process monitor's.
+	 */
 	public void monitorProcess() {
-    	// If already disposed -> return immediately
-    	if (disposed) return;
+		// If already disposed -> return immediately
+		if (disposed)
+			return;
 
-    	try {
-    		// Wait for the monitored process to terminate
-    		process.waitFor();
-    	} catch (InterruptedException ie) {
-    		// clear interrupted state
-    		Thread.interrupted();
-    	} finally {
-    		// Dispose the parent process connector
-    		if (!disposed)
-    			processConnector.disconnect();
-    	}
-    }
+		try {
+			// Wait for the monitored process to terminate
+			process.waitFor();
+		} catch (InterruptedException ie) {
+			// clear interrupted state
+			Thread.interrupted();
+		} finally {
+			// Dispose the parent process connector
+			if (!disposed)
+				processConnector.disconnect();
+		}
+	}
 }

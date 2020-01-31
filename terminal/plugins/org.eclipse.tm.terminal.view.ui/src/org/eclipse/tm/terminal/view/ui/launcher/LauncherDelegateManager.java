@@ -78,10 +78,9 @@ public class LauncherDelegateManager {
 			// Extract the extension attributes
 			id = element.getAttribute("id"); //$NON-NLS-1$
 			if (id == null || id.trim().length() == 0) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						UIPlugin.getUniqueIdentifier(),
-						0,
-						NLS.bind(Messages.Extension_error_missingRequiredAttribute, "id", element.getContributor().getName()), //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(), 0,
+						NLS.bind(Messages.Extension_error_missingRequiredAttribute, "id", //$NON-NLS-1$
+								element.getContributor().getName()),
 						null));
 			}
 
@@ -113,7 +112,8 @@ public class LauncherDelegateManager {
 		 * @return The extension class instance or <code>null</code> if the instantiation fails.
 		 */
 		public ILauncherDelegate getInstance() {
-			if (instance == null) instance = newInstance();
+			if (instance == null)
+				instance = newInstance();
 			return instance;
 		}
 
@@ -123,19 +123,21 @@ public class LauncherDelegateManager {
 		 *
 		 * @return A new extension class instance or <code>null</code> if the instantiation fails.
 		 */
-	    public ILauncherDelegate newInstance() {
+		public ILauncherDelegate newInstance() {
 			IConfigurationElement element = getConfigurationElement();
 			Assert.isNotNull(element);
 
 			// The "class" to load can be specified either as attribute or as child element
 			if (element.getAttribute("class") != null || element.getChildren("class").length > 0) { //$NON-NLS-1$ //$NON-NLS-2$
 				try {
-					return (ILauncherDelegate)element.createExecutableExtension("class"); //$NON-NLS-1$
+					return (ILauncherDelegate) element.createExecutableExtension("class"); //$NON-NLS-1$
 				} catch (Exception e) {
 					// Possible exceptions: CoreException, ClassCastException.
-					Platform.getLog(UIPlugin.getDefault().getBundle()).log(new Status(IStatus.ERROR,
-									UIPlugin.getUniqueIdentifier(),
-									NLS.bind(Messages.Extension_error_invalidExtensionPoint, element.getDeclaringExtension().getUniqueIdentifier()), e));
+					Platform.getLog(UIPlugin.getDefault().getBundle())
+							.log(new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(),
+									NLS.bind(Messages.Extension_error_invalidExtensionPoint,
+											element.getDeclaringExtension().getUniqueIdentifier()),
+									e));
 				}
 			}
 			return null;
@@ -149,7 +151,7 @@ public class LauncherDelegateManager {
 			// Proxies are equal if they have encapsulate an element
 			// with the same unique id
 			if (obj instanceof Proxy) {
-				return getId().equals(((Proxy)obj).getId());
+				return getId().equals(((Proxy) obj).getId());
 			}
 			return super.equals(obj);
 		}
@@ -183,11 +185,13 @@ public class LauncherDelegateManager {
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-	    public int compare(IExtension o1, IExtension o2) {
+		public int compare(IExtension o1, IExtension o2) {
 			// We ignore any comparisation with null and
-			if (o1 == null || o2 == null) return 0;
+			if (o1 == null || o2 == null)
+				return 0;
 			// Check if it is the exact same element
-			if (o1 == o2) return 0;
+			if (o1 == o2)
+				return 0;
 
 			// The extensions are compared by the unique id of the contributing plug-in first
 			String contributor1 = o1.getContributor().getName();
@@ -300,7 +304,8 @@ public class LauncherDelegateManager {
 			if (enablement != null) {
 				if (selection != null) {
 					// Set the default variable to selection.
-					IEvaluationContext currentState = ((IHandlerService)PlatformUI.getWorkbench().getService(IHandlerService.class)).getCurrentState();
+					IEvaluationContext currentState = ((IHandlerService) PlatformUI.getWorkbench()
+							.getService(IHandlerService.class)).getCurrentState();
 					EvaluationContext context = new EvaluationContext(currentState, selection);
 					// Set the "selection" variable to the selection.
 					context.addVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
@@ -310,7 +315,8 @@ public class LauncherDelegateManager {
 					try {
 						isApplicable = enablement.evaluate(context).equals(EvaluationResult.TRUE);
 					} catch (CoreException e) {
-						IStatus status = new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(), e.getLocalizedMessage(), e);
+						IStatus status = new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(),
+								e.getLocalizedMessage(), e);
 						UIPlugin.getDefault().getLog().log(status);
 					}
 				} else {
@@ -321,7 +327,8 @@ public class LauncherDelegateManager {
 			}
 
 			// Add the page if applicable
-			if (isApplicable) applicable.add(delegate);
+			if (isApplicable)
+				applicable.add(delegate);
 		}
 
 		return applicable.toArray(new ILauncherDelegate[applicable.size()]);
@@ -337,7 +344,10 @@ public class LauncherDelegateManager {
 	protected Map<String, Proxy> getExtensions() {
 		// Load and store the extensions thread-safe!
 		synchronized (extensionsMap) {
-			if (!initialized) { loadExtensions(); initialized = true; }
+			if (!initialized) {
+				loadExtensions();
+				initialized = true;
+			}
 		}
 		return extensionsMap;
 	}
@@ -379,7 +389,8 @@ public class LauncherDelegateManager {
 	 */
 	protected void loadExtensions() {
 		// If already initialized, this method will do nothing.
-		if (initialized)  return;
+		if (initialized)
+			return;
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint("org.eclipse.tm.terminal.view.ui.launcherDelegates"); //$NON-NLS-1$
@@ -395,25 +406,25 @@ public class LauncherDelegateManager {
 								// If no extension with this id had been registered before, register now.
 								if (!extensionsMap.containsKey(candidate.getId())) {
 									extensionsMap.put(candidate.getId(), candidate);
-								}
-								else {
-									throw new CoreException(new Status(IStatus.ERROR,
-											UIPlugin.getUniqueIdentifier(),
-											0,
-											NLS.bind(Messages.Extension_error_duplicateExtension, candidate.getId(), element.getContributor().getName()),
-											null));
+								} else {
+									throw new CoreException(
+											new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(), 0,
+													NLS.bind(Messages.Extension_error_duplicateExtension,
+															candidate.getId(), element.getContributor().getName()),
+													null));
 								}
 							} else {
-								throw new CoreException(new Status(IStatus.ERROR,
-										UIPlugin.getUniqueIdentifier(),
-										0,
-										NLS.bind(Messages.Extension_error_missingRequiredAttribute, "id", element.getAttribute("label")), //$NON-NLS-1$ //$NON-NLS-2$
+								throw new CoreException(new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(), 0,
+										NLS.bind(Messages.Extension_error_missingRequiredAttribute, "id", //$NON-NLS-1$
+												element.getAttribute("label")), //$NON-NLS-1$
 										null));
 							}
 						} catch (CoreException e) {
-							Platform.getLog(UIPlugin.getDefault().getBundle()).log(new Status(IStatus.ERROR,
-											UIPlugin.getUniqueIdentifier(),
-											NLS.bind(Messages.Extension_error_invalidExtensionPoint, element.getDeclaringExtension().getUniqueIdentifier()), e));
+							Platform.getLog(UIPlugin.getDefault().getBundle())
+									.log(new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(),
+											NLS.bind(Messages.Extension_error_invalidExtensionPoint,
+													element.getDeclaringExtension().getUniqueIdentifier()),
+											e));
 						}
 					}
 				}

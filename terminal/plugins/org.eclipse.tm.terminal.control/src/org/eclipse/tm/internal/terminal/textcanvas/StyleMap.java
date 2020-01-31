@@ -45,29 +45,32 @@ public class StyleMap {
 	private static final String BLUE = "blue"; //$NON-NLS-1$
 	private static final String GREEN = "green"; //$NON-NLS-1$
 	private static final String RED = "red"; //$NON-NLS-1$
-	
+
 	private static final String PREFIX = "org.eclipse.tm.internal."; //$NON-NLS-1$
-	String fFontName=ITerminalConstants.FONT_DEFINITION;
-	Map<StyleColor, Color> fColorMapForeground=new HashMap<StyleColor, Color>();
-	Map<StyleColor, Color> fColorMapBackground=new HashMap<StyleColor, Color>();
-	Map<StyleColor, Color> fColorMapIntense=new HashMap<StyleColor, Color>();
+	String fFontName = ITerminalConstants.FONT_DEFINITION;
+	Map<StyleColor, Color> fColorMapForeground = new HashMap<StyleColor, Color>();
+	Map<StyleColor, Color> fColorMapBackground = new HashMap<StyleColor, Color>();
+	Map<StyleColor, Color> fColorMapIntense = new HashMap<StyleColor, Color>();
 	private Point fCharSize;
 	private final Style fDefaultStyle;
 	private boolean fInvertColors;
 	private boolean fProportional;
-	private final int[] fOffsets=new int[256];
+	private final int[] fOffsets = new int[256];
+
 	StyleMap() {
 		initColors();
-		fDefaultStyle=Style.getStyle(StyleColor.getStyleColor(BLACK),StyleColor.getStyleColor(WHITE));
+		fDefaultStyle = Style.getStyle(StyleColor.getStyleColor(BLACK), StyleColor.getStyleColor(WHITE));
 		updateFont();
 	}
+
 	private void initColors() {
 		initForegroundColors();
 		initBackgroundColors();
 		initIntenseColors();
 	}
+
 	private void initForegroundColors() {
-		if(fInvertColors) {
+		if (fInvertColors) {
 			setColor(fColorMapForeground, WHITE, 0, 0, 0);
 			setColor(fColorMapForeground, WHITE_FOREGROUND, 50, 50, 50);
 			setColor(fColorMapForeground, BLACK, 229, 229, 229);
@@ -86,7 +89,7 @@ public class StyleMap {
 	}
 
 	private void initBackgroundColors() {
-		if(fInvertColors) {
+		if (fInvertColors) {
 			setColor(fColorMapBackground, WHITE, 0, 0, 0);
 			setColor(fColorMapBackground, WHITE_FOREGROUND, 50, 50, 50); // only used when colors are inverse
 			setColor(fColorMapBackground, BLACK, 255, 255, 255);
@@ -105,7 +108,7 @@ public class StyleMap {
 	}
 
 	private void initIntenseColors() {
-		if(fInvertColors) {
+		if (fInvertColors) {
 			setColor(fColorMapIntense, WHITE, 127, 127, 127);
 			setColor(fColorMapIntense, WHITE_FOREGROUND, 0, 0, 0); // only used when colors are inverse
 			setColor(fColorMapIntense, BLACK, 255, 255, 255);
@@ -122,13 +125,13 @@ public class StyleMap {
 		setColor(fColorMapIntense, MAGENTA, 255, 0, 255);
 		setColor(fColorMapIntense, GRAY, 255, 255, 255);
 	}
-	
+
 	private void setColor(Map<StyleColor, Color> colorMap, String name, int r, int g, int b) {
-		String colorName=PREFIX+r+"-"+g+"-"+b;  //$NON-NLS-1$//$NON-NLS-2$
-		Color color=JFaceResources.getColorRegistry().get(colorName);
-		if(color==null) {
-			JFaceResources.getColorRegistry().put(colorName, new RGB(r,g,b));
-			color=JFaceResources.getColorRegistry().get(colorName);
+		String colorName = PREFIX + r + "-" + g + "-" + b; //$NON-NLS-1$//$NON-NLS-2$
+		Color color = JFaceResources.getColorRegistry().get(colorName);
+		if (color == null) {
+			JFaceResources.getColorRegistry().put(colorName, new RGB(r, g, b));
+			color = JFaceResources.getColorRegistry().get(colorName);
 		}
 		colorMap.put(StyleColor.getStyleColor(name), color);
 		colorMap.put(StyleColor.getStyleColor(name.toUpperCase()), color);
@@ -138,66 +141,74 @@ public class StyleMap {
 		style = defaultIfNull(style);
 		Map<StyleColor, Color> map = style.isBold() ? fColorMapIntense : fColorMapForeground;
 		//Map map = fColorMapForeground;
-		if(style.isReverse())
-			return getColor(map ,style.getBackground());
+		if (style.isReverse())
+			return getColor(map, style.getBackground());
 		else
-			return  getColor(map ,style.getForground());
+			return getColor(map, style.getForground());
 	}
+
 	public Color getBackgroundColor(Style style) {
 		style = defaultIfNull(style);
-		if(style.isReverse())
-			return getColor(fColorMapBackground,style.getForground());
+		if (style.isReverse())
+			return getColor(fColorMapBackground, style.getForground());
 		else
-			return getColor(fColorMapBackground,style.getBackground());
+			return getColor(fColorMapBackground, style.getBackground());
 	}
-	Color getColor(Map<StyleColor, Color> map,StyleColor color) {
-		Color c=map.get(color);
-		if(c==null) {
-			c=Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
+
+	Color getColor(Map<StyleColor, Color> map, StyleColor color) {
+		Color c = map.get(color);
+		if (c == null) {
+			c = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 		}
 		return c;
 	}
+
 	private Style defaultIfNull(Style style) {
-		if(style==null)
-			style=fDefaultStyle;
+		if (style == null)
+			style = fDefaultStyle;
 		return style;
 	}
+
 	public void setInvertedColors(boolean invert) {
-		if(invert==fInvertColors)
+		if (invert == fInvertColors)
 			return;
-		fInvertColors=invert;
+		fInvertColors = invert;
 		initColors();
 	}
-//	static Font getBoldFont(Font font) {
-//		FontData fontDatas[] = font.getFontData();
-//		FontData data = fontDatas[0];
-//		return new Font(Display.getCurrent(), data.getName(), data.getHeight(), data.getStyle()|SWT.BOLD);
-//	}
+	//	static Font getBoldFont(Font font) {
+	//		FontData fontDatas[] = font.getFontData();
+	//		FontData data = fontDatas[0];
+	//		return new Font(Display.getCurrent(), data.getName(), data.getHeight(), data.getStyle()|SWT.BOLD);
+	//	}
 
 	public Font getFont(Style style) {
 		style = defaultIfNull(style);
-		if(style.isBold()) {
-			return  JFaceResources.getFontRegistry().getBold(fFontName);
-		} else if(style.isUnderline()) {
-			return  JFaceResources.getFontRegistry().getItalic(fFontName);
+		if (style.isBold()) {
+			return JFaceResources.getFontRegistry().getBold(fFontName);
+		} else if (style.isUnderline()) {
+			return JFaceResources.getFontRegistry().getItalic(fFontName);
 
 		}
-		return  JFaceResources.getFontRegistry().get(fFontName);
+		return JFaceResources.getFontRegistry().get(fFontName);
 	}
 
 	public Font getFont() {
-		return  JFaceResources.getFontRegistry().get(fFontName);
+		return JFaceResources.getFontRegistry().get(fFontName);
 
 	}
+
 	public int getFontWidth() {
 		return fCharSize.x;
 	}
+
 	public int getFontHeight() {
 		return fCharSize.y;
 	}
+
 	public void updateFont() {
 		updateFont(ITerminalConstants.FONT_DEFINITION);
 	}
+
 	/**
 	 * Update the StyleMap for a new font name.
 	 * The font name must be a valid name in the Jface font registry.
@@ -205,8 +216,8 @@ public class StyleMap {
 	 * @since 3.2
 	 */
 	public void updateFont(String fontName) {
-		Display display=Display.getCurrent();
-		GC gc = new GC (display);
+		Display display = Display.getCurrent();
+		GC gc = new GC(display);
 		if (JFaceResources.getFontRegistry().hasValueFor(fontName)) {
 			fFontName = fontName;
 		} else {
@@ -214,55 +225,56 @@ public class StyleMap {
 			fFontName = "org.eclipse.jface.textfont"; //$NON-NLS-1$
 		}
 		gc.setFont(getFont());
-		fCharSize = gc.textExtent ("W"); //$NON-NLS-1$
-		fProportional=false;
-		
+		fCharSize = gc.textExtent("W"); //$NON-NLS-1$
+		fProportional = false;
+
 		for (char c = ' '; c <= '~'; c++) {
 			// consider only the first 128 chars for deciding if a font
 			// is proportional. Collect char width as a side-effect.
-			if(measureChar(gc, c, true))
-				fProportional=true;
+			if (measureChar(gc, c, true))
+				fProportional = true;
 		}
-		if(fProportional) {
+		if (fProportional) {
 			// Widest char minus the padding on the left and right:
 			// Looks much better for small fonts
-			fCharSize.x-=2;
+			fCharSize.x -= 2;
 			// Collect width of the upper characters (for offset calculation)
-			for (char c = '~'+1; c < fOffsets.length; c++) {
-				measureChar(gc, c,false);
+			for (char c = '~' + 1; c < fOffsets.length; c++) {
+				measureChar(gc, c, false);
 			}
 			// Calculate offsets based on each character's width and the bounding box
 			for (int i = ' '; i < fOffsets.length; i++) {
-				fOffsets[i]=(fCharSize.x-fOffsets[i])/2;
+				fOffsets[i] = (fCharSize.x - fOffsets[i]) / 2;
 			}
 		} else {
 			// Non-Proportional: Reset all offsets (eg after font change)
 			for (int i = 0; i < fOffsets.length; i++) {
-				fOffsets[i]=0;
+				fOffsets[i] = 0;
 			}
 			String t = "The quick brown Fox jumps over the Lazy Dog."; //$NON-NLS-1$
-			Point ext=gc.textExtent(t);
-			if(ext.x != fCharSize.x * t.length()) {
+			Point ext = gc.textExtent(t);
+			if (ext.x != fCharSize.x * t.length()) {
 				//Bug 475422: On OSX with Retina display and due to scaling,
 				//a text many be shorter than the sum of its bounding boxes.
-				//Because even with fixed width font, bounding box size 
+				//Because even with fixed width font, bounding box size
 				//may not be an integer but a fraction eg 6.75 pixels.
 				//
 				//Painting in proportional mode ensures that each character
 				//is painted individually into its proper bounding box, rather
 				//than using an optimization where Strings would be drawn as
 				//a whole. This fixes the "fractional bounding box" problem.
-				fProportional=true;
+				fProportional = true;
 			}
 			//measure font in boldface, too, and if wider then treat like proportional
 			gc.setFont(getFont(fDefaultStyle.setBold(true)));
 			Point charSizeBold = gc.textExtent("W"); //$NON-NLS-1$
 			if (fCharSize.x != charSizeBold.x) {
-				fProportional=true;
+				fProportional = true;
 			}
 		}
-		gc.dispose ();
+		gc.dispose();
 	}
+
 	/**
 	 * @param gc
 	 * @param c
@@ -270,28 +282,30 @@ public class StyleMap {
 	 * @return true if the the font is proportional
 	 */
 	private boolean measureChar(GC gc, char c, boolean updateMax) {
-		boolean proportional=false;
-		Point ext=gc.textExtent(String.valueOf(c));
-		if(ext.x>0 && ext.y>0 && (fCharSize.x!=ext.x || fCharSize.y!=ext.y)) {
-			proportional=true;
-			if(updateMax) {
-				fCharSize.x=Math.max(fCharSize.x, ext.x);
-				fCharSize.y=Math.max(fCharSize.y, ext.y);
+		boolean proportional = false;
+		Point ext = gc.textExtent(String.valueOf(c));
+		if (ext.x > 0 && ext.y > 0 && (fCharSize.x != ext.x || fCharSize.y != ext.y)) {
+			proportional = true;
+			if (updateMax) {
+				fCharSize.x = Math.max(fCharSize.x, ext.x);
+				fCharSize.y = Math.max(fCharSize.y, ext.y);
 			}
 		}
-		fOffsets[c]=ext.x;
+		fOffsets[c] = ext.x;
 		return proportional;
 	}
+
 	public boolean isFontProportional() {
 		return fProportional;
 	}
+
 	/**
 	 * Return the offset in pixels required to center a given character
 	 * @param c the character to measure
 	 * @return the offset in x direction to center this character
 	 */
 	public int getCharOffset(char c) {
-		if(c>=fOffsets.length)
+		if (c >= fOffsets.length)
 			return 0;
 		return fOffsets[c];
 	}

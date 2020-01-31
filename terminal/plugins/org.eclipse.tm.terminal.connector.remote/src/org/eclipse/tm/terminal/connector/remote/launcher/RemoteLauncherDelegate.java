@@ -98,7 +98,8 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 	private String getTerminalTitle(Map<String, Object> properties) {
 		// Try to see if the user set a title explicitly via the properties map.
 		String title = getDefaultTerminalTitle(properties);
-		if (title != null) return title;
+		if (title != null)
+			return title;
 
 		String connection = (String) properties.get(IRemoteSettings.CONNECTION_NAME);
 
@@ -107,7 +108,7 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 			String date = format.format(new Date(System.currentTimeMillis()));
 			return NLS.bind(Messages.RemoteLauncherDelegate_terminalTitle, new String[] { connection, date });
 		}
-		
+
 		return Messages.RemoteLauncherDelegate_terminalTitle_default;
 	}
 

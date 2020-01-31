@@ -84,7 +84,6 @@ public class VT100Emulator implements ControlListener {
 	 * character. Expecting a character set designation character.
 	 */
 	private static final int ANSISTATE_EXPECTING_CHARSET_DESIGNATION = 5;
-	
 
 	/**
 	 * This field holds the current state of the Finite TerminalState Automaton (FSA)
@@ -140,6 +139,7 @@ public class VT100Emulator implements ControlListener {
 	Reader fReader;
 
 	boolean fCrAfterNewLine;
+
 	/**
 	 * The constructor.
 	 */
@@ -154,13 +154,13 @@ public class VT100Emulator implements ControlListener {
 			ansiParameters[i] = new StringBuffer();
 		}
 		setInputStreamReader(reader);
-		if(TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_VT100BACKEND))
-			text=new VT100BackendTraceDecorator(new VT100EmulatorBackend(data),System.out);
+		if (TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_VT100BACKEND))
+			text = new VT100BackendTraceDecorator(new VT100EmulatorBackend(data), System.out);
 		else
-			text=new VT100EmulatorBackend(data);
+			text = new VT100EmulatorBackend(data);
 
-//		text.setDimensions(24, 80);
-		Style  style=Style.getStyle("BLACK", "WHITE"); //$NON-NLS-1$ //$NON-NLS-2$
+		//		text.setDimensions(24, 80);
+		Style style = Style.getStyle("BLACK", "WHITE"); //$NON-NLS-1$ //$NON-NLS-2$
 		text.setDefaultStyle(style);
 		text.setStyle(style);
 	}
@@ -182,7 +182,7 @@ public class VT100Emulator implements ControlListener {
 		fReader = reader;
 	}
 
-	public void setDimensions(int lines,int cols) {
+	public void setDimensions(int lines, int cols) {
 		text.setDimensions(lines, cols);
 		ITerminalConnector telnetConnection = getConnector();
 		if (telnetConnection != null) {
@@ -236,22 +236,23 @@ public class VT100Emulator implements ControlListener {
 		if (text != null)
 			adjustTerminalDimensions();
 	}
-//	/**
-//	 * This method executes in the Display thread to process data received from
-//	 * the remote host by class {@link org.eclipse.tm.internal.terminal.telnet.TelnetConnection} and
-//	 * other implementors of {@link ITerminalConnector}, like the
-//	 * SerialPortHandler.
-//	 * <p>
-//	 * These connectors write text to the terminal's buffer through
-//	 * {@link TerminalControl#writeToTerminal(String)} and then have
-//	 * this run method executed in the display thread. This method
-//	 * must not execute at the same time as methods
-//	 * {@link #setNewText(StringBuffer)} and {@link #clearTerminal()}.
-//	 * <p>
-//	 * IMPORTANT: This method must be called in strict alternation with method
-//	 * {@link #setNewText(StringBuffer)}.
-//	 * <p>
-//	 */
+
+	//	/**
+	//	 * This method executes in the Display thread to process data received from
+	//	 * the remote host by class {@link org.eclipse.tm.internal.terminal.telnet.TelnetConnection} and
+	//	 * other implementors of {@link ITerminalConnector}, like the
+	//	 * SerialPortHandler.
+	//	 * <p>
+	//	 * These connectors write text to the terminal's buffer through
+	//	 * {@link TerminalControl#writeToTerminal(String)} and then have
+	//	 * this run method executed in the display thread. This method
+	//	 * must not execute at the same time as methods
+	//	 * {@link #setNewText(StringBuffer)} and {@link #clearTerminal()}.
+	//	 * <p>
+	//	 * IMPORTANT: This method must be called in strict alternation with method
+	//	 * {@link #setNewText(StringBuffer)}.
+	//	 * <p>
+	//	 */
 	public void processText() {
 		try {
 			// Find the width and height of the terminal, and resize it to display an
@@ -275,6 +276,7 @@ public class VT100Emulator implements ControlListener {
 			Logger.logException(ex);
 		}
 	}
+
 	/**
 	 * This method scans the newly received text, processing ANSI control
 	 * characters and escape sequences and displaying normal text.
@@ -282,7 +284,6 @@ public class VT100Emulator implements ControlListener {
 	 */
 	private void processNewText() throws IOException {
 		Logger.log("entered"); //$NON-NLS-1$
-
 
 		// Scan the newly received text.
 
@@ -309,7 +310,7 @@ public class VT100Emulator implements ControlListener {
 
 				case '\n':
 					processNewline(); // Newline (Control-J)
-					if(fCrAfterNewLine)
+					if (fCrAfterNewLine)
 						processCarriageReturn(); // Carriage Return (Control-M)
 					break;
 
@@ -382,8 +383,7 @@ public class VT100Emulator implements ControlListener {
 					break;
 
 				default:
-					Logger
-							.log("Unsupported escape sequence: escape '" + character + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+					Logger.log("Unsupported escape sequence: escape '" + character + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 					ansiState = ANSISTATE_INITIAL;
 					break;
 				}
@@ -448,6 +448,7 @@ public class VT100Emulator implements ControlListener {
 			}
 		}
 	}
+
 	private void resetTerminal() {
 		text.eraseAll();
 		text.setCursor(0, 0);
@@ -456,6 +457,7 @@ public class VT100Emulator implements ControlListener {
 		text.setInsertMode(false);
 		terminal.enableApplicationCursorKeys(false);
 	}
+
 	/**
 	 * This method is called when we have parsed an OS Command escape sequence.
 	 * The only one we support is "\e]0;...\u0007", which sets the terminal
@@ -463,8 +465,7 @@ public class VT100Emulator implements ControlListener {
 	 */
 	private void processAnsiOsCommand() {
 		if (ansiOsCommand.charAt(0) != '0' || ansiOsCommand.charAt(1) != ';') {
-			Logger
-					.log("Ignoring unsupported ANSI OSC sequence: '" + ansiOsCommand + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+			Logger.log("Ignoring unsupported ANSI OSC sequence: '" + ansiOsCommand + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		terminal.setTerminalTitle(ansiOsCommand.substring(2));
@@ -514,7 +515,7 @@ public class VT100Emulator implements ControlListener {
 			// Line Position Absolute [row] (default = [1,column]) (VPA).
 			processAnsiCommand_d();
 			break;
-			
+
 		case 'E':
 			// Move cursor to first column of Nth next line (default 1).
 			processAnsiCommand_E();
@@ -559,7 +560,7 @@ public class VT100Emulator implements ControlListener {
 			// Set Mode.
 			processAnsiCommand_l();
 			break;
-			
+
 		case 'M':
 			// Delete line(s).
 			processAnsiCommand_M();
@@ -688,7 +689,7 @@ public class VT100Emulator implements ControlListener {
 		// Line Position Absolute [row] (default = [1,column]) (VPA).
 		text.setCursorLine(getAnsiParameter(0) - 1);
 	}
-	
+
 	/**
 	 * This method moves the cursor to the first column of the Nth next line,
 	 * where N is specified by the ANSI parameter (default 1).
@@ -838,15 +839,14 @@ public class VT100Emulator implements ControlListener {
 
 			ansiParameters[0].append('0');
 		}
-		Style style=text.getStyle();
+		Style style = text.getStyle();
 		// There are a non-zero number of ANSI parameters. Process each one in
 		// order.
 
 		int totalParameters = ansiParameters.length;
 		int parameterIndex = 0;
 
-		while (parameterIndex < totalParameters
-				&& ansiParameters[parameterIndex].length() > 0) {
+		while (parameterIndex < totalParameters && ansiParameters[parameterIndex].length() > 0) {
 			int ansiParameter = getAnsiParameter(parameterIndex);
 
 			switch (ansiParameter) {
@@ -896,15 +896,15 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			case 31:
-				style = style.setForground("RED");  //$NON-NLS-1$
+				style = style.setForground("RED"); //$NON-NLS-1$
 				break;
 
 			case 32:
-				style = style.setForground("GREEN");  //$NON-NLS-1$
+				style = style.setForground("GREEN"); //$NON-NLS-1$
 				break;
 
 			case 33:
-				style = style.setForground("YELLOW");  //$NON-NLS-1$
+				style = style.setForground("YELLOW"); //$NON-NLS-1$
 				break;
 
 			case 34:
@@ -912,7 +912,7 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			case 35:
-				style = style.setForground("MAGENTA");  //$NON-NLS-1$
+				style = style.setForground("MAGENTA"); //$NON-NLS-1$
 				break;
 
 			case 36:
@@ -964,8 +964,7 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			default:
-				Logger
-						.log("Unsupported graphics rendition parameter: " + ansiParameter); //$NON-NLS-1$
+				Logger.log("Unsupported graphics rendition parameter: " + ansiParameter); //$NON-NLS-1$
 				break;
 			}
 
@@ -1025,23 +1024,23 @@ public class VT100Emulator implements ControlListener {
 			top = getAnsiParameter(0);
 			bottom = getAnsiParameter(1);
 		}
-		text.setScrollRegion(top-1, bottom-1);
+		text.setScrollRegion(top - 1, bottom - 1);
 	}
-	
+
 	/**
 	 * Scroll up n lines (default = 1 line).
 	 */
 	private void processAnsiCommand_S() {
 		text.scrollUp(getAnsiParameter(0));
 	}
-	
+
 	/**
 	 * Scroll down n lines (default = 1 line).
 	 */
 	private void processAnsiCommand_T() {
 		text.scrollDown(getAnsiParameter(0));
 	}
-	
+
 	private void processDecPrivateCommand_h() {
 		int param = getAnsiParameter(0);
 		switch (param) {
@@ -1080,7 +1079,7 @@ public class VT100Emulator implements ControlListener {
 			break;
 		}
 	}
-	
+
 	/**
 	 * This method returns one of the numeric ANSI parameters received in the
 	 * most recent escape sequence.
@@ -1128,6 +1127,7 @@ public class VT100Emulator implements ControlListener {
 				ansiParameters[nextAnsiParameter].append(ch);
 		}
 	}
+
 	/**
 	 * This method processes a contiguous sequence of non-control characters.
 	 * This is a performance optimization, so that we don't have to insert or
@@ -1137,15 +1137,14 @@ public class VT100Emulator implements ControlListener {
 	 * @throws IOException
 	 */
 	private void processNonControlCharacters(char character) throws IOException {
-		StringBuffer buffer=new StringBuffer();
+		StringBuffer buffer = new StringBuffer();
 		buffer.append(character);
 		// Identify a contiguous sequence of non-control characters, starting at
 		// firstNonControlCharacterIndex in newText.
-		while(hasNextChar()) {
-			character=getNextChar();
-			if(character == '\u0000' || character == '\b' || character == '\t'
-				|| character == '\u0007' || character == '\n'
-				|| character == '\r' || character == '\u001b') {
+		while (hasNextChar()) {
+			character = getNextChar();
+			if (character == '\u0000' || character == '\b' || character == '\t' || character == '\u0007'
+					|| character == '\n' || character == '\r' || character == '\u001b') {
 				pushBackChar(character);
 				break;
 			}
@@ -1172,7 +1171,6 @@ public class VT100Emulator implements ControlListener {
 	private void displayNewText(String buffer) {
 		text.appendString(buffer);
 	}
-
 
 	/**
 	 * Process a BEL (Control-G) character.
@@ -1251,8 +1249,8 @@ public class VT100Emulator implements ControlListener {
 		// to make it display an integral number of lines of text.
 
 		// TODO
-//		if(text.getColumns()!=80 && text.getLines()!=80)
-//			text.setDimensions(24, 80);
+		//		if(text.getColumns()!=80 && text.getLines()!=80)
+		//			text.setDimensions(24, 80);
 		// If we are in a TELNET connection and we know the dimensions of the terminal,
 		// we give the size information to the TELNET connection object so it can
 		// communicate it to the TELNET server. If we are in a serial connection,
@@ -1267,7 +1265,7 @@ public class VT100Emulator implements ControlListener {
 	}
 
 	private ITerminalConnector getConnector() {
-		if(terminal.getTerminalConnector()!=null)
+		if (terminal.getTerminalConnector() != null)
 			return terminal.getTerminalConnector();
 		return null;
 	}
@@ -1291,7 +1289,7 @@ public class VT100Emulator implements ControlListener {
 	 * contain any text to move the cursor to any column in that line.
 	 */
 	private void moveCursor(int targetLine, int targetColumn) {
-		text.setCursor(targetLine,targetColumn);
+		text.setCursor(targetLine, targetColumn);
 	}
 
 	/**
@@ -1330,42 +1328,43 @@ public class VT100Emulator implements ControlListener {
 	private void moveCursorBackward(int columnsToMove) {
 		moveCursor(relativeCursorLine(), getCursorColumn() - columnsToMove);
 	}
+
 	/**
 	 * Resets the state of the terminal text (foreground color, background color,
 	 * font style and other internal state). It essentially makes it ready for new input.
 	 */
 	public void resetState() {
-		ansiState=ANSISTATE_INITIAL;
+		ansiState = ANSISTATE_INITIAL;
 		text.setStyle(text.getDefaultStyle());
 		text.setScrollRegion(-1, -1);
 		text.setInsertMode(false);
 	}
 
-//	public OutputStream getOutputStream() {
-//		return fTerminalInputStream.getOutputStream();
-//	}
+	//	public OutputStream getOutputStream() {
+	//		return fTerminalInputStream.getOutputStream();
+	//	}
 
 	/**
 	 * Buffer for {@link #pushBackChar(char)}.
 	 */
-	private int fNextChar=-1;
+	private int fNextChar = -1;
 
 	private char getNextChar() throws IOException {
-		int c=-1;
-		if(fNextChar!=-1) {
-			c= fNextChar;
-			fNextChar=-1;
+		int c = -1;
+		if (fNextChar != -1) {
+			c = fNextChar;
+			fNextChar = -1;
 		} else {
 			c = fReader.read();
 		}
 		// TODO: better end of file handling
-		if(c==-1)
-			c=0;
-		return (char)c;
+		if (c == -1)
+			c = 0;
+		return (char) c;
 	}
 
-	private boolean hasNextChar() throws IOException  {
-		if(fNextChar>=0)
+	private boolean hasNextChar() throws IOException {
+		if (fNextChar >= 0)
 			return true;
 		return fReader.ready();
 	}
@@ -1378,20 +1377,25 @@ public class VT100Emulator implements ControlListener {
 	 */
 	void pushBackChar(char c) {
 		//assert fNextChar!=-1: "Already a character waiting:"+fNextChar; //$NON-NLS-1$
-		fNextChar=c;
+		fNextChar = c;
 	}
+
 	private int getCursorColumn() {
 		return text.getCursorColumn();
 	}
+
 	public boolean isCrAfterNewLine() {
 		return fCrAfterNewLine;
 	}
+
 	public void setCrAfterNewLine(boolean crAfterNewLine) {
 		fCrAfterNewLine = crAfterNewLine;
 	}
+
 	void setVT100LineWrapping(boolean enable) {
 		text.setVT100LineWrapping(enable);
 	}
+
 	boolean isVT100LineWrapping() {
 		return text.isVT100LineWrapping();
 	}

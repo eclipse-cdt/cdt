@@ -22,7 +22,7 @@ import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 
 /**
  * Terminal Preference Initializer.
- *  
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noreference This class is not intended to be referenced by clients.

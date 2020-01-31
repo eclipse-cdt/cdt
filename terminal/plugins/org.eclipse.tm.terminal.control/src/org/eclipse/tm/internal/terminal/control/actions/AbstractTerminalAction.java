@@ -32,13 +32,11 @@ public abstract class AbstractTerminalAction extends Action {
 		this(null, strId, 0);
 	}
 
-	public AbstractTerminalAction(ITerminalViewControl target,
-			String strId) {
+	public AbstractTerminalAction(ITerminalViewControl target, String strId) {
 		this(target, strId, 0);
 	}
 
-	public AbstractTerminalAction(ITerminalViewControl target,
-			String strId, int style) {
+	public AbstractTerminalAction(ITerminalViewControl target, String strId, int style) {
 		super("", style); //$NON-NLS-1$
 
 		fTarget = target;
@@ -48,27 +46,20 @@ public abstract class AbstractTerminalAction extends Action {
 
 	abstract public void run();
 
-	protected void setupAction(String strText, String strToolTip,
-			String strImage, String strEnabledImage, String strDisabledImage,
-			boolean bEnabled) {
-		setupAction(strText, strToolTip, strImage, strEnabledImage,
-				strDisabledImage, bEnabled, TerminalPlugin.getDefault()
-						.getImageRegistry());
+	protected void setupAction(String strText, String strToolTip, String strImage, String strEnabledImage,
+			String strDisabledImage, boolean bEnabled) {
+		setupAction(strText, strToolTip, strImage, strEnabledImage, strDisabledImage, bEnabled,
+				TerminalPlugin.getDefault().getImageRegistry());
 	}
 
-	protected void setupAction(String strText, String strToolTip,
-			String strHoverImage, String strEnabledImage,
-			String strDisabledImage, boolean bEnabled,
-			ImageRegistry imageRegistry) {
-		setupAction(strText, strToolTip, imageRegistry
-				.getDescriptor(strHoverImage), imageRegistry
-				.getDescriptor(strEnabledImage), imageRegistry
-				.getDescriptor(strDisabledImage), bEnabled);
+	protected void setupAction(String strText, String strToolTip, String strHoverImage, String strEnabledImage,
+			String strDisabledImage, boolean bEnabled, ImageRegistry imageRegistry) {
+		setupAction(strText, strToolTip, imageRegistry.getDescriptor(strHoverImage),
+				imageRegistry.getDescriptor(strEnabledImage), imageRegistry.getDescriptor(strDisabledImage), bEnabled);
 	}
 
-	protected void setupAction(String strText, String strToolTip,
-			ImageDescriptor hoverImage, ImageDescriptor enabledImage,
-			ImageDescriptor disabledImage, boolean bEnabled) {
+	protected void setupAction(String strText, String strToolTip, ImageDescriptor hoverImage,
+			ImageDescriptor enabledImage, ImageDescriptor disabledImage, boolean bEnabled) {
 		setText(strText);
 		setToolTipText(strToolTip);
 		setEnabled(bEnabled);
@@ -85,7 +76,7 @@ public abstract class AbstractTerminalAction extends Action {
 
 	/**
 	 * Return the terminal instance on which the action should operate.
-	 * 
+	 *
 	 * @return the terminal instance on which the action should operate.
 	 */
 	protected ITerminalViewControl getTarget() {

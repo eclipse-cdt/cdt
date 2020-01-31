@@ -91,7 +91,8 @@ public class NoteCompositeHelper {
 	 *
 	 * @return the composite for the note
 	 */
-	public static Composite createNoteComposite(Font font, Composite composite, String title, String message, int minCharsPerLine) {
+	public static Composite createNoteComposite(Font font, Composite composite, String title, String message,
+			int minCharsPerLine) {
 		final GC gc = new GC(composite);
 		gc.setFont(font);
 
@@ -142,7 +143,8 @@ public class NoteCompositeHelper {
 		 * needed
 		 */
 		layoutData = new GridData(GridData.FILL_HORIZONTAL);
-		layoutData.widthHint = Dialog.convertWidthInCharsToPixels(gc.getFontMetrics(), minCharsPerLine >= 20 ? minCharsPerLine : 65);
+		layoutData.widthHint = Dialog.convertWidthInCharsToPixels(gc.getFontMetrics(),
+				minCharsPerLine >= 20 ? minCharsPerLine : 65);
 		messageLabel.setLayoutData(layoutData);
 
 		gc.dispose();

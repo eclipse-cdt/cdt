@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2018 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
- * https://www.eclipse.org/legal/epl-2.0/ 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Anton Leherbauer (Wind River) - [206329] Changing terminal size right after connect does not scroll properly
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
@@ -26,22 +26,27 @@ import org.eclipse.tm.terminal.model.Style;
 public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 
 	private static class ScrollRegion {
-		static final ScrollRegion FULL_WINDOW = new ScrollRegion(0, Integer.MAX_VALUE-1);
+		static final ScrollRegion FULL_WINDOW = new ScrollRegion(0, Integer.MAX_VALUE - 1);
 		private final int fTop;
 		private final int fBottom;
+
 		ScrollRegion(int top, int bottom) {
 			fTop = top;
 			fBottom = bottom;
 		}
+
 		boolean contains(int line) {
 			return line >= fTop && line <= fBottom;
 		}
+
 		int getTopLine() {
 			return fTop;
 		}
+
 		int getBottomLine() {
 			return fBottom;
 		}
+
 		int getHeight() {
 			return fBottom - fTop + 1;
 		}
@@ -54,7 +59,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 * {@link #widthInColumns} - 1. We track the cursor column using this field
 	 * to avoid having to recompute it repeatly using StyledText method calls.
 	 * <p>
-	 * 
+	 *
 	 * The StyledText widget that displays text has a vertical bar (called the
 	 * "caret") that appears _between_ character cells, but ANSI terminals have
 	 * the concept of a cursor that appears _in_ a character cell, so we need a
@@ -63,13 +68,13 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 * class is that the cursor is logically in column N when the caret is
 	 * physically positioned immediately to the _left_ of column N.
 	 * <p>
-	 * 
+	 *
 	 * When fCursorColumn is N, the next character output to the terminal appears
 	 * in column N. When a character is output to the rightmost column on a
 	 * given line (column widthInColumns - 1), the cursor moves to column 0 on
 	 * the next line after the character is drawn (this is the default line wrapping
 	 * mode). If VT100 line wrapping mode is enabled, the cursor does not move
-	 * to the next line until the next character is printed (this is known as 
+	 * to the next line until the next character is printed (this is known as
 	 * the VT100 'eat_newline_glitch').
 	 * If the cursor is in the bottommost line when line wrapping
 	 * occurs, the topmost visible line is scrolled off the top edge of the
@@ -78,7 +83,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 */
 	private int fCursorColumn;
 	private int fCursorLine;
-	/* true if last output occurred on rightmost column 
+	/* true if last output occurred on rightmost column
 	 * and next output requires line wrap */
 	private boolean fWrapPending;
 	private boolean fInsertMode;
@@ -91,16 +96,16 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	private ScrollRegion fScrollRegion = ScrollRegion.FULL_WINDOW;
 
 	public VT100EmulatorBackend(ITerminalTextData terminal) {
-		fTerminal=terminal;
+		fTerminal = terminal;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#clearAll()
 	 */
 	public void clearAll() {
 		synchronized (fTerminal) {
 			// clear the history
-			int n=fTerminal.getHeight();
+			int n = fTerminal.getHeight();
 			for (int line = 0; line < n; line++) {
 				fTerminal.cleanLine(line);
 			}
@@ -109,34 +114,35 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			setCursor(0, 0);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setDimensions(int, int)
 	 */
 	public void setDimensions(int lines, int cols) {
 		synchronized (fTerminal) {
-			if(lines==fLines && cols==fColumns)
+			if (lines == fLines && cols == fColumns)
 				return; // nothing to do
 			// relative cursor line
-			int cl=getCursorLine();
-			int cc=getCursorColumn();
-			int height=fTerminal.getHeight();
+			int cl = getCursorLine();
+			int cc = getCursorColumn();
+			int height = fTerminal.getHeight();
 			// absolute cursor line
-			int acl=cl+height-fLines;
-			int newLines=Math.max(lines,height);
-			if(lines<fLines) {
-				if(height==fLines) {
+			int acl = cl + height - fLines;
+			int newLines = Math.max(lines, height);
+			if (lines < fLines) {
+				if (height == fLines) {
 					// if the terminal has no history, then resize by
 					// setting the size to the new size
 					// TODO We are assuming that cursor line points at end of text
-					newLines=Math.max(lines, cl+1);
+					newLines = Math.max(lines, cl + 1);
 				}
 			}
-			fLines=lines;
-			fColumns=cols;
+			fLines = lines;
+			fColumns = cols;
 			// make the terminal at least as high as we need lines
 			fTerminal.setDimensions(newLines, fColumns);
 			// compute relative cursor line
-			cl=acl-(newLines-fLines);
+			cl = acl - (newLines - fLines);
 			setCursor(cl, cc);
 		}
 	}
@@ -148,24 +154,25 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 */
 	public int toAbsoluteLine(int line) {
 		synchronized (fTerminal) {
-			return fTerminal.getHeight()-fLines+line;
+			return fTerminal.getHeight() - fLines + line;
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#insertCharacters(int)
 	 */
 	public void insertCharacters(int charactersToInsert) {
 		synchronized (fTerminal) {
-			int line=toAbsoluteLine(fCursorLine);
-			int n=charactersToInsert;
-			for (int col = fColumns-1; col >=fCursorColumn+n; col--) {
-				char c=fTerminal.getChar(line, col-n);
-				Style style=fTerminal.getStyle(line, col-n);
-				fTerminal.setChar(line, col,c, style);
+			int line = toAbsoluteLine(fCursorLine);
+			int n = charactersToInsert;
+			for (int col = fColumns - 1; col >= fCursorColumn + n; col--) {
+				char c = fTerminal.getChar(line, col - n);
+				Style style = fTerminal.getStyle(line, col - n);
+				fTerminal.setChar(line, col, c, style);
 			}
-			int last=Math.min(fCursorColumn+n, fColumns);
-			for (int col = fCursorColumn; col <last; col++) {
-				fTerminal.setChar(line, col,'\000', null);
+			int last = Math.min(fCursorColumn + n, fColumns);
+			for (int col = fCursorColumn; col < last; col++) {
+				fTerminal.setChar(line, col, '\000', null);
 			}
 		}
 	}
@@ -176,12 +183,13 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	public void eraseToEndOfScreen() {
 		synchronized (fTerminal) {
 			eraseLineToEnd();
-			for (int line = toAbsoluteLine(fCursorLine+1); line < toAbsoluteLine(fLines); line++) {
+			for (int line = toAbsoluteLine(fCursorLine + 1); line < toAbsoluteLine(fLines); line++) {
 				fTerminal.cleanLine(line);
 			}
 		}
-		
+
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseToCursor()
 	 */
@@ -193,6 +201,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			eraseLineToCursor();
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseAll()
 	 */
@@ -203,6 +212,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			}
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseLine()
 	 */
@@ -211,72 +221,77 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			fTerminal.cleanLine(toAbsoluteLine(fCursorLine));
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseLineToEnd()
 	 */
 	public void eraseLineToEnd() {
 		synchronized (fTerminal) {
-			int line=toAbsoluteLine(fCursorLine);
+			int line = toAbsoluteLine(fCursorLine);
 			for (int col = fCursorColumn; col < fColumns; col++) {
 				fTerminal.setChar(line, col, '\000', null);
 			}
 		}
-	}	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseLineToCursor()
 	 */
 	public void eraseLineToCursor() {
 		synchronized (fTerminal) {
-			int line=toAbsoluteLine(fCursorLine);
+			int line = toAbsoluteLine(fCursorLine);
 			for (int col = 0; col <= fCursorColumn; col++) {
 				fTerminal.setChar(line, col, '\000', null);
 			}
 		}
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#insertLines(int)
 	 */
 	public void insertLines(int n) {
 		synchronized (fTerminal) {
-			if(!isCusorInScrollingRegion())
+			if (!isCusorInScrollingRegion())
 				return;
-			assert n>0;
-			int line=toAbsoluteLine(fCursorLine);
-			int nLines=Math.min(fTerminal.getHeight()-line, fScrollRegion.getBottomLine()-fCursorLine+1);
+			assert n > 0;
+			int line = toAbsoluteLine(fCursorLine);
+			int nLines = Math.min(fTerminal.getHeight() - line, fScrollRegion.getBottomLine() - fCursorLine + 1);
 			fTerminal.scroll(line, nLines, n);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#deleteCharacters(int)
 	 */
 	public void deleteCharacters(int n) {
 		synchronized (fTerminal) {
-			int line=toAbsoluteLine(fCursorLine);
-			for (int col = fCursorColumn+n; col < fColumns; col++) {
-				char c=fTerminal.getChar(line, col);
-				Style style=fTerminal.getStyle(line, col);
-				fTerminal.setChar(line, col-n,c, style);
+			int line = toAbsoluteLine(fCursorLine);
+			for (int col = fCursorColumn + n; col < fColumns; col++) {
+				char c = fTerminal.getChar(line, col);
+				Style style = fTerminal.getStyle(line, col);
+				fTerminal.setChar(line, col - n, c, style);
 			}
-			int first=Math.max(fCursorColumn, fColumns-n);
-			for (int col = first; col <fColumns; col++) {
-				fTerminal.setChar(line, col,'\000', null);
+			int first = Math.max(fCursorColumn, fColumns - n);
+			for (int col = first; col < fColumns; col++) {
+				fTerminal.setChar(line, col, '\000', null);
 			}
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#deleteLines(int)
 	 */
 	public void deleteLines(int n) {
 		synchronized (fTerminal) {
-			if(!isCusorInScrollingRegion())
+			if (!isCusorInScrollingRegion())
 				return;
-			assert n>0;
-			int line=toAbsoluteLine(fCursorLine);
-			int nLines=Math.min(fTerminal.getHeight()-line, fScrollRegion.getBottomLine()-fCursorLine+1);
+			assert n > 0;
+			int line = toAbsoluteLine(fCursorLine);
+			int nLines = Math.min(fTerminal.getHeight() - line, fScrollRegion.getBottomLine() - fCursorLine + 1);
 			fTerminal.scroll(line, nLines, -n);
 		}
 	}
+
 	private boolean isCusorInScrollingRegion() {
 		return fScrollRegion.contains(fCursorLine);
 	}
@@ -304,39 +319,41 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 */
 	public Style getStyle() {
 		synchronized (fTerminal) {
-			if(fStyle==null)
+			if (fStyle == null)
 				return fDefaultStyle;
 			return fStyle;
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setStyle(org.eclipse.tm.terminal.model.Style)
 	 */
 	public void setStyle(Style style) {
 		synchronized (fTerminal) {
-			fStyle=style;
+			fStyle = style;
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#appendString(java.lang.String)
 	 */
 	public void appendString(String buffer) {
 		synchronized (fTerminal) {
-			char[] chars=buffer.toCharArray();
+			char[] chars = buffer.toCharArray();
 			if (fInsertMode)
 				insertCharacters(chars.length);
-			int line=toAbsoluteLine(fCursorLine);
-			int i=0;
+			int line = toAbsoluteLine(fCursorLine);
+			int i = 0;
 			while (i < chars.length) {
-				if(fWrapPending) {
+				if (fWrapPending) {
 					line = doLineWrap();
 				}
-				int n=Math.min(fColumns-fCursorColumn,chars.length-i);
+				int n = Math.min(fColumns - fCursorColumn, chars.length - i);
 				fTerminal.setChars(line, fCursorColumn, chars, i, n, fStyle);
-				int col=fCursorColumn+n;
-				i+=n;
+				int col = fCursorColumn + n;
+				i += n;
 				// wrap needed?
-				if(col == fColumns) {
+				if (col == fColumns) {
 					if (fVT100LineWrapping) {
 						// deferred line wrapping (eat_newline_glitch)
 						setCursorColumn(col - 1);
@@ -353,10 +370,10 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 
 	private int doLineWrap() {
 		int line;
-		line=toAbsoluteLine(fCursorLine);
+		line = toAbsoluteLine(fCursorLine);
 		fTerminal.setWrappedLine(line);
 		doNewline();
-		line=toAbsoluteLine(fCursorLine);
+		line = toAbsoluteLine(fCursorLine);
 		setCursorColumn(0);
 		return line;
 	}
@@ -367,15 +384,16 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	private void doNewline() {
 		if (fCursorLine == fScrollRegion.getBottomLine())
 			scrollUp(1);
-		else if (fCursorLine+1>=fLines) {
-			int h=fTerminal.getHeight();
+		else if (fCursorLine + 1 >= fLines) {
+			int h = fTerminal.getHeight();
 			fTerminal.addLine();
-			if(h!=fTerminal.getHeight())
-				setCursorLine(fCursorLine+1);
+			if (h != fTerminal.getHeight())
+				setCursorLine(fCursorLine + 1);
 		} else {
-			setCursorLine(fCursorLine+1);
+			setCursorLine(fCursorLine + 1);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#processNewline()
 	 */
@@ -384,6 +402,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			doNewline();
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getCursorLine()
 	 */
@@ -392,6 +411,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			return fCursorLine;
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getCursorColumn()
 	 */
@@ -400,6 +420,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			return fCursorColumn;
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setCursor(int, int)
 	 */
@@ -415,11 +436,11 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 */
 	public void setCursorColumn(int targetColumn) {
 		synchronized (fTerminal) {
-			if(targetColumn<0)
-				targetColumn=0;
-			else if(targetColumn>=fColumns)
-				targetColumn=fColumns-1;
-			fCursorColumn=targetColumn;
+			if (targetColumn < 0)
+				targetColumn = 0;
+			else if (targetColumn >= fColumns)
+				targetColumn = fColumns - 1;
+			fCursorColumn = targetColumn;
 			fWrapPending = false;
 			// We make the assumption that nobody is changing the
 			// terminal cursor except this class!
@@ -433,11 +454,11 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 */
 	public void setCursorLine(int targetLine) {
 		synchronized (fTerminal) {
-			if(targetLine<0)
-				targetLine=0;
-			else if(targetLine>=fLines)
-				targetLine=fLines-1;
-			fCursorLine=targetLine;
+			if (targetLine < 0)
+				targetLine = 0;
+			else if (targetLine >= fLines)
+				targetLine = fLines - 1;
+			fCursorLine = targetLine;
 			// We make the assumption that nobody is changing the
 			// terminal cursor except this class!
 			// This assumption gives a huge performance improvement
@@ -470,32 +491,32 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	public boolean isVT100LineWrapping() {
 		return fVT100LineWrapping;
 	}
-	
+
 	public void setInsertMode(boolean enable) {
 		fInsertMode = enable;
 	}
 
 	public void setScrollRegion(int top, int bottom) {
 		if (top < 0 || bottom < 0)
-			fScrollRegion  = ScrollRegion.FULL_WINDOW;
+			fScrollRegion = ScrollRegion.FULL_WINDOW;
 		else if (top < bottom)
 			fScrollRegion = new ScrollRegion(top, bottom);
 	}
 
 	public void scrollUp(int n) {
-		assert n>0;
+		assert n > 0;
 		synchronized (fTerminal) {
 			int line = toAbsoluteLine(fScrollRegion.getTopLine());
-			int nLines = Math.min(fTerminal.getHeight()-line, fScrollRegion.getHeight());
+			int nLines = Math.min(fTerminal.getHeight() - line, fScrollRegion.getHeight());
 			fTerminal.scroll(line, nLines, -n);
 		}
 	}
 
 	public void scrollDown(int n) {
-		assert n>0;
+		assert n > 0;
 		synchronized (fTerminal) {
 			int line = toAbsoluteLine(fScrollRegion.getTopLine());
-			int nLines = Math.min(fTerminal.getHeight()-line, fScrollRegion.getHeight());
+			int nLines = Math.min(fTerminal.getHeight() - line, fScrollRegion.getHeight());
 			fTerminal.scroll(line, nLines, n);
 		}
 	}

@@ -52,7 +52,7 @@ public class TerminalsViewMementoHandler {
 	 * @param memento The memento. Must not be <code>null</code>.
 	 */
 	@SuppressWarnings("unchecked")
-    public void saveState(TerminalsView view, IMemento memento) {
+	public void saveState(TerminalsView view, IMemento memento) {
 		Assert.isNotNull(view);
 		Assert.isNotNull(memento);
 
@@ -69,16 +69,22 @@ public class TerminalsViewMementoHandler {
 		// item to the memento
 		for (CTabItem item : saveables) {
 			// Ignore disposed items
-			if (item.isDisposed()) continue;
+			if (item.isDisposed())
+				continue;
 
 			// Get the original terminal properties associated with the tab item
-			Map<String, Object> properties = (Map<String, Object>)item.getData("properties"); //$NON-NLS-1$
-			if (properties == null) continue;
+			Map<String, Object> properties = (Map<String, Object>) item.getData("properties"); //$NON-NLS-1$
+			if (properties == null)
+				continue;
 
 			// Get the terminal launcher delegate
-			String delegateId = (String)properties.get(ITerminalsConnectorConstants.PROP_DELEGATE_ID);
-			ILauncherDelegate delegate = delegateId != null ? LauncherDelegateManager.getInstance().getLauncherDelegate(delegateId, false) : null;
-			IMementoHandler mementoHandler = delegate != null ? (IMementoHandler)delegate.getAdapter(IMementoHandler.class) : null;
+			String delegateId = (String) properties.get(ITerminalsConnectorConstants.PROP_DELEGATE_ID);
+			ILauncherDelegate delegate = delegateId != null
+					? LauncherDelegateManager.getInstance().getLauncherDelegate(delegateId, false)
+					: null;
+			IMementoHandler mementoHandler = delegate != null
+					? (IMementoHandler) delegate.getAdapter(IMementoHandler.class)
+					: null;
 			if (mementoHandler != null) {
 				// Create terminal connection child memento
 				IMemento connectionMemento = memento.createChild("connection"); //$NON-NLS-1$
@@ -86,19 +92,23 @@ public class TerminalsViewMementoHandler {
 				// Store the common attributes
 				connectionMemento.putString(ITerminalsConnectorConstants.PROP_DELEGATE_ID, delegateId);
 
-				String terminalConnectorId = (String)properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
+				String terminalConnectorId = (String) properties
+						.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
 				if (terminalConnectorId != null) {
-					connectionMemento.putString(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, terminalConnectorId);
+					connectionMemento.putString(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID,
+							terminalConnectorId);
 				}
 
 				if (properties.get(ITerminalsConnectorConstants.PROP_FORCE_NEW) instanceof Boolean) {
-					connectionMemento.putBoolean(ITerminalsConnectorConstants.PROP_FORCE_NEW, ((Boolean)properties.get(ITerminalsConnectorConstants.PROP_FORCE_NEW)).booleanValue());
+					connectionMemento.putBoolean(ITerminalsConnectorConstants.PROP_FORCE_NEW,
+							((Boolean) properties.get(ITerminalsConnectorConstants.PROP_FORCE_NEW)).booleanValue());
 				}
 
 				// Store the current encoding
-				ITerminalViewControl terminal = (ITerminalViewControl)item.getData();
+				ITerminalViewControl terminal = (ITerminalViewControl) item.getData();
 				String encoding = terminal != null ? terminal.getEncoding() : null;
-				if (encoding == null || "".equals(encoding)) encoding = (String)properties.get(ITerminalsConnectorConstants.PROP_ENCODING); //$NON-NLS-1$
+				if (encoding == null || "".equals(encoding)) //$NON-NLS-1$
+					encoding = (String) properties.get(ITerminalsConnectorConstants.PROP_ENCODING);
 				if (encoding != null && !"".equals(encoding)) { //$NON-NLS-1$
 					connectionMemento.putString(ITerminalsConnectorConstants.PROP_ENCODING, encoding);
 				}
@@ -125,7 +135,8 @@ public class TerminalsViewMementoHandler {
 			// Read view id and secondary id
 			String id = memento.getString("id"); //$NON-NLS-1$
 			String secondaryId = memento.getString("secondaryId"); //$NON-NLS-1$
-			if ("null".equals(secondaryId)) secondaryId = null; //$NON-NLS-1$
+			if ("null".equals(secondaryId)) //$NON-NLS-1$
+				secondaryId = null;
 
 			// Get all the "connection" memento's.
 			IMemento[] connections = memento.getChildren("connection"); //$NON-NLS-1$
@@ -138,30 +149,38 @@ public class TerminalsViewMementoHandler {
 				properties.put(ITerminalsConnectorConstants.PROP_SECONDARY_ID, secondaryId);
 
 				// Restore the common attributes
-				properties.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, connection.getString(ITerminalsConnectorConstants.PROP_DELEGATE_ID));
-				properties.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, connection.getString(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID));
+				properties.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID,
+						connection.getString(ITerminalsConnectorConstants.PROP_DELEGATE_ID));
+				properties.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID,
+						connection.getString(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID));
 				if (connection.getBoolean(ITerminalsConnectorConstants.PROP_FORCE_NEW) != null) {
-					properties.put(ITerminalsConnectorConstants.PROP_FORCE_NEW, connection.getBoolean(ITerminalsConnectorConstants.PROP_FORCE_NEW));
+					properties.put(ITerminalsConnectorConstants.PROP_FORCE_NEW,
+							connection.getBoolean(ITerminalsConnectorConstants.PROP_FORCE_NEW));
 				}
 
 				// Restore the encoding
 				if (connection.getString(ITerminalsConnectorConstants.PROP_ENCODING) != null) {
-					properties.put(ITerminalsConnectorConstants.PROP_ENCODING, connection.getString(ITerminalsConnectorConstants.PROP_ENCODING));
+					properties.put(ITerminalsConnectorConstants.PROP_ENCODING,
+							connection.getString(ITerminalsConnectorConstants.PROP_ENCODING));
 				}
 
-                // Get the terminal launcher delegate
-                String delegateId = (String)properties.get(ITerminalsConnectorConstants.PROP_DELEGATE_ID);
-                ILauncherDelegate delegate = delegateId != null ? LauncherDelegateManager.getInstance().getLauncherDelegate(delegateId, false) : null;
-                IMementoHandler mementoHandler = delegate != null ? (IMementoHandler)delegate.getAdapter(IMementoHandler.class) : null;
-                if (mementoHandler != null) {
-                	// Pass on to the memento handler
-                	mementoHandler.restoreState(connection, properties);
-                }
+				// Get the terminal launcher delegate
+				String delegateId = (String) properties.get(ITerminalsConnectorConstants.PROP_DELEGATE_ID);
+				ILauncherDelegate delegate = delegateId != null
+						? LauncherDelegateManager.getInstance().getLauncherDelegate(delegateId, false)
+						: null;
+				IMementoHandler mementoHandler = delegate != null
+						? (IMementoHandler) delegate.getAdapter(IMementoHandler.class)
+						: null;
+				if (mementoHandler != null) {
+					// Pass on to the memento handler
+					mementoHandler.restoreState(connection, properties);
+				}
 
-                // Restore the terminal connection
-                if (delegate != null && !properties.isEmpty()) {
-                	delegate.execute(properties, null);
-                }
+				// Restore the terminal connection
+				if (delegate != null && !properties.isEmpty()) {
+					delegate.execute(properties, null);
+				}
 			}
 		}
 	}
@@ -173,7 +192,8 @@ public class TerminalsViewMementoHandler {
 	 */
 	/* default */ void asyncExec(Runnable runnable) {
 		Assert.isNotNull(runnable);
-		if (PlatformUI.getWorkbench() != null && PlatformUI.getWorkbench().getDisplay() != null && !PlatformUI.getWorkbench().getDisplay().isDisposed()) {
+		if (PlatformUI.getWorkbench() != null && PlatformUI.getWorkbench().getDisplay() != null
+				&& !PlatformUI.getWorkbench().getDisplay().isDisposed()) {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(runnable);
 		}
 	}

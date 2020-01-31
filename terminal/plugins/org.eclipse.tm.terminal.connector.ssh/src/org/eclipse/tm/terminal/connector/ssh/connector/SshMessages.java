@@ -59,7 +59,7 @@ public class SshMessages extends NLS {
 	public static String java_net_SocketException;
 	public static String java_net_NoRouteToHostException;
 
-    // <Copied from org.eclipse.team.cvs.core / CVSCommunicationException (c) IBM 2000, 2007>
+	// <Copied from org.eclipse.team.cvs.core / CVSCommunicationException (c) IBM 2000, 2007>
 
 	public static String getMessageFor(Throwable throwable) {
 		String message = getMessage(getMessageKey(throwable));
@@ -96,4 +96,4 @@ public class SshMessages extends NLS {
 
 	// </Copied from org.eclipse.team.cvs.core / Policy>
 
- }
+}

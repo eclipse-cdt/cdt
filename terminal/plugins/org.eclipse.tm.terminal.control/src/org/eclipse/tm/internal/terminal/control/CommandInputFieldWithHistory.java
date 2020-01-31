@@ -41,8 +41,6 @@ import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 
-
-
 /**
  * Manages the Command History for the command line input
  * of the terminal control.
@@ -60,16 +58,16 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	private class FieldAssist implements IContentProposalProvider {
 
 		public IContentProposal[] getProposals(String contents, int position) {
-			String prefix=contents.substring(0, position);
-			List<Proposal> result=new ArrayList<Proposal>();
+			String prefix = contents.substring(0, position);
+			List<Proposal> result = new ArrayList<Proposal>();
 			// show an entry only once
-			Set<String> seen=new HashSet<String>();
+			Set<String> seen = new HashSet<String>();
 			for (Iterator<String> iterator = fHistory.iterator(); iterator.hasNext();) {
 				String history = iterator.next();
-				if(history.startsWith(prefix) && !seen.contains(history)) {
+				if (history.startsWith(prefix) && !seen.contains(history)) {
 					// the content is the rest of the history item
-					String content=history.substring(prefix.length());
-					result.add(new Proposal(content,history));
+					String content = history.substring(prefix.length());
+					result.add(new Proposal(content, history));
 					// don't add this proposal again
 					seen.add(history);
 				}
@@ -78,14 +76,17 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		}
 
 	}
+
 	private static class Proposal implements IContentProposal {
 
 		private final String fContent;
 		private final String fLabel;
+
 		Proposal(String content, String label) {
-			fContent= content;
-			fLabel= label;
+			fContent = content;
+			fLabel = label;
 		}
+
 		public String getContent() {
 			return fContent;
 		}
@@ -103,7 +104,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		}
 	}
 
-	final List<String> fHistory=new ArrayList<String>();
+	final List<String> fHistory = new ArrayList<String>();
 	/**
 	 * Keeps a modifiable history while in history editing mode
 	 */
@@ -111,7 +112,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	/**
 	 * The current position in the edit history
 	 */
-	private int fEditHistoryPos=0;
+	private int fEditHistoryPos = 0;
 	/**
 	 * The limit of the history.
 	 */
@@ -122,9 +123,11 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	private Text fInputField;
 	private Sash fSash;
 	private Composite fPanel;
+
 	public CommandInputFieldWithHistory(int maxHistorySize) {
-		fMaxSize=maxHistorySize;
+		fMaxSize = maxHistorySize;
 	}
+
 	/**
 	 * Add a line to the history.
 	 * @param line The line to be added to the history.
@@ -132,16 +135,17 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	protected void pushLine(String line) {
 		endHistoryMode();
 		// anything to remember?
-		if(line==null || line.trim().length()==0)
+		if (line == null || line.trim().length() == 0)
 			return;
-		fHistory.add(0,line);
+		fHistory.add(0, line);
 		// ignore if the same as last
-		if(fHistory.size()>1 && line.equals(fHistory.get(1)))
+		if (fHistory.size() > 1 && line.equals(fHistory.get(1)))
 			fHistory.remove(0);
 		// limit the history size.
-		if(fHistory.size()>=fMaxSize)
-			fHistory.remove(fHistory.size()-1);
+		if (fHistory.size() >= fMaxSize)
+			fHistory.remove(fHistory.size() - 1);
 	}
+
 	/**
 	 * Sets the history
 	 * @param history or null
@@ -149,34 +153,36 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	public void setHistory(String history) {
 		endHistoryMode();
 		fHistory.clear();
-		if(history==null)
+		if (history == null)
 			return;
 		// add history entries separated by '\n'
 		// fHistory.addAll(Arrays.asList(history.split("\n"))); //$NON-NLS-1$
 		//<J2ME CDC-1.1 Foundation-1.1 variant>
-		StringTokenizer tok=new StringTokenizer(history,"\n"); //$NON-NLS-1$
-		while(tok.hasMoreElements())
+		StringTokenizer tok = new StringTokenizer(history, "\n"); //$NON-NLS-1$
+		while (tok.hasMoreElements())
 			fHistory.add((String) tok.nextElement());
 		//</J2ME CDC-1.1 Foundation-1.1 variant>
 	}
+
 	/**
 	 * @return the current content of the history buffer and new line separated list
 	 */
 	public String getHistory() {
-		StringBuffer buff=new StringBuffer();
-		boolean sep=false;
+		StringBuffer buff = new StringBuffer();
+		boolean sep = false;
 		for (Iterator<String> iterator = fHistory.iterator(); iterator.hasNext();) {
-			String line=iterator.next();
-			if(line.length()>0) {
-				if(sep)
+			String line = iterator.next();
+			if (line.length() > 0) {
+				if (sep)
 					buff.append("\n"); //$NON-NLS-1$
 				else
-					sep=true;
+					sep = true;
 				buff.append(line);
 			}
 		}
 		return buff.toString();
 	}
+
 	/**
 	 * @param currLine Line of text to be moved in history
 	 * @param count (+1 or -1) for forward and backward movement. -1 goes back
@@ -184,22 +190,23 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	 * if the limit is reached.
 	 */
 	public String move(String currLine, int count) {
-		if(!inHistoryMode()) {
-			fEditedHistory=new ArrayList<Object>(fHistory.size()+1);
+		if (!inHistoryMode()) {
+			fEditedHistory = new ArrayList<Object>(fHistory.size() + 1);
 			fEditedHistory.add(currLine);
 			fEditedHistory.addAll(fHistory);
-			fEditHistoryPos=0;
+			fEditHistoryPos = 0;
 		}
-		fEditedHistory.set(fEditHistoryPos,currLine);
-		if(fEditHistoryPos+count>=fEditedHistory.size())
+		fEditedHistory.set(fEditHistoryPos, currLine);
+		if (fEditHistoryPos + count >= fEditedHistory.size())
 			return null;
-		if(fEditHistoryPos+count<0)
+		if (fEditHistoryPos + count < 0)
 			return null;
-		fEditHistoryPos+=count;
+		fEditHistoryPos += count;
 		return (String) fEditedHistory.get(fEditHistoryPos);
 	}
+
 	private boolean inHistoryMode() {
-		return fEditedHistory!=null;
+		return fEditedHistory != null;
 	}
 
 	/**
@@ -207,41 +214,43 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	 * @return the string to be shown in the command line
 	 */
 	protected String escape() {
-		if(!inHistoryMode())
+		if (!inHistoryMode())
 			return null;
-		String line= (String) fEditedHistory.get(0);
+		String line = (String) fEditedHistory.get(0);
 		endHistoryMode();
 		return line;
 	}
+
 	/**
 	 * End history editing
 	 */
 	private void endHistoryMode() {
-		fEditedHistory=null;
-		fEditHistoryPos=0;
+		fEditedHistory = null;
+		fEditHistoryPos = 0;
 	}
-	public void createControl(final Composite parent,final ITerminalViewControl terminal) {
-//		fSash = new Sash(parent,SWT.HORIZONTAL|SWT.SMOOTH);
-		fSash = new Sash(parent,SWT.HORIZONTAL);
+
+	public void createControl(final Composite parent, final ITerminalViewControl terminal) {
+		//		fSash = new Sash(parent,SWT.HORIZONTAL|SWT.SMOOTH);
+		fSash = new Sash(parent, SWT.HORIZONTAL);
 		final GridData gd_sash = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd_sash.heightHint=5;
+		gd_sash.heightHint = 5;
 		fSash.setLayoutData(gd_sash);
-		fSash.addListener (SWT.Selection, new Listener () {
-			public void handleEvent (Event e) {
+		fSash.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
 				if (e.detail == SWT.DRAG) {
 					// don't redraw during drag, it causes paint errors - bug 220971
 					return;
 				}
 				// no idea why this is needed
 				GridData gdata = (GridData) fInputField.getLayoutData();
-				Rectangle sashRect = fSash.getBounds ();
-				Rectangle containerRect = parent.getClientArea ();
+				Rectangle sashRect = fSash.getBounds();
+				Rectangle containerRect = parent.getClientArea();
 
-				int h=fInputField.getLineHeight();
+				int h = fInputField.getLineHeight();
 				// make sure the input filed height is a multiple of the line height
-				gdata.heightHint = Math.max(((containerRect.height-e.y-sashRect.height)/h)*h,h);
+				gdata.heightHint = Math.max(((containerRect.height - e.y - sashRect.height) / h) * h, h);
 				// do not show less then one line
-				e.y=Math.min(e.y,containerRect.height-h);
+				e.y = Math.min(e.y, containerRect.height - h);
 				fInputField.setLayoutData(gdata);
 				parent.layout();
 				// else the content assist icon will be replicated
@@ -250,17 +259,20 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		});
 		fPanel = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0; layout.marginHeight = 0; layout.marginTop = 0; layout.marginBottom = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.marginTop = 0;
+		layout.marginBottom = 2;
 		fPanel.setLayout(layout);
 		fPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		fInputField=new Text(fPanel, SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL);
-		GridData data=new GridData(SWT.FILL, SWT.FILL, true, false);
-		boolean installDecoration=true;
-		if(installDecoration) {
+		fInputField = new Text(fPanel, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		boolean installDecoration = true;
+		if (installDecoration) {
 			// The ContentAssistCommandAdapter says: "The client is responsible for
 			// ensuring that adequate space is reserved for the decoration."
 			// TODO: what is the "adequate space"???
-			data.horizontalIndent=6;
+			data.horizontalIndent = 6;
 		}
 		fInputField.setLayoutData(data);
 		fInputField.setFont(terminal.getFont());
@@ -268,57 +280,56 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		// Else the ENTER key is sent *first* to the input field
 		// and then to the field assist popup.
 		// (https://bugs.eclipse.org/bugs/show_bug.cgi?id=211659)
-		new ContentAssistCommandAdapter(
-				fInputField,
-				new TextContentAdapter(),
-				new FieldAssist(),
-				null,
-				null,
+		new ContentAssistCommandAdapter(fInputField, new TextContentAdapter(), new FieldAssist(), null, null,
 				installDecoration);
-		fInputField.addKeyListener(new KeyListener(){
+		fInputField.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
 				// if the field assist has handled the key already then
 				// ignore it (https://bugs.eclipse.org/bugs/show_bug.cgi?id=211659)
-				if(!e.doit)
+				if (!e.doit)
 					return;
-				if(e.character==SWT.CR || e.character==SWT.LF) {
-					e.doit=false;
-					String line=fInputField.getText();
-					if(!terminal.pasteString(line+'\r'))
+				if (e.character == SWT.CR || e.character == SWT.LF) {
+					e.doit = false;
+					String line = fInputField.getText();
+					if (!terminal.pasteString(line + '\r'))
 						return;
 					pushLine(line);
 					setCommand("");//$NON-NLS-1$
-				} else if(e.keyCode==SWT.ARROW_UP || e.keyCode==SWT.PAGE_UP) {
-					e.doit=false;
-					setCommand(move(fInputField.getText(),1));
-				} else if(e.keyCode==SWT.ARROW_DOWN || e.keyCode==SWT.PAGE_DOWN) {
-					e.doit=false;
-					setCommand(move(fInputField.getText(),-1));
-				} else if(e.keyCode==SWT.ESC) {
-					e.doit=false;
+				} else if (e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.PAGE_UP) {
+					e.doit = false;
+					setCommand(move(fInputField.getText(), 1));
+				} else if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.PAGE_DOWN) {
+					e.doit = false;
+					setCommand(move(fInputField.getText(), -1));
+				} else if (e.keyCode == SWT.ESC) {
+					e.doit = false;
 					setCommand(escape());
 				}
 			}
+
 			private void setCommand(String line) {
-				if(line==null)
+				if (line == null)
 					return;
 				fInputField.setText(line);
 				fInputField.setSelection(fInputField.getCharCount());
 			}
+
 			public void keyReleased(KeyEvent e) {
 			}
 		});
 	}
+
 	public void setFont(Font font) {
 		fInputField.setFont(font);
 		fInputField.getParent().layout(true);
 	}
+
 	public void dispose() {
 		fSash.dispose();
-		fSash=null;
+		fSash = null;
 		fPanel.dispose();
-		fPanel=null;
+		fPanel = null;
 		fInputField.dispose();
-		fInputField=null;
+		fInputField = null;
 	}
 }

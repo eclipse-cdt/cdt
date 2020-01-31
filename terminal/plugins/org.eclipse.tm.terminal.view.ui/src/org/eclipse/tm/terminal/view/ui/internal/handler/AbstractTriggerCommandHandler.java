@@ -43,13 +43,14 @@ public abstract class AbstractTriggerCommandHandler extends AbstractHandler {
 	protected void triggerCommand(String commandId, ISelection selection) {
 		Assert.isNotNull(commandId);
 
-		ICommandService service = (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);
+		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command command = service != null ? service.getCommand(commandId) : null;
 		if (command != null && command.isDefined() && command.isEnabled()) {
 			try {
 				ParameterizedCommand pCmd = ParameterizedCommand.generateCommand(command, null);
 				Assert.isNotNull(pCmd);
-				IHandlerService handlerSvc = (IHandlerService)PlatformUI.getWorkbench().getService(IHandlerService.class);
+				IHandlerService handlerSvc = (IHandlerService) PlatformUI.getWorkbench()
+						.getService(IHandlerService.class);
 				Assert.isNotNull(handlerSvc);
 				IEvaluationContext ctx = handlerSvc.getCurrentState();
 				if (selection != null) {
@@ -61,7 +62,7 @@ public abstract class AbstractTriggerCommandHandler extends AbstractHandler {
 				// If the platform is in debug mode, we print the exception to the log view
 				if (Platform.inDebugMode()) {
 					IStatus status = new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(),
-												Messages.AbstractTriggerCommandHandler_error_executionFailed, e);
+							Messages.AbstractTriggerCommandHandler_error_executionFailed, e);
 					UIPlugin.getDefault().getLog().log(status);
 				}
 			}

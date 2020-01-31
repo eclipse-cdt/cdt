@@ -33,7 +33,7 @@ class EditActionAccelerators {
 
 	private void addAccelerator(String commandId) {
 		TriggerSequence[] bindings = bindingsFor(commandId);
-		for (int i=0; i<bindings.length; ++i) {
+		for (int i = 0; i < bindings.length; ++i) {
 			if (bindings[i] instanceof KeySequence) {
 				KeyStroke[] keyStrokes = ((KeySequence) bindings[i]).getKeyStrokes();
 				if (keyStrokes.length != 0) {

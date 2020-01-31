@@ -44,18 +44,18 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
 	 *
 	 * @param container The configuration panel container or <code>null</code>.
 	 */
-    public LocalWizardConfigurationPanel(IConfigurationPanelContainer container) {
-    	super(container);
-    }
+	public LocalWizardConfigurationPanel(IConfigurationPanelContainer container) {
+		super(container);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
+	 */
 	@Override
-    public void setupPanel(Composite parent) {
-    	Composite panel = new Composite(parent, SWT.NONE);
-    	panel.setLayout(new GridLayout());
-    	panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+	public void setupPanel(Composite parent) {
+		Composite panel = new Composite(parent, SWT.NONE);
+		panel.setLayout(new GridLayout());
+		panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		// Create the encoding selection combo
 		createEncodingUI(panel, false);
@@ -66,13 +66,14 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
 			setEncoding("UTF-8"); //$NON-NLS-1$
 		} else {
 			String encoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
-			if (encoding != null && !"".equals(encoding)) setEncoding(encoding); //$NON-NLS-1$
+			if (encoding != null && !"".equals(encoding)) //$NON-NLS-1$
+				setEncoding(encoding);
 		}
 
 		// Fill the rest of the panel with a label to be able to
 		// set a height and width hint for the dialog
-    	Label label = new Label(panel, SWT.HORIZONTAL);
-    	GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		Label label = new Label(panel, SWT.HORIZONTAL);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		layoutData.widthHint = 300;
 		layoutData.heightHint = 80;
 		label.setLayoutData(layoutData);
@@ -82,36 +83,39 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
 			resource = getSelectionResource();
 		}
 
-    	setControl(panel);
-    }
+		setControl(panel);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#setupData(java.util.Map)
 	 */
 	@Override
 	public void setupData(Map<String, Object> data) {
-		if (data == null) return;
+		if (data == null)
+			return;
 
-		String value = (String)data.get(ITerminalsConnectorConstants.PROP_ENCODING);
-		if (value != null) setEncoding(value);
-    }
+		String value = (String) data.get(ITerminalsConnectorConstants.PROP_ENCODING);
+		if (value != null)
+			setEncoding(value);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#extractData(java.util.Map)
 	 */
 	@Override
 	public void extractData(Map<String, Object> data) {
-    	// set the terminal connector id for local terminal
-    	data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, "org.eclipse.tm.terminal.connector.local.LocalConnector"); //$NON-NLS-1$
+		// set the terminal connector id for local terminal
+		data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID,
+				"org.eclipse.tm.terminal.connector.local.LocalConnector"); //$NON-NLS-1$
 
-    	// Store the encoding
+		// Store the encoding
 		data.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
 
 		Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
 		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 			// if we have a IResource selection use the location for working directory
-			if (resource instanceof org.eclipse.core.resources.IResource){
-				String dir = ((org.eclipse.core.resources.IResource)resource).getProject().getLocation().toString();
+			if (resource instanceof org.eclipse.core.resources.IResource) {
+				String dir = ((org.eclipse.core.resources.IResource) resource).getProject().getLocation().toString();
 				data.put(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR, dir);
 			}
 		}
@@ -121,21 +125,21 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#fillSettingsForHost(java.lang.String)
 	 */
 	@Override
-	protected void fillSettingsForHost(String host){
+	protected void fillSettingsForHost(String host) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#saveSettingsForHost(boolean)
 	 */
 	@Override
-	protected void saveSettingsForHost(boolean add){
+	protected void saveSettingsForHost(boolean add) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#isValid()
 	 */
 	@Override
-    public boolean isValid(){
+	public boolean isValid() {
 		return true;
 	}
 
@@ -143,16 +147,16 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#doSaveWidgetValues(org.eclipse.jface.dialogs.IDialogSettings, java.lang.String)
 	 */
 	@Override
-    public void doSaveWidgetValues(IDialogSettings settings, String idPrefix) {
+	public void doSaveWidgetValues(IDialogSettings settings, String idPrefix) {
 		// Save the encodings widget values
 		doSaveEncodingsWidgetValues(settings, idPrefix);
-    }
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#doRestoreWidgetValues(org.eclipse.jface.dialogs.IDialogSettings, java.lang.String)
 	 */
 	@Override
-    public void doRestoreWidgetValues(IDialogSettings settings, String idPrefix) {
+	public void doRestoreWidgetValues(IDialogSettings settings, String idPrefix) {
 		// Restore the encodings widget values
 		doRestoreEncodingsWidgetValues(settings, idPrefix);
 	}
@@ -161,17 +165,17 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#getHostFromSettings()
 	 */
 	@Override
-    protected String getHostFromSettings() {
+	protected String getHostFromSettings() {
 		return null;
-    }
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#isWithHostList()
 	 */
 	@Override
-    public boolean isWithHostList() {
-    	return false;
-    }
+	public boolean isWithHostList() {
+		return false;
+	}
 
 	/**
 	 * Returns the IResource from the current selection
@@ -184,11 +188,12 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
 
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			Object element = ((IStructuredSelection) selection).getFirstElement();
-			if (element instanceof org.eclipse.core.resources.IResource){
-				return ((org.eclipse.core.resources.IResource)element);
+			if (element instanceof org.eclipse.core.resources.IResource) {
+				return ((org.eclipse.core.resources.IResource) element);
 			}
 			if (element instanceof IAdaptable) {
-				return (org.eclipse.core.resources.IResource) ((IAdaptable) element).getAdapter(org.eclipse.core.resources.IResource.class);
+				return (org.eclipse.core.resources.IResource) ((IAdaptable) element)
+						.getAdapter(org.eclipse.core.resources.IResource.class);
 			}
 		}
 		return null;

@@ -42,44 +42,50 @@ final class VT100DataSource implements IDataSource {
 	private final String fFile;
 
 	VT100DataSource(String file) {
-		fFile=file;
+		fFile = file;
 	}
+
 	class InfiniteFileInputStream extends InputStream {
 		public InfiniteFileInputStream() {
 			try {
-				fInputStream=new FileInputStream(fFile);
+				fInputStream = new FileInputStream(fFile);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+
 		public int available() throws IOException {
 			return fAvailable;
 		}
+
 		private InputStream fInputStream;
+
 		public int read() throws IOException {
 			throw new IOException();
 		}
+
 		public int read(byte[] b, int off, int len) throws IOException {
-			while(fAvailable==0) {
+			while (fAvailable == 0) {
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				}
 			}
-			len=fAvailable;
-			int n=fInputStream.read(b, off, len);
-			if(n<=0) {
+			len = fAvailable;
+			int n = fInputStream.read(b, off, len);
+			if (n <= 0) {
 				fInputStream.close();
-				fInputStream=new FileInputStream(fFile);
-				n=fInputStream.read(b, off, len);
+				fInputStream = new FileInputStream(fFile);
+				n = fInputStream.read(b, off, len);
 			}
-			fAvailable-=n;
+			fAvailable -= n;
 			return n;
 		}
 
 	}
+
 	void init(ITerminalTextData terminal) {
 		final Reader reader;
 		try {
@@ -87,7 +93,7 @@ final class VT100DataSource implements IDataSource {
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
-		fEmulator=new VT100Emulator(terminal,new ITerminalControlForText() {
+		fEmulator = new VT100Emulator(terminal, new ITerminalControlForText() {
 
 			public void disconnectTerminal() {
 				// TODO Auto-generated method stub
@@ -116,16 +122,17 @@ final class VT100DataSource implements IDataSource {
 			}
 		}, reader);
 	}
+
 	public int step(ITerminalTextData terminal) {
-		synchronized(terminal) {
-			if(fEmulator==null) {
+		synchronized (terminal) {
+			if (fEmulator == null) {
 				init(terminal);
-//				fEmulator.setDimensions(48, 132);
+				//				fEmulator.setDimensions(48, 132);
 				fEmulator.setDimensions(24, 80);
 				fEmulator.setCrAfterNewLine(true);
 
 			}
-			fAvailable=80;
+			fAvailable = 80;
 			fEmulator.processText();
 		}
 		return 80;

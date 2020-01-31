@@ -20,19 +20,19 @@ import org.eclipse.ui.IMemento;
  */
 public interface IMementoHandler {
 
-    /**
-     * Saves the terminal properties in the given memento.
-     *
-     * @param memento The memento. Must not be <code>null</code>.
-     * @param properties The map containing the terminal properties to save. Must not be <code>null</code>.
-     */
-    public void saveState(IMemento memento, Map<String, Object> properties);
+	/**
+	 * Saves the terminal properties in the given memento.
+	 *
+	 * @param memento The memento. Must not be <code>null</code>.
+	 * @param properties The map containing the terminal properties to save. Must not be <code>null</code>.
+	 */
+	public void saveState(IMemento memento, Map<String, Object> properties);
 
-    /**
-     * Restore the terminal properties from the given memento.
-     *
-     * @param memento The memento. Must not be <code>null</code>.
-     * @param properties The map receiving the restored terminal properties. Must not be <code>null</code>.
-     */
-    public void restoreState(IMemento memento, Map<String, Object> properties);
+	/**
+	 * Restore the terminal properties from the given memento.
+	 *
+	 * @param memento The memento. Must not be <code>null</code>.
+	 * @param properties The map receiving the restored terminal properties. Must not be <code>null</code>.
+	 */
+	public void restoreState(IMemento memento, Map<String, Object> properties);
 }

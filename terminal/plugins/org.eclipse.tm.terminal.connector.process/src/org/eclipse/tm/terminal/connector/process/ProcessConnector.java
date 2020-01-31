@@ -113,7 +113,7 @@ public class ProcessConnector extends AbstractStreamsConnector {
 						pty = new PTY(PTY.Mode.TERMINAL);
 
 						// Initialize the terminal size
-						VT100Emulator text = ((VT100TerminalControl)control).getTerminalText();
+						VT100Emulator text = ((VT100TerminalControl) control).getTerminalText();
 						text.fontChanged();
 					} catch (IOException e) {
 						// PTY not supported
@@ -129,13 +129,13 @@ public class ProcessConnector extends AbstractStreamsConnector {
 					command.append(arguments.trim());
 				}
 
-				File workingDir =null;
-				if (settings.getWorkingDir()!=null){
+				File workingDir = null;
+				if (settings.getWorkingDir() != null) {
 					workingDir = new File(settings.getWorkingDir());
 				}
 
 				String[] envp = null;
-				if (settings.getEnvironment()!=null){
+				if (settings.getEnvironment() != null) {
 					envp = settings.getEnvironment();
 				}
 
@@ -165,7 +165,8 @@ public class ProcessConnector extends AbstractStreamsConnector {
 					}
 
 					// Execute the process
-					process = ProcessFactory.getFactory().exec(argv.toArray(new String[argv.size()]), envp, workingDir, pty);
+					process = ProcessFactory.getFactory().exec(argv.toArray(new String[argv.size()]), envp, workingDir,
+							pty);
 				} else {
 					// No PTY -> just execute via the standard Java Runtime implementation.
 					process = Runtime.getRuntime().exec(command.toString(), envp, workingDir);
@@ -177,11 +178,9 @@ public class ProcessConnector extends AbstractStreamsConnector {
 				lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 				if ("\r".equals(lineSeparator)) { //$NON-NLS-1$
 					lineSeparator = ILineSeparatorConstants.LINE_SEPARATOR_CR;
-				}
-				else if ("\n".equals(lineSeparator)) { //$NON-NLS-1$
+				} else if ("\n".equals(lineSeparator)) { //$NON-NLS-1$
 					lineSeparator = ILineSeparatorConstants.LINE_SEPARATOR_LF;
-				}
-				else {
+				} else {
 					lineSeparator = ILineSeparatorConstants.LINE_SEPARATOR_CRLF;
 				}
 			}
@@ -196,7 +195,8 @@ public class ProcessConnector extends AbstractStreamsConnector {
 				control.setVT100LineWrapping(true);
 
 			// connect the streams
-			connectStreams(control, process.getOutputStream(), process.getInputStream(), (pty == null ? process.getErrorStream() : null), settings.isLocalEcho(), lineSeparator);
+			connectStreams(control, process.getOutputStream(), process.getInputStream(),
+					(pty == null ? process.getErrorStream() : null), settings.isLocalEcho(), lineSeparator);
 
 			// Set the terminal control state to CONNECTED
 			control.setState(TerminalState.CONNECTED);
@@ -209,7 +209,8 @@ public class ProcessConnector extends AbstractStreamsConnector {
 			disconnect();
 			// Lookup the tab item
 			CTabItem item = ConsoleManager.getInstance().findConsole(control);
-			if (item != null) item.dispose();
+			if (item != null)
+				item.dispose();
 			// Get the error message from the exception
 			String msg = e.getLocalizedMessage() != null ? e.getLocalizedMessage() : ""; //$NON-NLS-1$
 			Assert.isNotNull(msg);
@@ -225,10 +226,10 @@ public class ProcessConnector extends AbstractStreamsConnector {
 	private static String getTermVariable(String[] envp) {
 		if (envp != null && !Platform.OS_WIN32.equals(Platform.getOS()))
 			for (String var : envp)
-		        if (var.startsWith("TERM=")) //$NON-NLS-1$
-		        	return var.substring(5);
-	    return "xterm"; //$NON-NLS-1$
-    }
+				if (var.startsWith("TERM=")) //$NON-NLS-1$
+					return var.substring(5);
+		return "xterm"; //$NON-NLS-1$
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#isLocalEcho()
@@ -252,7 +253,10 @@ public class ProcessConnector extends AbstractStreamsConnector {
 
 		if (!isWindows) {
 			// Destroy the process first, except on windows (Bug 465674)
-			if (process != null) { process.destroy(); process = null; }
+			if (process != null) {
+				process.destroy();
+				process = null;
+			}
 		}
 
 		// Dispose the streams
@@ -260,7 +264,10 @@ public class ProcessConnector extends AbstractStreamsConnector {
 
 		if (isWindows) {
 			// On Windows destroy the process after closing streams
-			if (process != null) { process.destroy(); process = null; }
+			if (process != null) {
+				process.destroy();
+				process = null;
+			}
 		}
 
 		// Set the terminal control state to CLOSED.
@@ -274,7 +281,7 @@ public class ProcessConnector extends AbstractStreamsConnector {
 	 */
 	@Override
 	public void setDefaultSettings() {
-	    settings.load(new NullSettingsStore());
+		settings.load(new NullSettingsStore());
 	}
 
 	/* (non-Javadoc)

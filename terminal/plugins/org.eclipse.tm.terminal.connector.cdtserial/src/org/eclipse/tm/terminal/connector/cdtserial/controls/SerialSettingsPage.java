@@ -246,13 +246,10 @@ public class SerialSettingsPage extends AbstractSettingsPage {
 		settings.setStopBits(StopBits.fromStringIndex(stopBitsCombo.getSelectionIndex()));
 
 		dialogSettings.put(SerialSettings.PORT_NAME_ATTR, portCombo.getText());
-		dialogSettings.put(SerialSettings.BAUD_RATE_ATTR,
-				BaudRate.getStrings()[baudRateCombo.getSelectionIndex()]);
-		dialogSettings.put(SerialSettings.BYTE_SIZE_ATTR,
-				ByteSize.getStrings()[byteSizeCombo.getSelectionIndex()]);
+		dialogSettings.put(SerialSettings.BAUD_RATE_ATTR, BaudRate.getStrings()[baudRateCombo.getSelectionIndex()]);
+		dialogSettings.put(SerialSettings.BYTE_SIZE_ATTR, ByteSize.getStrings()[byteSizeCombo.getSelectionIndex()]);
 		dialogSettings.put(SerialSettings.PARITY_ATTR, Parity.getStrings()[parityCombo.getSelectionIndex()]);
-		dialogSettings.put(SerialSettings.STOP_BITS_ATTR,
-				StopBits.getStrings()[stopBitsCombo.getSelectionIndex()]);
+		dialogSettings.put(SerialSettings.STOP_BITS_ATTR, StopBits.getStrings()[stopBitsCombo.getSelectionIndex()]);
 	}
 
 	@Override

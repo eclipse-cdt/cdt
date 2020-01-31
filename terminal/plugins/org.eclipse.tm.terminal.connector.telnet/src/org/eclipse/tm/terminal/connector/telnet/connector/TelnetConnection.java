@@ -297,7 +297,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 	 * display.
 	 */
 	@Override
-    public void run() {
+	public void run() {
 		Logger.log("Entered"); //$NON-NLS-1$
 
 		try {
@@ -335,7 +335,8 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 			// A "socket closed" exception is normal here. It's caused by the
 			// user clicking the disconnect button on the Terminal view toolbar.
 
-			if (message != null && !message.equalsIgnoreCase("Socket closed") && !message.equalsIgnoreCase("Connection reset")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (message != null && !message.equalsIgnoreCase("Socket closed") //$NON-NLS-1$
+					&& !message.equalsIgnoreCase("Connection reset")) //$NON-NLS-1$
 			{
 				Logger.logException(ex);
 			}
@@ -345,8 +346,14 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 		} finally {
 			// Tell the ITerminalControl object that the connection is closed.
 			terminalControl.setState(TerminalState.CLOSED);
-			try { inputStream.close(); } catch(IOException ioe) { /*ignore*/ }
-			try { outputStream.close(); } catch(IOException ioe) { /*ignore*/ }
+			try {
+				inputStream.close();
+			} catch (IOException ioe) {
+				/*ignore*/ }
+			try {
+				outputStream.close();
+			} catch (IOException ioe) {
+				/*ignore*/ }
 		}
 	}
 

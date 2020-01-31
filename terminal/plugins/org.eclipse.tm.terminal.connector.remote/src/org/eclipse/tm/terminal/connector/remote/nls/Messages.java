@@ -23,7 +23,7 @@ public class Messages extends NLS {
 	public static String RemoteTerminalPreferencePage_0;
 
 	public static String TERMINAL_EXCEPTION;
-	
+
 	public static String RemoteLauncherDelegate_terminalTitle;
 	public static String RemoteLauncherDelegate_terminalTitle_default;
 

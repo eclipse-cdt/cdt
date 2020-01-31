@@ -69,18 +69,21 @@ public class ConsoleManager {
 		@Override
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 			// If the old references list is empty, just return
-			if (references.isEmpty()) return;
+			if (references.isEmpty())
+				return;
 			// Create a copy of the old view references list
 			List<IViewReference> oldReferences = new ArrayList<IViewReference>(references);
 
 			// Get the current list of view references
 			List<IViewReference> references = new ArrayList<IViewReference>(Arrays.asList(page.getViewReferences()));
 			for (IViewReference reference : oldReferences) {
-				if (references.contains(reference)) continue;
+				if (references.contains(reference))
+					continue;
 				// Previous visible terminals console view reference, make visible again
 				try {
 					page.showView(reference.getId(), reference.getSecondaryId(), IWorkbenchPage.VIEW_VISIBLE);
-				} catch (PartInitException e) { /* Failure on part instantiation is ignored */ }
+				} catch (PartInitException e) {
+					/* Failure on part instantiation is ignored */ }
 			}
 
 		}
@@ -111,42 +114,42 @@ public class ConsoleManager {
 	class ConsoleManagerPartListener implements IPartListener2 {
 
 		@Override
-        public void partActivated(IWorkbenchPartReference partRef) {
+		public void partActivated(IWorkbenchPartReference partRef) {
 			IWorkbenchPart part = partRef.getPart(false);
 			if (part instanceof ITerminalsView) {
-				lastActiveViewId = ((ITerminalsView)part).getViewSite().getId();
-				lastActiveSecondaryViewId = ((ITerminalsView)part).getViewSite().getSecondaryId();
+				lastActiveViewId = ((ITerminalsView) part).getViewSite().getId();
+				lastActiveSecondaryViewId = ((ITerminalsView) part).getViewSite().getSecondaryId();
 				//System.out.println("Terminals view activated: id = " + lastActiveViewId + ", secondary id = " + lastActiveSecondaryViewId); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-        }
+		}
 
 		@Override
-        public void partBroughtToTop(IWorkbenchPartReference partRef) {
-        }
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {
+		}
 
 		@Override
-        public void partClosed(IWorkbenchPartReference partRef) {
-        }
+		public void partClosed(IWorkbenchPartReference partRef) {
+		}
 
 		@Override
-        public void partDeactivated(IWorkbenchPartReference partRef) {
-        }
+		public void partDeactivated(IWorkbenchPartReference partRef) {
+		}
 
 		@Override
-        public void partOpened(IWorkbenchPartReference partRef) {
-        }
+		public void partOpened(IWorkbenchPartReference partRef) {
+		}
 
 		@Override
-        public void partHidden(IWorkbenchPartReference partRef) {
-        }
+		public void partHidden(IWorkbenchPartReference partRef) {
+		}
 
 		@Override
-        public void partVisible(IWorkbenchPartReference partRef) {
-        }
+		public void partVisible(IWorkbenchPartReference partRef) {
+		}
 
 		@Override
-        public void partInputChanged(IWorkbenchPartReference partRef) {
-        }
+		public void partInputChanged(IWorkbenchPartReference partRef) {
+		}
 	}
 
 	/*
@@ -172,7 +175,8 @@ public class ConsoleManager {
 		perspectiveListener = new ConsoleManagerPerspectiveListener();
 		partListener = new ConsoleManagerPartListener();
 
-		if (PlatformUI.isWorkbenchRunning() && PlatformUI.getWorkbench() != null && PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null) {
+		if (PlatformUI.isWorkbenchRunning() && PlatformUI.getWorkbench() != null
+				&& PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null) {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().addPerspectiveListener(perspectiveListener);
 
 			IPartService service = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService();
@@ -187,7 +191,8 @@ public class ConsoleManager {
 	 */
 	private final IWorkbenchPage getActiveWorkbenchPage() {
 		// To lookup the console view, the workbench must be still running
-		if (PlatformUI.isWorkbenchRunning() && PlatformUI.getWorkbench() != null && PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null) {
+		if (PlatformUI.isWorkbenchRunning() && PlatformUI.getWorkbench() != null
+				&& PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null) {
 			return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		}
 		return null;
@@ -215,7 +220,7 @@ public class ConsoleManager {
 			IViewPart part = getTerminalsViewWithSecondaryId(id != null ? id : IUIConstants.ID, secondaryId, true);
 			// Check the interface
 			if (part instanceof ITerminalsView) {
-				view = (ITerminalsView)part;
+				view = (ITerminalsView) part;
 			}
 		}
 
@@ -236,9 +241,8 @@ public class ConsoleManager {
 
 		for (IViewReference ref : getActiveWorkbenchPage().getViewReferences()) {
 			if (ref.getId().equals(id)) {
-				if (ANY_SECONDARY_ID.equals(secondaryId)
-								|| secondaryId == null && ref.getSecondaryId() == null
-								|| secondaryId != null && secondaryId.equals(ref.getSecondaryId())) {
+				if (ANY_SECONDARY_ID.equals(secondaryId) || secondaryId == null && ref.getSecondaryId() == null
+						|| secondaryId != null && secondaryId.equals(ref.getSecondaryId())) {
 					return ref.getView(restore);
 				}
 			}
@@ -259,7 +263,8 @@ public class ConsoleManager {
 		IViewPart part = null;
 
 		if (id.equals(lastActiveViewId)) {
-			if (secondaryId == null || ANY_SECONDARY_ID.equals(secondaryId) || secondaryId.equals(lastActiveSecondaryViewId)) {
+			if (secondaryId == null || ANY_SECONDARY_ID.equals(secondaryId)
+					|| secondaryId.equals(lastActiveSecondaryViewId)) {
 				part = getTerminalsViewWithSecondaryId(lastActiveViewId, lastActiveSecondaryViewId, false);
 			}
 		}
@@ -296,8 +301,7 @@ public class ConsoleManager {
 					if (scondaryIdInt > maxNumber) {
 						maxNumber = scondaryIdInt;
 					}
-				}
-				else {
+				} else {
 					// add the one with secondaryId == null with 0 by default
 					terminalViews.put(Integer.toString(0), ref);
 				}
@@ -337,12 +341,12 @@ public class ConsoleManager {
 			try {
 				// show the view
 				IViewPart part = getActiveTerminalsView(id != null ? id : IUIConstants.ID, secondaryId);
-				if (part == null) part = page.showView(id != null ? id : IUIConstants.ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
+				if (part == null)
+					part = page.showView(id != null ? id : IUIConstants.ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
 				// and force the view to the foreground
 				page.bringToTop(part);
 				return part;
-			}
-			catch (PartInitException e) {
+			} catch (PartInitException e) {
 				IStatus status = new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(), e.getLocalizedMessage(), e);
 				UIPlugin.getDefault().getLog().log(status);
 			}
@@ -369,8 +373,10 @@ public class ConsoleManager {
 				return newPart;
 			}
 
-			if (activate) page.activate(activePart);
-			else page.bringToTop(activePart);
+			if (activate)
+				page.activate(activePart);
+			else
+				page.bringToTop(activePart);
 
 			return activePart;
 		}
@@ -383,8 +389,8 @@ public class ConsoleManager {
 	 * @param id
 	 * @return the secondaryId argument is not null, or *, otherwise use the auto generated secondary id.
 	 */
-	private String getSecondaryId(String secondaryId, String id){
-		if(secondaryId==null || ANY_SECONDARY_ID.equals(secondaryId)){
+	private String getSecondaryId(String secondaryId, String id) {
+		if (secondaryId == null || ANY_SECONDARY_ID.equals(secondaryId)) {
 			return getNextTerminalSecondaryId(id != null ? id : IUIConstants.ID);
 		}
 
@@ -403,7 +409,8 @@ public class ConsoleManager {
 	 * @param data The custom terminal data node or <code>null</code>.
 	 * @param flags The flags controlling how the console is opened or <code>null</code> to use defaults.
 	 */
-	public CTabItem openConsole(String id, String title, String encoding, ITerminalConnector connector, Object data, Map<String, Boolean> flags) {
+	public CTabItem openConsole(String id, String title, String encoding, ITerminalConnector connector, Object data,
+			Map<String, Boolean> flags) {
 		return openConsole(id, ANY_SECONDARY_ID, title, encoding, connector, data, flags);
 	}
 
@@ -421,27 +428,33 @@ public class ConsoleManager {
 	 * @param flags The flags controlling how the console is opened or <code>null</code> to use defaults.
 	 */
 	@SuppressWarnings("cast")
-	public CTabItem openConsole(String id, String secondaryId, String title, String encoding, ITerminalConnector connector, Object data, Map<String, Boolean> flags) {
+	public CTabItem openConsole(String id, String secondaryId, String title, String encoding,
+			ITerminalConnector connector, Object data, Map<String, Boolean> flags) {
 		Assert.isNotNull(title);
 		Assert.isNotNull(connector);
 		Assert.isNotNull(Display.findDisplay(Thread.currentThread()));
 
 		// Get the flags handled by the openConsole method itself
-		boolean activate = flags != null && flags.containsKey("activate") ? flags.get("activate").booleanValue() : false; //$NON-NLS-1$ //$NON-NLS-2$
-		boolean forceNew = flags != null && flags.containsKey(ITerminalsConnectorConstants.PROP_FORCE_NEW) ? flags.get(ITerminalsConnectorConstants.PROP_FORCE_NEW).booleanValue() : false;
+		boolean activate = flags != null && flags.containsKey("activate") ? flags.get("activate").booleanValue() //$NON-NLS-1$//$NON-NLS-2$
+				: false;
+		boolean forceNew = flags != null && flags.containsKey(ITerminalsConnectorConstants.PROP_FORCE_NEW)
+				? flags.get(ITerminalsConnectorConstants.PROP_FORCE_NEW).booleanValue()
+				: false;
 
 		// Make the consoles view visible
 		IViewPart part = bringToTop(id, secondaryId, activate);
-		if (!(part instanceof ITerminalsView)) return null;
+		if (!(part instanceof ITerminalsView))
+			return null;
 		// Cast to the correct type
-		ITerminalsView view = (ITerminalsView)part;
+		ITerminalsView view = (ITerminalsView) part;
 
 		// Get the tab folder manager associated with the view
 		TabFolderManager manager = (TabFolderManager) view.getAdapter(TabFolderManager.class);
-		if (manager == null) return null;
+		if (manager == null)
+			return null;
 
 		// Lookup an existing console first
-		String secId = ((IViewSite)part.getSite()).getSecondaryId();
+		String secId = ((IViewSite) part.getSite()).getSecondaryId();
 		CTabItem item = findConsole(id, secId, title, connector, data);
 
 		// Switch to the tab folder page _before_ calling TabFolderManager#createItem(...).
@@ -467,7 +480,8 @@ public class ConsoleManager {
 			item = manager.createTabItem(title, encoding, connector, data, flags);
 		}
 		// If still null, something went wrong
-		if (item == null) return null;
+		if (item == null)
+			return null;
 
 		// Make the item the active console
 		manager.bringToTop(item);
@@ -494,18 +508,21 @@ public class ConsoleManager {
 	 * @return The corresponding console tab item or <code>null</code>.
 	 */
 	@SuppressWarnings("cast")
-	public CTabItem findConsole(String id, String secondaryId, String title, ITerminalConnector connector, Object data) {
+	public CTabItem findConsole(String id, String secondaryId, String title, ITerminalConnector connector,
+			Object data) {
 		Assert.isNotNull(title);
 		Assert.isNotNull(connector);
 		Assert.isNotNull(Display.findDisplay(Thread.currentThread()));
 
 		// Get the console view
 		ITerminalsView view = findConsoleView(id, secondaryId);
-		if (view == null) return null;
+		if (view == null)
+			return null;
 
 		// Get the tab folder manager associated with the view
 		TabFolderManager manager = (TabFolderManager) view.getAdapter(TabFolderManager.class);
-		if (manager == null) return null;
+		if (manager == null)
+			return null;
 
 		return manager.findTabItem(title, connector, data);
 	}
@@ -530,7 +547,8 @@ public class ConsoleManager {
 				IViewPart part = ref != null ? ref.getView(false) : null;
 				if (part instanceof ITerminalsView) {
 					CTabFolder tabFolder = (CTabFolder) part.getAdapter(CTabFolder.class);
-					if (tabFolder == null) continue;
+					if (tabFolder == null)
+						continue;
 					CTabItem[] candidates = tabFolder.getItems();
 					for (CTabItem candidate : candidates) {
 						Object data = candidate.getData();
@@ -540,7 +558,8 @@ public class ConsoleManager {
 						}
 					}
 				}
-				if (item != null) break;
+				if (item != null)
+					break;
 			}
 		}
 
@@ -560,7 +579,8 @@ public class ConsoleManager {
 	 * @return The corresponding console tab item or <code>null</code>.
 	 */
 	@SuppressWarnings("cast")
-	private CTabItem findConsoleForTerminalConnector(String id, String title, ITerminalConnector connector, Object data) {
+	private CTabItem findConsoleForTerminalConnector(String id, String title, ITerminalConnector connector,
+			Object data) {
 		Assert.isNotNull(title);
 		Assert.isNotNull(connector);
 
@@ -629,7 +649,7 @@ public class ConsoleManager {
 		CTabItem console = findConsoleForTerminalConnector(id, title, connector, data);
 		// If found, disconnect the console
 		if (console != null && !console.isDisposed()) {
-			ITerminalViewControl terminal = (ITerminalViewControl)console.getData();
+			ITerminalViewControl terminal = (ITerminalViewControl) console.getData();
 			if (terminal != null && !terminal.isDisposed()) {
 				terminal.disconnectTerminal();
 			}

@@ -19,14 +19,15 @@ package org.eclipse.tm.terminal.connector.ssh.connector;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 public class SshSettings implements ISshSettings {
-    protected String fHost;
-    protected String fUser;
-    protected String fPassword;
-    protected String fPort;
-    protected String fTimeout;
-    protected String fKeepalive;
+	protected String fHost;
+	protected String fUser;
+	protected String fPassword;
+	protected String fPort;
+	protected String fTimeout;
+	protected String fKeepalive;
+
 	@Override
-    public String getHost() {
+	public String getHost() {
 		return fHost;
 	}
 
@@ -35,16 +36,16 @@ public class SshSettings implements ISshSettings {
 	}
 
 	@Override
-    public String getSummary() {
-		String settings = getUser()+'@'+getHost();
-		if(getPort()!=ISshSettings.DEFAULT_SSH_PORT) {
+	public String getSummary() {
+		String settings = getUser() + '@' + getHost();
+		if (getPort() != ISshSettings.DEFAULT_SSH_PORT) {
 			settings += ":" + getPort(); //$NON-NLS-1$
 		}
 		return settings;
 	}
 
 	@Override
-    public void load(ISettingsStore store) {
+	public void load(ISettingsStore store) {
 		fHost = store.get("Host", "");//$NON-NLS-1$ //$NON-NLS-2$
 		fUser = store.get("User", "");//$NON-NLS-1$ //$NON-NLS-2$
 		// ISettingsStore providers have to make sure that
@@ -57,7 +58,7 @@ public class SshSettings implements ISshSettings {
 	}
 
 	@Override
-    public void save(ISettingsStore store) {
+	public void save(ISettingsStore store) {
 		store.put("Host", fHost);//$NON-NLS-1$
 		store.put("User", fUser);//$NON-NLS-1$
 		store.put("Port", fPort);//$NON-NLS-1$
@@ -68,15 +69,15 @@ public class SshSettings implements ISshSettings {
 		store.put("Keepalive", fKeepalive);//$NON-NLS-1$
 	}
 
-
 	@Override
-    public int getTimeout() {
+	public int getTimeout() {
 		try {
 			return Integer.parseInt(fTimeout);
 		} catch (NumberFormatException numberFormatException) {
 			return 10;
 		}
 	}
+
 	public String getTimeoutString() {
 		return fTimeout;
 	}
@@ -86,13 +87,14 @@ public class SshSettings implements ISshSettings {
 	}
 
 	@Override
-    public int getKeepalive() {
+	public int getKeepalive() {
 		try {
 			return Integer.parseInt(fKeepalive);
 		} catch (NumberFormatException numberFormatException) {
 			return 300;
 		}
 	}
+
 	public String getKeepaliveString() {
 		return fKeepalive;
 	}
@@ -102,15 +104,16 @@ public class SshSettings implements ISshSettings {
 	}
 
 	@Override
-    public String getUser() {
+	public String getUser() {
 		return fUser;
 	}
 
 	public void setUser(String user) {
 		fUser = user;
 	}
+
 	@Override
-    public int getPort() {
+	public int getPort() {
 		try {
 			return Integer.parseInt(fPort);
 		} catch (NumberFormatException numberFormatException) {
@@ -127,7 +130,7 @@ public class SshSettings implements ISshSettings {
 	}
 
 	@Override
-    public String getPassword() {
+	public String getPassword() {
 		return fPassword;
 	}
 

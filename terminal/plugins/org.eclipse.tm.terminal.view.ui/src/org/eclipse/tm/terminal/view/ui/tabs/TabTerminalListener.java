@@ -60,7 +60,8 @@ public class TabTerminalListener implements ITerminalListener2 {
 	}
 
 	private void attachTo(CTabItem item) {
-		if (tabItem != null) tabItem.setData(TAB_TERMINAL_LISTENER, null);
+		if (tabItem != null)
+			tabItem.setData(TAB_TERMINAL_LISTENER, null);
 		item.setData(TAB_TERMINAL_LISTENER, this);
 		tabItem = item;
 	}
@@ -81,7 +82,8 @@ public class TabTerminalListener implements ITerminalListener2 {
 	public void setState(final TerminalState state) {
 		// The tab item must have been not yet disposed
 		final CTabItem item = getTabItem();
-		if (item == null || item.isDisposed()) return;
+		if (item == null || item.isDisposed())
+			return;
 
 		// Run asynchronously in the display thread
 		item.getDisplay().asyncExec(new Runnable() {
@@ -89,7 +91,8 @@ public class TabTerminalListener implements ITerminalListener2 {
 			public void run() {
 				// Update the tab item title
 				String newTitle = getTerminalConsoleTabTitle(state);
-				if (newTitle != null) item.setText(newTitle);
+				if (newTitle != null)
+					item.setText(newTitle);
 
 				// Turn off the command field (if necessary)
 				TabCommandFieldHandler handler = tabFolderManager.getTabCommandFieldHandler(item);
@@ -123,7 +126,8 @@ public class TabTerminalListener implements ITerminalListener2 {
 
 		// The tab item must have been not yet disposed
 		CTabItem item = getTabItem();
-		if (item == null || item.isDisposed()) return null;
+		if (item == null || item.isDisposed())
+			return null;
 
 		// Get the current tab title
 		String oldTitle = item.getText();
@@ -132,12 +136,12 @@ public class TabTerminalListener implements ITerminalListener2 {
 		String newTitle = null;
 
 		if (TerminalState.CLOSED.equals(state)) {
-			newTitle = NLS.bind(Messages.TabTerminalListener_consoleClosed, tabItemTitle, tabFolderManager.state2msg(item, state));
-		}
-		else if (TerminalState.CONNECTING.equals(state)) {
-			newTitle = NLS.bind(Messages.TabTerminalListener_consoleConnecting, tabItemTitle, tabFolderManager.state2msg(item, state));
-		}
-		else if (TerminalState.CONNECTED.equals(state)) {
+			newTitle = NLS.bind(Messages.TabTerminalListener_consoleClosed, tabItemTitle,
+					tabFolderManager.state2msg(item, state));
+		} else if (TerminalState.CONNECTING.equals(state)) {
+			newTitle = NLS.bind(Messages.TabTerminalListener_consoleConnecting, tabItemTitle,
+					tabFolderManager.state2msg(item, state));
+		} else if (TerminalState.CONNECTED.equals(state)) {
 			newTitle = tabItemTitle;
 		}
 

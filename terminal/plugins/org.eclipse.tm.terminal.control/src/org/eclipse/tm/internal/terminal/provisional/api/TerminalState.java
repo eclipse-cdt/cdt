@@ -30,17 +30,17 @@ public class TerminalState {
 	/**
 	 * The terminal is not connected.
 	 */
-	public final static TerminalState CLOSED=new TerminalState("CLOSED"); //$NON-NLS-1$
+	public final static TerminalState CLOSED = new TerminalState("CLOSED"); //$NON-NLS-1$
 
 	/**
 	 * The terminal is about to connect.
 	 */
-	public final static TerminalState CONNECTING=new TerminalState("CONNECTING..."); //$NON-NLS-1$
+	public final static TerminalState CONNECTING = new TerminalState("CONNECTING..."); //$NON-NLS-1$
 
 	/**
 	 * The terminal is connected.
 	 */
-	public final static TerminalState CONNECTED=new TerminalState("CONNECTED"); //$NON-NLS-1$
+	public final static TerminalState CONNECTED = new TerminalState("CONNECTED"); //$NON-NLS-1$
 
 	private final String fState;
 

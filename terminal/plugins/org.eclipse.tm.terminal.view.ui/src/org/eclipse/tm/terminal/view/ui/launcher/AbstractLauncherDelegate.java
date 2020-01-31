@@ -44,8 +44,10 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
-	    if (config == null) return;
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
+		if (config == null)
+			return;
 
 		// Initialize the id field by reading the <id> extension attribute.
 		// Throws an exception if the id is empty or null.
@@ -88,11 +90,8 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 		Assert.isNotNull(attributeName);
 		Assert.isNotNull(extensionId);
 
-		return new CoreException(new Status(IStatus.ERROR,
-				UIPlugin.getUniqueIdentifier(),
-				0,
-				NLS.bind(Messages.Extension_error_missingRequiredAttribute, attributeName, extensionId),
-				null));
+		return new CoreException(new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(), 0,
+				NLS.bind(Messages.Extension_error_missingRequiredAttribute, attributeName, extensionId), null));
 	}
 
 	/* (non-Javadoc)
@@ -115,7 +114,7 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#getEnablement()
 	 */
 	@Override
-    public Expression getEnablement() {
+	public Expression getEnablement() {
 		return expression;
 	}
 
@@ -124,7 +123,7 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 	 */
 	@Override
 	public boolean isHidden() {
-	    return hidden;
+		return hidden;
 	}
 
 	/* (non-Javadoc)
@@ -133,9 +132,9 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AbstractLauncherDelegate) {
-			return id.equals(((AbstractLauncherDelegate)obj).id);
+			return id.equals(((AbstractLauncherDelegate) obj).id);
 		}
-	    return super.equals(obj);
+		return super.equals(obj);
 	}
 
 	/* (non-Javadoc)
@@ -143,7 +142,7 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 	 */
 	@Override
 	public int hashCode() {
-	    return id.hashCode();
+		return id.hashCode();
 	}
 
 	/**
@@ -155,7 +154,7 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 	 * @since 4.1
 	 */
 	protected String getDefaultTerminalTitle(Map<String, Object> properties) {
-		String title = (String)properties.get(ITerminalsConnectorConstants.PROP_TITLE);
+		String title = (String) properties.get(ITerminalsConnectorConstants.PROP_TITLE);
 		return title != null ? title : null;
 	}
 }

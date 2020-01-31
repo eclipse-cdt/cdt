@@ -73,21 +73,24 @@ public class TelnetConnector extends TerminalConnectorImpl {
 	public TelnetConnector() {
 		this(new TelnetSettings());
 	}
+
 	public TelnetConnector(TelnetSettings settings) {
-		fSettings=settings;
+		fSettings = settings;
 	}
+
 	@Override
-    public void connect(ITerminalControl control) {
+	public void connect(ITerminalControl control) {
 		super.connect(control);
-		fWidth=-1;
-		fHeight=-1;
+		fWidth = -1;
+		fHeight = -1;
 		// TERM=xterm implies VT100 line wrapping mode
 		control.setVT100LineWrapping(true);
-		TelnetConnectWorker worker = new TelnetConnectWorker(this,control);
+		TelnetConnectWorker worker = new TelnetConnectWorker(this, control);
 		worker.start();
 	}
+
 	@Override
-    public void doDisconnect() {
+	public void doDisconnect() {
 		if (getSocket() != null) {
 			try {
 				getSocket().close();
@@ -113,31 +116,37 @@ public class TelnetConnector extends TerminalConnectorImpl {
 		}
 		cleanSocket();
 	}
+
 	@Override
-    public boolean isLocalEcho() {
-		if(fTelnetConnection==null)
+	public boolean isLocalEcho() {
+		if (fTelnetConnection == null)
 			return false;
 		return fTelnetConnection.localEcho();
 	}
+
 	@Override
-    public void setTerminalSize(int newWidth, int newHeight) {
-		if(fTelnetConnection!=null && (newWidth!=fWidth || newHeight!=fHeight)) {
+	public void setTerminalSize(int newWidth, int newHeight) {
+		if (fTelnetConnection != null && (newWidth != fWidth || newHeight != fHeight)) {
 			//avoid excessive communications due to change size requests by caching previous size
 			fTelnetConnection.setTerminalSize(newWidth, newHeight);
-			fWidth=newWidth;
-			fHeight=newHeight;
+			fWidth = newWidth;
+			fHeight = newHeight;
 		}
 	}
+
 	public InputStream getInputStream() {
 		return fInputStream;
 	}
+
 	@Override
-    public OutputStream getTerminalToRemoteStream() {
+	public OutputStream getTerminalToRemoteStream() {
 		return fOutputStream;
 	}
+
 	private void setInputStream(InputStream inputStream) {
 		fInputStream = inputStream;
 	}
+
 	private void setOutputStream(OutputStream outputStream) {
 		if (outputStream == null) {
 			fOutputStream = null;
@@ -146,6 +155,7 @@ public class TelnetConnector extends TerminalConnectorImpl {
 		// translate CR to telnet end-of-line sequence - RFC 854
 		fOutputStream = new TelnetOutputStream(outputStream, fSettings.getEndOfLine());
 	}
+
 	Socket getSocket() {
 		return fSocket;
 	}
@@ -154,13 +164,13 @@ public class TelnetConnector extends TerminalConnectorImpl {
 	 * sets the socket to null
 	 */
 	void cleanSocket() {
-		fSocket=null;
+		fSocket = null;
 		setInputStream(null);
 		setOutputStream(null);
 	}
 
 	void setSocket(Socket socket) throws IOException {
-		if(socket==null) {
+		if (socket == null) {
 			cleanSocket();
 		} else {
 			fSocket = socket;
@@ -169,35 +179,44 @@ public class TelnetConnector extends TerminalConnectorImpl {
 		}
 
 	}
+
 	public void setTelnetConnection(TelnetConnection connection) {
-		fTelnetConnection=connection;
+		fTelnetConnection = connection;
 	}
+
 	public void displayTextInTerminal(String text) {
 		fControl.displayTextInTerminal(text);
 	}
-	public OutputStream getRemoteToTerminalOutputStream () {
+
+	public OutputStream getRemoteToTerminalOutputStream() {
 		return fControl.getRemoteToTerminalOutputStream();
 	}
+
 	public void setState(TerminalState state) {
 		fControl.setState(state);
 	}
+
 	public ITelnetSettings getTelnetSettings() {
 		return fSettings;
 	}
+
 	@Override
 	public void setDefaultSettings() {
-	    fSettings.load(new NullSettingsStore());
+		fSettings.load(new NullSettingsStore());
 	}
+
 	@Override
-    public String getSettingsSummary() {
+	public String getSettingsSummary() {
 		return fSettings.getSummary();
 	}
+
 	@Override
-    public void load(ISettingsStore store) {
+	public void load(ISettingsStore store) {
 		fSettings.load(store);
 	}
+
 	@Override
-    public void save(ISettingsStore store) {
+	public void save(ISettingsStore store) {
 		fSettings.save(store);
 	}
 }

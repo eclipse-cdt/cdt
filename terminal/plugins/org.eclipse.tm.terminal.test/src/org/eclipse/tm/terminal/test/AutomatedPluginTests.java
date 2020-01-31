@@ -29,7 +29,7 @@ public class AutomatedPluginTests extends TestCase {
 		//These tests require Eclipse Platform to be up
 		suite.addTestSuite(org.eclipse.tm.internal.terminal.connector.TerminalConnectorPluginTest.class);
 		suite.addTestSuite(org.eclipse.tm.internal.terminal.connector.TerminalConnectorFactoryTest.class);
-		
+
 		//These tests must run as plain JUnit because they require access
 		//to "package" protected methods
 		//suite.addTest(AutomatedTests.suite());

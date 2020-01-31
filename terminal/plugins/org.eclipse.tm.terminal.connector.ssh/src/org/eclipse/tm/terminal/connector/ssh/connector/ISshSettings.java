@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2018 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
- * https://www.eclipse.org/legal/epl-2.0/ 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
@@ -18,26 +18,26 @@ public interface ISshSettings {
 
 	public static int DEFAULT_SSH_PORT = 22;
 
-	/** 
+	/**
 	 * Get the host name or IP address of remote system to connect.
 	 * @return host name or IP address of the remote system.
-	 */ 
+	 */
 	String getHost();
 
 	/**
 	 * Get the login name for connecting to the remote system.
 	 * @return remote login name
-	 */ 
+	 */
 	String getUser();
 
 	/**
 	 *  Get the password for connecting to the remote system.
 	 *  May be empty if connecting via SSH public key authentication
 	 *  (with or without passphrase).
-	 *  @return password to use 
-	 */ 
+	 *  @return password to use
+	 */
 	String getPassword();
-	
+
 	/**
 	 * Get the timeout (in seconds) after which the SSH connection is assumed dead.
 	 * @return timeout (in seconds) for the SSH connection.
@@ -47,9 +47,9 @@ public interface ISshSettings {
 	/**
 	 * Get the keepalive interval (in seconds).
 	 * After this time of inactivity, the SSH connector will send a message to the
-	 * remote system in order to avoid timeouts on the remote. A maximum of 6 
-	 * keepalive messages will be sent if enabled. When set to 0, the keepalive 
-	 * feature is disabled. 
+	 * remote system in order to avoid timeouts on the remote. A maximum of 6
+	 * keepalive messages will be sent if enabled. When set to 0, the keepalive
+	 * feature is disabled.
 	 * @return interval (in seconds) for keepalive messages.
 	 */
 	int getKeepalive();

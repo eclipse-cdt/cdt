@@ -46,10 +46,12 @@ public class LocalLauncherHandler extends AbstractHandler {
 		if (!(selection instanceof IStructuredSelection)) {
 			IEditorInput input = HandlerUtil.getActiveEditorInput(event);
 			if (input instanceof IPathEditorInput) {
-				IPath path = ((IPathEditorInput)input).getPath();
+				IPath path = ((IPathEditorInput) input).getPath();
 				if (path != null) {
-					if (path.toFile().isFile()) path = path.removeLastSegments(1);
-					if (path.toFile().isDirectory() && path.toFile().canRead()) selection = new StructuredSelection(path);
+					if (path.toFile().isFile())
+						path = path.removeLastSegments(1);
+					if (path.toFile().isDirectory() && path.toFile().canRead())
+						selection = new StructuredSelection(path);
 				}
 			}
 		}

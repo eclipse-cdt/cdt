@@ -113,7 +113,8 @@ public class ProcessSettings {
 	public void setPTY(PTY pty) {
 		this.pty = pty;
 		// If the PTY is set to "null", the local echo will be set to "true"
-		if (pty == null) setLocalEcho(true);
+		if (pty == null)
+			setLocalEcho(true);
 	}
 
 	/**
@@ -265,15 +266,18 @@ public class ProcessSettings {
 		image = store.get("Path", null);//$NON-NLS-1$
 		arguments = store.get("Arguments", null); //$NON-NLS-1$
 		localEcho = Boolean.parseBoolean(store.get("LocalEcho", Boolean.FALSE.toString())); //$NON-NLS-1$
-		mergeWithNativeEnvironment = Boolean.parseBoolean(store.get("MergeWithNativeEnvironment", Boolean.FALSE.toString())); //$NON-NLS-1$
+		mergeWithNativeEnvironment = Boolean
+				.parseBoolean(store.get("MergeWithNativeEnvironment", Boolean.FALSE.toString())); //$NON-NLS-1$
 		lineSeparator = store.get("LineSeparator", null); //$NON-NLS-1$
 		workingDir = store.get("WorkingDir", null); //$NON-NLS-1$
 		if (store instanceof SettingsStore) {
-			process = (Process)((SettingsStore)store).getSettings().get("Process"); //$NON-NLS-1$
-			pty = (PTY)((SettingsStore)store).getSettings().get("PTY"); //$NON-NLS-1$
-			stdoutListeners = (ITerminalServiceOutputStreamMonitorListener[])((SettingsStore)store).getSettings().get("StdOutListeners"); //$NON-NLS-1$
-			stderrListeners = (ITerminalServiceOutputStreamMonitorListener[])((SettingsStore)store).getSettings().get("StdErrListeners"); //$NON-NLS-1$
-			environment = (String[])((SettingsStore)store).getSettings().get("Environment"); //$NON-NLS-1$
+			process = (Process) ((SettingsStore) store).getSettings().get("Process"); //$NON-NLS-1$
+			pty = (PTY) ((SettingsStore) store).getSettings().get("PTY"); //$NON-NLS-1$
+			stdoutListeners = (ITerminalServiceOutputStreamMonitorListener[]) ((SettingsStore) store).getSettings()
+					.get("StdOutListeners"); //$NON-NLS-1$
+			stderrListeners = (ITerminalServiceOutputStreamMonitorListener[]) ((SettingsStore) store).getSettings()
+					.get("StdErrListeners"); //$NON-NLS-1$
+			environment = (String[]) ((SettingsStore) store).getSettings().get("Environment"); //$NON-NLS-1$
 		}
 	}
 
@@ -291,11 +295,11 @@ public class ProcessSettings {
 		store.put("LineSeparator", lineSeparator); //$NON-NLS-1$
 		store.put("WorkingDir", workingDir); //$NON-NLS-1$
 		if (store instanceof SettingsStore) {
-			((SettingsStore)store).getSettings().put("Process", process); //$NON-NLS-1$
-			((SettingsStore)store).getSettings().put("PTY", pty); //$NON-NLS-1$
-			((SettingsStore)store).getSettings().put("StdOutListeners", stdoutListeners); //$NON-NLS-1$
-			((SettingsStore)store).getSettings().put("StdErrListeners", stderrListeners); //$NON-NLS-1$
-			((SettingsStore)store).getSettings().put("Environment", environment); //$NON-NLS-1$
+			((SettingsStore) store).getSettings().put("Process", process); //$NON-NLS-1$
+			((SettingsStore) store).getSettings().put("PTY", pty); //$NON-NLS-1$
+			((SettingsStore) store).getSettings().put("StdOutListeners", stdoutListeners); //$NON-NLS-1$
+			((SettingsStore) store).getSettings().put("StdErrListeners", stderrListeners); //$NON-NLS-1$
+			((SettingsStore) store).getSettings().put("Environment", environment); //$NON-NLS-1$
 		}
 	}
 }

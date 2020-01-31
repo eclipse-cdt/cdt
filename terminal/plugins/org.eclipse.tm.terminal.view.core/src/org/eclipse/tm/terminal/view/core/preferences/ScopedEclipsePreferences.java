@@ -115,6 +115,7 @@ public class ScopedEclipsePreferences {
 				public String[] getScopes() {
 					return new String[] { InstanceScope.SCOPE };
 				}
+
 				/* (non-Javadoc)
 				 * @see org.eclipse.core.runtime.preferences.IPreferenceFilter#getMapping(java.lang.String)
 				 */
@@ -124,10 +125,10 @@ public class ScopedEclipsePreferences {
 				}
 			};
 
-			Platform.getPreferencesService().exportPreferences(contextScopePrefs, new IPreferenceFilter[] { filter }, stream);
+			Platform.getPreferencesService().exportPreferences(contextScopePrefs, new IPreferenceFilter[] { filter },
+					stream);
 			stream.close();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 		}
 	}
 
@@ -236,8 +237,7 @@ public class ScopedEclipsePreferences {
 		if (value == null || value.equals(defValue)) {
 			contextScopePrefs.remove(key);
 			flushAndNotify(contextScopePrefs, key, instValue, defValue);
-		}
-		else if (!value.equals(instValue)) {
+		} else if (!value.equals(instValue)) {
 			contextScopePrefs.put(key, value);
 			flushAndNotify(contextScopePrefs, key, instValue, value);
 		}
@@ -258,8 +258,7 @@ public class ScopedEclipsePreferences {
 		if (value == defValue) {
 			contextScopePrefs.remove(key);
 			flushAndNotify(contextScopePrefs, key, Boolean.toString(instValue), Boolean.toString(defValue));
-		}
-		else if (value != instValue) {
+		} else if (value != instValue) {
 			contextScopePrefs.putBoolean(key, value);
 			flushAndNotify(contextScopePrefs, key, Boolean.toString(instValue), Boolean.toString(value));
 		}
@@ -281,8 +280,7 @@ public class ScopedEclipsePreferences {
 		if (value == defValue) {
 			contextScopePrefs.remove(key);
 			flushAndNotify(contextScopePrefs, key, Integer.toString(instValue), Integer.toString(defValue));
-		}
-		else if (value != instValue) {
+		} else if (value != instValue) {
 			contextScopePrefs.putInt(key, value);
 			flushAndNotify(contextScopePrefs, key, Integer.toString(instValue), Integer.toString(value));
 		}
@@ -304,8 +302,7 @@ public class ScopedEclipsePreferences {
 		if (value == defValue) {
 			contextScopePrefs.remove(key);
 			flushAndNotify(contextScopePrefs, key, Long.toString(instValue), Long.toString(defValue));
-		}
-		else if (value != instValue) {
+		} else if (value != instValue) {
 			contextScopePrefs.putLong(key, value);
 			flushAndNotify(contextScopePrefs, key, Long.toString(instValue), Long.toString(value));
 		}
@@ -325,8 +322,7 @@ public class ScopedEclipsePreferences {
 		if (value == null) {
 			defaultPrefs.remove(key);
 			flushAndNotify(defaultPrefs, key, defValue, null);
-		}
-		else if (!value.equals(defValue)) {
+		} else if (!value.equals(defValue)) {
 			defaultPrefs.put(key, value);
 			flushAndNotify(defaultPrefs, key, defValue, value);
 		}
@@ -392,7 +388,10 @@ public class ScopedEclipsePreferences {
 	 */
 	protected final void flushAndNotify(IEclipsePreferences node, String key, String oldValue, String newValue) {
 		// Flush the preferences to the persistence store
-		try { node.flush(); } catch (BackingStoreException e) { /* Ignored on purpose */ }
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			/* Ignored on purpose */ }
 
 		// Notify the listeners
 		firePreferenceEvent(node, key, oldValue, newValue);
@@ -435,7 +434,8 @@ public class ScopedEclipsePreferences {
 		Assert.isNotNull(key);
 
 		// If no listener is registered, we are done here
-		if (listeners.isEmpty()) return;
+		if (listeners.isEmpty())
+			return;
 
 		// Get the list or currently registered listeners
 		Object[] l = listeners.getListeners();

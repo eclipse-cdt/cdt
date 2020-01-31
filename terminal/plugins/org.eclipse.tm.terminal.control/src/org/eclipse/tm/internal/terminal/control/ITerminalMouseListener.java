@@ -17,7 +17,7 @@ import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
  * Terminal specific version of {@link org.eclipse.swt.events.MouseListener}
  * @since 4.1
  */
-public interface ITerminalMouseListener  {
+public interface ITerminalMouseListener {
 	/**
 	 * Invoked when a double-click has happend inside the terminal control.<br>
 	 * <br>
@@ -26,6 +26,7 @@ public interface ITerminalMouseListener  {
 	 * @param button see {@link org.eclipse.swt.events.MouseEvent#button} for the meaning of the button values
 	 */
 	void mouseDoubleClick(ITerminalTextDataReadOnly terminalText, int line, int column, int button);
+
 	/**
 	 * Invoked when a mouse button is pushed down inside the terminal control.<br>
 	 * <br>
@@ -34,6 +35,7 @@ public interface ITerminalMouseListener  {
 	 * @param button see {@link org.eclipse.swt.events.MouseEvent#button} for the meaning of the button values
 	 */
 	void mouseDown(ITerminalTextDataReadOnly terminalText, int line, int column, int button);
+
 	/**
 	 * Invoked when a mouse button is released inside the terminal control.<br>
 	 * <br>

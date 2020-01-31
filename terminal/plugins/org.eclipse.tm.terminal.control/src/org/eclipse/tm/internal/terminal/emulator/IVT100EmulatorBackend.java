@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2018 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
- * https://www.eclipse.org/legal/epl-2.0/ 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
@@ -73,17 +73,17 @@ public interface IVT100EmulatorBackend {
 	void eraseLineToCursor();
 
 	/**
-	 * Inserts n lines at line with cursor. Lines displayed below cursor move down. 
-	 * Lines moved past the bottom margin are lost. This sequence is ignored when 
+	 * Inserts n lines at line with cursor. Lines displayed below cursor move down.
+	 * Lines moved past the bottom margin are lost. This sequence is ignored when
 	 * cursor is outside scrolling region.
 	 * @param n the number of lines to insert
 	 */
 	void insertLines(int n);
 
 	/**
-	 * Deletes n characters, starting with the character at cursor position. 
-	 * When a character is deleted, all characters to the right of cursor move 
-	 * left. This creates a space character at right margin. This character 
+	 * Deletes n characters, starting with the character at cursor position.
+	 * When a character is deleted, all characters to the right of cursor move
+	 * left. This creates a space character at right margin. This character
 	 * has same character attribute as the last character moved left.
 	 * @param n
 	 * 012345
@@ -92,9 +92,9 @@ public interface IVT100EmulatorBackend {
 	void deleteCharacters(int n);
 
 	/**
-	 * Deletes n lines, starting at line with cursor. As lines are deleted, 
-	 * lines displayed below cursor move up. Lines added to bottom of screen 
-	 * have spaces with same character attributes as last line moved up. This 
+	 * Deletes n lines, starting at line with cursor. As lines are deleted,
+	 * lines displayed below cursor move up. Lines added to bottom of screen
+	 * have spaces with same character attributes as last line moved up. This
 	 * sequence is ignored when cursor is outside scrolling region.
 	 * @param n the number of lines to delete
 	 */
@@ -117,7 +117,7 @@ public interface IVT100EmulatorBackend {
 	 * view, wrapping text at the right edge of the screen and overwriting text
 	 * when the cursor is not at the very end of the screen's text.
 	 * <p>
-	 * 
+	 *
 	 * There are never any ANSI control characters or escape sequences in the
 	 * text being displayed by this method (this includes newlines, carriage
 	 * returns, and tabs).
@@ -134,7 +134,7 @@ public interface IVT100EmulatorBackend {
 	 * first column of the next line, as if a carriage return (CR) and a NL were
 	 * written.
 	 * <p>
-	 * 
+	 *
 	 * UNIX terminals typically display a NL character as a CR followed by a NL
 	 * because the terminal device typically has the ONLCR attribute bit set
 	 * (see the termios(4) man page for details), which causes the terminal
@@ -151,7 +151,7 @@ public interface IVT100EmulatorBackend {
 	 * This method returns the relative line number of the line containing the
 	 * cursor. The returned line number is relative to the topmost visible line,
 	 * which has relative line number 0.
-	 * 
+	 *
 	 * @return The relative line number of the line containing the cursor.
 	 */
 	int getCursorLine();
@@ -181,7 +181,7 @@ public interface IVT100EmulatorBackend {
 	 * If enabled, writing to the rightmost column does not cause
 	 * an immediate wrap to the next line. Instead the line wrap occurs on the
 	 * next output character.
-	 * 
+	 *
 	 * @param enable  whether to enable or disable VT100 line wrapping mode
 	 */
 	void setVT100LineWrapping(boolean enable);
@@ -193,14 +193,14 @@ public interface IVT100EmulatorBackend {
 
 	/**
 	 * Enables/disables insert mode (IRM).
-	 * 
+	 *
 	 * @param enable  whether to enable insert mode
 	 */
 	void setInsertMode(boolean enable);
 
 	/**
 	 * Set scrolling region. Negative values reset the scroll region.
-	 * 
+	 *
 	 * @param top  top line of scroll region
 	 * @param bottom  bottom line of scroll region
 	 */
@@ -208,14 +208,14 @@ public interface IVT100EmulatorBackend {
 
 	/**
 	 * Scroll text upwards.
-	 * 
+	 *
 	 * @param lines  number of lines to scroll
 	 */
 	void scrollUp(int lines);
 
 	/**
 	 * Scroll text downwards.
-	 * 
+	 *
 	 * @param lines  number of lines to scroll
 	 */
 	void scrollDown(int lines);

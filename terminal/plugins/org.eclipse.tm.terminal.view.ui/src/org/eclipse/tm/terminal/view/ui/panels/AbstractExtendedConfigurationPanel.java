@@ -116,7 +116,8 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 			ITerminalContextPropertiesProvider provider = TerminalContextPropertiesProviderFactory.getProvider(element);
 			if (provider != null) {
 				Object encoding = provider.getProperty(element, IContextPropertiesConstants.PROP_DEFAULT_ENCODING);
-				if (encoding instanceof String) return ((String) encoding).trim();
+				if (encoding instanceof String)
+					return ((String) encoding).trim();
 			}
 		}
 
@@ -138,8 +139,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 				if (hostString.length == 2) {
 					HashMap<String, String> attr = deSerialize(hostString[1]);
 					hostSettingsMap.put(hostName, attr);
-				}
-				else {
+				} else {
 					hostSettingsMap.put(hostName, new HashMap<String, String>());
 				}
 			}
@@ -150,8 +150,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 			if (host != null) {
 				fillSettingsForHost(host);
 			}
-		}
-		else {
+		} else {
 			if (hostCombo != null) {
 				fillHostCombo();
 				String lastHost = settings.get(LAST_HOST_TAG);
@@ -159,12 +158,10 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 					int index = hostCombo.indexOf(lastHost);
 					if (index != -1) {
 						hostCombo.select(index);
-					}
-					else {
+					} else {
 						hostCombo.select(0);
 					}
-				}
-				else {
+				} else {
 					hostCombo.select(0);
 				}
 				fillSettingsForHost(hostCombo.getText());
@@ -190,7 +187,8 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 	protected void doRestoreEncodingsWidgetValues(IDialogSettings settings, String idPrefix) {
 		Assert.isNotNull(settings);
 
-		String encoding = settings.get(prefixDialogSettingsSlotId(ITerminalsConnectorConstants.PROP_ENCODING, idPrefix));
+		String encoding = settings
+				.get(prefixDialogSettingsSlotId(ITerminalsConnectorConstants.PROP_ENCODING, idPrefix));
 		if (encoding != null && encoding.trim().length() > 0) {
 			setEncoding(encoding);
 		}
@@ -208,7 +206,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 
 		if (hostString.length() != 0) {
 			String[] hostAttrs = hostString.split("\\:");//$NON-NLS-1$
-			for (int j = 0; j < hostAttrs.length-1; j = j + 2) {
+			for (int j = 0; j < hostAttrs.length - 1; j = j + 2) {
 				String key = hostAttrs[j];
 				String value = hostAttrs[j + 1];
 				attr.put(key, value);
@@ -260,7 +258,8 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 		if (isWithoutSelection()) {
 			if (hostCombo != null) {
 				String host = getHostFromSettings();
-				if (host != null) settings.put(LAST_HOST_TAG, host);
+				if (host != null)
+					settings.put(LAST_HOST_TAG, host);
 			}
 		}
 
@@ -335,16 +334,14 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 			}
 			if (hostList.size() <= 1) {
 				hostCombo.setEnabled(false);
-			}
-			else {
+			} else {
 				hostCombo.setEnabled(true);
 
 			}
 			if (deleteHostButton != null) {
 				if (hostList.size() == 0) {
 					deleteHostButton.setEnabled(false);
-				}
-				else {
+				} else {
 					deleteHostButton.setEnabled(true);
 				}
 			}
@@ -455,7 +452,8 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 
 		Composite panel = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight = 0; layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		panel.setLayout(layout);
 		panel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
@@ -469,25 +467,26 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 			public void widgetSelected(SelectionEvent e) {
 				if (Messages.AbstractConfigurationPanel_encoding_custom.equals(encodingCombo.getText())) {
 					InputDialog dialog = new InputDialog(parent.getShell(),
-														 Messages.AbstractConfigurationPanel_encoding_custom_title,
-														 Messages.AbstractConfigurationPanel_encoding_custom_message,
-														 null,
-														 new IInputValidator() {
-															@Override
-															public String isValid(String newText) {
-																boolean valid = false;
-																try {
-																	if (newText != null && !"".equals(newText)) { //$NON-NLS-1$
-																		valid = Charset.isSupported(newText);
-																	}
-																} catch (IllegalCharsetNameException e) { /* ignored on purpose */ }
+							Messages.AbstractConfigurationPanel_encoding_custom_title,
+							Messages.AbstractConfigurationPanel_encoding_custom_message, null, new IInputValidator() {
+								@Override
+								public String isValid(String newText) {
+									boolean valid = false;
+									try {
+										if (newText != null && !"".equals(newText)) { //$NON-NLS-1$
+											valid = Charset.isSupported(newText);
+										}
+									} catch (IllegalCharsetNameException e) {
+										/* ignored on purpose */ }
 
-																if (!valid) {
-																	return newText != null && !"".equals(newText) ? Messages.AbstractConfigurationPanel_encoding_custom_error : ""; //$NON-NLS-1$ //$NON-NLS-2$
-																}
-																return null;
-															}
-														});
+									if (!valid) {
+										return newText != null && !"".equals(newText) //$NON-NLS-1$
+												? Messages.AbstractConfigurationPanel_encoding_custom_error
+												: ""; //$NON-NLS-1$
+									}
+									return null;
+								}
+							});
 					if (dialog.open() == Window.OK) {
 						String encoding = dialog.getValue();
 						encodingCombo.add(encoding, encodingCombo.getItemCount() - 1);
@@ -496,7 +495,8 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 
 						// Remember the last 5 custom encodings entered
 						if (!encodingHistory.contains(encoding)) {
-							if (encodingHistory.size() == 5) encodingHistory.remove(4);
+							if (encodingHistory.size() == 5)
+								encodingHistory.remove(4);
 							encodingHistory.add(encoding);
 						}
 
@@ -579,11 +579,12 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 	 * @return String
 	 */
 	@SuppressWarnings("deprecation")
-    private String getResourceEncoding() {
+	private String getResourceEncoding() {
 		String preference = null;
 		Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
 		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
-			preference = org.eclipse.core.resources.ResourcesPlugin.getPlugin().getPluginPreferences().getString(org.eclipse.core.resources.ResourcesPlugin.PREF_ENCODING);
+			preference = org.eclipse.core.resources.ResourcesPlugin.getPlugin().getPluginPreferences()
+					.getString(org.eclipse.core.resources.ResourcesPlugin.PREF_ENCODING);
 		}
 
 		return preference != null && preference.length() > 0 ? preference : null;
@@ -599,7 +600,8 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 
 		if (encodingCombo != null && !encodingCombo.isDisposed()) {
 			int index = encodingCombo.indexOf("ISO-8859-1".equals(encoding) ? "Default (ISO-8859-1)" : encoding); //$NON-NLS-1$ //$NON-NLS-2$
-			if (index != -1) encodingCombo.select(index);
+			if (index != -1)
+				encodingCombo.select(index);
 			else {
 				encodingCombo.add(encoding, encodingCombo.getItemCount() - 1);
 				encodingCombo.select(encodingCombo.indexOf(encoding));

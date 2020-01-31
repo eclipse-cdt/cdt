@@ -61,13 +61,13 @@ public class ExternalExecutablesDialog extends TrayDialog {
 	private Map<String, String> executableData;
 
 	/**
-     * Constructor.
-     *
+	 * Constructor.
+	 *
 	 * @param shell The parent shell or <code>null</code>.
-     */
+	 */
 	public ExternalExecutablesDialog(Shell shell, boolean edit) {
-	    super(shell);
-	    this.edit = edit;
+		super(shell);
+		this.edit = edit;
 
 		this.contextHelpId = IContextHelpIds.EXTERNAL_EXECUTABLES_DIALOG;
 		setHelpAvailable(true);
@@ -86,11 +86,13 @@ public class ExternalExecutablesDialog extends TrayDialog {
 		Control control = super.createDialogArea(parent);
 		// Setup the inner panel as scrollable composite
 		if (control instanceof Composite) {
-			ScrolledComposite sc = new ScrolledComposite((Composite)control, SWT.V_SCROLL);
+			ScrolledComposite sc = new ScrolledComposite((Composite) control, SWT.V_SCROLL);
 
 			GridLayout layout = new GridLayout(1, true);
-			layout.marginHeight = 0; layout.marginWidth = 0;
-			layout.verticalSpacing = 0; layout.horizontalSpacing = 0;
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			layout.verticalSpacing = 0;
+			layout.horizontalSpacing = 0;
 
 			sc.setLayout(layout);
 			sc.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
@@ -119,203 +121,217 @@ public class ExternalExecutablesDialog extends TrayDialog {
 	 *
 	 * @param parent The parent composite. Must not be <code>null</code>.
 	 */
-    protected void createDialogAreaContent(Composite parent) {
-    	Assert.isNotNull(parent);
+	protected void createDialogAreaContent(Composite parent) {
+		Assert.isNotNull(parent);
 
-	    setDialogTitle(edit ? Messages.ExternalExecutablesDialog_title_edit : Messages.ExternalExecutablesDialog_title_add);
+		setDialogTitle(
+				edit ? Messages.ExternalExecutablesDialog_title_edit : Messages.ExternalExecutablesDialog_title_add);
 
-        Composite panel = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(2, false);
-        layout.marginHeight = 0; layout.marginWidth = 0;
-        panel.setLayout(layout);
-        GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, true, true);
-        layoutData.widthHint = convertWidthInCharsToPixels(50);
-        panel.setLayoutData(layoutData);
+		Composite panel = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		panel.setLayout(layout);
+		GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		layoutData.widthHint = convertWidthInCharsToPixels(50);
+		panel.setLayoutData(layoutData);
 
-        Label label = new Label(panel, SWT.HORIZONTAL);
-        label.setText(Messages.ExternalExecutablesDialog_field_name);
-        layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-        label.setLayoutData(layoutData);
+		Label label = new Label(panel, SWT.HORIZONTAL);
+		label.setText(Messages.ExternalExecutablesDialog_field_name);
+		layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+		label.setLayoutData(layoutData);
 
-        name = new Text(panel, SWT.HORIZONTAL | SWT.SINGLE | SWT.BORDER);
-        layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        layoutData.widthHint = convertWidthInCharsToPixels(30);
-        name.setLayoutData(layoutData);
-        name.addModifyListener(new ModifyListener() {
-        	@Override
-        	public void modifyText(ModifyEvent e) {
-        		validate();
-        	}
-        });
-
-        label = new Label(panel, SWT.HORIZONTAL);
-        label.setText(Messages.ExternalExecutablesDialog_field_path);
-        layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-        label.setLayoutData(layoutData);
-
-        Composite panel2 = new Composite(panel, SWT.NONE);
-        layout = new GridLayout(2, false);
-        layout.marginHeight = 0; layout.marginWidth = 0;
-        panel2.setLayout(layout);
-        layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        panel2.setLayoutData(layoutData);
-
-        path = new Text(panel2, SWT.HORIZONTAL | SWT.SINGLE | SWT.BORDER);
-        layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        layoutData.widthHint = convertWidthInCharsToPixels(30);
-        path.setLayoutData(layoutData);
-        path.addModifyListener(new ModifyListener() {
-        	@Override
-        	public void modifyText(ModifyEvent e) {
-        		validate();
-        	}
-        });
-
-        Button button = new Button(panel2, SWT.PUSH);
-        button.setText(Messages.ExternalExecutablesDialog_button_browse);
-        layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-        layoutData.widthHint = convertWidthInCharsToPixels(10);
-        button.setLayoutData(layoutData);
-        button.addSelectionListener(new SelectionAdapter() {
-        	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-
-    			String selectedFile = path.getText();
-    			if (selectedFile != null && selectedFile.trim().length() > 0) {
-    				IPath filePath = new Path(selectedFile);
-    				// If the selected file points to an directory, use the directory as is
-    				IPath filterPath = filePath.toFile().isDirectory() ? filePath : filePath.removeLastSegments(1);
-    				while (filterPath != null && filterPath.segmentCount() > 1 && !filterPath.toFile().exists()) {
-    					filterPath = filterPath.removeLastSegments(1);
-    				}
-    				String filterFileName = filePath.toFile().isDirectory() || !filePath.toFile().exists() ? null : filePath.lastSegment();
-
-    				if (filterPath != null && !filterPath.isEmpty()) dialog.setFilterPath(filterPath.toString());
-    				if (filterFileName != null) dialog.setFileName(filterFileName);
-    			} else {
-    				String workspace = null;
-    				Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-    				if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
-    					workspace = org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
-    				}
-
-    				String filterPath = last_filter_path != null ? last_filter_path : workspace;
-    				dialog.setFilterPath(filterPath);
-    			}
-
-    			selectedFile = dialog.open();
-    			if (selectedFile != null) {
-    				last_filter_path = dialog.getFilterPath();
-    				path.setText(selectedFile);
-    			}
-        	}
+		name = new Text(panel, SWT.HORIZONTAL | SWT.SINGLE | SWT.BORDER);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		layoutData.widthHint = convertWidthInCharsToPixels(30);
+		name.setLayoutData(layoutData);
+		name.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				validate();
+			}
 		});
 
-        label = new Label(panel, SWT.HORIZONTAL);
-        label.setText(Messages.ExternalExecutablesDialog_field_args);
-        layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-        label.setLayoutData(layoutData);
+		label = new Label(panel, SWT.HORIZONTAL);
+		label.setText(Messages.ExternalExecutablesDialog_field_path);
+		layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+		label.setLayoutData(layoutData);
 
-        args = new Text(panel, SWT.HORIZONTAL | SWT.SINGLE | SWT.BORDER);
-        layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        layoutData.widthHint = convertWidthInCharsToPixels(30);
-        args.setLayoutData(layoutData);
-        args.addModifyListener(new ModifyListener() {
-        	@Override
-        	public void modifyText(ModifyEvent e) {
-        		validate();
-        	}
-        });
+		Composite panel2 = new Composite(panel, SWT.NONE);
+		layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		panel2.setLayout(layout);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		panel2.setLayoutData(layoutData);
 
-        label = new Label(panel, SWT.HORIZONTAL);
-        label.setText(Messages.ExternalExecutablesDialog_field_icon);
-        layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-        label.setLayoutData(layoutData);
-
-        panel2 = new Composite(panel, SWT.NONE);
-        layout = new GridLayout(2, false);
-        layout.marginHeight = 0; layout.marginWidth = 0;
-        panel2.setLayout(layout);
-        layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        panel2.setLayoutData(layoutData);
-
-        icon = new Text(panel2, SWT.HORIZONTAL | SWT.SINGLE | SWT.BORDER);
-        layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        layoutData.widthHint = convertWidthInCharsToPixels(30);
-        icon.setLayoutData(layoutData);
-        icon.addModifyListener(new ModifyListener() {
-        	@Override
-        	public void modifyText(ModifyEvent e) {
-        		validate();
-        	}
-        });
-
-        button = new Button(panel2, SWT.PUSH);
-        button.setText(Messages.ExternalExecutablesDialog_button_browse);
-        layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-        layoutData.widthHint = convertWidthInCharsToPixels(10);
-        button.setLayoutData(layoutData);
-        button.addSelectionListener(new SelectionAdapter() {
-        	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-
-    			String selectedFile = icon.getText();
-    			if (selectedFile != null && selectedFile.trim().length() > 0) {
-    				IPath filePath = new Path(selectedFile);
-    				// If the selected file points to an directory, use the directory as is
-    				IPath filterPath = filePath.toFile().isDirectory() ? filePath : filePath.removeLastSegments(1);
-    				while (filterPath != null && filterPath.segmentCount() > 1 && !filterPath.toFile().exists()) {
-    					filterPath = filterPath.removeLastSegments(1);
-    				}
-    				String filterFileName = filePath.toFile().isDirectory() || !filePath.toFile().exists() ? null : filePath.lastSegment();
-
-    				if (filterPath != null && !filterPath.isEmpty()) dialog.setFilterPath(filterPath.toString());
-    				if (filterFileName != null) dialog.setFileName(filterFileName);
-    			} else {
-    				String workspace = null;
-    				Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-    				if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
-    					workspace = org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
-    				}
-
-    				String filterPath = last_filter_icon != null ? last_filter_icon : workspace;
-    				dialog.setFilterPath(filterPath);
-    			}
-
-    			selectedFile = dialog.open();
-    			if (selectedFile != null) {
-    				last_filter_icon = dialog.getFilterPath();
-    				icon.setText(selectedFile);
-    			}
-        	}
+		path = new Text(panel2, SWT.HORIZONTAL | SWT.SINGLE | SWT.BORDER);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		layoutData.widthHint = convertWidthInCharsToPixels(30);
+		path.setLayoutData(layoutData);
+		path.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				validate();
+			}
 		});
 
-        translate = new Button(panel, SWT.CHECK);
-        translate.setText(Messages.ExternalExecutablesDialog_field_translate);
-        layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
-        layoutData.horizontalSpan = 2;
-        translate.setLayoutData(layoutData);
-        translate.addSelectionListener(new SelectionAdapter() {
-        	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        		validate();
-        	}
+		Button button = new Button(panel2, SWT.PUSH);
+		button.setText(Messages.ExternalExecutablesDialog_button_browse);
+		layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+		layoutData.widthHint = convertWidthInCharsToPixels(10);
+		button.setLayoutData(layoutData);
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
+
+				String selectedFile = path.getText();
+				if (selectedFile != null && selectedFile.trim().length() > 0) {
+					IPath filePath = new Path(selectedFile);
+					// If the selected file points to an directory, use the directory as is
+					IPath filterPath = filePath.toFile().isDirectory() ? filePath : filePath.removeLastSegments(1);
+					while (filterPath != null && filterPath.segmentCount() > 1 && !filterPath.toFile().exists()) {
+						filterPath = filterPath.removeLastSegments(1);
+					}
+					String filterFileName = filePath.toFile().isDirectory() || !filePath.toFile().exists() ? null
+							: filePath.lastSegment();
+
+					if (filterPath != null && !filterPath.isEmpty())
+						dialog.setFilterPath(filterPath.toString());
+					if (filterFileName != null)
+						dialog.setFileName(filterFileName);
+				} else {
+					String workspace = null;
+					Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
+					if (bundle != null && bundle.getState() != Bundle.UNINSTALLED
+							&& bundle.getState() != Bundle.STOPPING) {
+						workspace = org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation()
+								.toOSString();
+					}
+
+					String filterPath = last_filter_path != null ? last_filter_path : workspace;
+					dialog.setFilterPath(filterPath);
+				}
+
+				selectedFile = dialog.open();
+				if (selectedFile != null) {
+					last_filter_path = dialog.getFilterPath();
+					path.setText(selectedFile);
+				}
+			}
 		});
 
-        if (executableData != null) {
-        	String value = executableData.get(IExternalExecutablesProperties.PROP_NAME);
-        	name.setText(value != null && !"".equals(value.trim()) ? value : ""); //$NON-NLS-1$ //$NON-NLS-2$
-        	value = executableData.get(IExternalExecutablesProperties.PROP_PATH);
-        	path.setText(value != null && !"".equals(value.trim()) ? value : ""); //$NON-NLS-1$ //$NON-NLS-2$
-        	value = executableData.get(IExternalExecutablesProperties.PROP_ARGS);
-        	args.setText(value != null && !"".equals(value.trim()) ? value : ""); //$NON-NLS-1$ //$NON-NLS-2$
-        	value = executableData.get(IExternalExecutablesProperties.PROP_ICON);
-        	icon.setText(value != null && !"".equals(value.trim()) ? value : ""); //$NON-NLS-1$ //$NON-NLS-2$
-        	value = executableData.get(IExternalExecutablesProperties.PROP_TRANSLATE);
-        	translate.setSelection(value != null ? Boolean.parseBoolean(value) : false);
-        }
+		label = new Label(panel, SWT.HORIZONTAL);
+		label.setText(Messages.ExternalExecutablesDialog_field_args);
+		layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+		label.setLayoutData(layoutData);
+
+		args = new Text(panel, SWT.HORIZONTAL | SWT.SINGLE | SWT.BORDER);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		layoutData.widthHint = convertWidthInCharsToPixels(30);
+		args.setLayoutData(layoutData);
+		args.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				validate();
+			}
+		});
+
+		label = new Label(panel, SWT.HORIZONTAL);
+		label.setText(Messages.ExternalExecutablesDialog_field_icon);
+		layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+		label.setLayoutData(layoutData);
+
+		panel2 = new Composite(panel, SWT.NONE);
+		layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		panel2.setLayout(layout);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		panel2.setLayoutData(layoutData);
+
+		icon = new Text(panel2, SWT.HORIZONTAL | SWT.SINGLE | SWT.BORDER);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		layoutData.widthHint = convertWidthInCharsToPixels(30);
+		icon.setLayoutData(layoutData);
+		icon.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				validate();
+			}
+		});
+
+		button = new Button(panel2, SWT.PUSH);
+		button.setText(Messages.ExternalExecutablesDialog_button_browse);
+		layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+		layoutData.widthHint = convertWidthInCharsToPixels(10);
+		button.setLayoutData(layoutData);
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
+
+				String selectedFile = icon.getText();
+				if (selectedFile != null && selectedFile.trim().length() > 0) {
+					IPath filePath = new Path(selectedFile);
+					// If the selected file points to an directory, use the directory as is
+					IPath filterPath = filePath.toFile().isDirectory() ? filePath : filePath.removeLastSegments(1);
+					while (filterPath != null && filterPath.segmentCount() > 1 && !filterPath.toFile().exists()) {
+						filterPath = filterPath.removeLastSegments(1);
+					}
+					String filterFileName = filePath.toFile().isDirectory() || !filePath.toFile().exists() ? null
+							: filePath.lastSegment();
+
+					if (filterPath != null && !filterPath.isEmpty())
+						dialog.setFilterPath(filterPath.toString());
+					if (filterFileName != null)
+						dialog.setFileName(filterFileName);
+				} else {
+					String workspace = null;
+					Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
+					if (bundle != null && bundle.getState() != Bundle.UNINSTALLED
+							&& bundle.getState() != Bundle.STOPPING) {
+						workspace = org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation()
+								.toOSString();
+					}
+
+					String filterPath = last_filter_icon != null ? last_filter_icon : workspace;
+					dialog.setFilterPath(filterPath);
+				}
+
+				selectedFile = dialog.open();
+				if (selectedFile != null) {
+					last_filter_icon = dialog.getFilterPath();
+					icon.setText(selectedFile);
+				}
+			}
+		});
+
+		translate = new Button(panel, SWT.CHECK);
+		translate.setText(Messages.ExternalExecutablesDialog_field_translate);
+		layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		layoutData.horizontalSpan = 2;
+		translate.setLayoutData(layoutData);
+		translate.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				validate();
+			}
+		});
+
+		if (executableData != null) {
+			String value = executableData.get(IExternalExecutablesProperties.PROP_NAME);
+			name.setText(value != null && !"".equals(value.trim()) ? value : ""); //$NON-NLS-1$ //$NON-NLS-2$
+			value = executableData.get(IExternalExecutablesProperties.PROP_PATH);
+			path.setText(value != null && !"".equals(value.trim()) ? value : ""); //$NON-NLS-1$ //$NON-NLS-2$
+			value = executableData.get(IExternalExecutablesProperties.PROP_ARGS);
+			args.setText(value != null && !"".equals(value.trim()) ? value : ""); //$NON-NLS-1$ //$NON-NLS-2$
+			value = executableData.get(IExternalExecutablesProperties.PROP_ICON);
+			icon.setText(value != null && !"".equals(value.trim()) ? value : ""); //$NON-NLS-1$ //$NON-NLS-2$
+			value = executableData.get(IExternalExecutablesProperties.PROP_TRANSLATE);
+			translate.setSelection(value != null ? Boolean.parseBoolean(value) : false);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -323,9 +339,9 @@ public class ExternalExecutablesDialog extends TrayDialog {
 	 */
 	@Override
 	protected Control createButtonBar(Composite parent) {
-	    Control control = super.createButtonBar(parent);
-	    validate();
-	    return control;
+		Control control = super.createButtonBar(parent);
+		validate();
+		return control;
 	}
 
 	/* (non-Javadoc)
@@ -336,7 +352,7 @@ public class ExternalExecutablesDialog extends TrayDialog {
 		if (IDialogConstants.OK_ID == id && !edit) {
 			label = Messages.ExternalExecutablesDialog_button_add;
 		}
-	    return super.createButton(parent, id, label, defaultButton);
+		return super.createButton(parent, id, label, defaultButton);
 	}
 
 	/* (non-Javadoc)
@@ -346,7 +362,8 @@ public class ExternalExecutablesDialog extends TrayDialog {
 	protected void okPressed() {
 		if (name != null && path != null) {
 			// Extract the executable properties
-			if (executableData == null) executableData = new HashMap<String, String>();
+			if (executableData == null)
+				executableData = new HashMap<String, String>();
 
 			String value = name.getText();
 			if (value != null && !"".equals(value.trim())) { //$NON-NLS-1$
@@ -384,14 +401,14 @@ public class ExternalExecutablesDialog extends TrayDialog {
 		} else {
 			executableData = null;
 		}
-	    super.okPressed();
+		super.okPressed();
 	}
 
 	@Override
 	protected void cancelPressed() {
 		// If the user pressed cancel, the dialog needs to return null
 		executableData = null;
-	    super.cancelPressed();
+		super.cancelPressed();
 	}
 
 	/**
@@ -446,7 +463,8 @@ public class ExternalExecutablesDialog extends TrayDialog {
 		}
 
 		Button okButton = getButton(IDialogConstants.OK_ID);
-		if (okButton != null) okButton.setEnabled(valid);
+		if (okButton != null)
+			okButton.setEnabled(valid);
 	}
 
 	/**

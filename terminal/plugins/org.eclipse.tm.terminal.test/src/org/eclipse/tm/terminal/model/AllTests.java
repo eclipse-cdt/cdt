@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Public Terminal Model test cases. 
+ * Public Terminal Model test cases.
  * Runs in internal model package to allow access to default visible items.
  */
 public class AllTests extends TestCase {

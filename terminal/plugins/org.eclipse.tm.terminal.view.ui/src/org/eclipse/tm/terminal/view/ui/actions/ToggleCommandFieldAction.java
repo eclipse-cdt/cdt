@@ -37,9 +37,9 @@ public class ToggleCommandFieldAction extends AbstractTerminalAction {
 
 		this.view = view;
 		setupAction(Messages.ToggleCommandFieldAction_menu, Messages.ToggleCommandFieldAction_toolTip,
-						UIPlugin.getImageDescriptor(ImageConsts.ACTION_ToggleCommandField_Hover),
-						UIPlugin.getImageDescriptor(ImageConsts.ACTION_ToggleCommandField_Enabled),
-						UIPlugin.getImageDescriptor(ImageConsts.ACTION_ToggleCommandField_Disabled), true);
+				UIPlugin.getImageDescriptor(ImageConsts.ACTION_ToggleCommandField_Hover),
+				UIPlugin.getImageDescriptor(ImageConsts.ACTION_ToggleCommandField_Enabled),
+				UIPlugin.getImageDescriptor(ImageConsts.ACTION_ToggleCommandField_Disabled), true);
 
 		TabCommandFieldHandler handler = getCommandFieldHandler();
 		setChecked(handler != null && handler.hasCommandInputField());
@@ -49,7 +49,7 @@ public class ToggleCommandFieldAction extends AbstractTerminalAction {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override
-    public void run() {
+	public void run() {
 		TabCommandFieldHandler handler = getCommandFieldHandler();
 		if (handler != null) {
 			handler.setCommandInputField(!handler.hasCommandInputField());
@@ -64,8 +64,7 @@ public class ToggleCommandFieldAction extends AbstractTerminalAction {
 	public void updateAction(boolean aboutToShow) {
 		TabCommandFieldHandler handler = getCommandFieldHandler();
 		ITerminalViewControl target = getTarget();
-		setEnabled(aboutToShow && handler != null
-						&& target != null && target.getState() == TerminalState.CONNECTED);
+		setEnabled(aboutToShow && handler != null && target != null && target.getState() == TerminalState.CONNECTED);
 		setChecked(handler != null && handler.hasCommandInputField());
 	}
 
@@ -78,7 +77,7 @@ public class ToggleCommandFieldAction extends AbstractTerminalAction {
 	protected TabCommandFieldHandler getCommandFieldHandler() {
 		TabCommandFieldHandler handler = null;
 		// Get the active tab item from the tab folder manager
-		TabFolderManager manager = (TabFolderManager)view.getAdapter(TabFolderManager.class);
+		TabFolderManager manager = (TabFolderManager) view.getAdapter(TabFolderManager.class);
 		if (manager != null) {
 			// If we have the active tab item, we can get the active terminal control
 			CTabItem activeTabItem = manager.getActiveTabItem();

@@ -10,7 +10,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Michael Scharf (Wind River) - [200541] Extract from TerminalConnectorExtension.TerminalConnectorProxy
- * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
  * Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.connector;
@@ -65,6 +65,7 @@ public class TerminalConnector implements ITerminalConnector {
 		 */
 		TerminalConnectorImpl makeConnector() throws Exception;
 	}
+
 	/**
 	 * The factory for creating impl instances.
 	 */
@@ -95,6 +96,7 @@ public class TerminalConnector implements ITerminalConnector {
 	 * This keeps the value until the connector is created.
 	 */
 	private ISettingsStore fStore;
+
 	/**
 	 * Constructor for the terminal connector.
 	 *
@@ -104,119 +106,138 @@ public class TerminalConnector implements ITerminalConnector {
 	 *            this ID.
 	 * @param name translatable name to display the connector in the UI.
 	 */
-	public TerminalConnector(TerminalConnector.Factory terminalConnectorFactory, String id, String name, boolean hidden) {
+	public TerminalConnector(TerminalConnector.Factory terminalConnectorFactory, String id, String name,
+			boolean hidden) {
 		fTerminalConnectorFactory = terminalConnectorFactory;
 		fId = id;
 		fName = name;
 		fHidden = hidden;
 	}
+
 	public String getInitializationErrorMessage() {
 		getConnectorImpl();
-		if(fException!=null)
+		if (fException != null)
 			return fException.getLocalizedMessage();
 		return null;
 	}
+
 	public String getId() {
 		return fId;
 	}
+
 	public String getName() {
 		return fName;
 	}
+
 	public boolean isHidden() {
 		return fHidden;
 	}
+
 	private TerminalConnectorImpl getConnectorImpl() {
-		if(!isInitialized()) {
+		if (!isInitialized()) {
 			try {
-				fConnector=fTerminalConnectorFactory.makeConnector();
+				fConnector = fTerminalConnectorFactory.makeConnector();
 				fConnector.initialize();
 			} catch (Exception e) {
-				fException=e;
-				fConnector=new TerminalConnectorImpl(){
+				fException = e;
+				fConnector = new TerminalConnectorImpl() {
 					public void connect(ITerminalControl control) {
 						// super.connect(control);
 						control.setState(TerminalState.CLOSED);
 						control.setMsg(getInitializationErrorMessage());
 					}
+
 					public OutputStream getTerminalToRemoteStream() {
 						return null;
 					}
+
 					public String getSettingsSummary() {
 						return null;
-					}};
+					}
+				};
 				// that's the place where we log the exception
 				Logger.logException(e);
 			}
-			if(fConnector!=null && fStore!=null)
+			if (fConnector != null && fStore != null)
 				fConnector.load(fStore);
 		}
 		return fConnector;
 	}
 
 	public boolean isInitialized() {
-		return fConnector!=null || fException!=null;
+		return fConnector != null || fException != null;
 	}
+
 	public void connect(ITerminalControl control) {
 		getConnectorImpl().connect(control);
 	}
+
 	public void disconnect() {
 		getConnectorImpl().disconnect();
 	}
+
 	public OutputStream getTerminalToRemoteStream() {
 		return getConnectorImpl().getTerminalToRemoteStream();
 	}
+
 	public String getSettingsSummary() {
-		if(fConnector!=null)
+		if (fConnector != null)
 			return getConnectorImpl().getSettingsSummary();
 		else
 			return TerminalMessages.NotInitialized;
 	}
+
 	public boolean isLocalEcho() {
 		return getConnectorImpl().isLocalEcho();
 	}
+
 	public void load(ISettingsStore store) {
-		if(fConnector==null) {
-			fStore=store;
+		if (fConnector == null) {
+			fStore = store;
 		} else {
 			getConnectorImpl().load(store);
 		}
 	}
+
 	@Override
 	public void setDefaultSettings() {
 		getConnectorImpl().setDefaultSettings();
 	}
+
 	public void save(ISettingsStore store) {
 		// no need to save the settings: it cannot have changed
 		// because we are not initialized....
-		if(fConnector!=null)
+		if (fConnector != null)
 			getConnectorImpl().save(store);
 	}
+
 	public void setTerminalSize(int newWidth, int newHeight) {
 		// we assume that setTerminalSize is called also after
 		// the terminal has been initialized. Else we would have to cache
 		// the values....
-		if(fConnector!=null) {
+		if (fConnector != null) {
 			fConnector.setTerminalSize(newWidth, newHeight);
 		}
 	}
+
 	public Object getAdapter(Class adapter) {
-		TerminalConnectorImpl connector=null;
-		if(isInitialized())
-			connector=getConnectorImpl();
+		TerminalConnectorImpl connector = null;
+		if (isInitialized())
+			connector = getConnectorImpl();
 		// if we cannot create the connector then we cannot adapt...
-		if(connector!=null) {
+		if (connector != null) {
 			// maybe the connector is adaptable
-			if(connector instanceof IAdaptable) {
-				Object result =((IAdaptable)connector).getAdapter(adapter);
+			if (connector instanceof IAdaptable) {
+				Object result = ((IAdaptable) connector).getAdapter(adapter);
 				// Not sure if the next block is needed....
-				if(result==null)
+				if (result == null)
 					//defer to the platform
-					result= Platform.getAdapterManager().getAdapter(connector, adapter);
-				if(result!=null)
+					result = Platform.getAdapterManager().getAdapter(connector, adapter);
+				if (result != null)
 					return result;
 			}
 			// maybe the real adapter is what we need....
-			if(adapter.isInstance(connector))
+			if (adapter.isInstance(connector))
 				return connector;
 		}
 		// maybe we have to be adapted....

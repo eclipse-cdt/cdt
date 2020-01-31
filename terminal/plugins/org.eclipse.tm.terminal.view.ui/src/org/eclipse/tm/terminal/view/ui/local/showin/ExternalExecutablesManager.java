@@ -59,20 +59,26 @@ public class ExternalExecutablesManager {
 
 				try {
 					Properties data = new Properties();
-					r= new FileReader(f);
+					r = new FileReader(f);
 					data.load(r);
 
 					Map<Integer, Map<String, String>> c = new HashMap<Integer, Map<String, String>>();
 					for (String name : data.stringPropertyNames()) {
-						if (name == null || name.indexOf('.') == -1) continue;
+						if (name == null || name.indexOf('.') == -1)
+							continue;
 						int ix = name.indexOf('.');
 						String n = name.substring(0, ix);
 						String k = (ix + 1) < name.length() ? name.substring(ix + 1) : null;
-						if (n == null || k == null) continue;
+						if (n == null || k == null)
+							continue;
 
 						Integer i = null;
-						try { i = Integer.decode(n); } catch (NumberFormatException e) { /* ignored on purpose */ }
-						if (i == null) continue;
+						try {
+							i = Integer.decode(n);
+						} catch (NumberFormatException e) {
+							/* ignored on purpose */ }
+						if (i == null)
+							continue;
 
 						Map<String, String> m = c.get(i);
 						if (m == null) {
@@ -88,14 +94,19 @@ public class ExternalExecutablesManager {
 					Collections.sort(k);
 					for (Integer i : k) {
 						Map<String, String> m = c.get(i);
-						if (m != null && !m.isEmpty()) l.add(m);
+						if (m != null && !m.isEmpty())
+							l.add(m);
 					}
 				} catch (Exception e) {
 					if (Platform.inDebugMode()) {
 						e.printStackTrace();
 					}
 				} finally {
-					if (r != null) try { r.close(); } catch (IOException e) { /* ignored on purpose */ }
+					if (r != null)
+						try {
+							r.close();
+						} catch (IOException e) {
+							/* ignored on purpose */ }
 				}
 			}
 		}
@@ -155,7 +166,8 @@ public class ExternalExecutablesManager {
 					m.put(IExternalExecutablesProperties.PROP_NAME, "Git Bash"); //$NON-NLS-1$
 					m.put(IExternalExecutablesProperties.PROP_PATH, gitPath);
 					m.put(IExternalExecutablesProperties.PROP_ARGS, "--login -i"); //$NON-NLS-1$
-					if (iconPath != null) m.put(IExternalExecutablesProperties.PROP_ICON, iconPath);
+					if (iconPath != null)
+						m.put(IExternalExecutablesProperties.PROP_ICON, iconPath);
 					m.put(IExternalExecutablesProperties.PROP_TRANSLATE, Boolean.TRUE.toString());
 
 					l.add(m);
@@ -197,18 +209,21 @@ public class ExternalExecutablesManager {
 	 * @param l The list of external executables or <code>null</code>.
 	 */
 	@SuppressWarnings("cast")
-    public static void save(List<Map<String, String>> l) {
-		ISourceProviderService sourceProviderService = (ISourceProviderService) PlatformUI.getWorkbench().getService(ISourceProviderService.class);
-		ExternalExecutablesState stateService = (ExternalExecutablesState) sourceProviderService.getSourceProvider(ExternalExecutablesState.CONFIGURED_STATE);
+	public static void save(List<Map<String, String>> l) {
+		ISourceProviderService sourceProviderService = (ISourceProviderService) PlatformUI.getWorkbench()
+				.getService(ISourceProviderService.class);
+		ExternalExecutablesState stateService = (ExternalExecutablesState) sourceProviderService
+				.getSourceProvider(ExternalExecutablesState.CONFIGURED_STATE);
 
 		IPath stateLocation = UIPlugin.getDefault().getStateLocation();
 		if (stateLocation != null) {
 			File f = stateLocation.append(".executables/data.properties").toFile(); //$NON-NLS-1$
 			if (f.isFile() && (l == null || l.isEmpty())) {
 				@SuppressWarnings("unused")
-                boolean s = f.delete();
+				boolean s = f.delete();
 
-				if (stateService != null) stateService.disable();
+				if (stateService != null)
+					stateService.disable();
 			} else {
 				FileWriter w = null;
 
@@ -230,7 +245,8 @@ public class ExternalExecutablesManager {
 					w = new FileWriter(f);
 					data.store(w, null);
 
-					if (stateService != null) stateService.enable();
+					if (stateService != null)
+						stateService.enable();
 				} catch (Exception e) {
 					if (Platform.inDebugMode()) {
 						e.printStackTrace();
@@ -270,7 +286,7 @@ public class ExternalExecutablesManager {
 				if (d.height == 16 && d.width == 16) {
 					if (id == null || id.height != 16 && id.width != 16) {
 						id = d;
-					} else if (d.depth < id.depth && d.depth >= 8){
+					} else if (d.depth < id.depth && d.depth >= 8) {
 						id = d;
 					}
 				} else {

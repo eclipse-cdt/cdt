@@ -44,8 +44,9 @@ public class Messages extends NLS {
 		if (key != null) {
 			try {
 				Field field = Messages.class.getDeclaredField(key);
-				return (String)field.get(null);
-			} catch (Exception e) { /* ignored on purpose */ }
+				return (String) field.get(null);
+			} catch (Exception e) {
+				/* ignored on purpose */ }
 		}
 
 		return null;
@@ -100,10 +101,10 @@ public class Messages extends NLS {
 	public static String LaunchTerminalSettingsDialog_combo_label;
 	public static String LaunchTerminalSettingsDialog_group_label;
 
-    public static String TabScrollLockAction_text;
-    public static String TabScrollLockAction_tooltip;
+	public static String TabScrollLockAction_text;
+	public static String TabScrollLockAction_tooltip;
 
-    public static String LaunchTerminalSettingsDialog_error_title;
+	public static String LaunchTerminalSettingsDialog_error_title;
 	public static String LaunchTerminalSettingsDialog_error_invalidSettings;
 	public static String LaunchTerminalSettingsDialog_error_unknownReason;
 

@@ -60,7 +60,8 @@ public class Env {
 		// the cached environment
 		Map<String, String> env = new LinkedHashMap<String, String>(nativeEnv);
 		// Set the TERM environment variable if in terminal mode
-		if (terminal) env.put("TERM", "xterm"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (terminal)
+			env.put("TERM", "xterm"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// On Windows, the environment variable names are not case-sensitive. However,
 		// we desire to preserve the original case. Build up a translation map between
@@ -97,9 +98,10 @@ public class Env {
 					}
 				}
 				// Get the variable value
-				String value = envpPart.substring(eqIdx+1);
+				String value = envpPart.substring(eqIdx + 1);
 				// Don't overwrite the TERM variable if in terminal mode
-				if (terminal && "TERM".equals(name)) continue; //$NON-NLS-1$
+				if (terminal && "TERM".equals(name)) //$NON-NLS-1$
+					continue;
 				// If a variable with the name does not exist, just append it
 				if (!env.containsKey(name) && !"<unset>".equals(value)) { //$NON-NLS-1$
 					env.put(name, value);
@@ -121,7 +123,8 @@ public class Env {
 		// Convert into an array of strings
 		List<String> keys = new ArrayList<String>(env.keySet());
 		// On Windows hosts, sort the environment keys
-		if (Platform.OS_WIN32.equals(Platform.getOS())) Collections.sort(keys);
+		if (Platform.OS_WIN32.equals(Platform.getOS()))
+			Collections.sort(keys);
 		Iterator<String> iter = keys.iterator();
 		List<String> strings = new ArrayList<String>(env.size());
 		StringBuilder buffer = null;
@@ -165,7 +168,9 @@ public class Env {
 			} else if (!Platform.getOS().equals(Constants.OS_UNKNOWN)) {
 				nativeCommand = "env"; //$NON-NLS-1$
 			}
-			if (nativeCommand == null) { return; }
+			if (nativeCommand == null) {
+				return;
+			}
 			Process process = Runtime.getRuntime().exec(nativeCommand);
 
 			// read process directly on other platforms

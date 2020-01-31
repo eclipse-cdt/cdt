@@ -122,9 +122,12 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 					// Create the panel controls
 					configPanel.setupPanel(getPanel());
 					// Restore widget values
-					IDialogSettings dialogSettings = LaunchTerminalSettingsDialog.this.settings.getDialogSettings(LaunchTerminalSettingsDialog.this.getDialogSettings());
-					IDialogSettings configPanelSettings = dialogSettings != null ? dialogSettings.getSection(key) : null;
-					if (configPanelSettings != null) configPanel.doRestoreWidgetValues(configPanelSettings, null);
+					IDialogSettings dialogSettings = LaunchTerminalSettingsDialog.this.settings
+							.getDialogSettings(LaunchTerminalSettingsDialog.this.getDialogSettings());
+					IDialogSettings configPanelSettings = dialogSettings != null ? dialogSettings.getSection(key)
+							: null;
+					if (configPanelSettings != null)
+						configPanel.doRestoreWidgetValues(configPanelSettings, null);
 				}
 			}
 
@@ -197,7 +200,10 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 	 * Dispose the dialog resources.
 	 */
 	protected void dispose() {
-		if (settings != null) { settings.dispose(); settings = null; }
+		if (settings != null) {
+			settings.dispose();
+			settings = null;
+		}
 		dialogSettings = null;
 	}
 
@@ -235,11 +241,13 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 		Control control = super.createDialogArea(parent);
 		// Setup the inner panel as scrollable composite
 		if (control instanceof Composite) {
-			ScrolledComposite sc = new ScrolledComposite((Composite)control, SWT.V_SCROLL);
+			ScrolledComposite sc = new ScrolledComposite((Composite) control, SWT.V_SCROLL);
 
 			GridLayout layout = new GridLayout(1, true);
-			layout.marginHeight = 0; layout.marginWidth = 0;
-			layout.verticalSpacing = 0; layout.horizontalSpacing = 0;
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			layout.verticalSpacing = 0;
+			layout.horizontalSpacing = 0;
 
 			sc.setLayout(layout);
 			sc.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
@@ -283,8 +291,9 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 		Assert.isNotNull(parent);
 
 		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-			UIPlugin.getTraceHandler().trace("Creating dialog area after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-							ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+			UIPlugin.getTraceHandler().trace(
+					"Creating dialog area after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+					ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
 		}
 
 		setDialogTitle(Messages.LaunchTerminalSettingsDialog_title);
@@ -293,7 +302,8 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 
 		Composite panel = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight = 0; layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		panel.setLayout(layout);
 		panel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 
@@ -310,7 +320,8 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 					IConfigurationPanel oldPanel = settings.getActiveConfigurationPanel();
 					// Extract the current settings in an special properties container
 					Map<String, Object> data = new HashMap<String, Object>();
-					if (oldPanel != null) oldPanel.extractData(data);
+					if (oldPanel != null)
+						oldPanel.extractData(data);
 					// Clean out settings which are never passed between the panels
 					data.remove(ITerminalsConnectorConstants.PROP_IP_PORT);
 					data.remove(ITerminalsConnectorConstants.PROP_TIMEOUT);
@@ -321,7 +332,8 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 					// Get the new panel
 					IConfigurationPanel newPanel = settings.getActiveConfigurationPanel();
 					// Re-setup the relevant data
-					if (newPanel != null) newPanel.setupData(data);
+					if (newPanel != null)
+						newPanel.setupData(data);
 
 					// resize the dialog if needed to show the complete panel
 					getShell().pack();
@@ -378,8 +390,9 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 		applyDialogFont(panel);
 
 		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-			UIPlugin.getTraceHandler().trace("Created dialog area after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-							ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+			UIPlugin.getTraceHandler().trace(
+					"Created dialog area after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+					ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
 		}
 	}
 
@@ -395,7 +408,7 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 
 		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
 			UIPlugin.getTraceHandler().trace("Filling combo after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-							ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+					ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
 		}
 
 		Collections.sort(items);
@@ -413,23 +426,27 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 
 		ILauncherDelegate localLauncher = null;
 
-		if(selection==null || selection.isEmpty()){
+		if (selection == null || selection.isEmpty()) {
 			if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-				UIPlugin.getTraceHandler().trace("Getting launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-								ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+				UIPlugin.getTraceHandler().trace(
+						"Getting launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+						ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
 			}
 
 			ILauncherDelegate[] delegates = LauncherDelegateManager.getInstance().getLauncherDelegates(false);
 
 			if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-				UIPlugin.getTraceHandler().trace("Got launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-								ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+				UIPlugin.getTraceHandler().trace(
+						"Got launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+						ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
 			}
 
 			for (ILauncherDelegate delegate : delegates) {
-				if (delegate.isHidden() || isFiltered(selection, delegate)) continue;
+				if (delegate.isHidden() || isFiltered(selection, delegate))
+					continue;
 				String label = delegate.getLabel();
-				if (label == null || "".equals(label.trim()) || label2delegate.containsKey(label)) label = delegate.getId(); //$NON-NLS-1$
+				if (label == null || "".equals(label.trim()) || label2delegate.containsKey(label)) //$NON-NLS-1$
+					label = delegate.getId();
 				label2delegate.put(label, delegate);
 				items.add(label);
 
@@ -439,21 +456,26 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 			}
 		} else {
 			if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-				UIPlugin.getTraceHandler().trace("Getting applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-								ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+				UIPlugin.getTraceHandler().trace(
+						"Getting applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+						ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
 			}
 
-			ILauncherDelegate[] delegates = LauncherDelegateManager.getInstance().getApplicableLauncherDelegates(selection);
+			ILauncherDelegate[] delegates = LauncherDelegateManager.getInstance()
+					.getApplicableLauncherDelegates(selection);
 
 			if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
-				UIPlugin.getTraceHandler().trace("Got applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
-								ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
+				UIPlugin.getTraceHandler().trace(
+						"Got applicable launcher delegates after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
+						ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
 			}
 
 			for (ILauncherDelegate delegate : delegates) {
-				if (delegate.isHidden() || isFiltered(selection, delegate)) continue;
+				if (delegate.isHidden() || isFiltered(selection, delegate))
+					continue;
 				String label = delegate.getLabel();
-				if (label == null || "".equals(label.trim())) label = delegate.getId(); //$NON-NLS-1$
+				if (label == null || "".equals(label.trim())) //$NON-NLS-1$
+					label = delegate.getId();
 				label2delegate.put(label, delegate);
 				items.add(label);
 
@@ -476,14 +498,17 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 					boolean translate = strTranslate != null ? Boolean.parseBoolean(strTranslate) : false;
 
 					if (name != null && !"".equals(name) && path != null && !"".equals(path)) { //$NON-NLS-1$ //$NON-NLS-2$
-						ISelectionService service = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService();
+						ISelectionService service = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+								.getSelectionService();
 						ISelection selection = service != null ? service.getSelection() : null;
-						if (selection != null && selection.isEmpty()) selection = null;
+						if (selection != null && selection.isEmpty())
+							selection = null;
 
 						Map<String, Object> properties = new HashMap<String, Object>();
 						properties.put(ITerminalsConnectorConstants.PROP_PROCESS_PATH, path);
 						properties.put(ITerminalsConnectorConstants.PROP_PROCESS_ARGS, args);
-						properties.put(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE, Boolean.valueOf(translate));
+						properties.put(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE,
+								Boolean.valueOf(translate));
 
 						// store external executable and properties
 						label2delegate.put(name, localLauncher);
@@ -518,7 +543,8 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 	public void validate() {
 		IConfigurationPanel panel = this.settings.getActiveConfigurationPanel();
 		Button okButton = getButton(IDialogConstants.OK_ID);
-		if (okButton != null) okButton.setEnabled(panel.isValid());
+		if (okButton != null)
+			okButton.setEnabled(panel.isValid());
 	}
 
 	/**
@@ -551,7 +577,9 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
 			String terminalLabel = settings.get("terminalLabel"); //$NON-NLS-1$
-			int index = terminalLabel != null && terminals != null ? Arrays.asList(terminals.getItems()).indexOf(terminalLabel) : -1;
+			int index = terminalLabel != null && terminals != null
+					? Arrays.asList(terminals.getItems()).indexOf(terminalLabel)
+					: -1;
 			if (index != -1) {
 				terminals.select(index);
 				this.settings.showConfigurationPanel(terminals.getText());
@@ -572,7 +600,9 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 		if (!panel.isValid()) {
 			MessageBox mb = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
 			mb.setText(Messages.LaunchTerminalSettingsDialog_error_title);
-			mb.setMessage(NLS.bind(Messages.LaunchTerminalSettingsDialog_error_invalidSettings, panel.getMessage() != null ? panel.getMessage() : Messages.LaunchTerminalSettingsDialog_error_unknownReason));
+			mb.setMessage(NLS.bind(Messages.LaunchTerminalSettingsDialog_error_invalidSettings,
+					panel.getMessage() != null ? panel.getMessage()
+							: Messages.LaunchTerminalSettingsDialog_error_unknownReason));
 			mb.open();
 			return;
 		}
@@ -581,7 +611,8 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 		// Store the id of the selected delegate
 		String terminalLabel = terminals != null ? terminals.getText() : singleDelegateLabel;
 		String delegateId = terminalLabel != null ? label2delegate.get(terminalLabel).getId() : null;
-		if (delegateId != null) data.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, delegateId);
+		if (delegateId != null)
+			data.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, delegateId);
 		// Store the selection
 		data.put(ITerminalsConnectorConstants.PROP_SELECTION, selection);
 

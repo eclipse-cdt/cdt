@@ -50,7 +50,7 @@ public class RemoteWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -88,7 +88,7 @@ public class RemoteWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#setupData(java.util.Map)
 	 */
 	@Override
@@ -117,7 +117,7 @@ public class RemoteWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#extractData(java.util.Map)
 	 */
 	@Override
@@ -141,7 +141,7 @@ public class RemoteWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#fillSettingsForHost(java.lang.String)
 	 */
 	@Override
@@ -150,7 +150,7 @@ public class RemoteWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#saveSettingsForHost(boolean)
 	 */
 	@Override
@@ -159,7 +159,7 @@ public class RemoteWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#isValid()
 	 */
 	@Override
@@ -169,7 +169,7 @@ public class RemoteWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#doSaveWidgetValues(org.eclipse.jface.dialogs.
 	 * IDialogSettings, java.lang.String)
 	 */
@@ -181,7 +181,7 @@ public class RemoteWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#getHostFromSettings()
 	 */
 	@Override

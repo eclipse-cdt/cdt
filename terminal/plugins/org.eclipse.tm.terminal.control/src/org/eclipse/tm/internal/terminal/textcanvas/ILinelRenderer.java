@@ -22,18 +22,24 @@ import org.eclipse.swt.graphics.GC;
  */
 public interface ILinelRenderer {
 	int getCellWidth();
+
 	int getCellHeight();
+
 	void drawLine(ITextCanvasModel model, GC gc, int line, int x, int y, int colFirst, int colLast);
+
 	/**
 	 * Update for a font change from the global JFace Registry.
 	 */
 	void onFontChange();
+
 	/**
 	 * Set a new font
 	 * @param fontName Jface name of the new font
 	 * @since 3.2
 	 */
 	void updateFont(String fontName);
+
 	void setInvertedColors(boolean invert);
+
 	Color getDefaultBackgroundColor();
 }

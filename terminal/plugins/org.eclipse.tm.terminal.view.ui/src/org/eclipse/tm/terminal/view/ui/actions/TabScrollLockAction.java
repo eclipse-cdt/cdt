@@ -30,12 +30,10 @@ public class TabScrollLockAction extends AbstractTerminalAction {
 	public TabScrollLockAction() {
 		super(null, TabScrollLockAction.class.getName(), IAction.AS_RADIO_BUTTON);
 
-        setupAction(Messages.TabScrollLockAction_text,
-                    Messages.TabScrollLockAction_tooltip,
-                    UIPlugin.getImageDescriptor(ImageConsts.ACTION_ScrollLock_Hover),
-                    UIPlugin.getImageDescriptor(ImageConsts.ACTION_ScrollLock_Enabled),
-                    UIPlugin.getImageDescriptor(ImageConsts.ACTION_ScrollLock_Disabled),
-                    true);
+		setupAction(Messages.TabScrollLockAction_text, Messages.TabScrollLockAction_tooltip,
+				UIPlugin.getImageDescriptor(ImageConsts.ACTION_ScrollLock_Hover),
+				UIPlugin.getImageDescriptor(ImageConsts.ACTION_ScrollLock_Enabled),
+				UIPlugin.getImageDescriptor(ImageConsts.ACTION_ScrollLock_Disabled), true);
 	}
 
 	/* (non-Javadoc)

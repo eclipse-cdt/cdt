@@ -57,32 +57,32 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 		 * Constructor.
 		 *
 		 * @param container The configuration panel container or <code>null</code>.
-	     */
-	    public EmptySettingsPanel(IConfigurationPanelContainer container) {
-		    super(container);
-	    }
+		 */
+		public EmptySettingsPanel(IConfigurationPanelContainer container) {
+			super(container);
+		}
 
-	    /* (non-Javadoc)
-	     * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
-	     */
-        @Override
-	    public void setupPanel(Composite parent) {
-	    	Composite panel = new Composite(parent, SWT.NONE);
-	    	panel.setLayout(new GridLayout());
-	    	panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		/* (non-Javadoc)
+		 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
+		 */
+		@Override
+		public void setupPanel(Composite parent) {
+			Composite panel = new Composite(parent, SWT.NONE);
+			panel.setLayout(new GridLayout());
+			panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-	    	panel.setBackground(parent.getBackground());
+			panel.setBackground(parent.getBackground());
 
-	    	setControl(panel);
-	    }
+			setControl(panel);
+		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#isValid()
-         */
-	    @Override
-	    public boolean isValid() {
-	        return false;
-	    }
+		/* (non-Javadoc)
+		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#isValid()
+		 */
+		@Override
+		public boolean isValid() {
+			return false;
+		}
 	}
 
 	/**
@@ -154,7 +154,8 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 
 		if (isPanelIsGroup()) {
 			panel = new Group(parent, SWT.NONE);
-			if (getGroupLabel() != null) ((Group)panel).setText(getGroupLabel());
+			if (getGroupLabel() != null)
+				((Group) panel).setText(getGroupLabel());
 		} else {
 			panel = new Composite(parent, SWT.NONE);
 		}
@@ -216,7 +217,8 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 	 * @param panel The configuration panel instance or <code>null</code>.
 	 */
 	public void addConfigurationPanel(String key, IConfigurationPanel panel) {
-		if (key == null) return;
+		if (key == null)
+			return;
 		if (panel != null) {
 			configurationPanels.put(key, panel);
 		} else {
@@ -259,7 +261,8 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 		}
 		IConfigurationPanel configPanel = getActiveConfigurationPanel();
 		Map<String, Object> data = new HashMap<String, Object>();
-		if (configPanel != null) configPanel.extractData(data);
+		if (configPanel != null)
+			configPanel.extractData(data);
 		configPanel = getConfigurationPanel(key);
 		Assert.isNotNull(configPanel);
 		if (configPanel.getControl() != null) {
@@ -267,10 +270,10 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 			activeConfigurationPanelKey = key;
 			panelLayout.topControl = configPanel.getControl();
 			panel.layout();
-			if (!data.isEmpty()) configPanel.updateData(data);
+			if (!data.isEmpty())
+				configPanel.updateData(data);
 			configPanel.activate();
-		}
-		else {
+		} else {
 			activeConfigurationPanelKey = key;
 		}
 	}
@@ -312,7 +315,7 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 			section = settings.addNewSection(sectionName);
 		}
 
-        return section;
+		return section;
 	}
 
 	/**
@@ -349,7 +352,8 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 			IConfigurationPanel configPanel = getConfigurationPanel(panelKey);
 			if (configPanel != null && !isEmptyConfigurationPanel(configPanel)) {
 				IDialogSettings configPanelSettings = settings.getSection(panelKey);
-				if (configPanelSettings == null) configPanelSettings = settings.addNewSection(panelKey);
+				if (configPanelSettings == null)
+					configPanelSettings = settings.addNewSection(panelKey);
 				configPanel.doRestoreWidgetValues(configPanelSettings, idPrefix);
 			}
 		}
@@ -388,7 +392,8 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 		if (configPanel != null && !isEmptyConfigurationPanel(configPanel)) {
 			String key = getActiveConfigurationPanelKey();
 			IDialogSettings configPanelSettings = settings.getSection(key);
-			if (configPanelSettings == null) configPanelSettings = settings.addNewSection(key);
+			if (configPanelSettings == null)
+				configPanelSettings = settings.addNewSection(key);
 			configPanel.doSaveWidgetValues(configPanelSettings, idPrefix);
 		}
 	}
@@ -416,7 +421,7 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 	 * @param messageType The message type or <code>IMessageProvider.NONE</code>.
 	 */
 	@Override
-    public final void setMessage(String message, int messageType) {
+	public final void setMessage(String message, int messageType) {
 		this.message = message;
 		this.messageType = messageType;
 	}

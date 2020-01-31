@@ -67,23 +67,26 @@ public class StreamsLauncherDelegate extends AbstractLauncherDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#createTerminalConnector(java.util.Map)
 	 */
-    @Override
+	@Override
 	public ITerminalConnector createTerminalConnector(Map<String, Object> properties) {
 		Assert.isNotNull(properties);
 
-    	// Check for the terminal connector id
-    	String connectorId = (String)properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
-		if (connectorId == null) connectorId = "org.eclipse.tm.terminal.connector.streams.StreamsConnector"; //$NON-NLS-1$
+		// Check for the terminal connector id
+		String connectorId = (String) properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
+		if (connectorId == null)
+			connectorId = "org.eclipse.tm.terminal.connector.streams.StreamsConnector"; //$NON-NLS-1$
 
 		// Extract the streams properties
-		OutputStream stdin = (OutputStream)properties.get(ITerminalsConnectorConstants.PROP_STREAMS_STDIN);
-		InputStream stdout = (InputStream)properties.get(ITerminalsConnectorConstants.PROP_STREAMS_STDOUT);
-		InputStream stderr = (InputStream)properties.get(ITerminalsConnectorConstants.PROP_STREAMS_STDERR);
+		OutputStream stdin = (OutputStream) properties.get(ITerminalsConnectorConstants.PROP_STREAMS_STDIN);
+		InputStream stdout = (InputStream) properties.get(ITerminalsConnectorConstants.PROP_STREAMS_STDOUT);
+		InputStream stderr = (InputStream) properties.get(ITerminalsConnectorConstants.PROP_STREAMS_STDERR);
 		Object value = properties.get(ITerminalsConnectorConstants.PROP_LOCAL_ECHO);
-		boolean localEcho =  value instanceof Boolean ? ((Boolean)value).booleanValue() : false;
-		String lineSeparator = (String)properties.get(ITerminalsConnectorConstants.PROP_LINE_SEPARATOR);
-		ITerminalServiceOutputStreamMonitorListener[] stdoutListeners = (ITerminalServiceOutputStreamMonitorListener[])properties.get(ITerminalsConnectorConstants.PROP_STDOUT_LISTENERS);
-		ITerminalServiceOutputStreamMonitorListener[] stderrListeners = (ITerminalServiceOutputStreamMonitorListener[])properties.get(ITerminalsConnectorConstants.PROP_STDERR_LISTENERS);
+		boolean localEcho = value instanceof Boolean ? ((Boolean) value).booleanValue() : false;
+		String lineSeparator = (String) properties.get(ITerminalsConnectorConstants.PROP_LINE_SEPARATOR);
+		ITerminalServiceOutputStreamMonitorListener[] stdoutListeners = (ITerminalServiceOutputStreamMonitorListener[]) properties
+				.get(ITerminalsConnectorConstants.PROP_STDOUT_LISTENERS);
+		ITerminalServiceOutputStreamMonitorListener[] stderrListeners = (ITerminalServiceOutputStreamMonitorListener[]) properties
+				.get(ITerminalsConnectorConstants.PROP_STDERR_LISTENERS);
 
 		// Construct the terminal settings store
 		ISettingsStore store = new SettingsStore();

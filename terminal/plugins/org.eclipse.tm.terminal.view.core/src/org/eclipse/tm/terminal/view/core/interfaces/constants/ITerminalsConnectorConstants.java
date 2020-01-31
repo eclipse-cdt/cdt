@@ -14,7 +14,6 @@ package org.eclipse.tm.terminal.view.core.interfaces.constants;
 
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalServiceOutputStreamMonitorListener;
 
-
 /**
  * Defines the terminals connector constants.
  *
@@ -218,7 +217,7 @@ public interface ITerminalsConnectorConstants {
 
 	/**
 	 * Property: Runtime process instance.
-     *           <p>Typical for process terminals.
+	 *           <p>Typical for process terminals.
 	 * <p>
 	 * Property Type: {@link Process}
 	 */

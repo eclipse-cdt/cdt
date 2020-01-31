@@ -73,7 +73,8 @@ public class TraceHandler {
 				if (mode != null && Integer.decode(mode).intValue() > 0) {
 					return Integer.decode(mode).intValue();
 				}
-			} catch (NumberFormatException e) { /* ignored on purpose */ }
+			} catch (NumberFormatException e) {
+				/* ignored on purpose */ }
 
 			return 0;
 		}
@@ -85,7 +86,8 @@ public class TraceHandler {
 		 * @return <code>true</code> if the slot is defined and enabled, <code>false</code> otherwise.
 		 */
 		protected boolean isSlotEnabled(String slotId) {
-			return fIdentifier != null ? Boolean.parseBoolean(Platform.getDebugOption(fIdentifier + "/" + slotId)) : false; //$NON-NLS-1$
+			return fIdentifier != null ? Boolean.parseBoolean(Platform.getDebugOption(fIdentifier + "/" + slotId)) //$NON-NLS-1$
+					: false;
 		}
 
 		/**
@@ -97,9 +99,8 @@ public class TraceHandler {
 		 * @return <code>true</code> if the debug should be written, <code>false</code> otherwise.
 		 */
 		protected final boolean isEnabled(int debugMode, String slotId) {
-			return getDebugMode() < 0 ||
-			(debugMode <= getDebugMode() &&
-					(slotId == null || slotId.trim().length() == 0 || isSlotEnabled(slotId)));
+			return getDebugMode() < 0 || (debugMode <= getDebugMode()
+					&& (slotId == null || slotId.trim().length() == 0 || isSlotEnabled(slotId)));
 		}
 
 		/**
@@ -113,12 +114,15 @@ public class TraceHandler {
 		 *
 		 * @see IStatus
 		 */
-		protected String getFormattedDebugMessage(String message, int debugMode, String slotId, int severity, Object clazz) {
+		protected String getFormattedDebugMessage(String message, int debugMode, String slotId, int severity,
+				Object clazz) {
 			StringBuffer debug = new StringBuffer();
 			if (slotId != null || clazz != null) {
 				if (clazz != null) {
-					String name = clazz instanceof Class<?> ? ((Class<?>)clazz).getSimpleName() : clazz.getClass().getSimpleName();
-					debug.append(name.trim().length() > 0 ? name.trim() : clazz instanceof Class<?> ? ((Class<?>)clazz).getName() : clazz.getClass().getName());
+					String name = clazz instanceof Class<?> ? ((Class<?>) clazz).getSimpleName()
+							: clazz.getClass().getSimpleName();
+					debug.append(name.trim().length() > 0 ? name.trim()
+							: clazz instanceof Class<?> ? ((Class<?>) clazz).getName() : clazz.getClass().getName());
 				}
 				if (slotId != null) {
 					debug.append(" at "); //$NON-NLS-1$
@@ -152,8 +156,7 @@ public class TraceHandler {
 			String formattedMessage = getFormattedDebugMessage(message, debugMode, slotId, severity, clazz);
 			if (severity == IStatus.ERROR || severity == IStatus.WARNING) {
 				System.err.println(formattedMessage);
-			}
-			else {
+			} else {
 				System.out.println(formattedMessage);
 			}
 		}

@@ -69,7 +69,8 @@ public class TerminalService implements ITerminalService {
 		 * @param data The custom terminal data node or <code>null</code>.
 		 * @param done The callback to invoke if the operation finished or <code>null</code>.
 		 */
-		public abstract void run(String id, String secondaryId, String title, ITerminalConnector connector, Object data, Done done);
+		public abstract void run(String id, String secondaryId, String title, ITerminalConnector connector, Object data,
+				Done done);
 
 		/**
 		 * Returns if or if not to execute the runnable asynchronously.
@@ -79,32 +80,34 @@ public class TerminalService implements ITerminalService {
 		 *
 		 * @return <code>True</code> to execute the runnable asynchronously, <code>false</code> otherwise.
 		 */
-		public boolean isExecuteAsync() { return true; }
+		public boolean isExecuteAsync() {
+			return true;
+		}
 	}
 
 	/**
-     * Constructor
-     */
-    public TerminalService() {
-    }
+	 * Constructor
+	 */
+	public TerminalService() {
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.tm.terminal.view.core.interfaces.ITerminalService#addTerminalTabListener(org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener)
-     */
-    @Override
-    public final void addTerminalTabListener(ITerminalTabListener listener) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.tm.terminal.view.core.interfaces.ITerminalService#addTerminalTabListener(org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener)
+	 */
+	@Override
+	public final void addTerminalTabListener(ITerminalTabListener listener) {
 		Assert.isNotNull(listener);
 		terminalTabListeners.add(listener);
-    }
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.tm.terminal.view.core.interfaces.ITerminalService#removeTerminalTabListener(org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener)
-     */
-    @Override
-    public final void removeTerminalTabListener(ITerminalTabListener listener) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.tm.terminal.view.core.interfaces.ITerminalService#removeTerminalTabListener(org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener)
+	 */
+	@Override
+	public final void removeTerminalTabListener(ITerminalTabListener listener) {
 		Assert.isNotNull(listener);
 		terminalTabListeners.remove(listener);
-    }
+	}
 
 	/**
 	 * Convenience method for notifying the registered terminal tab listeners.
@@ -117,7 +120,8 @@ public class TerminalService implements ITerminalService {
 		Assert.isNotNull(source);
 
 		// If no listener is registered, we are done here
-		if (terminalTabListeners.isEmpty()) return;
+		if (terminalTabListeners.isEmpty())
+			return;
 
 		// Get the list or currently registered listeners
 		// Loop the registered terminal tab listeners and invoke the proper method
@@ -150,14 +154,15 @@ public class TerminalService implements ITerminalService {
 	 * @param runnable The terminal service runnable. Must not be <code>null</code>.
 	 * @param done The callback to invoke if the operation has been finished or <code>null</code>.
 	 */
-	protected final void executeServiceOperation(final Map<String, Object> properties, final TerminalServiceRunnable runnable, final Done done) {
+	protected final void executeServiceOperation(final Map<String, Object> properties,
+			final TerminalServiceRunnable runnable, final Done done) {
 		Assert.isNotNull(properties);
 		Assert.isNotNull(runnable);
 
 		// Extract the properties
-		String id = (String)properties.get(ITerminalsConnectorConstants.PROP_ID);
-		String secondaryId = (String)properties.get(ITerminalsConnectorConstants.PROP_SECONDARY_ID);
-		String title = (String)properties.get(ITerminalsConnectorConstants.PROP_TITLE);
+		String id = (String) properties.get(ITerminalsConnectorConstants.PROP_ID);
+		String secondaryId = (String) properties.get(ITerminalsConnectorConstants.PROP_SECONDARY_ID);
+		String title = (String) properties.get(ITerminalsConnectorConstants.PROP_TITLE);
 		Object data = properties.get(ITerminalsConnectorConstants.PROP_DATA);
 
 		// Normalize the terminals console view id
@@ -171,7 +176,8 @@ public class TerminalService implements ITerminalService {
 			// Properties contain invalid connector arguments
 			if (done != null) {
 				Exception e = new IllegalArgumentException(Messages.TerminalService_error_cannotCreateConnector);
-				done.done(new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(), e.getLocalizedMessage(), e));
+				done.done(new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(), e.getLocalizedMessage(),
+						e));
 			}
 			return;
 		}
@@ -185,20 +191,18 @@ public class TerminalService implements ITerminalService {
 		// Execute the operation
 		if (!runnable.isExecuteAsync()) {
 			runnable.run(finId, finSecondaryId, finTitle, connector, finData, done);
-		}
-		else {
-	        try {
-	            Display display = PlatformUI.getWorkbench().getDisplay();
-	            display.asyncExec(new Runnable() {
+		} else {
+			try {
+				Display display = PlatformUI.getWorkbench().getDisplay();
+				display.asyncExec(new Runnable() {
 					@Override
-	                public void run() {
+					public void run() {
 						runnable.run(finId, finSecondaryId, finTitle, connector, finData, done);
 					}
 				});
-	        }
-	        catch (Exception e) {
-	            // if display is disposed, silently ignore.
-	        }
+			} catch (Exception e) {
+				// if display is disposed, silently ignore.
+			}
 		}
 	}
 
@@ -224,7 +228,8 @@ public class TerminalService implements ITerminalService {
 	 */
 	protected String normalizeTitle(String title, Object data) {
 		// If the title is explicitly specified, return as is
-		if (title != null) return title;
+		if (title != null)
+			return title;
 
 		// Return the default console title in all other cases
 		return Messages.TerminalService_defaultTitle;
@@ -243,7 +248,7 @@ public class TerminalService implements ITerminalService {
 		ITerminalConnector connector = null;
 
 		// Get the launcher delegate id from the properties
-		String delegateId = (String)properties.get(ITerminalsConnectorConstants.PROP_DELEGATE_ID);
+		String delegateId = (String) properties.get(ITerminalsConnectorConstants.PROP_DELEGATE_ID);
 		if (delegateId != null) {
 			// Get the launcher delegate
 			ILauncherDelegate delegate = LauncherDelegateManager.getInstance().getLauncherDelegate(delegateId, false);
@@ -260,7 +265,7 @@ public class TerminalService implements ITerminalService {
 	 * @see org.eclipse.tm.terminal.view.core.interfaces.ITerminalService#openConsole(java.util.Map, org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
 	 */
 	@Override
-    public void openConsole(final Map<String, Object> properties, final Done done) {
+	public void openConsole(final Map<String, Object> properties, final Done done) {
 		Assert.isNotNull(properties);
 		final boolean restoringView = fRestoringView;
 
@@ -268,7 +273,7 @@ public class TerminalService implements ITerminalService {
 			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run(final String id, final String secondaryId, final String title,
-							final ITerminalConnector connector, final Object data, final Done done) {
+					final ITerminalConnector connector, final Object data, final Done done) {
 				if (restoringView) {
 					doRun(id, secondaryId, title, connector, data, done);
 				} else {
@@ -278,45 +283,50 @@ public class TerminalService implements ITerminalService {
 					fRestoringView = false;
 
 					// After that schedule opening the requested console
-			        try {
-			            Display display = PlatformUI.getWorkbench().getDisplay();
-			            display.asyncExec(new Runnable() {
+					try {
+						Display display = PlatformUI.getWorkbench().getDisplay();
+						display.asyncExec(new Runnable() {
 							@Override
 							public void run() {
 								doRun(id, secondaryId, title, connector, data, done);
 							}
 						});
-			        }
-			        catch (Exception e) {
-			            // if display is disposed, silently ignore.
-			        }
+					} catch (Exception e) {
+						// if display is disposed, silently ignore.
+					}
 				}
 			}
 
-			public void doRun(String id, String secondaryId, String title, ITerminalConnector connector, Object data, Done done) {
+			public void doRun(String id, String secondaryId, String title, ITerminalConnector connector, Object data,
+					Done done) {
 				// Determine the terminal encoding
-				String encoding = (String)properties.get(ITerminalsConnectorConstants.PROP_ENCODING);
+				String encoding = (String) properties.get(ITerminalsConnectorConstants.PROP_ENCODING);
 				// Create the flags to pass on to openConsole
 				Map<String, Boolean> flags = new HashMap<String, Boolean>();
 				flags.put("activate", Boolean.TRUE); //$NON-NLS-1$
 				if (properties.get(ITerminalsConnectorConstants.PROP_FORCE_NEW) instanceof Boolean) {
-					flags.put(ITerminalsConnectorConstants.PROP_FORCE_NEW, (Boolean)properties.get(ITerminalsConnectorConstants.PROP_FORCE_NEW));
+					flags.put(ITerminalsConnectorConstants.PROP_FORCE_NEW,
+							(Boolean) properties.get(ITerminalsConnectorConstants.PROP_FORCE_NEW));
 				}
 				if (properties.get(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT) instanceof Boolean) {
-					flags.put(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT, (Boolean)properties.get(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT));
+					flags.put(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT,
+							(Boolean) properties.get(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT));
 				}
 				// Open the new console
 				CTabItem item;
 				if (secondaryId != null)
-					item = ConsoleManager.getInstance().openConsole(id, secondaryId, title, encoding, connector, data, flags);
+					item = ConsoleManager.getInstance().openConsole(id, secondaryId, title, encoding, connector, data,
+							flags);
 				else
 					item = ConsoleManager.getInstance().openConsole(id, title, encoding, connector, data, flags);
 				// Associate the original terminal properties with the tab item.
 				// This makes it easier to persist the connection data within the memento handler
-				if (item != null && !item.isDisposed()) item.setData("properties", properties); //$NON-NLS-1$
+				if (item != null && !item.isDisposed())
+					item.setData("properties", properties); //$NON-NLS-1$
 
 				// Invoke the callback
-				if (done != null) done.done(Status.OK_STATUS);
+				if (done != null)
+					done.done(Status.OK_STATUS);
 			}
 		}, done);
 	}
@@ -325,16 +335,18 @@ public class TerminalService implements ITerminalService {
 	 * @see org.eclipse.tm.terminal.view.core.interfaces.ITerminalService#closeConsole(java.util.Map, org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
 	 */
 	@Override
-    public void closeConsole(final Map<String, Object> properties, final Done done) {
+	public void closeConsole(final Map<String, Object> properties, final Done done) {
 		Assert.isNotNull(properties);
 
 		executeServiceOperation(properties, new TerminalServiceRunnable() {
 			@Override
-			public void run(String id, String secondaryId, String title, ITerminalConnector connector, Object data, Done done) {
+			public void run(String id, String secondaryId, String title, ITerminalConnector connector, Object data,
+					Done done) {
 				// Close the console
 				ConsoleManager.getInstance().closeConsole(id, title, connector, data);
 				// Invoke the callback
-				if (done != null) done.done(Status.OK_STATUS);
+				if (done != null)
+					done.done(Status.OK_STATUS);
 			}
 		}, done);
 	}
@@ -348,11 +360,13 @@ public class TerminalService implements ITerminalService {
 
 		executeServiceOperation(properties, new TerminalServiceRunnable() {
 			@Override
-			public void run(String id, String secondaryId, String title, ITerminalConnector connector, Object data, Done done) {
+			public void run(String id, String secondaryId, String title, ITerminalConnector connector, Object data,
+					Done done) {
 				// Close the console
 				ConsoleManager.getInstance().terminateConsole(id, title, connector, data);
 				// Invoke the callback
-				if (done != null) done.done(Status.OK_STATUS);
+				if (done != null)
+					done.done(Status.OK_STATUS);
 			}
 		}, done);
 	}

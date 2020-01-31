@@ -66,12 +66,14 @@ public interface ITerminalTextDataReadOnly {
 	public ITerminalTextDataSnapshot makeSnapshot();
 
 	char[] getChars(int line);
+
 	Style[] getStyles(int line);
 
 	/**
 	 * @return the line in which the cursor is at the moment
 	 */
 	int getCursorLine();
+
 	/**
 	 * @return the column at which the cursor is at the moment
 	 */

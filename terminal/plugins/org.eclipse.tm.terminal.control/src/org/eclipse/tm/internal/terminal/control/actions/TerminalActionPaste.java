@@ -33,22 +33,18 @@ public class TerminalActionPaste extends AbstractTerminalAction {
 		super(TerminalActionPaste.class.getName());
 		setActionDefinitionId("org.eclipse.tm.terminal.paste"); //$NON-NLS-1$
 		ISharedImages si = PlatformUI.getWorkbench().getSharedImages();
-		setupAction(ActionMessages.PASTE, ActionMessages.PASTE,
-					si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
-					si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
-					si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED),
-					false);
+		setupAction(ActionMessages.PASTE, ActionMessages.PASTE, si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED), false);
 	}
 
 	public TerminalActionPaste(ITerminalViewControl target) {
 		super(target, TerminalActionPaste.class.getName());
 		setActionDefinitionId("org.eclipse.tm.terminal.paste"); //$NON-NLS-1$
 		ISharedImages si = PlatformUI.getWorkbench().getSharedImages();
-		setupAction(ActionMessages.PASTE, ActionMessages.PASTE,
-					si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
-					si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
-					si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED),
-					false);
+		setupAction(ActionMessages.PASTE, ActionMessages.PASTE, si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
+				si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED), false);
 	}
 
 	public void run() {
@@ -62,8 +58,7 @@ public class TerminalActionPaste extends AbstractTerminalAction {
 		ITerminalViewControl target = getTarget();
 		boolean bEnabled = target != null && target.getClipboard() != null && !target.getClipboard().isDisposed();
 		if (bEnabled) {
-			String strText = (String) target.getClipboard().getContents(
-					TextTransfer.getInstance());
+			String strText = (String) target.getClipboard().getContents(TextTransfer.getInstance());
 			bEnabled = ((strText != null) && (!strText.equals("")) && (target.getState() == TerminalState.CONNECTED));//$NON-NLS-1$
 		}
 		setEnabled(bEnabled);

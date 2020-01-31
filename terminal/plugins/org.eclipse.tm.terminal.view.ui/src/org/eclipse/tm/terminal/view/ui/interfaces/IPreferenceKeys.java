@@ -65,5 +65,6 @@ public interface IPreferenceKeys {
 	 * Preference key: Local terminal default shell command arguments on Unix hosts.
 	 * @since 4.1
 	 */
-	public final String PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS = PREF_TERMINAL + ".localTerminalDefaultShellUnixArgs"; //$NON-NLS-1$
+	public final String PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS = PREF_TERMINAL
+			+ ".localTerminalDefaultShellUnixArgs"; //$NON-NLS-1$
 }

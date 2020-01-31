@@ -28,4 +28,4 @@ public class TelnetMessages extends NLS {
 	 */
 	public static String END_OF_LINE;
 
- }
+}

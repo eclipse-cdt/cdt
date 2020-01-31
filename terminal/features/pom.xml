@@ -40,8 +40,6 @@
 
 		<module>org.eclipse.tm.terminal.view.feature</module>
 		<module>org.eclipse.tm.terminal.view.sdk.feature</module>
-		<module>org.eclipse.tm.terminal.view.rse.feature</module>
-		<module>org.eclipse.tm.terminal.view.rse.sdk.feature</module>
 
 		<module>org.eclipse.tm.terminal.feature</module>
 		<module>org.eclipse.tm.terminal.sdk.feature</module>
@@ -66,25 +64,6 @@
 				<module>org.eclipse.tm.terminal.connector.cdtserial.feature</module>
 				<module>org.eclipse.tm.terminal.connector.cdtserial.sdk.feature</module>
 			</modules>
-		</profile>
-		<profile>
-			<!-- Bug 536800 depends on gnu.io.rxtx which is a workswith dep we are not allowed to redistribute --> 
-			<!-- The rxtxserial connector doesn't build on MacOSX. -->
-			<id>rxtxserial</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<!-- Bug 536800 remove from reactor <modules>
-				<module>org.eclipse.tm.terminal.connector.serial.feature</module>
-				<module>org.eclipse.tm.terminal.connector.serial.sdk.feature</module>
-			</modules> -->
-			<repositories>
-				<repository>
-					<id>rxtx</id>
-					<url>http://archive.eclipse.org/tm/updates/rxtx</url>
-					<layout>p2</layout>
-				</repository>
-			</repositories>
 		</profile>
 	</profiles>
 </project>

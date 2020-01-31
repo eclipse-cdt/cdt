@@ -136,7 +136,7 @@ public interface IASTUnaryExpression extends IASTExpression {
 
 	/**
 	 * For GCC parsers in C++ mode, only: '__integer_pack ( expression )'
-	 * @since 6.10
+	 * @since 6.11
 	 */
 	public static final int op_integerPack = 19;
 

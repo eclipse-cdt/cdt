@@ -280,6 +280,8 @@
 		<module>tools.templates/org.eclipse.tools.templates.freemarker.java11</module>
 		<module>tools.templates/org.eclipse.tools.templates.ui</module>
 
+		<module>terminal</module>
+
 		<module>releng/org.eclipse.cdt.native-feature</module>
 		<module>releng/org.eclipse.cdt</module>
 		<module>releng/org.eclipse.cdt.platform.branding</module>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+<<<<<<< HEAD   (d1e156 Bug 559647: [CDT debug.app.doc] Update links to be https://)
    Copyright (c) 2011, 2020 Wind River Systems, Inc. and others.
 
    This program and the accompanying materials
@@ -1028,4 +1029,372 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+=======
+    Copyright (c) 2018 Red Hat and others.
+    This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    https://www.eclipse.org/legal/epl-2.0/
+   
+    SPDX-License-Identifier: EPL-2.0
+ -->
+
+<project
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+		xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.eclipse.tm</groupId>
+	<artifactId>tm-parent</artifactId>
+	<version>4.5.100-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Target Management Parent</name>
+
+	<properties>
+		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.git</tycho.scmUrl>
+		<tycho-version>1.6.0</tycho-version>
+		<tycho-extras-version>${tycho-version}</tycho-extras-version>
+
+		<cbi-plugins.version>1.1.4</cbi-plugins.version>
+
+		<maven-resources-version>2.7</maven-resources-version>
+		<maven-antrun-version>1.8</maven-antrun-version>
+		<gmaven-version>1.5</gmaven-version>
+		<findbugs-version>3.0.4</findbugs-version>
+		<!-- Check available versions at https://repository.sonatype.org/content/repositories/public/org/jacoco/jacoco-maven-plugin -->
+		<jacoco-version>0.7.9</jacoco-version>
+
+		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
+		<platform-site>http://download.eclipse.org/eclipse/updates/I-builds/</platform-site>
+
+		<!-- <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20180905201904/repository/</orbit-site> -->
+		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/latest-I/</orbit-site>
+		<cdt-site>https://download.eclipse.org/tools/cdt/releases/9.7/</cdt-site>
+		<remote-site>http://download.eclipse.org/tools/ptp/builds/remote/nightly/</remote-site>
+		<!-- <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/photon/milestones/</remote-site> -->
+		<swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
+
+		<!-- TODO: remove dep on simrel site -->
+		<platform-release-site>http://download.eclipse.org/staging/2020-03/</platform-release-site>
+
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>license-feature</id>
+			<url>${license-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>platform</id>
+			<url>${platform-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>platform-release</id>
+			<url>${platform-release-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>orbit</id>
+			<url>${orbit-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>cdt</id>
+			<url>${cdt-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>swtbot</id>
+			<url>${swtbot-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>remote</id>
+			<url>${remote-site}</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype</id>
+			<url>http://oss.sonatype.org/content/repositories/public</url>
+				<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+		<pluginRepository>
+			<id>cbi</id>
+			<url>http://repo.eclipse.org/content/repositories/cbi-releases/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>cbi-snapshots</id>
+			<url>http://repo.eclipse.org/content/repositories/cbi-snapshots/</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>target-platform-configuration</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<environments>
+							<environment>
+								<os>linux</os>
+								<ws>gtk</ws>
+								<arch>x86_64</arch>
+							</environment>
+							<environment>
+								<os>win32</os>
+								<ws>win32</ws>
+								<arch>x86_64</arch>
+							</environment>
+						</environments>
+						<resolver>p2</resolver>
+						<ignoreTychoRepositories>true</ignoreTychoRepositories>
+						<includePackedArtifacts>true</includePackedArtifacts>
+						<pomDependencies>consider</pomDependencies>
+						<filters>
+							<filter>
+								<type>eclipse-plugin</type>
+								<id>org.apache.commons.net</id>
+								<restrictTo>
+									<versionRange>[3.2,3.3)</versionRange>
+								</restrictTo>
+							</filter>
+							<filter>
+								<type>eclipse-plugin</type>
+								<id>org.apache.commons.net.source</id>
+								<restrictTo>
+									<versionRange>[3.2,3.3)</versionRange>
+								</restrictTo>
+							</filter>
+						</filters>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-compiler-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+                  				<compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
+                  				<!-- ignore project settings which appear in Eclipse but are ignored by Tycho <= 0.26, like API access restrictions -->
+                  				<!-- <useProjectSettings>false</useProjectSettings> -->
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-source-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+					</configuration>
+					<executions>
+						<execution>
+							<id>plugin-source</id>
+							<goals>
+								<goal>plugin-source</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-packaging-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.eclipse.tycho.extras</groupId>
+							<artifactId>tycho-buildtimestamp-jgit</artifactId>
+							<version>${tycho-extras-version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.eclipse.tycho.extras</groupId>
+							<artifactId>tycho-sourceref-jgit</artifactId>
+							<version>${tycho-extras-version}</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<strictBinIncludes>false</strictBinIncludes>
+						<timestampProvider>jgit</timestampProvider>
+						<jgit.ignore>pom.xml</jgit.ignore>
+						<jgit.dirtyWorkingTree>ignore</jgit.dirtyWorkingTree>
+						<sourceReferences>
+							<generate>true</generate>
+						</sourceReferences>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-repository-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<finalName>${project.artifactId}</finalName>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>${maven-resources-version}</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>${maven-antrun-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.gmaven</groupId>
+					<artifactId>gmaven-plugin</artifactId>
+					<version>${gmaven-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>${findbugs-version}</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+						<effort>Max</effort>
+						<threshold>Low</threshold>
+						<xmlOutput>true</xmlOutput>
+						<failOnError>false</failOnError>
+						<excludeFilterFile>${adminDir}/findbugs-exclude.xml</excludeFilterFile>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>		
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-surefire-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<!-- <useUIHarness>true</useUIHarness>  -->
+						<!-- <useUIThread>true</useUIThread> -->
+						<failIfNoTests>false</failIfNoTests>
+						<product>org.eclipse.platform.ide</product>
+						<!-- <argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=256m -Drse.enableSecureStoreAccess=false -Dorg.eclipse.swt.browser.UseWebKitGTK=true</argLine> -->
+						<argLine> -ea </argLine>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>eclipse-sign</id>
+			<build>
+			<plugins>
+				<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<includePackedArtifacts>true</includePackedArtifacts>
+				</configuration>
+				</plugin>
+				<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-pack200a-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<configuration>
+					<fork>true</fork>
+				</configuration>
+				<executions>
+					<execution>
+					<id>pack200-normalize</id>
+					<goals>
+						<goal>normalize</goal>
+					</goals>
+					<phase>verify</phase>
+					</execution>
+				</executions>
+				</plugin>
+				<plugin>
+				<groupId>org.eclipse.cbi.maven.plugins</groupId>
+				<artifactId>eclipse-jarsigner-plugin</artifactId>
+				<version>${cbi-plugins.version}</version>
+				<executions>
+					<execution>
+					<id>sign</id>
+					<goals>
+						<goal>sign</goal>
+					</goals>
+					<phase>verify</phase>
+					</execution>
+				</executions>
+				</plugin>
+				<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-pack200b-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<configuration>
+					<fork>true</fork>
+				</configuration>
+				<executions>
+					<execution>
+					<id>pack200-pack</id>
+					<goals>
+						<goal>pack</goal>
+					</goals>
+					<phase>verify</phase>
+					</execution>
+				</executions>
+				</plugin>
+				<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+					<id>p2-metadata</id>
+					<goals>
+						<goal>p2-metadata</goal>
+					</goals>
+					<phase>package</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<defaultP2Metadata>false</defaultP2Metadata>
+				</configuration>
+				</plugin>
+			</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<modules>
+		<!-- Terminal features and plug-ins -->
+		<module>terminal</module>
+		<module>site</module>
+	</modules>
+>>>>>>> BRANCH (642a74 Bug 559474: Update all releng for terminal to build on its o)
 </project>

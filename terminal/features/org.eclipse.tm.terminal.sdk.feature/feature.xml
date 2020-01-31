@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2018 Red Hat and others.
+    This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    https://www.eclipse.org/legal/epl-2.0/
+   
+    SPDX-License-Identifier: EPL-2.0
+ -->
+
+<feature
+      id="org.eclipse.tm.terminal.sdk.feature"
+      label="%featureName"
+      version="4.5.100.qualifier"
+      provider-name="%providerName"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1.qualifier">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <includes
+         id="org.eclipse.tm.terminal.feature"
+         version="0.0.0"/>
+   
+   <requires>
+      <import feature="org.eclipse.tm.terminal.connector.local.sdk.feature"/>
+      <import feature="org.eclipse.tm.terminal.connector.ssh.sdk.feature"/>
+      <import feature="org.eclipse.tm.terminal.connector.telnet.sdk.feature"/>
+      <import feature="org.eclipse.tm.terminal.control.sdk.feature"/>
+      <import feature="org.eclipse.tm.terminal.view.sdk.feature"/>
+   </requires>
+
+</feature>

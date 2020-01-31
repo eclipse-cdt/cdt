@@ -1,0 +1,17 @@
+# ignore various emacs droppings
+*~
+\#*\#
+
+# .
+workspace
+debug-workspace
+
+# Ignored throughout the whole tree
+bin/
+target/
+coverage/
+artifacts/
+/ManifestValidationResult.html
+
+# MacOSX
+.DS_Store

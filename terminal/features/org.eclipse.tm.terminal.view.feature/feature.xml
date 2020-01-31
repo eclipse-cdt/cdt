@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2018 Red Hat and others.
+    This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    https://www.eclipse.org/legal/epl-2.0/
+   
+    SPDX-License-Identifier: EPL-2.0
+ -->
+<feature
+      id="org.eclipse.tm.terminal.view.feature"
+      label="%featureName"
+      version="4.5.200.qualifier"
+      provider-name="%providerName"
+      plugin="org.eclipse.tm.terminal.view.core"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1.qualifier">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal.view.core"/>
+      <import plugin="org.eclipse.tm.terminal.control"/>
+      <import plugin="org.eclipse.ui" version="3.8.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.tm.terminal.view.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tm.terminal.view.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

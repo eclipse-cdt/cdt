@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2018 Red Hat and others.
+    This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    https://www.eclipse.org/legal/epl-2.0/
+   
+    SPDX-License-Identifier: EPL-2.0
+ -->
+
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.eclipse.tm</groupId>
+    <artifactId>tm-parent</artifactId>
+    <version>4.5.100-SNAPSHOT</version>
+    <relativePath>../../</relativePath>
+  </parent>
+
+	<groupId>org.eclipse.tm.terminal</groupId>
+	<artifactId>org.eclipse.tm.terminal.maven-config</artifactId>
+	<packaging>pom</packaging>
+	<name>TM Terminal, Maven Configuration Master</name>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License</name>
+			<url>https://www.eclipse.org/legal/epl-2.0/</url>
+			<distribution>repo</distribution>
+			<comments>
+            All rights reserved.
+
+            This program and the accompanying materials are made
+            available under the terms of the Eclipse Public License 2.0
+            which accompanies this distribution, and is available at
+            https://www.eclipse.org/legal/epl-2.0/
+            </comments>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>Eclipse Foundation</name>
+		<url>http://www.eclipse.org/</url>
+	</organization>
+
+	<properties>
+		<!-- Common global properties -->
+		<adminDir>${env.WORKSPACE}/admin</adminDir>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- JaCoCo global properties -->
+		<jacoco.skip>false</jacoco.skip>
+		<jacoco.output>file</jacoco.output>
+		<jacoco.dumpOnExit>true</jacoco.dumpOnExit>
+
+		<terminal-stream>development</terminal-stream>
+		<terminal-zipfile>${project.artifactId}.zip</terminal-zipfile>
+		<terminal-install>/home/data/httpd/download.eclipse.org/tm/terminal/builds/${terminal-stream}/nightly</terminal-install>
+		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.git</tycho.scmUrl>
+	</properties>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>3.8</version>
+					<configuration>
+						<sourceEncoding>utf-8</sourceEncoding>
+						<minimumTokens>100</minimumTokens>
+						<targetJdk>1.7</targetJdk>
+						<format>xml</format>
+						<failOnViolation>false</failOnViolation>
+						<excludes>
+							<exclude>**/UbcCheck.java</exclude>
+						</excludes>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>cpd-check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

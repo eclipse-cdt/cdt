@@ -26,24 +26,16 @@
 
 	<modules>
 		<module>org.eclipse.tm.terminal.control.feature</module>
-		<module>org.eclipse.tm.terminal.control.sdk.feature</module>
 
 		<module>org.eclipse.tm.terminal.connector.local.feature</module>
-		<module>org.eclipse.tm.terminal.connector.local.sdk.feature</module>
 		<module>org.eclipse.tm.terminal.connector.remote.feature</module>
-		<module>org.eclipse.tm.terminal.connector.remote.sdk.feature</module>
 		<module>org.eclipse.tm.terminal.connector.ssh.feature</module>
-		<module>org.eclipse.tm.terminal.connector.ssh.sdk.feature</module>
 		<module>org.eclipse.tm.terminal.connector.telnet.feature</module>
-		<module>org.eclipse.tm.terminal.connector.telnet.sdk.feature</module>
 		<module>org.eclipse.tm.terminal.connector.cdtserial.feature</module>
-		<module>org.eclipse.tm.terminal.connector.cdtserial.sdk.feature</module>
 
 		<module>org.eclipse.tm.terminal.view.feature</module>
-		<module>org.eclipse.tm.terminal.view.sdk.feature</module>
 
 		<module>org.eclipse.tm.terminal.feature</module>
-		<module>org.eclipse.tm.terminal.sdk.feature</module>
 
 	</modules>
 

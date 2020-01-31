@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2018 Red Hat and others.
+    This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    https://www.eclipse.org/legal/epl-2.0/
+   
+    SPDX-License-Identifier: EPL-2.0
+ -->
+
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.tm.terminal</groupId>
+		<artifactId>org.eclipse.tm.terminal.maven-build</artifactId>
+		<version>4.5.100-SNAPSHOT</version>
+		<relativePath>../admin/pom-build.xml</relativePath>
+	</parent>
+
+	<artifactId>org.eclipse.tm.terminal.plugins</artifactId>
+
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>org.eclipse.tm.terminal.control</module>
+
+		<module>org.eclipse.tm.terminal.connector.local</module>
+		<module>org.eclipse.tm.terminal.connector.process</module>
+		<module>org.eclipse.tm.terminal.connector.remote</module>
+		<module>org.eclipse.tm.terminal.connector.ssh</module>
+		<module>org.eclipse.tm.terminal.connector.telnet</module>
+
+		<module>org.eclipse.tm.terminal.view.core</module>
+		<module>org.eclipse.tm.terminal.view.ui</module>
+
+		<module>org.eclipse.tm.terminal.test</module>
+	</modules>
+
+	<profiles>
+		<profile>
+			<!-- The cdtserial connector can only be built with CDT Oxygen or newer. -->
+			<id>cdtserial</id>
+			<activation>
+				<!-- cdtserial is the future for master moving forward, so have it on 
+					by default. -->
+				<!-- This also affects the Gerrit validation job, which should work on 
+					cdtserial too. -->
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>!nocdtserial</name>
+				</property>
+			</activation>
+			<modules>
+				<module>org.eclipse.tm.terminal.connector.cdtserial</module>
+			</modules>
+		</profile>
+		<profile>
+			<!-- Bug 536800 depends on gnu.io.rxtx which is a workswith dep we are not allowed to redistribute --> 
+			<!-- The rxtxserial connector doesn't build on MacOSX. -->
+			<id>rxtxserial</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<!-- Bug 536800 remove from reactor <modules>
+				<module>org.eclipse.tm.terminal.connector.serial</module>
+			</modules> -->
+			<repositories>
+				<repository>
+					<id>rxtx</id>
+					<url>http://archive.eclipse.org/tm/updates/rxtx</url>
+					<layout>p2</layout>
+				</repository>
+			</repositories>
+		</profile>
+	</profiles>
+</project>

@@ -4920,7 +4920,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 			} else if (onPos != -1 && onPos > offPos) {
 				if (inInactiveCode) {
-					int inactiveCodeEnd = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
+					int inactiveCodeEnd = nodeLocation.getNodeOffset();
 					positions.add(new InactivePosition(inactiveCodeStart, inactiveCodeEnd - inactiveCodeStart, false));
 				}
 				inInactiveCode = false;

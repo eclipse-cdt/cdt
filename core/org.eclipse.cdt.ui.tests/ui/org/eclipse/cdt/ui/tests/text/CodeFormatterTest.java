@@ -4717,4 +4717,21 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testEnumWithAttributes_Bug559545() throws Exception {
 		assertFormatterResult();
 	}
+
+	////@formatter:off
+    //	int a;
+    //
+    ////@formatter:on
+	//	int b;
+	//	int c;
+
+	////@formatter:off
+    //	int a;
+    //
+    ////@formatter:on
+	//int b;
+	//int c;
+	public void testFormatterOnOff_Bug559669() throws Exception {
+		assertFormatterResult();
+	}
 }

@@ -67,6 +67,14 @@ public class ValidatingLabeledTextField extends Composite {
 		}
 
 		/**
+		 * Is an empty input allowed?
+		 * @return True if empty string is allowed, false otherwise
+		 */
+		public boolean emptyAllowed() {
+			return true;
+		}
+
+		/**
 		 * @param text the new value of the field
 		 * @return whether the value is valid or not
 		 */
@@ -138,17 +146,18 @@ public class ValidatingLabeledTextField extends Composite {
 			public void checkField() {
 				String newName = textField.getText();
 
-				boolean isEmpty = (newName.length() == 0);
+				boolean isEmpty = newName.length() == 0;
 
 				boolean isNameAlreadyInUse = nameAlreadyInUse(textField, newName);
 				boolean isValid = validator.isValidInput(newName);
 				boolean isKeyword = NameHelper.isKeyword(newName);
-				boolean isValidName = NameHelper.isValidLocalVariableName(newName);
+				boolean isEmptyAllowed = validator.emptyAllowed();
+				boolean isValidName = (isEmpty && isEmptyAllowed) || NameHelper.isValidLocalVariableName(newName);
 
-				boolean isOk = isValid && !isNameAlreadyInUse && !isEmpty && !isKeyword && isValidName;
+				boolean isOk = isValid && !isNameAlreadyInUse && !isKeyword && isValidName;
 				if (isOk) {
 					setErrorStatus(EMPTY_STRING);
-				} else if (isEmpty) {
+				} else if (isEmpty && !isEmptyAllowed) {
 					setErrorStatus(validator.errorMessageForEmptyField());
 				} else if (!isValid || !isValidName) {
 					setErrorStatus(validator.errorMessageForInvalidInput());
@@ -159,8 +168,8 @@ public class ValidatingLabeledTextField extends Composite {
 				}
 				validationStatus.put(textField, isOk);
 
-				if (validationStatus.values().contains(Boolean.FALSE) || isEmpty || isNameAlreadyInUse || isKeyword
-						|| !isValidName) {
+				if (validationStatus.values().contains(Boolean.FALSE) || (isEmpty && !isEmptyAllowed)
+						|| isNameAlreadyInUse || isKeyword || !isValidName) {
 					validator.hasErrors();
 				} else {
 					validator.hasNoErrors();

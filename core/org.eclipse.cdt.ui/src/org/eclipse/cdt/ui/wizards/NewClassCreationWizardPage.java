@@ -122,6 +122,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	private static final String KEY_STUB_SELECTED = "stubSelected"; //$NON-NLS-1$
 	private static final String KEY_STUB_VIRTUAL = "stubVirtual"; //$NON-NLS-1$
 	private static final String KEY_STUB_IMPL = "stubImpl"; //$NON-NLS-1$
+	private static final String KEY_FINAL_SELECTED = "finalSelected"; //$NON-NLS-1$
 
 	// Field IDs
 	protected static final int SOURCE_FOLDER_ID = 1;
@@ -133,8 +134,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected static final int SOURCE_FILE_ID = 64;
 	/** @since 5.3 */
 	protected static final int TEST_FILE_ID = 128;
+	/** @since 6.7*/
+	protected static final int FINAL_ID = 256;
 	protected static final int ALL_FIELDS = SOURCE_FOLDER_ID | NAMESPACE_ID | CLASS_NAME_ID | BASE_CLASSES_ID
-			| METHOD_STUBS_ID | HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID;
+			| METHOD_STUBS_ID | HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID | FINAL_ID;
 	protected int fLastFocusedField = 0;
 
 	protected StringButtonDialogField fSourceFolderDialogField;
@@ -145,6 +148,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected MethodStubsListDialogField fMethodStubsDialogField;
 	protected StringButtonDialogField fHeaderFileDialogField;
 	protected StringButtonDialogField fSourceFileDialogField;
+	/**
+	 * @since 6.7
+	 */
+	protected SelectionButtonDialogField fIsFinalClassField;
 	/** @since 5.3 */
 	protected StringButtonDialogField fTestFileDialogField;
 	/** @since 5.3 */
@@ -165,6 +172,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected IStatus fSourceFileStatus;
 	/** @since 5.3 */
 	protected IStatus fTestFileStatus;
+	/**
+	 * @since 6.7
+	 */
+	protected IStatus fIsFinalStatus;
 	protected final IStatus STATUS_OK = new StatusInfo();
 
 	protected IFile fCreatedHeaderFile;
@@ -216,6 +227,11 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		fMethodStubsDialogField = new MethodStubsListDialogField(
 				NewClassWizardMessages.NewClassCreationWizardPage_methodStubs_label, methodStubsAdapter);
 
+		FinalFieldAdapter finalAdapter = new FinalFieldAdapter();
+		fIsFinalClassField = new SelectionButtonDialogField(SWT.CHECK);
+		fIsFinalClassField.setDialogFieldListener(finalAdapter);
+		fIsFinalClassField.setLabelText(NewClassWizardMessages.NewClassCreationWizardPage_final_label);
+
 		FileGroupFieldAdapter fileGroupAdapter = new FileGroupFieldAdapter();
 		fHeaderFileDialogField = new StringButtonDialogField(fileGroupAdapter);
 		fHeaderFileDialogField.setDialogFieldListener(fileGroupAdapter);
@@ -244,6 +260,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		fHeaderFileStatus = STATUS_OK;
 		fSourceFileStatus = STATUS_OK;
 		fTestFileStatus = STATUS_OK;
+		fIsFinalStatus = STATUS_OK;
 		fLastFocusedField = 0;
 
 		isFirstTime = true;
@@ -275,6 +292,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		createClassNameControls(composite, nColumns);
 		createBaseClassesControls(composite, nColumns);
 		createMethodStubsControls(composite, nColumns);
+		createFinalClassControls(composite, nColumns);
 
 		createSeparator(composite, nColumns);
 
@@ -357,6 +375,16 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		Text textControl = fClassNameDialogField.getTextControl(null);
 		LayoutUtil.setWidthHint(textControl, getMaxFieldWidth());
 		textControl.addFocusListener(new StatusFocusListener(CLASS_NAME_ID));
+	}
+
+	/**
+	 * Creates the controls for the final class field.
+	 *
+	 * @param composite the parent composite
+	 * @since 6.7
+	 */
+	protected void createFinalClassControls(Composite composite, int nColumns) {
+		fIsFinalClassField.doFillIntoGrid(composite, nColumns - 1);
 	}
 
 	/**
@@ -499,6 +527,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			addMethodStub(stub, getBooleanSettingWithDefault(KEY_STUB_SELECTED + i, stub.isEnabledByDefault()));
 		}
 
+		fIsFinalClassField.setSelection(fDialogSettings.getBoolean(KEY_FINAL_SELECTED));
 		setTestFileSelection(fDialogSettings.getBoolean(KEY_TEST_FILE_SELECTED), true);
 		handleFieldChanged(ALL_FIELDS);
 	}
@@ -714,6 +743,16 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */
 	public String getClassName() {
 		return fClassNameDialogField.getText().trim();
+	}
+
+	/**
+	 * Check if the class is final
+	 *
+	 * @return true if final, false otherwise
+	 * @since 6.7
+	 */
+	public boolean isFinalClass() {
+		return fIsFinalClassField.isSelected();
 	}
 
 	/**
@@ -1083,6 +1122,21 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * handles changes to the final field
+	 */
+	private final class FinalFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
+		@Override
+		public void changeControlPressed(DialogField field) {
+			handleFieldChanged(FINAL_ID);
+		}
+
+		@Override
+		public void dialogFieldChanged(DialogField field) {
+			handleFieldChanged(FINAL_ID);
+		}
 	}
 
 	/**
@@ -1471,6 +1525,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		if (fieldChanged(fields, TEST_FILE_ID)) {
 			fTestFileStatus = testFileChanged();
 		}
+		if (fieldChanged(fields, FINAL_ID)) {
+			fIsFinalStatus = finalChanged();
+		}
 		doStatusUpdate();
 	}
 
@@ -1503,7 +1560,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				(fMethodStubsStatus != lastStatus) ? fMethodStubsStatus : STATUS_OK,
 				(fHeaderFileStatus != lastStatus) ? fHeaderFileStatus : STATUS_OK,
 				(fSourceFileStatus != lastStatus) ? fSourceFileStatus : STATUS_OK,
-				(fTestFileStatus != lastStatus) ? fTestFileStatus : STATUS_OK, };
+				(fTestFileStatus != lastStatus) ? fTestFileStatus : STATUS_OK,
+				(fIsFinalStatus != lastStatus) ? fIsFinalStatus : STATUS_OK, };
 
 		// the mode severe status will be displayed and the ok button enabled/disabled.
 		updateStatus(status);
@@ -1532,6 +1590,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			return fSourceFileStatus;
 		case TEST_FILE_ID:
 			return fTestFileStatus;
+		case FINAL_ID:
+			return fIsFinalStatus;
 		default:
 			return STATUS_OK;
 		}
@@ -1724,6 +1784,15 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			}
 		}
 		return status;
+	}
+
+	/**
+	 * Final class field changed
+	 * @return the status of the validation
+	 * @since 6.7
+	 */
+	protected IStatus finalChanged() {
+		return Status.OK_STATUS;
 	}
 
 	/**
@@ -2080,6 +2149,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		// Update dialog settings.
 		fDialogSettings.put(KEY_NAMESPACE_SELECTED, fNamespaceSelection.isSelected());
 		fDialogSettings.put(KEY_TEST_FILE_SELECTED, fTestFileSelection.isSelected());
+		fDialogSettings.put(KEY_FINAL_SELECTED, fIsFinalClassField.isSelected());
 		String namespace = fNamespaceSelection.isSelected() ? getNamespaceText() : null;
 		fDialogSettings.put(KEY_NAMESPACE, namespace);
 		IMethodStub[] stubs = fMethodStubsDialogField.getMethodStubs();
@@ -2103,7 +2173,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		IPath sourcePath = getSourceFileFullPath();
 		IPath testPath = getTestFileFullPath();
 		createClass(headerPath, sourcePath, testPath, getClassName(), namespace, getBaseClasses(),
-				getSelectedMethodStubs(), monitor);
+				getSelectedMethodStubs(), isFinalClass(), monitor);
 	}
 
 	/**
@@ -2135,9 +2205,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
 	protected void createClass(IPath headerPath, IPath sourcePath, IPath testPath, String className, String namespace,
-			IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, IProgressMonitor monitor) throws CoreException {
+			IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, boolean isFinal, IProgressMonitor monitor)
+			throws CoreException {
 		NewClassCodeGenerator generator = new NewClassCodeGenerator(headerPath, sourcePath, testPath, className,
-				namespace, baseClasses, methodStubs);
+				namespace, baseClasses, methodStubs, isFinal);
 		generator.setForceSourceFileCreation(true);
 		generator.createClass(monitor);
 
@@ -2154,6 +2225,15 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected void createClass(IPath headerPath, IPath sourcePath, String className, String namespace,
 			IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, IProgressMonitor monitor) throws CoreException {
 		createClass(headerPath, sourcePath, null, className, namespace, baseClasses, methodStubs, monitor);
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
+	protected void createClass(IPath headerPath, IPath sourcePath, IPath testPath, String className, String namespace,
+			IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, IProgressMonitor monitor) throws CoreException {
+		createClass(headerPath, sourcePath, null, className, namespace, baseClasses, methodStubs, false, monitor);
 	}
 
 	/**

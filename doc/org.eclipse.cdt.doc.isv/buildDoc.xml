@@ -3,7 +3,6 @@
 
 	<target name="all">
 		<antcall target="convertSchemaToHtml" />
-		<!--antcall target="examplesDocCopy" /-->
 		<antcall target="generateJavadoc" />
 		<antcall target="build.index" />
 	</target>
@@ -23,14 +22,6 @@
 	    <pde.convertSchemaToHTML manifest="../../build/org.eclipse.cdt.managedbuilder.core/plugin.xml" destination="${dest}" />
 	    <pde.convertSchemaToHTML manifest="../../build/org.eclipse.cdt.managedbuilder.ui/plugin.xml" destination="${dest}" />
 	    <record name="${basedir}/cdtconvert.txt" action="stop"/>
-	</target>
-	
-	<target name="examplesDocCopy" >
-		 <copy todir="samples">
-	    	<fileset dir="..">
-	    		<include name="org.eclipse.jdt.ui.examples.projects/doc-html/"/>
-		    </fileset>
-		  </copy>
 	</target>
 	
 	<target name="getJavadocPath">

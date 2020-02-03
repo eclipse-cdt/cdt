@@ -63,6 +63,10 @@
 									<artifactId>org.eclipse.pde.core</artifactId>
 									<type>eclipse-plugin</type>
 								</dependency>
+								<dependency>
+									<artifactId>javax.annotation</artifactId>
+									<type>eclipse-plugin</type>
+								</dependency>
 							</dependencies>
 						</configuration>
 						<executions>

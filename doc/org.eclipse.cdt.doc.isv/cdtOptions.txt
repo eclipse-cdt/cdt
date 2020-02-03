@@ -11,7 +11,7 @@
 -bottom "Copyright (c) IBM Corp. and others 2004, 2020.  All Rights Reserved."
 -group "C/C++ Development Tools Core Plug-in Packages" "org.eclipse.cdt.core;org.eclipse.cdt.core.*"
 -group "C/C++ Development Tools Debug Core Plug-in Packages" "org.eclipse.cdt.debug.core;org.eclipse.cdt.debug.core.*"
--link http://docs.oracle.com/javase/7/docs/api/
+-link https://docs.oracle.com/en/java/javase/11/docs/api/
 
 org.eclipse.cdt.core
 org.eclipse.cdt.core.model

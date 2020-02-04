@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Launch delegate implementation that redirects its queries to the preferred
@@ -239,11 +240,10 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	private void activateTestingView() {
 		Display.getDefault().syncExec(() -> {
 			try {
-				IWorkbenchWindow activeWindow = TestsRunnerPlugin.getDefault().getWorkbench()
-						.getActiveWorkbenchWindow();
+				IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				IViewPart view = activeWindow.getActivePage()
 						.showView(ITestsRunnerConstants.TESTS_RUNNER_RESULTS_VIEW_ID);
-				TestsRunnerPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(view);
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(view);
 			} catch (PartInitException e) {
 				TestsRunnerPlugin.log(e);
 			}

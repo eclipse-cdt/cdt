@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -153,8 +154,8 @@ public class TriggerCellModifier implements ICellModifier {
 	}
 
 	private Shell getShell() {
-		if (DsfExamplesPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow() != null) {
-			return DsfExamplesPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+		if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null) {
+			return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		}
 		return null;
 	}

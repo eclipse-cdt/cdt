@@ -60,6 +60,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class ImportExecutablePageOne extends WizardPage {
 
@@ -209,7 +210,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		Dialog.applyDialogFont(workArea);
 		selectSingleButton.setSelection(true);
 		checkControlState();
-		CDebugUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				ICDebugHelpContextIds.IMPORT_EXECUTABLE_PAGE_ONE);
 	}
 

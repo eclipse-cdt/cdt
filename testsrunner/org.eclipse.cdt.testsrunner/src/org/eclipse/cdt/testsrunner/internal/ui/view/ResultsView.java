@@ -43,6 +43,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 
@@ -121,7 +122,7 @@ public class ResultsView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		sessionsManager = TestsRunnerPlugin.getDefault().getTestingSessionsManager();
-		IWorkbench workbench = TestsRunnerPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		Clipboard clipboard = new Clipboard(parent.getDisplay());
 
 		this.parent = parent;

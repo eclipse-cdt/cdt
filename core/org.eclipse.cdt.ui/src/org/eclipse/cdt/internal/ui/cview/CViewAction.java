@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
 
 /**
@@ -60,7 +60,7 @@ public abstract class CViewAction extends SelectionProviderAction {
 	 * Returns the workbench.
 	 */
 	protected IWorkbench getWorkbench() {
-		return CUIPlugin.getDefault().getWorkbench();
+		return PlatformUI.getWorkbench();
 	}
 
 	/**

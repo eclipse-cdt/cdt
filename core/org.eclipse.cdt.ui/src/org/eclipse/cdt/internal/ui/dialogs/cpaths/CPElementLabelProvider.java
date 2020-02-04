@@ -33,6 +33,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -68,7 +69,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 		fOutputImage = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CONTAINER);
 		fContainerImage = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LIBRARY);
 
-		IWorkbench workbench = CUIPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 
 		fProjectImage = workbench.getSharedImages().getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT);
 		bShowExported = showExported;

@@ -46,6 +46,7 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoManager;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
@@ -62,8 +63,7 @@ public class AddIncludeAction extends TextEditorAction {
 	 */
 	public AddIncludeAction(ITextEditor editor) {
 		super(CEditorMessages.getBundleForConstructedKeys(), "AddInclude.", editor); //$NON-NLS-1$
-		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this,
-				ICHelpContextIds.ADD_INCLUDE_ON_SELECTION_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.ADD_INCLUDE_ON_SELECTION_ACTION);
 		final Shell shell = editor.getEditorSite().getShell();
 		fAmbiguityResolver = new IElementSelector() {
 			@SuppressWarnings("unchecked")

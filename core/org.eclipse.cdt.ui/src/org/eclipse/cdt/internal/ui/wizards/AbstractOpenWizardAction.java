@@ -39,6 +39,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.NewProjectAction;
 
 public abstract class AbstractOpenWizardAction extends Action implements IWorkbenchWindowActionDelegate {
@@ -78,7 +79,7 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 	}
 
 	protected IWorkbench getWorkbench() {
-		return CUIPlugin.getDefault().getWorkbench();
+		return PlatformUI.getWorkbench();
 	}
 
 	private boolean isOfAcceptedType(Object obj) {

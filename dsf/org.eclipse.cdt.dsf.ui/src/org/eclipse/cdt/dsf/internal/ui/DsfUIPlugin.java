@@ -29,6 +29,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -174,7 +175,7 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 	 * @return the active workbench shell or <code>null</code> if none
 	 */
 	public static Shell getActiveWorkbenchShell() {
-		IWorkbenchWindow window = getDefault().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
 			return window.getShell();
 		}

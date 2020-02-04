@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 Wind River Systems and others.
+ * Copyright (c) 2010, 2020 Wind River Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -109,7 +109,7 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 
 					CfgHolder cfgHolder = new CfgHolder(toolChain, null);
 					String s = toolChain == null ? "0" : ((ToolChain) toolChain).getId(); //$NON-NLS-1$
-					Configuration config = new Configuration(mProj, (ToolChain) toolChain,
+					Configuration config = new Configuration(mProj, toolChain,
 							ManagedBuildManager.calculateChildId(s, null), cfgHolder.getName());
 					IBuilder builder = config.getEditableBuilder();
 					builder.setManagedBuildOn(false);

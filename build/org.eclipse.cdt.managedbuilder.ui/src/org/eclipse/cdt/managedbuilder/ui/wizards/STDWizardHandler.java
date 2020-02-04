@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 Intel Corporation and others.
+ * Copyright (c) 2007, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -88,7 +88,7 @@ public class STDWizardHandler extends MBSWizardHandler {
 		int work = 50 / cfgs.length;
 		for (int i = 0; i < cfgs.length; i++) {
 			String s = (cfgs[i].getToolChain() == null) ? "0" : ((ToolChain) (cfgs[i].getToolChain())).getId(); //$NON-NLS-1$
-			Configuration cfg = new Configuration(mProj, (ToolChain) cfgs[i].getToolChain(),
+			Configuration cfg = new Configuration(mProj, cfgs[i].getToolChain(),
 					ManagedBuildManager.calculateChildId(s, null), cfgs[i].getName());
 			cfgs[i].setConfiguration(cfg);
 			IBuilder bld = cfg.getEditableBuilder();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Mentor Graphics Corporation.
+ * Copyright (c) 2015, 2020 Mentor Graphics Corporation.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -130,7 +130,7 @@ public class AutotoolsProjectImportWizard extends NewMakeProjFromExisting {
 
 					CfgHolder cfgHolder = new CfgHolder(toolChain, null);
 					String s = toolChain == null ? "0" : ((ToolChain) toolChain).getId(); //$NON-NLS-1$
-					Configuration config = new Configuration(mProj, (ToolChain) toolChain,
+					Configuration config = new Configuration(mProj, toolChain,
 							ManagedBuildManager.calculateChildId(s, null), cfgHolder.getName());
 					IBuilder builder = config.getEditableBuilder();
 					builder.setManagedBuildOn(false);

@@ -50,6 +50,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -330,7 +331,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void refreshViews() {
 		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
 			// Refresh interested views
-			IWorkbenchWindow[] windows = CDebugUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 			IWorkbenchPage page = null;
 			for (int i = 0; i < windows.length; i++) {
 				page = windows[i].getActivePage();

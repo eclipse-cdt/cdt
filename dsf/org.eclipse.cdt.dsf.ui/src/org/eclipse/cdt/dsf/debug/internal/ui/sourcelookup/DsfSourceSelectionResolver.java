@@ -27,6 +27,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -109,7 +110,7 @@ public class DsfSourceSelectionResolver implements Runnable {
 			return fEditorPage;
 		}
 
-		final IWorkbench wb = DsfUIPlugin.getDefault().getWorkbench();
+		final IWorkbench wb = PlatformUI.getWorkbench();
 		// Run in UI thread to access UI resources
 		ResolveEditorRunnable reditorRunnable = new ResolveEditorRunnable() {
 			TextEditor result = null;

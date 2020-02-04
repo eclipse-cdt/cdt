@@ -45,6 +45,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class FileTransferDragAdapter implements TransferDragSourceListener {
@@ -168,7 +169,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 
 	private static void runOperation(IRunnableWithProgress operation, boolean fork, boolean cancelable) {
 		try {
-			IWorkbench workbench = CUIPlugin.getDefault().getWorkbench();
+			IWorkbench workbench = PlatformUI.getWorkbench();
 			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 			Shell parent = window.getShell();
 

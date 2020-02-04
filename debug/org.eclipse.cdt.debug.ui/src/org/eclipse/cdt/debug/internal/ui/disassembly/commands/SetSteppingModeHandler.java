@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -28,6 +27,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -84,7 +84,7 @@ public class SetSteppingModeHandler extends AbstractHandler implements IElementU
 	 */
 	@Override
 	public boolean isEnabled() {
-		IWorkbenchWindow window = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		return (window != null && getSteppingModeTarget(window) != null);
 	}
 
@@ -93,7 +93,7 @@ public class SetSteppingModeHandler extends AbstractHandler implements IElementU
 	 */
 	@Override
 	public boolean isHandled() {
-		IWorkbenchWindow window = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		return (window != null && getSteppingModeTarget(window) != null);
 	}
 

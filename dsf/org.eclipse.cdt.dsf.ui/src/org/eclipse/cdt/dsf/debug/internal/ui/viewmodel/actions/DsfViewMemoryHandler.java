@@ -61,6 +61,7 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * DSF version of handler for viewing variable in memory view command.
@@ -200,7 +201,7 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 
 	private void showInMemoryView(VariableExpressionVMC contexts[]) {
 		try {
-			IWorkbenchPage page = DsfUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			IViewPart memoryView = page.showView(IDebugUIConstants.ID_MEMORY_VIEW, null, IWorkbenchPage.VIEW_ACTIVATE);
 			final IMemoryRenderingSite memRendSite = (IMemoryRenderingSite) memoryView;
 			for (final VariableExpressionVMC context : contexts) {

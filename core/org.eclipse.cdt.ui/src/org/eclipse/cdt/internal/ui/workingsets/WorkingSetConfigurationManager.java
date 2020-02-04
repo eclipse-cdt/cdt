@@ -36,6 +36,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 
 /**
@@ -58,7 +59,7 @@ public class WorkingSetConfigurationManager {
 	static final String ATTR_CONFIG = "config"; //$NON-NLS-1$
 	static final String ATTR_FACTORY = "factory"; //$NON-NLS-1$
 
-	static IWorkingSetManager WS_MGR = CUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
+	static IWorkingSetManager WS_MGR = PlatformUI.getWorkbench().getWorkingSetManager();
 
 	private static final WorkingSetConfigurationManager INSTANCE = new WorkingSetConfigurationManager();
 

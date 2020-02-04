@@ -66,6 +66,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -212,8 +213,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		fIncludeSymPathsList.setButtonsMinWidth(buttonBarWidth);
 		setControl(composite);
 		fIncludeSymPathsList.getTreeViewer().addFilter(fFilter);
-		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite,
-				ICHelpContextIds.PROJECT_INCLUDE_PATHS_SYMBOLS);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_INCLUDE_PATHS_SYMBOLS);
 	}
 
 	@Override

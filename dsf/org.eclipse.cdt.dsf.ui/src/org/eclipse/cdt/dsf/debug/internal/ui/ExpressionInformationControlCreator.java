@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Creates an information control to display an expression in a hover control.
@@ -439,7 +440,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		 * @return a view to emulate or <code>null</code>
 		 */
 		private AbstractDebugView getViewToEmulate() {
-			IWorkbenchPage page = DsfUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			AbstractDebugView expressionsView = (AbstractDebugView) page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
 			if (expressionsView != null && expressionsView.isVisible()) {
 				return expressionsView;

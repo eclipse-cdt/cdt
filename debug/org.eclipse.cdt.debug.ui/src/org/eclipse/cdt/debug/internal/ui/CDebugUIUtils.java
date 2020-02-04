@@ -23,7 +23,6 @@ import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointPropertyDialogAction;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IMarker;
@@ -62,6 +61,7 @@ import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
@@ -252,7 +252,7 @@ public class CDebugUIUtils {
 				if (e != null)
 					detail = e.getMessage();
 
-				Shell shell = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
 				MessageDialog.openError(shell, title, message + "\n" + detail); //$NON-NLS-1$
 				return Status.OK_STATUS;

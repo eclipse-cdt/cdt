@@ -39,6 +39,7 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoManager;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
@@ -52,7 +53,7 @@ public class OrganizeIncludesAction extends TextEditorAction {
 	 */
 	public OrganizeIncludesAction(ITextEditor editor) {
 		super(CEditorMessages.getBundleForConstructedKeys(), "OrganizeIncludes.", editor); //$NON-NLS-1$
-		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.ORGANIZE_INCLUDES_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.ORGANIZE_INCLUDES_ACTION);
 	}
 
 	@Override

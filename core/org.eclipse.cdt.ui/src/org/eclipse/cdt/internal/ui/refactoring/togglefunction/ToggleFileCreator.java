@@ -16,7 +16,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -56,7 +55,7 @@ public class ToggleFileCreator {
 		}
 		final boolean[] answer = new boolean[1];
 		Runnable r = () -> {
-			Shell shell = CUIPlugin.getDefault().getWorkbench().getWorkbenchWindows()[0].getShell();
+			Shell shell = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getShell();
 			String functionName;
 			if (context.getDeclaration() != null) {
 				functionName = context.getDeclaration().getRawSignature();

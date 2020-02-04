@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A launch configuration tab that displays and edits program arguments,
@@ -69,7 +70,7 @@ public abstract class CAbstractArgumentsTab extends CLaunchConfigurationTab {
 		comp.setLayoutData(gd);
 		setControl(comp);
 
-		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ARGUMNETS_TAB);
 
 		createArgumentComponent(comp, 1);

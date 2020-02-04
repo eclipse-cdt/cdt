@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.docker.launcher;
 
-import org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.linuxtools.docker.core.IDockerConnection;
@@ -18,6 +17,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 public class ConnectionListener implements ISelectionListener {
 
@@ -35,7 +35,7 @@ public class ConnectionListener implements ISelectionListener {
 	}
 
 	public void init() {
-		IWorkbench workbench = DockerLaunchUIPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench != null) {
 			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 			if (window != null) {

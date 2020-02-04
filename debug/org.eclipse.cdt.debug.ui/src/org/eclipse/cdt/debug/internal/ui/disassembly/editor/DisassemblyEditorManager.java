@@ -44,6 +44,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
@@ -59,8 +60,8 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
 		fEditorParts = new HashMap<>();
 		fOpenDisassemblyPolicy = new HashMap<>();
 		fSteppingModePolicy = new HashMap<>();
-		CDebugUIPlugin.getDefault().getWorkbench().addWindowListener(this);
-		IWorkbenchWindow window = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		PlatformUI.getWorkbench().addWindowListener(this);
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
 			window.getPartService().addPartListener(this);
 		}
@@ -69,7 +70,7 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
 
 	public void dispose() {
 		getDisassemblyManager().removeDisassemblyContextListener(this);
-		CDebugUIPlugin.getDefault().getWorkbench().removeWindowListener(this);
+		PlatformUI.getWorkbench().removeWindowListener(this);
 		fSteppingModePolicy.clear();
 		fOpenDisassemblyPolicy.clear();
 		fEditorParts.clear();

@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -174,7 +175,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 
 	private void doAddMemoryBlocks(final IMemoryRenderingSite renderingSite, final Object context,
 			final IMemorySpaceAwareMemoryBlockRetrieval retrieval, String[] memorySpaces) {
-		Shell shell = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
 		// create dialog to ask for expression/address to block
 		AddMemoryBlockDialog dialog = new AddMemoryBlockDialog(shell, memorySpaces);
@@ -360,7 +361,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 				if (e != null)
 					detail = e.getMessage();
 
-				Shell shell = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
 				MessageDialog.openError(shell, title, message + "\n" + detail); //$NON-NLS-1$
 				return Status.OK_STATUS;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -46,39 +47,41 @@
 				<plugins>
 					<plugin>
 						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-eclipserun-plugin</artifactId>
-						<version>${tycho-extras-version}</version>
-						<configuration>
-							<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile buildDoc.xml</appArgLine>
-							<dependencies>
-								<dependency>
-									<artifactId>org.apache.ant</artifactId>
-									<type>eclipse-plugin</type>
-								</dependency>
-								<dependency>
-									<artifactId>org.eclipse.help.base</artifactId>
-									<type>eclipse-plugin</type>
-								</dependency>
-								<dependency>
-									<artifactId>org.eclipse.pde.core</artifactId>
-									<type>eclipse-plugin</type>
-								</dependency>
-								<dependency>
-									<artifactId>javax.annotation</artifactId>
-									<type>eclipse-plugin</type>
-								</dependency>
-								<dependency>
-									<artifactId>org.eclipse.osgi.compatibility.state</artifactId>
-									<type>eclipse-plugin</type>
-								</dependency>
-							</dependencies>
-						</configuration>
+						<artifactId>tycho-document-bundle-plugin</artifactId>
+						<version>${tycho-version}</version>
 						<executions>
 							<execution>
+								<id>eclipse-javadoc</id>
+								<phase>generate-resources</phase>
 								<goals>
-									<goal>eclipse-run</goal>
+									<goal>javadoc</goal>
 								</goals>
-								<phase>compile</phase>
+								<configuration>
+									<outputDirectory>${project.basedir}/reference/api
+									</outputDirectory>
+									<javadocOptions>
+										<excludes>
+											<exclude>org.eclipse.cdt.internal.*</exclude>
+										</excludes>
+										<additionalArguments>
+											<additionalArgument>-windowtitle "Eclipse CDT API Specification"</additionalArgument>
+											<additionalArgument>-doctitle "Eclipse CDT API Specification"
+											</additionalArgument>
+											<additionalArgument>-link "https://docs.oracle.com/javase/8/docs/api/"</additionalArgument>
+											<additionalArgument>-linkoffline ../../org.eclipse.platform.doc.isv/reference/api
+											</additionalArgument>
+											<additionalArgument>-public</additionalArgument>
+											<additionalArgument>-header "Eclipse CDT 9.11.0"
+											</additionalArgument>
+											<additionalArgument>-bottom "Copyright (c) IBM Corp. and others 2004, 2020. All Rights Reserved."</additionalArgument>
+											<additionalArgument>-tag 'noimplement:a:Restriction:'</additionalArgument>
+											<additionalArgument>-tag 'noextend:a:Restriction:'</additionalArgument>
+											<additionalArgument>-tag 'noreference:a:Restriction:'</additionalArgument>
+											<additionalArgument>-tag 'noinstantiate:a:Restriction:'</additionalArgument>
+											<additionalArgument>-tag 'nooverride:a:Restriction:'</additionalArgument>
+										</additionalArguments>
+									</javadocOptions>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
@@ -102,7 +105,7 @@
 								<phase>compile</phase>
 								<configuration>
 									<target>
-										<touch file="index/indexed_docs" mkdirs="true"/>
+										<touch file="index/indexed_docs" mkdirs="true" />
 									</target>
 								</configuration>
 								<goals>

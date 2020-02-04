@@ -16,7 +16,6 @@
 package org.eclipse.cdt.ui.actions;
 
 import org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationDialog;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -25,12 +24,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 
 /**
  */
 public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, IPropertyChangeListener {
 
-	private static final IWorkingSetManager wsm = CUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
+	private static final IWorkingSetManager wsm = PlatformUI.getWorkbench().getWorkingSetManager();
 	private boolean enabled = true;
 	private IWorkbenchWindow window;
 	private IAction action;

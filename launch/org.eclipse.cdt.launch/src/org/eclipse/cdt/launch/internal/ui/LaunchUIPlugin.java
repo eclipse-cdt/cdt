@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -78,7 +79,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 				return debugDialogShell;
 			debugDialogShell = null;
 		}
-		IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		return windows[0].getShell();
 	}
 
@@ -135,7 +136,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 	 * @return the active workbench window
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	public static IWorkbenchPage getActivePage() {

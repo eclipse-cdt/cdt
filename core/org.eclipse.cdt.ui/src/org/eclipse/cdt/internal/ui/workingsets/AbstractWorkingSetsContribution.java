@@ -17,12 +17,12 @@ package org.eclipse.cdt.internal.ui.workingsets;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CompoundContributionItem;
 
 /**
@@ -76,7 +76,7 @@ abstract class AbstractWorkingSetsContribution extends CompoundContributionItem 
 
 	private IWorkingSetManager getWorkingsetManager() {
 		if (workingSetManager == null) {
-			workingSetManager = CUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
+			workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 		}
 
 		return workingSetManager;

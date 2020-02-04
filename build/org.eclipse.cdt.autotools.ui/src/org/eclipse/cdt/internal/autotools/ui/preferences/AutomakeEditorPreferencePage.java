@@ -18,7 +18,6 @@ package org.eclipse.cdt.internal.autotools.ui.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -43,6 +42,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
@@ -233,7 +233,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 
 	@Override
 	protected Control createContents(Composite parent) {
-		AutotoolsUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				IMakeHelpContextIds.MAKE_EDITOR_PREFERENCE_PAGE);
 		getOverlayStore().load();
 		getOverlayStore().start();

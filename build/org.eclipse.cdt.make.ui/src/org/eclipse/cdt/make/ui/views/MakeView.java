@@ -101,7 +101,7 @@ public class MakeView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(parent, IMakeHelpContextIds.MAKE_VIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IMakeHelpContextIds.MAKE_VIEW);
 		fViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		fViewer.setUseHashlookup(true);
 		fViewer.setContentProvider(new MakeContentProvider());

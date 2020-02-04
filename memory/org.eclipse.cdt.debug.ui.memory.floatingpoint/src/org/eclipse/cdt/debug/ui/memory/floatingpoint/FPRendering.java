@@ -1101,7 +1101,7 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 			if (fConnection == null) {
 				fConnection = () -> {
 					// update UI asynchronously
-					Display display = FPRenderingPlugin.getDefault().getWorkbench().getDisplay();
+					Display display = PlatformUI.getWorkbench().getDisplay();
 					display.asyncExec(() -> {
 						try {
 							if (fBigBaseAddress != FPRendering.this.fRendering.getMemoryBlock().getBigBaseAddress()) {

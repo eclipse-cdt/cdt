@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
@@ -54,7 +55,7 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 	 * Returns the active workbench window or <code>null</code> if none
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	/**
@@ -121,7 +122,7 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 		if (getActiveWorkbenchShell() != null) {
 			return getActiveWorkbenchShell();
 		} else {
-			IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 			return windows[0].getShell();
 		}
 	}

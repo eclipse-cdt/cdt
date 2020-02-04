@@ -51,6 +51,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -107,7 +108,7 @@ public class CElementImageProvider {
 	private static ImageDescriptor DESC_OBJ_PROJECT;
 	//private static ImageDescriptor DESC_OBJ_FOLDER;
 	{
-		ISharedImages images = CUIPlugin.getDefault().getWorkbench().getSharedImages();
+		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		DESC_OBJ_PROJECT_CLOSED = images.getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED);
 		DESC_OBJ_PROJECT = images.getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT);
 		//DESC_OBJ_FOLDER= 		 images.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);

@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -51,6 +50,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class ImportExecutablePageTwo extends WizardPage {
@@ -304,7 +304,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		});
 		addLaunchConfigTypes();
 		updateControls();
-		CDebugUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				ICDebugHelpContextIds.IMPORT_EXECUTABLE_PAGE_TWO);
 
 	}

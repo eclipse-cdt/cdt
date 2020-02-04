@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class CDebuggerTab extends CLaunchConfigurationTab {
 	/**
@@ -122,7 +123,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 
 		fContents = new Composite(fContainer, SWT.NONE);
 		setControl(fContainer);
-		GdbUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB);
 		int numberOfColumns = fAttachMode ? 2 : 1;
 		GridLayout layout = new GridLayout(numberOfColumns, false);

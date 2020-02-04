@@ -1269,7 +1269,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 			if (fConnection == null) {
 				fConnection = () -> {
 					// update UI asynchronously
-					Display display = TraditionalRenderingPlugin.getDefault().getWorkbench().getDisplay();
+					Display display = PlatformUI.getWorkbench().getDisplay();
 					display.asyncExec(() -> {
 						try {
 							if (fBigBaseAddress != TraditionalRendering.this.fRendering.getMemoryBlock()

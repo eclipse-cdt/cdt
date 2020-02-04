@@ -67,6 +67,10 @@
 									<artifactId>javax.annotation</artifactId>
 									<type>eclipse-plugin</type>
 								</dependency>
+								<dependency>
+									<artifactId>org.eclipse.osgi.compatibility.state</artifactId>
+									<type>eclipse-plugin</type>
+								</dependency>
 							</dependencies>
 						</configuration>
 						<executions>

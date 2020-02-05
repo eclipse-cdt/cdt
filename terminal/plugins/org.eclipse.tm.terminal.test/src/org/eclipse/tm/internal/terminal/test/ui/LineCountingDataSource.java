@@ -23,15 +23,18 @@ final class LineCountingDataSource extends AbstractLineOrientedDataSource {
 
 	int pos;
 
+	@Override
 	public char[] dataSource() {
 		return (pos + " 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789")
 				.toCharArray();
 	}
 
+	@Override
 	public Style getStyle() {
 		return styles[pos % styles.length];
 	}
 
+	@Override
 	public void next() {
 		pos++;
 	}

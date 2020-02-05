@@ -39,14 +39,17 @@ final class FileDataSource extends AbstractLineOrientedDataSource {
 		fFile = file;
 	}
 
+	@Override
 	public char[] dataSource() {
 		return line.toCharArray();
 	}
 
+	@Override
 	public Style getStyle() {
 		return style;
 	}
 
+	@Override
 	public void next() {
 		try {
 			if (reader == null)

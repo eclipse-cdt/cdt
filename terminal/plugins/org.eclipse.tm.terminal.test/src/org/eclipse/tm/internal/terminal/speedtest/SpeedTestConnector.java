@@ -35,6 +35,7 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 	public SpeedTestConnector() {
 	}
 
+	@Override
 	synchronized public void connect(ITerminalControl control) {
 		super.connect(control);
 		fControl.setState(TerminalState.CONNECTING);
@@ -52,6 +53,7 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 		fConnection.start();
 	}
 
+	@Override
 	synchronized public void doDisconnect() {
 		if (fConnection != null) {
 			fConnection.interrupt();
@@ -79,10 +81,12 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 		return fInputStream;
 	}
 
+	@Override
 	synchronized public OutputStream getTerminalToRemoteStream() {
 		return fOutputStream;
 	}
 
+	@Override
 	public String getSettingsSummary() {
 		return fSettings.getInputFile();
 	}
@@ -92,14 +96,17 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 		fSettings.load(new NullSettingsStore());
 	}
 
+	@Override
 	public void load(ISettingsStore store) {
 		fSettings.load(store);
 	}
 
+	@Override
 	public void save(ISettingsStore store) {
 		fSettings.save(store);
 	}
 
+	@Override
 	public void setTerminalSize(int newWidth, int newHeight) {
 	}
 

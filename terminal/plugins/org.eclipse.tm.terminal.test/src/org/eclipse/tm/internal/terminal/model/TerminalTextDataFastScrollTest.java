@@ -13,6 +13,7 @@ package org.eclipse.tm.internal.terminal.model;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 
 public class TerminalTextDataFastScrollTest extends AbstractITerminalTextDataTest {
+	@Override
 	protected ITerminalTextData makeITerminalTextData() {
 		return new TerminalTextDataFastScroll(3);
 	}

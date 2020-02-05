@@ -11,17 +11,18 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
-import junit.framework.TestCase;
-
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.LineSegment;
 import org.eclipse.tm.terminal.model.Style;
 import org.eclipse.tm.terminal.model.StyleColor;
 
+import junit.framework.TestCase;
+
 abstract public class AbstractITerminalTextDataTest extends TestCase {
 	abstract protected ITerminalTextData makeITerminalTextData();
 
+	@Override
 	protected void setUp() throws Exception {
 		try {
 			assert false;

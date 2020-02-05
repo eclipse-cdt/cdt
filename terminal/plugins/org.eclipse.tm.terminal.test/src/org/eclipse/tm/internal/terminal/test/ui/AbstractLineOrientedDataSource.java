@@ -24,6 +24,7 @@ abstract class AbstractLineOrientedDataSource implements IDataSource {
 
 	abstract public void next();
 
+	@Override
 	public int step(ITerminalTextData terminal) {
 		next();
 		char[] chars = dataSource();

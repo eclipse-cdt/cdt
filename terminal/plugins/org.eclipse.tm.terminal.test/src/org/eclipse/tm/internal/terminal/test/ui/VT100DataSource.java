@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.emulator.VT100Emulator;
@@ -55,16 +55,19 @@ final class VT100DataSource implements IDataSource {
 			}
 		}
 
+		@Override
 		public int available() throws IOException {
 			return fAvailable;
 		}
 
 		private InputStream fInputStream;
 
+		@Override
 		public int read() throws IOException {
 			throw new IOException();
 		}
 
+		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
 			while (fAvailable == 0) {
 				try {
@@ -87,12 +90,7 @@ final class VT100DataSource implements IDataSource {
 	}
 
 	void init(ITerminalTextData terminal) {
-		final Reader reader;
-		try {
-			reader = new InputStreamReader(new InfiniteFileInputStream(), "ISO-8859-1"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		final Reader reader = new InputStreamReader(new InfiniteFileInputStream(), StandardCharsets.ISO_8859_1);
 		fEmulator = new VT100Emulator(terminal, new ITerminalControlForText() {
 
 			public void disconnectTerminal() {
@@ -100,29 +98,36 @@ final class VT100DataSource implements IDataSource {
 
 			}
 
+			@Override
 			public OutputStream getOutputStream() {
 				return new ByteArrayOutputStream();
 			}
 
+			@Override
 			public TerminalState getState() {
 				return TerminalState.CONNECTED;
 			}
 
+			@Override
 			public ITerminalConnector getTerminalConnector() {
 				return null;
 			}
 
+			@Override
 			public void setState(TerminalState state) {
 			}
 
+			@Override
 			public void setTerminalTitle(String title) {
 			}
 
+			@Override
 			public void enableApplicationCursorKeys(boolean enable) {
 			}
 		}, reader);
 	}
 
+	@Override
 	public int step(ITerminalTextData terminal) {
 		synchronized (terminal) {
 			if (fEmulator == null) {

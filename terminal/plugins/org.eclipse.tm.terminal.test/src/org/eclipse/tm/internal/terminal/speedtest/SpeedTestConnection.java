@@ -34,6 +34,7 @@ public class SpeedTestConnection extends Thread {
 		fSettings = settings;
 	}
 
+	@Override
 	public void run() {
 		fControl.setState(TerminalState.CONNECTED);
 
@@ -113,11 +114,7 @@ public class SpeedTestConnection extends Thread {
 	}
 
 	private void setTitle(final String title) {
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				fControl.setTerminalTitle(title);
-			}
-		});
+		Display.getDefault().asyncExec(() -> fControl.setTerminalTitle(title));
 	}
 
 }

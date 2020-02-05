@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
-import junit.framework.TestCase;
-
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.Style;
 import org.eclipse.tm.terminal.model.StyleColor;
+
+import junit.framework.TestCase;
 
 public class TerminalTextDataSnapshotTest extends TestCase {
 	String toMultiLineText(ITerminalTextDataReadOnly term) {
@@ -794,6 +794,7 @@ public class TerminalTextDataSnapshotTest extends TestCase {
 	private final class SnapshotListener implements ITerminalTextDataSnapshot.SnapshotOutOfDateListener {
 		int N;
 
+		@Override
 		public void snapshotOutOfDate(ITerminalTextDataSnapshot snapshot) {
 			N++;
 		}

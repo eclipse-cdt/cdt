@@ -19,14 +19,17 @@ final class FastDataSource extends AbstractLineOrientedDataSource {
 
 	int pos;
 
+	@Override
 	public char[] dataSource() {
 		return lines[pos % lines.length];
 	}
 
+	@Override
 	public Style getStyle() {
 		return null;
 	}
 
+	@Override
 	public void next() {
 		pos++;
 	}

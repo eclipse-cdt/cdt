@@ -17,9 +17,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
 public class TerminalTextCanvas extends Canvas {
@@ -31,65 +29,57 @@ public class TerminalTextCanvas extends Canvas {
 		loadImage(parent);
 
 		final ScrollBar hBar = getHorizontalBar();
-		hBar.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				int hSelection = hBar.getSelection();
-				int destX = -hSelection - origin.x;
-				Rectangle rect = image.getBounds();
-				scroll(destX, 0, 0, 0, rect.width, rect.height, false);
-				origin.x = -hSelection;
-			}
+		hBar.addListener(SWT.Selection, e -> {
+			int hSelection = hBar.getSelection();
+			int destX = -hSelection - origin.x;
+			Rectangle rect = image.getBounds();
+			scroll(destX, 0, 0, 0, rect.width, rect.height, false);
+			origin.x = -hSelection;
 		});
 		final ScrollBar vBar = getVerticalBar();
-		vBar.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				int vSelection = vBar.getSelection();
-				int destY = -vSelection - origin.y;
-				Rectangle rect = image.getBounds();
-				scroll(0, destY, 0, 0, rect.width, rect.height, false);
+		vBar.addListener(SWT.Selection, e -> {
+			int vSelection = vBar.getSelection();
+			int destY = -vSelection - origin.y;
+			Rectangle rect = image.getBounds();
+			scroll(0, destY, 0, 0, rect.width, rect.height, false);
+			origin.y = -vSelection;
+		});
+		addListener(SWT.Resize, e -> {
+			Rectangle rect = image.getBounds();
+			Rectangle client = getClientArea();
+			hBar.setMaximum(rect.width);
+			vBar.setMaximum(rect.height);
+			hBar.setThumb(Math.min(rect.width, client.width));
+			vBar.setThumb(Math.min(rect.height, client.height));
+			int hPage = rect.width - client.width;
+			int vPage = rect.height - client.height;
+			int hSelection = hBar.getSelection();
+			int vSelection = vBar.getSelection();
+			if (hSelection >= hPage) {
+				if (hPage <= 0)
+					hSelection = 0;
+				origin.x = -hSelection;
+			}
+			if (vSelection >= vPage) {
+				if (vPage <= 0)
+					vSelection = 0;
 				origin.y = -vSelection;
 			}
+			redraw();
 		});
-		addListener(SWT.Resize, new Listener() {
-			public void handleEvent(Event e) {
-				Rectangle rect = image.getBounds();
-				Rectangle client = getClientArea();
-				hBar.setMaximum(rect.width);
-				vBar.setMaximum(rect.height);
-				hBar.setThumb(Math.min(rect.width, client.width));
-				vBar.setThumb(Math.min(rect.height, client.height));
-				int hPage = rect.width - client.width;
-				int vPage = rect.height - client.height;
-				int hSelection = hBar.getSelection();
-				int vSelection = vBar.getSelection();
-				if (hSelection >= hPage) {
-					if (hPage <= 0)
-						hSelection = 0;
-					origin.x = -hSelection;
-				}
-				if (vSelection >= vPage) {
-					if (vPage <= 0)
-						vSelection = 0;
-					origin.y = -vSelection;
-				}
-				redraw();
+		addListener(SWT.Paint, e -> {
+			GC gc = e.gc;
+			System.out.println(gc.getClipping() + " " + origin);
+			gc.drawImage(image, origin.x, origin.y);
+			Rectangle rect = image.getBounds();
+			Rectangle client = getClientArea();
+			int marginWidth = client.width - rect.width;
+			if (marginWidth > 0) {
+				gc.fillRectangle(rect.width, 0, marginWidth, client.height);
 			}
-		});
-		addListener(SWT.Paint, new Listener() {
-			public void handleEvent(Event e) {
-				GC gc = e.gc;
-				System.out.println(gc.getClipping() + " " + origin);
-				gc.drawImage(image, origin.x, origin.y);
-				Rectangle rect = image.getBounds();
-				Rectangle client = getClientArea();
-				int marginWidth = client.width - rect.width;
-				if (marginWidth > 0) {
-					gc.fillRectangle(rect.width, 0, marginWidth, client.height);
-				}
-				int marginHeight = client.height - rect.height;
-				if (marginHeight > 0) {
-					gc.fillRectangle(0, rect.height, client.width, marginHeight);
-				}
+			int marginHeight = client.height - rect.height;
+			if (marginHeight > 0) {
+				gc.fillRectangle(0, rect.height, client.width, marginHeight);
 			}
 		});
 	}

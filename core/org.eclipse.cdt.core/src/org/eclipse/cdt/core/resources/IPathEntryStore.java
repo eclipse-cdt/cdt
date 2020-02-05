@@ -36,7 +36,6 @@ public interface IPathEntryStore extends ICExtension {
 	 * Setting paths should fire a CONTENT_CHANGED events to the listeners.
 	 * It is up to the listener to calculate the deltas.
 	 *
-	 * @param project
 	 * @param entries
 	 * @throws CoreException
 	 */

@@ -38,11 +38,8 @@ import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-/*
- * CygwinPEBinaryObject
- */
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEBinaryObject64}.
+ * @deprecated Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEBinaryObject64}.
  * This class is planned for removal in next major release.
  */
 @Deprecated

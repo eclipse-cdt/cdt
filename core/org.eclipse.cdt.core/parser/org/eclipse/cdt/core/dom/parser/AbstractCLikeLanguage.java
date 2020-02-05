@@ -102,13 +102,13 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	}
 
 	/**
-	 * @returns the actual parser object.
+	 * @return the actual parser object.
 	 */
 	protected abstract ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode,
 			IParserLogService logService, IIndex index);
 
 	/**
-	 * @returns the actual parser object, configured with additional settings.
+	 * @return the actual parser object, configured with additional settings.
 	 * @since 5.6
 	 */
 	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,

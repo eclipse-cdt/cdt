@@ -25,7 +25,7 @@ import org.eclipse.cdt.utils.macho.AR;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @deprecated. Deprecated as of CDT 6.1. Use 64 bit version {@link MachOBinaryArchive64}.
+ * @deprecated Deprecated as of CDT 6.1. Use 64 bit version {@link MachOBinaryArchive64}.
  * This class is planned for removal in next major release.
  */
 @Deprecated

@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEBinaryExecutable64}.
+ * @deprecated Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEBinaryExecutable64}.
  * This class is planned for removal in next major release.
  */
 @Deprecated

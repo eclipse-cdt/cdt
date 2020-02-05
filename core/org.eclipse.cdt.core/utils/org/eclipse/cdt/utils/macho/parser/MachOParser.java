@@ -27,15 +27,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * @deprecated. Deprecated as of CDT 6.1. Use 64 bit version {@link MachOParser64}.
+ * @deprecated Deprecated as of CDT 6.1. Use 64 bit version {@link MachOParser64}.
  * This class is planned for removal in next major release.
  */
 @Deprecated
 public class MachOParser extends AbstractCExtension implements IBinaryParser {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public IBinaryFile getBinary(IPath path) throws IOException {
 		return getBinary(null, path);
@@ -88,33 +85,21 @@ public class MachOParser extends AbstractCExtension implements IBinaryParser {
 		return binary;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.IBinaryParser#getFormat()
-	 */
 	@Override
 	public String getFormat() {
 		return "MACHO"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public boolean isBinary(byte[] array, IPath path) {
 		return MachO.isMachOHeader(array) || AR.isARHeader(array);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#getBufferSize()
-	 */
 	@Override
 	public int getHintBufferSize() {
 		return 128;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getCPPFilt()
-	 */
 	public CPPFilt getCPPFilt() {
 		IPath cppFiltPath = getCPPFiltPath();
 		CPPFilt cppfilt = null;

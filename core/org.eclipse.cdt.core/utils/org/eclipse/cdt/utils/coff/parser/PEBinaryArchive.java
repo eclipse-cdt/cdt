@@ -25,7 +25,7 @@ import org.eclipse.cdt.utils.BinaryFile;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link PEBinaryArchive64}.
+ * @deprecated Deprecated as of CDT 6.9. Use 64 bit version {@link PEBinaryArchive64}.
  * This class is planned for removal in next major release.
  */
 @Deprecated

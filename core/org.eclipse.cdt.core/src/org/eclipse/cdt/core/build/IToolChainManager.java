@@ -38,7 +38,7 @@ public interface IToolChainManager {
 	/**
 	 * Return the UI label for the toolchain type.
 	 *
-	 * @param id
+	 * @param typeId
 	 *            type toolchain type id
 	 * @return name of the type
 	 * @since 6.4

@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 
 /**
- * @deprecated, use {@link ICPPASTFunctionWithTryBlock}, instead.
+ * @deprecated Use {@link ICPPASTFunctionWithTryBlock}, instead.
  * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated

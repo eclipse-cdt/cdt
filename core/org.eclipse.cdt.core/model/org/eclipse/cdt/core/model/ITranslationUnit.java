@@ -169,7 +169,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	/**
 	 * Creates and returns a namespace in this translation unit
 	 *
-	 * @param name the name of the namespace
+	 * @param namespace the name of the namespace
 	 * @param monitor the progress monitor to notify
 	 * @return the newly inserted namespace declaration (or the previously existing one in case
 	 *     attempting to create a duplicate)
@@ -189,8 +189,6 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * <p>
 	 * Users of this method must not destroy the resulting working copy.
 	 *
-	 * @param bufferFactory
-	 *            the given {@code IBuffer} factory
 	 * @return the found shared working copy for this element, or {@code null} if none
 	 * @see IBufferFactory
 	 * @since 5.1
@@ -225,7 +223,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * unit itself at the given position, or if the given position is not
 	 * within the source range of this translation unit.
 	 *
-	 * @param position a source position inside the translation unit
+	 * @param offset a source position inside the translation unit
 	 * @return the innermost C element enclosing a given source position or {@code null}
 	 *	   if none (excluding the translation unit).
 	 * @exception CModelException if the translation unit does not exist or if an
@@ -241,7 +239,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * within the source range of this translation unit.
 	 * You have this behavior when at expansion of a macro.
 	 *
-	 * @param position a source position inside the translation unit
+	 * @param offset a source position inside the translation unit
 	 * @return the innermost C element enclosing a given source position or {@code null}
 	 *		if none (excluding the translation unit).
 	 * @exception CModelException if the translation unit does not exist or if an
@@ -254,7 +252,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	/**
 	 * Returns the include declaration in this translation unit with the given name.
 	 *
-	 * @param the name of the include to find (For example: {@code "stdio.h"}
+	 * @param name the name of the include to find (For example: {@code "stdio.h"}
 	 * 		or {@code "sys/types.h"})
 	 * @return a handle onto the corresponding include declaration. The include declaration may or
 	 * 		may not exist.
@@ -519,7 +517,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	Map<?, ?> parse();
 
 	/**
-	 * @deprecated, use {@link FileContent#create(ITranslationUnit)}, instead.
+	 * @deprecated Use {@link FileContent#create(ITranslationUnit)}, instead.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated

@@ -30,7 +30,7 @@ import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 
 // test checkin
 /**
- * @deprecated. Deprecated as of CDT 6.1. Use 64 bit version {@link MachO64}.
+ * @deprecated Deprecated as of CDT 6.1. Use 64 bit version {@link MachO64}.
  * This class is planned for removal in next major release.
  */
 @Deprecated

@@ -51,7 +51,6 @@ public interface OptionStorage {
 	 * @param value to be saved, must not be <code>null</code>.
 	 * @param option the option metadata, must not be <code>null</code>.
 	 *
-	 * @return the option value or default value if option is unknown
 	 * @throws UnsupportedOperationException for unsupported option value types
 	 *
 	 * @see #consumable(Class)

@@ -65,7 +65,7 @@ public interface IAddress extends Comparable<Object> {
 	/**
 	 * Returns whether this address equals the given object.
 	 *
-	 * @param obj the other object
+	 * @param addr the other object
 	 * @return <code>true</code> if the addresses are equivalent,
 	 *    and <code>false</code> if they are not
 	 */

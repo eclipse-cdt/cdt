@@ -45,8 +45,7 @@ public interface ICDescriptor {
 	 * in the project
 	 * @param extensionPointID String extensionPointID
 	 * @return ICExtensionReference[] ICExtensionReference array
-	 * @deprecated
-	 * @use {@link ICConfigurationDescription#get(String)}
+	 * @deprecated Use {@link ICConfigurationDescription#get(String)}
 	 */
 	@Deprecated
 	public ICExtensionReference[] get(String extensionPointID);
@@ -74,8 +73,7 @@ public interface ICDescriptor {
 	 * @param id
 	 * @return the create ICExtensionReference
 	 * @throws CoreException
-	 * @deprecated
-	 * @use {@link ICConfigurationDescription#create(String, String)}
+	 * @deprecated Use {@link ICConfigurationDescription#create(String, String)}
 	 */
 	@Deprecated
 	public ICExtensionReference create(String extensionPointID, String id) throws CoreException;
@@ -84,8 +82,7 @@ public interface ICDescriptor {
 	 * Remove a given ICExtensionReference from the project description.
 	 * @param extension
 	 * @throws CoreException
-	 * @deprecated
-	 * @use {@link ICConfigurationDescription#remove(org.eclipse.cdt.core.settings.model.ICConfigExtensionReference)}
+	 * @deprecated Use {@link ICConfigurationDescription#remove(org.eclipse.cdt.core.settings.model.ICConfigExtensionReference)}
 	 */
 	@Deprecated
 	public void remove(ICExtensionReference extension) throws CoreException;
@@ -95,8 +92,7 @@ public interface ICDescriptor {
 	 * this descriptor
 	 * @param extensionPoint
 	 * @throws CoreException
-	 * @deprecated
-	 * @use {@link ICConfigurationDescription#remove(String)}
+	 * @deprecated Use {@link ICConfigurationDescription#remove(String)}
 	 */
 	@Deprecated
 	public void remove(String extensionPoint) throws CoreException;
@@ -117,9 +113,8 @@ public interface ICDescriptor {
 	 * @param id an identifier that uniquely identifies the client
 	 * @return a non-null {@link Element} to which client specific meta-data may be attached
 	 * @throws CoreException
-	 * @deprecated
+	 * @deprecated Use {@link ICDescriptor#getProjectStorageElement(String)}
 	 * @noreference This method is not intended to be referenced by clients.
-	 * @use {@link ICDescriptor#getProjectStorageElement(String)}
 	 */
 	@Deprecated
 	public Element getProjectData(String id) throws CoreException;

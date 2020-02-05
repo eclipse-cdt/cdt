@@ -130,7 +130,7 @@ public interface IWorkingCopy extends ITranslationUnit {
 	 * @param forceProblemDetection  The boolean argument allows to force problem
 	 * 		detection even if the working copy is already consistent.
 	 * @param monitor  a progress monitor
-	 * @throw CModelException if the contents of the original element
+	 * @throws CModelException if the contents of the original element
 	 *		cannot be accessed
 	 */
 	void reconcile(boolean forceProblemDetection, IProgressMonitor monitor) throws CModelException;
@@ -157,7 +157,7 @@ public interface IWorkingCopy extends ITranslationUnit {
 	 * 		detection even if the working copy is already consistent.
 	 * @param monitor  a progress monitor
 	 * @return the AST or <code>null</code>
-	 * @throw CModelException if the contents of the original element
+	 * @throws CModelException if the contents of the original element
 	 *		cannot be accessed
 	 *
 	 * @since 4.0

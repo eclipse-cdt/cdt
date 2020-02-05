@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
  */
 public interface ICPPBasicType extends IBasicType {
 	/**
-	 * @deprecated, don't use the constant, more flags may be added for supporting future c++ standards.
+	 * @deprecated Don't use the constant, more flags may be added for supporting future c++ standards.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated

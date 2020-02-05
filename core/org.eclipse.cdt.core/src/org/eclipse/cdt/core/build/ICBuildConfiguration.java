@@ -188,8 +188,8 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 *
 	 * @param name
 	 *            the name of the property
-	 * @param the
-	 *            new value for the property
+	 * @param value
+	 *            the new value for the property
 	 * @since 6.4
 	 */
 	default void setProperty(String name, String value) {

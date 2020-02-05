@@ -69,7 +69,7 @@ public interface IDebugEntryRequestor {
 	/**
 	 * Statement in the compilation unit with a given address.
 	 * @param line lineno of the statement relative to the current compilation unit.
-	 * @param offset addres of the statement relative to the current function.
+	 * @param address address of the statement relative to the current function.
 	 */
 	void acceptStatement(int line, long address);
 
@@ -80,23 +80,16 @@ public interface IDebugEntryRequestor {
 
 	/**
 	 *  floating point constant.
-	 * @param name
-	 * @param value
 	 */
 	void acceptFloatConst(String name, double value);
 
 	/**
 	 * Type constant: "const b = 0", b is a type enum.
-	 * @param name
-	 * @param type
-	 * @param address
 	 */
 	void acceptTypeConst(String name, DebugType type, int value);
 
 	/**
 	 * Caught Exception.
-	 * @param name
-	 * @param value
 	 */
 	void acceptCaughtException(String name, DebugType type, long address);
 
@@ -111,10 +104,6 @@ public interface IDebugEntryRequestor {
 
 	/**
 	 * Record a variable.
-	 * @param name
-	 * @param type
-	 * @param kind
-	 * @param address
 	 */
 	void acceptVariable(String name, DebugType type, DebugVariableKind kind, long address);
 

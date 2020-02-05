@@ -234,10 +234,10 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * If the current configuration does not reference any other configurations,
 	 * an empty map is returned.
 	 *
-	 * @return Map<String,String> of referenced Project -> Configuration ID
-	 * @see {@link #setReferenceInfo(Map)} <br/>
-	 * {@link #getExternalSettings()}<br/>
-	 * {@link #createExternalSetting(String[], String[], String[], ICSettingEntry[])}
+	 * @return Map<String,String> of referenced Project -&gt; Configuration ID
+	 * @see #setReferenceInfo(Map)
+	 * @see #getExternalSettings()
+	 * @see #createExternalSetting(String[], String[], String[], ICSettingEntry[])
 	 */
 	Map<String, String> getReferenceInfo();
 

@@ -38,9 +38,6 @@ public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 		children = new ArrayList<>(5);
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryArchive#getObjects()
-	 */
 	@Override
 	public IBinaryObject[] getObjects() {
 		if (hasChanged()) {
@@ -71,7 +68,7 @@ public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 	}
 
 	/**
-	 * @deprecated use {@link ElfBinaryArchive#createArchiveMembers(ARHeader[])}
+	 * @deprecated use {@link #createArchiveMembers(ARHeader[])}
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Deprecated

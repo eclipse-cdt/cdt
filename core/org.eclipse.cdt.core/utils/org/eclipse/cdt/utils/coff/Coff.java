@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import com.ibm.icu.text.DateFormat;
 
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link Coff64}.
+ * @deprecated Deprecated as of CDT 6.9. Use 64 bit version {@link Coff64}.
  * This class is planned for removal in next major release.
  */
 @Deprecated

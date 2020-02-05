@@ -21,7 +21,7 @@ import org.eclipse.cdt.utils.ICygwinToolsFactroy;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEParser64}.
+ * @deprecated Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEParser64}.
  * This class is planned for removal in next major release.
  */
 @Deprecated

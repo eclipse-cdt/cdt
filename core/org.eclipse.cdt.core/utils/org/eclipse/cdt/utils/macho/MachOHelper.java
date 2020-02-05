@@ -23,11 +23,11 @@ import org.eclipse.cdt.utils.macho.MachO.Section;
 import org.eclipse.cdt.utils.macho.MachO.Symbol;
 
 /**
- * @deprecated. Deprecated as of CDT 6.1. Use 64 bit version {@link MachOHelper64}.
+ * <code>MachOHelper</code> is a wrapper class for the <code>MachO</code> class
+ * to provide higher level API for sorting/searching the MachO data.
+ *
+ * @deprecated Deprecated as of CDT 6.1. Use 64 bit version {@link MachOHelper64}.
  * This class is planned for removal in next major release.
- * <br>
- *  <code>MachOHelper</code> is a wrapper class for the <code>MachO</code> class
- *  to provide higher level API for sorting/searching the MachO data.
  *
  *  @see MachO
  */

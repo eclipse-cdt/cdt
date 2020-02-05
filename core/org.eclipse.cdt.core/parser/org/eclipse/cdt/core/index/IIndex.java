@@ -155,7 +155,7 @@ public interface IIndex {
 	 *
 	 * @param linkageID the id of the linkage in which the file has been parsed.
 	 * @param location the IIndexFileLocation representing the location of the file
-	 * @param macroDictionary The names and definitions of the macros used to disambiguate between
+	 * @param significantMacros The names and definitions of the macros used to disambiguate between
 	 *     variants of the file contents corresponding to different inclusion points.
 	 * @return the file for the location, or {@code null} if the file is not present in
 	 *     the index

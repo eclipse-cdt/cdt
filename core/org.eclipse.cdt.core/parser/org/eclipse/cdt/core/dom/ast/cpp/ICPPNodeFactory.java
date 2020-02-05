@@ -391,7 +391,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	/**
 	 * Creates a new translation unit that cooperates with the given scanner in order
 	 * to track macro-expansions and location information.
-	 * @scanner the preprocessor the translation unit interacts with.
+	 * @param scanner the preprocessor the translation unit interacts with.
 	 * @since 5.2
 	 */
 	@Override

@@ -67,7 +67,7 @@ public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProbl
 	public static final int SEMANTIC_INVALID_TEMPLATE_ARGUMENTS = BINDING_INVALID_TEMPLATE_ARGUMENTS;
 
 	/**
-	 * @deprecated, there may be additional problems.
+	 * @deprecated There may be additional problems.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated

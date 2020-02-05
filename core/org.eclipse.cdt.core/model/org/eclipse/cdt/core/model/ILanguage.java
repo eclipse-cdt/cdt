@@ -44,7 +44,7 @@ public interface ILanguage extends IAdaptable {
 	public final static int OPTION_SKIP_FUNCTION_BODIES = 0x1;
 
 	/**
-	 * @deprecated, Has no effect.
+	 * @deprecated Has no effect.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
@@ -58,7 +58,7 @@ public interface ILanguage extends IAdaptable {
 	public final static int OPTION_NO_IMAGE_LOCATIONS = 0x4;
 
 	/**
-	 * @deprecated, Has no effect.
+	 * @deprecated Has no effect.
 	 */
 	@Deprecated
 	public final static int OPTION_IS_SOURCE_UNIT = 0x8;

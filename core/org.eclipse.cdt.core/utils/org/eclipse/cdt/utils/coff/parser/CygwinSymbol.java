@@ -27,13 +27,7 @@ import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @author DInglis
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
-/**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinSymbol64}.
+ * @deprecated Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinSymbol64}.
  * This class is planned for removal in next major release.
  */
 @Deprecated

@@ -27,11 +27,11 @@ public interface IPathEntryContainerExtension extends IPathEntryContainer {
 	 * and empty array if none.
 	 *
 	 * @param path Workspace relative path.
-	 * @param typeMask type of path entries:
+	 * @param typesMask type of path entries:<ul>
 	 * <li><code>IPathEntry.CDT_INCLUDE</code></li>
 	 * <li><code>IPathEntry.CDT_INCLUDE_FILE</code></li>
 	 * <li><code>IPathEntry.CDT_MACRO_FILE</code></li>
-	 * <li><code>IPathEntry.CDT_MACRO</code></li>
+	 * <li><code>IPathEntry.CDT_MACRO</code></li></ul>
 	 * @return IPathEntry[] - the entries or empty set if none
 	 * @see IPathEntry
 	 */

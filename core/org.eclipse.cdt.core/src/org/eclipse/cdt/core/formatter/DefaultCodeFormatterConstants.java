@@ -97,7 +97,6 @@ public class DefaultCodeFormatterConstants {
 	 *     - option id:         "org.eclipse.cdt.core.formatter.comment_formatter_on_tag"
 	 *     - default:           @formatter:on
 	 * </pre>
-	 * @see CCorePlugin#FORMAT_ON_TAG
 	 * @since 6.7
 	 */
 	public static final String FORMATTER_COMMENT_ON_TAG = CCorePlugin.PLUGIN_ID + ".formatter.comment_formatter_on_tag"; //$NON-NLS-1$
@@ -107,7 +106,6 @@ public class DefaultCodeFormatterConstants {
 	 *     - option id:         "org.eclipse.cdt.core.formatter.comment_formatter_off_tag"
 	 *     - default:           @formatter:off
 	 * </pre>
-	 * @see CCorePlugin#FORMAT_OFF_TAG
 	 * @since 6.7
 	 */
 	public static final String FORMATTER_COMMENT_OFF_TAG = CCorePlugin.PLUGIN_ID

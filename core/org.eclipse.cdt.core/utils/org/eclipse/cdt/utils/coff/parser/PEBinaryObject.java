@@ -35,7 +35,7 @@ import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @deprecated. Deprecated as of CDT 6.9. Use 64 bit version {@link PEBinaryObject64}.
+ * @deprecated Deprecated as of CDT 6.9. Use 64 bit version {@link PEBinaryObject64}.
  * This class is planned for removal in next major release.
  */
 @Deprecated
@@ -54,9 +54,6 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		super(parser, p, type);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
-	 */
 	@Override
 	public String getName() {
 		if (header != null) {
@@ -65,9 +62,6 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		return super.getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
-	 */
 	@Override
 	public InputStream getContents() throws IOException {
 		if (getPath() != null && header != null) {
@@ -76,9 +70,6 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		return super.getContents();
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
-	 */
 	@Override
 	public ISymbol[] getSymbols() {
 		if (hasChanged() || symbols == null) {
@@ -191,9 +182,6 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
-	 */
 	@Override
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {

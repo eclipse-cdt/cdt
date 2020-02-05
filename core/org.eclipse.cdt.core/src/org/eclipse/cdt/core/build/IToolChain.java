@@ -214,7 +214,7 @@ public interface IToolChain extends IAdaptable {
 	 *            info for
 	 * @param buildDirectoryURI
 	 *            the build directory that would be used to run commands
-	 * @returns default scanner info for this language
+	 * @return default scanner info for this language
 	 * @since 6.1
 	 */
 	default IExtendedScannerInfo getDefaultScannerInfo(IBuildConfiguration buildConfig,

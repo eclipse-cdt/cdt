@@ -56,7 +56,7 @@ public interface ICSettingsStorage {
 	 * the specified id an empty storage is created and returned
 	 * @throws CoreException
 	 *
-	 * @see {@link ICStorageElement}
+	 * @see ICStorageElement
 	 */
 	ICStorageElement getStorage(String id, boolean create) throws CoreException;
 

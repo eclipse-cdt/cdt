@@ -229,9 +229,9 @@ public class SegmentMatcher {
 	}
 
 	/**
-	 * @return If false, calling @{@link #match(char[])} can be skipped if a
+	 * @return If false, calling {@link #match(char[])} can be skipped if a
 	 *         name survived a binary search using the prefix returned by
-	 *         @{@link #getPrefixForBinarySearch()} as key.
+	 *         {@link #getPrefixForBinarySearch()} as key.
 	 */
 	public boolean matchRequiredAfterBinarySearch() {
 		return !singleSegment;

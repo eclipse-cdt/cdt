@@ -38,3 +38,4 @@ Export-Package: org.eclipse.tm.terminal.view.ui.actions,
  org.eclipse.tm.terminal.view.ui.tabs,
  org.eclipse.tm.terminal.view.ui.view,
  org.eclipse.tm.terminal.view.ui.view.showin;x-internal:=true
+Automatic-Module-Name: org.eclipse.tm.terminal.view.ui

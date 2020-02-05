@@ -20,3 +20,4 @@ Export-Package: org.eclipse.tm.terminal.connector.telnet.activator;x-internal:=t
  org.eclipse.tm.terminal.connector.telnet.controls,
  org.eclipse.tm.terminal.connector.telnet.launcher,
  org.eclipse.tm.terminal.connector.telnet.nls;x-internal:=true
+Automatic-Module-Name: org.eclipse.tm.terminal.connector.telnet

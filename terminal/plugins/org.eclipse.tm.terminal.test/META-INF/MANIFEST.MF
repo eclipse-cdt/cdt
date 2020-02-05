@@ -19,3 +19,4 @@ Export-Package: org.eclipse.tm.internal.terminal.connector;x-internal:=true,
  org.eclipse.tm.internal.terminal.textcanvas;x-internal:=true,
  org.eclipse.tm.terminal.model,
  org.eclipse.tm.terminal.test
+Automatic-Module-Name: org.eclipse.tm.terminal.test

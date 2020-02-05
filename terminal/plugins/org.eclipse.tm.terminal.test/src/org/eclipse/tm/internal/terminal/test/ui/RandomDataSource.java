@@ -24,6 +24,7 @@ public class RandomDataSource implements IDataSource {
 			styleNormal.setReverse(true), styleNormal.setReverse(true).setBold(true),
 			styleNormal.setReverse(true).setUnderline(true) };
 
+	@Override
 	public int step(ITerminalTextData terminal) {
 		int N = fRandom.nextInt(1000);
 		int h = terminal.getHeight();

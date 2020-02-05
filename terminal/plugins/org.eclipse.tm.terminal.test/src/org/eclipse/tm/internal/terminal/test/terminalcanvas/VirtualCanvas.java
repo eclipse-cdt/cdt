@@ -11,8 +11,6 @@
 package org.eclipse.tm.internal.terminal.test.terminalcanvas;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -20,7 +18,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
 /**
@@ -37,40 +34,26 @@ public abstract class VirtualCanvas extends Canvas {
 	public VirtualCanvas(Composite parent, int style) {
 		super(parent, style | SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE);
 		fPaintGC = new GC(this);
-		addListener(SWT.Paint, new Listener() {
-			public void handleEvent(Event event) {
-				paint(event.gc);
-			}
+		addListener(SWT.Paint, event -> paint(event.gc));
+		addListener(SWT.Resize, event -> {
+			fClientArea = getClientArea();
+			updateViewRectangle();
 		});
-		addListener(SWT.Resize, new Listener() {
-			public void handleEvent(Event event) {
-				fClientArea = getClientArea();
-				updateViewRectangle();
-			}
-		});
-		getVerticalBar().addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				scrollY((ScrollBar) e.widget);
-				postScrollEventHandling(e);
-
-			}
+		getVerticalBar().addListener(SWT.Selection, e -> {
+			scrollY((ScrollBar) e.widget);
+			postScrollEventHandling(e);
 
 		});
-		getHorizontalBar().addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				scrollX((ScrollBar) e.widget);
-				postScrollEventHandling(e);
+		getHorizontalBar().addListener(SWT.Selection, e -> {
+			scrollX((ScrollBar) e.widget);
+			postScrollEventHandling(e);
 
-			}
 		});
-		addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (fPaintGC != null) {
-					fPaintGC.dispose();
-					fPaintGC = null;
-				}
+		addDisposeListener(e -> {
+			if (fPaintGC != null) {
+				fPaintGC.dispose();
+				fPaintGC = null;
 			}
-
 		});
 	}
 

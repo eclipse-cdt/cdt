@@ -17,7 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 class PipedStreamTest {
-	static class ReadThread extends Thread implements Runnable {
+	static class ReadThread extends Thread {
 
 		InputStream pi = null;
 
@@ -29,6 +29,7 @@ class PipedStreamTest {
 			setDaemon(true);
 		}
 
+		@Override
 		public void run() {
 			byte[] buffer = new byte[2048];
 			int bytes_read;
@@ -56,6 +57,7 @@ class PipedStreamTest {
 			N = n;
 		}
 
+		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
 			if (N == 0)
 				return -1;
@@ -67,6 +69,7 @@ class PipedStreamTest {
 			return n;
 		}
 
+		@Override
 		public int read() throws IOException {
 			throw new UnsupportedOperationException();
 		}
@@ -74,6 +77,7 @@ class PipedStreamTest {
 		/*
 		 * available has to be implemented!
 		 */
+		@Override
 		public int available() throws IOException {
 			return N;
 		}
@@ -82,10 +86,12 @@ class PipedStreamTest {
 	static class FakeOutputStream extends OutputStream {
 		long N;
 
+		@Override
 		public void write(int b) throws IOException {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public void write(byte[] b, int off, int len) throws IOException {
 			N += len;
 		}

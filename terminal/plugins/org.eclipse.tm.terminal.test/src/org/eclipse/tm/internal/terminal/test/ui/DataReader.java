@@ -32,6 +32,7 @@ class DataReader implements Runnable {
 		fThread.start();
 	}
 
+	@Override
 	public void run() {
 		long t0 = System.currentTimeMillis() - 1;
 		long c = 0;

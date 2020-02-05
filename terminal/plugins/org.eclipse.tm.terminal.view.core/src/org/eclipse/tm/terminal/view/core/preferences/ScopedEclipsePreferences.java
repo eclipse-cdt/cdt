@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -58,7 +59,7 @@ public class ScopedEclipsePreferences {
 	/**
 	 * The registered preference change listeners.
 	 */
-	private final ListenerList listeners = new ListenerList();
+	private final ListenerList<IPreferenceChangeListener> listeners = new ListenerList<>();
 
 	/**
 	 * Constructor.
@@ -108,19 +109,13 @@ public class ScopedEclipsePreferences {
 		Assert.isNotNull(stream);
 		try {
 			IPreferenceFilter filter = new IPreferenceFilter() {
-				/* (non-Javadoc)
-				 * @see org.eclipse.core.runtime.preferences.IPreferenceFilter#getScopes()
-				 */
 				@Override
 				public String[] getScopes() {
 					return new String[] { InstanceScope.SCOPE };
 				}
 
-				/* (non-Javadoc)
-				 * @see org.eclipse.core.runtime.preferences.IPreferenceFilter#getMapping(java.lang.String)
-				 */
 				@Override
-				public Map getMapping(String scope) {
+				public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 					return null;
 				}
 			};
@@ -437,12 +432,9 @@ public class ScopedEclipsePreferences {
 		if (listeners.isEmpty())
 			return;
 
-		// Get the list or currently registered listeners
-		Object[] l = listeners.getListeners();
 		// Create the preference change event
 		final PreferenceChangeEvent event = new PreferenceChangeEvent(node, key, oldValue, newValue);
-		for (int i = 0; i < l.length; i++) {
-			final IPreferenceChangeListener listener = (IPreferenceChangeListener) l[i];
+		for (IPreferenceChangeListener listener : listeners) {
 			ISafeRunnable job = new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {

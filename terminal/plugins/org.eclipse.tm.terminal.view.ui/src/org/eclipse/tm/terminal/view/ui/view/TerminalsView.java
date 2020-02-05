@@ -54,8 +54,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 import org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
@@ -167,32 +165,20 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 			return draggedTabFolderManager;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.dnd.Transfer#getTypeIds()
-		 */
 		@Override
 		protected int[] getTypeIds() {
 			return new int[] { TYPEID };
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.dnd.Transfer#getTypeNames()
-		 */
 		@Override
 		protected String[] getTypeNames() {
 			return new String[] { TYPE_NAME };
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.dnd.ByteArrayTransfer#javaToNative(java.lang.Object, org.eclipse.swt.dnd.TransferData)
-		 */
 		@Override
 		public void javaToNative(Object data, TransferData transferData) {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.dnd.ByteArrayTransfer#nativeToJava(org.eclipse.swt.dnd.TransferData)
-		 */
 		@Override
 		public Object nativeToJava(TransferData transferData) {
 			return null;
@@ -211,60 +197,54 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	 */
 	private void addDragSupport() {
 		// The event listener is registered as filter. It will receive events from all widgets.
-		PlatformUI.getWorkbench().getDisplay().addFilter(SWT.DragDetect, new Listener() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			@Override
-			public void handleEvent(Event event) {
-				// Only handle events where a CTabFolder is the source
-				if (!(event.widget instanceof CTabFolder))
-					return;
-				// TabFolderManager must be created
-				if (tabFolderManager == null)
-					return;
+		PlatformUI.getWorkbench().getDisplay().addFilter(SWT.DragDetect, event -> {
+			// Only handle events where a CTabFolder is the source
+			if (!(event.widget instanceof CTabFolder))
+				return;
+			// TabFolderManager must be created
+			if (tabFolderManager == null)
+				return;
 
-				// only for own tab folders
-				if (event.widget != tabFolderControl)
-					return;
+			// only for own tab folders
+			if (event.widget != tabFolderControl)
+				return;
 
-				// Skip drag if DnD is still ongoing (bug 443787)
-				if (tabFolderControl.getData(DND.DRAG_SOURCE_KEY) != null)
-					return;
+			// Skip drag if DnD is still ongoing (bug 443787)
+			if (tabFolderControl.getData(DND.DRAG_SOURCE_KEY) != null)
+				return;
 
-				final CTabFolder draggedFolder = (CTabFolder) event.widget;
+			final CTabFolder draggedFolder = (CTabFolder) event.widget;
 
-				int operations = DND.DROP_MOVE | DND.DROP_DEFAULT;
-				final DragSource dragSource = new DragSource(draggedFolder, operations);
+			int operations = DND.DROP_MOVE | DND.DROP_DEFAULT;
+			final DragSource dragSource = new DragSource(draggedFolder, operations);
 
-				// Initialize the terminal transfer type data
-				TerminalTransfer.getInstance().setDraggedFolderItem(tabFolderManager.getActiveTabItem());
-				TerminalTransfer.getInstance().setTabFolderManager(tabFolderManager);
+			// Initialize the terminal transfer type data
+			TerminalTransfer.getInstance().setDraggedFolderItem(tabFolderManager.getActiveTabItem());
+			TerminalTransfer.getInstance().setTabFolderManager(tabFolderManager);
 
-				Transfer[] transferTypes = new Transfer[] { TerminalTransfer.getInstance() };
-				dragSource.setTransfer(transferTypes);
+			Transfer[] transferTypes = new Transfer[] { TerminalTransfer.getInstance() };
+			dragSource.setTransfer(transferTypes);
 
-				// Add a drag source listener to cleanup after the drag operation finished
-				dragSource.addDragListener(new DragSourceListener() {
-					@Override
-					public void dragStart(DragSourceEvent event) {
-					}
+			// Add a drag source listener to cleanup after the drag operation finished
+			dragSource.addDragListener(new DragSourceListener() {
+				@Override
+				public void dragStart(DragSourceEvent event) {
+				}
 
-					@Override
-					public void dragSetData(DragSourceEvent event) {
-					}
+				@Override
+				public void dragSetData(DragSourceEvent event) {
+				}
 
-					@Override
-					public void dragFinished(DragSourceEvent event) {
-						// dispose this drag-source-listener by disposing its drag-source
-						dragSource.dispose();
+				@Override
+				public void dragFinished(DragSourceEvent event) {
+					// dispose this drag-source-listener by disposing its drag-source
+					dragSource.dispose();
 
-						// Inhibit the action of CTabFolder's default DragDetect-listeners,
-						// fire a mouse-click event on the widget that was dragged.
-						draggedFolder.notifyListeners(SWT.MouseUp, null);
-					}
-				});
-			}
+					// Inhibit the action of CTabFolder's default DragDetect-listeners,
+					// fire a mouse-click event on the widget that was dragged.
+					draggedFolder.notifyListeners(SWT.MouseUp, null);
+				}
+			});
 		});
 	}
 
@@ -332,9 +312,6 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// Dispose the tab folder manager
@@ -356,18 +333,12 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.ViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		restoreState(memento);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		// Create the page book control
@@ -666,10 +637,6 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 		mementoHandler.restoreState(this, memento);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
-	 */
-	@SuppressWarnings("cast")
 	@Override
 	public boolean show(ShowInContext context) {
 		if (context != null) {
@@ -696,7 +663,7 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 				boolean isValid = true;
 
 				// Build a new structured selection with the adapted elements
-				List<Object> elements = new ArrayList<Object>();
+				List<Object> elements = new ArrayList<>();
 
 				Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 				while (iterator.hasNext() && isValid) {
@@ -781,8 +748,7 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 				// If the selection is valid, fire the command to open the local terminal
 				if (isValid) {
 					selection = new StructuredSelection(elements);
-					ICommandService service = (ICommandService) PlatformUI.getWorkbench()
-							.getService(ICommandService.class);
+					ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
 					Command command = service != null
 							? service.getCommand("org.eclipse.tm.terminal.connector.local.command.launch") //$NON-NLS-1$
 							: null;
@@ -790,8 +756,7 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 						try {
 							ParameterizedCommand pCmd = ParameterizedCommand.generateCommand(command, null);
 							Assert.isNotNull(pCmd);
-							IHandlerService handlerSvc = (IHandlerService) PlatformUI.getWorkbench()
-									.getService(IHandlerService.class);
+							IHandlerService handlerSvc = PlatformUI.getWorkbench().getService(IHandlerService.class);
 							Assert.isNotNull(handlerSvc);
 							IEvaluationContext ctx = handlerSvc.getCurrentState();
 							ctx = new EvaluationContext(ctx, selection);

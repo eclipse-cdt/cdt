@@ -58,10 +58,10 @@ public class OutputStreamMonitor implements IDisposable {
 	private boolean disposed;
 
 	// A list of object to dispose if this monitor is disposed
-	private final List<IDisposable> disposables = new ArrayList<IDisposable>();
+	private final List<IDisposable> disposables = new ArrayList<>();
 
 	// The list of registered listener
-	private final ListenerList listeners;
+	private final ListenerList<ITerminalServiceOutputStreamMonitorListener> listeners;
 
 	/**
 	 * Constructor.
@@ -80,7 +80,7 @@ public class OutputStreamMonitor implements IDisposable {
 
 		this.lineSeparator = lineSeparator;
 
-		this.listeners = new ListenerList();
+		this.listeners = new ListenerList<>();
 	}
 
 	/**
@@ -126,9 +126,6 @@ public class OutputStreamMonitor implements IDisposable {
 		disposables.remove(disposable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.services.IDisposable#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// If already disposed --> return immediately
@@ -160,12 +157,7 @@ public class OutputStreamMonitor implements IDisposable {
 			return;
 
 		// Create a new runnable which is constantly reading from the stream
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				readStream();
-			}
-		};
+		Runnable runnable = () -> readStream();
 
 		// Create the reader thread
 		thread = new Thread(runnable, "Terminal Output Stream Monitor Thread"); //$NON-NLS-1$
@@ -319,11 +311,8 @@ public class OutputStreamMonitor implements IDisposable {
 
 		// If listeners are registered, invoke the listeners now.
 		if (listeners.size() > 0) {
-			for (Object candidate : listeners.getListeners()) {
-				if (!(candidate instanceof ITerminalServiceOutputStreamMonitorListener))
-					continue;
-				((ITerminalServiceOutputStreamMonitorListener) candidate).onContentReadFromStream(byteBuffer,
-						bytesRead);
+			for (ITerminalServiceOutputStreamMonitorListener candidate : listeners) {
+				candidate.onContentReadFromStream(byteBuffer, bytesRead);
 			}
 		}
 

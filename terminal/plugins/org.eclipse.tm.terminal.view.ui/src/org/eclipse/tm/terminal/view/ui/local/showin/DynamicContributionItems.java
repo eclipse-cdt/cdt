@@ -43,9 +43,6 @@ public class DynamicContributionItems extends CompoundContributionItem implement
 	// Reference to the local terminal launcher delegate
 	/* default */ ILauncherDelegate delegate;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.menus.IWorkbenchContribution#initialize(org.eclipse.ui.services.IServiceLocator)
-	 */
 	@Override
 	public void initialize(IServiceLocator serviceLocator) {
 		this.serviceLocator = serviceLocator;
@@ -55,12 +52,9 @@ public class DynamicContributionItems extends CompoundContributionItem implement
 				.getLauncherDelegate("org.eclipse.tm.terminal.connector.local.launcher.local", false); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
-	 */
 	@Override
 	protected IContributionItem[] getContributionItems() {
-		List<IContributionItem> items = new ArrayList<IContributionItem>();
+		List<IContributionItem> items = new ArrayList<>();
 
 		if (delegate != null) {
 			List<Map<String, String>> l = ExternalExecutablesManager.load();
@@ -118,7 +112,7 @@ public class DynamicContributionItems extends CompoundContributionItem implement
 				if (selection != null && selection.isEmpty())
 					selection = null;
 
-				Map<String, Object> properties = new HashMap<String, Object>();
+				Map<String, Object> properties = new HashMap<>();
 				properties.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, delegate.getId());
 				if (selection != null)
 					properties.put(ITerminalsConnectorConstants.PROP_SELECTION, selection);

@@ -46,10 +46,10 @@ import org.eclipse.tm.terminal.view.core.TerminalContextPropertiesProviderFactor
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalContextPropertiesProvider;
 import org.eclipse.tm.terminal.view.core.interfaces.constants.IContextPropertiesConstants;
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
-import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchEncoding;
 import org.osgi.framework.Bundle;
 
@@ -69,10 +69,10 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 	// The last selected encoding
 	/* default */ String lastSelectedEncoding;
 	// The last entered custom encodings
-	/* default */ final List<String> encodingHistory = new ArrayList<String>();
+	/* default */ final List<String> encodingHistory = new ArrayList<>();
 
 	// A map containing the settings per host
-	protected final Map<String, Map<String, String>> hostSettingsMap = new HashMap<String, Map<String, String>>();
+	protected final Map<String, Map<String, String>> hostSettingsMap = new HashMap<>();
 
 	/**
 	 * Constructor.
@@ -124,9 +124,6 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#doRestoreWidgetValues(org.eclipse.jface.dialogs.IDialogSettings, java.lang.String)
-	 */
 	@Override
 	public void doRestoreWidgetValues(IDialogSettings settings, String idPrefix) {
 		Assert.isNotNull(settings);
@@ -202,7 +199,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 	 */
 	private HashMap<String, String> deSerialize(String hostString) {
 		Assert.isNotNull(hostString);
-		HashMap<String, String> attr = new HashMap<String, String>();
+		HashMap<String, String> attr = new HashMap<>();
 
 		if (hostString.length() != 0) {
 			String[] hostAttrs = hostString.split("\\:");//$NON-NLS-1$
@@ -237,9 +234,6 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#doSaveWidgetValues(org.eclipse.jface.dialogs.IDialogSettings, java.lang.String)
-	 */
 	@Override
 	public void doSaveWidgetValues(IDialogSettings settings, String idPrefix) {
 		Iterator<String> nextHost = hostSettingsMap.keySet().iterator();
@@ -314,7 +308,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 	 * @return The list of host names.
 	 */
 	private List<String> getHostList() {
-		List<String> hostList = new ArrayList<String>();
+		List<String> hostList = new ArrayList<>();
 		hostList.addAll(hostSettingsMap.keySet());
 		return hostList;
 	}
@@ -402,7 +396,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 			deleteHostButton = new Button(comboComposite, SWT.NONE);
 			// deleteHostButton.setText(Messages.AbstractConfigurationPanel_delete);
 
-			ISharedImages workbenchImages = UIPlugin.getDefault().getWorkbench().getSharedImages();
+			ISharedImages workbenchImages = PlatformUI.getWorkbench().getSharedImages();
 			deleteHostButton.setImage(workbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE).createImage());
 
 			deleteHostButton.setToolTipText(Messages.AbstractConfigurationPanel_deleteButtonTooltip);
@@ -521,7 +515,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 	 */
 	protected void fillEncodingCombo() {
 		if (encodingCombo != null) {
-			List<String> encodings = new ArrayList<String>();
+			List<String> encodings = new ArrayList<>();
 
 			// Default encoding
 			encodings.add("Default (ISO-8859-1)"); //$NON-NLS-1$
@@ -551,7 +545,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 	 * Add given encoding names to the list. Duplicates are filtered out by comparing aliases.
 	 */
 	private void addEncodings(List<String> encodings, String... toadd) {
-		Set<String> aliases = new HashSet<String>();
+		Set<String> aliases = new HashSet<>();
 		for (String name : toadd) {
 			if (name == null)
 				continue;

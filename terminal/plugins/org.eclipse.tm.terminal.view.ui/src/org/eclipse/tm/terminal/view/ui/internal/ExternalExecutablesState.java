@@ -37,8 +37,8 @@ public class ExternalExecutablesState extends AbstractSourceProvider {
 	}
 
 	@Override
-	public Map getCurrentState() {
-		Map<String, String> map = new HashMap<String, String>(1);
+	public Map<String, String> getCurrentState() {
+		Map<String, String> map = new HashMap<>(1);
 		map.put(CONFIGURED_STATE, Boolean.valueOf(enabled).toString().toUpperCase());
 		return map;
 	}

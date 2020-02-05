@@ -40,9 +40,6 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 	// The hidden attribute
 	private boolean hidden;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
 			throws CoreException {
@@ -94,41 +91,26 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 				NLS.bind(Messages.Extension_error_missingRequiredAttribute, attributeName, extensionId), null));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#getId()
-	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return label != null ? label.trim() : ""; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#getEnablement()
-	 */
 	@Override
 	public Expression getEnablement() {
 		return expression;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#isHidden()
-	 */
 	@Override
 	public boolean isHidden() {
 		return hidden;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AbstractLauncherDelegate) {
@@ -137,9 +119,6 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 		return super.equals(obj);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return id.hashCode();

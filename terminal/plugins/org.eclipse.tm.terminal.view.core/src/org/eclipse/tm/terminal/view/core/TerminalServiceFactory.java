@@ -34,7 +34,7 @@ public final class TerminalServiceFactory {
 		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 			try {
 				Class<?> clazz = bundle.loadClass("org.eclipse.tm.terminal.view.ui.services.TerminalService"); //$NON-NLS-1$
-				instance = (ITerminalService) clazz.newInstance();
+				instance = (ITerminalService) clazz.getDeclaredConstructor().newInstance();
 			} catch (Exception e) {
 				if (Platform.inDebugMode()) {
 					Platform.getLog(bundle).log(new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(),

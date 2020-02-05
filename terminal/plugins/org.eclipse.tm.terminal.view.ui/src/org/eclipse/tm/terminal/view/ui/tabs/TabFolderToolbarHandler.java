@@ -49,16 +49,13 @@ public class TabFolderToolbarHandler extends PlatformObject {
 	// Reference to the selection listener
 	private ToolbarSelectionChangedListener selectionChangedListener;
 	// The list of actions available within the toolbar
-	private final List<AbstractTerminalAction> toolbarActions = new ArrayList<AbstractTerminalAction>();
+	private final List<AbstractTerminalAction> toolbarActions = new ArrayList<>();
 
 	/**
 	 * Default selection listener implementation.
 	 */
 	protected class ToolbarSelectionChangedListener implements ISelectionChangedListener {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			boolean enable = event != null;
@@ -100,9 +97,8 @@ public class TabFolderToolbarHandler extends PlatformObject {
 	 *
 	 * @return The tab folder or <code>null</code>.
 	 */
-	@SuppressWarnings("cast")
 	protected final CTabFolder getTabFolder() {
-		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
+		return getParentView().getAdapter(CTabFolder.class);
 	}
 
 	/**
@@ -110,12 +106,11 @@ public class TabFolderToolbarHandler extends PlatformObject {
 	 *
 	 * @return The currently active terminal control or <code>null</code>.
 	 */
-	@SuppressWarnings("cast")
 	public ITerminalViewControl getActiveTerminalViewControl() {
 		ITerminalViewControl terminal = null;
 
 		// Get the active tab item from the tab folder manager
-		TabFolderManager manager = (TabFolderManager) getParentView().getAdapter(TabFolderManager.class);
+		TabFolderManager manager = getParentView().getAdapter(TabFolderManager.class);
 		if (manager != null) {
 			// If we have the active tab item, we can get the active terminal control
 			CTabItem activeTabItem = manager.getActiveTabItem();

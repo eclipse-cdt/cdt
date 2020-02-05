@@ -46,25 +46,16 @@ public abstract class AbstractConfigurationPanel implements IConfigurationPanel 
 		this.container = container;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#getContainer()
-	 */
 	@Override
 	public IConfigurationPanelContainer getContainer() {
 		return container;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
-	 */
 	@Override
 	public final String getMessage() {
 		return message;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
-	 */
 	@Override
 	public final int getMessageType() {
 		return messageType;
@@ -81,9 +72,6 @@ public abstract class AbstractConfigurationPanel implements IConfigurationPanel 
 		this.messageType = messageType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#dispose()
-	 */
 	@Override
 	public void dispose() {
 	}
@@ -97,40 +85,25 @@ public abstract class AbstractConfigurationPanel implements IConfigurationPanel 
 		this.topControl = topControl;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#getControl()
-	 */
 	@Override
 	public Composite getControl() {
 		return topControl;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setSelection(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void setSelection(ISelection selection) {
 		this.selection = selection;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#getSelection()
-	 */
 	@Override
 	public ISelection getSelection() {
 		return selection;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#doRestoreWidgetValues(org.eclipse.jface.dialogs.IDialogSettings, java.lang.String)
-	 */
 	@Override
 	public void doRestoreWidgetValues(IDialogSettings settings, String idPrefix) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#doSaveWidgetValues(org.eclipse.jface.dialogs.IDialogSettings, java.lang.String)
-	 */
 	@Override
 	public void doSaveWidgetValues(IDialogSettings settings, String idPrefix) {
 	}
@@ -150,9 +123,6 @@ public abstract class AbstractConfigurationPanel implements IConfigurationPanel 
 		return settingsSlotId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setEnabled(boolean)
-	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
@@ -165,39 +135,24 @@ public abstract class AbstractConfigurationPanel implements IConfigurationPanel 
 		return enabled;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		setMessage(null, NONE);
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#activate()
-	 */
 	@Override
 	public void activate() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#extractData(java.util.Map)
-	 */
 	@Override
 	public void extractData(Map<String, Object> data) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupData(java.util.Map)
-	 */
 	@Override
 	public void setupData(Map<String, Object> data) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#updateData(java.util.Map)
-	 */
 	@Override
 	public void updateData(Map<String, Object> data) {
 	}

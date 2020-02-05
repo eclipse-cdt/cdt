@@ -41,25 +41,16 @@ public class TelnetLauncherDelegate extends AbstractLauncherDelegate {
 	// The Telnet terminal connection memento handler
 	private final IMementoHandler mementoHandler = new TelnetMementoHandler();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#needsUserConfiguration()
-	 */
 	@Override
 	public boolean needsUserConfiguration() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#getPanel(org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer)
-	 */
 	@Override
 	public IConfigurationPanel getPanel(IConfigurationPanelContainer container) {
 		return new TelnetWizardConfigurationPanel(container);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#execute(java.util.Map, org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
-	 */
 	@Override
 	public void execute(Map<String, Object> properties, ITerminalService.Done done) {
 		Assert.isNotNull(properties);
@@ -109,20 +100,14 @@ public class TelnetLauncherDelegate extends AbstractLauncherDelegate {
 		return Messages.TelnetLauncherDelegate_terminalTitle_default;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-	 */
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IMementoHandler.class.equals(adapter)) {
-			return mementoHandler;
+			return adapter.cast(mementoHandler);
 		}
 		return super.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#createTerminalConnector(java.util.Map)
-	 */
 	@Override
 	public ITerminalConnector createTerminalConnector(Map<String, Object> properties) {
 		Assert.isNotNull(properties);

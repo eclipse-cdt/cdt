@@ -2945,10 +2945,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		IExpressionDMAddress addr = (IExpressionDMAddress) wait.getReturnInfo();
 
 		assertTrue("Unable to get address", addr != null);
-		if (addr != null) {
-			assertTrue("Received wrong address of " + addr.toString() + " instead of (" + actualAddrStr + ", "
-					+ actualAddrSize + ")", addressesEqual(addr, actualAddrStr, actualAddrSize));
-		}
+		assertTrue("Received wrong address of " + addr.toString() + " instead of (" + actualAddrStr + ", "
+				+ actualAddrSize + ")", addressesEqual(addr, actualAddrStr, actualAddrSize));
 	}
 
 	private void doTestChildren(IExpressionDMContext exprDMC) throws Throwable {

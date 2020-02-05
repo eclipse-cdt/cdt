@@ -17,7 +17,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.dsf.gdb,
  org.eclipse.core.variables,
  org.mockito,
- org.hamcrest
+ org.hamcrest.library
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .

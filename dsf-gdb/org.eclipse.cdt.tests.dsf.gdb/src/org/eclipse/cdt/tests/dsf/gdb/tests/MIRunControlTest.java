@@ -152,43 +152,36 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 			// that is relative to the working directory.
 			File file = new File(EXEC_PATH + EXEC_NAME);
 
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(file);
+			try (FileInputStream fis = new FileInputStream(file);) {
+				final String MATCH = "cygwin1.dll";
+				final int MATCH_LEN = MATCH.length();
+				int i = 0;
+				int ch = 0;
+				while (true) {
+					try {
+						ch = fis.read();
+					} catch (IOException e) {
+						Assert.fail("Problem inspecting file to see if it's a cygwin executable : "
+								+ e.getLocalizedMessage());
+					}
+					if (ch == -1) { // EOF
+						break;
+					}
+					if (ch == MATCH.charAt(i)) {
+						if (i == MATCH_LEN - 1) {
+							sProgramIsCygwin = true;
+							break; // found it!
+						}
+						i++;
+					} else {
+						i = 0;
+					}
+				}
 			} catch (FileNotFoundException e) {
 				Assert.fail(e.getLocalizedMessage());
 				return; // needed to avoid warning at fis usage below
-			}
-
-			final String MATCH = "cygwin1.dll";
-			final int MATCH_LEN = MATCH.length();
-			int i = 0;
-			int ch = 0;
-			while (true) {
-				try {
-					ch = fis.read();
-				} catch (IOException e) {
-					Assert.fail(
-							"Problem inspecting file to see if it's a cygwin executable : " + e.getLocalizedMessage());
-				}
-				if (ch == -1) { // EOF
-					break;
-				}
-				if (ch == MATCH.charAt(i)) {
-					if (i == MATCH_LEN - 1) {
-						sProgramIsCygwin = true;
-						break; // found it!
-					}
-					i++;
-				} else {
-					i = 0;
-				}
-			}
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-				}
+			} catch (IOException e1) {
+				//ignore
 			}
 		}
 	}

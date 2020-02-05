@@ -26,12 +26,12 @@
 					<execution>
 						<phase>generate-sources</phase>
 						<configuration>
-							<tasks>
+							<target>
 								<!-- Run yarn via ant so that we can share the same (small) xml file
 									for building within eclipse as with tycho -->
 								<ant antfile="BuildDebugServers.xml"
 									target="BuildDebugServers" />
-							</tasks>
+							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>

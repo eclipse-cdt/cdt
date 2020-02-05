@@ -29,6 +29,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		fSize = 2;
 	}
 
+	@Override
 	protected ITerminalTextData makeITerminalTextData() {
 		TerminalTextDataWindow term = new TerminalTextDataWindow();
 		term.setWindow(fOffset, fSize);
@@ -40,6 +41,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 	 * @param expected
 	 * @param actual
 	 */
+	@Override
 	protected void assertEqualsTerm(String expected, String actual) {
 		assertEquals(stripMultiLine(expected), stripMultiLine(actual));
 	}
@@ -48,7 +50,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		StringBuffer b = new StringBuffer();
 		// String[] lines=s.split("\n");
 		// <J2ME CDC-1.1 Foundation-1.1 variant>
-		ArrayList<String> l = new ArrayList<String>();
+		ArrayList<String> l = new ArrayList<>();
 		int j = 0;
 		for (int k = 0; k < s.length(); k++) {
 			if (s.charAt(k) == '\n') {
@@ -82,6 +84,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 	 * @param expected
 	 * @param actual
 	 */
+	@Override
 	protected void assertEqualsSimple(String expected, String actual) {
 		assertEquals(stripSimple(expected), stripSimple(actual));
 	}
@@ -97,6 +100,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		return b.toString();
 	}
 
+	@Override
 	public void testAddLine() {
 		String s = "111\n" + "222\n" + "333\n" + "444\n" + "555";
 		ITerminalTextData term = makeITerminalTextData();
@@ -105,6 +109,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		assertEqualsTerm("222\n" + "333\n" + "444\n" + "\0\0\0\n" + "\000\000\000", toMultiLineText(term));
 	}
 
+	@Override
 	public void testMaxSize() {
 		String s = "111\n" + "222\n" + "333\n" + "444\n" + "555";
 		ITerminalTextData term = makeITerminalTextData();
@@ -130,6 +135,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 				+ "\000\000\000\n" + "\000\000\000", toMultiLineText(term));
 	}
 
+	@Override
 	public void testGetLineSegments() {
 		Style s1 = getDefaultStyle();
 		Style s2 = s1.setBold(true);
@@ -178,6 +184,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 
 	}
 
+	@Override
 	public void testGetChar() {
 		String s = "12345\n" + "abcde\n" + "ABCDE";
 		ITerminalTextData term = makeITerminalTextData();
@@ -199,6 +206,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		assertEquals('E', term.getChar(2, 4));
 	}
 
+	@Override
 	public void testGetStyle() {
 		ITerminalTextData term = makeITerminalTextData();
 		Style style = getDefaultStyle();
@@ -221,6 +229,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 
 	}
 
+	@Override
 	public void testSetChar() {
 		ITerminalTextData term = makeITerminalTextData();
 		term.setDimensions(6, 3);
@@ -240,6 +249,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		assertEqualsTerm("abc\n" + "bcd\n" + "cde\n" + "def\n" + "efg\n" + "fgh", toMultiLineText(term));
 	}
 
+	@Override
 	public void testSetChars() {
 		ITerminalTextData term = makeITerminalTextData();
 		term.setDimensions(6, 3);
@@ -268,6 +278,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 
 	}
 
+	@Override
 	public void testSetCharsLen() {
 		ITerminalTextData term = makeITerminalTextData();
 		String s = "ZYXWVU\n" + "abcdef\n" + "ABCDEF";
@@ -295,6 +306,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		fill(term, s);
 	}
 
+	@Override
 	public void testSetCopyLines() {
 		ITerminalTextData term = new TerminalTextDataStore();
 		String s = "012345";
@@ -337,6 +349,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		assertEqualsSimple("a2345", toSimple(termCopy));
 	}
 
+	@Override
 	public void testScrollNegative() {
 		scrollTest(0, 2, -1, "  23  ", "  23  ");
 		scrollTest(0, 1, -1, "  23  ", "  23  ");
@@ -351,6 +364,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		scrollTest(5, 1, -1, "  23  ", "  23  ");
 	}
 
+	@Override
 	public void testScrollAll() {
 		scrollTest(0, 6, 1, "  2345", "   2  ");
 		scrollTest(0, 6, -1, "  2345", "  3   ");
@@ -358,6 +372,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		scrollTest(0, 6, -2, "  2345", "      ");
 	}
 
+	@Override
 	public void testCopyLineWithOffset() {
 		ITerminalTextData term = makeITerminalTextData();
 		String s = "111\n" + "222\n" + "333\n" + "444\n" + "555";
@@ -393,6 +408,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		term.copy(data);
 	}
 
+	@Override
 	public void testWrappedLines() {
 		ITerminalTextData term = makeITerminalTextData();
 		term.setDimensions(4, 4);

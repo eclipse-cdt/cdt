@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
-import junit.framework.TestCase;
-
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.Style;
 import org.eclipse.tm.terminal.model.StyleColor;
+
+import junit.framework.TestCase;
 
 public class TerminalTextDataPerformanceTest extends TestCase {
 	long TIME = 100;
@@ -40,11 +40,7 @@ public class TerminalTextDataPerformanceTest extends TestCase {
 		ITerminalTextData term = new TerminalTextData();
 		ITerminalTextDataSnapshot snapshot = term.makeSnapshot();
 		N = 0;
-		snapshot.addListener(new ITerminalTextDataSnapshot.SnapshotOutOfDateListener() {
-			public void snapshotOutOfDate(ITerminalTextDataSnapshot snapshot) {
-				N++;
-			}
-		});
+		snapshot.addListener(snapshot1 -> N++);
 		method0(term, "0b");
 		snapshot.updateSnapshot(true);
 	}
@@ -88,11 +84,7 @@ public class TerminalTextDataPerformanceTest extends TestCase {
 		ITerminalTextData term = new TerminalTextData();
 		ITerminalTextDataSnapshot snapshot = term.makeSnapshot();
 		N = 0;
-		snapshot.addListener(new ITerminalTextDataSnapshot.SnapshotOutOfDateListener() {
-			public void snapshotOutOfDate(ITerminalTextDataSnapshot snapshot) {
-				N++;
-			}
-		});
+		snapshot.addListener(snapshot1 -> N++);
 		method1(term, "1b");
 		snapshot.updateSnapshot(true);
 	}
@@ -185,11 +177,7 @@ public class TerminalTextDataPerformanceTest extends TestCase {
 		TerminalTextData term = new TerminalTextData();
 		ITerminalTextDataSnapshot snapshot = term.makeSnapshot();
 		N = 0;
-		snapshot.addListener(new ITerminalTextDataSnapshot.SnapshotOutOfDateListener() {
-			public void snapshotOutOfDate(ITerminalTextDataSnapshot snapshot) {
-				N++;
-			}
-		});
+		snapshot.addListener(snapshot1 -> N++);
 		Style style = Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false,
 				false, false);
 		initPerformance(term);

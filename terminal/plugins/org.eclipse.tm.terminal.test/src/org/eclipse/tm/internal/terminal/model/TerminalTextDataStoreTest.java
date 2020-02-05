@@ -13,6 +13,7 @@ package org.eclipse.tm.internal.terminal.model;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 
 public class TerminalTextDataStoreTest extends AbstractITerminalTextDataTest {
+	@Override
 	protected ITerminalTextData makeITerminalTextData() {
 		return new TerminalTextDataStore();
 	}

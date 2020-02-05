@@ -16,8 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -55,13 +53,12 @@ public class TerminalTextUITest {
 	private static Text heightText;
 
 	static class Status implements IStatus {
+		@Override
 		public void setStatus(final String s) {
 			if (!fStatusLabel.isDisposed())
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						if (!fStatusLabel.isDisposed())
-							fStatusLabel.setText(s);
-					}
+				Display.getDefault().asyncExec(() -> {
+					if (!fStatusLabel.isDisposed())
+						fStatusLabel.setText(s);
 				});
 		}
 
@@ -129,19 +126,17 @@ public class TerminalTextUITest {
 		addLabel(composite, "maxHeight:");
 		final Text maxHeightText = new Text(composite, SWT.BORDER);
 		setLayoutData(maxHeightText, 30);
-		maxHeightText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				synchronized (fTerminalModel) {
-					int height = textToInt(maxHeightText);
-					if (height < 1)
-						return;
-					if (fTerminalModel.getHeight() > height) {
-						fTerminalModel.scroll(0, fTerminalModel.getHeight(), height - fTerminalModel.getHeight());
-						fTerminalModel.setDimensions(height, fTerminalModel.getWidth());
-						heightText.setText(height + "");
-					}
-					fTerminalModel.setMaxHeight(height);
+		maxHeightText.addModifyListener(e -> {
+			synchronized (fTerminalModel) {
+				int height = textToInt(maxHeightText);
+				if (height < 1)
+					return;
+				if (fTerminalModel.getHeight() > height) {
+					fTerminalModel.scroll(0, fTerminalModel.getHeight(), height - fTerminalModel.getHeight());
+					fTerminalModel.setDimensions(height, fTerminalModel.getWidth());
+					heightText.setText(height + "");
 				}
+				fTerminalModel.setMaxHeight(height);
 			}
 		});
 		maxHeightText.setText(fHeight + "");
@@ -152,16 +147,14 @@ public class TerminalTextUITest {
 		addLabel(composite, "heigth:");
 		heightText = new Text(composite, SWT.BORDER);
 		setLayoutData(heightText, 30);
-		heightText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				synchronized (fTerminalModel) {
-					int height = textToInt(heightText);
-					if (height < 1)
-						return;
-					maxHeightText.setText("" + height);
-					fTerminalModel.setDimensions(height, fTerminalModel.getWidth());
-					fTerminalModel.setMaxHeight(height);
-				}
+		heightText.addModifyListener(e -> {
+			synchronized (fTerminalModel) {
+				int height = textToInt(heightText);
+				if (height < 1)
+					return;
+				maxHeightText.setText("" + height);
+				fTerminalModel.setDimensions(height, fTerminalModel.getWidth());
+				fTerminalModel.setMaxHeight(height);
 			}
 		});
 		heightText.setText(fHeight + "");
@@ -171,13 +164,11 @@ public class TerminalTextUITest {
 		addLabel(composite, "width:");
 		final Text widthText = new Text(composite, SWT.BORDER);
 		setLayoutData(widthText, 30);
-		widthText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				synchronized (fTerminalModel) {
-					int width = textToInt(widthText);
-					if (width > 1)
-						fTerminalModel.setDimensions(fTerminalModel.getHeight(), width);
-				}
+		widthText.addModifyListener(e -> {
+			synchronized (fTerminalModel) {
+				int width = textToInt(widthText);
+				if (width > 1)
+					fTerminalModel.setDimensions(fTerminalModel.getHeight(), width);
 			}
 		});
 		widthText.setText(fWidth + "");
@@ -188,12 +179,10 @@ public class TerminalTextUITest {
 		addLabel(composite, "throttle:");
 		final Text throttleText = new Text(composite, SWT.BORDER);
 		setLayoutData(throttleText, 30);
-		throttleText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				synchronized (fTerminalModel) {
-					int throttle = textToInt(throttleText);
-					setThrottleForAll(throttle);
-				}
+		throttleText.addModifyListener(e -> {
+			synchronized (fTerminalModel) {
+				int throttle = textToInt(throttleText);
+				setThrottleForAll(throttle);
 			}
 		});
 		return throttleText;
@@ -204,6 +193,7 @@ public class TerminalTextUITest {
 		stopAllButton.setText("Stop ALL");
 		stopAllButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean stop = stopAllButton.getSelection();
 				for (Iterator iterator = fDataReaders.iterator(); iterator.hasNext();) {
@@ -220,6 +210,7 @@ public class TerminalTextUITest {
 		final Button button = new Button(composite, SWT.CHECK);
 		button.setText("ScrollLock");
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean scrollLock = button.getSelection();
 				fgTextCanvas.setScrollLock(scrollLock);
@@ -240,6 +231,7 @@ public class TerminalTextUITest {
 		button.setText(reader.getName());
 		button.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				reader.setStart(button.getSelection());
 			}

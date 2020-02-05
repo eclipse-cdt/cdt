@@ -18,8 +18,6 @@ package org.eclipse.tm.internal.terminal.connector;
 
 import java.io.OutputStream;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -28,17 +26,22 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
+import junit.framework.TestCase;
+
 public class TerminalConnectorFactoryTest extends TestCase {
 	public class SettingsMock implements ISettingsStore {
 
+		@Override
 		public String get(String key) {
 			return null;
 		}
 
+		@Override
 		public String get(String key, String defaultValue) {
 			return null;
 		}
 
+		@Override
 		public void put(String key, String value) {
 		}
 
@@ -46,50 +49,64 @@ public class TerminalConnectorFactoryTest extends TestCase {
 
 	public static class TerminalControlMock implements ITerminalControl {
 
+		@Override
 		public void setEncoding(String encoding) {
 		}
 
+		@Override
 		public String getEncoding() {
 			return "ISO-8859-1"; //$NON-NLS-1$
 		}
 
+		@Override
 		public void displayTextInTerminal(String text) {
 		}
 
+		@Override
 		public OutputStream getRemoteToTerminalOutputStream() {
 			return null;
 		}
 
+		@Override
 		public Shell getShell() {
 			return null;
 		}
 
+		@Override
 		public TerminalState getState() {
 			return null;
 		}
 
+		@Override
 		public void setMsg(String msg) {
 		}
 
+		@Override
 		public void setState(TerminalState state) {
 		}
 
+		@Override
 		public void setTerminalTitle(String title) {
 		}
 
+		@Override
 		public void setupTerminal(Composite parent) {
 		}
 
+		@Override
 		public boolean isConnectOnEnterIfClosed() {
 			return false;
 		}
 
+		@Override
 		public void setConnectOnEnterIfClosed(boolean on) {
 		}
 
+		@Override
 		public void setVT100LineWrapping(boolean enable) {
 		}
 
+		@Override
 		public boolean isVT100LineWrapping() {
 			return false;
 		}
@@ -105,36 +122,44 @@ public class TerminalConnectorFactoryTest extends TestCase {
 		public ISettingsStore fLoadStore;
 		public boolean fDisconnect;
 
+		@Override
 		public boolean isLocalEcho() {
 			return fEcho;
 		}
 
+		@Override
 		public void setTerminalSize(int newWidth, int newHeight) {
 			fWidth = newWidth;
 			fHeight = newHeight;
 		}
 
+		@Override
 		public void connect(ITerminalControl control) {
 			super.connect(control);
 			fTerminalControl = control;
 		}
 
+		@Override
 		public void doDisconnect() {
 			fDisconnect = true;
 		}
 
+		@Override
 		public OutputStream getTerminalToRemoteStream() {
 			return null;
 		}
 
+		@Override
 		public String getSettingsSummary() {
 			return "Summary";
 		}
 
+		@Override
 		public void load(ISettingsStore store) {
 			fLoadStore = store;
 		}
 
+		@Override
 		public void save(ISettingsStore store) {
 			fSaveStore = store;
 		}
@@ -146,6 +171,7 @@ public class TerminalConnectorFactoryTest extends TestCase {
 
 	protected TerminalConnector makeTerminalConnector(final TerminalConnectorImpl mock) {
 		TerminalConnector c = new TerminalConnector(new TerminalConnector.Factory() {
+			@Override
 			public TerminalConnectorImpl makeConnector() throws Exception {
 				return mock;
 			}
@@ -159,6 +185,7 @@ public class TerminalConnectorFactoryTest extends TestCase {
 		assertNull(c.getInitializationErrorMessage());
 
 		c = makeTerminalConnector(new ConnectorMock() {
+			@Override
 			public void initialize() throws Exception {
 				throw new Exception("FAILED");
 			}

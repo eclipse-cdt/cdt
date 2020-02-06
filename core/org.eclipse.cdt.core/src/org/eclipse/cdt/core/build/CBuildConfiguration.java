@@ -1172,7 +1172,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		Map<String, String> properties = new HashMap<>();
 		Preferences settings = getSettings();
 		try {
-			for (String key : settings.childrenNames()) {
+			for (String key : settings.keys()) {
 				String value = settings.get(key, null);
 				if (value != null) {
 					properties.put(key, value);

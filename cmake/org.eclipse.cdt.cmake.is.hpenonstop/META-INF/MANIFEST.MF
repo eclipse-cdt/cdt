@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %bundleName
+Bundle-Copyright: 2019 Martin Weber
+Bundle-SymbolicName: org.eclipse.cdt.cmake.is.hpenonstop;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Martin Weber
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.11.1",
+ org.eclipse.help
+Import-Package: org.eclipse.cdt.cmake.is.core,
+ org.eclipse.cdt.cmake.is.core.builtins
+Automatic-Module-Name: org.eclipse.cdt.cmake.is.hpenonstop

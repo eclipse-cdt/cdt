@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %bundleName
+Bundle-Description: CDT CMake build integration
+Bundle-Copyright: 2013 Martin Weber
+Bundle-SymbolicName: org.eclipse.cdt.cmake.is.core.doc;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Martin Weber
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy

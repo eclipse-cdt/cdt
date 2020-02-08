@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.eclipse.cdt.cmake.is.microsoft.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Martin Weber
+Fragment-Host: org.eclipse.cdt.cmake.is.microsoft
+Import-Package: org.junit
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.cdt.cmake.is.microsoft.tests

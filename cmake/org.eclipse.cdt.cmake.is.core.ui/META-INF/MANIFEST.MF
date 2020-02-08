@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %bundleName
+Bundle-SymbolicName: org.eclipse.cdt.cmake.is.core.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui
+Automatic-Module-Name: org.eclipse.cdt.cmake.is.core.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.eclipse.cdt.cmake.is.core.ui.CMakeISPlugin
+Export-Package: org.eclipse.cdt.cmake.is.core.ui;x-friends:="org.eclipse.cdt.cmake.is.core"
+Bundle-Vendor: %Bundle-Vendor

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="detectionParticipant" name="Detection Participant" schema="schema/participant.exsd"/>
+"org.eclipse.cdt.cmake.is.core.internal.ui.CompileCommandsJsonParserOptionPage">
+ <extension
+         point="org.eclipse.cdt.core.CBuildConsole">
+      <CBuildConsole
+            class="org.eclipse.cdt.cmake.is.core.internal.builtins.DetectorConsole"
+            id="org.eclipse.cdt.cmake.is.core.detectorConsole">
+      </CBuildConsole>
+ </extension>
+</plugin>

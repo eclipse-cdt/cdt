@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contentExtension>
+  <contribution content="doc/compiler.xhtml#lsp"
+    path="/de.marw.cdt.cmake.core/doc/html/languageSettingsProviders.xhtml#extra_lsp_detection_participant_list"/>
+  <contribution content="doc/compiler.xhtml#builtins"
+    path="/de.marw.cdt.cmake.core/doc/html/builtins-detection.xhtml#extra_lsp_detection_participant_builtins_list"/>
+  <contribution content="doc/compiler.xhtml#builtins_enhanced"
+    path="/de.marw.cdt.cmake.core/doc/html/builtins-detection.xhtml#extra_lsp_detection_participant_builtins_enhanced_list"/>
+</contentExtension>

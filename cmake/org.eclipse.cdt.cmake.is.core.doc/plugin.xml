@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <!-- project settings UI   -->
+  
+
+ <extension point="org.eclipse.help.toc">
+    <toc file="doc/toc.xml" primary="true"/>
+    <toc file="doc/topics_Tasks.xml"/>
+ </extension>
+</plugin>

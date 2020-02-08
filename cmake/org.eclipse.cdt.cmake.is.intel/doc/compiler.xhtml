@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <title>ARM.com Compilers</title>
+  </head>
+  <body>
+    <div id="lsp">
+      <h4>Intel Compilers</h4>
+      <table style="border-collapse:collapse">
+        <thead>
+          <tr>
+            <th>Compiler</th>
+            <th>Vendor</th>
+            <th>Language</th>
+            <th>Macros</th>
+            <th>Include directories</th>
+            <th>
+              System include
+              <br />
+              directories
+            </th>
+            <th>Compiler executables</th>
+          </tr>
+        </thead>
+        <tbody>
+	<tr>
+	<td>icc</td>
+	<td>Intel</td>
+	<td>C</td>
+	<td>Yes</td>
+	<td>Yes</td>
+	<td>No</td>
+	<td>icc, icl</td>
+	</tr>
+	<tr>
+	<td>icpc</td>
+	<td>Intel</td>
+	<td>C++</td>
+	<td>Yes</td>
+	<td>Yes</td>
+	<td>No</td>
+	<td>icpc, icl++</td>
+	</tr>
+	<tr>
+	<td>icl</td>
+	<td>Intel</td>
+	<td>C/C++</td>
+	<td>Yes</td>
+	<td>Yes</td>
+	<td>No</td>
+	<td>icl.exe</td>
+	</tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="builtins">
+      <h4>Intel Compilers</h4>
+      <table style="border-collapse:collapse">
+        <thead>
+          <tr>
+            <th>Compiler</th>
+            <th>Vendor</th>
+            <th>Macros</th>
+            <th>
+              System
+              <br />
+              include paths
+            </th>
+            <th>
+              Local
+              <br />
+              include paths
+            </th>
+            <th>
+              MACOS Framework
+              <br />
+              include paths
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+	<tr>
+	<td>icc</td>
+	<td>Intel</td>
+	<td>NYI <a href="#help-icc">[help]</a></td>
+	<td>NYI <a href="#help-icc">[help]</a></td>
+	<td>NYI <a href="#help-icc">[help]</a></td>
+	<td>NYI <a href="#fw-help-icc">[help]</a></td>
+	</tr>
+        </tbody>
+      </table>
+	<p>Remarks:</p>
+	<ul style="list-style-type:none">
+	<li id="fw-help-icc">[help] Help wanted! To implement this, the output of <code>icc -EP -dM empty.c</code> 
+	is needed.</li>
+	</ul>
+    </div>
+  </body>
+</html>

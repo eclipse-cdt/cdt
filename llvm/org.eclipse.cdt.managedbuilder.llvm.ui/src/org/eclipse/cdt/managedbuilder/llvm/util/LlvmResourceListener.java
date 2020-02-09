@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.llvm.util;
 
-import org.eclipse.cdt.managedbuilder.llvm.ui.preferences.LlvmPreferenceStore;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 
@@ -53,23 +52,6 @@ public class LlvmResourceListener implements IResourceChangeListener {
 			//					e.printStackTrace();
 			//				}
 			//			}
-		} else if (event.getType() == IResourceChangeEvent.PRE_BUILD) {
-			String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-			if (os.indexOf("win") >= 0) { //$NON-NLS-1$
-				LlvmPreferenceStore.addMinGWStdLib();
-				//				LlvmToolOptionPathUtil.addMissingCppIncludesForMingw(); //TODO: Remove when Scanner Discovery has been fixed
-			} else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 /*|| os.indexOf( "mac") >=0 */) { //$NON-NLS-1$ //$NON-NLS-2$
-				LlvmPreferenceStore.addStdLibUnix();
-			}
-
-			/*
-			 * try to add values (include and library paths and libraries) to
-			 * projects's build configurations to ensure that newly added projects
-			 * have necessary paths.
-			 */
-			LlvmToolOptionPathUtil.addAllIncludesToBuildConf();
-			LlvmToolOptionPathUtil.addAllLibsToBuildConf();
-			LlvmToolOptionPathUtil.addAllLibPathsToBuildConf();
 		} else {
 			return;
 		}

@@ -5212,15 +5212,6 @@
       </projectType>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.managedbuilder.llvm.ui.preferences.LlvmPreferencePage"
-            id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences.LlvmPreferencePage"
-            name="%page.name">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
             class="org.eclipse.cdt.managedbuilder.llvm.ui.preferences.PreferenceInitializer">

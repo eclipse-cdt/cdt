@@ -980,6 +980,16 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		// Split line into args, taking into account quotes
 		List<String> command = stripArgs(line);
 
+		//Expand short paths names if any before compare it compile commands
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			List<String> newcmds = new ArrayList<>();
+			for (String cmd : command) {
+				String expandedCmd = expandShortFileName(cmd);
+				newcmds.add(expandedCmd);
+			}
+			command = newcmds;
+		}
+
 		// Make sure it's a compile command
 		String[] compileCommands = toolChain.getCompileCommands();
 		boolean found = false;
@@ -1064,6 +1074,32 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 			CCorePlugin.log(e);
 			return false;
 		}
+	}
+
+	private static String expandShortFileName(String commandLine) {
+		if (commandLine.indexOf('~', 6) == -1) {
+			// not a short file name
+			return commandLine;
+		}
+		String command;
+		StringBuilder commandLine2 = new StringBuilder();
+		// split at first space character
+		int idx = commandLine.indexOf(' ');
+		if (idx != -1) {
+			command = commandLine.substring(0, idx);
+			commandLine2.append(commandLine.substring(idx));
+		} else {
+			command = commandLine;
+		}
+		// convert to long file name and retry lookup
+		try {
+			command = new File(command).getCanonicalPath();
+			commandLine2.insert(0, command);
+			return commandLine2.toString();
+		} catch (IOException e) {
+			CCorePlugin.log(e);
+		}
+		return commandLine;
 	}
 
 	/**

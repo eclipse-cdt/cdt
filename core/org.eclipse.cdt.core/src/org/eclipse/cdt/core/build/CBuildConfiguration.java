@@ -839,7 +839,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	 * @return List of arg Strings
 	 */
 	private List<String> stripArgs(String argString) {
-		String[] args = CommandLineUtil.argumentsToArrayUnixStyle(argString);
+		String[] args = CommandLineUtil.argumentsToArray(argString);
 		return new ArrayList<>(Arrays.asList(args));
 	}
 

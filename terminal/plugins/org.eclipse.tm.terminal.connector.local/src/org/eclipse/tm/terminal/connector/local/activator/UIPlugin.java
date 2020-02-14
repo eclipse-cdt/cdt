@@ -77,18 +77,12 @@ public class UIPlugin extends AbstractUIPlugin {
 		return traceHandler;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
@@ -97,9 +91,6 @@ public class UIPlugin extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
-	 */
 	@Override
 	protected void initializeImageRegistry(ImageRegistry registry) {
 		super.initializeImageRegistry(registry);

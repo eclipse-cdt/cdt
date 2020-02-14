@@ -50,21 +50,17 @@ public class NewTerminalViewAction extends AbstractTerminalAction {
 		setEnabled(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#run()
-	 */
 	@SuppressWarnings("cast")
 	@Override
 	public void run() {
-		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command command = service != null ? service.getCommand("org.eclipse.tm.terminal.view.ui.command.newview") //$NON-NLS-1$
 				: null;
 		if (command != null && command.isDefined() && command.isEnabled()) {
 			try {
 				ParameterizedCommand pCmd = ParameterizedCommand.generateCommand(command, null);
 				Assert.isNotNull(pCmd);
-				IHandlerService handlerSvc = (IHandlerService) PlatformUI.getWorkbench()
-						.getService(IHandlerService.class);
+				IHandlerService handlerSvc = PlatformUI.getWorkbench().getService(IHandlerService.class);
 				Assert.isNotNull(handlerSvc);
 				handlerSvc.executeCommandInContext(pCmd, null, handlerSvc.getCurrentState());
 			} catch (Exception e) {

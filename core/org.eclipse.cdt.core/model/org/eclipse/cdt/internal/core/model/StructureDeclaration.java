@@ -18,9 +18,6 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IStructureDeclaration;
 
-/**
- * StructureDeclaration
- */
 public class StructureDeclaration extends SourceManipulation implements IStructureDeclaration {
 
 	public StructureDeclaration(ICElement parent, String name, int kind) {
@@ -60,25 +57,16 @@ public class StructureDeclaration extends SourceManipulation implements IStructu
 		return new StructureInfo(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IDeclaration#isStatic()
-	 */
 	@Override
 	public boolean isStatic() throws CModelException {
 		return getStructureInfo().isStatic();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
-	 */
 	@Override
 	public boolean isConst() throws CModelException {
 		return getStructureInfo().isConst();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IDeclaration#isVolatile()
-	 */
 	@Override
 	public boolean isVolatile() throws CModelException {
 		return getStructureInfo().isVolatile();

@@ -51,26 +51,17 @@ public class CreateMethodOperation extends CreateMemberOperation {
 		fSource = source;
 	}
 
-	/**
-	 * @see CreateElementInTUOperation#generateResultHandle
-	 */
 	@Override
 	protected ICElement generateResultHandle() {
 		//TODO: what about collisions, we need the signature here.
 		return getStructure().getMethod(fName);
 	}
 
-	/**
-	 * @see CreateElementInTUOperation#getMainTaskName
-	 */
 	@Override
 	public String getMainTaskName() {
 		return CoreModelMessages.getString("operation.createMethodProgress"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see CreateMemberOperation#verifyNameCollision
-	 */
 	@Override
 	protected ICModelStatus verifyNameCollision() {
 		ICModelStatus status = super.verify();
@@ -92,9 +83,6 @@ public class CreateMethodOperation extends CreateMemberOperation {
 		return CModelStatus.VERIFIED_OK;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CreateElementInTUOperation#generateElement(org.eclipse.cdt.core.model.ITranslationUnit)
-	 */
 	@Override
 	protected String generateElement(ITranslationUnit unit) throws CModelException {
 		StringBuilder sb = new StringBuilder();

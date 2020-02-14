@@ -23,9 +23,6 @@ import org.eclipse.ui.IMemento;
  */
 public class TelnetMementoHandler implements IMementoHandler {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler#saveState(org.eclipse.ui.IMemento, java.util.Map)
-	 */
 	@Override
 	public void saveState(IMemento memento, Map<String, Object> properties) {
 		Assert.isNotNull(memento);
@@ -45,9 +42,6 @@ public class TelnetMementoHandler implements IMementoHandler {
 				(String) properties.get(ITerminalsConnectorConstants.PROP_ENCODING));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler#restoreState(org.eclipse.ui.IMemento, java.util.Map)
-	 */
 	@Override
 	public void restoreState(IMemento memento, Map<String, Object> properties) {
 		Assert.isNotNull(memento);

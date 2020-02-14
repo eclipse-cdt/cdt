@@ -27,9 +27,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class DisconnectTerminalCommandHandler extends AbstractHandler {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@SuppressWarnings("cast")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -45,7 +42,7 @@ public class DisconnectTerminalCommandHandler extends AbstractHandler {
 
 		if (item == null && HandlerUtil.getActivePart(event) instanceof ITerminalsView) {
 			ITerminalsView view = (ITerminalsView) HandlerUtil.getActivePart(event);
-			TabFolderManager mgr = (TabFolderManager) view.getAdapter(TabFolderManager.class);
+			TabFolderManager mgr = view.getAdapter(TabFolderManager.class);
 			if (mgr != null && mgr.getActiveTabItem() != null) {
 				item = mgr.getActiveTabItem();
 			}

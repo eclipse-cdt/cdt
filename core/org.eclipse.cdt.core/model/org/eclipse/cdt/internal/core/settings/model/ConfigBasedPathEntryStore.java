@@ -51,9 +51,6 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	static final QualifiedName PATH_ENTRY_COLLECTOR_PROPERTY_NAME = new QualifiedName(CCorePlugin.PLUGIN_ID,
 			"PathEntryStoreCollector"); //$NON-NLS-1$
 
-	/**
-	 *
-	 */
 	public ConfigBasedPathEntryStore(IProject project) {
 		fProject = project;
 		fListeners = Collections.synchronizedList(new ArrayList<IPathEntryStoreListener>());
@@ -62,17 +59,11 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 				CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADED);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#addPathEntryStoreListener(org.eclipse.cdt.core.resources.IPathEntryStoreListener)
-	 */
 	@Override
 	public void addPathEntryStoreListener(IPathEntryStoreListener listener) {
 		fListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#removePathEntryStoreListener(org.eclipse.cdt.core.resources.IPathEntryStoreListener)
-	 */
 	@Override
 	public void removePathEntryStoreListener(IPathEntryStoreListener listener) {
 		fListeners.remove(listener);
@@ -88,9 +79,6 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#fireClosedChangedEvent(IProject)
-	 */
 	@Override
 	public void close() {
 		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, fProject,

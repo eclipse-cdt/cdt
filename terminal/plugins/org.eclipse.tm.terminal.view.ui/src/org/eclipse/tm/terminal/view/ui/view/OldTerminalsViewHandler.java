@@ -39,9 +39,6 @@ public class OldTerminalsViewHandler extends ViewPart {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		replaceWithTerminalsView();
@@ -121,9 +118,6 @@ public class OldTerminalsViewHandler extends ViewPart {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		// should not happen, but just in case - replace on focus

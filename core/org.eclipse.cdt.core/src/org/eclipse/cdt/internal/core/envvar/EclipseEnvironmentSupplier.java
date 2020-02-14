@@ -28,9 +28,6 @@ import org.eclipse.cdt.utils.spawner.EnvironmentReader;
  */
 public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSupplier {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariable()
-	 */
 	@Override
 	public IEnvironmentVariable getVariable(String name, Object context) {
 		if (context == null) {
@@ -42,9 +39,6 @@ public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSuppl
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariables()
-	 */
 	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if (context == null) {

@@ -30,18 +30,13 @@ public class CoreVariableSubstitutor extends SupplierBasedCdtVariableSubstitutor
 	public CoreVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue, String listDelimiter,
 			Map<?, ?> delimiterMap, String incorrectlyReferencedMacroValue) {
 		super(contextInfo, inexistentMacroValue, listDelimiter, delimiterMap, incorrectlyReferencedMacroValue);
-		// TODO Auto-generated constructor stub
 	}
 
 	public CoreVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue,
 			String listDelimiter) {
 		super(contextInfo, inexistentMacroValue, listDelimiter);
-		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor#setMacroContextInfo(int, java.lang.Object)
-	 */
 	public void setMacroContextInfo(int contextType, Object contextData) throws CdtVariableException {
 		setMacroContextInfo(getMacroContextInfo(contextType, contextData));
 	}

@@ -17,62 +17,41 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IVariable;
 
-/**
- *
- */
 public class BinaryVariable extends BinaryElement implements IVariable {
 
 	public BinaryVariable(ICElement parent, String name, IAddress a) {
 		super(parent, name, ICElement.C_VARIABLE, a);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IVariable#getInitializer()
-	 */
 	@Override
 	public String getInitializer() {
 		// TODO Auto-generated method stub
 		return ""; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IVariableDeclaration#getTypeName()
-	 */
 	@Override
 	public String getTypeName() {
 		// TODO Auto-generated method stub
 		return ""; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IVariableDeclaration#setTypeName(java.lang.String)
-	 */
 	@Override
 	public void setTypeName(String type) {
 		// TODO Auto-generated method stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IDeclaration#isStatic()
-	 */
 	@Override
 	public boolean isStatic() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
-	 */
 	@Override
 	public boolean isConst() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IDeclaration#isVolatile()
-	 */
 	@Override
 	public boolean isVolatile() {
 		// TODO Auto-generated method stub

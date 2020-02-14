@@ -135,11 +135,6 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 	}
 
 	/*
-	 *  I R e s o u r c e C h a n g e L i s t e n e r
-	 */
-
-	/* (non-Javadoc)
-	 *
 	 *  Handle the renaming and deletion of project resources
 	 *  This is necessary in order to update ResourceConfigurations and AdditionalInputs
 	 *

@@ -67,10 +67,10 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 	/* default */ SettingsPanelControl settings;
 
 	// Map the label added to the combo box to the corresponding launcher delegate.
-	/* default */ final Map<String, ILauncherDelegate> label2delegate = new HashMap<String, ILauncherDelegate>();
+	/* default */ final Map<String, ILauncherDelegate> label2delegate = new HashMap<>();
 
 	// Map the label added to the combo box to the corresponding launcher properties for external executables.
-	/* default */ final Map<String, Map<String, Object>> label2properties = new HashMap<String, Map<String, Object>>();
+	/* default */ final Map<String, Map<String, Object>> label2properties = new HashMap<>();
 
 	// The data object containing the currently selected settings
 	private Map<String, Object> data = null;
@@ -86,24 +86,15 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 	 */
 	protected class SettingsPanelControl extends ConfigurationPanelControl {
 
-		/**
-		 * Constructor.
-		 */
 		public SettingsPanelControl() {
 			setPanelIsGroup(true);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.tm.terminal.view.ui.controls.ConfigurationPanelControl#getGroupLabel()
-		 */
 		@Override
 		public String getGroupLabel() {
 			return Messages.LaunchTerminalSettingsDialog_group_label;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.tm.terminal.view.ui.controls.ConfigurationPanelControl#showConfigurationPanel(java.lang.String)
-		 */
 		@Override
 		public void showConfigurationPanel(String key) {
 			// Check if we have to create the panel first
@@ -134,9 +125,6 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 			super.showConfigurationPanel(key);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer#validate()
-		 */
 		@Override
 		public void validate() {
 			LaunchTerminalSettingsDialog.this.validate();
@@ -187,9 +175,6 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 		return selection;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#close()
-	 */
 	@Override
 	public boolean close() {
 		dispose();
@@ -207,17 +192,11 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 		dialogSettings = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 */
 	@Override
 	protected boolean isResizable() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Control composite = super.createContents(parent);
@@ -228,9 +207,6 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 		return composite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected final Control createDialogArea(Composite parent) {
 		if (contextHelpId != null) {
@@ -319,7 +295,7 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 					// Get the old panel
 					IConfigurationPanel oldPanel = settings.getActiveConfigurationPanel();
 					// Extract the current settings in an special properties container
-					Map<String, Object> data = new HashMap<String, Object>();
+					Map<String, Object> data = new HashMap<>();
 					if (oldPanel != null)
 						oldPanel.extractData(data);
 					// Clean out settings which are never passed between the panels
@@ -422,7 +398,7 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 	 * @return The list of terminal launcher delegate labels or an empty list.
 	 */
 	protected List<String> getTerminals() {
-		List<String> items = new ArrayList<String>();
+		List<String> items = new ArrayList<>();
 
 		ILauncherDelegate localLauncher = null;
 
@@ -504,7 +480,7 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 						if (selection != null && selection.isEmpty())
 							selection = null;
 
-						Map<String, Object> properties = new HashMap<String, Object>();
+						Map<String, Object> properties = new HashMap<>();
 						properties.put(ITerminalsConnectorConstants.PROP_PROCESS_PATH, path);
 						properties.put(ITerminalsConnectorConstants.PROP_PROCESS_ARGS, args);
 						properties.put(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE,
@@ -589,9 +565,6 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		IConfigurationPanel panel = this.settings.getActiveConfigurationPanel();
@@ -606,7 +579,7 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 			mb.open();
 			return;
 		}
-		data = new HashMap<String, Object>();
+		data = new HashMap<>();
 
 		// Store the id of the selected delegate
 		String terminalLabel = terminals != null ? terminals.getText() : singleDelegateLabel;

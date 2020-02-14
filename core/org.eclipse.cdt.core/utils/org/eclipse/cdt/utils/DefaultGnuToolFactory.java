@@ -23,16 +23,10 @@ import org.eclipse.core.runtime.Path;
 public class DefaultGnuToolFactory implements IGnuToolFactory {
 	protected ICExtension fExtension;
 
-	/**
-	 *
-	 */
 	public DefaultGnuToolFactory(ICExtension ext) {
 		fExtension = ext;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getAddr2line(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public Addr2line getAddr2line(IPath path) {
 		IPath addr2LinePath = getAddr2linePath();
@@ -46,9 +40,6 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 		return addr2line;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getCPPFilt()
-	 */
 	@Override
 	public CPPFilt getCPPFilt() {
 		IPath cppFiltPath = getCPPFiltPath();
@@ -62,9 +53,6 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 		return cppfilt;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getObjdump(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public Objdump getObjdump(IPath path) {
 		IPath objdumpPath = getObjdumpPath();
@@ -79,9 +67,6 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 		return objdump;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getObjdump(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public NM getNM(IPath path) {
 		IPath nmPath = getNMPath();

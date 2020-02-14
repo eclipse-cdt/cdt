@@ -157,9 +157,6 @@ public class RegexErrorParser implements IErrorParserNamed {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof RegexErrorParser) {
@@ -170,9 +167,6 @@ public class RegexErrorParser implements IErrorParserNamed {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		RegexErrorParser that = new RegexErrorParser(fId, fName);

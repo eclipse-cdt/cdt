@@ -33,9 +33,6 @@ public class MultiFolderDescription extends MultiResourceDescription implements 
 		super(res);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICFolderDescription#createLanguageSettingForContentTypes(java.lang.String, java.lang.String[])
-	 */
 	@Override
 	public ICLanguageSetting createLanguageSettingForContentTypes(String languageId, String[] typeIds)
 			throws CoreException {
@@ -44,9 +41,6 @@ public class MultiFolderDescription extends MultiResourceDescription implements 
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICFolderDescription#createLanguageSettingForExtensions(java.lang.String, java.lang.String[])
-	 */
 	@Override
 	public ICLanguageSetting createLanguageSettingForExtensions(String languageId, String[] extensions)
 			throws CoreException {
@@ -55,9 +49,6 @@ public class MultiFolderDescription extends MultiResourceDescription implements 
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICFolderDescription#getLanguageSettingForFile(java.lang.String)
-	 */
 	@Override
 	public ICLanguageSetting getLanguageSettingForFile(String fileName) {
 		ICLanguageSetting ls0 = ((ICFolderDescription) fRess[0]).getLanguageSettingForFile(fileName);
@@ -73,9 +64,6 @@ public class MultiFolderDescription extends MultiResourceDescription implements 
 		return ls0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICFolderDescription#getLanguageSettings()
-	 */
 	@Override
 	public ICLanguageSetting[][] getLanguageSettingsM(Comparator<Object> comp) {
 		ICLanguageSetting[][] ls = new ICLanguageSetting[fRess.length][];
@@ -88,9 +76,6 @@ public class MultiFolderDescription extends MultiResourceDescription implements 
 		return ls;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICFolderDescription#getNestedResourceDescription(org.eclipse.core.runtime.IPath, boolean)
-	 */
 	@Override
 	public ICResourceDescription getNestedResourceDescription(IPath relPath, boolean exactPath) {
 		if (DEBUG)
@@ -98,9 +83,6 @@ public class MultiFolderDescription extends MultiResourceDescription implements 
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICFolderDescription#getNestedResourceDescriptions(int)
-	 */
 	@Override
 	public ICResourceDescription[] getNestedResourceDescriptions(int kind) {
 		if (DEBUG)
@@ -108,9 +90,6 @@ public class MultiFolderDescription extends MultiResourceDescription implements 
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICFolderDescription#getNestedResourceDescriptions()
-	 */
 	@Override
 	public ICResourceDescription[] getNestedResourceDescriptions() {
 		if (DEBUG)
@@ -118,9 +97,6 @@ public class MultiFolderDescription extends MultiResourceDescription implements 
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICFolderDescription#isRoot()
-	 */
 	@Override
 	public boolean isRoot() {
 		for (int i = 0; i < fRess.length; i++)

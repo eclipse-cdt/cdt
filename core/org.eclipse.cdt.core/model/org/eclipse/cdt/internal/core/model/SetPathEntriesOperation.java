@@ -46,9 +46,6 @@ public class SetPathEntriesOperation extends CModelOperation {
 		this.cproject = project;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#executeOperation()
-	 */
 	@Override
 	protected void executeOperation() throws CModelException {
 		//	project reference updated - may throw an exception if unable to write .cdtproject file

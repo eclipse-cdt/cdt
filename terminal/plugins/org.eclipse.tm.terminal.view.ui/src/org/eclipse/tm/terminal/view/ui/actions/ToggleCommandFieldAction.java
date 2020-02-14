@@ -45,9 +45,6 @@ public class ToggleCommandFieldAction extends AbstractTerminalAction {
 		setChecked(handler != null && handler.hasCommandInputField());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		TabCommandFieldHandler handler = getCommandFieldHandler();
@@ -57,9 +54,6 @@ public class ToggleCommandFieldAction extends AbstractTerminalAction {
 		setChecked(handler != null && handler.hasCommandInputField());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#updateAction(boolean)
-	 */
 	@Override
 	public void updateAction(boolean aboutToShow) {
 		TabCommandFieldHandler handler = getCommandFieldHandler();
@@ -77,7 +71,7 @@ public class ToggleCommandFieldAction extends AbstractTerminalAction {
 	protected TabCommandFieldHandler getCommandFieldHandler() {
 		TabCommandFieldHandler handler = null;
 		// Get the active tab item from the tab folder manager
-		TabFolderManager manager = (TabFolderManager) view.getAdapter(TabFolderManager.class);
+		TabFolderManager manager = view.getAdapter(TabFolderManager.class);
 		if (manager != null) {
 			// If we have the active tab item, we can get the active terminal control
 			CTabItem activeTabItem = manager.getActiveTabItem();

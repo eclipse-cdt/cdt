@@ -96,9 +96,6 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 		return super.equals(obj);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IIncludeEntry#getFullIncludePath()
-	 */
 	@Override
 	public IPath getFullIncludePath() {
 		final IPath inc = getIncludePath();
@@ -129,9 +126,6 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 		return inc;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

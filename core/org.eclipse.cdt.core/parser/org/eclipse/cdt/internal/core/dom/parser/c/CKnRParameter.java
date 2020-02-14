@@ -42,9 +42,6 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 		this.name = name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
-	 */
 	@Override
 	public IType getType() {
 		IASTDeclSpecifier declSpec = null;
@@ -62,56 +59,35 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
 	@Override
 	public String getName() {
 		return name.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
 	@Override
 	public char[] getNameCharArray() {
 		return name.toCharArray();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
 	@Override
 	public IScope getScope() {
 		return CVisitor.getContainingScope(declaration);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
-	 */
 	public IASTNode getPhysicalNode() {
 		return declaration;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
-	 */
 	@Override
 	public boolean isStatic() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
-	 */
 	@Override
 	public boolean isExtern() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
-	 */
 	@Override
 	public boolean isAuto() {
 		if (declaration instanceof IASTSimpleDeclaration)
@@ -120,9 +96,6 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
-	 */
 	@Override
 	public boolean isRegister() {
 		if (declaration instanceof IASTSimpleDeclaration)

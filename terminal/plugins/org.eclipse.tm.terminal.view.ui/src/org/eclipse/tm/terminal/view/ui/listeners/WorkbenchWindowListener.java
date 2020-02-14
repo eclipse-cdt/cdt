@@ -19,9 +19,6 @@ import org.eclipse.ui.IPartListener2;
  */
 public class WorkbenchWindowListener extends AbstractWindowListener {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.listeners.AbstractWindowListener#createPartListener()
-	 */
 	@Override
 	protected IPartListener2 createPartListener() {
 		return new WorkbenchPartListener();

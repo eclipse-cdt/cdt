@@ -367,8 +367,6 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	}
 
 	/* Sets the current read-only descriptions -- uses the write lock
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.AbstractCProjectDescriptionStorage#setCurrentDescription(org.eclipse.cdt.core.settings.model.ICProjectDescription, boolean)
 	 */
 	@Override
 	public boolean setCurrentDescription(ICProjectDescription des, boolean overwriteIfExists) {

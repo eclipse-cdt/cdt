@@ -73,17 +73,11 @@ public class SavedCodeReaderFactory extends AbstractCodeReaderFactory {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()
-	 */
 	@Override
 	public int getUniqueIdentifier() {
 		return CDOM.PARSE_SAVED_RESOURCES;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForTranslationUnit(java.lang.String)
-	 */
 	@Override
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
 		return cache.get(path);
@@ -93,9 +87,6 @@ public class SavedCodeReaderFactory extends AbstractCodeReaderFactory {
 		return new CodeReader(tu.getResource().getLocation().toOSString(), tu.getContents());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
-	 */
 	@Override
 	public CodeReader createCodeReaderForInclusion(String path) {
 		return cache.get(path);
@@ -107,9 +98,6 @@ public class SavedCodeReaderFactory extends AbstractCodeReaderFactory {
 		return cache.get(astPath, ifl);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
-	 */
 	@Override
 	public ICodeReaderCache getCodeReaderCache() {
 		return cache;

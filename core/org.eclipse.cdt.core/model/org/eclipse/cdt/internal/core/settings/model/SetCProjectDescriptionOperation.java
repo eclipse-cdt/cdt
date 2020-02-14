@@ -170,8 +170,6 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 	//	/*
 	//	 * Instead of using the workspace scheduling rule, use a more refined project scoped rule.
 	//	 * This must contain the rule in CConfigBasedDescriptor.setApply(...)
-	//	 * (non-Javadoc)
-	//	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#getSchedulingRule()
 	//	 */
 	//	@Override
 	//	public ISchedulingRule getSchedulingRule() {

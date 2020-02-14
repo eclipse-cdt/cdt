@@ -94,9 +94,6 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		return info;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
-	 */
 	@Override
 	public String getName() {
 		if (header != null) {
@@ -302,9 +299,6 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		return super.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
-	 */
 	@Override
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {

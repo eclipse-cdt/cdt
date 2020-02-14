@@ -27,25 +27,16 @@ public final class EmptyIterator<T> implements Iterator<T> {
 	private EmptyIterator() {
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#hasNext()
-	 */
 	@Override
 	public final boolean hasNext() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#next()
-	 */
 	@Override
 	public final T next() {
 		throw new NoSuchElementException();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#remove()
-	 */
 	@Override
 	public final void remove() {
 		throw new UnsupportedOperationException();

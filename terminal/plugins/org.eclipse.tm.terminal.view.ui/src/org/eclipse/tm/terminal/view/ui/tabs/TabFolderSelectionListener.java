@@ -40,16 +40,10 @@ public class TabFolderSelectionListener implements SelectionListener {
 		return parentTabFolderManager;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
 	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
 	@Override
 	public void widgetSelected(SelectionEvent e) {
 		parentTabFolderManager.fireSelectionChanged();

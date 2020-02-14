@@ -86,9 +86,6 @@ public class ProcessConnector extends AbstractStreamsConnector {
 		return process;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#connect(org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl)
-	 */
 	@Override
 	public void connect(ITerminalControl control) {
 		Assert.isNotNull(control);
@@ -157,7 +154,7 @@ public class ProcessConnector extends AbstractStreamsConnector {
 					st.quoteChar('"');
 					st.quoteChar('\'');
 
-					List<String> argv = new ArrayList<String>();
+					List<String> argv = new ArrayList<>();
 					int ttype = st.nextToken();
 					while (ttype != StreamTokenizer.TT_EOF) {
 						argv.add(st.sval);
@@ -231,17 +228,11 @@ public class ProcessConnector extends AbstractStreamsConnector {
 		return "xterm"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#isLocalEcho()
-	 */
 	@Override
 	public boolean isLocalEcho() {
 		return settings.isLocalEcho();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.streams.AbstractStreamsConnector#doDisconnect()
-	 */
 	@Override
 	public void doDisconnect() {
 		// Stop monitoring the process
@@ -274,43 +265,26 @@ public class ProcessConnector extends AbstractStreamsConnector {
 		fControl.setState(TerminalState.CLOSED);
 	}
 
-	// ***** Process Connector settings handling *****
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#setDefaultSettings()
-	 */
 	@Override
 	public void setDefaultSettings() {
 		settings.load(new NullSettingsStore());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#getSettingsSummary()
-	 */
 	@Override
 	public String getSettingsSummary() {
 		return settings.getImage() != null ? settings.getImage() : ""; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#load(org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore)
-	 */
 	@Override
 	public void load(ISettingsStore store) {
 		settings.load(store);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#save(org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore)
-	 */
 	@Override
 	public void save(ISettingsStore store) {
 		settings.save(store);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#setTerminalSize(int, int)
-	 */
 	@Override
 	public void setTerminalSize(int newWidth, int newHeight) {
 		if (width != newWidth || height != newHeight) {

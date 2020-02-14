@@ -40,10 +40,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class LaunchTerminalCommandHandler extends AbstractHandler {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String commandId = event.getCommand().getId();
@@ -132,7 +128,7 @@ public class LaunchTerminalCommandHandler extends AbstractHandler {
 				}
 			} else if (delegates.length == 1) {
 				ILauncherDelegate delegate = delegates[0];
-				Map<String, Object> properties = new HashMap<String, Object>();
+				Map<String, Object> properties = new HashMap<>();
 
 				// Store the id of the selected delegate
 				properties.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, delegate.getId());

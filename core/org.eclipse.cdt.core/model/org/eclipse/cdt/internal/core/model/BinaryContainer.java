@@ -78,9 +78,6 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 		return new BinaryContainerInfo(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements,
 			IResource underlyingResource) throws CModelException {

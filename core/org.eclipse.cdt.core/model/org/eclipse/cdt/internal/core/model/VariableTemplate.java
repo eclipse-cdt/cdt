@@ -27,17 +27,11 @@ public class VariableTemplate extends Variable implements ITemplate {
 		templateParameterTypes = fgEmptyList;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITemplate#getNumberOfTemplateParameters()
-	 */
 	@Override
 	public int getNumberOfTemplateParameters() {
 		return templateParameterTypes == null ? 0 : templateParameterTypes.length;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateParameterTypes()
-	 */
 	@Override
 	public String[] getTemplateParameterTypes() {
 		return templateParameterTypes;
@@ -48,16 +42,10 @@ public class VariableTemplate extends Variable implements ITemplate {
 		return fgEmptyList;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITemplate#setTemplateParameterTypes(java.lang.String[])
-	 */
 	public void setTemplateParameterTypes(String[] templateParameterTypes) {
 		this.templateParameterTypes = templateParameterTypes;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateSignature()
-	 */
 	@Override
 	public String getTemplateSignature() throws CModelException {
 		StringBuilder sig = new StringBuilder(getElementName());

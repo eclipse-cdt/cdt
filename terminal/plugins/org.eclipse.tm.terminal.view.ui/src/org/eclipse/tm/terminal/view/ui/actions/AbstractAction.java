@@ -64,17 +64,11 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 		return parent;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-	 */
 	@Override
 	protected ITerminalViewControl getTarget() {
 		return getParent().getActiveTerminalViewControl();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#run()
-	 */
 	@Override
 	public void run() {
 		// Get the active tab item from the tab folder manager
@@ -100,13 +94,12 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 	@SuppressWarnings("cast")
 	protected void executeCommand(Object data) {
 		// Get the command service from the workbench
-		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+		ICommandService service = PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (service != null && getCommandId() != null) {
 			// Get the command
 			final Command command = service.getCommand(getCommandId());
 			if (command != null && command.isDefined()) {
-				IHandlerService handlerSvc = (IHandlerService) PlatformUI.getWorkbench()
-						.getService(IHandlerService.class);
+				IHandlerService handlerSvc = PlatformUI.getWorkbench().getService(IHandlerService.class);
 				Assert.isNotNull(handlerSvc);
 
 				// Construct a selection element
@@ -143,9 +136,6 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 	 */
 	protected abstract String getCommandId();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#updateAction(boolean)
-	 */
 	@Override
 	public void updateAction(boolean aboutToShow) {
 		// Ignore the flag given from outside. We have to decide ourself

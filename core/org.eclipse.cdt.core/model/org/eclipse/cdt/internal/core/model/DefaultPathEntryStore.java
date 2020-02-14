@@ -378,17 +378,11 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#addPathEntryStoreListener(org.eclipse.cdt.core.resources.IPathEntryStoreListener)
-	 */
 	@Override
 	public void addPathEntryStoreListener(IPathEntryStoreListener listener) {
 		listeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#removePathEntryStoreListener(org.eclipse.cdt.core.resources.IPathEntryStoreListener)
-	 */
 	@Override
 	public void removePathEntryStoreListener(IPathEntryStoreListener listener) {
 		listeners.remove(listener);
@@ -404,9 +398,6 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#fireClosedChangedEvent(IProject)
-	 */
 	@Override
 	public void close() {
 		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, fProject,

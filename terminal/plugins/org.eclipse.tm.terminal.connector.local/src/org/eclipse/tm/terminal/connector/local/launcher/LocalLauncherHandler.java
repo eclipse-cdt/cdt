@@ -33,9 +33,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class LocalLauncherHandler extends AbstractHandler {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		// Get the current selection
@@ -69,7 +66,7 @@ public class LocalLauncherHandler extends AbstractHandler {
 
 		// Launch the local terminal
 		if (delegate != null) {
-			Map<String, Object> properties = new HashMap<String, Object>();
+			Map<String, Object> properties = new HashMap<>();
 			properties.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, delegate.getId());
 			properties.put(ITerminalsConnectorConstants.PROP_SELECTION, selection);
 

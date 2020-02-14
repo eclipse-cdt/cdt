@@ -22,11 +22,8 @@ import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
  * within memory.
  */
 public class SettingsStore implements ISettingsStore {
-	private final Map<String, Object> settings = new HashMap<String, Object>();
+	private final Map<String, Object> settings = new HashMap<>();
 
-	/**
-	 * Constructor.
-	 */
 	public SettingsStore() {
 	}
 
@@ -39,9 +36,6 @@ public class SettingsStore implements ISettingsStore {
 		return settings;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#get(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public final String get(String key, String defaultValue) {
 		Assert.isNotNull(key);
@@ -49,18 +43,12 @@ public class SettingsStore implements ISettingsStore {
 		return value != null ? value : defaultValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#get(java.lang.String)
-	 */
 	@Override
 	public final String get(String key) {
 		Assert.isNotNull(key);
 		return settings.get(key) instanceof String ? (String) settings.get(key) : null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#put(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public final void put(String key, String value) {
 		Assert.isNotNull(key);

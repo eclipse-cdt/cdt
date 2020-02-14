@@ -33,25 +33,16 @@ import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
  */
 public class StreamsLauncherDelegate extends AbstractLauncherDelegate {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#needsUserConfiguration()
-	 */
 	@Override
 	public boolean needsUserConfiguration() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#getPanel(org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer)
-	 */
 	@Override
 	public IConfigurationPanel getPanel(IConfigurationPanelContainer container) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#execute(java.util.Map, org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
-	 */
 	@Override
 	public void execute(Map<String, Object> properties, ITerminalService.Done done) {
 		Assert.isNotNull(properties);
@@ -64,9 +55,6 @@ public class StreamsLauncherDelegate extends AbstractLauncherDelegate {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#createTerminalConnector(java.util.Map)
-	 */
 	@Override
 	public ITerminalConnector createTerminalConnector(Map<String, Object> properties) {
 		Assert.isNotNull(properties);

@@ -56,25 +56,16 @@ public class CdtVariable implements ICdtVariable {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getName()
-	 */
 	@Override
 	public String getName() {
 		return fName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getMacroValueType()
-	 */
 	@Override
 	public int getValueType() {
 		return fType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringValue()
-	 */
 	@Override
 	public String getStringValue() throws CdtVariableException {
 		if (CdtVariableResolver.isStringListVariable(fType))
@@ -83,9 +74,6 @@ public class CdtVariable implements ICdtVariable {
 		return fStringValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringListValue()
-	 */
 	@Override
 	public String[] getStringListValue() throws CdtVariableException {
 		if (!CdtVariableResolver.isStringListVariable(fType))

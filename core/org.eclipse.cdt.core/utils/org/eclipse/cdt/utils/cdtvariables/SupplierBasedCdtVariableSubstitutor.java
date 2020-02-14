@@ -62,9 +62,6 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 			fIsList = true;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringValue()
-		 */
 		@Override
 		public String getStringValue() throws CdtVariableException {
 			//			if(!fIsDefined)
@@ -74,9 +71,6 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 			return fStringValue;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringListValue()
-		 */
 		@Override
 		public String[] getStringListValue() throws CdtVariableException {
 			//			if(!fIsDefined)
@@ -235,9 +229,6 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor#resolveToString(java.lang.String)
-	 */
 	@Override
 	public String resolveToString(String macroName) throws CdtVariableException {
 		return resolveToString(new MacroDescriptor(macroName, fContextInfo));
@@ -274,9 +265,6 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		return des.fMacro != null ? resolveMacro(des.fMacro) : resolveMacro(des.fName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor#resolveToStringList(java.lang.String)
-	 */
 	@Override
 	public String[] resolveToStringList(String macroName) throws CdtVariableException {
 		return resolveToStringList(new MacroDescriptor(macroName, fContextInfo));
@@ -419,9 +407,6 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		return fResolvedMacros.remove(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor#getMacroContextInfo()
-	 */
 	public IVariableContextInfo getMacroContextInfo() {
 		return fContextInfo;
 	}

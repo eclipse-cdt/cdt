@@ -70,12 +70,12 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	/**
 	 * List of selection changed listeners.
 	 */
-	private final List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
+	private final List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<>();
 
 	/**
 	 * Map of tab command input field handler per tab item
 	 */
-	private final Map<CTabItem, TabCommandFieldHandler> commandFieldHandler = new HashMap<CTabItem, TabCommandFieldHandler>();
+	private final Map<CTabItem, TabCommandFieldHandler> commandFieldHandler = new HashMap<>();
 
 	/**
 	 * The terminal control selection listener implementation.
@@ -107,9 +107,6 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			return terminal;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-		 */
 		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			// Widget got disposed, check if it is ours
@@ -121,9 +118,6 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-		 */
 		@Override
 		public void mouseDown(MouseEvent e) {
 			// Left button down -> select mode starts
@@ -131,9 +125,6 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 				selectMode = true;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-		 */
 		@Override
 		public void mouseUp(MouseEvent e) {
 			if (e.button == 1 && selectMode) {
@@ -153,9 +144,6 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-		 */
 		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 		}
@@ -204,7 +192,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 */
 	@SuppressWarnings("cast")
 	protected final CTabFolder getTabFolder() {
-		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
+		return getParentView().getAdapter(CTabFolder.class);
 	}
 
 	/**
@@ -308,8 +296,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			}
 
 			// Set the context menu
-			TabFolderMenuHandler menuHandler = (TabFolderMenuHandler) getParentView()
-					.getAdapter(TabFolderMenuHandler.class);
+			TabFolderMenuHandler menuHandler = getParentView().getAdapter(TabFolderMenuHandler.class);
 			if (menuHandler != null) {
 				Menu menu = (Menu) menuHandler.getAdapter(Menu.class);
 				if (menu != null) {
@@ -424,8 +411,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			}
 
 			// Set the context menu
-			TabFolderMenuHandler menuHandler = (TabFolderMenuHandler) getParentView()
-					.getAdapter(TabFolderMenuHandler.class);
+			TabFolderMenuHandler menuHandler = getParentView().getAdapter(TabFolderMenuHandler.class);
 			if (menuHandler != null) {
 				Menu menu = (Menu) menuHandler.getAdapter(Menu.class);
 				if (menu != null) {
@@ -499,7 +485,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 		// Loop all existing tab items and check the titles. We have to remember
 		// all found titles as modifying the proposal might in turn conflict again
 		// with the title of a tab already checked.
-		List<String> titles = new ArrayList<String>();
+		List<String> titles = new ArrayList<>();
 		for (CTabItem item : tabFolder.getItems()) {
 			// Get the tab item title
 			titles.add(item.getText());
@@ -747,36 +733,24 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			handler.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		if (listener != null && !selectionChangedListeners.contains(listener))
 			selectionChangedListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		if (listener != null)
 			selectionChangedListeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-	 */
 	@Override
 	public ISelection getSelection() {
 		CTabItem activeTabItem = getActiveTabItem();
 		return activeTabItem != null ? new StructuredSelection(activeTabItem) : new StructuredSelection();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void setSelection(ISelection selection) {
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {

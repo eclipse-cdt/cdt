@@ -39,9 +39,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		fRess = res;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#canExclude(boolean)
-	 *
+	/*
 	 * returns TRUE only if all res.configurations return true
 	 */
 	@Override
@@ -52,9 +50,6 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#getParentFolderDescription()
-	 */
 	@Override
 	public ICFolderDescription getParentFolderDescription() {
 		if (DEBUG)
@@ -62,9 +57,6 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#getPath()
-	 */
 	@Override
 	public IPath getPath() {
 		IPath p = fRess[0].getPath();
@@ -78,9 +70,6 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#isExcluded()
-	 */
 	@Override
 	public boolean isExcluded() {
 		for (int i = 0; i < fRess.length; i++)
@@ -89,27 +78,18 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#setExcluded(boolean)
-	 */
 	@Override
 	public void setExcluded(boolean excluded) throws WriteAccessException {
 		for (int i = 0; i < fRess.length; i++)
 			fRess[i].setExcluded(excluded);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#setPath(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public void setPath(IPath path) throws WriteAccessException {
 		for (int i = 0; i < fRess.length; i++)
 			fRess[i].setPath(path);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingContainer#getChildSettings()
-	 */
 	@Override
 	public ICSettingObject[] getChildSettings() {
 		if (DEBUG)
@@ -117,9 +97,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getConfiguration()
-	 *
+	/*
 	 * returns multi-configuration object
 	 */
 	@Override
@@ -133,25 +111,17 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		return fCfg;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getId()
-	 */
 	@Override
 	public String getId() {
 		return fRess[0].getId() + "_etc"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getName()
-	 */
 	@Override
 	public String getName() {
 		return "Multiple Resource Description"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getParent()
-	 *
+	/*
 	 * If there's the same parent for all res cfgs, return it.
 	 * Else return null;
 	 */
@@ -166,9 +136,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		return sc;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getType()
-	 *
+	/*
 	 * If there's the same type for all res cfgs, return it.
 	 * Else return null;
 	 */
@@ -181,9 +149,6 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		return t;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		for (int i = 0; i < fRess.length; i++)
@@ -192,9 +157,6 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		for (int i = 0; i < fRess.length; i++)
@@ -203,9 +165,6 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICMultiItemsHolder#getItems()
-	 */
 	@Override
 	public Object[] getItems() {
 		return fRess;

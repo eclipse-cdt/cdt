@@ -28,18 +28,12 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.parser.EmptyIterator;
 import org.eclipse.core.runtime.CoreException;
 
-/**
- * @author jcamelon
- */
 @Deprecated
 public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFactory {
 
 	private final IWorkingCopyProvider provider;
 	private ICodeReaderCache cache = null;
 
-	/**
-	 * @param provider
-	 */
 	public PartialWorkingCopyCodeReaderFactory(IWorkingCopyProvider provider,
 			IIncludeFileResolutionHeuristics heuristics) {
 		super(heuristics);
@@ -47,17 +41,11 @@ public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFacto
 		cache = SavedCodeReaderFactory.getInstance().getCodeReaderCache();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()
-	 */
 	@Override
 	public int getUniqueIdentifier() {
 		return CDOM.PARSE_WORKING_COPY_WITH_SAVED_INCLUSIONS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForTranslationUnit(java.lang.String)
-	 */
 	@Override
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
 		return checkWorkingCopyThenCache(path);
@@ -74,9 +62,6 @@ public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFacto
 		return cache.get(path);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
-	 */
 	@Override
 	public CodeReader createCodeReaderForInclusion(String path) {
 		return cache.get(path);
@@ -94,9 +79,6 @@ public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFacto
 		return Arrays.asList(provider.getWorkingCopies()).iterator();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getCodeReaderCache()
-	 */
 	@Override
 	public ICodeReaderCache getCodeReaderCache() {
 		return cache;

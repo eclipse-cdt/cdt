@@ -61,9 +61,6 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		fElfAttributes = elfAttributes;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
-	 */
 	@Override
 	public String getName() {
 		if (header != null) {
@@ -72,9 +69,6 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		return super.getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
-	 */
 	@Override
 	public InputStream getContents() throws IOException {
 		if (getPath() != null && header != null) {
@@ -83,9 +77,6 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		return super.getContents();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
-	 */
 	@Override
 	public ISymbol[] getSymbols() {
 		// Call the hasChanged first, to initialize the timestamp
@@ -99,9 +90,6 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		return symbols;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
-	 */
 	@Override
 	protected BinaryObjectInfo getBinaryObjectInfo() {
 		// Call the hasChanged first, to initialize the timestamp
@@ -219,9 +207,6 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		return super.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
-	 */
 	@Override
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {
@@ -239,9 +224,6 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		return addressFactory;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#isLittleEndian()
-	 */
 	@Override
 	public boolean isLittleEndian() {
 		if (fElfAttributes != null) {
@@ -250,9 +232,6 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		return super.isLittleEndian();
 	}
 
-	/*
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getCPU()
-	 */
 	@Override
 	public String getCPU() {
 		if (fElfAttributes != null) {

@@ -390,9 +390,6 @@ public abstract class RefreshExclusion implements Cloneable {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public abstract Object clone();
 }

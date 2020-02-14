@@ -50,70 +50,67 @@ public class OldTerminalsViewHandler extends ViewPart {
 		IViewSite site = getViewSite();
 		final IWorkbenchPage page = site.getPage();
 
-		site.getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (fReplaced)
-					return;
-				if (!page.isPageZoomed() || page.getActivePart() instanceof TerminalsView) {
-					fReplaced = true;
-					// Show the new view
-					try {
-						page.showView(IUIConstants.ID, null, IWorkbenchPage.VIEW_CREATE);
-					} catch (PartInitException e) {
-						/* ignored on purpose */ }
+		site.getShell().getDisplay().asyncExec(() -> {
+			if (fReplaced)
+				return;
+			if (!page.isPageZoomed() || page.getActivePart() instanceof TerminalsView) {
+				fReplaced = true;
+				// Show the new view
+				try {
+					page.showView(IUIConstants.ID, null, IWorkbenchPage.VIEW_CREATE);
+				} catch (PartInitException e) {
+					/* ignored on purpose */ }
 
-					// Hide ourself in the current perspective
-					page.hideView(OldTerminalsViewHandler.this);
-				} else if (fPartlistener == null) {
-					final IWorkbenchPart maximizedPart = page.getActivePart();
-					page.addPartListener(fPartlistener = new IPartListener2() {
-						@Override
-						public void partVisible(IWorkbenchPartReference partRef) {
-							if (partRef.getPart(false) == OldTerminalsViewHandler.this) {
-								page.removePartListener(this);
-								fPartlistener = null;
-								replaceWithTerminalsView();
-							}
+				// Hide ourself in the current perspective
+				page.hideView(OldTerminalsViewHandler.this);
+			} else if (fPartlistener == null) {
+				final IWorkbenchPart maximizedPart = page.getActivePart();
+				page.addPartListener(fPartlistener = new IPartListener2() {
+					@Override
+					public void partVisible(IWorkbenchPartReference partRef) {
+						if (partRef.getPart(false) == OldTerminalsViewHandler.this) {
+							page.removePartListener(this);
+							fPartlistener = null;
+							replaceWithTerminalsView();
 						}
+					}
 
-						@Override
-						public void partOpened(IWorkbenchPartReference partRef) {
-						}
+					@Override
+					public void partOpened(IWorkbenchPartReference partRef) {
+					}
 
-						@Override
-						public void partInputChanged(IWorkbenchPartReference partRef) {
-						}
+					@Override
+					public void partInputChanged(IWorkbenchPartReference partRef) {
+					}
 
-						@Override
-						public void partHidden(IWorkbenchPartReference partRef) {
-						}
+					@Override
+					public void partHidden(IWorkbenchPartReference partRef) {
+					}
 
-						@Override
-						public void partDeactivated(IWorkbenchPartReference partRef) {
-						}
+					@Override
+					public void partDeactivated(IWorkbenchPartReference partRef) {
+					}
 
-						@Override
-						public void partClosed(IWorkbenchPartReference partRef) {
-							if (partRef.getPart(false) == OldTerminalsViewHandler.this) {
-								page.removePartListener(this);
-								fPartlistener = null;
-							} else if (partRef.getPart(false) == maximizedPart) {
-								page.removePartListener(this);
-								fPartlistener = null;
-								replaceWithTerminalsView();
-							}
+					@Override
+					public void partClosed(IWorkbenchPartReference partRef) {
+						if (partRef.getPart(false) == OldTerminalsViewHandler.this) {
+							page.removePartListener(this);
+							fPartlistener = null;
+						} else if (partRef.getPart(false) == maximizedPart) {
+							page.removePartListener(this);
+							fPartlistener = null;
+							replaceWithTerminalsView();
 						}
+					}
 
-						@Override
-						public void partBroughtToTop(IWorkbenchPartReference partRef) {
-						}
+					@Override
+					public void partBroughtToTop(IWorkbenchPartReference partRef) {
+					}
 
-						@Override
-						public void partActivated(IWorkbenchPartReference partRef) {
-						}
-					});
-				}
+					@Override
+					public void partActivated(IWorkbenchPartReference partRef) {
+					}
+				});
 			}
 		});
 	}

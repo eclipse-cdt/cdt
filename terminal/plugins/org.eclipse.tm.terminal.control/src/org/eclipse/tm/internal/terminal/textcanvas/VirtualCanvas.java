@@ -19,8 +19,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 
@@ -42,30 +40,13 @@ public abstract class VirtualCanvas extends Canvas {
 	public VirtualCanvas(Composite parent, int style) {
 		super(parent, style | SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE);
 		fClientArea = getClientArea();
-		addListener(SWT.Paint, new Listener() {
-			public void handleEvent(Event event) {
-				paint(event.gc);
-			}
+		addListener(SWT.Paint, event -> paint(event.gc));
+		addListener(SWT.Resize, event -> {
+			fClientArea = getClientArea();
+			onResize();
 		});
-		addListener(SWT.Resize, new Listener() {
-			public void handleEvent(Event event) {
-				fClientArea = getClientArea();
-				onResize();
-			}
-		});
-		getVerticalBar().addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				scrollY((ScrollBar) e.widget);
-
-			}
-
-		});
-		getHorizontalBar().addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				scrollX((ScrollBar) e.widget);
-
-			}
-		});
+		getVerticalBar().addListener(SWT.Selection, e -> scrollY((ScrollBar) e.widget));
+		getHorizontalBar().addListener(SWT.Selection, e -> scrollX((ScrollBar) e.widget));
 	}
 
 	protected void onResize() {

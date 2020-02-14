@@ -20,7 +20,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.terminal.connector.telnet.connector.NetworkPortMap;
@@ -72,13 +71,9 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		telnetSettingsPage.createControl(panel);
 
 		// Add the listener to the settings page
-		telnetSettingsPage.addListener(new ISettingsPage.Listener() {
-
-			@Override
-			public void onSettingsPageChanged(Control control) {
-				if (getContainer() != null)
-					getContainer().validate();
-			}
+		telnetSettingsPage.addListener(control -> {
+			if (getContainer() != null)
+				getContainer().validate();
 		});
 
 		// Create the encoding selection combo

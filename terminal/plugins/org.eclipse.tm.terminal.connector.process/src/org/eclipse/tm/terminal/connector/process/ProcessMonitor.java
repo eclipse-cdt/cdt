@@ -68,12 +68,7 @@ public class ProcessMonitor {
 			return;
 
 		// Create a new runnable which is constantly reading from the stream
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				monitorProcess();
-			}
-		};
+		Runnable runnable = () -> monitorProcess();
 
 		// Create the monitor thread
 		thread = new Thread(runnable, "Terminal Process Monitor Thread"); //$NON-NLS-1$

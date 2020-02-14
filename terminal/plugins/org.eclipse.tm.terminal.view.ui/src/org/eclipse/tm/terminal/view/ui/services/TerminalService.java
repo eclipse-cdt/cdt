@@ -185,12 +185,7 @@ public class TerminalService implements ITerminalService {
 		} else {
 			try {
 				Display display = PlatformUI.getWorkbench().getDisplay();
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						runnable.run(finId, finSecondaryId, finTitle, connector, finData, done);
-					}
-				});
+				display.asyncExec(() -> runnable.run(finId, finSecondaryId, finTitle, connector, finData, done));
 			} catch (Exception e) {
 				// if display is disposed, silently ignore.
 			}
@@ -273,12 +268,7 @@ public class TerminalService implements ITerminalService {
 					// After that schedule opening the requested console
 					try {
 						Display display = PlatformUI.getWorkbench().getDisplay();
-						display.asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								doRun(id, secondaryId, title, connector, data, done);
-							}
-						});
+						display.asyncExec(() -> doRun(id, secondaryId, title, connector, data, done));
 					} catch (Exception e) {
 						// if display is disposed, silently ignore.
 					}

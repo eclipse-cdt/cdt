@@ -67,7 +67,6 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -165,21 +164,15 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/**
 	 * Listens to changes in the preferences
 	 */
-	private final IPropertyChangeListener fPreferenceListener = new IPropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty().equals(ITerminalConstants.PREF_BUFFERLINES)
-					|| event.getProperty().equals(ITerminalConstants.PREF_INVERT_COLORS)) {
-				updatePreferences();
-			}
+	private final IPropertyChangeListener fPreferenceListener = event -> {
+		if (event.getProperty().equals(ITerminalConstants.PREF_BUFFERLINES)
+				|| event.getProperty().equals(ITerminalConstants.PREF_INVERT_COLORS)) {
+			updatePreferences();
 		}
 	};
-	private final IPropertyChangeListener fFontListener = new IPropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty().equals(ITerminalConstants.FONT_DEFINITION)) {
-				onTerminalFontChanged();
-			}
+	private final IPropertyChangeListener fFontListener = event -> {
+		if (event.getProperty().equals(ITerminalConstants.FONT_DEFINITION)) {
+			onTerminalFontChanged();
 		}
 	};
 
@@ -731,12 +724,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				new TextLineRenderer(fCtlText, fPollingTextCanvasModel));
 
 		fCtlText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		fCtlText.addResizeHandler(new TextCanvas.ResizeListener() {
-			@Override
-			public void sizeChanged(int lines, int columns) {
-				fTerminalText.setDimensions(lines, columns);
-			}
-		});
+		fCtlText.addResizeHandler((lines, columns) -> fTerminalText.setDimensions(lines, columns));
 		fCtlText.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -1233,17 +1221,14 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		fState = state;
 		fTerminalListener.setState(state);
 		// enable the (blinking) cursor if the terminal is connected
-		runAsyncInDisplayThread(new Runnable() {
-			@Override
-			public void run() {
-				if (fCtlText != null && !fCtlText.isDisposed()) {
-					if (isConnected()) {
-						fCtlText.setCursorEnabled(true);
-					} else {
-						fCtlText.setCursorEnabled(false);
-						// Stop capturing all key events
-						fFocusListener.captureKeyEvents(false);
-					}
+		runAsyncInDisplayThread(() -> {
+			if (fCtlText != null && !fCtlText.isDisposed()) {
+				if (isConnected()) {
+					fCtlText.setCursorEnabled(true);
+				} else {
+					fCtlText.setCursorEnabled(false);
+					// Stop capturing all key events
+					fFocusListener.captureKeyEvents(false);
 				}
 			}
 		});

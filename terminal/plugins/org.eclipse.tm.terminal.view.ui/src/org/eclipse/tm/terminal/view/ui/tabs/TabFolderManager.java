@@ -132,12 +132,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 				// Fire a selection changed event with the terminal controls selection
 				try {
 					Display display = PlatformUI.getWorkbench().getDisplay();
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							fireSelectionChanged(new StructuredSelection(getTerminal().getSelection()));
-						}
-					});
+					display.asyncExec(() -> fireSelectionChanged(new StructuredSelection(getTerminal().getSelection())));
 				} catch (Exception ex) {
 					// if display is disposed, silently ignore.
 				}

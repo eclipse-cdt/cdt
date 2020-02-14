@@ -133,7 +133,7 @@ public class UIPlugin extends AbstractUIPlugin {
 							final List<CTabItem> saveables = new ArrayList<>();
 
 							// Get the tab folder
-							CTabFolder tabFolder = (CTabFolder) ((TerminalsView) part).getAdapter(CTabFolder.class);
+							CTabFolder tabFolder = ((TerminalsView) part).getAdapter(CTabFolder.class);
 							if (tabFolder != null && !tabFolder.isDisposed()) {
 								// Get the list of tab items
 								CTabItem[] items = tabFolder.getItems();
@@ -153,7 +153,7 @@ public class UIPlugin extends AbstractUIPlugin {
 							}
 
 							// Push the determined saveable items to the memento handler
-							TerminalsViewMementoHandler mementoHandler = (TerminalsViewMementoHandler) ((TerminalsView) part)
+							TerminalsViewMementoHandler mementoHandler = ((TerminalsView) part)
 									.getAdapter(TerminalsViewMementoHandler.class);
 							if (mementoHandler != null)
 								mementoHandler.setSaveables(saveables);

@@ -67,7 +67,6 @@ public class ToggleCommandFieldAction extends AbstractTerminalAction {
 	 *
 	 * @return The command input field handler or <code>null</code>.
 	 */
-	@SuppressWarnings("cast")
 	protected TabCommandFieldHandler getCommandFieldHandler() {
 		TabCommandFieldHandler handler = null;
 		// Get the active tab item from the tab folder manager

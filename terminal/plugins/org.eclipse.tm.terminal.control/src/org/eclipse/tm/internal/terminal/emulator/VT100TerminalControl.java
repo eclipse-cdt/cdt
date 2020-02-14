@@ -842,7 +842,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		}
 
 		@Override
-		@SuppressWarnings("cast")
 		public void mouseEnter(MouseEvent e) {
 			// Disable all keyboard accelerators (e.g., Control-B) so the Terminal view
 			// can see every keystroke.  Without this, Emacs, vi, and Bash are unusable
@@ -855,7 +854,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		}
 
 		@Override
-		@SuppressWarnings("cast")
 		public void mouseExit(MouseEvent e) {
 			// Enable all keybindings.
 			captureKeyEvents(false);
@@ -866,7 +864,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			contextService.deactivateContext(editContextActivation);
 		}
 
-		@SuppressWarnings("cast")
 		protected void captureKeyEvents(boolean capture) {
 			IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 			IContextService contextService = PlatformUI.getWorkbench().getAdapter(IContextService.class);
@@ -1179,7 +1176,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		/*
 		 * Process given event as Eclipse key binding.
 		 */
-		@SuppressWarnings("cast")
 		private void processKeyBinding(KeyEvent event, int accelerator) {
 			IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 			KeyStroke keyStroke = SWTKeySupport.convertAcceleratorToKeyStroke(accelerator);

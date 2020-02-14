@@ -190,7 +190,6 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 *
 	 * @return The tab folder or <code>null</code>.
 	 */
-	@SuppressWarnings("cast")
 	protected final CTabFolder getTabFolder() {
 		return getParentView().getAdapter(CTabFolder.class);
 	}
@@ -229,7 +228,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 *
 	 * @return The created tab item or <code>null</code> if failed.
 	 */
-	@SuppressWarnings({ "unused", "cast" })
+	@SuppressWarnings({ "unused" })
 	public CTabItem createTabItem(String title, String encoding, ITerminalConnector connector, Object data,
 			Map<String, Boolean> flags) {
 		Assert.isNotNull(title);
@@ -298,7 +297,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			// Set the context menu
 			TabFolderMenuHandler menuHandler = getParentView().getAdapter(TabFolderMenuHandler.class);
 			if (menuHandler != null) {
-				Menu menu = (Menu) menuHandler.getAdapter(Menu.class);
+				Menu menu = menuHandler.getAdapter(Menu.class);
 				if (menu != null) {
 					// One weird occurrence of IllegalArgumentException: Widget has wrong parent.
 					// Inspecting the code, this seem extremely unlikely. The terminal is created
@@ -341,7 +340,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 * @param oldItem The old dragged tab item. Must not be <code>null</code>.
 	 * @return The new dropped tab item.
 	 */
-	@SuppressWarnings({ "unchecked", "cast" })
+	@SuppressWarnings({ "unchecked" })
 	public CTabItem cloneTabItemAfterDrop(CTabItem oldItem) {
 		Assert.isNotNull(oldItem);
 
@@ -413,7 +412,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			// Set the context menu
 			TabFolderMenuHandler menuHandler = getParentView().getAdapter(TabFolderMenuHandler.class);
 			if (menuHandler != null) {
-				Menu menu = (Menu) menuHandler.getAdapter(Menu.class);
+				Menu menu = menuHandler.getAdapter(Menu.class);
 				if (menu != null) {
 					// One weird occurrence of IllegalArgumentException: Widget has wrong parent.
 					// Inspecting the code, this seem extremely unlikely. The terminal is created

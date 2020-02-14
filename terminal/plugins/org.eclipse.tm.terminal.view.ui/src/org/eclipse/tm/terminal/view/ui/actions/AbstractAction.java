@@ -72,7 +72,7 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 	@Override
 	public void run() {
 		// Get the active tab item from the tab folder manager
-		TabFolderManager manager = (TabFolderManager) getParent().getAdapter(TabFolderManager.class);
+		TabFolderManager manager = getParent().getAdapter(TabFolderManager.class);
 		if (manager != null) {
 			// If we have the active tab item, we can get the active terminal control
 			CTabItem activeTabItem = manager.getActiveTabItem();
@@ -91,7 +91,6 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 	 *
 	 * @param data The terminal custom data node or <code>null</code>.
 	 */
-	@SuppressWarnings("cast")
 	protected void executeCommand(Object data) {
 		// Get the command service from the workbench
 		ICommandService service = PlatformUI.getWorkbench().getAdapter(ICommandService.class);
@@ -148,7 +147,7 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 			// The action will be enabled if we can determine the VLM target object
 			enabled = false;
 			// Get the active tab item from the tab folder manager
-			TabFolderManager manager = (TabFolderManager) getParent().getAdapter(TabFolderManager.class);
+			TabFolderManager manager = getParent().getAdapter(TabFolderManager.class);
 			if (manager != null) {
 				// If we have the active tab item, we can get the active terminal control
 				CTabItem activeTabItem = manager.getActiveTabItem();

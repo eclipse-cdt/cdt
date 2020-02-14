@@ -50,7 +50,6 @@ public class NewTerminalViewAction extends AbstractTerminalAction {
 		setEnabled(true);
 	}
 
-	@SuppressWarnings("cast")
 	@Override
 	public void run() {
 		ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);

@@ -20,10 +20,6 @@ import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.managedbuilder.llvm.util.LlvmResourceListener;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -54,10 +50,6 @@ public class LlvmUIPlugin extends AbstractUIPlugin {
 	//Property Resource bundle
 	private PropertyResourceBundle properties;
 
-	//Resource listeners
-	private IResourceChangeListener listener = new LlvmResourceListener();
-	private IResourceChangeListener listener2 = new LlvmResourceListener();
-
 	/**
 	 * Constructor.
 	 */
@@ -71,9 +63,6 @@ public class LlvmUIPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		//		LlvmEnvironmentVariableSupplier.initializePaths();
-		//add resource change listeners to the workspace
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this.listener, IResourceChangeEvent.PRE_BUILD);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this.listener2, IResourceChangeEvent.POST_BUILD);
 	}
 
 	@Override

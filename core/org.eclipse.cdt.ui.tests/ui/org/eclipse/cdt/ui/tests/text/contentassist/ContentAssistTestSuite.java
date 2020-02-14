@@ -22,6 +22,8 @@ import org.junit.runners.Suite;
 
 		ContentAssistTests.class,
 
+		CompletionProposalComputerPreferenceParserTest.class,
+
 })
 public class ContentAssistTestSuite {
 }

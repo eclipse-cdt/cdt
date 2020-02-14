@@ -64,14 +64,13 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		fType = type;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		// handle all kinds of resources
 		if (IResource.class.isAssignableFrom(adapter)) {
 			IResource r = getResource();
 			if (r != null && adapter.isAssignableFrom(r.getClass())) {
-				return r;
+				return adapter.cast(r);
 			}
 		}
 		return super.getAdapter(adapter);

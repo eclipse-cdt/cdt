@@ -114,6 +114,7 @@ public class TerminalConnector implements ITerminalConnector {
 		fHidden = hidden;
 	}
 
+	@Override
 	public String getInitializationErrorMessage() {
 		getConnectorImpl();
 		if (fException != null)
@@ -121,14 +122,17 @@ public class TerminalConnector implements ITerminalConnector {
 		return null;
 	}
 
+	@Override
 	public String getId() {
 		return fId;
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public boolean isHidden() {
 		return fHidden;
 	}
@@ -141,16 +145,19 @@ public class TerminalConnector implements ITerminalConnector {
 			} catch (Exception e) {
 				fException = e;
 				fConnector = new TerminalConnectorImpl() {
+					@Override
 					public void connect(ITerminalControl control) {
 						// super.connect(control);
 						control.setState(TerminalState.CLOSED);
 						control.setMsg(getInitializationErrorMessage());
 					}
 
+					@Override
 					public OutputStream getTerminalToRemoteStream() {
 						return null;
 					}
 
+					@Override
 					public String getSettingsSummary() {
 						return null;
 					}
@@ -164,22 +171,27 @@ public class TerminalConnector implements ITerminalConnector {
 		return fConnector;
 	}
 
+	@Override
 	public boolean isInitialized() {
 		return fConnector != null || fException != null;
 	}
 
+	@Override
 	public void connect(ITerminalControl control) {
 		getConnectorImpl().connect(control);
 	}
 
+	@Override
 	public void disconnect() {
 		getConnectorImpl().disconnect();
 	}
 
+	@Override
 	public OutputStream getTerminalToRemoteStream() {
 		return getConnectorImpl().getTerminalToRemoteStream();
 	}
 
+	@Override
 	public String getSettingsSummary() {
 		if (fConnector != null)
 			return getConnectorImpl().getSettingsSummary();
@@ -187,10 +199,12 @@ public class TerminalConnector implements ITerminalConnector {
 			return TerminalMessages.NotInitialized;
 	}
 
+	@Override
 	public boolean isLocalEcho() {
 		return getConnectorImpl().isLocalEcho();
 	}
 
+	@Override
 	public void load(ISettingsStore store) {
 		if (fConnector == null) {
 			fStore = store;
@@ -204,6 +218,7 @@ public class TerminalConnector implements ITerminalConnector {
 		getConnectorImpl().setDefaultSettings();
 	}
 
+	@Override
 	public void save(ISettingsStore store) {
 		// no need to save the settings: it cannot have changed
 		// because we are not initialized....
@@ -211,6 +226,7 @@ public class TerminalConnector implements ITerminalConnector {
 			getConnectorImpl().save(store);
 	}
 
+	@Override
 	public void setTerminalSize(int newWidth, int newHeight) {
 		// we assume that setTerminalSize is called also after
 		// the terminal has been initialized. Else we would have to cache
@@ -220,7 +236,8 @@ public class TerminalConnector implements ITerminalConnector {
 		}
 	}
 
-	public Object getAdapter(Class adapter) {
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
 		TerminalConnectorImpl connector = null;
 		if (isInitialized())
 			connector = getConnectorImpl();
@@ -234,11 +251,11 @@ public class TerminalConnector implements ITerminalConnector {
 					//defer to the platform
 					result = Platform.getAdapterManager().getAdapter(connector, adapter);
 				if (result != null)
-					return result;
+					return adapter.cast(result);
 			}
 			// maybe the real adapter is what we need....
 			if (adapter.isInstance(connector))
-				return connector;
+				return adapter.cast(connector);
 		}
 		// maybe we have to be adapted....
 		return Platform.getAdapterManager().getAdapter(this, adapter);

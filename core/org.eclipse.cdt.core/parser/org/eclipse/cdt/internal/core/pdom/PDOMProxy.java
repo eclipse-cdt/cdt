@@ -250,10 +250,9 @@ public class PDOMProxy implements IPDOM {
 			fDelegate.resetCacheCounters();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public synchronized Object getAdapter(Class adapter) {
+	public synchronized <T> T getAdapter(Class<T> adapter) {
 		if (adapter.isAssignableFrom(PDOMProxy.class)) {
-			return this;
+			return adapter.cast(this);
 		}
 		return null;
 	}

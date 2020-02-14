@@ -171,10 +171,9 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.isAssignableFrom(PDOMMacroContainer.class)) {
-			return this;
+			return adapter.cast(this);
 		}
 		return null;
 	}

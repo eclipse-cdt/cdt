@@ -212,11 +212,10 @@ public class Binary extends Openable implements IBinary {
 		return binaryObject;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IBinaryObject.class.equals(adapter)) {
-			return getBinaryObject();
+			return adapter.cast(getBinaryObject());
 		}
 		return super.getAdapter(adapter);
 	}
@@ -313,7 +312,7 @@ public class Binary extends Openable implements IBinary {
 
 		String[] sourceFiles = symbolreader.getSourceFiles();
 		if (sourceFiles != null && sourceFiles.length > 0) {
-			ISourceFinder srcFinder = (ISourceFinder) getAdapter(ISourceFinder.class);
+			ISourceFinder srcFinder = getAdapter(ISourceFinder.class);
 			try {
 				for (String filename : sourceFiles) {
 

@@ -86,11 +86,10 @@ public class Archive extends Openable implements IArchive {
 		return true;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IBinaryArchive.class.equals(adapter)) {
-			return getBinaryArchive();
+			return adapter.cast(getBinaryArchive());
 		}
 		return super.getAdapter(adapter);
 	}

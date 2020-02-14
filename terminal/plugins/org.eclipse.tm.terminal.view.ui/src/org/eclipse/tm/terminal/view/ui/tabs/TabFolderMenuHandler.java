@@ -358,22 +358,21 @@ public class TabFolderMenuHandler extends PlatformObject {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (MenuManager.class.isAssignableFrom(adapter)) {
-			return contextMenuManager;
+			return adapter.cast(contextMenuManager);
 		} else if (Menu.class.isAssignableFrom(adapter)) {
 			if (contextMenu == null || contextMenu.isDisposed()) {
 				contextMenu = contextMenuManager.createContextMenu(getTabFolder());
 			}
 			// Clear the menu from the tab folder now - see initialize()
 			getTabFolder().setMenu(null);
-			return contextMenu;
+			return adapter.cast(contextMenu);
 		}
 
 		// Try the parent view
-		Object adapted = getParentView().getAdapter(adapter);
+		T adapted = getParentView().getAdapter(adapter);
 		if (adapted != null) {
 			return adapted;
 		}

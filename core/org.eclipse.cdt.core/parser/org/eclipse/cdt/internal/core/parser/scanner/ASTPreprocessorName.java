@@ -199,13 +199,12 @@ class ASTBuiltinName extends ASTPreprocessorDefinition implements IAdaptable {
 	}
 
 	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.isAssignableFrom(ASTBuiltinName.class)) {
-			return this;
+			return adapter.cast(this);
 		}
 		if (fOriginalDefinition != null && adapter.isAssignableFrom(fOriginalDefinition.getClass())) {
-			return fOriginalDefinition;
+			return adapter.cast(fOriginalDefinition);
 		}
 		return null;
 	}

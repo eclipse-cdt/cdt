@@ -66,14 +66,13 @@ public class CygwinPEParser extends PEParser {
 		return new DefaultCygwinToolFactory(this);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.isAssignableFrom(ICygwinToolsFactroy.class)) {
 			if (toolFactory == null) {
 				toolFactory = createToolFactory();
 			}
-			return toolFactory;
+			return adapter.cast(toolFactory);
 		}
 		return super.getAdapter(adapter);
 	}

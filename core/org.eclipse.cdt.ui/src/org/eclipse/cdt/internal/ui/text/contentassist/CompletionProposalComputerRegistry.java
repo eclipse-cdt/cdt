@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -272,20 +271,10 @@ public final class CompletionProposalComputerRegistry {
 
 	private List<CompletionProposalCategory> getCategories(List<IConfigurationElement> elements) {
 		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
-		String preference = store.getString(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES);
-		Set<String> disabled = new HashSet<>();
-		StringTokenizer tok = new StringTokenizer(preference, "\0"); //$NON-NLS-1$
-		while (tok.hasMoreTokens())
-			disabled.add(tok.nextToken());
-		Map<String, Integer> ordered = new HashMap<>();
-		preference = store.getString(PreferenceConstants.CODEASSIST_CATEGORY_ORDER);
-		tok = new StringTokenizer(preference, "\0"); //$NON-NLS-1$
-		while (tok.hasMoreTokens()) {
-			StringTokenizer inner = new StringTokenizer(tok.nextToken(), ":"); //$NON-NLS-1$
-			String id = inner.nextToken();
-			int rank = Integer.parseInt(inner.nextToken());
-			ordered.put(id, Integer.valueOf(rank));
-		}
+		Set<String> disabled = CompletionProposalComputerPreferenceParser
+				.parseExcludedCategories(store.getString(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES));
+		Map<String, Integer> ordered = CompletionProposalComputerPreferenceParser
+				.parseCategoryOrder(store.getString(PreferenceConstants.CODEASSIST_CATEGORY_ORDER));
 
 		List<CompletionProposalCategory> categories = new ArrayList<>();
 		for (Iterator<IConfigurationElement> iter = elements.iterator(); iter.hasNext();) {

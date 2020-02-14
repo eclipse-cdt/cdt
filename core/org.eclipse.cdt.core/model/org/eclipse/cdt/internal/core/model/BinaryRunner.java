@@ -49,9 +49,6 @@ public class BinaryRunner {
 			super(cproj);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
-		 */
 		@Override
 		public boolean isReadOnly() {
 			return true;

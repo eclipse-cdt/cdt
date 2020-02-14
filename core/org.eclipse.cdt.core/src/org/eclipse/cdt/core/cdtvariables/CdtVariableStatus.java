@@ -159,40 +159,25 @@ public class CdtVariableStatus extends Status implements ICdtVariableStatus {
 		return message;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus#getMacroName()
-	 */
 	@Override
 	public String getVariableName() {
 		return fMacroName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus#getExpression()
-	 */
 	@Override
 	public String getExpression() {
 		return fExpression;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus#getReferencedName()
-	 */
 	@Override
 	public String getReferencedMacroName() {
 		return fReferencedName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus#getContextType()
-	 */
 	//	public int getContextType() {
 	//		return fContextType;
 	//	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus#getContextData()
-	 */
 	//	public Object getContextData() {
 	//		return fContextData;
 	//	}

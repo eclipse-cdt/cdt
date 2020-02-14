@@ -71,25 +71,16 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo#getContextType()
-	 */
 	@Override
 	public int getContextType() {
 		return fType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo#getContextData()
-	 */
 	@Override
 	public Object getContextData() {
 		return fData;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo#getSuppliers()
-	 */
 	@Override
 	public ICdtVariableSupplier[] getSuppliers() {
 		if (fSuppliers == null)
@@ -97,9 +88,6 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 		return fSuppliers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo#getNext()
-	 */
 	@Override
 	public IVariableContextInfo getNext() {
 		switch (fType) {

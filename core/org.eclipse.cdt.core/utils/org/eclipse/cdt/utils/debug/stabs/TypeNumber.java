@@ -48,9 +48,6 @@ public class TypeNumber {
 		return super.equals(obj);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return fileno * 10 + typeno;

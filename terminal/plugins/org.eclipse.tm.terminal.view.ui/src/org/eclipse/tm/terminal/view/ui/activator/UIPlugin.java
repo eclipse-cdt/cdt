@@ -103,9 +103,6 @@ public class UIPlugin extends AbstractUIPlugin {
 		return traceHandler;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -133,7 +130,7 @@ public class UIPlugin extends AbstractUIPlugin {
 							 * To be safe, we determine the still opened terminals on shutdown
 							 * separately here in the preShutdown.
 							 */
-							final List<CTabItem> saveables = new ArrayList<CTabItem>();
+							final List<CTabItem> saveables = new ArrayList<>();
 
 							// Get the tab folder
 							CTabFolder tabFolder = (CTabFolder) ((TerminalsView) part).getAdapter(CTabFolder.class);
@@ -195,9 +192,6 @@ public class UIPlugin extends AbstractUIPlugin {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (windowListener != null && PlatformUI.getWorkbench() != null) {
@@ -215,9 +209,6 @@ public class UIPlugin extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
-	 */
 	@Override
 	protected void initializeImageRegistry(ImageRegistry registry) {
 		Bundle bundle = getBundle();

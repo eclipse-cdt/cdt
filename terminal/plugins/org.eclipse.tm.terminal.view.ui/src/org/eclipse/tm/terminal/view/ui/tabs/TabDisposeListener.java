@@ -46,9 +46,6 @@ public class TabDisposeListener implements DisposeListener {
 		return parentTabFolderManager;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-	 */
 	@Override
 	public void widgetDisposed(DisposeEvent e) {
 		// If a tab item gets disposed, we have to dispose the terminal as well

@@ -142,9 +142,6 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 		return stream;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#loadSymbols(org.eclipse.cdt.utils.elf.ElfHelper)
-	 */
 	@Override
 	protected void loadSymbols(ElfHelper helper) throws IOException {
 		symbolLoadingAddr2line = getAddr2line(false);

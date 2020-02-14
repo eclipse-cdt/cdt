@@ -212,9 +212,6 @@ public class Binary extends Openable implements IBinary {
 		return binaryObject;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
@@ -258,9 +255,6 @@ public class Binary extends Openable implements IBinary {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElement#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		return true;
@@ -271,9 +265,6 @@ public class Binary extends Openable implements IBinary {
 		return new BinaryInfo(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements,
 			IResource underlyingResource) throws CModelException {
@@ -470,9 +461,6 @@ public class Binary extends Openable implements IBinary {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#openBuffer(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
 
@@ -515,17 +503,11 @@ public class Binary extends Openable implements IBinary {
 		return buffer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#hasBuffer()
-	 */
 	@Override
 	protected boolean hasBuffer() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElement#exists()
-	 */
 	@Override
 	public boolean exists() {
 		IResource res = getResource();
@@ -534,9 +516,6 @@ public class Binary extends Openable implements IBinary {
 		return super.exists();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CElement#closing(java.lang.Object)
-	 */
 	@Override
 	protected void closing(Object info) throws CModelException {
 		ICProject cproject = getCProject();

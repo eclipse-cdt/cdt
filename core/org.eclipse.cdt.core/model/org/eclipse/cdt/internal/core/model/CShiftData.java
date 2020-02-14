@@ -49,81 +49,51 @@ public class CShiftData implements ICElementDelta {
 		return lines;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElementDelta#getAddedChildren()
-	 */
 	@Override
 	public ICElementDelta[] getAddedChildren() {
 		return new ICElementDelta[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElementDelta#getAffectedChildren()
-	 */
 	@Override
 	public ICElementDelta[] getAffectedChildren() {
 		return new ICElementDelta[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElementDelta#getChangedChildren()
-	 */
 	@Override
 	public ICElementDelta[] getChangedChildren() {
 		return new ICElementDelta[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElementDelta#getElement()
-	 */
 	@Override
 	public ICElement getElement() {
 		return element;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElementDelta#getFlags()
-	 */
 	@Override
 	public int getFlags() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElementDelta#getKind()
-	 */
 	@Override
 	public int getKind() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElementDelta#getMovedFromElement()
-	 */
 	@Override
 	public ICElement getMovedFromElement() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElementDelta#getMovedToElement()
-	 */
 	@Override
 	public ICElement getMovedToElement() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElementDelta#getRemovedChildren()
-	 */
 	@Override
 	public ICElementDelta[] getRemovedChildren() {
 		return new ICElementDelta[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElementDelta#getResourceDeltas()
-	 */
 	@Override
 	public IResourceDelta[] getResourceDeltas() {
 		return null;

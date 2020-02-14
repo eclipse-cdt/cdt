@@ -22,15 +22,9 @@ import org.eclipse.tm.terminal.view.ui.interfaces.IPreferenceKeys;
  */
 public class PreferencesInitializer extends AbstractPreferenceInitializer {
 
-	/**
-	 * Constructor.
-	 */
 	public PreferencesInitializer() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		ScopedEclipsePreferences prefs = UIPlugin.getScopedPreferences();

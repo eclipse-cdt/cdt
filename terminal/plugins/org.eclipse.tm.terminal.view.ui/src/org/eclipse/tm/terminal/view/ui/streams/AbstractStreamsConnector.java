@@ -158,9 +158,6 @@ public abstract class AbstractStreamsConnector extends TerminalConnectorImpl {
 		return new OutputStreamMonitor(terminalControl, stderr, lineSeparator);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#doDisconnect()
-	 */
 	@Override
 	protected void doDisconnect() {
 		// Dispose the streams
@@ -180,9 +177,6 @@ public abstract class AbstractStreamsConnector extends TerminalConnectorImpl {
 		super.doDisconnect();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#getTerminalToRemoteStream()
-	 */
 	@Override
 	public OutputStream getTerminalToRemoteStream() {
 		return stdInMonitor;

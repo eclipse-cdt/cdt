@@ -56,9 +56,6 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
 		return enumeratorName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
 	@Override
 	public String getName() {
 		return enumeratorName.toString();
@@ -69,17 +66,11 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
 		return enumeratorName.toCharArray();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
 	@Override
 	public IScope getScope() {
 		return CVisitor.getContainingScope(enumeratorName.getParent());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IEnumerator#getType()
-	 */
 	@Override
 	public IType getType() {
 		return (IType) getOwner();

@@ -16,25 +16,16 @@ package org.eclipse.tm.internal.terminal.provisional.api;
  */
 public class NullSettingsStore implements ISettingsStore {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#get(java.lang.String)
-	 */
 	@Override
 	public String get(String key) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#get(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public String get(String key, String defaultValue) {
 		return defaultValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#put(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void put(String key, String value) {
 	}

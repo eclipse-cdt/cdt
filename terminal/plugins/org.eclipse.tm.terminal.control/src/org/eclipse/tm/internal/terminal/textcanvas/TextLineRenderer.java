@@ -37,20 +37,17 @@ public class TextLineRenderer implements ILinelRenderer {
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.imagicus.thumbs.view.ICellRenderer#getCellWidth()
-	 */
+	@Override
 	public int getCellWidth() {
 		return fStyleMap.getFontWidth();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.imagicus.thumbs.view.ICellRenderer#getCellHeight()
-	 */
+	@Override
 	public int getCellHeight() {
 		return fStyleMap.getFontHeight();
 	}
 
+	@Override
 	public void drawLine(ITextCanvasModel model, GC gc, int line, int x, int y, int colFirst, int colLast) {
 		if (line < 0 || line >= getTerminalText().getHeight() || colFirst >= getTerminalText().getWidth()
 				|| colFirst - colLast == 0) {
@@ -100,6 +97,7 @@ public class TextLineRenderer implements ILinelRenderer {
 
 	}
 
+	@Override
 	public Color getDefaultBackgroundColor() {
 		// null == default style
 		return fStyleMap.getBackgroundColor(null);
@@ -166,14 +164,17 @@ public class TextLineRenderer implements ILinelRenderer {
 		return fModel.getTerminalText();
 	}
 
+	@Override
 	public void onFontChange() {
 		fStyleMap.updateFont();
 	}
 
+	@Override
 	public void updateFont(String fontName) {
 		fStyleMap.updateFont(fontName);
 	}
 
+	@Override
 	public void setInvertedColors(boolean invert) {
 		fStyleMap.setInvertedColors(invert);
 

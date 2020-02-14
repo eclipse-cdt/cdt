@@ -244,8 +244,6 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 
 	/*
 	 * Run the descriptor operation. Lock the descriptor while this takes place...
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptorManager#runDescriptorOperation(org.eclipse.core.resources.IProject, org.eclipse.cdt.core.ICDescriptorOperation, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void runDescriptorOperation(IProject project, ICDescriptorOperation op, IProgressMonitor monitor)
@@ -275,8 +273,6 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	/*
 	 * Runs a descriptor operation directly on an ICProjectDescription.
 	 *
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptorManager#runDescriptorOperation(org.eclipse.core.resources.IProject, org.eclipse.cdt.core.settings.model.ICProjectDescription, org.eclipse.cdt.core.ICDescriptorOperation, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void runDescriptorOperation(IProject project, ICProjectDescription des, ICDescriptorOperation op,

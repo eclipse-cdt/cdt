@@ -52,9 +52,6 @@ public class Archive extends Openable implements IArchive {
 		return b;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElement#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		return true;
@@ -89,9 +86,6 @@ public class Archive extends Openable implements IArchive {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
@@ -105,9 +99,6 @@ public class Archive extends Openable implements IArchive {
 		return binaryArchive;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElement#exists()
-	 */
 	@Override
 	public boolean exists() {
 		IResource res = getResource();
@@ -116,9 +107,6 @@ public class Archive extends Openable implements IArchive {
 		return super.exists();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CElement#closing(java.lang.Object)
-	 */
 	@Override
 	protected void closing(Object info) throws CModelException {
 		ICProject cproject = getCProject();

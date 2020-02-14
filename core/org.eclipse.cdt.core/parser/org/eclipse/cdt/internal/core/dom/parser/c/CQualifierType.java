@@ -68,25 +68,16 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#isConst()
-	 */
 	@Override
 	public boolean isConst() {
 		return isConst;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#isVolatile()
-	 */
 	@Override
 	public boolean isVolatile() {
 		return isVolatile;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICQualifierType#isRestrict()
-	 */
 	@Override
 	public boolean isRestrict() {
 		return isRestrict;

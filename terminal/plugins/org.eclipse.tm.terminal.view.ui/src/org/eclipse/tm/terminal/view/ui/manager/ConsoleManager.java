@@ -61,21 +61,18 @@ public class ConsoleManager {
 
 	// Internal perspective listener implementation
 	static class ConsoleManagerPerspectiveListener extends PerspectiveAdapter {
-		private final List<IViewReference> references = new ArrayList<IViewReference>();
+		private final List<IViewReference> references = new ArrayList<>();
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.PerspectiveAdapter#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
-		 */
 		@Override
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 			// If the old references list is empty, just return
 			if (references.isEmpty())
 				return;
 			// Create a copy of the old view references list
-			List<IViewReference> oldReferences = new ArrayList<IViewReference>(references);
+			List<IViewReference> oldReferences = new ArrayList<>(references);
 
 			// Get the current list of view references
-			List<IViewReference> references = new ArrayList<IViewReference>(Arrays.asList(page.getViewReferences()));
+			List<IViewReference> references = new ArrayList<>(Arrays.asList(page.getViewReferences()));
 			for (IViewReference reference : oldReferences) {
 				if (references.contains(reference))
 					continue;
@@ -88,9 +85,6 @@ public class ConsoleManager {
 
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.PerspectiveAdapter#perspectivePreDeactivate(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
-		 */
 		@Override
 		public void perspectivePreDeactivate(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 			references.clear();
@@ -290,7 +284,7 @@ public class ConsoleManager {
 	public String getNextTerminalSecondaryId(String id) {
 		Assert.isNotNull(id);
 
-		Map<String, IViewReference> terminalViews = new HashMap<String, IViewReference>();
+		Map<String, IViewReference> terminalViews = new HashMap<>();
 
 		int maxNumber = 0;
 		for (IViewReference ref : getActiveWorkbenchPage().getViewReferences()) {
@@ -449,7 +443,7 @@ public class ConsoleManager {
 		ITerminalsView view = (ITerminalsView) part;
 
 		// Get the tab folder manager associated with the view
-		TabFolderManager manager = (TabFolderManager) view.getAdapter(TabFolderManager.class);
+		TabFolderManager manager = view.getAdapter(TabFolderManager.class);
 		if (manager == null)
 			return null;
 
@@ -520,7 +514,7 @@ public class ConsoleManager {
 			return null;
 
 		// Get the tab folder manager associated with the view
-		TabFolderManager manager = (TabFolderManager) view.getAdapter(TabFolderManager.class);
+		TabFolderManager manager = view.getAdapter(TabFolderManager.class);
 		if (manager == null)
 			return null;
 
@@ -546,7 +540,7 @@ public class ConsoleManager {
 			for (IViewReference ref : page.getViewReferences()) {
 				IViewPart part = ref != null ? ref.getView(false) : null;
 				if (part instanceof ITerminalsView) {
-					CTabFolder tabFolder = (CTabFolder) part.getAdapter(CTabFolder.class);
+					CTabFolder tabFolder = part.getAdapter(CTabFolder.class);
 					if (tabFolder == null)
 						continue;
 					CTabItem[] candidates = tabFolder.getItems();
@@ -592,7 +586,7 @@ public class ConsoleManager {
 					IViewPart part = ref.getView(true);
 					if (part instanceof ITerminalsView) {
 						// Get the tab folder manager associated with the view
-						TabFolderManager manager = (TabFolderManager) part.getAdapter(TabFolderManager.class);
+						TabFolderManager manager = part.getAdapter(TabFolderManager.class);
 						if (manager == null) {
 							continue;
 						}

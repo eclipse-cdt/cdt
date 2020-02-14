@@ -75,9 +75,6 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		super(parser, path, type);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
-	 */
 	@Override
 	protected BinaryObjectInfo getBinaryObjectInfo() {
 		// we don't use this method
@@ -85,9 +82,6 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return new BinaryObjectInfo();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
-	 */
 	@Override
 	public InputStream getContents() throws IOException {
 		if (getPath() != null && header != null) {
@@ -108,9 +102,6 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getName()
-	 */
 	@Override
 	public String getName() {
 		if (header != null) {
@@ -119,9 +110,6 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return super.getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
-	 */
 	@Override
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {

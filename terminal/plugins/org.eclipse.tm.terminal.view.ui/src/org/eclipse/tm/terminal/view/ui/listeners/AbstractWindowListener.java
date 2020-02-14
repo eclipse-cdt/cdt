@@ -63,9 +63,6 @@ public abstract class AbstractWindowListener implements IWindowListener {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 		if (!initialized && window != null) {
@@ -73,16 +70,10 @@ public abstract class AbstractWindowListener implements IWindowListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void windowClosed(IWorkbenchWindow window) {
 		// On close, remove the listeners from the window
@@ -96,9 +87,6 @@ public abstract class AbstractWindowListener implements IWindowListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void windowOpened(IWorkbenchWindow window) {
 		if (window != null) {

@@ -31,9 +31,6 @@ import org.eclipse.core.runtime.Path;
  */
 public class MachOParser64 extends AbstractCExtension implements IBinaryParser {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public IBinaryFile getBinary(IPath path) throws IOException {
 		return getBinary(null, path);
@@ -86,33 +83,21 @@ public class MachOParser64 extends AbstractCExtension implements IBinaryParser {
 		return binary;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.IBinaryParser#getFormat()
-	 */
 	@Override
 	public String getFormat() {
 		return "MACHO"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public boolean isBinary(byte[] array, IPath path) {
 		return MachO64.isMachOHeader(array) || AR.isARHeader(array);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#getBufferSize()
-	 */
 	@Override
 	public int getHintBufferSize() {
 		return 128;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getCPPFilt()
-	 */
 	public CPPFilt getCPPFilt() {
 		IPath cppFiltPath = getCPPFiltPath();
 		CPPFilt cppfilt = null;

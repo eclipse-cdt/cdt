@@ -73,9 +73,6 @@ public class ExternalExecutablesDialog extends TrayDialog {
 		setHelpAvailable(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected final Control createDialogArea(Composite parent) {
 		if (contextHelpId != null) {
@@ -334,9 +331,6 @@ public class ExternalExecutablesDialog extends TrayDialog {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createButtonBar(Composite parent) {
 		Control control = super.createButtonBar(parent);
@@ -344,9 +338,6 @@ public class ExternalExecutablesDialog extends TrayDialog {
 		return control;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createButton(org.eclipse.swt.widgets.Composite, int, java.lang.String, boolean)
-	 */
 	@Override
 	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 		if (IDialogConstants.OK_ID == id && !edit) {
@@ -355,15 +346,12 @@ public class ExternalExecutablesDialog extends TrayDialog {
 		return super.createButton(parent, id, label, defaultButton);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		if (name != null && path != null) {
 			// Extract the executable properties
 			if (executableData == null)
-				executableData = new HashMap<String, String>();
+				executableData = new HashMap<>();
 
 			String value = name.getText();
 			if (value != null && !"".equals(value.trim())) { //$NON-NLS-1$
@@ -430,7 +418,7 @@ public class ExternalExecutablesDialog extends TrayDialog {
 		if (data == null) {
 			executableData = null;
 		} else {
-			executableData = new HashMap<String, String>(data);
+			executableData = new HashMap<>(data);
 		}
 	}
 

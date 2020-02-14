@@ -20,65 +20,41 @@ import org.eclipse.cdt.core.IAddressFactory2;
 
 public class Addr64Factory implements IAddressFactory2 {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IAddressFactory#getZero()
-	 */
 	@Override
 	public IAddress getZero() {
 		return Addr64.ZERO;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IAddressFactory#getMax()
-	 */
 	@Override
 	public IAddress getMax() {
 		return Addr64.MAX;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IAddressFactory#createAddress(java.lang.String)
-	 */
 	@Override
 	public IAddress createAddress(String addr) {
 		return createAddress(addr, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IAddressFactory2#createAddress(java.lang.String, boolean)
-	 */
 	@Override
 	public IAddress createAddress(String addr, boolean truncate) {
 		return new Addr64(addr, truncate);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IAddressFactory#createAddress(java.lang.String, int)
-	 */
 	@Override
 	public IAddress createAddress(String addr, int radix) {
 		return createAddress(addr, radix, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IAddressFactory2#createAddress(java.lang.String, int, boolean)
-	 */
 	@Override
 	public IAddress createAddress(String addr, int radix, boolean truncate) {
 		return new Addr64(addr, radix, truncate);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IAddressFactory#createAddress(java.math.BigInteger)
-	 */
 	@Override
 	public IAddress createAddress(BigInteger addr) {
 		return createAddress(addr, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IAddressFactory2#createAddress(java.math.BigInteger, boolean)
-	 */
 	@Override
 	public IAddress createAddress(BigInteger addr, boolean truncate) {
 		return new Addr64(addr, truncate);

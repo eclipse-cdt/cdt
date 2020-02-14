@@ -38,9 +38,6 @@ public class PathEntryContainerUpdatesOperation extends CModelOperation {
 		this.events = events;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		return true;

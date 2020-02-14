@@ -57,9 +57,6 @@ public class CImplicitTypedef extends CTypedef {
 		return scope;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-	 */
 	//    public boolean isSameType(IType t) {
 	//        if (t == this)
 	//            return true;

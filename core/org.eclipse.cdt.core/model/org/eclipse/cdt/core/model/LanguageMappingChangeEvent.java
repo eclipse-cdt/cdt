@@ -35,25 +35,16 @@ public class LanguageMappingChangeEvent implements ILanguageMappingChangeEvent {
 	private String fFileName;
 	private IContentType[] fContentTypes;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ILanguageMappingsChangeEvent#getAffectedContentTypes()
-	 */
 	@Override
 	public IContentType[] getAffectedContentTypes() {
 		return fContentTypes;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ILanguageMappingsChangeEvent#getFile()
-	 */
 	@Override
 	public IFile getFile() {
 		return fFile;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ILanguageMappingsChangeEvent#getFilename()
-	 */
 	@Override
 	public String getFilename() {
 
@@ -85,9 +76,6 @@ public class LanguageMappingChangeEvent implements ILanguageMappingChangeEvent {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ILanguageMappingsChangeEvent#getPath()
-	 */
 	@Override
 	public IPath getPath() {
 
@@ -104,9 +92,6 @@ public class LanguageMappingChangeEvent implements ILanguageMappingChangeEvent {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ILanguageMappingsChangeEvent#getProject()
-	 */
 	@Override
 	public IProject getProject() {
 
@@ -123,9 +108,6 @@ public class LanguageMappingChangeEvent implements ILanguageMappingChangeEvent {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ILanguageMappingsChangeEvent#getType()
-	 */
 	@Override
 	public int getType() {
 		return fType;

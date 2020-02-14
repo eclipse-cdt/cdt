@@ -99,9 +99,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		fTerminal = terminal;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#clearAll()
-	 */
+	@Override
 	public void clearAll() {
 		synchronized (fTerminal) {
 			// clear the history
@@ -115,9 +113,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setDimensions(int, int)
-	 */
+	@Override
 	public void setDimensions(int lines, int cols) {
 		synchronized (fTerminal) {
 			if (lines == fLines && cols == fColumns)
@@ -158,9 +154,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#insertCharacters(int)
-	 */
+	@Override
 	public void insertCharacters(int charactersToInsert) {
 		synchronized (fTerminal) {
 			int line = toAbsoluteLine(fCursorLine);
@@ -177,9 +171,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseToEndOfScreen()
-	 */
+	@Override
 	public void eraseToEndOfScreen() {
 		synchronized (fTerminal) {
 			eraseLineToEnd();
@@ -190,9 +182,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseToCursor()
-	 */
+	@Override
 	public void eraseToCursor() {
 		synchronized (fTerminal) {
 			for (int line = toAbsoluteLine(0); line < toAbsoluteLine(fCursorLine); line++) {
@@ -202,9 +192,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseAll()
-	 */
+	@Override
 	public void eraseAll() {
 		synchronized (fTerminal) {
 			for (int line = toAbsoluteLine(0); line < toAbsoluteLine(fLines); line++) {
@@ -213,18 +201,14 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseLine()
-	 */
+	@Override
 	public void eraseLine() {
 		synchronized (fTerminal) {
 			fTerminal.cleanLine(toAbsoluteLine(fCursorLine));
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseLineToEnd()
-	 */
+	@Override
 	public void eraseLineToEnd() {
 		synchronized (fTerminal) {
 			int line = toAbsoluteLine(fCursorLine);
@@ -234,9 +218,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseLineToCursor()
-	 */
+	@Override
 	public void eraseLineToCursor() {
 		synchronized (fTerminal) {
 			int line = toAbsoluteLine(fCursorLine);
@@ -246,9 +228,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#insertLines(int)
-	 */
+	@Override
 	public void insertLines(int n) {
 		synchronized (fTerminal) {
 			if (!isCusorInScrollingRegion())
@@ -260,9 +240,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#deleteCharacters(int)
-	 */
+	@Override
 	public void deleteCharacters(int n) {
 		synchronized (fTerminal) {
 			int line = toAbsoluteLine(fCursorLine);
@@ -278,9 +256,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#deleteLines(int)
-	 */
+	@Override
 	public void deleteLines(int n) {
 		synchronized (fTerminal) {
 			if (!isCusorInScrollingRegion())
@@ -296,27 +272,21 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		return fScrollRegion.contains(fCursorLine);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getDefaultStyle()
-	 */
+	@Override
 	public Style getDefaultStyle() {
 		synchronized (fTerminal) {
 			return fDefaultStyle;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setDefaultStyle(org.eclipse.tm.terminal.model.Style)
-	 */
+	@Override
 	public void setDefaultStyle(Style defaultStyle) {
 		synchronized (fTerminal) {
 			fDefaultStyle = defaultStyle;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getStyle()
-	 */
+	@Override
 	public Style getStyle() {
 		synchronized (fTerminal) {
 			if (fStyle == null)
@@ -325,18 +295,14 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setStyle(org.eclipse.tm.terminal.model.Style)
-	 */
+	@Override
 	public void setStyle(Style style) {
 		synchronized (fTerminal) {
 			fStyle = style;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#appendString(java.lang.String)
-	 */
+	@Override
 	public void appendString(String buffer) {
 		synchronized (fTerminal) {
 			char[] chars = buffer.toCharArray();
@@ -394,36 +360,28 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#processNewline()
-	 */
+	@Override
 	public void processNewline() {
 		synchronized (fTerminal) {
 			doNewline();
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getCursorLine()
-	 */
+	@Override
 	public int getCursorLine() {
 		synchronized (fTerminal) {
 			return fCursorLine;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getCursorColumn()
-	 */
+	@Override
 	public int getCursorColumn() {
 		synchronized (fTerminal) {
 			return fCursorColumn;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setCursor(int, int)
-	 */
+	@Override
 	public void setCursor(int targetLine, int targetColumn) {
 		synchronized (fTerminal) {
 			setCursorLine(targetLine);
@@ -431,9 +389,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setCursorColumn(int)
-	 */
+	@Override
 	public void setCursorColumn(int targetColumn) {
 		synchronized (fTerminal) {
 			if (targetColumn < 0)
@@ -449,9 +405,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setCursorLine(int)
-	 */
+	@Override
 	public void setCursorLine(int targetLine) {
 		synchronized (fTerminal) {
 			if (targetLine < 0)
@@ -466,36 +420,36 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getLines()
-	 */
+	@Override
 	public int getLines() {
 		synchronized (fTerminal) {
 			return fLines;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getColumns()
-	 */
+	@Override
 	public int getColumns() {
 		synchronized (fTerminal) {
 			return fColumns;
 		}
 	}
 
+	@Override
 	public void setVT100LineWrapping(boolean enable) {
 		fVT100LineWrapping = enable;
 	}
 
+	@Override
 	public boolean isVT100LineWrapping() {
 		return fVT100LineWrapping;
 	}
 
+	@Override
 	public void setInsertMode(boolean enable) {
 		fInsertMode = enable;
 	}
 
+	@Override
 	public void setScrollRegion(int top, int bottom) {
 		if (top < 0 || bottom < 0)
 			fScrollRegion = ScrollRegion.FULL_WINDOW;
@@ -503,6 +457,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			fScrollRegion = new ScrollRegion(top, bottom);
 	}
 
+	@Override
 	public void scrollUp(int n) {
 		assert n > 0;
 		synchronized (fTerminal) {
@@ -512,6 +467,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
+	@Override
 	public void scrollDown(int n) {
 		assert n > 0;
 		synchronized (fTerminal) {

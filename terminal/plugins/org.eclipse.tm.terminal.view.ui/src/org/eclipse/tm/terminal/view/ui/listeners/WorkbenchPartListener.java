@@ -27,53 +27,35 @@ import org.eclipse.ui.contexts.IContextService;
 public class WorkbenchPartListener implements IPartListener2 {
 
 	// The context activations per workbench part reference
-	private final Map<IWorkbenchPartReference, IContextActivation> activations = new HashMap<IWorkbenchPartReference, IContextActivation>();
+	private final Map<IWorkbenchPartReference, IContextActivation> activations = new HashMap<>();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partVisible(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partHidden(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@SuppressWarnings("cast")
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 		if ("org.eclipse.tm.terminal.view.ui.TerminalsView".equals(partRef.getId())) { //$NON-NLS-1$
 			IWorkbenchPart part = partRef.getPart(false);
 			if (part != null && part.getSite() != null) {
-				IContextService service = (IContextService) part.getSite().getService(IContextService.class);
+				IContextService service = part.getSite().getService(IContextService.class);
 				if (service != null) {
 					IContextActivation activation = service.activateContext(partRef.getId());
 					if (activation != null) {
@@ -86,16 +68,13 @@ public class WorkbenchPartListener implements IPartListener2 {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@SuppressWarnings("cast")
 	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
 		if ("org.eclipse.tm.terminal.view.ui.TerminalsView".equals(partRef.getId())) { //$NON-NLS-1$
 			IWorkbenchPart part = partRef.getPart(false);
 			if (part != null && part.getSite() != null) {
-				IContextService service = (IContextService) part.getSite().getService(IContextService.class);
+				IContextService service = part.getSite().getService(IContextService.class);
 				if (service != null) {
 					IContextActivation activation = activations.remove(partRef);
 					if (activation != null) {
@@ -106,9 +85,6 @@ public class WorkbenchPartListener implements IPartListener2 {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}

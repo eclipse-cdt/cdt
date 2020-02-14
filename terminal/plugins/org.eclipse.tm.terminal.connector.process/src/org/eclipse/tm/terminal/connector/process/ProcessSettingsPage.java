@@ -57,9 +57,6 @@ public class ProcessSettingsPage extends AbstractSettingsPage {
 		this.settings = settings;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -168,9 +165,6 @@ public class ProcessSettingsPage extends AbstractSettingsPage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage#saveSettings()
-	 */
 	@Override
 	public void saveSettings() {
 		settings.setImage(processImageSelectorControl.getText());
@@ -180,9 +174,6 @@ public class ProcessSettingsPage extends AbstractSettingsPage {
 		settings.setProcess(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage#loadSettings()
-	 */
 	@Override
 	public void loadSettings() {
 		processImageSelectorControl.setText(settings.getImage());
@@ -191,9 +182,6 @@ public class ProcessSettingsPage extends AbstractSettingsPage {
 		processWorkingDirControl.setText(settings.getWorkingDir());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage#validateSettings()
-	 */
 	@Override
 	public boolean validateSettings() {
 		// The settings are considered valid if the selected process image can be read.

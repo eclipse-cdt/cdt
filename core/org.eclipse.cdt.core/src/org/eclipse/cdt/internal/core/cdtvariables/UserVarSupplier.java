@@ -37,50 +37,32 @@ public class UserVarSupplier implements IUserVarSupplier {
 		return sup;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.cdtvariables.IUserVarSupplier#createMacro(org.eclipse.cdt.core.cdtvariables.ICdtVariable, int, java.lang.Object)
-	 */
 	@Override
 	public ICdtVariable createMacro(ICdtVariable copy, ICConfigurationDescription contextData) {
 		return CdtVariableManager.fUserDefinedMacroSupplier.createMacro(copy, CTX, contextData);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.cdtvariables.IUserVarSupplier#createMacro(java.lang.String, int, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public ICdtVariable createMacro(String macroName, int type, String value, ICConfigurationDescription contextData) {
 		return CdtVariableManager.fUserDefinedMacroSupplier.createMacro(macroName, type, value, CTX, contextData);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.cdtvariables.IUserVarSupplier#createMacro(java.lang.String, int, java.lang.String[], java.lang.Object)
-	 */
 	@Override
 	public ICdtVariable createMacro(String macroName, int type, String[] value,
 			ICConfigurationDescription contextData) {
 		return CdtVariableManager.fUserDefinedMacroSupplier.createMacro(macroName, type, value, CTX, contextData);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.cdtvariables.IUserVarSupplier#deleteAll(java.lang.Object)
-	 */
 	@Override
 	public void deleteAll(ICConfigurationDescription contextData) {
 		CdtVariableManager.fUserDefinedMacroSupplier.deleteAll(CTX, contextData);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.cdtvariables.IUserVarSupplier#deleteMacro(java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public ICdtVariable deleteMacro(String name, ICConfigurationDescription contextData) {
 		return CdtVariableManager.fUserDefinedMacroSupplier.deleteMacro(name, CTX, contextData);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.cdtvariables.IUserVarSupplier#getMacros(java.lang.Object)
-	 */
 	@Override
 	public ICdtVariable[] getMacros(ICConfigurationDescription contextData) {
 		return CdtVariableManager.fUserDefinedMacroSupplier.getMacros(CTX, contextData);

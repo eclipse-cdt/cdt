@@ -53,9 +53,6 @@ public class PEBinaryObject64 extends BinaryObjectAdapter {
 		super(parser, p, type);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
-	 */
 	@Override
 	public String getName() {
 		if (header != null) {
@@ -64,9 +61,6 @@ public class PEBinaryObject64 extends BinaryObjectAdapter {
 		return super.getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
-	 */
 	@Override
 	public InputStream getContents() throws IOException {
 		if (getPath() != null && header != null) {
@@ -190,9 +184,6 @@ public class PEBinaryObject64 extends BinaryObjectAdapter {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
-	 */
 	@Override
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {

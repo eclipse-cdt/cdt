@@ -89,9 +89,6 @@ public class FixitErrorParser extends RegexErrorParser {
 		return super.processLine(line, epManager);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		FixitErrorParser that = new FixitErrorParser(getId(), getName());

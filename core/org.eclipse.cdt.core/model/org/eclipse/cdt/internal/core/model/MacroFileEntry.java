@@ -81,9 +81,6 @@ public class MacroFileEntry extends APathEntry implements IMacroFileEntry {
 		return super.equals(obj);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IIncludeEntry#getFullIncludePath()
-	 */
 	@Override
 	public IPath getFullMacroFilePath() {
 		IPath p;
@@ -118,9 +115,6 @@ public class MacroFileEntry extends APathEntry implements IMacroFileEntry {
 		return p;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

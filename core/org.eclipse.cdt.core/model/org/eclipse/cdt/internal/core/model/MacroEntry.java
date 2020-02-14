@@ -89,9 +89,6 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 		return super.equals(obj);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

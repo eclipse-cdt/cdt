@@ -32,17 +32,11 @@ import org.eclipse.core.runtime.IPath;
  */
 public class PEParser64 extends AbstractCExtension implements IBinaryParser {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public IBinaryFile getBinary(IPath path) throws IOException {
 		return getBinary(null, path);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(byte[], org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public IBinaryFile getBinary(byte[] hints, IPath path) throws IOException {
 		if (path == null) {
@@ -99,9 +93,6 @@ public class PEParser64 extends AbstractCExtension implements IBinaryParser {
 		return "PE"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public boolean isBinary(byte[] array, IPath path) {
 		boolean isBin = PE64.isExeHeader(array) || AR.isARHeader(array);
@@ -134,9 +125,6 @@ public class PEParser64 extends AbstractCExtension implements IBinaryParser {
 		return isBin;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#getHintBufferSize()
-	 */
 	@Override
 	public int getHintBufferSize() {
 		return 512;

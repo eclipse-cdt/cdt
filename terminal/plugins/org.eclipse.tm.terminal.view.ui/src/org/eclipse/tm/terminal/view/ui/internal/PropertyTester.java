@@ -25,9 +25,6 @@ import org.eclipse.tm.terminal.view.ui.tabs.TabFolderManager;
  */
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
 	@SuppressWarnings("cast")
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
@@ -42,8 +39,7 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 		if ("canDisconnect".equals(property) && receiver instanceof ITerminalsView) { //$NON-NLS-1$
 			CTabItem tabItem = null;
 
-			TabFolderManager manager = (TabFolderManager) ((ITerminalsView) receiver)
-					.getAdapter(TabFolderManager.class);
+			TabFolderManager manager = ((ITerminalsView) receiver).getAdapter(TabFolderManager.class);
 			if (manager != null) {
 				tabItem = manager.getActiveTabItem();
 			}

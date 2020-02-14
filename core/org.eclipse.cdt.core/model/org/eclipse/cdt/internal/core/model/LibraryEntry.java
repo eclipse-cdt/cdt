@@ -182,17 +182,11 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 		return p;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ILibraryEntry#getLibraryPath()
-	 */
 	@Override
 	public IPath getLibraryPath() {
 		return libraryPath;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

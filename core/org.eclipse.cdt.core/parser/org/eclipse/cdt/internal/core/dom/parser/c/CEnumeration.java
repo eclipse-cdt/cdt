@@ -97,9 +97,6 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 		return;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
 	@Override
 	public String getName() {
 		if (definition != null)
@@ -116,9 +113,6 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 		return declarations[0].toCharArray();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
 	@Override
 	public IScope getScope() {
 		return CVisitor.getContainingScope(definition != null ? definition : declarations[0].getParent());
@@ -135,9 +129,6 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 		return t;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IEnumeration#getEnumerators()
-	 */
 	@Override
 	public IEnumerator[] getEnumerators() {
 		if (definition == null) {
@@ -162,9 +153,6 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 			definition = name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-	 */
 	@Override
 	public boolean isSameType(IType type) {
 		if (type == this)

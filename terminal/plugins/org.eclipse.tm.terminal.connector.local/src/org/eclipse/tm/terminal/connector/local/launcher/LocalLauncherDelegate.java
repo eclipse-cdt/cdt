@@ -65,25 +65,16 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 
 	private final IMementoHandler mementoHandler = new LocalMementoHandler();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#needsUserConfiguration()
-	 */
 	@Override
 	public boolean needsUserConfiguration() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#getPanel(org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer)
-	 */
 	@Override
 	public IConfigurationPanel getPanel(IConfigurationPanelContainer container) {
 		return new LocalWizardConfigurationPanel(container);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#execute(java.util.Map, org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
-	 */
 	@Override
 	public void execute(Map<String, Object> properties, ITerminalService.Done done) {
 		Assert.isNotNull(properties);
@@ -255,9 +246,6 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 		return "Local"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-	 */
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (IMementoHandler.class.equals(adapter)) {
@@ -296,9 +284,6 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 		return new File(shell);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#createTerminalConnector(java.util.Map)
-	 */
 	@Override
 	public ITerminalConnector createTerminalConnector(Map<String, Object> properties) {
 		Assert.isNotNull(properties);
@@ -368,7 +353,7 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 		}
 
 		// Set the ECLIPSE_HOME and ECLIPSE_WORKSPACE environment variables
-		List<String> envpList = new ArrayList<String>();
+		List<String> envpList = new ArrayList<>();
 		if (envp != null)
 			envpList.addAll(Arrays.asList(envp));
 

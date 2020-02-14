@@ -36,9 +36,6 @@ public class TabScrollLockAction extends AbstractTerminalAction {
 				UIPlugin.getImageDescriptor(ImageConsts.ACTION_ScrollLock_Disabled), true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#run()
-	 */
 	@Override
 	public void run() {
 		ITerminalViewControl target = getTarget();
@@ -48,9 +45,6 @@ public class TabScrollLockAction extends AbstractTerminalAction {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#updateAction(boolean)
-	 */
 	@Override
 	public void updateAction(boolean aboutToShow) {
 		setEnabled(aboutToShow && getTarget() != null && getTarget().getState() == TerminalState.CONNECTED);

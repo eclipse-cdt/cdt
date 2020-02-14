@@ -78,8 +78,6 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 
 	/*
 	 * Check for external modification in the module files in the .csettings directory
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage#checkExternalModification()
 	 */
 	@Override
 	protected synchronized boolean checkExternalModification() {
@@ -165,8 +163,6 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 	 *    - We serialize the storageModule children of the CConfiguration elements (in the org.eclipse.cdt.settings module)
 	 *      to separate files in the .csettings  directory to prevent unmanageably large XML deltas
 	 * Return the modification stamp of the main .cproject file as our super method does
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage#serialize(org.eclipse.core.resources.IContainer, java.lang.String, org.eclipse.cdt.core.settings.model.ICStorageElement)
 	 */
 	@Override
 	protected long serialize(IContainer container, String file, ICStorageElement element) throws CoreException {

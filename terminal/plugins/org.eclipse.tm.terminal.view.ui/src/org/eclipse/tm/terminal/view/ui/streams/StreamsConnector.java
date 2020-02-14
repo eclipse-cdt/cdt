@@ -25,9 +25,6 @@ public class StreamsConnector extends AbstractStreamsConnector implements IDispo
 	// Reference to the streams settings
 	private final StreamsSettings settings;
 
-	/**
-	 * Constructor.
-	 */
 	public StreamsConnector() {
 		this(new StreamsSettings());
 	}
@@ -44,9 +41,6 @@ public class StreamsConnector extends AbstractStreamsConnector implements IDispo
 		this.settings = settings;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#connect(org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl)
-	 */
 	@Override
 	public void connect(ITerminalControl control) {
 		Assert.isNotNull(control);
@@ -64,25 +58,16 @@ public class StreamsConnector extends AbstractStreamsConnector implements IDispo
 		control.setState(TerminalState.CONNECTED);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#isLocalEcho()
-	 */
 	@Override
 	public boolean isLocalEcho() {
 		return settings.isLocalEcho();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.services.IDisposable#dispose()
-	 */
 	@Override
 	public void dispose() {
 		disconnect();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.streams.AbstractStreamsConnector#doDisconnect()
-	 */
 	@Override
 	public void doDisconnect() {
 		// Dispose the streams
@@ -92,11 +77,6 @@ public class StreamsConnector extends AbstractStreamsConnector implements IDispo
 		fControl.setState(TerminalState.CLOSED);
 	}
 
-	// ***** Process Connector settings handling *****
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#getSettingsSummary()
-	 */
 	@Override
 	public String getSettingsSummary() {
 		return ""; //$NON-NLS-1$
@@ -107,17 +87,11 @@ public class StreamsConnector extends AbstractStreamsConnector implements IDispo
 		settings.load(new NullSettingsStore());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#load(org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore)
-	 */
 	@Override
 	public void load(ISettingsStore store) {
 		settings.load(store);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#save(org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore)
-	 */
 	@Override
 	public void save(ISettingsStore store) {
 		settings.save(store);

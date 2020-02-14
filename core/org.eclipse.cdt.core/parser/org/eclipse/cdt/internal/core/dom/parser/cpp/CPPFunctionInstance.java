@@ -64,9 +64,6 @@ public class CPPFunctionInstance extends CPPFunctionSpecialization implements IC
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * For debug purposes only
-	 */
 	@Override
 	public String toString() {
 		return getName() + " " + ASTTypeUtil.getArgumentListString(fArguments, true); //$NON-NLS-1$

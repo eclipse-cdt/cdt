@@ -22,18 +22,12 @@ import org.eclipse.ui.IMemento;
  */
 public class LocalMementoHandler implements IMementoHandler {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler#saveState(org.eclipse.ui.IMemento, java.util.Map)
-	 */
 	@Override
 	public void saveState(IMemento memento, Map<String, Object> properties) {
 		Assert.isNotNull(memento);
 		Assert.isNotNull(properties);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler#restoreState(org.eclipse.ui.IMemento, java.util.Map)
-	 */
 	@Override
 	public void restoreState(IMemento memento, Map<String, Object> properties) {
 		Assert.isNotNull(memento);

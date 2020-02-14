@@ -75,9 +75,6 @@ public class TabTerminalListener implements ITerminalListener2 {
 		return tabItem;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.control.ITerminalListener#setState(org.eclipse.tm.internal.terminal.provisional.api.TerminalState)
-	 */
 	@Override
 	public void setState(final TerminalState state) {
 		// The tab item must have been not yet disposed
@@ -148,9 +145,6 @@ public class TabTerminalListener implements ITerminalListener2 {
 		return newTitle != null && !newTitle.equals(oldTitle) ? newTitle : null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.control.ITerminalListener#setTerminalTitle(java.lang.String)
-	 */
 	@Override
 	public void setTerminalTitle(String title) {
 	}

@@ -51,7 +51,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 	// Reference to the tab folder context menu
 	private Menu contextMenu;
 	// The list of actions available within the context menu
-	private final List<AbstractTerminalAction> contextMenuActions = new ArrayList<AbstractTerminalAction>();
+	private final List<AbstractTerminalAction> contextMenuActions = new ArrayList<>();
 
 	// The list of invalid context menu contributions "startsWith" expressions
 	/* default */ static final String[] INVALID_CONTRIBUTIONS_STARTS_WITH = { "org.eclipse.cdt", "org.eclipse.ui.edit" //$NON-NLS-1$ //$NON-NLS-2$
@@ -62,9 +62,6 @@ public class TabFolderMenuHandler extends PlatformObject {
 	 */
 	protected class MenuListener implements IMenuListener2 {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IMenuListener2#menuAboutToHide(org.eclipse.jface.action.IMenuManager)
-		 */
 		@Override
 		public void menuAboutToHide(IMenuManager manager) {
 			// CQ:WIND00192293 and CQ:WIND194204 - don't update actions on menuAboutToHide
@@ -72,9 +69,6 @@ public class TabFolderMenuHandler extends PlatformObject {
 			//			updateMenuItems(false);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
-		 */
 		@Override
 		public void menuAboutToShow(IMenuManager manager) {
 			removeInvalidContributions(manager);
@@ -133,7 +127,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 	 */
 	@SuppressWarnings("cast")
 	protected final CTabFolder getTabFolder() {
-		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
+		return getParentView().getAdapter(CTabFolder.class);
 	}
 
 	/**
@@ -219,9 +213,6 @@ public class TabFolderMenuHandler extends PlatformObject {
 	protected void doCreateContextMenuActions() {
 		// Create and add the copy action
 		add(new TerminalActionCopy() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-			 */
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();
@@ -236,7 +227,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 				// Determine if pasting to the active tab require backslash translation
 				boolean needsTranslation = false;
 
-				TabFolderManager manager = (TabFolderManager) getParentView().getAdapter(TabFolderManager.class);
+				TabFolderManager manager = getParentView().getAdapter(TabFolderManager.class);
 				if (manager != null) {
 					// If we have the active tab item, we can get the active terminal control
 					CTabItem activeTabItem = manager.getActiveTabItem();
@@ -268,9 +259,6 @@ public class TabFolderMenuHandler extends PlatformObject {
 				super.run();
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-			 */
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();
@@ -279,17 +267,11 @@ public class TabFolderMenuHandler extends PlatformObject {
 
 		// Create and add the clear all action
 		add(new TerminalActionClearAll() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-			 */
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.TerminalActionPaste#updateAction(boolean)
-			 */
 			@Override
 			public void updateAction(boolean aboutToShow) {
 				super.updateAction(aboutToShow);
@@ -301,9 +283,6 @@ public class TabFolderMenuHandler extends PlatformObject {
 
 		// Create and add the select all action
 		add(new TerminalActionSelectAll() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-			 */
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();
@@ -311,10 +290,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 		});
 
 		// Create and add the select encoding action
-		add(new SelectEncodingAction((TabFolderManager) getParentView().getAdapter(TabFolderManager.class)) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-			 */
+		add(new SelectEncodingAction(getParentView().getAdapter(TabFolderManager.class)) {
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();
@@ -332,7 +308,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 		ITerminalViewControl terminal = null;
 
 		// Get the active tab item from the tab folder manager
-		TabFolderManager manager = (TabFolderManager) getParentView().getAdapter(TabFolderManager.class);
+		TabFolderManager manager = getParentView().getAdapter(TabFolderManager.class);
 		if (manager != null) {
 			// If we have the active tab item, we can get the active terminal control
 			CTabItem activeTabItem = manager.getActiveTabItem();
@@ -382,9 +358,6 @@ public class TabFolderMenuHandler extends PlatformObject {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(Class adapter) {

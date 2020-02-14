@@ -65,35 +65,23 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 			"GNUC++" //$NON-NLS-1$
 	};
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getName()
-	 */
 	public String getName() {
 		// TODO is this a name or an id?
 		return "CDT AST Service"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit()
-	 */
 	@Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse) throws UnsupportedDialectException {
 		return getTranslationUnit(fileToParse.getLocation().toOSString(), fileToParse,
 				SavedCodeReaderFactory.getInstance(), null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit(org.eclipse.cdt.core.dom.ICodeReaderFactory)
-	 */
 	@Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator)
 			throws UnsupportedDialectException {
 		return getTranslationUnit(fileToParse.getLocation().toOSString(), fileToParse, fileCreator, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit(org.eclipse.cdt.core.dom.ICodeReaderFactory, org.eclipse.cdt.core.dom.IParserConfiguration)
-	 */
 	@Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator,
 			IParserConfiguration configuration) throws UnsupportedDialectException {

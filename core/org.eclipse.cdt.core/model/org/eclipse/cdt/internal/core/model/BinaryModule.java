@@ -41,9 +41,6 @@ public class BinaryModule extends Parent implements IBinaryModule {
 		fPath = p;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IBinaryModule#getBinaryElements()
-	 */
 	@Override
 	public IBinaryElement[] getBinaryElements() throws CModelException {
 		ICElement[] e = getChildren();
@@ -52,25 +49,16 @@ public class BinaryModule extends Parent implements IBinaryModule {
 		return b;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IBinaryElement#getAddress()
-	 */
 	@Override
 	public IAddress getAddress() throws CModelException {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IBinaryElement#getBinary()
-	 */
 	@Override
 	public IBinary getBinary() {
 		return (IBinary) getParent();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElement#getResource()
-	 */
 	@Override
 	public IResource getResource() {
 		IWorkspaceRoot root = getCModel().getWorkspace().getRoot();
@@ -81,33 +69,21 @@ public class BinaryModule extends Parent implements IBinaryModule {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElement#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CElement#createElementInfo()
-	 */
 	@Override
 	protected CElementInfo createElementInfo() {
 		return new CElementInfo(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
-	 */
 	@Override
 	public IPath getPath() {
 		return fPath;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor)
 			throws CModelException {

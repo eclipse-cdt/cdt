@@ -284,36 +284,20 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		return new RcMoveHandler();
 	}
 
-	/*
-	 *  I S a v e P a r t i c i p a n t
-	 */
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
-	 */
 	@Override
 	public void saving(ISaveContext context) throws CoreException {
 		//Request a resource delta to be used on next activation.
 		context.needDelta();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
-	 */
 	@Override
 	public void doneSaving(ISaveContext context) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
-	 */
 	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
-	 */
 	@Override
 	public void rollback(ISaveContext context) {
 	}

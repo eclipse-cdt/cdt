@@ -25,15 +25,9 @@ public abstract class MultiItemsHolder implements ICMultiItemsHolder {
 	/** @since 5.2 */
 	protected static final boolean DEBUG = false;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICMultiItemsHolder#getItems()
-	 */
 	@Override
 	public abstract Object[] getItems();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICMultiItemsHolder#setStringListMode(int)
-	 */
 	/**
 	 * This method is put here to prevent UI from
 	 * accessing constructors in "internal" dirs.

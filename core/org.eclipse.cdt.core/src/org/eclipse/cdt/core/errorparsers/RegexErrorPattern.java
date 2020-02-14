@@ -344,9 +344,6 @@ public class RegexErrorPattern implements Cloneable {
 		return path;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof RegexErrorPattern) {
@@ -362,9 +359,6 @@ public class RegexErrorPattern implements Cloneable {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return new RegexErrorPattern(pattern.toString(), fileExpression, lineExpression, descriptionExpression,

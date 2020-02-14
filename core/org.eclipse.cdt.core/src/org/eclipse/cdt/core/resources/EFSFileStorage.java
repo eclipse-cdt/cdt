@@ -42,9 +42,6 @@ public class EFSFileStorage extends PlatformObject implements IStorage {
 		this.locationURI = locationURI;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#getContents()
-	 */
 	@Override
 	public InputStream getContents() throws CoreException {
 		if (inputStream == null) {
@@ -59,17 +56,11 @@ public class EFSFileStorage extends PlatformObject implements IStorage {
 		return inputStream;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#getFullPath()
-	 */
 	@Override
 	public IPath getFullPath() {
 		return URIUtil.toPath(locationURI);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#getName()
-	 */
 	@Override
 	public String getName() {
 		IFileStore fileStore = null;
@@ -88,9 +79,6 @@ public class EFSFileStorage extends PlatformObject implements IStorage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		IFileStore fileStore = null;

@@ -28,8 +28,6 @@ import java.util.List;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -195,12 +193,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		fHostText = new Text(composite, SWT.BORDER);
 		fHostText.setLayoutData(gridData);
-		fHostText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fireListeners(fHostText);
-			}
-		});
+		fHostText.addModifyListener(e -> fireListeners(fHostText));
 		createControlDecoration(fHostText);
 
 		// Add label
@@ -211,12 +204,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		fNetworkPortCombo = new Combo(composite, SWT.DROP_DOWN);
 		fNetworkPortCombo.setLayoutData(gridData);
-		fNetworkPortCombo.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fireListeners(fNetworkPortCombo);
-			}
-		});
+		fNetworkPortCombo.addModifyListener(e -> fireListeners(fNetworkPortCombo));
 		fNetworkPortCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -232,12 +220,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		new Label(composite, SWT.RIGHT).setText(TelnetMessages.TIMEOUT + ":"); //$NON-NLS-1$
 		fTimeout = new Text(composite, SWT.BORDER);
 		fTimeout.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fTimeout.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fireListeners(fTimeout);
-			}
-		});
+		fTimeout.addModifyListener(e -> fireListeners(fTimeout));
 		createControlDecoration(fTimeout);
 
 		new Label(composite, SWT.RIGHT).setText(TelnetMessages.END_OF_LINE + ":"); //$NON-NLS-1$

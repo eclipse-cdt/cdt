@@ -16,8 +16,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
 /**
@@ -32,16 +30,14 @@ abstract public class GridCanvas extends VirtualCanvas {
 
 	public GridCanvas(Composite parent, int style) {
 		super(parent, style);
-		addListener(SWT.MouseWheel, new Listener() {
-			public void handleEvent(Event event) {
-				if (getVerticalBar().isVisible()) {
-					int delta = -fCellHeight;
-					if (event.count < 0)
-						delta = -delta;
-					scrollYDelta(delta);
-				}
-				event.doit = false;
+		addListener(SWT.MouseWheel, event -> {
+			if (getVerticalBar().isVisible()) {
+				int delta = -fCellHeight;
+				if (event.count < 0)
+					delta = -delta;
+				scrollYDelta(delta);
 			}
+			event.doit = false;
 		});
 
 	}

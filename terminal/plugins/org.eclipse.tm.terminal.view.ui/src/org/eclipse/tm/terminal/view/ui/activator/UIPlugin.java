@@ -183,12 +183,7 @@ public class UIPlugin extends AbstractUIPlugin {
 			if (window != null && windowListener != null)
 				windowListener.windowOpened(window);
 		} else {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					activateContexts();
-				}
-			});
+			PlatformUI.getWorkbench().getDisplay().asyncExec(() -> activateContexts());
 		}
 	}
 

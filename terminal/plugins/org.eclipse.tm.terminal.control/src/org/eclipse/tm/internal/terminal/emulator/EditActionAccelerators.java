@@ -50,7 +50,7 @@ class EditActionAccelerators {
 	}
 
 	private static IBindingService bindingService() {
-		return (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		return PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 	}
 
 	boolean isCopyAction(int accelerator) {

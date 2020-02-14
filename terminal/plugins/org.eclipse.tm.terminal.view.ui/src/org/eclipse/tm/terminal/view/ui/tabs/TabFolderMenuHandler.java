@@ -125,7 +125,6 @@ public class TabFolderMenuHandler extends PlatformObject {
 	 *
 	 * @return The tab folder or <code>null</code>.
 	 */
-	@SuppressWarnings("cast")
 	protected final CTabFolder getTabFolder() {
 		return getParentView().getAdapter(CTabFolder.class);
 	}
@@ -209,7 +208,6 @@ public class TabFolderMenuHandler extends PlatformObject {
 	/**
 	 * Create the context menu actions.
 	 */
-	@SuppressWarnings("cast")
 	protected void doCreateContextMenuActions() {
 		// Create and add the copy action
 		add(new TerminalActionCopy() {
@@ -303,7 +301,6 @@ public class TabFolderMenuHandler extends PlatformObject {
 	 *
 	 * @return The currently active terminal control or <code>null</code>.
 	 */
-	@SuppressWarnings("cast")
 	protected ITerminalViewControl getActiveTerminalViewControl() {
 		ITerminalViewControl terminal = null;
 

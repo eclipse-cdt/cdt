@@ -76,10 +76,9 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.isAssignableFrom(getClass()))
-			return this;
+			return adapter.cast(this);
 		return null;
 	}
 

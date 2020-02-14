@@ -319,22 +319,21 @@ public class TabFolderToolbarHandler extends PlatformObject {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IToolBarManager.class.isAssignableFrom(adapter)) {
-			return toolbarManager;
+			return adapter.cast(toolbarManager);
 		}
 
 		// Try the toolbar actions
 		for (AbstractTerminalAction action : toolbarActions) {
 			if (adapter.isAssignableFrom(action.getClass())) {
-				return action;
+				return adapter.cast(action);
 			}
 		}
 
 		// Try the parent view
-		Object adapted = getParentView().getAdapter(adapter);
+		T adapted = getParentView().getAdapter(adapter);
 		if (adapted != null) {
 			return adapted;
 		}

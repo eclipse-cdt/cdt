@@ -51,14 +51,13 @@ public class TabCommandFieldHandler implements IDisposable, IAdaptable {
 		history = null;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (TabFolderManager.class.equals(adapter)) {
-			return tabFolderManager;
+			return adapter.cast(tabFolderManager);
 		}
 		if (CTabItem.class.equals(adapter)) {
-			return item;
+			return adapter.cast(item);
 		}
 		return null;
 	}

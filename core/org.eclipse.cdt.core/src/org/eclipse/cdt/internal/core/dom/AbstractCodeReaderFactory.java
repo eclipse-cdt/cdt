@@ -34,10 +34,9 @@ public abstract class AbstractCodeReaderFactory implements ICodeReaderFactory, I
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.isAssignableFrom(IIncludeFileResolutionHeuristics.class)) {
-			return fHeuristics;
+			return adapter.cast(fHeuristics);
 		}
 		return null;
 	}

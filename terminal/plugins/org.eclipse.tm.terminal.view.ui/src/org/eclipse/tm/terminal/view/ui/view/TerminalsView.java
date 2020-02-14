@@ -581,23 +581,22 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (CTabFolder.class.isAssignableFrom(adapter)) {
-			return tabFolderControl;
+			return adapter.cast(tabFolderControl);
 		}
 		if (TabFolderManager.class.isAssignableFrom(adapter)) {
-			return tabFolderManager;
+			return adapter.cast(tabFolderManager);
 		}
 		if (TabFolderMenuHandler.class.isAssignableFrom(adapter)) {
-			return tabFolderMenuHandler;
+			return adapter.cast(tabFolderMenuHandler);
 		}
 		if (TabFolderToolbarHandler.class.isAssignableFrom(adapter)) {
-			return tabFolderToolbarHandler;
+			return adapter.cast(tabFolderToolbarHandler);
 		}
 		if (TerminalsViewMementoHandler.class.isAssignableFrom(adapter)) {
-			return mementoHandler;
+			return adapter.cast(mementoHandler);
 		}
 
 		return super.getAdapter(adapter);

@@ -14,10 +14,7 @@ package org.eclipse.tm.terminal.view.ui.controls;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
@@ -116,23 +113,15 @@ public class NoteCompositeHelper {
 		noteLabel.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
 		noteLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
-		final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				// Note: This is actually wrong but the same as in platforms
-				// PreferencePage
-				if (JFaceResources.BANNER_FONT.equals(event.getProperty())) {
-					noteLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
-				}
+		final IPropertyChangeListener fontListener = event -> {
+			// Note: This is actually wrong but the same as in platforms
+			// PreferencePage
+			if (JFaceResources.BANNER_FONT.equals(event.getProperty())) {
+				noteLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
 			}
 		};
 		JFaceResources.getFontRegistry().addListener(fontListener);
-		noteLabel.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent event) {
-				JFaceResources.getFontRegistry().removeListener(fontListener);
-			}
-		});
+		noteLabel.addDisposeListener(event -> JFaceResources.getFontRegistry().removeListener(fontListener));
 
 		Label messageLabel = new Label(messageComposite, SWT.WRAP);
 		messageLabel.setText(message);

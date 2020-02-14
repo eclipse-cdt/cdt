@@ -34,7 +34,6 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -185,13 +184,10 @@ public class TextCanvas extends GridCanvas {
 				}
 			}
 		});
-		addMouseMoveListener(new MouseMoveListener() {
-
-			public void mouseMove(MouseEvent e) {
-				if (fDraggingStart != null) {
-					updateHasSelection(e);
-					setSelection(screenPointToCell(e.x, e.y));
-				}
+		addMouseMoveListener(e -> {
+			if (fDraggingStart != null) {
+				updateHasSelection(e);
+				setSelection(screenPointToCell(e.x, e.y));
 			}
 		});
 		serVerticalBarVisible(true);

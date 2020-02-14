@@ -134,9 +134,14 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected static final int SOURCE_FILE_ID = 64;
 	/** @since 5.3 */
 	protected static final int TEST_FILE_ID = 128;
-	/** @since 6.7*/
-	protected static final int FINAL_ID = 256;
+	private static final int FINAL_ID = 256;
+	/**
+	 * @deprecated Use NEW_ALL_FIELDS instead
+	 */
+	@Deprecated
 	protected static final int ALL_FIELDS = SOURCE_FOLDER_ID | NAMESPACE_ID | CLASS_NAME_ID | BASE_CLASSES_ID
+			| METHOD_STUBS_ID | HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID;
+	private static final int NEW_ALL_FIELDS = SOURCE_FOLDER_ID | NAMESPACE_ID | CLASS_NAME_ID | BASE_CLASSES_ID
 			| METHOD_STUBS_ID | HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID | FINAL_ID;
 	protected int fLastFocusedField = 0;
 
@@ -148,10 +153,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected MethodStubsListDialogField fMethodStubsDialogField;
 	protected StringButtonDialogField fHeaderFileDialogField;
 	protected StringButtonDialogField fSourceFileDialogField;
-	/**
-	 * @since 6.7
-	 */
-	protected SelectionButtonDialogField fIsFinalClassField;
+	private SelectionButtonDialogField fIsFinalClassField;
 	/** @since 5.3 */
 	protected StringButtonDialogField fTestFileDialogField;
 	/** @since 5.3 */
@@ -172,10 +174,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected IStatus fSourceFileStatus;
 	/** @since 5.3 */
 	protected IStatus fTestFileStatus;
-	/**
-	 * @since 6.7
-	 */
-	protected IStatus fIsFinalStatus;
+	private IStatus fIsFinalStatus;
 	protected final IStatus STATUS_OK = new StatusInfo();
 
 	protected IFile fCreatedHeaderFile;
@@ -381,9 +380,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * Creates the controls for the final class field.
 	 *
 	 * @param composite the parent composite
-	 * @since 6.7
 	 */
-	protected void createFinalClassControls(Composite composite, int nColumns) {
+	private void createFinalClassControls(Composite composite, int nColumns) {
 		fIsFinalClassField.doFillIntoGrid(composite, nColumns - 1);
 	}
 
@@ -529,7 +527,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 		fIsFinalClassField.setSelection(fDialogSettings.getBoolean(KEY_FINAL_SELECTED));
 		setTestFileSelection(fDialogSettings.getBoolean(KEY_TEST_FILE_SELECTED), true);
-		handleFieldChanged(ALL_FIELDS);
+		handleFieldChanged(NEW_ALL_FIELDS);
 	}
 
 	private boolean getBooleanSettingWithDefault(String key, boolean defaultValue) {
@@ -749,9 +747,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * Check if the class is final
 	 *
 	 * @return true if final, false otherwise
-	 * @since 6.7
 	 */
-	public boolean isFinalClass() {
+	private boolean isFinalClass() {
 		return fIsFinalClassField.isSelected();
 	}
 
@@ -1085,13 +1082,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			IPath newFolderPath = chooseSourceFolder(oldFolderPath);
 			if (newFolderPath != null) {
 				setSourceFolderFullPath(newFolderPath, false);
-				handleFieldChanged(SOURCE_FOLDER_ID | ALL_FIELDS);
+				handleFieldChanged(SOURCE_FOLDER_ID | NEW_ALL_FIELDS);
 			}
 		}
 
 		@Override
 		public void dialogFieldChanged(DialogField field) {
-			handleFieldChanged(SOURCE_FOLDER_ID | ALL_FIELDS);
+			handleFieldChanged(SOURCE_FOLDER_ID | NEW_ALL_FIELDS);
 		}
 	}
 
@@ -1789,9 +1786,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	/**
 	 * Final class field changed
 	 * @return the status of the validation
-	 * @since 6.7
 	 */
-	protected IStatus finalChanged() {
+	private IStatus finalChanged() {
 		return Status.OK_STATUS;
 	}
 

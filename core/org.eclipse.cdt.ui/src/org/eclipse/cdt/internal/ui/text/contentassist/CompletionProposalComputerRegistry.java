@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -272,19 +272,19 @@ public final class CompletionProposalComputerRegistry {
 
 	private List<CompletionProposalCategory> getCategories(List<IConfigurationElement> elements) {
 		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
-		String preference = store.getString(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES);
-		Set<String> disabled = new HashSet<>();
-		StringTokenizer tok = new StringTokenizer(preference, "\0"); //$NON-NLS-1$
-		while (tok.hasMoreTokens())
-			disabled.add(tok.nextToken());
-		Map<String, Integer> ordered = new HashMap<>();
-		preference = store.getString(PreferenceConstants.CODEASSIST_CATEGORY_ORDER);
-		tok = new StringTokenizer(preference, "\0"); //$NON-NLS-1$
-		while (tok.hasMoreTokens()) {
-			StringTokenizer inner = new StringTokenizer(tok.nextToken(), ":"); //$NON-NLS-1$
-			String id = inner.nextToken();
-			int rank = Integer.parseInt(inner.nextToken());
-			ordered.put(id, Integer.valueOf(rank));
+		Set<String> disabled = Collections.emptySet();
+		Map<String, Integer> ordered = Collections.emptyMap();
+		boolean parseFailed = false;
+		try {
+			disabled = CompletionProposalComputerPreferenceParser
+					.parseExcludedCategories(store.getString(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES));
+			ordered = CompletionProposalComputerPreferenceParser
+					.parseCategoryOrder(store.getString(PreferenceConstants.CODEASSIST_CATEGORY_ORDER));
+		} catch (ParseException e) {
+			// Failed to parse user setting, clear all settings
+			// and display error message to user allowing them to
+			// reset on first use
+			parseFailed = true;
 		}
 
 		List<CompletionProposalCategory> categories = new ArrayList<>();
@@ -296,13 +296,20 @@ public final class CompletionProposalComputerRegistry {
 
 					CompletionProposalCategory category = new CompletionProposalCategory(element, this);
 					categories.add(category);
-					category.setIncluded(!disabled.contains(category.getId()));
-					Integer rank = ordered.get(category.getId());
-					if (rank != null) {
-						int r = rank.intValue();
-						boolean separate = r < 0xffff;
-						category.setSeparateCommand(separate);
-						category.setSortOrder(r);
+					if (parseFailed) {
+						// When parse has failed we do the same thing as if the user had disabled
+						// off ever proposal category. This causes a pop-up on first completion
+						// attempt with the option of resetting defaults
+						category.setIncluded(false);
+					} else {
+						category.setIncluded(!disabled.contains(category.getId()));
+						Integer rank = ordered.get(category.getId());
+						if (rank != null) {
+							int r = rank.intValue();
+							boolean separate = r < 0xffff;
+							category.setSeparateCommand(separate);
+							category.setSortOrder(r);
+						}
 					}
 				}
 			} catch (CoreException x) {

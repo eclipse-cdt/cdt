@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,10 +22,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerPreferenceParser;
 import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
@@ -230,22 +233,25 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		}
 
 		private boolean readInclusionPreference(CompletionProposalCategory cat) {
-			String[] ids = getTokens(getValue(PREF_EXCLUDED_CATEGORIES), SEPARATOR);
-			for (String id : ids) {
-				if (id.equals(cat.getId()))
-					return false;
+			String value = getValue(PREF_EXCLUDED_CATEGORIES);
+			try {
+				Set<String> parseExcludedCategories = CompletionProposalComputerPreferenceParser
+						.parseExcludedCategories(value);
+				return !parseExcludedCategories.contains(cat.getId());
+			} catch (ParseException e) {
+				return true;
 			}
-			return true;
 		}
 
 		private int readOrderPreference(CompletionProposalCategory cat) {
-			String[] sortOrderIds = getTokens(getValue(PREF_CATEGORY_ORDER), SEPARATOR);
-			for (String sortOrderId : sortOrderIds) {
-				String[] idAndRank = getTokens(sortOrderId, COLON);
-				if (idAndRank[0].equals(cat.getId()))
-					return Integer.parseInt(idAndRank[1]);
+			String categoryOrderPref = getValue(PREF_CATEGORY_ORDER);
+			try {
+				Map<String, Integer> parseCategoryOrder = CompletionProposalComputerPreferenceParser
+						.parseCategoryOrder(categoryOrderPref);
+				return parseCategoryOrder.getOrDefault(cat.getId(), LIMIT + 1);
+			} catch (ParseException e) {
+				return LIMIT + 1;
 			}
-			return LIMIT + 1;
 		}
 
 		public void update() {

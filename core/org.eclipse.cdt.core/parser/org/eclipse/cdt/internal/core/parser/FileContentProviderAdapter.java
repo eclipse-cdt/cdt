@@ -49,8 +49,7 @@ public class FileContentProviderAdapter extends InternalFileContentProvider {
 
 	private FileContentProviderAdapter(AbstractCodeReaderFactory factory) {
 		fDelegate = factory;
-		setIncludeResolutionHeuristics(
-				(IIncludeFileResolutionHeuristics) factory.getAdapter(IIncludeFileResolutionHeuristics.class));
+		setIncludeResolutionHeuristics(factory.getAdapter(IIncludeFileResolutionHeuristics.class));
 	}
 
 	/**

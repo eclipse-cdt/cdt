@@ -25,7 +25,6 @@ import org.eclipse.tm.terminal.view.ui.tabs.TabFolderManager;
  */
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
 
-	@SuppressWarnings("cast")
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 

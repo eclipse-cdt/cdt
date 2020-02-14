@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -272,19 +272,25 @@ public final class CompletionProposalComputerRegistry {
 
 	private List<CompletionProposalCategory> getCategories(List<IConfigurationElement> elements) {
 		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
-		String preference = store.getString(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES);
-		Set<String> disabled = new HashSet<>();
-		StringTokenizer tok = new StringTokenizer(preference, "\0"); //$NON-NLS-1$
-		while (tok.hasMoreTokens())
-			disabled.add(tok.nextToken());
-		Map<String, Integer> ordered = new HashMap<>();
-		preference = store.getString(PreferenceConstants.CODEASSIST_CATEGORY_ORDER);
-		tok = new StringTokenizer(preference, "\0"); //$NON-NLS-1$
-		while (tok.hasMoreTokens()) {
-			StringTokenizer inner = new StringTokenizer(tok.nextToken(), ":"); //$NON-NLS-1$
-			String id = inner.nextToken();
-			int rank = Integer.parseInt(inner.nextToken());
-			ordered.put(id, Integer.valueOf(rank));
+		Set<String> disabled;
+		Map<String, Integer> ordered;
+		try {
+			disabled = CompletionProposalComputerPreferenceParser
+					.parseExcludedCategories(store.getString(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES));
+			ordered = CompletionProposalComputerPreferenceParser
+					.parseCategoryOrder(store.getString(PreferenceConstants.CODEASSIST_CATEGORY_ORDER));
+		} catch (ParseException e) {
+			// Failed to parse user setting, try again with default (which may itself be bad, for example,
+			// if plugin_customization.ini is used.)
+			try {
+				disabled = CompletionProposalComputerPreferenceParser.parseExcludedCategories(
+						store.getDefaultString(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES));
+				ordered = CompletionProposalComputerPreferenceParser
+						.parseCategoryOrder(store.getDefaultString(PreferenceConstants.CODEASSIST_CATEGORY_ORDER));
+			} catch (ParseException e1) {
+				disabled = Collections.emptySet();
+				ordered = Collections.emptyMap();
+			}
 		}
 
 		List<CompletionProposalCategory> categories = new ArrayList<>();

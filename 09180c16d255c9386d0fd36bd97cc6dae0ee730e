@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "936d9987_15653042",
+        "filename": "llvm/org.eclipse.cdt.managedbuilder.llvm.ui/src/org/eclipse/cdt/managedbuilder/llvm/ui/LlvmUIPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-14T14:48:00Z",
+      "side": 0,
+      "message": "But why two of them? To make sure, I suppose :)",
+      "revId": "09180c16d255c9386d0fd36bd97cc6dae0ee730e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

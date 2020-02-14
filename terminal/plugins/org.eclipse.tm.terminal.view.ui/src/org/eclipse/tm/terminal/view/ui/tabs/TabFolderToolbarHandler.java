@@ -205,9 +205,6 @@ public class TabFolderToolbarHandler extends PlatformObject {
 	protected void doCreateToolbarActions() {
 		// Create and add the paste action
 		add(new TerminalActionPaste() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-			 */
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();
@@ -216,9 +213,6 @@ public class TabFolderToolbarHandler extends PlatformObject {
 
 		// Create and add the copy action
 		add(new TerminalActionCopy() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-			 */
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();
@@ -227,9 +221,6 @@ public class TabFolderToolbarHandler extends PlatformObject {
 
 		// Create and add the scroll lock action
 		add(new TabScrollLockAction() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-			 */
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();
@@ -238,17 +229,11 @@ public class TabFolderToolbarHandler extends PlatformObject {
 
 		// Create and add the clear all action
 		add(new TerminalActionClearAll() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-			 */
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.TerminalActionPaste#updateAction(boolean)
-			 */
 			@Override
 			public void updateAction(boolean aboutToShow) {
 				super.updateAction(aboutToShow);
@@ -260,9 +245,6 @@ public class TabFolderToolbarHandler extends PlatformObject {
 
 		// Create and add the toggle command input field action
 		add(new ToggleCommandFieldAction(getParentView()) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-			 */
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();
@@ -271,9 +253,6 @@ public class TabFolderToolbarHandler extends PlatformObject {
 
 		// Create and add the new terminal view action
 		add(new NewTerminalViewAction(getParentView()) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-			 */
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();
@@ -340,9 +319,6 @@ public class TabFolderToolbarHandler extends PlatformObject {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(Class adapter) {

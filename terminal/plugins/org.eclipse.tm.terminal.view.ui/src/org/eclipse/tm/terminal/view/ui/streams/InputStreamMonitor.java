@@ -49,10 +49,10 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 	private volatile boolean disposed;
 
 	// A list of object to dispose if this monitor is disposed
-	private final List<IDisposable> disposables = new ArrayList<IDisposable>();
+	private final List<IDisposable> disposables = new ArrayList<>();
 
 	// Queue to buffer the data to write to the output stream
-	private final Queue<byte[]> queue = new LinkedList<byte[]>();
+	private final Queue<byte[]> queue = new LinkedList<>();
 
 	// ***** Line separator replacement logic *****
 
@@ -148,9 +148,6 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 		disposables.remove(disposable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.services.IDisposable#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// If already disposed --> return immediately
@@ -274,9 +271,6 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 		dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.io.OutputStream#write(int)
-	 */
 	@Override
 	public void write(int b) throws IOException {
 		synchronized (queue) {
@@ -285,9 +279,6 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.io.OutputStream#write(byte[], int, int)
-	 */
 	@Override
 	public void write(byte[] b, int off, int len) throws IOException {
 		// Write the whole block to the queue to avoid synchronization

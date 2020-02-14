@@ -46,9 +46,6 @@ public class SelectEncodingAction extends AbstractTerminalAction {
 				(ImageDescriptor) null, (ImageDescriptor) null, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#run()
-	 */
 	@Override
 	public void run() {
 		ITerminalViewControl target = getTarget();
@@ -67,9 +64,6 @@ public class SelectEncodingAction extends AbstractTerminalAction {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#updateAction(boolean)
-	 */
 	@Override
 	public void updateAction(boolean aboutToShow) {
 		setEnabled(aboutToShow && getTarget() != null && getTarget().getState() == TerminalState.CONNECTED);

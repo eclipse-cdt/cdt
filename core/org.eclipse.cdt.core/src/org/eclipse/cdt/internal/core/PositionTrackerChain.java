@@ -77,9 +77,6 @@ class PositionTrackerChain implements IDocumentListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IPositionUpdater#update(DocumentEvent)
-	 */
 	private void update(DocumentEvent event) {
 		String text = event.getText();
 		int insertLen = text != null ? text.length() : 0;

@@ -53,33 +53,21 @@ public class Symbol implements ISymbol {
 		this.sourceFile = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getBinarObject()
-	 */
 	@Override
 	public IBinaryObject getBinaryObject() {
 		return binary;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getFilename()
-	 */
 	@Override
 	public IPath getFilename() {
 		return sourceFile;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getName()
-	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getType()
-	 */
 	@Override
 	public int getType() {
 		return type;

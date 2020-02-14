@@ -30,9 +30,6 @@ public class Using extends SourceManipulation implements IUsing {
 		return new SourceManipulationInfo(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IUsing#isDirective()
-	 */
 	@Override
 	public boolean isDirective() {
 		return directive;

@@ -300,9 +300,6 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		return super.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
-	 */
 	@Override
 	public IAddressFactory getAddressFactory() {
 		if (addressFactory == null) {

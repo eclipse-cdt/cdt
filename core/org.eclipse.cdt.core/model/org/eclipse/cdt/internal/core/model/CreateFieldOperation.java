@@ -48,9 +48,6 @@ public class CreateFieldOperation extends CreateMemberOperation {
 		fInitializer = initializer;
 	}
 
-	/**
-	 * @see CreateElementInTUOperation#getMainTaskName
-	 */
 	@Override
 	public String getMainTaskName() {
 		return CoreModelMessages.getString("operation.createFieldProgress"); //$NON-NLS-1$
@@ -78,25 +75,16 @@ public class CreateFieldOperation extends CreateMemberOperation {
 		}
 	}
 
-	/**
-	 * @see CreateElementInTUOperation#generateResultHandle
-	 */
 	@Override
 	protected ICElement generateResultHandle() {
 		return getStructure().getField(fName);
 	}
 
-	/**
-	 * @see CreateMemberOperation#verifyNameCollision
-	 */
 	@Override
 	protected ICModelStatus verifyNameCollision() {
 		return super.verifyNameCollision();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CreateElementInTUOperation#generateElement(org.eclipse.cdt.core.model.ITranslationUnit)
-	 */
 	@Override
 	protected String generateElement(ITranslationUnit unit) throws CModelException {
 		StringBuilder sb = new StringBuilder();

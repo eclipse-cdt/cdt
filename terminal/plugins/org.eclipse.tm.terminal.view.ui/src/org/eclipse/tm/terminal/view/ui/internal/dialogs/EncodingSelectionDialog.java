@@ -52,9 +52,6 @@ public class EncodingSelectionDialog extends TrayDialog {
 			super(container);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
-		 */
 		@Override
 		public void setupPanel(Composite parent) {
 			Composite panel = new Composite(parent, SWT.NONE);
@@ -71,39 +68,24 @@ public class EncodingSelectionDialog extends TrayDialog {
 			setControl(panel);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#saveSettingsForHost(boolean)
-		 */
 		@Override
 		protected void saveSettingsForHost(boolean add) {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#fillSettingsForHost(java.lang.String)
-		 */
 		@Override
 		protected void fillSettingsForHost(String host) {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#getHostFromSettings()
-		 */
 		@Override
 		protected String getHostFromSettings() {
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#getEncoding()
-		 */
 		@Override
 		public String getEncoding() {
 			return super.getEncoding();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#setEncoding(java.lang.String)
-		 */
 		@Override
 		public void setEncoding(String encoding) {
 			super.setEncoding(encoding);
@@ -122,9 +104,6 @@ public class EncodingSelectionDialog extends TrayDialog {
 		setHelpAvailable(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected final Control createDialogArea(Composite parent) {
 		if (contextHelpId != null) {
@@ -199,9 +178,6 @@ public class EncodingSelectionDialog extends TrayDialog {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		// Save the selected encoding
@@ -210,9 +186,6 @@ public class EncodingSelectionDialog extends TrayDialog {
 		super.okPressed();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
-	 */
 	@Override
 	protected void cancelPressed() {
 		// Reset the encoding

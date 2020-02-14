@@ -55,17 +55,11 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		fCfgs = des;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.settings.model.MultiItemsHolder#getItems()
-	 */
 	@Override
 	public Object[] getItems() {
 		return fCfgs;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#create(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public ICConfigExtensionReference create(String extensionPoint, String extension) throws CoreException {
 		if (DEBUG)
@@ -73,9 +67,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#createExternalSetting(java.lang.String[], java.lang.String[], java.lang.String[], org.eclipse.cdt.core.settings.model.ICSettingEntry[])
-	 */
 	@Override
 	public ICExternalSetting createExternalSetting(String[] languageIDs, String[] contentTypeIds, String[] extensions,
 			ICSettingEntry[] entries) throws WriteAccessException {
@@ -84,9 +75,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#createFileDescription(org.eclipse.core.runtime.IPath, org.eclipse.cdt.core.settings.model.ICResourceDescription)
-	 */
 	@Override
 	public ICFileDescription createFileDescription(IPath path, ICResourceDescription base)
 			throws CoreException, WriteAccessException {
@@ -95,9 +83,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#createFolderDescription(org.eclipse.core.runtime.IPath, org.eclipse.cdt.core.settings.model.ICFolderDescription)
-	 */
 	@Override
 	public ICFolderDescription createFolderDescription(IPath path, ICFolderDescription base)
 			throws CoreException, WriteAccessException {
@@ -106,9 +91,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#get(java.lang.String)
-	 */
 	@Override
 	public ICConfigExtensionReference[] get(String extensionPointID) {
 		if (DEBUG)
@@ -116,9 +98,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getBuildSetting()
-	 */
 	@Override
 	public ICBuildSetting getBuildSetting() {
 		if (DEBUG)
@@ -140,25 +119,16 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 			fCfgs[i].getBuildSetting().setErrorParserIDs(ids);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getBuildSystemId()
-	 */
 	@Override
 	public String getBuildSystemId() {
 		return fCfgs[0].getBuildSystemId();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getBuildVariablesContributor()
-	 */
 	@Override
 	public ICdtVariablesContributor getBuildVariablesContributor() {
 		return fCfgs[0].getBuildVariablesContributor();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getConfigurationData()
-	 */
 	@Override
 	public CConfigurationData getConfigurationData() {
 		if (DEBUG)
@@ -166,9 +136,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getConfigurationStatus()
-	 */
 	@Override
 	public CConfigurationStatus getConfigurationStatus() {
 		CConfigurationStatus st = null;
@@ -180,25 +147,16 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return st;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return "Multi Configuration"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getExternalSettings()
-	 */
 	@Override
 	public ICExternalSetting[] getExternalSettings() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getExternalSettingsProviderIds()
-	 */
 	@Override
 	public String[] getExternalSettingsProviderIds() {
 		if (DEBUG)
@@ -206,9 +164,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getFileDescriptions()
-	 */
 	@Override
 	public ICFileDescription[] getFileDescriptions() {
 		ArrayList<ICFileDescription> lst = new ArrayList<>();
@@ -217,9 +172,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return lst.toArray(new ICFileDescription[lst.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getFolderDescriptions()
-	 */
 	@Override
 	public ICFolderDescription[] getFolderDescriptions() {
 		ArrayList<ICFolderDescription> lst = new ArrayList<>();
@@ -228,9 +180,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return lst.toArray(new ICFolderDescription[lst.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getLanguageSettingForFile(org.eclipse.core.runtime.IPath, boolean)
-	 */
 	@Override
 	public ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExludeStatus) {
 		if (DEBUG)
@@ -238,9 +187,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getProjectDescription()
-	 */
 	@Override
 	public ICProjectDescription getProjectDescription() {
 		ICProjectDescription pd = fCfgs[0].getProjectDescription();
@@ -252,9 +198,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return pd;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getReferenceInfo()
-	 */
 	@Override
 	public Map<String, String> getReferenceInfo() {
 		if (DEBUG)
@@ -262,17 +205,11 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return Collections.emptyMap();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getResolvedSourceEntries()
-	 */
 	@Override
 	public ICSourceEntry[] getResolvedSourceEntries() {
 		return new ICSourceEntry[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getResourceDescription(org.eclipse.core.runtime.IPath, boolean)
-	 */
 	@Override
 	public ICResourceDescription getResourceDescription(IPath path, boolean isForFolder) {
 		ArrayList<ICResourceDescription> lst = new ArrayList<>();
@@ -300,9 +237,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 			return new MultiFileDescription(lst.toArray(new ICFileDescription[lst.size()]));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getResourceDescriptions()
-	 */
 	@Override
 	public ICResourceDescription[] getResourceDescriptions() {
 		ArrayList<ICResourceDescription> lst = new ArrayList<>();
@@ -311,9 +245,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return lst.toArray(new ICResourceDescription[lst.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getRootFolderDescription()
-	 */
 	@Override
 	public ICFolderDescription getRootFolderDescription() {
 		ICFolderDescription[] rds = new ICFolderDescription[fCfgs.length];
@@ -322,9 +253,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return new MultiFolderDescription(rds);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getSessionProperty(org.eclipse.core.runtime.QualifiedName)
-	 */
 	@Override
 	public Object getSessionProperty(QualifiedName name) {
 		if (DEBUG)
@@ -332,17 +260,11 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getSourceEntries()
-	 */
 	@Override
 	public ICSourceEntry[] getSourceEntries() {
 		return new ICSourceEntry[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getTargetPlatformSetting()
-	 */
 	@Override
 	public ICTargetPlatformSetting getTargetPlatformSetting() {
 		if (DEBUG)
@@ -350,9 +272,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#isActive()
-	 */
 	@Override
 	public boolean isActive() {
 		for (int i = 0; i < fCfgs.length; i++)
@@ -361,9 +280,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#isModified()
-	 */
 	@Override
 	public boolean isModified() {
 		for (int i = 0; i < fCfgs.length; i++)
@@ -372,70 +288,46 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#isPreferenceConfiguration()
-	 */
 	@Override
 	public boolean isPreferenceConfiguration() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#remove(org.eclipse.cdt.core.settings.model.ICConfigExtensionReference)
-	 */
 	@Override
 	public void remove(ICConfigExtensionReference ext) throws CoreException {
 		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].remove(ext);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#remove(java.lang.String)
-	 */
 	@Override
 	public void remove(String extensionPoint) throws CoreException {
 		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].remove(extensionPoint);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#removeExternalSetting(org.eclipse.cdt.core.settings.model.ICExternalSetting)
-	 */
 	@Override
 	public void removeExternalSetting(ICExternalSetting setting) throws WriteAccessException {
 		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].removeExternalSetting(setting);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#removeExternalSettings()
-	 */
 	@Override
 	public void removeExternalSettings() throws WriteAccessException {
 		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].removeExternalSettings();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#removeResourceDescription(org.eclipse.cdt.core.settings.model.ICResourceDescription)
-	 */
 	@Override
 	public void removeResourceDescription(ICResourceDescription des) throws CoreException, WriteAccessException {
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setActive()
-	 */
 	@Override
 	public void setActive() throws WriteAccessException {
 		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setActive();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setConfigurationData(java.lang.String, org.eclipse.cdt.core.settings.model.extension.CConfigurationData)
-	 */
 	@Override
 	public void setConfigurationData(String buildSystemId, CConfigurationData data) throws WriteAccessException {
 		if (DEBUG)
@@ -443,9 +335,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setDescription(java.lang.String)
-	 */
 	@Override
 	public void setDescription(String des) throws WriteAccessException {
 		if (DEBUG)
@@ -453,18 +342,12 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setExternalSettingsProviderIds(java.lang.String[])
-	 */
 	@Override
 	public void setExternalSettingsProviderIds(String[] ids) {
 		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setExternalSettingsProviderIds(ids);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setName(java.lang.String)
-	 */
 	@Override
 	public void setName(String name) throws WriteAccessException {
 		if (DEBUG)
@@ -472,77 +355,50 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setReferenceInfo(java.util.Map)
-	 */
 	@Override
 	public void setReferenceInfo(Map<String, String> refs) throws WriteAccessException {
 		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setReferenceInfo(refs);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setSessionProperty(org.eclipse.core.runtime.QualifiedName, java.lang.Object)
-	 */
 	@Override
 	public void setSessionProperty(QualifiedName name, Object value) {
 		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setSessionProperty(name, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setSourceEntries(org.eclipse.cdt.core.settings.model.ICSourceEntry[])
-	 */
 	@Override
 	public void setSourceEntries(ICSourceEntry[] entries) throws CoreException, WriteAccessException {
 		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].setSourceEntries(entries);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#updateExternalSettingsProviders(java.lang.String[])
-	 */
 	@Override
 	public void updateExternalSettingsProviders(String[] ids) throws WriteAccessException {
 		for (int i = 0; i < fCfgs.length; i++)
 			fCfgs[i].updateExternalSettingsProviders(ids);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingContainer#getChildSettings()
-	 */
 	@Override
 	public ICSettingObject[] getChildSettings() {
 		return new ICSettingObject[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getConfiguration()
-	 */
 	@Override
 	public ICConfigurationDescription getConfiguration() {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getId()
-	 */
 	@Override
 	public String getId() {
 		return fCfgs[0].getId() + "_etc"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getName()
-	 */
 	@Override
 	public String getName() {
 		return "Multiple Config Description"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getParent()
-	 */
 	@Override
 	public ICSettingContainer getParent() {
 		ICSettingContainer p = fCfgs[0].getParent();
@@ -554,9 +410,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return p;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getType()
-	 */
 	@Override
 	public int getType() {
 		int t = fCfgs[0].getType();
@@ -566,9 +419,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return t;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		for (int i = 0; i < fCfgs.length; i++)
@@ -583,9 +433,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 			cfg.setReadOnly(readOnly, keepModify);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		for (int i = 0; i < fCfgs.length; i++)
@@ -594,9 +441,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingsStorage#getStorage(java.lang.String, boolean)
-	 */
 	@Override
 	public ICStorageElement getStorage(String id, boolean create) throws CoreException {
 		if (DEBUG)
@@ -604,9 +448,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingsStorage#getStorage(java.lang.String, boolean)
-	 */
 	@Override
 	public ICStorageElement importStorage(String id, ICStorageElement el)
 			throws UnsupportedOperationException, CoreException {
@@ -615,9 +456,6 @@ public class MultiConfigDescription extends MultiItemsHolder implements ICMultiC
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICSettingsStorage#removeStorage(java.lang.String)
-	 */
 	@Override
 	public void removeStorage(String id) throws CoreException {
 		for (int i = 0; i < fCfgs.length; i++)

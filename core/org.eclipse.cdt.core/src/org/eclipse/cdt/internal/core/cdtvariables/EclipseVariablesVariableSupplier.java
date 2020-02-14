@@ -77,9 +77,6 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 			fArgument = argument;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringValue()
-		 */
 		@Override
 		public String getStringValue() throws CdtVariableException {
 			if (!fInitialized) {
@@ -124,9 +121,6 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacro(java.lang.String, int, java.lang.Object)
-	 */
 	@Override
 	public ICdtVariable getVariable(String macroName, IVariableContextInfo info) {
 		return getVariable(macroName);
@@ -162,9 +156,6 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacros(int, java.lang.Object)
-	 */
 	@Override
 	public ICdtVariable[] getVariables(IVariableContextInfo info) {
 		return getVariables();

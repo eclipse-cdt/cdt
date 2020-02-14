@@ -48,9 +48,6 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 		super(parser, path, type);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbol(long)
-	 */
 	@Override
 	public ISymbol getSymbol(IAddress addr) {
 		ISymbol[] syms = getSymbols();

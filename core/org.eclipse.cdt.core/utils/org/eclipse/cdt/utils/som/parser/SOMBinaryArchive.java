@@ -43,9 +43,6 @@ public class SOMBinaryArchive extends BinaryFile implements IBinaryArchive {
 		children = new ArrayList<>(5);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryArchive#getObjects()
-	 */
 	@Override
 	public IBinaryObject[] getObjects() {
 		if (hasChanged()) {

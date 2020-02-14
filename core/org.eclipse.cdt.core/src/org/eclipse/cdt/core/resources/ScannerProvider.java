@@ -179,9 +179,6 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
-	 */
 	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		try {

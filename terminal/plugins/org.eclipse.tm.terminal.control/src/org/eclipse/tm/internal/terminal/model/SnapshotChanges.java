@@ -145,9 +145,7 @@ public class SnapshotChanges implements ISnapshotChanges {
 		return size;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#markLineChanged(int)
-	 */
+	@Override
 	public void markLineChanged(int line) {
 		if (!isInInterestWindow(line))
 			return;
@@ -164,9 +162,7 @@ public class SnapshotChanges implements ISnapshotChanges {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#markLinesChanged(int, int)
-	 */
+	@Override
 	public void markLinesChanged(int line, int n) {
 		if (n <= 0 || !isInInterestWindow(line, n))
 			return;
@@ -186,13 +182,12 @@ public class SnapshotChanges implements ISnapshotChanges {
 		markLineChanged(line + n - 1);
 	}
 
+	@Override
 	public void markCursorChanged() {
 		fCursorHasChanged = true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#convertScrollingIntoChanges()
-	 */
+	@Override
 	public void convertScrollingIntoChanges() {
 		markLinesChanged(fScrollWindowStartLine, fScrollWindowSize);
 		fScrollWindowStartLine = 0;
@@ -200,9 +195,7 @@ public class SnapshotChanges implements ISnapshotChanges {
 		fScrollWindowShift = 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#hasChanged()
-	 */
+	@Override
 	public boolean hasChanged() {
 		if (fFirstChangedLine != Integer.MAX_VALUE || fLastChangedLine > 0 || fScrollWindowShift != 0
 				|| fDimensionsChanged || fCursorHasChanged)
@@ -210,25 +203,27 @@ public class SnapshotChanges implements ISnapshotChanges {
 		return false;
 	}
 
+	@Override
 	public void markDimensionsChanged() {
 		fDimensionsChanged = true;
 	}
 
+	@Override
 	public boolean hasDimensionsChanged() {
 		return fDimensionsChanged;
 	}
 
+	@Override
 	public boolean hasTerminalChanged() {
 		return fTerminalHasChanged;
 	}
 
+	@Override
 	public void setTerminalChanged() {
 		fTerminalHasChanged = true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#scroll(int, int, int)
-	 */
+	@Override
 	public void scroll(int startLine, int size, int shift) {
 		size = fitSizeToWindow(startLine, size);
 		startLine = fitLineToWindow(startLine);
@@ -311,9 +306,7 @@ public class SnapshotChanges implements ISnapshotChanges {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#setAllChanged(int)
-	 */
+	@Override
 	public void setAllChanged(int height) {
 		fScrollWindowStartLine = 0;
 		fScrollWindowSize = 0;
@@ -324,44 +317,32 @@ public class SnapshotChanges implements ISnapshotChanges {
 		setChangedLinesLength(0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#getFirstChangedLine()
-	 */
+	@Override
 	public int getFirstChangedLine() {
 		return fFirstChangedLine;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#getLastChangedLine()
-	 */
+	@Override
 	public int getLastChangedLine() {
 		return fLastChangedLine;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#getScrollWindowStartLine()
-	 */
+	@Override
 	public int getScrollWindowStartLine() {
 		return fScrollWindowStartLine;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#getScrollWindowSize()
-	 */
+	@Override
 	public int getScrollWindowSize() {
 		return fScrollWindowSize;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#getScrollWindowShift()
-	 */
+	@Override
 	public int getScrollWindowShift() {
 		return fScrollWindowShift;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#copyChangedLines(org.eclipse.tm.terminal.model.ITerminalTextData, org.eclipse.tm.terminal.model.ITerminalTextData)
-	 */
+	@Override
 	public void copyChangedLines(ITerminalTextData dest, ITerminalTextData source) {
 		int n = Math.min(fLastChangedLine + 1, source.getHeight());
 		for (int i = fFirstChangedLine; i < n; i++) {
@@ -370,14 +351,17 @@ public class SnapshotChanges implements ISnapshotChanges {
 		}
 	}
 
+	@Override
 	public int getInterestWindowSize() {
 		return fInterestWindowSize;
 	}
 
+	@Override
 	public int getInterestWindowStartLine() {
 		return fInterestWindowStartLine;
 	}
 
+	@Override
 	public void setInterestWindow(int startLine, int size) {
 		int oldStartLine = fInterestWindowStartLine;
 		int oldSize = fInterestWindowSize;
@@ -412,9 +396,7 @@ public class SnapshotChanges implements ISnapshotChanges {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ISnapshotChanges#hasLineChanged(int)
-	 */
+	@Override
 	public boolean hasLineChanged(int line) {
 		if (line < fChangedLines.length)
 			return fChangedLines[line];

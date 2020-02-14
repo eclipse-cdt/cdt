@@ -56,9 +56,6 @@ public class CdtVariableManager implements ICdtVariableManager {
 		return fDefault;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#getMacro(java.lang.String, int, java.lang.Object, boolean)
-	 */
 	@Override
 	public ICdtVariable getVariable(String macroName, ICConfigurationDescription cfg) {
 		if (cfg instanceof CConfigurationDescriptionCache) {
@@ -75,9 +72,6 @@ public class CdtVariableManager implements ICdtVariableManager {
 		return getMacroContextInfo(type, cfg);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#getMacros(int, java.lang.Object, boolean)
-	 */
 	@Override
 	public ICdtVariable[] getVariables(ICConfigurationDescription cfg) {
 		if (cfg instanceof CConfigurationDescriptionCache) {
@@ -89,9 +83,6 @@ public class CdtVariableManager implements ICdtVariableManager {
 		return SupplierBasedCdtVariableManager.getVariables(getMacroContextInfo(type, cfg), true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#getSuppliers(int, java.lang.Object)
-	 */
 	public ICdtVariableSupplier[] getSuppliers(int contextType, Object contextData) {
 		IVariableContextInfo info = getMacroContextInfo(contextType, contextData);
 		if (info != null)
@@ -106,17 +97,11 @@ public class CdtVariableManager implements ICdtVariableManager {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#convertStringListToString(java.lang.String[], java.lang.String)
-	 */
 	@Override
 	public String convertStringListToString(String[] value, String listDelimiter) {
 		return CdtVariableResolver.convertStringListToString(value, listDelimiter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#resolveValue(java.lang.String, java.lang.String, java.lang.String, int, java.lang.Object)
-	 */
 	@Override
 	public String resolveValue(String value, String nonexistentMacrosValue, String listDelimiter,
 			ICConfigurationDescription cfg) throws CdtVariableException {
@@ -128,9 +113,6 @@ public class CdtVariableManager implements ICdtVariableManager {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#resolveStringListValue(java.lang.String, java.lang.String, int, java.lang.Object)
-	 */
 	@Override
 	public String[] resolveStringListValue(String value, String nonexistentMacrosValue, String listDelimiter,
 			ICConfigurationDescription cfg) throws CdtVariableException {
@@ -142,9 +124,6 @@ public class CdtVariableManager implements ICdtVariableManager {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#isStringListValue(java.lang.String)
-	 */
 	@Override
 	public boolean isStringListValue(String value, ICConfigurationDescription cfg) throws CdtVariableException {
 		try {
@@ -157,9 +136,6 @@ public class CdtVariableManager implements ICdtVariableManager {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#checkIntegrity(int, java.lang.Object)
-	 */
 	@Override
 	public void checkVariableIntegrity(ICConfigurationDescription cfg) throws CdtVariableException {
 
@@ -188,9 +164,6 @@ public class CdtVariableManager implements ICdtVariableManager {
 		return new CoreVariableSubstitutor(info, inexistentMacroValue, listDelimiter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#resolveStringListValues(java.lang.String[], java.lang.String, java.lang.String, int, java.lang.Object)
-	 */
 	@Override
 	public String[] resolveStringListValues(String[] value, String nonexistentMacrosValue, String listDelimiter,
 			ICConfigurationDescription cfg) throws CdtVariableException {

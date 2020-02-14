@@ -82,9 +82,6 @@ public class IncludeFileEntry extends APathEntry implements IIncludeFileEntry {
 		return super.equals(obj);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IIncludeEntry#getFullIncludePath()
-	 */
 	@Override
 	public IPath getFullIncludeFilePath() {
 		final IPath inc = getIncludeFilePath();
@@ -115,9 +112,6 @@ public class IncludeFileEntry extends APathEntry implements IIncludeFileEntry {
 		return inc;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

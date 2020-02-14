@@ -55,9 +55,6 @@ public class BuildSystemEnvironmentSupplier implements ICoreEnvironmentVariableS
 			fStartData = level;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getVariable(java.lang.String, java.lang.Object, boolean)
-		 */
 		@Override
 		public IEnvironmentVariable getVariable(String variableName, ICConfigurationDescription cfg,
 				boolean resolveMacros) {
@@ -71,9 +68,6 @@ public class BuildSystemEnvironmentSupplier implements ICoreEnvironmentVariableS
 			return filterVariables(super.getVariables(cfg, resolveMacros));
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider#getContextInfo(java.lang.Object)
-		 */
 		@Override
 		public IEnvironmentContextInfo getContextInfo(Object level) {
 			IEnvironmentContextInfo startInfo = getStartInfo();
@@ -153,9 +147,6 @@ public class BuildSystemEnvironmentSupplier implements ICoreEnvironmentVariableS
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariable()
-	 */
 	@Override
 	public IEnvironmentVariable getVariable(String name, Object context) {
 		if (context == null)
@@ -175,9 +166,6 @@ public class BuildSystemEnvironmentSupplier implements ICoreEnvironmentVariableS
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariables()
-	 */
 	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if (context == null)

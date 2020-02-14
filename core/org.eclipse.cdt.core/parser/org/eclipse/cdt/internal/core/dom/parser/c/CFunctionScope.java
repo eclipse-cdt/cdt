@@ -27,9 +27,6 @@ public class CFunctionScope extends CScope implements ICFunctionScope {
 		super(function, EScopeKind.eLocal);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICFunctionScope#getBinding(char[])
-	 */
 	@Override
 	public IBinding getBinding(char[] name) {
 		return super.getBinding(NAMESPACE_TYPE_OTHER, name);

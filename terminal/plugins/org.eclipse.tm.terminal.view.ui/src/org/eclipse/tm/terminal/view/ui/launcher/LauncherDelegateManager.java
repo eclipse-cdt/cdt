@@ -49,7 +49,7 @@ public class LauncherDelegateManager {
 	private boolean initialized = false;
 
 	// The map containing all loaded contributions
-	private final Map<String, Proxy> extensionsMap = new HashMap<String, Proxy>();
+	private final Map<String, Proxy> extensionsMap = new HashMap<>();
 
 	// The extension point comparator
 	private ExtensionPointComparator comparator = null;
@@ -143,9 +143,6 @@ public class LauncherDelegateManager {
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			// Proxies are equal if they have encapsulate an element
@@ -156,9 +153,6 @@ public class LauncherDelegateManager {
 			return super.equals(obj);
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			// The hash code of a proxy is the one from the id
@@ -181,9 +175,6 @@ public class LauncherDelegateManager {
 	/* default */ static class ExtensionPointComparator implements Comparator<IExtension> {
 		private final static String OWN_PLUGINS_PATTERN = "org.eclipse.tm.terminal."; //$NON-NLS-1$
 
-		/* (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(IExtension o1, IExtension o2) {
 			// We ignore any comparisation with null and
@@ -252,7 +243,7 @@ public class LauncherDelegateManager {
 	 * @return The list of contributed terminal launcher delegates, or an empty array.
 	 */
 	public ILauncherDelegate[] getLauncherDelegates(boolean unique) {
-		List<ILauncherDelegate> contributions = new ArrayList<ILauncherDelegate>();
+		List<ILauncherDelegate> contributions = new ArrayList<>();
 		for (Proxy launcherDelegate : getExtensions().values()) {
 			ILauncherDelegate instance = unique ? launcherDelegate.newInstance() : launcherDelegate.getInstance();
 			if (instance != null && !contributions.contains(instance)) {
@@ -292,7 +283,7 @@ public class LauncherDelegateManager {
 	 */
 	@SuppressWarnings("cast")
 	public ILauncherDelegate[] getApplicableLauncherDelegates(ISelection selection) {
-		List<ILauncherDelegate> applicable = new ArrayList<ILauncherDelegate>();
+		List<ILauncherDelegate> applicable = new ArrayList<>();
 
 		for (ILauncherDelegate delegate : getLauncherDelegates(false)) {
 			Expression enablement = delegate.getEnablement();
@@ -304,8 +295,8 @@ public class LauncherDelegateManager {
 			if (enablement != null) {
 				if (selection != null) {
 					// Set the default variable to selection.
-					IEvaluationContext currentState = ((IHandlerService) PlatformUI.getWorkbench()
-							.getService(IHandlerService.class)).getCurrentState();
+					IEvaluationContext currentState = PlatformUI.getWorkbench().getService(IHandlerService.class)
+							.getCurrentState();
 					EvaluationContext context = new EvaluationContext(currentState, selection);
 					// Set the "selection" variable to the selection.
 					context.addVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
@@ -376,7 +367,7 @@ public class LauncherDelegateManager {
 	protected IExtension[] getExtensionsSorted(IExtensionPoint point) {
 		Assert.isNotNull(point);
 
-		List<IExtension> extensions = new ArrayList<IExtension>(Arrays.asList(point.getExtensions()));
+		List<IExtension> extensions = new ArrayList<>(Arrays.asList(point.getExtensions()));
 		if (extensions.size() > 0) {
 			Collections.sort(extensions, getExtensionPointComparator());
 		}

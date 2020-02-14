@@ -50,23 +50,17 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		throw new RuntimeException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#getWidth()
-	 */
+	@Override
 	public int getWidth() {
 		return fWidth;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#getHeight()
-	 */
+	@Override
 	public int getHeight() {
 		return fHeight;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#setDimensions(int, int)
-	 */
+	@Override
 	public void setDimensions(int height, int width) {
 		assert height >= 0 || throwRuntimeException();
 		assert width >= 0 || throwRuntimeException();
@@ -109,9 +103,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		return newArray;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#getLineSegments(int, int, int)
-	 */
+	@Override
 	public LineSegment[] getLineSegments(int line, int column, int len) {
 		// get the styles and chars for this line
 		Style[] styles = fStyle[line];
@@ -132,7 +124,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 
 		// and create the line segments
 		Style style = styles[column];
-		List<LineSegment> segments = new ArrayList<LineSegment>();
+		List<LineSegment> segments = new ArrayList<>();
 		for (int i = column; i < n; i++) {
 			if (styles[i] != style) {
 				segments.add(new LineSegment(col, new String(chars, col, i - col), style));
@@ -146,9 +138,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		return segments.toArray(new LineSegment[segments.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#getChar(int, int)
-	 */
+	@Override
 	public char getChar(int line, int column) {
 		assert column < fWidth || throwRuntimeException();
 		if (fChars[line] == null || column >= fChars[line].length)
@@ -156,9 +146,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		return fChars[line][column];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#getStyle(int, int)
-	 */
+	@Override
 	public Style getStyle(int line, int column) {
 		assert column < fWidth || throwRuntimeException();
 		if (fStyle[line] == null || column >= fStyle[line].length)
@@ -181,25 +169,19 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#setChar(int, int, char, org.eclipse.tm.internal.terminal.text.Style)
-	 */
+	@Override
 	public void setChar(int line, int column, char c, Style style) {
 		ensureLineLength(line, column + 1);
 		fChars[line][column] = c;
 		fStyle[line][column] = style;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#setChars(int, int, char[], org.eclipse.tm.internal.terminal.text.Style)
-	 */
+	@Override
 	public void setChars(int line, int column, char[] chars, Style style) {
 		setChars(line, column, chars, 0, chars.length, style);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#setChars(int, int, char[], int, int, org.eclipse.tm.internal.terminal.text.Style)
-	 */
+	@Override
 	public void setChars(int line, int column, char[] chars, int start, int len, Style style) {
 		ensureLineLength(line, column + len);
 		for (int i = 0; i < len; i++) {
@@ -208,9 +190,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#scroll(int, int, int)
-	 */
+	@Override
 	public void scroll(int startLine, int size, int shift) {
 		assert startLine + size <= getHeight() || throwRuntimeException();
 		if (shift < 0) {
@@ -249,6 +229,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	 * @return a text representation of the object.
 	 * Lines are separated by '\n'. No style information is returned.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
 		for (int line = 0; line < getHeight(); line++) {
@@ -261,10 +242,12 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		return buff.toString();
 	}
 
+	@Override
 	public ITerminalTextDataSnapshot makeSnapshot() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void addLine() {
 		if (fMaxHeight > 0 && getHeight() < fMaxHeight) {
 			setDimensions(getHeight() + 1, getWidth());
@@ -273,6 +256,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		}
 	}
 
+	@Override
 	public void copy(ITerminalTextData source) {
 		fWidth = source.getWidth();
 		int n = source.getHeight();
@@ -288,24 +272,28 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		fCursorColumn = source.getCursorColumn();
 	}
 
+	@Override
 	public void copyRange(ITerminalTextData source, int sourceStartLine, int destStartLine, int length) {
 		for (int i = 0; i < length; i++) {
 			copyLine(source, i + sourceStartLine, i + destStartLine);
 		}
 	}
 
+	@Override
 	public void copyLine(ITerminalTextData source, int sourceLine, int destLine) {
 		fChars[destLine] = source.getChars(sourceLine);
 		fStyle[destLine] = source.getStyles(sourceLine);
 		fWrappedLines.set(destLine, source.isWrappedLine(sourceLine));
 	}
 
+	@Override
 	public char[] getChars(int line) {
 		if (fChars[line] == null)
 			return null;
 		return fChars[line].clone();
 	}
 
+	@Override
 	public Style[] getStyles(int line) {
 		if (fStyle[line] == null)
 			return null;
@@ -318,40 +306,49 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		fWrappedLines.clear(line);
 	}
 
+	@Override
 	public void setMaxHeight(int height) {
 		fMaxHeight = height;
 	}
 
+	@Override
 	public int getMaxHeight() {
 		return fMaxHeight;
 	}
 
+	@Override
 	public void cleanLine(int line) {
 		fChars[line] = null;
 		fStyle[line] = null;
 		fWrappedLines.clear(line);
 	}
 
+	@Override
 	public int getCursorColumn() {
 		return fCursorColumn;
 	}
 
+	@Override
 	public int getCursorLine() {
 		return fCursorLine;
 	}
 
+	@Override
 	public void setCursorColumn(int column) {
 		fCursorColumn = column;
 	}
 
+	@Override
 	public void setCursorLine(int line) {
 		fCursorLine = line;
 	}
 
+	@Override
 	public boolean isWrappedLine(int line) {
 		return fWrappedLines.get(line);
 	}
 
+	@Override
 	public void setWrappedLine(int line) {
 		fWrappedLines.set(line);
 	}

@@ -122,7 +122,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					}
 				}
 			}
-
+	
 			return value;
 		}*/
 
@@ -160,9 +160,6 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 		return fInstance;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacro(java.lang.String, int, java.lang.Object)
-	 */
 	@Override
 	public ICdtVariable getMacro(String macroName, int contextType, Object contextData) {
 		ICdtVariable macro = null;
@@ -226,15 +223,15 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					if(targetTool != null){
 						IOutputType pot = targetTool.getPrimaryOutputType();
 						String prefix = pot.getOutputPrefix();
-
-
+		
+		
 						// Resolve any macros in the outputPrefix
 						// Note that we cannot use file macros because if we do a clean
 						// we need to know the actual
 						// name of the file to clean, and cannot use any builder
 						// variables such as $@. Hence
 						// we use the next best thing, i.e. configuration context.
-
+		
 						// figure out the configuration we're using
 						IBuildObject toolParent = targetTool.getParent();
 						IConfiguration config = null;
@@ -246,20 +243,20 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 							config = (IConfiguration) ((IToolChain) toolParent)
 									.getParent();
 						}
-
+		
 						else if (toolParent instanceof IResourceConfiguration) {
 							config = (IConfiguration) ((IResourceConfiguration) toolParent)
 									.getParent();
 						}
-
+		
 						else {
 							// bad
 							throw new AssertionError(
 									"tool parent must be one of configuration, toolchain, or resource configuration");
 						}
-
+		
 						if (config != null) {
-
+		
 							try {
 								prefix = ManagedBuildManager
 										.getBuildMacroProvider()
@@ -270,13 +267,13 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 												IBuildMacroProvider.CONTEXT_CONFIGURATION,
 												config);
 							}
-
+		
 							catch (BuildMacroException e) {
 							}
-
+		
 						}
-
-
+		
+		
 						if(prefix != null && !EMPTY_STRING.equals(prefix))
 							name = prefix + name;
 					}
@@ -287,14 +284,14 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					if(targetTool != null){
 						IOutputType pot = targetTool.getPrimaryOutputType();
 						String prefix = pot.getOutputPrefix();
-
+		
 						// Resolve any macros in the outputPrefix
 						// Note that we cannot use file macros because if we do a clean
 						// we need to know the actual
 						// name of the file to clean, and cannot use any builder
 						// variables such as $@. Hence
 						// we use the next best thing, i.e. configuration context.
-
+		
 						// figure out the configuration we're using
 						IBuildObject toolParent = targetTool.getParent();
 						IConfiguration config = null;
@@ -306,20 +303,20 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 							config = (IConfiguration) ((IToolChain) toolParent)
 									.getParent();
 						}
-
+		
 						else if (toolParent instanceof IResourceConfiguration) {
 							config = (IConfiguration) ((IResourceConfiguration) toolParent)
 									.getParent();
 						}
-
+		
 						else {
 							// bad
 							throw new AssertionError(
 									"tool parent must be one of configuration, toolchain, or resource configuration");
 						}
-
+		
 						if (config != null) {
-
+		
 							try {
 								prefix = ManagedBuildManager
 										.getBuildMacroProvider()
@@ -330,12 +327,12 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 												IBuildMacroProvider.CONTEXT_CONFIGURATION,
 												config);
 							}
-
+		
 							catch (BuildMacroException e) {
 							}
-
+		
 						}
-
+		
 						if(prefix == null)
 							prefix = EMPTY_STRING;
 						macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,prefix);
@@ -354,7 +351,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					if(archList == null)
 						archList = new String[0];
 					macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT_LIST,archList);
-
+		
 				}*/
 		/*		else if("ToolChainVersion".equals(macroName)){	//$NON-NLS-1$
 					if(cfg.getToolChain().getVersion() != null)
@@ -460,9 +457,6 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 		return macro;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacros(int, java.lang.Object)
-	 */
 	@Override
 	public ICdtVariable[] getMacros(int contextType, Object contextData) {
 		String names[] = getMacroNames(contextType, false);
@@ -490,16 +484,16 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 			IPath workingDirectory = null;
 			IResource owner = cfg.getOwner();
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(owner);
-
+	
 			if(info != null){
 				if(info.getDefaultConfiguration().equals(cfg)){
 					IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
 					generator.initialize((IProject)owner,info,null);
-
+	
 					IPath topBuildDir = generator.getBuildWorkingDir();
 					if(topBuildDir == null)
 						topBuildDir = new Path(info.getConfigurationName());
-
+	
 					IPath projectLocation = owner.getLocation();
 					workingDirectory = projectLocation.append(topBuildDir);
 				}

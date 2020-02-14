@@ -66,41 +66,26 @@ public class CommandLauncher implements ICommandLauncher {
 		fShowCommand = false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICommandLauncher#showCommand(boolean)
-	 */
 	@Override
 	public void showCommand(boolean show) {
 		fShowCommand = show;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICommandLauncher#getErrorMessage()
-	 */
 	@Override
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICommandLauncher#setErrorMessage(java.lang.String)
-	 */
 	@Override
 	public void setErrorMessage(String error) {
 		fErrorMessage = error;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICommandLauncher#getCommandArgs()
-	 */
 	@Override
 	public String[] getCommandArgs() {
 		return fCommandArgs;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICommandLauncher#getEnvironment()
-	 */
 	@Override
 	public Properties getEnvironment() {
 		if (fEnvironment == null) {
@@ -121,9 +106,6 @@ public class CommandLauncher implements ICommandLauncher {
 		return fEnvironment.getProperty(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICommandLauncher#getCommandLine()
-	 */
 	@Override
 	public String getCommandLine() {
 		return getCommandLine(getCommandArgs());
@@ -239,9 +221,6 @@ public class CommandLauncher implements ICommandLauncher {
 		return fProcess;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICommandLauncher#waitAndRead(java.io.OutputStream, java.io.OutputStream)
-	 */
 	@Override
 	@Deprecated
 	public int waitAndRead(OutputStream out, OutputStream err) {
@@ -258,9 +237,6 @@ public class CommandLauncher implements ICommandLauncher {
 		return OK;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICommandLauncher#waitAndRead(java.io.OutputStream, java.io.OutputStream, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public int waitAndRead(OutputStream output, OutputStream err, IProgressMonitor monitor) {
 		if (fShowCommand) {

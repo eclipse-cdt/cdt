@@ -59,9 +59,6 @@ class CygwinSymbol extends Symbol {
 		super(binary, name, type, addr, size);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.Symbol#getLineNumber(long)
-	 */
 	@Override
 	public int getLineNumber(long offset) {
 		int line = -1;

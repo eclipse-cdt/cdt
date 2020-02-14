@@ -48,9 +48,6 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		super(container);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void setupPanel(Composite parent) {
 		Composite panel = new Composite(parent, SWT.NONE);
@@ -90,9 +87,6 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		setControl(panel);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#setupData(java.util.Map)
-	 */
 	@Override
 	public void setupData(Map<String, Object> data) {
 		if (data == null || telnetSettings == null || telnetSettingsPage == null)
@@ -124,9 +118,6 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		telnetSettingsPage.loadSettings();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#extractData(java.util.Map)
-	 */
 	@Override
 	public void extractData(Map<String, Object> data) {
 		if (data == null)
@@ -144,9 +135,6 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		data.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#fillSettingsForHost(java.lang.String)
-	 */
 	@Override
 	protected void fillSettingsForHost(String host) {
 		if (host != null && host.length() != 0) {
@@ -177,16 +165,13 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#saveSettingsForHost(boolean)
-	 */
 	@Override
 	protected void saveSettingsForHost(boolean add) {
 		String host = getHostFromSettings();
 		if (host != null && host.length() != 0) {
 			Map<String, String> hostSettings = hostSettingsMap.get(host);
 			if (hostSettings == null && !add) {
-				hostSettings = new HashMap<String, String>();
+				hostSettings = new HashMap<>();
 				hostSettingsMap.put(host, hostSettings);
 			}
 			if (hostSettings != null) {
@@ -203,26 +188,17 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		return isEncodingValid() && telnetSettingsPage.validateSettings();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#doSaveWidgetValues(org.eclipse.jface.dialogs.IDialogSettings, java.lang.String)
-	 */
 	@Override
 	public void doSaveWidgetValues(IDialogSettings settings, String idPrefix) {
 		saveSettingsForHost(true);
 		super.doSaveWidgetValues(settings, idPrefix);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#getHostFromSettings()
-	 */
 	@Override
 	protected String getHostFromSettings() {
 		telnetSettingsPage.saveSettings();

@@ -123,9 +123,6 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 		return fInstance;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacro(java.lang.String, int, java.lang.Object)
-	 */
 	@Override
 	public ICdtVariable getMacro(String macroName, int contextType, Object contextData) {
 		if (macroName == null || macroName.isEmpty())
@@ -155,9 +152,6 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacros(int, java.lang.Object)
-	 */
 	@Override
 	public ICdtVariable[] getMacros(int contextType, Object contextData) {
 		IEnvironmentVariable vars[] = null;

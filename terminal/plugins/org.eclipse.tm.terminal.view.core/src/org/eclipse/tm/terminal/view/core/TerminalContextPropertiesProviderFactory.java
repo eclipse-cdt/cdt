@@ -40,7 +40,7 @@ public final class TerminalContextPropertiesProviderFactory {
 	private static boolean contributionsLoaded = false;
 
 	// The list of all loaded contributions
-	private static final List<Proxy> contributions = new ArrayList<Proxy>();
+	private static final List<Proxy> contributions = new ArrayList<>();
 
 	// The proxy used to achieve lazy class loading and plug-in activation
 	private static class Proxy implements IExecutableExtension {
@@ -59,9 +59,6 @@ public final class TerminalContextPropertiesProviderFactory {
 		protected Proxy() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-		 */
 		@Override
 		public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
 				throws CoreException {

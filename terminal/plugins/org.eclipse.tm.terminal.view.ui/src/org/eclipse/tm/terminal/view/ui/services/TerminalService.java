@@ -42,7 +42,7 @@ public class TerminalService implements ITerminalService {
 	/**
 	 * The registered terminal tab dispose listeners.
 	 */
-	private final ListenerList<ITerminalTabListener> terminalTabListeners = new ListenerList<ITerminalTabListener>();
+	private final ListenerList<ITerminalTabListener> terminalTabListeners = new ListenerList<>();
 
 	// Flag to remember if the terminal view has been restored or not.
 	private boolean fRestoringView;
@@ -85,24 +85,15 @@ public class TerminalService implements ITerminalService {
 		}
 	}
 
-	/**
-	 * Constructor
-	 */
 	public TerminalService() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.core.interfaces.ITerminalService#addTerminalTabListener(org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener)
-	 */
 	@Override
 	public final void addTerminalTabListener(ITerminalTabListener listener) {
 		Assert.isNotNull(listener);
 		terminalTabListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.core.interfaces.ITerminalService#removeTerminalTabListener(org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener)
-	 */
 	@Override
 	public final void removeTerminalTabListener(ITerminalTabListener listener) {
 		Assert.isNotNull(listener);
@@ -261,9 +252,6 @@ public class TerminalService implements ITerminalService {
 		return connector;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.core.interfaces.ITerminalService#openConsole(java.util.Map, org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
-	 */
 	@Override
 	public void openConsole(final Map<String, Object> properties, final Done done) {
 		Assert.isNotNull(properties);
@@ -302,7 +290,7 @@ public class TerminalService implements ITerminalService {
 				// Determine the terminal encoding
 				String encoding = (String) properties.get(ITerminalsConnectorConstants.PROP_ENCODING);
 				// Create the flags to pass on to openConsole
-				Map<String, Boolean> flags = new HashMap<String, Boolean>();
+				Map<String, Boolean> flags = new HashMap<>();
 				flags.put("activate", Boolean.TRUE); //$NON-NLS-1$
 				if (properties.get(ITerminalsConnectorConstants.PROP_FORCE_NEW) instanceof Boolean) {
 					flags.put(ITerminalsConnectorConstants.PROP_FORCE_NEW,
@@ -331,9 +319,6 @@ public class TerminalService implements ITerminalService {
 		}, done);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.core.interfaces.ITerminalService#closeConsole(java.util.Map, org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
-	 */
 	@Override
 	public void closeConsole(final Map<String, Object> properties, final Done done) {
 		Assert.isNotNull(properties);
@@ -351,9 +336,6 @@ public class TerminalService implements ITerminalService {
 		}, done);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.core.interfaces.ITerminalService#terminateConsole(java.util.Map, org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
-	 */
 	@Override
 	public void terminateConsole(Map<String, Object> properties, Done done) {
 		Assert.isNotNull(properties);

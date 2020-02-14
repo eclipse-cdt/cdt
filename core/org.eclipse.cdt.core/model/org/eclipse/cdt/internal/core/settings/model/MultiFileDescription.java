@@ -27,9 +27,6 @@ public class MultiFileDescription extends MultiResourceDescription implements IC
 		super(res);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.settings.model.ICFileDescription#getLanguageSetting()
-	 */
 	@Override
 	public ICLanguageSetting getLanguageSetting() {
 		if (DEBUG)

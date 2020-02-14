@@ -559,18 +559,12 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 		toolbarHandler.initialize();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		if (pageBookControl != null)
 			pageBookControl.setFocus();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView#switchToEmptyPageControl()
-	 */
 	@Override
 	public void switchToEmptyPageControl() {
 		if (pageBookControl != null && !pageBookControl.isDisposed() && emptyPageControl != null
@@ -579,9 +573,6 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView#switchToTabFolderControl()
-	 */
 	@Override
 	public void switchToTabFolderControl() {
 		if (pageBookControl != null && !pageBookControl.isDisposed() && tabFolderControl != null
@@ -590,9 +581,6 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(Class adapter) {
@@ -615,9 +603,6 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 		return super.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);

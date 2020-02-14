@@ -58,17 +58,11 @@ public class IncludeReference extends Openable implements IIncludeReference {
 		fPath = PathUtil.getCanonicalPathWindows(path);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElement#getResource()
-	 */
 	@Override
 	public IResource getResource() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.core.model.CElement#exists()
-	 */
 	@Override
 	public boolean exists() {
 		File file = null;
@@ -80,42 +74,27 @@ public class IncludeReference extends Openable implements IIncludeReference {
 		return file != null && file.isDirectory();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CElement#createElementInfo()
-	 */
 	@Override
 	protected CElementInfo createElementInfo() {
 		return new OpenableInfo(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IIncludeReference#getIncludeEntry()
-	 */
 	@Override
 	public IIncludeEntry getIncludeEntry() {
 		return fIncludeEntry;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements,
 			IResource underlyingResource) throws CModelException {
 		return computeChildren(info, pm, underlyingResource);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IIncludeReference#getAffectedPath()
-	 */
 	@Override
 	public IPath getAffectedPath() {
 		return fIncludeEntry.getPath();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CContainer#computeChildren(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.resources.IResource)
-	 */
 	protected boolean computeChildren(OpenableInfo info, IProgressMonitor pm, IResource res) throws CModelException {
 		ArrayList<ICElement> vChildren = new ArrayList<>();
 		IPath filePath = null;
@@ -178,9 +157,6 @@ public class IncludeReference extends Openable implements IIncludeReference {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IIncludeReference#isOnIncludeEntry(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public boolean isOnIncludeEntry(IPath path) {
 		if (fIncludeEntry.getFullIncludePath().isPrefixOf(path)
@@ -190,9 +166,6 @@ public class IncludeReference extends Openable implements IIncludeReference {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
-	 */
 	@Override
 	public IPath getPath() {
 		return fPath;

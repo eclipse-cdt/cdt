@@ -66,9 +66,6 @@ public class CygwinPEParser extends PEParser {
 		return new DefaultCygwinToolFactory(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(Class adapter) {

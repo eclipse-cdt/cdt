@@ -174,9 +174,6 @@ public class CVisitor extends ASTQueries {
 			return removeNullFromProblems();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-		 */
 		@Override
 		public int visit(IASTDeclaration declaration) {
 			if (declaration instanceof IASTProblemHolder)
@@ -185,9 +182,6 @@ public class CVisitor extends ASTQueries {
 			return PROCESS_CONTINUE;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-		 */
 		@Override
 		public int visit(IASTExpression expression) {
 			if (expression instanceof IASTProblemHolder)
@@ -196,9 +190,6 @@ public class CVisitor extends ASTQueries {
 			return PROCESS_CONTINUE;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
-		 */
 		@Override
 		public int visit(IASTStatement statement) {
 			if (statement instanceof IASTProblemHolder)
@@ -207,9 +198,6 @@ public class CVisitor extends ASTQueries {
 			return PROCESS_CONTINUE;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-		 */
 		@Override
 		public int visit(IASTTypeId typeId) {
 			if (typeId instanceof IASTProblemHolder)
@@ -266,9 +254,6 @@ public class CVisitor extends ASTQueries {
 			this.binding = binding;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
-		 */
 		@Override
 		public int visit(IASTDeclarator declarator) {
 			//GCC allows declarations in expressions, so we have to continue from the
@@ -309,9 +294,6 @@ public class CVisitor extends ASTQueries {
 			return PROCESS_CONTINUE;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
-		 */
 		@Override
 		public int visit(IASTDeclSpecifier declSpec) {
 			if (compositeTypeDeclared && declSpec instanceof ICASTTypedefNameSpecifier)
@@ -348,9 +330,6 @@ public class CVisitor extends ASTQueries {
 			return PROCESS_CONTINUE;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
-		 */
 		@Override
 		public int visit(IASTEnumerator enumerator) {
 			if (binding instanceof IEnumerator && enumerator.getName().resolveBinding() == binding) {
@@ -360,9 +339,6 @@ public class CVisitor extends ASTQueries {
 			return PROCESS_CONTINUE;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
-		 */
 		@Override
 		public int visit(IASTStatement statement) {
 			if (statement instanceof IASTLabelStatement && binding instanceof ILabel) {

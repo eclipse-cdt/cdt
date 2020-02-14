@@ -73,10 +73,12 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 		throw new RuntimeException();
 	}
 
+	@Override
 	public void detach() {
 		fTerminal.removeSnapshot(this);
 	}
 
+	@Override
 	public boolean isOutOfDate() {
 		// this is called from fTerminal, therefore we lock on fTerminal
 		synchronized (fTerminal) {
@@ -84,9 +86,7 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ITerminalTextDataSnapshot#snapshot()
-	 */
+	@Override
 	public void updateSnapshot(boolean detectScrolling) {
 		// make sure terminal does not change while we make the snapshot
 		synchronized (fTerminal) {
@@ -121,69 +121,67 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 		}
 	}
 
+	@Override
 	public char getChar(int line, int column) {
 		return fSnapshot.getChar(line, column);
 	}
 
+	@Override
 	public int getHeight() {
 		return fSnapshot.getHeight();
 	}
 
+	@Override
 	public LineSegment[] getLineSegments(int line, int column, int len) {
 		return fSnapshot.getLineSegments(line, column, len);
 	}
 
+	@Override
 	public Style getStyle(int line, int column) {
 		return fSnapshot.getStyle(line, column);
 	}
 
+	@Override
 	public int getWidth() {
 		return fSnapshot.getWidth();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ITerminalTextDataSnapshot#getFirstChangedLine()
-	 */
+	@Override
 	public int getFirstChangedLine() {
 		return fCurrentChanges.getFirstChangedLine();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ITerminalTextDataSnapshot#getLastChangedLine()
-	 */
+	@Override
 	public int getLastChangedLine() {
 		return fCurrentChanges.getLastChangedLine();
 	}
 
+	@Override
 	public boolean hasLineChanged(int line) {
 		return fCurrentChanges.hasLineChanged(line);
 	}
 
+	@Override
 	public boolean hasDimensionsChanged() {
 		return fCurrentChanges.hasDimensionsChanged();
 	}
 
+	@Override
 	public boolean hasTerminalChanged() {
 		return fCurrentChanges.hasTerminalChanged();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ITerminalTextDataSnapshot#getScrollChangeY()
-	 */
+	@Override
 	public int getScrollWindowStartLine() {
 		return fCurrentChanges.getScrollWindowStartLine();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ITerminalTextDataSnapshot#getScrollChangeN()
-	 */
+	@Override
 	public int getScrollWindowSize() {
 		return fCurrentChanges.getScrollWindowSize();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.model.ITerminalTextDataSnapshot#getScrollChangeShift()
-	 */
+	@Override
 	public int getScrollWindowShift() {
 		return fCurrentChanges.getScrollWindowShift();
 	}
@@ -248,36 +246,43 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 		}
 	}
 
+	@Override
 	public ITerminalTextDataSnapshot makeSnapshot() {
 		return fSnapshot.makeSnapshot();
 	}
 
+	@Override
 	synchronized public void addListener(SnapshotOutOfDateListener listener) {
-		List<SnapshotOutOfDateListener> list = new ArrayList<SnapshotOutOfDateListener>();
+		List<SnapshotOutOfDateListener> list = new ArrayList<>();
 		list.addAll(Arrays.asList(fListener));
 		list.add(listener);
 		fListener = list.toArray(new SnapshotOutOfDateListener[list.size()]);
 	}
 
+	@Override
 	synchronized public void removeListener(SnapshotOutOfDateListener listener) {
-		List<SnapshotOutOfDateListener> list = new ArrayList<SnapshotOutOfDateListener>();
+		List<SnapshotOutOfDateListener> list = new ArrayList<>();
 		list.addAll(Arrays.asList(fListener));
 		list.remove(listener);
 		fListener = list.toArray(new SnapshotOutOfDateListener[list.size()]);
 	}
 
+	@Override
 	public String toString() {
 		return fSnapshot.toString();
 	}
 
+	@Override
 	public int getInterestWindowSize() {
 		return fInterestWindowSize;
 	}
 
+	@Override
 	public int getInterestWindowStartLine() {
 		return fInterestWindowStartLine;
 	}
 
+	@Override
 	public void setInterestWindow(int startLine, int size) {
 		assert startLine >= 0 || throwRuntimeException();
 		assert size >= 0 || throwRuntimeException();
@@ -288,26 +293,32 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 		notifyListers();
 	}
 
+	@Override
 	public char[] getChars(int line) {
 		return fSnapshot.getChars(line);
 	}
 
+	@Override
 	public Style[] getStyles(int line) {
 		return fSnapshot.getStyles(line);
 	}
 
+	@Override
 	public int getCursorColumn() {
 		return fSnapshot.getCursorColumn();
 	}
 
+	@Override
 	public int getCursorLine() {
 		return fSnapshot.getCursorLine();
 	}
 
+	@Override
 	public ITerminalTextData getTerminalTextData() {
 		return fTerminal;
 	}
 
+	@Override
 	public boolean isWrappedLine(int line) {
 		return fSnapshot.isWrappedLine(line);
 	}

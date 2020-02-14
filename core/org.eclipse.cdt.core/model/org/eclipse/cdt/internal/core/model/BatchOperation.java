@@ -30,9 +30,6 @@ public class BatchOperation extends CModelOperation {
 		this.runnable = runnable;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.core.JavaModelOperation#executeOperation()
-	 */
 	@Override
 	protected void executeOperation() throws CModelException {
 		try {
@@ -51,9 +48,6 @@ public class BatchOperation extends CModelOperation {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.core.JavaModelOperation#verify()
-	 */
 	@Override
 	protected ICModelStatus verify() {
 		// cannot verify user defined operation

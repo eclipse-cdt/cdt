@@ -33,7 +33,7 @@ import org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel;
  * which should share the same UI space.
  */
 public class ConfigurationPanelControl implements IConfigurationPanelContainer, IMessageProvider {
-	private final Map<String, IConfigurationPanel> configurationPanels = new Hashtable<String, IConfigurationPanel>();
+	private final Map<String, IConfigurationPanel> configurationPanels = new Hashtable<>();
 
 	private String message = null;
 	private int messageType = IMessageProvider.NONE;
@@ -62,9 +62,6 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 			super(container);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
-		 */
 		@Override
 		public void setupPanel(Composite parent) {
 			Composite panel = new Composite(parent, SWT.NONE);
@@ -76,9 +73,6 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 			setControl(panel);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#isValid()
-		 */
 		@Override
 		public boolean isValid() {
 			return false;
@@ -137,9 +131,6 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer#validate()
-	 */
 	@Override
 	public void validate() {
 	}
@@ -260,7 +251,7 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 			return;
 		}
 		IConfigurationPanel configPanel = getActiveConfigurationPanel();
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		if (configPanel != null)
 			configPanel.extractData(data);
 		configPanel = getConfigurationPanel(key);
@@ -398,17 +389,11 @@ public class ConfigurationPanelControl implements IConfigurationPanelContainer, 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
-	 */
 	@Override
 	public final String getMessage() {
 		return message;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
-	 */
 	@Override
 	public final int getMessageType() {
 		return messageType;

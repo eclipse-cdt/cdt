@@ -57,9 +57,6 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo {
 		return suppliers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo#getNext()
-	 */
 	@Override
 	public IEnvironmentContextInfo getNext() {
 		DefaultEnvironmentContextInfo next = null;
@@ -71,9 +68,6 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo {
 		return next;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo#getSuppliers()
-	 */
 	@Override
 	public ICoreEnvironmentVariableSupplier[] getSuppliers() {
 		if (fContextSuppliers == null)
@@ -85,9 +79,6 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo {
 		fContextSuppliers = suppliers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo#getContext()
-	 */
 	@Override
 	public Object getContext() {
 		return fContextObject;

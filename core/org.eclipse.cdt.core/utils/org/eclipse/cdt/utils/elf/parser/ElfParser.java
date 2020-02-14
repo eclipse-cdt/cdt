@@ -33,13 +33,8 @@ import org.eclipse.cdt.utils.elf.Elf.PHdr;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 
-/**
- */
 public class ElfParser extends AbstractCExtension implements IBinaryParser {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public IBinaryFile getBinary(IPath path) throws IOException {
 		return getBinary(null, path);
@@ -95,25 +90,16 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 		return binary;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.IBinaryParser#getFormat()
-	 */
 	@Override
 	public String getFormat() {
 		return "ELF"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public boolean isBinary(byte[] array, IPath path) {
 		return Elf.isElfHeader(array) || AR.isARHeader(array);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser#getBufferSize()
-	 */
 	@Override
 	public int getHintBufferSize() {
 		return 128;

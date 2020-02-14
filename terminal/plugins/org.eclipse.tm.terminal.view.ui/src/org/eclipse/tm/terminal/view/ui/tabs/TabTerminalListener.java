@@ -83,27 +83,24 @@ public class TabTerminalListener implements ITerminalListener2 {
 			return;
 
 		// Run asynchronously in the display thread
-		item.getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				// Update the tab item title
-				String newTitle = getTerminalConsoleTabTitle(state);
-				if (newTitle != null)
-					item.setText(newTitle);
+		item.getDisplay().asyncExec(() -> {
+			// Update the tab item title
+			String newTitle = getTerminalConsoleTabTitle(state);
+			if (newTitle != null)
+				item.setText(newTitle);
 
-				// Turn off the command field (if necessary)
-				TabCommandFieldHandler handler = tabFolderManager.getTabCommandFieldHandler(item);
-				if (TerminalState.CLOSED.equals(state) && handler != null && handler.hasCommandInputField()) {
-					handler.setCommandInputField(false);
-					// Trigger a selection changed event to update the action enablements
-					// and the status line
-					ISelectionProvider provider = tabFolderManager.getParentView().getViewSite().getSelectionProvider();
-					Assert.isNotNull(provider);
-					provider.setSelection(provider.getSelection());
-				} else {
-					// Update the status line
-					tabFolderManager.updateStatusLine();
-				}
+			// Turn off the command field (if necessary)
+			TabCommandFieldHandler handler = tabFolderManager.getTabCommandFieldHandler(item);
+			if (TerminalState.CLOSED.equals(state) && handler != null && handler.hasCommandInputField()) {
+				handler.setCommandInputField(false);
+				// Trigger a selection changed event to update the action enablements
+				// and the status line
+				ISelectionProvider provider = tabFolderManager.getParentView().getViewSite().getSelectionProvider();
+				Assert.isNotNull(provider);
+				provider.setSelection(provider.getSelection());
+			} else {
+				// Update the status line
+				tabFolderManager.updateStatusLine();
 			}
 		});
 	}

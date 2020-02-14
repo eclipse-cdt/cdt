@@ -170,12 +170,7 @@ public class TerminalConnectorFactoryTest extends TestCase {
 	}
 
 	protected TerminalConnector makeTerminalConnector(final TerminalConnectorImpl mock) {
-		TerminalConnector c = new TerminalConnector(new TerminalConnector.Factory() {
-			@Override
-			public TerminalConnectorImpl makeConnector() throws Exception {
-				return mock;
-			}
-		}, "xID", "xName", false);
+		TerminalConnector c = new TerminalConnector(() -> mock, "xID", "xName", false);
 		return c;
 	}
 

@@ -49,11 +49,7 @@ public class TerminalConnectorExtension {
 		}
 		String hidden = config.getAttribute("hidden"); //$NON-NLS-1$
 		boolean isHidden = hidden != null ? new Boolean(hidden).booleanValue() : false;
-		TerminalConnector.Factory factory = new TerminalConnector.Factory() {
-			public TerminalConnectorImpl makeConnector() throws Exception {
-				return (TerminalConnectorImpl) config.createExecutableExtension("class"); //$NON-NLS-1$
-			}
-		};
+		TerminalConnector.Factory factory = () -> (TerminalConnectorImpl) config.createExecutableExtension("class");
 		return new TerminalConnector(factory, id, name, isHidden);
 	}
 

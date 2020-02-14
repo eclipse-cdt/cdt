@@ -198,12 +198,7 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 			return;
 
 		// Create a new runnable which is constantly reading from the stream
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				writeStream();
-			}
-		};
+		Runnable runnable = () -> writeStream();
 
 		// Create the writer thread
 		thread = new Thread(runnable, "Terminal Input Stream Monitor Thread"); //$NON-NLS-1$

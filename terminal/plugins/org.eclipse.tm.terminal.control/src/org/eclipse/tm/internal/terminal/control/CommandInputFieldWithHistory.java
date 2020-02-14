@@ -35,8 +35,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
@@ -235,27 +233,25 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		final GridData gd_sash = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd_sash.heightHint = 5;
 		fSash.setLayoutData(gd_sash);
-		fSash.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				if (e.detail == SWT.DRAG) {
-					// don't redraw during drag, it causes paint errors - bug 220971
-					return;
-				}
-				// no idea why this is needed
-				GridData gdata = (GridData) fInputField.getLayoutData();
-				Rectangle sashRect = fSash.getBounds();
-				Rectangle containerRect = parent.getClientArea();
-
-				int h = fInputField.getLineHeight();
-				// make sure the input filed height is a multiple of the line height
-				gdata.heightHint = Math.max(((containerRect.height - e.y - sashRect.height) / h) * h, h);
-				// do not show less then one line
-				e.y = Math.min(e.y, containerRect.height - h);
-				fInputField.setLayoutData(gdata);
-				parent.layout();
-				// else the content assist icon will be replicated
-				parent.redraw();
+		fSash.addListener(SWT.Selection, e -> {
+			if (e.detail == SWT.DRAG) {
+				// don't redraw during drag, it causes paint errors - bug 220971
+				return;
 			}
+			// no idea why this is needed
+			GridData gdata = (GridData) fInputField.getLayoutData();
+			Rectangle sashRect = fSash.getBounds();
+			Rectangle containerRect = parent.getClientArea();
+
+			int h = fInputField.getLineHeight();
+			// make sure the input filed height is a multiple of the line height
+			gdata.heightHint = Math.max(((containerRect.height - e.y - sashRect.height) / h) * h, h);
+			// do not show less then one line
+			e.y = Math.min(e.y, containerRect.height - h);
+			fInputField.setLayoutData(gdata);
+			parent.layout();
+			// else the content assist icon will be replicated
+			parent.redraw();
 		});
 		fPanel = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();

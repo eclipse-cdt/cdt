@@ -27,7 +27,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -462,24 +461,21 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 				if (Messages.AbstractConfigurationPanel_encoding_custom.equals(encodingCombo.getText())) {
 					InputDialog dialog = new InputDialog(parent.getShell(),
 							Messages.AbstractConfigurationPanel_encoding_custom_title,
-							Messages.AbstractConfigurationPanel_encoding_custom_message, null, new IInputValidator() {
-								@Override
-								public String isValid(String newText) {
-									boolean valid = false;
-									try {
-										if (newText != null && !"".equals(newText)) { //$NON-NLS-1$
-											valid = Charset.isSupported(newText);
-										}
-									} catch (IllegalCharsetNameException e) {
-										/* ignored on purpose */ }
-
-									if (!valid) {
-										return newText != null && !"".equals(newText) //$NON-NLS-1$
-												? Messages.AbstractConfigurationPanel_encoding_custom_error
-												: ""; //$NON-NLS-1$
+							Messages.AbstractConfigurationPanel_encoding_custom_message, null, newText -> {
+								boolean valid = false;
+								try {
+									if (newText != null && !"".equals(newText)) { //$NON-NLS-1$
+										valid = Charset.isSupported(newText);
 									}
-									return null;
+								} catch (IllegalCharsetNameException e1) {
+									/* ignored on purpose */ }
+
+								if (!valid) {
+									return newText != null && !"".equals(newText) //$NON-NLS-1$
+											? Messages.AbstractConfigurationPanel_encoding_custom_error
+											: ""; //$NON-NLS-1$
 								}
+								return null;
 							});
 					if (dialog.open() == Window.OK) {
 						String encoding = dialog.getValue();

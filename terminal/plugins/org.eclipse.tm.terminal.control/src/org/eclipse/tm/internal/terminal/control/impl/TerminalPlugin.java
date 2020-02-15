@@ -64,7 +64,7 @@ public class TerminalPlugin extends AbstractUIPlugin {
 		if (strEnabled == null)
 			return false;
 
-		return new Boolean(strEnabled).booleanValue();
+		return Boolean.parseBoolean(strEnabled);
 	}
 
 	@Override

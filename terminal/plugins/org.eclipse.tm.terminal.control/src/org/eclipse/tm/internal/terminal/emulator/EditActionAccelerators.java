@@ -38,7 +38,7 @@ class EditActionAccelerators {
 				KeyStroke[] keyStrokes = ((KeySequence) bindings[i]).getKeyStrokes();
 				if (keyStrokes.length != 0) {
 					int accelerator = SWTKeySupport.convertKeyStrokeToAccelerator(keyStrokes[0]);
-					commandIdsByAccelerator.put(new Integer(accelerator), commandId);
+					commandIdsByAccelerator.put(Integer.valueOf(accelerator), commandId);
 				}
 			}
 		}
@@ -65,6 +65,6 @@ class EditActionAccelerators {
 		if (commandIdsByAccelerator.isEmpty()) {
 			load();
 		}
-		return commandId.equals(commandIdsByAccelerator.get(new Integer(accelerator)));
+		return commandId.equals(commandIdsByAccelerator.get(Integer.valueOf(accelerator)));
 	}
 }

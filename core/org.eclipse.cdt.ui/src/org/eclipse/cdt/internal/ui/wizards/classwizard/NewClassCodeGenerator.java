@@ -91,7 +91,6 @@ public class NewClassCodeGenerator {
 	private ICElement fCreatedClass;
 	private String fFullyQualifiedClassName;
 	private boolean fForceSourceFileCreation;
-	private final boolean fIsFinal;
 
 	/**
 	 * When set to <code>true</code>, the source file is created, even if no stubs have
@@ -126,7 +125,7 @@ public class NewClassCodeGenerator {
 	 * @param methodStubs the method stubs
 	 */
 	public NewClassCodeGenerator(IPath headerPath, IPath sourcePath, IPath testPath, String className, String namespace,
-			IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, boolean isFinal) {
+			IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs) {
 		fHeaderPath = headerPath;
 		fSourcePath = sourcePath;
 		fTestPath = testPath;
@@ -143,7 +142,6 @@ public class NewClassCodeGenerator {
 		}
 		fBaseClasses = baseClasses;
 		fMethodStubs = methodStubs;
-		fIsFinal = isFinal;
 	}
 
 	public ICElement getCreatedClass() {
@@ -468,9 +466,6 @@ public class NewClassCodeGenerator {
 		}
 		code.append("class "); //$NON-NLS-1$
 		code.append(fClassName);
-		if (fIsFinal) {
-			code.append(" final "); //$NON-NLS-1$
-		}
 		code.append(constructBaseClassInheritance());
 		code.append(" {"); //$NON-NLS-1$
 		code.append(lineDelimiter);

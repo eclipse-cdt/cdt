@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bccc3e21_8c99ec35",
+        "filename": "llvm/org.eclipse.cdt.managedbuilder.llvm.ui/build.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-15T10:52:26Z",
+      "side": 1,
+      "message": "hmmm. I don\u0027t think it should be there. At least I never saw it there before",
+      "revId": "567b0d1ca1bf622549d6212116366bfe5fda3ef8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

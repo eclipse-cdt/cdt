@@ -86,6 +86,7 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		return true;
 	}
 
+	@Override
 	public void addLine() {
 		if (getHeight() < fMaxHeight) {
 			setDimensions(getHeight() + 1, getWidth());
@@ -94,10 +95,12 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		}
 	}
 
+	@Override
 	public void cleanLine(int line) {
 		fData.cleanLine(getPositionOfLine(line));
 	}
 
+	@Override
 	public void copy(ITerminalTextData source) {
 		int n = source.getHeight();
 		setDimensions(source.getHeight(), source.getWidth());
@@ -106,10 +109,12 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		}
 	}
 
+	@Override
 	public void copyLine(ITerminalTextData source, int sourceLine, int destLine) {
 		fData.copyLine(source, sourceLine, getPositionOfLine(destLine));
 	}
 
+	@Override
 	public void copyRange(ITerminalTextData source, int sourceStartLine, int destStartLine, int length) {
 		assert (destStartLine >= 0 && destStartLine + length <= fHeight) || throwRuntimeException();
 		for (int i = 0; i < length; i++) {
@@ -117,43 +122,52 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		}
 	}
 
+	@Override
 	public char getChar(int line, int column) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		return fData.getChar(getPositionOfLine(line), column);
 	}
 
+	@Override
 	public char[] getChars(int line) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		return fData.getChars(getPositionOfLine(line));
 	}
 
+	@Override
 	public int getHeight() {
 		return fHeight;
 	}
 
+	@Override
 	public LineSegment[] getLineSegments(int line, int startCol, int numberOfCols) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		return fData.getLineSegments(getPositionOfLine(line), startCol, numberOfCols);
 	}
 
+	@Override
 	public int getMaxHeight() {
 		return fMaxHeight;
 	}
 
+	@Override
 	public Style getStyle(int line, int column) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		return fData.getStyle(getPositionOfLine(line), column);
 	}
 
+	@Override
 	public Style[] getStyles(int line) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		return fData.getStyles(getPositionOfLine(line));
 	}
 
+	@Override
 	public int getWidth() {
 		return fData.getWidth();
 	}
 
+	@Override
 	public ITerminalTextDataSnapshot makeSnapshot() {
 		return fData.makeSnapshot();
 	}
@@ -164,6 +178,7 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		}
 	}
 
+	@Override
 	public void scroll(int startLine, int size, int shift) {
 		assert (startLine >= 0 && startLine + size <= fHeight) || throwRuntimeException();
 		if (shift >= fMaxHeight || -shift >= fMaxHeight) {
@@ -198,21 +213,25 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		}
 	}
 
+	@Override
 	public void setChar(int line, int column, char c, Style style) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		fData.setChar(getPositionOfLine(line), column, c, style);
 	}
 
+	@Override
 	public void setChars(int line, int column, char[] chars, int start, int len, Style style) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		fData.setChars(getPositionOfLine(line), column, chars, start, len, style);
 	}
 
+	@Override
 	public void setChars(int line, int column, char[] chars, Style style) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		fData.setChars(getPositionOfLine(line), column, chars, style);
 	}
 
+	@Override
 	public void setDimensions(int height, int width) {
 		assert height >= 0 || throwRuntimeException();
 		assert width >= 0 || throwRuntimeException();
@@ -223,6 +242,7 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 			fData.setDimensions(fMaxHeight, width);
 	}
 
+	@Override
 	public void setMaxHeight(int maxHeight) {
 		assert maxHeight >= fHeight || throwRuntimeException();
 		// move everything to offset0
@@ -247,27 +267,33 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		fMaxHeight = maxHeight;
 	}
 
+	@Override
 	public int getCursorColumn() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public int getCursorLine() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void setCursorColumn(int column) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void setCursorLine(int line) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean isWrappedLine(int line) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		return fData.isWrappedLine(getPositionOfLine(line));
 	}
 
+	@Override
 	public void setWrappedLine(int line) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		fData.setWrappedLine(getPositionOfLine(line));

@@ -44,10 +44,12 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
 		super(GRID);
 	}
 
+	@Override
 	protected void createFieldEditors() {
 		setupPage();
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 		// do nothing
 	}

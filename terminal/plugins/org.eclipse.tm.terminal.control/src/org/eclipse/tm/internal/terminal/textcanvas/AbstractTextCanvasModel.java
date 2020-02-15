@@ -23,7 +23,7 @@ import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 
 abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
-	protected List<ITextCanvasModelListener> fListeners = new ArrayList<ITextCanvasModelListener>();
+	protected List<ITextCanvasModelListener> fListeners = new ArrayList<>();
 	private int fCursorLine;
 	private int fCursorColumn;
 	private boolean fShowCursor;
@@ -50,10 +50,12 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		fLines = fSnapshot.getHeight();
 	}
 
+	@Override
 	public void addCellCanvasModelListener(ITextCanvasModelListener listener) {
 		fListeners.add(listener);
 	}
 
+	@Override
 	public void removeCellCanvasModelListener(ITextCanvasModelListener listener) {
 		fListeners.remove(listener);
 	}
@@ -81,6 +83,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 
 	}
 
+	@Override
 	public ITerminalTextDataReadOnly getTerminalText() {
 		return fSnapshot;
 	}
@@ -127,14 +130,17 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		updateCursor();
 	}
 
+	@Override
 	public int getCursorColumn() {
 		return fCursorColumn;
 	}
 
+	@Override
 	public int getCursorLine() {
 		return fCursorLine;
 	}
 
+	@Override
 	public boolean isCursorOn() {
 		return fShowCursor && fCursorIsEnabled;
 	}
@@ -194,6 +200,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		}
 	}
 
+	@Override
 	public void setVisibleRectangle(int startLine, int startCol, int height, int width) {
 		fSnapshot.setInterestWindow(Math.max(0, startLine), Math.max(1, height));
 		update();
@@ -203,6 +210,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		fShowCursor = true;
 	}
 
+	@Override
 	public void setCursorEnabled(boolean visible) {
 		fCursorTime = System.currentTimeMillis();
 		fShowCursor = visible;
@@ -210,10 +218,12 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		fireCellRangeChanged(fCursorColumn, fCursorLine, 1, 1);
 	}
 
+	@Override
 	public boolean isCursorEnabled() {
 		return fCursorIsEnabled;
 	}
 
+	@Override
 	public Point getSelectionEnd() {
 		if (fSelectionStartLine < 0)
 			return null;
@@ -221,6 +231,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 			return new Point(fSelectionEndColumn, fSeletionEndLine);
 	}
 
+	@Override
 	public Point getSelectionStart() {
 		if (fSelectionStartLine < 0)
 			return null;
@@ -228,17 +239,20 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 			return new Point(fSelectionStartCoumn, fSelectionStartLine);
 	}
 
+	@Override
 	public Point getSelectionAnchor() {
 		if (fSelectionStartLine < 0)
 			return null;
 		return new Point(fSelectionAnchor.x, fSelectionAnchor.y);
 	}
 
+	@Override
 	public void setSelectionAnchor(Point anchor) {
 		fSelectionAnchor.x = anchor.x;
 		fSelectionAnchor.y = anchor.y;
 	}
 
+	@Override
 	public void setSelection(int startLine, int endLine, int startColumn, int endColumn) {
 		//		System.err.println(startLine+","+endLine+","+startColumn+","+endColumn);
 		doSetSelection(startLine, endLine, startColumn, endColumn);
@@ -282,6 +296,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		}
 	}
 
+	@Override
 	public boolean hasLineSelection(int line) {
 		if (fSelectionStartLine < 0)
 			return false;
@@ -289,6 +304,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 			return line >= fSelectionStartLine && line <= fSeletionEndLine;
 	}
 
+	@Override
 	public String getSelectedText() {
 		return fCurrentSelection;
 	}

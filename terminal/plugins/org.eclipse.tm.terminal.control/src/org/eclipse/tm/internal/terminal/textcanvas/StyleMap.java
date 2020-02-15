@@ -48,9 +48,9 @@ public class StyleMap {
 
 	private static final String PREFIX = "org.eclipse.tm.internal."; //$NON-NLS-1$
 	String fFontName = ITerminalConstants.FONT_DEFINITION;
-	Map<StyleColor, Color> fColorMapForeground = new HashMap<StyleColor, Color>();
-	Map<StyleColor, Color> fColorMapBackground = new HashMap<StyleColor, Color>();
-	Map<StyleColor, Color> fColorMapIntense = new HashMap<StyleColor, Color>();
+	Map<StyleColor, Color> fColorMapForeground = new HashMap<>();
+	Map<StyleColor, Color> fColorMapBackground = new HashMap<>();
+	Map<StyleColor, Color> fColorMapIntense = new HashMap<>();
 	private Point fCharSize;
 	private final Style fDefaultStyle;
 	private boolean fInvertColors;

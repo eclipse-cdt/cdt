@@ -44,6 +44,7 @@ public abstract class AbstractTerminalAction extends Action {
 		setId(strId);
 	}
 
+	@Override
 	abstract public void run();
 
 	protected void setupAction(String strText, String strToolTip, String strImage, String strEnabledImage,

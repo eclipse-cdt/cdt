@@ -55,11 +55,12 @@ import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 public class CommandInputFieldWithHistory implements ICommandInputField {
 	private class FieldAssist implements IContentProposalProvider {
 
+		@Override
 		public IContentProposal[] getProposals(String contents, int position) {
 			String prefix = contents.substring(0, position);
-			List<Proposal> result = new ArrayList<Proposal>();
+			List<Proposal> result = new ArrayList<>();
 			// show an entry only once
-			Set<String> seen = new HashSet<String>();
+			Set<String> seen = new HashSet<>();
 			for (Iterator<String> iterator = fHistory.iterator(); iterator.hasNext();) {
 				String history = iterator.next();
 				if (history.startsWith(prefix) && !seen.contains(history)) {
@@ -85,24 +86,28 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 			fLabel = label;
 		}
 
+		@Override
 		public String getContent() {
 			return fContent;
 		}
 
+		@Override
 		public String getLabel() {
 			return fLabel;
 		}
 
+		@Override
 		public String getDescription() {
 			return null;
 		}
 
+		@Override
 		public int getCursorPosition() {
 			return fContent.length();
 		}
 	}
 
-	final List<String> fHistory = new ArrayList<String>();
+	final List<String> fHistory = new ArrayList<>();
 	/**
 	 * Keeps a modifiable history while in history editing mode
 	 */
@@ -189,7 +194,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	 */
 	public String move(String currLine, int count) {
 		if (!inHistoryMode()) {
-			fEditedHistory = new ArrayList<Object>(fHistory.size() + 1);
+			fEditedHistory = new ArrayList<>(fHistory.size() + 1);
 			fEditedHistory.add(currLine);
 			fEditedHistory.addAll(fHistory);
 			fEditHistoryPos = 0;
@@ -227,6 +232,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		fEditHistoryPos = 0;
 	}
 
+	@Override
 	public void createControl(final Composite parent, final ITerminalViewControl terminal) {
 		//		fSash = new Sash(parent,SWT.HORIZONTAL|SWT.SMOOTH);
 		fSash = new Sash(parent, SWT.HORIZONTAL);
@@ -279,6 +285,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		new ContentAssistCommandAdapter(fInputField, new TextContentAdapter(), new FieldAssist(), null, null,
 				installDecoration);
 		fInputField.addKeyListener(new KeyListener() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				// if the field assist has handled the key already then
 				// ignore it (https://bugs.eclipse.org/bugs/show_bug.cgi?id=211659)
@@ -310,16 +317,19 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 				fInputField.setSelection(fInputField.getCharCount());
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 			}
 		});
 	}
 
+	@Override
 	public void setFont(Font font) {
 		fInputField.setFont(font);
 		fInputField.getParent().layout(true);
 	}
 
+	@Override
 	public void dispose() {
 		fSash.dispose();
 		fSash = null;

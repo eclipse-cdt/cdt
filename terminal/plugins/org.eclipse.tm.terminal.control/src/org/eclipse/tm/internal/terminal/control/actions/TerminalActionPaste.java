@@ -47,6 +47,7 @@ public class TerminalActionPaste extends AbstractTerminalAction {
 				si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED), false);
 	}
 
+	@Override
 	public void run() {
 		ITerminalViewControl target = getTarget();
 		if (target != null) {
@@ -54,6 +55,7 @@ public class TerminalActionPaste extends AbstractTerminalAction {
 		}
 	}
 
+	@Override
 	public void updateAction(boolean aboutToShow) {
 		ITerminalViewControl target = getTarget();
 		boolean bEnabled = target != null && target.getClipboard() != null && !target.getClipboard().isDisposed();

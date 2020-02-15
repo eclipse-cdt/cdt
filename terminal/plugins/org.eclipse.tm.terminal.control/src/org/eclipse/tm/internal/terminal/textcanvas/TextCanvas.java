@@ -96,18 +96,21 @@ public class TextCanvas extends GridCanvas {
 		setCellHeight(fCellRenderer.getCellHeight());
 		fCellCanvasModel = model;
 		fCellCanvasModel.addCellCanvasModelListener(new ITextCanvasModelListener() {
+			@Override
 			public void rangeChanged(int col, int line, int width, int height) {
 				if (isDisposed())
 					return;
 				repaintRange(col, line, width, height);
 			}
 
+			@Override
 			public void dimensionsChanged(int cols, int rows) {
 				if (isDisposed())
 					return;
 				calculateGrid();
 			}
 
+			@Override
 			public void terminalDataChanged() {
 				if (isDisposed())
 					return;
@@ -121,16 +124,19 @@ public class TextCanvas extends GridCanvas {
 		});
 		// let the cursor blink if the text canvas gets the focus...
 		addFocusListener(new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				fCellCanvasModel.setCursorEnabled(fCursorEnabled);
 			}
 
+			@Override
 			public void focusLost(FocusEvent e) {
 				fCellCanvasModel.setCursorEnabled(false);
 			}
 		});
-		fMouseListeners = new ArrayList<ITerminalMouseListener>();
+		fMouseListeners = new ArrayList<>();
 		addMouseListener(new MouseListener() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				if (fMouseListeners.size() > 0) {
 					Point pt = screenPointToCell(e.x, e.y);
@@ -142,6 +148,7 @@ public class TextCanvas extends GridCanvas {
 				}
 			}
 
+			@Override
 			public void mouseDown(MouseEvent e) {
 				if (e.button == 1) { // left button
 					fDraggingStart = screenPointToCell(e.x, e.y);
@@ -165,6 +172,7 @@ public class TextCanvas extends GridCanvas {
 				}
 			}
 
+			@Override
 			public void mouseUp(MouseEvent e) {
 				if (e.button == 1) { // left button
 					updateHasSelection(e);
@@ -291,6 +299,7 @@ public class TextCanvas extends GridCanvas {
 		calculateGrid();
 	}
 
+	@Override
 	protected void onResize() {
 		fResizing = true;
 		try {
@@ -354,23 +363,28 @@ public class TextCanvas extends GridCanvas {
 		repaint(r);
 	}
 
+	@Override
 	protected void drawLine(GC gc, int line, int x, int y, int colFirst, int colLast) {
 		fCellRenderer.drawLine(fCellCanvasModel, gc, line, x, y, colFirst, colLast);
 	}
 
+	@Override
 	protected Color getTerminalBackgroundColor() {
 		return fCellRenderer.getDefaultBackgroundColor();
 	}
 
+	@Override
 	protected void visibleCellRectangleChanged(int x, int y, int width, int height) {
 		fCellCanvasModel.setVisibleRectangle(y, x, height, width);
 		update();
 	}
 
+	@Override
 	protected int getCols() {
 		return fCellCanvasModel.getTerminalText().getWidth();
 	}
 
+	@Override
 	protected int getRows() {
 		return fCellCanvasModel.getTerminalText().getHeight();
 	}

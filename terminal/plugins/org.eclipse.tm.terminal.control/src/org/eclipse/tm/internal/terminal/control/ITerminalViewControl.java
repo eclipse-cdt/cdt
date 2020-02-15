@@ -57,6 +57,7 @@ public interface ITerminalViewControl {
 	 * @deprecated use {@link #setFont(String)} in order to support bold and italic variants of the given font
 	 * @param font
 	 */
+	@Deprecated
 	void setFont(Font font);
 
 	/**

@@ -28,7 +28,7 @@ public class Style {
 	private final boolean fBlink;
 	private final boolean fUnderline;
 	private final boolean fReverse;
-	private final static Map<Style, Style> fgStyles = new HashMap<Style, Style>();
+	private final static Map<Style, Style> fgStyles = new HashMap<>();
 
 	private Style(StyleColor forground, StyleColor background, boolean bold, boolean blink, boolean underline,
 			boolean reverse) {
@@ -119,6 +119,7 @@ public class Style {
 		return fUnderline;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -131,6 +132,7 @@ public class Style {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -155,6 +157,7 @@ public class Style {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		result.append("Style(foreground="); //$NON-NLS-1$

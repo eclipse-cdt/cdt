@@ -36,6 +36,7 @@ public class TerminalActionSelectAll extends AbstractTerminalAction {
 		setupAction(ActionMessages.SELECTALL, ActionMessages.SELECTALL, (ImageDescriptor) null, null, null, false);
 	}
 
+	@Override
 	public void run() {
 		ITerminalViewControl target = getTarget();
 		if (target != null) {
@@ -43,6 +44,7 @@ public class TerminalActionSelectAll extends AbstractTerminalAction {
 		}
 	}
 
+	@Override
 	public void updateAction(boolean aboutToShow) {
 		ITerminalViewControl target = getTarget();
 		setEnabled(target != null && !target.isEmpty());

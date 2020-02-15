@@ -43,6 +43,7 @@ public class TerminalActionCopy extends AbstractTerminalAction {
 				si.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED), true);
 	}
 
+	@Override
 	public void run() {
 		ITerminalViewControl target = getTarget();
 		if (target != null) {
@@ -56,6 +57,7 @@ public class TerminalActionCopy extends AbstractTerminalAction {
 		}
 	}
 
+	@Override
 	public void updateAction(boolean aboutToShow) {
 		ITerminalViewControl target = getTarget();
 		boolean bEnabled = target != null;

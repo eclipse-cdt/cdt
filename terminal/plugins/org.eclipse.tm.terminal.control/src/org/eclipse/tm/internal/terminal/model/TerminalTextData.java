@@ -91,15 +91,18 @@ public class TerminalTextData implements ITerminalTextData {
 		fData = data;
 	}
 
+	@Override
 	public int getWidth() {
 		return fData.getWidth();
 	}
 
+	@Override
 	public int getHeight() {
 		// no need for an extra variable
 		return fData.getHeight();
 	}
 
+	@Override
 	public void setDimensions(int height, int width) {
 		int h = getHeight();
 		int w = getWidth();
@@ -122,38 +125,46 @@ public class TerminalTextData implements ITerminalTextData {
 		sendDimensionsChanged();
 	}
 
+	@Override
 	public LineSegment[] getLineSegments(int line, int column, int len) {
 		return fData.getLineSegments(line, column, len);
 	}
 
+	@Override
 	public char getChar(int line, int column) {
 		return fData.getChar(line, column);
 	}
 
+	@Override
 	public Style getStyle(int line, int column) {
 		return fData.getStyle(line, column);
 	}
 
+	@Override
 	public void setChar(int line, int column, char c, Style style) {
 		fData.setChar(line, column, c, style);
 		sendLineChangedToSnapshots(line);
 	}
 
+	@Override
 	public void setChars(int line, int column, char[] chars, Style style) {
 		fData.setChars(line, column, chars, style);
 		sendLineChangedToSnapshots(line);
 	}
 
+	@Override
 	public void setChars(int line, int column, char[] chars, int start, int len, Style style) {
 		fData.setChars(line, column, chars, start, len, style);
 		sendLineChangedToSnapshots(line);
 	}
 
+	@Override
 	public void scroll(int startLine, int size, int shift) {
 		fData.scroll(startLine, size, shift);
 		sendScrolledToSnapshots(startLine, size, shift);
 	}
 
+	@Override
 	public String toString() {
 		return fData.toString();
 	}
@@ -208,23 +219,25 @@ public class TerminalTextData implements ITerminalTextData {
 	 */
 	protected void removeSnapshot(TerminalTextDataSnapshot snapshot) {
 		// poor mans approach to modify the array
-		List<TerminalTextDataSnapshot> list = new ArrayList<TerminalTextDataSnapshot>();
+		List<TerminalTextDataSnapshot> list = new ArrayList<>();
 		list.addAll(Arrays.asList(fSnapshots));
 		list.remove(snapshot);
 		fSnapshots = list.toArray(new TerminalTextDataSnapshot[list.size()]);
 	}
 
+	@Override
 	public ITerminalTextDataSnapshot makeSnapshot() {
 		// poor mans approach to modify the array
 		TerminalTextDataSnapshot snapshot = new TerminalTextDataSnapshot(this);
 		snapshot.markDimensionsChanged();
-		List<TerminalTextDataSnapshot> list = new ArrayList<TerminalTextDataSnapshot>();
+		List<TerminalTextDataSnapshot> list = new ArrayList<>();
 		list.addAll(Arrays.asList(fSnapshots));
 		list.add(snapshot);
 		fSnapshots = list.toArray(new TerminalTextDataSnapshot[list.size()]);
 		return snapshot;
 	}
 
+	@Override
 	public void addLine() {
 		int oldHeight = getHeight();
 		fData.addLine();
@@ -243,63 +256,77 @@ public class TerminalTextData implements ITerminalTextData {
 
 	}
 
+	@Override
 	public void copy(ITerminalTextData source) {
 		fData.copy(source);
 		fCursorLine = source.getCursorLine();
 		fCursorColumn = source.getCursorColumn();
 	}
 
+	@Override
 	public void copyLine(ITerminalTextData source, int sourceLine, int destLine) {
 		fData.copyLine(source, sourceLine, destLine);
 	}
 
+	@Override
 	public void copyRange(ITerminalTextData source, int sourceStartLine, int destStartLine, int length) {
 		fData.copyRange(source, sourceStartLine, destStartLine, length);
 	}
 
+	@Override
 	public char[] getChars(int line) {
 		return fData.getChars(line);
 	}
 
+	@Override
 	public Style[] getStyles(int line) {
 		return fData.getStyles(line);
 	}
 
+	@Override
 	public int getMaxHeight() {
 		return fData.getMaxHeight();
 	}
 
+	@Override
 	public void setMaxHeight(int height) {
 		fData.setMaxHeight(height);
 	}
 
+	@Override
 	public void cleanLine(int line) {
 		fData.cleanLine(line);
 		sendLineChangedToSnapshots(line);
 	}
 
+	@Override
 	public int getCursorColumn() {
 		return fCursorColumn;
 	}
 
+	@Override
 	public int getCursorLine() {
 		return fCursorLine;
 	}
 
+	@Override
 	public void setCursorColumn(int column) {
 		fCursorColumn = column;
 		sendCursorChanged();
 	}
 
+	@Override
 	public void setCursorLine(int line) {
 		fCursorLine = line;
 		sendCursorChanged();
 	}
 
+	@Override
 	public boolean isWrappedLine(int line) {
 		return fData.isWrappedLine(line);
 	}
 
+	@Override
 	public void setWrappedLine(int line) {
 		fData.setWrappedLine(line);
 	}

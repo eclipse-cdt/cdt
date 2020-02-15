@@ -54,52 +54,62 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 		return line >= fWindowStartLine && line < fWindowStartLine + fWindowSize;
 	}
 
+	@Override
 	public char getChar(int line, int column) {
 		if (!isInWindow(line))
 			return 0;
 		return fData.getChar(line - fWindowStartLine, column);
 	}
 
+	@Override
 	public char[] getChars(int line) {
 		if (!isInWindow(line))
 			return null;
 		return fData.getChars(line - fWindowStartLine);
 	}
 
+	@Override
 	public int getHeight() {
 		return fHeight;
 	}
 
+	@Override
 	public LineSegment[] getLineSegments(int line, int startCol, int numberOfCols) {
 		if (!isInWindow(line))
 			return new LineSegment[] { new LineSegment(startCol, new String(new char[numberOfCols]), null) };
 		return fData.getLineSegments(line - fWindowStartLine, startCol, numberOfCols);
 	}
 
+	@Override
 	public int getMaxHeight() {
 		return fMaxHeight;
 	}
 
+	@Override
 	public Style getStyle(int line, int column) {
 		if (!isInWindow(line))
 			return null;
 		return fData.getStyle(line - fWindowStartLine, column);
 	}
 
+	@Override
 	public Style[] getStyles(int line) {
 		if (!isInWindow(line))
 			return null;
 		return fData.getStyles(line - fWindowStartLine);
 	}
 
+	@Override
 	public int getWidth() {
 		return fData.getWidth();
 	}
 
+	@Override
 	public ITerminalTextDataSnapshot makeSnapshot() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void addLine() {
 		if (fMaxHeight > 0 && getHeight() < fMaxHeight) {
 			setDimensions(getHeight() + 1, getWidth());
@@ -108,6 +118,7 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 		}
 	}
 
+	@Override
 	public void copy(ITerminalTextData source) {
 		// we inherit the dimensions of the source
 		setDimensions(source.getHeight(), source.getWidth());
@@ -116,6 +127,7 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 			fData.copyRange(source, fWindowStartLine, 0, n);
 	}
 
+	@Override
 	public void copyRange(ITerminalTextData source, int sourceStartLine, int destStartLine, int length) {
 		int n = length;
 		int dStart = destStartLine - fWindowStartLine;
@@ -133,11 +145,13 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 
 	}
 
+	@Override
 	public void copyLine(ITerminalTextData source, int sourceLine, int destLine) {
 		if (isInWindow(destLine))
 			fData.copyLine(source, sourceLine, destLine - fWindowStartLine);
 	}
 
+	@Override
 	public void scroll(int startLine, int size, int shift) {
 		assert (startLine >= 0 && startLine + size <= fHeight) || throwRuntimeException();
 		int n = size;
@@ -153,30 +167,35 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 			fData.scroll(start, n, shift);
 	}
 
+	@Override
 	public void setChar(int line, int column, char c, Style style) {
 		if (!isInWindow(line))
 			return;
 		fData.setChar(line - fWindowStartLine, column, c, style);
 	}
 
+	@Override
 	public void setChars(int line, int column, char[] chars, int start, int len, Style style) {
 		if (!isInWindow(line))
 			return;
 		fData.setChars(line - fWindowStartLine, column, chars, start, len, style);
 	}
 
+	@Override
 	public void setChars(int line, int column, char[] chars, Style style) {
 		if (!isInWindow(line))
 			return;
 		fData.setChars(line - fWindowStartLine, column, chars, style);
 	}
 
+	@Override
 	public void setDimensions(int height, int width) {
 		assert height >= 0 || throwRuntimeException();
 		fData.setDimensions(fWindowSize, width);
 		fHeight = height;
 	}
 
+	@Override
 	public void setMaxHeight(int height) {
 		fMaxHeight = height;
 	}
@@ -199,33 +218,40 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 		fHeight = height;
 	}
 
+	@Override
 	public void cleanLine(int line) {
 		if (isInWindow(line))
 			fData.cleanLine(line - fWindowStartLine);
 	}
 
+	@Override
 	public int getCursorColumn() {
 		return fData.getCursorColumn();
 	}
 
+	@Override
 	public int getCursorLine() {
 		return fData.getCursorLine();
 	}
 
+	@Override
 	public void setCursorColumn(int column) {
 		fData.setCursorColumn(column);
 	}
 
+	@Override
 	public void setCursorLine(int line) {
 		fData.setCursorLine(line);
 	}
 
+	@Override
 	public boolean isWrappedLine(int line) {
 		if (isInWindow(line))
 			return fData.isWrappedLine(line - fWindowStartLine);
 		return false;
 	}
 
+	@Override
 	public void setWrappedLine(int line) {
 		if (isInWindow(line))
 			fData.setWrappedLine(line - fWindowStartLine);

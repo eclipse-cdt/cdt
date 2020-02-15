@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .
 Export-Package: org.eclipse.tm.internal.terminal.connector;x-internal:=true,
  org.eclipse.tm.internal.terminal.control,
@@ -23,3 +23,4 @@ Export-Package: org.eclipse.tm.internal.terminal.connector;x-internal:=true,
  org.eclipse.tm.internal.terminal.provisional.api.provider,
  org.eclipse.tm.internal.terminal.textcanvas;x-internal:=true,
  org.eclipse.tm.terminal.model
+Automatic-Module-Name: org.eclipse.tm.terminal.control

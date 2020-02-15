@@ -45,6 +45,7 @@ abstract public class GridCanvas extends VirtualCanvas {
 	/** template method paint.
 	 * iterates over all cells in the clipping rectangle and paints them.
 	 */
+	@Override
 	protected void paint(GC gc) {
 		Rectangle clipping = gc.getClipping();
 		if (clipping.width == 0 || clipping.height == 0)
@@ -157,6 +158,7 @@ abstract public class GridCanvas extends VirtualCanvas {
 		return new Rectangle(x, y, fCellWidth, fCellHeight);
 	}
 
+	@Override
 	protected void viewRectangleChanged(int x, int y, int width, int height) {
 		int cellX = virtualXToCell(x);
 		int cellY = virtualYToCell(y);
@@ -182,6 +184,7 @@ abstract public class GridCanvas extends VirtualCanvas {
 	protected void visibleCellRectangleChanged(int x, int y, int width, int height) {
 	}
 
+	@Override
 	protected void setVirtualExtend(int width, int height) {
 		int cellHeight = getCellHeight();
 		if (cellHeight > 0) {
@@ -190,6 +193,7 @@ abstract public class GridCanvas extends VirtualCanvas {
 		super.setVirtualExtend(width, height);
 	}
 
+	@Override
 	protected void setVirtualOrigin(int x, int y) {
 		int cellHeight = getCellHeight();
 		if (cellHeight > 0) {
@@ -203,6 +207,7 @@ abstract public class GridCanvas extends VirtualCanvas {
 		super.setVirtualOrigin(x, y);
 	}
 
+	@Override
 	protected void scrollY(ScrollBar vBar) {
 		int vSelection = vBar.getSelection();
 		Rectangle bounds = getVirtualBounds();

@@ -37,6 +37,7 @@ public class TerminalActionClearAll extends AbstractTerminalAction {
 				ImageConsts.IMAGE_ELCL_CLEAR_ALL, ImageConsts.IMAGE_DLCL_CLEAR_ALL, false);
 	}
 
+	@Override
 	public void run() {
 		ITerminalViewControl target = getTarget();
 		if (target != null) {
@@ -44,6 +45,7 @@ public class TerminalActionClearAll extends AbstractTerminalAction {
 		}
 	}
 
+	@Override
 	public void updateAction(boolean aboutToShow) {
 		ITerminalViewControl target = getTarget();
 		setEnabled(target != null && !target.isEmpty());

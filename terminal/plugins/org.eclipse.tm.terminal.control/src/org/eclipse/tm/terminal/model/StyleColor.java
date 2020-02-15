@@ -19,7 +19,7 @@ import java.util.Map;
  * Threadsafe.
  */
 public class StyleColor {
-	private final static Map<String, StyleColor> fgStyleColors = new HashMap<String, StyleColor>();
+	private final static Map<String, StyleColor> fgStyleColors = new HashMap<>();
 	final String fName;
 
 	/**
@@ -48,6 +48,7 @@ public class StyleColor {
 		return fName;
 	}
 
+	@Override
 	public String toString() {
 		return fName;
 	}

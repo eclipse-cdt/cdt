@@ -177,6 +177,7 @@ public class PipedInputStream extends InputStream {
 	 *
 	 */
 	class PipedOutputStream extends OutputStream {
+		@Override
 		public void write(byte[] b, int off, int len) throws IOException {
 			try {
 				synchronized (fQueue) {
@@ -203,6 +204,7 @@ public class PipedInputStream extends InputStream {
 			}
 		}
 
+		@Override
 		public void write(int b) throws IOException {
 			try {
 				synchronized (fQueue) {
@@ -215,6 +217,7 @@ public class PipedInputStream extends InputStream {
 			}
 		}
 
+		@Override
 		public void close() throws IOException {
 			synchronized (fQueue) {
 				fQueue.close();
@@ -254,6 +257,7 @@ public class PipedInputStream extends InputStream {
 	 * Must be called in the Display Thread!
 	 * @return number of characters available for reading.
 	 */
+	@Override
 	public int available() {
 		synchronized (fQueue) {
 			return fQueue.available();
@@ -264,6 +268,7 @@ public class PipedInputStream extends InputStream {
 	 * @return the next available byte. Check with {@link #available}
 	 * if characters are available.
 	 */
+	@Override
 	public int read() throws IOException {
 		try {
 			synchronized (fQueue) {
@@ -280,12 +285,14 @@ public class PipedInputStream extends InputStream {
 	 * The stream will allow reading data that's still in the pipe after which it will
 	 * throw an <tt>IOException</tt>.
 	 */
+	@Override
 	public void close() throws IOException {
 		synchronized (fQueue) {
 			fQueue.close();
 		}
 	}
 
+	@Override
 	public int read(byte[] cbuf, int off, int len) throws IOException {
 		int n = 0;
 		if (len == 0)

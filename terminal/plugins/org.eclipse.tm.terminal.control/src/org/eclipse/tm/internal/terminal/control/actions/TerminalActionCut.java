@@ -40,6 +40,7 @@ public class TerminalActionCut extends AbstractTerminalAction {
 				si.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED), true);
 	}
 
+	@Override
 	public void run() {
 		ITerminalViewControl target = getTarget();
 		if (target != null) {
@@ -47,6 +48,7 @@ public class TerminalActionCut extends AbstractTerminalAction {
 		}
 	}
 
+	@Override
 	public void updateAction(boolean aboutToShow) {
 		// Cut is always disabled
 		setEnabled(false);

@@ -68,14 +68,17 @@ public class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 	static public class BufferInterceptor extends Interceptor {
 		private final ByteArrayOutputStream fBuffer = new ByteArrayOutputStream();
 
+		@Override
 		public void close() throws IOException {
 			fOriginal.write(fBuffer.toByteArray());
 		}
 
+		@Override
 		public void write(byte[] b, int off, int len) throws IOException {
 			fBuffer.write(b, off, len);
 		}
 
+		@Override
 		public void write(int b) throws IOException {
 			fBuffer.write(b);
 		}
@@ -84,6 +87,7 @@ public class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 	private class TerminalFilterOutputStream extends OutputStream {
 		final private Object fLock = TerminalToRemoteInjectionOutputStream.this;
 
+		@Override
 		public void close() throws IOException {
 			synchronized (fLock) {
 				if (fInjection == this) {
@@ -93,6 +97,7 @@ public class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 			}
 		}
 
+		@Override
 		public void write(byte[] b, int off, int len) throws IOException {
 			synchronized (fLock) {
 				checkStream();
@@ -100,6 +105,7 @@ public class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 			}
 		}
 
+		@Override
 		public void write(byte[] b) throws IOException {
 			synchronized (fLock) {
 				checkStream();
@@ -107,6 +113,7 @@ public class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 			}
 		}
 
+		@Override
 		public void flush() throws IOException {
 			synchronized (fLock) {
 				checkStream();
@@ -114,6 +121,7 @@ public class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 			}
 		}
 
+		@Override
 		public void write(int b) throws IOException {
 			synchronized (fLock) {
 				checkStream();
@@ -167,6 +175,7 @@ public class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 		return grabOutput(new BufferInterceptor());
 	}
 
+	@Override
 	synchronized public void close() throws IOException {
 		if (fInjection != null) {
 			fInjection.close();
@@ -174,12 +183,14 @@ public class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 		super.close();
 	}
 
+	@Override
 	synchronized public void flush() throws IOException {
 		if (fInterceptor != null)
 			fInterceptor.flush();
 		out.flush();
 	}
 
+	@Override
 	synchronized public void write(byte[] b, int off, int len) throws IOException {
 		if (fInterceptor != null)
 			fInterceptor.write(b, off, len);
@@ -187,6 +198,7 @@ public class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
 			out.write(b, off, len);
 	}
 
+	@Override
 	synchronized public void write(int b) throws IOException {
 		if (fInterceptor != null)
 			fInterceptor.write(b);

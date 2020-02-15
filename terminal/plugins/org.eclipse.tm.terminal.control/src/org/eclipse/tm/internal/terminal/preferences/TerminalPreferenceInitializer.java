@@ -32,6 +32,7 @@ public class TerminalPreferenceInitializer extends AbstractPreferenceInitializer
 	public TerminalPreferenceInitializer() {
 	}
 
+	@Override
 	public void initializeDefaultPreferences() {
 		//DefaultScope.INSTANCE was added in Eclipse 3.7
 		IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE.getNode(TerminalPlugin.PLUGIN_ID);

@@ -203,6 +203,7 @@ public class VT100Emulator implements ControlListener {
 	 * This method is required by interface ControlListener. It allows us to
 	 * know when the StyledText widget is moved.
 	 */
+	@Override
 	public void controlMoved(ControlEvent event) {
 		Logger.log("entered"); //$NON-NLS-1$
 		// Empty.
@@ -212,6 +213,7 @@ public class VT100Emulator implements ControlListener {
 	 * This method is required by interface ControlListener. It allows us to
 	 * know when the StyledText widget is resized.
 	 */
+	@Override
 	public void controlResized(ControlEvent event) {
 		Logger.log("entered"); //$NON-NLS-1$
 		adjustTerminalDimensions();

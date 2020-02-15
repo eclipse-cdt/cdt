@@ -43,6 +43,7 @@ public class PollingTextCanvasModel extends AbstractTextCanvasModel {
 		if (fPollInterval < 0) {
 			fPollInterval = DEFAULT_POLL_INTERVAL;
 			Display.getDefault().timerExec(fPollInterval, new Runnable() {
+				@Override
 				public void run() {
 					update();
 					Display.getDefault().timerExec(fPollInterval, this);

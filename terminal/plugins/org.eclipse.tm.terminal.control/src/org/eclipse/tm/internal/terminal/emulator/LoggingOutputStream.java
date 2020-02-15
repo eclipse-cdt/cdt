@@ -22,6 +22,7 @@ public class LoggingOutputStream extends FilterOutputStream {
 		super(out);
 	}
 
+	@Override
 	public void write(byte[] b, int off, int len) throws IOException {
 		if (Logger.isLogEnabled())
 			Logger.log("Received " + len + " bytes: '" + //$NON-NLS-1$ //$NON-NLS-2$
@@ -38,6 +39,7 @@ public class LoggingOutputStream extends FilterOutputStream {
 		}
 	}
 
+	@Override
 	public void write(int b) throws IOException {
 		if (Logger.isLogEnabled())
 			Logger.log("Received " + 1 + " bytes: '" + //$NON-NLS-1$ //$NON-NLS-2$

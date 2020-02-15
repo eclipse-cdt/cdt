@@ -33,6 +33,7 @@ public class LineSegment {
 		return fCol;
 	}
 
+	@Override
 	public String toString() {
 		return "LineSegment(" + fCol + ", \"" + fText + "\"," + fStyle + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}

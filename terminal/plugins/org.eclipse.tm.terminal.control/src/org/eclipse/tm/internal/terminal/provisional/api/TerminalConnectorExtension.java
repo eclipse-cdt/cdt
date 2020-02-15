@@ -90,7 +90,7 @@ public class TerminalConnectorExtension {
 	public static ITerminalConnector[] makeTerminalConnectors() {
 		IConfigurationElement[] config = RegistryFactory.getRegistry()
 				.getConfigurationElementsFor("org.eclipse.tm.terminal.control.connectors"); //$NON-NLS-1$
-		List<ITerminalConnector> result = new ArrayList<ITerminalConnector>();
+		List<ITerminalConnector> result = new ArrayList<>();
 		for (int i = 0; i < config.length; i++) {
 			result.add(makeConnector(config[i]));
 		}

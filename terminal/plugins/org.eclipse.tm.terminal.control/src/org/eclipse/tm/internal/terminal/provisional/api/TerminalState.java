@@ -48,6 +48,7 @@ public class TerminalState {
 		fState = state;
 	}
 
+	@Override
 	public String toString() {
 		return fState;
 	}

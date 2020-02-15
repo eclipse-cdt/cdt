@@ -30,7 +30,6 @@ public final class NewClassWizardMessages extends NLS {
 	public static String NewClassCreationWizardPage_warning_NotACProject;
 	public static String NewClassCreationWizardPage_warning_NotInACProject;
 	public static String NewClassCreationWizardPage_namespace_label;
-	public static String NewClassCreationWizardPage_final_label;
 	public static String NewClassCreationWizardPage_namespace_button;
 	public static String NewClassCreationWizardPage_error_EnterNamespace;
 	public static String NewClassCreationWizardPage_error_NamespaceExistsDifferentCase;

@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2f89bc7a_a3913a8a",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/StringUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-02-16T08:39:46Z",
+      "side": 1,
+      "message": "I\u0027d like to have this kind of classes in a single point (core plugin?). I would check in addition if we already have something similar.",
+      "range": {
+        "startLine": 33,
+        "startChar": 1,
+        "endLine": 33,
+        "endChar": 52
+      },
+      "revId": "7fb790920834e3efd5de1307723bba8d547f6beb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fa0076b_a31276c3",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/jetty/util/ajax/JSON.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-02-16T08:39:46Z",
+      "side": 1,
+      "message": "We should use EPL 2. In addition it seems this file has not been written by Martin. I\u0027m not a lawyer but I think it should be taken into account in CQ.",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 72
+      },
+      "revId": "7fb790920834e3efd5de1307723bba8d547f6beb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

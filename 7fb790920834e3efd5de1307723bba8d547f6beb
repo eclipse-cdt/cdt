@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "2a1ba274_eab3bad0",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/icons/CMakeLogo.gif",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-16T14:09:12Z",
+      "side": 1,
+      "message": "This file will be removed. It is not used anymore.",
+      "revId": "7fb790920834e3efd5de1307723bba8d547f6beb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2f89bc7a_a3913a8a",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/StringUtil.java",
         "patchSetId": 3
@@ -37,6 +54,30 @@
       "side": 1,
       "message": "I thing \"below\" the core. We should have \"platform-less\" layer that doesn\u0027t require OSGi to be running. This is deadly important to support CLI scenarios.\n\nFor this one in particular we need to understand the use case: why it is so important to keep trailing WS?",
       "parentUuid": "2f89bc7a_a3913a8a",
+      "range": {
+        "startLine": 33,
+        "startChar": 1,
+        "endLine": 33,
+        "endChar": 52
+      },
+      "revId": "7fb790920834e3efd5de1307723bba8d547f6beb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8028ef46_7dbc6479",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/StringUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-16T14:09:12Z",
+      "side": 1,
+      "message": "It is used for perforamce reasons.\nThis is called many times to advance to the next argument on a commandline string.\nOf cource, I could use String.trim() but\n- Usually the commandline string has no railing WS\n- String.trim() processes the complete string, we nned to just process some trailing WS here, so this performs better.",
+      "parentUuid": "a2d6794b_13086665",
       "range": {
         "startLine": 33,
         "startChar": 1,

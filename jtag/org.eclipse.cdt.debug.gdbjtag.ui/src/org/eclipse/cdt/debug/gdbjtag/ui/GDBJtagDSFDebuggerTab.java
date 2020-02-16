@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 QNX Software Systems and others.
+ * Copyright (c) 2007, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@
  *                allow connections via serial ports and pipes).
  *     John Dallaway - Ensure correct SessionType enabled, bug 334110
  *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
+ *     John Dallaway - Sort JTAG device list, bug 560186
 *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
@@ -27,6 +28,7 @@ package org.eclipse.cdt.debug.gdbjtag.ui;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.gdbjtag.core.Activator;
@@ -256,9 +258,8 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance()
 				.getGDBJtagDeviceContribution();
-		for (int i = 0; i < availableDevices.length; i++) {
-			jtagDevice.add(availableDevices[i].getDeviceName());
-		}
+		Arrays.stream(availableDevices).map(GDBJtagDeviceContribution::getDeviceName).sorted()
+				.forEach(name -> jtagDevice.add(name));
 
 		jtagDevice.addModifyListener(new ModifyListener() {
 			@Override
@@ -564,8 +565,11 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				} else {
 					String ip = ipAddress.getText().trim();
 					configuration.setAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, ip);
-					int port = Integer.valueOf(portNumber.getText().trim()).intValue();
-					configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, port);
+					String port = portNumber.getText().trim();
+					if (!port.isEmpty()) {
+						configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER,
+								Integer.valueOf(port).intValue());
+					}
 				}
 			} catch (URISyntaxException e) {
 				Activator.log(e);
@@ -589,6 +593,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET,
 				IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
+		configuration.setAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE_ID, IGDBJtagConstants.DEFAULT_JTAG_DEVICE_ID);
 		configuration.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,

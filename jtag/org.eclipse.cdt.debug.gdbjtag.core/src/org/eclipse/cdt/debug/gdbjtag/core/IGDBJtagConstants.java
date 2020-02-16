@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2018 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     John Dallaway - Disable reset and halt by default, bug 529171
  *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
+ *     John Dallaway - Sort JTAG device list, bug 560186
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core;
@@ -101,7 +102,7 @@ public interface IGDBJtagConstants {
 	/** @since 7.0 */
 	public static final String DEFAULT_STOP_AT = ""; //$NON-NLS-1$
 	/** @since 9.2 */
-	public static final String DEFAULT_JTAG_DEVICE_ID = ""; //$NON-NLS-1$
+	public static final String DEFAULT_JTAG_DEVICE_ID = "org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.genericDevice"; //$NON-NLS-1$
 	/** @since 9.2 */
 	public static final String DEFAULT_JTAG_DEVICE_NAME = ""; //$NON-NLS-1$
 	/**

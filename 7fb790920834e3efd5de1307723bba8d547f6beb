@@ -93,6 +93,53 @@
       "revId": "7fb790920834e3efd5de1307723bba8d547f6beb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8c85f71a_e860f71c",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/jetty/util/ajax/JSON.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-16T13:52:34Z",
+      "side": 1,
+      "message": "Core build uses gson to parse json files, the libraries are already in the target platform.\nMy plan is to remove this file and use the json lib from the target platform.",
+      "parentUuid": "b3ec4d31_1481698a",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 72
+      },
+      "revId": "7fb790920834e3efd5de1307723bba8d547f6beb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a911882_a0bcae03",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/jetty/util/ajax/JSON.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-16T13:52:34Z",
+      "side": 1,
+      "message": "This comment was added by me (Martin) to the cmake4eclipse code when Eclipse Mars was released. Prior to Eclipse Mars, exactly this source file was part of the Eclipse installation. So I just copied the file and added the comment.",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 67
+      },
+      "revId": "7fb790920834e3efd5de1307723bba8d547f6beb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

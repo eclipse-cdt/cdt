@@ -6,7 +6,7 @@ endif
 
 # Defaults which can be overridden.
 OS = linux
-ARCH = x86
+ARCH = x86_64
 
 JDK_INCLUDES= $(JAVA_HOME)/include
 JDK_OS_INCLUDES= $(JAVA_HOME)/include/$(OS)

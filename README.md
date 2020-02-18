@@ -104,3 +104,16 @@ For running CDT's DSF-GDB tests, this specifies the path to the location of gdb.
 #### cdt.tests.dsf.gdb.versions
 
 For running CDT's DSF-GDB tests, this specifies the executable names of the gdbs to run, comma-separated.
+
+#### native
+
+The `native` property can be used to build the native libraries. Defining the `native` property can will activate profiles to add the extra steps to compile the natives libraries used by CDT. The main CDT build by default will not build the libraries, but instead use the versions of the libraries checked into git. 
+
+The releng/scripts/check_code_cleanliness.sh, which is run on the build machine, will ensure that the libraries that are checked in are indeed up to date with their sources. (*This is only supported for serial library at the time of writing, see [Bug 521515](https://bugs.eclipse.org/bugs/show_bug.cgi?id=521515) to track current state.)
+
+The `native` property can be one of the following:
+
+- `linux.x86_64` - uses local tools and builds only linux.x86_64 libraries
+- `linux.ppc64le` - uses local tools and builds only linux.ppc64le libraries
+- `docker` - uses CDT's docker releng images to do the native builds for all platforms (*This is only supported for serial library at the time of writing, see [Bug 521515](https://bugs.eclipse.org/bugs/show_bug.cgi?id=521515) to track current state.)
+ - `all` - uses local tools to do the native builds for all platforms (*This is only supported for serial library at the time of writing, see [Bug 521515](https://bugs.eclipse.org/bugs/show_bug.cgi?id=521515) to track current state.)

@@ -104,3 +104,36 @@ For running CDT's DSF-GDB tests, this specifies the path to the location of gdb.
 #### cdt.tests.dsf.gdb.versions
 
 For running CDT's DSF-GDB tests, this specifies the executable names of the gdbs to run, comma-separated.
+
+#### native
+
+The `native` property can be used to build the native libraries. Defining the `native` property will activate profiles to add the extra steps to compile the natives libraries used by CDT. The main CDT build by default will not build the libraries, but instead use the versions of the libraries checked into git. Therefore when users modify the sources of the native libraries, they have to build and commit the changed library binaries as part of the commit.
+
+The releng/scripts/check_code_cleanliness.sh, which is run on the build machine as part of the gerrit and main build flows, will ensure that the libraries that are checked in are indeed up to date with their sources. (*This is only supported for serial library at the time of writing, see [Bug 521515](https://bugs.eclipse.org/bugs/show_bug.cgi?id=521515) to track current state.)
+
+The `native` property can be one of the following:
+
+- `linux.x86_64` - uses local tools and builds only linux.x86_64 libraries
+- `linux.ppc64le` - uses local tools and builds only linux.ppc64le libraries
+- `docker` - uses CDT's docker releng images to do the native builds for all platforms (*This is only supported for serial library at the time of writing, see [Bug 521515](https://bugs.eclipse.org/bugs/show_bug.cgi?id=521515) to track current state.)
+ - `all` - uses local tools to do the native builds for all platforms (*This is only supported for serial library at the time of writing, see [Bug 521515](https://bugs.eclipse.org/bugs/show_bug.cgi?id=521515) to track current state.)
+
+Therefore to build all the natives using docker do `mvn process-resources -Dnative=docker`. 
+
+However, the challenge is that dll files on Windows have a timestamp in them. To have reproducible builds, we need to have a reproducible timestamp. Therefore we use the commit time of the commit to derive a timestamp (We use the `SOURCE_DATE_EPOCH` environemnt variable to achieve this, see the [Makefile](native/org.eclipse.cdt.native.serial/jni/Makefile) for more info). Because we want to keep the DLL checked in so that contributors don't need to rebuild it all the time we need a way to have to check in the dll with the same commit time. To do this we use GIT_COMMITTER_DATE. So, after editing and committing your change, you need to rebuild one last time with the commit date and the commit it without changing the commit date again using:
+
+1. Edit and commit change
+2. Set DIR to the name of the directory you are working on, e.g. `DIR=native/org.eclipse.cdt.native.serial`
+3. `mvn process-resources -DuseSimrelRepo -Dnative=docker -f $DIR`
+4. `git add -- $DIR`
+5. `GIT_COMMITTER_DATE=$(git log -1 --pretty=format:%cI -- $DIR) git commit --amend --reuse-message=HEAD`
+
+As a CDT contributor if you are having an issue recreating the above flow, please reach out on cdt-dev mailing list or in the bug/gerrit you submit. A CDT committer can help ensure the native libraries are correctly rebuilt.
+
+An additional tip is to set the following in `.gitconfig` to allow you to diff `.dll` files. This will show the timestamp of the DLL in the diff as part of the DLL headers.
+
+```
+[diff "dll"]
+    textconv = objdump -x
+    binary = true
+```

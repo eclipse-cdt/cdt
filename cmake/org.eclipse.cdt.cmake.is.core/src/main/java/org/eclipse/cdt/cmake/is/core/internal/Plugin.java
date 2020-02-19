@@ -63,12 +63,12 @@ public class Plugin extends AbstractUIPlugin {
 	 * @return the resource bundle message
 	 */
 	public static String getResourceString(String key) {
-//		ResourceBundle bundle = Plugin.getDefault().getResourceBundle();
-//		try {
-//			return bundle.getString(key);
-//		} catch (MissingResourceException e) {
-//			return key;
-//		}
+		//		ResourceBundle bundle = Plugin.getDefault().getResourceBundle();
+		//		try {
+		//			return bundle.getString(key);
+		//		} catch (MissingResourceException e) {
+		//			return key;
+		//		}
 		return key;
 	}
 

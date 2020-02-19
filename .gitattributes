@@ -59,6 +59,7 @@ Makefile text
 *.css text
 *.htm text
 *.html text
+*.xhtml text
 *.js text
 *.json text
 .npmignore text

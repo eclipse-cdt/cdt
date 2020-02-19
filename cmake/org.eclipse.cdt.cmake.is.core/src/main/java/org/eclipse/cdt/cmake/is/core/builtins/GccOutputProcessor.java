@@ -85,7 +85,7 @@ public class GccOutputProcessor implements IBuiltinsOutputProcessor {
 				if (processingContext.addSettingEntry(processor.process(line)))
 					return; // line matched
 			}
-//      System.err.println("NO MATCH ON LINE: '" + line + "'");
+			//      System.err.println("NO MATCH ON LINE: '" + line + "'");
 		}
 	}
 

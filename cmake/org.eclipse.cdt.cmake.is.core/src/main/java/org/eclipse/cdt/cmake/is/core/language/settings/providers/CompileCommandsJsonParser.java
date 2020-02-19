@@ -272,7 +272,7 @@ public class CompileCommandsJsonParser extends LanguageSettingsSerializableProvi
 								createMarker(jsonFileRc, msg);
 							}
 						}
-//languageScope.addAll(c)
+						//languageScope.addAll(c)
 						// re-index to reflect new paths and macros in editor views
 						// serializeLanguageSettings(currentCfgDescription);
 						if (!initializingWorkbench) {
@@ -744,7 +744,7 @@ public class CompileCommandsJsonParser extends LanguageSettingsSerializableProvi
 				entries.stream().sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))
 						.forEach(e -> System.out.printf("  %s%n", e));
 			}
-//      setLanguageScope(languageScope); TODO
+			//      setLanguageScope(languageScope); TODO
 			/*
 			 * compile_commands.json holds entries per-file only and does not contain
 			 * per-project or per-folder entries. So we map the latter as project entries

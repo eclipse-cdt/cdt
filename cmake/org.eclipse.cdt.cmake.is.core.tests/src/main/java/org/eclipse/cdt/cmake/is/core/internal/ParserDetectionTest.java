@@ -202,8 +202,8 @@ public class ParserDetectionTest {
 		assertEquals("org.eclipse.cdt.core.g++",
 				result.getDetectorWithMethod().getToolDetectionParticipant().getParser().getLanguageId("c"));
 		result = ParserDetection.determineDetector("/usr/local/bin/clang++40 -C blah.c", "40", false);
-//    result = ParserDetection.determineDetector("/usr/local/bin/clang++40 -I/home/me/workspace/first/test/../utility -I/home/me/workspace/first/test/../include -I/home/me/workspace/first/test -g -std=c++1y -stdlib=libc++ -include-pch /home/me/workspace/first/build/Debug/test/catch.hpp.pch -include-pch /home/me/workspace/first/build/Debug/test/pch.hpp.pch -o CMakeFiles/first_test.test.dir/__/utility/fun.cpp.o -c /home/me/workspace/first/utility/fun.cpp",
-//        "40", false);
+		//    result = ParserDetection.determineDetector("/usr/local/bin/clang++40 -I/home/me/workspace/first/test/../utility -I/home/me/workspace/first/test/../include -I/home/me/workspace/first/test -g -std=c++1y -stdlib=libc++ -include-pch /home/me/workspace/first/build/Debug/test/catch.hpp.pch -include-pch /home/me/workspace/first/build/Debug/test/pch.hpp.pch -o CMakeFiles/first_test.test.dir/__/utility/fun.cpp.o -c /home/me/workspace/first/utility/fun.cpp",
+		//        "40", false);
 		assertNotNull(result);
 		assertEquals("org.eclipse.cdt.core.g++",
 				result.getDetectorWithMethod().getToolDetectionParticipant().getParser().getLanguageId("c"));

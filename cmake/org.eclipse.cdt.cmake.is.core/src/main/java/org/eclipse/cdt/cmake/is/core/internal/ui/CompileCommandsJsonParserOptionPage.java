@@ -122,7 +122,7 @@ public class CompileCommandsJsonParserOptionPage extends AbstractLanguageSetting
 				final String text = pattern.getText();
 				try {
 					Pattern.compile(text);
-//          provider.setVersionPattern(text); has no effect here
+					//          provider.setVersionPattern(text); has no effect here
 				} catch (PatternSyntaxException ex) {
 					// swallow exception here, but re-check with error dialog in performApply(),
 					// since

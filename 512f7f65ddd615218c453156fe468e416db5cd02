@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6d7990db_b75f3c84",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.arm.tests/build.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-02-19T18:34:34Z",
+      "side": 1,
+      "message": "this looks suspect",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

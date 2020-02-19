@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f3bfa83_74285e3a",
+        "filename": "cmake/aggregator/.project",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-02-19T17:33:43Z",
+      "side": 1,
+      "message": "This will still fail code cleanliness because of a deficiency in the script. \n\nThe script[1] assumes that all .project files are JDT/PDE projects\n\nFeel free to propose a solution, or simply include the extra prefs files.\n\n[1] https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tree/releng/scripts/check_code_cleanliness.sh#n55",
+      "revId": "4462cf7a3d61f3e4126d3a6347bf15fdb3c75abb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

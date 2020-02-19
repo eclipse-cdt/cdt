@@ -54,11 +54,12 @@ done
 ##
 git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
     d=`dirname $i`;
-    if test ! -e $d/feature.xml; then
-        mkdir -p $d/.settings
+    natures=$(xmllint --xpath 'string(//projectDescription/natures)' $i)
+    mkdir -p $d/.settings
+
+    # JDT
+    if [[ $natures == *"org.eclipse.jdt.core.javanature"* ]]; then
         cp $COREPROJECT/.settings/org.eclipse.jdt.* $d/.settings
-        cp $COREPROJECT/.settings/org.eclipse.pde.prefs $d/.settings
-        cp $COREPROJECT/.settings/org.eclipse.pde.api.tools.prefs $d/.settings        
         # For test plug-ins we are more lenient so don't warn on some items
         if echo $i | grep -E '\.tests?[/\.]' > /dev/null; then
             sed -i \
@@ -77,15 +78,27 @@ git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
                 '-es@org.eclipse.jdt.core.compiler.problem.rawTypeReference=warning@org.eclipse.jdt.core.compiler.problem.rawTypeReference=ignore@' \
                 '-es@org.eclipse.jdt.core.compiler.problem.incompleteEnumSwitch=warning@org.eclipse.jdt.core.compiler.problem.incompleteEnumSwitch=ignore@' \
                 $d/.settings/org.eclipse.jdt.core.prefs
-            sed -i \
-                '-es@compilers.p.not-externalized-att=1@compilers.p.not-externalized-att=2@' \
-                $d/.settings/org.eclipse.pde.prefs
         fi
         if echo $i | grep 'org.eclipse.cdt.examples.dsf' > /dev/null; then
             sed -i \
                 '-es@org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=warning@org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=ignore@' \
                 $d/.settings/org.eclipse.jdt.core.prefs
         fi
+    else
+        rm -f $d/.settings/org.eclipse.jdt*.prefs
+    fi
+
+    # PDE
+    if [[ $natures == *"org.eclipse.pde.PluginNature"* ]]; then
+        cp $COREPROJECT/.settings/org.eclipse.pde.prefs $d/.settings
+        cp $COREPROJECT/.settings/org.eclipse.pde.api.tools.prefs $d/.settings
+        if echo $i | grep -E '\.tests?[/\.]' > /dev/null; then
+            sed -i \
+                '-es@compilers.p.not-externalized-att=1@compilers.p.not-externalized-att=2@' \
+                $d/.settings/org.eclipse.pde.prefs
+        fi
+    else
+        rm -f $d/.settings/org.eclipse.pde*.prefs
     fi
 done
 

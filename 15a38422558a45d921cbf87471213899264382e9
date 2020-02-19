@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "55d240f1_0aace63e",
+        "filename": "releng/org.eclipse.cdt.testing-feature/.settings/org.eclipse.pde.prefs",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-02-19T18:32:03Z",
+      "side": 1,
+      "message": "Here is an add.",
+      "revId": "15a38422558a45d921cbf87471213899264382e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

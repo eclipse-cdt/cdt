@@ -16,6 +16,176 @@
       "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f7497d2_5d455599",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-19T19:32:46Z",
+      "side": 1,
+      "message": "This is too cruel, please change to empty list",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6cbb16f2_6c07f2a2",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-19T19:32:46Z",
+      "side": 1,
+      "message": "Optional would be better",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "447dfafb_fa68065a",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-19T19:32:46Z",
+      "side": 1,
+      "message": "We will need to rework this method to make it more clear what is going on, i.e. to highlight the role of \"arglet\" in the process",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3d45a3a_a692d3fe",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/Plugin.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-19T19:32:46Z",
+      "side": 1,
+      "message": "This class is the first candidate to rework after initial contribution, I don\u0027t think it is needed at all.",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "81a46933_4d746187",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/Plugin.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-19T19:32:46Z",
+      "side": 1,
+      "message": "This is very unusual content for the Activator start",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "69fadf9a_6d2604e1",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ui/BuiltinsCompilerCommandOptionPage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-19T19:32:46Z",
+      "side": 1,
+      "message": "We will need to extract this to \".ui\" bundle.",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c758b_1d971a89",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ui/BuiltinsCompilerCommandOptionPage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-19T19:32:46Z",
+      "side": 1,
+      "message": "The naming convention is different:\nhttps://help.eclipse.org/2019-12/index.jsp?topic\u003d%2Forg.eclipse.platform.doc.isv%2Freference%2Fmisc%2Fnaming.html",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "40936606_a87576da",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ui/BuiltinsCompilerCommandOptionPage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-19T19:32:46Z",
+      "side": 1,
+      "message": "This can be done much shorter with GridDataFactory",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "20817634_a0c51111",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ui/BuiltinsCompilerCommandOptionPage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-19T19:32:46Z",
+      "side": 1,
+      "message": "Later we can use SelectionListener.widgetSelectedAdapter(Consumer\u003cSelectionEvent\u003e)",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bdc6f378_9adee76b",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.nvidia/.gitignore",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-19T19:32:46Z",
+      "side": 1,
+      "message": "It should be a part of .gitignore from the root of repository",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -294,6 +294,24 @@
       "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ee38e177_a01e1d70",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.nvidia/.gitignore",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-02-20T21:18:21Z",
+      "side": 1,
+      "message": "FWIW it is in the root .gitignore already, but not as **/target/* but as /*/*/target https://github.com/eclipse-cdt/cdt/blob/7415100f6ac1efaee87c1beea466c327ab9c63fa/.gitignore#L3 along with /*/*/bin",
+      "parentUuid": "df801ec6_28ecca60",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

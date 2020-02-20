@@ -184,8 +184,8 @@ class CBreakpointContextWorkbenchAdapter implements IWorkbenchAdapter {
 	@Override
 	public String getLabel(Object o) {
 		if (o instanceof ICBreakpointContext) {
-			ICBreakpoint bp = ((ICBreakpointContext) o).getBreakpoint();
-			return getBreakpointMainLabel(bp);
+			ICBreakpointContext context = (ICBreakpointContext) o;
+			return getBreakpointMainLabel(context.getBreakpoint(), context);
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -205,7 +205,7 @@ class CBreakpointContextWorkbenchAdapter implements IWorkbenchAdapter {
 		return null;
 	}
 
-	private String getBreakpointMainLabel(ICBreakpoint breakpoint) {
+	private String getBreakpointMainLabel(ICBreakpoint breakpoint, ICBreakpointContext o) {
 		if (breakpoint instanceof ICFunctionBreakpoint) {
 			if (breakpoint instanceof ICTracepoint) {
 				return BreakpointsMessages.getString("TracepointPropertyPage.tracepointType_function_label"); //$NON-NLS-1$
@@ -233,6 +233,21 @@ class CBreakpointContextWorkbenchAdapter implements IWorkbenchAdapter {
 		} else if (breakpoint instanceof ICEventBreakpoint) {
 			return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_event_label"); //$NON-NLS-1$
 		} else if (breakpoint instanceof ICWatchpoint) {
+			if (breakpoint.getMarker() != null) {
+				// For an existing breakpoint, calculate watchpoint label based
+				// on read/write type.
+				boolean isReadType = o.getPreferenceStore().getBoolean(ICWatchpoint.READ);
+				boolean isWriteType = o.getPreferenceStore().getBoolean(ICWatchpoint.WRITE);
+				if (isReadType && !isWriteType) {
+					return BreakpointsMessages
+							.getString("CBreakpointPropertyPage.breakpointType_watchpoint_read_label"); //$NON-NLS-1$
+				} else if (!isReadType && isWriteType) {
+					return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_label"); //$NON-NLS-1$
+				} else {
+					return BreakpointsMessages
+							.getString("CBreakpointPropertyPage.breakpointType_watchpoint_access_label"); //$NON-NLS-1$
+				}
+			}
 			return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_label"); //$NON-NLS-1$
 		}
 		// default main label is the label of marker type for the breakpoint

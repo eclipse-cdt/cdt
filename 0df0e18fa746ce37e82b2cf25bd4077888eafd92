@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f21635e_94f161eb",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/CBreakpointContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-20T16:23:22Z",
+      "side": 1,
+      "message": "I would say \n`\nICBreakpointContext context \u003d (ICBreakpointContext) o;\nreturn getBreakpointMainLabel(context.gettBreakpoint(), context)\n`\nBut may be we have another way to access PreferenceStor, see the note below.",
+      "revId": "0df0e18fa746ce37e82b2cf25bd4077888eafd92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8a4f2ed1_0e43c94b",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/CBreakpointContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-20T16:23:22Z",
+      "side": 1,
+      "message": "Why this check is required here?",
+      "revId": "0df0e18fa746ce37e82b2cf25bd4077888eafd92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "49c34c61_c2f7f1c0",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/CBreakpointContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-20T16:23:22Z",
+      "side": 1,
+      "message": "the way to access Preference Store look strange a bit. Do we expect different instances for different \"Preference Store\" ICBreakpointContext instances?",
+      "revId": "0df0e18fa746ce37e82b2cf25bd4077888eafd92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

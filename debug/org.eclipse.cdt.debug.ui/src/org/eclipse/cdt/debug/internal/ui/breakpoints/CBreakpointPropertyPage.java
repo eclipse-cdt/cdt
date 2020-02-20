@@ -650,20 +650,6 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	}
 
 	private String getBreakpointMainLabel(ICBreakpoint breakpoint) {
-		if (breakpoint instanceof ICWatchpoint && breakpoint.getMarker() != null) {
-			// For an existing breakpoint, calculate watchpoint label based
-			// on read/write type.
-			boolean isReadType = getPreferenceStore().getBoolean(ICWatchpoint.READ);
-			boolean isWriteType = getPreferenceStore().getBoolean(ICWatchpoint.WRITE);
-			if (isReadType && !isWriteType) {
-				return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_read_label"); //$NON-NLS-1$
-			} else if (!isReadType && isWriteType) {
-				return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_label"); //$NON-NLS-1$
-			} else {
-				return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_access_label"); //$NON-NLS-1$
-			}
-		}
-
 		IWorkbenchAdapter labelProvider = getElement().getAdapter(IWorkbenchAdapter.class);
 		if (labelProvider != null) {
 			return labelProvider.getLabel(getElement());

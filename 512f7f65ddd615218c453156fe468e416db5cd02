@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3a0d755c_e1d7c8b2",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.arm.tests/build.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-20T20:27:12Z",
+      "side": 1,
+      "message": "botche by quick-fix. Patch uploaded",
+      "parentUuid": "6d7990db_b75f3c84",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5f7497d2_5d455599",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2020-02-19T19:32:46Z",
       "side": 1,
       "message": "This is too cruel, please change to empty list",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b8e35980_906bc4c7",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-20T20:27:12Z",
+      "side": 1,
+      "message": "In case someone implements IToolCommandlineParser and does return null instead of empty list here, I will still need to check for null. So I think returning null make it easier for implementors.",
+      "parentUuid": "5f7497d2_5d455599",
       "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "5208af69_e141a1eb",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/Plugin.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-20T20:27:12Z",
+      "side": 1,
+      "message": "Currently it is just a holder for PLUGIN_ID.",
+      "parentUuid": "f3d45a3a_a692d3fe",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81a46933_4d746187",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/Plugin.java",
         "patchSetId": 8
@@ -115,6 +169,24 @@
       "writtenOn": "2020-02-19T19:32:46Z",
       "side": 1,
       "message": "We will need to extract this to \".ui\" bundle.",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "69e6d7d9_16e5c78e",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ui/BuiltinsCompilerCommandOptionPage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-20T20:27:12Z",
+      "side": 1,
+      "message": "You answer a question I did ask yet!\nThis is a projects property page for MBS LanguageSettingProvider. AFAIK, core build does not use language setting providers, so my plan is to use a workbench preference page instead to let users set the allocate console, version-suffix and use-version-suffix preferences.",
+      "parentUuid": "69fadf9a_6d2604e1",
       "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +227,24 @@
     },
     {
       "key": {
+        "uuid": "240c6957_d42327b9",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ui/BuiltinsCompilerCommandOptionPage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-20T20:27:12Z",
+      "side": 1,
+      "message": "1) I do not claim to be a day-to-day SWT programmer. In fact, I heard of GDF just some week ago.\n2) The code was written for a pre-Mars Eclipse edition which did not come with GDF.\nWhat\u0027s your suggestion to improve?",
+      "parentUuid": "40936606_a87576da",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "20817634_a0c51111",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ui/BuiltinsCompilerCommandOptionPage.java",
         "patchSetId": 8
@@ -183,6 +273,24 @@
       "writtenOn": "2020-02-19T19:32:46Z",
       "side": 1,
       "message": "It should be a part of .gitignore from the root of repository",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "df801ec6_28ecca60",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.nvidia/.gitignore",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-20T20:27:12Z",
+      "side": 1,
+      "message": "No. Adding **/target/ to root\u0027s .gitignore will give you grief if you have packages that are named \u0027target\u0027. Been there.\nBetter to put the class files below bin, just like the rest of CDT code does.",
+      "parentUuid": "bdc6f378_9adee76b",
       "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

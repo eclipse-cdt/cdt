@@ -37,6 +37,108 @@
     },
     {
       "key": {
+        "uuid": "1c8460f6_cdbdca7e",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "This class looks more like a \"namespace\". Why not to have a number of small dedicated classes in its own package instead of this one?",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2719f3cc_03d45d8e",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "We need to rework this later to encapsulate the knowledge about languageId and how to deal with it with dedicated object.",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "48fee379_c63c2371",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "We need to rework this later to avoid null, it may be some default empty implementation + constructor without this parameter",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f58121d5_6cb50bb3",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "As above: empty implementation + constructor without this parameter",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a64d5227_554e78f4",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Javadoc does not correspond to the code below",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "136507c1_afc150e3",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Optional\u003cString\u003e here will be better as it is query that may not be able to determine the id from extension.\nReturning non-optional object that does something based on resolved languaugeId will be much better.",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5f7497d2_5d455599",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
         "patchSetId": 8
@@ -72,6 +174,24 @@
     },
     {
       "key": {
+        "uuid": "add11696_ec28f6d9",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Passing `null` and returning `null` is evil,\nespecially for arrays and collections. And here you gives an example for implementors: \"please return me `null` in case of concerns\". The API should clearly state that `null` is not allowed. After that you are free to fail for violated API contract (i.e. null). The way to implement this \"failure\" is another story.",
+      "parentUuid": "b8e35980_906bc4c7",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6cbb16f2_6c07f2a2",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
         "patchSetId": 8
@@ -100,6 +220,244 @@
       "writtenOn": "2020-02-19T19:32:46Z",
       "side": 1,
       "message": "We will need to rework this method to make it more clear what is going on, i.e. to highlight the role of \"arglet\" in the process",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "11fff2dd_1265ea13",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolDetectionParticipant.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "This may be null, but I do not see the null-aware code below. Would be better to require non-null for all the fields.",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "040f5ca5_fe5c1006",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/IToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "+1",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a70d3892_a66a102c",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/IToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Sounds like exception to be thrown.",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e69b38b8_0a865827",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/IToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Please return empty list instead of null",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "af2d25ea_031c1bfc",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/IToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Optional would be better",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b7bf72a4_00f9431d",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/IToolDetectionParticipant.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Please consider Optional\u003cMatchResult\u003e to avoid null",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3fbd01ee_32629f3c",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/ParticipantTestUtil.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Looks like it should be somewhere in tests, according to the class name",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "224ae3fc_1cecc067",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/ParticipantTestUtil.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Adds another null to the control flow. Please return Optional or better empty implementation of the interface.",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e66c8093_7883fbf3",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/ResponseFileArglets.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Please consider Consumer\u003cThrowable\u003e to be passed here, by default it may print to err like now",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8104039_84f7d6c2",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/builtins/GccOutputProcessor.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Please consider Optional here, or throw an exception if there is nothing to do in this case",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc26714a_ba2c8321",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/builtins/IBuiltinsDetectionBehavior.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "empty String for \"no filename\"?",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d1c07e88_bfb01b4b",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/builtins/IBuiltinsOutputProcessor.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "It should just fail for null, because it is illegal argument. This way we can purify this \"command\" method to return \"void\"",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1210747b_2686392c",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/builtins/OutputSniffer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "there should be another constructor without otput stream and \"no-op\" output stream implementation to use in this case",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "88d4e11f_d1379c90",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParserDetection.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "This will need rework later as \u0027static\u0027 is not friendly to Eclipse dynamic world",
       "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -152,6 +510,40 @@
       "writtenOn": "2020-02-19T19:32:46Z",
       "side": 1,
       "message": "This is very unusual content for the Activator start",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d707e1ac_ea8a635d",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/builtins/MaybeGccBuiltinDetectionBehavior.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "empty string?",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "becb58b1_bb3e9ff9",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/builtins/ProcessingContext.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "fail? adding `null` entry seems useless and illegal",
       "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -245,6 +637,24 @@
     },
     {
       "key": {
+        "uuid": "c6a80e42_0538f021",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ui/BuiltinsCompilerCommandOptionPage.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "We can just use GDF here, but this is minor issue, we can fix it later",
+      "parentUuid": "240c6957_d42327b9",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "20817634_a0c51111",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ui/BuiltinsCompilerCommandOptionPage.java",
         "patchSetId": 8
@@ -256,6 +666,108 @@
       "writtenOn": "2020-02-19T19:32:46Z",
       "side": 1,
       "message": "Later we can use SelectionListener.widgetSelectedAdapter(Consumer\u003cSelectionEvent\u003e)",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6855723c_eea1a0be",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/BuiltinsCompileCommandsJsonParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "This long running file access operation from UI thread is performance issue and should be reworked to a org.eclipse.core.runtime.jobs.Job",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "54d6addb_a10ffd23",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CompileCommandsJsonParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Otherwise this class will need refactoring",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9d5cc22f_6e5ac238",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CompileCommandsJsonParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "I understand the implementation is inherited, but in general it is better to avoid \"configuring\" after creation.",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0490ce7a_e0c853d2",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CompileCommandsJsonParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Please, empty list instead of null",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "92c4debf_61bca79d",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CompileCommandsJsonParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "Why not to return empty iterable?",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "32c92876_aaa68f17",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CompileCommandsJsonParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 650,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-02-22T15:35:53Z",
+      "side": 1,
+      "message": "I would not recommend to use clone() at all",
       "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

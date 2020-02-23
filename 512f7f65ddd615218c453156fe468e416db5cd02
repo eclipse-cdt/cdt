@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "ede94895_edb60ea6",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-23T18:09:37Z",
+      "side": 1,
+      "message": "This is modelled after java.util.Collections/Arrays.\nImplementors of the extension point can easily find all commonly used Arglet implementation in this class.\nIn rare cases they will have to implement new arglets, see org.eclipse.cdt.cmake.is.microsoft.MsclToolCommandlineParser for an example.",
+      "parentUuid": "1c8460f6_cdbdca7e",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2719f3cc_03d45d8e",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
         "patchSetId": 8
@@ -226,6 +244,24 @@
     },
     {
       "key": {
+        "uuid": "a6e88e60_313dcc42",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-23T18:09:37Z",
+      "side": 1,
+      "message": "Outline in \u003chttps://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d559674#c4\u003e\n\nI think I should add extra documentation in HTML that explains how all this stuff is supposed to work (maybe package.info?)",
+      "parentUuid": "447dfafb_fa68065a",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "11fff2dd_1265ea13",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolDetectionParticipant.java",
         "patchSetId": 8
@@ -237,6 +273,24 @@
       "writtenOn": "2020-02-22T15:35:53Z",
       "side": 1,
       "message": "This may be null, but I do not see the null-aware code below. Would be better to require non-null for all the fields.",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "324e36cb_76d08b48",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolDetectionParticipant.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-23T18:09:37Z",
+      "side": 1,
+      "message": "Good spot!",
+      "parentUuid": "11fff2dd_1265ea13",
       "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -345,6 +399,24 @@
     },
     {
       "key": {
+        "uuid": "67917f91_baa4599c",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/ParticipantTestUtil.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-23T18:09:37Z",
+      "side": 1,
+      "message": "It is there to help implementors of the extension point to write tests.\nWithout this, I would have to make much more classes being API.",
+      "parentUuid": "3fbd01ee_32629f3c",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "224ae3fc_1cecc067",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/ParticipantTestUtil.java",
         "patchSetId": 8
@@ -379,6 +451,24 @@
     },
     {
       "key": {
+        "uuid": "bebd473e_0c1d9ca2",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/ResponseFileArglets.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-23T18:09:37Z",
+      "side": 1,
+      "message": "Sorry, I do not understand. Can you explaiin?",
+      "parentUuid": "e66c8093_7883fbf3",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a8104039_84f7d6c2",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/builtins/GccOutputProcessor.java",
         "patchSetId": 8
@@ -407,6 +497,24 @@
       "writtenOn": "2020-02-22T15:35:53Z",
       "side": 1,
       "message": "empty String for \"no filename\"?",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8cfb910d_9c392464",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/builtins/IBuiltinsDetectionBehavior.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-23T18:09:37Z",
+      "side": 1,
+      "message": "Yes. Gcc requires an empty file with \u0027.c\u0027 extension for input, g++ requires \u0027.cpp\u0027. But other compilers may not require an input file at all.",
+      "parentUuid": "fc26714a_ba2c8321",
       "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -734,6 +842,24 @@
       "writtenOn": "2020-02-22T15:35:53Z",
       "side": 1,
       "message": "Please, empty list instead of null",
+      "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eda76e80_38eb9ab3",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CompileCommandsJsonParser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-02-23T18:09:37Z",
+      "side": 1,
+      "message": "All other ILanguageSettingsProvider implementation I\u0027ve found in MBS do return null here",
+      "parentUuid": "0490ce7a_e0c853d2",
       "revId": "512f7f65ddd615218c453156fe468e416db5cd02",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

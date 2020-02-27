@@ -20,6 +20,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.text.BreakIterator;
 import java.text.CharacterIterator;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -238,8 +239,6 @@ import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 import org.eclipse.ui.texteditor.templates.ITemplatesPage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * C/C++ source editor.

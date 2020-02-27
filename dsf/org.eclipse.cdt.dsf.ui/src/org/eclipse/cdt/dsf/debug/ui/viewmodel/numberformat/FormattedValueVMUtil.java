@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,8 +36,6 @@ import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A helper class for View Model Node implementations that support elements
@@ -95,13 +94,13 @@ public class FormattedValueVMUtil {
 			return label;
 		} else {
 			return MessageFormat.format(MessagesForNumberFormat.FormattedValueVMUtil_Other_format__format_text,
-					new Object[] { formatId });
+					formatId);
 		}
 	}
 
 	/**
 	 * Returns an element property representing an element value in a given format.
-
+	 *
 	 * @deprecated Replaced by {@link #getPropertyForFormatId(String, String)}
 	 */
 	@Deprecated

@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.codemanipulation;
 
-import com.ibm.icu.text.Collator;
+import java.text.Collator;
 
 public class IncludeInfo implements Comparable<IncludeInfo> {
 	private static final Collator COLLATOR = Collator.getInstance();

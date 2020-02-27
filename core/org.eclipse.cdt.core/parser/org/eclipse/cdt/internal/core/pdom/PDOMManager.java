@@ -26,6 +26,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,9 +118,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-
-import com.ibm.icu.text.MessageFormat;
-import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * Manages PDOM updates and events associated with them. Provides methods for index access.
@@ -1227,8 +1226,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			}
 		}
 
-		String msg = MessageFormat.format(Messages.PDOMManager_indexMonitorDetail, new Object[] {
-				Integer.valueOf(sourceCount), Integer.valueOf(sourceEstimate), Integer.valueOf(headerCount) });
+		String msg = MessageFormat.format(Messages.PDOMManager_indexMonitorDetail, Integer.valueOf(sourceCount),
+				Integer.valueOf(sourceEstimate), Integer.valueOf(headerCount));
 		if (detail != null) {
 			msg += ": " + detail; //$NON-NLS-1$
 		}

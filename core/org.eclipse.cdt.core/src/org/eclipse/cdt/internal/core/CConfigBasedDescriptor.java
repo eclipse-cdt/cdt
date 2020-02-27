@@ -19,6 +19,7 @@ package org.eclipse.cdt.internal.core;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -57,8 +58,6 @@ import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Concrete ICDescriptor for a Project.
@@ -136,7 +135,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 			if (!getProject().isAccessible())
 				throw ExceptionFactory.createCoreException(
 						MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), //$NON-NLS-1$
-								new Object[] { getProject().getName() }));
+								getProject().getName()));
 			if (fIsDirty) {
 				ICProjectDescription des = fCfgDes.getProjectDescription();
 				if (des.isCdtProjectCreating())

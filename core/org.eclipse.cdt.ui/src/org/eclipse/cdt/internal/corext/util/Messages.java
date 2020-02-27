@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.util;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 
 /**
  * Helper class to format message strings.
@@ -22,11 +22,7 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class Messages {
 
-	public static String format(String message, Object object) {
-		return MessageFormat.format(message, new Object[] { object });
-	}
-
-	public static String format(String message, Object[] objects) {
+	public static String format(String message, Object... objects) {
 		return MessageFormat.format(message, objects);
 	}
 

@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.core.runtime.IStatus;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Label attribute that fills in the formatted value text using the active
@@ -74,8 +73,8 @@ public class FormattedValueLabelText extends LabelText {
 			Object preferredFormat = properties.get(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE);
 			Object value = properties.get(PROP_ACTIVE_FORMAT_VALUE);
 			if (value != null && activeFormat != null && !activeFormat.equals(preferredFormat)) {
-				return MessageFormat.format(MessagesForNumberFormat.FormattedValueLabelText__Value__text_format,
-						new Object[] { value, FormattedValueVMUtil.getFormatLabel((String) activeFormat) });
+				return MessageFormat.format(MessagesForNumberFormat.FormattedValueLabelText__Value__text_format, value,
+						FormattedValueVMUtil.getFormatLabel((String) activeFormat));
 			}
 		}
 		return properties.get(propertyName);

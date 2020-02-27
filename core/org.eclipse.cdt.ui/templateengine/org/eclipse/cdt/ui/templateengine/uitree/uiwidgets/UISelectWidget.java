@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,8 +30,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This gives a Label and Combo widget.

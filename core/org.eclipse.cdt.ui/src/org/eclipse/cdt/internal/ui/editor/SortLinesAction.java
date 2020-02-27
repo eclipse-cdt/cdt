@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.text.Collator;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.model.ICProject;
@@ -36,8 +37,6 @@ import org.eclipse.text.undo.IDocumentUndoManager;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Sorts selected lines in alphabetical order. If both, comment and non-comment lines

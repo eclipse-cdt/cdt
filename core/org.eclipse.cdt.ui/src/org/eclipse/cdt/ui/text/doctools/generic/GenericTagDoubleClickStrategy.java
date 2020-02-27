@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools.generic;
 
+import java.text.BreakIterator;
 import java.text.CharacterIterator;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -21,8 +22,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * A double-click strategy for words starting with specified tag markers.

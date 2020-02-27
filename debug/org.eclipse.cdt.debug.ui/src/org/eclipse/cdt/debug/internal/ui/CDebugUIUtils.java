@@ -15,6 +15,7 @@
 package org.eclipse.cdt.debug.internal.ui;
 
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
@@ -65,8 +66,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Utility methods for C/C++ Debug UI.
@@ -129,7 +128,7 @@ public class CDebugUIUtils {
 		StringBuilder label = new StringBuilder();
 		if (value instanceof ICDebugElementStatus && !((ICDebugElementStatus) value).isOK()) {
 			label.append(MessageFormat.format(CDebugUIMessages.getString("CDTDebugModelPresentation.4"), //$NON-NLS-1$
-					(Object[]) new String[] { ((ICDebugElementStatus) value).getMessage() }));
+					((ICDebugElementStatus) value).getMessage()));
 		} else if (value instanceof ICValue) {
 			ICType type = null;
 			try {

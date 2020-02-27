@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -103,8 +104,6 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The view part for the include browser.
@@ -399,8 +398,8 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		if (elem != null) {
 			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenElement);
 			if (hierarchyView && !elem.equals(fModel.getInput())) {
-				String label = MessageFormat.format(Messages.THViewPart_FocusOn, new Object[] { CElementLabels
-						.getTextLabel(elem, CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.M_PARAMETER_TYPES) });
+				String label = MessageFormat.format(Messages.THViewPart_FocusOn, CElementLabels.getTextLabel(elem,
+						CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.M_PARAMETER_TYPES));
 				menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, new Action(label) {
 					@Override
 					public void run() {
@@ -910,7 +909,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 					message = label;
 				} else {
 					String scope = workingSet.getLabel();
-					message = MessageFormat.format("{0} - {1}", new Object[] { label, scope }); //$NON-NLS-1$
+					message = MessageFormat.format("{0} - {1}", label, scope); //$NON-NLS-1$
 				}
 
 				label = ""; //$NON-NLS-1$

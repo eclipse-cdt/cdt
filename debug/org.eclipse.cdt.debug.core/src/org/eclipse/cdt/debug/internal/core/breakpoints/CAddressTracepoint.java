@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A tracepoint that collects data when a particular address is reached.
@@ -53,6 +52,6 @@ public class CAddressTracepoint extends AbstractTracepoint implements ICAddressB
 	@Override
 	protected String getMarkerMessage() throws CoreException {
 		return MessageFormat.format(BreakpointMessages.getString("CAddressTracepoint.0"), //$NON-NLS-1$
-				(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });
+				CDebugUtils.getBreakpointText(this, false));
 	}
 }

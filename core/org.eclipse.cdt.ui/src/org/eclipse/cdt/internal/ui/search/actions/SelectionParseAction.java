@@ -17,6 +17,8 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -30,8 +32,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @author aniefer
@@ -111,8 +111,8 @@ public class SelectionParseAction extends Action {
 	}
 
 	protected void reportSourceFileOpenFailure(IPath path) {
-		showStatusLineMessage(MessageFormat.format(CSearchMessages.SelectionParseAction_FileOpenFailure_format,
-				new Object[] { path.toOSString() }));
+		showStatusLineMessage(
+				MessageFormat.format(CSearchMessages.SelectionParseAction_FileOpenFailure_format, path.toOSString()));
 	}
 
 	protected void reportSelectionMatchFailure() {
@@ -120,12 +120,12 @@ public class SelectionParseAction extends Action {
 	}
 
 	protected void reportSymbolLookupFailure(String symbol) {
-		showStatusLineMessage(MessageFormat.format(CSearchMessages.SelectionParseAction_SymbolNotFoundInIndex_format,
-				new Object[] { symbol }));
+		showStatusLineMessage(
+				MessageFormat.format(CSearchMessages.SelectionParseAction_SymbolNotFoundInIndex_format, symbol));
 	}
 
 	protected void reportIncludeLookupFailure(String filename) {
-		showStatusLineMessage(MessageFormat.format(CSearchMessages.SelectionParseAction_IncludeNotFound_format,
-				new Object[] { filename }));
+		showStatusLineMessage(
+				MessageFormat.format(CSearchMessages.SelectionParseAction_IncludeNotFound_format, filename));
 	}
 }

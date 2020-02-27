@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.ui.breakpointactions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -44,8 +45,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class ExternalToolAction extends AbstractBreakpointAction {
 
@@ -87,7 +86,7 @@ public class ExternalToolAction extends AbstractBreakpointAction {
 			}
 			if (!launched) {
 				String errorMsg = MessageFormat.format(Messages.getString("ExternalToolAction.error.0"), //$NON-NLS-1$
-						new Object[] { externalToolName });
+						externalToolName);
 				errorStatus = new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
 						ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null);
 			}
@@ -101,7 +100,7 @@ public class ExternalToolAction extends AbstractBreakpointAction {
 
 		if (errorStatus != null) {
 			String errorMsg = MessageFormat.format(Messages.getString("ExternalToolAction.error.1"), //$NON-NLS-1$
-					new Object[] { externalToolName });
+					externalToolName);
 			MultiStatus ms = new MultiStatus(CDIDebugModel.getPluginIdentifier(),
 					ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null);
 			ms.add(errorStatus);

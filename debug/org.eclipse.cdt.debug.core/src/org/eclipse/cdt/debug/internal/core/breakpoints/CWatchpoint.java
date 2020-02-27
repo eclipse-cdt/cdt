@@ -15,6 +15,7 @@
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.math.BigInteger;
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -22,8 +23,6 @@ import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A watchpoint specific to the C/C++ debug model.
@@ -84,7 +83,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 			format = BreakpointMessages.getString("CWatchpoint.1"); //$NON-NLS-1$
 		else if (isWriteType() && isReadType())
 			format = BreakpointMessages.getString("CWatchpoint.2"); //$NON-NLS-1$
-		return MessageFormat.format(format, new Object[] { CDebugUtils.getBreakpointText(this, false) });
+		return MessageFormat.format(format, CDebugUtils.getBreakpointText(this, false));
 	}
 
 	/* (non-Javadoc)

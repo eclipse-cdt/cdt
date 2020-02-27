@@ -14,6 +14,7 @@
 
 package org.eclipse.cdt.internal.ui.workingsets;
 
+import java.text.Collator;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -24,8 +25,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.CompoundContributionItem;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Common API of dynamic contribution of items to manipulate configurations of a working set.

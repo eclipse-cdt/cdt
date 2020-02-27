@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.part;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -21,8 +23,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @version 	1.0
@@ -126,8 +126,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	protected void updateCounterLabel() {
 		String number = EMPTY_STRING + getSelectionCount();
 		String totalNumber = EMPTY_STRING + getTotalCount();
-		String message = MessageFormat.format(MakeUIPlugin.getResourceString(KEY_COUNTER),
-				new Object[] { number, totalNumber });
+		String message = MessageFormat.format(MakeUIPlugin.getResourceString(KEY_COUNTER), number, totalNumber);
 		counterLabel.setText(message);
 	}
 

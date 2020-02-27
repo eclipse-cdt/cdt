@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
@@ -44,8 +45,6 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class Util implements ICLogConstants {
 	public static boolean VERBOSE_PARSER;
@@ -197,8 +196,8 @@ public class Util implements ICLogConstants {
 		if (CCorePlugin.getDefault().isDebugging() && isActive(client)) {
 			// Time stamp
 			if (addTimeStamp)
-				message = MessageFormat.format("[{0}] {1}", new Object[] { //$NON-NLS-1$
-						Long.valueOf(System.currentTimeMillis()), message });
+				message = MessageFormat.format("[{0}] {1}", //$NON-NLS-1$
+						Long.valueOf(System.currentTimeMillis()), message);
 			while (message.length() > 100) {
 				String partial = message.substring(0, 100);
 				message = message.substring(100);

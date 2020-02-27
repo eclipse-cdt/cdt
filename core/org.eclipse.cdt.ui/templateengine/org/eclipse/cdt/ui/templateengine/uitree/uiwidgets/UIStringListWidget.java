@@ -14,6 +14,7 @@
 
 package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,8 +34,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This gives a Label and StringList Widget.

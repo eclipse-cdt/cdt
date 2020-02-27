@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.internal.ui.text.CBreakIterator;
 import org.eclipse.cdt.ui.PreferenceConstants;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * Composes names according to a particular style. A seed name is split into

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -43,8 +44,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class THInformationControl extends AbstractInformationControl implements ITHModelPresenter {
 	private THHierarchyModel fModel;
@@ -254,7 +253,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 		default:
 			break;
 		}
-		return MessageFormat.format(message, new Object[] { keyName });
+		return MessageFormat.format(message, keyName);
 	}
 
 	@Override

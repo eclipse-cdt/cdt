@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -55,8 +56,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Default source locator.
@@ -348,8 +347,8 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					try {
 						clazz = bundle.loadClass(className);
 					} catch (ClassNotFoundException e) {
-						CDebugCorePlugin.log(MessageFormat.format(
-								"Unable to restore source location - class not found {0}", new Object[] { className })); //$NON-NLS-1$
+						CDebugCorePlugin.log(MessageFormat
+								.format("Unable to restore source location - class not found {0}", className)); //$NON-NLS-1$
 						continue;
 					}
 					ICSourceLocation location = null;

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.internal.core.scannerconfig;
 
+import java.text.MessageFormat;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,8 +30,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.core.runtime.Assert;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class CfgScannerConfigUtil {
 	public static CfgInfoContext adjustPerRcTypeContext(CfgInfoContext context) {
@@ -197,7 +196,7 @@ public class CfgScannerConfigUtil {
 
 		if (!(tool instanceof Tool)) {
 			String msg = MessageFormat.format(ManagedMakeMessages.getString("CfgScannerConfigUtil_ErrorNotSupported"), //$NON-NLS-1$
-					new Object[] { Tool.class.getName() });
+					Tool.class.getName());
 			throw new UnsupportedOperationException(msg);
 		}
 
@@ -229,7 +228,7 @@ public class CfgScannerConfigUtil {
 
 		if (!(inputType instanceof InputType)) {
 			String msg = MessageFormat.format(ManagedMakeMessages.getString("CfgScannerConfigUtil_ErrorNotSupported"), //$NON-NLS-1$
-					new Object[] { InputType.class.getName() });
+					InputType.class.getName());
 			throw new UnsupportedOperationException(msg);
 		}
 

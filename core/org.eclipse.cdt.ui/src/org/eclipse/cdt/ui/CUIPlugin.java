@@ -20,6 +20,7 @@ package org.eclipse.cdt.ui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -110,8 +111,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.

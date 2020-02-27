@@ -14,9 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
-import org.eclipse.osgi.util.NLS;
+import java.text.MessageFormat;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	public static String EditorUtility_calculatingChangedRegions_message;

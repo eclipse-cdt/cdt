@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -22,8 +24,6 @@ import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class BreakpointProblems {
 
@@ -44,7 +44,7 @@ public class BreakpointProblems {
 	public static IMarker reportBreakpointMoved(ICBreakpoint breakpoint, int oldLineNumber, int newLineNumber,
 			String contextName, String contextID) throws CoreException {
 		String message = MessageFormat.format(BreakpointMessages.getString("BreakpointProblems_Moved"), //$NON-NLS-1$
-				new Object[] { Integer.valueOf(oldLineNumber), Integer.valueOf(newLineNumber) });
+				Integer.valueOf(oldLineNumber), Integer.valueOf(newLineNumber));
 		IMarker marker = BreakpointProblems.reportBreakpointProblem(breakpoint, message, IMarker.SEVERITY_INFO, MOVED,
 				true, false, contextName, contextID);
 		return marker;

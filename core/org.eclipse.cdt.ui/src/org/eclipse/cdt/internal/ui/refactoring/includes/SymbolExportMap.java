@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,8 +31,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * A set of header file substitution rules.
@@ -72,7 +71,7 @@ public class SymbolExportMap {
 
 	/**
 	 * Indicates that the given symbol is exported by the given header.
-
+	
 	 * @param symbol The symbol represented by its fully qualified name.
 	 * @param header The header file exporting the symbol.
 	 */
@@ -89,7 +88,7 @@ public class SymbolExportMap {
 
 	/**
 	 * Indicates that the given symbol is exported by the given header.
-
+	
 	 * @param symbol The symbol represented by its fully qualified name.
 	 * @param header The header file exporting the symbol. The header is represented by an include
 	 *     name optionally surrounded by double quotes or angle brackets. Angle brackets indicate

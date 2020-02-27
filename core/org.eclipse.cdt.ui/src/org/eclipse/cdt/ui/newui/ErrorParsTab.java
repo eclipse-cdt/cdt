@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -70,8 +71,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.prefs.BackingStoreException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class represents Error Parser Tab in Project Properties or workspace Preferences
@@ -371,7 +370,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 					status.setError(Messages.ErrorParsTab_error_NonEmptyName);
 				} else if (newText.indexOf(ErrorParserManager.ERROR_PARSER_DELIMITER) >= 0) {
 					String message = MessageFormat.format(Messages.ErrorParsTab_error_IllegalCharacter,
-							new Object[] { ErrorParserManager.ERROR_PARSER_DELIMITER });
+							ErrorParserManager.ERROR_PARSER_DELIMITER);
 					status.setError(message);
 				} else if (fAvailableErrorParsers.containsKey(makeId(newText))) {
 					status.setError(Messages.ErrorParsTab_error_NonUniqueID);
@@ -416,7 +415,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 					status.setError(Messages.ErrorParsTab_error_NonEmptyName);
 				} else if (newText.indexOf(ErrorParserManager.ERROR_PARSER_DELIMITER) >= 0) {
 					String message = MessageFormat.format(Messages.ErrorParsTab_error_IllegalCharacter,
-							new Object[] { ErrorParserManager.ERROR_PARSER_DELIMITER });
+							ErrorParserManager.ERROR_PARSER_DELIMITER);
 					status.setError(message);
 				}
 				return status;

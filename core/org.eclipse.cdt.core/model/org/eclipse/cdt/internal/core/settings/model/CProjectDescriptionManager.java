@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -134,8 +135,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.xml.sax.SAXException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The CProjectDescriptionManager is to marshall the loading and storing
@@ -846,7 +845,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				if (!project.isAccessible())
 					throw ExceptionFactory.createCoreException(MessageFormat.format(
 							CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), //$NON-NLS-1$
-							new Object[] { project.getName() }));
+							project.getName()));
 
 				if (!des.isValid() && (!fAllowEmptyCreatingDescription || !des.isCdtProjectCreating()))
 					throw ExceptionFactory.createCoreException(
@@ -887,7 +886,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		if (project == null || !project.isAccessible())
 			throw ExceptionFactory.createCoreException(
 					MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), //$NON-NLS-1$
-							new Object[] { project != null ? project.getName() : "<null>" })); //$NON-NLS-1$
+							project != null ? project.getName() : "<null>")); //$NON-NLS-1$
 		AbstractCProjectDescriptionStorage storage = CProjectDescriptionStorageManager.getInstance()
 				.getProjectDescriptionStorage(project);
 		if (storage == null)
@@ -1389,7 +1388,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	/*	void postProcessNewDescriptionCache(CProjectDescription des, ICProjectDescriptionDelta delta) {
 			if (delta == null && delta.getDeltaKind() != ICProjectDescriptionDelta.CHANGED)
 				return;
-
+	
 			ICConfigurationDescription indexCfg = des.getIndexConfiguration();
 			ICConfigurationDescription activeCfg = des.getActiveConfiguration();
 			ICProjectDescriptionDelta activeCfgDelta = findDelta(activeCfg.getId(), delta);
@@ -1399,8 +1398,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					des.setIndexConfiguration(activeCfg);
 				}
 			}
-
-
+	
+	
 		}
 	*/
 	private ICDescriptionDelta findDelta(String id, ICDescriptionDelta delta) {
@@ -1936,12 +1935,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	/*	public boolean entriesEqual(ICLanguageSettingEntry entries1[], ICLanguageSettingEntry entries2[]) {
 			if (entries1.length != entries2.length)
 				return false;
-
+	
 			for (int i = 0; i < entries1.length; i++) {
 				if (!entries1[i].equals(entries2[i]))
 					return false;
 			}
-
+	
 			return true;
 		}
 	*/

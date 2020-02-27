@@ -21,6 +21,7 @@ package org.eclipse.cdt.core;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -100,8 +101,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * CCorePlugin is the life-cycle owner of the core plug-in, and starting point
@@ -337,7 +336,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), new Object[] { arg });
+		return MessageFormat.format(getResourceString(key), arg);
 	}
 
 	public static String getFormattedString(String key, String[] args) {

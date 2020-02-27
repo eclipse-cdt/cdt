@@ -15,6 +15,8 @@
 
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.internal.ui.text.correction.CorrectionCommandHandler;
 import org.eclipse.cdt.internal.ui.text.correction.CorrectionMessages;
 import org.eclipse.cdt.internal.ui.text.correction.ICommandAccess;
@@ -40,8 +42,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Implementation of a C completion proposal to be used for quick fix and quick assist
@@ -177,8 +177,8 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	public String getDisplayString() {
 		String shortCutString = CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
-			return MessageFormat.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
-					new Object[] { getName(), shortCutString });
+			return MessageFormat.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut, getName(),
+					shortCutString);
 		}
 		return getName();
 	}
@@ -190,7 +190,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		String shortCutString = CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
 			String decorated = MessageFormat.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut,
-					new Object[] { getName(), shortCutString });
+					getName(), shortCutString);
 			return ColoringLabelProvider.decorateStyledString(str, decorated, StyledString.QUALIFIER_STYLER);
 		}
 		return str;

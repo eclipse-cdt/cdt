@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,8 +64,6 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Utility methods.
@@ -442,7 +441,7 @@ public class CDebugUtils {
 		if (lineNumber > 0) {
 			label.append(' ');
 			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.0"), //$NON-NLS-1$
-					(Object[]) new String[] { Integer.toString(lineNumber) }));
+					Integer.toString(lineNumber)));
 		}
 		return label;
 	}
@@ -452,7 +451,7 @@ public class CDebugUtils {
 		try {
 			label.append(' ');
 			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.1"), //$NON-NLS-1$
-					(Object[]) new String[] { breakpoint.getAddress() }));
+					breakpoint.getAddress()));
 		} catch (NumberFormatException e) {
 		}
 		return label;
@@ -464,7 +463,7 @@ public class CDebugUtils {
 		if (function != null && function.trim().length() > 0) {
 			label.append(' ');
 			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.2"), //$NON-NLS-1$
-					(Object[]) new String[] { function.trim() }));
+					function.trim()));
 		}
 		return label;
 	}
@@ -477,7 +476,7 @@ public class CDebugUtils {
 		if (printfStr != null && printfStr.length() > 0) {
 			buffer.append(' ');
 			buffer.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.printfString"), //$NON-NLS-1$
-					(Object[]) new String[] { printfStr }));
+					printfStr));
 		}
 	}
 
@@ -486,7 +485,7 @@ public class CDebugUtils {
 		if (ignoreCount > 0) {
 			label.append(' ');
 			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.3"), //$NON-NLS-1$
-					(Object[]) new String[] { Integer.toString(ignoreCount) }));
+					Integer.toString(ignoreCount)));
 		}
 		return label;
 	}
@@ -496,7 +495,7 @@ public class CDebugUtils {
 		if (condition != null && condition.length() > 0) {
 			buffer.append(' ');
 			buffer.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.4"), //$NON-NLS-1$
-					(Object[]) new String[] { condition }));
+					condition));
 		}
 	}
 
@@ -505,7 +504,7 @@ public class CDebugUtils {
 		if (expression != null && expression.length() > 0) {
 			label.append(' ');
 			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.5"), //$NON-NLS-1$
-					(Object[]) new String[] { expression }));
+					expression));
 		}
 	}
 
@@ -514,7 +513,7 @@ public class CDebugUtils {
 		if (memorySpace != null && memorySpace.length() > 0) {
 			label.append(' ');
 			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.6"), //$NON-NLS-1$
-					(Object[]) new String[] { memorySpace }));
+					memorySpace));
 		}
 	}
 
@@ -523,7 +522,7 @@ public class CDebugUtils {
 		if (range.length() > 0 && !range.equals("0")) { //$NON-NLS-1$
 			label.append(' ');
 			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.7"), //$NON-NLS-1$
-					(Object[]) new String[] { range }));
+					range));
 		}
 	}
 
@@ -557,7 +556,7 @@ public class CDebugUtils {
 			if (typeString.length() > 0) {
 				label.append(' ');
 				label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.8"), //$NON-NLS-1$
-						(Object[]) new String[] { typeString }));
+						typeString));
 			}
 		}
 		return label;

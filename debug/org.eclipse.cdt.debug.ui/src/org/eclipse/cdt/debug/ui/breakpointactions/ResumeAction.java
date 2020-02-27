@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.ui.breakpointactions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,8 +42,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.ibm.icu.text.MessageFormat;
-
 public class ResumeAction extends AbstractBreakpointAction {
 
 	final static int INCRIMENT_MSEC = 100;
@@ -62,7 +61,7 @@ public class ResumeAction extends AbstractBreakpointAction {
 				long currentTime = System.currentTimeMillis();
 				while (!monitor.isCanceled() && currentTime < endTime) {
 					monitor.setTaskName(MessageFormat.format(Messages.getString("ResumeAction.SummaryResumeTime"), //$NON-NLS-1$
-							new Object[] { Long.valueOf((endTime - currentTime) / 1000) })); //)
+							Long.valueOf((endTime - currentTime) / 1000))); //)
 					monitor.worked(1);
 					Thread.sleep(INCRIMENT_MSEC);
 					currentTime = System.currentTimeMillis();

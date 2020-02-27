@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The text attribute of a label.  It uses a message format string in order to

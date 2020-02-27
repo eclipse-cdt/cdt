@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class LaunchUIMessages {
 
@@ -35,7 +34,7 @@ public class LaunchUIMessages {
 	}
 
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getString(key), new Object[] { arg });
+		return MessageFormat.format(getString(key), arg);
 	}
 
 	public static String getFormattedString(String key, String[] args) {

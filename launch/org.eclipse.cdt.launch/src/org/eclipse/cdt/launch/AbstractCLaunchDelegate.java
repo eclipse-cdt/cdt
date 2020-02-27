@@ -21,6 +21,8 @@ package org.eclipse.cdt.launch;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -76,9 +78,6 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.osgi.util.NLS;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * AbstractCLaunchDelegate is the launch delegate used by most CDI based debuggers.

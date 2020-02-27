@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class DebugCoreMessages {
 
@@ -28,7 +27,7 @@ public class DebugCoreMessages {
 	}
 
 	static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getString(key), new Object[] { arg });
+		return MessageFormat.format(getString(key), arg);
 	}
 
 	static String getFormattedString(String key, String[] args) {

@@ -14,10 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class BuildModelMessages {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildModelMessages"; //$NON-NLS-1$
@@ -42,7 +41,7 @@ public class BuildModelMessages {
 	}
 
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), (Object[]) new String[] { arg });
+		return MessageFormat.format(getResourceString(key), arg);
 	}
 
 	public static String getFormattedString(String key, String[] args) {

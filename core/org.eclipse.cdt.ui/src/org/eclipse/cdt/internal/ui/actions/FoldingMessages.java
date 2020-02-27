@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Class that gives access to the folding messages resource bundle.
@@ -62,23 +61,10 @@ public class FoldingMessages {
 	 * under the given key, the key is returned.
 	 *
 	 * @param key the resource key
-	 * @param arg the message argument
-	 * @return the string
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		return getFormattedString(key, new Object[] { arg });
-	}
-
-	/**
-	 * Returns the formatted resource string associated with the given key in the resource bundle.
-	 * <code>MessageFormat</code> is used to format the message. If there isn't  any value
-	 * under the given key, the key is returned.
-	 *
-	 * @param key the resource key
 	 * @param args the message arguments
 	 * @return the string
 	 */
-	public static String getFormattedString(String key, Object[] args) {
+	public static String getFormattedString(String key, Object... args) {
 		return MessageFormat.format(getString(key), args);
 	}
 }

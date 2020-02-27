@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine.process;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Abstract ProcessRunner class provides the methods to implement for processes.

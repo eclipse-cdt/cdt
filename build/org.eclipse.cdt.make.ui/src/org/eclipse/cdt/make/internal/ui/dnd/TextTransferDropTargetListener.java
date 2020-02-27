@@ -14,6 +14,7 @@
 
 package org.eclipse.cdt.make.internal.ui.dnd;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,6 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * {@code TextTransferDropTargetListener} handles dropping of selected text to
@@ -165,7 +164,7 @@ public class TextTransferDropTargetListener extends AbstractContainerAreaDropAda
 			String title = MakeUIPlugin.getResourceString("MakeTargetDnD.title.createFromTextConfirm"); //$NON-NLS-1$
 			String question = MessageFormat.format(
 					MakeUIPlugin.getResourceString("MakeTargetDnD.message.createFromTextConfirm"), //$NON-NLS-1$
-					new Object[] { Integer.valueOf(makeTargets.length) });
+					Integer.valueOf(makeTargets.length));
 
 			String topTargets = ""; //$NON-NLS-1$
 			for (int i = 0; i < makeTargets.length; i++) {

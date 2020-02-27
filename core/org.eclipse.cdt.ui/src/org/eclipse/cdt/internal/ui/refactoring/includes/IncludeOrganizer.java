@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 import static org.eclipse.cdt.core.index.IndexLocationFactory.getAbsolutePath;
 import static org.eclipse.cdt.internal.ui.refactoring.includes.IncludeUtil.isContainedInRegion;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -79,8 +80,6 @@ import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Organizes the include directives and forward declarations of a source or header file.

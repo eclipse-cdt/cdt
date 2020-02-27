@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.ui.breakpointactions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,8 +42,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class LogAction extends AbstractBreakpointAction {
 
@@ -76,7 +75,7 @@ public class LogAction extends AbstractBreakpointAction {
 			stream.close();
 		} catch (Exception e) {
 			String errorMsg = MessageFormat.format(Messages.getString("LogAction.error.0"), //$NON-NLS-1$
-					new Object[] { getSummary() });
+					getSummary());
 			result = new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
 					ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, e);
 		}

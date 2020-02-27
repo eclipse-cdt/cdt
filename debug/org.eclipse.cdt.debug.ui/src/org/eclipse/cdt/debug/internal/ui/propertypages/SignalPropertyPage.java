@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.propertypages;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICSignal;
@@ -32,8 +34,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.PropertyPage;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The property page for a signal.
@@ -60,7 +60,7 @@ public class SignalPropertyPage extends PropertyPage {
 			String description = getSignal().getDescription();
 			Label label = new Label(composite, SWT.WRAP);
 			label.setText(MessageFormat.format(PropertyPageMessages.getString("SignalPropertyPage.0"), //$NON-NLS-1$
-					new Object[] { description }));
+					description));
 			GridData data = new GridData(
 					GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);

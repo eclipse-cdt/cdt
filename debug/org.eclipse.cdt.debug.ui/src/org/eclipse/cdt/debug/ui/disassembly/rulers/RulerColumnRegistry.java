@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.disassembly.rulers;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,8 +41,6 @@ import org.eclipse.ui.internal.texteditor.rulers.ExtensionPointHelper;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnMessages;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnPlacementConstraint;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A registry for all extensions to the
@@ -268,25 +267,25 @@ public final class RulerColumnRegistry {
 
 	private void noteInvalidExtension(IConfigurationElement element, InvalidRegistryObjectException x) {
 		String message = MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_invalid_msg,
-				new Object[] { ExtensionPointHelper.findId(element) });
+				ExtensionPointHelper.findId(element));
 		warnUser(message, x);
 	}
 
 	private void noteUnknownTarget(RulerColumnDescriptor desc, String referencedId) {
 		String message = MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_unresolved_placement_msg,
-				new Object[] { QUALIFIED_EXTENSION_POINT, referencedId, desc.getName(), desc.getContributor() });
+				QUALIFIED_EXTENSION_POINT, referencedId, desc.getName(), desc.getContributor());
 		warnUser(message, null);
 	}
 
 	private void noteCycle(RulerColumnDescriptor desc, RulerColumnDescriptor target) {
 		String message = MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_cyclic_placement_msg,
-				new Object[] { QUALIFIED_EXTENSION_POINT, target.getName(), desc.getName(), desc.getContributor() });
+				QUALIFIED_EXTENSION_POINT, target.getName(), desc.getName(), desc.getContributor());
 		warnUser(message, null);
 	}
 
 	private void noteDuplicateId(RulerColumnDescriptor desc) {
 		String message = MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_duplicate_id_msg,
-				new Object[] { QUALIFIED_EXTENSION_POINT, desc.getId(), desc.getContributor() });
+				QUALIFIED_EXTENSION_POINT, desc.getId(), desc.getContributor());
 		warnUser(message, null);
 	}
 

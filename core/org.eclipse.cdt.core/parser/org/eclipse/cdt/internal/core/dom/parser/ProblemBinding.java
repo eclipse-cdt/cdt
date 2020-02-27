@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -39,8 +41,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.core.runtime.PlatformObject;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Implementation of problem bindings
@@ -142,7 +142,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		}
 
 		if (arg != null) {
-			msg = MessageFormat.format(msg, new Object[] { new String(arg) });
+			msg = MessageFormat.format(msg, new String(arg));
 		}
 
 		return msg;

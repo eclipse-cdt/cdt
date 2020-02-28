@@ -62,15 +62,15 @@ class BaseClassLookup {
 
 		final HashMap<IScope, BaseClassLookup> infoMap = new HashMap<>();
 		BaseClassLookup rootInfo = lookupInBaseClass(data, null, false, classType, infoMap, 0);
-		if (data.contentAssist) {
+		if (data.isContentAssist()) {
 			rootInfo.collectResultForContentAssist(data);
 		} else {
 			hideVirtualBases(rootInfo, infoMap);
 			IBinding[] result = rootInfo.collectResult(data, true, IBinding.EMPTY_BINDING_ARRAY);
-			if (data.problem == null) {
-				data.foundItems = ArrayUtil.addAll((Object[]) data.foundItems, result);
+			if (data.getProblem() == null) {
+				data.setFoundItems(ArrayUtil.addAll((Object[]) data.getFoundItems(), result));
 			} else if (result.length > 0) {
-				data.problem.setCandidateBindings(result);
+				data.getProblem().setCandidateBindings(result);
 			}
 			//			verifyResult(data, result);
 		}
@@ -162,8 +162,8 @@ class BaseClassLookup {
 			if (info != null) {
 				// Avoid loops.
 				if (info.getResult() == null) {
-					data.problem = new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE,
-							root.getNameCharArray());
+					data.setProblem(new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE,
+							root.getNameCharArray()));
 					return null;
 				}
 				return info;
@@ -182,7 +182,7 @@ class BaseClassLookup {
 			try {
 				// Determine the name qualifier if the lookup name is a definition.
 				ICPPASTNameSpecifier nameQualifier = null;
-				if (data.qualified) {
+				if (data.isQualified()) {
 					// Check if the name qualifier is in agreement with the base class name.
 					IASTName lookupName = data.getLookupName();
 					if (lookupName != null && lookupName.getPropertyInParent() == ICPPASTQualifiedName.SEGMENT_NAME
@@ -236,14 +236,14 @@ class BaseClassLookup {
 					if (!(grandBaseBinding instanceof ICPPClassType)) {
 						// 14.6.2.3 scope is not examined.
 						if (grandBaseBinding instanceof ICPPUnknownBinding) {
-							if (data.skippedScope == null)
-								data.skippedScope = root;
+							if (data.getSkippedScope() == null)
+								data.setSkippedScope(root);
 						}
 						continue;
 					}
 
 					ICPPClassType grandBaseClass = (ICPPClassType) grandBaseBinding;
-					if (data.fHeuristicBaseLookup && grandBaseClass instanceof ICPPDeferredClassInstance) {
+					if (data.isHeuristicBaseLookup() && grandBaseClass instanceof ICPPDeferredClassInstance) {
 						// Support content assist for members of deferred instances.
 						grandBaseClass = ((ICPPDeferredClassInstance) grandBaseClass).getClassTemplate();
 					}
@@ -253,8 +253,8 @@ class BaseClassLookup {
 					final IScope grandBaseScope = grandBaseClass.getCompositeScope();
 					if (grandBaseScope == null || grandBaseScope instanceof ICPPInternalUnknownScope) {
 						// 14.6.2.3 scope is not examined.
-						if (data.skippedScope == null)
-							data.skippedScope = root;
+						if (data.getSkippedScope() == null)
+							data.setSkippedScope(root);
 						continue;
 					}
 					if (!(grandBaseScope instanceof ICPPClassScope))
@@ -272,7 +272,7 @@ class BaseClassLookup {
 	}
 
 	private static BitSet selectPreferredBases(LookupData data, ICPPBase[] grandBases) {
-		if (data.contentAssist)
+		if (data.isContentAssist())
 			return null;
 
 		BitSet selectedBases;
@@ -356,8 +356,8 @@ class BaseClassLookup {
 		fCollected = true;
 
 		@SuppressWarnings("unchecked")
-		final CharArrayObjectMap<Object> resultMap = (CharArrayObjectMap<Object>) data.foundItems;
-		data.foundItems = CPPSemantics.mergePrefixResults(resultMap, fBindings, true);
+		final CharArrayObjectMap<Object> resultMap = (CharArrayObjectMap<Object>) data.getFoundItems();
+		data.setFoundItems(CPPSemantics.mergePrefixResults(resultMap, fBindings, true));
 		for (int i = 0; i < fChildren.size(); i++) {
 			BaseClassLookup child = fChildren.get(i);
 			child.collectResultForContentAssist(data);
@@ -369,8 +369,8 @@ class BaseClassLookup {
 			if (fHiddenAsVirtualBase)
 				return result;
 		} else {
-			if (fCollectedAsRegularBase && data.problem == null && containsNonStaticMember()) {
-				data.problem = new ProblemBinding(data.getLookupName(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
+			if (fCollectedAsRegularBase && data.getProblem() == null && containsNonStaticMember()) {
+				data.setProblem(new ProblemBinding(data.getLookupName(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP));
 			}
 			fCollectedAsRegularBase = true;
 		}
@@ -390,7 +390,7 @@ class BaseClassLookup {
 		if (numBindingsToAdd < fBindings.length)
 			fBindings[numBindingsToAdd] = null;
 		boolean possibleAmbiguity = false;
-		if (result.length > 0 && numBindingsToAdd > 0 && data.problem == null) {
+		if (result.length > 0 && numBindingsToAdd > 0 && data.getProblem() == null) {
 			// Matches are found in more than one base class - this is usually
 			// an indication of ambiguity (but see below).
 			possibleAmbiguity = true;
@@ -407,8 +407,8 @@ class BaseClassLookup {
 			//   specialization thereof, and is not ambiguous.
 			result = collapseInjectedClassNames(data, result);
 			if (result.length > 1) {
-				data.problem = new ProblemBinding(data.getLookupName(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
-						result);
+				data.setProblem(
+						new ProblemBinding(data.getLookupName(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, result));
 			}
 		}
 		for (int i = 0; i < fChildren.size(); i++) {

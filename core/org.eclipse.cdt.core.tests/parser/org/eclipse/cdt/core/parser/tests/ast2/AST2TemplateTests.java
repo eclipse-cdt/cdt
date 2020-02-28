@@ -11400,4 +11400,18 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		ITypedef type2 = helper.assertNonProblem("type2");
 		assertSameType(type1, type2);
 	}
+
+	//struct B {
+	//	~B() {
+	//	}
+	//};
+	//typedef B C;
+	//int main() {
+	//	C c;
+	//	char *p = reinterpret_cast<char*>(&c);
+	//	reinterpret_cast<C*>(p)->C::~C();
+	//}
+	public void testDestructorWithTypeDef_560173() throws Exception {
+		parseAndCheckBindings();
+	}
 }

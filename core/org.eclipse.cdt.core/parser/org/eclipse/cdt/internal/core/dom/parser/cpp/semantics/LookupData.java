@@ -123,21 +123,25 @@ public class LookupData extends ScopeLookupData {
 	public ICPPClassType skippedScope;
 	public Object foundItems;
 	public ProblemBinding problem;
+	public boolean isDestructor;
 
 	public LookupData(IASTName name) {
 		super(name, true, false);
 		fTemplateArguments = UNINITIALIZED_TEMPLATE_ARGUMENTS; // Lazy initialization to avoid DOMException.
+		isDestructor = false;
 		configureWith(name);
 	}
 
 	public LookupData(char[] name, ICPPTemplateArgument[] templateArgs, IASTNode lookupPoint) {
 		super(name, lookupPoint);
 		fTemplateArguments = templateArgs;
+		isDestructor = false;
 	}
 
 	public LookupData(char[] name, ICPPTemplateArgument[] templateArgs, IASTTranslationUnit tu) {
 		super(name, tu);
 		fTemplateArguments = templateArgs;
+		isDestructor = false;
 	}
 
 	@Override

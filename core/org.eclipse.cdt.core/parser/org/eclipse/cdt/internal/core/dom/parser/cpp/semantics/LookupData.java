@@ -123,6 +123,7 @@ public class LookupData extends ScopeLookupData {
 	public ICPPClassType skippedScope;
 	public Object foundItems;
 	public ProblemBinding problem;
+	public boolean isDestructor;
 
 	public LookupData(IASTName name) {
 		super(name, true, false);

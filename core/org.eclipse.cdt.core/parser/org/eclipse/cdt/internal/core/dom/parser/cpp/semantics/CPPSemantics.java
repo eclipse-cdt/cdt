@@ -1143,7 +1143,7 @@ public class CPPSemantics {
 					return;
 			}
 
-			if (data.qualified && !(scope instanceof ICPPTemplateScope)) {
+			if (!data.isDestructor && data.qualified && !(scope instanceof ICPPTemplateScope)) {
 				if (data.ignoreUsingDirectives || data.usingDirectives.isEmpty())
 					return;
 				data.usingDirectivesOnly = true;
@@ -1250,6 +1250,7 @@ public class CPPSemantics {
 		ld2.fHeuristicBaseLookup = data.fHeuristicBaseLookup;
 		ld2.qualified = parent instanceof ICPPASTQualifiedName;
 		ld2.typesOnly = true;
+		ld2.isDestructor = true;
 		lookup(ld2, getLookupScope(typeDtorName));
 		IBinding[] typedefs = ld2.getFoundBindings();
 		ITypedef typedef = null;

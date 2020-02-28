@@ -193,7 +193,7 @@ public class CPPStructuredBindingComposite extends CPPImplicitVariable {
 			ICPPFunction[] functions = Arrays.stream(allGetBindings).filter(IFunction.class::isInstance)
 					.map(IFunction.class::cast).toArray(ICPPFunction[]::new);
 			ICPPTemplateArgument[] arguments = new ICPPTemplateArgument[] { new CPPTemplateNonTypeArgument(index) };
-			LookupData lookupGet = new LookupData(GET_NAME, arguments, point);
+			LookupData lookupGet = new LookupData.Builder(GET_NAME, arguments, point).build();
 			//LookupData::containsImpliedObject is ignored for non-member functions in CPPSemantics.resolveFunction
 			//and will therefore find the the free get function using the arguments
 			lookupGet.setFunctionArguments(true, argument);

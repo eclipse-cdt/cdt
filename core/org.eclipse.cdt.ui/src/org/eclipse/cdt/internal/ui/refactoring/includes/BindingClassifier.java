@@ -766,7 +766,7 @@ public class BindingClassifier {
 							boolean defineFunction = !isPartOfExternalMacroDefinition(name);
 
 							if (defineFunction) {
-								LookupData data = new LookupData(functionName);
+								LookupData data = new LookupData.Builder(functionName).build();
 								IType impliedObjectType = data.getImpliedObjectType();
 								if (impliedObjectType != null)
 									defineTypeExceptTypedefOrNonFixedEnum(impliedObjectType);
@@ -1126,9 +1126,8 @@ public class BindingClassifier {
 		idExp.setParent(argument.getParent());
 		idExp.setPropertyInParent(IASTFunctionCallExpression.FUNCTION_NAME);
 
-		LookupData lookupData = new LookupData(astName);
+		LookupData lookupData = new LookupData.Builder(astName).setQualified(true).build();
 		lookupData.setFunctionArguments(false, new IASTInitializerClause[] { argument });
-		lookupData.qualified = true;
 		try {
 			IBinding constructor = CPPSemantics.resolveFunction(lookupData, classType.getConstructors(), false, false);
 			if (constructor instanceof ICPPConstructor && !((ICPPConstructor) constructor).isExplicit())

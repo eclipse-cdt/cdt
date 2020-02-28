@@ -456,8 +456,7 @@ public class EvalID extends CPPDependentEvaluation {
 	private ICPPEvaluation resolveName(char[] name, ICPPClassType nameOwner, ICPPEvaluation ownerEval,
 			ICPPTemplateArgument[] templateArgs, IType impliedObjectType) {
 		IASTNode point = CPPSemantics.getCurrentLookupPoint();
-		LookupData data = new LookupData(name, templateArgs, point);
-		data.qualified = fQualified;
+		LookupData data = new LookupData.Builder(name, templateArgs, point).setQualified(fQualified).build();
 		try {
 			CPPSemantics.lookup(data, nameOwner.getCompositeScope());
 		} catch (DOMException e) {

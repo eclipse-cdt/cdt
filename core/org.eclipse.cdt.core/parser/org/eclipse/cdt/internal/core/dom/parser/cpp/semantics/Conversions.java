@@ -605,10 +605,10 @@ public class Conversions {
 		//     class T and the argument list consists of the elements
 		//     of the initializer list.
 
-		LookupData data = new LookupData(t.getNameCharArray(), null, CPPSemantics.getCurrentLookupPoint());
+		LookupData data = new LookupData.Builder(t.getNameCharArray(), null, CPPSemantics.getCurrentLookupPoint())
+				.setNoNarrowing(true).build();
 		final ICPPEvaluation[] expandedArgs = arg.getClauses();
 		data.setFunctionArguments(false, expandedArgs);
-		data.fNoNarrowing = true;
 
 		// 13.3.3.1.4
 		ICPPConstructor[] filteredConstructors = constructors;

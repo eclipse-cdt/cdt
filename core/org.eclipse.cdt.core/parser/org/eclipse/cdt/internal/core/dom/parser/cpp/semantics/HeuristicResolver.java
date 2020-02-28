@@ -327,8 +327,8 @@ public class HeuristicResolver {
 		if (lookupScope != null) {
 			HeuristicLookup entry = new HeuristicLookup(lookupScope, name);
 			if (lookupSet.add(entry)) {
-				LookupData lookup = new LookupData(name, templateArgs, CPPSemantics.getCurrentLookupPoint());
-				lookup.fHeuristicBaseLookup = true;
+				LookupData lookup = new LookupData.Builder(name, templateArgs, CPPSemantics.getCurrentLookupPoint())
+						.setHeuristicBaseLookup(true).build();
 				try {
 					CPPSemantics.lookup(lookup, lookupScope);
 					IBinding[] foundBindings = lookup.getFoundBindings();

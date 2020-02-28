@@ -328,8 +328,9 @@ public class EvalTypeId extends CPPDependentEvaluation {
 				}
 			}
 
-			LookupData data = new LookupData(classType.getNameCharArray(), null, CPPSemantics.getCurrentLookupPoint());
-			data.foundItems = constructors;
+			LookupData data = new LookupData.Builder(classType.getNameCharArray(), null,
+					CPPSemantics.getCurrentLookupPoint()).build();
+			data.setFoundItems(constructors);
 			data.setFunctionArguments(false, arguments);
 			try {
 				IBinding binding = CPPSemantics.resolveFunction(data, constructors, true, false);

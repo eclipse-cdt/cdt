@@ -3669,7 +3669,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		B_ptr->~B(); //2                 // calls D's destructor
 	//		B_ptr->~B_alias(); //3           // calls D's destructor
 	//		B_ptr->B_alias::~B(); //4        // calls B's destructor
-	//		B_ptr->B_alias::~B_alias(); //5  // error, no B_alias in class B
+	//	    B_ptr->B_alias::~B_alias(); //5  // calls B's destructor
 	//	}
 	public void test12_4s12() throws Exception {
 		final String code = getAboveComment();
@@ -3685,8 +3685,8 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 		assertSame(dtor, d);
 		d = bh.assertNonProblem("~B(); //4", 2);
 		assertSame(dtor, d);
-
-		bh.assertProblem("~B_alias(); //5", 8);
+		d = bh.assertNonProblem("~B_alias(); //5", 8);
+		assertSame(dtor, d);
 	}
 
 	// void* operator new(size_t, void* p) { return p; }

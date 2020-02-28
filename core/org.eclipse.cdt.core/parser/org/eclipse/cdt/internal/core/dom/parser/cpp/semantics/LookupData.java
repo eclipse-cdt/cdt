@@ -86,30 +86,30 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
  */
 public class LookupData extends ScopeLookupData {
 	private static final ICPPTemplateArgument[] UNINITIALIZED_TEMPLATE_ARGUMENTS = {};
-	public Map<ICPPNamespaceScope, List<ICPPNamespaceScope>> usingDirectives = Collections.emptyMap();
+	private Map<ICPPNamespaceScope, List<ICPPNamespaceScope>> usingDirectives = Collections.emptyMap();
 
 	/** Used to ensure we don't visit things more than once. */
-	public ObjectSet<IScope> visited = new ObjectSet<>(1);
+	private ObjectSet<IScope> visited = new ObjectSet<>(1);
 
-	public boolean contentAssist;
+	private final boolean contentAssist;
 
-	public boolean typesOnly;
-	public boolean usingDirectivesOnly;
-	public boolean ignoreUsingDirectives;
-	public boolean ignoreMembers;
+	private boolean typesOnly;
+	private boolean usingDirectivesOnly;
+	private boolean ignoreUsingDirectives;
+	private boolean ignoreMembers;
 
-	public boolean qualified;
+	private boolean qualified;
 
-	public boolean forUsingDeclaration;
-	public boolean namespacesOnly;
+	private boolean forUsingDeclaration;
+	private boolean namespacesOnly;
 
 	/** When computing the cost of a method call, treat the first argument as the implied object. */
-	public boolean argsContainImpliedObject;
+	private boolean argsContainImpliedObject;
 	/** In list-initialization **/
-	public boolean fNoNarrowing;
+	private final boolean fNoNarrowing;
 	/** When doing lookup in base classes, replace deferred class instances with their class template.
 	 *  This is used by editor actions like content assist. */
-	public boolean fHeuristicBaseLookup;
+	private final boolean fHeuristicBaseLookup;
 
 	private IASTDeclarator fDeclarator;
 	private boolean fFunctionCall;
@@ -120,23 +120,178 @@ public class LookupData extends ScopeLookupData {
 	private ValueCategory[] functionArgValueCategories;
 	private ICPPTemplateArgument[] fTemplateArguments = UNINITIALIZED_TEMPLATE_ARGUMENTS;
 
-	public ICPPClassType skippedScope;
-	public Object foundItems;
-	public ProblemBinding problem;
+	private ICPPClassType skippedScope;
+	private Object foundItems;
+	private ProblemBinding problem;
+	private final boolean isDestructor;
 
-	public LookupData(IASTName name) {
+	public static class Builder {
+		private boolean contentAssist;
+		private boolean typesOnly;
+		private boolean usingDirectivesOnly;
+		private boolean ignoreUsingDirectives;
+		private boolean ignoreMembers;
+		private boolean qualified;
+		private boolean forUsingDeclaration;
+		private boolean namespacesOnly;
+		private boolean argsContainImpliedObject;
+		private boolean fNoNarrowing;
+		private boolean fHeuristicBaseLookup;
+		private boolean isDestructor;
+
+		private IASTName nodeName;
+		private ICPPTemplateArgument[] templateArgs;
+		private IASTNode lookupPoint;
+		private IASTTranslationUnit tu;
+		private char[] name;
+
+		public Builder(IASTName name) {
+			this.nodeName = name;
+		}
+
+		public Builder(char[] name, ICPPTemplateArgument[] templateArgs, IASTNode lookupPoint) {
+			this.name = name;
+			this.templateArgs = templateArgs;
+			this.lookupPoint = lookupPoint;
+		}
+
+		public Builder(char[] name, ICPPTemplateArgument[] templateArgs, IASTTranslationUnit tu) {
+			this.name = name;
+			this.templateArgs = templateArgs;
+			this.tu = tu;
+		}
+
+		public Builder setContentAssist(boolean value) {
+			contentAssist = value;
+			return this;
+		}
+
+		public Builder setTypesOnly(boolean value) {
+			typesOnly = value;
+			return this;
+		}
+
+		public Builder setUsingDirectivesOnly(boolean value) {
+			usingDirectivesOnly = value;
+			return this;
+		}
+
+		public Builder setIgnoreMembers(boolean value) {
+			ignoreMembers = value;
+			return this;
+		}
+
+		public Builder setQualified(boolean value) {
+			qualified = value;
+			return this;
+		}
+
+		public Builder setForUsingDeclaration(boolean value) {
+			forUsingDeclaration = value;
+			return this;
+		}
+
+		public Builder setNamespacesOnly(boolean value) {
+			namespacesOnly = value;
+			return this;
+		}
+
+		public Builder setArgsContainImpliedObject(boolean value) {
+			argsContainImpliedObject = value;
+			return this;
+		}
+
+		public Builder setNoNarrowing(boolean value) {
+			fNoNarrowing = value;
+			return this;
+		}
+
+		public Builder setHeuristicBaseLookup(boolean value) {
+			fHeuristicBaseLookup = value;
+			return this;
+		}
+
+		public Builder setIsDestructor(boolean value) {
+			isDestructor = value;
+			return this;
+		}
+
+		public LookupData build() {
+			LookupData ld;
+			if (tu != null) {
+				ld = new LookupData(name, templateArgs, tu, contentAssist, typesOnly, usingDirectivesOnly,
+						ignoreUsingDirectives, ignoreMembers, qualified, forUsingDeclaration, namespacesOnly,
+						argsContainImpliedObject, fNoNarrowing, fHeuristicBaseLookup, isDestructor);
+			} else if (lookupPoint != null) {
+				ld = new LookupData(name, templateArgs, lookupPoint, contentAssist, typesOnly, usingDirectivesOnly,
+						ignoreUsingDirectives, ignoreMembers, qualified, forUsingDeclaration, namespacesOnly,
+						argsContainImpliedObject, fNoNarrowing, fHeuristicBaseLookup, isDestructor);
+			} else
+				ld = new LookupData(nodeName, contentAssist, typesOnly, usingDirectivesOnly, ignoreUsingDirectives,
+						ignoreMembers, qualified, forUsingDeclaration, namespacesOnly, argsContainImpliedObject,
+						fNoNarrowing, fHeuristicBaseLookup, isDestructor);
+			return ld;
+		}
+	}
+
+	private LookupData(IASTName name, boolean contentAssist, boolean typesOnly, boolean usingDirectivesOnly,
+			boolean ignoreUsingDirectives, boolean ignoreMembers, boolean qualified, boolean forUsingDeclaration,
+			boolean namespacesOnly, boolean argsContainImpliedObject, boolean fNoNarrowing,
+			boolean fHeuristicBaseLookup, boolean isDestructor) {
 		super(name, true, false);
+		this.contentAssist = contentAssist;
+		this.typesOnly = typesOnly;
+		this.usingDirectivesOnly = usingDirectivesOnly;
+		this.ignoreUsingDirectives = ignoreUsingDirectives;
+		this.ignoreMembers = ignoreMembers;
+		this.qualified = qualified;
+		this.forUsingDeclaration = forUsingDeclaration;
+		this.namespacesOnly = namespacesOnly;
+		this.argsContainImpliedObject = argsContainImpliedObject;
+		this.fNoNarrowing = fNoNarrowing;
+		this.fHeuristicBaseLookup = fHeuristicBaseLookup;
+		this.isDestructor = isDestructor;
 		fTemplateArguments = UNINITIALIZED_TEMPLATE_ARGUMENTS; // Lazy initialization to avoid DOMException.
 		configureWith(name);
 	}
 
-	public LookupData(char[] name, ICPPTemplateArgument[] templateArgs, IASTNode lookupPoint) {
+	private LookupData(char[] name, ICPPTemplateArgument[] templateArgs, IASTNode lookupPoint, boolean contentAssist,
+			boolean typesOnly, boolean usingDirectivesOnly, boolean ignoreUsingDirectives, boolean ignoreMembers,
+			boolean qualified, boolean forUsingDeclaration, boolean namespacesOnly, boolean argsContainImpliedObject,
+			boolean fNoNarrowing, boolean fHeuristicBaseLookup, boolean isDestructor) {
 		super(name, lookupPoint);
+		this.contentAssist = contentAssist;
+		this.typesOnly = typesOnly;
+		this.usingDirectivesOnly = usingDirectivesOnly;
+		this.ignoreUsingDirectives = ignoreUsingDirectives;
+		this.ignoreMembers = ignoreMembers;
+		this.qualified = qualified;
+		this.forUsingDeclaration = forUsingDeclaration;
+		this.namespacesOnly = namespacesOnly;
+		this.argsContainImpliedObject = argsContainImpliedObject;
+		this.fNoNarrowing = fNoNarrowing;
+		this.fHeuristicBaseLookup = fHeuristicBaseLookup;
+		this.isDestructor = isDestructor;
 		fTemplateArguments = templateArgs;
 	}
 
-	public LookupData(char[] name, ICPPTemplateArgument[] templateArgs, IASTTranslationUnit tu) {
+	private LookupData(char[] name, ICPPTemplateArgument[] templateArgs, IASTTranslationUnit tu, boolean contentAssist,
+			boolean typesOnly, boolean usingDirectivesOnly, boolean ignoreUsingDirectives, boolean ignoreMembers,
+			boolean qualified, boolean forUsingDeclaration, boolean namespacesOnly, boolean argsContainImpliedObject,
+			boolean fNoNarrowing, boolean fHeuristicBaseLookup, boolean isDestructor) {
 		super(name, tu);
+		this.contentAssist = contentAssist;
+		this.typesOnly = typesOnly;
+		this.usingDirectivesOnly = usingDirectivesOnly;
+		this.ignoreUsingDirectives = ignoreUsingDirectives;
+		this.ignoreMembers = ignoreMembers;
+		this.qualified = qualified;
+		this.forUsingDeclaration = forUsingDeclaration;
+		this.namespacesOnly = namespacesOnly;
+		this.argsContainImpliedObject = argsContainImpliedObject;
+		this.fNoNarrowing = fNoNarrowing;
+		this.fHeuristicBaseLookup = fHeuristicBaseLookup;
+		this.isDestructor = isDestructor;
 		fTemplateArguments = templateArgs;
 	}
 
@@ -622,5 +777,191 @@ public class LookupData extends ScopeLookupData {
 		// ignore the resulting IRecursionResolvingBindings and allow
 		// name lookup to proceed to outer (or base class) scopes.
 		return getLookupName() == null;
+	}
+
+	public boolean isTypesOnly() {
+		return typesOnly;
+	}
+
+	public void setTypesOnly(boolean typesOnly) {
+		this.typesOnly = typesOnly;
+	}
+
+	public boolean isQualified() {
+		return qualified;
+	}
+
+	public void setQualified(boolean qualified) {
+		this.qualified = qualified;
+	}
+
+	public boolean isForUsingDeclaration() {
+		return forUsingDeclaration;
+	}
+
+	public void setForUsingDeclaration(boolean forUsingDeclaration) {
+		this.forUsingDeclaration = forUsingDeclaration;
+	}
+
+	public boolean isNamespacesOnly() {
+		return namespacesOnly;
+	}
+
+	public void setNamespacesOnly(boolean namespacesOnly) {
+		this.namespacesOnly = namespacesOnly;
+	}
+
+	public boolean isArgsContainImpliedObject() {
+		return argsContainImpliedObject;
+	}
+
+	public void setArgsContainImpliedObject(boolean argsContainImpliedObject) {
+		this.argsContainImpliedObject = argsContainImpliedObject;
+	}
+
+	public IASTDeclarator getfDeclarator() {
+		return fDeclarator;
+	}
+
+	public void setfDeclarator(IASTDeclarator fDeclarator) {
+		this.fDeclarator = fDeclarator;
+	}
+
+	public boolean isfFunctionCall() {
+		return fFunctionCall;
+	}
+
+	public void setfFunctionCall(boolean fFunctionCall) {
+		this.fFunctionCall = fFunctionCall;
+	}
+
+	public IType getfImpliedObjectType() {
+		return fImpliedObjectType;
+	}
+
+	public void setfImpliedObjectType(IType fImpliedObjectType) {
+		this.fImpliedObjectType = fImpliedObjectType;
+	}
+
+	public ValueCategory getfImpliedObjectValueCategory() {
+		return fImpliedObjectValueCategory;
+	}
+
+	public void setfImpliedObjectValueCategory(ValueCategory fImpliedObjectValueCategory) {
+		this.fImpliedObjectValueCategory = fImpliedObjectValueCategory;
+	}
+
+	public ICPPEvaluation[] getFunctionArgs() {
+		return functionArgs;
+	}
+
+	public void setFunctionArgs(ICPPEvaluation[] functionArgs) {
+		this.functionArgs = functionArgs;
+	}
+
+	public IType[] getFunctionArgTypes() {
+		return functionArgTypes;
+	}
+
+	public void setFunctionArgTypes(IType[] functionArgTypes) {
+		this.functionArgTypes = functionArgTypes;
+	}
+
+	public ValueCategory[] getFunctionArgValueCategories() {
+		return functionArgValueCategories;
+	}
+
+	public void setFunctionArgValueCategories(ValueCategory[] functionArgValueCategories) {
+		this.functionArgValueCategories = functionArgValueCategories;
+	}
+
+	public ICPPTemplateArgument[] getfTemplateArguments() {
+		return fTemplateArguments;
+	}
+
+	public void setfTemplateArguments(ICPPTemplateArgument[] fTemplateArguments) {
+		this.fTemplateArguments = fTemplateArguments;
+	}
+
+	public boolean isContentAssist() {
+		return contentAssist;
+	}
+
+	public boolean isUsingDirectivesOnly() {
+		return usingDirectivesOnly;
+	}
+
+	public boolean isIgnoreUsingDirectives() {
+		return ignoreUsingDirectives;
+	}
+
+	public boolean isIgnoreMembers() {
+		return ignoreMembers;
+	}
+
+	public boolean isfNoNarrowing() {
+		return fNoNarrowing;
+	}
+
+	public boolean isHeuristicBaseLookup() {
+		return fHeuristicBaseLookup;
+	}
+
+	public boolean isDestructor() {
+		return isDestructor;
+	}
+
+	public void setIgnoreUsingDirectives(boolean ignoreUsingDirectives) {
+		this.ignoreUsingDirectives = ignoreUsingDirectives;
+	}
+
+	public void setUsingDirectivesOnly(boolean usingDirectivesOnly) {
+		this.usingDirectivesOnly = usingDirectivesOnly;
+	}
+
+	public void setIgnoreMembers(boolean ignoreMembers) {
+		this.ignoreMembers = ignoreMembers;
+	}
+
+	public ICPPClassType getSkippedScope() {
+		return skippedScope;
+	}
+
+	public void setSkippedScope(ICPPClassType skippedScope) {
+		this.skippedScope = skippedScope;
+	}
+
+	public Object getFoundItems() {
+		return foundItems;
+	}
+
+	public void setFoundItems(Object foundItems) {
+		this.foundItems = foundItems;
+	}
+
+	public ProblemBinding getProblem() {
+		return problem;
+	}
+
+	public void setProblem(ProblemBinding problem) {
+		this.problem = problem;
+	}
+
+	public Map<ICPPNamespaceScope, List<ICPPNamespaceScope>> getUsingDirectives() {
+		return usingDirectives;
+	}
+
+	public void setUsingDirectives(Map<ICPPNamespaceScope, List<ICPPNamespaceScope>> usingDirectives) {
+		if (usingDirectives != null)
+			this.usingDirectives = usingDirectives;
+	}
+
+	public ObjectSet<IScope> getVisited() {
+		return visited;
+	}
+
+	public void setVisited(ObjectSet<IScope> visited) {
+		if (visited != null)
+			this.visited = visited;
 	}
 }

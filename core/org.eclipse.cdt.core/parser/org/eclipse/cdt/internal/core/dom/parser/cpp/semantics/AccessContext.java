@@ -305,8 +305,8 @@ public class AccessContext {
 	}
 
 	private ICPPClassType getFirstCandidateForNamingClass(IASTName name) throws DOMException {
-		LookupData data = new LookupData(name);
-		isUnqualifiedLookup = !data.qualified;
+		LookupData data = new LookupData.Builder(name).build();
+		isUnqualifiedLookup = !data.isQualified();
 
 		ICPPScope scope = CPPSemantics.getLookupScope(name);
 		while (scope != null && !(scope instanceof ICPPClassScope)) {

@@ -311,11 +311,12 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 		ICPPFunction[] functions = null;
 		IASTNode point = CPPSemantics.getCurrentLookupPoint();
 		if (fFunctionSet == null) {
-			data = new LookupData(fName, null, point);
+			data = new LookupData.Builder(fName, null, point).build();
 		} else {
 			functions = fFunctionSet.getBindings();
-			data = new LookupData(functions[0].getNameCharArray(), fFunctionSet.getTemplateArguments(), point);
-			data.foundItems = functions;
+			data = new LookupData.Builder(functions[0].getNameCharArray(), fFunctionSet.getTemplateArguments(), point)
+					.build();
+			data.setFoundItems(functions);
 		}
 		data.setFunctionArguments(false, args);
 		if (fImpliedObjectType != null)
@@ -326,7 +327,7 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 			if (!fQualified && fImpliedObjectType == null && !data.hasTypeOrMemberFunctionOrVariableResult()) {
 				CPPSemantics.doArgumentDependentLookup(data);
 
-				Object[] foundItems = (Object[]) data.foundItems;
+				Object[] foundItems = (Object[]) data.getFoundItems();
 				if (foundItems != null && (functions == null || foundItems.length > functions.length)) {
 					// ADL found additional functions.
 					int start = functions == null ? 0 : functions.length;

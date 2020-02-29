@@ -3779,7 +3779,12 @@ public class CPPSemantics {
 					if (CPPTemplates.isDependentType(sourceType)) {
 						IType[] tmp = { sourceType };
 						setTargetedFunctionsToUnknown(tmp);
-						return CPPDeferredFunction.createForCandidates(type.getConstructors());
+						ICPPConstructor[] ctors = type.getConstructors();
+						if (ctors != null && ctors.length > 0) {
+							return CPPDeferredFunction.createForCandidates(type.getConstructors());
+						} else {
+							return new ProblemBinding(null, typeId, ISemanticProblem.BINDING_NOT_FOUND, ctors);
+						}
 					}
 					Cost c;
 					if (calculateInheritanceDepth(sourceType, type) >= 0) {

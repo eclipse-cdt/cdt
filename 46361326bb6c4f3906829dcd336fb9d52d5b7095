@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "638184a9_fdb5cad0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/LookupData.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-01T09:39:44Z",
+      "side": 1,
+      "message": "@Marco public mutable fields is something that should be avoided at any cost, because it adds yet another dimension of complexity to already complex area, without any possibility to manage it:\n- who is changing it? \n- when? \n- how often should I check its value in the client code?\n- what if I\u0027m not single threaded?\n- and so on.\n\nHaving all this in mind I do not see _any_ benefit of introducing public non-final fields.",
+      "revId": "46361326bb6c4f3906829dcd336fb9d52d5b7095",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

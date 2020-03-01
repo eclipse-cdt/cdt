@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "e22273e4_6644cb7f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1248,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-01T09:31:11Z",
+      "side": 1,
+      "message": "\u003e The LookupData is already supposed to be the data class.\n\nyes, and mutable \"data class\" is bad thing :) but this is out of scope for ths gerrit\n\n\u003e Please don\u0027t try to create new constructors for these case in LookupData, otherwise you end up with constructors with unreasonable numbers of arguments.\n\nAs I can see from this fragment we need constructor\n`LookupData(LookupData data, boolean destructor)`\n- even less arguments than we have now\n- allow us to not increse the `LookupData ` mutability \n- more compact and focused client code.",
+      "parentUuid": "3b5cb1de_bec5a282",
+      "revId": "998cd89d26c38e4315ea5eb39efd2d0dcaf4ec08",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e0fc95e_377203be",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/LookupData.java",
         "patchSetId": 3

@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "cc3d10d6_33e843eb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1248,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-01T05:52:57Z",
+      "side": 1,
+      "message": "Something is wrong with this concept with assigning public fields externally just after object construction. Can we add another constructor that accepts LookupData and then make fields final?",
+      "revId": "998cd89d26c38e4315ea5eb39efd2d0dcaf4ec08",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e0fc95e_377203be",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/LookupData.java",
         "patchSetId": 3
@@ -13,6 +30,24 @@
       "writtenOn": "2020-03-01T01:53:14Z",
       "side": 1,
       "message": "You can put the \"\u003d false\" here.",
+      "revId": "998cd89d26c38e4315ea5eb39efd2d0dcaf4ec08",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ba4016a_a075b106",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/LookupData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-01T05:52:57Z",
+      "side": 1,
+      "message": "Marco, can it be the final field? The only assignment I can see is done just after constructor invocation.",
+      "parentUuid": "9e0fc95e_377203be",
       "revId": "998cd89d26c38e4315ea5eb39efd2d0dcaf4ec08",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

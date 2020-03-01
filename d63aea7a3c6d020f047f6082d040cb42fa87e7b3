@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2b65dcb0_d5ff1dd5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3786,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-01T23:45:50Z",
+      "side": 1,
+      "message": "There is no point in passing in an array with zero candidate constructors to the ProblemBinding constructor.\n\nIt would be better to call the constructor with a char[] arg and pass in the name of the class.",
+      "revId": "d63aea7a3c6d020f047f6082d040cb42fa87e7b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

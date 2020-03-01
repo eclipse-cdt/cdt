@@ -4799,9 +4799,19 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		// cv-qualifiers
 		if (isLambdaDeclarator) {
-			if (LT(1) == IToken.t_mutable) {
-				fc.setMutable(true);
-				endOffset = consume().getEndOffset();
+			specloop: while (true) {
+				switch (LT(1)) {
+				case IToken.t_mutable:
+					fc.setMutable(true);
+					endOffset = consume().getEndOffset();
+					break;
+				case IToken.t_constexpr:
+					fc.setConstexpr(true);
+					endOffset = consume().getEndOffset();
+					break;
+				default:
+					break specloop;
+				}
 			}
 		} else {
 			cvloop: while (true) {

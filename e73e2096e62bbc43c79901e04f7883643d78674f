@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "356ff772_12f67e80",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolDetectionParticipant.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-01T06:31:23Z",
+      "side": 1,
+      "message": "good catch :-)\n\nFeel free to turn on JDT\u0027s null analysis for these new plug-ins. It will catch these errors.",
+      "revId": "e73e2096e62bbc43c79901e04f7883643d78674f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

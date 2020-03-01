@@ -50,4 +50,12 @@ public class LambdaExpressionTests extends AST2CPPTestBase {
 	public void testLambdaCaptures_535196_3() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//int main() {
+	//	auto f = []() constexpr {return 2;};
+	//	return 0;
+	//}
+	public void testLambdaConstexpr_560483() throws Exception {
+		parseAndCheckBindings();
+	}
 }

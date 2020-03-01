@@ -54,6 +54,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 	private boolean isConst;
 	private boolean isMutable;
 	private RefQualifier refQualifier;
+	private boolean isConstexpr;
 
 	private ICPPFunctionScope scope;
 
@@ -78,6 +79,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		copy.isConst = isConst;
 		copy.isMutable = isMutable;
 		copy.refQualifier = refQualifier;
+		copy.isConstexpr = isConstexpr;
 
 		for (IASTParameterDeclaration param : getParameters()) {
 			copy.addParameterDeclaration(param == null ? null : param.copy(style));
@@ -403,5 +405,16 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 			return NOEXCEPT_TRUE;
 		}
 		return null;
+	}
+
+	@Override
+	public boolean isConstexpr() {
+		return isConstexpr;
+	}
+
+	@Override
+	public void setConstexpr(boolean value) {
+		assertNotFrozen();
+		this.isConstexpr = value;
 	}
 }

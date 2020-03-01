@@ -102,6 +102,18 @@ public interface ICPPASTFunctionDeclarator
 	public void setMutable(boolean value);
 
 	/**
+	 * When used as a lambda declarator, it can be constexpr.
+	 * @since 6.11
+	 */
+	public boolean isConstexpr();
+
+	/**
+	 * When used as a lambda declarator, it can be constexpr.
+	 * @since 6.11
+	 */
+	public void setConstexpr(boolean value);
+
+	/**
 	 * Is the method pure virtual?
 	 */
 	public boolean isPureVirtual();

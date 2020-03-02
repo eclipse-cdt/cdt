@@ -17,7 +17,6 @@ package org.eclipse.cdt.launch;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,6 +55,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Utility methods.

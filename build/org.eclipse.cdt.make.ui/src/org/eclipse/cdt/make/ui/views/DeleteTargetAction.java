@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.views;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -30,6 +29,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -63,12 +64,12 @@ public class DeleteTargetAction extends SelectionListenerAction {
 			title = MakeUIPlugin.getResourceString("DeleteTargetAction.title.confirmDeletion"); //$NON-NLS-1$
 			IMakeTarget target = (IMakeTarget) targets.get(0);
 			msg = MessageFormat.format(MakeUIPlugin.getResourceString("DeleteTargetAction.message.confirmDeleteion"), //$NON-NLS-1$
-					target.getName());
+					new Object[] { target.getName() });
 		} else {
 			title = MakeUIPlugin.getResourceString("DeleteTargetAction.title.confirmMultipleDeletion"); //$NON-NLS-1$
 			msg = MessageFormat.format(
 					MakeUIPlugin.getResourceString("DeleteTargetAction.message.confirmMultipleDeletion"), //$NON-NLS-1$
-					Integer.valueOf(targets.size()));
+					new Object[] { Integer.valueOf(targets.size()) });
 		}
 		return MessageDialog.openQuestion(shell, title, msg);
 	}

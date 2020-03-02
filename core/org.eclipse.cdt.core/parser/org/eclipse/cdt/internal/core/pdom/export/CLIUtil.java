@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.export;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +20,8 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.index.export.Messages;
 import org.eclipse.core.runtime.CoreException;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Helper methods for command-line options
@@ -42,7 +43,8 @@ public class CLIUtil {
 			throws CoreException {
 		List<String> list = arguments.get(opt);
 		if (list == null || list.size() != number) {
-			String msg = MessageFormat.format(Messages.CLIUtil_OptionParametersMismatch, opt, "" + number); //$NON-NLS-1$
+			String msg = MessageFormat.format(Messages.CLIUtil_OptionParametersMismatch,
+					new Object[] { opt, "" + number }); //$NON-NLS-1$
 			GeneratePDOMApplication.fail(msg);
 		}
 		return list;

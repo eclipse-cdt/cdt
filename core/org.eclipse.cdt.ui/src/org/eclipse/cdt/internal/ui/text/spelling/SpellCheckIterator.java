@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.spelling;
 
-import java.text.BreakIterator;
 import java.util.LinkedList;
 import java.util.Locale;
 
@@ -23,6 +22,8 @@ import org.eclipse.cdt.internal.ui.text.spelling.engine.DefaultSpellChecker;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckIterator;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+
+import com.ibm.icu.text.BreakIterator;
 
 /**
  * Iterator to spell check multiline comment regions.

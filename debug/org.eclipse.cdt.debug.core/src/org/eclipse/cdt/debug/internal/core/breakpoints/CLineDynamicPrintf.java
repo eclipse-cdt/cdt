@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
-import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -22,6 +21,8 @@ import org.eclipse.cdt.debug.core.model.ICLineBreakpoint2;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A DynamicPrintf that prints a string when a particular line of code is reached.
@@ -60,10 +61,10 @@ public class CLineDynamicPrintf extends AbstractDynamicPrintf {
 		if (bp_line != bp_request_line || (bp_file == null && bp_reqest_file != null)
 				|| (bp_file != null && !bp_file.equals(bp_reqest_file))) {
 			return MessageFormat.format(BreakpointMessages.getString("CLineDynamicPrintf.1"), //$NON-NLS-1$
-					CDebugUtils.getBreakpointText(this, false));
+					(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });
 		} else {
 			return MessageFormat.format(BreakpointMessages.getString("CLineDynamicPrintf.0"), //$NON-NLS-1$
-					CDebugUtils.getBreakpointText(this, false));
+					(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });
 
 		}
 	}

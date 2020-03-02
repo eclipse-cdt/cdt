@@ -13,13 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
-import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A DynamicPrintf that prints a message when a particular address is reached.
@@ -46,6 +47,6 @@ public class CAddressDynamicPrintf extends AbstractDynamicPrintf implements ICAd
 	@Override
 	protected String getMarkerMessage() throws CoreException {
 		return MessageFormat.format(BreakpointMessages.getString("CAddressDynamicPrintf.0"), //$NON-NLS-1$
-				CDebugUtils.getBreakpointText(this, false));
+				(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });
 	}
 }

@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +28,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @author Doug Schaefer
@@ -92,13 +93,13 @@ public class CSearchListContentProvider implements IStructuredContentProvider, I
 	private Status createUnindexedProjectWarningElement(ICProject project) {
 		return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
 				MessageFormat.format(CSearchMessages.PDOMSearchListContentProvider_IndexerNotEnabledMessageFormat,
-						project.getProject().getName()));
+						new Object[] { project.getProject().getName() }));
 	}
 
 	private Status createClosedProjectWarningElement(ICProject project) {
 		return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
 				MessageFormat.format(CSearchMessages.PDOMSearchListContentProvider_ProjectClosedMessageFormat,
-						project.getProject().getName()));
+						new Object[] { project.getProject().getName() }));
 	}
 
 	@Override

@@ -18,7 +18,6 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 
 import static org.eclipse.cdt.core.index.IndexLocationFactory.getAbsolutePath;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -88,6 +87,8 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * Adds an include statement and, optionally, a 'using' declaration for the currently

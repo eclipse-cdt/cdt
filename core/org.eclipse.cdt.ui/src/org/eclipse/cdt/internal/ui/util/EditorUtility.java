@@ -21,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -103,6 +102,8 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class EditorUtility {
 	/**
@@ -254,7 +255,7 @@ public class EditorUtility {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
 		errorMsg.setText(CUIPlugin.getResourceString("EditorUtility.closedproject")); //$NON-NLS-1$
 		String desc = CUIPlugin.getResourceString("Editorutility.closedproject.description"); //$NON-NLS-1$
-		errorMsg.setMessage(MessageFormat.format(desc, project.getName()));
+		errorMsg.setMessage(MessageFormat.format(desc, new Object[] { project.getName() }));
 		errorMsg.open();
 	}
 

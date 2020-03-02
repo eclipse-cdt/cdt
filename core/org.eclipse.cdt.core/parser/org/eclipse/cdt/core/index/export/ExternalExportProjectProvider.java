@@ -14,8 +14,6 @@
 package org.eclipse.cdt.core.index.export;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -50,6 +48,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * An IExportProjectProvider suitable for indexing an external folder. The arguments understood by this provider
  * are
@@ -81,7 +82,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 		// -source
 		File source = new File(getSingleString(OPT_SOURCE));
 		if (!source.exists()) {
-			fail(MessageFormat.format(Messages.ExternalContentPEM_LocationToIndexNonExistent, source));
+			fail(MessageFormat.format(Messages.ExternalContentPEM_LocationToIndexNonExistent, new Object[] { source }));
 		}
 
 		// -include

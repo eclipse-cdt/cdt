@@ -20,7 +20,6 @@ package org.eclipse.cdt.debug.internal.ui;
 
 import java.io.File;
 import java.net.URI;
-import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.IAddress;
@@ -97,6 +96,8 @@ import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @see IDebugModelPresentation

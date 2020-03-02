@@ -25,7 +25,6 @@ import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils
 
 import java.io.File;
 import java.math.BigInteger;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -187,6 +186,8 @@ import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * DisassemblyPart
@@ -602,7 +603,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 				continue;
 			final boolean isVisible = support.isColumnVisible(descriptor);
 			IAction action = new Action(MessageFormat.format(DisassemblyMessages.DisassemblyPart_showRulerColumn_label,
-					descriptor.getName()), IAction.AS_CHECK_BOX) {
+					new Object[] { descriptor.getName() }), IAction.AS_CHECK_BOX) {
 				@Override
 				public void run() {
 					if (descriptor.isGlobal())

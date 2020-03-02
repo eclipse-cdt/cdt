@@ -13,11 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class ParserMessages {
 	private static final String BUNDLE_NAME = ParserMessages.class.getName();
@@ -65,7 +66,7 @@ public class ParserMessages {
 		if (arg == null)
 			arg = ""; //$NON-NLS-1$
 
-		return MessageFormat.format(format, arg);
+		return MessageFormat.format(format, new Object[] { arg });
 	}
 
 	public static String getProblemPattern(ISemanticProblem problem) {

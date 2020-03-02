@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
-import java.text.BreakIterator;
+import com.ibm.icu.text.BreakIterator;
 
 import junit.framework.TestCase;
 

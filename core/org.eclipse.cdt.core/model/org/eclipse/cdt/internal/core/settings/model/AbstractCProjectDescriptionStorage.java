@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
-import java.text.MessageFormat;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
@@ -35,6 +33,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.Version;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This abstract class provides an extension point for functionality for loading
@@ -159,7 +159,7 @@ public abstract class AbstractCProjectDescriptionStorage {
 		if (!project.isAccessible())
 			throw ExceptionFactory.createCoreException(
 					MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), //$NON-NLS-1$
-							getProject().getName()));
+							new Object[] { getProject().getName() }));
 		return currentThreadProjectDescription.get();
 	}
 

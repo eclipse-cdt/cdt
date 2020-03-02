@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @noreference This class is not intended to be referenced by clients.
@@ -54,9 +55,18 @@ public class CoreModelMessages {
 	}
 
 	/**
+	 * Returns a string from the resource bundle and formats it with the argument
+	 *
+	 * @param key the string used to get the bundle value, must not be {@code null}
+	 */
+	public static String getFormattedString(String key, Object arg) {
+		return MessageFormat.format(getString(key), new Object[] { arg });
+	}
+
+	/**
 	 * Returns a string from the resource bundle and formats it with arguments
 	 */
-	public static String getFormattedString(String key, Object... args) {
+	public static String getFormattedString(String key, Object[] args) {
 		return MessageFormat.format(getString(key), args);
 	}
 }

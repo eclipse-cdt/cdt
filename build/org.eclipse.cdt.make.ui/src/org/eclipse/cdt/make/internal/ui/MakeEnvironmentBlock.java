@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui;
 
-import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -68,6 +67,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties

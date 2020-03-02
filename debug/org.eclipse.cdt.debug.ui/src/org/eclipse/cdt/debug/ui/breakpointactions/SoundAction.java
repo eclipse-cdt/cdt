@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.MessageFormat;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -46,6 +45,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class SoundAction extends AbstractBreakpointAction {
 
@@ -103,7 +104,7 @@ public class SoundAction extends AbstractBreakpointAction {
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		if (soundFile == null || !soundFile.exists()) {
 			String errorMsg = MessageFormat.format(Messages.getString("SoundAction.error.0"), //$NON-NLS-1$
-					getSummary());
+					new Object[] { getSummary() });
 			return new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(),
 					ICDebugInternalConstants.STATUS_CODE_ERROR, errorMsg, null);
 		}

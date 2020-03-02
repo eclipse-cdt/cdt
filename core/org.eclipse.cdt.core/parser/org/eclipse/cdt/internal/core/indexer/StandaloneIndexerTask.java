@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.indexer;
 
-import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Iterator;
@@ -27,6 +26,8 @@ import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A task for index updates.

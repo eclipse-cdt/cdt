@@ -15,7 +15,6 @@
 
 package org.eclipse.cdt.ui.dialogs;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +68,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Options page for RegexErrorParser in Error Parsers Tab of properties/preferences.
@@ -586,7 +587,8 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 		columnViewer.getColumn().setText(DialogsMessages.RegexErrorParserOptionPage_EatColumn);
 		columnViewer.getColumn().setResizable(true);
 
-		String message = MessageFormat.format(DialogsMessages.RegexErrorParserOptionPage_TooltipConsume, EAT_NO);
+		String message = MessageFormat.format(DialogsMessages.RegexErrorParserOptionPage_TooltipConsume,
+				new Object[] { EAT_NO });
 		columnViewer.getColumn().setToolTipText(message);
 		columnViewer.setLabelProvider(new ColumnLabelProvider() {
 

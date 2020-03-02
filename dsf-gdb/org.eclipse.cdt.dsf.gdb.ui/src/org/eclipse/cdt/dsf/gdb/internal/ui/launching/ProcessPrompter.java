@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -36,6 +35,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class ProcessPrompter implements IStatusHandler {
 

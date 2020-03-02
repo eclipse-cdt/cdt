@@ -15,7 +15,6 @@
 package org.eclipse.cdt.make.internal.ui.dnd;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +42,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.widgets.Shell;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A collection of various functions for Make Target View drag and drop support.
@@ -238,7 +239,7 @@ public class MakeTargetDndUtil {
 
 		// Try "Copy of name"
 		newName = MessageFormat.format(MakeUIPlugin.getResourceString("MakeTargetDnD.copyOf.uniqueName"), //$NON-NLS-1$
-				targetName);
+				new Object[] { targetName });
 		if (makeTargetManager.findTarget(container, newName) == null) {
 			return newName;
 		}
@@ -246,7 +247,7 @@ public class MakeTargetDndUtil {
 		// Try "Copy (2) of name"
 		for (int counter = 1;; counter++) {
 			newName = MessageFormat.format(MakeUIPlugin.getResourceString("MakeTargetDnD.countedCopyOf.uniqueName"), //$NON-NLS-1$
-					counter, targetName);
+					new Object[] { counter, targetName });
 			if (makeTargetManager.findTarget(container, newName) == null) {
 				return newName;
 			}

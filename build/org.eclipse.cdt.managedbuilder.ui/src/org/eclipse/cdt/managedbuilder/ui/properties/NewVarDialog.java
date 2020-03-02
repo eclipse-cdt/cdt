@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
-import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -49,6 +48,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * the dialog used to create or edit the build macro

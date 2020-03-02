@@ -15,12 +15,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
-import java.text.MessageFormat;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @author Doug Schaefer
@@ -317,7 +317,7 @@ public class BTree {
 				}
 				throw new BTreeKeyNotFoundException(
 						MessageFormat.format(Messages.getString("BTree.DeletionOnAbsentKey"), //$NON-NLS-1$
-								Long.valueOf(key), Integer.valueOf(mode)));
+								new Object[] { Long.valueOf(key), Integer.valueOf(mode) }));
 			}
 		} else {
 			if (keyIndexInNode != -1) {
@@ -417,7 +417,7 @@ public class BTree {
 
 					throw new BTreeKeyNotFoundException(
 							MessageFormat.format(Messages.getString("BTree.DeletionOnAbsentKey"), //$NON-NLS-1$
-									Long.valueOf(key), Integer.valueOf(mode)));
+									new Object[] { Long.valueOf(key), Integer.valueOf(mode) }));
 				}
 			}
 		}
@@ -674,8 +674,8 @@ public class BTree {
 				if (!full && !empty) {
 					valid = false;
 					msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorA"), //$NON-NLS-1$
-							Long.valueOf(node), Integer.valueOf(indexFirstBlankKey),
-							Integer.valueOf(indexLastNonBlankKey));
+							new Object[] { Long.valueOf(node), Integer.valueOf(indexFirstBlankKey),
+									Integer.valueOf(indexLastNonBlankKey) });
 				}
 			}
 
@@ -683,7 +683,7 @@ public class BTree {
 			if (childCount != 0 && childCount != keyCount + 1) {
 				valid = false;
 				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorB"), //$NON-NLS-1$
-						Long.valueOf(node));
+						new Object[] { Long.valueOf(node) });
 			}
 
 			// The root node is excused from the remaining node constraints.
@@ -695,7 +695,7 @@ public class BTree {
 			if (keyCount < MIN_RECORDS || keyCount > MAX_RECORDS) {
 				valid = false;
 				msg += MessageFormat.format(Messages.getString("BTree.IntegrityErrorC"), //$NON-NLS-1$
-						Long.valueOf(node));
+						new Object[] { Long.valueOf(node) });
 			}
 
 			// Check: All leaf nodes are at the same depth

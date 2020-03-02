@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.pdom.export;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +39,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.ProgressProvider;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * An eclipse application for generating PDOM's without starting the Workbench
@@ -90,7 +91,7 @@ public class GeneratePDOMApplication implements IApplication {
 		String pproviderFQN;
 		if (!arguments.containsKey(OPT_PROJECTPROVIDER)) {
 			output(MessageFormat.format(Messages.GeneratePDOMApplication_UsingDefaultProjectProvider,
-					DEFAULT_PROJECT_PROVIDER));
+					new Object[] { DEFAULT_PROJECT_PROVIDER }));
 			pproviderFQN = DEFAULT_PROJECT_PROVIDER;
 		} else {
 			pproviderFQN = CLIUtil.getArg(arguments, OPT_PROJECTPROVIDER, 1).get(0);
@@ -104,7 +105,8 @@ public class GeneratePDOMApplication implements IApplication {
 			if (indexerIDs.size() == 1) {
 				indexerID = indexerIDs.get(0);
 			} else if (indexerIDs.size() > 1) {
-				fail(MessageFormat.format(Messages.GeneratePDOMApplication_InvalidIndexerID, OPT_INDEXER_ID));
+				fail(MessageFormat.format(Messages.GeneratePDOMApplication_InvalidIndexerID,
+						new Object[] { OPT_INDEXER_ID }));
 			}
 		}
 

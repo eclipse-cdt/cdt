@@ -14,7 +14,6 @@
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,6 +33,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.osgi.framework.Bundle;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * CEditorTexHoverDescriptor

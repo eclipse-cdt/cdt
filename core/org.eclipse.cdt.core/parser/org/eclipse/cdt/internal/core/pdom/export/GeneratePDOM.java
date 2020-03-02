@@ -16,7 +16,6 @@
 package org.eclipse.cdt.internal.core.pdom.export;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -33,6 +32,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * An ISafeRunnable which
@@ -90,13 +91,14 @@ public class GeneratePDOM {
 		final ICProject cproject = pm.createProject();
 		if (cproject == null) {
 			fail(MessageFormat.format(Messages.GeneratePDOM_ProjectProviderReturnedNullCProject,
-					pm.getClass().getName()));
+					new Object[] { pm.getClass().getName() }));
 			return null; // Cannot be reached, inform the compiler
 		}
 
 		IIndexLocationConverter converter = pm.getLocationConverter(cproject);
 		if (converter == null) {
-			fail(MessageFormat.format(Messages.GeneratePDOM_NullLocationConverter, pm.getClass().getName()));
+			fail(MessageFormat.format(Messages.GeneratePDOM_NullLocationConverter,
+					new Object[] { pm.getClass().getName() }));
 		}
 
 		// Index the project
@@ -147,7 +149,8 @@ public class GeneratePDOM {
 				exportedPDOM.releaseWriteLock();
 			}
 		} catch (InterruptedException ie) {
-			String msg = MessageFormat.format(Messages.GeneratePDOM_GenericGenerationFailed, ie.getMessage());
+			String msg = MessageFormat.format(Messages.GeneratePDOM_GenericGenerationFailed,
+					new Object[] { ie.getMessage() });
 			throw new CoreException(CCorePlugin.createStatus(msg, ie));
 		} finally {
 			if (deleteOnExit) {

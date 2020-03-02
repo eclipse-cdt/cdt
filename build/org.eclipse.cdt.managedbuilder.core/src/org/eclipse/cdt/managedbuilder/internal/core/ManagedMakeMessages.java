@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
-import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @since 2.0
@@ -49,7 +50,7 @@ public class ManagedMakeMessages {
 	}
 
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), arg);
+		return MessageFormat.format(getResourceString(key), new Object[] { arg });
 	}
 
 	public static String getFormattedString(String key, String[] args) {

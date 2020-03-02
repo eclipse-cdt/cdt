@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -25,6 +24,8 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
+
+import com.ibm.icu.text.DateFormatSymbols;
 
 /**
  * Models macros used by the preprocessor

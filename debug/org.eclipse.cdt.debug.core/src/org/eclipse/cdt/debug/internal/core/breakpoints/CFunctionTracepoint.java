@@ -13,13 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
-import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A tracepoint that collects data when a function is entered.
@@ -52,6 +53,6 @@ public class CFunctionTracepoint extends AbstractTracepoint implements ICFunctio
 	@Override
 	protected String getMarkerMessage() throws CoreException {
 		return MessageFormat.format(BreakpointMessages.getString("CFunctionTracepoint.0"), //$NON-NLS-1$
-				CDebugUtils.getBreakpointText(this, false));
+				(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });
 	}
 }

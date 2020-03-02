@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +43,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.Breakpoint;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The base class for all C/C++ specific breakpoints.
@@ -236,11 +237,12 @@ public abstract class CBreakpoint extends Breakpoint
 		StringBuilder sb = new StringBuilder();
 		int ignoreCount = getIgnoreCount();
 		if (ignoreCount > 0) {
-			sb.append(MessageFormat.format(BreakpointMessages.getString("CBreakpoint.1"), ignoreCount)); //$NON-NLS-1$
+			sb.append(
+					MessageFormat.format(BreakpointMessages.getString("CBreakpoint.1"), new Object[] { ignoreCount })); //$NON-NLS-1$
 		}
 		String condition = getCondition();
 		if (condition != null && condition.length() > 0) {
-			sb.append(MessageFormat.format(BreakpointMessages.getString("CBreakpoint.2"), condition)); //$NON-NLS-1$
+			sb.append(MessageFormat.format(BreakpointMessages.getString("CBreakpoint.2"), new Object[] { condition })); //$NON-NLS-1$
 		}
 		return sb.toString();
 	}

@@ -14,10 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import java.text.BreakIterator;
 import java.text.CharacterIterator;
 
 import org.eclipse.core.runtime.Assert;
+
+import com.ibm.icu.text.BreakIterator;
 
 /**
  * A C break iterator. It returns all breaks, including before and after
@@ -376,6 +377,7 @@ public class CBreakIterator extends BreakIterator {
 	 * Creates a break iterator given a char sequence.
 	 * @param newText the new text
 	 */
+	@Override
 	public void setText(CharSequence newText) {
 		fText = newText;
 		fIterator.setText(new SequenceCharacterIterator(newText));

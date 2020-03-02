@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +40,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * This dialog is used to add/edit user-defined register groups.
  */
@@ -60,7 +61,7 @@ public class RegisterGroupDialog extends TitleAreaDialog {
 		public String getText(Object element) {
 			if (element instanceof IRegisterDescriptor) {
 				IRegisterDescriptor rd = (IRegisterDescriptor) element;
-				return MessageFormat.format("{0} - {1}", rd.getName(), rd.getGroupName()); //$NON-NLS-1$
+				return MessageFormat.format("{0} - {1}", new Object[] { rd.getName(), rd.getGroupName() }); //$NON-NLS-1$
 			}
 			return super.getText(element);
 		}

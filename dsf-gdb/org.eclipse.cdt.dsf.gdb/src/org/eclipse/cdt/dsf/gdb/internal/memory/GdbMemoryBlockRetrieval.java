@@ -18,7 +18,6 @@
 package org.eclipse.cdt.dsf.gdb.internal.memory;
 
 import java.math.BigInteger;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -59,6 +58,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A specialization of the DSF memory block retrieval implementation supporting

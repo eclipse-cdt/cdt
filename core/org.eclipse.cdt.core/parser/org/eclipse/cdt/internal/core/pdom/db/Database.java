@@ -28,7 +28,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,6 +37,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Database encapsulates access to a flat binary format file with a memory-manager-like API for
@@ -318,7 +319,7 @@ public class Database {
 
 	private void databaseCorruptionDetected() throws CoreException {
 		String msg = MessageFormat.format(Messages.getString("Database.CorruptedDatabase"), //$NON-NLS-1$
-				fLocation.getName());
+				new Object[] { fLocation.getName() });
 		throw new CoreException(new DBStatus(msg));
 	}
 

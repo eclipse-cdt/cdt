@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Models problems, all problems should derive from this class.
@@ -169,7 +170,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 			msg = ""; //$NON-NLS-1$
 
 		if (arg != null) {
-			msg = MessageFormat.format(msg, arg);
+			msg = MessageFormat.format(msg, new Object[] { arg });
 		}
 		if (originalProblem != null) {
 			msg = MessageFormat.format("{0}: {1}", msg, originalProblem.getMessage()); //$NON-NLS-1$

@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
-import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -52,6 +51,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.PropertyPage;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * This <code>IndexerBlock</code> is used in the <code>MakeProjectWizardOptionPage</code> and

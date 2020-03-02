@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree;
 
-import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,8 @@ import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * UIElementTreeBuilderHelper provides methods to convert an Element (XML) into
@@ -127,14 +128,14 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 				if (label == null || value == null) {
 					String msg = MessageFormat.format(
 							Messages.getString("UIElementTreeBuilderHelper.InvalidEmptyLabel"), //$NON-NLS-1$
-							id);
+							new Object[] { id });
 					CUIPlugin.log(TEMPLATE_ENGINE_ERROR,
 							new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
 				} else {
 					if (value2name.put(value, label) != null) {
 						String msg = MessageFormat.format(
 								Messages.getString("UIElementTreeBuilderHelper.InvalidNonUniqueValue"), //$NON-NLS-1$
-								value, id);
+								new Object[] { value, id });
 						CUIPlugin.log(TEMPLATE_ENGINE_ERROR,
 								new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
 					}
@@ -161,7 +162,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 			// for generating UI pages as TABS in a single page.
 		} else {
 			String msg = MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.UnknownWidgetType0"), //$NON-NLS-1$
-					type);
+					new Object[] { type });
 			CUIPlugin.log(TEMPLATE_ENGINE_ERROR,
 					new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
 		}

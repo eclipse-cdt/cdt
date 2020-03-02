@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.includes;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +36,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
+
+import com.ibm.icu.text.MessageFormat;
 
 import junit.framework.TestSuite;
 

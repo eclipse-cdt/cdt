@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui.commands;
 
-import java.text.MessageFormat;
-
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -26,6 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A job to build CDT build configurations.
@@ -39,11 +39,11 @@ public class BuildConfigurationsJob extends Job {
 		String firstProjectName = cfgDescriptions[0].getProjectDescription().getName();
 		String firstConfigurationName = cfgDescriptions[0].getName();
 		if (isCleaning) {
-			return MessageFormat.format(Messages.BuildConfigurationsJob_Cleaning, cfgDescriptions.length,
-					firstProjectName, firstConfigurationName);
+			return MessageFormat.format(Messages.BuildConfigurationsJob_Cleaning,
+					new Object[] { cfgDescriptions.length, firstProjectName, firstConfigurationName });
 		} else {
-			return MessageFormat.format(Messages.BuildConfigurationsJob_Building, cfgDescriptions.length,
-					firstProjectName, firstConfigurationName);
+			return MessageFormat.format(Messages.BuildConfigurationsJob_Building,
+					new Object[] { cfgDescriptions.length, firstProjectName, firstConfigurationName });
 		}
 	}
 

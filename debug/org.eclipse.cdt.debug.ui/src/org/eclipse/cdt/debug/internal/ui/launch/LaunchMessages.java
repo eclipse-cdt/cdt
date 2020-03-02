@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.launch;
 
-import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class LaunchMessages {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.ui.launch.LaunchMessages";//$NON-NLS-1$
@@ -25,7 +26,7 @@ public class LaunchMessages {
 	}
 
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getString(key), arg);
+		return MessageFormat.format(getString(key), new Object[] { arg });
 	}
 
 	public static String getFormattedString(String key, String[] args) {

@@ -15,9 +15,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
-import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class LaunchMessages {
 
@@ -39,7 +40,7 @@ public class LaunchMessages {
 		return MessageFormat.format(getString(key), arg);
 	}
 
-	public static String getFormattedString(String key, String... args) {
+	public static String getFormattedString(String key, String[] args) {
 		return MessageFormat.format(getString(key), (Object[]) args);
 	}
 

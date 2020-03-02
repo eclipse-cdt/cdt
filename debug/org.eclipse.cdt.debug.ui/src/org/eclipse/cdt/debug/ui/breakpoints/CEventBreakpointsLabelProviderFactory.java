@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.breakpoints;
 
-import java.text.MessageFormat;
 import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.DebugCoreMessages;
@@ -30,6 +29,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProv
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Factory for event breakpoint label provider
@@ -102,7 +103,7 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 		if (ignoreCount > 0) {
 			label.append(' ');
 			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.3"), //$NON-NLS-1$
-					Integer.toString(ignoreCount)));
+					new Object[] { Integer.toString(ignoreCount) }));
 		}
 		return label;
 	}
@@ -111,7 +112,8 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 		String condition = breakpoint.getCondition();
 		if (condition != null && condition.length() > 0) {
 			buffer.append(' ');
-			buffer.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.4"), condition)); //$NON-NLS-1$
+			buffer.append(
+					MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.4"), new Object[] { condition })); //$NON-NLS-1$
 		}
 	}
 

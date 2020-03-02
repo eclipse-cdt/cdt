@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.IAddress;
@@ -33,6 +32,8 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This factory provides an instance of ICSourceNotFoundDescription that can

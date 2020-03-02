@@ -19,12 +19,13 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+
+import com.ibm.icu.text.DateFormat;
 
 /**
  * @since 6.9

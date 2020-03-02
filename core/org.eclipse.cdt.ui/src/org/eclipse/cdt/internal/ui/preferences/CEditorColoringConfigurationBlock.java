@@ -18,7 +18,6 @@ package org.eclipse.cdt.internal.ui.preferences;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,6 +75,8 @@ import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * Configures C/C++ Editor code coloring preferences.

@@ -24,7 +24,6 @@
 
 package org.eclipse.cdt.dsf.mi.service;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -112,6 +111,8 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.osgi.framework.BundleContext;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Breakpoint service interface.  The breakpoint service tracks CDT breakpoint
@@ -723,7 +724,8 @@ public class MIBreakpointsManager extends AbstractDsfService
 						detailedMessage = getStatus().getMessage();
 					}
 					String description = (detailedMessage == null) ? Messages.Breakpoint_attribute_problem
-							: MessageFormat.format(Messages.Breakpoint_attribute_detailed_problem, detailedMessage);
+							: MessageFormat.format(Messages.Breakpoint_attribute_detailed_problem,
+									new Object[] { detailedMessage });
 
 					addBreakpointProblemMarker(breakpoint, description, IMarker.SEVERITY_WARNING);
 					installRM.done();

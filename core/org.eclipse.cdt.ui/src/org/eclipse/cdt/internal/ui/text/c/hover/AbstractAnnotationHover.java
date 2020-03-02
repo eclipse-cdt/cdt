@@ -16,7 +16,6 @@
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
-import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -85,6 +84,8 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * AbstractAnnotationHover
@@ -351,7 +352,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 				text = CHoverMessages.AbstractAnnotationHover_message_singleQuickFix;
 			} else {
 				text = MessageFormat.format(CHoverMessages.AbstractAnnotationHover_message_multipleQuickFix,
-						String.valueOf(proposals.length));
+						new Object[] { String.valueOf(proposals.length) });
 			}
 			quickFixLabel.setText(text);
 

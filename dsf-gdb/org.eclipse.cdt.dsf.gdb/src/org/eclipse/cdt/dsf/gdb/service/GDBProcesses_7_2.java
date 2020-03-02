@@ -16,7 +16,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,6 +71,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Adding support for multi-process with GDB 7.2

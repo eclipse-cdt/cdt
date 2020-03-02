@@ -14,10 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import java.text.BreakIterator;
 import java.text.CharacterIterator;
 
 import org.eclipse.core.runtime.Assert;
+
+import com.ibm.icu.text.BreakIterator;
 
 /**
  * Breaks C text into word starts, also stops at line start and end. No
@@ -182,6 +183,7 @@ public class CWordIterator extends BreakIterator {
 	 * Sets the text as <code>CharSequence</code>.
 	 * @param newText the new text
 	 */
+	@Override
 	public void setText(CharSequence newText) {
 		fIterator.setText(newText);
 		first();

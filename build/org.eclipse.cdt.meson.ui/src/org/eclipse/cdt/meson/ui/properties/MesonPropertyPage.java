@@ -268,7 +268,7 @@ public class MesonPropertyPage extends PropertyPage {
 					args.add(control.getConfiguredString());
 				}
 			}
-			if (args.size() == 2) {
+			if (args.size() == 1) {
 				return true;
 			}
 			try {

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0fb4a863_f69890e9",
+        "filename": "build/org.eclipse.cdt.meson.ui/src/org/eclipse/cdt/meson/ui/properties/MesonPropertyPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-03T17:16:45Z",
+      "side": 1,
+      "message": "This is true if you do not have any control with value change. Is this what you want?",
+      "revId": "d1c7eb449a699d85f5e898442f522c1a4eac2277",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

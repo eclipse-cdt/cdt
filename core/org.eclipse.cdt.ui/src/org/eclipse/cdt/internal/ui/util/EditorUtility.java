@@ -39,6 +39,9 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
+import org.eclipse.cdt.internal.core.model.Include;
+import org.eclipse.cdt.internal.core.model.WorkingCopy;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -454,6 +457,19 @@ public class EditorUtility {
 			ICProject cproject = context.getCProject();
 			if (cproject != null) {
 				ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, location);
+				if (unit == null && (context instanceof Include) && location.toFile().exists()) {
+					ICElement parent = context.getParent();
+					if (parent instanceof WorkingCopy) {
+						WorkingCopy copy = (WorkingCopy) parent;
+						if (copy.isCLanguage()) {
+							unit = new ExternalTranslationUnit(cproject, URIUtil.toURI(location),
+									CCorePlugin.CONTENT_TYPE_CHEADER);
+						} else if (copy.isCXXLanguage()) {
+							unit = new ExternalTranslationUnit(cproject, URIUtil.toURI(location),
+									CCorePlugin.CONTENT_TYPE_CXXHEADER);
+						}
+					}
+				}
 				if (unit != null) {
 					return new ExternalEditorInput(unit);
 				}
@@ -618,6 +634,9 @@ public class EditorUtility {
 		} else if (input instanceof ITranslationUnitEditorInput) {
 			ITranslationUnitEditorInput editorInput = (ITranslationUnitEditorInput) input;
 			cElement = editorInput.getTranslationUnit();
+			if (cElement == null && input instanceof ExternalEditorInput && inputObject instanceof ICElement) {
+				cElement = ((ICElement) inputObject).getAncestor(ICElement.C_UNIT);
+			}
 		} else if (inputObject instanceof ICElement) {
 			cElement = (ICElement) inputObject;
 		}

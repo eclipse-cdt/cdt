@@ -63,8 +63,6 @@ public class ShallowCopyChecker extends AbstractIndexAstChecker {
 		if (fOnlyNew) {
 			ast.accept(new OnlyNewVisitor());
 		} else {
-			if (!ast.isHeaderUnit())
-				return;
 			ast.accept(new AllPtrsVisitor());
 		}
 	}

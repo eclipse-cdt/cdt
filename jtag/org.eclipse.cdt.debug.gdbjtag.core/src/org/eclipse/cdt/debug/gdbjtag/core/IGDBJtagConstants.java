@@ -102,7 +102,7 @@ public interface IGDBJtagConstants {
 	/** @since 7.0 */
 	public static final String DEFAULT_STOP_AT = ""; //$NON-NLS-1$
 	/** @since 9.2 */
-	public static final String DEFAULT_JTAG_DEVICE_ID = "org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.genericDevice"; //$NON-NLS-1$
+	public static final String DEFAULT_JTAG_DEVICE_ID = ""; // not used (bug 560186) //$NON-NLS-1$
 	/** @since 9.2 */
 	public static final String DEFAULT_JTAG_DEVICE_NAME = ""; //$NON-NLS-1$
 	/**

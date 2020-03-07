@@ -76,7 +76,8 @@ import org.eclipse.ui.PlatformUI;
 public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 	private static final String TAB_NAME = "Debugger";
-	private static final String TAB_ID = "org.eclipse.cdt.debug.gdbjtag.ui.debuggertab.dsf";
+	private static final String TAB_ID = "org.eclipse.cdt.debug.gdbjtag.ui.debuggertab.dsf"; //$NON-NLS-1$
+	private static final String DEFAULT_JTAG_DEVICE_ID = "org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.genericDevice"; //$NON-NLS-1$
 
 	private Text gdbCommand;
 	private Button useRemote;
@@ -428,10 +429,10 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	}
 
 	/**
-	 * Returns the device id for a given device name or {@link IGDBJtagConstants.DEFAULT_JTAG_DEVICE_ID}
+	 * Returns the device id for a given device name or {@link #DEFAULT_JTAG_DEVICE_ID}
 	 *
 	 * @param jtagDeviceName The device name
-	 * @return The device id if found, else {@link IGDBJtagConstants.DEFAULT_JTAG_DEVICE_ID}
+	 * @return The device id if found, else {@link #DEFAULT_JTAG_DEVICE_ID}
 	 * @since 8.1
 	 */
 	protected String getDeviceIdForDeviceName(String jtagDeviceName) {
@@ -440,7 +441,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		if (device != null) {
 			return device.getDeviceId();
 		}
-		return IGDBJtagConstants.DEFAULT_JTAG_DEVICE_ID;
+		return DEFAULT_JTAG_DEVICE_ID;
 	}
 
 	private GDBJtagDeviceContribution getDeviceContribution(ILaunchConfiguration configuration) throws CoreException {
@@ -481,7 +482,16 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 			}
 
 			if (savedJtagDevice.isEmpty()) {
-				jtagDevice.select(0);
+				// saved device not known so use default device attributes
+				String deviceName = getDeviceNameForDeviceId(DEFAULT_JTAG_DEVICE_ID);
+				int index = 0;
+				for (int i = 0; i < jtagDevice.getItemCount(); i++) {
+					if (jtagDevice.getItem(i).equals(deviceName)) {
+						index = i;
+						break;
+					}
+				}
+				jtagDevice.select(index);
 			} else {
 				String storedAddress = ""; //$NON-NLS-1$
 				int storedPort = 0;
@@ -593,7 +603,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET,
 				IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
-		configuration.setAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE_ID, IGDBJtagConstants.DEFAULT_JTAG_DEVICE_ID);
+		configuration.setAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE_ID, DEFAULT_JTAG_DEVICE_ID);
 		configuration.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,

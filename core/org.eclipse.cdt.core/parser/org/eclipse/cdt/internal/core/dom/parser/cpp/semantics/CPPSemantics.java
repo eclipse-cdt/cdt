@@ -3781,7 +3781,7 @@ public class CPPSemantics {
 						setTargetedFunctionsToUnknown(tmp);
 						ICPPConstructor[] ctors = type.getConstructors();
 						if (ctors != null && ctors.length > 0) {
-							return CPPDeferredFunction.createForCandidates(type.getConstructors());
+							return CPPDeferredFunction.createForCandidates(ctors);
 						} else {
 							return new ProblemBinding(typeId, ISemanticProblem.BINDING_NOT_FOUND,
 									type.getNameCharArray());

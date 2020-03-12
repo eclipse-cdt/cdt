@@ -38,12 +38,14 @@ public class GLDErrorParserTests extends GenericErrorParserTests {
 				new String[] { "make -k all", "gcc -o hallo.o main.c libfoo.a",
 						"main.c(.text+0x14): undefined reference to `foo()'",
 						"main.o(.rodata+0x14): undefined reference to `something'",
+						"(.text.myfunc+0x42): undefined reference to `bar'",
 						"make: Target `all' not remade because of errors.", },
-				2, // errors
+				3, // errors
 				0, // warnings
 				0, // Infos
-				new String[] { "main.c", "main.o" },
-				new String[] { "undefined reference to `foo()'", "undefined reference to `something'" },
+				new String[] { "main.c", "main.o", "project" },
+				new String[] { "undefined reference to `foo()'", "undefined reference to `something'",
+						"undefined reference to `bar'" },
 				new String[] { GLD_ERROR_PARSER_ID });
 	}
 
@@ -53,12 +55,14 @@ public class GLDErrorParserTests extends GenericErrorParserTests {
 				new String[] { "make -k all", "gcc -o hallo.o main.c libfoo.a",
 						"main.c:(.text+0x14): undefined reference to `foo()'",
 						"main.o:(.rodata+0x14): undefined reference to `something'",
+						"(.text.myfunc+0x42): undefined reference to `bar'",
 						"make: Target `all' not remade because of errors.", },
-				2, // errors
+				3, // errors
 				0, // warnings
 				0, // Infos
-				new String[] { "main.c", "main.o" },
-				new String[] { "undefined reference to `foo()'", "undefined reference to `something'" },
+				new String[] { "main.c", "main.o", "project" },
+				new String[] { "undefined reference to `foo()'", "undefined reference to `something'",
+						"undefined reference to `bar'" },
 				new String[] { GLD_ERROR_PARSER_ID });
 	}
 
@@ -102,6 +106,32 @@ public class GLDErrorParserTests extends GenericErrorParserTests {
 						"libstdc++.so.5, needed by testlib_3.so, may conflict with libstdc++.so.6",
 						"libstdc++.so.5, needed by testlib_4.so, may conflict with libstdc++.so.6",
 						"cannot find -ljpeg", },
+				new String[] { GLD_ERROR_PARSER_ID });
+	}
+
+	public void testLinkerMessages_bug495661() throws IOException {
+		runParserTest(
+				// new style: colons before sections
+				new String[] { "make all ",
+					"Building file: ../src/a.cpp",
+					"Invoking: GCC C++ Compiler",
+					"g++ -std=c++0x -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF\"src/a.d\" -MT\"src/a.o\" -o \"src/a.o\" \"../src/a.cpp\"",
+					"Finished building: ../src/a.cpp",
+					" ",
+					"Building target: parser",
+					"Invoking: GCC C++ Linker",
+					"g++ -o \"a\"  ./src/a.o   ",
+					"/usr/lib/gcc/x86_64-pc-linux-gnu/9.2.0/../../../../x86_64-pc-linux-gnu/bin/ld: ./src/a.o: in function `TLS wrapper function for A::max_compatdb_time':",
+					"a.cpp:(.text._ZTWN1A17max_compatdb_timeE[_ZTWN1A17max_compatdb_timeE]+0x21): undefined reference to `A::max_compatdb_time'",
+					"collect2: error: ld returned 1 exit status",
+					"make: *** [makefile:47: parser] Error 1",
+					"\"make all\" terminated with exit code 2. Build might be incomplete.", },
+				2, // errors
+				0, // warnings
+				0, // Infos
+				new String[] { "a.cpp", "project" },
+				new String[] { "./src/a.o: in function `TLS wrapper function for A::max_compatdb_time':",
+						"undefined reference to `A::max_compatdb_time'" },
 				new String[] { GLD_ERROR_PARSER_ID });
 	}
 }

@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
+import java.util.Optional;
+
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -62,9 +64,11 @@ public class CSearchUtil {
 	public static boolean isWriteOccurrence(IASTName node, IBinding binding) {
 		boolean isWrite;
 		if (binding instanceof ICPPVariable) {
-			isWrite = ((CPPVariableReadWriteFlags.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
+			Optional<Integer> res = CPPVariableReadWriteFlags.getReadWriteFlags(node);
+			isWrite = !res.isPresent() || ((res.get() & PDOMName.WRITE_ACCESS) != 0);
 		} else {
-			isWrite = ((CVariableReadWriteFlags.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
+			Optional<Integer> res = CVariableReadWriteFlags.getReadWriteFlags(node);
+			isWrite = !res.isPresent() || ((res.get() & PDOMName.WRITE_ACCESS) != 0);
 		}
 		return isWrite;
 	}

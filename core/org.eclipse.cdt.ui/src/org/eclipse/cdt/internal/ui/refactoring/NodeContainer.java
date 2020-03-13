@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -179,8 +180,8 @@ public class NodeContainer {
 						if (!hasReferenceOperator(declarator)) {
 							for (NameInformation n2 : names) {
 								if (n2.getDeclarationName() == declarationName) {
-									int flag = CPPVariableReadWriteFlags.getReadWriteFlags(n2.getName());
-									if ((flag & PDOMName.WRITE_ACCESS) != 0) {
+									Optional<Integer> flag = CPPVariableReadWriteFlags.getReadWriteFlags(n2.getName());
+									if (!flag.isPresent() || (flag.get() & PDOMName.WRITE_ACCESS) != 0) {
 										nameInfo.setWriteAccess(true);
 										break;
 									}

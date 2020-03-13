@@ -17,6 +17,7 @@
 package org.eclipse.cdt.codan.internal.checkers;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 
@@ -59,7 +60,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 /**
  * Checks that class members of simple types (int, float, pointers,
@@ -212,7 +212,8 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 						IField equivalentFieldBinding = getContainedEquivalentBinding(actualConstructorFields, binding,
 								name.getTranslationUnit().getIndex());
 						if (equivalentFieldBinding != null) {
-							if ((CPPVariableReadWriteFlags.getReadWriteFlags(name) & PDOMName.WRITE_ACCESS) != 0) {
+							Optional<Integer> res = CPPVariableReadWriteFlags.getReadWriteFlags(name);
+							if (CPPVariableReadWriteFlags.mayBeWriteAccess(res)) {
 								actualConstructorFields.remove(equivalentFieldBinding);
 							}
 						}

@@ -13,11 +13,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import java.util.Optional;
+
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -33,47 +37,48 @@ import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
 public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 	private static CVariableReadWriteFlags INSTANCE = new CVariableReadWriteFlags();
 
-	public static int getReadWriteFlags(IASTName variable) {
+	public static Optional<Integer> getReadWriteFlags(IASTName variable) {
 		return INSTANCE.rwAnyNode(variable, 0);
 	}
 
 	@Override
-	protected int rwAnyNode(IASTNode node, int indirection) {
+	protected Optional<Integer> rwAnyNode(IASTNode node, int indirection) {
 		final IASTNode parent = node.getParent();
 		if (parent instanceof ICASTFieldDesignator) {
-			return WRITE; // node is initialized via designated initializer
+			return Optional.of(WRITE); // node is initialized via designated initializer
 		}
 		return super.rwAnyNode(node, indirection);
 	}
 
 	@Override
-	protected int rwInExpression(IASTExpression expr, IASTNode node, int indirection) {
+	protected Optional<Integer> rwInExpression(IASTExpression expr, IASTNode node, int indirection) {
 		if (expr instanceof ICASTTypeIdInitializerExpression) {
-			return 0;
+			return Optional.of(0);
 		}
 		return super.rwInExpression(expr, node, indirection);
 	}
 
 	@Override
-	protected int rwInEqualsInitializer(IASTEqualsInitializer parent, int indirection) {
+	protected Optional<Integer> rwInEqualsInitializer(IASTEqualsInitializer parent, int indirection) {
 		if (indirection == 0) {
-			return READ;
+			return Optional.of(READ);
 		}
 		return super.rwInEqualsInitializer(parent, indirection);
 	}
 
 	@Override
-	protected int rwArgumentForFunctionCall(IASTFunctionCallExpression funcCall, IASTNode argument, int indirection) {
+	protected Optional<Integer> rwArgumentForFunctionCall(IASTFunctionCallExpression funcCall, IASTNode argument,
+			int indirection) {
 		if (indirection == 0) {
-			return READ;
+			return Optional.of(READ);
 		}
 		return super.rwArgumentForFunctionCall(funcCall, argument, indirection);
 	}
 
 	@Override
-	protected int rwAssignmentToType(IType type, int indirection) {
+	protected Optional<Integer> rwAssignmentToType(IType type, int indirection) {
 		if (indirection == 0) {
-			return READ;
+			return Optional.of(READ);
 		}
 		while (indirection > 0 && (type instanceof IPointerType)) {
 			type = ((IPointerType) type).getType();
@@ -81,11 +86,22 @@ public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 		}
 		if (indirection == 0) {
 			if (type instanceof IQualifierType) {
-				return ((IQualifierType) type).isConst() ? READ : READ | WRITE;
+				return ((IQualifierType) type).isConst() ? Optional.of(READ) : Optional.of(READ | WRITE);
 			} else if (type instanceof IPointerType) {
-				return ((IPointerType) type).isConst() ? READ : READ | WRITE;
+				return ((IPointerType) type).isConst() ? Optional.of(READ) : Optional.of(READ | WRITE);
 			}
 		}
-		return READ | WRITE; // fallback
+		return Optional.empty(); // Fallback
+	}
+
+	@Override
+	protected IBinding getDeferredFunction(IASTExpression functionNameExpression) {
+		return null;
+	}
+
+	@Override
+	protected Optional<Integer> evaluateDeferredFunction(final IASTFunctionCallExpression funcCall,
+			final IASTInitializerClause arg, int argPos, int indirection, IBinding defFunctionBinding) {
+		return Optional.empty();
 	}
 }

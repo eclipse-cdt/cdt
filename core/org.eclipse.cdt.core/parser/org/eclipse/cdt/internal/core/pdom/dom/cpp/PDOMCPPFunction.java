@@ -449,4 +449,9 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			return null;
 		}
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return PDOMCPPAnnotations.isNoDiscardFunction(getAnnotations());
+	}
 }

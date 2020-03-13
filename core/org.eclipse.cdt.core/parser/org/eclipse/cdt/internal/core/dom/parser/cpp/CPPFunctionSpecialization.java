@@ -341,4 +341,12 @@ public class CPPFunctionSpecialization extends CPPSpecialization
 		}
 		return CPPTemplates.instantiateFunctionBody(this);
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		ICPPFunction f = (ICPPFunction) getSpecializedBinding();
+		if (f != null)
+			return f.isNoDiscard();
+		return false;
+	}
 }

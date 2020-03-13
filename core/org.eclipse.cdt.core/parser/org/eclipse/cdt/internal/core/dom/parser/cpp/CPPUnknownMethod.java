@@ -174,4 +174,9 @@ public class CPPUnknownMethod extends CPPUnknownMember implements ICPPMethod {
 	public boolean isConstexpr() {
 		return false;
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return false;
+	}
 }

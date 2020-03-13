@@ -14,6 +14,7 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
@@ -35,27 +36,34 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 			super(contents, isCPP);
 		}
 
-		void assertReadWriteFlags(String context, String name, int expectedFlags) throws Exception {
+		void assertReadWriteFlags(String context, String name, Optional<Integer> expectedFlags) throws Exception {
 			IASTName variable = findName(context, name);
 			assertNotNull(variable);
 			assertEquals(flagsToString(expectedFlags), flagsToString(getReadWriteFlags(variable)));
 		}
 
-		void assertReadWriteFlags(String name, int expectedFlags) throws Exception {
-			assertReadWriteFlags(null, name, expectedFlags);
+		void assertReadWriteFlags(String context, String name, int expectedFlags) throws Exception {
+			assertReadWriteFlags(context, name, Optional.of(expectedFlags));
 		}
 
-		int getReadWriteFlags(IASTName variable) {
+		void assertReadWriteFlags(String context, String name) throws Exception {
+			assertReadWriteFlags(context, name, Optional.empty());
+		}
+
+		Optional<Integer> getReadWriteFlags(IASTName variable) {
 			return isCPP ? CPPVariableReadWriteFlags.getReadWriteFlags(variable)
 					: CVariableReadWriteFlags.getReadWriteFlags(variable);
 		}
 
-		private String flagsToString(int flags) {
+		private String flagsToString(Optional<Integer> flags) {
 			StringBuilder buf = new StringBuilder();
-			if ((flags & READ) != 0) {
+			if (!flags.isPresent()) {
+				buf.append("UNK");
+			}
+			if (flags.isPresent() && (flags.get() & READ) != 0) {
 				buf.append("READ");
 			}
-			if ((flags & WRITE) != 0) {
+			if (flags.isPresent() && (flags.get() & WRITE) != 0) {
 				if (buf.length() != 0)
 					buf.append(" | ");
 				buf.append("WRITE");
@@ -153,8 +161,8 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//	};
 	public void testFunctionCall() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
-		a.assertReadWriteFlags("f(&a, b)", "a", READ | WRITE);
-		a.assertReadWriteFlags("f(&a, b)", "b", READ | WRITE);
+		a.assertReadWriteFlags("f(&a, b)", "a");
+		a.assertReadWriteFlags("f(&a, b)", "b");
 		a.assertReadWriteFlags("f(&a, b)", "f", READ);
 		a.assertReadWriteFlags("g(&a, b, c)", "a", READ);
 		a.assertReadWriteFlags("g(&a, b, c)", "b", READ);
@@ -176,12 +184,12 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//	};
 	public void testConstructorCall_393068() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
-		a.assertReadWriteFlags("= A(&a, b)", "a", READ | WRITE);
-		a.assertReadWriteFlags("= A(&a, b)", "b", READ | WRITE);
-		a.assertReadWriteFlags("new A(&a, b)", "a", READ | WRITE);
-		a.assertReadWriteFlags("new A(&a, b)", "b", READ | WRITE);
-		a.assertReadWriteFlags("w(&a, b)", "a", READ | WRITE);
-		a.assertReadWriteFlags("w(&a, b)", "b", READ | WRITE);
+		a.assertReadWriteFlags("= A(&a, b)", "a");
+		a.assertReadWriteFlags("= A(&a, b)", "b");
+		a.assertReadWriteFlags("new A(&a, b)", "a");
+		a.assertReadWriteFlags("new A(&a, b)", "b");
+		a.assertReadWriteFlags("w(&a, b)", "a");
+		a.assertReadWriteFlags("w(&a, b)", "b");
 		a.assertReadWriteFlags("w(&a, b)", "w", WRITE);
 		a.assertReadWriteFlags("= A(&a, b, c)", "a", READ);
 		a.assertReadWriteFlags("= A(&a, b, c)", "b", READ);
@@ -227,7 +235,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	public void testVariadicFunctionCall_452416() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("variadic(waldo)", "waldo", READ);
-		a.assertReadWriteFlags("variadic(&waldo)", "waldo", READ | WRITE);
+		a.assertReadWriteFlags("variadic(&waldo)", "waldo");
 	}
 
 	//	int arr[5];
@@ -256,5 +264,21 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	public void testDeclType() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("decltype(v) o = 14;", "v", READ);
+	}
+
+	//template <typename S, typename T>
+	//void g(S, T);
+	//
+	//struct A {
+	//	int field;
+	//
+	//	template <typename S>
+	//	void method3(S s) const {
+	//  	  g(s, field);
+	//	}
+	//};
+	public void testDependentType() throws Exception {
+		AssertionHelper a = getCPPAssertionHelper();
+		a.assertReadWriteFlags("g(s, field);", "field");
 	}
 }

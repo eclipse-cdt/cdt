@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -43,7 +44,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.corext.refactoring.code.flow.FlowContext;
 import org.eclipse.cdt.internal.corext.refactoring.code.flow.FlowInfo;
 import org.eclipse.cdt.internal.corext.refactoring.code.flow.InputFlowAnalyzer;
@@ -179,8 +179,8 @@ public class NodeContainer {
 						if (!hasReferenceOperator(declarator)) {
 							for (NameInformation n2 : names) {
 								if (n2.getDeclarationName() == declarationName) {
-									int flag = CPPVariableReadWriteFlags.getReadWriteFlags(n2.getName());
-									if ((flag & PDOMName.WRITE_ACCESS) != 0) {
+									Optional<Integer> flags = CPPVariableReadWriteFlags.getReadWriteFlags(n2.getName());
+									if (CPPVariableReadWriteFlags.mayBeWriteAccess(flags)) {
 										nameInfo.setWriteAccess(true);
 										break;
 									}

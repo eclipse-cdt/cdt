@@ -56,6 +56,7 @@ public final class PDOMName implements IIndexFragmentName {
 	public static final int IS_FRIEND_SPEC = 0x08;
 	public static final int IS_INLINE_NAMESPACE = 0x0C;
 	public static final int COULD_BE_POLYMORPHIC_METHOD_CALL = 0x10;
+	//TODO We haven't got any flag for "unknown" access, we should add it to the index
 	public static final int READ_ACCESS = 0x20;
 	public static final int WRITE_ACCESS = 0x40;
 	// Whether this name is a potential match for its binding, rather than an exact match.

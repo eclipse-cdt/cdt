@@ -17,6 +17,7 @@
 package org.eclipse.cdt.codan.internal.checkers;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 
@@ -212,7 +213,8 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 						IField equivalentFieldBinding = getContainedEquivalentBinding(actualConstructorFields, binding,
 								name.getTranslationUnit().getIndex());
 						if (equivalentFieldBinding != null) {
-							if ((CPPVariableReadWriteFlags.getReadWriteFlags(name) & PDOMName.WRITE_ACCESS) != 0) {
+							Optional<Integer> res = CPPVariableReadWriteFlags.getReadWriteFlags(name);
+							if (res.isEmpty() || (res.get() & PDOMName.WRITE_ACCESS) != 0) {
 								actualConstructorFields.remove(equivalentFieldBinding);
 							}
 						}

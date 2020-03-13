@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.Optional;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -162,7 +164,11 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	@Override
 	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
 		if ((standardFlags & PDOMName.IS_REFERENCE) == PDOMName.IS_REFERENCE) {
-			return CPPVariableReadWriteFlags.getReadWriteFlags(name);
+			Optional<Integer> res = CPPVariableReadWriteFlags.getReadWriteFlags(name);
+			if (res.isEmpty()) {
+				return PDOMName.READ_ACCESS | PDOMName.WRITE_ACCESS;
+			}
+			return res.get();
 		}
 		return 0;
 	}

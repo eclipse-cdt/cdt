@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.corext.refactoring.code.flow;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -918,10 +919,10 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 			if (!(variable instanceof IField)) {
 				int index = fFlowContext.getIndexFromLocal(variable);
 				if (index >= 0) {
-					int accessMode = CPPVariableReadWriteFlags.getReadWriteFlags(node);
-					if (accessMode != 0) {
+					Optional<Integer> accessMode = CPPVariableReadWriteFlags.getReadWriteFlags(node);
+					if (accessMode.isPresent() && accessMode.get() != 0) {
 						int flowInfoMode = FlowInfo.UNUSED;
-						switch (accessMode) {
+						switch (accessMode.get()) {
 						case PDOMName.READ_ACCESS:
 							flowInfoMode = FlowInfo.READ;
 							break;
@@ -933,6 +934,8 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 							break;
 						}
 						setFlowInfo(node, new LocalFlowInfo(variable, index, flowInfoMode, fFlowContext));
+					} else if (!accessMode.isPresent()) {
+						setFlowInfo(node, new LocalFlowInfo(variable, index, FlowInfo.UNKNOWN, fFlowContext));
 					}
 				}
 			}

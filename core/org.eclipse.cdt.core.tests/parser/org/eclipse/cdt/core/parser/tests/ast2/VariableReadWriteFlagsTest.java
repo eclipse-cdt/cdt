@@ -29,6 +29,7 @@ import junit.framework.TestSuite;
 public class VariableReadWriteFlagsTest extends AST2TestBase {
 	private static final int READ = PDOMName.READ_ACCESS;
 	private static final int WRITE = PDOMName.WRITE_ACCESS;
+	private static final int UNKWOWN = READ | WRITE | 0x80;
 
 	protected class AssertionHelper extends AST2AssertionHelper {
 		AssertionHelper(String contents, boolean isCPP) throws ParserException {
@@ -256,5 +257,21 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	public void testDeclType() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("decltype(v) o = 14;", "v", READ);
+	}
+
+	//template <typename S, typename T>
+	//void g(S, T);
+	//
+	//struct A {
+	//	int field;
+	//
+	//	template <typename S>
+	//	void method3(S s) const {
+	//  	  g(s, field);
+	//	}
+	//};
+	public void testDependentType() throws Exception {
+		AssertionHelper a = getCPPAssertionHelper();
+		a.assertReadWriteFlags("g(s, field);", "field", UNKWOWN);
 	}
 }

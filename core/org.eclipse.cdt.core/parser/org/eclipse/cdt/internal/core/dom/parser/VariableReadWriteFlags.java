@@ -56,7 +56,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 /**
@@ -67,6 +70,12 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 public abstract class VariableReadWriteFlags {
 	protected static final int READ = PDOMName.READ_ACCESS;
 	protected static final int WRITE = PDOMName.WRITE_ACCESS;
+	private static final int UNKWOWN_BIT = 0x80;
+	protected static final int UNKWOWN = READ | WRITE | UNKWOWN_BIT;
+
+	public static boolean isResultUnkwown(int result) {
+		return (result & UNKWOWN_BIT) != 0;
+	}
 
 	protected int rwAnyNode(IASTNode node, int indirection) {
 		final IASTNode parent = node.getParent();
@@ -85,7 +94,7 @@ public abstract class VariableReadWriteFlags {
 		} else if (parent instanceof IASTDeclSpecifier) {
 			return READ;
 		}
-		return READ | WRITE; // fallback
+		return UNKWOWN; // fallback
 	}
 
 	protected int rwInDeclarator(IASTDeclarator parent, int indirection) {
@@ -104,7 +113,7 @@ public abstract class VariableReadWriteFlags {
 		} else if (grand instanceof ICPPASTStructuredBindingDeclaration) {
 			return rwInStructuredBinding((ICPPASTStructuredBindingDeclaration) grand);
 		}
-		return READ | WRITE; // fallback
+		return UNKWOWN; // fallback
 	}
 
 	protected int rwInInitializerList(IASTInitializerList parent, int indirection) {
@@ -123,7 +132,7 @@ public abstract class VariableReadWriteFlags {
 		} else if (grand instanceof ICPPASTStructuredBindingDeclaration) {
 			return rwInStructuredBinding((ICPPASTStructuredBindingDeclaration) grand);
 		}
-		return READ | WRITE; // fallback
+		return UNKWOWN; // fallback
 	}
 
 	protected int rwInStructuredBinding(ICPPASTStructuredBindingDeclaration declaration) {
@@ -207,7 +216,7 @@ public abstract class VariableReadWriteFlags {
 			return 0;
 		}
 
-		return READ | WRITE; // fall back
+		return UNKWOWN; // fall back
 	}
 
 	protected int rwInFieldReference(IASTNode node, IASTFieldReference expr, int indirection) {
@@ -234,7 +243,34 @@ public abstract class VariableReadWriteFlags {
 			if (args[i] == argument) {
 				final IASTExpression functionNameExpression = funcCall.getFunctionNameExpression();
 				if (functionNameExpression != null) {
-					final IType type = functionNameExpression.getExpressionType();
+					IType type = functionNameExpression.getExpressionType();
+					if (functionNameExpression instanceof IASTIdExpression) {
+						IBinding b = ((IASTIdExpression) functionNameExpression).getName().resolveBinding();
+						if (b instanceof ICPPDeferredFunction) {
+							ICPPFunction[] candidates = ((ICPPDeferredFunction) b).getCandidates();
+							if (candidates != null) {
+								int res = 0;
+								for (ICPPFunction f : candidates) {
+									type = f.getType();
+									if (type instanceof IFunctionType) {
+										res |= rwArgumentForFunctionCall((IFunctionType) type, i, args[i], indirection);
+									} else if (funcCall instanceof IASTImplicitNameOwner) {
+										IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) funcCall)
+												.getImplicitNames();
+										if (implicitNames.length == 1) {
+											IASTImplicitName name = implicitNames[0];
+											IBinding binding = name.resolveBinding();
+											if (binding instanceof IFunction) {
+												res |= rwArgumentForFunctionCall(((IFunction) binding).getType(), i,
+														args[i], indirection);
+											}
+										}
+									}
+								}
+								return res;
+							}
+						}
+					}
 					if (type instanceof IFunctionType) {
 						return rwArgumentForFunctionCall((IFunctionType) type, i, args[i], indirection);
 					} else if (funcCall instanceof IASTImplicitNameOwner) {
@@ -252,7 +288,7 @@ public abstract class VariableReadWriteFlags {
 				break;
 			}
 		}
-		return READ | WRITE; // Fallback
+		return UNKWOWN; // Fallback
 	}
 
 	private IType getArgumentType(IASTInitializerClause argument) {
@@ -276,10 +312,14 @@ public abstract class VariableReadWriteFlags {
 			parameterType = getArgumentType(argument);
 		}
 
+		if (CPPTemplates.isDependentType(parameterType)) {
+			return UNKWOWN; // Fallback
+		}
+
 		if (parameterType != null) {
 			return rwAssignmentToType(parameterType, indirection);
 		}
-		return READ | WRITE; // Fallback
+		return UNKWOWN; // Fallback
 	}
 
 	protected abstract int rwAssignmentToType(IType type, int indirection);
@@ -320,7 +360,7 @@ public abstract class VariableReadWriteFlags {
 				return READ;
 			}
 		} else if (stmt instanceof IASTProblemStatement) {
-			return READ | WRITE;
+			return UNKWOWN;
 		} else if (stmt instanceof IASTReturnStatement) {
 			return indirection == 0 ? READ : WRITE;
 		} else if (stmt instanceof IASTSwitchStatement) {

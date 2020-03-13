@@ -183,4 +183,9 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 	public boolean isNoReturn() {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
+	}
 }

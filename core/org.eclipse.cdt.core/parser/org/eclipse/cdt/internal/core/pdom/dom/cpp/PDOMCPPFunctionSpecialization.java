@@ -342,4 +342,9 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			return null;
 		}
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return PDOMCPPAnnotations.isNoDiscardFunction(getAnnotations());
+	}
 }

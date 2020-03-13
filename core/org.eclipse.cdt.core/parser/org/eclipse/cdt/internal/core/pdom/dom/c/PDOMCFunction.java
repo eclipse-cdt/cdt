@@ -208,4 +208,9 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	public IScope getFunctionScope() {
 		return null;
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return PDOMCAnnotations.isNoDiscardFunction(getAnnotations());
+	}
 }

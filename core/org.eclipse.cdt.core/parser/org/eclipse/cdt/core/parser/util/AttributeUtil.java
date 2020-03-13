@@ -26,6 +26,8 @@ import org.eclipse.cdt.core.parser.StandardAttributes;
  */
 public class AttributeUtil {
 	private static final String[] ATTRIBUTE_NORETURN = new String[] { "__noreturn__", StandardAttributes.NORETURN }; //$NON-NLS-1$
+	private static final String[] ATTRIBUTE_NODISCARD = new String[] { "warn_unused_result", //$NON-NLS-1$
+			StandardAttributes.NODISCARD };
 
 	// Not instantiatable.
 	private AttributeUtil() {
@@ -52,6 +54,14 @@ public class AttributeUtil {
 	 */
 	public static boolean hasNoreturnAttribute(IASTAttributeOwner node) {
 		return hasAttribute(node, ATTRIBUTE_NORETURN);
+	}
+
+	/**
+	 * Returns {@code true} if the node has a "nodiscard" attribute.
+	 * @since 6.12
+	 */
+	public static boolean hasNodiscardAttribute(IASTAttributeOwner node) {
+		return hasAttribute(node, ATTRIBUTE_NODISCARD);
 	}
 
 	/**

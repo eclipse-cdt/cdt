@@ -45,6 +45,7 @@ class PDOMCPPAnnotations {
 	private static final int PARAMETER_PACK_OFFSET = 7;
 	private static final int DELETED_OFFSET = 8;
 	private static final int NO_RETURN_OFFSET = 9;
+	private static final int NO_DISCARD_OFFSET = 10;
 
 	// Method annotations that don't fit on the first 16 bits of annotations.
 	private static final int VIRTUAL_OFFSET = 0;
@@ -82,6 +83,8 @@ class PDOMCPPAnnotations {
 			annotation |= 1 << PARAMETER_PACK_OFFSET;
 		if (function.isDeleted())
 			annotation |= 1 << DELETED_OFFSET;
+		if (function.isNoDiscard())
+			annotation |= 1 << NO_DISCARD_OFFSET;
 
 		return annotation;
 	}
@@ -224,6 +227,13 @@ class PDOMCPPAnnotations {
 	 */
 	public static boolean isNoReturnFunction(short annotation) {
 		return (annotation & (1 << NO_RETURN_OFFSET)) != 0;
+	}
+
+	/**
+	 * Checks if the "no discard" annotation is set.
+	 */
+	public static boolean isNoDiscardFunction(short annotation) {
+		return (annotation & (1 << NO_DISCARD_OFFSET)) != 0;
 	}
 
 	/**

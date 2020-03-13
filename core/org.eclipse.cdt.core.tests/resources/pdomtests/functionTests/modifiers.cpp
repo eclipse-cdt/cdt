@@ -10,6 +10,12 @@ void leadingNoReturnStdAttributeDecl() [[noreturn]];
 [[noreturn]] void trailingNoReturnStdAttributeDef(){}
 void leadingNoReturnStdAttributeDef() [[noreturn]]{}
 
+int noDiscardCPPFunction() __attribute__((warn_unused_result));
+[[nodiscard]] int trailingNoDiscardStdAttributeDecl();
+int leadingNoDiscardStdAttributeDecl() [[nodiscard]];
+[[nodiscard]] int trailingNoDiscardStdAttributeDef(){return 0;}
+int leadingNoDiscardStdAttributeDef() [[nodiscard]]{return 0;}
+
 void voidCPPFunction();
 int intCPPFunction();
 double doubleCPPFunction();

@@ -392,6 +392,11 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		return CPPFunction.isNoReturn(getFirstFunctionDtor());
 	}
 
+	@Override
+	public boolean isNoDiscard() {
+		return CPPFunction.isNoDiscard(getFirstFunctionDtor());
+	}
+
 	private IASTDeclarator getDeclaratorByName(IASTNode node) {
 		// Skip qualified names and nested declarators.
 		while (node != null) {

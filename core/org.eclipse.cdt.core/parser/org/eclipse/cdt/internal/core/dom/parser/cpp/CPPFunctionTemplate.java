@@ -445,4 +445,9 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		}
 		return CPPFunction.computeFunctionBodyExecution(getDefinition());
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return CPPFunction.isNoDiscard(getFirstFunctionDtor());
+	}
 }

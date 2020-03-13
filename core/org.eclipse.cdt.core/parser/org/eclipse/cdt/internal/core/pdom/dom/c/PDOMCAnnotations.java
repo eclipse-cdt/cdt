@@ -32,6 +32,7 @@ class PDOMCAnnotations {
 	private static final int NO_RETURN_OFFSET = 4;
 	private static final int REGISTER_OFFSET = 5;
 	private static final int AUTO_OFFSET = 6;
+	private static final int NO_DISCARD_OFFSET = 7;
 
 	/**
 	 * Encodes annotations applicable to functions.
@@ -55,6 +56,8 @@ class PDOMCAnnotations {
 			annotation |= 1 << REGISTER_OFFSET;
 		if (function.isAuto())
 			annotation |= 1 << AUTO_OFFSET;
+		if (function.isNoDiscard())
+			annotation |= 1 << NO_DISCARD_OFFSET;
 
 		return annotation;
 	}
@@ -112,6 +115,13 @@ class PDOMCAnnotations {
 	 */
 	public static boolean isNoReturnFunction(short annotation) {
 		return (annotation & (1 << NO_RETURN_OFFSET)) != 0;
+	}
+
+	/**
+	 * Checks if the "no return" annotation is set.
+	 */
+	public static boolean isNoDiscardFunction(short annotation) {
+		return (annotation & (1 << NO_DISCARD_OFFSET)) != 0;
 	}
 
 	/**

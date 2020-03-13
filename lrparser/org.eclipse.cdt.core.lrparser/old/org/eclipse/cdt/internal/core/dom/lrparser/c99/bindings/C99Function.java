@@ -39,6 +39,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 	private boolean isStatic;
 	private boolean isVarArgs;
 	private boolean isNoReturn;
+	private boolean isNoDiscard;
 
 	// the scope that the function is in (must be the global scope, no?)
 	private IScope scope;
@@ -180,5 +181,14 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 	@Override
 	public IBinding getOwner() {
 		return null;
+	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return isNoDiscard;
+	}
+
+	public void setNoDiscard(boolean isNoDiscard) {
+		this.isNoDiscard = isNoDiscard;
 	}
 }

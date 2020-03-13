@@ -65,4 +65,11 @@ public interface IFunction extends IBinding {
 	 * @since 5.4
 	 */
 	public boolean isNoReturn();
+
+	/**
+	 * Returns {@code true} if this function never returns. Based on 'nodiscard' attribute in
+	 * the function declaration.
+	 * @since 6.11
+	 */
+	public boolean isNoDiscard();
 }

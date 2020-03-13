@@ -215,4 +215,9 @@ public class CPPDeferredFunction extends CPPUnknownBinding
 		}
 		return new CPPDeferredFunction(owner, name, candidates);
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return false;
+	}
 }

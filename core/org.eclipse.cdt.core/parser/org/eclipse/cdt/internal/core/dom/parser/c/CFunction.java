@@ -496,6 +496,12 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 		return dtor != null && AttributeUtil.hasNoreturnAttribute(dtor);
 	}
 
+	@Override
+	public boolean isNoDiscard() {
+		IASTFunctionDeclarator dtor = getPreferredDtor();
+		return dtor != null && AttributeUtil.hasNodiscardAttribute(dtor);
+	}
+
 	protected IASTFunctionDeclarator getPreferredDtor() {
 		IASTFunctionDeclarator dtor = getDefinition();
 		if (dtor != null)

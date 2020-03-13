@@ -161,6 +161,11 @@ public class CPPClassSpecialization extends CPPSpecialization
 		public boolean isConstexpr() {
 			return false;
 		}
+
+		@Override
+		public boolean isNoDiscard() {
+			return false;
+		}
 	}
 
 	public final static class RecursionResolvingConstructor extends RecursionResolvingMethod

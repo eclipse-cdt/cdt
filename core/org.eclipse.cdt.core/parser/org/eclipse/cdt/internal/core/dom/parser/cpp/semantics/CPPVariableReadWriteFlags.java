@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import java.util.Optional;
+
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -50,7 +52,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 	private static CPPVariableReadWriteFlags INSTANCE = new CPPVariableReadWriteFlags();
 
-	public static int getReadWriteFlags(IASTName variable) {
+	public static Optional<Integer> getReadWriteFlags(IASTName variable) {
 		CPPSemantics.pushLookupPoint(variable);
 		try {
 			return INSTANCE.rwAnyNode(variable, 0);
@@ -60,28 +62,29 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 	}
 
 	@Override
-	protected int rwAnyNode(IASTNode node, int indirection) {
+	protected Optional<Integer> rwAnyNode(IASTNode node, int indirection) {
 		final IASTNode parent = node.getParent();
 		if (parent instanceof ICPPASTConstructorInitializer) {
 			return rwInCtorInitializer(node, indirection, (ICPPASTConstructorInitializer) parent);
 		}
 		if (parent instanceof ICPPASTFieldDesignator) {
-			return WRITE; // Field is initialized via a designated initializer.
+			return Optional.of(WRITE); // Field is initialized via a designated initializer.
 		}
 		return super.rwAnyNode(node, indirection);
 	}
 
 	@Override
-	protected int rwInDeclarator(IASTDeclarator parent, int indirection) {
+	protected Optional<Integer> rwInDeclarator(IASTDeclarator parent, int indirection) {
 		IType type = CPPVisitor.createType(parent);
 		if (type instanceof ICPPUnknownType || type instanceof ICPPClassType
 				&& !TypeTraits.hasTrivialDefaultConstructor((ICPPClassType) type, CPPSemantics.MAX_INHERITANCE_DEPTH)) {
-			return WRITE;
+			return Optional.of(WRITE);
 		}
 		return super.rwInDeclarator(parent, indirection);
 	}
 
-	private int rwInCtorInitializer(IASTNode node, int indirection, ICPPASTConstructorInitializer parent) {
+	private Optional<Integer> rwInCtorInitializer(IASTNode node, int indirection,
+			ICPPASTConstructorInitializer parent) {
 		IASTNode grand = parent.getParent();
 		if (grand instanceof IASTDeclarator || grand instanceof ICPPASTNewExpression) {
 			// Look for a constructor being called.
@@ -112,33 +115,33 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		} else if (grand instanceof ICPPASTStructuredBindingDeclaration) {
 			return rwInStructuredBinding((ICPPASTStructuredBindingDeclaration) grand);
 		}
-		return READ | WRITE; // fallback
+		return Optional.of(READ | WRITE); // fallback
 	}
 
 	@Override
-	protected int rwInUnaryExpression(IASTNode node, IASTUnaryExpression expr, int indirection) {
+	protected Optional<Integer> rwInUnaryExpression(IASTNode node, IASTUnaryExpression expr, int indirection) {
 		switch (expr.getOperator()) {
 		case ICPPASTUnaryExpression.op_typeid:
-			return 0;
+			return Optional.of(0);
 		}
 		return super.rwInUnaryExpression(node, expr, indirection);
 	}
 
 	@Override
-	protected int rwInFunctionName(IASTExpression node) {
+	protected Optional<Integer> rwInFunctionName(IASTExpression node) {
 		if (!(node instanceof IASTIdExpression)) {
 			IType type = node.getExpressionType();
 			if (type instanceof ICPPFunctionType && !((ICPPFunctionType) type).isConst())
-				return READ | WRITE;
+				return Optional.of(READ | WRITE);
 		}
-		return READ;
+		return Optional.of(READ);
 	}
 
 	@Override
-	protected int rwAssignmentToType(IType type, int indirection) {
+	protected Optional<Integer> rwAssignmentToType(IType type, int indirection) {
 		if (indirection == 0) {
 			if (!(type instanceof ICPPReferenceType) || ((ICPPReferenceType) type).isRValueReference()) {
-				return READ;
+				return Optional.of(READ);
 			}
 			type = ((ICPPReferenceType) type).getType();
 		}
@@ -150,11 +153,11 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		}
 		if (indirection == 0) {
 			if (type instanceof IQualifierType) {
-				return ((IQualifierType) type).isConst() ? READ : READ | WRITE;
+				return ((IQualifierType) type).isConst() ? Optional.of(READ) : Optional.of(READ | WRITE);
 			} else if (type instanceof IPointerType) {
-				return ((IPointerType) type).isConst() ? READ : READ | WRITE;
+				return ((IPointerType) type).isConst() ? Optional.of(READ) : Optional.of(READ | WRITE);
 			}
 		}
-		return READ | WRITE; // fallback
+		return Optional.of(READ | WRITE); // fallback
 	}
 }

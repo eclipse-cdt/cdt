@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
+import java.util.Optional;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -138,7 +140,11 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	@Override
 	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
 		if ((standardFlags & PDOMName.IS_REFERENCE) == PDOMName.IS_REFERENCE) {
-			return CVariableReadWriteFlags.getReadWriteFlags(name);
+			Optional<Integer> res = CVariableReadWriteFlags.getReadWriteFlags(name);
+			if (!res.isPresent()) {
+				return PDOMName.WRITE_ACCESS | PDOMName.READ_ACCESS;
+			}
+			return res.get();
 		}
 		return 0;
 	}

@@ -160,6 +160,11 @@ public class CPPDeferredFunction extends CPPUnknownBinding
 	}
 
 	@Override
+	public boolean isNoDiscard() {
+		return false;
+	}
+
+	@Override
 	public int getRequiredArgumentCount() {
 		return 0;
 	}

@@ -152,4 +152,9 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 	public ICPPExecution getFunctionBodyExecution() {
 		return CPPFunction.getFunctionBodyExecution((ICPPFunction) rbinding);
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return ((ICPPFunction) rbinding).isNoDiscard();
+	}
 }

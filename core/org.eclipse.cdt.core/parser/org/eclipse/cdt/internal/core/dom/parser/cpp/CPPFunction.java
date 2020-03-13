@@ -104,6 +104,11 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		public int getRequiredArgumentCount() {
 			return 0;
 		}
+
+		@Override
+		public boolean isNoDiscard() {
+			return false;
+		}
 	}
 
 	public static final ICPPFunction UNINITIALIZED_FUNCTION = new CPPFunction(null) {
@@ -739,6 +744,11 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return isNoReturn(getPreferredDtor());
 	}
 
+	@Override
+	public boolean isNoDiscard() {
+		return isNoDiscard(getPreferredDtor());
+	}
+
 	public static boolean isNoReturn(ICPPASTFunctionDeclarator dtor) {
 		if (dtor == null) {
 			return false;
@@ -749,6 +759,20 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		IASTNode parent = dtor.getParent();
 		if (parent instanceof IASTAttributeOwner) {
 			return AttributeUtil.hasNoreturnAttribute((IASTAttributeOwner) parent);
+		}
+		return false;
+	}
+
+	public static boolean isNoDiscard(ICPPASTFunctionDeclarator dtor) {
+		if (dtor == null) {
+			return false;
+		}
+		if (AttributeUtil.hasNodiscardAttribute(dtor)) {
+			return true;
+		}
+		IASTNode parent = dtor.getParent();
+		if (parent instanceof IASTAttributeOwner) {
+			return AttributeUtil.hasNodiscardAttribute((IASTAttributeOwner) parent);
 		}
 		return false;
 	}

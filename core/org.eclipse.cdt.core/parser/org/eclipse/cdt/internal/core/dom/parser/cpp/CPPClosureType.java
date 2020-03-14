@@ -103,7 +103,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		// Deleted copy assignment operator: A& operator = (const A &)
 		IType refType = new CPPReferenceType(this, false);
 		ICPPFunctionType ft = CPPVisitor.createImplicitFunctionType(refType, ps, false, false);
-		ICPPMethod m = new CPPImplicitMethod(scope, OverloadableOperator.ASSIGN.toCharArray(), ft, ps, false);
+		CPPImplicitMethod m = new CPPImplicitMethod(scope, OverloadableOperator.ASSIGN.toCharArray(), ft, ps, false);
 		result[2] = m;
 
 		// Destructor: ~A()
@@ -120,22 +120,28 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 
 		ICPPParameter[] params = getParameters();
 		char[] operatorParensName = OverloadableOperator.PAREN.toCharArray();
+		ICPPASTFunctionDeclarator dtor = fLambdaExpression.getDeclarator();
+		boolean constExpr = false;
+		if (dtor != null) {
+			constExpr = dtor.isConstexpr();
+		}
 		if (isGeneric()) {
 			m = new CPPImplicitMethodTemplate(getInventedTemplateParameterList(), scope, operatorParensName, ft, params,
-					false) {
+					constExpr) {
 				@Override
 				public boolean isImplicit() {
 					return false;
 				}
 			};
 		} else {
-			m = new CPPImplicitMethod(scope, operatorParensName, ft, params, false) {
+			m = new CPPImplicitMethod(scope, operatorParensName, ft, params, constExpr) {
 				@Override
 				public boolean isImplicit() {
 					return false;
 				}
 			};
 		}
+		m.addDefinition(fLambdaExpression.getDeclarator());
 		result[4] = m;
 
 		// Conversion operator
@@ -156,20 +162,21 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 					templateParamClones[i] = (ICPPTemplateParameter) ((IType) templateParams[i]).clone();
 				}
 				m = new CPPImplicitMethodTemplate(templateParamClones, scope, conversionOperatorName, ft, params,
-						false) {
+						constExpr) {
 					@Override
 					public boolean isImplicit() {
 						return false;
 					}
 				};
 			} else {
-				m = new CPPImplicitMethod(scope, conversionOperatorName, ft, params, false) {
+				m = new CPPImplicitMethod(scope, conversionOperatorName, ft, params, constExpr) {
 					@Override
 					public boolean isImplicit() {
 						return false;
 					}
 				};
 			}
+			m.addDefinition(fLambdaExpression.getDeclarator());
 			result[5] = m;
 		}
 		return result;

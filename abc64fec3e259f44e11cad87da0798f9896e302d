@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "48cf6b38_23f2489e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPClosureType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-14T22:04:23Z",
+      "side": 1,
+      "message": "Why would the conversion operator to a pointer have the lambda body as its body?",
+      "revId": "abc64fec3e259f44e11cad87da0798f9896e302d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ade97335_86e31ac4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 629,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-14T22:04:23Z",
+      "side": 1,
+      "message": "Is this ever actually reached? It seems to me we only have a lambda declarator associated with CPPImplicitFunctions, and CPPImplicitFunction overrides isConstexpr().",
+      "revId": "abc64fec3e259f44e11cad87da0798f9896e302d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

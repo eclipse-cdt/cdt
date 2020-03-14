@@ -274,4 +274,11 @@ public class FunctionTests extends TestBase {
 	//	    .m(21).m(22).m(23).m(24).m(25).m(26).m(27).m(28).m(29).m(30);
 	public void testLongCallChain_505606() throws Exception {
 	}
+
+	// auto f = []() constexpr -> int {return 58;};
+
+	// constexpr int x = f();
+	public void testLambdaExpression_560483() throws Exception {
+		assertEvaluationEquals(58);
+	}
 }

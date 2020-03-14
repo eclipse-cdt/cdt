@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -625,8 +626,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	@Override
 	public boolean isConstexpr() {
 		ICPPASTDeclSpecifier declSpec = getDeclSpecifier();
-		if (declSpec == null)
+		if (declSpec == null) {
 			return false;
+		}
 		return declSpec.isConstexpr();
 	}
 
@@ -776,7 +778,16 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 	public static ICPPExecution computeFunctionBodyExecution(IASTNode def) {
 		ICPPASTFunctionDefinition fnDef = getFunctionDefinition(def);
-		if (fnDef != null) {
+		if (fnDef == null) {
+			ICPPASTLambdaExpression lambda = ASTQueries.findAncestorWithType(def, ICPPASTLambdaExpression.class);
+			if (lambda == null)
+				return null;
+			((ASTNode) lambda).resolvePendingAmbiguities();
+			if (lambda.getBody() instanceof CPPASTCompoundStatement) {
+				CPPASTCompoundStatement body = (CPPASTCompoundStatement) lambda.getBody();
+				return body.getExecution();
+			}
+		} else {
 			// Make sure ambiguity resolution has been performed on the function body, even
 			// if it's a class method and we're still processing the class declaration.
 			((ASTNode) fnDef).resolvePendingAmbiguities();

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21d18190_1965bf79",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-14T12:25:20Z",
+      "side": 1,
+      "message": "This change is the main thing I was looking for.",
+      "revId": "f6c1d8ae604dc8a4c8c8bd9ec6cd878fd1295d17",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1bf745c0_020e10d7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/c/PDOMCAnnotations.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-14T12:25:20Z",
+      "side": 1,
+      "message": "I don\u0027t know if this needs to be mentioned but as the no discard is being stored in the sign bit of the byte future maintenance needs to take care not to use signed right shift in some cases. AFAICT this is not a concern for current version.\n\nSo therefore the next person to add an additional flag will need to change storage from byte to something bigger.",
+      "revId": "f6c1d8ae604dc8a4c8c8bd9ec6cd878fd1295d17",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

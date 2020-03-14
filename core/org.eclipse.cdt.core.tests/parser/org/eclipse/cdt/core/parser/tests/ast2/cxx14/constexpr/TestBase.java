@@ -55,6 +55,12 @@ public class TestBase extends IndexBindingResolutionTestBase {
 	private static final IParserLogService NULL_LOG = new NullLogService();
 	private static final ScannerInfo SCANNER_INFO = new ScannerInfo(getStdMap());
 
+	public TestBase() {
+		// Pick a default startegy, just so that we can run test cases individually
+		// for debugging purposes.
+		setStrategy(new NonIndexingTestStrategy());
+	}
+
 	private static Map<String, String> getStdMap() {
 		Map<String, String> map = new HashMap<>();
 		map.put("__SIZEOF_SHORT__", "2");

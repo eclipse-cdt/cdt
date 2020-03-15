@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "acae7cb9_d85f6e88",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersInitializationChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-15T21:45:50Z",
+      "side": 1,
+      "message": "It would be useful to add helpers whose names suggest the intended semantics.\n\nFor example, here we could have a helper\n\n  bool mayBeWriteAccess(Optional\u003cInteger\u003e flags)\n\nwhich returns true if flags is present and contains WRITE (meaning, we know it\u0027s a write access), or flags is empty (meaning, we don\u0027t know, so it may or may not be).",
+      "revId": "52de674b0b9791ade90b6f827f96e19a35970c22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f638cbae_9fb68380",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-15T21:45:50Z",
+      "side": 1,
+      "message": "It would be better to take Optional\u003cInteger\u003e instead of string.\n\nFor convenience, we can also have an overload that takes \"int\", and forward to the Optional\u003cInteger\u003e overload with \"Optional.of(arg)\".",
+      "revId": "52de674b0b9791ade90b6f827f96e19a35970c22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f80990e5_290f1721",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-15T21:45:50Z",
+      "side": 1,
+      "message": "It would be good to keep C++-specific functionality in CPPVariableReadWriteFlags.java.\n\nOne way to do that here would be to extract a helper function for the body of this loop, and override it in CPPVariableReadWriteFlags.java. The overridden helper that then call \"super.helper()\" to run the logic that is common to C and C++.\n\n(I know there are already violations of this in the file, such as ICPPASTRangedBasedForStatement being handled directly in this file, but let\u0027s not add more.)",
+      "revId": "52de674b0b9791ade90b6f827f96e19a35970c22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad95540b_a181f176",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-15T21:45:50Z",
+      "side": 1,
+      "message": "We can factor this out into a helper function \n\n  Optional\u003cInteger\u003e bitwiseOr(Optional\u003cInteger\u003e a, Optional\u003cInteger\u003e b)\n\nand then write:\n\n  cumulative \u003d bitwiseOr(res, cumulative);",
+      "revId": "52de674b0b9791ade90b6f827f96e19a35970c22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4920a82e_a2cec777",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-15T21:45:50Z",
+      "side": 1,
+      "message": "This can go into the C++ override of rwAssignmentToType().",
+      "revId": "52de674b0b9791ade90b6f827f96e19a35970c22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "597ad3e5_d8392ec3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPVariable.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-15T21:45:50Z",
+      "side": 1,
+      "message": "This is fine for now, but eventually we should expand the flags we store in the index, so the distinction between \"read and write\" and \"unknown\" is maintained in the index as well. Please add a TODO comment (and maybe file a bug).",
+      "revId": "52de674b0b9791ade90b6f827f96e19a35970c22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "85491e29_f9215b0d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/NodeContainer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-15T21:45:50Z",
+      "side": 1,
+      "message": "This could be another place to use mayBeWriteAccess().",
+      "revId": "52de674b0b9791ade90b6f827f96e19a35970c22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

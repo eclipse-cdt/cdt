@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "eb9f594b_98e10219",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/constexpr/FunctionTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-03-15T06:48:16Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "678687e4_662fc54b",
+      "revId": "abc64fec3e259f44e11cad87da0798f9896e302d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "48cf6b38_23f2489e",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPClosureType.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a04bcca1_42e3b576",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPClosureType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-03-15T06:48:16Z",
+      "side": 1,
+      "message": "just copy-paste from above, I will remove it",
+      "parentUuid": "48cf6b38_23f2489e",
+      "revId": "abc64fec3e259f44e11cad87da0798f9896e302d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ade97335_86e31ac4",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunction.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2020-03-14T22:04:23Z",
       "side": 1,
       "message": "Is this ever actually reached? It seems to me we only have a lambda declarator associated with CPPImplicitFunctions, and CPPImplicitFunction overrides isConstexpr().",
+      "revId": "abc64fec3e259f44e11cad87da0798f9896e302d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9efdaa3c_dfd286ee",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 629,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-03-15T06:48:16Z",
+      "side": 1,
+      "message": "yep, it was a doubt indeed, I will remove it",
+      "parentUuid": "ade97335_86e31ac4",
       "revId": "abc64fec3e259f44e11cad87da0798f9896e302d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

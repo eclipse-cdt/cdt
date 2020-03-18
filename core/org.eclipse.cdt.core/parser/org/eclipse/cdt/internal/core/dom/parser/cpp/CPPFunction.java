@@ -777,17 +777,22 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	}
 
 	public static ICPPExecution computeFunctionBodyExecution(IASTNode def) {
-		ICPPASTFunctionDefinition fnDef = getFunctionDefinition(def);
-		if (fnDef == null) {
-			ICPPASTLambdaExpression lambda = ASTQueries.findAncestorWithType(def, ICPPASTLambdaExpression.class);
-			if (lambda == null)
-				return null;
+
+		while (def != null && !(def instanceof IASTDeclaration) && !(def instanceof ICPPASTLambdaExpression)) {
+			def = def.getParent();
+		}
+		if (def == null)
+			return null;
+
+		if (def instanceof ICPPASTLambdaExpression) {
+			ICPPASTLambdaExpression lambda = (ICPPASTLambdaExpression) def;
 			((ASTNode) lambda).resolvePendingAmbiguities();
 			if (lambda.getBody() instanceof CPPASTCompoundStatement) {
 				CPPASTCompoundStatement body = (CPPASTCompoundStatement) lambda.getBody();
 				return body.getExecution();
 			}
-		} else {
+		} else if (def instanceof ICPPASTFunctionDefinition) {
+			ICPPASTFunctionDefinition fnDef = (ICPPASTFunctionDefinition) def;
 			// Make sure ambiguity resolution has been performed on the function body, even
 			// if it's a class method and we're still processing the class declaration.
 			((ASTNode) fnDef).resolvePendingAmbiguities();

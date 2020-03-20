@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17c6f0e8_8b642fd2",
+        "filename": "core/org.eclipse.cdt.core/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-20T14:57:03Z",
+      "side": 1,
+      "message": "This looks fine and works, but I wonder if it can/should be simplified to:\n\n    (.*?):?\\\\([^\\\\)]+\\\\): (.*)\n\nwith similar changes to the above ones. \n\ni.e. optional stuff before optional : followed by one bracketed expression followed by : and then the rest of the line?\n\nIt can even be just:\n\n    (.*?):?\\\\(.+\\\\): (.*)\n\nIf there is only ever one ( and ) in the line?",
+      "range": {
+        "startLine": 74,
+        "startChar": 40,
+        "endLine": 74,
+        "endChar": 75
+      },
+      "revId": "bf45e83fad541f7af321b43a2321f10fd1c54c04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

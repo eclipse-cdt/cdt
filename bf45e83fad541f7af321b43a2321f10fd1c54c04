@@ -22,6 +22,30 @@
       "revId": "bf45e83fad541f7af321b43a2321f10fd1c54c04",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1deaaea6_10380677",
+        "filename": "core/org.eclipse.cdt.core/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-03-20T17:47:55Z",
+      "side": 1,
+      "message": "I spent a few hours trying to find the definition for what tokens were allowed in a symbol, but I did not find any.\nAccording to the bug, [ and ] are allowed and so is an extra dot (.) to the set of \\w, but I do not know what other characters that might be allowed or not allowed. Therefor, I tried to allow everything other than a + sign and whitespace since I thought those were unlikely allowed in a symbol.\nI still think it\u0027s safe to assume that the symbol name should start with a dot so that we do not match generic messages from ld.\n\nMaybe your simplified expression is safe, but I have no idea. What I do know is that \\w is not enough to support C++ mangling and how sections are typically used in embedded. Could your expression be fine in a non greedy match perhaps?",
+      "parentUuid": "17c6f0e8_8b642fd2",
+      "range": {
+        "startLine": 74,
+        "startChar": 40,
+        "endLine": 74,
+        "endChar": 75
+      },
+      "revId": "bf45e83fad541f7af321b43a2321f10fd1c54c04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

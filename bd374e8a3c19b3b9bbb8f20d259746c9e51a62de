@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b8adce76_f468255f",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/internal/errorparsers/tests/GenericErrorParserTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-20T17:05:38Z",
+      "side": 1,
+      "message": "Is this check necessary? Why don\u0027t we expect a marker to be assigned to IFolder?",
+      "revId": "bd374e8a3c19b3b9bbb8f20d259746c9e51a62de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

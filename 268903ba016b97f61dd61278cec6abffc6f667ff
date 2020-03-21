@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ce2f885_bce21e6f",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-21T23:48:30Z",
+      "side": 1,
+      "message": "any reason this whole loop can\u0027t be replaced with:\n\n    Files.walkFileTree(dir, deltor);",
+      "range": {
+        "startLine": 341,
+        "startChar": 2,
+        "endLine": 344,
+        "endChar": 3
+      },
+      "revId": "268903ba016b97f61dd61278cec6abffc6f667ff",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

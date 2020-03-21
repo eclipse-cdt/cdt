@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "425e0790_04ba5983",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-21T12:05:37Z",
+      "side": 1,
+      "message": "Because I started with previous revisions I didn\u0027t notice that I changed the order of some entries. Feel free to correct that, or even to alphabetize if desired.",
+      "revId": "5c8fdf44532cd093ce8333e9307a95825bc3d1e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fae6e_03945b91",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-21T12:05:37Z",
+      "side": 1,
+      "message": "All of these items are probably not needed from Orbit - feel free to identify what really is. AFAIK com.sun.xml.bind is needed for 9.11 and *should* have been provided in the 9.11 repo.",
+      "revId": "5c8fdf44532cd093ce8333e9307a95825bc3d1e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

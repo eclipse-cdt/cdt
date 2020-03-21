@@ -33,6 +33,23 @@
       "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6e42976_9ff78073",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-21T12:05:37Z",
+      "side": 0,
+      "message": "We no longer have circular dependency (at p2 repo level) AFAIK.",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

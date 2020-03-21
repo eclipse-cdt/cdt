@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c2d61ba6_decd586a",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core.ui/src/org/eclipse/cdt/cmake/is/core/ui/internal/IndexerSupportPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-03-21T16:38:51Z",
+      "side": 1,
+      "message": "The answer is YES",
+      "parentUuid": "b23c7511_f8fa0e6a",
+      "range": {
+        "startLine": 65,
+        "startChar": 2,
+        "endLine": 65,
+        "endChar": 49
+      },
+      "revId": "dfaee2b70e265bc08a1f12b387b82bbb1c60e5d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "664274eb_d10e1f01",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CompileCommandsJsonParser.java",
         "patchSetId": 1
@@ -71,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "1b0805e1_0e9859da",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CompileCommandsJsonParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-03-21T16:38:51Z",
+      "side": 1,
+      "message": "Can\u0027t remeber when, but I did some web search to gather the commonly used C++ file name extension. I could not find  evidence of CXX being in use.\n\nTo answer the question, let me explain:\nIf you have the souce files a.C, b.cc, c.cpp, d.CPP, the compiler will be invoked only once to get the built-ins.\nI you add a file named z.CXX, the compiler will be invoked a second time to get the built-ins for the CXX file, which will cost a little performance.",
+      "parentUuid": "8f5904e3_53faa1d3",
+      "range": {
+        "startLine": 482,
+        "startChar": 0,
+        "endLine": 490,
+        "endChar": 31
+      },
+      "revId": "dfaee2b70e265bc08a1f12b387b82bbb1c60e5d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fadc3a30_1ad3a90b",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/IIndexerInfoConsumer.java",
         "patchSetId": 1
@@ -82,6 +130,30 @@
       "writtenOn": "2020-03-21T15:36:03Z",
       "side": 1,
       "message": "Please add docs :)",
+      "range": {
+        "startLine": 23,
+        "startChar": 1,
+        "endLine": 23,
+        "endChar": 13
+      },
+      "revId": "dfaee2b70e265bc08a1f12b387b82bbb1c60e5d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a0f4d9f_052faa63",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/IIndexerInfoConsumer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-03-21T16:38:51Z",
+      "side": 1,
+      "message": "Yes. \nDocs are currently intentionally missing here, since ATM it is not clear how to properly handle the sourceFileName argument.\n- Cmake writes filenames with forward slashes (/) even if it runs on windows.\n- OTOH, IScannerInfoProvider requests info for IResourceS.\n\nSomewhere in the calling sequence, the filenames have to be converted/mapped to IResource. Conversion *could* be done in CompileCommandsJsonParser, but when I think of builds running in a Linux-Docker-Container under windows, it might be better to do the conversion on the IIndexerInfoConsumer side which has more information on the build setup.",
+      "parentUuid": "fadc3a30_1ad3a90b",
       "range": {
         "startLine": 23,
         "startChar": 1,

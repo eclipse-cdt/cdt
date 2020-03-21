@@ -8,10 +8,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.cmake.is.core.ui.internal;
+package org.eclipse.cdt.cmake.is.core.internal;
 
-import org.eclipse.cdt.cmake.is.core.ui.CMakeISPlugin;
-import org.eclipse.cdt.cmake.is.core.ui.PreferenceConstants;
+import org.eclipse.cdt.cmake.is.core.language.settings.providers.PreferenceConstants;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -19,9 +18,11 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * Class used to initialize default preference values.
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
+	@Override
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = CMakeISPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
+		store.setDefault(PreferenceConstants.P_WITH_CONSOLE, false);
 		store.setDefault(PreferenceConstants.P_PATTERN_ENABLED, false);
-		store.setDefault(PreferenceConstants.P_PATTERN, "-?\\d+(\\.\\d+)*");
+		store.setDefault(PreferenceConstants.P_PATTERN, "-?\\d+(\\.\\d+)*"); //$NON-NLS-1$
 	}
 }

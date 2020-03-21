@@ -13,16 +13,15 @@ package org.eclipse.cdt.cmake.is.core.ui.internal;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.cdt.cmake.is.core.ui.CMakeISPlugin;
-import org.eclipse.cdt.cmake.is.core.ui.PreferenceConstants;
+import org.eclipse.cdt.cmake.is.core.language.settings.providers.PreferenceConstants;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
@@ -45,8 +44,6 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 	private Button btnWithConsole;
 
 	public IndexerSupportPreferencePage() {
-		super();
-		setPreferenceStore(CMakeISPlugin.getDefault().getPreferenceStore());
 		setDescription("Configure how macros and include paths get extracted from the compile_commands.json file");
 	}
 
@@ -57,6 +54,7 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode("org.eclipse.cdt.cmake.is.core"); //$NON-NLS-1$
 		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
 		GridDataFactory.swtDefaults().applyTo(composite);
@@ -64,8 +62,8 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 		final Group gr = createGroup(composite, SWT.FILL, 1, "For compilers with version in name", 2);
 		btnVersionsEnabled = createCheckbox(gr, SWT.BEGINNING, 2, "&Also try with version suffix");
 		btnVersionsEnabled.setToolTipText("Can recognize gcc-12.9.2, clang++-7.5.4, ...");
-		IPreferenceStore preferenceStore = getPreferenceStore();
-		btnVersionsEnabled.setSelection(preferenceStore.getBoolean(PreferenceConstants.P_PATTERN_ENABLED));
+		// TODO use OptionMetadata based implementation
+		btnVersionsEnabled.setSelection(preferences.getBoolean(PreferenceConstants.P_PATTERN_ENABLED, false));
 		{
 			Label label = new Label(gr, SWT.NONE);
 			label.setText("&Suffix pattern:");
@@ -76,14 +74,8 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 		GridDataFactory.defaultsFor(pattern).applyTo(pattern);
 		pattern.setToolTipText("Specify a Java regular expression pattern here");
 		pattern.setEnabled(btnVersionsEnabled.getSelection());
-		pattern.setText(preferenceStore.getString(PreferenceConstants.P_PATTERN));
-		pattern.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				final String text = ((Text) e.widget).getText();
-				//				provider.setVersionPattern(text);
-			}
-		});
+		// TODO use OptionMetadata based implementation
+		pattern.setText(preferences.get(PreferenceConstants.P_PATTERN, "-?\\d+(\\.\\d+)*"));
 		pattern.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -115,7 +107,8 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 
 		btnWithConsole = createCheckbox(composite, SWT.BEGINNING, 1,
 				"&Show output of compiler built-in detection in a console in the Console View");
-		btnWithConsole.setSelection(preferenceStore.getBoolean(PreferenceConstants.P_WITH_CONSOLE));
+		// TODO use OptionMetadata based implementation
+		btnWithConsole.setSelection(preferences.getBoolean(PreferenceConstants.P_WITH_CONSOLE, false));
 
 		return composite;
 	}
@@ -131,6 +124,8 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 
 	@Override
 	protected void performDefaults() {
+		// TODO		IEclipsePreferences preferenceStore = InstanceScope.INSTANCE.getNode("org.eclipse.cdt.cmake.is.core"); //$NON-NLS-1$
+
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		btnVersionsEnabled.setSelection(preferenceStore.getDefaultBoolean(PreferenceConstants.P_PATTERN_ENABLED));
 		pattern.setText(preferenceStore.getDefaultString(PreferenceConstants.P_PATTERN));
@@ -141,10 +136,11 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 
 	@Override
 	public boolean performOk() {
-		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.setValue(PreferenceConstants.P_PATTERN_ENABLED, btnVersionsEnabled.getSelection());
-		preferenceStore.setValue(PreferenceConstants.P_PATTERN, pattern.getText());
-		preferenceStore.setValue(PreferenceConstants.P_WITH_CONSOLE, btnWithConsole.getSelection());
+		// TODO IPreferenceStore preferenceStore = getPreferenceStore();
+		IEclipsePreferences preferenceStore = InstanceScope.INSTANCE.getNode("org.eclipse.cdt.cmake.is.core"); //$NON-NLS-1$
+		preferenceStore.putBoolean(PreferenceConstants.P_PATTERN_ENABLED, btnVersionsEnabled.getSelection());
+		preferenceStore.put(PreferenceConstants.P_PATTERN, pattern.getText());
+		preferenceStore.putBoolean(PreferenceConstants.P_WITH_CONSOLE, btnWithConsole.getSelection());
 		return true;
 	}
 

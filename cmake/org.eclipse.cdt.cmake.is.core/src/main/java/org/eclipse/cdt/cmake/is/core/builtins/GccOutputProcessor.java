@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.cmake.is.core.IRawIndexerInfoCollector;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -37,7 +38,7 @@ public class GccOutputProcessor implements IBuiltinsOutputProcessor {
 			new OutputLineProcessor(" *(\\S.*)", 1, -1, true, 0) };
 
 	@SuppressWarnings("nls")
-	private static final OutputLineProcessor[] framewotks = {
+	private static final OutputLineProcessor[] frameworks = {
 			new OutputLineProcessor(" *(\\S.*)", 1, -1, true, ICSettingEntry.FRAMEWORKS_MAC) };
 
 	private State state = State.NONE;
@@ -49,7 +50,7 @@ public class GccOutputProcessor implements IBuiltinsOutputProcessor {
 
 	@SuppressWarnings("nls")
 	@Override
-	public void processLine(String line, IProcessingContext processingContext) {
+	public void processLine(String line, IRawIndexerInfoCollector infoCollector) {
 
 		// include paths
 		if (line.equals("#include \"...\" search starts here:")) {
@@ -74,7 +75,7 @@ public class GccOutputProcessor implements IBuiltinsOutputProcessor {
 			for (OutputLineProcessor processor : localIncludes) {
 				Optional<ICLanguageSettingEntry> result = processor.process(line);
 				if (result.isPresent()) {
-					processingContext.addSettingEntry(result.get());
+					infoCollector.addIncludePath(result.get().getName());
 					return; // line matched
 				}
 			}
@@ -82,15 +83,16 @@ public class GccOutputProcessor implements IBuiltinsOutputProcessor {
 			for (OutputLineProcessor processor : systemIncludes) {
 				Optional<ICLanguageSettingEntry> result = processor.process(line);
 				if (result.isPresent()) {
-					processingContext.addSettingEntry(result.get());
+					infoCollector.addSystemIncludePath(result.get().getName());
 					return; // line matched
 				}
 			}
 		} else if (state == State.EXPECTING_FRAMEWORK) {
-			for (OutputLineProcessor processor : framewotks) {
+			for (OutputLineProcessor processor : frameworks) {
 				Optional<ICLanguageSettingEntry> result = processor.process(line);
 				if (result.isPresent()) {
-					processingContext.addSettingEntry(result.get());
+					// IExtendedScannerInfo has no mean to specify ICSettingEntry.FRAMEWORKS_MAC
+					// infoCollector.addSettingEntry(result.get());
 					return; // line matched
 				}
 			}
@@ -99,11 +101,12 @@ public class GccOutputProcessor implements IBuiltinsOutputProcessor {
 			for (OutputLineProcessor processor : macros) {
 				Optional<ICLanguageSettingEntry> result = processor.process(line);
 				if (result.isPresent()) {
-					processingContext.addSettingEntry(result.get());
+					ICLanguageSettingEntry settingEntry = result.get();
+					infoCollector.addDefine(settingEntry.getName(), settingEntry.getValue());
 					return; // line matched
 				}
 			}
-			//      System.err.println("NO MATCH ON LINE: '" + line + "'");
+			// System.err.println("NO MATCH ON LINE: '" + line + "'");
 		}
 	}
 

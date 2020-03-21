@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Martin Weber.
+ * Copyright (c) 2019-2020 Martin Weber.
  *
  * Content is provided to you under the terms and conditions of the Eclipse Public License Version 2.0 "EPL".
  * A copy of the EPL is available at http://www.eclipse.org/legal/epl-2.0.
@@ -36,15 +36,4 @@ public interface IBuiltinsDetectionBehavior {
 	 * cases, most implementations, should return {@code false} here.
 	 */
 	boolean suppressErrormessage();
-
-	/**
-	 * Gets the filename extension for the input file. An empty input file will be
-	 * created and its name will be given on the command-line when the compiler is
-	 * invoked for built-ins detection.
-	 *
-	 * @param languageID the language ID
-	 * @return the filename extension or {@code null} if no filename argument needs
-	 *         to be given for built-ins detection
-	 */
-	String getInputFileExtension(String languageID);
 }

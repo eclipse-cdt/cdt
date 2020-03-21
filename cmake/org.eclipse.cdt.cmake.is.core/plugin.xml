@@ -10,4 +10,10 @@
             id="org.eclipse.cdt.cmake.is.core.detectorConsole">
       </CBuildConsole>
  </extension>
+ <extension
+       point="org.eclipse.core.runtime.preferences">
+    <initializer
+          class="org.eclipse.cdt.cmake.is.core.internal.PreferenceInitializer">
+    </initializer>
+ </extension>
 </plugin>

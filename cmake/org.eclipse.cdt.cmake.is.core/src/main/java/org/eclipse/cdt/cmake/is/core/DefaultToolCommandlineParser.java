@@ -9,10 +9,8 @@
 package org.eclipse.cdt.cmake.is.core;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.cdt.cmake.is.core.internal.ParseContext;
@@ -29,10 +27,9 @@ import org.eclipse.core.runtime.Platform;
  */
 public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	@SuppressWarnings("nls")
-	private static final boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption(Plugin.PLUGIN_ID + "/CECC/args"));
+	private static final boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption(Plugin.PLUGIN_ID + "/debug/arglets"));
 
 	private final IArglet[] argumentParsers;
-	private final String languageID;
 	private final IResponseFileArglet responseFileArglet;
 	private final IBuiltinsDetectionBehavior builtinsDetection;
 
@@ -50,11 +47,7 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	 * recognize different language IDs, such as
 	 * "com.nvidia.cuda.toolchain.language.cuda.cu"
 	 * </p>
-	 *
-	 * @param languageID                the language ID of the language that the
-	 *                                  tool compiles or {@code null} if the
-	 *                                  language ID should be derived from the
-	 *                                  source file-name extension
+	 * 
 	 * @param responseFileArglet        the parsers for the response-file
 	 *                                  command-line argument for the tool or
 	 *                                  {@code null} if the tool does not recognize
@@ -67,6 +60,7 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	 *                                  detection.
 	 * @param argumentParsers           the parsers for the command line arguments
 	 *                                  of of interest for the tool
+	 *
 	 * @throws NullPointerException if the {@code argumentParsers} arguments is
 	 *                              {@code null}
 	 * @see Arglets various IArglet implementations you may want to use
@@ -74,9 +68,8 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	 *      you may want to use
 	 */
 	@SuppressWarnings("nls")
-	public DefaultToolCommandlineParser(String languageID, IResponseFileArglet responseFileArglet,
+	public DefaultToolCommandlineParser(IResponseFileArglet responseFileArglet,
 			IBuiltinsDetectionBehavior builtinsDetectionBehavior, IArglet... argumentParsers) {
-		this.languageID = languageID;
 		this.builtinsDetection = builtinsDetectionBehavior;
 		this.argumentParsers = Objects.requireNonNull(argumentParsers, "argumentParsers");
 		this.responseFileArglet = responseFileArglet;
@@ -93,34 +86,12 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	}
 
 	/**
-	 * Implemented to determine the language ID from the source file name extension,
-	 * if the language ID of this object is {@code null}.
-	 */
-	@Override
-	public String getLanguageId(String sourceFileExtension) {
-		if (languageID != null) {
-			return languageID;
-		}
-		return determineLanguageId(sourceFileExtension).orElse(null);
-	}
-
-	/**
-	 * Default implementation.
-	 *
-	 * @return always an empty set
-	 */
-	@Override
-	public Set<String> getCustomLanguageIds() {
-		return Collections.emptySet();
-	}
-
-	/**
 	 * Gets the languageID of the specified file name extension. This is a
 	 * convenience method for subclasses.
 	 *
 	 * @param sourceFileExtension The file name extension to examine
-	 * @return an {@code Optional<String>} holding the language ID or {@code Optional.empty()} if the file name extension is
-	 *         unknown.
+	 * @return an {@code Optional<String>} holding the language ID or
+	 *         {@code Optional.empty()} if the file name extension is unknown.
 	 */
 	@SuppressWarnings("nls")
 	protected Optional<String> determineLanguageId(String sourceFileExtension) {
@@ -148,7 +119,7 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	@SuppressWarnings("nls")
 	@Override
 	public String toString() {
-		return "[languageID=" + this.languageID + ", argumentParsers=" + Arrays.toString(this.argumentParsers) + "]";
+		return "[" + getClass().getName() + ", argumentParsers=" + Arrays.toString(this.argumentParsers) + "]";
 	}
 
 	/**

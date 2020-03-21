@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Martin Weber.
+ * Copyright (c) 2019-2020 Martin Weber.
  *
  * Content is provided to you under the terms and conditions of the Eclipse Public License Version 2.0 "EPL".
  * A copy of the EPL is available at http://www.eclipse.org/legal/epl-2.0.
@@ -41,19 +41,5 @@ class NvccBuiltinDetectionBehavior implements IBuiltinsDetectionBehavior {
 		// report an error, if the compiler does not understand the arguments that
 		// enable built-in detection
 		return false;
-	}
-
-	@Override
-	public String getInputFileExtension(String languageId) {
-		if (languageId.equals("org.eclipse.cdt.core.gcc")) {
-			return "c";
-		}
-		if (languageId.equals("org.eclipse.cdt.core.g++")) {
-			return "cpp";
-		}
-		if (languageId.equals("com.nvidia.cuda.toolchain.language.cuda.cu")) {
-			return "cu";
-		}
-		return null;
 	}
 }

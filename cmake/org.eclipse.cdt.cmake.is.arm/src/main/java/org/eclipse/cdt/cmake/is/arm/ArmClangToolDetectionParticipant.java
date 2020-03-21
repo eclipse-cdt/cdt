@@ -33,7 +33,7 @@ public class ArmClangToolDetectionParticipant extends DefaultToolDetectionPartic
 				new Arglets.MacroUndefine_C_POSIX() };
 
 		private ToolCommandlineParser() {
-			super(null, new ResponseFileArglets.At(), null, arglets);
+			super(new ResponseFileArglets.At(), null, arglets);
 		}
 	}
 }

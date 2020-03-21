@@ -33,7 +33,7 @@ class NvccSystemIncludePathArglet extends IncludePathGeneric implements IArglet 
 	 * @see org.eclipse.cdt.cmake.is.IArglet#processArgs(java.lang.String)
 	 */
 	@Override
-	public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-		return processArgument(parseContext, cwd, argsLine, optionMatchers);
+	public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+		return processArgument(true, resultCollector, cwd, argsLine, optionMatchers);
 	}
 }

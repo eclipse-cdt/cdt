@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2018 Martin Weber.
+ * Copyright (c) 2015-2020 Martin Weber.
  *
  * Content is provided to you under the terms and conditions of the Eclipse Public License Version 2.0 "EPL".
  * A copy of the EPL is available at http://www.eclipse.org/legal/epl-2.0.
@@ -12,9 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.eclipse.cdt.cmake.is.core.Arglets.IncludePath_C_POSIX;
 import org.eclipse.cdt.cmake.is.core.Arglets.SystemIncludePath_C;
-import org.eclipse.cdt.cmake.is.core.IArglet.IParseContext;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.cmake.is.core.IArglet.IArgumentCollector;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.junit.Before;
@@ -39,110 +37,88 @@ public class SystemIncludePath_C_Test {
 	public final void testProcessArgument() {
 		final String more = " -g -MMD -MT CMakeFiles/execut1.dir/util1.c.o -MF \"CMakeFiles/execut1.dir/util1.c.o.d\""
 				+ " -o CMakeFiles/execut1.dir/util1.c.o -c /testprojects/C-subsrc/src/src-sub/main1.c";
-		ParseContext entries;
-		ICLanguageSettingEntry parsed;
+		ParseContext result;
 		final IPath cwd = new Path("");
 
 		String name = "/an/Include/Path";
 
 		// -isystem /an/Include/Path
-		entries = new ParseContext();
-		assertEquals(8 + name.length() + 3, testee.processArgument(entries, cwd, "-isystem   " + name + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.INCLUDE_PATH, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
+		result = new ParseContext();
+		assertEquals(8 + name.length() + 3, testee.processArgument(result, cwd, "-isystem   " + name + more));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 		// -isystem '/an/Include/Path'
-		entries = new ParseContext();
+		result = new ParseContext();
 		assertEquals(8 + name.length() + 3 + 2,
-				testee.processArgument(entries, cwd, "-isystem   " + "'" + name + "'" + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.INCLUDE_PATH, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
+				testee.processArgument(result, cwd, "-isystem   " + "'" + name + "'" + more));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 		// -isystem "/an/Include/Path"
-		entries = new ParseContext();
+		result = new ParseContext();
 		assertEquals(8 + name.length() + 3 + 2,
-				testee.processArgument(entries, cwd, "-isystem   " + "\"" + name + "\"" + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.INCLUDE_PATH, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
+				testee.processArgument(result, cwd, "-isystem   " + "\"" + name + "\"" + more));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 
 		name = (new Path("A:an\\Include/Path")).toOSString();
 		// -isystem A:an\Include/Path
-		entries = new ParseContext();
-		assertEquals(8 + 1 + name.length(), testee.processArgument(entries, cwd, "-isystem " + name + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.INCLUDE_PATH, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
+		result = new ParseContext();
+		assertEquals(8 + 1 + name.length(), testee.processArgument(result, cwd, "-isystem " + name + more));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 
 		// -isystemA:an\Include/Path
-		entries = new ParseContext();
-		assertEquals(8 + name.length(), testee.processArgument(entries, cwd, "-isystem" + name + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.INCLUDE_PATH, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
+		result = new ParseContext();
+		assertEquals(8 + name.length(), testee.processArgument(result, cwd, "-isystem" + name + more));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 	}
 
 	/**
 	 * Test method for
-	 * {@link IncludePath_C_POSIX#processArgument(IParseContext, IPath, java.lang.String)}
+	 * {@link IncludePath_C_POSIX#processArgument(IArgumentCollector, IPath, java.lang.String)}
 	 */
 	@Test
 	public final void testProcessArgument_WS() {
 		final String more = " -g -MMD -MT CMakeFiles/execut1.dir/util1.c.o -MF \"CMakeFiles/execut1.dir/util1.c.o.d\""
 				+ " -o CMakeFiles/execut1.dir/util1.c.o -c /testprojects/C-subsrc/src/src-sub/main1.c";
-		ParseContext entries;
-		ICLanguageSettingEntry parsed;
+		ParseContext result;
 		final IPath cwd = new Path("");
 
 		String name = "/ye olde/In clu de/Pa the";
 		// -isystem '/ye olde/In clu de/Pa the'
-		entries = new ParseContext();
+		result = new ParseContext();
 		assertEquals(8 + name.length() + 3 + 2,
-				testee.processArgument(entries, cwd, "-isystem   " + "'" + name + "'" + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.INCLUDE_PATH, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
+				testee.processArgument(result, cwd, "-isystem   " + "'" + name + "'" + more));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 		// -isystem "/ye olde/In clu de/Pa the"
-		entries = new ParseContext();
+		result = new ParseContext();
 		assertEquals(8 + name.length() + 3 + 2,
-				testee.processArgument(entries, cwd, "-isystem   " + "\"" + name + "\"" + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.INCLUDE_PATH, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
+				testee.processArgument(result, cwd, "-isystem   " + "\"" + name + "\"" + more));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 
 		name = (new Path("A:an\\In CLU  de/Pat h")).toOSString();
 		// -isystem"A:an\In CLU de/Pat h"
-		entries = new ParseContext();
+		result = new ParseContext();
 		assertEquals(8 + name.length() + 2,
-				testee.processArgument(entries, cwd, "-isystem" + "\"" + name + "\"" + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.INCLUDE_PATH, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
+				testee.processArgument(result, cwd, "-isystem" + "\"" + name + "\"" + more));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 
 		// -isystem'A:an\In CLU de/Pat h'
-		entries = new ParseContext();
-		assertEquals(8 + name.length() + 2, testee.processArgument(entries, cwd, "-isystem" + "'" + name + "'" + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.INCLUDE_PATH, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
+		result = new ParseContext();
+		assertEquals(8 + name.length() + 2, testee.processArgument(result, cwd, "-isystem" + "'" + name + "'" + more));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 
 		name = (new Path("/Inc/CLUde/Path")).toOSString();
 		// -isystem/Inc/CLUde/Path
-		entries = new ParseContext();
-		assertEquals(8 + name.length(), testee.processArgument(entries, cwd, "-isystem" + name + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.INCLUDE_PATH, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
+		result = new ParseContext();
+		assertEquals(8 + name.length(), testee.processArgument(result, cwd, "-isystem" + name + more));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 	}
 
 }

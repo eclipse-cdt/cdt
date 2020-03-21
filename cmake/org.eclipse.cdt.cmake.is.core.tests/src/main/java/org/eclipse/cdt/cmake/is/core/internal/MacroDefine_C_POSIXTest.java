@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Martin Weber.
+ * Copyright (c) 2015-2020 Martin Weber.
  *
  * Content is provided to you under the terms and conditions of the Eclipse Public License Version 2.0 "EPL".
  * A copy of the EPL is available at http://www.eclipse.org/legal/epl-2.0.
@@ -9,11 +9,12 @@
 package org.eclipse.cdt.cmake.is.core.internal;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Map;
 
 import org.eclipse.cdt.cmake.is.core.Arglets;
 import org.eclipse.cdt.cmake.is.core.Arglets.MacroDefine_C_POSIX;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.junit.Before;
@@ -41,8 +42,7 @@ public class MacroDefine_C_POSIXTest {
 	public final void testProcessArgument() {
 		final String more = " -g -MMD -MT CMakeFiles/execut1.dir/util1.c.o -MF \"CMakeFiles/execut1.dir/util1.c.o.d\""
 				+ " -o CMakeFiles/execut1.dir/util1.c.o -c /testprojects/C-subsrc/src/src-sub/main1.c";
-		ParseContext entries;
-		ICLanguageSettingEntry parsed;
+		ParseContext result;
 
 		final IPath cwd = new Path("");
 		int len;
@@ -50,23 +50,17 @@ public class MacroDefine_C_POSIXTest {
 		String name = "FOO";
 		String arg = "-D" + name;
 
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", "", parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", "", result.getDefines().get(name));
 		assertEquals(2 + name.length(), len);
 		// -D FOO
-		entries = new ParseContext();
+		result = new ParseContext();
 		arg = "-D   " + name;
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", "", parsed.getValue());
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", "", result.getDefines().get(name));
 		assertEquals(2 + name.length() + 3, len);
 	}
 
@@ -77,52 +71,39 @@ public class MacroDefine_C_POSIXTest {
 	public final void testProcessArgument_Value() {
 		final String more = " -g -MMD -MT CMakeFiles/execut1.dir/util1.c.o -MF \"CMakeFiles/execut1.dir/util1.c.o.d\""
 				+ " -o CMakeFiles/execut1.dir/util1.c.o -c /testprojects/C-subsrc/src/src-sub/main1.c";
-		ParseContext entries;
-		ICLanguageSettingEntry parsed;
+		ParseContext result;
 		final IPath cwd = new Path("");
 
 		final String name = "FOO";
 		String val = "noWhiteSpace";
 
 		// -DFOO=noWhiteSpace
-		entries = new ParseContext();
+		result = new ParseContext();
 		assertEquals(2 + name.length() + 1 + val.length(),
-				testee.processArgument(entries, cwd, "-D" + name + "=" + val + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+				testee.processArgument(result, cwd, "-D" + name + "=" + val + more));
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		// -D FOO=noWhiteSpace
-		entries = new ParseContext();
+		result = new ParseContext();
 		assertEquals(2 + name.length() + 1 + 3 + val.length(),
-				testee.processArgument(entries, cwd, "-D   " + name + "=" + val + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+				testee.processArgument(result, cwd, "-D   " + name + "=" + val + more));
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 
 		// ----------------------------------------
 		val = "Wh it e s ap ac ";
 		// -D 'FOO=Wh it e s ap ac '
-		entries = new ParseContext();
+		result = new ParseContext();
 		assertEquals(2 + name.length() + 1 + 2 + 3 + val.length(),
-				testee.processArgument(entries, cwd, "-D   " + "'" + name + "=" + val + "'" + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+				testee.processArgument(result, cwd, "-D   " + "'" + name + "=" + val + "'" + more));
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		// -D "FOO=Wh it e s ap ac "
-		entries = new ParseContext();
+		result = new ParseContext();
 		assertEquals(2 + name.length() + 1 + 2 + 3 + val.length(),
-				testee.processArgument(entries, cwd, "-D   " + "\"" + name + "=" + val + "\"" + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+				testee.processArgument(result, cwd, "-D   " + "\"" + name + "=" + val + "\"" + more));
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 	}
 
 	/**
@@ -132,8 +113,7 @@ public class MacroDefine_C_POSIXTest {
 	public final void testProcessArgument_Value_CharLiteral() {
 		final String more = " -g -MMD -MT CMakeFiles/execut1.dir/util1.c.o -MF \"CMakeFiles/execut1.dir/util1.c.o.d\""
 				+ " -o CMakeFiles/execut1.dir/util1.c.o -c /testprojects/C-subsrc/src/src-sub/main1.c";
-		ParseContext entries;
-		ICLanguageSettingEntry parsed;
+		ParseContext result;
 		final IPath cwd = new Path("");
 		int len;
 		String val, arg;
@@ -144,90 +124,66 @@ public class MacroDefine_C_POSIXTest {
 		// -DFOO='noWhiteSpace'
 		val = "'noWhiteSpace'";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// -D FOO='noWhiteSpace'
 		arg = "-D   " + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// ----------------------------------------
 		// -DFOO='noWhite\'escapedQuoteChar' (values with single quotes)
 		val = "'noWhite\\'escapedQuoteChar'";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// -DFOO='noWhite\\escapedEscapeChar'
 		val = "'noWhite\\\\escapedEscapeChar'";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// ----------------------------------------
 		// -DFOO='Wh it e s ap ac '
 		val = "'Wh it e s ap ac '";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// -D FOO='Wh it e s ap ac '
 		arg = "-D   " + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// -DFOO='Wh it e s ap ac \'escaped Quote Char' (values with single quotes)
 		val = "'Wh it e s ap ac \\'escaped Quote Char'";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// -DFOO='Wh it e s ap ac \\escaped Escape Char'
 		val = "'Wh it e s ap ac \\\\escaped Escape Char'";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 	}
 
@@ -238,8 +194,7 @@ public class MacroDefine_C_POSIXTest {
 	public final void testProcessArgument_Value_StringLiteral() {
 		final String more = " -g -MMD -MT CMakeFiles/execut1.dir/util1.c.o -MF \"CMakeFiles/execut1.dir/util1.c.o.d\""
 				+ " -o CMakeFiles/execut1.dir/util1.c.o -c /testprojects/C-subsrc/src/src-sub/main1.c";
-		ParseContext entries;
-		ICLanguageSettingEntry parsed;
+		ParseContext result;
 		final IPath cwd = new Path("");
 		int len;
 		String val, arg;
@@ -249,90 +204,66 @@ public class MacroDefine_C_POSIXTest {
 		// -DFOO="noWhiteSpace"
 		val = "\"noWhiteSpace\"";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// -D FOO="noWhiteSpace"
 		arg = "-D   " + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// ----------------------------------------
 		// -DFOO="noWhite\"escapedQuoteChar" (values with single quotes)
 		val = "\"noWhite\\\"escapedQuoteChar\"";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// -DFOO="noWhite\\escapedEscapeChar"
 		val = "\"noWhite\\\\escapedEscapeChar\"";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// ----------------------------------------
 		// -DFOO="Wh it e s ap ac "
 		val = "\"Wh it e s ap ac \"";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// -D FOO="Wh it e s ap ac "
 		arg = "-D   " + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// -DFOO="Wh it e s ap ac \"escaped Quote Char" (values with single quotes)
 		val = "\"Wh it e s ap ac \\\"escaped Quote Char\"";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 		// -DFOO="Wh it e s ap ac \\escaped Escape Char"
 		val = "\"Wh it e s ap ac \\\\escaped Escape Char\"";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 		assertEquals(arg.length(), len);
 
 		// ----------------------------------------
@@ -340,14 +271,11 @@ public class MacroDefine_C_POSIXTest {
 		// -DFOO="2(vtkIOMySQL,vtkIOPostgreSQL)"
 		val = "\"2(vtkIOMySQL,vtkIOPostgreSQL)\"";
 		arg = "-D" + name + "=" + val;
-		entries = new ParseContext();
-		len = testee.processArgument(entries, cwd, arg + " " + arg + more);
+		result = new ParseContext();
+		len = testee.processArgument(result, cwd, arg + " " + arg + more);
 		assertEquals(arg.length(), len);
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+		assertTrue("found", result.getDefines().containsKey(name));
+		assertEquals("value", val, result.getDefines().get(name));
 	}
 
 	/**
@@ -357,8 +285,7 @@ public class MacroDefine_C_POSIXTest {
 	public final void testProcessArgument_MacroWithArgs() {
 		final String more = " -g -MMD -MT CMakeFiles/execut1.dir/util1.c.o -MF \"CMakeFiles/execut1.dir/util1.c.o.d\""
 				+ " -o CMakeFiles/execut1.dir/util1.c.o -c /testprojects/C-subsrc/src/src-sub/main1.c";
-		ParseContext entries;
-		ICLanguageSettingEntry parsed;
+		ParseContext result;
 		final IPath cwd = new Path("");
 
 		// -DFOO=noWhiteSpace
@@ -367,22 +294,18 @@ public class MacroDefine_C_POSIXTest {
 		String val = "(a)/((b)+(c))";
 
 		// -DFOO(a,b,c)=(a)/((b)+(c))
-		entries = new ParseContext();
+		result = new ParseContext();
 		assertEquals(2 + name.length() + args.length() + 1 + val.length(),
-				testee.processArgument(entries, cwd, "-D" + name + args + "=" + val + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+				testee.processArgument(result, cwd, "-D" + name + args + "=" + val + more));
+		Map<String, String> defines = result.getDefines();
+		assertEquals("#entries", 1, defines.size());
+		assertEquals("value", val, result.getDefines().get(name));
 		// -D FOO(a,b,c)=(a)/((b)+(c))
-		entries = new ParseContext();
+		result = new ParseContext();
 		assertEquals(2 + name.length() + args.length() + 1 + 3 + val.length(),
-				testee.processArgument(entries, cwd, "-D   " + name + args + "=" + val + more));
-		assertEquals("#entries", 1, entries.getSettingEntries().size());
-		parsed = entries.getSettingEntries().get(0);
-		assertEquals("kind", ICSettingEntry.MACRO, parsed.getKind());
-		assertEquals("name", name, parsed.getName());
-		assertEquals("value", val, parsed.getValue());
+				testee.processArgument(result, cwd, "-D   " + name + args + "=" + val + more));
+		defines = result.getDefines();
+		assertEquals("#entries", 1, defines.size());
+		assertEquals("value", val, result.getDefines().get(name));
 	}
 }

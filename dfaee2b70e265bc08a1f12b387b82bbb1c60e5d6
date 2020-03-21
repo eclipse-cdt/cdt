@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b23c7511_f8fa0e6a",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core.ui/src/org/eclipse/cdt/cmake/is/core/ui/internal/IndexerSupportPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-03-21T15:36:03Z",
+      "side": 1,
+      "message": "Are you planning to do another commit for \"preference management\"? If the answer is \"yes, of course\" ok, we can do a follow up commit, otherwise it would be better to fix it now instead of keeping TODO in the code.",
+      "range": {
+        "startLine": 65,
+        "startChar": 2,
+        "endLine": 65,
+        "endChar": 49
+      },
+      "revId": "dfaee2b70e265bc08a1f12b387b82bbb1c60e5d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "664274eb_d10e1f01",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CompileCommandsJsonParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-03-21T15:36:03Z",
+      "side": 1,
+      "message": "Why a suppress here instead of $NON-NLS-1$?",
+      "range": {
+        "startLine": 78,
+        "startChar": 1,
+        "endLine": 78,
+        "endChar": 25
+      },
+      "revId": "dfaee2b70e265bc08a1f12b387b82bbb1c60e5d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f5904e3_53faa1d3",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CompileCommandsJsonParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-03-21T15:36:03Z",
+      "side": 1,
+      "message": "It seems uppercase/lowercase strings are not managed here. I mean I can see \"cxx\" and \"CPP\" but I can\u0027t see \"CXX\", so what happens if for a crazy idea I have all my file .CXX uppercase?",
+      "range": {
+        "startLine": 482,
+        "startChar": 0,
+        "endLine": 490,
+        "endChar": 31
+      },
+      "revId": "dfaee2b70e265bc08a1f12b387b82bbb1c60e5d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fadc3a30_1ad3a90b",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/IIndexerInfoConsumer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-03-21T15:36:03Z",
+      "side": 1,
+      "message": "Please add docs :)",
+      "range": {
+        "startLine": 23,
+        "startChar": 1,
+        "endLine": 23,
+        "endChar": 13
+      },
+      "revId": "dfaee2b70e265bc08a1f12b387b82bbb1c60e5d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

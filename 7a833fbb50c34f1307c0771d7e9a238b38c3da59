@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9dc924c6_36f258d0",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-21T12:02:45Z",
+      "side": 0,
+      "message": "THese features are now in CDT repo so need to be relocated there.",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e5e2fb4a_36147a41",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-21T12:02:45Z",
+      "side": 0,
+      "message": "This needs to be removed too.",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

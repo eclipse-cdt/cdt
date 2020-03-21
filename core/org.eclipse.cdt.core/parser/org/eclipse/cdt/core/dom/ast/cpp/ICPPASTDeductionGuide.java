@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
  *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * @since 6.11
+ * @since 6.12
  */
 public interface ICPPASTDeductionGuide extends IASTDeclaration, ICPPASTParameterListOwner {
 

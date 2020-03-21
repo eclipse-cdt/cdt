@@ -13,8 +13,11 @@ package org.eclipse.cdt.cmake.core.internal;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -318,13 +321,26 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
-	private void cleanDirectory(Path dir) throws IOException {
+	/** Recursively removes any files and directories found in the specified Path.
+	 */
+	private static void cleanDirectory(Path dir) throws IOException {
+		SimpleFileVisitor<Path> deltor = new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				Files.delete(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				super.postVisitDirectory(dir, exc);
+				Files.delete(dir);
+				return FileVisitResult.CONTINUE;
+			}
+		};
 		Path[] files = Files.list(dir).toArray(Path[]::new);
 		for (Path file : files) {
-			if (Files.isDirectory(file))
-				cleanDirectory(file);
-			else
-				Files.delete(file);
+			Files.walkFileTree(file, deltor);
 		}
 	}
 

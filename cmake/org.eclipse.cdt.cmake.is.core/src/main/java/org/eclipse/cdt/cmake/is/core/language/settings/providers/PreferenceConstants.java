@@ -8,7 +8,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.cmake.is.core.ui;
+package org.eclipse.cdt.cmake.is.core.language.settings.providers;
 
 /**
  * Constant definitions for plug-in preferences
@@ -16,9 +16,9 @@ package org.eclipse.cdt.cmake.is.core.ui;
 public class PreferenceConstants {
 
 	/** preferences key for version suffix regex pattern */
-	public static final String P_PATTERN = "vPattern";
+	public static final String P_PATTERN = "vPattern"; //$NON-NLS-1$
 	/** preferences key for version suffix regex pattern enabled */
-	public static final String P_PATTERN_ENABLED = "vPatternEnabled";
+	public static final String P_PATTERN_ENABLED = "vPatternEnabled"; //$NON-NLS-1$
 	/** preferences key for built-ins detection output showing a console */
-	public static final String P_WITH_CONSOLE = "console";
+	public static final String P_WITH_CONSOLE = "console"; //$NON-NLS-1$
 }

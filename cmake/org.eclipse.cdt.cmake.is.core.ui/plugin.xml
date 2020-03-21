@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
 <plugin>
 
    <extension
@@ -10,12 +9,6 @@
             id="org.eclipse.cdt.cmake.is.core.ui.IndexerSupportPreferencePage"
             name="%page.name">
       </page>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.eclipse.cdt.cmake.is.core.ui.internal.PreferenceInitializer">
-      </initializer>
    </extension>
 
 </plugin>

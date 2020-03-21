@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Martin Weber.
+ * Copyright (c) 2019-2020 Martin Weber.
  *
  * Content is provided to you under the terms and conditions of the Eclipse Public License Version 2.0 "EPL".
  * A copy of the EPL is available at http://www.eclipse.org/legal/epl-2.0.
@@ -32,7 +32,7 @@ public class ArmccToolDetectionParticipant extends DefaultToolDetectionParticipa
 				new Arglets.MacroUndefine_C_POSIX(), new Arglets.SystemIncludePath_armcc() };
 
 		private ToolCommandlineParser() {
-			super(null, null, new ArmccBuiltinDetectionBehavior(), arglets);
+			super(null, new ArmccBuiltinDetectionBehavior(), arglets);
 		}
 	}
 }

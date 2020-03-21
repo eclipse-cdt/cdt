@@ -296,22 +296,18 @@
           <repository
               url="https://download.eclipse.org/technology/swtbot/releases/2.7.0/"/>
           <repository
-              url="https://download.eclipse.org/tm/terminal/updates/4.4milestones/"/>
-          <repository
               url="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
           <repository
-              url="https://download.eclipse.org/tools/cdt/builds/9.11/cdt-9.11.0-2020-03-rc1/">
+              url="https://download.eclipse.org/tools/cdt/releases/9.11/cdt-9.11.0/">
             <annotation>
               <detail
                   key="description">
-                <value>OMG! We have circular dependency that involves 'java.package; org.eclipse.cdt.utils.pty 0.0.0' and We explicitly have CDT in target platform so that developers can develop org.eclipse.cdt.core/ui without requiring all the projects from CDT in their workspace.</value>
+                <value>We explicitly have CDT in target platform so that developers can develop org.eclipse.cdt.core/ui without requiring all the projects from CDT in their workspace.</value>
               </detail>
             </annotation>
           </repository>
           <repository
-              url="https://download.eclipse.org/tools/orbit/downloads/2020-03/"/>
-          <repository
-              url="https://download.eclipse.org/tools/orbit/downloads/2019-12/"/>
+              url="https://download.eclipse.org/tools/orbit/downloads/2020-06/"/>
           <repository
               url="https://download.eclipse.org/tools/ptp/builds/remote/3.0/2020-03-M2/"/>
         </repositoryList>

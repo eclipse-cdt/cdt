@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.messages"; //$NON-NLS-1$
-	public static String CompilationDatabaseParserOptionPage_Browse;
+	public static String CompilationDatabaseParserOptionPage_FileSystem;
 	public static String CompilationDatabaseParserOptionPage_BuildOutputParserError;
 	public static String CompilationDatabaseParserOptionPage_BuildParser;
 	public static String CompilationDatabaseParserOptionPage_ChooseFile;
@@ -22,6 +22,7 @@ public class Messages extends NLS {
 	public static String CompilationDatabaseParserOptionPage_CompileCommandsPathError;
 	public static String CompilationDatabaseParserOptionPage_ExcludeFiles;
 	public static String CompilationDatabaseParserOptionPage_NoBuildOutputParserError;
+	public static String CompilationDatabaseParserOptionPage_Variables;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

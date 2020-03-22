@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
@@ -48,7 +50,6 @@ import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -77,12 +78,24 @@ public class CompilationDatabaseParser extends LanguageSettingsSerializableProvi
 	private static final String ATTR_CDB_MODIFIED_TIME = "cdb-modified-time"; //$NON-NLS-1$
 	private static final String ATTR_EXCLUDE_FILES = "exclude-files"; //$NON-NLS-1$
 
-	public IPath getCompilationDataBasePath() {
-		return Path.fromOSString(getProperty(ATTR_CDB_PATH));
+	public String getCompilationDataBasePathProperty() {
+		return getProperty(ATTR_CDB_PATH);
 	}
 
-	public void setCompilationDataBasePath(IPath compilationDataBasePath) {
-		setProperty(ATTR_CDB_PATH, compilationDataBasePath.toOSString());
+	public String resolveCompilationDataBasePath(ICConfigurationDescription cfgDescription)
+			throws CdtVariableException {
+		ICdtVariableManager varManager = CCorePlugin.getDefault().getCdtVariableManager();
+		return varManager.resolveValue(getCompilationDataBasePathProperty(), "", null, //$NON-NLS-1$
+				cfgDescription);
+	}
+
+	public boolean isValidCompilationDataBasePath(String compilationDataBasePath) {
+		return compilationDataBasePath != null && !Files.isDirectory(Paths.get(compilationDataBasePath))
+				&& Files.isReadable(Paths.get(compilationDataBasePath));
+	}
+
+	public void setCompilationDataBasePathProperty(String compilationDataBasePathProperty) {
+		setProperty(ATTR_CDB_PATH, compilationDataBasePathProperty);
 	}
 
 	public void setExcludeFiles(boolean selection) {
@@ -206,19 +219,26 @@ public class CompilationDatabaseParser extends LanguageSettingsSerializableProvi
 			return false;
 		}
 
-		if (getCompilationDataBasePath().isEmpty()) {
+		if (getCompilationDataBasePathProperty().isEmpty()) {
 			throw new CoreException(new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
 					Messages.CompilationDatabaseParser_CDBNotConfigured));
 		}
 
-		if (!Files.exists(Paths.get(getCompilationDataBasePath().toOSString()))) {
-			throw new CoreException(new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, MessageFormat.format(
-					Messages.CompilationDatabaseParser_CDBNotFound, getCompilationDataBasePath().toOSString())));
+		String cdbPath = null;
+		try {
+			cdbPath = resolveCompilationDataBasePath(cfgDescription);
+		} catch (CdtVariableException e1) {
+			// Handled by isValidCompilationDataBasePath below
+		}
+
+		if (!isValidCompilationDataBasePath(cdbPath)) {
+			throw new CoreException(new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, MessageFormat
+					.format(Messages.CompilationDatabaseParser_CDBNotFound, getCompilationDataBasePathProperty())));
 		}
 
 		try {
-			if (!getProperty(ATTR_CDB_MODIFIED_TIME).isEmpty() && getProperty(ATTR_CDB_MODIFIED_TIME)
-					.equals(getCDBModifiedTime(getCompilationDataBasePath().toOSString()).toString())) {
+			if (!getProperty(ATTR_CDB_MODIFIED_TIME).isEmpty()
+					&& getProperty(ATTR_CDB_MODIFIED_TIME).equals(getCDBModifiedTime(cdbPath).toString())) {
 				return false;
 			}
 		} catch (IOException e) {
@@ -228,14 +248,12 @@ public class CompilationDatabaseParser extends LanguageSettingsSerializableProvi
 
 		if (getBuildParserId().isEmpty()) {
 			throw new CoreException(new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
-					MessageFormat.format(Messages.CompilationDatabaseParser_BuildCommandParserNotConfigured,
-							getCompilationDataBasePath().toOSString())));
+					MessageFormat.format(Messages.CompilationDatabaseParser_BuildCommandParserNotConfigured, cdbPath)));
 		}
 
 		if (!isEmpty()) {
 			clear();
 		}
-		String cdbPath = getCompilationDataBasePath().toOSString();
 		Long cdbModifiedTime;
 		try {
 			cdbModifiedTime = getCDBModifiedTime(cdbPath);

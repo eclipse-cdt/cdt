@@ -46,6 +46,30 @@
       "revId": "268903ba016b97f61dd61278cec6abffc6f667ff",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96e6afc8_dc5ea8c1",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-22T14:30:57Z",
+      "side": 1,
+      "message": "Thanks, that was the question I was trying to ask. Should the cmake empty output directory be preserved?",
+      "parentUuid": "e598ab22_2ccef7af",
+      "range": {
+        "startLine": 341,
+        "startChar": 2,
+        "endLine": 344,
+        "endChar": 3
+      },
+      "revId": "268903ba016b97f61dd61278cec6abffc6f667ff",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

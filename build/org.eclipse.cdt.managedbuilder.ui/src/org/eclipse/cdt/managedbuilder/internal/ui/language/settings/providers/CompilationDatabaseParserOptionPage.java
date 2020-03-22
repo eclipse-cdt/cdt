@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -23,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.internal.language.settings.providers.Compi
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
+import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -77,7 +77,7 @@ public final class CompilationDatabaseParserOptionPage extends AbstractLanguageS
 	private Composite createCompositeForPageArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.marginWidth = 1;
 		layout.marginHeight = 1;
 		layout.marginRight = 1;
@@ -86,7 +86,7 @@ public final class CompilationDatabaseParserOptionPage extends AbstractLanguageS
 		Dialog.applyDialogFont(composite);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		composite.setLayoutData(gd);
 		return composite;
 	}
@@ -95,12 +95,12 @@ public final class CompilationDatabaseParserOptionPage extends AbstractLanguageS
 		Label label = ControlFactory.createLabel(composite,
 				Messages.CompilationDatabaseParserOptionPage_CompileCommandsPath);
 		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
 		label.setEnabled(fEditable);
 
 		fCompileCommandsPath = ControlFactory.createTextField(composite, SWT.SINGLE | SWT.BORDER);
-		String command = provider.getCompilationDataBasePath().toOSString();
+		String command = provider.getCompilationDataBasePathProperty();
 		fCompileCommandsPath.setText(command != null ? command : ""); //$NON-NLS-1$
 		fCompileCommandsPath.setEnabled(fEditable);
 		fCompileCommandsPath.addModifyListener(new ModifyListener() {
@@ -108,10 +108,10 @@ public final class CompilationDatabaseParserOptionPage extends AbstractLanguageS
 			public void modifyText(ModifyEvent e) {
 				String text = fCompileCommandsPath.getText();
 				CompilationDatabaseParser provider = (CompilationDatabaseParser) getProvider();
-				if (provider.getCompilationDataBasePath() == null
-						|| !text.equals(provider.getCompilationDataBasePath().toOSString())) {
+				if (provider.getCompilationDataBasePathProperty() == null
+						|| !text.equals(provider.getCompilationDataBasePathProperty())) {
 					CompilationDatabaseParser selectedProvider = (CompilationDatabaseParser) getProviderWorkingCopy();
-					selectedProvider.setCompilationDataBasePath(Path.fromOSString(text));
+					selectedProvider.setCompilationDataBasePathProperty(text);
 					refreshItem(selectedProvider);
 					validate();
 				}
@@ -120,19 +120,32 @@ public final class CompilationDatabaseParserOptionPage extends AbstractLanguageS
 	}
 
 	private void createBrowseButton(Composite composite) {
-		Button button = ControlFactory.createPushButton(composite, Messages.CompilationDatabaseParserOptionPage_Browse);
-		button.setEnabled(fEditable);
-		button.addSelectionListener(new SelectionAdapter() {
+		Button fileSystemButton = ControlFactory.createPushButton(composite,
+				Messages.CompilationDatabaseParserOptionPage_FileSystem);
+		fileSystemButton.setEnabled(fEditable);
+		fileSystemButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
-				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
+				FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.SHEET);
 				dialog.setText(Messages.CompilationDatabaseParserOptionPage_ChooseFile);
 				String fileName = fCompileCommandsPath.getText();
 				IPath folder = new Path(fileName).removeLastSegments(1);
 				dialog.setFilterPath(folder.toOSString());
 				String chosenFile = dialog.open();
 				if (chosenFile != null) {
-					fCompileCommandsPath.insert(chosenFile);
+					fCompileCommandsPath.setText(chosenFile);
+				}
+			}
+		});
+
+		Button variablesButton = ControlFactory.createPushButton(composite,
+				Messages.CompilationDatabaseParserOptionPage_Variables);
+		variablesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String result = AbstractCPropertyTab.getVariableDialog(getShell(), getConfigurationDescription());
+				if (result != null) {
+					fCompileCommandsPath.setText(result);
 				}
 			}
 		});
@@ -155,13 +168,13 @@ public final class CompilationDatabaseParserOptionPage extends AbstractLanguageS
 		Label parserLabel = ControlFactory.createLabel(composite,
 				Messages.CompilationDatabaseParserOptionPage_BuildParser);
 		GridData gd = new GridData(SWT.BEGINNING);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		parserLabel.setLayoutData(gd);
 
 		fBuildOutputParserCombo = new Combo(composite, SWT.READ_ONLY);
 		fBuildOutputParserCombo.setEnabled(fEditable);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		fBuildOutputParserCombo.setLayoutData(gd);
 		if (buildParsers.isEmpty()) {
 			fBuildOutputParserCombo.add(Messages.CompilationDatabaseParserOptionPage_NoBuildOutputParserError);
@@ -207,7 +220,7 @@ public final class CompilationDatabaseParserOptionPage extends AbstractLanguageS
 		Button keepExclusion = new Button(parent, SWT.CHECK);
 		keepExclusion.setText(Messages.CompilationDatabaseParserOptionPage_ExcludeFiles);
 		GridData gd = new GridData(SWT.BEGINNING);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		keepExclusion.setLayoutData(gd);
 
 		keepExclusion.setSelection(((CompilationDatabaseParser) getProvider()).getExcludeFiles());
@@ -238,8 +251,8 @@ public final class CompilationDatabaseParserOptionPage extends AbstractLanguageS
 			CompilationDatabaseParser compilationDatabaseParser = (CompilationDatabaseParser) provider;
 			ILanguageSettingsProvider initialProvider = providerTab.getInitialProvider(providerId);
 			if (!(initialProvider instanceof CompilationDatabaseParser)
-					|| !((CompilationDatabaseParser) initialProvider).getCompilationDataBasePath()
-							.equals(compilationDatabaseParser.getCompilationDataBasePath())
+					|| !((CompilationDatabaseParser) initialProvider).getCompilationDataBasePathProperty()
+							.equals(compilationDatabaseParser.getCompilationDataBasePathProperty())
 					|| !((CompilationDatabaseParser) initialProvider).getBuildParserId()
 							.equals(compilationDatabaseParser.getBuildParserId())
 					|| ((CompilationDatabaseParser) initialProvider).getExcludeFiles() != compilationDatabaseParser
@@ -261,8 +274,13 @@ public final class CompilationDatabaseParserOptionPage extends AbstractLanguageS
 		}
 
 		CompilationDatabaseParser provider = (CompilationDatabaseParser) getProvider();
-		if (provider.getCompilationDataBasePath() == null || provider.getCompilationDataBasePath().isEmpty()
-				|| !Files.exists(Paths.get(provider.getCompilationDataBasePath().toOSString()))) {
+		String compilationDataBasePath = null;
+		try {
+			compilationDataBasePath = provider.resolveCompilationDataBasePath(getConfigurationDescription());
+		} catch (CdtVariableException e1) {
+			// Handled by setErrorStatus below
+		}
+		if (!provider.isValidCompilationDataBasePath(compilationDataBasePath)) {
 			fStatusLine.setErrorStatus(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(),
 					Messages.CompilationDatabaseParserOptionPage_CompileCommandsPathError));
 			return;

@@ -268,7 +268,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
@@ -298,7 +298,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, false);
@@ -326,7 +326,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		parser.setExcludeFiles(true);
 		addLanguageSettingsProvider(parser);
 
@@ -356,7 +356,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		parser.setExcludeFiles(true);
 		addLanguageSettingsProvider(parser);
 
@@ -384,7 +384,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		CompilationDatabaseParser parser = (CompilationDatabaseParser) LanguageSettingsManager
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		parser.setExcludeFiles(true);
 		addLanguageSettingsProvider(parser);
 
@@ -417,7 +417,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT + "foo");
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		parser.setExcludeFiles(true);
 		addLanguageSettingsProvider(parser);
 
@@ -450,7 +450,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(new Path("/testParseCDB_NonExistantCDB"));
+		parser.setCompilationDataBasePathProperty(new Path("/testParseCDB_NonExistantCDB").toOSString());
 		parser.setExcludeFiles(true);
 		addLanguageSettingsProvider(parser);
 
@@ -483,7 +483,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(new Path(""));
+		parser.setCompilationDataBasePathProperty("");
 		parser.setExcludeFiles(true);
 		addLanguageSettingsProvider(parser);
 
@@ -516,7 +516,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getParent().getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getParent().getLocation().toOSString());
 		parser.setExcludeFiles(true);
 		addLanguageSettingsProvider(parser);
 
@@ -534,6 +534,34 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				GPPLanguage.ID);
 		assertTrue(entries == null);
 		assertFalse(CDataUtil.isExcluded(tu.getPath(), resCfgDescription.getSourceEntries()));
+	}
+
+	public void testParseCDB_ProjectRelativeCDBPath() throws Exception {
+		createTestProject();
+
+		ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(fProject);
+
+		CompilationDatabaseParser parser = (CompilationDatabaseParser) LanguageSettingsManager
+				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
+		assertTrue(parser.isEmpty());
+		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
+		//TODO: Windows path?
+		parser.setCompilationDataBasePathProperty(new Path("${ProjDirPath}")
+				.append(fCdbFile.getFullPath().makeRelativeTo(cProject.getProject().getFullPath())).toOSString());
+		parser.setExcludeFiles(true);
+		addLanguageSettingsProvider(parser);
+
+		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
+
+		parser.processCompileCommandsFile(null, cfgDescription);
+		assertFalse(parser.isEmpty());
+		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
+				cfgDescription.getProjectDescription());
+		joingLanguageSettingsJobs();
+
+		assertExpectedEntries(parser);
+
+		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 	}
 
 	public void testParseCDB_InvalidJson() throws Exception {
@@ -562,7 +590,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		parser.setExcludeFiles(true);
 		addLanguageSettingsProvider(parser);
 
@@ -596,7 +624,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
@@ -626,7 +654,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
@@ -670,7 +698,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
@@ -714,7 +742,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
@@ -745,7 +773,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
@@ -776,7 +804,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
@@ -802,7 +830,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
@@ -830,7 +858,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
@@ -861,7 +889,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePath(fCdbFile.getLocation());
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);

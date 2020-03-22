@@ -11,7 +11,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>5.4.400-SNAPSHOT</version>
+	<version>5.4.500-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.doc.isv</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
@@ -113,7 +113,7 @@
 											<additionalArgument>-linkoffline ../../org.eclipse.platform.doc.isv/reference/api
 											</additionalArgument>
 											<additionalArgument>-public</additionalArgument>
-											<additionalArgument>-header "Eclipse CDT 9.11.0"
+											<additionalArgument>-header "Eclipse CDT 9.12.0"
 											</additionalArgument>
 											<additionalArgument>-bottom "Copyright (c) IBM Corp. and others 2004, 2020. All Rights Reserved."</additionalArgument>
 											<additionalArgument>-tag 'noimplement:a:Restriction:'</additionalArgument>

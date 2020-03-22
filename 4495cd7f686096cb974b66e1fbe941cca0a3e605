@@ -1,0 +1,310 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3951525_ed003239",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core.ui/src/org/eclipse/cdt/cmake/is/core/ui/internal/IndexerSupportPreferencePage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Please create a bugzilla record for i18n work",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8dd693ab_8d42cb0e",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Please add bugzilla record to remove ui bundles from .core",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3738488f_4f270912",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Please add bugzilla record to remove ui bundles from .core",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f1dc9d6e_256f3976",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Please add bugzilla record to remove ui bundles from .core",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f59f4147_83aa709c",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Ideally (may be an another bugzilla record) we should not depend on particular JSON lib, especially for the very simple structure like cc.json\n\n(Ideally) I would expect an interface like \n`CommandParser extends BiFunction\u003cString, List\u003cCommandEntry\u003e, IProgressMonitor\u003e` and then another bundle or fragment that supplies the implementation.",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0498c9d4_53d9316e",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Not sure that we need this one",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "814e9fcc_f4e6599b",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Please do not omit curly braces",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ec1f5e9f_dea4e258",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Please do not omit curly braces",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c54887e8_0ba6ee7d",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/builtins/OutputSniffer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "I would convert this to a human-readable i18n message, as it may be potentially displayed in UI",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "398c72dc_4ad558df",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/builtins/OutputSniffer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "I would convert this to a human-readable i18n message, as it may be potentially displayed in UI",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b2a4293_4982df32",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParserDetection.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Please create a bugzilla record to rework this design of static initializing (+ loading from extension) to avoid startup problems for (relatively big) consumer installations. \nFor example, too much calculations during bundle activation (here we have potential recursive class loading) may lead to activation failure - long startup may be considered as a deadlock.",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "649018bf_4455195c",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/builtins/CompilerBuiltinsDetector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "SubMonitor.convert",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6027297d_6266b950",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/builtins/CompilerBuiltinsDetector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Why we catch it here? File handle seems invalid and we should through exception to the caller.",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e8d71358_59d58590",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/builtins/CompilerBuiltinsDetector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Please avoid returning `null\u0027\nSomeone asked to start console or throw an exception, no room for null here.",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bad535f4_f224d517",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/builtins/CompilerBuiltinsDetector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Again, it should be the very first check for the public API. For private method we should never pass `null`",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e3df96f1_d8986bd5",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/builtins/CompilerBuiltinsDetector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "The good question is \"what encoding should we use to write strings to console?\". Honestly, I do not know the right answer. It will be great to create a bugzilla record to invetsigate it.",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a7ad2f5_1afb80cf",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CommandEntry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "Please make this type immutable. \nI see, it is needed for GSON - in this case it is better to have an interface",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "45d9e667_ab2928ca",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CompileCommandsJsonParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-22T09:41:01Z",
+      "side": 1,
+      "message": "This class still needs rework, it has too much responsibilites, that is clear from the list of imports. I suggest to create another bugzilla/gerrit for this effort.",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

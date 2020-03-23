@@ -18,10 +18,8 @@ import java.util.Optional;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -92,16 +90,5 @@ public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 			}
 		}
 		return Optional.empty(); // Fallback
-	}
-
-	@Override
-	protected IBinding getDeferredFunction(IASTExpression functionNameExpression) {
-		return null;
-	}
-
-	@Override
-	protected Optional<Integer> evaluateDeferredFunction(final IASTFunctionCallExpression funcCall,
-			final IASTInitializerClause arg, int argPos, int indirection, IBinding defFunctionBinding) {
-		return Optional.empty();
 	}
 }

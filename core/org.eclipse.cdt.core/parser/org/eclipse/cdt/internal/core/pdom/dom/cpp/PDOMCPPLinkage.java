@@ -1270,8 +1270,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (owner instanceof IFunction) {
 			boolean isTemplateParameter = binding instanceof ICPPTemplateParameter;
 			boolean ownerIsConstexprFunc = owner instanceof ICPPFunction && ((ICPPFunction) owner).isConstexpr();
-			boolean isVariableOrTypedef = binding instanceof ICPPVariable || binding instanceof ITypedef;
-			if (!isTemplateParameter && !(ownerIsConstexprFunc && isVariableOrTypedef)) {
+			boolean isVariableOrType = binding instanceof ICPPVariable || binding instanceof IType;
+			if (!isTemplateParameter && !(ownerIsConstexprFunc && isVariableOrType)) {
 				return null;
 			}
 		}

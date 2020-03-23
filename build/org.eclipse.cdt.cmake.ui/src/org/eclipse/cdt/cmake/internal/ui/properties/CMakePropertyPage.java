@@ -11,7 +11,7 @@
  * Contributors:
  *     IAR Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.cmake.ui.properties;
+package org.eclipse.cdt.cmake.internal.ui.properties;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

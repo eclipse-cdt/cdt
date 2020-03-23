@@ -2,6 +2,74 @@
   "comments": [
     {
       "key": {
+        "uuid": "5d9f084c_0b042f85",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "this should be replaced with Predicate function",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7306f3c_73bd4dd0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "If result is optional let\u0027s use Optional",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a88dfe0_6edc7cf9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "Please implement as java.util.function.BinaryOperation and apply to stream",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4e6d928_a3e71770",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "It looks like this one is not needed, especially if we will use Optional.filter",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8aca87e6_1db80890",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
         "patchSetId": 12
@@ -13,6 +81,23 @@
       "writtenOn": "2020-03-23T04:03:36Z",
       "side": 1,
       "message": "I think we actually want \"unknown\" (i.e. Optional.empty()) here.\n\nSuppose you have an expression f(a), where f may resolve to one of two overloads, we don\u0027t know which.\n\nIf overload 1 has flags \"unknown\", meaning it may read or write  \"a\", we don\u0027t know; and overload 2 has flags \"write\", meaning it may write \"a\";\n\nthen overall our answer is \"unknown\", i.e. this call may read or write \"a\".",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3101b6ba_912502b3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "This condition asks us to reorganize the method.\n1) find an argument\n2) obtain IASTExpression\n3) calculate result\nthis will reduce complexity of the method\nthen we should have closer look how to simplify 3)",
       "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -36,6 +121,91 @@
     },
     {
       "key": {
+        "uuid": "ccca6f17_b4fd14b9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/CVariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "please avoid returning `null`",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6f019c05_7e65c20e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "This should ne reworked, `null` should not be returned.",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cd2467da_a2081f48",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "```\nif(!ICPPDeferredFunction.class.isInstance(defFunctionBinding)) {\n   return Optional.empty();\n}\n```",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8bbd5f1e_656a7a69",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "we should not have `null` there, I would remove the check.\nIf we do have - it is a bug to be fixed separately.",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "60717c39_59288fd4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "this should be implemented with a stream + \"reduce\" function.",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c98ac906_63df24af",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVariableReadWriteFlags.java",
         "patchSetId": 12
@@ -47,6 +217,91 @@
       "writtenOn": "2020-03-23T04:03:36Z",
       "side": 1,
       "message": "This branch is actually redundant (it doesn\u0027t use the candidate in any way, and we already check for this case in VariableReadWriteFalgs).",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a9f9b2e_349fe673",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/c/PDOMCVariable.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "`return res.orElse(PDOMName.READ_ACCESS | PDOMName.WRITE_ACCESS);`",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "14a61334_350c989c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPVariable.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "`return res.orElse(PDOMName.READ_ACCESS | PDOMName.WRITE_ACCESS);`",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e0aea086_b86919a8",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/refactoring/code/flow/FlowAnalyzer.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 923,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "that should be like \n`int mode \u003d optional.flatMap(\u003ccalculate flow info mode\u003e).orElse( FlowInfo.UNKNOWN);\nsetFlowInfo(node, new LocalFlowInfo(variable, index, mode, fFlowContext));\n`",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf38b810_7a41e59c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/NodeContainer.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "that should be like \n`optional.filter(...).isPresent()`",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ce6cf0d_30f8a9dd",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchUtil.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "Something is wrong with this method: binding \"kind\" (c or c++) should be well known at this point. I would expect this global function to be a Predicate\u003cIASTName\u003e , most probably two implementations of predicate.",
       "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

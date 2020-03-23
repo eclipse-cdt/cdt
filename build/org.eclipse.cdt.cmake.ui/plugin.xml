@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            class="org.eclipse.cdt.cmake.ui.properties.CMakePropertyPage"
+            class="org.eclipse.cdt.cmake.internal.ui.properties.CMakePropertyPage"
             id="org.eclipse.cdt.cmake.ui.properties.cmakePropertyPage"
             name="CMake">
          <enabledWhen>

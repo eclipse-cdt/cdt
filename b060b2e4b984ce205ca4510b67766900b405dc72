@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8128743_557bc4a5",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1085,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-03-23T20:12:33Z",
+      "side": 1,
+      "message": "That\u0027s ways too complicated. File.getCanonicalPath() is easier.\nHere\u0027s how I dealt with this [1]\n\n[1] https://github.com/15knots/cmake4eclipse/issues/31#issuecomment-297940831",
+      "range": {
+        "startLine": 1079,
+        "startChar": 0,
+        "endLine": 1085,
+        "endChar": 51
+      },
+      "revId": "b060b2e4b984ce205ca4510b67766900b405dc72",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

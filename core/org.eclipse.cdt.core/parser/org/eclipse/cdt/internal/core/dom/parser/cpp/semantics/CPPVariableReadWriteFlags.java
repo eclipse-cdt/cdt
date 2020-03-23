@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -45,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
@@ -171,50 +171,32 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 	}
 
 	@Override
-	protected IBinding getDeferredFunction(IASTExpression functionNameExpression) {
+	protected Optional<Integer> rwArgumentForFunctionCall(final IASTFunctionCallExpression funcCall, IASTNode argument,
+			int indirection) {
+		// Handle deferred functions (unresolved overloads) by taking the union (bitwise or)
+		// of the flags of each candidate function.
+		IASTExpression functionNameExpression = funcCall.getFunctionNameExpression();
 		if (functionNameExpression instanceof IASTIdExpression) {
 			IBinding b = ((IASTIdExpression) functionNameExpression).getName().resolveBinding();
 			if (b instanceof ICPPDeferredFunction) {
-				return b;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	protected Optional<Integer> evaluateDeferredFunction(final IASTFunctionCallExpression funcCall,
-			final IASTInitializerClause arg, int argPos, int indirection, IBinding defFunctionBinding) {
-
-		ICPPDeferredFunction deferredFunc = (defFunctionBinding instanceof ICPPDeferredFunction)
-				? (ICPPDeferredFunction) defFunctionBinding
-				: null;
-
-		if (deferredFunc == null)
-			return Optional.empty();
-
-		ICPPFunction[] candidates = deferredFunc.getCandidates();
-		if (candidates != null) {
-			Optional<Integer> cumulative = Optional.empty();
-			for (ICPPFunction f : candidates) {
-				IType type = f.getType();
-				if (type instanceof IFunctionType) {
-					Optional<Integer> res = rwArgumentForFunctionCall((IFunctionType) type, argPos, arg, indirection);
-					cumulative = bitwiseOr(cumulative, res);
-				} else if (funcCall instanceof IASTImplicitNameOwner) {
-					IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) funcCall).getImplicitNames();
-					if (implicitNames.length == 1) {
-						IASTImplicitName name = implicitNames[0];
-						IBinding binding = name.resolveBinding();
-						if (binding instanceof IFunction) {
-							Optional<Integer> res = rwArgumentForFunctionCall(((IFunction) binding).getType(), argPos,
-									arg, indirection);
-							cumulative = bitwiseOr(cumulative, res);
+				ICPPDeferredFunction deferredFunc = (ICPPDeferredFunction) b;
+				ICPPFunction[] candidates = deferredFunc.getCandidates();
+				if (candidates != null) {
+					IASTInitializerClause[] args = funcCall.getArguments();
+					int argPos = ArrayUtil.indexOf(args, argument);
+					Optional<Integer> cumulative = Optional.empty();
+					for (ICPPFunction f : candidates) {
+						IType type = f.getType();
+						if (type instanceof IFunctionType) {
+							Optional<Integer> res = rwArgumentForFunctionCall((IFunctionType) type, argPos,
+									args[argPos], indirection);
+							cumulative = union(cumulative, res);
 						}
 					}
+					return cumulative;
 				}
 			}
-			return cumulative;
 		}
-		return Optional.empty(); // Fallback
+		return super.rwArgumentForFunctionCall(funcCall, argument, indirection);
 	}
 }

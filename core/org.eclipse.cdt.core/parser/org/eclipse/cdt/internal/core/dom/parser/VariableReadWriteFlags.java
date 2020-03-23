@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 /**
@@ -242,79 +243,47 @@ public abstract class VariableReadWriteFlags {
 	}
 
 	/**
-	 * Check if the function name expression involves a deferred function. Applicable
-	 * only to C++.
-	 * @param functionNameExpression The expression
-	 * @return The binding found, null otherwise
+	 * Helper method to take the union of two sets of read/write flags.
+	 * Note that "unknown" (represented as Optional.empty()) unioned
+	 * with anything is still "unknown", since "unknown" means that
+	 * potentially any type of access is possible.
 	 */
-	protected abstract IBinding getDeferredFunction(IASTExpression functionNameExpression);
-
-	/**
-	 * Evaluate the deferred function and check the flags for arguments passed. Applicable
-	 * only to C++.
-	 * @param funcCall The function call expression
-	 * @param arg The argument to be evaluated
-	 * @param argPos The argument position
-	 * @param indirection Level of indirection
-	 * @param defFunctionBinding The function binding
-	 * @return Access flags
-	 */
-	protected abstract Optional<Integer> evaluateDeferredFunction(final IASTFunctionCallExpression funcCall,
-			final IASTInitializerClause arg, int argPos, int indirection, IBinding defFunctionBinding);
-
-	/**
-	 * Helper method to merge two optional flags containers
-	 * @param a A flag optional container
-	 * @param b A flag optional container
-	 * @return An optional with bit or operation between a and b
-	 */
-	protected Optional<Integer> bitwiseOr(Optional<Integer> a, Optional<Integer> b) {
-		Optional<Integer> or = Optional.empty();
-		if (a.isPresent()) {
-			if (!b.isPresent()) {
-				or = a;
-			} else {
-				or = Optional.of(a.get() | b.get());
-			}
-		} else {
-			if (!b.isPresent()) {
-				return or;
-			} else {
-				or = b;
-			}
+	protected Optional<Integer> union(Optional<Integer> a, Optional<Integer> b) {
+		if (a.isPresent() && b.isPresent()) {
+			return Optional.of(a.get() | b.get());
 		}
-		return or;
+		return Optional.empty();
 	}
 
 	protected Optional<Integer> rwArgumentForFunctionCall(final IASTFunctionCallExpression funcCall, IASTNode argument,
 			int indirection) {
 		final IASTInitializerClause[] args = funcCall.getArguments();
-		for (int i = 0; i < args.length; i++) {
-			if (args[i] == argument) {
-				final IASTExpression functionNameExpression = funcCall.getFunctionNameExpression();
-				if (functionNameExpression != null) {
-					IType type = functionNameExpression.getExpressionType();
-					IBinding deferredFunc = getDeferredFunction(functionNameExpression);
-					if (deferredFunc != null) {
-						return evaluateDeferredFunction(funcCall, args[i], i, indirection, deferredFunc);
-					} else if (type instanceof IFunctionType) {
-						return rwArgumentForFunctionCall((IFunctionType) type, i, args[i], indirection);
-					} else if (funcCall instanceof IASTImplicitNameOwner) {
-						IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) funcCall).getImplicitNames();
-						if (implicitNames.length == 1) {
-							IASTImplicitName name = implicitNames[0];
-							IBinding binding = name.resolveBinding();
-							if (binding instanceof IFunction) {
-								return rwArgumentForFunctionCall(((IFunction) binding).getType(), i, args[i],
-										indirection);
-							}
-						}
-					}
+		int index = ArrayUtil.indexOf(args, argument);
+		if (index == -1) {
+			return Optional.empty();
+		}
+		final IASTExpression functionNameExpression = funcCall.getFunctionNameExpression();
+		if (functionNameExpression == null) {
+			return Optional.empty();
+		}
+		IType type = functionNameExpression.getExpressionType();
+		IFunctionType functionType = null;
+		if (type instanceof IFunctionType) {
+			functionType = (IFunctionType) type;
+		} else if (funcCall instanceof IASTImplicitNameOwner) {
+			IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) funcCall).getImplicitNames();
+			if (implicitNames.length == 1) {
+				IASTImplicitName name = implicitNames[0];
+				IBinding binding = name.resolveBinding();
+				if (binding instanceof IFunction) {
+					functionType = ((IFunction) binding).getType();
 				}
-				break;
 			}
 		}
-		return Optional.empty(); // Fallback
+		if (functionType == null) {
+			return Optional.empty();
+		}
+		return rwArgumentForFunctionCall(functionType, index, args[index], indirection);
 	}
 
 	private IType getArgumentType(IASTInitializerClause argument) {

@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "c2e800b4_bcd904c1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IFunction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-23T04:25:57Z",
+      "side": 1,
+      "message": "\"this function never returns\" --\u003e \"the return value of this function must be used (not discarded) by the caller\"\n\nAlso, let\u0027s mention that in C this is expressed using the the \"warn_unused_result\" attribute.",
+      "revId": "f6c1d8ae604dc8a4c8c8bd9ec6cd878fd1295d17",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e07f51f_aea9762a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPDeferredFunction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-23T04:25:57Z",
+      "side": 1,
+      "message": "Let\u0027s put the definition next to the other booleans like isNoReturn().",
+      "revId": "f6c1d8ae604dc8a4c8c8bd9ec6cd878fd1295d17",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4e81130_75b5bda2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPFunctionTemplate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-23T04:25:57Z",
+      "side": 1,
+      "message": "Likewise",
+      "revId": "f6c1d8ae604dc8a4c8c8bd9ec6cd878fd1295d17",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21d18190_1965bf79",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
         "patchSetId": 2
@@ -30,6 +81,24 @@
       "writtenOn": "2020-03-14T12:25:20Z",
       "side": 1,
       "message": "I don\u0027t know if this needs to be mentioned but as the no discard is being stored in the sign bit of the byte future maintenance needs to take care not to use signed right shift in some cases. AFAICT this is not a concern for current version.\n\nSo therefore the next person to add an additional flag will need to change storage from byte to something bigger.",
+      "revId": "f6c1d8ae604dc8a4c8c8bd9ec6cd878fd1295d17",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ffb2a3bc_2cd92883",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/c/PDOMCAnnotations.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-23T04:25:57Z",
+      "side": 1,
+      "message": "I would suggest adding a comment here saying that there is no space for any more flags in the annotations byte, if a new flag is needed in the future we need to change it from a byte to a short.",
+      "parentUuid": "1bf745c0_020e10d7",
       "revId": "f6c1d8ae604dc8a4c8c8bd9ec6cd878fd1295d17",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

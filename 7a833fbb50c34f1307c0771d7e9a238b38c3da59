@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8aca87e6_1db80890",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-23T04:03:36Z",
+      "side": 1,
+      "message": "I think we actually want \"unknown\" (i.e. Optional.empty()) here.\n\nSuppose you have an expression f(a), where f may resolve to one of two overloads, we don\u0027t know which.\n\nIf overload 1 has flags \"unknown\", meaning it may read or write  \"a\", we don\u0027t know; and overload 2 has flags \"write\", meaning it may write \"a\";\n\nthen overall our answer is \"unknown\", i.e. this call may read or write \"a\".",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b36ff94_74aa1796",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-23T04:03:36Z",
+      "side": 1,
+      "message": "A deferred function is still a C++-specific concept (i.e. there is no \"ICDeferredFunction\". I think we can organize the code so only CPPVariableReadWriteFlags needs to worry about it.",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c98ac906_63df24af",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVariableReadWriteFlags.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-23T04:03:36Z",
+      "side": 1,
+      "message": "This branch is actually redundant (it doesn\u0027t use the candidate in any way, and we already check for this case in VariableReadWriteFalgs).",
+      "revId": "7a833fbb50c34f1307c0771d7e9a238b38c3da59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

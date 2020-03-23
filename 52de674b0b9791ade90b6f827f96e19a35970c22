@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0e246d11_fd4a2cd8",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersInitializationChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-23T07:39:08Z",
+      "side": 1,
+      "message": "Please have a look at \u0027filter/map/flatMap\u0027 methods of Optional",
+      "parentUuid": "acae7cb9_d85f6e88",
+      "revId": "52de674b0b9791ade90b6f827f96e19a35970c22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f638cbae_9fb68380",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/VariableReadWriteFlagsTest.java",
         "patchSetId": 8

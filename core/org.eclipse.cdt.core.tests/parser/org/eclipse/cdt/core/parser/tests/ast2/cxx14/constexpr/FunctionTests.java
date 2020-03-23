@@ -282,11 +282,10 @@ public class FunctionTests extends TestBase {
 		assertEvaluationEquals(58);
 	}
 
-	// //Empty header file
-
 	// constexpr int f() {
 	//   return ([]() constexpr -> int {return 58;})();
 	// }
+
 	// constexpr int x = f();
 	public void testLambdaExpression2_560483() throws Exception {
 		assertEvaluationEquals(58);

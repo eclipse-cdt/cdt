@@ -372,7 +372,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		return EvalFixed.INCOMPLETE;
 	}
 
-	private ICPPFunction resolveFunctionBinding() {
+	public ICPPFunction resolveFunctionBinding() {
 		ICPPFunction function = getOverload();
 		if (function == null) {
 			ICPPEvaluation funcEval = fArguments[0];

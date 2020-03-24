@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.arduino.core;singleton:=true
-Bundle-Version: 2.1.300.qualifier
+Bundle-Version: 2.2.0.qualifier
 Bundle-Activator: org.eclipse.cdt.arduino.core.internal.Activator
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime,
@@ -24,6 +24,7 @@ Bundle-ClassPath: .
 Export-Package: org.eclipse.cdt.arduino.core.internal;x-friends:="org.eclipse.cdt.arduino.ui",
  org.eclipse.cdt.arduino.core.internal.board;x-friends:="org.eclipse.cdt.arduino.ui",
  org.eclipse.cdt.arduino.core.internal.build;x-friends:="org.eclipse.cdt.arduino.ui",
+ org.eclipse.cdt.arduino.core.internal.launch,
  org.eclipse.cdt.arduino.core.internal.remote;x-friends:="org.eclipse.cdt.arduino.ui"
 Bundle-Localization: plugin
 Automatic-Module-Name: org.eclipse.cdt.arduino.core

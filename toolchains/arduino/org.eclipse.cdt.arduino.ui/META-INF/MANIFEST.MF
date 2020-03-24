@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.arduino.ui;singleton:=true
-Bundle-Version: 2.1.500.qualifier
+Bundle-Version: 2.2.0.qualifier
 Bundle-Activator: org.eclipse.cdt.arduino.ui.internal.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions,
@@ -27,3 +27,10 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: org.eclipse.cdt.arduino.ui
+Export-Package: org.eclipse.cdt.arduino.ui.internal;x-internal:=true,
+ org.eclipse.cdt.arduino.ui.internal.downloads;x-internal:=true,
+ org.eclipse.cdt.arduino.ui.internal.launch;x-internal:=true,
+ org.eclipse.cdt.arduino.ui.internal.preferences;x-internal:=true,
+ org.eclipse.cdt.arduino.ui.internal.project;x-internal:=true,
+ org.eclipse.cdt.arduino.ui.internal.remote;x-internal:=true,
+ org.eclipse.cdt.arduino.ui.internal.terminal;x-internal:=true

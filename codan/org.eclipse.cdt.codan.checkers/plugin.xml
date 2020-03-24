@@ -672,5 +672,17 @@
                name="%problem.name.MagicNumberProblem">
          </problem>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.NoDiscardChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.NoDiscardChecker"
+            name="%checker.name.NoDiscard">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultSeverity="Warning"
+               description="%problem.description.NoDiscard"
+               id="org.eclipse.cdt.codan.internal.checkers.NoDiscardProblem"
+               messagePattern="%problem.messagePattern.NoDiscard"
+               name="%problem.name.NoDiscard"/>
+      </checker>
    </extension>
 </plugin>

@@ -46,6 +46,7 @@ public class CheckersMessages extends NLS {
 	public static String Copyright_regex;
 	public static String ShallowCopyChecker_OnlyNew;
 	public static String CStyleCastCheck_checkInMacro;
+	public static String NoDiscardChecker_ParameterMacro;
 
 	static {
 		NLS.initializeMessages(CheckersMessages.class.getName(), CheckersMessages.class);

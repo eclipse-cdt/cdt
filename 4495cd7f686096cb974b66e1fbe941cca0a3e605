@@ -121,6 +121,24 @@
     },
     {
       "key": {
+        "uuid": "bf5111f7_0fccca7c",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-03-24T21:46:36Z",
+      "side": 1,
+      "message": "OK. Existing CDT code base suggest non-block statements are fine.",
+      "parentUuid": "814e9fcc_f4e6599b",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ec1f5e9f_dea4e258",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
         "patchSetId": 3
@@ -285,6 +303,24 @@
       "writtenOn": "2020-03-22T09:41:01Z",
       "side": 1,
       "message": "Please make this type immutable. \nI see, it is needed for GSON - in this case it is better to have an interface",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5bbaafe9_10196c13",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CommandEntry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-03-24T21:46:36Z",
+      "side": 1,
+      "message": "Isn\u0027t it immutable already? It does not provide any getter metods and its fields are all private.",
+      "parentUuid": "0a7ad2f5_1afb80cf",
       "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

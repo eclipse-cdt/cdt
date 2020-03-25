@@ -104,6 +104,24 @@
     },
     {
       "key": {
+        "uuid": "d20c8a74_3389c108",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-03-25T21:20:18Z",
+      "side": 1,
+      "message": "It is needed to get filename extensions",
+      "parentUuid": "0498c9d4_53d9316e",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "814e9fcc_f4e6599b",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
         "patchSetId": 3
@@ -203,6 +221,24 @@
       "writtenOn": "2020-03-22T09:41:01Z",
       "side": 1,
       "message": "I would convert this to a human-readable i18n message, as it may be potentially displayed in UI",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "df53a23a_c1bc7e13",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/builtins/OutputSniffer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-03-25T21:20:18Z",
+      "side": 1,
+      "message": "I may be somehow old-school here following the Java-convention \u0027If you (the programmer) get a runtime exception, it is your fault!\u0027. This exception must not hit the end user.\nI could as well remove the argument name from the exception and everything would be fine. The arguemnt name is set because it is not obvious to the called which arguement must not be null (method has to args requiered to be non-null).\n\nIn general, my contribution follows a null-argument rule of: By default, neither args nor return values are allowed to be null. If one of these is allowed to be null, it must be documented what a null value does mean.\nOK, staring at CDT code I become more and more sloppy :-)\n\nI know of spotbug annotations that can be used to document the \u0027non-null-by-default\u0027 behavior but could not find spotbugs in the CDT target platform.",
+      "parentUuid": "c54887e8_0ba6ee7d",
       "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -375,6 +411,24 @@
       "side": 1,
       "message": "Let\u0027s say it is \"effectively final\" at the moment. To make the type really immutable one should declare all its fields final. \n\nAnd the type itself should be either `abstract` or `final` to highlight the design decision.",
       "parentUuid": "5bbaafe9_10196c13",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "91b36501_b8af3b2a",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CommandEntry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-03-25T21:20:18Z",
+      "side": 1,
+      "message": "The fields are set by GSON through reflection. I doubt de-serialization will work if the fields are final.\n\nI can make the class final, but why? It is not API since it has intentionally package scope.",
+      "parentUuid": "fea0c643_fd017748",
       "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

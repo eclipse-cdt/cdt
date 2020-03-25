@@ -157,6 +157,24 @@
     },
     {
       "key": {
+        "uuid": "5f54a106_50e43626",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-25T15:28:20Z",
+      "side": 1,
+      "message": "That is a good point - it probably should be added to the coding standards done by code cleanup.\n\nSadly CDT is filled by generations of different coding styles with little to no enforcement of style. Just over a year ago we started enforcing coding style with the check code cleanliness checks - but they can be adapted as we go forward, but if we do they should be applied across the code base (and not changed too often).",
+      "parentUuid": "bf5111f7_0fccca7c",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ec1f5e9f_dea4e258",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
         "patchSetId": 3

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: org.eclipse.cdt.autotools.core;singleton:=true
-Bundle-Version: 2.0.2.qualifier
+Bundle-Version: 2.1.0.qualifier
 Bundle-Activator: org.eclipse.cdt.autotools.core.AutotoolsPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",
@@ -28,7 +28,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",
  org.eclipse.cdt.remote.core;bundle-version="1.0.1"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %provider
-Export-Package: org.eclipse.cdt.autotools.core,
+Export-Package: org.eclipse.cdt.autotools.core;x-friends:="org.eclipse.cdt.autotools.ui",
  org.eclipse.cdt.internal.autotools.core;x-friends:="org.eclipse.cdt.autotools.ui",
  org.eclipse.cdt.internal.autotools.core.configure;x-friends:="org.eclipse.cdt.autotools.ui",
  org.eclipse.cdt.internal.autotools.core.wizards;x-friends:="org.eclipse.cdt.autotools.ui"

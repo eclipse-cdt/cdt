@@ -139,6 +139,24 @@
     },
     {
       "key": {
+        "uuid": "49fda4b2_708c441d",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-25T15:09:37Z",
+      "side": 1,
+      "message": "We will need to employ an auto-check for that. \"Java Editor\" -\u003e \"Save actions\" can do that for us.",
+      "parentUuid": "bf5111f7_0fccca7c",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ec1f5e9f_dea4e258",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
         "patchSetId": 3
@@ -321,6 +339,24 @@
       "side": 1,
       "message": "Isn\u0027t it immutable already? It does not provide any getter metods and its fields are all private.",
       "parentUuid": "0a7ad2f5_1afb80cf",
+      "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fea0c643_fd017748",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/CommandEntry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-25T15:09:37Z",
+      "side": 1,
+      "message": "Let\u0027s say it is \"effectively final\" at the moment. To make the type really immutable one should declare all its fields final. \n\nAnd the type itself should be either `abstract` or `final` to highlight the design decision.",
+      "parentUuid": "5bbaafe9_10196c13",
       "revId": "4495cd7f686096cb974b66e1fbe941cca0a3e605",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

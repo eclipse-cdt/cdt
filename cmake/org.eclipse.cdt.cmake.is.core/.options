@@ -1,12 +1,10 @@
 # Debugging options for the org.eclipse.cdt.cmake.is.core plugin.
 
-# Trace CMAKE_EXPORT_COMPILE_COMMANDS Parser tool detection participant lookup
-org.eclipse.cdt.cmake.is.core/CECC/participant=false
-# Trace CMAKE_EXPORT_COMPILE_COMMANDS Parser command-line argument parser lookup
-org.eclipse.cdt.cmake.is.core/CECC/arglets=false
-# Trace detected language setting entries
-org.eclipse.cdt.cmake.is.core/CECC/entries=false
-# Trace language setting entries as passed to the indexer
-org.eclipse.cdt.cmake.is.core/CECC/indexer-entries=false
-# Trace CMAKE_EXPORT_COMPILE_COMMANDS Compiler Built-ins detected language setting entries
-org.eclipse.cdt.cmake.is.core/CECC/builtins/entries=false
+# Trace total time for parsing compile_commands.json files
+org.eclipse.cdt.cmake.is.core/debug/performance=false
+# Trace compile_commands.json Parser tool detection participant lookup
+org.eclipse.cdt.cmake.is.core/debug/participant=false
+# Trace how compiler command-line arguments are detected and parsed
+org.eclipse.cdt.cmake.is.core/debug/arglets=false
+# Trace detected preprocessor symbols and include path entries as passed to the indexer
+org.eclipse.cdt.cmake.is.core/debug/detected.entries=false

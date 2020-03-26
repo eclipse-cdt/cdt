@@ -9,10 +9,8 @@
 package org.eclipse.cdt.cmake.is.core;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.cdt.cmake.is.core.internal.ParseContext;
@@ -28,18 +26,12 @@ import org.eclipse.core.runtime.Platform;
  * @author Martin Weber
  */
 public class DefaultToolCommandlineParser implements IToolCommandlineParser {
-	@SuppressWarnings("nls")
-	private static final boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption(Plugin.PLUGIN_ID + "/CECC/args"));
+	private static final boolean DEBUG = Boolean
+			.parseBoolean(Platform.getDebugOption(Plugin.PLUGIN_ID + "/debug/arglets")); //$NON-NLS-1$
 
 	private final IArglet[] argumentParsers;
-	private final String languageID;
 	private final IResponseFileArglet responseFileArglet;
 	private final IBuiltinsDetectionBehavior builtinsDetection;
-
-	/** gathers the result */
-	private ParseContext result;
-
-	private IPath cwd;
 
 	/**
 	 * Constructs a new object with the given values.
@@ -51,10 +43,6 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	 * "com.nvidia.cuda.toolchain.language.cuda.cu"
 	 * </p>
 	 *
-	 * @param languageID                the language ID of the language that the
-	 *                                  tool compiles or {@code null} if the
-	 *                                  language ID should be derived from the
-	 *                                  source file-name extension
 	 * @param responseFileArglet        the parsers for the response-file
 	 *                                  command-line argument for the tool or
 	 *                                  {@code null} if the tool does not recognize
@@ -67,6 +55,7 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	 *                                  detection.
 	 * @param argumentParsers           the parsers for the command line arguments
 	 *                                  of of interest for the tool
+	 *
 	 * @throws NullPointerException if the {@code argumentParsers} arguments is
 	 *                              {@code null}
 	 * @see Arglets various IArglet implementations you may want to use
@@ -74,9 +63,8 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	 *      you may want to use
 	 */
 	@SuppressWarnings("nls")
-	public DefaultToolCommandlineParser(String languageID, IResponseFileArglet responseFileArglet,
+	public DefaultToolCommandlineParser(IResponseFileArglet responseFileArglet,
 			IBuiltinsDetectionBehavior builtinsDetectionBehavior, IArglet... argumentParsers) {
-		this.languageID = languageID;
 		this.builtinsDetection = builtinsDetectionBehavior;
 		this.argumentParsers = Objects.requireNonNull(argumentParsers, "argumentParsers");
 		this.responseFileArglet = responseFileArglet;
@@ -84,60 +72,8 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 
 	@Override
 	public IResult processArgs(IPath cwd, String args) {
-		this.result = new ParseContext();
-		this.cwd = Objects.requireNonNull(cwd, "cwd"); //$NON-NLS-1$
-
-		ParserHandler ph = new ParserHandler();
-		ph.parseArguments(responseFileArglet, args);
-		return result;
-	}
-
-	/**
-	 * Implemented to determine the language ID from the source file name extension,
-	 * if the language ID of this object is {@code null}.
-	 */
-	@Override
-	public String getLanguageId(String sourceFileExtension) {
-		if (languageID != null) {
-			return languageID;
-		}
-		return determineLanguageId(sourceFileExtension).orElse(null);
-	}
-
-	/**
-	 * Default implementation.
-	 *
-	 * @return always an empty set
-	 */
-	@Override
-	public Set<String> getCustomLanguageIds() {
-		return Collections.emptySet();
-	}
-
-	/**
-	 * Gets the languageID of the specified file name extension. This is a
-	 * convenience method for subclasses.
-	 *
-	 * @param sourceFileExtension The file name extension to examine
-	 * @return an {@code Optional<String>} holding the language ID or {@code Optional.empty()} if the file name extension is
-	 *         unknown.
-	 */
-	@SuppressWarnings("nls")
-	protected Optional<String> determineLanguageId(String sourceFileExtension) {
-		switch (sourceFileExtension) {
-		case "c":
-			return Optional.of("org.eclipse.cdt.core.gcc");
-		case "C":
-		case "cc":
-		case "cpp":
-		case "CPP":
-		case "cp":
-		case "cxx":
-		case "c++":
-			return Optional.of("org.eclipse.cdt.core.g++");
-		default:
-			return Optional.empty();
-		}
+		ParserHandler ph = new ParserHandler(cwd);
+		return ph.parseArguments(responseFileArglet, args);
 	}
 
 	@Override
@@ -148,7 +84,7 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	@SuppressWarnings("nls")
 	@Override
 	public String toString() {
-		return "[languageID=" + this.languageID + ", argumentParsers=" + Arrays.toString(this.argumentParsers) + "]";
+		return "[" + getClass().getName() + ", argumentParsers=" + Arrays.toString(this.argumentParsers) + "]";
 	}
 
 	/**
@@ -175,12 +111,25 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	 */
 	private class ParserHandler implements IParserHandler {
 
+		private final IPath cwd;
+
+		/**
+		* @param cwd  the current working directory of the compiler at the time of its
+		*             invocation
+		*
+		* @throws NullPointerException if any of the arguments is {@code null}
+		 */
+		public ParserHandler(IPath cwd) {
+			this.cwd = Objects.requireNonNull(cwd, "cwd"); //$NON-NLS-1$
+		}
+
 		/**
 		 * @param responseFileArglet
 		 * @param args               the command line arguments to process
 		 */
 		@SuppressWarnings("nls")
-		private void parseArguments(IResponseFileArglet responseFileArglet, String args) {
+		private IResult parseArguments(IResponseFileArglet responseFileArglet, String args) {
+			ParseContext result = new ParseContext();
 			// eat buildOutput string argument by argument..
 			while (!(args = StringUtil.trimLeadingWS(args)).isEmpty()) {
 				boolean argParsed = false;
@@ -227,6 +176,7 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 					}
 				}
 			}
+			return result;
 		}
 
 		/**

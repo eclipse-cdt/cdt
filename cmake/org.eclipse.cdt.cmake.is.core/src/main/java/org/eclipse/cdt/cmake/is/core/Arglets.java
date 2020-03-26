@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2019 Martin Weber.
+ * Copyright (c) 2015-2020 Martin Weber.
  *
  * Content is provided to you under the terms and conditions of the Eclipse Public License Version 2.0 "EPL".
  * A copy of the EPL is available at http://www.eclipse.org/legal/epl-2.0.
@@ -11,10 +11,7 @@ package org.eclipse.cdt.cmake.is.core;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.cmake.is.core.IArglet.IParseContext;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.cmake.is.core.IArglet.IArgumentCollector;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -23,7 +20,7 @@ import org.eclipse.core.runtime.Path;
  *
  * @author Martin Weber
  */
-public class Arglets {
+public final class Arglets {
 	private static final String EMPTY_STR = ""; //$NON-NLS-1$
 
 	/** matches a macro name, with optional macro parameter list */
@@ -134,7 +131,7 @@ public class Arglets {
 	 */
 	public static abstract class MacroDefineGeneric {
 
-		protected final int processArgument(IParseContext parseContext, String args,
+		protected final int processArgument(IArgumentCollector resultCollector, String args,
 				NameValueOptionMatcher[] optionMatchers) {
 			for (NameValueOptionMatcher oMatcher : optionMatchers) {
 				final Matcher matcher = oMatcher.matcher;
@@ -143,9 +140,7 @@ public class Arglets {
 				if (matcher.lookingAt()) {
 					final String name = matcher.group(oMatcher.nameGroup);
 					final String value = oMatcher.valueGroup == -1 ? null : matcher.group(oMatcher.valueGroup);
-					final ICLanguageSettingEntry entry = CDataUtil.createCMacroEntry(name, value,
-							ICSettingEntry.READONLY);
-					parseContext.addSettingEntry(entry);
+					resultCollector.addDefine(name, value);
 					final int end = matcher.end();
 					return end;
 				}
@@ -162,16 +157,14 @@ public class Arglets {
 		/*-
 		 * @see org.eclipse.cdt.cmake.is.IArglet#processArgument(java.util.List, java.lang.String)
 		 */
-		protected final int processArgument(IParseContext parseContext, String argsLine,
+		protected final int processArgument(IArgumentCollector resultCollector, String argsLine,
 				NameOptionMatcher optionMatcher) {
 			final Matcher oMatcher = optionMatcher.matcher;
 
 			oMatcher.reset(argsLine);
 			if (oMatcher.lookingAt()) {
 				final String name = oMatcher.group(1);
-				final ICLanguageSettingEntry entry = CDataUtil.createCMacroEntry(name, null,
-						ICSettingEntry.UNDEFINED | ICSettingEntry.READONLY);
-				parseContext.addSettingEntry(entry);
+				resultCollector.addUndefine(name);
 				final int end = oMatcher.end();
 				return end;
 			}
@@ -184,12 +177,13 @@ public class Arglets {
 	 */
 	public static abstract class IncludePathGeneric {
 		/**
+		 * @param isSystemIncludePath <code>true</code> if the include path is a system include path otherwise <code>false</code>
 		 * @param cwd the current working directory of the compiler at its invocation
-		 * @see org.eclipse.cdt.cmake.is.core.IArglet#processArgument(IParseContext,
+		 * @see org.eclipse.cdt.cmake.is.core.IArglet#processArgument(IArgumentCollector,
 		 *      IPath, String)
 		 */
-		protected final int processArgument(IParseContext parseContext, IPath cwd, String argsLine,
-				NameOptionMatcher[] optionMatchers) {
+		protected final int processArgument(boolean isSystemIncludePath, IArgumentCollector resultCollector, IPath cwd,
+				String argsLine, NameOptionMatcher[] optionMatchers) {
 			for (NameOptionMatcher oMatcher : optionMatchers) {
 				final Matcher matcher = oMatcher.matcher;
 
@@ -203,10 +197,11 @@ public class Arglets {
 						// prepend CWD
 						name = cwd.append(path).toOSString();
 					}
-
-					final ICLanguageSettingEntry entry = CDataUtil.createCIncludePathEntry(name,
-							ICSettingEntry.READONLY);
-					parseContext.addSettingEntry(entry);
+					if (isSystemIncludePath) {
+						resultCollector.addSystemIncludePath(name);
+					} else {
+						resultCollector.addIncludePath(name);
+					}
 					final int end = matcher.end();
 					return end;
 				}
@@ -249,8 +244,8 @@ public class Arglets {
 		 * @see org.eclipse.cdt.cmake.is.IArglet#processArgs(java.lang.String)
 		 */
 		@Override
-		public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-			return processArgument(parseContext, argsLine, optionMatchers);
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(resultCollector, argsLine, optionMatchers);
 		}
 
 	}
@@ -270,8 +265,8 @@ public class Arglets {
 		 * @see org.eclipse.cdt.cmake.is.IArglet#processArgument(java.util.List, java.lang.String)
 		 */
 		@Override
-		public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-			return processArgument(parseContext, argsLine, optionMatcher);
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(resultCollector, argsLine, optionMatcher);
 		}
 	}
 
@@ -292,8 +287,8 @@ public class Arglets {
 		 * @see org.eclipse.cdt.cmake.is.IArglet#processArgs(java.lang.String)
 		 */
 		@Override
-		public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-			return processArgument(parseContext, cwd, argsLine, optionMatchers);
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(false, resultCollector, cwd, argsLine, optionMatchers);
 		}
 	}
 
@@ -314,8 +309,8 @@ public class Arglets {
 		 * @see org.eclipse.cdt.cmake.is.IArglet#processArgs(java.lang.String)
 		 */
 		@Override
-		public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-			return processArgument(parseContext, cwd, argsLine, optionMatchers);
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(true, resultCollector, cwd, argsLine, optionMatchers);
 		}
 	}
 
@@ -324,6 +319,7 @@ public class Arglets {
 	 * A tool argument parser capable to parse a armcc-compiler system include path
 	 * argument: {@code -Jdir}.
 	 */
+	// TODO move this to the arm plugin
 	public static class SystemIncludePath_armcc extends IncludePathGeneric implements IArglet {
 		@SuppressWarnings("nls")
 		static final NameOptionMatcher[] optionMatchers = {
@@ -336,8 +332,8 @@ public class Arglets {
 		 * @see org.eclipse.cdt.cmake.is.IArglet#processArgs(java.lang.String)
 		 */
 		@Override
-		public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-			return processArgument(parseContext, cwd, argsLine, optionMatchers);
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(true, resultCollector, cwd, argsLine, optionMatchers);
 		}
 	}
 
@@ -355,14 +351,15 @@ public class Arglets {
 	 */
 	public static abstract class BuiltinDetctionArgsGeneric {
 		/**
-		 * @see org.eclipse.cdt.cmake.is.core.IArglet#processArgument(IParseContext,
+		 * @see org.eclipse.cdt.cmake.is.core.IArglet#processArgument(IArgumentCollector,
 		 *      IPath, String)
 		 */
-		protected final int processArgument(IParseContext parseContext, String argsLine, Matcher[] optionMatchers) {
+		protected final int processArgument(IArgumentCollector resultCollector, String argsLine,
+				Matcher[] optionMatchers) {
 			for (Matcher matcher : optionMatchers) {
 				matcher.reset(argsLine);
 				if (matcher.lookingAt()) {
-					parseContext.addBuiltinDetectionArgument(matcher.group());
+					resultCollector.addBuiltinDetectionArgument(matcher.group());
 					return matcher.end();
 				}
 			}
@@ -393,8 +390,8 @@ public class Arglets {
 		 * @see org.eclipse.cdt.cmake.is.IArglet#processArgs(java.lang.String)
 		 */
 		@Override
-		public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-			return processArgument(parseContext, argsLine, optionMatchers);
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(resultCollector, argsLine, optionMatchers);
 		}
 	}
 
@@ -412,8 +409,8 @@ public class Arglets {
 		 * @see org.eclipse.cdt.cmake.is.IArglet#processArgs(java.lang.String)
 		 */
 		@Override
-		public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-			return processArgument(parseContext, argsLine, optionMatchers);
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(resultCollector, argsLine, optionMatchers);
 		}
 	}
 

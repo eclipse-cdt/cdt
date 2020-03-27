@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "d197f3e5_7f2cd28c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-27T05:36:46Z",
+      "side": 1,
+      "message": "That would not tell us the index, which we use later in the function.",
+      "parentUuid": "791338b7_243705c1",
+      "revId": "a19d3ad11548a99fabbf8e9b4925b039eb200003",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e92e2a5_278ea1b6",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/VariableReadWriteFlags.java",
         "patchSetId": 1

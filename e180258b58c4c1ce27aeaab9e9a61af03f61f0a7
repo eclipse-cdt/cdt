@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "69ee368e_787b99cc",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/NoDiscardCheckerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-27T06:00:36Z",
+      "side": 1,
+      "message": "A common (and intended) way of suppressing this diagnostic is to cast the result of the call to void, e.g. \n\n  (void) foo();\n\nIt would be good to have a testcase which checks that there is no diagnostic for such a call.",
+      "revId": "e180258b58c4c1ce27aeaab9e9a61af03f61f0a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "befd5309_09598027",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/NoDiscardCheckerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-27T06:00:36Z",
+      "side": 1,
+      "message": "The \"C\" testcases should actually parse their code as C, not C++. There is a method \"loadCodeAndRunC()\" to do that.",
+      "revId": "e180258b58c4c1ce27aeaab9e9a61af03f61f0a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16d2e9ab_8fbc162c",
+        "filename": "codan/org.eclipse.cdt.codan.core.tests/src/org/eclipse/cdt/codan/core/internal/checkers/NoDiscardCheckerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-27T06:00:36Z",
+      "side": 1,
+      "message": "This is not actually a \"C\" testcase (there are no methods in C). Rather, this is testing that the \"warn_unused_result\" attribute works in C++ code. Please rename accordingly.",
+      "revId": "e180258b58c4c1ce27aeaab9e9a61af03f61f0a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -102,6 +102,7 @@ public class CommonBuilder extends ACBuilder {
 
 	private boolean fBuildErrOccured;
 	private Set<String> builtRefConfigIds = new HashSet<>();
+	private Set<String> scheduledConfigIds = new HashSet<>();
 
 	public CommonBuilder() {
 	}
@@ -436,6 +437,7 @@ public class CommonBuilder extends ACBuilder {
 
 		fBuildSet.start(this);
 		builtRefConfigIds.clear();
+		scheduledConfigIds.clear();
 
 		IProject project = getProject();
 
@@ -486,6 +488,7 @@ public class CommonBuilder extends ACBuilder {
 			if (status.getSeverity() != IStatus.OK)
 				throw new CoreException(status);
 
+			scheduledConfigIds.add(activeCfg.getId());
 			IConfiguration rcfgs[] = getReferencedConfigs(builders);
 
 			monitor.beginTask("", num + rcfgs.length); //$NON-NLS-1$
@@ -518,6 +521,8 @@ public class CommonBuilder extends ACBuilder {
 					build(kind, new CfgBuildInfo(builders[i], isForeground), new SubProgressMonitor(monitor, 1));
 				}
 			}
+
+			scheduledConfigIds.remove(activeCfg.getId());
 		}
 
 		if (isForeground)
@@ -579,6 +584,12 @@ public class CommonBuilder extends ACBuilder {
 		for (IConfiguration cfg : cfgs) {
 			IProject project = cfg.getOwner().getProject();
 			fBuildSet.getCfgIdSet(project, true).add(cfg.getId());
+
+			if (scheduledConfigIds.contains(cfg.getId())) {
+				ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(),
+						"Circular dependency found for config " + project.getName() + ":" + cfg.getName())); //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
+			}
 
 			if (!builtRefConfigIds.contains(cfg.getId())) {
 				if (VERBOSE) {

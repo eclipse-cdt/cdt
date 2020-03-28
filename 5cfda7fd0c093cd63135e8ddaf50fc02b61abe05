@@ -16,6 +16,24 @@
       "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b0b06cb_60a83073",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-03-28T15:59:27Z",
+      "side": 1,
+      "message": "I just cloned this code using another method, so I guess it\u0027s ok to catch here instead of throwing the exception. Usually if a method can throw an exception is better to document it and use throws(...) in the signature, if there\u0027s nothing client code could assume there\u0027s no exception thrown from the call.",
+      "parentUuid": "4c42408b_4201ddac",
+      "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

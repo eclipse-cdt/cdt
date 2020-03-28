@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4c42408b_4201ddac",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-28T15:54:07Z",
+      "side": 1,
+      "message": "Academic interest: how to decide should we catch or throw if we need to call `getDB` ?",
+      "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

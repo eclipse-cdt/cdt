@@ -34,6 +34,24 @@
       "revId": "b65be51fc9378720f766b84509443c36018429fa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cc049ee9_a18d1b2b",
+        "filename": "build/org.eclipse.cdt.autotools.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-28T21:03:40Z",
+      "side": 1,
+      "message": "Build should not have errors because no one has ever written API analysis in Maven/Tycho for CDT. This is why the API baseline check is part of the endgame checklist.\n\nSee Bug 561543",
+      "parentUuid": "76db9ed4_643d82e7",
+      "revId": "b65be51fc9378720f766b84509443c36018429fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

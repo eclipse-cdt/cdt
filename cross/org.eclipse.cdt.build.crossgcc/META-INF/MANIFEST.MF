@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.build.crossgcc;singleton:=true
-Bundle-Version: 1.1.200.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.cdt.internal.build.crossgcc.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core;bundle-version="5.1.0",
@@ -17,3 +17,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Localization: plugin
 Automatic-Module-Name: org.eclipse.cdt.build.crossgcc
+Export-Package: org.eclipse.cdt.internal.build.crossgcc;x-internal:=true

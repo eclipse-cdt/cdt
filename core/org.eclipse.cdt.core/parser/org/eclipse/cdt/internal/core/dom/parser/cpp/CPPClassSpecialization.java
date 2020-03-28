@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
@@ -506,6 +507,15 @@ public class CPPClassSpecialization extends CPPSpecialization
 		ICPPASTCompositeTypeSpecifier typeSpecifier = getCompositeTypeSpecifier();
 		if (typeSpecifier != null) {
 			return typeSpecifier.isFinal();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isNoDiscard() {
+		ICPPASTCompositeTypeSpecifier typeSpecifier = getCompositeTypeSpecifier();
+		if (typeSpecifier != null) {
+			return AttributeUtil.hasNodiscardAttribute(typeSpecifier);
 		}
 		return false;
 	}

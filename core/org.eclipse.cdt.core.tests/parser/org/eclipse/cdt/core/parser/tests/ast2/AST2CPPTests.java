@@ -145,6 +145,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -13425,5 +13426,30 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		ICPPASTExpression e = helper.assertNode("e[] = \"waldo\"", "\"waldo\"");
 		ICPPASTExpression f = helper.assertNode("f[] = \"waldo\"", "\"waldo\"");
 		assertTrue(e.getEvaluation().isEquivalentTo(f.getEvaluation()));
+	}
+
+	// struct Base {
+	// };
+	// struct [[nodiscard]] S : public Base {
+	// };
+	public void testNoDiscardClass() throws Exception {
+		String code = getAboveComment();
+		parseAndCheckBindings(code);
+
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+
+		CPPClassType structBase = bh.assertNonProblem("Base {", 4);
+		assertFalse(structBase.isNoDiscard());
+		IASTNode baseDefinitionName = structBase.getDefinition();
+		IASTNode baseDefinition = baseDefinitionName.getParent();
+		assertInstance(baseDefinition, ICPPASTCompositeTypeSpecifier.class);
+		assertFalse(AttributeUtil.hasNodiscardAttribute(((ICPPASTCompositeTypeSpecifier) baseDefinition)));
+
+		CPPClassType structS = bh.assertNonProblem("S", 1);
+		assertTrue(structS.isNoDiscard());
+		IASTNode sDefinitionName = structS.getDefinition();
+		IASTNode sDefinition = sDefinitionName.getParent();
+		assertInstance(sDefinition, ICPPASTCompositeTypeSpecifier.class);
+		assertTrue(AttributeUtil.hasNodiscardAttribute(((ICPPASTCompositeTypeSpecifier) sDefinition)));
 	}
 }

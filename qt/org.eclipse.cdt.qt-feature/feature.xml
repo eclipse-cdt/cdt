@@ -21,7 +21,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.launchbar" version="2.0.0" match="compatible"/>
+      <import feature="org.eclipse.launchbar" version="9.12.0" match="compatible"/>
    </requires>
 
    <plugin

@@ -20,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
@@ -49,44 +50,53 @@ public class TextLineRenderer implements ILinelRenderer {
 
 	@Override
 	public void drawLine(ITextCanvasModel model, GC gc, int line, int x, int y, int colFirst, int colLast) {
+		int width = getCellWidth() * (colLast - colFirst);
+		int height = getCellHeight();
+		if (width <= 0 || height <= 0) {
+			return;
+		}
+		Image buffer = new Image(gc.getDevice(), width, height);
+		GC doubleBufferGC = new GC(buffer);
 		if (line < 0 || line >= getTerminalText().getHeight() || colFirst >= getTerminalText().getWidth()
 				|| colFirst - colLast == 0) {
-			fillBackground(gc, x, y, getCellWidth() * (colLast - colFirst), getCellHeight());
+			fillBackground(doubleBufferGC, 0, 0, width, height);
 		} else {
 			colLast = Math.min(colLast, getTerminalText().getWidth());
 			LineSegment[] segments = getTerminalText().getLineSegments(line, colFirst, colLast - colFirst);
 			for (int i = 0; i < segments.length; i++) {
 				LineSegment segment = segments[i];
 				Style style = segment.getStyle();
-				setupGC(gc, style);
+				setupGC(doubleBufferGC, style);
 				String text = segment.getText();
-				drawText(gc, x, y, colFirst, segment.getColumn(), text);
-				drawCursor(model, gc, line, x, y, colFirst);
+				drawText(doubleBufferGC, 0, 0, colFirst, segment.getColumn(), text);
+				drawCursor(model, doubleBufferGC, line, 0, 0, colFirst);
 			}
 			if (fModel.hasLineSelection(line)) {
-				gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
-				gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION));
+				doubleBufferGC.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+				doubleBufferGC.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION));
 				Point start = model.getSelectionStart();
 				Point end = model.getSelectionEnd();
 				char[] chars = model.getTerminalText().getChars(line);
-				if (chars == null)
-					return;
-				int offset = 0;
-				if (start.y == line)
-					offset = start.x;
-				offset = Math.max(offset, colFirst);
-				int len;
-				if (end.y == line)
-					len = end.x - offset + 1;
-				else
-					len = chars.length - offset + 1;
-				len = Math.min(len, chars.length - offset);
-				if (len > 0) {
-					String text = new String(chars, offset, len);
-					drawText(gc, x, y, colFirst, offset, text);
+				if (chars != null) {
+					int offset = 0;
+					if (start.y == line)
+						offset = start.x;
+					offset = Math.max(offset, colFirst);
+					int len;
+					if (end.y == line)
+						len = end.x - offset + 1;
+					else
+						len = chars.length - offset + 1;
+					len = Math.min(len, chars.length - offset);
+					if (len > 0) {
+						String text = new String(chars, offset, len);
+						drawText(doubleBufferGC, 0, 0, colFirst, offset, text);
+					}
 				}
 			}
 		}
+		gc.drawImage(buffer, x, y);
+		doubleBufferGC.dispose();
 	}
 
 	private void fillBackground(GC gc, int x, int y, int width, int height) {

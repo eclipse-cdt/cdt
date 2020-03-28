@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
@@ -262,6 +263,15 @@ public class CPPClassTemplate extends CPPTemplateDefinition
 		ICPPASTCompositeTypeSpecifier typeSpecifier = getCompositeTypeSpecifier();
 		if (typeSpecifier != null) {
 			return typeSpecifier.isFinal();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isNoDiscard() {
+		ICPPASTCompositeTypeSpecifier typeSpecifier = getCompositeTypeSpecifier();
+		if (typeSpecifier != null) {
+			return AttributeUtil.hasNodiscardAttribute(typeSpecifier);
 		}
 		return false;
 	}

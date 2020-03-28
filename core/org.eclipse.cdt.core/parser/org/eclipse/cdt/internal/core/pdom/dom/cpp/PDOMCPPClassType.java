@@ -60,8 +60,9 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	private static final int ANONYMOUS = KEY + 1; // byte
 	private static final int FINAL = ANONYMOUS + 1; // byte
 	private static final int VISIBLE_TO_ADL_ONLY = FINAL + 1; // byte
+	private static final int NO_DISCARD = VISIBLE_TO_ADL_ONLY + 1; // byte
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = VISIBLE_TO_ADL_ONLY + 1;
+	protected static final int RECORD_SIZE = NO_DISCARD + 1;
 
 	private PDOMCPPClassScope fScope; // No need for volatile, all fields of PDOMCPPClassScope are final.
 
@@ -73,6 +74,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		setAnonymous(classType);
 		setFinal(classType);
 		setVisibleToAdlOnly(visibleToAdlOnly);
+		setNoDiscard(classType);
 		// Linked list is initialized by storage being zero'd by malloc.
 	}
 
@@ -97,6 +99,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 			setKind(ct);
 			setAnonymous(ct);
 			setFinal(ct);
+			setNoDiscard(ct);
 			super.update(linkage, newBinding);
 		}
 	}
@@ -111,6 +114,10 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	private void setFinal(ICPPClassType ct) throws CoreException {
 		getDB().putByte(record + FINAL, (byte) (ct.isFinal() ? 1 : 0));
+	}
+
+	private void setNoDiscard(ICPPClassType ct) throws CoreException {
+		getDB().putByte(record + NO_DISCARD, (byte) (ct.isNoDiscard() ? 1 : 0));
 	}
 
 	@Override
@@ -273,6 +280,16 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	public boolean isFinal() {
 		try {
 			return getDB().getByte(record + FINAL) != 0;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isNoDiscard() {
+		try {
+			return getDB().getByte(record + NO_DISCARD) != 0;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return false;

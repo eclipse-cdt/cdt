@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f69185c8_844a81b1",
+        "filename": "build/org.eclipse.cdt.autotools.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-28T19:16:22Z",
+      "side": 1,
+      "message": "Please add the appropriate filters to the bundles when changing package to x-internal. These changes are good - but they introduce many API errors of the form:\n\nDescription\tResource\tPath\tLocation\tType\nThe type org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin in org.eclipse.cdt.autotools.ui_2.1.0 is no longer an API\tAutotoolsUIPlugin.java\t/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/autotools/ui\tline 36\tCompatibility Problem",
+      "revId": "b65be51fc9378720f766b84509443c36018429fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

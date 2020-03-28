@@ -34,6 +34,24 @@
       "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca29f815_61b28192",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-28T16:05:39Z",
+      "side": 1,
+      "message": "Yes, I can see it. I found that some ot methods catches `getDB` exception and some of them are re-throwing exception to a caller.\nThe signatures should be more consistent, but this is far beyond the scope of this change.",
+      "parentUuid": "9b0b06cb_60a83073",
+      "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

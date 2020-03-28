@@ -592,4 +592,9 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 			return CPPClosureType.this.getConstructors();
 		}
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return false;
+	}
 }

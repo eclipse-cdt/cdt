@@ -669,6 +669,11 @@ public class PDOMASTAdapter {
 		public int getVisibility(IBinding member) {
 			return ((ICPPClassType) fDelegate).getVisibility(member);
 		}
+
+		@Override
+		public boolean isNoDiscard() {
+			return ((ICPPClassType) fDelegate).isNoDiscard();
+		}
 	}
 
 	private static class AnonymousClassSpecialization extends AnonymousClassType implements ICPPClassSpecialization {

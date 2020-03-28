@@ -191,6 +191,11 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 	}
 
 	@Override
+	public boolean isNoDiscard() {
+		return false;
+	}
+
+	@Override
 	public int getVisibility(IBinding member) {
 		throw new IllegalArgumentException(member.getName() + " is not a member of " + getName()); //$NON-NLS-1$
 	}

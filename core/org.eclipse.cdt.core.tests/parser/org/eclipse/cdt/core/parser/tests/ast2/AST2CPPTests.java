@@ -145,15 +145,20 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
@@ -13425,5 +13430,63 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		ICPPASTExpression e = helper.assertNode("e[] = \"waldo\"", "\"waldo\"");
 		ICPPASTExpression f = helper.assertNode("f[] = \"waldo\"", "\"waldo\"");
 		assertTrue(e.getEvaluation().isEquivalentTo(f.getEvaluation()));
+	}
+
+	// struct Base {
+	// };
+	// struct [[nodiscard]] S : public Base {
+	// };
+	public void testNoDiscardClass_Bug534420() throws Exception {
+		String code = getAboveComment();
+		parseAndCheckBindings(code);
+
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+
+		CPPClassType structBase = bh.assertNonProblem("Base {", 4);
+		assertFalse(structBase.isNoDiscard());
+		IASTNode baseDefinitionName = structBase.getDefinition();
+		IASTNode baseDefinition = baseDefinitionName.getParent();
+		assertInstance(baseDefinition, ICPPASTCompositeTypeSpecifier.class);
+		assertFalse(AttributeUtil.hasNodiscardAttribute(((ICPPASTCompositeTypeSpecifier) baseDefinition)));
+
+		CPPClassType structS = bh.assertNonProblem("S", 1);
+		assertTrue(structS.isNoDiscard());
+		IASTNode sDefinitionName = structS.getDefinition();
+		IASTNode sDefinition = sDefinitionName.getParent();
+		assertInstance(sDefinition, ICPPASTCompositeTypeSpecifier.class);
+		assertTrue(AttributeUtil.hasNodiscardAttribute(((ICPPASTCompositeTypeSpecifier) sDefinition)));
+	}
+
+	//template <typename T>
+	//struct Foo {};
+	//template <typename T>
+	//struct [[nodiscard]] Foo<T*> {};
+	//
+	//Foo<int> var1;
+	//Foo<int*> var2;
+	public void testNoDiscardTemplateSpecialization_Bug534420() throws Exception {
+		String code = getAboveComment();
+		parseAndCheckBindings(code);
+
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+
+		CPPClassTemplate structFoo = bh.assertNonProblem("Foo {", 3);
+		assertFalse(structFoo.isNoDiscard());
+		IASTNode fooDefinitionName = structFoo.getDefinition();
+		IASTNode fooDefinition = fooDefinitionName.getParent();
+		assertInstance(fooDefinition, ICPPASTCompositeTypeSpecifier.class);
+		assertFalse(AttributeUtil.hasNodiscardAttribute(((ICPPASTCompositeTypeSpecifier) fooDefinition)));
+
+		CPPClassTemplatePartialSpecialization structSpec = bh.assertNonProblem("Foo<T*> {", 7);
+		assertTrue(structSpec.isNoDiscard());
+		IASTNode specDefinitionName = structSpec.getDefinition();
+		IASTNode specDefinition = specDefinitionName.getParent();
+		assertInstance(specDefinition, ICPPASTCompositeTypeSpecifier.class);
+		assertTrue(AttributeUtil.hasNodiscardAttribute(((ICPPASTCompositeTypeSpecifier) specDefinition)));
+
+		CPPVariable var1Base = bh.assertNonProblem("var1", 4);
+		CPPVariable var2Spec = bh.assertNonProblem("var2", 4);
+		assertFalse(((CPPClassInstance) var1Base.getType()).isNoDiscard());
+		assertTrue(((CPPClassInstance) var2Spec.getType()).isNoDiscard());
 	}
 }

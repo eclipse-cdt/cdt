@@ -128,6 +128,11 @@ public class CPPTemplateTemplateParameterSpecialization extends CPPTemplateParam
 	}
 
 	@Override
+	public boolean isNoDiscard() {
+		return false;
+	}
+
+	@Override
 	public int getVisibility(IBinding member) {
 		return getSpecializedBinding().getVisibility(member);
 	}

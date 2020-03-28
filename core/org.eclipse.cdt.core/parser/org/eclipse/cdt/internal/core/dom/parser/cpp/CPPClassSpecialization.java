@@ -511,6 +511,15 @@ public class CPPClassSpecialization extends CPPSpecialization
 	}
 
 	@Override
+	public boolean isNoDiscard() {
+		ICPPClassType clazz = getSpecializedBinding();
+		if (clazz != null) {
+			return clazz.isNoDiscard();
+		}
+		return false;
+	}
+
+	@Override
 	public int getVisibility(IBinding member) {
 		return ClassTypeHelper.getVisibility(this, member);
 	}

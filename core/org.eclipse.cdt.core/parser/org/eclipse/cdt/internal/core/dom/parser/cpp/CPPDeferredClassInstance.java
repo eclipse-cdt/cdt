@@ -179,6 +179,11 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding
 	}
 
 	@Override
+	public boolean isNoDiscard() {
+		return false;
+	}
+
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return fArguments;
 	}

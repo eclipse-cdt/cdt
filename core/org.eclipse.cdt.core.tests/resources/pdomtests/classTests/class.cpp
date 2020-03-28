@@ -35,3 +35,6 @@ class D {
 
 class E final : public A {
 };
+
+class [[nodiscard]] F : public A {
+};

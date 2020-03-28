@@ -231,4 +231,9 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	public int getVisibility(IBinding member) {
 		return ((ICPPClassType) rbinding).getVisibility(member);
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return ((ICPPClassType) rbinding).isNoDiscard();
+	}
 }

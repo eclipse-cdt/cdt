@@ -72,6 +72,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 
 	private static final byte FLAGS_FINAL = 0x01;
 	private static final byte FLAGS_HAS_OWN_SCOPE = 0x02;
+	private static final byte FLAGS_NODISCARD = 0x03;
 
 	private volatile ICPPClassScope fScope;
 	private ObjectMap specializationMap; // Obtained from the synchronized PDOM cache.
@@ -502,6 +503,16 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	public boolean isFinal() {
 		try {
 			return (getFlags() & FLAGS_FINAL) != 0;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isNoDiscard() {
+		try {
+			return (getFlags() & FLAGS_NODISCARD) != 0;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return false;

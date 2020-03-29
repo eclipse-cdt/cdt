@@ -97,6 +97,7 @@ public class TextLineRenderer implements ILinelRenderer {
 		}
 		gc.drawImage(buffer, x, y);
 		doubleBufferGC.dispose();
+		buffer.dispose();
 	}
 
 	private void fillBackground(GC gc, int x, int y, int width, int height) {

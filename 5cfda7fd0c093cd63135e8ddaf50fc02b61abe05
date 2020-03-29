@@ -52,6 +52,24 @@
       "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "344ecabb_d193c73b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-29T06:31:37Z",
+      "side": 1,
+      "message": "For methods implementing interfaces like ICompositeType, the exception signature is governed by the interface.\n\nAdding a throws clause to e.g. ICompositeType.isAnonymous() would have a viral effect on all implementations (including ones that never have to do an operation like getDB()) and their callers.",
+      "parentUuid": "ca29f815_61b28192",
+      "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

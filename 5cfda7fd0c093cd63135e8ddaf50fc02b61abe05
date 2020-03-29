@@ -70,6 +70,24 @@
       "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4ce4c062_e47be86b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-29T07:22:31Z",
+      "side": 1,
+      "message": "I understand all that potential influence and I\u0027m not suggesting to change this signature.\n\nMy question is about interface contract: what was an idea to throw \"on access exception\" for only a part of its methods?\n*If* we have a concept of \"DB backend\" behind it *than* current design looks strange: I will always have safe (and potentially wrong) answer for \"read\" but need to process exception if I want to \"write\". What it all for?",
+      "parentUuid": "344ecabb_d193c73b",
+      "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

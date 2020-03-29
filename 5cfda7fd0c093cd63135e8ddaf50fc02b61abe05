@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "53f180e2_28ca07ee",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13454,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-03-29T18:54:17Z",
+      "side": 1,
+      "message": "Ok",
+      "parentUuid": "f9049d6b_8ef8b26c",
+      "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c345a9d1_50bdea32",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
         "patchSetId": 1
@@ -47,6 +65,24 @@
       "writtenOn": "2020-03-29T18:46:57Z",
       "side": 1,
       "message": "Since we are changing the record size, we need to increase the PDOM version.",
+      "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f525527c_39f6adab",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-03-29T18:54:17Z",
+      "side": 1,
+      "message": "I already bumped up the pdom version in a previous commit, what\u0027s the policy here? A bump for each commit? Or a bump for each CDT release?",
+      "parentUuid": "dc4e42a6_dd3d8c1a",
       "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

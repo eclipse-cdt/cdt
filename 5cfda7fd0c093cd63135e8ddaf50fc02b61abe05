@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "f9af4029_97f3a0d1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-29T19:01:58Z",
+      "side": 1,
+      "message": "We usually do a bump for each commit. The reason is that there may be people using nightly builds, who e.g. reindexed their project with yesterday\u0027s nightly (which included the previous version bump).\n\nIf they then update to a nightly containing this patch, and the version hasn\u0027t been bumped again, their index will become corrupted.",
+      "parentUuid": "f525527c_39f6adab",
+      "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4c42408b_4201ddac",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
         "patchSetId": 1

@@ -2492,8 +2492,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		final int elementsLength = elements.size();
 		if (encloseInParen) {
-			boolean spaceBeforeClosingParen = elements.isEmpty() && !addEllipsis ? options.fSpaceBetweenEmptyParen
-					: options.fSpaceBeforeClosingParen;
+			boolean spaceBeforeClosingParen = elements.isEmpty() && !addEllipsis
+					&& options.captureDefault == CaptureDefault.UNSPECIFIED ? options.fSpaceBetweenEmptyParen
+							: options.fSpaceBeforeClosingParen;
 			tailFormatter = new ClosingParensesisTailFormatter(spaceBeforeClosingParen, tailFormatter,
 					options.rightToken);
 		}

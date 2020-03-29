@@ -4771,4 +4771,23 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testDeductionGuideExplicit() throws Exception {
 		assertFormatterResult();
 	}
+
+	//int main() {
+	//	auto f = [&](){
+	//	};
+	//	return 0;
+	//}
+
+	//int main() {
+	//	auto f = [ & ]() {
+	//	};
+	//	return 0;
+	//}
+	public void testLambdaExpressionOnlyDefCapture_Bug561559() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_DECLARATION,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_DECLARATION,
+				CCorePlugin.INSERT);
+		assertFormatterResult();
+	}
 }

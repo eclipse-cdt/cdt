@@ -31,6 +31,8 @@
         name="org.eclipse.jdt.feature.group"/>
     <requirement
         name="org.eclipse.pde.feature.group"/>
+    <requirement
+        name="org.sonatype.tycho.m2e.feature.feature.group"/>
     <repository
         url="http://download.eclipse.org/technology/swtbot/releases/latest"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>

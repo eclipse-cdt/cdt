@@ -34,6 +34,24 @@
       "revId": "022b8bb69976125fb9e359c5cd77026992264c26",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d2ddaf2c_445ba745",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-29T17:29:04Z",
+      "side": 1,
+      "message": "Thanks - that is where I expected it to be I just misread the patch and incorrectly thought it was in the target platform.",
+      "parentUuid": "15160311_d7328534",
+      "revId": "022b8bb69976125fb9e359c5cd77026992264c26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

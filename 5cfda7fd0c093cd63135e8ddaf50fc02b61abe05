@@ -88,6 +88,24 @@
       "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b1be99d_5303d940",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPClassType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-29T18:36:37Z",
+      "side": 1,
+      "message": "As for that I\u0027m not sure. These classes predate my involvement with the project.",
+      "parentUuid": "4ce4c062_e47be86b",
+      "revId": "5cfda7fd0c093cd63135e8ddaf50fc02b61abe05",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

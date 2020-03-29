@@ -58,10 +58,16 @@ public class TerminalActionPaste extends AbstractTerminalAction {
 	@Override
 	public void updateAction(boolean aboutToShow) {
 		ITerminalViewControl target = getTarget();
-		boolean bEnabled = target != null && target.getClipboard() != null && !target.getClipboard().isDisposed();
-		if (bEnabled) {
-			String strText = (String) target.getClipboard().getContents(TextTransfer.getInstance());
-			bEnabled = ((strText != null) && (!strText.equals("")) && (target.getState() == TerminalState.CONNECTED));//$NON-NLS-1$
+		boolean bEnabled = false;
+		if (target != null) {
+			if (target.getState() == TerminalState.CONNECTED) {
+				if (target.getClipboard() != null && !target.getClipboard().isDisposed()) {
+					String strText = (String) target.getClipboard().getContents(TextTransfer.getInstance());
+					if (strText != null && !strText.isEmpty()) {
+						bEnabled = true;
+					}
+				}
+			}
 		}
 		setEnabled(bEnabled);
 	}

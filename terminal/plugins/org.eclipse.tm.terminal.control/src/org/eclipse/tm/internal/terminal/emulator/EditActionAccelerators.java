@@ -24,7 +24,7 @@ class EditActionAccelerators {
 	private static final String COPY_COMMAND_ID = "org.eclipse.tm.terminal.copy"; //$NON-NLS-1$
 	private static final String PASTE_COMMAND_ID = "org.eclipse.tm.terminal.paste"; //$NON-NLS-1$
 
-	private final Map commandIdsByAccelerator = new HashMap();
+	private final Map<Integer, String> commandIdsByAccelerator = new HashMap<Integer, String>();
 
 	private void load() {
 		addAccelerator(COPY_COMMAND_ID);

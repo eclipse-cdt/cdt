@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c65bfa5_9314f95d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-29T18:35:01Z",
+      "side": 1,
+      "message": "What is the purpose of this check?",
+      "revId": "0d110578715920955e3e4f03ea2dd9b84ddc54b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

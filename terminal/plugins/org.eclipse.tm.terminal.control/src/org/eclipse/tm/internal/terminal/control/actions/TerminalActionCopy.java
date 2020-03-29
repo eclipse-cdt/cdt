@@ -60,10 +60,10 @@ public class TerminalActionCopy extends AbstractTerminalAction {
 	@Override
 	public void updateAction(boolean aboutToShow) {
 		ITerminalViewControl target = getTarget();
-		boolean bEnabled = target != null;
-		if (aboutToShow && bEnabled) {
-			bEnabled = target.getSelection().length() > 0;
+		if (aboutToShow && target != null) {
+			setEnabled(!target.getSelection().isEmpty());
+		} else {
+			setEnabled(false);
 		}
-		setEnabled(bEnabled);
 	}
 }

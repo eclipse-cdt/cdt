@@ -31,7 +31,7 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 	private int messageType = IMessageProvider.NONE;
 
 	// Reference to the listener
-	private final ListenerList listeners = new ListenerList();
+	private final ListenerList<Listener> listeners = new ListenerList<>();
 
 	// Flag to control the control decorations
 	private boolean hasDecoration = false;

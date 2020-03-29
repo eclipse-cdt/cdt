@@ -19,7 +19,7 @@
 # Martin Oberhuber (Wind River) - [434939] Fix Keybinding conflicts with JEE Luna package
 -->
 <plugin>
-   <extension-point id="connectors" name="Terminal Connector Extensions" schema="schema/connectors.exsd"/>
+   <extension-point id="connectors" name="%terminal.connectors.name" schema="schema/connectors.exsd"/>
    
    <extension point="org.eclipse.ui.contexts">           
       <context

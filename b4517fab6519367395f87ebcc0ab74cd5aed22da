@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d5c28eb_1493de78",
+        "filename": "codan/org.eclipse.cdt.codan.checkers.ui.tests/src/org/eclipse/cdt/codan/checkers/ui/quickfix/AutomatedIntegrationSuite.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-03-30T14:40:34Z",
+      "side": 0,
+      "message": "If you delete this please make sure the tests still are running - note that AutomatedIntegrationSuite is what is configured to run:\n\nhttps://github.com/eclipse-cdt/cdt/blob/ec893a74ec4b0440002d90dbd7a5942743bb5ca6/pom.xml#L894",
+      "revId": "b4517fab6519367395f87ebcc0ab74cd5aed22da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

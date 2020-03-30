@@ -39,6 +39,30 @@
       "revId": "2dc59c9e95b649fa08523e978ab642ebd88fa3c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2c401633_5dbb294e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/CommonBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-03-30T05:45:39Z",
+      "side": 1,
+      "message": "Log message is not sufficient here: user should be able to see an IMarker in \"Problems\" view. Then we can make the severity configurable.",
+      "parentUuid": "3f323001_de5180f5",
+      "range": {
+        "startLine": 589,
+        "startChar": 4,
+        "endLine": 589,
+        "endChar": 28
+      },
+      "revId": "2dc59c9e95b649fa08523e978ab642ebd88fa3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

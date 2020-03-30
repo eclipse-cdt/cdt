@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 COSEDA Technologies GmbH
+ * Copyright (c) 2016, 2020 COSEDA Technologies GmbH and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Dominic Scharfe (COSEDA Technologies GmbH) - initial implementation
- *
+ *     Alexander Fedorov (alexander.fedorov@arsysop.ru) - Bug 561582
  *******************************************************************************/
 package org.eclipse.cdt.codan.checkers.ui.quickfix;
 
@@ -34,7 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QuickFixCreateNewClassTest {

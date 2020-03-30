@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "060b9ef4_adbc7496",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/CommonBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 67162
+      },
+      "writtenOn": "2020-03-30T05:33:34Z",
+      "side": 1,
+      "message": "Shouldn\u0027t copyright years (2019-2020) be updated as well?",
+      "revId": "2dc59c9e95b649fa08523e978ab642ebd88fa3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f323001_de5180f5",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/CommonBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 67162
+      },
+      "writtenOn": "2020-03-30T05:33:34Z",
+      "side": 1,
+      "message": "I don\u0027t think that a circular reference is really an \u0027error\u0027 case. As far as I\u0027m concerned, a \u0027warning\u0027 message should be enough.",
+      "range": {
+        "startLine": 589,
+        "startChar": 4,
+        "endLine": 589,
+        "endChar": 28
+      },
+      "revId": "2dc59c9e95b649fa08523e978ab642ebd88fa3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1cd59f43_fa8082f6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPClassSpecialization.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-31T04:39:05Z",
+      "side": 1,
+      "message": "OK, I was misremembering how CPPClassSpecialization worked. I guess we did need a change to the code :)\n\nBut now, I think we may get explicit specializations wrong:\n\n  // Primary template is not nodiscard\n  template \u003ctypename T\u003e\n  struct Foo {};\n\n  // Explicit specialization is nodiscard\n  template \u003c\u003e\n  struct [[nodicard]] Foo\u003cint\u003e {};\n\n  Foo\u003cint\u003e var1;   // uses explicit specialization\n\nI believe the way it works is:\n\n* A CPPClassSpecialization that represents an explicit specialization will have non-null getDefinition() and getCompositeTypeSpecifier(), but a null getSpecializationScope(). Operations are typically performed via the composite type specifier as for a regular class.\n\n* A CPPClassSpecialization that was instantiated from a primary template or a partial specialization will have a null getDefinition() and getCompositeTypeSpecifier(), but a non-null getSpecializationScope(). Operations are typically performed via the specialization scope (or getSpecializedBinding() directly).\n\nNote that using getSpecializedBinding() for an explicit instantiation is almost certainly wrong, as it will return the primary template. (Whereas, for a partial specialization, getSpecializedBinding() will return the ICPPClassTemplatePartialSpecialization representing the (uninstantiated) partial specialization pattern.)\n\nAnyways, sorry for being so long winded. Templates are complicated...\n\nThe point is, I think the correct implementation would be:\n\n  // First handle the explicit specialization case\n  CPPASTCompositeTypeSpecifier typeSpecifier \u003d getCompositeTypeSpecifier();\n  if (typeSpecifier !\u003d null) {\n    return AttributeUtil.hasNodiscardAttribute(typeSpecifier);\n  }\n\n  // Now handle the partial spec or primary template case\n  ICPPClassType clazz \u003d getSpecializedBinding();\n  if (clazz !\u003d null) {\n    return clazz.isNoDiscard();\n  }\n\n  return false;",
+      "revId": "176fb7ab7094493f4871e49f0c409cc70c240af8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

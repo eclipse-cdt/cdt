@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "97eb8ba1_d49eee03",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-31T04:59:31Z",
+      "side": 1,
+      "message": "Thanks, this looks pretty good.\n\nI think there\u0027s an opportunity to organize this function a bit more.\n\nConcrete suggestions:\n\n* have a helper isDiscardedValueExpression(IASTExpression)\n* have a helper isCallToNodiscardFunction(IASTExpression)\n* the body of visit() can then just be\n\n  if (isDiscardedValueExpression(expr) \u0026\u0026\n      isCallToNodiscardFunction(expr)) {\n    reportProblem(...);\n  }\n\nisDiscardedValueExpression can be implemented something like this (pseudocode):\n\n  // unwrap parentheses\n  while expr is unary with op bracketedPrimary\n    expr \u003d expr.parent\n  // check for expression statement\n  if expr.parent is ExpressionStatement\n    return true\n  // check for left hand side of comma expression\n  if expr.propertyInParent is ExpressionList.NESTED_EXPRESSION\n    ExpressionList list \u003d (ExpressionList) expr.parent\n    allExpr \u003d list.expressions\n    return expr !\u003d allExpr[allExpr.length - 1]\n  return false\n\nisCallToNodiscardFunction could be implemented something like this:\n\n1. check that it\u0027s either a FunctionCallExpression or a static_cast, early exit otherwise\n2. try evaluation next, handle EvalTypeId\n3. otherwise introspect the function-name-expression as we currently do",
+      "revId": "f1b31133d9bb82cd88064fbd4f415b42ee866004",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

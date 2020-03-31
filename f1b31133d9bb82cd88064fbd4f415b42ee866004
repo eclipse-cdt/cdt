@@ -16,6 +16,24 @@
       "revId": "f1b31133d9bb82cd88064fbd4f415b42ee866004",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "241c491f_a3a0e928",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-31T05:04:50Z",
+      "side": 1,
+      "message": "\u003e 3. otherwise introspect the function-name-expression as we\n \u003e currently do\n\nActually, I realized that this approach overlooks the function object case:\n\n  struct Foo {\n    [[nodiscard]] operator()() {}\n  };\n\n  int main() {\n    Foo foo;\n    foo();  // should give diagnostic\n  }\n\nTo handle this case, it\u0027s better to use evaluations for the function call case as well:\n\n* after checking for EvalTypeId, check for EvalFunctionCall\n* use EvalFunctionCall.resolveFunctionBinding() (make it public) to get the called function\n\n(And let\u0027s add the above as a test case as well.)",
+      "parentUuid": "97eb8ba1_d49eee03",
+      "revId": "f1b31133d9bb82cd88064fbd4f415b42ee866004",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

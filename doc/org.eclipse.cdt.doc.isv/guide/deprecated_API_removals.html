@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html lang="en">
+
+<head>
+  <meta name="copyright"
+    content="Copyright (c) IBM Corporation and others 2011, 2020. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <link rel="STYLESHEET" href="../book.css" charset="ISO-8859-1" type="text/css">
+  <title>Eclipse CDT Deprecated and Breaking API changes and removals</title>
+</head>
+
+<body>
+  <h1>Eclipse CDT Deprecated and Breaking API changes and removals</h1>
+
+  <p>
+    Deprecated API can be marked for deletion without requiring a major version increment.
+    See the <a href="https://wiki.eclipse.org/CDT/policy">policy</a> for the details.
+    This section describes API removals that occurred in past releases, and upcoming removals in future releases.
+  </p>
+
+  <p>
+    API Changes prior to CDT 10.0 / 2020-09.
+  </p>
+  <p>
+    Prior to CDT 10 release API changes were published as part of the <a
+      href="https://wiki.eclipse.org/CDT/User/NewInCDT">New and Noteworthy</a> entries for that release. From CDT 10
+    forward breaking API changes are included in this document.
+  </p>
+
+  <p>
+    API Changes in CDT 10.0.
+  </p>
+  <ol>
+    <li><a href="#java11">Eclipse CDT requires Java 11 as a minimum to build and run.</a></li>
+    <li><a href="#internals">Previously exported packages that were not API are now correctly marked as such.</a></li>
+    <li><a href="#activators">Activators removed for all bundles where possible.</a></li>
+    <li><a href="#NewClassCreationWizardPage">NewClassCreationWizardPage breaking changes.</a></li>
+  </ol>
+  <p>
+    Planned Removals after June 2022
+  </p>
+  <ol>
+    <li><a href="#binaryparsers">32-bit Binary parsers with 64-bit replacements</a></li>
+  </ol>
+
+  <hr>
+
+  <h2>API Changes in CDT 10.0.</h2>
+  <h3>1. <a name="java11">Eclipse CDT requires Java 11 as a minimum to build and run.</a></h3>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=562494" target="_blank">Bug 562494</a>.
+  </p>
+  <h3>2. <a name="internals">Previously exported packages that were not API are now correctly marked as such.</a></h3>
+  <p>
+    A review of the previously exported API of CDT was performed. A lot of what was previously marked as public API has
+    now been marked as internal. This means the API has either had <code>x-internal</code> or <code>x-friends</code>
+    added to the <code>Export-Package</code> declarations.
+  </p>
+  <p>
+    The following bundles have had all their packages exported as internal See <a
+      href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=561389" target="_blank">Bug 561389</a>:
+    <ul>
+      <li>org.eclipse.cdt.cmake.ui</li>
+      <li>org.eclipse.cdt.autotools.core</li>
+      <li>org.eclipse.cdt.core.autotools.core</li>
+      <li>org.eclipse.cdt.core.autotools.ui</li>
+      <li>org.eclipse.cdt.autotools.tests</li>
+      <li>org.eclipse.cdt.autotools.ui.tests</li>
+      <li>org.eclipse.cdt.build.crossgcc</li>
+      <li>org.eclipse.cdt.cmake.ui</li>
+      <li>org.eclipse.cdt.build.gcc.core</li>
+      <li>org.eclipse.cdt.build.gcc.ui</li>
+      <li>org.eclipse.cdt.codan.checkers.ui.tests</li>
+    </ul>
+  </p>
+  <p>
+    The following bundles had additional changes made to be able to mark packages as internal:
+    <ul>
+      org.eclipse.cdt.cmake.ui: renamed package "org.eclipse.cdt.cmake.ui.properties"
+      to "org.eclipse.cdt.cmake.internal.ui.properties". See <a
+        href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=561390" target="_blank">Bug 561390</a>
+    </ul>
+    <ul>
+      org.eclipse.cdt.codan.checkers: marked package "org.eclipse.cdt.codan.checkers" as internal. See <a
+        href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=561582" target="_blank">Bug 561582</a>
+    </ul>
+  </p>
+
+  <h3>3. <a name="activators">Activators removed for all bundles where possible.</a></h3>
+  <p>
+    Where possible bundles have had their Activators removed. Some of these activators were API and are no longer
+    available. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=561635" target="_blank">Bug 561635</a> for
+    workarounds where items that used to be in Activators are still needed, such as logging and plug-ids.
+  </p>
+  <p>
+    The following Activators that were API have been removed.
+    <ul>
+      <li>(None have been removed yet.)</li>
+    </ul>
+  </p>
+
+  <h3>4. <a name="NewClassCreationWizardPage">NewClassCreationWizardPage breaking changes.</a></h3>
+  <p>
+    The NewClassCreationWizardPage has some API breaking changes due to how some protected fields, especially
+    <code>ALL_FIELDS</code> was used. While this breaks binary
+    compatibility, no code changes should be needed in extenders, just compiling against the new version. See <a
+      href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=510789" target="_blank">Bug 510789</a> and <a
+      href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=561770" target="_blank">Bug 561770</a>.
+  </p>
+
+  <hr>
+
+  <h2>Future Deletions</h2>
+  <p>
+    The items below can be removed after the given date or on the next major release, whichever is sooner. The details
+    and discussion on the removal happens in the Bugzilla associated with the entry below. See
+    the <a href="https://wiki.eclipse.org/CDT/policy">policy</a> for the details.
+  </p>
+
+  <h3>API Removals after June 2022</h3>
+
+  <h3>1. <a name="binaryparsers">Planned Removals after June 2022.</a></h3>
+  <p>
+    The following binary parser classes have replacements, mostly due to these versions not supporting 64-bit variants
+    of the binary files. The new 64-bit parsers support both 32 and 64 bit files.
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryArchive</li>
+    <li>org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryExecutable</li>
+    <li>org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryObject</li>
+    <li>org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryShared</li>
+    <li>org.eclipse.cdt.utils.coff.parser.CygwinPEParser</li>
+    <li>org.eclipse.cdt.utils.coff.parser.CygwinSymbol</li>
+    <li>org.eclipse.cdt.utils.coff.parser.PEBinaryArchive</li>
+    <li>org.eclipse.cdt.utils.coff.parser.PEBinaryExecutable</li>
+    <li>org.eclipse.cdt.utils.coff.parser.PEBinaryObject</li>
+    <li>org.eclipse.cdt.utils.coff.parser.PEBinaryShared</li>
+    <li>org.eclipse.cdt.utils.coff.parser.PEParser</li>
+    <li>org.eclipse.cdt.utils.macho.parser.MachOBinaryArchive</li>
+    <li>org.eclipse.cdt.utils.macho.parser.MachOBinaryExecutable</li>
+    <li>org.eclipse.cdt.utils.macho.parser.MachOBinaryObject</li>
+    <li>org.eclipse.cdt.utils.macho.parser.MachOBinaryShared</li>
+    <li>org.eclipse.cdt.utils.macho.parser.MachOParser</li>
+  </ul>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=562495" target="_blank">Bug 562495</a>.
+  </p>
+</body>
+
+</html>

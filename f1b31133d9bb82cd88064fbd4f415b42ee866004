@@ -34,6 +34,24 @@
       "revId": "f1b31133d9bb82cd88064fbd4f415b42ee866004",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8fa470bd_fdf59457",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-03-31T05:12:58Z",
+      "side": 1,
+      "message": "Oh, evaluations don\u0027t handle the C case. So I guess we need a fall back to using the function name expression after all.\n\n(I wish we used evaluations for C as well. It would simplify several things.)\n\nFeel free to consider any of these suggestions optional if they just make things more difficult :)",
+      "parentUuid": "241c491f_a3a0e928",
+      "revId": "f1b31133d9bb82cd88064fbd4f415b42ee866004",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

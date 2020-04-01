@@ -508,6 +508,10 @@ public class CPPClassSpecialization extends CPPSpecialization
 		if (typeSpecifier != null) {
 			return typeSpecifier.isFinal();
 		}
+		ICPPClassType clazz = getSpecializedBinding();
+		if (clazz != null) {
+			return clazz.isFinal();
+		}
 		return false;
 	}
 

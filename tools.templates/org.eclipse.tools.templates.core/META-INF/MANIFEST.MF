@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.tools.templates.core
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tools.templates.core
-Bundle-Version: 1.1.100.qualifier
-Bundle-Activator: org.eclipse.tools.templates.core.internal.Activator
+Bundle-Version: 1.1.200.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

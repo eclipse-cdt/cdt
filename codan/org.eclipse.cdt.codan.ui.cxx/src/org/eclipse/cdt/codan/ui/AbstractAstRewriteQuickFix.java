@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.ui;
 
-import org.eclipse.cdt.codan.internal.ui.cxx.Activator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
@@ -42,7 +42,7 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 			try {
 				index = getIndexFromMarker(marker);
 			} catch (CoreException e) {
-				Activator.log(e);
+				Platform.getLog(getClass()).log(e.getStatus());
 				return;
 			}
 			// lock the index for read access
@@ -57,7 +57,7 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 				index.releaseReadLock();
 			}
 		} catch (Exception e) {
-			Activator.log(e);
+			Platform.getLog(getClass()).error(e.getMessage(), e);
 		}
 	}
 

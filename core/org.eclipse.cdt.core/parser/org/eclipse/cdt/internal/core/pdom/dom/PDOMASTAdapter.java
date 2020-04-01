@@ -578,6 +578,11 @@ public class PDOMASTAdapter {
 		public ICPPScope asScope() {
 			return ((ICPPEnumeration) fDelegate).asScope();
 		}
+
+		@Override
+		public boolean isNoDiscard() {
+			return ((ICPPEnumeration) fDelegate).isNoDiscard();
+		}
 	}
 
 	private static class AnonymousClassType extends AnonymousCPPBinding implements ICPPClassType {

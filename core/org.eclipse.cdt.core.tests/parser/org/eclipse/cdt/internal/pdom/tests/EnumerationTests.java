@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
@@ -101,7 +102,8 @@ public class EnumerationTests extends PDOMTestBase {
 		Pattern pattern = Pattern.compile("TestCPPEnum");
 		IBinding[] bindings = pdom.findBindings(pattern, false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
-		IEnumeration enumeration = (IEnumeration) bindings[0];
+		ICPPEnumeration enumeration = (ICPPEnumeration) bindings[0];
+		assertFalse(enumeration.isNoDiscard());
 		assertEquals("TestCPPEnum", enumeration.getName());
 		IEnumerator[] enumerators = enumeration.getEnumerators();
 		assertEquals(3, enumerators.length);
@@ -133,5 +135,12 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals(1, aRefs.length);
 		loc = aRefs[0].getFileLocation();
 		assertEquals(offset("enumTest.cpp", "cppa;"), loc.getNodeOffset());
+
+		// Check bindings no discard
+		pattern = Pattern.compile("TestCPPEnumNoDis");
+		bindings = pdom.findBindings(pattern, false, IndexFilter.ALL, new NullProgressMonitor());
+		assertEquals(1, bindings.length);
+		enumeration = (ICPPEnumeration) bindings[0];
+		assertTrue(enumeration.isNoDiscard());
 	}
 }

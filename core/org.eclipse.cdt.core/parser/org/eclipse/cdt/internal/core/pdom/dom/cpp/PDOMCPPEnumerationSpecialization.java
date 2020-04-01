@@ -51,7 +51,8 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 	private static final int OFFSET_MIN_VALUE = OFFSET_ENUMERATOR_LIST + Database.PTR_SIZE;
 	private static final int OFFSET_MAX_VALUE = OFFSET_MIN_VALUE + 8;
 	private static final int OFFSET_FIXED_TYPE = OFFSET_MAX_VALUE + 8;
-	private static final int OFFSET_FLAGS = OFFSET_FIXED_TYPE + Database.TYPE_SIZE;
+	private static final int OFFSET_NO_DISCARD = OFFSET_FIXED_TYPE + 8;
+	private static final int OFFSET_FLAGS = OFFSET_NO_DISCARD + Database.TYPE_SIZE;
 
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = OFFSET_FLAGS + 1;
@@ -84,6 +85,7 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 	private void storeProperties(ICPPEnumeration enumeration) throws CoreException {
 		final Database db = getDB();
 		db.putByte(record + OFFSET_FLAGS, enumeration.isScoped() ? (byte) 1 : (byte) 0);
+		db.putByte(record + OFFSET_NO_DISCARD, enumeration.isNoDiscard() ? (byte) 1 : (byte) 0);
 
 		getLinkage().storeType(record + OFFSET_FIXED_TYPE, enumeration.getFixedType());
 
@@ -197,6 +199,15 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 	public boolean isScoped() {
 		try {
 			return getDB().getByte(record + OFFSET_FLAGS) != 0;
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isNoDiscard() {
+		try {
+			return getDB().getByte(record + OFFSET_NO_DISCARD) != 0;
 		} catch (CoreException e) {
 			return false;
 		}

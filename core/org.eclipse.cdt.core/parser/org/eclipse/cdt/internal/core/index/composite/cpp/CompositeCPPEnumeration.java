@@ -76,4 +76,9 @@ class CompositeCPPEnumeration extends CompositeCPPBinding implements ICPPEnumera
 	public ICPPScope asScope() {
 		return new CompositeCPPEnumScope(cf, rbinding);
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return ((ICPPEnumeration) rbinding).isNoDiscard();
+	}
 }

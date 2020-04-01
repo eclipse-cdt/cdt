@@ -13501,4 +13501,21 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertTrue(((CPPClassInstance) var2Spec.getType()).isNoDiscard());
 		assertTrue(((CPPClassInstance) var3Spec.getType()).isNoDiscard());
 	}
+
+	// enum [[nodiscard]] hue { red, blue, green };
+	// enum fruit { apple, banana };
+	// enum hue col;
+	// enum fruit f;
+	public void testEnumerations_Bug534420() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+		NameCollector collector = new NameCollector();
+		tu.accept(collector);
+
+		ICPPEnumeration hue = (ICPPEnumeration) collector.getName(0).resolveBinding();
+		ICPPEnumeration fruit = (ICPPEnumeration) collector.getName(4).resolveBinding();
+		ICPPVariable col = (ICPPVariable) collector.getName(8).resolveBinding();
+		ICPPVariable f = (ICPPVariable) collector.getName(10).resolveBinding();
+		assertTrue(((ICPPEnumeration) col.getType()).isNoDiscard());
+		assertFalse(((ICPPEnumeration) f.getType()).isNoDiscard());
+	}
 }

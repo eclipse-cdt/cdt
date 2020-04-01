@@ -13501,4 +13501,49 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertTrue(((CPPClassInstance) var2Spec.getType()).isNoDiscard());
 		assertTrue(((CPPClassInstance) var3Spec.getType()).isNoDiscard());
 	}
+
+	//template <typename T>
+	//struct Foo {};
+	//template <typename T>
+	//struct Foo<T*> final {};
+	//template <>
+	//struct Foo<int> final {};
+	//
+	//Foo<double> var1;
+	//Foo<int*> var2;
+	//Foo<int> var3;
+	public void testFinalTemplateSpecialization_Bug561631() throws Exception {
+		String code = getAboveComment();
+		parseAndCheckBindings(code);
+
+		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
+
+		CPPClassTemplate structFoo = bh.assertNonProblem("Foo {", 3);
+		assertFalse(structFoo.isFinal());
+		IASTNode fooDefinitionName = structFoo.getDefinition();
+		IASTNode fooDefinition = fooDefinitionName.getParent();
+		assertInstance(fooDefinition, ICPPASTCompositeTypeSpecifier.class);
+		assertFalse((((ICPPASTCompositeTypeSpecifier) fooDefinition)).isFinal());
+
+		CPPClassTemplatePartialSpecialization structSpec = bh.assertNonProblem("Foo<T*>", 7);
+		assertTrue(structSpec.isFinal());
+		IASTNode specDefinitionName = structSpec.getDefinition();
+		IASTNode specDefinition = specDefinitionName.getParent();
+		assertInstance(specDefinition, ICPPASTCompositeTypeSpecifier.class);
+		assertTrue((((ICPPASTCompositeTypeSpecifier) specDefinition)).isFinal());
+
+		CPPClassInstance structFullSpec = bh.assertNonProblem("Foo<int>", 8);
+		assertTrue(structSpec.isFinal());
+		IASTNode specFullDefinitionName = structFullSpec.getDefinition();
+		IASTNode specFullDefinition = specFullDefinitionName.getParent();
+		assertInstance(specFullDefinition, ICPPASTCompositeTypeSpecifier.class);
+		assertTrue((((ICPPASTCompositeTypeSpecifier) specFullDefinition)).isFinal());
+
+		CPPVariable var1Base = bh.assertNonProblem("var1", 4);
+		CPPVariable var2Spec = bh.assertNonProblem("var2", 4);
+		CPPVariable var3Spec = bh.assertNonProblem("var3", 4);
+		assertFalse(((CPPClassInstance) var1Base.getType()).isFinal());
+		assertTrue(((CPPClassInstance) var2Spec.getType()).isFinal());
+		assertTrue(((CPPClassInstance) var3Spec.getType()).isFinal());
+	}
 }

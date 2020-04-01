@@ -162,4 +162,9 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 		}
 		return enumerator;
 	}
+
+	@Override
+	public boolean isNoDiscard() {
+		return getSpecializedBinding().isNoDiscard();
+	}
 }

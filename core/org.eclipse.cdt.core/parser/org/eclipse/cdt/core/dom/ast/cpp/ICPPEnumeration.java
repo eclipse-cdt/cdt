@@ -43,4 +43,10 @@ public interface ICPPEnumeration extends IEnumeration, ICPPBinding {
 	 * will be returned.
 	 */
 	ICPPScope asScope();
+
+	/**
+	 * Returns weather the enum is marked as 'nodiscard'
+	 * @since 6.12
+	 */
+	boolean isNoDiscard();
 }

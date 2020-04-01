@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -89,6 +90,11 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		@Override
 		public ICPPScope asScope() {
 			return this;
+		}
+
+		@Override
+		public boolean isNoDiscard() {
+			return false;
 		}
 	}
 
@@ -338,5 +344,19 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 			IASTNode node = CPPVisitor.getContainingBlockItem(getADeclaration()).getParent();
 			node.accept(action);
 		}
+	}
+
+	@Override
+	public boolean isNoDiscard() {
+		findDefinition();
+		IASTName def = getDefinition();
+		if (def == null) {
+			ICPPEnumeration indexBinding = getIndexBinding();
+			if (indexBinding != null) {
+				return indexBinding.isNoDiscard();
+			}
+			def = getADeclaration();
+		}
+		return AttributeUtil.hasNodiscardAttribute(((ICPPASTEnumerationSpecifier) def.getParent()));
 	}
 }

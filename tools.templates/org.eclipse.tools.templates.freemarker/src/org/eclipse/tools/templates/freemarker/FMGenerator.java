@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 QNX Software Systems and others.
+ * Copyright (c) 2016, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -46,9 +47,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.tools.templates.core.IGenerator;
-import org.eclipse.tools.templates.freemarker.internal.Activator;
 import org.eclipse.tools.templates.freemarker.internal.Messages;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import com.sun.xml.bind.v2.ContextFactory;
 
@@ -63,11 +64,15 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 	private final String manifestPath;
 	private TemplateManifest manifest;
 	private List<IFile> filesToOpen = new ArrayList<>();
+	private final String pluginId;
 
 	protected FMGenerator(String manifestPath) {
 		templateConfig = new Configuration(Configuration.VERSION_2_3_22);
 		templateConfig.setTemplateLoader(this);
 		this.manifestPath = manifestPath;
+		this.pluginId = Optional.ofNullable(FrameworkUtil.getBundle(FMGenerator.class))//
+				.map(b -> b.getSymbolicName())//
+				.orElse(FMGenerator.class.getName());
 	}
 
 	protected abstract Bundle getSourceBundle();
@@ -107,7 +112,7 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 			Unmarshaller unmarshaller = xmlContext.createUnmarshaller();
 			manifest = (TemplateManifest) unmarshaller.unmarshal(new StringReader(writer.toString()));
 		} catch (JAXBException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), Messages.FMGenerator_0, e));
+			throwCoreException(Messages.FMGenerator_0, e);
 		}
 
 		// generate files
@@ -132,8 +137,7 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 							}
 						}
 					} catch (IOException e) {
-						throw new CoreException(new Status(IStatus.ERROR, Activator.getId(),
-								String.format(Messages.FMGenerator_1, fileTemplate.getSrc()), e));
+						throwCoreException(String.format(Messages.FMGenerator_1, fileTemplate.getSrc()), e);
 					}
 				}
 
@@ -160,8 +164,7 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 			Template template = templateConfig.getTemplate(templateFile);
 			template.process(model, out);
 		} catch (IOException | TemplateException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(),
-					String.format(Messages.FMGenerator_2, templateFile), e));
+			throwCoreException(String.format(Messages.FMGenerator_2, templateFile), e);
 		}
 	}
 
@@ -179,8 +182,7 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 				}
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(),
-					String.format(Messages.FMGenerator_3, templateFile), e));
+			throwCoreException(String.format(Messages.FMGenerator_3, templateFile), e);
 		}
 	}
 
@@ -232,6 +234,10 @@ public abstract class FMGenerator implements IGenerator, TemplateLoader {
 	@Override
 	public void closeTemplateSource(Object arg0) throws IOException {
 		// Nothing
+	}
+
+	private void throwCoreException(String message, Throwable e) throws CoreException {
+		throw new CoreException(new Status(IStatus.ERROR, pluginId, message, e));
 	}
 
 }

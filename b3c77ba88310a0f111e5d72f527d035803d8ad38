@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2847533a_f78e009c",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-04-01T01:49:21Z",
+      "side": 1,
+      "message": "Why does this need to be an array rather than just a single IASTNode?",
+      "revId": "b3c77ba88310a0f111e5d72f527d035803d8ad38",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "46cb727b_cd1b6667",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-04-01T01:49:21Z",
+      "side": 1,
+      "message": "If we move this loop to the beginning of the function, it would also handle a case like:\n\n  (foo()), bar();\n\n(where foo is nodiscard).",
+      "revId": "b3c77ba88310a0f111e5d72f527d035803d8ad38",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "df8b7b89_7e572861",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-04-01T01:49:21Z",
+      "side": 1,
+      "message": "Why does this need to be passed \u0027res\u0027, rather than using the field \u0027this.res\u0027?",
+      "revId": "b3c77ba88310a0f111e5d72f527d035803d8ad38",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

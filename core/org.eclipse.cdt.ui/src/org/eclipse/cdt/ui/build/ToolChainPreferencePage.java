@@ -54,7 +54,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.tools.templates.ui.internal.Activator;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -91,7 +90,7 @@ public class ToolChainPreferencePage extends PreferencePage implements IWorkbenc
 		try {
 			toolChains = new ArrayList<>(manager.getAllToolChains());
 		} catch (CoreException e) {
-			Activator.log(e);
+			Platform.getLog(getClass()).log(e.getStatus());
 		}
 	}
 

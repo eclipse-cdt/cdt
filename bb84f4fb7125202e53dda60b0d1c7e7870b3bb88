@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41a48ee8_2969498d",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/ERandomAccessFile.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-02T08:41:04Z",
+      "side": 1,
+      "message": "Please make it final",
+      "revId": "bb84f4fb7125202e53dda60b0d1c7e7870b3bb88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "31825cbb_65e4de4d",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-02T08:41:04Z",
+      "side": 1,
+      "message": "Please follow Eclipse (Java) naming convention https://help.eclipse.org/2019-12/index.jsp?topic\u003d%2Forg.eclipse.platform.doc.isv%2Freference%2Fmisc%2Fnaming.html\u0026anchor\u003dVariables",
+      "revId": "bb84f4fb7125202e53dda60b0d1c7e7870b3bb88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28850dae_11bab7c8",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1084,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-02T08:41:04Z",
+      "side": 1,
+      "message": "Please consider to extract this class to a separate file as its enclosing type is huge enough.",
+      "revId": "bb84f4fb7125202e53dda60b0d1c7e7870b3bb88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

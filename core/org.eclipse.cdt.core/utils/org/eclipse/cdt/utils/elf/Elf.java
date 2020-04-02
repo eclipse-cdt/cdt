@@ -52,11 +52,13 @@ public class Elf {
 
 	private int syms = 0;
 	private Symbol[] symbols;
-	private Symbol[] symtab_symbols;
-	private Section symtab_sym;
-	private Symbol[] dynsym_symbols;
-	private Section dynsym_sym;
-	private boolean sections_mapped; // Have sections been mapped? Used to clean up properly in Elf.Dispose.
+	/** .symtab section */
+	private Symbol[] symbolsTable;
+	private Section symbolsTableSection;
+	/** .dynSym section */
+	private Symbol[] dynamicSymbols;
+	private Section dynamicSymbolSection;
+	private boolean areSectionsMapped; // Have sections been mapped? Used to clean up properly in Elf.Dispose.
 
 	protected String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -332,7 +334,7 @@ public class Elf {
 		 */
 		public ByteBuffer mapSectionData() throws IOException {
 			makeSureNotCompressed();
-			sections_mapped = true;
+			areSectionsMapped = true;
 			return efile.getChannel().map(MapMode.READ_ONLY, sh_offset, sh_size).load().asReadOnlyBuffer();
 		}
 
@@ -974,7 +976,7 @@ public class Elf {
 				efile = null;
 
 				// ensure the mappings get cleaned up
-				if (sections_mapped)
+				if (areSectionsMapped)
 					System.gc();
 			}
 		} catch (IOException e) {
@@ -1131,28 +1133,28 @@ public class Elf {
 		if (symbols == null) {
 			Section section[] = getSections(Section.SHT_SYMTAB);
 			if (section.length > 0) {
-				symtab_sym = section[0];
-				symtab_symbols = loadSymbolsBySection(section[0]);
+				symbolsTableSection = section[0];
+				symbolsTable = loadSymbolsBySection(section[0]);
 			} else {
-				symtab_sym = null;
-				symtab_symbols = new Symbol[0];
+				symbolsTableSection = null;
+				symbolsTable = new Symbol[0];
 			}
 
 			section = getSections(Section.SHT_DYNSYM);
 			if (section.length > 0) {
-				dynsym_sym = section[0];
-				dynsym_symbols = loadSymbolsBySection(section[0]);
+				dynamicSymbolSection = section[0];
+				dynamicSymbols = loadSymbolsBySection(section[0]);
 			} else {
-				dynsym_sym = null;
-				dynsym_symbols = new Symbol[0];
+				dynamicSymbolSection = null;
+				dynamicSymbols = new Symbol[0];
 			}
 
-			if (symtab_sym != null) {
+			if (symbolsTableSection != null) {
 				// sym = symtab_sym;
-				symbols = symtab_symbols;
-			} else if (dynsym_sym != null) {
+				symbols = symbolsTable;
+			} else if (dynamicSymbolSection != null) {
 				// sym = dynsym_sym;
-				symbols = dynsym_symbols;
+				symbols = dynamicSymbols;
 			}
 		}
 	}
@@ -1162,11 +1164,11 @@ public class Elf {
 	}
 
 	public Symbol[] getDynamicSymbols() {
-		return dynsym_symbols;
+		return dynamicSymbols;
 	}
 
 	public Symbol[] getSymtabSymbols() {
-		return symtab_symbols;
+		return symbolsTable;
 	}
 
 	/* return the address of the function that address is in */

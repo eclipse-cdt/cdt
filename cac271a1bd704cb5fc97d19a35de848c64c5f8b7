@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9db5eef7_0230fe2d",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1139,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-04-02T23:21:47Z",
+      "side": 1,
+      "message": "useless assignment.",
+      "revId": "cac271a1bd704cb5fc97d19a35de848c64c5f8b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d742dcdc_1d690a44",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1148,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-04-02T23:21:47Z",
+      "side": 1,
+      "message": "ditto",
+      "revId": "cac271a1bd704cb5fc97d19a35de848c64c5f8b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

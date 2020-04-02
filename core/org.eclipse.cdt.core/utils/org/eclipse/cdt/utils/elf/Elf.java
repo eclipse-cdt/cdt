@@ -53,10 +53,8 @@ public class Elf {
 	private Symbol[] symbols;
 	/** .symtab section */
 	private Symbol[] symbolsTable;
-	private Section symbolsTableSection;
 	/** .dynSym section */
 	private Symbol[] dynamicSymbols;
-	private Section dynamicSymbolSection;
 	private boolean areSectionsMapped; // Have sections been mapped? Used to clean up properly in Elf.Dispose.
 
 	protected String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -1125,6 +1123,8 @@ public class Elf {
 	}
 
 	public void loadSymbols() throws IOException {
+		Section symbolsTableSection = null;
+		Section dynamicSymbolSection = null;
 		if (symbols == null) {
 			Section section[] = getSections(Section.SHT_SYMTAB);
 			if (section.length > 0) {

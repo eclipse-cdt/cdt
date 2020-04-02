@@ -50,7 +50,6 @@ public class Elf {
 	protected String file;
 	protected byte[] section_strtab;
 
-	private int syms = 0;
 	private Symbol[] symbols;
 	private Symbol[] symtab_symbols;
 	private Section symtab_sym;
@@ -1069,10 +1068,6 @@ public class Elf {
 				default:
 					throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
 				}
-				if (sections[i].sh_type == Section.SHT_SYMTAB)
-					syms = i;
-				if (syms == 0 && sections[i].sh_type == Section.SHT_DYNSYM)
-					syms = i;
 			}
 		}
 		return sections;

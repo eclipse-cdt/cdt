@@ -50,7 +50,6 @@ public class Elf {
 	protected String file;
 	protected byte[] section_strtab;
 
-	private int syms = 0;
 	private Symbol[] symbols;
 	/** .symtab section */
 	private Symbol[] symbolsTable;
@@ -1018,6 +1017,7 @@ public class Elf {
 	}
 
 	public Section[] getSections() throws IOException {
+		int syms = 0;
 		if (sections == null) {
 			if (ehdr.e_shoff == 0) {
 				sections = new Section[0];

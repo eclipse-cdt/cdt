@@ -38,10 +38,10 @@ import org.eclipse.cdt.utils.ERandomAccessFile;
 import org.eclipse.cdt.utils.debug.dwarf.DwarfReader;
 
 public class Elf {
-	public final static int ELF32_ADDR_SIZE = 4;
-	public final static int ELF32_OFF_SIZE = 4;
-	public final static int ELF64_ADDR_SIZE = 8;
-	public final static int ELF64_OFF_SIZE = 8;
+	public static final int ELF32_ADDR_SIZE = 4;
+	public static final int ELF32_OFF_SIZE = 4;
+	public static final int ELF64_ADDR_SIZE = 8;
+	public static final int ELF64_OFF_SIZE = 8;
 
 	protected ERandomAccessFile efile;
 
@@ -65,107 +65,107 @@ public class Elf {
 	public class ELFhdr {
 
 		/* e_ident offsets */
-		public final static int EI_MAG0 = 0;
-		public final static int EI_MAG1 = 1;
-		public final static int EI_MAG2 = 2;
-		public final static int EI_MAG3 = 3;
-		public final static int EI_CLASS = 4;
-		public final static int EI_DATA = 5;
-		public final static int EI_VERSION = 6;
-		public final static int EI_PAD = 7;
-		public final static int EI_NDENT = 16;
+		public static final int EI_MAG0 = 0;
+		public static final int EI_MAG1 = 1;
+		public static final int EI_MAG2 = 2;
+		public static final int EI_MAG3 = 3;
+		public static final int EI_CLASS = 4;
+		public static final int EI_DATA = 5;
+		public static final int EI_VERSION = 6;
+		public static final int EI_PAD = 7;
+		public static final int EI_NDENT = 16;
 
 		/* e_ident[EI_CLASS] */
-		public final static int ELFCLASSNONE = 0;
-		public final static int ELFCLASS32 = 1;
-		public final static int ELFCLASS64 = 2;
+		public static final int ELFCLASSNONE = 0;
+		public static final int ELFCLASS32 = 1;
+		public static final int ELFCLASS64 = 2;
 
 		/* e_ident[EI_DATA] */
-		public final static int ELFDATANONE = 0;
-		public final static int ELFDATA2LSB = 1;
-		public final static int ELFDATA2MSB = 2;
+		public static final int ELFDATANONE = 0;
+		public static final int ELFDATA2LSB = 1;
+		public static final int ELFDATA2MSB = 2;
 
 		/* values of e_type */
-		public final static int ET_NONE = 0;
-		public final static int ET_REL = 1;
-		public final static int ET_EXEC = 2;
-		public final static int ET_DYN = 3;
-		public final static int ET_CORE = 4;
-		public final static int ET_LOPROC = 0xff00;
-		public final static int ET_HIPROC = 0xffff;
+		public static final int ET_NONE = 0;
+		public static final int ET_REL = 1;
+		public static final int ET_EXEC = 2;
+		public static final int ET_DYN = 3;
+		public static final int ET_CORE = 4;
+		public static final int ET_LOPROC = 0xff00;
+		public static final int ET_HIPROC = 0xffff;
 
 		/* values of e_machine */
-		public final static int EM_NONE = 0;
-		public final static int EM_M32 = 1;
-		public final static int EM_SPARC = 2;
-		public final static int EM_386 = 3;
-		public final static int EM_68K = 4;
-		public final static int EM_88K = 5;
-		public final static int EM_486 = 6;
-		public final static int EM_860 = 7;
-		public final static int EM_MIPS = 8;
-		public final static int EM_MIPS_RS3_LE = 10;
-		public final static int EM_RS6000 = 11;
-		public final static int EM_PARISC = 15;
-		public final static int EM_nCUBE = 16;
-		public final static int EM_VPP550 = 17;
-		public final static int EM_SPARC32PLUS = 18;
-		public final static int EM_PPC = 20;
-		public final static int EM_PPC64 = 21;
-		public final static int EM_ARM = 40;
-		public final static int EM_SH = 42;
-		public final static int EM_SPARCV9 = 43;
-		public final static int EM_TRICORE = 44;
-		public final static int EM_H8_300 = 46;
-		public final static int EM_H8_300H = 47;
-		public final static int EM_IA_64 = 50;
-		public final static int EM_COLDFIRE = 52;
-		public final static int EM_STARCORE = 58;
-		public final static int EM_X86_64 = 62;
-		public final static int EM_ST100 = 60;
+		public static final int EM_NONE = 0;
+		public static final int EM_M32 = 1;
+		public static final int EM_SPARC = 2;
+		public static final int EM_386 = 3;
+		public static final int EM_68K = 4;
+		public static final int EM_88K = 5;
+		public static final int EM_486 = 6;
+		public static final int EM_860 = 7;
+		public static final int EM_MIPS = 8;
+		public static final int EM_MIPS_RS3_LE = 10;
+		public static final int EM_RS6000 = 11;
+		public static final int EM_PARISC = 15;
+		public static final int EM_nCUBE = 16;
+		public static final int EM_VPP550 = 17;
+		public static final int EM_SPARC32PLUS = 18;
+		public static final int EM_PPC = 20;
+		public static final int EM_PPC64 = 21;
+		public static final int EM_ARM = 40;
+		public static final int EM_SH = 42;
+		public static final int EM_SPARCV9 = 43;
+		public static final int EM_TRICORE = 44;
+		public static final int EM_H8_300 = 46;
+		public static final int EM_H8_300H = 47;
+		public static final int EM_IA_64 = 50;
+		public static final int EM_COLDFIRE = 52;
+		public static final int EM_STARCORE = 58;
+		public static final int EM_X86_64 = 62;
+		public static final int EM_ST100 = 60;
 
 		/** @since 5.2 */
-		public final static int EM_68HC08 = 71; /* Freescale MC68HC08 Microcontroller */
+		public static final int EM_68HC08 = 71; /* Freescale MC68HC08 Microcontroller */
 
-		public final static int EM_AVR = 83;
-		public final static int EM_FR30 = 84; /* Fujitsu FR30 */
-		public final static int EM_V850 = 87;
-		public final static int EM_M32R = 88;
-		public final static int EM_MN10300 = 89;
-		public final static int EM_MN10200 = 90;
-		public final static int EM_XTENSA = 94;
-		public final static int EM_MSP430 = 105;
-		public final static int EM_BLACKFIN = 106;
-		public final static int EM_EXCESS = 111;
+		public static final int EM_AVR = 83;
+		public static final int EM_FR30 = 84; /* Fujitsu FR30 */
+		public static final int EM_V850 = 87;
+		public static final int EM_M32R = 88;
+		public static final int EM_MN10300 = 89;
+		public static final int EM_MN10200 = 90;
+		public static final int EM_XTENSA = 94;
+		public static final int EM_MSP430 = 105;
+		public static final int EM_BLACKFIN = 106;
+		public static final int EM_EXCESS = 111;
 		/** @since 5.5 */
-		public final static int EM_ESIRISC = 111;
-		public final static int EM_NIOSII = 113;
-		public final static int EM_C166 = 116;
-		public final static int EM_M16C = 117;
+		public static final int EM_ESIRISC = 111;
+		public static final int EM_NIOSII = 113;
+		public static final int EM_C166 = 116;
+		public static final int EM_M16C = 117;
 
 		/** @since 5.2 */
-		public final static int EM_RS08 = 132; /* Freescale RS08 embedded processor */
+		public static final int EM_RS08 = 132; /* Freescale RS08 embedded processor */
 
-		public final static int EM_MMDSP = 160;
-
-		/** @since 5.4 */
-		public final static int EM_RX = 173; /* Renesas RX Microcontroller */
+		public static final int EM_MMDSP = 160;
 
 		/** @since 5.4 */
-		public final static int EM_RL78 = 197; /* Renesas RL78 Microcontroller */
+		public static final int EM_RX = 173; /* Renesas RX Microcontroller */
+
+		/** @since 5.4 */
+		public static final int EM_RL78 = 197; /* Renesas RL78 Microcontroller */
 		/** @since 6.0 */
-		public final static int EM_AARCH64 = 183;
+		public static final int EM_AARCH64 = 183;
 
-		public final static int EM_NIOS = 0xFEBB;
-		public final static int EM_CYGNUS_POWERPC = 0x9025;
-		public final static int EM_CYGNUS_M32R = 0x9041;
-		public final static int EM_CYGNUS_V850 = 0x9080;
-		public final static int EM_CYGNUS_MN10200 = 0xdead;
-		public final static int EM_CYGNUS_MN10300 = 0xbeef;
-		public final static int EM_CYGNUS_FR30 = 0x3330;
-		public final static int EM_XSTORMY16 = 0xad45;
-		public final static int EM_CYGNUS_FRV = 0x5441;
-		public final static int EM_IQ2000 = 0xFEBA;
+		public static final int EM_NIOS = 0xFEBB;
+		public static final int EM_CYGNUS_POWERPC = 0x9025;
+		public static final int EM_CYGNUS_M32R = 0x9041;
+		public static final int EM_CYGNUS_V850 = 0x9080;
+		public static final int EM_CYGNUS_MN10200 = 0xdead;
+		public static final int EM_CYGNUS_MN10300 = 0xbeef;
+		public static final int EM_CYGNUS_FR30 = 0x3330;
+		public static final int EM_XSTORMY16 = 0xad45;
+		public static final int EM_CYGNUS_FRV = 0x5441;
+		public static final int EM_IQ2000 = 0xFEBA;
 		public static final int EM_XILINX_MICROBLAZE = 0xbaab;
 		public static final int EM_SDMA = 0xcafe;
 		public static final int EM_CRADLE = 0x4d55;
@@ -288,35 +288,35 @@ public class Elf {
 	public class Section {
 
 		/* sh_type */
-		public final static int SHT_NULL = 0;
-		public final static int SHT_PROGBITS = 1;
-		public final static int SHT_SYMTAB = 2;
-		public final static int SHT_STRTAB = 3;
-		public final static int SHT_RELA = 4;
-		public final static int SHT_HASH = 5;
-		public final static int SHT_DYNAMIC = 6;
-		public final static int SHT_NOTE = 7;
-		public final static int SHT_NOBITS = 8;
-		public final static int SHT_REL = 9;
-		public final static int SHT_SHLIB = 10;
-		public final static int SHT_DYNSYM = 11;
+		public static final int SHT_NULL = 0;
+		public static final int SHT_PROGBITS = 1;
+		public static final int SHT_SYMTAB = 2;
+		public static final int SHT_STRTAB = 3;
+		public static final int SHT_RELA = 4;
+		public static final int SHT_HASH = 5;
+		public static final int SHT_DYNAMIC = 6;
+		public static final int SHT_NOTE = 7;
+		public static final int SHT_NOBITS = 8;
+		public static final int SHT_REL = 9;
+		public static final int SHT_SHLIB = 10;
+		public static final int SHT_DYNSYM = 11;
 
-		public final static int SHT_LOPROC = 0x70000000;
+		public static final int SHT_LOPROC = 0x70000000;
 
 		/* sh_flags */
-		public final static int SHF_WRITE = 1;
-		public final static int SHF_ALLOC = 2;
-		public final static int SHF_EXECINTR = 4;
+		public static final int SHF_WRITE = 1;
+		public static final int SHF_ALLOC = 2;
+		public static final int SHF_EXECINTR = 4;
 		/**
 		 * @since 6.6
 		 */
-		public final static int SHF_COMPRESSED = 2048;
+		public static final int SHF_COMPRESSED = 2048;
 
 		/* note_types */
 		/**
 		 * @since 5.7
 		 */
-		public final static int NT_GNU_BUILD_ID = 3;
+		public static final int NT_GNU_BUILD_ID = 3;
 
 		public long sh_name;
 		public long sh_type;
@@ -411,26 +411,26 @@ public class Elf {
 	public class Symbol implements Comparable<Object> {
 
 		/* Symbol bindings */
-		public final static int STB_LOCAL = 0;
-		public final static int STB_GLOBAL = 1;
-		public final static int STB_WEAK = 2;
+		public static final int STB_LOCAL = 0;
+		public static final int STB_GLOBAL = 1;
+		public static final int STB_WEAK = 2;
 		/* Symbol type */
-		public final static int STT_NOTYPE = 0;
-		public final static int STT_OBJECT = 1;
-		public final static int STT_FUNC = 2;
-		public final static int STT_SECTION = 3;
-		public final static int STT_FILE = 4;
+		public static final int STT_NOTYPE = 0;
+		public static final int STT_OBJECT = 1;
+		public static final int STT_FUNC = 2;
+		public static final int STT_SECTION = 3;
+		public static final int STT_FILE = 4;
 		/* Special Indexes */
-		public final static int SHN_UNDEF = 0;
-		public final static int SHN_LORESERVE = 0xffffff00;
-		public final static int SHN_LOPROC = 0xffffff00;
-		public final static int SHN_HIPROC = 0xffffff1f;
-		public final static int SHN_LOOS = 0xffffff20;
-		public final static int SHN_HIOS = 0xffffff3f;
-		public final static int SHN_ABS = 0xfffffff1;
-		public final static int SHN_COMMON = 0xfffffff2;
-		public final static int SHN_XINDEX = 0xffffffff;
-		public final static int SHN_HIRESERVE = 0xffffffff;
+		public static final int SHN_UNDEF = 0;
+		public static final int SHN_LORESERVE = 0xffffff00;
+		public static final int SHN_LOPROC = 0xffffff00;
+		public static final int SHN_HIPROC = 0xffffff1f;
+		public static final int SHN_LOOS = 0xffffff20;
+		public static final int SHN_HIOS = 0xffffff3f;
+		public static final int SHN_ABS = 0xfffffff1;
+		public static final int SHN_COMMON = 0xfffffff2;
+		public static final int SHN_XINDEX = 0xffffffff;
+		public static final int SHN_HIRESERVE = 0xffffffff;
 
 		/* NOTE: 64 bit and 32 bit ELF sections has different order */
 		public long st_name;
@@ -520,17 +520,17 @@ public class Elf {
 
 	public class PHdr {
 
-		public final static int PT_NULL = 0;
-		public final static int PT_LOAD = 1;
-		public final static int PT_DYNAMIC = 2;
-		public final static int PT_INTERP = 3;
-		public final static int PT_NOTE = 4;
-		public final static int PT_SHLIB = 5;
-		public final static int PT_PHDR = 6;
+		public static final int PT_NULL = 0;
+		public static final int PT_LOAD = 1;
+		public static final int PT_DYNAMIC = 2;
+		public static final int PT_INTERP = 3;
+		public static final int PT_NOTE = 4;
+		public static final int PT_SHLIB = 5;
+		public static final int PT_PHDR = 6;
 
-		public final static int PF_X = 1;
-		public final static int PF_W = 2;
-		public final static int PF_R = 4;
+		public static final int PF_X = 1;
+		public static final int PF_W = 2;
+		public static final int PF_R = 4;
 		/* NOTE: 64 bit and 32 bit ELF have different order and size of elements */
 		public long p_type;
 		public long p_offset;
@@ -593,25 +593,25 @@ public class Elf {
 
 	public class Dynamic {
 
-		public final static int DYN_ENT_SIZE_32 = 8;
-		public final static int DYN_ENT_SIZE_64 = 16;
+		public static final int DYN_ENT_SIZE_32 = 8;
+		public static final int DYN_ENT_SIZE_64 = 16;
 
-		public final static int DT_NULL = 0;
-		public final static int DT_NEEDED = 1;
-		public final static int DT_PLTRELSZ = 2;
-		public final static int DT_PLTGOT = 3;
-		public final static int DT_HASH = 4;
-		public final static int DT_STRTAB = 5;
-		public final static int DT_SYMTAB = 6;
-		public final static int DT_RELA = 7;
-		public final static int DT_RELASZ = 8;
-		public final static int DT_RELAENT = 9;
-		public final static int DT_STRSZ = 10;
-		public final static int DT_SYMENT = 11;
-		public final static int DT_INIT = 12;
-		public final static int DT_FINI = 13;
-		public final static int DT_SONAME = 14;
-		public final static int DT_RPATH = 15;
+		public static final int DT_NULL = 0;
+		public static final int DT_NEEDED = 1;
+		public static final int DT_PLTRELSZ = 2;
+		public static final int DT_PLTGOT = 3;
+		public static final int DT_HASH = 4;
+		public static final int DT_STRTAB = 5;
+		public static final int DT_SYMTAB = 6;
+		public static final int DT_RELA = 7;
+		public static final int DT_RELASZ = 8;
+		public static final int DT_RELAENT = 9;
+		public static final int DT_STRSZ = 10;
+		public static final int DT_SYMENT = 11;
+		public static final int DT_INIT = 12;
+		public static final int DT_FINI = 13;
+		public static final int DT_SONAME = 14;
+		public static final int DT_RPATH = 15;
 		public long d_tag;
 		public long d_val;
 		private final Section section;

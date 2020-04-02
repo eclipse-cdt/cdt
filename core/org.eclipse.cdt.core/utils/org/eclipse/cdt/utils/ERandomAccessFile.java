@@ -25,13 +25,15 @@ public class ERandomAccessFile extends RandomAccessFile {
 	private boolean isle;
 	private long ptr_offset;
 	int val[] = new int[4];
+	private String path;
 
 	public ERandomAccessFile(String file, String mode) throws IOException {
 		super(file, mode);
+		path = file;
 	}
 
 	public ERandomAccessFile(File file, String mode) throws IOException {
-		super(file, mode);
+		this(file.getPath(), mode);
 	}
 
 	public void setEndian(boolean le) {
@@ -98,6 +100,14 @@ public class ERandomAccessFile extends RandomAccessFile {
 	public void setFileOffset(long offset) throws IOException {
 		ptr_offset = offset;
 		super.seek(offset);
+	}
+
+	/**
+	 * Get the path of the file reader
+	 * @since 6.12
+	 */
+	public String getPath() {
+		return path;
 	}
 
 	@Override

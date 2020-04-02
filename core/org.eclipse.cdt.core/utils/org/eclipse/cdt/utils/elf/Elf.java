@@ -25,6 +25,8 @@ import java.nio.channels.FileChannel.MapMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
@@ -45,6 +47,7 @@ public class Elf {
 
 	protected ERandomAccessFile efile;
 
+	private Iterator<Symbol> elf_iterator;
 	protected ELFhdr ehdr;
 	protected Section[] sections;
 	protected String file;
@@ -1078,6 +1081,82 @@ public class Elf {
 		return sections;
 	}
 
+	private class ElfSectionIterator implements Iterator<Symbol> {
+
+		private final int nbSymbols;
+		private final ERandomAccessFile inner_efile;
+		private final Section section;
+		private int position = 0;
+		private long inner_offset = 0;
+		private byte arch;
+
+		public ElfSectionIterator(ERandomAccessFile eFile, byte b, Section section_to_read, byte architecture)
+				throws IOException {
+			int numSyms = 1;
+			section = section_to_read;
+			if (section.sh_entsize != 0) {
+				numSyms = (int) section.sh_size / (int) section.sh_entsize;
+			}
+			section.makeSureNotCompressed();
+			nbSymbols = numSyms;
+			inner_efile = new ERandomAccessFile(eFile.getPath(), "r");
+			arch = architecture;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return position < nbSymbols;
+		}
+
+		@Override
+		public Symbol next() {
+			try {
+				position++;
+				inner_offset = section.sh_entsize * position;
+				inner_efile.seek(inner_offset);
+				Symbol symbol = new Symbol(section);
+
+				switch (arch) {
+				case ELFhdr.ELFCLASS32: {
+					byte[] addrArray = new byte[ELF32_ADDR_SIZE];
+
+					symbol.st_name = inner_efile.readIntE();
+					inner_efile.readFullyE(addrArray);
+					symbol.st_value = new Addr32(addrArray);
+					symbol.st_size = inner_efile.readIntE();
+					symbol.st_info = inner_efile.readByte();
+					symbol.st_other = inner_efile.readByte();
+					symbol.st_shndx = inner_efile.readShortE();
+					break;
+				}
+				case ELFhdr.ELFCLASS64: {
+					byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+
+					symbol.st_name = inner_efile.readIntE();
+					symbol.st_info = inner_efile.readByte();
+					symbol.st_other = inner_efile.readByte();
+					symbol.st_shndx = inner_efile.readShortE();
+					inner_efile.readFullyE(addrArray);
+					symbol.st_value = new Addr64(addrArray);
+					symbol.st_size = inner_efile.readLongE();
+					if (symbol.st_size < 0) {
+						throw new IOException("Maximal file offset is " + Long.toHexString(Long.MAX_VALUE) + //$NON-NLS-1$
+								" given offset is " + Long.toHexString(symbol.st_size)); //$NON-NLS-1$
+					}
+					break;
+				}
+				case ELFhdr.ELFCLASSNONE:
+				default:
+					throw new IOException("Unknown ELF class " + arch); //$NON-NLS-1$
+				}
+				return symbol;
+			} catch (IOException e) {
+				throw new NoSuchElementException(e.getMessage());
+			}
+		}
+
+	}
+
 	private Symbol[] loadSymbolsBySection(Section section) throws IOException {
 		int numSyms = 1;
 		if (section.sh_entsize != 0) {
@@ -1085,46 +1164,27 @@ public class Elf {
 		}
 		section.makeSureNotCompressed();
 		ArrayList<Symbol> symList = new ArrayList<>(numSyms);
-		long offset = section.sh_offset;
-		for (int c = 0; c < numSyms; offset += section.sh_entsize, c++) {
-			efile.seek(offset);
-			Symbol symbol = new Symbol(section);
-			switch (ehdr.e_ident[ELFhdr.EI_CLASS]) {
-			case ELFhdr.ELFCLASS32: {
-				byte[] addrArray = new byte[ELF32_ADDR_SIZE];
-
-				symbol.st_name = efile.readIntE();
-				efile.readFullyE(addrArray);
-				symbol.st_value = new Addr32(addrArray);
-				symbol.st_size = efile.readIntE();
-				symbol.st_info = efile.readByte();
-				symbol.st_other = efile.readByte();
-				symbol.st_shndx = efile.readShortE();
-			}
-				break;
-			case ELFhdr.ELFCLASS64: {
-				byte[] addrArray = new byte[ELF64_ADDR_SIZE];
-
-				symbol.st_name = efile.readIntE();
-				symbol.st_info = efile.readByte();
-				symbol.st_other = efile.readByte();
-				symbol.st_shndx = efile.readShortE();
-				efile.readFullyE(addrArray);
-				symbol.st_value = new Addr64(addrArray);
-				symbol.st_size = readUnsignedLong(efile);
-			}
-				break;
-			case ELFhdr.ELFCLASSNONE:
-			default:
-				throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
-			}
+		elf_iterator = getSymbolIterator(section);
+		while (elf_iterator.hasNext()) {
+			Symbol symbol = elf_iterator.next();
 			if (symbol.st_info == 0)
 				continue;
 			symList.add(symbol);
 		}
-		Symbol[] results = symList.toArray(new Symbol[0]);
+		Symbol[] results = symList.toArray(new Symbol[symList.size()]);
 		Arrays.sort(results);
 		return results;
+	}
+
+	/**
+	 * Get a symbol iterator
+	 * @param section the section to iterate over
+	 * @return an iterator that returns symbols of a given sectiton
+	 * @throws IOException If the file is corrupt
+	 * @since 6.12
+	 */
+	public ElfSectionIterator getSymbolIterator(Section section) throws IOException {
+		return new ElfSectionIterator(efile, ehdr.e_ident[ELFhdr.EI_CLASS], section, ehdr.e_ident[ELFhdr.EI_CLASS]);
 	}
 
 	public void loadSymbols() throws IOException {

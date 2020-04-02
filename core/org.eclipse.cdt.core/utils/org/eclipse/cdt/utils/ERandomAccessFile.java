@@ -17,6 +17,7 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteOrder;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -25,13 +26,15 @@ public class ERandomAccessFile extends RandomAccessFile {
 	private boolean isle;
 	private long ptr_offset;
 	int val[] = new int[4];
+	private final String path;
 
 	public ERandomAccessFile(String file, String mode) throws IOException {
 		super(file, mode);
+		path = file;
 	}
 
 	public ERandomAccessFile(File file, String mode) throws IOException {
-		super(file, mode);
+		this(file.getPath(), mode);
 	}
 
 	public void setEndian(boolean le) {
@@ -100,6 +103,14 @@ public class ERandomAccessFile extends RandomAccessFile {
 		super.seek(offset);
 	}
 
+	/**
+	 * Get the path of the file reader
+	 * @since 6.12
+	 */
+	public String getPath() {
+		return path;
+	}
+
 	@Override
 	public long getFilePointer() throws IOException {
 		long ptr = super.getFilePointer();
@@ -111,5 +122,14 @@ public class ERandomAccessFile extends RandomAccessFile {
 	public void seek(long pos) throws IOException {
 		long real_pos = pos + ptr_offset;
 		super.seek(real_pos);
+	}
+
+	/**
+	 * Get the byte order of the file
+	 * @return {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}
+	 * @since 6.12
+	 */
+	public ByteOrder order() {
+		return isle ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
 	}
 }

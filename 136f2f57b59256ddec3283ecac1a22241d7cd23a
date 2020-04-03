@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7ee5651_18e03d71",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-03T08:07:22Z",
+      "side": 1,
+      "message": "Returning boolean is not sufficient here: if we can return Optional\u003cIASTName\u003e - the \"res\" field will gone.",
+      "revId": "136f2f57b59256ddec3283ecac1a22241d7cd23a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

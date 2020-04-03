@@ -34,6 +34,24 @@
       "revId": "6c2633a067152808476034d711481942ec73d751",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad3e9fe1_ce47f524",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1130,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-03T12:40:16Z",
+      "side": 1,
+      "message": "2) as we are using kind of \"random access\" file - my assumption would be to read only what is really needed. As we started to talk about performance - let\u0027s switch to \"lazy\" style.\n3) me either :) but in any case that should be either explicit or disapear",
+      "parentUuid": "6703c87d_967963b4",
+      "revId": "6c2633a067152808476034d711481942ec73d751",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

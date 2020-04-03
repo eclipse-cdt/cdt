@@ -16,6 +16,24 @@
       "revId": "6c2633a067152808476034d711481942ec73d751",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6703c87d_967963b4",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1130,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-04-03T12:18:01Z",
+      "side": 1,
+      "message": "I think documentation would help.\n\n1) yes\n2) I assumed that it loads both so you can get the stab or dynamic symbols explicitly.\n3) I assumed that\u0027s the way the elf format worked. I would have rather had symbols merge the two. But I\u0027m far from an Elf expert.",
+      "parentUuid": "d377f483_c7c484f2",
+      "revId": "6c2633a067152808476034d711481942ec73d751",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

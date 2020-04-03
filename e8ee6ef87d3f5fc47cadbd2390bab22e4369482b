@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f50b77df_4891e543",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1020,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-03T07:37:37Z",
+      "side": 1,
+      "message": "Honestly, I do not understand why we need this variable at all. I would just remove it.",
+      "revId": "e8ee6ef87d3f5fc47cadbd2390bab22e4369482b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

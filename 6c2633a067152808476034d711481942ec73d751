@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d377f483_c7c484f2",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1130,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-03T07:32:07Z",
+      "side": 1,
+      "message": "Something is wrong with this method:\n1) it has code duplication that can be extracted to another method\n2) it always tries to load both tables\n3) while assuming Section.SHT_SYMTAB has a priority for some reason",
+      "revId": "6c2633a067152808476034d711481942ec73d751",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

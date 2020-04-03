@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "e1232b1b_3651fce1",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1074,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-03T12:30:32Z",
+      "side": 1,
+      "message": "And this one. And unit tests was required before the first change, yes :)",
+      "revId": "e8ee6ef87d3f5fc47cadbd2390bab22e4369482b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8efd4032_f92f841d",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
         "patchSetId": 1
@@ -30,6 +47,24 @@
       "writtenOn": "2020-04-03T12:14:36Z",
       "side": 1,
       "message": "if we remove it, then we would need to remove this part too. I am very OK with that. just wanted to be clear. ;) also i would suggest we need unit testing then...",
+      "revId": "e8ee6ef87d3f5fc47cadbd2390bab22e4369482b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "868044dc_5a3289c4",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1076,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-03T12:30:32Z",
+      "side": 1,
+      "message": "yes and yes",
+      "parentUuid": "8efd4032_f92f841d",
       "revId": "e8ee6ef87d3f5fc47cadbd2390bab22e4369482b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

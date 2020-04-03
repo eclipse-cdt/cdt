@@ -17,16 +17,21 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.tools.templates.core.IGenerator;
-import org.eclipse.tools.templates.ui.internal.Activator;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * The wizard component of a template. Takes over when the template is selected in the from the
@@ -69,7 +74,7 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 				IDE.openEditor(activePage, file);
 			}
 		} catch (PartInitException e) {
-			Activator.log(e);
+			log("Failed to open editor", e);
 		}
 	}
 
@@ -103,12 +108,28 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 				}
 			});
 		} catch (InterruptedException e) {
-			Activator.errorDialog(getShell(), "Error Creating Project", "Project cannot be created", e, true);
+			handle(e);
 		} catch (InvocationTargetException e) {
-			Activator.errorDialog(getShell(), "Error Creating Project", "Project cannot be created",
-					e.getTargetException(), true);
+			handle(e.getTargetException());
 		}
 		return true;
 	}
 
+	private void handle(Throwable target) {
+		String message = "Project cannot be created";
+		log(message, target);
+		IStatus status;
+		if (target instanceof CoreException) {
+			status = ((CoreException) target).getStatus();
+		} else {
+			status = new Status(IStatus.ERROR, FrameworkUtil.getBundle(getClass()).getSymbolicName(),
+					"Internal Error: ", target);
+		}
+		ErrorDialog.openError(getShell(), "Error Creating Project", message, status);
+	}
+
+	private void log(String message, Throwable e) {
+		ILog log = Platform.getLog(getClass());
+		log.log(new Status(IStatus.ERROR, log.getBundle().getSymbolicName(), message, e));
+	}
 }

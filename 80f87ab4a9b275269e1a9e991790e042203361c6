@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "88b49828_6f33103c",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1178,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-04-03T02:42:12Z",
+      "side": 1,
+      "message": "set to 0, recent optimizations in jvm make [0] faster",
+      "range": {
+        "startLine": 1178,
+        "startChar": 55,
+        "endLine": 1178,
+        "endChar": 56
+      },
+      "revId": "80f87ab4a9b275269e1a9e991790e042203361c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

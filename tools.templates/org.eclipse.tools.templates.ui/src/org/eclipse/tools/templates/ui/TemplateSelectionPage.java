@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -149,7 +150,7 @@ public class TemplateSelectionPage extends WizardPage {
 				nextWizard.addPages();
 				return nextWizard.getPages()[0];
 			} catch (CoreException e) {
-				Activator.log(e);
+				Platform.getLog(getClass()).log(e.getStatus());
 			}
 		}
 		return super.getNextPage();

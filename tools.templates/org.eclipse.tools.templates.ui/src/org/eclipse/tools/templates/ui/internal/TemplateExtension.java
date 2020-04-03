@@ -18,7 +18,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.FrameworkUtil;
 
+//FIXME: AF: reimplement as a service
 public class TemplateExtension {
 
 	private Map<String, Template> templates;
@@ -32,7 +34,8 @@ public class TemplateExtension {
 		tags = new HashMap<>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IExtensionPoint point = registry.getExtensionPoint(Activator.getId(), "templates"); //$NON-NLS-1$
+		IExtensionPoint point = registry.getExtensionPoint(FrameworkUtil.getBundle(getClass()).getSymbolicName(),
+				"templates"); //$NON-NLS-1$
 
 		// tags
 		Tag allTag = new Tag(Tag.ALL_ID, "All");

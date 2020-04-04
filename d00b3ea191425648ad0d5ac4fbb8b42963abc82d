@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a0f2ad73_1f760a3d",
+        "filename": "core/org.eclipse.cdt.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T08:32:26Z",
+      "side": 1,
+      "message": "7.0.0\nor 6.8.0\nor 6.7.200\nwill depending on the scope of change for this Gerrit that we can agree :)",
+      "revId": "d00b3ea191425648ad0d5ac4fbb8b42963abc82d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d2542a6_687d4932",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T08:32:26Z",
+      "side": 1,
+      "message": "Let\u0027s add another constructor, this one may be kept with `false` value for `isFinal` parameter",
+      "revId": "d00b3ea191425648ad0d5ac4fbb8b42963abc82d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1833809f_73c2d7ea",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T08:32:26Z",
+      "side": 1,
+      "message": "I would live this constant \"as is\", deprecate it and re-route to the newly introduced method \"getAllFieldsId\" that will return `ALL_FIELDS | FINAL_ID`\n\nActually this constant and code around it *is* design defect, it will be great to rework it all in the scope of 2020-09",
+      "revId": "d00b3ea191425648ad0d5ac4fbb8b42963abc82d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b634246d_41142e70",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2288,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T08:32:26Z",
+      "side": 1,
+      "message": "We can remove \"static\" from here, \"protected static\" combination is legal but looks confusing.",
+      "revId": "d00b3ea191425648ad0d5ac4fbb8b42963abc82d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a038b18e_8f363fc0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2289,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T08:32:26Z",
+      "side": 1,
+      "message": "return ALL_FIELDS | FINAL_ID;",
+      "revId": "d00b3ea191425648ad0d5ac4fbb8b42963abc82d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

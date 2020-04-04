@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f9d91271_5c477079",
+        "filename": "core/org.eclipse.cdt.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-04-04T10:04:47Z",
+      "side": 1,
+      "message": "This commit is revert of a revert because it was a break api commit, so we need to bump version to 7. However maybe it\u0027s 7.0.0 not 7.0.100.",
+      "parentUuid": "a0f2ad73_1f760a3d",
+      "revId": "d00b3ea191425648ad0d5ac4fbb8b42963abc82d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3d2542a6_687d4932",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "f556e73c_44a86058",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-04-04T10:04:47Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "3d2542a6_687d4932",
+      "revId": "d00b3ea191425648ad0d5ac4fbb8b42963abc82d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1833809f_73c2d7ea",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2020-04-04T08:32:26Z",
       "side": 1,
       "message": "I would live this constant \"as is\", deprecate it and re-route to the newly introduced method \"getAllFieldsId\" that will return `ALL_FIELDS | FINAL_ID`\n\nActually this constant and code around it *is* design defect, it will be great to rework it all in the scope of 2020-09",
+      "revId": "d00b3ea191425648ad0d5ac4fbb8b42963abc82d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "68ee92b5_74196658",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-04-04T10:04:47Z",
+      "side": 1,
+      "message": "Rework it was the goal here, if you have suggestions about to remove this design defect share it :)",
+      "parentUuid": "1833809f_73c2d7ea",
       "revId": "d00b3ea191425648ad0d5ac4fbb8b42963abc82d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

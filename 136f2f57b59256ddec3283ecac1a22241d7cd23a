@@ -87,6 +87,24 @@
       "revId": "136f2f57b59256ddec3283ecac1a22241d7cd23a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b6dc07b6_ffc25b9f",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-04-04T10:06:59Z",
+      "side": 1,
+      "message": "Ok, since I need to modify this checker again to take into account classes and enum types, I will modify in the next commit.",
+      "parentUuid": "c97617d8_35d43f74",
+      "revId": "136f2f57b59256ddec3283ecac1a22241d7cd23a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "e526f666_4d28ca75",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T11:43:07Z",
+      "side": 1,
+      "message": "Well to be more specific, this constant is just a way to say \"everythingChanged\" and its usage may be replaced with the corresponding aggregated validation. But this is just a beginning of the story.",
+      "parentUuid": "68ee92b5_74196658",
+      "revId": "d00b3ea191425648ad0d5ac4fbb8b42963abc82d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b634246d_41142e70",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
         "patchSetId": 1

@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "929589f2_f3342d74",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-04T16:38:24Z",
+      "side": 1,
+      "message": "Rather than final, how about @noextend if it isn\u0027t intended to be extended by clients?",
+      "parentUuid": "e793e734_3f86543f",
+      "revId": "31bf917968739e796c84cd13595c87dadd2db42b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d3ac1fc0_4a86c281",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
         "patchSetId": 1

@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d8939a78_47f44ffa",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Arglets.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T15:10:56Z",
+      "side": 1,
+      "message": "final?",
+      "revId": "31bf917968739e796c84cd13595c87dadd2db42b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d3ac1fc0_4a86c281",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T15:10:56Z",
+      "side": 1,
+      "message": "abstract or final?",
+      "revId": "31bf917968739e796c84cd13595c87dadd2db42b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c0843f7a_b11341a8",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParseContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T15:10:56Z",
+      "side": 1,
+      "message": "final?",
+      "revId": "31bf917968739e796c84cd13595c87dadd2db42b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a1dfeb88_59d26874",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParserDetection.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T15:10:56Z",
+      "side": 1,
+      "message": "final?",
+      "revId": "31bf917968739e796c84cd13595c87dadd2db42b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

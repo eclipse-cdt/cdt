@@ -69,6 +69,24 @@
       "revId": "136f2f57b59256ddec3283ecac1a22241d7cd23a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c97617d8_35d43f74",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T08:05:39Z",
+      "side": 1,
+      "message": "Marco, method visibility does not really matter. The gain is to have immutable type after this change. Of cause you can postpone this improvement for another Gerrit.",
+      "parentUuid": "b8c10eff_83d2baad",
+      "revId": "136f2f57b59256ddec3283ecac1a22241d7cd23a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "ab086e81_d94eceba",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-04T00:40:29Z",
+      "side": 1,
+      "message": "If this restriction is solely for access to org.eclipse.cdt.internal.core.* then the suppress should be removed and org.eclipse.cdt.codan.checkers be declared a friend in CDT core.",
+      "revId": "136f2f57b59256ddec3283ecac1a22241d7cd23a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7ee5651_18e03d71",
         "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
         "patchSetId": 8

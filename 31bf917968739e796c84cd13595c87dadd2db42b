@@ -108,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "bb943278_9d198d8b",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-04T18:56:43Z",
+      "side": 1,
+      "message": "\u003e All what this class does is specified through the arguments in its constructor, its internal logic is immutable.\n\nnot yet. but if you can move fields \"result\" and \"cwd\" as final fields to inner ParserHandler - it will be.\n\n\n\u003e The class cannot be declared final\n\nBut why? :)\n\nOK, if each method of this will be final - what may be the reason to extend it? In that case it is easier to declare the whole class final :)",
+      "parentUuid": "01fb0c84_7df9ba65",
+      "revId": "31bf917968739e796c84cd13595c87dadd2db42b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c0843f7a_b11341a8",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParseContext.java",
         "patchSetId": 1

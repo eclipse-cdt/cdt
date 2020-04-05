@@ -45,6 +45,7 @@ import org.eclipse.cdt.utils.StorableCdtVariablesTest;
 import org.eclipse.cdt.utils.UNCPathConverterTest;
 import org.eclipse.cdt.utils.WeakHashSetTest;
 import org.eclipse.cdt.utils.elf.ElfParserTest;
+import org.eclipse.cdt.utils.elf.ElfTest;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
@@ -103,6 +104,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(UNCPathConverterTest.suite());
 		suite.addTest(TestScopeOfBuildConfigResourceChangesPreference.suite());
 		suite.addTest(ElfParserTest.suite());
+		suite.addTest(new JUnit4TestAdapter(ElfTest.class));
 
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());

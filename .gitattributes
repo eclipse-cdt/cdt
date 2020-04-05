@@ -19,6 +19,7 @@ CONTRIBUTING text
 *.h text
 *.s text
 *.S text
+*.elf binary
 
 # C-like configuration/scripts
 *.ac text

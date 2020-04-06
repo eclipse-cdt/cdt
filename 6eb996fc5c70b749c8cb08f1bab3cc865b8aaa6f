@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2e3fd622_e3ed6244",
+        "filename": "core/org.eclipse.cdt.core.tests/resources/elf/unit_test/simple-x86-64",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-06T14:29:38Z",
+      "side": 1,
+      "message": "Every file type (by extension) needs to be listed in .gitattributes to ensure that newlines and whitespace are being handled properly. This new file is causing the code cleanliness check to fail.\n\nAdd file to # Files used in tests section of:\nhttps://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tree/.gitattributes#n110\n\n(it may be worth using .elf extension - the problem is *.elf is in .gitignore too!)\n\nLet me know if you need further clarification.",
+      "revId": "6eb996fc5c70b749c8cb08f1bab3cc865b8aaa6f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -40,7 +40,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-@SuppressWarnings("restriction")
 public class MagicNumberChecker extends AbstractIndexAstChecker {
 	public static final String ERR_ID = "org.eclipse.cdt.codan.internal.checkers.MagicNumberProblem"; //$NON-NLS-1$
 	private static final String OPERATOR_PAREN = "operator ()"; //$NON-NLS-1$

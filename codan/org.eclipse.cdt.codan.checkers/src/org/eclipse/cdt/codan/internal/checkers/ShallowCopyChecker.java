@@ -45,7 +45,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 /**
  * Checker to find that class has pointers but no copy constructor
  */
-@SuppressWarnings("restriction")
 public class ShallowCopyChecker extends AbstractIndexAstChecker {
 	public static final String PROBLEM_ID = "org.eclipse.cdt.codan.internal.checkers.ShallowCopyProblem"; //$NON-NLS-1$
 	public static final String PARAM_ONLY_NEW = "onlynew"; //$NON-NLS-1$

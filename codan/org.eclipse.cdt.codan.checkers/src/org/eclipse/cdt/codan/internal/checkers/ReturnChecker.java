@@ -83,7 +83,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * <li>Function declared as returning void has non-void return
  * <li>Function declared as returning non-void has no return (requires control flow graph)
  */
-@SuppressWarnings("restriction")
 public class ReturnChecker extends AbstractAstFunctionChecker {
 	public static final String PARAM_IMPLICIT = "implicit"; //$NON-NLS-1$
 	public static final String RET_NO_VALUE_ID = "org.eclipse.cdt.codan.checkers.noreturn"; //$NON-NLS-1$

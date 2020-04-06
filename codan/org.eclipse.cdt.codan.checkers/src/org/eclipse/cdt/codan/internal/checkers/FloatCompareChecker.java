@@ -26,7 +26,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-@SuppressWarnings("restriction")
 public class FloatCompareChecker extends AbstractIndexAstChecker {
 	public static final String ERR_ID = "org.eclipse.cdt.codan.internal.checkers.FloatCompareProblem"; //$NON-NLS-1$
 

@@ -16,6 +16,24 @@
       "revId": "aa7b546ef11a6b0609b95d9760812e167451d87a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c3c2adb2_8f86e0cf",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1180,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-06T13:54:22Z",
+      "side": 1,
+      "message": "it should be try-with-resources otherwise it looks like leak in case of IOException",
+      "parentUuid": "dc008796_a83d32e9",
+      "revId": "aa7b546ef11a6b0609b95d9760812e167451d87a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

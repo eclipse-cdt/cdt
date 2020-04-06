@@ -28,14 +28,22 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 @SuppressWarnings("restriction")
 public class NoDiscardChecker extends AbstractAstFunctionChecker {
@@ -104,7 +112,10 @@ public class NoDiscardChecker extends AbstractAstFunctionChecker {
 				}
 				IBinding binding = name.resolveBinding();
 
-				if (binding instanceof IFunction && ((IFunction) binding).isNoDiscard()) {
+				if (binding instanceof ICPPFunction
+						&& (((IFunction) binding).isNoDiscard() || checkEvaluation((ICPPASTExpression) expr))) {
+					return Optional.of(name);
+				} else if (binding instanceof IFunction && ((IFunction) binding).isNoDiscard()) {
 					return Optional.of(name);
 				} else if ((binding instanceof ICPPClassType || binding instanceof ICPPVariable)
 						&& expr instanceof ICPPASTExpression && checkEvaluation((ICPPASTExpression) expr)) {
@@ -139,8 +150,26 @@ public class NoDiscardChecker extends AbstractAstFunctionChecker {
 				}
 			} else if (eval instanceof EvalFunctionCall) {
 				ICPPFunction evalFunc = ((EvalFunctionCall) eval).resolveFunctionBinding();
-				if (evalFunc != null && evalFunc.isNoDiscard()) {
+				if (evalFunc == null)
+					return false;
+				if (evalFunc.isNoDiscard()) {
 					return true;
+				} else {
+					ICPPFunctionType fType = evalFunc.getType();
+					IType retType = SemanticUtil.getNestedType(fType.getReturnType(), SemanticUtil.TDEF);
+					if (CPPTemplates.isDependentType(retType)) {
+						return false;
+					}
+					if (retType instanceof ICPPReferenceType || retType instanceof IPointerType)
+						return false;
+					retType = SemanticUtil.getUltimateType(retType, true);
+					if (retType instanceof ICPPClassType) {
+						return ((ICPPClassType) retType).isNoDiscard();
+					} else if (retType instanceof ICPPEnumeration) {
+						return ((ICPPEnumeration) retType).isNoDiscard();
+					} else if (retType instanceof ICPPEnumerationSpecialization) {
+						return ((ICPPEnumerationSpecialization) retType).isNoDiscard();
+					}
 				}
 			}
 			return false;

@@ -12,6 +12,7 @@ package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.tests.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.checkers.NoDiscardChecker;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 
 /**
  * Test for {@link NoDiscardChecker} class
@@ -383,5 +384,63 @@ public class NoDiscardCheckerTest extends CheckerTestCase {
 	public void testCppFunctor() throws Exception {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(6, ER_ID);
+	}
+
+	//struct [[nodiscard]] error_info { };
+	//error_info enable_missile_safety_mode();
+	//void launch_missiles();
+	//void test_missiles() {
+	//   enable_missile_safety_mode();
+	//   launch_missiles();
+	//}
+	public void testClassNoDiscardType() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(5, ER_ID);
+	}
+
+	//struct [[nodiscard]] error_type {};
+	//error_info& foo();
+	//void f1() {
+	//    foo();
+	//}
+	public void testClassNoDiscardTypesByRef() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(ER_ID);
+	}
+
+	//struct [[nodiscard]] error_type { error_type(int) {} };
+	//template<class T>
+	//typename T::E foo() {return static_cast<typename T::E>(0);}
+	//template<class F>
+	//struct trait { typedef typename F E; }
+	//void f1() {
+	//    foo<trait<error_type>>();
+	//}
+	public void testClassNoDiscardTypesTemplate() throws Exception {
+		CPPASTNameBase.sAllowNameComputation = true;
+		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(ER_ID);
+	}
+
+	//enum [[nodiscard]] error_type { FAILURE };
+	//error_type enable_missile_safety_mode();
+	//void launch_missiles();
+	//void test_missiles() {
+	//   enable_missile_safety_mode();
+	//   launch_missiles();
+	//}
+	public void testEnumNoDiscardType() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(5, ER_ID);
+	}
+
+	//enum [[nodiscard]] error_type { FAILURE };
+	//error_type& foo();
+	//void f1() {
+	//    foo();
+	//}
+	public void testEnumNoDiscardTypesByRef() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(ER_ID);
 	}
 }

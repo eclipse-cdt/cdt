@@ -40,7 +40,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 
-@SuppressWarnings("restriction")
 public class VirtualMethodCallChecker extends AbstractIndexAstChecker {
 	public static final String VIRTUAL_CALL_ID = "org.eclipse.cdt.codan.internal.checkers.VirtualMethodCallProblem"; //$NON-NLS-1$
 

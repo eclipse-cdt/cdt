@@ -43,7 +43,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalVariable;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMGlobalScope;
 import org.eclipse.core.runtime.CoreException;
 
-@SuppressWarnings("restriction")
 public class SymbolShadowingChecker extends AbstractIndexAstChecker {
 
 	public static final String ERR_ID = "org.eclipse.cdt.codan.internal.checkers.SymbolShadowingProblem"; //$NON-NLS-1$

@@ -37,7 +37,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 
-@SuppressWarnings("restriction")
 public class NoDiscardChecker extends AbstractAstFunctionChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NoDiscardProblem"; //$NON-NLS-1$
 	public static final String PARAM_MACRO_ID = "macro"; //$NON-NLS-1$

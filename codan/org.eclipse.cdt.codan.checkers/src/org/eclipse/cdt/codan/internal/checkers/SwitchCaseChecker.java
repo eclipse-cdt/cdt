@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-@SuppressWarnings("restriction")
 public class SwitchCaseChecker extends AbstractIndexAstChecker {
 	public static final String MISS_CASE_ID = "org.eclipse.cdt.codan.internal.checkers.MissCaseProblem"; //$NON-NLS-1$
 	public static final String MISS_DEFAULT_ID = "org.eclipse.cdt.codan.internal.checkers.MissDefaultProblem"; //$NON-NLS-1$

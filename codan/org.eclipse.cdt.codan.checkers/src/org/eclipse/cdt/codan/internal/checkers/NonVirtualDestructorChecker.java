@@ -42,7 +42,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  *
  * @author Alena Laskavaia
  */
-@SuppressWarnings("restriction")
 public class NonVirtualDestructorChecker extends AbstractIndexAstChecker {
 	public static final String PROBLEM_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
 

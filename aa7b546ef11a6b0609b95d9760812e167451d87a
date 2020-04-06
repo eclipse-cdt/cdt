@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc008796_a83d32e9",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1180,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-04-06T12:53:12Z",
+      "side": 1,
+      "message": "I should probably comment here.",
+      "revId": "aa7b546ef11a6b0609b95d9760812e167451d87a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

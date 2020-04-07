@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b9e04006_05f27771",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-04-07T21:12:58Z",
+      "side": 1,
+      "message": "Suggestion for organizing this a bit better:\n\n  // compute \"name\"\n\n  // For C++, checkEvaluation() should handle everything\n  if (expr instanceof ICPPASTExpression) {\n    if (checkEvaluation((ICPPASTExpression) expr) {\n      return Optional.of(name);\n    }\n    return Optional.empty();\n  }\n\n  // For C, the only thing we need to check if IFunction\n  IBinding binding \u003d name.resolveBinding();\n  if (binding instanceof IFunction \u0026\u0026 ((IFunction) binding).isNoDiscard()) {\n    return Optional.of(name);\n  }",
+      "revId": "277982fcaa4f06b88e0ea764aa7a872c2f6b0af1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f2be15f6_bc2ec928",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/NoDiscardChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-04-07T21:12:58Z",
+      "side": 1,
+      "message": "ICPPEnumerationSpecialization extends ICPPEnumeration, so there is no need for this additional branch.",
+      "revId": "277982fcaa4f06b88e0ea764aa7a872c2f6b0af1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

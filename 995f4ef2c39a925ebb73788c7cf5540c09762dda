@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c6fec71_c3b40f9a",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1145,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-04-07T02:36:11Z",
+      "side": 1,
+      "message": "untested",
+      "range": {
+        "startLine": 1144,
+        "startChar": 0,
+        "endLine": 1145,
+        "endChar": 78
+      },
+      "revId": "995f4ef2c39a925ebb73788c7cf5540c09762dda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "881aa0a2_d82915c5",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1151,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-04-07T02:36:11Z",
+      "side": 1,
+      "message": "untested",
+      "revId": "995f4ef2c39a925ebb73788c7cf5540c09762dda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b88dcfb_2665c11f",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1155,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-04-07T02:36:11Z",
+      "side": 1,
+      "message": "untested",
+      "revId": "995f4ef2c39a925ebb73788c7cf5540c09762dda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

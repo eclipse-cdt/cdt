@@ -126,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "068d1b26_a7caf6bd",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-04-07T19:02:24Z",
+      "side": 1,
+      "message": "\u003e \u003e All what this class does is specified through the arguments in its constructor, its internal logic is immutable.\n\u003e \n\u003e not yet. but if you can move fields \"result\" and \"cwd\" as final fields to inner ParserHandler - it will be.\n\nAH. good spot.\n\u003e \n\u003e \n\u003e \u003e The class cannot be declared final\n\u003e \n\u003e But why? :)\n\n- new DefaultToolDetectionParticipant(\"cc\", true, \"exe\", cc) in [1]\n- for convenience of extension point implementors [2]: they may re-use existing arglets to configure their implementation. E.g. \n\tprivate static class ToolCommandlineParser extends DefaultToolCommandlineParser {\n\n\t\tprivate static final IArglet[] arglets \u003d { new Arglets.IncludePath_C_POSIX(), new Arglets.MacroDefine_C_POSIX(),\n\t\t\t\tnew Arglets.MacroUndefine_C_POSIX(), new NvccSystemIncludePathArglet(),\n\t\t\t\tnew Arglets.SystemIncludePath_C(), new NvccLangStdArglet() };\n\n\t\tprivate ToolCommandlineParser() {\n\t\t\tsuper(new ResponseFileArglets.At(), new NvccBuiltinDetectionBehavior(), arglets);\n\t\t}\n\t}\n  \nOk, I could have made it abstract and introduce a configure method and make it abstract, but my current target is to  Improve parser for compile_commands.json [3]  and I want to contribute a mechnism that is known to be working (from my experience).\n\n[1] https://git.eclipse.org/r/c/160068/1/cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParserDetection.java#73\n[2] https://github.com/15knots/cmake4eclipse/blob/b0089ca61d416e49196b7f75a85d112f7344f7e8/de.marw.cmake.cdt.lsp.nvidia/src/main/java/de/marw/cmake/cdt/lsp/nvidia/NvccToolDetectionParticipant.java#L39\n[3] https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d559674\n\n\u003e \n\u003e OK, if each method of this will be final - what may be the reason to extend it? In that case it is easier to declare the whole class final :)",
+      "parentUuid": "bb943278_9d198d8b",
+      "revId": "31bf917968739e796c84cd13595c87dadd2db42b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c0843f7a_b11341a8",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParseContext.java",
         "patchSetId": 1

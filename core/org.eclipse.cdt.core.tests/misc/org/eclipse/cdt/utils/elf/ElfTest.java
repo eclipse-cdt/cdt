@@ -16,11 +16,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.cdt.core.ISymbolReader;
+import org.eclipse.cdt.utils.elf.Elf.Attribute;
 import org.eclipse.cdt.utils.elf.Elf.Section;
 import org.eclipse.cdt.utils.elf.Elf.Symbol;
 import org.junit.Test;
@@ -40,12 +43,14 @@ public class ElfTest {
 	@Parameters(name = "{0}")
 	public static Collection<Object[]> elfArchitectures() {
 		return Arrays.asList(new Object[][] {
-				{ "BE32", "resources/elf/unit_test/simple-be32.elf", 35, "0x00000000", "0x100001a8", 75, "0x10000518" },
-				{ "BE64", "resources/elf/unit_test/simple-be64.elf", 34, "0x0000000000000000", "0x0000000010000240", 69,
-						"0x000000001001fea0" },
-				{ "LE32", "resources/elf/unit_test/simple-le32.elf", 36, "0x00000000", "0x080481cc", 70, "0x080483e5" },
-				{ "LE64", "resources/elf/unit_test/simple-le64.elf", 36, "0x0000000000000000", "0x00000000004002b8", 68,
-						"0x00000000004004e4" }, });
+				{ "BE32", "ppc", "resources/elf/unit_test/simple-be32.elf", 35, "0x00000000", "0x100001a8", 75,
+						"0x10000518" },
+				{ "BE64", "ppc64", "resources/elf/unit_test/simple-be64.elf", 34, "0x0000000000000000",
+						"0x0000000010000240", 69, "0x000000001001fea0" },
+				{ "LE32", "x86", "resources/elf/unit_test/simple-le32.elf", 36, "0x00000000", "0x080481cc", 70,
+						"0x080483e5" },
+				{ "LE64", "x86_64", "resources/elf/unit_test/simple-le64.elf", 36, "0x0000000000000000",
+						"0x00000000004002b8", 68, "0x00000000004004e4" }, });
 	}
 
 	private static final Collection<String> functions = Arrays.asList("", "crtstuff.c", "simple.c", "crtstuff.c",
@@ -55,6 +60,7 @@ public class ElfTest {
 			"__JCR_LIST__", "__JCR_END__", "_DYNAMIC", "data_start", "__data_start", "__dso_handle", "_edata",
 			"__bss_start", "__TMC_END__", "_end");
 
+	private final String memoryArchitecture;
 	private final String arch;
 	private final Elf elf;
 	private final int nbSections;
@@ -63,8 +69,9 @@ public class ElfTest {
 	private final int nbSymbols;
 	private final String mainAddress;
 
-	public ElfTest(String architecture, String path, int sections, String symBaseAddress, String dynBaseAddress,
-			int symbolCount, String mainAddr) throws IOException {
+	public ElfTest(String mArch, String architecture, String path, int sections, String symBaseAddress,
+			String dynBaseAddress, int symbolCount, String mainAddr) throws IOException {
+		memoryArchitecture = mArch;
 		nbSections = sections;
 		elf = new Elf(path);
 		arch = architecture;
@@ -120,6 +127,38 @@ public class ElfTest {
 		}
 		assertNotNull(symbol);
 		assertEquals(arch + ": " + "Main address", mainAddress, symbol.st_value.toHexAddressString());
+	}
+
+	@Test
+	public void testGetAttributes() throws IOException {
+		Attribute attributes = elf.getAttributes();
+		assertEquals(arch + ": " + "CPU Architecture", arch, attributes.getCPU());
+		assertTrue(arch + ": " + "is debuggable", attributes.hasDebug());
+		assertEquals(arch + ": " + "is Little Endian", memoryArchitecture.startsWith("LE"),
+				attributes.isLittleEndian());
+
+		/*
+		 *  Big integer math
+		 *
+		 * max 32 = 0xffffffff (2^32 -1)
+		 * max 64 = 0xffffffffffffffff (2^64 -1) (larger than a long)
+		 */
+		BigInteger twoThirtyTwo = BigInteger.valueOf((1L << 32));
+		BigInteger unsigned32BitAddress = twoThirtyTwo.subtract(BigInteger.ONE);
+		BigInteger unsigned64BitAddress = twoThirtyTwo.multiply(twoThirtyTwo).subtract(BigInteger.ONE);
+		assertEquals(arch + ": " + "get Address factory",
+				memoryArchitecture.endsWith("32") ? unsigned32BitAddress : unsigned64BitAddress,
+				attributes.getAddressFactory().getMax().getValue());
+		assertEquals(arch + ": " + "debug type", Attribute.DEBUG_TYPE_DWARF, attributes.getDebugType());
+		assertEquals(arch + ": " + "elf type", Attribute.ELF_TYPE_EXE, attributes.getType());
+	}
+
+	@Test
+	public void testSymbolReader() {
+		ISymbolReader symbolReader = elf.getSymbolReader();
+		String[] sourceFiles = symbolReader.getSourceFiles();
+		assertEquals(arch + ": " + "Number of Source files", 1, sourceFiles.length);
+		assertTrue(arch + ": " + "Source file name", sourceFiles[0].endsWith("simple.c"));
 	}
 
 }

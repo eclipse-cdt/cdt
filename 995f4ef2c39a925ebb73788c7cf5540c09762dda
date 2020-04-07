@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1652dcb7_7b9490d0",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1145,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-07T14:53:32Z",
+      "side": 1,
+      "message": "You drew my eye to it - so I have a question... Can you throw NoSuchElementException directly?",
+      "parentUuid": "3c6fec71_c3b40f9a",
+      "range": {
+        "startLine": 1144,
+        "startChar": 0,
+        "endLine": 1145,
+        "endChar": 78
+      },
+      "revId": "995f4ef2c39a925ebb73788c7cf5540c09762dda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "881aa0a2_d82915c5",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
         "patchSetId": 5
@@ -42,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "36bcb3b9_df24b843",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1151,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-07T14:53:32Z",
+      "side": 1,
+      "message": "Can you throw NoSuchElementException directly?",
+      "parentUuid": "881aa0a2_d82915c5",
+      "revId": "995f4ef2c39a925ebb73788c7cf5540c09762dda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0b88dcfb_2665c11f",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
         "patchSetId": 5
@@ -53,6 +95,24 @@
       "writtenOn": "2020-04-07T02:36:11Z",
       "side": 1,
       "message": "untested",
+      "revId": "995f4ef2c39a925ebb73788c7cf5540c09762dda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b5473192_9e73d418",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1155,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-07T14:53:32Z",
+      "side": 1,
+      "message": "I was going to say:\n\nIn this case, please also include the \"e\" exception when constructing the NoSuchElementException so that the original exception info (especially stacktrace) is not lost.\n\nBut the reason is that NoSuchElementException has no such constructor :-(",
+      "parentUuid": "0b88dcfb_2665c11f",
       "revId": "995f4ef2c39a925ebb73788c7cf5540c09762dda",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

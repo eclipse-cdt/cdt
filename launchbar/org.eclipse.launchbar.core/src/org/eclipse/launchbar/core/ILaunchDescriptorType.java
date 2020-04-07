@@ -46,5 +46,11 @@ public interface ILaunchDescriptorType {
 	default boolean supportsTargets() throws CoreException {
 		return true;
 	}
+	
+	/** Do the launch configurations of this type support being deleted. */
+	default boolean canDelete() {
+		return true;
+	}
+
 
 }

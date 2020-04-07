@@ -34,6 +34,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
+import org.eclipse.launchbar.core.DefaultLaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchConfigurationProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchDescriptorType;
@@ -205,6 +206,107 @@ public class LaunchBarManagerTest {
 		assertEquals(runMode, manager.getActiveLaunchMode());
 		assertEquals(ILaunchTargetManager.localLaunchTargetTypeId, manager.getActiveLaunchTarget().getTypeId());
 		assertEquals("Local", manager.getActiveLaunchTarget().getId());
+		assertEquals(launchConfig, manager.getActiveLaunchConfiguration());
+	}
+
+	@Test
+	public void descriptorWithTargetsTest() throws Exception {
+		// Create a descriptor derived from DefaultLaunchDescriptor whose type
+		// supports targets.
+		// Check the active config after adding the launchObject and make sure it came from the provider
+
+		// Mocking
+		final IExtensionPoint extensionPoint = mock(IExtensionPoint.class);
+		IExtension extension = mock(IExtension.class);
+		doReturn(new IExtension[] { extension }).when(extensionPoint).getExtensions();
+
+		List<IConfigurationElement> elements = new ArrayList<>();
+		IConfigurationElement element;
+
+		// fake launch object
+		String launchObject = "fakeObject";
+
+		// launch descriptor for that object
+		element = mock(IConfigurationElement.class);
+		elements.add(element);
+		doReturn("descriptorType").when(element).getName();
+		String descriptorTypeId = "fakeDescriptorType";
+		doReturn(descriptorTypeId).when(element).getAttribute("id");
+		ILaunchDescriptorType descriptorType = mock(ILaunchDescriptorType.class);
+		doReturn(descriptorType).when(element).createExecutableExtension("class");
+		ILaunchDescriptor descriptor = mock(DefaultLaunchDescriptor.class);
+		doReturn(true).when(descriptorType).supportsTargets();
+		doReturn(descriptor).when(descriptorType).getDescriptor(launchObject);
+		doReturn(descriptorType).when(descriptor).getType();
+		doReturn(launchObject).when(descriptor).getName();
+
+		// launch config type
+		final ILaunchManager launchManager = mock(ILaunchManager.class);
+		ILaunchMode runMode = mock(ILaunchMode.class);
+		String run = "run";
+		doReturn(run).when(runMode).getIdentifier();
+		doReturn(runMode).when(launchManager).getLaunchMode(run);
+		ILaunchMode debugMode = mock(ILaunchMode.class);
+		String debug = "debug";
+		doReturn(debug).when(debugMode).getIdentifier();
+		doReturn(debugMode).when(launchManager).getLaunchMode(debug);
+		doReturn(new ILaunchMode[] { runMode, debugMode }).when(launchManager).getLaunchModes();
+		ILaunchConfigurationType launchConfigType = mock(ILaunchConfigurationType.class);
+		String launchConfigTypeId = "fakeLaunchConfigType";
+		doReturn(launchConfigTypeId).when(launchConfigType).getIdentifier();
+		doReturn(true).when(launchConfigType).supportsMode(run);
+		doReturn(true).when(launchConfigType).supportsMode(debug);
+		doReturn(launchConfigType).when(launchManager).getLaunchConfigurationType(launchConfigTypeId);
+		doReturn(new ILaunchConfiguration[0]).when(launchManager).getLaunchConfigurations();
+
+		// configProvider
+		element = mock(IConfigurationElement.class);
+		elements.add(element);
+		doReturn("configProvider").when(element).getName();
+		doReturn(descriptorTypeId).when(element).getAttribute("descriptorType");
+		doReturn("10").when(element).getAttribute("priority");
+
+		ILaunchConfigurationProvider configProvider = mock(ILaunchConfigurationProvider.class);
+		doReturn(configProvider).when(element).createExecutableExtension("class");
+
+		final ILaunchTargetManager targetManager = mock(ILaunchTargetManager.class);
+		ILaunchTarget localTarget = mock(ILaunchTarget.class);
+		doReturn(ILaunchTargetManager.localLaunchTargetTypeId).when(localTarget).getTypeId();
+		doReturn("Local").when(localTarget).getId();
+		doReturn(new ILaunchTarget[] { localTarget }).when(targetManager).getLaunchTargets();
+
+		ILaunchConfiguration launchConfig = mock(ILaunchConfiguration.class);
+		doReturn(launchConfig).when(configProvider).getLaunchConfiguration(eq(descriptor), any(ILaunchTarget.class));
+		doReturn(launchConfigType).when(configProvider).getLaunchConfigurationType(any(ILaunchDescriptor.class),
+				any(ILaunchTarget.class));
+		doAnswer(invocation -> {
+			ILaunchTarget target = (ILaunchTarget) invocation.getArguments()[1];
+			return target.getTypeId().equals(ILaunchTargetManager.localLaunchTargetTypeId);
+		}).when(configProvider).supports(eq(descriptor), any(ILaunchTarget.class));
+
+		doReturn(elements.toArray(new IConfigurationElement[0])).when(extension).getConfigurationElements();
+
+		// Now inject the launch object
+		LaunchBarManager manager = new LaunchBarManager(false) {
+			@Override
+			IExtensionPoint getExtensionPoint() throws CoreException {
+				return extensionPoint;
+			}
+
+			@Override
+			ILaunchManager getLaunchManager() {
+				return launchManager;
+			}
+
+			@Override
+			ILaunchTargetManager getLaunchTargetManager() {
+				return targetManager;
+			}
+
+		};
+		manager.init();
+		manager.launchObjectAdded(launchObject);
+
 		assertEquals(launchConfig, manager.getActiveLaunchConfiguration());
 	}
 

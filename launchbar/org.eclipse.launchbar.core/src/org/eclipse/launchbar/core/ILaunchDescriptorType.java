@@ -47,4 +47,13 @@ public interface ILaunchDescriptorType {
 		return true;
 	}
 
+	/**
+	 * Do the launch configurations of this type support being deleted.
+	 *
+	 * @return true if can be deleted
+	 * @since 2.4
+	 */
+	default boolean canDelete() {
+		return true;
+	}
 }

@@ -18,7 +18,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
-import org.eclipse.launchbar.core.DefaultLaunchDescriptor;
 import org.eclipse.launchbar.core.DefaultLaunchDescriptorType;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
@@ -249,7 +248,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		}
 
 		String deleteText;
-		if (descriptor instanceof DefaultLaunchDescriptor) {
+		if (descriptor.getType().canDelete()) {
 			deleteText = Messages.LaunchBarLaunchConfigDialog_Delete;
 		} else {
 			deleteText = Messages.LaunchBarLaunchConfigDialog_Reset;
@@ -274,7 +273,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 
 	protected void deletePressed() {
 		String title, message;
-		if (descriptor instanceof DefaultLaunchDescriptor) {
+		if (descriptor.getType().canDelete()) {
 			title = Messages.LaunchBarLaunchConfigDialog_DeleteTitle;
 			message = Messages.LaunchBarLaunchConfigDialog_DeleteConfirm;
 		} else {

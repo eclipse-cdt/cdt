@@ -835,7 +835,9 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		}
 
 		if (descriptor instanceof DefaultLaunchDescriptor) {
-			return descriptor.getAdapter(ILaunchConfiguration.class);
+			if (!descriptor.getType().supportsTargets()) {
+				return descriptor.getAdapter(ILaunchConfiguration.class);
+			}
 		}
 
 		String descTypeId = getDescriptorTypeId(descriptor.getType());

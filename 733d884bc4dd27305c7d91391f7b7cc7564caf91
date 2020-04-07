@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4e9fc14b_3d21b392",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPEnumeration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-04-07T21:01:36Z",
+      "side": 1,
+      "message": "Why do we need 8 bytes to store a boolean value?",
+      "revId": "733d884bc4dd27305c7d91391f7b7cc7564caf91",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

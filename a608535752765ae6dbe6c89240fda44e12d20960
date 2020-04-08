@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd7f55f0_e3bd5dd5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPEnumeration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-04-08T22:40:04Z",
+      "side": 1,
+      "message": "We could go a step further and store \"isNoDiscard\" and \"isScoped\" as two bits in the OFFSET_FLAGS byte. Up to you if you want to do that.",
+      "revId": "a608535752765ae6dbe6c89240fda44e12d20960",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

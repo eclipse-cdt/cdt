@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2583fac6_f512b76b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-08T14:16:31Z",
+      "side": 1,
+      "message": "Please follow standard git commit message rules. \n\nIn short:\n1st line should be short summary\n2nd line should be blank\n3-nth lines have details",
+      "revId": "298c3f537b290b24049bbb834cbb9952bd0ea137",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "20506012_55f3a1cc",
+        "filename": "launchbar/org.eclipse.launchbar.core/src/org/eclipse/launchbar/core/ILaunchDescriptorType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-08T14:16:31Z",
+      "side": 1,
+      "message": "Please add full javadocs, including @since messages. If you don\u0027t have an error you may not have API baselines setup properly in your workspace.\n\nThis probably means you need to bump the minor version of the bundle.",
+      "revId": "298c3f537b290b24049bbb834cbb9952bd0ea137",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "757f8a22_50787535",
+        "filename": "launchbar/org.eclipse.launchbar.core/src/org/eclipse/launchbar/core/ILaunchDescriptorType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-08T14:16:31Z",
+      "side": 1,
+      "message": "Extra blank line fails code cleanliness checks.",
+      "revId": "298c3f537b290b24049bbb834cbb9952bd0ea137",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c46e546d_eb33a7fc",
+        "filename": "launchbar/org.eclipse.launchbar.core/src/org/eclipse/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 838,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-08T14:16:31Z",
+      "side": 1,
+      "message": "Should the outer if be removed in this case?",
+      "revId": "298c3f537b290b24049bbb834cbb9952bd0ea137",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

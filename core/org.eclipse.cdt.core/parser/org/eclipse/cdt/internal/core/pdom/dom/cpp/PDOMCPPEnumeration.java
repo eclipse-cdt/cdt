@@ -49,8 +49,10 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 	private static final int OFFSET_MIN_VALUE = OFFSET_ENUMERATOR_LIST + Database.PTR_SIZE;
 	private static final int OFFSET_MAX_VALUE = OFFSET_MIN_VALUE + 8;
 	private static final int OFFSET_FIXED_TYPE = OFFSET_MAX_VALUE + 8;
-	private static final int OFFSET_NO_DISCARD = OFFSET_FIXED_TYPE + 8;
-	private static final int OFFSET_FLAGS = OFFSET_NO_DISCARD + Database.TYPE_SIZE;
+	private static final int OFFSET_FLAGS = OFFSET_FIXED_TYPE + Database.TYPE_SIZE;
+
+	private static final byte FLAG_SCOPED = 0x1;
+	private static final byte FLAG_NODISCARD = 0x2;
 
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = OFFSET_FLAGS + 1;
@@ -76,8 +78,15 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 
 	private void storeProperties(ICPPEnumeration enumeration) throws CoreException {
 		final Database db = getDB();
-		db.putByte(record + OFFSET_FLAGS, enumeration.isScoped() ? (byte) 1 : (byte) 0);
-		db.putByte(record + OFFSET_NO_DISCARD, enumeration.isNoDiscard() ? (byte) 1 : (byte) 0);
+		byte flags = 0;
+		if (enumeration.isScoped()) {
+			flags |= FLAG_SCOPED;
+		}
+		if (enumeration.isNoDiscard()) {
+			flags |= FLAG_NODISCARD;
+		}
+
+		db.putByte(record + OFFSET_FLAGS, flags);
 
 		getLinkage().storeType(record + OFFSET_FIXED_TYPE, enumeration.getFixedType());
 
@@ -190,7 +199,8 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 	@Override
 	public boolean isScoped() {
 		try {
-			return getDB().getByte(record + OFFSET_FLAGS) != 0;
+			byte flags = getDB().getByte(record + OFFSET_FLAGS);
+			return (flags & FLAG_SCOPED) != 0;
 		} catch (CoreException e) {
 			return false;
 		}
@@ -199,7 +209,8 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 	@Override
 	public boolean isNoDiscard() {
 		try {
-			return getDB().getByte(record + OFFSET_NO_DISCARD) != 0;
+			byte flags = getDB().getByte(record + OFFSET_FLAGS);
+			return (flags & FLAG_NODISCARD) != 0;
 		} catch (CoreException e) {
 			return false;
 		}

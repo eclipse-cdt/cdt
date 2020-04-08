@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "e16701f6_883e9dda",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1145,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-08T14:18:28Z",
+      "side": 1,
+      "message": "Ahh the curse of copying old CDT code :-)",
+      "parentUuid": "7253cf95_c78a9d21",
+      "range": {
+        "startLine": 1144,
+        "startChar": 0,
+        "endLine": 1145,
+        "endChar": 78
+      },
+      "revId": "995f4ef2c39a925ebb73788c7cf5540c09762dda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "881aa0a2_d82915c5",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
         "patchSetId": 5

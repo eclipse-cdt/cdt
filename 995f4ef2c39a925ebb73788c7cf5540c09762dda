@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "7253cf95_c78a9d21",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1145,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-04-08T13:58:41Z",
+      "side": 1,
+      "message": "Makes sense, I was copy-pasting the original code.",
+      "parentUuid": "1652dcb7_7b9490d0",
+      "range": {
+        "startLine": 1144,
+        "startChar": 0,
+        "endLine": 1145,
+        "endChar": 78
+      },
+      "revId": "995f4ef2c39a925ebb73788c7cf5540c09762dda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "881aa0a2_d82915c5",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
         "patchSetId": 5
@@ -78,6 +102,24 @@
       "side": 1,
       "message": "Can you throw NoSuchElementException directly?",
       "parentUuid": "881aa0a2_d82915c5",
+      "revId": "995f4ef2c39a925ebb73788c7cf5540c09762dda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d67d3692_85b15e3c",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1151,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-04-08T13:58:41Z",
+      "side": 1,
+      "message": "Sure!",
+      "parentUuid": "36bcb3b9_df24b843",
       "revId": "995f4ef2c39a925ebb73788c7cf5540c09762dda",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

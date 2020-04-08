@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3906d6a5_208e4f3b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 273472
+      },
+      "writtenOn": "2020-04-08T16:22:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2583fac6_f512b76b",
+      "revId": "298c3f537b290b24049bbb834cbb9952bd0ea137",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "20506012_55f3a1cc",
         "filename": "launchbar/org.eclipse.launchbar.core/src/org/eclipse/launchbar/core/ILaunchDescriptorType.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2020-04-08T14:16:31Z",
       "side": 1,
       "message": "Please add full javadocs, including @since messages. If you don\u0027t have an error you may not have API baselines setup properly in your workspace.\n\nThis probably means you need to bump the minor version of the bundle.",
+      "revId": "298c3f537b290b24049bbb834cbb9952bd0ea137",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17c00d8a_86df20a7",
+        "filename": "launchbar/org.eclipse.launchbar.core/src/org/eclipse/launchbar/core/ILaunchDescriptorType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 273472
+      },
+      "writtenOn": "2020-04-08T16:22:10Z",
+      "side": 1,
+      "message": "Updated, the baseline error not sure why I don\u0027t get those locally, I verified I have the baseline selected in PluginDevelopment-\u003eAPI baselines, and that baseline errors were set as \u0027error\u0027 there, also verified that PluginDevelopment-\u003eAPI Errors and Warnings, had missing since tags as errors. Is it that the new interface is marked \u0027default\u0027 that it is not complaining? I did a clean and rebuild with the tag not present but still no error indicated.  I\u0027m also building on windows if thats relevant.",
+      "parentUuid": "20506012_55f3a1cc",
       "revId": "298c3f537b290b24049bbb834cbb9952bd0ea137",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "51ed4b71_4e59a31f",
+        "filename": "launchbar/org.eclipse.launchbar.core/src/org/eclipse/launchbar/core/ILaunchDescriptorType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 273472
+      },
+      "writtenOn": "2020-04-08T16:22:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "757f8a22_50787535",
+      "revId": "298c3f537b290b24049bbb834cbb9952bd0ea137",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c46e546d_eb33a7fc",
         "filename": "launchbar/org.eclipse.launchbar.core/src/org/eclipse/launchbar/core/internal/LaunchBarManager.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2020-04-08T14:16:31Z",
       "side": 1,
       "message": "Should the outer if be removed in this case?",
+      "revId": "298c3f537b290b24049bbb834cbb9952bd0ea137",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5f0ac8a_c6a6d8bf",
+        "filename": "launchbar/org.eclipse.launchbar.core/src/org/eclipse/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 838,
+      "author": {
+        "id": 273472
+      },
+      "writtenOn": "2020-04-08T16:22:10Z",
+      "side": 1,
+      "message": "Good point, at this point I think I would lean towards keeping it, just as that would open up a use case that I have not encountered. Specifically the logic before would have said, any non DefaultLaunchDescriptor has its configuration retrieved via provider.getLaunchDescriptor (the for block below), getAdaptor would never have been called in this context on anything other than a DefaultLaunchDescriptor. The use case I was going after here was DefaultDescriptors which support targets, so those ones I let fall down to the code to retrieve the configuration via getLaunchConfiguration. Removing that outer if would then presume the non DefaultDescriptors implement an adaptor for ILaunchConfiguration, which I can\u0027t guarantee would be true for all descriptors out there, so as of right now I don\u0027t think there is a compelling reason to open up that path.",
+      "parentUuid": "c46e546d_eb33a7fc",
       "revId": "298c3f537b290b24049bbb834cbb9952bd0ea137",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

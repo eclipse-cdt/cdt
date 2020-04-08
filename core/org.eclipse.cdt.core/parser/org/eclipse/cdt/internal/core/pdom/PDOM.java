@@ -307,10 +307,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  216.0 - Added nodiscard function information, bug 534420
 	 *  217.0 - Added nodiscard class/struct information, bug 534420
 	 *  218.0 - Added nodiscard enums information, bug 534420
+	 *  219.0 - Fix enums nodiscard information in the index from 8 byte to 1 byte, bug 534420
 	 */
-	private static final int MIN_SUPPORTED_VERSION = version(218, 0);
-	private static final int MAX_SUPPORTED_VERSION = version(218, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(218, 0);
+	private static final int MIN_SUPPORTED_VERSION = version(219, 0);
+	private static final int MAX_SUPPORTED_VERSION = version(219, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(219, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

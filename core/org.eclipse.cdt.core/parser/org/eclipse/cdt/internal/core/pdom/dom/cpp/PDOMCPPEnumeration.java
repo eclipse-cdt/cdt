@@ -49,7 +49,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 	private static final int OFFSET_MIN_VALUE = OFFSET_ENUMERATOR_LIST + Database.PTR_SIZE;
 	private static final int OFFSET_MAX_VALUE = OFFSET_MIN_VALUE + 8;
 	private static final int OFFSET_FIXED_TYPE = OFFSET_MAX_VALUE + 8;
-	private static final int OFFSET_NO_DISCARD = OFFSET_FIXED_TYPE + 8;
+	private static final int OFFSET_NO_DISCARD = OFFSET_FIXED_TYPE + 1;
 	private static final int OFFSET_FLAGS = OFFSET_NO_DISCARD + Database.TYPE_SIZE;
 
 	@SuppressWarnings("hiding")

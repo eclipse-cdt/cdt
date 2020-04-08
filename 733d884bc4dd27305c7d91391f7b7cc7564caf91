@@ -16,6 +16,24 @@
       "revId": "733d884bc4dd27305c7d91391f7b7cc7564caf91",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cea88a37_cffc1f3e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/cpp/PDOMCPPEnumeration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-04-08T06:13:58Z",
+      "side": 1,
+      "message": "Just copy-paste. I\u0027m going to fix it.",
+      "parentUuid": "4e9fc14b_3d21b392",
+      "revId": "733d884bc4dd27305c7d91391f7b7cc7564caf91",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

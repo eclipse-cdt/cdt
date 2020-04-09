@@ -136,8 +136,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected static final int TEST_FILE_ID = 128;
 	/** @since 7.0*/
 	protected static final int FINAL_ID = 256;
-	protected static final int ALL_FIELDS = SOURCE_FOLDER_ID | NAMESPACE_ID | CLASS_NAME_ID | BASE_CLASSES_ID
-			| METHOD_STUBS_ID | HEADER_FILE_ID | SOURCE_FILE_ID | TEST_FILE_ID | FINAL_ID;
 	protected int fLastFocusedField = 0;
 
 	protected StringButtonDialogField fSourceFolderDialogField;
@@ -268,9 +266,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 	// -------- UI Creation ---------
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
@@ -529,7 +524,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 		fIsFinalClassField.setSelection(fDialogSettings.getBoolean(KEY_FINAL_SELECTED));
 		setTestFileSelection(fDialogSettings.getBoolean(KEY_TEST_FILE_SELECTED), true);
-		handleFieldChanged(ALL_FIELDS);
+		handleFieldsChanged();
 	}
 
 	private boolean getBooleanSettingWithDefault(String key, boolean defaultValue) {
@@ -1085,13 +1080,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			IPath newFolderPath = chooseSourceFolder(oldFolderPath);
 			if (newFolderPath != null) {
 				setSourceFolderFullPath(newFolderPath, false);
-				handleFieldChanged(SOURCE_FOLDER_ID | ALL_FIELDS);
+				handleFieldsChanged();
 			}
 		}
 
 		@Override
 		public void dialogFieldChanged(DialogField field) {
-			handleFieldChanged(SOURCE_FOLDER_ID | ALL_FIELDS);
+			handleFieldsChanged();
 		}
 	}
 
@@ -1528,6 +1523,23 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		if (fieldChanged(fields, FINAL_ID)) {
 			fIsFinalStatus = finalChanged();
 		}
+		doStatusUpdate();
+	}
+
+	/**
+	 * Hook method that gets called when all fields on this page have changed.
+	 * @since 7.0
+	 */
+	protected void handleFieldsChanged() {
+		fSourceFolderStatus = sourceFolderChanged();
+		fNamespaceStatus = namespaceChanged();
+		fClassNameStatus = classNameChanged();
+		fBaseClassesStatus = baseClassesChanged();
+		fMethodStubsStatus = methodStubsChanged();
+		fHeaderFileStatus = headerFileChanged();
+		fSourceFileStatus = sourceFileChanged();
+		fTestFileStatus = testFileChanged();
+		fIsFinalStatus = finalChanged();
 		doStatusUpdate();
 	}
 

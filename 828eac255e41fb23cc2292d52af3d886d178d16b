@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "638e3727_da4c3749",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1089,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-09T12:55:42Z",
+      "side": 1,
+      "message": "So we assume that our fields are depenedent and we should revalidate all on any change. In this case why we support so granular checks?",
+      "revId": "828eac255e41fb23cc2292d52af3d886d178d16b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

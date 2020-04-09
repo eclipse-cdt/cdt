@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c5758e0c_4a45b969",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-09T12:55:42Z",
+      "side": 0,
+      "message": "+1",
+      "revId": "31b748e7b9ce00dd4e5286f4a12236f263e3ec5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cfa05f89_ff66e14b",
+        "filename": "core/org.eclipse.cdt.core.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-09T08:33:49Z",
+      "side": 1,
+      "message": "org.junit should be enough",
+      "revId": "0b34c28e84ee41d3c182bb2b4555b09aba09dd30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

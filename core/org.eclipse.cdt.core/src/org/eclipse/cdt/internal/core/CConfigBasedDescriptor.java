@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,16 +9,18 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
- * James Blackburn (Broadcom Corp.)
- * IBM Corporation
+ *     Intel Corporation - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
+ *     James Blackburn (Broadcom Corp.)
+ *     IBM Corporation
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -57,8 +59,6 @@ import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Concrete ICDescriptor for a Project.

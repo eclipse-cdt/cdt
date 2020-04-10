@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2020 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,9 +10,11 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -24,8 +26,6 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
-
-import com.ibm.icu.text.DateFormatSymbols;
 
 /**
  * Models macros used by the preprocessor

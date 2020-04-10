@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2020 Symbian Software Limited and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Mark Espiritu (VastSystems) - bug 215283
  *     Raphael Zulliger (Indel AG) - [367482] fixed resource leak
  *     Doug Schaefer (QNX) - added different start and end patterns for macros
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine.process;
 
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -31,8 +33,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Acts as helper class for process the processes i.e., copy, replace and append files.

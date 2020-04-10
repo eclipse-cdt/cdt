@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2020 Symbian Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,10 +12,12 @@
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
  *     Martin Oberhuber (Wind River) - [397652] fix up-to-date check for PDOM
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.export;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -32,8 +34,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * An ISafeRunnable which

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2020 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,9 +12,11 @@
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson)
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -46,8 +48,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-
-import com.ibm.icu.text.NumberFormat;
 
 /**
  * Configures the abstract indexer task suitable for indexing projects.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2020 Symbian Software Limited and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,15 +9,16 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine.process;
+
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Abstract ProcessRunner class provides the methods to implement for processes.

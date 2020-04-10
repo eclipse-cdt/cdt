@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2020 Symbian Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,13 +9,15 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
- * Anna Dushistova (MontaVista) - bug [247087]
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Anna Dushistova (MontaVista) - bug [247087]
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.export;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +41,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.ProgressProvider;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * An eclipse application for generating PDOM's without starting the Workbench

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 QNX Software Systems and others.
+ * Copyright (c) 2000, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff;
 
@@ -18,13 +19,12 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-
-import com.ibm.icu.text.DateFormat;
 
 /**
  * @deprecated Deprecated as of CDT 6.9. Use 64 bit version {@link Coff64}.

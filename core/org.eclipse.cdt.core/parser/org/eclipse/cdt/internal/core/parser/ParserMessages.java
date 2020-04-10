@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,15 +10,15 @@
  *
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - Initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class ParserMessages {
 	private static final String BUNDLE_NAME = ParserMessages.class.getName();

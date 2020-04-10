@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Intel Corporation and others.
+ * Copyright (c) 2007, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,12 +9,13 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
- * James Blackburn (Broadcom Corp.)
- * Alex Blewitt Bug 132511 - nature order not preserved
- * Christian Walther (Indel AG) - [436060] Race condition in updateProjectDescriptions()
+ *     Intel Corporation - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
+ *     James Blackburn (Broadcom Corp.)
+ *     Alex Blewitt Bug 132511 - nature order not preserved
+ *     Christian Walther (Indel AG) - [436060] Race condition in updateProjectDescriptions()
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -134,8 +136,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.xml.sax.SAXException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The CProjectDescriptionManager is to marshall the loading and storing
@@ -1386,23 +1386,6 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return !newCfg.getId().equals(oldCfg.getId());
 	}
 
-	/*	void postProcessNewDescriptionCache(CProjectDescription des, ICProjectDescriptionDelta delta) {
-			if (delta == null && delta.getDeltaKind() != ICProjectDescriptionDelta.CHANGED)
-				return;
-
-			ICConfigurationDescription indexCfg = des.getIndexConfiguration();
-			ICConfigurationDescription activeCfg = des.getActiveConfiguration();
-			ICProjectDescriptionDelta activeCfgDelta = findDelta(activeCfg.getId(), delta);
-			if (indexCfg != activeCfg) {
-				switch(activeCfgDelta.getDeltaKind()) {
-				case ICProjectDescriptionDelta.CHANGED:
-					des.setIndexConfiguration(activeCfg);
-				}
-			}
-
-
-		}
-	*/
 	private ICDescriptionDelta findDelta(String id, ICDescriptionDelta delta) {
 		ICDescriptionDelta children[] = delta.getChildren();
 		ICSettingObject obj;
@@ -1933,18 +1916,6 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return result;
 	}
 
-	/*	public boolean entriesEqual(ICLanguageSettingEntry entries1[], ICLanguageSettingEntry entries2[]) {
-			if (entries1.length != entries2.length)
-				return false;
-
-			for (int i = 0; i < entries1.length; i++) {
-				if (!entries1[i].equals(entries2[i]))
-					return false;
-			}
-
-			return true;
-		}
-	*/
 	private CProjectDescriptionDelta createDelta(ICBuildSetting newBuildSetting, ICBuildSetting oldBuildSetting) {
 		CProjectDescriptionDelta delta = new CProjectDescriptionDelta(newBuildSetting, oldBuildSetting);
 		if (!Arrays.equals(newBuildSetting.getErrorParserIDs(), oldBuildSetting.getErrorParserIDs()))

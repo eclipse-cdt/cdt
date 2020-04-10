@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Broadcom Corporation and others.
+ * Copyright (c) 2008, 2020 Broadcom Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,8 +11,11 @@
  * Contributors:
  *     James Blackburn (Broadcom Corp.)
  *     IBM Corporation
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
+
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
@@ -33,8 +36,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.Version;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This abstract class provides an extension point for functionality for loading

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 Space Codesign Systems and others.
+ * Copyright (c) 2000, 2020 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Space Codesign Systems - Initial API and implementation
  *     QNX Software Systems - Initial Coff class
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff;
 
@@ -19,13 +20,12 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-
-import com.ibm.icu.text.DateFormat;
 
 /**
  * @since 6.9

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 QNX Software Systems and others.
+ * Copyright (c) 2005, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,15 +12,16 @@
  *     QNX - Initial API and implementation
  *     Andrew Ferguson (Symbian) - Provide B-tree deletion routine
  *     Markus Schorn (Wind River Systems)
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
+
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @author Doug Schaefer

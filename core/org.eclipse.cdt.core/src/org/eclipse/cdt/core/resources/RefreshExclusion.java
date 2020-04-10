@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2011, 2012 IBM Corporation and others.
+ *  Copyright (c) 2011, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,9 +10,11 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.core.resources;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,8 +24,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A RefreshExclusion represents a rule for excluding certain resources from being refreshed.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2016 IBM Corporation and others.
+ *  Copyright (c) 2004, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -9,20 +9,20 @@
  *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
- *  IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561992
  *******************************************************************************/
 package org.eclipse.cdt.utils.xcoff;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.coff.ReadMemoryAccess;
-
-import com.ibm.icu.text.DateFormat;
 
 /**
  * Representation of AIX XCOFF32 binary format

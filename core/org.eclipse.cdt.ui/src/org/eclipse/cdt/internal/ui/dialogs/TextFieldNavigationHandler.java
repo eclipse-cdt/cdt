@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,9 +11,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +50,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * Support for camelCase-aware sub-word navigation in dialog fields.

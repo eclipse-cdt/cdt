@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 QNX Software Systems and others.
+ * Copyright (c) 2009, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.workingsets;
@@ -26,9 +27,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
-
-import com.ibm.icu.text.UCharacterIterator;
-import com.ibm.icu.text.UForwardCharacterIterator;
 
 /**
  * Default implementation of the {@link IWorkingSetProxy} interface.
@@ -275,14 +273,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 
 		private String getSearchKey(String configurationName) {
 			StringBuilder result = new StringBuilder(configurationName.length());
-
-			UCharacterIterator iter = UCharacterIterator.getInstance(configurationName);
-			for (int cp = iter.nextCodePoint(); cp != UForwardCharacterIterator.DONE; cp = iter.nextCodePoint()) {
-				if (Character.isLetterOrDigit(cp)) {
-					result.appendCodePoint(cp);
-				}
-			}
-
+			configurationName.codePoints().filter(Character::isLetterOrDigit).forEach(result::appendCodePoint);
 			return result.toString();
 		}
 

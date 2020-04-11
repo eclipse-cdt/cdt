@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,9 +17,11 @@
  *     Axel Mueller - [289339] Surround with
  *     Tomasz Wesolowski - [320561] Override indicators
  *     Serge Beauchamp (Freescale Semiconductor) - Bug 417909
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.text.BreakIterator;
 import java.text.CharacterIterator;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -238,8 +240,6 @@ import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 import org.eclipse.ui.texteditor.templates.ITemplatesPage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * C/C++ source editor.

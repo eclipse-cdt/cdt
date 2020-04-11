@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Google, Inc and others.
+ * Copyright (c) 2013, 2020 Google, Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -21,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -70,8 +72,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Dialog for editing a header file substitution map.

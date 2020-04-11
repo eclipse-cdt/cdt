@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,9 +11,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.spelling;
 
+import java.text.BreakIterator;
 import java.util.LinkedList;
 import java.util.Locale;
 
@@ -22,8 +24,6 @@ import org.eclipse.cdt.internal.ui.text.spelling.engine.DefaultSpellChecker;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckIterator;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * Iterator to spell check multiline comment regions.

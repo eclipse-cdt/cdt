@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Google, Inc and others.
+ * Copyright (c) 2011, 2020 Google, Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,17 +10,17 @@
  *
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.internal.ui.text.CBreakIterator;
 import org.eclipse.cdt.ui.PreferenceConstants;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * Composes names according to a particular style. A seed name is split into

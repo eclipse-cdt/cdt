@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2020 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,12 +11,13 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
-import org.eclipse.osgi.util.NLS;
+import java.text.MessageFormat;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	public static String EditorUtility_calculatingChangedRegions_message;

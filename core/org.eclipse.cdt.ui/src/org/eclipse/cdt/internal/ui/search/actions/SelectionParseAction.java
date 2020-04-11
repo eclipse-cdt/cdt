@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,9 +13,12 @@
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
  *     Anton Leherbauer (Wind River Systems)
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search.actions;
+
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
@@ -30,8 +33,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @author aniefer

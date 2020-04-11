@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2020 Andrew Gvozdev and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,10 +11,12 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *     IBM Corporation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.dialogs;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,8 +70,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Options page for RegexErrorParser in Error Parsers Tab of properties/preferences.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 QNX Software Systems and others.
+ * Copyright (c) 2002, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,10 +12,12 @@
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin (Google)
  *     IBM Corporation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -84,8 +86,6 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * AbstractAnnotationHover

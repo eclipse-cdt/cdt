@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Intel Corporation and others.
+ * Copyright (c) 2007, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,9 +11,11 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * Andrew Gvozdev (Quoin Inc.) - Regular expression error parsers
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -70,8 +72,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.prefs.BackingStoreException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class represents Error Parser Tab in Project Properties or workspace Preferences

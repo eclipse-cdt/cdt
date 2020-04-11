@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2020 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,9 +11,11 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Patrick Hofer [bug 325488]
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -43,8 +45,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class THInformationControl extends AbstractInformationControl implements ITHModelPresenter {
 	private THHierarchyModel fModel;

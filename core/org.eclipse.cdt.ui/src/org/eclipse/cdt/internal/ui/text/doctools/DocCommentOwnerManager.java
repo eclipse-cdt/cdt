@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2020 Symbian Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,9 +12,11 @@
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     IBM Corporation
  *     Johan Ekberg -  Bug 285932
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.doctools;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +43,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class manages which IDocCommentOwner's are available in the run-time, and how they map to

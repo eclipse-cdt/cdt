@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 Symbian Software Limited and others.
+ * Copyright (c) 2005, 2020 Symbian Software Limited and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,10 +10,12 @@
  *
  * Contributors:
  *     Symbian Software Limited - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,8 +35,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This gives a Label and StringList Widget.

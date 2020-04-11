@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1038d49a_fe67b012",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/includes/SymbolExportMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-11T17:34:30Z",
+      "side": 1,
+      "message": "Hmm - it seems like some automatic settings in Eclipse IDE are not quite right that you are getting this whitespace at end of the line inserted.\n\nThe Java formatter does insert this whitespace - but the \"Remove trailing white spaces on all lines\" save action should then remove it. I can see that in this case the \"Remove trailing white spaces on all lines\" does not appear to be running after the formatter consistently and I can reproduce it introducing these trailing whitespace lines.\n\nI am sure you have a solution in mind - for example you could just stage the relevant lines. Adding the missing * on the line also fixes the problem.",
+      "range": {
+        "startLine": 75,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 1
+      },
+      "revId": "ef02660c52ab9a1ac48b1be03b6cc23031cf26bb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

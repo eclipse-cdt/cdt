@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "19598826_6372765e",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CProjectDescriptionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-11T14:25:36Z",
+      "side": 1,
+      "message": "IMHO you should leave other changes out of this commit, that way if we do have to revert it or in other ways do history mining we don\u0027t have unrelated changes.\n\nAs this is a trivial change it can just be a \"Cosmetics.\" commit - it does not need a bug report or anything else to go with it.",
+      "revId": "d1868c46c958a6bc19f97d44d9cdb5809058682c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70e12650_d2ee3bb6",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CProjectDescriptionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-11T14:25:36Z",
+      "side": 1,
+      "message": "You are welcome to add these lines, but they are not needed and most people are not bothering anymore. If you are going to include them, please at least put a bug summary.",
+      "revId": "d1868c46c958a6bc19f97d44d9cdb5809058682c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "edd04400_cfc3494b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/index/export/ExternalExportProjectProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-11T14:25:36Z",
+      "side": 1,
+      "message": "For the copyright year it would be worth (independently of this commit) to apply copyright tool to all of CDT source. I believe that this used to be done on occasion.",
+      "revId": "d1868c46c958a6bc19f97d44d9cdb5809058682c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

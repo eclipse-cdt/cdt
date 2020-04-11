@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.xlc.sdk"
       label="%featureName"
-      version="9.12.0.qualifier"
+      version="10.0.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.xlc.sdk.branding"
       license-feature="org.eclipse.license"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Google, Inc and others.
+ * Copyright (c) 2012, 2020 Google, Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,11 +9,12 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Sergey Prigogin (Google) - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.codemanipulation;
 
-import com.ibm.icu.text.Collator;
+import java.text.Collator;
 
 public class IncludeInfo implements Comparable<IncludeInfo> {
 	private static final Collator COLLATOR = Collator.getInstance();

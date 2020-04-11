@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2020 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,11 +9,13 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    IBM Corporation
+ *     Markus Schorn - initial API and implementation
+ *     IBM Corporation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -103,8 +105,6 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The view part for the include browser.

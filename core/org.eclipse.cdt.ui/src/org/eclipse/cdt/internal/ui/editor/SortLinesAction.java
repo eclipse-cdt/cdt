@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Google, Inc and others.
+ * Copyright (c) 2010, 2020 Google, Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,9 +10,11 @@
  *
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.text.Collator;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.model.ICProject;
@@ -36,8 +38,6 @@ import org.eclipse.text.undo.IDocumentUndoManager;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Sorts selected lines in alphabetical order. If both, comment and non-comment lines

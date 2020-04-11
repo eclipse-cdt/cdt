@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,12 +12,14 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems
  *     Andrew Ferguson (Symbian)
+ *     Alexander Fedorov (ArSysOp) - Bug 561993
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,8 +77,6 @@ import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Configures C/C++ Editor code coloring preferences.

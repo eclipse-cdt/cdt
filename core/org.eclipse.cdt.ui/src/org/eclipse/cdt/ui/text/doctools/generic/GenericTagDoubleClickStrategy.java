@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2020 Symbian Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,10 +9,12 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools.generic;
 
+import java.text.BreakIterator;
 import java.text.CharacterIterator;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -21,8 +23,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * A double-click strategy for words starting with specified tag markers.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,14 +11,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Alexander Fedorov (ArSysOp) - Bug 561993
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import java.text.BreakIterator;
 import java.text.CharacterIterator;
 
 import org.eclipse.core.runtime.Assert;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * A C break iterator. It returns all breaks, including before and after
@@ -377,7 +377,6 @@ public class CBreakIterator extends BreakIterator {
 	 * Creates a break iterator given a char sequence.
 	 * @param newText the new text
 	 */
-	@Override
 	public void setText(CharSequence newText) {
 		fText = newText;
 		fIterator.setText(new SequenceCharacterIterator(newText));

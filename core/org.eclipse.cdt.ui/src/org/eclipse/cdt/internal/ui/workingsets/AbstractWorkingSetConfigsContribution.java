@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 QNX Software Systems and others.
+ * Copyright (c) 2009, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,10 +10,12 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.workingsets;
 
+import java.text.Collator;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -24,8 +26,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.CompoundContributionItem;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Common API of dynamic contribution of items to manipulate configurations of a working set.

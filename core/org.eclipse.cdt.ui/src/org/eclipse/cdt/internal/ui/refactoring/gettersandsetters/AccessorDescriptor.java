@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Google, Inc and others.
+ * Copyright (c) 2011, 2020 Google, Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,14 +11,15 @@
  * Contributors:
  *     Sergey Prigogin (Google) - initial API and implementation
  *     Marc-Andre Laperle (Ericsson)
+ *     Alexander Fedorov (ArSysOp) - Bug 561993
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
+
+import java.text.Collator;
 
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-
-import com.ibm.icu.text.Collator;
 
 public class AccessorDescriptor implements Comparable<AccessorDescriptor> {
 	public enum AccessorKind {

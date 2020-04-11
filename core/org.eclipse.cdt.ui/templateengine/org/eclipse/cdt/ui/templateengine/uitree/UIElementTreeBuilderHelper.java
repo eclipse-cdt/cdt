@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2020 Symbian Software Limited and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,11 +9,13 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
- * IBM Corporation
+ *     Bala Torati (Symbian) - Initial API and implementation
+ *     IBM Corporation
+ *     Alexander Fedorov (ArSysOp) - Bug 561993
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree;
 
+import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +37,6 @@ import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * UIElementTreeBuilderHelper provides methods to convert an Element (XML) into

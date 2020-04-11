@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Google, Inc and others.
+ * Copyright (c) 2012, 2020 Google, Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,12 +11,14 @@
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *	   Mathias Kunter
+ *     Alexander Fedorov (ArSysOp) - Bug 561993
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.includes;
 
 import static org.eclipse.cdt.core.index.IndexLocationFactory.getAbsolutePath;
 import static org.eclipse.cdt.internal.ui.refactoring.includes.IncludeUtil.isContainedInRegion;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -79,8 +81,6 @@ import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Organizes the include directives and forward declarations of a source or header file.

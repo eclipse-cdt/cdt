@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0b4ef76b_cde48b89",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CProjectDescriptionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-11T14:51:45Z",
+      "side": 1,
+      "message": "I\u0027m doing it unconsciously when I see issues in header formatting :( I\u0027ll try to put more attention to stop doing this.",
+      "parentUuid": "19598826_6372765e",
+      "revId": "d1868c46c958a6bc19f97d44d9cdb5809058682c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "70e12650_d2ee3bb6",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CProjectDescriptionManager.java",
         "patchSetId": 3

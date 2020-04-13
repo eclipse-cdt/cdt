@@ -347,7 +347,7 @@ public final class CHeuristicScanner implements Symbols {
 		case SEMICOLON:
 			return TokenSEMICOLON;
 		case COLON:
-			switch (peekNextChar()) {
+			switch (peekPreviousChar()) {
 			case COLON:
 				++fPos;
 				return TokenDOUBLECOLON;
@@ -360,7 +360,7 @@ public final class CHeuristicScanner implements Symbols {
 		case EQUAL:
 			return TokenEQUAL;
 		case LANGLE:
-			switch (peekNextChar()) {
+			switch (peekPreviousChar()) {
 			case LANGLE:
 				++fPos;
 				return TokenSHIFTLEFT;
@@ -370,7 +370,7 @@ public final class CHeuristicScanner implements Symbols {
 			}
 			return TokenLESSTHAN;
 		case RANGLE:
-			switch (peekNextChar()) {
+			switch (peekPreviousChar()) {
 			case RANGLE:
 				++fPos;
 				return TokenSHIFTRIGHT;
@@ -382,7 +382,7 @@ public final class CHeuristicScanner implements Symbols {
 		case DOT:
 			return TokenDOT;
 		case MINUS:
-			switch (peekNextChar()) {
+			switch (peekPreviousChar()) {
 			case RANGLE:
 				++fPos;
 				return TokenARROW;
@@ -517,19 +517,6 @@ public final class CHeuristicScanner implements Symbols {
 		}
 		// operators, number literals etc
 		return TokenOTHER;
-	}
-
-	/**
-	 * @return the next char without shifting the position
-	 */
-	private char peekNextChar() {
-		if (fPos + 1 < fDocument.getLength()) {
-			try {
-				return fDocument.getChar(fPos + 1);
-			} catch (BadLocationException exc) {
-			}
-		}
-		return (char) -1;
 	}
 
 	/**

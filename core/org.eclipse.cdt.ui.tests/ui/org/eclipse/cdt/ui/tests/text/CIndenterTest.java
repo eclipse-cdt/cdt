@@ -1054,4 +1054,17 @@ public class CIndenterTest extends BaseUITestCase {
 	public void testIndentationAfterFunctionHeaderWithReturnTypeTemplateSpecification_Bug537568() throws Exception {
 		assertIndenterResult();
 	}
+
+	//MyFunctionCall(::My::Namespace::MyType::Value1,
+	//var1,
+	//::My::Namespace::MyType::Value2,
+	//var2);
+
+	//MyFunctionCall(::My::Namespace::MyType::Value1,
+	//		var1,
+	//		::My::Namespace::MyType::Value2,
+	//		var2);
+	public void testIndentationAfterArgumentWithQualifier_Bug516393() throws Exception {
+		assertIndenterResult(); // global scope
+	}
 }

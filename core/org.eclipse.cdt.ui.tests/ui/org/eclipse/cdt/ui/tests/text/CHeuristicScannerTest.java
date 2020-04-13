@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.CIndenter;
 import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
+import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -677,5 +678,20 @@ public class CHeuristicScannerTest extends TestCase {
 
 		String indent = fScanner.computeIndentation(fDocument.getLength() - 8).toString();
 		Assert.assertEquals("					", indent);
+	}
+
+	public void testNextTokenDoubleChar() throws Exception {
+		fDocument.set("::");
+		assertEquals(fHeuristicScanner.nextToken(0, fDocument.getLength() - 1), Symbols.TokenDOUBLECOLON);
+		fDocument.set("<<");
+		assertEquals(fHeuristicScanner.nextToken(0, fDocument.getLength() - 1), Symbols.TokenSHIFTLEFT);
+		fDocument.set("<=");
+		assertEquals(fHeuristicScanner.nextToken(0, fDocument.getLength() - 1), Symbols.TokenOTHER);
+		fDocument.set(">>");
+		assertEquals(fHeuristicScanner.nextToken(0, fDocument.getLength() - 1), Symbols.TokenSHIFTRIGHT);
+		fDocument.set(">=");
+		assertEquals(fHeuristicScanner.nextToken(0, fDocument.getLength() - 1), Symbols.TokenOTHER);
+		fDocument.set("->");
+		assertEquals(fHeuristicScanner.nextToken(0, fDocument.getLength() - 1), Symbols.TokenARROW);
 	}
 }

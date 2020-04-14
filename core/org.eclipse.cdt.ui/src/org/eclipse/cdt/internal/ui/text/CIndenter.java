@@ -2219,8 +2219,9 @@ public final class CIndenter {
 			if (fToken == Symbols.TokenTILDE) {
 				return true;
 			}
-			if (skipQualifiers()) {
-				return true;
+			// optional class or namespace qualifiers
+			while (skipQualifiers()) {
+				nextToken();
 			}
 			// optional brackets for array valued return types
 			while (skipBrackets()) {
@@ -2238,6 +2239,9 @@ public final class CIndenter {
 			switch (fToken) {
 			case Symbols.TokenIDENT:
 				return true;
+			case Symbols.TokenEOF:
+				// EOF can be seen in constructor definition outside the class
+				// at the beginning of the source file
 			case Symbols.TokenSEMICOLON:
 			case Symbols.TokenRBRACE:
 				fPosition = pos;

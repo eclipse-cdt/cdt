@@ -1067,4 +1067,19 @@ public class CIndenterTest extends BaseUITestCase {
 	public void testIndentationAfterArgumentWithQualifier_Bug516393() throws Exception {
 		assertIndenterResult(); // global scope
 	}
+
+	//x = f()
+	//+ ::f()
+	//+ A::f()
+	//+ ::A::f()
+	//+ B::C::f();
+
+	//x = f()
+	//		+ ::f()
+	//		+ A::f()
+	//		+ ::A::f()
+	//		+ B::C::f();
+	public void testIndentationAfterFunctionCallWithQualifier_Bug562125() throws Exception {
+		assertIndenterResult();
+	}
 }

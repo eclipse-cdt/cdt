@@ -2245,10 +2245,12 @@ public final class CIndenter {
 			case Symbols.TokenSEMICOLON:
 			case Symbols.TokenRBRACE:
 				fPosition = pos;
+				fToken = Symbols.TokenIDENT;
 				return true;
 			case Symbols.TokenLBRACE:
 				if (fScanner.looksLikeCompositeTypeDefinitionBackward(fPosition, CHeuristicScanner.UNBOUND)) {
 					fPosition = pos;
+					fToken = Symbols.TokenIDENT;
 					return true;
 				}
 				break;
@@ -2268,11 +2270,13 @@ public final class CIndenter {
 				case Symbols.TokenPROTECTED:
 				case Symbols.TokenPRIVATE:
 					fPosition = pos;
+					fToken = Symbols.TokenIDENT;
 					return true;
 				case Symbols.TokenRPAREN:
 					// constructor initializer
 					if (skipScope()) {
 						pos = fPosition;
+						int token = fToken;
 						nextToken();
 						// optional throw
 						if (fToken == Symbols.TokenTHROW) {
@@ -2282,6 +2286,7 @@ public final class CIndenter {
 							}
 						} else {
 							fPosition = pos;
+							fToken = token;
 						}
 						return looksLikeMethodDecl();
 					}

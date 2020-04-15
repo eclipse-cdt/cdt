@@ -1082,4 +1082,23 @@ public class CIndenterTest extends BaseUITestCase {
 	public void testIndentationAfterFunctionCallWithQualifier_Bug562125() throws Exception {
 		assertIndenterResult();
 	}
+
+	//class Test
+	//{
+	//public:
+	//Test()
+	//{
+	//}
+	//};
+
+	//class Test
+	//{
+	//public:
+	//	Test()
+	//	{
+	//	}
+	//};
+	public void testIndentationAfterContructorWithAccessSpecifier_Bug562181() throws Exception {
+		assertIndenterResult();
+	}
 }

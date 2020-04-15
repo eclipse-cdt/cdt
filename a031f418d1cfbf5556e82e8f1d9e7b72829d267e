@@ -88,6 +88,24 @@
       "revId": "a031f418d1cfbf5556e82e8f1d9e7b72829d267e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "22ea2f13_beee4b10",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.transport/src/org/eclipse/cdt/debug/ui/memory/transport/SRecordExporter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-15T13:36:27Z",
+      "side": 1,
+      "message": "\u003e That\u0027s fine. I was keen to push this one (pending for years) to\n \u003e clean up my list.",
+      "parentUuid": "57e45dc8_96ac9dd6",
+      "revId": "a031f418d1cfbf5556e82e8f1d9e7b72829d267e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

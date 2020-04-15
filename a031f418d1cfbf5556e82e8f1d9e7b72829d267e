@@ -34,6 +34,24 @@
       "revId": "a031f418d1cfbf5556e82e8f1d9e7b72829d267e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dfe7d154_2f0e5a32",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.transport/src/org/eclipse/cdt/debug/ui/memory/transport/SRecordExporter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-15T12:33:27Z",
+      "side": 1,
+      "message": "Sounds good. I can suggest the following plan:\n1) create ticket to extract runnables (JD)\n2) perform extraction (AF)\n3) provide test data (JD)\n4) provide unit test (AF)\n5) return to this one\nWDYT?",
+      "parentUuid": "ff80dfb3_cc3ef34d",
+      "revId": "a031f418d1cfbf5556e82e8f1d9e7b72829d267e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

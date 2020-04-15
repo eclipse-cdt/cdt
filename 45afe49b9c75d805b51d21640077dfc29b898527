@@ -22,6 +22,30 @@
       "revId": "45afe49b9c75d805b51d21640077dfc29b898527",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e2c08581_b5238fb9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/CIndenter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2244,
+      "author": {
+        "id": 4198
+      },
+      "writtenOn": "2020-04-15T14:14:28Z",
+      "side": 1,
+      "message": "Yes, this case is not covered by my test but it is required now. When scanning  method declaration backward, here it is expected  in most cases to see return type declaration but not in case of constructor. And if constructor is defined at the start of source file we can see the EOF instead of any normal token.\n\nI have added this because test CAutoIndentTest::testBracketIndentForConstructorDefinition_Bug183814 are fails after my changes. So, I decided not add another test for this.",
+      "parentUuid": "bd4ac62b_6006ff00",
+      "range": {
+        "startLine": 2243,
+        "startChar": 4,
+        "endLine": 2244,
+        "endChar": 42
+      },
+      "revId": "45afe49b9c75d805b51d21640077dfc29b898527",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

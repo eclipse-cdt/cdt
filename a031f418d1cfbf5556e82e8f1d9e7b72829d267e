@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "995fa68b_d126ca25",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.transport/src/org/eclipse/cdt/debug/ui/memory/transport/SRecordExporter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-15T12:17:41Z",
+      "side": 1,
+      "message": "Do you think we can extract this content to a separate \"class implements ICoreRunnable\" to make it unit-testable?",
+      "revId": "a031f418d1cfbf5556e82e8f1d9e7b72829d267e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

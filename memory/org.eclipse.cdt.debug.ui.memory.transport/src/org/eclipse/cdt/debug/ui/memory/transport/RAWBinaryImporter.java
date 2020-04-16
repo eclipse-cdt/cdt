@@ -15,18 +15,19 @@
 package org.eclipse.cdt.debug.ui.memory.transport;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.math.BigInteger;
+import java.util.function.Consumer;
 
+import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
+import org.eclipse.cdt.debug.internal.core.memory.transport.FileImportJob;
+import org.eclipse.cdt.debug.internal.core.memory.transport.RAWBinaryImport;
+import org.eclipse.cdt.debug.internal.ui.memory.transport.ScrollMemory;
+import org.eclipse.cdt.debug.internal.ui.memory.transport.WriteMemoryBlock;
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryImporter;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -60,8 +61,6 @@ public class RAWBinaryImporter implements IMemoryImporter {
 	private ImportMemoryDialog fParentDialog;
 
 	private IDialogSettings fProperties;
-
-	private static final int BUFFER_LENGTH = 64 * 1024;
 
 	@Override
 	public Control createControl(final Composite parent, IMemoryBlock memBlock, IDialogSettings properties,
@@ -247,89 +246,23 @@ public class RAWBinaryImporter implements IMemoryImporter {
 
 	@Override
 	public void importMemory() {
-		Job job = new Job("Memory Import from RAW Binary File") { //$NON-NLS-1$
-
-			@Override
-			public IStatus run(IProgressMonitor monitor) {
-				try {
-					BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock,
-							BUFFER_LENGTH);
-
-					BigInteger scrollToAddress = null;
-
-					FileInputStream reader = new FileInputStream(fInputFile);
-
-					BigInteger jobs = BigInteger.valueOf(fInputFile.length());
-					BigInteger factor = BigInteger.ONE;
-					if (jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0) {
-						factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
-						jobs = jobs.divide(factor);
-					}
-
-					byte[] byteValues = new byte[1024];
-
-					monitor.beginTask(Messages.getString("Importer.ProgressTitle"), jobs.intValue()); //$NON-NLS-1$
-
-					int actualByteCount = reader.read(byteValues);
-					BigInteger recordAddress = fStartAddress;
-
-					while (actualByteCount != -1 && !monitor.isCanceled()) {
-						byte data[] = new byte[actualByteCount];
-						for (int i = 0; i < data.length; i++) {
-							data[i] = byteValues[i];
-						}
-
-						if (scrollToAddress == null)
-							scrollToAddress = recordAddress;
-
-						BigInteger baseAddress = null;
-						if (fMemoryBlock instanceof IMemoryBlockExtension)
-							baseAddress = ((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress();
-						else
-							baseAddress = BigInteger.valueOf(fMemoryBlock.getStartAddress());
-
-						memoryWriter.write(recordAddress.subtract(baseAddress), data);
-
-						BigInteger jobCount = BigInteger.valueOf(actualByteCount).divide(factor);
-						monitor.worked(jobCount.intValue());
-
-						recordAddress = recordAddress.add(BigInteger.valueOf(actualByteCount));
-						actualByteCount = reader.read(byteValues);
-					}
-
-					if (!monitor.isCanceled())
-						memoryWriter.flush();
-
-					reader.close();
-					monitor.done();
-
-					if (fScrollToStart)
-						fParentDialog.scrollRenderings(scrollToAddress);
-
-				} catch (IOException ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrReadFile"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrReadFile"), ex); //$NON-NLS-1$
-
-				} catch (DebugException ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrWriteTarget"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrWriteTarget"), ex); //$NON-NLS-1$
-				} catch (Exception ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.INTERNAL_ERROR, Messages.getString("Importer.FalureImporting"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.INTERNAL_ERROR, Messages.getString("Importer.FalureImporting"), ex); //$NON-NLS-1$
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(true);
-		job.schedule();
+		try {
+			Consumer<BigInteger> scroll = fScrollToStart ? new ScrollMemory(fParentDialog) : new ScrollMemory.Ignore();
+			IMemoryBlockExtension block = (IMemoryBlockExtension) fMemoryBlock;
+			ImportRequest request = new ImportRequest(block.getBigBaseAddress(), fStartAddress,
+					new WriteMemoryBlock(block));
+			RAWBinaryImport memoryImport = new RAWBinaryImport(fInputFile, request, scroll);
+			FileImportJob job = new FileImportJob(//
+					"Memory Import from RAW Binary File", memoryImport);
+			job.setUser(true);
+			job.schedule();
+		} catch (DebugException e) {
+			//FIXME: unreachable with current implementation, to be i18n after UI rework
+			ErrorDialog.openError(fParentDialog.getShell(), //
+					"Import Failure", //
+					"Failed to retrieve base memory address", //
+					e.getStatus());
+		}
 	}
+
 }

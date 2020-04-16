@@ -14,22 +14,20 @@
 
 package org.eclipse.cdt.debug.ui.memory.transport;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.util.StringTokenizer;
+import java.util.function.Consumer;
 
+import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
+import org.eclipse.cdt.debug.internal.core.memory.transport.FileImportJob;
+import org.eclipse.cdt.debug.internal.core.memory.transport.PlainTextImport;
+import org.eclipse.cdt.debug.internal.ui.memory.transport.ScrollMemory;
+import org.eclipse.cdt.debug.internal.ui.memory.transport.WriteMemoryBlock;
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryImporter;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -63,8 +61,6 @@ public class PlainTextImporter implements IMemoryImporter {
 	private ImportMemoryDialog fParentDialog;
 
 	private IDialogSettings fProperties;
-
-	private static final int BUFFER_LENGTH = 64 * 1024;
 
 	@Override
 	public Control createControl(final Composite parent, IMemoryBlock memBlock, IDialogSettings properties,
@@ -267,104 +263,22 @@ public class PlainTextImporter implements IMemoryImporter {
 
 	@Override
 	public void importMemory() {
-		Job job = new Job("Memory Import from Plain Text File") { //$NON-NLS-1$
-
-			@Override
-			public IStatus run(IProgressMonitor monitor) {
-				try {
-					BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock,
-							BUFFER_LENGTH);
-
-					BigInteger scrollToAddress = null;
-
-					BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));
-
-					BigInteger jobs = BigInteger.valueOf(fInputFile.length());
-					BigInteger factor = BigInteger.ONE;
-					if (jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0) {
-						factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
-						jobs = jobs.divide(factor);
-					}
-
-					monitor.beginTask(Messages.getString("Importer.ProgressTitle"), jobs.intValue()); //$NON-NLS-1$
-
-					BigInteger recordAddress = fStartAddress;
-					String line = reader.readLine();
-					int lineNo = 1; // line error reporting
-					while (line != null && !monitor.isCanceled()) {
-						StringTokenizer st = new StringTokenizer(line, " "); //$NON-NLS-1$
-						int bytesRead = 0;
-						while (st.hasMoreElements()) {
-							String valueString = (String) st.nextElement();
-							int position = 0;
-							byte data[] = new byte[valueString.length() / 2];
-							for (int i = 0; i < data.length; i++) {
-								try {
-									data[i] = new BigInteger(valueString.substring(position++, position++ + 1), 16)
-											.byteValue();
-								} catch (NumberFormatException ex) {
-									return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-											DebugException.REQUEST_FAILED,
-											String.format(Messages.getString("PlainTextImporter.ErrInvalidFormat"), //$NON-NLS-1$
-													lineNo),
-											ex);
-								}
-							}
-
-							if (scrollToAddress == null)
-								scrollToAddress = recordAddress;
-
-							BigInteger writeAddress =
-
-									recordAddress.subtract(((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress())
-											.add(BigInteger.valueOf(bytesRead));
-
-							memoryWriter.write(writeAddress, data);
-
-							bytesRead += data.length;
-						}
-
-						recordAddress = recordAddress.add(BigInteger.valueOf(bytesRead));
-
-						BigInteger jobCount = BigInteger.valueOf(bytesRead).divide(factor);
-						monitor.worked(jobCount.intValue());
-
-						line = reader.readLine();
-						lineNo++;
-					}
-
-					if (!monitor.isCanceled())
-						memoryWriter.flush();
-
-					reader.close();
-					monitor.done();
-
-					if (fScrollToStart)
-						fParentDialog.scrollRenderings(scrollToAddress);
-				} catch (IOException ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrReadFile"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrReadFile"), ex); //$NON-NLS-1$
-
-				} catch (DebugException ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrWriteTarget"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrWriteTarget"), ex); //$NON-NLS-1$
-				} catch (Exception ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.INTERNAL_ERROR, Messages.getString("Importer.FalureImporting"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.INTERNAL_ERROR, Messages.getString("Importer.FalureImporting"), ex); //$NON-NLS-1$
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(true);
-		job.schedule();
+		try {
+			Consumer<BigInteger> scroll = fScrollToStart ? new ScrollMemory(fParentDialog) : new ScrollMemory.Ignore();
+			IMemoryBlockExtension block = (IMemoryBlockExtension) fMemoryBlock;
+			ImportRequest request = new ImportRequest(block.getBigBaseAddress(), fStartAddress,
+					new WriteMemoryBlock(block));
+			PlainTextImport memoryImport = new PlainTextImport(fInputFile, request, scroll);
+			FileImportJob job = new FileImportJob(//
+					"Memory Import from Plain Text File", memoryImport);
+			job.setUser(true);
+			job.schedule();
+		} catch (DebugException e) {
+			//FIXME: unreachable with current implementation, to be i18n after UI rework
+			ErrorDialog.openError(fParentDialog.getShell(), //
+					"Import Failure", //
+					"Failed to retrieve base memory address", //
+					e.getStatus());
+		}
 	}
 }

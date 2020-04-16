@@ -5,7 +5,8 @@ Bundle-SymbolicName: org.eclipse.cdt.debug.ui.memory.transport;singleton:=true
 Bundle-Version: 2.1.200.qualifier
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
-Require-Bundle: org.eclipse.debug.core,
+Require-Bundle: org.eclipse.cdt.debug.core.memory;bundle-version="0.1.0",
+ org.eclipse.debug.core,
  org.eclipse.debug.ui,
  org.eclipse.core.runtime,
  org.eclipse.swt,
@@ -14,7 +15,8 @@ Require-Bundle: org.eclipse.debug.core,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.debug.ui.memory.transport.MemoryTransportPlugin
-Export-Package: org.eclipse.cdt.debug.ui.memory.transport,
+Export-Package: org.eclipse.cdt.debug.internal.ui.memory.transport;x-internal:=true,
+ org.eclipse.cdt.debug.ui.memory.transport,
  org.eclipse.cdt.debug.ui.memory.transport.actions,
  org.eclipse.cdt.debug.ui.memory.transport.model
 Automatic-Module-Name: org.eclipse.cdt.debug.ui.memory.transport

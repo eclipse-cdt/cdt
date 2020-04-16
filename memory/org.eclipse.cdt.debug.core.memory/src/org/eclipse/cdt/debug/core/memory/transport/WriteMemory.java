@@ -13,15 +13,30 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.memory.transport;
 
-import org.eclipse.core.runtime.ICoreRunnable;
+import java.math.BigInteger;
+
+import org.eclipse.debug.core.DebugException;
 
 /**
- * Imports memory information from a given source
+ * Writes an array of bytes using the given offset
  *
  * @since 0.1
  */
-public abstract class MemoryImport implements ICoreRunnable {
-	/* WIP: here we will place basic logic to read the data and notify consumer interactively
-	private final Consumer<BigInteger> scroll;
-	*/
+public interface WriteMemory {
+
+	/**
+	 * Writes the given data to a memory starting from the given offset. Actual write may be delayed until the nearest {@link WriteMemory#flush()} call
+	 *
+	 * @param offset
+	 * @param data
+	 * @throws DebugException
+	 */
+	void to(BigInteger offset, byte[] data) throws DebugException;
+
+	/**
+	 * Forces data write to a memory.
+	 *
+	 * @throws DebugException
+	 */
+	void flush() throws DebugException;
 }

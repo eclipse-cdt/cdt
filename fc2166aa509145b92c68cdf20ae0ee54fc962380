@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b649e554_dd021217",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.transport/src/org/eclipse/cdt/debug/ui/memory/transport/SRecordImport.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-16T18:32:38Z",
+      "side": 1,
+      "message": "@John as you can see we have nothing from UI here - let\u0027s establish non-UI bundle for the classes like this",
+      "revId": "fc2166aa509145b92c68cdf20ae0ee54fc962380",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -210,6 +210,7 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.cdt.debug.application"/>
       <plugin id="org.eclipse.cdt.debug.application.doc"/>
       <plugin id="org.eclipse.cdt.debug.core"/>
+      <plugin id="org.eclipse.cdt.debug.core.memory"/>
       <plugin id="org.eclipse.cdt.debug.ui"/>
       <plugin id="org.eclipse.cdt.debug.ui.memory.floatingpoint"/>
       <plugin id="org.eclipse.cdt.debug.ui.memory.memorybrowser"/>

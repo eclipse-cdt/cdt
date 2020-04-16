@@ -11,17 +11,30 @@
  * Contributors:
  *     Alexander Fedorov (ArSysOp) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.core.memory.transport;
+package org.eclipse.cdt.debug.ui.memory.transport;
 
-import org.eclipse.core.runtime.ICoreRunnable;
+import java.math.BigInteger;
+import java.util.function.Consumer;
 
-/**
- * Imports memory information from a given source
- *
- * @since 0.1
- */
-public abstract class MemoryImport implements ICoreRunnable {
-	/* WIP: here we will place basic logic to read the data and notify consumer interactively
-	private final Consumer<BigInteger> scroll;
-	*/
+final class ScrollMemory implements Consumer<BigInteger> {
+
+	private final ImportMemoryDialog dialog;
+
+	public ScrollMemory(ImportMemoryDialog dialog) {
+		this.dialog = dialog;
+	}
+
+	@Override
+	public void accept(BigInteger address) {
+		dialog.scrollRenderings(address);
+	}
+
+	static class Ignore implements Consumer<BigInteger> {
+
+		@Override
+		public void accept(BigInteger t) {
+			//ignore
+		}
+	}
+
 }

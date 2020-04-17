@@ -21,6 +21,13 @@
    </license>
 
    <plugin
+         id="org.eclipse.cdt.debug.core.memory"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.cdt.debug.ui.memory.search"
          download-size="0"
          install-size="0"

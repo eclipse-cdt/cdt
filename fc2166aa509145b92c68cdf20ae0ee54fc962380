@@ -39,6 +39,30 @@
       "revId": "fc2166aa509145b92c68cdf20ae0ee54fc962380",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f4bca4a1_b92a7b3d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.transport/src/org/eclipse/cdt/debug/ui/memory/transport/SRecordImporter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 356,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-17T12:10:20Z",
+      "side": 1,
+      "message": "We will see during refactoring, I still have a hope to use an interactive \"consumer\" here to report intermediate results from the runnable. In this case we will not need to know about dialog state at all and Job listening can be removed.",
+      "parentUuid": "ff0d8781_520df63a",
+      "range": {
+        "startLine": 356,
+        "startChar": 6,
+        "endLine": 356,
+        "endChar": 19
+      },
+      "revId": "fc2166aa509145b92c68cdf20ae0ee54fc962380",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

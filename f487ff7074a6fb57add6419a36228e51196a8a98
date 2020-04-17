@@ -34,6 +34,24 @@
       "revId": "f487ff7074a6fb57add6419a36228e51196a8a98",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d156864_228aaa00",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-17T15:04:43Z",
+      "side": 1,
+      "message": "Because you are going to make this bundle a dependency of production bundles, I think \"How do I know when to release 1.0.0?\" would apply - i.e. when we release CDT 10 with this the bundle should be at 1.0, which AFAICT means it should be 1.0.0.qualifier from now.\n\nIn addition, in Eclipse land the convention (but not enforced) is that \u003c 1.0 means incubation and CDT is not incubating.\n\nFinally, CDT\u0027s policy says to use https://wiki.eclipse.org/Version_Numbering which does not specify either way what the first version should be. But AFAIK the Eclipse Platform generally does 1.0.0 not 0.1.0.\n\nAnyway, my long answer should not be used to indicate how much I care. Feel free to use 0.1.0 because it doesn\u0027t actually matter.",
+      "parentUuid": "5f868165_9faccd47",
+      "revId": "f487ff7074a6fb57add6419a36228e51196a8a98",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

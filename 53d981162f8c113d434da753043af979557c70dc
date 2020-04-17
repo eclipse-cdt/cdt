@@ -33,6 +33,24 @@
       "revId": "53d981162f8c113d434da753043af979557c70dc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "46ed107c_6a51a98a",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1170,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-04-17T11:31:10Z",
+      "side": 1,
+      "message": "if we want to go faster, we can instead buffer the file in large blocks, we\u0027re more IO bound than cpu bound on my computer.",
+      "parentUuid": "21db9f84_c81a65e7",
+      "revId": "53d981162f8c113d434da753043af979557c70dc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

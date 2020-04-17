@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0f93446b_7cc22621",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1167,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-17T10:08:53Z",
+      "side": 1,
+      "message": "if we are doing it here, can we remove this call from iterator constructor?",
+      "revId": "53d981162f8c113d434da753043af979557c70dc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21db9f84_c81a65e7",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1170,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-17T10:08:53Z",
+      "side": 1,
+      "message": "we can try to reimplement it with Java Stream API later :)",
+      "revId": "53d981162f8c113d434da753043af979557c70dc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

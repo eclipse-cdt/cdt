@@ -16,6 +16,24 @@
       "revId": "f487ff7074a6fb57add6419a36228e51196a8a98",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f868165_9faccd47",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-17T13:48:03Z",
+      "side": 1,
+      "message": "But why we are starting from 1.0 instead of 0.1? SemVer [1] has complains :) \n\"The simplest thing to do is start your initial development release at 0.1.0 and then increment the minor version for each subsequent release.\"\n\n[1] https://semver.org/#faq",
+      "parentUuid": "3310c6dd_221e44c2",
+      "revId": "f487ff7074a6fb57add6419a36228e51196a8a98",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

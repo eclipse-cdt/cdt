@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3310c6dd_221e44c2",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-17T13:36:23Z",
+      "side": 1,
+      "message": "Bundle should be 1.0",
+      "revId": "f487ff7074a6fb57add6419a36228e51196a8a98",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

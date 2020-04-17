@@ -108,12 +108,14 @@ fi
 if test -z "$(git status -s)"; then
     echo "Tree looks clean!"
 else
-    echo "Tree is dirty - something needs to be cleaned up in your commit"
+    echo "Tree is dirty - something needs to be cleaned up in your commit (more info below)"
     echo "Result of git status"
     git status
     echo "Result of git diff"
     git diff
-    echo "Tree is dirty - something needs to be cleaned up in your commit (see above for git status/diff)"
+    echo "Tree is dirty - something needs to be cleaned up in your commit (see above for git status/diff). The 'something'"
+    echo "is likely a misformatted file, extra whitespace at end of line, or something similar. The diff above"
+    echo "shows what changes you need to apply to your patch to get it past the code cleanliness check."
     exit 1
 fi
 
@@ -146,8 +148,9 @@ else
         echo "Please bump service segment by 100 if on master branch"
         echo "See: https://wiki.eclipse.org/Version_Numbering#When_to_change_the_service_segment"
     else
-        echo "Maven 'check all versions have been bumped appropriately' failed!"
-        echo "The log of this build is part of the artifacts"
+        echo "Maven 'check all versions have been bumped appropriately' failed! Please see the"
+        echo "log of the failed maven run which is available as part of the artifacts in a"
+        echo "file called baseline-compare-and-replace.log"
     fi
     cp ${logfile} baseline-compare-and-replace.log
     exit 1

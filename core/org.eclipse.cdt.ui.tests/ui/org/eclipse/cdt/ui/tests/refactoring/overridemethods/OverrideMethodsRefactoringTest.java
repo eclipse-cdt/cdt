@@ -672,4 +672,66 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 		selectedMethods = new String[] { "baseFunc()const" };
 		assertRefactoringSuccess();
 	}
+
+	//A.h
+	//namespace Bar {
+	//namespace Foo {
+	//namespace Baz {
+	//class Base {
+	//public:
+	//	virtual ~Base();
+	//	virtual void baseFunc() const = 0;
+	//};
+	//class X: public Base {
+	//public:
+	//	X();
+	//	/*$*//*$$*/
+	//};
+	//}
+	//}
+	//}
+	//====================
+	//namespace Bar {
+	//namespace Foo {
+	//namespace Baz {
+	//class Base {
+	//public:
+	//	virtual ~Base();
+	//	virtual void baseFunc() const = 0;
+	//};
+	//class X: public Base {
+	//public:
+	//	X();
+	//	virtual void baseFunc() const;
+	//};
+	//}
+	//}
+	//}
+
+	//A.cpp
+	//#include "A.h"
+	//
+	//namespace Bar {
+	//namespace Foo {
+	//namespace Baz {
+	//}
+	//}
+	//}
+	//====================
+	//#include "A.h"
+	//
+	//namespace Bar {
+	//namespace Foo {
+	//namespace Baz {
+	//
+	//void X::baseFunc() const {
+	//}
+	//
+	//}
+	//}
+	//}
+	public void testWithHeaderAndSource_BugXXXXX() throws Exception {
+		selectedMethods = new String[] { "baseFunc()const" };
+		assertRefactoringSuccess();
+	}
 }

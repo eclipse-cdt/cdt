@@ -63,6 +63,12 @@ public class MethodDefinitionInsertLocationFinder {
 
 	public InsertLocation find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation,
 			IASTNode parent, CRefactoringContext refactoringContext, IProgressMonitor pm) throws CoreException {
+		return find(declarationTu, methodDeclarationLocation, parent, refactoringContext, pm, -1);
+	}
+
+	public InsertLocation find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation,
+			IASTNode parent, CRefactoringContext refactoringContext, IProgressMonitor pm, int functionOffset)
+			throws CoreException {
 		IASTDeclaration[] declarations = NodeHelper.getDeclarations(parent);
 		InsertLocation insertLocation = new InsertLocation();
 
@@ -120,12 +126,14 @@ public class MethodDefinitionInsertLocationFinder {
 				ITranslationUnit partner = SourceHeaderPartnerFinder.getPartnerTranslationUnit(declarationTu,
 						refactoringContext);
 				if (partner != null) {
-					if (methodDeclarationLocation == null) {
+					if (methodDeclarationLocation == null && functionOffset < 0) {
 						insertLocation.setParentNode(refactoringContext.getAST(partner, null), partner);
 						return insertLocation;
 					}
 					final ICPPASTName[] names = NamespaceHelper.getSurroundingNamespace(declarationTu,
-							methodDeclarationLocation.getNodeOffset(), refactoringContext);
+							methodDeclarationLocation != null ? methodDeclarationLocation.getNodeOffset()
+									: functionOffset,
+							refactoringContext);
 					IASTTranslationUnit ast = refactoringContext.getAST(partner, null);
 					IASTNode[] target = new IASTNode[1];
 					if (ast != null) {

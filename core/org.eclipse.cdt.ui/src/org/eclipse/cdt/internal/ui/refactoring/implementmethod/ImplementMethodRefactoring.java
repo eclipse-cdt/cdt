@@ -229,7 +229,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			throw new OperationCanceledException();
 		}
 		IASTSimpleDeclaration decl = config.getDeclaration();
-		InsertLocation insertLocation = findInsertLocation(decl, subMonitor);
+		InsertLocation insertLocation = findInsertLocation(decl, subMonitor, functionOffset);
 		if (subMonitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
@@ -277,11 +277,17 @@ public class ImplementMethodRefactoring extends CRefactoring {
 
 	private InsertLocation findInsertLocation(IASTSimpleDeclaration methodDeclaration, IProgressMonitor subMonitor)
 			throws CoreException {
+		return findInsertLocation(methodDeclaration, subMonitor, -1);
+	}
+
+	private InsertLocation findInsertLocation(IASTSimpleDeclaration methodDeclaration, IProgressMonitor subMonitor,
+			int functionOffset) throws CoreException {
 		if (insertLocations.containsKey(methodDeclaration)) {
 			return insertLocations.get(methodDeclaration);
 		}
 		InsertLocation insertLocation = methodDefinitionInsertLocationFinder.find(tu,
-				methodDeclaration.getFileLocation(), methodDeclaration.getParent(), refactoringContext, subMonitor);
+				methodDeclaration.getFileLocation(), methodDeclaration.getParent(), refactoringContext, subMonitor,
+				functionOffset);
 
 		if (insertLocation.getTranslationUnit() == null
 				|| NodeHelper.isContainedInTemplateDeclaration(methodDeclaration)) {

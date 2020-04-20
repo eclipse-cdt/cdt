@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecCompoundStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecFor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclaration;
 
@@ -252,7 +253,8 @@ public class CPPASTForStatement extends CPPASTAttributeOwner implements ICPPASTF
 				: null;
 		ICPPASTExpression iterationExpr = (ICPPASTExpression) getIterationExpression();
 		ICPPEvaluation iterationEval = iterationExpr != null ? iterationExpr.getEvaluation() : null;
-		ICPPExecution bodyExec = EvalUtil.getExecutionFromStatement(getBody());
+		ICPPExecution bodyExec = getBody() != null ? EvalUtil.getExecutionFromStatement(getBody())
+				: ExecCompoundStatement.createEmpty();
 		return new ExecFor(initializerExec, conditionExprEval, conditionDeclExec, iterationEval, bodyExec);
 	}
 }

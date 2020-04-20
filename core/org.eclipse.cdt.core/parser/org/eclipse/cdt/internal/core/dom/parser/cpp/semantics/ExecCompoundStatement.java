@@ -29,6 +29,10 @@ public class ExecCompoundStatement implements ICPPExecution {
 		this(createExecutionsFromStatements(statements));
 	}
 
+	public static ExecCompoundStatement createEmpty() {
+		return new ExecCompoundStatement(new IASTStatement[] {});
+	}
+
 	private static ICPPExecution[] createExecutionsFromStatements(IASTStatement[] statements) {
 		ICPPExecution[] executions = new ICPPExecution[statements.length];
 		for (int i = 0; i < executions.length; i++) {

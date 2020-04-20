@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Red Hat and others.
+ * Copyright (c) 2015, 2020 Red Hat and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -58,6 +58,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
 import org.eclipse.linuxtools.docker.core.Activator;
 import org.eclipse.linuxtools.docker.core.IDockerContainerInfo;
 import org.eclipse.linuxtools.docker.core.IDockerNetworkSettings;
@@ -68,6 +69,8 @@ import org.eclipse.linuxtools.docker.ui.launch.IContainerLaunchListener;
 public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 
 	private ContainerLauncher launcher;
+
+	private final static String NONE = ""; //$NON-NLS-1$
 
 	private class StartGdbServerJob extends Job implements IContainerLaunchListener {
 
@@ -207,7 +210,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 						IPath path = new Path(additionalDir);
 						String dir = path.toPortableString();
 						if (path.getDevice() != null) {
-							dir = "/" + dir.replace(':', '/');
+							dir = "/" + dir.replace(':', '/'); //$NON-NLS-1$
 						}
 						dirs.add(dir);
 					}
@@ -243,7 +246,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 				}
 
 				String image = configuration.getAttribute(ILaunchConstants.ATTR_IMAGE, (String) null);
-				String connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, "");
+				String connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, NONE);
 				boolean keepContainer = configuration.getAttribute(ILaunchConstants.ATTR_KEEP_AFTER_LAUNCH, false);
 
 				boolean supportStdin = configuration.getAttribute(ILaunchConstants.ATTR_STDIN_SUPPORT, false);
@@ -308,7 +311,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 
 				StringBuilder b = new StringBuilder();
 
-				b.append(gdbserverCommand).append(' ').append(commandArguments); //$NON-NLS-1$
+				b.append(gdbserverCommand).append(' ').append(commandArguments);
 
 				String arguments = getProgramArguments(configuration);
 				if (arguments.trim().length() > 0) {
@@ -348,7 +351,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 						IPath path = new Path(additionalDir);
 						String dir = path.toPortableString();
 						if (path.getDevice() != null) {
-							dir = "/" + dir.replace(':', '/');
+							dir = "/" + dir.replace(':', '/'); //$NON-NLS-1$
 						}
 						dirs.add(dir);
 					}
@@ -356,10 +359,10 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 				}
 
 				String image = configuration.getAttribute(ILaunchConstants.ATTR_IMAGE, (String) null);
-				String connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, "");
+				String connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, NONE);
 				boolean isLocalConnection = true;
 				try {
-					Pattern ipaddrPattern = Pattern.compile("[a-z]*://([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)[:]*[0-9]*");
+					Pattern ipaddrPattern = Pattern.compile("[a-z]*://([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)[:]*[0-9]*"); //$NON-NLS-1$
 					Matcher m = ipaddrPattern.matcher(connectionUri);
 					if (m.matches()) {
 						String ipaddr = m.group(1);
@@ -448,7 +451,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 	 * @throws CoreException
 	 */
 	private String getProgramArguments(ILaunchConfiguration config) throws CoreException {
-		String args = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "");
+		String args = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, NONE);
 		if (args != null && args.length() > 0) {
 			args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
 		}
@@ -463,13 +466,13 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 	 * @throws CoreException
 	 */
 	private IPath getCommandPath(ILaunchConfiguration configuration) throws CoreException {
-		String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+		String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, NONE);
 		if (projectName.length() > 0) {
 			IProject project = CCorePlugin.getWorkspace().getRoot().getProject(projectName);
 			if (project == null)
 				return null;
 
-			String name = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "");
+			String name = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, NONE);
 
 			if (name.length() == 0)
 				return null;
@@ -574,7 +577,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 			ILaunchTarget target = null;
 			ILaunchTarget[] targets = targetManager.getLaunchTargetsOfType(ContainerTargetTypeProvider.TYPE_ID);
 			for (ILaunchTarget t : targets) {
-				if (t.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, "").replaceAll(":", "_").equals(m.group(1))) {
+				if (t.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, "").replaceAll(":", "_").equals(m.group(1))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					target = t;
 					break;
 				}
@@ -601,11 +604,48 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 		IProject project = getProject(configuration);
 		ILaunchTargetManager targetManager = CCorePlugin.getService(ILaunchTargetManager.class);
 		ILaunchTarget target = null;
+		// force ContainerTargetTypeProvider to flush all check jobs by calling getStatus()
+		ILaunchTarget fakeTarget = new ILaunchTarget() {
+
+			@Override
+			public <T> T getAdapter(Class<T> adapter) {
+				return null;
+			}
+
+			@Override
+			public String getId() {
+				return null;
+			}
+
+			@Override
+			public String getTypeId() {
+				return ContainerTargetTypeProvider.TYPE_ID;
+			}
+
+			@Override
+			public String getAttribute(String key, String defValue) {
+				return null;
+			}
+
+			@Override
+			public Map<String, String> getAttributes() {
+				return null;
+			}
+
+			@Override
+			public ILaunchTargetWorkingCopy getWorkingCopy() {
+				return null;
+			}
+
+		};
+		targetManager.getStatus(fakeTarget);
+
+		// now that check jobs are flushed, get launch targets
 		ILaunchTarget[] targets = targetManager.getLaunchTargetsOfType(ContainerTargetTypeProvider.TYPE_ID);
 		String image = configuration.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, (String) null);
 		String connection = configuration.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, (String) null);
 		for (ILaunchTarget t : targets) {
-			if (t.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, "").equals(image)) {
+			if (t.getAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, "").equals(image)) { //$NON-NLS-1$
 				target = t;
 				break;
 			}
@@ -645,9 +685,11 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 			if (resources != null && resources.length > 0 && resources[0] instanceof IProject) {
 				project = (IProject) resources[0];
 			}
-			ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getName());
-			wc.doSave();
+			if (project != null) {
+				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getName());
+				wc.doSave();
+			}
 		} else {
 			projectName = projectName.trim();
 			if (!projectName.isEmpty()) {

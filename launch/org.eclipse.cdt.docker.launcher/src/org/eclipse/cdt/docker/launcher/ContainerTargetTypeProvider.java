@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2019 QNX Software Systems and others.
+ * Copyright (c) 2017, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.build.IToolChainProvider;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.internal.docker.launcher.Messages;
 import org.eclipse.cdt.internal.docker.launcher.ui.launchbar.ContainerGCCToolChain;
 import org.eclipse.cdt.internal.docker.launcher.ui.launchbar.ContainerGCCToolChainProvider;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -36,6 +37,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobGroup;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
@@ -58,6 +60,9 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 
 	public static final String TYPE_ID = "org.eclipse.cdt.docker.launcher.launchTargetType.container"; //$NON-NLS-1$
 	public static final String CONTAINER_LINUX = "linux-container"; //$NON-NLS-1$
+
+	private static final JobGroup containerTargetTypeGroup = new JobGroup(
+			Messages.ContainerTargetTypeProviderJobGroup_name, 1, 1);
 
 	private ILaunchTargetManager targetManager;
 
@@ -139,6 +144,7 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 				return Status.OK_STATUS;
 			}
 		};
+		checkConfigs.setJobGroup(containerTargetTypeGroup);
 		checkConfigs.setUser(true);
 		checkConfigs.schedule();
 
@@ -153,6 +159,16 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 
 	@Override
 	public TargetStatus getStatus(ILaunchTarget target) {
+		// don't allow status to be ok until all check jobs are complete
+		// we could do a join() here but to be absolutely sure we don't cause a deadlock, we will sleep
+		// until there are no jobs scheduled
+		while (containerTargetTypeGroup.getState() != JobGroup.NONE) {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// do nothing
+			}
+		}
 		// Always OK
 		return TargetStatus.OK_STATUS;
 	}
@@ -268,6 +284,7 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 			}
 		};
 		checkConfigs.setUser(true);
+		checkConfigs.setJobGroup(containerTargetTypeGroup);
 		checkConfigs.schedule();
 	}
 

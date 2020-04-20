@@ -21,6 +21,10 @@ import org.eclipse.core.runtime.CoreException;
 public class ExecCompoundStatement implements ICPPExecution {
 	private ICPPExecution[] executions;
 
+	public ExecCompoundStatement() {
+		this(new IASTStatement[] {});
+	}
+
 	private ExecCompoundStatement(ICPPExecution[] executions) {
 		this.executions = executions;
 	}

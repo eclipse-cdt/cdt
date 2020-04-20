@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2019 QNX Software Systems and others.
+ * Copyright (c) 2017, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,6 +60,7 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 	public static final String CONTAINER_LINUX = "linux-container"; //$NON-NLS-1$
 
 	private ILaunchTargetManager targetManager;
+	private Set<Job> checkJobs = new HashSet<>();
 
 	@Override
 	public synchronized void init(ILaunchTargetManager targetManager) {
@@ -127,18 +128,23 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 		// valid again do this in a separate job to prevent a possible
 		// deadlock trying to get the lock on the CBuildConfigurationManager
 		// "configs" map (Bug 540085)
+		final ContainerTargetTypeProvider provider = this;
 		Job checkConfigs = new Job("Check configs") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				// call the recheckConfigs method in case any disabled targets
-				// are now
-				// ok
-				ICBuildConfigurationManager mgr = CCorePlugin.getService(ICBuildConfigurationManager.class);
-				ICBuildConfigurationManager2 cbuildmanager = (ICBuildConfigurationManager2) mgr;
-				cbuildmanager.recheckConfigs();
-				return Status.OK_STATUS;
+				synchronized (provider) {
+					// call the recheckConfigs method in case any disabled targets
+					// are now
+					// ok
+					ICBuildConfigurationManager mgr = CCorePlugin.getService(ICBuildConfigurationManager.class);
+					ICBuildConfigurationManager2 cbuildmanager = (ICBuildConfigurationManager2) mgr;
+					cbuildmanager.recheckConfigs();
+					checkJobs.remove(this);
+					return Status.OK_STATUS;
+				}
 			}
 		};
+		checkJobs.add(checkConfigs);
 		checkConfigs.setUser(true);
 		checkConfigs.schedule();
 
@@ -153,120 +159,134 @@ public class ContainerTargetTypeProvider implements ILaunchTargetProvider, IDock
 
 	@Override
 	public TargetStatus getStatus(ILaunchTarget target) {
+		// don't allow status to be ok until all check jobs are complete
+		while (!checkJobs.isEmpty()) {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// do nothing
+			}
+		}
 		// Always OK
 		return TargetStatus.OK_STATUS;
 	}
 
 	@Override
 	public synchronized void changeEvent(final IDockerConnection connection, final int type) {
+		final ContainerTargetTypeProvider provider = this;
 		Job checkConfigs = new Job("Check configs") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 
-				ICBuildConfigurationManager mgr = CCorePlugin.getService(ICBuildConfigurationManager.class);
-				ICBuildConfigurationManager2 manager = (ICBuildConfigurationManager2) mgr;
+				synchronized (provider) {
 
-				if (type == IDockerConnectionManagerListener.ADD_EVENT
-						|| type == IDockerConnectionManagerListener.ENABLE_EVENT) {
-					ILaunchBarManager launchbarManager = CDebugCorePlugin.getService(ILaunchBarManager.class);
-					ILaunchTarget defaultTarget = null;
-					try {
-						defaultTarget = launchbarManager.getActiveLaunchTarget();
-					} catch (CoreException e) {
-						// ignore
-					}
+					ICBuildConfigurationManager mgr = CCorePlugin.getService(ICBuildConfigurationManager.class);
+					ICBuildConfigurationManager2 manager = (ICBuildConfigurationManager2) mgr;
 
-					List<IDockerImage> images = connection.getImages();
-					IToolChainProvider provider = new ContainerGCCToolChainProvider();
-					for (IDockerImage image : images) {
-						if (!image.isDangling() && !image.isIntermediateImage()) {
+					if (type == IDockerConnectionManagerListener.ADD_EVENT
+							|| type == IDockerConnectionManagerListener.ENABLE_EVENT) {
+						ILaunchBarManager launchbarManager = CDebugCorePlugin.getService(ILaunchBarManager.class);
+						ILaunchTarget defaultTarget = null;
+						try {
+							defaultTarget = launchbarManager.getActiveLaunchTarget();
+						} catch (CoreException e) {
+							// ignore
+						}
 
-							String imageName = "[" //$NON-NLS-1$
-									+ image.repoTags().get(0).replace(':', '_')
-							// .replace('/', '_')
-									+ "]"; //$NON-NLS-1$
-							String imageName2 = imageName + "[" //$NON-NLS-1$
-									+ connection.getName() + "]"; //$NON-NLS-1$
-							ILaunchTarget target = targetManager.getLaunchTarget(TYPE_ID, imageName2);
-							if (target != null) {
-								continue;
-							}
-							target = targetManager.getLaunchTarget(TYPE_ID, imageName);
-							if (target != null) {
-								if (target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, "") //$NON-NLS-1$
-										.equals(connection.getUri())) {
+						List<IDockerImage> images = connection.getImages();
+						IToolChainProvider provider = new ContainerGCCToolChainProvider();
+						for (IDockerImage image : images) {
+							if (!image.isDangling() && !image.isIntermediateImage()) {
+
+								String imageName = "[" //$NON-NLS-1$
+										+ image.repoTags().get(0).replace(':', '_')
+								// .replace('/', '_')
+										+ "]"; //$NON-NLS-1$
+								String imageName2 = imageName + "[" //$NON-NLS-1$
+										+ connection.getName() + "]"; //$NON-NLS-1$
+								ILaunchTarget target = targetManager.getLaunchTarget(TYPE_ID, imageName2);
+								if (target != null) {
 									continue;
 								}
-								imageName = imageName2;
-							}
-							target = ((ILaunchTargetManager2) targetManager).addLaunchTargetNoNotify(TYPE_ID,
-									imageName);
-							ILaunchTargetWorkingCopy wc = target.getWorkingCopy();
-							wc.setAttribute(ILaunchTarget.ATTR_OS, CONTAINER_LINUX);
-							wc.setAttribute(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());
-							wc.setAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, connection.getUri());
-							wc.setAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, image.repoTags().get(0));
-
-							wc.save();
-
-							Map<String, String> properties = new HashMap<>();
-
-							properties.put(ILaunchTarget.ATTR_OS, ContainerTargetTypeProvider.CONTAINER_LINUX);
-							properties.put(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());
-							properties.put(IContainerLaunchTarget.ATTR_CONNECTION_URI, connection.getUri());
-							properties.put(IContainerLaunchTarget.ATTR_IMAGE_ID, image.repoTags().get(0));
-							// following can be used for naming build
-							// configurations
-							properties.put(ContainerGCCToolChainProvider.CONTAINER_LINUX_CONFIG_ID,
-									image.repoTags().get(0).replace(':', '_'));
-							// .replace('/', '_'));
-
-							IToolChainManager toolChainManager = MakeCorePlugin.getService(IToolChainManager.class);
-
-							Collection<IToolChain> toolChains;
-							try {
-								toolChains = toolChainManager.getToolChainsMatching(properties);
-								if (toolChains.isEmpty()) {
-									ContainerGCCToolChain toolChain = new ContainerGCCToolChain(
-											"gcc-img-" + image.id().substring(0, //$NON-NLS-1$
-													19),
-											provider, properties, null);
-									toolChainManager.addToolChain(toolChain);
+								target = targetManager.getLaunchTarget(TYPE_ID, imageName);
+								if (target != null) {
+									if (target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, "") //$NON-NLS-1$
+											.equals(connection.getUri())) {
+										continue;
+									}
+									imageName = imageName2;
 								}
+								target = ((ILaunchTargetManager2) targetManager).addLaunchTargetNoNotify(TYPE_ID,
+										imageName);
+								ILaunchTargetWorkingCopy wc = target.getWorkingCopy();
+								wc.setAttribute(ILaunchTarget.ATTR_OS, CONTAINER_LINUX);
+								wc.setAttribute(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());
+								wc.setAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, connection.getUri());
+								wc.setAttribute(IContainerLaunchTarget.ATTR_IMAGE_ID, image.repoTags().get(0));
+
+								wc.save();
+
+								Map<String, String> properties = new HashMap<>();
+
+								properties.put(ILaunchTarget.ATTR_OS, ContainerTargetTypeProvider.CONTAINER_LINUX);
+								properties.put(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());
+								properties.put(IContainerLaunchTarget.ATTR_CONNECTION_URI, connection.getUri());
+								properties.put(IContainerLaunchTarget.ATTR_IMAGE_ID, image.repoTags().get(0));
+								// following can be used for naming build
+								// configurations
+								properties.put(ContainerGCCToolChainProvider.CONTAINER_LINUX_CONFIG_ID,
+										image.repoTags().get(0).replace(':', '_'));
+								// .replace('/', '_'));
+
+								IToolChainManager toolChainManager = MakeCorePlugin.getService(IToolChainManager.class);
+
+								Collection<IToolChain> toolChains;
+								try {
+									toolChains = toolChainManager.getToolChainsMatching(properties);
+									if (toolChains.isEmpty()) {
+										ContainerGCCToolChain toolChain = new ContainerGCCToolChain(
+												"gcc-img-" + image.id().substring(0, //$NON-NLS-1$
+														19),
+												provider, properties, null);
+										toolChainManager.addToolChain(toolChain);
+									}
+								} catch (CoreException e) {
+									DockerLaunchUIPlugin.log(e);
+								}
+
+							}
+						}
+
+						// reset the default target back again
+						if (defaultTarget != null) {
+							try {
+								launchbarManager.setActiveLaunchTarget(defaultTarget);
 							} catch (CoreException e) {
 								DockerLaunchUIPlugin.log(e);
 							}
 
 						}
-					}
 
-					// reset the default target back again
-					if (defaultTarget != null) {
-						try {
-							launchbarManager.setActiveLaunchTarget(defaultTarget);
-						} catch (CoreException e) {
-							DockerLaunchUIPlugin.log(e);
-						}
-
-					}
-
-					// Re-evaluate config list in case a build config was marked
-					// invalid and is now enabled
-					manager.recheckConfigs();
-				} else if (type == IDockerConnectionManagerListener.REMOVE_EVENT
-						|| type == IDockerConnectionManagerListener.DISABLE_EVENT) {
-					String connectionURI = connection.getUri();
-					ILaunchTarget[] targets = targetManager.getLaunchTargetsOfType(TYPE_ID);
-					for (ILaunchTarget target : targets) {
-						String uri = target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, ""); //$NON-NLS-1$
-						if (connectionURI.equals(uri)) {
-							targetManager.removeLaunchTarget(target);
+						// Re-evaluate config list in case a build config was marked
+						// invalid and is now enabled
+						manager.recheckConfigs();
+					} else if (type == IDockerConnectionManagerListener.REMOVE_EVENT
+							|| type == IDockerConnectionManagerListener.DISABLE_EVENT) {
+						String connectionURI = connection.getUri();
+						ILaunchTarget[] targets = targetManager.getLaunchTargetsOfType(TYPE_ID);
+						for (ILaunchTarget target : targets) {
+							String uri = target.getAttribute(IContainerLaunchTarget.ATTR_CONNECTION_URI, ""); //$NON-NLS-1$
+							if (connectionURI.equals(uri)) {
+								targetManager.removeLaunchTarget(target);
+							}
 						}
 					}
+					checkJobs.remove(this);
+					return Status.OK_STATUS;
 				}
-				return Status.OK_STATUS;
 			}
 		};
+		checkJobs.add(checkConfigs);
 		checkConfigs.setUser(true);
 		checkConfigs.schedule();
 	}

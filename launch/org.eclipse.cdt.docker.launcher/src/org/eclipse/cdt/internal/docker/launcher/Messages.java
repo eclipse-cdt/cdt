@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2018 Red Hat, Inc.
+ * Copyright (c) 2012, 2020 Red Hat, Inc.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -58,6 +58,8 @@ public class Messages extends NLS {
 	public static String ContainerTab_Error_No_Images;
 	public static String ContainerTab_Warning_Connection_Not_Found;
 	public static String ContainerTab_Warning_Image_Not_Found;
+
+	public static String ContainerTargetTypeProviderJobGroup_name;
 
 	public static String HeaderPreferencePage_Connection_Label;
 	public static String HeaderPreferencePage_Image_Label;

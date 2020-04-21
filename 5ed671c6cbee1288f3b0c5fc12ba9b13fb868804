@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "653d3816_6b3727a0",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerTargetTypeProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-21T07:54:04Z",
+      "side": 1,
+      "message": "it should be final",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a1d83d0_39eafac3",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerTargetTypeProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-21T07:54:04Z",
+      "side": 1,
+      "message": "We should not use synchronized inside Job#run",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ce6dc975_9ec4a609",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerTargetTypeProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-21T07:54:04Z",
+      "side": 1,
+      "message": "This partially duplicates IJobManager",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ac728bc_8d24b90a",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerTargetTypeProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-21T07:54:04Z",
+      "side": 1,
+      "message": "We should not use synchronized inside Job#run",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "34dafdaa_efecc91e",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-21T07:54:04Z",
+      "side": 1,
+      "message": "It should have semantic name like \"NO_ARGS\"",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b301f7c1_43b3d893",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-21T07:54:04Z",
+      "side": 1,
+      "message": "As empty project name is not legal I would inline constant here",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47bf145c_3ccdc1cf",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-21T07:54:04Z",
+      "side": 1,
+      "message": "Something is wrong with this approach, we are fighting with our own code",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c22b51ca_2130fe6a",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-21T07:54:04Z",
+      "side": 1,
+      "message": "This should be reworked to avoid null suppression",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

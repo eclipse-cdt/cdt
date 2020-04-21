@@ -796,6 +796,21 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		assertAutoEditBehaviour();
 	}
 
+	///**X
+	//template<class T>
+	//T foo() {}
+
+	///**
+	// * X${whitespace_eol}
+	// * @tparam T
+	// * @return
+	// */
+	//template<class T>
+	//T foo() {}
+	public void testTemplateParameters_Bug562368() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
 	protected void assertAutoEditBehaviour() throws CoreException {
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 		final IDocument doc = new Document();

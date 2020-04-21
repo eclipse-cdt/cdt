@@ -206,7 +206,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 					.append(ASTStringUtil.getSimpleName(decl.getName()))
 					.append(ASTStringUtil.getSignatureString(null, decl)).append(getLineDelimiter());
 		}
-		result.append(getBriefTag()).append(getPrePostTag()).append(documentTemplateParameters(templateParams));
+		result.append(getBriefTag()).append(getPrePostTag());
 
 		result.append(documentTemplateParameters(templateParams));
 		result.append(documentFunctionParameters(getParameterDecls(decl)));

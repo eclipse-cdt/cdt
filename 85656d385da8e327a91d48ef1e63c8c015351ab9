@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ec6ce79_288fb37f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/AbstractCPPClassSpecializationScope.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-22T18:16:36Z",
+      "side": 1,
+      "message": "This check looks cheaper and should go first",
+      "revId": "85656d385da8e327a91d48ef1e63c8c015351ab9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0c3aa8e5_51be7539",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/AbstractCPPClassSpecializationScope.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-22T18:16:36Z",
+      "side": 1,
+      "message": "Will we have `filteredFriends` array with `null` elements if this condition is false?\nMay be we should use List to collect bindings.",
+      "revId": "85656d385da8e327a91d48ef1e63c8c015351ab9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

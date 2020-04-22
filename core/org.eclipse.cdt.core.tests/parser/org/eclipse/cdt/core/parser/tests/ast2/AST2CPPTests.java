@@ -13563,4 +13563,24 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertTrue(((ICPPEnumeration) col.getType()).isNoDiscard());
 		assertFalse(((ICPPEnumeration) f.getType()).isNoDiscard());
 	}
+
+	// template<typename ... T>
+	//class Foo {
+	//	template<class A, class ... B>
+	//	friend void visit(A &&vis, B &&... vars);
+	//};
+	//template<class A, class ... B>
+	//void visit(A &&vis, B &&... vars)  {
+	//}
+	//class Bar{};
+	//int main() {
+	//	Bar b;
+	//	Foo<int, double> f;
+	//	visit(b, f);
+	//	return 0;
+	//}
+	public void testTemplateFriendFunctionInTemplate_Bug562284() throws Exception {
+		String code = getAboveComment();
+		parseAndCheckBindings(code);
+	}
 }

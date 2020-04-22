@@ -28,14 +28,17 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexFileSet;
@@ -228,6 +231,18 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 		return newArray;
 	}
 
+	private boolean useSameParameter(ICPPTemplateParameter[] cParams, ICPPTemplateParameter[] fParams) {
+		for (ICPPTemplateParameter p : fParams) {
+			for (ICPPTemplateParameter k : cParams) {
+				if (p.isParameterPack() == k.isParameterPack()
+						&& CharArrayUtils.equals(p.getNameCharArray(), k.getNameCharArray())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public ICPPField[] getDeclaredFields() {
 		ICPPField[] fields = specialClass.getSpecializedBinding().getDeclaredFields();
@@ -321,7 +336,22 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 	@Override
 	public IBinding[] getFriends() {
-		IBinding[] friends = specialClass.getSpecializedBinding().getFriends();
+		ICPPClassType klass = specialClass.getSpecializedBinding();
+		IBinding[] friends = klass.getFriends();
+		if (klass instanceof ICPPClassTemplate) {
+			IBinding[] filteredFriends = new IBinding[friends.length];
+			ICPPTemplateParameter[] classParams = ((ICPPClassTemplate) klass).getTemplateParameters();
+			for (int i = 0; i < friends.length; ++i) {
+				if (friends[i] instanceof ICPPFunctionTemplate) {
+					ICPPTemplateParameter[] funcParams = ((ICPPFunctionTemplate) friends[i]).getTemplateParameters();
+					boolean paramFound = useSameParameter(classParams, funcParams);
+					filteredFriends[i] = paramFound ? specialClass.specializeMember(friends[i]) : friends[i];
+				} else {
+					filteredFriends[i] = specialClass.specializeMember(friends[i]);
+				}
+			}
+			return filteredFriends;
+		}
 		return specializeMembers(friends);
 	}
 

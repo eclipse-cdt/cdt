@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "80b7a5da_3064fe07",
+        "filename": "core/org.eclipse.cdt.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-22T17:41:00Z",
+      "side": 1,
+      "message": "Please note - on non-master branch this needs to be incremented by 1 - not 100.\n\nSee https://wiki.eclipse.org/Version_Numbering#When_to_change_the_service_segment for more info.",
+      "revId": "a0dcef0eacfe9438b56d3c4b04ab2bacebe8e721",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

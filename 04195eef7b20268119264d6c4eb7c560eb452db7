@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd29be57_d0b4ef21",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTForStatement.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-22T02:16:09Z",
+      "side": 1,
+      "message": "Note that by changing this the code now creates a new ExecCompoundStatement() every time getExecution() is called. This can be avoided with:\n\n\t\t\t\t.orElseGet(() -\u003e new ExecCompoundStatement());\n\nwhich would show the original ternary intent better of not excuting the \"else\" expression unless the conditional is false.",
+      "revId": "04195eef7b20268119264d6c4eb7c560eb452db7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

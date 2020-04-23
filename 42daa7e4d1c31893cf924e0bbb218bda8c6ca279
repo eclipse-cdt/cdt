@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b221c2ac_360b7daa",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13584,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-04-23T00:08:52Z",
+      "side": 1,
+      "message": "You can just do parseAndCheckBindings(), it defaults to getting the code from getAboveComment().",
+      "revId": "42daa7e4d1c31893cf924e0bbb218bda8c6ca279",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "77ff0cbc_536193b8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/AbstractCPPClassSpecializationScope.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-04-23T00:08:52Z",
+      "side": 1,
+      "message": "This boolean will never be true, because template parameter names cannot shadow each other. (So, in well formed code, if \"klass\" has a template parameter named \"T\", then \"friends[i]\" cannot have a template parameter also named \"T\".)\n\nRather, what we want to be checking for is uses of klass\u0027s template parameters in the signature of friends[i].\n\nFor example:\n\n  template \u003ctypename T\u003e\n  struct S {\n    template \u003ctypename U\u003e\n    void bar(T, U);\n  };\n\nhere, \"T\" appears in the signature of bar(), so we want to use specializeMember().",
+      "revId": "42daa7e4d1c31893cf924e0bbb218bda8c6ca279",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

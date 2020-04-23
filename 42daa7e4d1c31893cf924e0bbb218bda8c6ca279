@@ -33,6 +33,24 @@
       "revId": "42daa7e4d1c31893cf924e0bbb218bda8c6ca279",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d896c0e9_5ff2e837",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/AbstractCPPClassSpecializationScope.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-04-23T00:25:23Z",
+      "side": 1,
+      "message": "Here\u0027s a full test case which this patch regresses:\n\n  template \u003cint\u003e struct S {};\n\n  template\u003ctypename T\u003e\n  class Foo {\n      template \u003cint U\u003e\n      friend void visit(Foo\u003cT\u003e, S\u003cU\u003e);\n  };\n\n  class Bar{};\n\n  void bar() {\n      Foo\u003cint\u003e f;\n      S\u003c1\u003e s;\n      visit(f, s);  // ERROR HERE with this patch\n  }\n\nWe should add this to the test suite as part of this patch.\n\n(Note: I had to be somewhat careful in constructing this example. If the kind of \"T\" and \"U\" is both \"typename\", we run into the second bug mentioned in https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d562284#c3, causing name resolution to fail for that reason.)",
+      "parentUuid": "77ff0cbc_536193b8",
+      "revId": "42daa7e4d1c31893cf924e0bbb218bda8c6ca279",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

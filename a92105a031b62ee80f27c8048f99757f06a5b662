@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e107245b_4f7e6647",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-25T17:28:35Z",
+      "side": 0,
+      "message": "this was unreachable - I added some comments about it in https://git.eclipse.org/r/#/c/156872/",
+      "range": {
+        "startLine": 150,
+        "startChar": 6,
+        "endLine": 150,
+        "endChar": 28
+      },
+      "revId": "a92105a031b62ee80f27c8048f99757f06a5b662",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

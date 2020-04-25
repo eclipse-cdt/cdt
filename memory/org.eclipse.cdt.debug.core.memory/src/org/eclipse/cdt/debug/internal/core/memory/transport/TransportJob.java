@@ -13,30 +13,30 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.memory.transport;
 
-import org.eclipse.cdt.debug.core.memory.transport.FileImport;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * Runs {@link FileImport} operation as a {@link Job}
+ * Runs memory transport runnable as a {@link Job}
  *
  */
-public final class FileImportJob extends Job {
+public final class TransportJob extends Job {
 
-	private final FileImport<?> fileImport;
+	private final ICoreRunnable runnable;
 
-	public FileImportJob(String name, FileImport<?> fileImport) {
+	public TransportJob(String name, ICoreRunnable runnable) {
 		super(name);
-		this.fileImport = fileImport;
+		this.runnable = runnable;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
-			fileImport.run(monitor);
+			runnable.run(monitor);
 		} catch (CoreException e) {
 			return e.getStatus();
 		}

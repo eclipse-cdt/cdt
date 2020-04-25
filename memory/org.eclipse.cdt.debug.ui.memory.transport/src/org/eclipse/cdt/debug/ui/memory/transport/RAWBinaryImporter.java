@@ -20,7 +20,7 @@ import java.math.BigInteger;
 import java.util.function.Consumer;
 
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
-import org.eclipse.cdt.debug.internal.core.memory.transport.FileImportJob;
+import org.eclipse.cdt.debug.internal.core.memory.transport.TransportJob;
 import org.eclipse.cdt.debug.internal.core.memory.transport.RAWBinaryImport;
 import org.eclipse.cdt.debug.internal.ui.memory.transport.ScrollMemory;
 import org.eclipse.cdt.debug.internal.ui.memory.transport.WriteMemoryBlock;
@@ -253,7 +253,7 @@ public class RAWBinaryImporter implements IMemoryImporter {
 			ImportRequest request = new ImportRequest(block.getBigBaseAddress(), fStartAddress,
 					new WriteMemoryBlock(block));
 			RAWBinaryImport memoryImport = new RAWBinaryImport(fInputFile, request, scroll);
-			FileImportJob job = new FileImportJob(//
+			TransportJob job = new TransportJob(//
 					"Memory Import from RAW Binary File", memoryImport);
 			job.setUser(true);
 			job.schedule();

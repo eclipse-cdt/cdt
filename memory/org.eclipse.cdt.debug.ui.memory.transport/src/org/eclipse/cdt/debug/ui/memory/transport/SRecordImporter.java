@@ -20,7 +20,7 @@ import java.math.BigInteger;
 import java.util.function.Consumer;
 
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
-import org.eclipse.cdt.debug.internal.core.memory.transport.FileImportJob;
+import org.eclipse.cdt.debug.internal.core.memory.transport.TransportJob;
 import org.eclipse.cdt.debug.internal.core.memory.transport.SRecordImport;
 import org.eclipse.cdt.debug.internal.ui.memory.transport.ScrollMemory;
 import org.eclipse.cdt.debug.internal.ui.memory.transport.WriteMemoryBlock;
@@ -342,7 +342,7 @@ public class SRecordImporter implements IMemoryImporter {
 					new WriteMemoryBlock(block));
 			SRecordImport memoryImport = new SRecordImport(fInputFile, request, scroll,
 					fProperties.getBoolean(TRANSFER_CUSTOM_START_ADDRESS));
-			FileImportJob job = new FileImportJob(//
+			TransportJob job = new TransportJob(//
 					"Memory Import from S-Record File", memoryImport);
 			job.setUser(true);
 			job.schedule();

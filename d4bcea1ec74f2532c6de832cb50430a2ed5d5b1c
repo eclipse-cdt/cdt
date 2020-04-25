@@ -78,6 +78,52 @@
     },
     {
       "key": {
+        "uuid": "026373a4_d4b647f3",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-25T17:27:55Z",
+      "side": 1,
+      "message": "A little after the fact - but if it was possible for the getAllInputExtensions to return null entries, then a new NPE was introduced here. I have resolved this in https://git.eclipse.org/r/#/c/161521/",
+      "range": {
+        "startLine": 144,
+        "startChar": 43,
+        "endLine": 144,
+        "endChar": 55
+      },
+      "revId": "d4bcea1ec74f2532c6de832cb50430a2ed5d5b1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f006cc44_6fe8f4f4",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-04-25T17:27:55Z",
+      "side": 1,
+      "message": "this part of the conditional is unreachable.",
+      "range": {
+        "startLine": 150,
+        "startChar": 6,
+        "endLine": 150,
+        "endChar": 24
+      },
+      "revId": "d4bcea1ec74f2532c6de832cb50430a2ed5d5b1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0481b0b1_6bd1c4b6",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
         "patchSetId": 1

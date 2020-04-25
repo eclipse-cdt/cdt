@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -894,23 +895,32 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * @return file extension associated with the language or {@code null} if not found.
 	 */
 	protected String getSpecFileExtension(String languageId) {
-		String ext = null;
+		Optional<String> extension = Optional.empty();
 		ILanguageDescriptor langDescriptor = LanguageManager.getInstance().getLanguageDescriptor(languageId);
 		if (langDescriptor != null) {
 			IContentType[] contentTypes = langDescriptor.getContentTypes();
 			if (contentTypes != null && contentTypes.length > 0) {
 				String[] fileExtensions = contentTypes[0].getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-				if (fileExtensions != null && fileExtensions.length > 0) {
-					ext = fileExtensions[0];
+				if (fileExtensions != null) {
+					List<String> extensions = Arrays.asList(fileExtensions);
+					extension = extensions.stream().filter(s -> s != null && !s.isEmpty()).findFirst();
+					extension = extension.map(ext2 -> {
+						// Bug 562452: Special case where we prefer not to use .C for c++ files.
+						if ("C".equals(ext2) && extensions.contains("cpp")) { //$NON-NLS-1$//$NON-NLS-2$
+							return "cpp"; //$NON-NLS-1$
+						}
+						return ext2;
+					});
 				}
 			}
 		}
 
-		if (ext == null) {
+		if (!extension.isPresent()) {
 			ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
 					"Unable to find file extension for language " + languageId)); //$NON-NLS-1$
+			return null;
 		}
-		return ext;
+		return extension.get();
 	}
 
 	/**

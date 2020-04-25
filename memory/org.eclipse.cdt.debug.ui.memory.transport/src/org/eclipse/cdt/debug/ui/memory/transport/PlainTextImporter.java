@@ -20,7 +20,7 @@ import java.math.BigInteger;
 import java.util.function.Consumer;
 
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
-import org.eclipse.cdt.debug.internal.core.memory.transport.FileImportJob;
+import org.eclipse.cdt.debug.internal.core.memory.transport.TransportJob;
 import org.eclipse.cdt.debug.internal.core.memory.transport.PlainTextImport;
 import org.eclipse.cdt.debug.internal.ui.memory.transport.ScrollMemory;
 import org.eclipse.cdt.debug.internal.ui.memory.transport.WriteMemoryBlock;
@@ -270,7 +270,7 @@ public class PlainTextImporter implements IMemoryImporter {
 			ImportRequest request = new ImportRequest(block.getBigBaseAddress(), fStartAddress,
 					new WriteMemoryBlock(block));
 			PlainTextImport memoryImport = new PlainTextImport(fInputFile, request, scroll);
-			FileImportJob job = new FileImportJob(//
+			TransportJob job = new TransportJob(//
 					"Memory Import from Plain Text File", memoryImport);
 			job.setUser(true);
 			job.schedule();

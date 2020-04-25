@@ -41,10 +41,10 @@ public abstract class FileImport<I extends AutoCloseable> implements ICoreRunnab
 	protected final WriteMemory write;
 	protected final Consumer<BigInteger> scroll;
 
-	private final File inputFile;
+	private final File file;
 
 	protected FileImport(File input, ImportRequest request, Consumer<BigInteger> scroll) {
-		this.inputFile = input;
+		this.file = input;
 		this.base = request.base();
 		this.start = request.start();
 		this.write = request.write();
@@ -53,8 +53,8 @@ public abstract class FileImport<I extends AutoCloseable> implements ICoreRunnab
 
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
-		try (I reader = input(inputFile)) {
-			BigInteger jobs = BigInteger.valueOf(inputFile.length());
+		try (I reader = input(file)) {
+			BigInteger jobs = BigInteger.valueOf(file.length());
 			BigInteger factor = BigInteger.ONE;
 			if (jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0) {
 				factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));

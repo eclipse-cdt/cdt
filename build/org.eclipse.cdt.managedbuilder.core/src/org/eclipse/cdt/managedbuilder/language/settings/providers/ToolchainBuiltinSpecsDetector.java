@@ -16,6 +16,7 @@
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,19 +140,24 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 
 	@Override
 	protected String getSpecFileExtension(String languageId) {
-		Optional<String> found = languageTool(languageId)//
-				.flatMap(t -> Optional.of(t.getAllInputExtensions()))//
-				.flatMap(e -> Arrays.asList(e).stream().findFirst());
-		if (!found.isPresent()) {
+		Optional<String[]> optionalExtensions = languageTool(languageId)
+				.flatMap(t -> Optional.of(t.getAllInputExtensions()));
+		List<String> extensions = optionalExtensions.map(Arrays::asList).orElseGet(() -> Collections.emptyList());
+		Optional<String> extension = extensions.stream().filter(s -> s != null && !s.isEmpty()).findFirst();
+		extension = extension.map(ext -> {
+			// Bug 562452: Special case where we prefer not to use .C for c++ files.
+			if ("C".equals(ext) && extensions.contains("cpp")) { //$NON-NLS-1$//$NON-NLS-2$
+				return "cpp"; //$NON-NLS-1$
+			}
+			return ext;
+		});
+
+		if (!extension.isPresent()) {
+			//this looks like either invalid configuration settings or API issue
 			ManagedBuilderCorePlugin.error(NLS.bind("Unable to find file extension for language {0}", languageId)); //$NON-NLS-1$
 			return null;
 		}
-		String firstInput = found.get();
-		if (firstInput == null || firstInput.isEmpty()) {
-			//this looks like either invalid configuration settings or API issue
-			ManagedBuilderCorePlugin.error(NLS.bind("Unable to find file extension for language {0}", languageId)); //$NON-NLS-1$
-		}
-		return firstInput;
+		return extension.get();
 	}
 
 	@Override

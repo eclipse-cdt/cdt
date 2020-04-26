@@ -36,6 +36,7 @@
     <li><a href="#internals">Previously exported packages that were not API are now correctly marked as such.</a></li>
     <li><a href="#activators">Activators removed for all bundles where possible.</a></li>
     <li><a href="#NewClassCreationWizardPage">NewClassCreationWizardPage breaking changes.</a></li>
+    <li><a href="#arduino">Arduino plug-ins and features removed.</a></li>
   </ol>
   <p>
     Planned Removals after June 2022
@@ -107,6 +108,25 @@
     compatibility, no code changes should be needed in extenders, just compiling against the new version. See <a
       href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=510789" target="_blank">Bug 510789</a> and <a
       href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=561770" target="_blank">Bug 561770</a>.
+  </p>
+
+  <h3>5. <a name="arduino">Arduino plug-ins and features removed.</a></h3>
+  <p>
+    The CDT Arduino plug-ins and features have been removed. Arduino can still be used with CDT with manual maintenance
+    of packages, etc. Or a third-party add-on such as <a href="https://eclipse.baeyens.it/">Sloeber</a> can be used as a
+    replacement.
+  </p>
+  <p>
+    The bundles and features that have been removed are:
+    <ul>
+      <li>org.eclipse.cdt.arduino-feature</li>
+      <li>org.eclipse.cdt.arduino.core.tests</li>
+      <li>org.eclipse.cdt.arduino.core</li>
+      <li>org.eclipse.cdt.arduino.ui</li>
+    </ul>
+  </p>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=562498" target="_blank">Bug 562498</a>.
   </p>
 
   <hr>

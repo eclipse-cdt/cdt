@@ -28,7 +28,6 @@
 <repository location="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.cdt.arduino.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.autotools.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.build.crossgcc.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.bupc.feature.group" version="0.0.0"/>

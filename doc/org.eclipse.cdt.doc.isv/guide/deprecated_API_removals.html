@@ -37,6 +37,7 @@
     <li><a href="#activators">Activators removed for all bundles where possible.</a></li>
     <li><a href="#NewClassCreationWizardPage">NewClassCreationWizardPage breaking changes.</a></li>
     <li><a href="#arduino">Arduino plug-ins and features removed.</a></li>
+    <li><a href="#oldparsers">Remove LRParser, XLC and UPC.</a></li>
   </ol>
   <p>
     Planned Removals after June 2022
@@ -123,6 +124,43 @@
       <li>org.eclipse.cdt.arduino.core.tests</li>
       <li>org.eclipse.cdt.arduino.core</li>
       <li>org.eclipse.cdt.arduino.ui</li>
+    </ul>
+  </p>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=562498" target="_blank">Bug 562498</a>.
+  </p>
+
+  <h3>6. <a name="oldparsers">Remove LRParser, XLC and UPC.</a></h3>
+  <p>
+    The LR, UPC and XLC support have been removed from CDT. The bundles have not been maintained for a while and were
+    not functional anymore.
+  </p>
+  <p>
+    The bundles and features that have been removed are:
+    <ul>
+      <li>org.eclipse.cdt.core.lrparser.feature</li>
+      <li>org.eclipse.cdt.core.lrparser.sdk.branding</li>
+      <li>org.eclipse.cdt.core.lrparser.sdk.feature</li>
+      <li>org.eclipse.cdt.core.lrparser.tests</li>
+      <li>org.eclipse.cdt.core.lrparser</li>
+      <li>org.eclipse.cdt.bupc-feature</li>
+      <li>org.eclipse.cdt.core.parser.upc.feature</li>
+      <li>org.eclipse.cdt.core.parser.upc.sdk.branding</li>
+      <li>org.eclipse.cdt.core.parser.upc.sdk.feature</li>
+      <li>org.eclipse.cdt.core.parser.upc.tests</li>
+      <li>org.eclipse.cdt.core.parser.upc</li>
+      <li>org.eclipse.cdt.managedbuilder.bupc.ui</li>
+      <li>org.eclipse.cdt.core.lrparser.xlc.tests</li>
+      <li>org.eclipse.cdt.core.lrparser.xlc</li>
+      <li>org.eclipse.cdt.errorparsers.xlc.tests</li>
+      <li>org.eclipse.cdt.errorparsers.xlc</li>
+      <li>org.eclipse.cdt.make.xlc.core</li>
+      <li>org.eclipse.cdt.managedbuilder.xlc.core</li>
+      <li>org.eclipse.cdt.managedbuilder.xlc.ui</li>
+      <li>org.eclipse.cdt.managedbuilder.xlupc.ui</li>
+      <li>org.eclipse.cdt.xlc.feature</li>
+      <li>org.eclipse.cdt.xlc.sdk-feature</li>
+      <li>org.eclipse.cdt.xlc.sdk.branding</li>
     </ul>
   </p>
   <p>

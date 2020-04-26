@@ -148,7 +148,6 @@ cdtOptions text
 *.top text
 *.ucd text
 .umlproject text
-*.upc text
 # remove trailing whitespace
 *.py text
 *.xhtml text

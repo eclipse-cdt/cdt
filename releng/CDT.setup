@@ -78,12 +78,6 @@
       <requirement
           name="org.eclipse.cdt.build.crossgcc.feature.group"/>
       <requirement
-          name="org.eclipse.cdt.bupc.feature.group"/>
-      <requirement
-          name="org.eclipse.cdt.core.lrparser.sdk.feature.group"/>
-      <requirement
-          name="org.eclipse.cdt.core.parser.upc.sdk.feature.group"/>
-      <requirement
           name="org.eclipse.cdt.debug.gdbjtag.feature.group"/>
       <requirement
           name="org.eclipse.cdt.debug.standalone.feature.group"/>
@@ -109,8 +103,6 @@
           name="org.eclipse.cdt.testsrunner.feature.feature.group"/>
       <requirement
           name="org.eclipse.cdt.visualizer.feature.group"/>
-      <requirement
-          name="org.eclipse.cdt.xlc.sdk.feature.group"/>
       <requirement
           name="org.eclipse.launchbar.feature.group"/>
       <requirement

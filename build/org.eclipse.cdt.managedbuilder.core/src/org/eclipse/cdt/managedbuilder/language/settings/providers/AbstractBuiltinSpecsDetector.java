@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -78,6 +79,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Element;
 
 /**
@@ -895,25 +897,17 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * @return file extension associated with the language or {@code null} if not found.
 	 */
 	protected String getSpecFileExtension(String languageId) {
-		Optional<String> extension = Optional.empty();
-		ILanguageDescriptor langDescriptor = LanguageManager.getInstance().getLanguageDescriptor(languageId);
-		if (langDescriptor != null) {
-			IContentType[] contentTypes = langDescriptor.getContentTypes();
-			if (contentTypes != null && contentTypes.length > 0) {
-				String[] fileExtensions = contentTypes[0].getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-				if (fileExtensions != null) {
-					List<String> extensions = Arrays.asList(fileExtensions);
-					extension = selectBestSpecFileExtension(extensions);
-				}
-			}
-		}
-
-		if (!extension.isPresent()) {
-			ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
-					"Unable to find file extension for language " + languageId)); //$NON-NLS-1$
-			return null;
-		}
-		return extension.get();
+		return Optional.ofNullable(LanguageManager.getInstance().getLanguageDescriptor(languageId))//
+				.map(ILanguageDescriptor::getContentTypes)//
+				.filter(types -> types.length > 0)//
+				.map(types -> types[0].getFileSpecs(IContentType.FILE_EXTENSION_SPEC))//
+				.map(Arrays::asList)//
+				.flatMap(this::selectBestSpecFileExtension)//
+				.orElseGet(() -> {
+					ManagedBuilderCorePlugin
+							.error(NLS.bind("Unable to find file extension for language {0}", languageId)); //$NON-NLS-1$
+					return null;
+				});
 	}
 
 	/**
@@ -923,13 +917,18 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * @since 8.9
 	 */
 	protected Optional<String> selectBestSpecFileExtension(List<String> extensions) {
-		return extensions.stream().filter(s -> s != null && !s.isEmpty()).findFirst().map(ext -> {
-			// Bug 562452: Special case where we prefer not to use .C for c++ files.
-			if ("C".equals(ext) && extensions.contains("cpp")) { //$NON-NLS-1$//$NON-NLS-2$
-				return "cpp"; //$NON-NLS-1$
-			}
-			return ext;
-		});
+		return extensions.stream()//
+				.filter(Objects::nonNull)//
+				.filter(s -> !s.isEmpty())//
+				.findFirst().map(e -> preferCpp(e, extensions));
+	}
+
+	private String preferCpp(String ext, List<String> extensions) {
+		// Bug 562452: Special case where we prefer not to use .C for c++ files.
+		if ("C".equals(ext) && extensions.contains("cpp")) { //$NON-NLS-1$//$NON-NLS-2$
+			return "cpp"; //$NON-NLS-1$
+		}
+		return ext;
 	}
 
 	/**

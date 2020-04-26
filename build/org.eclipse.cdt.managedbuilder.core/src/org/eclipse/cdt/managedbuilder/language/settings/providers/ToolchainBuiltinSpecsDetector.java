@@ -16,7 +16,6 @@
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableManagerToolChain;
+import org.eclipse.cdt.managedbuilder.internal.language.settings.providers.NotFoundFileExtension;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -140,17 +140,11 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 
 	@Override
 	protected String getSpecFileExtension(String languageId) {
-		Optional<String[]> optionalExtensions = languageTool(languageId)
-				.flatMap(t -> Optional.of(t.getAllInputExtensions()));
-		List<String> extensions = optionalExtensions.map(Arrays::asList).orElseGet(() -> Collections.emptyList());
-		Optional<String> extension = selectBestSpecFileExtension(extensions);
-
-		if (!extension.isPresent()) {
-			//this looks like either invalid configuration settings or API issue
-			ManagedBuilderCorePlugin.error(NLS.bind("Unable to find file extension for language {0}", languageId)); //$NON-NLS-1$
-			return null;
-		}
-		return extension.get();
+		return languageTool(languageId)//
+				.flatMap(t -> Optional.ofNullable(t.getAllInputExtensions()))// ToolReference can return null
+				.map(Arrays::asList)//
+				.flatMap(this::selectBestSpecFileExtension)//
+				.orElseGet(() -> new NotFoundFileExtension().apply(languageId));
 	}
 
 	@Override

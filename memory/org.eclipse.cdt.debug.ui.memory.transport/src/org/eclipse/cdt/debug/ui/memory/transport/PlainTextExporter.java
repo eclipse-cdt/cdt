@@ -15,19 +15,16 @@
 package org.eclipse.cdt.debug.ui.memory.transport;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.math.BigInteger;
 
+import org.eclipse.cdt.debug.core.memory.transport.ExportRequest;
+import org.eclipse.cdt.debug.core.memory.transport.ReadMemory;
+import org.eclipse.cdt.debug.internal.core.memory.transport.ReadMemoryBlock;
+import org.eclipse.cdt.debug.internal.core.memory.transport.TransportJob;
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryExporter;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -453,97 +450,10 @@ public class PlainTextExporter implements IMemoryExporter {
 
 	@Override
 	public void exportMemory() {
-		Job job = new Job("Memory Export to Plain Text File") { //$NON-NLS-1$
-			@Override
-			public IStatus run(IProgressMonitor monitor) {
-				try {
-					final BigInteger addressableSize = getAdressableSize();
-
-					// These variables control how the output will be formatted
-
-					// The output data is split by chunks of 1 addressable unit size.
-					final BigInteger dataCellSize = BigInteger.valueOf(1);
-					// show 32 bytes of data per line, total. Adjust number of columns to compensate
-					// for longer addressable unit size
-					final BigInteger numberOfColumns = BigInteger.valueOf(32).divide(addressableSize);
-					// deduce the number of data chunks to be output, per line
-					final BigInteger dataCellsPerLine = dataCellSize.multiply(numberOfColumns);
-
-					BigInteger transferAddress = fStartAddress;
-
-					FileWriter writer = new FileWriter(fOutputFile);
-
-					BigInteger jobs = fEndAddress.subtract(transferAddress).divide(dataCellsPerLine);
-					BigInteger factor = BigInteger.ONE;
-					if (jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0) {
-						factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
-						jobs = jobs.divide(factor);
-					}
-
-					monitor.beginTask(Messages.getString("Exporter.ProgressTitle"), jobs.intValue()); //$NON-NLS-1$
-
-					BigInteger jobCount = BigInteger.ZERO;
-					while (transferAddress.compareTo(fEndAddress) < 0 && !monitor.isCanceled()) {
-						BigInteger length = dataCellsPerLine;
-						if (fEndAddress.subtract(transferAddress).compareTo(length) < 0)
-							length = fEndAddress.subtract(transferAddress);
-
-						monitor.subTask(String.format(Messages.getString("Exporter.Progress"), length.toString(10), //$NON-NLS-1$
-								transferAddress.toString(16)));
-
-						StringBuilder buf = new StringBuilder();
-
-						for (int i = 0; i < length.divide(dataCellSize).intValue(); i++) {
-							if (i != 0)
-								buf.append(" "); //$NON-NLS-1$
-							MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(
-									transferAddress.add(dataCellSize.multiply(BigInteger.valueOf(i))),
-									dataCellSize.longValue());
-							for (int byteIndex = 0; byteIndex < bytes.length; byteIndex++) {
-								String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
-								if (bString.length() == 1)
-									buf.append("0"); //$NON-NLS-1$
-								buf.append(bString);
-							}
-						}
-
-						writer.write(buf.toString().toUpperCase());
-						writer.write("\n"); //$NON-NLS-1$
-
-						transferAddress = transferAddress.add(length);
-
-						jobCount = jobCount.add(BigInteger.ONE);
-						if (jobCount.compareTo(factor) == 0) {
-							jobCount = BigInteger.ZERO;
-							monitor.worked(1);
-						}
-					}
-
-					writer.close();
-					monitor.done();
-				} catch (IOException ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrFile"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrFile"), ex); //$NON-NLS-1$
-
-				} catch (DebugException ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrReadTarget"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrReadTarget"), ex); //$NON-NLS-1$
-				} catch (Exception ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.INTERNAL_ERROR, Messages.getString("Exporter.Falure"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.INTERNAL_ERROR, Messages.getString("Exporter.Falure"), ex); //$NON-NLS-1$
-				}
-				return Status.OK_STATUS;
-			}
-		};
+		ReadMemory read = new ReadMemoryBlock((IMemoryBlockExtension) fMemoryBlock);
+		ExportRequest request = new ExportRequest(fStartAddress, fEndAddress, getAdressableSize(), read);
+		PlainTextExport memoryExport = new PlainTextExport(fOutputFile, request);
+		TransportJob job = new TransportJob("Memory Export to Plain Text File", memoryExport);
 		job.setUser(true);
 		job.schedule();
 	}

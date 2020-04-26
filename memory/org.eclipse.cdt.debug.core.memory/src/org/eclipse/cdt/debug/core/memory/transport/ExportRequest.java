@@ -17,29 +17,23 @@ import java.math.BigInteger;
 
 /**
  *
- * Aggregates memory import configuration
+ * Aggregates memory export configuration
  *
  * @since 0.1
  *
  */
-public final class ImportRequest {
+public final class ExportRequest {
 
-	private final BigInteger base;
 	private final BigInteger start;
-	private final WriteMemory write;
+	private final BigInteger end;
+	private final BigInteger addressable;
+	private final ReadMemory read;
 
-	public ImportRequest(BigInteger base, BigInteger start, WriteMemory write) {
-		this.base = base;
+	public ExportRequest(BigInteger start, BigInteger end, BigInteger addressable, ReadMemory read) {
 		this.start = start;
-		this.write = write;
-	}
-
-	/**
-	 *
-	 * @return base memory address
-	 */
-	public BigInteger base() {
-		return base;
+		this.end = end;
+		this.addressable = addressable;
+		this.read = read;
 	}
 
 	/**
@@ -52,9 +46,25 @@ public final class ImportRequest {
 
 	/**
 	 *
-	 * @return writer
+	 * @return ending offset
 	 */
-	public WriteMemory write() {
-		return write;
+	public BigInteger end() {
+		return end;
+	}
+
+	/**
+	 *
+	 * @return addressable size
+	 */
+	public BigInteger addressable() {
+		return addressable;
+	}
+
+	/**
+	 *
+	 * @return reader
+	 */
+	public ReadMemory read() {
+		return read;
 	}
 }

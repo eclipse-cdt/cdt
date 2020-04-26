@@ -13,48 +13,31 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.memory.transport;
 
+import java.io.File;
 import java.math.BigInteger;
 
+import org.eclipse.core.runtime.ICoreRunnable;
+
 /**
- *
- * Aggregates memory import configuration
+ * Exports memory information to a given file
  *
  * @since 0.1
- *
  */
-public final class ImportRequest {
+public abstract class FileExport<O extends AutoCloseable> implements ICoreRunnable {
 
-	private final BigInteger base;
-	private final BigInteger start;
-	private final WriteMemory write;
+	protected final BigInteger start;
+	protected final BigInteger end;
+	protected final BigInteger addressable;
+	protected final ReadMemory read;
 
-	public ImportRequest(BigInteger base, BigInteger start, WriteMemory write) {
-		this.base = base;
-		this.start = start;
-		this.write = write;
+	protected final File file;
+
+	protected FileExport(File input, ExportRequest request) {
+		this.file = input;
+		this.start = request.start();
+		this.end = request.end();
+		this.addressable = request.addressable();
+		this.read = request.read();
 	}
 
-	/**
-	 *
-	 * @return base memory address
-	 */
-	public BigInteger base() {
-		return base;
-	}
-
-	/**
-	 *
-	 * @return starting offset
-	 */
-	public BigInteger start() {
-		return start;
-	}
-
-	/**
-	 *
-	 * @return writer
-	 */
-	public WriteMemory write() {
-		return write;
-	}
 }

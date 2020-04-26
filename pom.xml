@@ -201,11 +201,6 @@
 		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb.ui</module>
 		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb-feature</module>
 
-		<module>lrparser/org.eclipse.cdt.core.lrparser</module>
-		<module>lrparser/org.eclipse.cdt.core.lrparser.feature</module>
-		<module>lrparser/org.eclipse.cdt.core.lrparser.sdk.branding</module>
-		<module>lrparser/org.eclipse.cdt.core.lrparser.sdk.feature</module>
-
 		<module>lsp/org.eclipse.cdt.lsp.core</module>
 		<module>lsp/org.eclipse.cdt.lsp.ui</module>
 		<module>lsp/org.eclipse.cdt.lsp-feature</module>
@@ -233,14 +228,6 @@
 		<module>testsrunner/org.eclipse.cdt.testsrunner.tap</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.feature</module>
 
-		<module>upc/org.eclipse.cdt.core.parser.upc</module>
-		<module>upc/org.eclipse.cdt.core.parser.upc.feature</module>
-		<module>upc/org.eclipse.cdt.core.parser.upc.sdk.branding</module>
-		<module>upc/org.eclipse.cdt.core.parser.upc.sdk.feature</module>
-
-		<module>upc/org.eclipse.cdt.managedbuilder.bupc.ui</module>
-		<module>upc/org.eclipse.cdt.bupc-feature</module>
-
 		<module>util/org.eclipse.cdt.util</module>
 
 		<module>visualizer/org.eclipse.cdt.visualizer.core</module>
@@ -251,16 +238,6 @@
 		<module>windows/org.eclipse.cdt.msw.build</module>
 		<module>windows/org.eclipse.cdt.msw.build.tests</module>
 		<module>windows/org.eclipse.cdt.msw-feature</module>
-
-		<module>xlc/org.eclipse.cdt.core.lrparser.xlc</module>
-		<module>xlc/org.eclipse.cdt.errorparsers.xlc</module>
-		<module>xlc/org.eclipse.cdt.make.xlc.core</module>
-		<module>xlc/org.eclipse.cdt.managedbuilder.xlc.core</module>
-		<module>xlc/org.eclipse.cdt.managedbuilder.xlc.ui</module>
-		<module>xlc/org.eclipse.cdt.managedbuilder.xlupc.ui</module>
-		<module>xlc/org.eclipse.cdt.xlc.feature</module>
-		<module>xlc/org.eclipse.cdt.xlc.sdk.branding</module>
-		<module>xlc/org.eclipse.cdt.xlc.sdk-feature</module>
 
 		<module>launchbar/org.eclipse.launchbar</module>
 		<module>launchbar/org.eclipse.launchbar.core</module>
@@ -308,7 +285,6 @@
 		<module>lsp/org.eclipse.cdt.lsp.core.tests</module>
 		<module>qt/org.eclipse.cdt.qt.ui.tests</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.tests</module>
-		<module>xlc/org.eclipse.cdt.errorparsers.xlc.tests</module>
 
 		<module>releng/org.eclipse.cdt.testing</module>
 		<module>releng/org.eclipse.cdt.testing-feature</module>
@@ -319,10 +295,7 @@
 		-->
 		
 		<!--
-		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>
 		<module>qt/org.eclipse.cdt.qt.core.tests</module>
-		<module>upc/org.eclipse.cdt.core.parser.upc.tests</module>
-		<module>org.eclipse.cdt.core.lrparser.xlc.tests</module>
 		-->
 	</modules>
 

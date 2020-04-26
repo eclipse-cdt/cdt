@@ -30,13 +30,8 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.cdt.autotools.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.build.crossgcc.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.bupc.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.cmake.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.core.autotools.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.core.lrparser.feature.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.core.lrparser.sdk.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.core.parser.upc.feature.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.core.parser.upc.sdk.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.debug.dap.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.debug.dap.gdbjtag.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.debug.gdbjtag.feature.group" version="0.0.0"/>
@@ -62,8 +57,6 @@
 <unit id="org.eclipse.cdt.sdk.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.testsrunner.feature.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.visualizer.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.xlc.sdk.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.cdt.xlc.feature.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.launchbar.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.launchbar.remote.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>

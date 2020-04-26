@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c23c90fa_1ce3153b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/breakpoints/GdbBreakpointVMProvider.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-26T08:20:58Z",
+      "side": 1,
+      "message": "Thanks for guiding me to DSF internals, that has its own implementation of concurrency and its own OSGi service tracking and many more creative code.\nAs I can see this change is a copy of already existing code from other descendants of AbstractCachingVMProvider.\nSo, it can work not worse than others.\n\nFrom the design point of view all these duplicated implementations should be reworked. Even from DSF perspective `DsfServicesTracker is assumed to be accessed by a single thread hence it has no synchronization built in` and as I can see it will be accessed mostly from DefaultDsfExecutor\u0027s threads.\n\nThis discussion is far beyond the scope of this Gerrit",
+      "revId": "6b56750408d945e9cfcd7e1847025511c7b4f424",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

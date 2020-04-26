@@ -15,46 +15,22 @@ package org.eclipse.cdt.debug.core.memory.transport;
 
 import java.math.BigInteger;
 
+import org.eclipse.debug.core.DebugException;
+
 /**
- *
- * Aggregates memory import configuration
+ * Reads an array of bytes using the given offset
  *
  * @since 0.1
- *
  */
-public final class ImportRequest {
-
-	private final BigInteger base;
-	private final BigInteger start;
-	private final WriteMemory write;
-
-	public ImportRequest(BigInteger base, BigInteger start, WriteMemory write) {
-		this.base = base;
-		this.start = start;
-		this.write = write;
-	}
+public interface ReadMemory {
 
 	/**
+	 * Reads an array of bytes from a memory starting from the given offset.
 	 *
-	 * @return base memory address
+	 * @param offset
+	 * @return the obtained data
+	 * @throws DebugException
 	 */
-	public BigInteger base() {
-		return base;
-	}
+	byte[] from(BigInteger offset) throws DebugException;
 
-	/**
-	 *
-	 * @return starting offset
-	 */
-	public BigInteger start() {
-		return start;
-	}
-
-	/**
-	 *
-	 * @return writer
-	 */
-	public WriteMemory write() {
-		return write;
-	}
 }

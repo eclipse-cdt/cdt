@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e47601e4_15f2496a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuiltinSpecsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 918,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-04-26T12:35:27Z",
+      "side": 1,
+      "message": "May be we don\u0027t need this method having BestFileExtension function extracted",
+      "revId": "4c78ca923581b5c4495bd21baefbe4d266e51811",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -74,8 +74,6 @@
         name="${scope.project.label}"
         activeRepositoryList="CDT Latest Released">
       <requirement
-          name="org.eclipse.cdt.arduino.feature.group"/>
-      <requirement
           name="org.eclipse.cdt.autotools.feature.group"/>
       <requirement
           name="org.eclipse.cdt.build.crossgcc.feature.group"/>

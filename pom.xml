@@ -233,10 +233,6 @@
 		<module>testsrunner/org.eclipse.cdt.testsrunner.tap</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.feature</module>
 
-		<module>toolchains/arduino/org.eclipse.cdt.arduino.core</module>
-		<module>toolchains/arduino/org.eclipse.cdt.arduino.ui</module>
-		<module>toolchains/arduino/org.eclipse.cdt.arduino-feature</module>
-
 		<module>upc/org.eclipse.cdt.core.parser.upc</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.feature</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.sdk.branding</module>

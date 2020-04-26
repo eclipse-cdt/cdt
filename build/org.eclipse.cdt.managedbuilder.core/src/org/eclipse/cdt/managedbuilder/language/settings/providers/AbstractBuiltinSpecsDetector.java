@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -55,6 +54,9 @@ import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
+import org.eclipse.cdt.managedbuilder.internal.language.settings.providers.BestFileExtension;
+import org.eclipse.cdt.managedbuilder.internal.language.settings.providers.LanguageFileExtension;
+import org.eclipse.cdt.managedbuilder.internal.language.settings.providers.NotFoundFileExtension;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.utils.envvar.IEnvironmentChangeEvent;
@@ -75,7 +77,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
@@ -142,10 +143,19 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	private static final int HASH_NOT_INITIALIZED = -1;
 	private long envPathHash = HASH_NOT_INITIALIZED;
 
+	private final BestFileExtension bestFileExtension;
+	private final LanguageFileExtension languageFileExtension;
+
 	private BuildRunnerHelper buildRunnerHelper;
 	private SDMarkerGenerator markerGenerator = new SDMarkerGenerator();
 	private boolean isConsoleEnabled = false;
 	private String currentCommandResolved = null;
+
+	public AbstractBuiltinSpecsDetector() {
+		this.bestFileExtension = new BestFileExtension();
+		this.languageFileExtension = new LanguageFileExtension(
+				l -> LanguageManager.getInstance().getLanguageDescriptor(l));
+	}
 
 	private class SDMarkerGenerator implements IMarkerGenerator {
 		// Reuse scanner discovery markers defined in org.eclipse.cdt.managedbuilder.core plugin.xml
@@ -895,25 +905,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * @return file extension associated with the language or {@code null} if not found.
 	 */
 	protected String getSpecFileExtension(String languageId) {
-		Optional<String> extension = Optional.empty();
-		ILanguageDescriptor langDescriptor = LanguageManager.getInstance().getLanguageDescriptor(languageId);
-		if (langDescriptor != null) {
-			IContentType[] contentTypes = langDescriptor.getContentTypes();
-			if (contentTypes != null && contentTypes.length > 0) {
-				String[] fileExtensions = contentTypes[0].getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-				if (fileExtensions != null) {
-					List<String> extensions = Arrays.asList(fileExtensions);
-					extension = selectBestSpecFileExtension(extensions);
-				}
-			}
-		}
-
-		if (!extension.isPresent()) {
-			ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
-					"Unable to find file extension for language " + languageId)); //$NON-NLS-1$
-			return null;
-		}
-		return extension.get();
+		return languageFileExtension.apply(languageId)//
+				.orElseGet(() -> new NotFoundFileExtension().apply(languageId));
 	}
 
 	/**
@@ -923,13 +916,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * @since 8.9
 	 */
 	protected Optional<String> selectBestSpecFileExtension(List<String> extensions) {
-		return extensions.stream().filter(s -> s != null && !s.isEmpty()).findFirst().map(ext -> {
-			// Bug 562452: Special case where we prefer not to use .C for c++ files.
-			if ("C".equals(ext) && extensions.contains("cpp")) { //$NON-NLS-1$//$NON-NLS-2$
-				return "cpp"; //$NON-NLS-1$
-			}
-			return ext;
-		});
+		return bestFileExtension.apply(extensions);
 	}
 
 	/**

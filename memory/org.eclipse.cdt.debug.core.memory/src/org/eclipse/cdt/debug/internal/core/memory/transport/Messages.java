@@ -17,9 +17,14 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.core.memory.transport.messages"; //$NON-NLS-1$
-	public static String FileImport_e_import_from_file;
-	public static String FileImport_e_read_from_file;
-	public static String FileImport_e_write_to_target;
+	public static String FileExport_e_export_memory;
+	public static String FileExport_e_read_target;
+	public static String FileExport_e_write_file;
+	public static String FileExport_sub_transferring;
+	public static String FileExport_task_transferring;
+	public static String FileImport_e_import_file;
+	public static String FileImport_e_read_file;
+	public static String FileImport_e_write_target;
 	public static String FileImport_task_transferring;
 	public static String PlainTextImport_e_invalid_format;
 	public static String SRecordImport_e_checksum_failure;

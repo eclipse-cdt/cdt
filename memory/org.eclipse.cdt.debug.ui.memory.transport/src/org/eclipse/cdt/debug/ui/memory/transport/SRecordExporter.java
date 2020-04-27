@@ -16,19 +16,17 @@
 package org.eclipse.cdt.debug.ui.memory.transport;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.math.BigInteger;
 
+import org.eclipse.cdt.debug.core.memory.transport.ExportRequest;
+import org.eclipse.cdt.debug.core.memory.transport.ReadMemory;
+import org.eclipse.cdt.debug.internal.core.memory.transport.ReadMemoryBlock;
+import org.eclipse.cdt.debug.internal.core.memory.transport.SRecordExport;
+import org.eclipse.cdt.debug.internal.core.memory.transport.TransportJob;
+import org.eclipse.cdt.debug.internal.ui.memory.transport.AddressableSize;
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryExporter;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -491,133 +489,11 @@ public class SRecordExporter implements IMemoryExporter {
 
 	@Override
 	public void exportMemory() {
-		Job job = new Job("Memory Export to S-Record File") { //$NON-NLS-1$
-			@Override
-			public IStatus run(IProgressMonitor monitor) {
-				try {
-					// FIXME 4 byte default
-
-					BigInteger DATA_PER_RECORD = BigInteger.valueOf(16);
-					BigInteger DATA_PER_TRANSFER = BigInteger.valueOf(4096).multiply(DATA_PER_RECORD);
-
-					BigInteger transferAddress = fStartAddress;
-
-					FileWriter writer = new FileWriter(fOutputFile);
-
-					BigInteger jobs = fEndAddress.subtract(transferAddress).divide(DATA_PER_RECORD);
-					BigInteger factor = BigInteger.ONE;
-					if (jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0) {
-						factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
-						jobs = jobs.divide(factor);
-					}
-
-					monitor.beginTask(Messages.getString("Exporter.ProgressTitle"), jobs.intValue()); //$NON-NLS-1$
-
-					BigInteger jobCount = BigInteger.ZERO;
-					while (transferAddress.compareTo(fEndAddress) < 0 && !monitor.isCanceled()) {
-						BigInteger length = DATA_PER_TRANSFER;
-						if (fEndAddress.subtract(transferAddress).compareTo(length) < 0)
-							length = fEndAddress.subtract(transferAddress);
-
-						monitor.subTask(String.format(Messages.getString("Exporter.Progress"), length.toString(10), //$NON-NLS-1$
-								transferAddress.toString(16)));
-
-						MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(transferAddress,
-								length.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
-
-						BigInteger sRecordAddress = transferAddress;
-						BigInteger sRecordEndAddress = transferAddress.add(length);
-						while (sRecordAddress.compareTo(sRecordEndAddress) < 0 && !monitor.isCanceled()) {
-							BigInteger sRecordDataLength = DATA_PER_RECORD;
-							if (sRecordEndAddress.subtract(sRecordAddress).compareTo(sRecordDataLength) < 0) {
-								sRecordDataLength = fEndAddress.subtract(sRecordAddress);
-							}
-
-							writer.write("S3"); // FIXME 4 byte address //$NON-NLS-1$
-
-							StringBuilder buf = new StringBuilder();
-
-							BigInteger sRecordLength = BigInteger.valueOf(4); // address size
-							sRecordLength = sRecordLength.add(sRecordDataLength);
-							sRecordLength = sRecordLength.add(BigInteger.ONE); // checksum
-
-							String transferAddressString = sRecordAddress.toString(16);
-
-							String lengthString = sRecordLength.toString(16);
-							if (lengthString.length() == 1)
-								buf.append("0"); //$NON-NLS-1$
-							buf.append(lengthString);
-							for (int i = 0; i < 8 - transferAddressString.length(); i++)
-								buf.append("0"); //$NON-NLS-1$
-							buf.append(transferAddressString);
-
-							final int byteOffset = sRecordAddress.subtract(transferAddress).intValue();
-							final int byteLength = byteOffset + sRecordDataLength.intValue();
-							for (int byteIndex = byteOffset; byteIndex < byteLength; byteIndex++) {
-								String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
-								if (bString.length() == 1)
-									buf.append("0"); //$NON-NLS-1$
-								buf.append(bString);
-							}
-
-							/*
-							 * The least significant byte of the one's complement of the sum of the values
-							 * represented by the pairs of characters making up the records length, address,
-							 * and the code/data fields.
-							 */
-							byte checksum = 0;
-
-							for (int i = 0; i < buf.length(); i += 2) {
-								BigInteger value = new BigInteger(buf.substring(i, i + 2), 16);
-								checksum += value.byteValue();
-							}
-
-							String bString = BigInteger.valueOf(0xFF - checksum).and(BigInteger.valueOf(0xFF))
-									.toString(16);
-							if (bString.length() == 1)
-								buf.append("0"); //$NON-NLS-1$
-							buf.append(bString);
-
-							writer.write(buf.toString().toUpperCase());
-							writer.write("\n"); //$NON-NLS-1$
-
-							sRecordAddress = sRecordAddress.add(sRecordDataLength);
-
-							jobCount = jobCount.add(BigInteger.ONE);
-							if (jobCount.compareTo(factor) == 0) {
-								jobCount = BigInteger.ZERO;
-								monitor.worked(1);
-							}
-						}
-
-						transferAddress = transferAddress.add(length);
-					}
-
-					writer.close();
-					monitor.done();
-				} catch (IOException ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrFile"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrFile"), ex); //$NON-NLS-1$
-
-				} catch (DebugException ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrReadTarget"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrReadTarget"), ex); //$NON-NLS-1$
-				} catch (Exception ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.INTERNAL_ERROR, Messages.getString("Exporter.Falure"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.INTERNAL_ERROR, Messages.getString("Exporter.Falure"), ex); //$NON-NLS-1$
-				}
-				return Status.OK_STATUS;
-			}
-		};
+		ReadMemory read = new ReadMemoryBlock((IMemoryBlockExtension) fMemoryBlock);
+		BigInteger addressable = new AddressableSize((IMemoryBlockExtension) fMemoryBlock).get();
+		ExportRequest request = new ExportRequest(fStartAddress, fEndAddress, addressable, read);
+		SRecordExport memoryExport = new SRecordExport(fOutputFile, request);
+		TransportJob job = new TransportJob("Memory Export to S-Record File", memoryExport);
 		job.setUser(true);
 		job.schedule();
 	}

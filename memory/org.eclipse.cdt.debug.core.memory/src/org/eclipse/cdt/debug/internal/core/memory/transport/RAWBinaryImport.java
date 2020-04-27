@@ -23,7 +23,6 @@ import java.util.function.Consumer;
 
 import org.eclipse.cdt.debug.core.memory.transport.FileImport;
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 
@@ -39,8 +38,8 @@ public final class RAWBinaryImport extends FileImport<FileInputStream> {
 	}
 
 	@Override
-	protected void transfer(IProgressMonitor monitor, FileInputStream input, BigInteger factor)
-			throws IOException, CoreException, DebugException {
+	protected void transfer(FileInputStream input, BigInteger factor, IProgressMonitor monitor)
+			throws IOException, DebugException {
 		byte[] byteValues = new byte[1024];
 		int actualByteCount = input.read(byteValues);
 		BigInteger recordAddress = start;

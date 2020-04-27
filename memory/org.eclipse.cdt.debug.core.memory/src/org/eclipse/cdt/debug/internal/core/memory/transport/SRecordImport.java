@@ -25,7 +25,6 @@ import java.util.function.Consumer;
 
 import org.eclipse.cdt.debug.core.memory.transport.FileImport;
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -47,8 +46,8 @@ public class SRecordImport extends FileImport<BufferedReader> {
 	}
 
 	@Override
-	protected void transfer(IProgressMonitor monitor, BufferedReader reader, BigInteger factor)
-			throws IOException, CoreException, DebugException {
+	protected void transfer(BufferedReader reader, BigInteger factor, IProgressMonitor monitor)
+			throws IOException, DebugException {
 		// FIXME 4 byte default
 		final int CHECKSUM_LENGTH = 1;
 		BigInteger offset = null;
@@ -63,8 +62,8 @@ public class SRecordImport extends FileImport<BufferedReader> {
 			try {
 				recordCount = Integer.parseInt(line.substring(2, 4), 16);
 			} catch (NumberFormatException ex) {
-				throw new CoreException(new Status(IStatus.ERROR, FrameworkUtil.getBundle(getClass()).getSymbolicName(),
-						DebugException.REQUEST_FAILED,
+				throw new DebugException(new Status(IStatus.ERROR,
+						FrameworkUtil.getBundle(getClass()).getSymbolicName(), DebugException.REQUEST_FAILED,
 						String.format(Messages.SRecordImport_e_invalid_line_length, lineNo), ex));
 			}
 			int bytesRead = 4 + recordCount;
@@ -87,9 +86,9 @@ public class SRecordImport extends FileImport<BufferedReader> {
 			try {
 				recordAddress = new BigInteger(line.substring(position, position + addressSize * 2), 16);
 			} catch (NumberFormatException ex) {
-				throw new CoreException(new Status(IStatus.ERROR, FrameworkUtil.getBundle(getClass()).getSymbolicName(),
-						DebugException.REQUEST_FAILED, String.format(Messages.SRecordImport_e_invalid_address, lineNo),
-						ex));
+				throw new DebugException(new Status(IStatus.ERROR,
+						FrameworkUtil.getBundle(getClass()).getSymbolicName(), DebugException.REQUEST_FAILED,
+						String.format(Messages.SRecordImport_e_invalid_address, lineNo), ex));
 			}
 			recordCount -= addressSize;
 			position += addressSize * 2;
@@ -102,7 +101,7 @@ public class SRecordImport extends FileImport<BufferedReader> {
 				try {
 					data[i] = new BigInteger(line.substring(position++, position++ + 1), 16).byteValue();
 				} catch (NumberFormatException ex) {
-					throw new CoreException(new Status(IStatus.ERROR,
+					throw new DebugException(new Status(IStatus.ERROR,
 							FrameworkUtil.getBundle(getClass()).getSymbolicName(), DebugException.REQUEST_FAILED,
 							String.format(Messages.SRecordImport_e_invalid_data, lineNo), ex));
 				}
@@ -119,7 +118,7 @@ public class SRecordImport extends FileImport<BufferedReader> {
 				try {
 					value = new BigInteger(buf.substring(i, i + 2), 16);
 				} catch (NumberFormatException ex) {
-					throw new CoreException(new Status(IStatus.ERROR,
+					throw new DebugException(new Status(IStatus.ERROR,
 							FrameworkUtil.getBundle(getClass()).getSymbolicName(), DebugException.REQUEST_FAILED,
 							String.format(Messages.SRecordImport_e_invalid_checksum_format, lineNo), ex));
 				}
@@ -132,8 +131,9 @@ public class SRecordImport extends FileImport<BufferedReader> {
 			 */
 			if (checksum != (byte) -1) {
 				monitor.done();
-				throw new CoreException(new Status(IStatus.ERROR, FrameworkUtil.getBundle(getClass()).getSymbolicName(),
-						String.format(Messages.SRecordImport_e_checksum_failure, line)));
+				throw new DebugException(
+						new Status(IStatus.ERROR, FrameworkUtil.getBundle(getClass()).getSymbolicName(),
+								String.format(Messages.SRecordImport_e_checksum_failure, line)));
 			}
 			scroll.accept(recordAddress);
 			// FIXME error on incorrect checksum

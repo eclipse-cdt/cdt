@@ -14,9 +14,18 @@
 package org.eclipse.cdt.debug.core.memory.transport;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 
+import org.eclipse.cdt.debug.internal.core.memory.transport.Messages;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ICoreRunnable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Exports memory information to a given file
@@ -30,7 +39,7 @@ public abstract class FileExport<O extends AutoCloseable> implements ICoreRunnab
 	protected final BigInteger addressable;
 	protected final ReadMemory read;
 
-	protected final File file;
+	private final File file;
 
 	protected FileExport(File input, ExportRequest request) {
 		this.file = input;
@@ -38,6 +47,74 @@ public abstract class FileExport<O extends AutoCloseable> implements ICoreRunnab
 		this.end = request.end();
 		this.addressable = request.addressable();
 		this.read = request.read();
+	}
+
+	@Override
+	public void run(IProgressMonitor monitor) throws CoreException {
+		try (O writer = output(file)) {
+			BigInteger jobs = end.subtract(start).divide(chunkSize());
+			BigInteger factor = BigInteger.ONE;
+			if (jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0) {
+				factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
+				jobs = jobs.divide(factor);
+			}
+			monitor.beginTask(Messages.FileExport_task_transferring, jobs.intValue());
+			transfer(writer, factor, monitor);
+		} catch (IOException ex) {
+			requestFailed(Messages.FileExport_e_write_file, ex);
+		} catch (DebugException ex) {
+			requestFailed(Messages.FileExport_e_read_target, ex);
+		} catch (Exception ex) {
+			internalError(Messages.FileExport_e_export_memory, ex);
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * Creates the writer for the given file
+	 *
+	 * @param file to export to
+	 * @return writer instance
+	 * @throws IOException
+	 */
+	protected abstract O output(File file) throws IOException;
+
+	/**
+	 * Determines the data chunk to use for export
+	 *
+	 * @return the size of data chunk
+	 */
+	protected abstract BigInteger chunkSize();
+
+	protected abstract void transfer(O output, BigInteger factor, IProgressMonitor monitor)
+			throws IOException, DebugException;
+
+	protected String transferring(BigInteger length, BigInteger address) {
+		return String.format(Messages.FileExport_sub_transferring, length.toString(10), address.toString(16));
+	}
+
+	protected void requestFailed(String message, Throwable exception) throws DebugException {
+		failed(DebugException.REQUEST_FAILED, message, exception);
+	}
+
+	protected void internalError(String message, Throwable exception) throws DebugException {
+		failed(DebugException.INTERNAL_ERROR, message, exception);
+	}
+
+	protected void failed(int code, String message, Throwable exception) throws DebugException {
+		Status status = new Status(//
+				IStatus.ERROR, //
+				FrameworkUtil.getBundle(getClass()).getSymbolicName(), //
+				code, //
+				message, //
+				exception);
+		failed(new DebugException(status));
+	}
+
+	protected void failed(DebugException exception) throws DebugException {
+		Platform.getLog(FrameworkUtil.getBundle(getClass())).log(exception.getStatus());
+		throw exception;
 	}
 
 }

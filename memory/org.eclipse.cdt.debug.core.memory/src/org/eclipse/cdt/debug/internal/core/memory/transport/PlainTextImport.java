@@ -26,7 +26,6 @@ import java.util.function.Consumer;
 
 import org.eclipse.cdt.debug.core.memory.transport.FileImport;
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -45,8 +44,8 @@ public final class PlainTextImport extends FileImport<BufferedReader> {
 	}
 
 	@Override
-	protected void transfer(IProgressMonitor monitor, BufferedReader reader, BigInteger factor)
-			throws IOException, CoreException, DebugException {
+	protected void transfer(BufferedReader reader, BigInteger factor, IProgressMonitor monitor)
+			throws IOException, DebugException {
 		BigInteger recordAddress = start;
 		String line = reader.readLine();
 		int lineNo = 1; // line error reporting
@@ -61,7 +60,7 @@ public final class PlainTextImport extends FileImport<BufferedReader> {
 					try {
 						data[i] = new BigInteger(valueString.substring(position++, position++ + 1), 16).byteValue();
 					} catch (NumberFormatException ex) {
-						throw new CoreException(new Status(IStatus.ERROR,
+						throw new DebugException(new Status(IStatus.ERROR,
 								FrameworkUtil.getBundle(getClass()).getSymbolicName(), DebugException.REQUEST_FAILED,
 								String.format(Messages.PlainTextImport_e_invalid_format, lineNo), ex));
 					}

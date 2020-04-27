@@ -61,47 +61,52 @@ public abstract class FileImport<I extends AutoCloseable> implements ICoreRunnab
 				jobs = jobs.divide(factor);
 			}
 			monitor.beginTask(Messages.FileImport_task_transferring, jobs.intValue());
-			transfer(monitor, reader, factor);
+			transfer(reader, factor, monitor);
 			if (!monitor.isCanceled()) {
 				write.flush();
 			}
 		} catch (IOException ex) {
-			requestFailed(Messages.FileImport_e_read_from_file, ex);
+			requestFailed(Messages.FileImport_e_read_file, ex);
 		} catch (DebugException ex) {
-			requestFailed(Messages.FileImport_e_write_to_target, ex);
-		} catch (CoreException ex) {
-			failed(ex);
+			requestFailed(Messages.FileImport_e_write_target, ex);
 		} catch (Exception ex) {
-			internalError(Messages.FileImport_e_import_from_file, ex);
+			internalError(Messages.FileImport_e_import_file, ex);
 		} finally {
 			monitor.done();
 		}
 	}
 
+	/**
+	 * Creates the reader for the given file
+	 *
+	 * @param file to import from
+	 * @return reader instance
+	 * @throws IOException
+	 */
 	protected abstract I input(File file) throws FileNotFoundException;
 
-	protected abstract void transfer(IProgressMonitor monitor, I input, BigInteger factor)
-			throws IOException, CoreException, DebugException;
+	protected abstract void transfer(I input, BigInteger factor, IProgressMonitor monitor)
+			throws IOException, DebugException;
 
-	protected void requestFailed(String message, Throwable exception) throws CoreException {
+	protected void requestFailed(String message, Throwable exception) throws DebugException {
 		failed(DebugException.REQUEST_FAILED, message, exception);
 	}
 
-	protected void internalError(String message, Throwable exception) throws CoreException {
+	protected void internalError(String message, Throwable exception) throws DebugException {
 		failed(DebugException.INTERNAL_ERROR, message, exception);
 	}
 
-	protected void failed(int code, String message, Throwable exception) throws CoreException {
+	protected void failed(int code, String message, Throwable exception) throws DebugException {
 		Status status = new Status(//
 				IStatus.ERROR, //
 				FrameworkUtil.getBundle(getClass()).getSymbolicName(), //
 				code, //
 				message, //
 				exception);
-		failed(new CoreException(status));
+		failed(new DebugException(status));
 	}
 
-	protected void failed(CoreException exception) throws CoreException {
+	protected void failed(DebugException exception) throws DebugException {
 		Platform.getLog(FrameworkUtil.getBundle(getClass())).log(exception.getStatus());
 		throw exception;
 	}

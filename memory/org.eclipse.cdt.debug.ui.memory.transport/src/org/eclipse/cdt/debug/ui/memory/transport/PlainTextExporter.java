@@ -19,6 +19,7 @@ import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.core.memory.transport.ExportRequest;
 import org.eclipse.cdt.debug.core.memory.transport.ReadMemory;
+import org.eclipse.cdt.debug.internal.core.memory.transport.PlainTextExport;
 import org.eclipse.cdt.debug.internal.core.memory.transport.ReadMemoryBlock;
 import org.eclipse.cdt.debug.internal.core.memory.transport.TransportJob;
 import org.eclipse.cdt.debug.internal.ui.memory.transport.AddressableSize;

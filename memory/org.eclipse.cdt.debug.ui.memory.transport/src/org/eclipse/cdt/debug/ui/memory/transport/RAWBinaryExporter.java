@@ -15,19 +15,17 @@
 package org.eclipse.cdt.debug.ui.memory.transport;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 
+import org.eclipse.cdt.debug.core.memory.transport.ExportRequest;
+import org.eclipse.cdt.debug.core.memory.transport.ReadMemory;
+import org.eclipse.cdt.debug.internal.core.memory.transport.RAWBinaryExport;
+import org.eclipse.cdt.debug.internal.core.memory.transport.ReadMemoryBlock;
+import org.eclipse.cdt.debug.internal.core.memory.transport.TransportJob;
+import org.eclipse.cdt.debug.internal.ui.memory.transport.AddressableSize;
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryExporter;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -456,79 +454,11 @@ public class RAWBinaryExporter implements IMemoryExporter {
 
 	@Override
 	public void exportMemory() {
-		Job job = new Job("Memory Export to RAW Binary File") { //$NON-NLS-1$
-			@Override
-			public IStatus run(IProgressMonitor monitor) {
-				try {
-					BigInteger DATA_PER_RECORD = BigInteger.valueOf(1024);
-
-					BigInteger transferAddress = fStartAddress;
-
-					FileOutputStream writer = new FileOutputStream(fOutputFile);
-
-					BigInteger jobs = fEndAddress.subtract(transferAddress).divide(DATA_PER_RECORD);
-					BigInteger factor = BigInteger.ONE;
-					if (jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0) {
-						factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
-						jobs = jobs.divide(factor);
-					}
-
-					monitor.beginTask(Messages.getString("Exporter.ProgressTitle"), jobs.intValue()); //$NON-NLS-1$
-
-					BigInteger jobCount = BigInteger.ZERO;
-					while (transferAddress.compareTo(fEndAddress) < 0 && !monitor.isCanceled()) {
-						BigInteger length = DATA_PER_RECORD;
-						if (fEndAddress.subtract(transferAddress).compareTo(length) < 0)
-							length = fEndAddress.subtract(transferAddress);
-
-						monitor.subTask(String.format(Messages.getString("Exporter.Progress"), length.toString(10), //$NON-NLS-1$
-								transferAddress.toString(16)));
-
-						// data
-						byte[] byteValues = new byte[length.intValue()];
-
-						MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(transferAddress,
-								length.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
-						for (int byteIndex = 0; byteIndex < bytes.length; byteIndex++) {
-							byteValues[byteIndex] = bytes[byteIndex].getValue();
-						}
-
-						writer.write(byteValues);
-
-						transferAddress = transferAddress.add(length);
-
-						jobCount = jobCount.add(BigInteger.ONE);
-						if (jobCount.compareTo(factor) == 0) {
-							jobCount = BigInteger.ZERO;
-							monitor.worked(1);
-						}
-					}
-
-					writer.close();
-					monitor.done();
-				} catch (IOException ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrFile"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrFile"), ex); //$NON-NLS-1$
-
-				} catch (DebugException ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrReadTarget"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrReadTarget"), ex); //$NON-NLS-1$
-				} catch (Exception ex) {
-					MemoryTransportPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									DebugException.INTERNAL_ERROR, Messages.getString("Exporter.Falure"), ex)); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.INTERNAL_ERROR, Messages.getString("Exporter.Falure"), ex); //$NON-NLS-1$
-				}
-				return Status.OK_STATUS;
-			}
-		};
+		ReadMemory read = new ReadMemoryBlock((IMemoryBlockExtension) fMemoryBlock);
+		BigInteger addressable = new AddressableSize((IMemoryBlockExtension) fMemoryBlock).get();
+		ExportRequest request = new ExportRequest(fStartAddress, fEndAddress, addressable, read);
+		RAWBinaryExport memoryExport = new RAWBinaryExport(fOutputFile, request);
+		TransportJob job = new TransportJob("Memory Export to RAW Binary File", memoryExport);
 		job.setUser(true);
 		job.schedule();
 	}

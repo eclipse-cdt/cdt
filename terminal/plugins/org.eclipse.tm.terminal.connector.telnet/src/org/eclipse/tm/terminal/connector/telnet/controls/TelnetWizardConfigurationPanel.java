@@ -165,7 +165,7 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		String host = getHostFromSettings();
 		if (host != null && host.length() != 0) {
 			Map<String, String> hostSettings = hostSettingsMap.get(host);
-			if (hostSettings == null && !add) {
+			if (hostSettings == null && add) {
 				hostSettings = new HashMap<>();
 				hostSettingsMap.put(host, hostSettings);
 			}

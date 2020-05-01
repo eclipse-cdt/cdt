@@ -19,6 +19,17 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.BLACK;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.BLUE;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.CYAN;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.GRAY;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.GREEN;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.MAGENTA;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.RED;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.WHITE;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.WHITE_FOREGROUND;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.YELLOW;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,16 +46,6 @@ import org.eclipse.tm.terminal.model.Style;
 import org.eclipse.tm.terminal.model.StyleColor;
 
 public class StyleMap {
-	private static final String BLACK = "black"; //$NON-NLS-1$
-	private static final String WHITE = "white"; //$NON-NLS-1$
-	private static final String WHITE_FOREGROUND = "white_foreground"; //$NON-NLS-1$
-	private static final String GRAY = "gray"; //$NON-NLS-1$
-	private static final String MAGENTA = "magenta"; //$NON-NLS-1$
-	private static final String CYAN = "cyan"; //$NON-NLS-1$
-	private static final String YELLOW = "yellow"; //$NON-NLS-1$
-	private static final String BLUE = "blue"; //$NON-NLS-1$
-	private static final String GREEN = "green"; //$NON-NLS-1$
-	private static final String RED = "red"; //$NON-NLS-1$
 
 	private static final String PREFIX = "org.eclipse.tm.internal."; //$NON-NLS-1$
 	String fFontName = ITerminalConstants.FONT_DEFINITION;

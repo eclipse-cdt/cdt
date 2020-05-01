@@ -29,6 +29,16 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.BLACK;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.BLUE;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.CYAN;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.GREEN;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.MAGENTA;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.RED;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.WHITE;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.WHITE_FOREGROUND;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.YELLOW;
+
 import java.io.IOException;
 import java.io.Reader;
 
@@ -894,35 +904,35 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			case 30:
-				style = style.setForground("BLACK"); //$NON-NLS-1$
+				style = style.setForground(BLACK);
 				break;
 
 			case 31:
-				style = style.setForground("RED"); //$NON-NLS-1$
+				style = style.setForground(RED);
 				break;
 
 			case 32:
-				style = style.setForground("GREEN"); //$NON-NLS-1$
+				style = style.setForground(GREEN);
 				break;
 
 			case 33:
-				style = style.setForground("YELLOW"); //$NON-NLS-1$
+				style = style.setForground(YELLOW);
 				break;
 
 			case 34:
-				style = style.setForground("BLUE"); //$NON-NLS-1$
+				style = style.setForground(BLUE);
 				break;
 
 			case 35:
-				style = style.setForground("MAGENTA"); //$NON-NLS-1$
+				style = style.setForground(MAGENTA);
 				break;
 
 			case 36:
-				style = style.setForground("CYAN"); //$NON-NLS-1$
+				style = style.setForground(CYAN);
 				break;
 
 			case 37:
-				style = style.setForground("WHITE_FOREGROUND"); //$NON-NLS-1$
+				style = style.setForground(WHITE_FOREGROUND);
 				break;
 
 			case 39: //Foreground: Default
@@ -930,35 +940,35 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			case 40:
-				style = style.setBackground("BLACK"); //$NON-NLS-1$
+				style = style.setBackground(BLACK);
 				break;
 
 			case 41:
-				style = style.setBackground("RED"); //$NON-NLS-1$
+				style = style.setBackground(RED);
 				break;
 
 			case 42:
-				style = style.setBackground("GREEN"); //$NON-NLS-1$
+				style = style.setBackground(GREEN);
 				break;
 
 			case 43:
-				style = style.setBackground("YELLOW"); //$NON-NLS-1$
+				style = style.setBackground(YELLOW);
 				break;
 
 			case 44:
-				style = style.setBackground("BLUE"); //$NON-NLS-1$
+				style = style.setBackground(BLUE);
 				break;
 
 			case 45:
-				style = style.setBackground("MAGENTA"); //$NON-NLS-1$
+				style = style.setBackground(MAGENTA);
 				break;
 
 			case 46:
-				style = style.setBackground("CYAN"); //$NON-NLS-1$
+				style = style.setBackground(CYAN);
 				break;
 
 			case 47:
-				style = style.setBackground("WHITE"); //$NON-NLS-1$
+				style = style.setBackground(WHITE);
 				break;
 
 			case 49: //Background: Default

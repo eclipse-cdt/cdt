@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.model;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 
 /**
  * @author scharf
@@ -28,7 +32,21 @@ public class Style {
 	private final boolean fBlink;
 	private final boolean fUnderline;
 	private final boolean fReverse;
-	private final static Map<Style, Style> fgStyles = new HashMap<>();
+	private final static Map<Style, Style> fgStyles = Collections.synchronizedMap(new LinkedHashMap<Style, Style>() {
+		@Override
+		protected boolean removeEldestEntry(Map.Entry<Style, Style> eldest) {
+			int size = size();
+			boolean removeEldest = size >= 1000;
+			if (TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_VT100BACKEND)) {
+				if (removeEldest) {
+					Logger.log("Removing eldest Style from style cache, size = " + size); //$NON-NLS-1$
+				} else {
+					Logger.log("Leaving eldest Style in style cache, size = " + size); //$NON-NLS-1$
+				}
+			}
+			return removeEldest;
+		}
+	});
 
 	private Style(StyleColor forground, StyleColor background, boolean bold, boolean blink, boolean underline,
 			boolean reverse) {
@@ -43,15 +61,8 @@ public class Style {
 	public static Style getStyle(StyleColor forground, StyleColor background, boolean bold, boolean blink,
 			boolean underline, boolean reverse) {
 		Style style = new Style(forground, background, bold, blink, underline, reverse);
-		Style cached;
-		synchronized (fgStyles) {
-			cached = fgStyles.get(style);
-			if (cached == null) {
-				cached = style;
-				fgStyles.put(cached, cached);
-			}
-		}
-		return cached;
+		// If set had a computeIfAbsent we would use a set, instead just store 1-2-1 mapping
+		return fgStyles.computeIfAbsent(style, (s) -> style);
 	}
 
 	public static Style getStyle(String forground, String background) {

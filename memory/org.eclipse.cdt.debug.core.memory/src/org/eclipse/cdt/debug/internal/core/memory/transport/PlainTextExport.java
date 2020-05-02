@@ -32,6 +32,7 @@ public final class PlainTextExport extends FileExport<FileWriter> {
 
 	@Override
 	protected FileWriter output(File file) throws IOException {
+		file.getParentFile().mkdirs();
 		return new FileWriter(file);
 	}
 

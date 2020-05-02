@@ -498,7 +498,7 @@ public class OverrideMethodsRefactoringTest extends RefactoringTestBase {
 	//	virtual void baseFunc() const noexcept;
 	//};
 	//
-	//inline void X::baseFunc() const {
+	//inline void X::baseFunc() const noexcept {
 	//}
 	public void testWithNoExcept() throws Exception {
 		selectedMethods = new String[] { "baseFunc()const" };

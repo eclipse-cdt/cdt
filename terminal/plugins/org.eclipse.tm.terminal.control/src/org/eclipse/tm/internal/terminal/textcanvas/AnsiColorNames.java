@@ -23,4 +23,11 @@ public class AnsiColorNames {
 	public static final String BLUE = "blue"; //$NON-NLS-1$
 	public static final String GREEN = "green"; //$NON-NLS-1$
 	public static final String RED = "red"; //$NON-NLS-1$
+
+	/**
+	 * For 256-colors, pass the color number as the index
+	 */
+	public static String table(int index) {
+		return "table" + Integer.toString(index); //$NON-NLS-1$
+	}
 }

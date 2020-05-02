@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 
@@ -88,6 +89,20 @@ public class Style {
 
 	public Style setBackground(String colorName) {
 		return getStyle(fForground, StyleColor.getStyleColor(colorName), fBold, fBlink, fUnderline, fReverse);
+	}
+
+	/**
+	 * @since 4.7
+	 */
+	public Style setForground(RGB rgb) {
+		return getStyle(StyleColor.getStyleColor(rgb), fBackground, fBold, fBlink, fUnderline, fReverse);
+	}
+
+	/**
+	 * @since 4.7
+	 */
+	public Style setBackground(RGB rgb) {
+		return getStyle(fForground, StyleColor.getStyleColor(rgb), fBold, fBlink, fUnderline, fReverse);
 	}
 
 	public Style setBold(boolean bold) {

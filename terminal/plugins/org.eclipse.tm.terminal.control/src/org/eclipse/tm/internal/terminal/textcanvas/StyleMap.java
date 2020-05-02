@@ -29,9 +29,11 @@ import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.RED;
 import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.WHITE;
 import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.WHITE_FOREGROUND;
 import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.YELLOW;
+import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.table;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -74,57 +76,91 @@ public class StyleMap {
 		if (fInvertColors) {
 			setColor(fColorMapForeground, WHITE, 0, 0, 0);
 			setColor(fColorMapForeground, WHITE_FOREGROUND, 50, 50, 50);
-			setColor(fColorMapForeground, BLACK, 229, 229, 229);
+			setColor(fColorMapForeground, 0, BLACK, 229, 229, 229);
 		} else {
 			setColor(fColorMapForeground, WHITE, 255, 255, 255);
 			setColor(fColorMapForeground, WHITE_FOREGROUND, 229, 229, 229);
-			setColor(fColorMapForeground, BLACK, 50, 50, 50);
+			setColor(fColorMapForeground, 0, BLACK, 50, 50, 50);
 		}
-		setColor(fColorMapForeground, RED, 205, 0, 0);
-		setColor(fColorMapForeground, GREEN, 0, 205, 0);
-		setColor(fColorMapForeground, BLUE, 0, 0, 238);
-		setColor(fColorMapForeground, YELLOW, 205, 205, 0);
-		setColor(fColorMapForeground, CYAN, 0, 205, 205);
-		setColor(fColorMapForeground, MAGENTA, 205, 0, 205);
-		setColor(fColorMapForeground, GRAY, 229, 229, 229);
+		setColor(fColorMapForeground, 1, RED, 205, 0, 0);
+		setColor(fColorMapForeground, 2, GREEN, 0, 205, 0);
+		setColor(fColorMapForeground, 3, YELLOW, 205, 205, 0);
+		setColor(fColorMapForeground, 4, BLUE, 0, 0, 238);
+		setColor(fColorMapForeground, 5, MAGENTA, 205, 0, 205);
+		setColor(fColorMapForeground, 6, CYAN, 0, 205, 205);
+		setColor(fColorMapForeground, 7, GRAY, 229, 229, 229);
+
+		setTableColors(fColorMapForeground);
 	}
 
 	private void initBackgroundColors() {
 		if (fInvertColors) {
 			setColor(fColorMapBackground, WHITE, 0, 0, 0);
 			setColor(fColorMapBackground, WHITE_FOREGROUND, 50, 50, 50); // only used when colors are inverse
-			setColor(fColorMapBackground, BLACK, 255, 255, 255);
+			setColor(fColorMapBackground, 0, BLACK, 255, 255, 255);
 		} else {
 			setColor(fColorMapBackground, WHITE, 255, 255, 255);
 			setColor(fColorMapBackground, WHITE_FOREGROUND, 229, 229, 229);
-			setColor(fColorMapBackground, BLACK, 0, 0, 0);
+			setColor(fColorMapBackground, 0, BLACK, 0, 0, 0);
 		}
-		setColor(fColorMapBackground, RED, 205, 0, 0);
-		setColor(fColorMapBackground, GREEN, 0, 205, 0);
-		setColor(fColorMapBackground, BLUE, 0, 0, 238);
-		setColor(fColorMapBackground, YELLOW, 205, 205, 0);
-		setColor(fColorMapBackground, CYAN, 0, 205, 205);
-		setColor(fColorMapBackground, MAGENTA, 205, 0, 205);
-		setColor(fColorMapBackground, GRAY, 229, 229, 229);
+		setColor(fColorMapBackground, 1, RED, 205, 0, 0);
+		setColor(fColorMapBackground, 2, GREEN, 0, 205, 0);
+		setColor(fColorMapBackground, 3, YELLOW, 205, 205, 0);
+		setColor(fColorMapBackground, 4, BLUE, 0, 0, 238);
+		setColor(fColorMapBackground, 5, MAGENTA, 205, 0, 205);
+		setColor(fColorMapBackground, 6, CYAN, 0, 205, 205);
+		setColor(fColorMapBackground, 7, GRAY, 229, 229, 229);
+
+		setTableColors(fColorMapBackground);
 	}
 
 	private void initIntenseColors() {
 		if (fInvertColors) {
-			setColor(fColorMapIntense, WHITE, 127, 127, 127);
+			setColor(fColorMapIntense, 8, WHITE, 127, 127, 127);
 			setColor(fColorMapIntense, WHITE_FOREGROUND, 0, 0, 0); // only used when colors are inverse
 			setColor(fColorMapIntense, BLACK, 255, 255, 255);
 		} else {
-			setColor(fColorMapIntense, WHITE, 255, 255, 255);
+			setColor(fColorMapIntense, 8, WHITE, 255, 255, 255);
 			setColor(fColorMapIntense, WHITE_FOREGROUND, 255, 255, 255);
 			setColor(fColorMapIntense, BLACK, 0, 0, 0);
 		}
-		setColor(fColorMapIntense, RED, 255, 0, 0);
-		setColor(fColorMapIntense, GREEN, 0, 255, 0);
-		setColor(fColorMapIntense, BLUE, 92, 92, 255);
-		setColor(fColorMapIntense, YELLOW, 255, 255, 0);
-		setColor(fColorMapIntense, CYAN, 0, 255, 255);
-		setColor(fColorMapIntense, MAGENTA, 255, 0, 255);
-		setColor(fColorMapIntense, GRAY, 255, 255, 255);
+		setColor(fColorMapIntense, 9, RED, 255, 0, 0);
+		setColor(fColorMapIntense, 10, GREEN, 0, 255, 0);
+		setColor(fColorMapIntense, 11, YELLOW, 255, 255, 0);
+		setColor(fColorMapIntense, 12, BLUE, 92, 92, 255);
+		setColor(fColorMapIntense, 13, MAGENTA, 255, 0, 255);
+		setColor(fColorMapIntense, 14, CYAN, 0, 255, 255);
+		setColor(fColorMapIntense, 15, GRAY, 255, 255, 255);
+
+		setTableColors(fColorMapIntense);
+	}
+
+	private void setTableColors(Map<StyleColor, Color> map) {
+		int vals[] = { 0x00, 0x5f, 0x87, 0xaf, 0xd7, 0xff };
+		int index = 16;
+		for (int r = 0; r < 6; r++) {
+			for (int g = 0; g < 6; g++) {
+				for (int b = 0; b < 6; b++) {
+					setColor(map, table(index), vals[r], vals[g], vals[b]);
+					index++;
+				}
+			}
+		}
+
+		int greys[] = { 0x08, 0x12, 0x1c, 0x26, 0x30, 0x3a, 0x44, 0x4e, 0x58, 0x62, 0x6c, 0x76, 0x80, 0x8a, 0x94, 0x9e,
+				0xa8, 0xb2, 0xbc, 0xc6, 0xd0, 0xda, 0xe4, 0xee };
+
+		index = 232;
+		for (int g : greys) {
+			setColor(map, table(index), g, g, g);
+			index++;
+		}
+
+	}
+
+	private void setColor(Map<StyleColor, Color> colorMap, int tableIndex, String name, int r, int g, int b) {
+		setColor(colorMap, table(tableIndex), r, g, b);
+		setColor(colorMap, name, r, g, b);
 	}
 
 	private void setColor(Map<StyleColor, Color> colorMap, String name, int r, int g, int b) {
@@ -138,8 +174,19 @@ public class StyleMap {
 		colorMap.put(StyleColor.getStyleColor(name.toUpperCase()), color);
 	}
 
+	public Optional<RGB> getForegroundRGB(Style style) {
+		style = defaultIfNull(style);
+		if (style.isReverse())
+			return style.getBackground().getRGB();
+		else
+			return style.getForground().getRGB();
+	}
+
 	public Color getForegrondColor(Style style) {
 		style = defaultIfNull(style);
+		if (getBackgroundRGB(style).isPresent()) {
+			style = fDefaultStyle;
+		}
 		Map<StyleColor, Color> map = style.isBold() ? fColorMapIntense : fColorMapForeground;
 		//Map map = fColorMapForeground;
 		if (style.isReverse())
@@ -148,8 +195,19 @@ public class StyleMap {
 			return getColor(map, style.getForground());
 	}
 
+	public Optional<RGB> getBackgroundRGB(Style style) {
+		style = defaultIfNull(style);
+		if (style.isReverse())
+			return style.getForground().getRGB();
+		else
+			return style.getBackground().getRGB();
+	}
+
 	public Color getBackgroundColor(Style style) {
 		style = defaultIfNull(style);
+		if (getBackgroundRGB(style).isPresent()) {
+			style = fDefaultStyle;
+		}
 		if (style.isReverse())
 			return getColor(fColorMapBackground, style.getForground());
 		else

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.test.ui;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,18 +41,111 @@ final class VT100DataSource implements IDataSource {
 	volatile int fAvailable;
 	volatile int fRead;
 	private final String fFile;
+	private final String fANSIEscapeColors;
 
 	VT100DataSource(String file) {
 		fFile = file;
+		fANSIEscapeColors = null;
+	}
+
+	VT100DataSource() {
+		fFile = null;
+		StringBuffer input = new StringBuffer();
+		input.append("   8-bit      ");
+		for (int i = 0; i < 255; i++) {
+			input.append("\033[38:5:");
+			input.append(i);
+			input.append("m");
+			input.append(String.format("  %3s  ", i));
+			input.append("\033[0m");
+			if ((i + 1) % 6 == 4) {
+				input.append("\n");
+			}
+		}
+		input.append("\n");
+		input.append("   8-bit      ");
+		for (int i = 0; i < 255; i++) {
+			input.append("\033[48:5:");
+			input.append(i);
+			input.append("m");
+			input.append(String.format("  %3s  ", i));
+			input.append("\033[0m");
+			if ((i + 1) % 6 == 4) {
+				input.append("\n");
+			}
+		}
+		input.append("\n");
+
+		input.append("\n");
+		input.append("   24-bit (RGB incremented by 15)");
+		int count = 0;
+		for (int r = 0; r < 255; r += 15) {
+			for (int g = 0; g < 255; g += 15) {
+				count = 0;
+				for (int b = 0; b < 255; b += 15) {
+					if (count++ % 5 == 0) {
+						input.append("\n");
+					}
+					input.append("\033[38:2:3:");
+					input.append(r);
+					input.append(":");
+					input.append(g);
+					input.append(":");
+					input.append(b);
+					input.append(":");
+					input.append("m");
+					input.append(String.format(" (%02x%02x%02x) ", r, g, b));
+					input.append("\033[0m");
+
+				}
+			}
+		}
+		input.append("\n");
+		input.append("   24-bit (RGB incremented by 15)");
+		count = 0;
+		for (int r = 0; r < 255; r += 15) {
+			for (int g = 0; g < 255; g += 15) {
+				count = 0;
+				for (int b = 0; b < 255; b += 15) {
+					if (count++ % 5 == 0) {
+						input.append("\n");
+					}
+					input.append("\033[48:2:3:");
+					input.append(r);
+					input.append(":");
+					input.append(g);
+					input.append(":");
+					input.append(b);
+					input.append(":");
+					input.append("m");
+					input.append(String.format(" (%02x%02x%02x) ", r, g, b));
+					input.append("\033[0m");
+
+				}
+			}
+		}
+
+		input.append("\n");
+
+		fANSIEscapeColors = input.toString();
 	}
 
 	class InfiniteFileInputStream extends InputStream {
 		public InfiniteFileInputStream() {
-			try {
-				fInputStream = new FileInputStream(fFile);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			startInputStream();
+
+		}
+
+		private void startInputStream() {
+			if (fFile == null) {
+				fInputStream = new ByteArrayInputStream(fANSIEscapeColors.getBytes(StandardCharsets.ISO_8859_1));
+			} else {
+				try {
+					fInputStream = new FileInputStream(fFile);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -80,7 +174,7 @@ final class VT100DataSource implements IDataSource {
 			int n = fInputStream.read(b, off, len);
 			if (n <= 0) {
 				fInputStream.close();
-				fInputStream = new FileInputStream(fFile);
+				startInputStream();
 				n = fInputStream.read(b, off, len);
 			}
 			fAvailable -= n;

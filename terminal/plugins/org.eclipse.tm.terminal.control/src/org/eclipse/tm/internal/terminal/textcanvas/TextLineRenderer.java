@@ -16,12 +16,15 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
+import java.util.Optional;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.LineSegment;
@@ -157,8 +160,20 @@ public class TextLineRenderer implements ILinelRenderer {
 	}
 
 	private void setupGC(GC gc, Style style) {
-		gc.setForeground(fStyleMap.getForegrondColor(style));
-		gc.setBackground(fStyleMap.getBackgroundColor(style));
+		Optional<RGB> foregroundRGB = fStyleMap.getForegroundRGB(style);
+		if (foregroundRGB.isPresent()) {
+			gc.setForeground(new Color(gc.getDevice(), foregroundRGB.get()));
+		} else {
+			gc.setForeground(fStyleMap.getForegrondColor(style));
+		}
+
+		Optional<RGB> backgroundRGB = fStyleMap.getBackgroundRGB(style);
+		if (backgroundRGB.isPresent()) {
+			gc.setBackground(new Color(gc.getDevice(), backgroundRGB.get()));
+		} else {
+			gc.setBackground(fStyleMap.getBackgroundColor(style));
+		}
+
 		Font f = fStyleMap.getFont(style);
 		if (f != gc.getFont()) {
 			gc.setFont(f);

@@ -4753,4 +4753,28 @@ public class CodeFormatterTest extends BaseUITestCase {
 				CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
+
+	//class Foo {
+	//public:
+	//	void bar() noexcept
+	//	{
+	//	}
+	//	void baz() noexcept(false){
+	//	}
+	//	void biz() noexcept(noexcept(false)){
+	//	}
+	//};
+
+	//class Foo {
+	//public:
+	//	void bar() noexcept {
+	//	}
+	//	void baz() noexcept (false) {
+	//	}
+	//	void biz() noexcept (noexcept(false)) {
+	//	}
+	//};
+	public void testNoexcept_Bug562723() throws Exception {
+		assertFormatterResult();
+	}
 }

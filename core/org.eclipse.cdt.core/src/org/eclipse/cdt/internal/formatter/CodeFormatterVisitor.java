@@ -128,6 +128,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -339,12 +340,16 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				token = peekNextToken();
 				needSpace = true;
 			}
-			if (token == Token.t_throw || token == Token.tIDENTIFIER) {
+			if (token == Token.t_noexcept || token == Token.t_throw || token == Token.tIDENTIFIER) {
 				if (node instanceof ICPPASTFunctionDeclarator) {
 					final IASTTypeId[] exceptionSpecification = ((ICPPASTFunctionDeclarator) node)
 							.getExceptionSpecification();
 					if (exceptionSpecification != null && token == Token.t_throw)
 						formatExceptionSpecification(exceptionSpecification);
+					final ICPPASTExpression noexceptExpression = ((ICPPASTFunctionDeclarator) node)
+							.getNoexceptExpression();
+					if (noexceptExpression != null && token == Token.t_noexcept)
+						formatExceptionSpecification(noexceptExpression);
 				}
 				if (peekNextToken() == Token.tIDENTIFIER) {
 					Alignment alignment = scribe.createAlignment(Alignment.TRAILING_TEXT, Alignment.M_COMPACT_SPLIT, 1,
@@ -1666,6 +1671,38 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					preferences.insert_space_before_opening_paren_in_exception_specification);
 			scribe.printNextToken(Token.tRPAREN,
 					preferences.insert_space_between_empty_parens_in_exception_specification);
+		}
+	}
+
+	private void formatExceptionSpecification(final ICPPASTExpression noexceptSpecification) {
+		if (noexceptSpecification != null && noexceptSpecification != ICPPASTFunctionDeclarator.NOEXCEPT_DEFAULT) {
+			Alignment alignment = scribe.createAlignment(Alignment.EXCEPTION_SPECIFICATION,
+					preferences.alignment_for_throws_clause_in_method_declaration, 1, getCurrentPosition());
+
+			scribe.enterAlignment(alignment);
+			boolean ok = false;
+			do {
+				try {
+					scribe.alignFragment(alignment, 0);
+					scribe.printNextToken(Token.t_noexcept, true);
+					scribe.printNextToken(Token.tLPAREN,
+							preferences.insert_space_before_opening_paren_in_exception_specification);
+					if (preferences.insert_space_after_opening_paren_in_exception_specification) {
+						scribe.space();
+					}
+					noexceptSpecification.accept(this);
+					if (peekNextToken() == Token.tRPAREN) {
+						scribe.printNextToken(Token.tRPAREN,
+								preferences.insert_space_before_closing_paren_in_exception_specification);
+					}
+					ok = true;
+				} catch (AlignmentException e) {
+					scribe.redoAlignment(e);
+				}
+			} while (!ok);
+			scribe.exitAlignment(alignment, true);
+		} else {
+			scribe.printNextToken(Token.t_noexcept, true);
 		}
 	}
 
@@ -3076,6 +3113,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			break;
 		case IASTUnaryExpression.op_throw:
 			scribe.printNextToken(Token.t_throw, scribe.printComment());
+			if (operand != null) {
+				if (peekNextToken() != Token.tLPAREN) {
+					scribe.space();
+				}
+				operand.accept(this);
+			}
+			break;
+		case IASTUnaryExpression.op_noexcept:
+			scribe.printNextToken(Token.t_noexcept, scribe.printComment());
 			if (operand != null) {
 				if (peekNextToken() != Token.tLPAREN) {
 					scribe.space();

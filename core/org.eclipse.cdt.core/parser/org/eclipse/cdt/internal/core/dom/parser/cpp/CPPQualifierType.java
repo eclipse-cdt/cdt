@@ -15,12 +15,14 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.CoreException;
 
 public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerializableType {
@@ -38,8 +40,18 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
 	public boolean isSameType(IType o) {
 		if (o instanceof ITypedef)
 			return o.isSameType(this);
-		if (!(o instanceof IQualifierType))
+		if (!(o instanceof IQualifierType)) {
+			// Handle the case where we store the qualifiers in the IPointerType.
+			if (o instanceof IPointerType) {
+				IType nested = SemanticUtil.getSimplifiedType(type);
+				if (nested instanceof IPointerType) {
+					IPointerType pt = (IPointerType) o;
+					return isConst() == pt.isConst() && isVolatile() == pt.isVolatile()
+							&& ((IPointerType) nested).getType().isSameType(pt.getType());
+				}
+			}
 			return false;
+		}
 
 		IQualifierType pt = (IQualifierType) o;
 		if (isConst() == pt.isConst() && isVolatile() == pt.isVolatile() && type != null)

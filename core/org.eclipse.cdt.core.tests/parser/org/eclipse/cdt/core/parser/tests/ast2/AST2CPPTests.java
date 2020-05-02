@@ -13426,4 +13426,15 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		ICPPASTExpression f = helper.assertNode("f[] = \"waldo\"", "\"waldo\"");
 		assertTrue(e.getEvaluation().isEquivalentTo(f.getEvaluation()));
 	}
+
+	//	template <typename T>
+	//	void waldo(const T&) {}
+	//
+	//	typedef int* IntPtr;
+	//
+	//	template <>
+	//	void waldo(const IntPtr&) {}
+	public void testExplicitSpecPointerType_562697() throws Exception {
+		parseAndCheckBindings();
+	}
 }

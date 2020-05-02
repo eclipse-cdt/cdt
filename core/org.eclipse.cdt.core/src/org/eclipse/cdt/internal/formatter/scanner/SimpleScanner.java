@@ -947,6 +947,7 @@ public class SimpleScanner {
 		fgKeywords.put("while", Integer.valueOf(Token.t_while)); //$NON-NLS-1$
 		fgKeywords.put("xor", Integer.valueOf(Token.t_xor)); //$NON-NLS-1$
 		fgKeywords.put("xor_eq", Integer.valueOf(Token.t_xor_eq)); //$NON-NLS-1$
+		fgKeywords.put("noexcept", Integer.valueOf(Token.t_noexcept)); //$NON-NLS-1$
 
 		// additional java keywords
 		fgKeywords.put("abstract", Integer.valueOf(Token.t_abstract)); //$NON-NLS-1$

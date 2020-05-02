@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -357,6 +358,13 @@ public class ImplementMethodRefactoring extends CRefactoring {
 						.addExceptionSpecificationTypeId(typeId == null ? null : typeId.copy(CopyStyle.withLocations));
 			}
 		}
+		ICPPASTExpression noexceptExpression = functionDeclarator.getNoexceptExpression();
+		if (noexceptExpression != null) {
+			createdMethodDeclarator.setNoexceptExpression(
+					noexceptExpression == ICPPASTFunctionDeclarator.NOEXCEPT_DEFAULT ? noexceptExpression
+							: (ICPPASTExpression) noexceptExpression.copy(CopyStyle.withLocations));
+		}
+
 		IASTFunctionDefinition functionDefinition = nodeFactory.newFunctionDefinition(declSpecifier,
 				createdMethodDeclarator, nodeFactory.newCompoundStatement());
 		functionDefinition.setParent(unit);

@@ -919,4 +919,21 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	public void testNamespaceAlreadyInDefinition_Bug434677() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//A.h
+	//
+	//struct A {
+	//	/*$*/void waldo() noexcept;/*$$*/
+	//};
+
+	//A.cpp
+	//#include "A.h"
+	//====================
+	//#include "A.h"
+	//
+	//void A::waldo() noexcept {
+	//}
+	public void testNoexpect_Bug562722() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

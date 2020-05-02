@@ -157,14 +157,8 @@ public class TextLineRenderer implements ILinelRenderer {
 	}
 
 	private void setupGC(GC gc, Style style) {
-		Color c = fStyleMap.getForegrondColor(style);
-		if (c != gc.getForeground()) {
-			gc.setForeground(c);
-		}
-		c = fStyleMap.getBackgroundColor(style);
-		if (c != gc.getBackground()) {
-			gc.setBackground(c);
-		}
+		gc.setForeground(fStyleMap.getForegrondColor(style));
+		gc.setBackground(fStyleMap.getBackgroundColor(style));
 		Font f = fStyleMap.getFont(style);
 		if (f != gc.getFont()) {
 			gc.setFont(f);

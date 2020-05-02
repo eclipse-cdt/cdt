@@ -11,10 +11,14 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ScrollBar;
 
@@ -27,6 +31,8 @@ abstract public class GridCanvas extends VirtualCanvas {
 	private int fCellWidth;
 	/** height of a cell */
 	private int fCellHeight;
+
+	private final Collection<Resource> fResourcesToDisposeAfterPaint = new LinkedList<>();
 
 	public GridCanvas(Composite parent, int style) {
 		super(parent, style);
@@ -47,6 +53,7 @@ abstract public class GridCanvas extends VirtualCanvas {
 	 */
 	@Override
 	protected void paint(GC gc) {
+		fResourcesToDisposeAfterPaint.clear();
 		Rectangle clipping = gc.getClipping();
 		if (clipping.width == 0 || clipping.height == 0)
 			return;
@@ -73,9 +80,11 @@ abstract public class GridCanvas extends VirtualCanvas {
 		for (int row = rowFirst; row <= rowLast; row++) {
 			int cx = colFirst * fCellWidth - xOffset;
 			int cy = row * fCellHeight - yOffset;
-			drawLine(gc, row, cx, cy, colFirst, colLast);
+			drawLine(gc, fResourcesToDisposeAfterPaint, row, cx, cy, colFirst, colLast);
 		}
 		paintUnoccupiedSpace(gc, clipping);
+		fResourcesToDisposeAfterPaint.forEach(Resource::dispose);
+		fResourcesToDisposeAfterPaint.clear();
 	}
 
 	/**
@@ -86,7 +95,8 @@ abstract public class GridCanvas extends VirtualCanvas {
 	 * @param colFirst first column to draw
 	 * @param colLast last column to draw
 	 */
-	abstract void drawLine(GC gc, int row, int x, int y, int colFirst, int colLast);
+	abstract void drawLine(GC gc, Collection<Resource> resourcesToDispose, int row, int x, int y, int colFirst,
+			int colLast);
 
 	abstract protected int getRows();
 

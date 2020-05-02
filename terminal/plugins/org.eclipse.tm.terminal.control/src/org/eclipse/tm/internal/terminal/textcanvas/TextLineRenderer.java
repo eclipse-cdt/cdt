@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import org.eclipse.swt.SWT;
@@ -25,6 +26,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.LineSegment;
@@ -52,7 +54,8 @@ public class TextLineRenderer implements ILinelRenderer {
 	}
 
 	@Override
-	public void drawLine(ITextCanvasModel model, GC gc, int line, int x, int y, int colFirst, int colLast) {
+	public void drawLine(ITextCanvasModel model, GC gc, Collection<Resource> resourcesToDispose, int line, int x, int y,
+			int colFirst, int colLast) {
 		int width = getCellWidth() * (colLast - colFirst);
 		int height = getCellHeight();
 		if (width <= 0 || height <= 0) {
@@ -69,10 +72,10 @@ public class TextLineRenderer implements ILinelRenderer {
 			for (int i = 0; i < segments.length; i++) {
 				LineSegment segment = segments[i];
 				Style style = segment.getStyle();
-				setupGC(doubleBufferGC, style);
+				setupGC(doubleBufferGC, resourcesToDispose, style);
 				String text = segment.getText();
 				drawText(doubleBufferGC, 0, 0, colFirst, segment.getColumn(), text);
-				drawCursor(model, doubleBufferGC, line, 0, 0, colFirst);
+				drawCursor(model, doubleBufferGC, resourcesToDispose, line, 0, 0, colFirst);
 			}
 			if (fModel.hasLineSelection(line)) {
 				doubleBufferGC.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
@@ -117,7 +120,8 @@ public class TextLineRenderer implements ILinelRenderer {
 		return fStyleMap.getBackgroundColor(null);
 	}
 
-	private void drawCursor(ITextCanvasModel model, GC gc, int row, int x, int y, int colFirst) {
+	private void drawCursor(ITextCanvasModel model, GC gc, Collection<Resource> resourcesToDispose, int row, int x,
+			int y, int colFirst) {
 		if (!model.isCursorOn())
 			return;
 		int cursorLine = model.getCursorLine();
@@ -131,7 +135,7 @@ public class TextLineRenderer implements ILinelRenderer {
 					style = Style.getStyle("BLACK", "WHITE"); //$NON-NLS-1$//$NON-NLS-2$
 				}
 				style = style.setReverse(!style.isReverse());
-				setupGC(gc, style);
+				setupGC(gc, resourcesToDispose, style);
 				String text = String.valueOf(getTerminalText().getChar(row, cursorColumn));
 				drawText(gc, x, y, colFirst, cursorColumn, text);
 			}
@@ -159,17 +163,21 @@ public class TextLineRenderer implements ILinelRenderer {
 		}
 	}
 
-	private void setupGC(GC gc, Style style) {
+	private void setupGC(GC gc, Collection<Resource> resourcesToDispose, Style style) {
 		Optional<RGB> foregroundRGB = fStyleMap.getForegroundRGB(style);
 		if (foregroundRGB.isPresent()) {
-			gc.setForeground(new Color(gc.getDevice(), foregroundRGB.get()));
+			Color color = new Color(gc.getDevice(), foregroundRGB.get());
+			resourcesToDispose.add(color);
+			gc.setForeground(color);
 		} else {
 			gc.setForeground(fStyleMap.getForegrondColor(style));
 		}
 
 		Optional<RGB> backgroundRGB = fStyleMap.getBackgroundRGB(style);
 		if (backgroundRGB.isPresent()) {
-			gc.setBackground(new Color(gc.getDevice(), backgroundRGB.get()));
+			Color color = new Color(gc.getDevice(), backgroundRGB.get());
+			resourcesToDispose.add(color);
+			gc.setBackground(color);
 		} else {
 			gc.setBackground(fStyleMap.getBackgroundColor(style));
 		}

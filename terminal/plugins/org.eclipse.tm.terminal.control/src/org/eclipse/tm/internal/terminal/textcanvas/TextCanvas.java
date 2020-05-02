@@ -24,6 +24,7 @@
 package org.eclipse.tm.internal.terminal.textcanvas;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -38,6 +39,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm.internal.terminal.control.ITerminalMouseListener;
 
@@ -364,8 +366,9 @@ public class TextCanvas extends GridCanvas {
 	}
 
 	@Override
-	protected void drawLine(GC gc, int line, int x, int y, int colFirst, int colLast) {
-		fCellRenderer.drawLine(fCellCanvasModel, gc, line, x, y, colFirst, colLast);
+	protected void drawLine(GC gc, Collection<Resource> resourcesToDispose, int line, int x, int y, int colFirst,
+			int colLast) {
+		fCellRenderer.drawLine(fCellCanvasModel, gc, resourcesToDispose, line, x, y, colFirst, colLast);
 	}
 
 	@Override

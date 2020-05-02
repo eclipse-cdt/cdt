@@ -14,8 +14,11 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
+import java.util.Collection;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Resource;
 
 /**
  *
@@ -25,7 +28,8 @@ public interface ILinelRenderer {
 
 	int getCellHeight();
 
-	void drawLine(ITextCanvasModel model, GC gc, int line, int x, int y, int colFirst, int colLast);
+	void drawLine(ITextCanvasModel model, GC gc, Collection<Resource> resourcesToDispose, int line, int x, int y,
+			int colFirst, int colLast);
 
 	/**
 	 * Update for a font change from the global JFace Registry.

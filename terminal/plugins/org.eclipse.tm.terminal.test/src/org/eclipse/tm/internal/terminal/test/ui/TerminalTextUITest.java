@@ -97,6 +97,8 @@ public class TerminalTextUITest {
 		addDataReader(composite, reader);
 		reader = new DataReader("Fast", fTerminalModel, new FastDataSource(), status);
 		addDataReader(composite, reader);
+		reader = new DataReader("Colors", fTerminalModel, new VT100DataSource(), status);
+		addDataReader(composite, reader);
 		reader = new DataReader("Random", fTerminalModel, new RandomDataSource(), status);
 		addDataReader(composite, reader);
 		for (int i = 0; i < args.length; i++) {

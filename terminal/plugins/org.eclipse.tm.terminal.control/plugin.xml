@@ -10,7 +10,7 @@
     SPDX-License-Identifier: EPL-2.0
 #
 # Contributors:
-# Michael Scharf (Wind River) - initial API and implementation 
+# Michael Scharf (Wind River) - initial API and implementation
 # Martin Oberhuber (Wind River) - fixed copyright headers and beautified
 # Michael Scharf (Wind River) - [237425] undefined tm.terminal command
 # Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
@@ -20,8 +20,8 @@
 -->
 <plugin>
    <extension-point id="connectors" name="%terminal.connectors.name" schema="schema/connectors.exsd"/>
-   
-   <extension point="org.eclipse.ui.contexts">           
+
+   <extension point="org.eclipse.ui.contexts">
       <context
             name="%terminal.context.name.terminal"
             description="%terminal.context.description.terminal"
@@ -166,16 +166,16 @@
             contextId="org.eclipse.tm.terminal.TerminalContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Alt+Y"/> <!-- S&ystem -->
-      <!-- 
+      <!--
            For Copy and Paste, we need replacements since the default Ctrl+C / Ctrl+V
            need to go to the terminal and thus are not available for local Copy and Paste.
            This is not an issue on Mac, where COMMAND+C / COMMAND+V works fine.
-           
+
            We add both CTRL+INSERT and CTRL+SHIFT+C since on some keyboards, an INSERT key
            may not be available. Note: we want the "least surprising" and "most available"
-           of all bindings to be shown in the context menu according to the algorithm in 
+           of all bindings to be shown in the context menu according to the algorithm in
            IBindingService#getBestActiveBindingFor().
-           Therefore, we do not want these extra bindings to be shown on the Mac. 
+           Therefore, we do not want these extra bindings to be shown on the Mac.
 
            Unfortunately, there is no way in Bindings to say "NOT Platforms X,Y,Z"
            We would really like one of the following here but it doesnt work with Eclipse 4.3:
@@ -265,8 +265,8 @@
          </description>
       </fontDefinition>
    </extension>
-   
-<!-- Theme contributions -->   
+
+<!-- Theme contributions -->
    <extension point="org.eclipse.e4.ui.css.swt.theme">
       <stylesheet
             uri="css/org.eclipse.tm.terminal.stylesheet.dark.css">

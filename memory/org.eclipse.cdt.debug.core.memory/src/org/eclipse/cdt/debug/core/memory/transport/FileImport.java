@@ -99,7 +99,7 @@ public abstract class FileImport<I extends AutoCloseable> implements ICoreRunnab
 	protected void failed(int code, String message, Throwable exception) throws DebugException {
 		Status status = new Status(//
 				IStatus.ERROR, //
-				FrameworkUtil.getBundle(getClass()).getSymbolicName(), //
+				getClass(), //
 				code, //
 				message, //
 				exception);
@@ -107,7 +107,9 @@ public abstract class FileImport<I extends AutoCloseable> implements ICoreRunnab
 	}
 
 	protected void failed(DebugException exception) throws DebugException {
-		Platform.getLog(FrameworkUtil.getBundle(getClass())).log(exception.getStatus());
+		if (Platform.isRunning()) {
+			Platform.getLog(FrameworkUtil.getBundle(getClass())).log(exception.getStatus());
+		}
 		throw exception;
 	}
 }

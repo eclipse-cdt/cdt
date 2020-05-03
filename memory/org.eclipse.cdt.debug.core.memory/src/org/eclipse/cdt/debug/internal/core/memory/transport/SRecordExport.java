@@ -45,11 +45,10 @@ public final class SRecordExport extends FileExport<FileWriter> {
 	protected void transfer(FileWriter output, BigInteger factor, IProgressMonitor monitor)
 			throws IOException, DebugException {
 		final BigInteger DATA_PER_RECORD = chunkSize();
-		final BigInteger DATA_PER_TRANSFER = BigInteger.valueOf(4096).multiply(DATA_PER_RECORD);
 		BigInteger jobCount = BigInteger.ZERO;
 		BigInteger transferAddress = start;
 		while (transferAddress.compareTo(end) < 0 && !monitor.isCanceled()) {
-			BigInteger length = DATA_PER_TRANSFER;
+			BigInteger length = DATA_PER_RECORD;
 			if (end.subtract(transferAddress).compareTo(length) < 0) {
 				length = end.subtract(transferAddress);
 			}

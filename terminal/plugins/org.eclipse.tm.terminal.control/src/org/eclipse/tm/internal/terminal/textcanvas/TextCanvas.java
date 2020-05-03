@@ -473,7 +473,9 @@ public class TextCanvas extends GridCanvas {
 
 	/**
 	 * Notify about a change of the global Font Preference.
+	 * @deprecated Use {@link #updateFont(String)}
 	 */
+	@Deprecated
 	public void onFontChange() {
 		fCellRenderer.onFontChange();
 		setCellWidth(fCellRenderer.getCellWidth());

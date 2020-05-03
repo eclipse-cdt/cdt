@@ -169,6 +169,10 @@ public class TextLineRenderer implements ILinelRenderer {
 		return fModel.getTerminalText();
 	}
 
+	/**
+	 * @deprecated Use {@link #updateFont(String)}
+	 */
+	@Deprecated
 	@Override
 	public void onFontChange() {
 		fStyleMap.updateFont();

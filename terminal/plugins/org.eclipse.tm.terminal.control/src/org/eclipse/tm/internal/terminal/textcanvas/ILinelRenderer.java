@@ -29,7 +29,9 @@ public interface ILinelRenderer {
 
 	/**
 	 * Update for a font change from the global JFace Registry.
+	 * @deprecated Use {@link #updateFont(String)}
 	 */
+	@Deprecated
 	void onFontChange();
 
 	/**

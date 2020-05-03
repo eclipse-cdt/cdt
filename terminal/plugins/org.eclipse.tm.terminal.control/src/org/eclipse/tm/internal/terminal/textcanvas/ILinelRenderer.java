@@ -15,6 +15,7 @@
 package org.eclipse.tm.internal.terminal.textcanvas;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 
 /**
@@ -43,5 +44,11 @@ public interface ILinelRenderer {
 
 	void setInvertedColors(boolean invert);
 
+	/**
+	 * @deprecated use {@link #getDefaultBackgroundColor(Device)}
+	 */
+	@Deprecated
 	Color getDefaultBackgroundColor();
+
+	Color getDefaultBackgroundColor(Device device);
 }

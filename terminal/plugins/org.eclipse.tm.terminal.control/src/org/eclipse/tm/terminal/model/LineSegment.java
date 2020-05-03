@@ -13,15 +13,15 @@ package org.eclipse.tm.terminal.model;
 public class LineSegment {
 	private final String fText;
 	private final int fCol;
-	private final Style fStyle;
+	private final TerminalStyle fStyle;
 
-	public LineSegment(int col, String text, Style style) {
+	public LineSegment(int col, String text, TerminalStyle style) {
 		fCol = col;
 		fText = text;
 		fStyle = style;
 	}
 
-	public Style getStyle() {
+	public TerminalStyle getStyle() {
 		return fStyle;
 	}
 

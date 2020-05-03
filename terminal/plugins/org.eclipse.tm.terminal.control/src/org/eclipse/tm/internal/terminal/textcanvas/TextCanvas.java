@@ -35,6 +35,7 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -369,6 +370,12 @@ public class TextCanvas extends GridCanvas {
 	}
 
 	@Override
+	protected Color getTerminalBackgroundColor(Device device) {
+		return fCellRenderer.getDefaultBackgroundColor(device);
+	}
+
+	@Override
+	@Deprecated
 	protected Color getTerminalBackgroundColor() {
 		return fCellRenderer.getDefaultBackgroundColor();
 	}

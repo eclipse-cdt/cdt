@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
@@ -136,6 +137,12 @@ public abstract class VirtualCanvas extends Canvas {
 	 */
 	abstract protected void paint(GC gc);
 
+	abstract protected Color getTerminalBackgroundColor(Device device);
+
+	/**
+	 * @deprecated Use {@link #getTerminalBackgroundColor(Device)}
+	 */
+	@Deprecated
 	protected Color getTerminalBackgroundColor() {
 		//		return getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		return getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);

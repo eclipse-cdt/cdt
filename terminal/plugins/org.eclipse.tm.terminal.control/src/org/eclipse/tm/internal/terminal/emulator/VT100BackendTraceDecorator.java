@@ -15,7 +15,7 @@ package org.eclipse.tm.internal.terminal.emulator;
 
 import java.io.PrintStream;
 
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
 	final IVT100EmulatorBackend fBackend;
@@ -102,7 +102,7 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
 	}
 
 	@Override
-	public Style getDefaultStyle() {
+	public TerminalStyle getDefaultStyle() {
 		return fBackend.getDefaultStyle();
 	}
 
@@ -112,7 +112,7 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
 	}
 
 	@Override
-	public Style getStyle() {
+	public TerminalStyle getStyle() {
 		return fBackend.getStyle();
 	}
 
@@ -153,7 +153,7 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
 	}
 
 	@Override
-	public void setDefaultStyle(Style defaultStyle) {
+	public void setDefaultStyle(TerminalStyle defaultStyle) {
 		fWriter.println("setDefaultStyle(" + defaultStyle + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		fBackend.setDefaultStyle(defaultStyle);
 	}
@@ -165,7 +165,7 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
 	}
 
 	@Override
-	public void setStyle(Style style) {
+	public void setStyle(TerminalStyle style) {
 		fWriter.println("setStyle(" + style + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		fBackend.setStyle(style);
 	}

@@ -257,6 +257,7 @@
 
    <extension point="org.eclipse.ui.themes" id="terminal.font">
       <fontDefinition
+            categoryId="terminal.views.theme.category"
             defaultsTo="org.eclipse.jface.textfont"
             id="terminal.views.view.font.definition"
             label="%terminal.font.label">
@@ -264,14 +265,14 @@
             %terminal.font.description
          </description>
       </fontDefinition>
-   </extension>
+      <themeElementCategory
+            id="terminal.views.theme.category"
+            label="%terminal.views.theme.category.label">
+         <description>
+            %terminal.views.theme.category.description
+         </description>
+      </themeElementCategory>
 
-<!-- Theme contributions -->
-   <extension point="org.eclipse.e4.ui.css.swt.theme">
-      <stylesheet
-            uri="css/org.eclipse.tm.terminal.stylesheet.dark.css">
-            <themeid refid="org.eclipse.e4.ui.css.theme.e4_dark"/>
-      </stylesheet>
-   </extension>
 
+   </extension>
 </plugin>

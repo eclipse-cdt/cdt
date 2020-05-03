@@ -14,12 +14,12 @@
 
 package org.eclipse.tm.internal.terminal.connector;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.tm.internal.terminal.connector.TerminalConnectorTest.ConnectorMock;
 import org.eclipse.tm.internal.terminal.connector.TerminalConnectorTest.SimpleFactory;
 import org.eclipse.tm.internal.terminal.connector.TerminalConnectorTest.TerminalControlMock;
+
+import junit.framework.TestCase;
 
 /**
  * Testcase for TerminalConnector that must run as a JUnit plug-in test.

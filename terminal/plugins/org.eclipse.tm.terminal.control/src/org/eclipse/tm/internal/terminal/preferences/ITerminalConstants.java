@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.preferences;
 
+import org.eclipse.tm.terminal.model.TerminalColor;
+
 /**
  * Constants for Terminal Preferences.
  *
@@ -22,13 +24,27 @@ package org.eclipse.tm.internal.terminal.preferences;
  */
 public interface ITerminalConstants {
 
+	public static final String FONT_DEFINITION = "terminal.views.view.font.definition"; //$NON-NLS-1$
 	public static final String PREF_HAS_MIGRATED = "TerminalPref.migrated"; //$NON-NLS-1$
 
 	public static final String PREF_BUFFERLINES = "TerminalPrefBufferLines"; //$NON-NLS-1$
 	public static final String PREF_INVERT_COLORS = "TerminalPrefInvertColors"; //$NON-NLS-1$
+	/**
+	 * @since 5.0
+	 */
+	public static final String PREF_FONT_DEFINITION = "TerminalFontDefinition"; //$NON-NLS-1$
 	public static final int DEFAULT_BUFFERLINES = 1000;
 	public static final boolean DEFAULT_INVERT_COLORS = false;
+	/**
+	 * @since 5.0
+	 */
+	public static final String DEFAULT_FONT_DEFINITION = FONT_DEFINITION;
 
-	public static final String FONT_DEFINITION = "terminal.views.view.font.definition"; //$NON-NLS-1$
+	/**
+	 * @since 5.0
+	 */
+	public static String getPrefForTerminalColor(TerminalColor tc) {
+		return tc.toString();
+	}
 
 }

@@ -14,7 +14,7 @@ package org.eclipse.tm.internal.terminal.model;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * This class is optimized for scrolling the entire {@link #getHeight()}.
@@ -151,13 +151,13 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 	}
 
 	@Override
-	public Style getStyle(int line, int column) {
+	public TerminalStyle getStyle(int line, int column) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		return fData.getStyle(getPositionOfLine(line), column);
 	}
 
 	@Override
-	public Style[] getStyles(int line) {
+	public TerminalStyle[] getStyles(int line) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		return fData.getStyles(getPositionOfLine(line));
 	}
@@ -214,19 +214,19 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 	}
 
 	@Override
-	public void setChar(int line, int column, char c, Style style) {
+	public void setChar(int line, int column, char c, TerminalStyle style) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		fData.setChar(getPositionOfLine(line), column, c, style);
 	}
 
 	@Override
-	public void setChars(int line, int column, char[] chars, int start, int len, Style style) {
+	public void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		fData.setChars(getPositionOfLine(line), column, chars, start, len, style);
 	}
 
 	@Override
-	public void setChars(int line, int column, char[] chars, Style style) {
+	public void setChars(int line, int column, char[] chars, TerminalStyle style) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		fData.setChars(getPositionOfLine(line), column, chars, style);
 	}

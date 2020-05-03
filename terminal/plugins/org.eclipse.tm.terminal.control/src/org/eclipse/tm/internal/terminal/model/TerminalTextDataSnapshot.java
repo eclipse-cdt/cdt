@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * The public methods of this class have to be called from one thread!
@@ -137,7 +137,7 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	}
 
 	@Override
-	public Style getStyle(int line, int column) {
+	public TerminalStyle getStyle(int line, int column) {
 		return fSnapshot.getStyle(line, column);
 	}
 
@@ -299,7 +299,7 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	}
 
 	@Override
-	public Style[] getStyles(int line) {
+	public TerminalStyle[] getStyles(int line) {
 		return fSnapshot.getStyles(line);
 	}
 

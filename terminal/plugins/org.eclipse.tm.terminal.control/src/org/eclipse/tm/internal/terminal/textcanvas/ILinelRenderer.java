@@ -14,8 +14,13 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
+import java.util.Map;
+
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.tm.terminal.model.TerminalColor;
 
 /**
  *
@@ -41,7 +46,16 @@ public interface ILinelRenderer {
 	 */
 	void updateFont(String fontName);
 
+	void updateColors(Map<TerminalColor, RGB> map);
+
 	void setInvertedColors(boolean invert);
 
+	/**
+	 * @deprecated use {@link #getDefaultBackgroundColor(Device)}
+	 */
+	@Deprecated
 	Color getDefaultBackgroundColor();
+
+	Color getDefaultBackgroundColor(Device device);
+
 }

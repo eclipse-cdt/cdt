@@ -15,7 +15,7 @@
 package org.eclipse.tm.internal.terminal.emulator;
 
 import org.eclipse.tm.terminal.model.ITerminalTextData;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -87,8 +87,8 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 * and next output requires line wrap */
 	private boolean fWrapPending;
 	private boolean fInsertMode;
-	private Style fDefaultStyle;
-	private Style fStyle;
+	private TerminalStyle fDefaultStyle;
+	private TerminalStyle fStyle;
 	int fLines;
 	int fColumns;
 	final private ITerminalTextData fTerminal;
@@ -161,7 +161,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			int n = charactersToInsert;
 			for (int col = fColumns - 1; col >= fCursorColumn + n; col--) {
 				char c = fTerminal.getChar(line, col - n);
-				Style style = fTerminal.getStyle(line, col - n);
+				TerminalStyle style = fTerminal.getStyle(line, col - n);
 				fTerminal.setChar(line, col, c, style);
 			}
 			int last = Math.min(fCursorColumn + n, fColumns);
@@ -246,7 +246,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			int line = toAbsoluteLine(fCursorLine);
 			for (int col = fCursorColumn + n; col < fColumns; col++) {
 				char c = fTerminal.getChar(line, col);
-				Style style = fTerminal.getStyle(line, col);
+				TerminalStyle style = fTerminal.getStyle(line, col);
 				fTerminal.setChar(line, col - n, c, style);
 			}
 			int first = Math.max(fCursorColumn, fColumns - n);
@@ -273,21 +273,21 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	}
 
 	@Override
-	public Style getDefaultStyle() {
+	public TerminalStyle getDefaultStyle() {
 		synchronized (fTerminal) {
 			return fDefaultStyle;
 		}
 	}
 
 	@Override
-	public void setDefaultStyle(Style defaultStyle) {
+	public void setDefaultStyle(TerminalStyle defaultStyle) {
 		synchronized (fTerminal) {
 			fDefaultStyle = defaultStyle;
 		}
 	}
 
 	@Override
-	public Style getStyle() {
+	public TerminalStyle getStyle() {
 		synchronized (fTerminal) {
 			if (fStyle == null)
 				return fDefaultStyle;
@@ -296,7 +296,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	}
 
 	@Override
-	public void setStyle(Style style) {
+	public void setStyle(TerminalStyle style) {
 		synchronized (fTerminal) {
 			fStyle = style;
 		}

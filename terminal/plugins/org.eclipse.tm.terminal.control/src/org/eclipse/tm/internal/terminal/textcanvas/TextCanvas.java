@@ -25,6 +25,7 @@ package org.eclipse.tm.internal.terminal.textcanvas;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -35,11 +36,14 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm.internal.terminal.control.ITerminalMouseListener;
+import org.eclipse.tm.terminal.model.TerminalColor;
 
 /**
  * A cell oriented Canvas. Maintains a list of "cells".
@@ -369,6 +373,12 @@ public class TextCanvas extends GridCanvas {
 	}
 
 	@Override
+	protected Color getTerminalBackgroundColor(Device device) {
+		return fCellRenderer.getDefaultBackgroundColor(device);
+	}
+
+	@Override
+	@Deprecated
 	protected Color getTerminalBackgroundColor() {
 		return fCellRenderer.getDefaultBackgroundColor();
 	}
@@ -490,6 +500,11 @@ public class TextCanvas extends GridCanvas {
 		calculateGrid();
 	}
 
+	public void updateColors(Map<TerminalColor, RGB> map) {
+		fCellRenderer.updateColors(map);
+		redraw();
+	}
+
 	public void setInvertedColors(boolean invert) {
 		fCellRenderer.setInvertedColors(invert);
 		redraw();
@@ -520,4 +535,5 @@ public class TextCanvas extends GridCanvas {
 	public void removeTerminalMouseListener(ITerminalMouseListener listener) {
 		fMouseListeners.remove(listener);
 	}
+
 }

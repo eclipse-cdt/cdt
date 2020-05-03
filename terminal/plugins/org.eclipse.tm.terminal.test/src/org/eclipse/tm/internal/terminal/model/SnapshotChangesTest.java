@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
-import junit.framework.TestCase;
-
 import org.eclipse.tm.terminal.model.ITerminalTextData;
+
+import junit.framework.TestCase;
 
 public class SnapshotChangesTest extends TestCase {
 	/**

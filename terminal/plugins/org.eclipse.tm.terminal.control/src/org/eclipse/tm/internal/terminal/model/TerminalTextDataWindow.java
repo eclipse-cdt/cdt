@@ -14,7 +14,7 @@ package org.eclipse.tm.internal.terminal.model;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * This class stores the data only within a window {@link #setWindow(int, int)} and
@@ -86,14 +86,14 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 	}
 
 	@Override
-	public Style getStyle(int line, int column) {
+	public TerminalStyle getStyle(int line, int column) {
 		if (!isInWindow(line))
 			return null;
 		return fData.getStyle(line - fWindowStartLine, column);
 	}
 
 	@Override
-	public Style[] getStyles(int line) {
+	public TerminalStyle[] getStyles(int line) {
 		if (!isInWindow(line))
 			return null;
 		return fData.getStyles(line - fWindowStartLine);
@@ -168,21 +168,21 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 	}
 
 	@Override
-	public void setChar(int line, int column, char c, Style style) {
+	public void setChar(int line, int column, char c, TerminalStyle style) {
 		if (!isInWindow(line))
 			return;
 		fData.setChar(line - fWindowStartLine, column, c, style);
 	}
 
 	@Override
-	public void setChars(int line, int column, char[] chars, int start, int len, Style style) {
+	public void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style) {
 		if (!isInWindow(line))
 			return;
 		fData.setChars(line - fWindowStartLine, column, chars, start, len, style);
 	}
 
 	@Override
-	public void setChars(int line, int column, char[] chars, Style style) {
+	public void setChars(int line, int column, char[] chars, TerminalStyle style) {
 		if (!isInWindow(line))
 			return;
 		fData.setChars(line - fWindowStartLine, column, chars, style);

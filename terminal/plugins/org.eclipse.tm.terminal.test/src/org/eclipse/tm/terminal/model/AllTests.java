@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.model;
 
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -31,7 +32,7 @@ public class AllTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(StyleColorTest.class);
+		suite.addTest(new JUnit4TestAdapter(TerminalColorUITest.class));
 		suite.addTestSuite(StyleTest.class);
 		return suite;
 	}

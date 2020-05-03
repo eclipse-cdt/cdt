@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b4e76f7_de1a6f07",
+        "filename": ".gitattributes",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-03T20:15:59Z",
+      "side": 1,
+      "message": "srec files are normally plain text. It may be that you specifically need srecs with different line endings to make sure that if one is created on windows it works on linux and vice versa.",
+      "revId": "cee60d555d45a3014ac8987fa2684743882882c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

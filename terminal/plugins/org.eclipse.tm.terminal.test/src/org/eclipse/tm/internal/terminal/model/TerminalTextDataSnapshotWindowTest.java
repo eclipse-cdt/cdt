@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
-import junit.framework.TestCase;
-
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
+
+import junit.framework.TestCase;
 
 public class TerminalTextDataSnapshotWindowTest extends TestCase {
 	String toMultiLineText(ITerminalTextDataReadOnly term) {

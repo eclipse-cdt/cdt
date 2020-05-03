@@ -29,15 +29,14 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
-import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.BLACK;
-import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.BLUE;
-import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.CYAN;
-import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.GREEN;
-import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.MAGENTA;
-import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.RED;
-import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.WHITE;
-import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.WHITE_FOREGROUND;
-import static org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames.YELLOW;
+import static org.eclipse.tm.terminal.model.TerminalColor.BLACK;
+import static org.eclipse.tm.terminal.model.TerminalColor.BLUE;
+import static org.eclipse.tm.terminal.model.TerminalColor.CYAN;
+import static org.eclipse.tm.terminal.model.TerminalColor.GREEN;
+import static org.eclipse.tm.terminal.model.TerminalColor.MAGENTA;
+import static org.eclipse.tm.terminal.model.TerminalColor.RED;
+import static org.eclipse.tm.terminal.model.TerminalColor.WHITE;
+import static org.eclipse.tm.terminal.model.TerminalColor.YELLOW;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -51,9 +50,8 @@ import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
-import org.eclipse.tm.internal.terminal.textcanvas.AnsiColorNames;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * This class processes character data received from the remote host and
@@ -174,7 +172,7 @@ public class VT100Emulator implements ControlListener {
 			text = new VT100EmulatorBackend(data);
 
 		//		text.setDimensions(24, 80);
-		Style style = Style.getStyle("BLACK", "WHITE"); //$NON-NLS-1$ //$NON-NLS-2$
+		TerminalStyle style = TerminalStyle.getDefaultStyle();
 		text.setDefaultStyle(style);
 		text.setStyle(style);
 	}
@@ -855,7 +853,7 @@ public class VT100Emulator implements ControlListener {
 
 			ansiParameters[0].append('0');
 		}
-		Style style = text.getStyle();
+		TerminalStyle style = text.getStyle();
 		// There are a non-zero number of ANSI parameters. Process each one in
 		// order.
 
@@ -923,39 +921,39 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			case 30:
-				style = style.setForground(BLACK);
+				style = style.setForeground(BLACK);
 				break;
 
 			case 31:
-				style = style.setForground(RED);
+				style = style.setForeground(RED);
 				break;
 
 			case 32:
-				style = style.setForground(GREEN);
+				style = style.setForeground(GREEN);
 				break;
 
 			case 33:
-				style = style.setForground(YELLOW);
+				style = style.setForeground(YELLOW);
 				break;
 
 			case 34:
-				style = style.setForground(BLUE);
+				style = style.setForeground(BLUE);
 				break;
 
 			case 35:
-				style = style.setForground(MAGENTA);
+				style = style.setForeground(MAGENTA);
 				break;
 
 			case 36:
-				style = style.setForground(CYAN);
+				style = style.setForeground(CYAN);
 				break;
 
 			case 37:
-				style = style.setForground(WHITE_FOREGROUND);
+				style = style.setForeground(WHITE);
 				break;
 
 			case 39: //Foreground: Default
-				style = style.setForground(text.getDefaultStyle().getForground());
+				style = style.setForeground(text.getDefaultStyle());
 				break;
 
 			case 40:
@@ -991,7 +989,7 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			case 49: //Background: Default
-				style = style.setBackground(text.getDefaultStyle().getBackground());
+				style = style.setBackground(text.getDefaultStyle());
 				break;
 
 			case 38: // Foreground color defined by sequence
@@ -1016,7 +1014,7 @@ public class VT100Emulator implements ControlListener {
 		/**
 		 * @return the new style
 		 */
-		Style style();
+		TerminalStyle style();
 
 		/**
 		 * @return number of parameters consumed
@@ -1029,7 +1027,7 @@ public class VT100Emulator implements ControlListener {
 	 * @param params array of parameters, starting with 38 or 48 being the command
 	 * @param colorspace if a colorspace may be included (ITU T.416 mode)
 	 */
-	private ProcessExtendedColorsReturn processExtendedColors(CharSequence[] paramStrings, Style style,
+	private ProcessExtendedColorsReturn processExtendedColors(CharSequence[] paramStrings, TerminalStyle style,
 			boolean colorspace) {
 		int params[] = new int[paramStrings.length];
 		for (int i = 0; i < params.length; i++) {
@@ -1073,7 +1071,7 @@ public class VT100Emulator implements ControlListener {
 
 				RGB rgb = new RGB(r, g, b);
 				if (foreground) {
-					style = style.setForground(rgb);
+					style = style.setForeground(rgb);
 				} else {
 					style = style.setBackground(rgb);
 				}
@@ -1087,9 +1085,9 @@ public class VT100Emulator implements ControlListener {
 					index = params[2];
 				}
 				if (foreground) {
-					style = style.setForground(AnsiColorNames.table(index));
+					style = style.setForeground(index);
 				} else {
-					style = style.setBackground(AnsiColorNames.table(index));
+					style = style.setBackground(index);
 				}
 				consumed = Math.min(3, params.length);
 				break;
@@ -1101,11 +1099,11 @@ public class VT100Emulator implements ControlListener {
 			Logger.log("Missing color depth for " + params[0]); //$NON-NLS-1$
 		}
 
-		Style finalStyle = style;
+		TerminalStyle finalStyle = style;
 		int finalConsumed = consumed;
 		return new ProcessExtendedColorsReturn() {
 			@Override
-			public Style style() {
+			public TerminalStyle style() {
 				return finalStyle;
 			}
 

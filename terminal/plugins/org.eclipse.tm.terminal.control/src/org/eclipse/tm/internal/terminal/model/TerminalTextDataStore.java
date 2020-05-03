@@ -19,7 +19,7 @@ import java.util.List;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * This class is thread safe.
@@ -27,7 +27,7 @@ import org.eclipse.tm.terminal.model.Style;
  */
 public class TerminalTextDataStore implements ITerminalTextData {
 	private char[][] fChars;
-	private Style[][] fStyle;
+	private TerminalStyle[][] fStyle;
 	private int fWidth;
 	private int fHeight;
 	private int fMaxHeight;
@@ -37,7 +37,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 
 	public TerminalTextDataStore() {
 		fChars = new char[0][];
-		fStyle = new Style[0][];
+		fStyle = new TerminalStyle[0][];
 		fWidth = 0;
 	}
 
@@ -69,7 +69,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 			int h = 4 * height / 3;
 			if (fMaxHeight > 0 && h > fMaxHeight)
 				h = fMaxHeight;
-			fStyle = (Style[][]) resizeArray(fStyle, height);
+			fStyle = (TerminalStyle[][]) resizeArray(fStyle, height);
 			fChars = (char[][]) resizeArray(fChars, height);
 		}
 		// clean the new lines
@@ -106,16 +106,16 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	@Override
 	public LineSegment[] getLineSegments(int line, int column, int len) {
 		// get the styles and chars for this line
-		Style[] styles = fStyle[line];
+		TerminalStyle[] styles = fStyle[line];
 		char[] chars = fChars[line];
 		int col = column;
 		int n = column + len;
 
 		// expand the line if needed....
 		if (styles == null)
-			styles = new Style[n];
+			styles = new TerminalStyle[n];
 		else if (styles.length < n)
-			styles = (Style[]) resizeArray(styles, n);
+			styles = (TerminalStyle[]) resizeArray(styles, n);
 
 		if (chars == null)
 			chars = new char[n];
@@ -123,7 +123,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 			chars = (char[]) resizeArray(chars, n);
 
 		// and create the line segments
-		Style style = styles[column];
+		TerminalStyle style = styles[column];
 		List<LineSegment> segments = new ArrayList<>();
 		for (int i = column; i < n; i++) {
 			if (styles[i] != style) {
@@ -147,7 +147,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	}
 
 	@Override
-	public Style getStyle(int line, int column) {
+	public TerminalStyle getStyle(int line, int column) {
 		assert column < fWidth || throwRuntimeException();
 		if (fStyle[line] == null || column >= fStyle[line].length)
 			return null;
@@ -163,26 +163,26 @@ public class TerminalTextDataStore implements ITerminalTextData {
 			fChars[iLine] = (char[]) resizeArray(fChars[iLine], length);
 		}
 		if (fStyle[iLine] == null) {
-			fStyle[iLine] = new Style[length];
+			fStyle[iLine] = new TerminalStyle[length];
 		} else if (fStyle[iLine].length < length) {
-			fStyle[iLine] = (Style[]) resizeArray(fStyle[iLine], length);
+			fStyle[iLine] = (TerminalStyle[]) resizeArray(fStyle[iLine], length);
 		}
 	}
 
 	@Override
-	public void setChar(int line, int column, char c, Style style) {
+	public void setChar(int line, int column, char c, TerminalStyle style) {
 		ensureLineLength(line, column + 1);
 		fChars[line][column] = c;
 		fStyle[line][column] = style;
 	}
 
 	@Override
-	public void setChars(int line, int column, char[] chars, Style style) {
+	public void setChars(int line, int column, char[] chars, TerminalStyle style) {
 		setChars(line, column, chars, 0, chars.length, style);
 	}
 
 	@Override
-	public void setChars(int line, int column, char[] chars, int start, int len, Style style) {
+	public void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style) {
 		ensureLineLength(line, column + len);
 		for (int i = 0; i < len; i++) {
 			fChars[line][column + i] = chars[i + start];
@@ -262,7 +262,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		int n = source.getHeight();
 		if (getHeight() != n) {
 			fChars = new char[n][];
-			fStyle = new Style[n][];
+			fStyle = new TerminalStyle[n][];
 		}
 		for (int i = 0; i < n; i++) {
 			copyLine(source, i, i);
@@ -294,13 +294,13 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	}
 
 	@Override
-	public Style[] getStyles(int line) {
+	public TerminalStyle[] getStyles(int line) {
 		if (fStyle[line] == null)
 			return null;
 		return fStyle[line].clone();
 	}
 
-	public void setLine(int line, char[] chars, Style[] styles) {
+	public void setLine(int line, char[] chars, TerminalStyle[] styles) {
 		fChars[line] = chars.clone();
 		fStyle[line] = styles.clone();
 		fWrappedLines.clear(line);

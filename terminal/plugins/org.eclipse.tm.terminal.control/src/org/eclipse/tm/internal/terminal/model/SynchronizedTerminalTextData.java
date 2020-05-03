@@ -14,7 +14,7 @@ package org.eclipse.tm.internal.terminal.model;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * This is a decorator to make all access to
@@ -89,12 +89,12 @@ public class SynchronizedTerminalTextData implements ITerminalTextData {
 	}
 
 	@Override
-	synchronized public Style getStyle(int line, int column) {
+	synchronized public TerminalStyle getStyle(int line, int column) {
 		return fData.getStyle(line, column);
 	}
 
 	@Override
-	synchronized public Style[] getStyles(int line) {
+	synchronized public TerminalStyle[] getStyles(int line) {
 		return fData.getStyles(line);
 	}
 
@@ -114,17 +114,17 @@ public class SynchronizedTerminalTextData implements ITerminalTextData {
 	}
 
 	@Override
-	synchronized public void setChar(int line, int column, char c, Style style) {
+	synchronized public void setChar(int line, int column, char c, TerminalStyle style) {
 		fData.setChar(line, column, c, style);
 	}
 
 	@Override
-	synchronized public void setChars(int line, int column, char[] chars, int start, int len, Style style) {
+	synchronized public void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style) {
 		fData.setChars(line, column, chars, start, len, style);
 	}
 
 	@Override
-	synchronized public void setChars(int line, int column, char[] chars, Style style) {
+	synchronized public void setChars(int line, int column, char[] chars, TerminalStyle style) {
 		fData.setChars(line, column, chars, style);
 	}
 

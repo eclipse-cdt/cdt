@@ -114,6 +114,7 @@ be32 binary
 be32lib binary
 be64 binary
 be64lib binary
+*.bin binary
 exe binary
 exebig_g binary
 exe_g binary
@@ -129,6 +130,7 @@ le64lib binary
 output-1 text
 *.pda text
 *.rts text
+*.srec binary
 test_commands text
 
 # Other special files

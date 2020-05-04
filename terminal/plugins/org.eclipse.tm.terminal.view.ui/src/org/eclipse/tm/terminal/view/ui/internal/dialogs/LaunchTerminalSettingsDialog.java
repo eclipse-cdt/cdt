@@ -540,8 +540,10 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 	 */
 	protected void saveWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
-		if (settings != null && terminals != null) {
-			settings.put("terminalLabel", terminals.getText()); //$NON-NLS-1$
+		if (settings != null) {
+			if (terminals != null) {
+				settings.put("terminalLabel", terminals.getText()); //$NON-NLS-1$
+			}
 			this.settings.saveWidgetValues(settings, null);
 		}
 	}

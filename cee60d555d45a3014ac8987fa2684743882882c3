@@ -16,6 +16,24 @@
       "revId": "cee60d555d45a3014ac8987fa2684743882882c3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9d0d1883_b0653f88",
+        "filename": ".gitattributes",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-04T06:59:36Z",
+      "side": 1,
+      "message": "Thanks, Jonah!\nI marked it with \"text eol\u003dlf\" as SRecordExport creates it this way. \nIf current implementation \"always export .srec with LF\" looks wrong for you let\u0027s create another bugzilla ticket for it.",
+      "parentUuid": "3b4e76f7_de1a6f07",
+      "revId": "cee60d555d45a3014ac8987fa2684743882882c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.core.memory.transport.WriteMemory;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -31,17 +32,41 @@ import org.eclipse.osgi.util.NLS;
  */
 final class EmulateMemory implements WriteMemory, ReadMemory {
 
+	private final BigInteger addressible;
 	private final BigInteger base;
 	private final Map<BigInteger, byte[]> storage;
 
-	EmulateMemory(BigInteger base) {
-		storage = new LinkedHashMap<>();
+	EmulateMemory(BigInteger addressible, BigInteger base) {
+		this.addressible = addressible;
 		this.base = base;
+		this.storage = new LinkedHashMap<>();
 	}
 
 	@Override
-	public byte[] from(BigInteger offset) throws DebugException {
-		return Optional.ofNullable(storage.get(offset)).orElseThrow(() -> failed(offset));
+	public MemoryByte[] from(BigInteger offset, long units) throws DebugException {
+		int length = (int) (units * addressible.longValue());
+		MemoryByte[] result = new MemoryByte[length];
+		int i = 0;
+		while (i < length) {
+			BigInteger increment = BigInteger.valueOf(i);
+			byte[] raw = Optional.ofNullable(storage.get(offset.add(increment))).orElse(new byte[0]);
+			int obtained = raw.length;
+			if (obtained > 0) {
+				for (int j = 0; j < obtained; j++) {
+					result[i + j] = new MemoryByte(raw[j]);
+				}
+				i = i + obtained;
+			} else {
+				//unreachable with current test data
+				MemoryByte unavailable = new MemoryByte();
+				unavailable.setReadable(false);
+				for (int j = i; j < length; j++) {
+					result[i + j] = unavailable;
+				}
+				i = length;
+			}
+		}
+		return result;
 	}
 
 	@Override

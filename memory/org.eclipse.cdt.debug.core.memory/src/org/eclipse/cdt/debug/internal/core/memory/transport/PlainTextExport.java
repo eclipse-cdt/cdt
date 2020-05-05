@@ -15,25 +15,20 @@
 package org.eclipse.cdt.debug.internal.core.memory.transport;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.core.memory.transport.ExportRequest;
 import org.eclipse.cdt.debug.core.memory.transport.FileExport;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.MemoryByte;
 
-public final class PlainTextExport extends FileExport<FileWriter> {
+public final class PlainTextExport extends FileExport {
 
 	public PlainTextExport(File output, ExportRequest request) {
 		super(output, request);
-	}
-
-	@Override
-	protected FileWriter output(File file) throws IOException {
-		file.getParentFile().mkdirs();
-		return new FileWriter(file);
 	}
 
 	@Override
@@ -49,7 +44,7 @@ public final class PlainTextExport extends FileExport<FileWriter> {
 	}
 
 	@Override
-	protected void transfer(FileWriter output, BigInteger factor, IProgressMonitor monitor)
+	protected void transfer(OutputStream output, BigInteger factor, IProgressMonitor monitor)
 			throws IOException, DebugException {
 		// These variables control how the output will be formatted
 		// The output data is split by chunks of 1 addressable unit size.
@@ -69,17 +64,18 @@ public final class PlainTextExport extends FileExport<FileWriter> {
 					buf.append(" "); //$NON-NLS-1$
 				}
 				BigInteger from = transferAddress.add(dataCellSize.multiply(BigInteger.valueOf(i)));
-				byte[] bytes = read.from(from);
+				MemoryByte[] bytes = read.from(from, dataCellSize.longValue());
 				for (int byteIndex = 0; byteIndex < bytes.length; byteIndex++) {
-					String bString = BigInteger.valueOf(0xFF & bytes[byteIndex]).toString(16);
+					//FIXME: check MemoryByte#isReadable
+					String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
 					if (bString.length() == 1) {
 						buf.append("0"); //$NON-NLS-1$
 					}
 					buf.append(bString);
 				}
 			}
-			output.write(buf.toString().toUpperCase());
-			output.write("\n"); //$NON-NLS-1$
+			output.write(buf.toString().toUpperCase().getBytes());
+			output.write("\n".getBytes()); //$NON-NLS-1$
 			transferAddress = transferAddress.add(length);
 			jobCount = jobCount.add(BigInteger.ONE);
 			if (jobCount.compareTo(factor) == 0) {

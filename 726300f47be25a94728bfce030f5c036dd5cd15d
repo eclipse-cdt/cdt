@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0375c161_106a62d0",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/internal/core/memory/transport/SRecordExport.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2020-05-05T07:57:30Z",
+      "side": 1,
+      "message": "Alexander, I\u0027ve just noticed this change. It appears to undo my recent work on bug 390897. OK if I revert this part of your patch?",
+      "revId": "726300f47be25a94728bfce030f5c036dd5cd15d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

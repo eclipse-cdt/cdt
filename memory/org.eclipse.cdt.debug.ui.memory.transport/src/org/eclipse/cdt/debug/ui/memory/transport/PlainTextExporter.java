@@ -18,7 +18,7 @@ import java.io.File;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.core.memory.transport.ExportRequest;
-import org.eclipse.cdt.debug.core.memory.transport.ReadMemory;
+import org.eclipse.cdt.debug.core.memory.transport.IReadMemory;
 import org.eclipse.cdt.debug.internal.core.memory.transport.PlainTextExport;
 import org.eclipse.cdt.debug.internal.core.memory.transport.ReadMemoryBlock;
 import org.eclipse.cdt.debug.internal.core.memory.transport.TransportJob;
@@ -451,7 +451,7 @@ public class PlainTextExporter implements IMemoryExporter {
 
 	@Override
 	public void exportMemory() {
-		ReadMemory read = new ReadMemoryBlock((IMemoryBlockExtension) fMemoryBlock);
+		IReadMemory read = new ReadMemoryBlock((IMemoryBlockExtension) fMemoryBlock);
 		BigInteger addressable = new AddressableSize((IMemoryBlockExtension) fMemoryBlock).get();
 		ExportRequest request = new ExportRequest(fStartAddress, fEndAddress, addressable, read);
 		PlainTextExport memoryExport = new PlainTextExport(fOutputFile, request);

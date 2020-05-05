@@ -13,8 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.memory.transport;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.internal.core.memory.transport.Messages;
@@ -32,12 +35,12 @@ import org.osgi.framework.FrameworkUtil;
  *
  * @since 0.1
  */
-public abstract class FileExport<O extends AutoCloseable> implements ICoreRunnable {
+public abstract class FileExport implements ICoreRunnable {
 
 	protected final BigInteger start;
 	protected final BigInteger end;
 	protected final BigInteger addressable;
-	protected final ReadMemory read;
+	protected final IReadMemory read;
 
 	private final File file;
 
@@ -51,7 +54,7 @@ public abstract class FileExport<O extends AutoCloseable> implements ICoreRunnab
 
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
-		try (O writer = output(file)) {
+		try (OutputStream output = output(file)) {
 			BigInteger jobs = end.subtract(start).divide(chunkSize());
 			BigInteger factor = BigInteger.ONE;
 			if (jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0) {
@@ -59,7 +62,8 @@ public abstract class FileExport<O extends AutoCloseable> implements ICoreRunnab
 				jobs = jobs.divide(factor);
 			}
 			monitor.beginTask(Messages.FileExport_task_transferring, jobs.intValue());
-			transfer(writer, factor, monitor);
+			transfer(output, factor, monitor);
+			output.flush();
 		} catch (IOException ex) {
 			requestFailed(Messages.FileExport_e_write_file, ex);
 		} catch (DebugException ex) {
@@ -72,13 +76,16 @@ public abstract class FileExport<O extends AutoCloseable> implements ICoreRunnab
 	}
 
 	/**
-	 * Creates the writer for the given file
+	 * Creates the output stream for the given file
 	 *
 	 * @param file to export to
 	 * @return writer instance
 	 * @throws IOException
 	 */
-	protected abstract O output(File file) throws IOException;
+	protected OutputStream output(File file) throws IOException {
+		file.getParentFile().mkdirs();
+		return new BufferedOutputStream(new FileOutputStream(file));
+	}
 
 	/**
 	 * Determines the data chunk to use for export
@@ -87,7 +94,7 @@ public abstract class FileExport<O extends AutoCloseable> implements ICoreRunnab
 	 */
 	protected abstract BigInteger chunkSize();
 
-	protected abstract void transfer(O output, BigInteger factor, IProgressMonitor monitor)
+	protected abstract void transfer(OutputStream output, BigInteger factor, IProgressMonitor monitor)
 			throws IOException, DebugException;
 
 	protected String transferring(BigInteger length, BigInteger address) {

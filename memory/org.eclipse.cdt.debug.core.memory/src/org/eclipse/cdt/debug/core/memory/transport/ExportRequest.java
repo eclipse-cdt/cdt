@@ -27,9 +27,9 @@ public final class ExportRequest {
 	private final BigInteger start;
 	private final BigInteger end;
 	private final BigInteger addressable;
-	private final ReadMemory read;
+	private final IReadMemory read;
 
-	public ExportRequest(BigInteger start, BigInteger end, BigInteger addressable, ReadMemory read) {
+	public ExportRequest(BigInteger start, BigInteger end, BigInteger addressable, IReadMemory read) {
 		this.start = start;
 		this.end = end;
 		this.addressable = addressable;
@@ -64,7 +64,7 @@ public final class ExportRequest {
 	 *
 	 * @return reader
 	 */
-	public ReadMemory read() {
+	public IReadMemory read() {
 		return read;
 	}
 }

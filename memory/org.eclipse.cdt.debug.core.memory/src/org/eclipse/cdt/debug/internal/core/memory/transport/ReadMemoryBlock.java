@@ -27,21 +27,14 @@ import org.eclipse.debug.core.model.MemoryByte;
 public final class ReadMemoryBlock implements ReadMemory {
 
 	private final IMemoryBlockExtension memory;
-	private final long unit;
 
 	public ReadMemoryBlock(IMemoryBlockExtension memory) {
 		this.memory = memory;
-		this.unit = BigInteger.valueOf(1).longValue();
 	}
 
 	@Override
-	public byte[] from(BigInteger offset) throws DebugException {
-		MemoryByte[] received = memory.getBytesFromOffset(offset, unit);
-		byte[] bytes = new byte[received.length];
-		for (int i = 0; i < received.length; i++) {
-			bytes[i] = received[i].getValue();
-		}
-		return bytes;
+	public MemoryByte[] from(BigInteger offset, long units) throws DebugException {
+		return memory.getBytesFromOffset(offset, units);
 	}
 
 }

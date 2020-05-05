@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.core.memory.transport.ExportRequest;
 import org.eclipse.cdt.debug.core.memory.transport.FileExport;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.MemoryByte;
 
 public final class PlainTextExport extends FileExport<FileWriter> {
 
@@ -69,9 +70,10 @@ public final class PlainTextExport extends FileExport<FileWriter> {
 					buf.append(" "); //$NON-NLS-1$
 				}
 				BigInteger from = transferAddress.add(dataCellSize.multiply(BigInteger.valueOf(i)));
-				byte[] bytes = read.from(from);
+				MemoryByte[] bytes = read.from(from, dataCellSize.longValue());
 				for (int byteIndex = 0; byteIndex < bytes.length; byteIndex++) {
-					String bString = BigInteger.valueOf(0xFF & bytes[byteIndex]).toString(16);
+					//FIXME: check MemoryByte#isReadable
+					String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
 					if (bString.length() == 1) {
 						buf.append("0"); //$NON-NLS-1$
 					}

@@ -16,6 +16,7 @@ package org.eclipse.cdt.debug.core.memory.transport;
 import java.math.BigInteger;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.MemoryByte;
 
 /**
  * Reads an array of bytes using the given offset
@@ -25,12 +26,17 @@ import org.eclipse.debug.core.DebugException;
 public interface ReadMemory {
 
 	/**
-	 * Reads an array of bytes from a memory starting from the given offset.
+	 * Reads an array of bytes from a memory starting from the given offset. If requested to retrieve data beyond the memory
+	 * boundaries, implementations should return memory bytes with the <code>READABLE</code> bit turned off for each byte outside the
+	 * of the accessible range. An exception should not be thrown in this case.
 	 *
-	 * @param offset
-	 * @return the obtained data
-	 * @throws DebugException
+	 * @param offset zero based offset at which to start retrieving bytes in terms of addressable units
+	 * @param units the number of addressable units to retrieve
+	 * @return the obtained data, {@link MemoryByte#isReadable()} needs to be checked
+	 * @throws DebugException if unable to retrieve the specified bytes due to a failure communicating with the target
+	 *
+	 * @see {@link MemoryByte}
 	 */
-	byte[] from(BigInteger offset) throws DebugException;
+	MemoryByte[] from(BigInteger offset, long units) throws DebugException;
 
 }

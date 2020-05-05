@@ -15,24 +15,20 @@
 package org.eclipse.cdt.debug.internal.core.memory.transport;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.core.memory.transport.ExportRequest;
 import org.eclipse.cdt.debug.core.memory.transport.FileExport;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.MemoryByte;
 
-public final class RAWBinaryExport extends FileExport<FileOutputStream> {
+public final class RAWBinaryExport extends FileExport {
 
 	public RAWBinaryExport(File input, ExportRequest request) {
 		super(input, request);
-	}
-
-	@Override
-	protected FileOutputStream output(File file) throws IOException {
-		return new FileOutputStream(file);
 	}
 
 	@Override
@@ -41,7 +37,7 @@ public final class RAWBinaryExport extends FileExport<FileOutputStream> {
 	}
 
 	@Override
-	protected void transfer(FileOutputStream output, BigInteger factor, IProgressMonitor monitor)
+	protected void transfer(OutputStream output, BigInteger factor, IProgressMonitor monitor)
 			throws IOException, DebugException {
 		BigInteger transferAddress = start;
 		BigInteger jobCount = BigInteger.ZERO;
@@ -52,8 +48,11 @@ public final class RAWBinaryExport extends FileExport<FileOutputStream> {
 				length = end.subtract(transferAddress);
 			}
 			monitor.subTask(transferring(length, transferAddress));
-			byte[] byteValues = read.from(transferAddress);
-			output.write(byteValues);
+			MemoryByte[] byteValues = read.from(transferAddress, length.longValue() / addressable.longValue());
+			for (MemoryByte memoryByte : byteValues) {
+				//FIXME: check MemoryByte#isReadable
+				output.write(memoryByte.getValue());
+			}
 			transferAddress = transferAddress.add(length);
 			jobCount = jobCount.add(BigInteger.ONE);
 			if (jobCount.compareTo(factor) == 0) {

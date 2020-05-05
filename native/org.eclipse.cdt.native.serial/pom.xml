@@ -23,7 +23,7 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <version>1.1.400-SNAPSHOT</version>
+  <version>1.1.401-SNAPSHOT</version>
   <artifactId>org.eclipse.cdt.native.serial</artifactId>
   <packaging>eclipse-plugin</packaging>
 

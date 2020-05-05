@@ -15,24 +15,20 @@
 package org.eclipse.cdt.debug.internal.core.memory.transport;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.core.memory.transport.ExportRequest;
 import org.eclipse.cdt.debug.core.memory.transport.FileExport;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.MemoryByte;
 
-public final class SRecordExport extends FileExport<FileWriter> {
+public final class SRecordExport extends FileExport {
 
 	public SRecordExport(File input, ExportRequest request) {
 		super(input, request);
-	}
-
-	@Override
-	protected FileWriter output(File file) throws IOException {
-		return new FileWriter(file);
 	}
 
 	@Override
@@ -42,18 +38,19 @@ public final class SRecordExport extends FileExport<FileWriter> {
 	}
 
 	@Override
-	protected void transfer(FileWriter output, BigInteger factor, IProgressMonitor monitor)
+	protected void transfer(OutputStream output, BigInteger factor, IProgressMonitor monitor)
 			throws IOException, DebugException {
 		final BigInteger DATA_PER_RECORD = chunkSize();
+		final BigInteger DATA_PER_TRANSFER = BigInteger.valueOf(4096).multiply(DATA_PER_RECORD);
 		BigInteger jobCount = BigInteger.ZERO;
 		BigInteger transferAddress = start;
 		while (transferAddress.compareTo(end) < 0 && !monitor.isCanceled()) {
-			BigInteger length = DATA_PER_RECORD;
+			BigInteger length = DATA_PER_TRANSFER;
 			if (end.subtract(transferAddress).compareTo(length) < 0) {
 				length = end.subtract(transferAddress);
 			}
 			monitor.subTask(transferring(length, transferAddress));
-			byte[] bytes = read.from(transferAddress);
+			MemoryByte[] bytes = read.from(transferAddress, length.longValue() / addressable.longValue());
 			BigInteger sRecordAddress = transferAddress;
 			BigInteger sRecordEndAddress = transferAddress.add(length);
 			while (sRecordAddress.compareTo(sRecordEndAddress) < 0 && !monitor.isCanceled()) {
@@ -61,7 +58,7 @@ public final class SRecordExport extends FileExport<FileWriter> {
 				if (sRecordEndAddress.subtract(sRecordAddress).compareTo(sRecordDataLength) < 0) {
 					sRecordDataLength = end.subtract(sRecordAddress);
 				}
-				output.write("S3"); // FIXME 4 byte address //$NON-NLS-1$
+				output.write("S3".getBytes()); // FIXME 4 byte address //$NON-NLS-1$
 
 				StringBuilder buf = new StringBuilder();
 				BigInteger sRecordLength = BigInteger.valueOf(4); // address size
@@ -80,7 +77,8 @@ public final class SRecordExport extends FileExport<FileWriter> {
 				final int byteOffset = sRecordAddress.subtract(transferAddress).intValue();
 				final int byteLength = byteOffset + sRecordDataLength.intValue();
 				for (int byteIndex = byteOffset; byteIndex < byteLength; byteIndex++) {
-					String bString = BigInteger.valueOf(0xFF & bytes[byteIndex]).toString(16);
+					//FIXME: check MemoryByte#isReadable
+					String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
 					if (bString.length() == 1) {
 						buf.append("0"); //$NON-NLS-1$
 					}
@@ -101,8 +99,8 @@ public final class SRecordExport extends FileExport<FileWriter> {
 					buf.append("0"); //$NON-NLS-1$
 				}
 				buf.append(bString);
-				output.write(buf.toString().toUpperCase());
-				output.write("\n"); //$NON-NLS-1$
+				output.write(buf.toString().toUpperCase().getBytes());
+				output.write("\n".getBytes()); //$NON-NLS-1$
 				sRecordAddress = sRecordAddress.add(sRecordDataLength);
 				jobCount = jobCount.add(BigInteger.ONE);
 				if (jobCount.compareTo(factor) == 0) {

@@ -16,6 +16,7 @@ package org.eclipse.cdt.debug.core.memory.transport;
 import java.math.BigInteger;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.MemoryByte;
 
 /**
  * Reads an array of bytes using the given offset
@@ -28,9 +29,10 @@ public interface ReadMemory {
 	 * Reads an array of bytes from a memory starting from the given offset.
 	 *
 	 * @param offset
+	 * @param units the number of addressable units to retrieve
 	 * @return the obtained data
 	 * @throws DebugException
 	 */
-	byte[] from(BigInteger offset) throws DebugException;
+	MemoryByte[] from(BigInteger offset, long units) throws DebugException;
 
 }

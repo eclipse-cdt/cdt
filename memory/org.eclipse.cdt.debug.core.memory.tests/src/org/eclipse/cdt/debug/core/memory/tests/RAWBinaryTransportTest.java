@@ -58,7 +58,7 @@ public final class RAWBinaryTransportTest {
 	}
 
 	private void transport(String name, BigInteger end) throws CoreException, IOException {
-		EmulateMemory memory = new EmulateMemory(base);
+		EmulateMemory memory = new EmulateMemory(BigInteger.valueOf(1), base);
 		Consumer<BigInteger> scroll = new CollectScrolls();
 		File input = new InputFile(name).get();
 		new RAWBinaryImport(input, new ImportRequest(base, start, memory), scroll)//

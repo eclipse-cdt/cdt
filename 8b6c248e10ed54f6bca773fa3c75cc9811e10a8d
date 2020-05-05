@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6dc28719_e2af272e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractBuiltinSpecsDetector.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 910,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2020-05-05T22:32:09Z",
+      "side": 1,
+      "message": "Looks like this will be a pain to debug should something go wrong here",
+      "range": {
+        "startLine": 900,
+        "startChar": 6,
+        "endLine": 910,
+        "endChar": 7
+      },
+      "revId": "8b6c248e10ed54f6bca773fa3c75cc9811e10a8d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2228164c_62f646cb",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/ToolchainBuiltinSpecsDetector.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2020-05-05T22:32:09Z",
+      "side": 1,
+      "message": "This looks like it could be very difficult to debug compared to the original.",
+      "range": {
+        "startLine": 142,
+        "startChar": 4,
+        "endLine": 150,
+        "endChar": 7
+      },
+      "revId": "8b6c248e10ed54f6bca773fa3c75cc9811e10a8d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

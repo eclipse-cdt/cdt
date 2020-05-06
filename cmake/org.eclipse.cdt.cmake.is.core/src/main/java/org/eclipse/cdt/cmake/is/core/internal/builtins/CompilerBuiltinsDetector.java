@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018-2019 Martin Weber.
+ * Copyright (c) 2018-2020 Martin Weber.
  *
  * Content is provided to you under the terms and conditions of the Eclipse Public License Version 2.0 "EPL".
  * A copy of the EPL is available at http://www.eclipse.org/legal/epl-2.0.
@@ -9,42 +9,38 @@
 
 package org.eclipse.cdt.cmake.is.core.internal.builtins;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.eclipse.cdt.cmake.is.core.IRawIndexerInfo;
 import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsOutputProcessor;
 import org.eclipse.cdt.cmake.is.core.builtins.OutputSniffer;
 import org.eclipse.cdt.cmake.is.core.internal.Plugin;
+import org.eclipse.cdt.cmake.is.core.language.settings.providers.PreferenceConstants;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * Detects preprocessor macros and include paths that are built-in to a
@@ -63,77 +59,66 @@ public class CompilerBuiltinsDetector {
 	@SuppressWarnings("nls")
 	private static final String MARKER_ID = Plugin.PLUGIN_ID + ".CompilerBuiltinsDetectorMarker";
 
-	private ICConfigurationDescription cfgDescription;
-
-	/** environment variables, lazily instantiated */
-	private String[] envp;
-
-	private final String languageId;
-
+	private final String sourceFileExtension;
 	private final String command;
-
-	private List<String> builtinsDetectionArgs;
-
+	private final List<String> builtinsDetectionArgs;
 	private final IBuiltinsDetectionBehavior builtinsDetectionBehavior;
 
+	private IBuildConfiguration buildConfiguration;
+	private java.nio.file.Path buildDirectory;
+
 	/**
-	 * @param cfgDescription            configuration description.
-	 * @param languageId                language id
 	 * @param builtinsDetectionBehavior how compiler built-ins are to be detected
 	 * @param command                   the compiler command (argument # 0)
 	 * @param builtinsDetectionArgs     the compiler arguments from the command-line
 	 *                                  that affect built-in detection. For the GNU
 	 *                                  compilers, these are options like
 	 *                                  {@code --sysroot} and options that specify
-	 *                                  the language's standard ({@code -std=c++17}.
+	 *                                  the language's standard (e.g.
+	 *                                  {@code -std=c++17}).
+	 * @param sourceFileExtension       the extension of the source file name
 	 */
 	@SuppressWarnings("nls")
-	public CompilerBuiltinsDetector(ICConfigurationDescription cfgDescription, String languageId,
-			IBuiltinsDetectionBehavior builtinsDetectionBehavior, String command, List<String> builtinsDetectionArgs) {
-		this.languageId = Objects.requireNonNull(languageId, "languageId");
+	public CompilerBuiltinsDetector(IBuiltinsDetectionBehavior builtinsDetectionBehavior, String command,
+			List<String> builtinsDetectionArgs, String sourceFileExtension) {
+		this.sourceFileExtension = Objects.requireNonNull(sourceFileExtension, "sourceFileExtension");
 		this.builtinsDetectionBehavior = Objects.requireNonNull(builtinsDetectionBehavior, "builtinsDetectionBehavior");
 		this.command = Objects.requireNonNull(command, "command");
 		this.builtinsDetectionArgs = Objects.requireNonNull(builtinsDetectionArgs, "builtinsDetectionArgs");
-		this.cfgDescription = Objects.requireNonNull(cfgDescription);
 	}
 
 	/**
-	 * Gets the language ID of this detector.
-	 */
-	public String getLanguageId() {
-		return languageId;
-	}
-
-	/**
-	 * Run built-in detection builtinsDetectionArgs.
+	 * Runs built-in detection.
 	 *
-	 * @param withConsole whether to show a console for the builtinsDetectionArgs
-	 *                    output
-	 *
+	 * @param buildConfiguration the project build configuration to use
+	 * @param theBuildDirectory  the build directory of the build configuration
+	 * @param launcher           the launcher that can run in docker container, if
+	 *                           any
+	 * @param console            the console to print the compiler output to or
+	 *                           <code>null</code> if a separate console is to be
+	 *                           allocated.
 	 * @throws CoreException
 	 */
-	public List<ICLanguageSettingEntry> run(boolean withConsole) throws CoreException {
-		ProcessingContext entries = new ProcessingContext();
+	public IRawIndexerInfo detectBuiltins(IBuildConfiguration buildConfiguration, java.nio.file.Path theBuildDirectory,
+			ICommandLauncher launcher, IConsole console, IProgressMonitor monitor) throws CoreException {
+		this.buildConfiguration = Objects.requireNonNull(buildConfiguration, "buildConfiguration"); //$NON-NLS-1$
+		this.buildDirectory = Objects.requireNonNull(theBuildDirectory, "buildDirectory"); //$NON-NLS-1$
 
-		final List<String> argList = getCompilerArguments(languageId);
-		argList.addAll(builtinsDetectionArgs);
-
-		IConsole console = null;
-		if (withConsole) {
-			console = startOutputConsole();
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
 		}
 
-		IProject project = cfgDescription.getProjectDescription().getProject();
-		// get the launcher that runs in docker container, if any
-		ICommandLauncher launcher = ManagedBuildManager.getConfigurationForDescription(cfgDescription)
-				.getEditableBuilder().getCommandLauncher();
-		launcher.setProject(project);
+		RawIndexerInfo result = new RawIndexerInfo();
+
+		final List<String> argList = getCompilerArguments();
+		argList.addAll(builtinsDetectionArgs);
+
+		console = startOutputConsole(console);
+
+		launcher.setProject(buildConfiguration.getProject());
 		launcher.showCommand(console != null);
-		final NullProgressMonitor monitor = new NullProgressMonitor();
-		final IPath builderCWD = cfgDescription.getBuildSetting().getBuilderCWD();
-		IPath buildRoot = ResourcesPlugin.getWorkspace().getRoot().getFolder(builderCWD).getLocation();
 		final Process proc = launcher.execute(new Path(command), argList.toArray(new String[argList.size()]), getEnvp(),
-				buildRoot, monitor);
+				new Path(this.buildDirectory.toString()), monitor);
 		if (proc != null) {
 			try {
 				// Close the input of the process since we will never write to it
@@ -141,13 +126,22 @@ public class CompilerBuiltinsDetector {
 			} catch (IOException e) {
 			}
 			// NOTE: we need 2 of these, since the output streams are not synchronized,
-			// causing loss of
-			// the internal processor state
+			// causing loss of the output processors' internal state
 			final IBuiltinsOutputProcessor bopOut = builtinsDetectionBehavior.createCompilerOutputProcessor();
 			final IBuiltinsOutputProcessor bopErr = builtinsDetectionBehavior.createCompilerOutputProcessor();
+			long start = System.currentTimeMillis();
 			int state = launcher.waitAndRead(
-					new OutputSniffer(bopOut, console == null ? null : console.getOutputStream(), entries),
-					new OutputSniffer(bopErr, console == null ? null : console.getErrorStream(), entries), monitor);
+					new OutputSniffer(bopOut, console == null ? null : console.getOutputStream(), result),
+					new OutputSniffer(bopErr, console == null ? null : console.getErrorStream(), result), monitor);
+			if (console != null) {
+				final ConsoleOutputStream cis = console.getInfoStream();
+				try {
+					cis.write(String
+							.format("Detecting compiler built-ins took %d ms.\n", System.currentTimeMillis() - start)
+							.getBytes());
+				} catch (IOException ignore) {
+				}
+			}
 			if (state != ICommandLauncher.COMMAND_CANCELED) {
 				// check exit status
 				final int exitValue = proc.exitValue();
@@ -161,17 +155,16 @@ public class CompilerBuiltinsDetector {
 			// process start failed
 			createMarker(launcher.getErrorMessage());
 		}
-		return entries.getSettingEntries();
+		return result;
 	}
 
 	/**
-	 * Gets the compiler-arguments corresponding to the specified language ID and
-	 * the builtinDetection.
+	 * Gets the compiler-arguments corresponding to the builtinDetection.
 	 */
-	private List<String> getCompilerArguments(String languageId) {
+	private List<String> getCompilerArguments() {
 		List<String> args = new ArrayList<>();
 		args.addAll(builtinsDetectionBehavior.getBuiltinsOutputEnablingArgs());
-		String inputFile = getInputFile(languageId);
+		String inputFile = getInputFile();
 		if (inputFile != null) {
 			args.add(inputFile);
 		}
@@ -179,136 +172,99 @@ public class CompilerBuiltinsDetector {
 	}
 
 	/**
-	 * Get array of environment variables in format "var=value".
-	 */
-	@SuppressWarnings("nls")
-	private String[] getEnvp() {
-		if (envp == null) {
-			// On POSIX (Linux, UNIX) systems reset language variables to default
-			// (English)
-			// with UTF-8 encoding since GNU compilers can handle only UTF-8
-			// characters.
-			// Include paths with locale characters will be handled properly
-			// regardless
-			// of the language as long as the encoding is set to UTF-8.
-			// English language is set for parser because it relies on English
-			// messages
-			// in the output of the 'gcc -v' builtinsDetectionArgs.
-
-			List<String> env = new ArrayList<>(Arrays.asList(getEnvp(cfgDescription)));
-			for (Iterator<String> iterator = env.iterator(); iterator.hasNext();) {
-				String var = iterator.next();
-				if (var.startsWith("LANGUAGE" + '=') || var.startsWith("LC_ALL" + '=')) {
-					iterator.remove();
-				}
-			}
-			env.add("LANGUAGE" + "=en"); // override for GNU gettext //$NON-NLS-1$
-			env.add("LC_ALL" + "=C.UTF-8"); // for other parts of the //$NON-NLS-1$
-											// system libraries
-			envp = env.toArray(new String[env.size()]);
-		}
-		return envp;
-	}
-
-	/**
 	 * Get environment variables from configuration as array of "var=value" suitable
 	 * for using as "envp" with Runtime.exec(String[] cmdarray, String[] envp, File
 	 * dir)
 	 *
-	 * @param cfgDescription configuration description.
 	 * @return String array of environment variables in format "var=value". Does not
 	 *         return {@code null}.
 	 */
 	@SuppressWarnings("nls")
-	private static String[] getEnvp(ICConfigurationDescription cfgDescription) {
+	private String[] getEnvp() {
 		IEnvironmentVariableManager mngr = CCorePlugin.getDefault().getBuildEnvironmentManager();
-		IEnvironmentVariable[] vars = mngr.getVariables(cfgDescription, true);
+		IEnvironmentVariable[] vars = mngr.getVariables(buildConfiguration, true);
 		// Convert into envp strings
 		Set<String> strings = new HashSet<>(vars.length);
 		for (IEnvironmentVariable var : vars) {
+			if (var.getName().startsWith("LANGUAGE" + '=') || var.getName().startsWith("LC_ALL" + '='))
+				continue;
 			strings.add(var.getName() + '=' + var.getValue());
 		}
-		// On POSIX (Linux, UNIX) systems reset language variables to default
-		// (English)
+		// On POSIX (Linux, UNIX) systems reset language variables to default (English)
 		// with UTF-8 encoding since GNU compilers can handle only UTF-8 characters.
 		// Include paths with locale characters will be handled properly regardless
 		// of the language as long as the encoding is set to UTF-8.
 		// English language is set for parser because it relies on English messages
 		// in the output of the 'gcc -v' builtinsDetectionArgs.
 		strings.add("LANGUAGE" + "=en"); // override for GNU gettext
-		strings.add("LC_ALL" + "=C.UTF-8"); // for other parts of the system
-											// libraries
+		strings.add("LC_ALL" + "=C.UTF-8"); // for other parts of the system libraries
 
 		return strings.toArray(new String[strings.size()]);
 	}
 
 	/**
-	 * Get path to source file which is the input for the compiler.
+	 * Gets a path to the source file which is the input for the compiler. The file
+	 * will be created with no content in the build directory.
 	 *
-	 * @param languageId the language ID.
-	 * @return full path to the source file.
+	 * @return the full file system path of the source file
 	 */
-	private String getInputFile(String languageId) {
-		String specExt = builtinsDetectionBehavior.getInputFileExtension(languageId);
-		if (specExt != null) {
-			String specFileName = "detect_compiler_builtins" + '.' + specExt; //$NON-NLS-1$
-
-			final IPath builderCWD = cfgDescription.getBuildSetting().getBuilderCWD();
-			IPath fileLocation = ResourcesPlugin.getWorkspace().getRoot().getFolder(builderCWD).getLocation()
-					.append(specFileName);
-
-			File specFile = new java.io.File(fileLocation.toOSString());
-			if (!specFile.exists()) {
-				try {
-					// In the typical case it is sufficient to have an empty file.
-					specFile.getParentFile().mkdirs(); // no build ran yet, must create dirs
-					specFile.createNewFile();
-				} catch (IOException e) {
-					Plugin.getDefault().getLog().log(new Status(IStatus.ERROR, Plugin.PLUGIN_ID, "getInputFile()", e));
-				}
+	private String getInputFile() {
+		String specFileName = "detect_compiler_builtins" + '.' + sourceFileExtension; //$NON-NLS-1$
+		java.nio.file.Path specFile = buildDirectory.resolve(specFileName);
+		if (!Files.exists(specFile)) {
+			try {
+				// In the typical case it is sufficient to have an empty file.
+				Files.createDirectories(specFile.getParent()); // no build ran yet, must create dirs
+				Files.createFile(specFile);
+			} catch (IOException e) {
+				Plugin.getDefault().getLog().log(new Status(IStatus.ERROR, Plugin.PLUGIN_ID, "getInputFile()", e)); //$NON-NLS-1$
 			}
-
-			return fileLocation.toString();
 		}
-		return null;
+
+		return specFile.toString();
 	}
 
 	private void createMarker(String message) throws CoreException {
-		IMarker marker = cfgDescription.getProjectDescription().getProject().createMarker(MARKER_ID);
+		IMarker marker = buildConfiguration.getProject().createMarker(MARKER_ID);
 		marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
 		marker.setAttribute(IMarker.MESSAGE, message);
 	}
 
 	/**
-	 * Creates and starts the provider console.
+	 * Creates and starts the output console.
 	 *
 	 * @return CDT console or <code>null</code>
 	 *
 	 * @throws CoreException
 	 */
-	private IConsole startOutputConsole() throws CoreException {
-		IConsole console = null;
+	@SuppressWarnings("nls")
+	private IConsole startOutputConsole(IConsole console) throws CoreException {
+		IPreferenceStore prefStore = Plugin.getDefault().getPreferenceStore();
+		if (!prefStore.getBoolean(PreferenceConstants.P_WITH_CONSOLE)) {
+			return null; // no console to allocate
+		} else {
+			IProject project = buildConfiguration.getProject();
+			if (console != null) {
+				String consoleId = CONSOLE_ID + "." + project.getName();
+				console = CCorePlugin.getDefault().getConsole(CONSOLE_ID, consoleId, null, null);
+			}
 
-		ILanguage ld = LanguageManager.getInstance().getLanguage(languageId);
-		if (ld != null) {
-			String consoleId = CONSOLE_ID + '.' + languageId;
-			console = CCorePlugin.getDefault().getConsole(CONSOLE_ID, consoleId, null, null);
-			final IProject project = cfgDescription.getProjectDescription().getProject();
 			console.start(project);
 			try {
 				final ConsoleOutputStream cis = console.getInfoStream();
 				cis.write(SimpleDateFormat.getTimeInstance().format(new Date()).getBytes());
 				cis.write(" Detecting compiler built-ins: ".getBytes());
 				cis.write(project.getName().getBytes());
-				cis.write("::".getBytes());
-				cis.write(cfgDescription.getConfiguration().getName().getBytes());
+				if (!buildConfiguration.getName().isEmpty()) {
+					cis.write("::".getBytes());
+					cis.write(buildConfiguration.getName().getBytes());
+				}
 				cis.write(" for ".getBytes());
-				cis.write(ld.getName().getBytes());
-				cis.write("\n".getBytes());
+				cis.write(sourceFileExtension.getBytes());
+				cis.write(" files\n".getBytes());
 			} catch (IOException ignore) {
 			}
 		}
-
 		return console;
 	}
 

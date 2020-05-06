@@ -46,16 +46,4 @@ public class MaybeGccBuiltinDetectionBehavior implements IBuiltinsDetectionBehav
 		// detection
 		return true;
 	}
-
-	@SuppressWarnings("nls")
-	@Override
-	public String getInputFileExtension(String languageId) {
-		if (languageId.equals("org.eclipse.cdt.core.gcc")) {
-			return "c";
-		}
-		if (languageId.equals("org.eclipse.cdt.core.g++")) {
-			return "cpp";
-		}
-		return null; // no input file required for built-in detection
-	}
 }

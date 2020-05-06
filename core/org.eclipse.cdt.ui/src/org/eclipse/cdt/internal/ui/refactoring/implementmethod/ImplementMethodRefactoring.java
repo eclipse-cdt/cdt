@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeFactoryFactory;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -321,9 +323,19 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		 * we could miss the fully qualified name.
 		 */
 		if (declSpecifier instanceof ICPPASTNamedTypeSpecifier) {
-			ICPPASTQualifiedName qName = createQualifiedNameFor((IASTNamedTypeSpecifier) declSpecifier,
-					functionDeclarator, declarationParent, insertLocation, functionOffset);
-			((IASTNamedTypeSpecifier) declSpecifier).setName(qName);
+			IBinding binding = ((ICPPASTNamedTypeSpecifier) methodDeclaration.getDeclSpecifier()).getName()
+					.resolveBinding();
+			try {
+				if (binding.getScope().getKind() == EScopeKind.eClassType) {
+					if (!(((ICPPASTNamedTypeSpecifier) declSpecifier).getName() instanceof ICPPASTQualifiedName)) {
+						ICPPASTQualifiedName qName = createQualifiedNameFor((IASTNamedTypeSpecifier) declSpecifier,
+								functionDeclarator, declarationParent, insertLocation, functionOffset);
+						((IASTNamedTypeSpecifier) declSpecifier).setName(qName);
+					}
+				}
+			} catch (DOMException | CoreException e) {
+				CUIPlugin.log(e);
+			}
 		}
 
 		if (declSpecifier instanceof ICPPASTDeclSpecifier) {

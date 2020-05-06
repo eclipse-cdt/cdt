@@ -936,4 +936,21 @@ public class ImplementMethodRefactoringTest extends RefactoringTestBase {
 	public void testNoexpect_Bug562722() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//A.h
+	//
+	//struct Test {};
+	//class TestClass {
+	//public:
+	//	/*$*/Test foo();/*$$*/
+	//};
+	//
+
+	//A.cpp
+	//====================
+	//Test TestClass::foo() {
+	//}
+	public void testWithClassAsReturnType_Bug562896() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

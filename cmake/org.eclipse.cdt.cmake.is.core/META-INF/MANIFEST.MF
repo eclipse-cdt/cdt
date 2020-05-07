@@ -11,18 +11,14 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.cmake.is.core.internal.Plugin
 Export-Package: org.eclipse.cdt.cmake.is.core;x-internal:=true;uses:="org.eclipse.core.runtime,org.eclipse.cdt.core.settings.model,org.eclipse.cdt.cmake.is.core.builtins",
- org.eclipse.cdt.cmake.is.core.builtins;x-internal:=true;uses:="org.eclipse.cdt.core.settings.model"
+ org.eclipse.cdt.cmake.is.core.builtins;x-internal:=true;uses:="org.eclipse.cdt.core.settings.model",
+ org.eclipse.cdt.cmake.is.core.language.settings.providers;x-internal:=true
 Require-Bundle: org.eclipse.ui.workbench;bundle-version="3.8.0",
  org.eclipse.cdt.ui,
- org.eclipse.osgi,
  org.eclipse.core.resources;bundle-version="3.13.700",
  org.eclipse.core.runtime;bundle-version="3.17.100",
  org.eclipse.cdt.core,
- org.eclipse.cdt.managedbuilder.core;bundle-version="8.7.400",
- org.eclipse.swt;bundle-version="3.113.100",
  org.eclipse.jface,
- org.eclipse.osgi,
- org.eclipse.core.resources;bundle-version="3.13.700",
- org.eclipse.core.runtime;bundle-version="3.17.100",
- org.eclipse.swt;bundle-version="3.113.100"
+ com.google.gson,
+ org.apache.commons.io;bundle-version="2.6.0"
 Automatic-Module-Name: org.eclipse.cdt.cmake.is.core

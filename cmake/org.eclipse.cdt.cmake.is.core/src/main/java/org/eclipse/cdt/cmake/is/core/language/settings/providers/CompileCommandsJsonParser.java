@@ -12,21 +12,22 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.function.Predicate;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.eclipse.cdt.build.core.scannerconfig.ScannerConfigNature;
+import org.apache.commons.io.FilenameUtils;
 import org.eclipse.cdt.cmake.is.core.DefaultToolDetectionParticipant;
+import org.eclipse.cdt.cmake.is.core.IRawIndexerInfo;
 import org.eclipse.cdt.cmake.is.core.IToolCommandlineParser;
 import org.eclipse.cdt.cmake.is.core.IToolCommandlineParser.IResult;
 import org.eclipse.cdt.cmake.is.core.IToolDetectionParticipant;
@@ -37,83 +38,61 @@ import org.eclipse.cdt.cmake.is.core.internal.ParserDetection.ParserDetectionRes
 import org.eclipse.cdt.cmake.is.core.internal.Plugin;
 import org.eclipse.cdt.cmake.is.core.internal.StringUtil;
 import org.eclipse.cdt.cmake.is.core.internal.builtins.CompilerBuiltinsDetector;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
-import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
-import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.build.CBuildConfiguration;
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.widgets.Display;
-import org.w3c.dom.Element;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 /**
- * A ILanguageSettingsProvider that parses the file 'compile_commands.json'
- * produced by cmake when option {@code -DCMAKE_EXPORT_COMPILE_COMMANDS=ON} is
- * given.<br>
- * NOTE: This class misuses interface ICBuildOutputParser to detect when a build
- * did finish.<br>
- * NOTE: This class misuses interface ICListenerAgent to populate the
- * {@link #getSettingEntries setting entries} on workbench startup.
+ * Parses the file 'compile_commands.json' produced by cmake when option
+ * {@code -DCMAKE_EXPORT_COMPILE_COMMANDS=ON} is given and generates information
+ * about preprocessor symbols and include paths of the files being compiled for
+ * the CDT indexer.
  *
  * @author Martin Weber
  */
 /*
- * TODO delete this after integration into core build
+ * TODO introduce separate packages for consumers of this class and for
+ * implementors of the extension point (this package vs. packages
+ * org.eclipse.cdt.cmake.is.core, org.eclipse.cdt.cmake.is.core.builtins)
+ *
+ *
  */
-public class CompileCommandsJsonParser extends LanguageSettingsSerializableProvider
-		implements ILanguageSettingsEditableProvider, ICListenerAgent, ICBuildOutputParser, Cloneable {
+public class CompileCommandsJsonParser {
+	private static final boolean DEBUG_TIME = Boolean
+			.parseBoolean(Platform.getDebugOption(Plugin.PLUGIN_ID + "/debug/performance")); //$NON-NLS-1$
+	private static final boolean DEBUG_ENTRIES = Boolean
+			.parseBoolean(Platform.getDebugOption(Plugin.PLUGIN_ID + "/debug/detected.entries")); //$NON-NLS-1$
 	/**
-	 *
+	 * property to store the file modification time of the "compile_commands.json"
+	 * file
 	 */
-	static final String PROVIDER_ID = "org.eclipse.cdt.cmake.is.core.language.settings.providers.CompileCommandsJsonParser";
-
-	private static final ILog log = Plugin.getDefault().getLog();
-
-	/**
-	 * default regex string used for version pattern matching.
-	 *
-	 * @see #isVersionPatternEnabled()
-	 */
-	private static final String DEFALT_VERSION_PATTERN = "-?\\d+(\\.\\d+)*";
-	/** storage key for version pattern */
-	private static final String ATTR_PATTERN = "vPattern";
-	/** storage key for version pattern enabled */
-	private static final String ATTR_PATTERN_ENABLED = "vPatternEnabled";
+	private static final QualifiedName TIMESTAMP_COMPILE_COMMANDS_PROPERTY = new QualifiedName(null,
+			"timestamp:compile_commands.json"); //$NON-NLS-1$
 
 	private static final String WORKBENCH_WILL_NOT_KNOW_ALL_MSG = "Your workbench will not know all include paths and preprocessor defines.";
 
-	private static final String MARKER_ID = Plugin.PLUGIN_ID + ".CompileCommandsJsonParserMarker";
+	private static final String MARKER_ID = Plugin.PLUGIN_ID + ".CompileCommandsJsonParserMarker"; //$NON-NLS-1$
 
-	/**
-	 * Storage to keep settings entries
-	 */
-	private PerConfigLanguageSettingsStorage storage = new PerConfigLanguageSettingsStorage();
-
-	private ICConfigurationDescription currentCfgDescription;
+	private final CBuildConfiguration cBuildConfiguration;
+	private final IIndexerInfoConsumer indexerInfoConsumer;
 
 	/**
 	 * last known working tool detector and its tool option parsers or {@code null},
@@ -121,189 +100,112 @@ public class CompileCommandsJsonParser extends LanguageSettingsSerializableProvi
 	 */
 	private DetectorWithMethod lastDetector;
 
-	public CompileCommandsJsonParser() {
-	}
-
-	@Override
-	public void configureProvider(String id, String name, List<String> languages, List<ICLanguageSettingEntry> entries,
-			Map<String, String> properties) {
-		ArrayList<String> scope = new ArrayList<>();
-		scope.add("org.eclipse.cdt.core.gcc");
-		scope.add("org.eclipse.cdt.core.g++");
-		scope.addAll(ParserDetection.getCustomLanguages());
-		super.configureProvider(id, name, scope, entries, properties);
-	}
+	/**
+	 * markers for commands without a cmdline parser for the tool. just for error
+	 * reporting, no technical effect
+	 */
+	private Set<String> knownUnsupportedTools = new HashSet<>();
 
 	/**
-	 * Gets whether the parser will also try to detect compiler command that have a
-	 * trailing version-string in their name. If enabled, this parser will also try
-	 * to match for example {@code gcc-4.6} or {@code gcc-4.6.exe} if none of the
-	 * other patterns matched.
-	 *
-	 * @return {@code true} version pattern matching in command names is enabled,
-	 *         otherwise {@code false}
+	 * the raw scanner info results for each source file (source file name ->
+	 * IResult)
 	 */
-	public boolean isVersionPatternEnabled() {
-		return getPropertyBool(ATTR_PATTERN_ENABLED);
-	}
+	private Map<String, IRawIndexerInfo> fileResults;
 
 	/**
-	 * Sets whether version pattern matching is performed.
-	 *
-	 * @see #isVersionPatternEnabled()
+	 * minimized set of CompilerBuiltinsDetector to run. (detector key ->
+	 * CompilerBuiltinsDetector). Key is created by
+	 * {@link #makeBuiltinsDetectorKey(String, List, String)}.
 	 */
-	public void setVersionPatternEnabled(boolean enabled) {
-		setPropertyBool(ATTR_PATTERN_ENABLED, enabled);
-	}
+	private Map<String, CompilerBuiltinsDetector> builtinDetectorsToRun;
 
 	/**
-	 * Gets the regex pattern string used for version pattern matching.
-	 *
-	 * @see #isVersionPatternEnabled()
+	 * the built-ins detectors for each source file (source file name -> detector
+	 * key)
 	 */
-	public String getVersionPattern() {
-		String val = properties.get(ATTR_PATTERN);
-		if (val == null || val.isEmpty()) {
-			// provide a default pattern
-			val = DEFALT_VERSION_PATTERN;
-		}
-		return val;
-	}
+	private Map<String, String> fileToBuiltinDetectorLinks;
 
 	/**
-	 * Sets the regex pattern string used for version pattern matching.
+	 * Creates a new object that will try to parse the {@code compile_commands.json}
+	 * file in the build directory of the specified {@code CBuildConfiguration}.
 	 *
-	 * @see #isVersionPatternEnabled()
+	 * @param buildConfiguration  the CBuildConfiguration of the project
+	 * @param indexerInfoConsumer the objects that receives the indexer relevant
+	 *                            information for each source file
 	 */
-	public void setVersionPattern(String versionPattern) {
-		if (versionPattern == null || versionPattern.isEmpty() || versionPattern.equals(DEFALT_VERSION_PATTERN)) {
-			// do not store default pattern
-			properties.remove(ATTR_PATTERN);
-		} else {
-			setProperty(ATTR_PATTERN, versionPattern);
-		}
-	}
-
-	@Override
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc,
-			String languageId) {
-		if (cfgDescription == null || rc == null) {
-			// speed up, we do not provide global (workspace) lang settings..
-			return null;
-		}
-		TimestampedLanguageSettingsStorage store = storage.getSettingsStoreForConfig(cfgDescription);
-		String rcPath = null;
-		if (rc.getType() == IResource.FILE) {
-			rcPath = rc.getProjectRelativePath().toString();
-		}
-		return store.getSettingEntries(rcPath, languageId);
+	public CompileCommandsJsonParser(CBuildConfiguration buildConfiguration, IIndexerInfoConsumer indexerInfoConsumer) {
+		this.cBuildConfiguration = Objects.requireNonNull(buildConfiguration, "buildConfiguration");
+		this.indexerInfoConsumer = Objects.requireNonNull(indexerInfoConsumer, "indexerInfoConsumer");
 	}
 
 	/**
 	 * Parses the content of the 'compile_commands.json' file corresponding to the
 	 * specified configuration, if timestamps differ.
 	 *
-	 * @param enabled               {@code true} if this provider is present in the
-	 *                              project's list of settings providers, otherwise
-	 *                              false. If {@code false}, this method will just
-	 *                              determine the compiler-built-in processors and
-	 *                              not perform any command line parsing
-	 * @param initializingWorkbench {@code true} if the workbench is starting up. If
-	 *                              {@code true}, this method will not trigger UI
-	 *                              update to show newly detected include paths nor
-	 *                              will it complain if a "compile_commands.json"
-	 *                              file does not exist.
+	 * @param launcher the launcher to run the compiler for built-in detection.
+	 *                 Should be capable to run in docker container, if build in
+	 *                 container is configured for the project.
+	 * @param console  the console to print the compiler output during built-in
+	 *                 detection to or <code>null</code> if a separate console is to
+	 *                 be allocated.
+	 * @param monitor  the job's progress monitor
 	 *
 	 * @return {@code true} if the json file did change since the last invocation of
-	 *         this method (new setting entires were discoverd), ohterwise
+	 *         this method (new setting entries were discovered), otherwise
 	 *         {@code false}
 	 * @throws CoreException
 	 */
-	private boolean tryParseJson(boolean enabled, boolean initializingWorkbench) throws CoreException {
+	private boolean processJsonFile(ICommandLauncher launcher, IConsole console, IProgressMonitor monitor)
+			throws CoreException {
+		final IProject project = cBuildConfiguration.getBuildConfiguration().getProject();
+		java.nio.file.Path buildRoot = cBuildConfiguration.getBuildDirectory();
+		final java.nio.file.Path jsonFile = buildRoot.resolve("compile_commands.json"); //$NON-NLS-1$
+		if (!Files.exists(jsonFile)) {
+			// no json file was produced in the build
+			final String msg = "File '" + jsonFile + "' was not created in the build. "
+					+ WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
+			createMarker(project, msg);
+			return false;
+		}
+		// file exists on disk...
+		long tsJsonModified = 0;
+		try {
+			tsJsonModified = Files.getLastModifiedTime(jsonFile).toMillis();
+		} catch (IOException e) {
+			// tread as 'file does nor exist'
+			return false;
+		}
+		IContainer buildContainer = cBuildConfiguration.getBuildContainer();
+		final IFile jsonFileRc = buildContainer.getFile(new Path("compile_commands.json")); //$NON-NLS-1$
 
-		// If getBuilderCWD() returns a workspace relative path, it is garbled.
-		// It returns '${workspace_loc:/my-project-name}'. Additionally, it returns
-		// null on a project with makeNature.
-		// In contrast, getResolvedOutputDirectories() does it mostly right, it
-		// returns '/my-project-name', but also stale data
-		// when a user changed the build-root
-		final IPath buildRoot = currentCfgDescription.getBuildSetting().getBuilderCWD();
-		final IPath jsonPath = buildRoot.append("compile_commands.json");
-		final IFile jsonFileRc = ResourcesPlugin.getWorkspace().getRoot().getFile(jsonPath);
+		Long sessionLastModified = (Long) buildContainer.getSessionProperty(TIMESTAMP_COMPILE_COMMANDS_PROPERTY);
+		if (sessionLastModified == null || sessionLastModified.longValue() < tsJsonModified) {
+			// must parse json file...
+			monitor.setTaskName("Processing compile_commands.json");
+			project.deleteMarkers(MARKER_ID, false, IResource.DEPTH_INFINITE);
 
-		final IPath location = jsonFileRc.getLocation();
-		if (location != null) {
-			final File jsonFile = location.toFile();
-			if (!jsonFile.exists()) {
-				// no json file was produced in the build
-				final String msg = "File '" + jsonPath + "' was not created in the build. "
-						+ WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
+			try (Reader in = new FileReader(jsonFile.toFile())) {
+				// parse file...
+				Gson gson = new Gson();
+				CommandEntry[] sourceFileInfos = gson.fromJson(in, CommandEntry[].class);
+				for (CommandEntry sourceFileInfo : sourceFileInfos) {
+					processCommandEntry(sourceFileInfo, jsonFileRc);
+				}
+			} catch (JsonSyntaxException | JsonIOException ex) {
+				// file format error
+				final String msg = "File does not seem to be in JSON format. " + WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
+				createMarker(jsonFileRc, msg);
+				return false;
+			} catch (IOException ex) {
+				final String msg = "Failed to read file " + jsonFile + ". " + WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
 				createMarker(jsonFileRc, msg);
 				return false;
 			}
-			// file exists on disk...
-			final long tsJsonModified = jsonFile.lastModified();
 
-			final IProject project = currentCfgDescription.getProjectDescription().getProject();
-			final TimestampedLanguageSettingsStorage store = storage.getSettingsStoreForConfig(currentCfgDescription);
-
-			if (store.lastModified < tsJsonModified) {
-				// must parse json file...
-				store.clear();
-				// store time-stamp
-				store.lastModified = tsJsonModified;
-
-				if (!initializingWorkbench) {
-					project.deleteMarkers(MARKER_ID, false, IResource.DEPTH_INFINITE);
-				}
-				Reader in = null;
-				try {
-					// parse file...
-					in = new FileReader(jsonFile);
-					// TODO replace with Gson.fromJson() in the final version
-					//					Object parsed = new JSON().parse(new JSON.ReaderSource(in), false);
-					Object parsed = new Object();
-					if (parsed instanceof Object[]) {
-						for (Object o : (Object[]) parsed) {
-							if (o instanceof Map) {
-								processJsonEntry(store, enabled, (Map<?, ?>) o, jsonFileRc);
-							} else {
-								// expected Map object, skipping entry.toString()
-								final String msg = "File format error: unexpected entry '" + o + "'. "
-										+ WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
-								createMarker(jsonFileRc, msg);
-							}
-						}
-						//languageScope.addAll(c)
-						// re-index to reflect new paths and macros in editor views
-						// serializeLanguageSettings(currentCfgDescription);
-						if (!initializingWorkbench) {
-							final ICElement[] tuSelection = { CoreModel.getDefault().create(project) };
-							CCorePlugin.getIndexManager().update(tuSelection, IIndexManager.UPDATE_ALL);
-						}
-						// triggering UI update to show newly detected include paths in
-						// Includes folder is USELESS. It looks like ICProject#getIncludeReferences() is
-						// only
-						// updated when the project is opened or the user clicks 'Apply' in the
-						// Preprocessor Include Paths page.
-					} else {
-						// file format error
-						final String msg = "File does not seem to be in JSON format. "
-								+ WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
-						createMarker(jsonFileRc, msg);
-					}
-				} catch (IOException ex) {
-					final String msg = "Failed to read file " + jsonFile + ". " + WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
-					createMarker(jsonFileRc, msg);
-				} finally {
-					if (in != null)
-						try {
-							in.close();
-						} catch (IOException ignore) {
-						}
-				}
-				return true;
-			}
+			detectBuiltins(launcher, console, monitor);
+			// store time-stamp
+			buildContainer.setSessionProperty(TIMESTAMP_COMPILE_COMMANDS_PROPERTY, tsJsonModified);
+			return true;
 		}
 		return false;
 	}
@@ -312,65 +214,52 @@ public class CompileCommandsJsonParser extends LanguageSettingsSerializableProvi
 	 * Processes an entry from a {@code compile_commands.json} file and stores a
 	 * {@link ICLanguageSettingEntry} for the file given the specified map.
 	 *
-	 * @param storage        where to store language settings
-	 * @param enabled        {@code true} if this provider is present in the
-	 *                       project's list of settings providers, otherwise false.
-	 *                       If {@code false}, this method will just determine the
-	 *                       compiler-built-in processors and and options but not
-	 *                       add any language settings
-	 * @param sourceFileInfo a Map of type Map<String,String>
+	 * @param sourceFileInfo parsed command entry of a compile_commands.json file
 	 * @param jsonFile       the JSON file being parsed (for marker creation only)
+	 *
 	 * @throws CoreException if marker creation failed
 	 */
-	private void processJsonEntry(TimestampedLanguageSettingsStorage storage, boolean enabled, Map<?, ?> sourceFileInfo,
-			IFile jsonFile) throws CoreException {
+	private void processCommandEntry(CommandEntry sourceFileInfo, IFile jsonFile) throws CoreException {
+		// NOTE that this is the absolute file system path of the source file in
+		// CMake-notation (directory separator are forward slashes, even on windows)
+		final String file = sourceFileInfo.getFile();
+		final String cmdLine = sourceFileInfo.getCommand();
+		if (file != null && !file.isEmpty() && cmdLine != null && !cmdLine.isEmpty()) {
+			ParserDetection.ParserDetectionResult pdr = fastDetermineDetector(cmdLine);
+			if (pdr != null) {
+				// found a matching command-line parser
+				final IToolCommandlineParser parser = pdr.getDetectorWithMethod().getToolDetectionParticipant()
+						.getParser();
+				// cwdStr is the absolute working directory of the compiler in
+				// CMake-notation (fileSep are forward slashes)
+				final String cwdStr = sourceFileInfo.getDirectory();
+				IPath cwd = cwdStr != null ? Path.fromOSString(cwdStr) : new Path(""); //$NON-NLS-1$
+				IResult result = parser.processArgs(cwd, StringUtil.trimLeadingWS(pdr.getReducedCommandLine()));
+				// remember result together with file name
+				rememberFileResult(file, result);
 
-		if (sourceFileInfo.containsKey("file") && sourceFileInfo.containsKey("command")
-				&& sourceFileInfo.containsKey("directory")) {
-			final String file = sourceFileInfo.get("file").toString();
-			if (file != null && !file.isEmpty()) {
-				final String cmdLine = sourceFileInfo.get("command").toString();
-				if (cmdLine != null && !cmdLine.isEmpty()) {
-					final IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
-							.findFilesForLocationURI(new File(file).toURI());
-					if (files.length > 0) {
-						ParserDetection.ParserDetectionResult pdr = fastDetermineDetector(cmdLine);
-						if (pdr != null) {
-							// found a matching command-line parser
-							final IToolCommandlineParser parser = pdr.getDetectorWithMethod()
-									.getToolDetectionParticipant().getParser();
-							// cwdStr is the absolute working directory of the compiler in
-							// CMake-notation (fileSep are forward slashes)
-							final String cwdStr = sourceFileInfo.get("directory").toString();
-							IPath cwd = cwdStr != null ? Path.fromOSString(cwdStr) : new Path("");
-							IResult result = processCommandLine(storage, enabled, parser, files[0], cwd,
-									pdr.getReducedCommandLine());
+				final Optional<IBuiltinsDetectionBehavior> builtinDetection = parser.getIBuiltinsDetectionBehavior();
+				if (builtinDetection.isPresent()) {
+					rememberBuiltinsDetection(file, builtinDetection.get(), pdr.getCommandLine().getCommand(),
+							result.getBuiltinDetectionArgs());
+				}
+			} else {
+				// no matching parser found
 
-							final Optional<IBuiltinsDetectionBehavior> builtinDetection = parser
-									.getIBuiltinsDetectionBehavior();
-							if (builtinDetection.isPresent()) {
-								String languageId = parser.getLanguageId(files[0].getFileExtension());
-								if (languageId != null) {
-									storage.addBuiltinsDetector(currentCfgDescription, languageId,
-											builtinDetection.get(), pdr.getCommandLine().getCommand(),
-											result.getBuiltinDetectionArgs());
-								}
-							}
-						} else {
-							// no matching parser found
-							if (!isKnownLanguage(files[0])) {
-								// do not complain if source file is a fortran, assembler or other one we do not
-								// care for
-								return;
-							}
-							String message = "No parser for command '" + cmdLine + "'. "
-									+ WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
-							createMarker(jsonFile, message);
-						}
-					}
+				// complain only once if no cmdline parser for the tool is known (fortran,
+				// assembler, etc)
+				int idx = cmdLine.indexOf(' ');
+				String unkownMarker = (idx != -1 ? cmdLine.substring(0, idx) : cmdLine)
+						+ FilenameUtils.getExtension(file);
+				if (knownUnsupportedTools.contains(unkownMarker)) {
 					return;
 				}
+				knownUnsupportedTools.add(unkownMarker);
+
+				String message = "No parser for command '" + cmdLine + "'. " + WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
+				createMarker(jsonFile, message);
 			}
+			return;
 		}
 		// unrecognized entry, skipping
 		final String msg = "File format error: " + "'file', 'command' or 'directory' missing in JSON object. "
@@ -379,88 +268,99 @@ public class CompileCommandsJsonParser extends LanguageSettingsSerializableProvi
 	}
 
 	/**
-	 * Gets whether the specified source file name extension is one of our supported
-	 * languages.
-	 *
-	 * @param file The file name extension to examine
-	 * @return {@code false} if the language is unknown and not supported.
-	 */
-	private static boolean isKnownLanguage(IFile file) {
-		final String fileExtension = file.getFileExtension();
-		if (fileExtension == null) {
-			return false;
-		}
-		switch (fileExtension) {
-		case "c":
-		case "C":
-		case "cc":
-		case "cpp":
-		case "CPP":
-		case "cp":
-		case "cxx":
-		case "c++":
-		case "cu":
-			return true;
-		default:
-			return false;
-		}
-	}
-
-	/**
-	 * Determines the detectors for compiler built-in include paths and symbols.
-	 * Parses the json file, if necessary and caches the findings.
-	 *
-	 * @param cfgDescription        configuration description
-	 * @param enabled               {@code true} if this provider is present in the
-	 *                              project's list of settings providers, otherwise
-	 *                              false. If {@code false}, this method will just
-	 *                              determine the compiler-built-in processors and
-	 *                              not perform any command line parsing
-	 * @param initializingWorkbench {@code true} if the workbench is starting up. If
-	 *                              {@code true}, this method will not trigger UI
-	 *                              update to show newly detected include paths nor
-	 *                              will it complain if a "compile_commands.json"
-	 *                              file does not exist.
-	 * @return the detectors to run or {@code null} if the json file did not change
-	 *         since the last invocation of this method
+	 * @param launcher the launcher to run the compiler for built-in detection.
+	 *                 Should be capable to run in docker container, if build in
+	 *                 container is configured for the project.
+	 * @param console  the console to print the compiler output during built-in
+	 *                 detection to or <code>null</code> if a separate console is to
+	 *                 be allocated.
+	 * @param monitor
 	 * @throws CoreException
 	 */
-	/* package */ Iterable<CompilerBuiltinsDetector> determineBuiltinDetectors(
-			ICConfigurationDescription cfgDescription, boolean enabled, boolean initializingWorkbench)
+	private void detectBuiltins(ICommandLauncher launcher, IConsole console, IProgressMonitor monitor)
 			throws CoreException {
-		currentCfgDescription = Objects.requireNonNull(cfgDescription, "cfgDescription");
-		if (tryParseJson(enabled, initializingWorkbench))
-			return storage.getSettingsStoreForConfig(cfgDescription).getBuiltinsDetectors();
-		return null;
+		if (builtinDetectorsToRun == null || builtinDetectorsToRun.isEmpty())
+			return;
+		monitor.setTaskName("Detecting compiler built-ins");
+
+		java.nio.file.Path buildDir = cBuildConfiguration.getBuildDirectory();
+		// run each built-in detector and collect the results..
+		Map<String, IRawIndexerInfo> builtinDetectorsResults = new HashMap<>();
+		for (Entry<String, CompilerBuiltinsDetector> entry : builtinDetectorsToRun.entrySet()) {
+			IRawIndexerInfo result = entry.getValue().detectBuiltins(cBuildConfiguration.getBuildConfiguration(),
+					buildDir, launcher, console, monitor);
+			// store detector key with result
+			builtinDetectorsResults.put(entry.getKey(), result);
+		}
+		// all built-in detectors have been run at this point
+		builtinDetectorsToRun.clear();
+
+		// most of the time we get different String objects for different source files
+		// that have the same sequence of characters. So reduce the number of String
+		// objects by pooling them..
+		Map<String, String> strPool = new HashMap<>();
+		Function<String, String> stringPooler = v -> {
+			String old = strPool.putIfAbsent(v, v);
+			return old == null ? v : old;
+		};
+
+		// merge built-in results with source file results
+		for (Entry<String, String> link : fileToBuiltinDetectorLinks.entrySet()) {
+			String sourceFileName = link.getKey();
+			IRawIndexerInfo fileResult = fileResults.get(sourceFileName);
+			IRawIndexerInfo builtinDetectorsResult = builtinDetectorsResults.get(link.getValue());
+			mergeResultsForFile(stringPooler, sourceFileName, fileResult, builtinDetectorsResult);
+		}
 	}
 
 	/**
-	 * Unconditionally gets the Determined detectors for compiler built-in include
-	 * paths and symbols.
+	 * Merges preprocessor symbols and macros for a source file with compiler
+	 * built-in preprocessor symbols and macros and passes the to the
+	 * {@code IIndexerInfoConsumer} that was specified in the constructor.
 	 *
-	 * @param cfgDescription configuration description
-	 * @return the detectors to run or {@code null} if
-	 *         {@link #determineBuiltinDetectors} has not been invoked prior
+	 * @param fileResult             source file preprocessor symbols and macros
+	 * @param builtinDetectorsResult compiler built-in preprocessor symbols and
+	 *                               macros
+	 * @param stringPooler           a function that returns a String from a pool
+	 *                               for a given String
+	 * @param sourceFileName         the name of the source file
 	 */
-	/* package */ Iterable<CompilerBuiltinsDetector> getBuiltinDetectors(ICConfigurationDescription cfgDescription) {
-		return storage.getSettingsStoreForConfig(cfgDescription).getBuiltinsDetectors();
-	}
-
-	private static void createMarker(IFile file, String message) throws CoreException {
-		IMarker marker;
-		try {
-			marker = file.createMarker(MARKER_ID);
-		} catch (CoreException ex) {
-			// resource is not (yet) known by the workbench
-			try {
-				file.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
-				marker = file.createMarker(MARKER_ID);
-			} catch (CoreException ex2) {
-				// resource is not known by the workbench, use project instead of file
-				marker = file.getProject().createMarker(MARKER_ID);
+	private void mergeResultsForFile(Function<String, String> stringPooler, String sourceFileName,
+			IRawIndexerInfo fileResult, IRawIndexerInfo builtinDetectorsResult) {
+		/*
+		 * Handling of -U and -D is ambivalent here. - The GCC man page states: '-U name
+		 * Cancel any previous definition of name, either built in or provided with a -D
+		 * option.' - The POSIX c99 man page states: '-U name Remove any initial
+		 * definition of name.' We implement handling of defines according to GCC here.
+		 */
+		Map<String, String> builtinDefines = new HashMap<>(builtinDetectorsResult.getDefines());
+		for (String name : fileResult.getUndefines()) {
+			String value;
+			if ((value = builtinDefines.remove(name)) != null) {
+				if (DEBUG_ENTRIES)
+					System.out.printf("      Removed define: %s=%s%n", name, value); //$NON-NLS-1$
 			}
 		}
-		marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+
+		Map<String, String> effectiveDefines = Stream
+				.concat(builtinDefines.entrySet().stream(), fileResult.getDefines().entrySet().stream())
+				.collect(Collectors.toMap(stringPooler.compose(Map.Entry::getKey),
+						stringPooler.compose(Map.Entry::getValue)));
+		List<String> includePaths = Stream
+				.concat(fileResult.getIncludePaths().stream(), builtinDetectorsResult.getIncludePaths().stream())
+				.map(stringPooler).collect(Collectors.toList());
+		List<String> systemIncludePaths = Stream
+				.concat(fileResult.getSystemIncludePaths().stream(),
+						builtinDetectorsResult.getSystemIncludePaths().stream())
+				.map(stringPooler).collect(Collectors.toList());
+
+		// feed the paths and defines with the file name to the indexer..
+		indexerInfoConsumer.acceptSourceFileInfo(sourceFileName, systemIncludePaths, effectiveDefines, includePaths);
+	}
+
+	private static void createMarker(IResource rc, String message) throws CoreException {
+		IMarker marker = rc.createMarker(MARKER_ID);
+		marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
 		marker.setAttribute(IMarker.MESSAGE, message);
 		marker.setAttribute(IMarker.LOCATION, CompileCommandsJsonParser.class.getName());
 	}
@@ -479,6 +379,7 @@ public class CompileCommandsJsonParser extends LanguageSettingsSerializableProvi
 	 */
 	private ParserDetectionResult fastDetermineDetector(String line) {
 		// try last known matching detector first...
+		IPreferenceStore prefStore = Plugin.getDefault().getPreferenceStore();
 		if (lastDetector != null) {
 			Optional<DefaultToolDetectionParticipant.MatchResult> matchResult = Optional.empty();
 			final IToolDetectionParticipant detector = lastDetector.getToolDetectionParticipant();
@@ -490,15 +391,15 @@ public class CompileCommandsJsonParser extends LanguageSettingsSerializableProvi
 				matchResult = detector.basenameWithExtensionMatches(line, lastDetector.isMatchBackslash());
 				break;
 			case WITH_VERSION:
-				if (isVersionPatternEnabled()) {
+				if (prefStore.getBoolean(PreferenceConstants.P_PATTERN_ENABLED)) {
 					matchResult = detector.basenameWithVersionMatches(line, lastDetector.isMatchBackslash(),
-							getVersionPattern());
+							prefStore.getString(PreferenceConstants.P_PATTERN));
 				}
 				break;
 			case WITH_VERSION_EXTENSION:
-				if (isVersionPatternEnabled()) {
+				if (prefStore.getBoolean(PreferenceConstants.P_PATTERN_ENABLED)) {
 					matchResult = detector.basenameWithVersionAndExtensionMatches(line, lastDetector.isMatchBackslash(),
-							getVersionPattern());
+							prefStore.getString(PreferenceConstants.P_PATTERN));
 				}
 				break;
 			default:
@@ -512,7 +413,9 @@ public class CompileCommandsJsonParser extends LanguageSettingsSerializableProvi
 		}
 
 		// no working detector found, determine a new one...
-		String versionPattern = isVersionPatternEnabled() ? getVersionPattern() : null;
+		String versionPattern = prefStore.getBoolean(PreferenceConstants.P_PATTERN_ENABLED)
+				? prefStore.getString(PreferenceConstants.P_PATTERN)
+				: null;
 		ParserDetection.ParserDetectionResult result = ParserDetection.determineDetector(line, versionPattern,
 				File.separatorChar == '\\');
 		if (result != null) {
@@ -523,345 +426,114 @@ public class CompileCommandsJsonParser extends LanguageSettingsSerializableProvi
 	}
 
 	/**
-	 * Processes the command-line of an entry from a {@code compile_commands.json}
-	 * file by trying the specified detector and stores a
-	 * {@link ICLanguageSettingEntry} for the file found in the specified map.
+	 * Parses the {@code compile_commands.json} file in the build directory of the
+	 * project if necessary and generates indexer information.
 	 *
-	 * @param storage       where to store language settings
-	 * @param enabled       {@code true} if this provider is present in the
-	 *                      project's list of settings providers, otherwise false.
-	 *                      If {@code false}, this method will just determine the
-	 *                      compiler-built-in processors and and options but not add
-	 *                      any language settings
-	 * @param cmdlineParser the tool detector and its tool option parsers
-	 * @param sourceFile    the source file resource corresponding to the source
-	 *                      file being processed by the tool
-	 * @param cwd           the current working directory of the compiler at its
-	 *                      invocation
-	 * @param line          the command line to process
-	 * @return the result of command-line parsing
-	 */
-	private IResult processCommandLine(TimestampedLanguageSettingsStorage storage, boolean enabled,
-			IToolCommandlineParser cmdlineParser, IFile sourceFile, IPath cwd, String line) {
-		line = StringUtil.trimLeadingWS(line);
-		final IResult result = cmdlineParser.processArgs(cwd, line);
-		if (enabled) {
-			final List<ICLanguageSettingEntry> entries = result.getSettingEntries();
-			if (entries.size() > 0) {
-				String languageId = cmdlineParser.getLanguageId(sourceFile.getFileExtension());
-				if (languageId != null) {
-					handleIncludePathEntries(storage, entries, languageId);
-					// attach settings to sourceFile resource...
-					storage.addSettingEntries(sourceFile, languageId, entries);
-				}
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Handles {@code ICSettingEntry.INCLUDE_PATH} entries. These are added to the
-	 * project resource to make them show up in the UI in the includes folder and
-	 * the CommandLauncherManager is told to respect them, when the build took place
-	 * in a docker container.
+	 * @param launcher the launcher to run the compiler for built-in detection.
+	 *                 Should be capable to run in docker container, if build in
+	 *                 container is configured for the project.
+	 * @param console  the console to print the compiler output during built-in
+	 *                 detection to or <code>null</code> if a separate console is to
+	 *                 be allocated.
+	 * @param monitor  the job's progress monitor
 	 *
-	 * @param storage
-	 * @param entries
-	 * @param languageId
+	 * @return {@code true} if the {@code compile_commands.json} file did change
+	 *         since the last invocation of this method, otherwise {@code false}. If
+	 *         {@code true}, new scanner information was detected and the CDT
+	 *         indexer should be notified.
+	 * @throws CoreException
 	 */
-	private void handleIncludePathEntries(TimestampedLanguageSettingsStorage storage,
-			final List<ICLanguageSettingEntry> entries, final String languageId) {
-		/*
-		 * compile_commands.json holds entries per-file only and does not contain
-		 * per-project or per-folder entries. For include dirs, ALSO add these entries
-		 * to the project resource to make them show up in the UI in the includes
-		 * folder...
-		 */
-		Predicate<ICLanguageSettingEntry> isInclDir = e -> e.getKind() == ICSettingEntry.INCLUDE_PATH;
-		List<ICLanguageSettingEntry> newEntries = entries.stream().filter(isInclDir).collect(Collectors.toList());
-
-		List<ICLanguageSettingEntry> oldEntries = storage.getSettingEntries(null, languageId);
-		// add new items only, maintain list order
-		if (oldEntries != null) {
-			// filter duplicates by using a Set...
-			Set<ICLanguageSettingEntry> oldSet = new HashSet<>(oldEntries);
-			newEntries = newEntries.stream().filter(e -> !oldSet.contains(e)).collect(Collectors.toList());
-		}
-		storage.addSettingEntries(null, languageId, newEntries);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.language.settings.providers.
-	 * LanguageSettingsSerializableProvider#serializeEntries(org.w3c.dom. Element)
-	 */
-	@Override
-	public void serializeEntries(Element elementProvider) {
-		// no language setting entries to serialize, since entries come from the
-		// compile_commands.json file
-	}
-
-	/*-
-	 * interface ICBuildOutputParser
-	 */
-	@Override
-	public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker)
-			throws CoreException {
-		currentCfgDescription = cfgDescription;
-	}
-
-	/**
-	 * Invoked for each line in the build output.
-	 */
-	// interface ICBuildOutputParser
-	@Override
-	public boolean processLine(String line) {
-		// nothing to do, we parse on shutdown...
-		return false;
-	}
-
-	/*-
-	 * interface ICBuildOutputParser
-	 */
-	@Override
-	public void shutdown() {
+	public boolean parse(ICommandLauncher launcher, IConsole console, IProgressMonitor monitor) throws CoreException {
+		long start = 0;
 		try {
-			tryParseJson(true, false);
-		} catch (CoreException ex) {
-			log.log(new Status(IStatus.ERROR, Plugin.PLUGIN_ID, "shutdown()", ex));
+			if (DEBUG_TIME) {
+				System.out.printf("Project %s parsing compile_commands.json ...%n", //$NON-NLS-1$
+						cBuildConfiguration.getProject().getName());
+				start = System.currentTimeMillis();
+			}
+			return processJsonFile(launcher, console, monitor);
+		} finally {
+			if (DEBUG_TIME) {
+				long end = System.currentTimeMillis();
+				System.out.printf("Project %s parsed compile_commands.json file in %dms%n", //$NON-NLS-1$
+						cBuildConfiguration.getProject().getName(), end - start);
+			}
+			// clean up
+			builtinDetectorsToRun = null;
+			fileResults = null;
+			fileToBuiltinDetectorLinks = null;
 		}
-		// release resources for garbage collector
-		currentCfgDescription = null;
-	}
-
-	@Override
-	public CompileCommandsJsonParser clone() throws CloneNotSupportedException {
-		return (CompileCommandsJsonParser) super.clone();
-	}
-
-	@Override
-	public CompileCommandsJsonParser cloneShallow() throws CloneNotSupportedException {
-		return (CompileCommandsJsonParser) super.cloneShallow();
-	}
-
-	@Override
-	public LanguageSettingsStorage copyStorage() {
-		if (currentCfgDescription == null)
-			return null;
-		TimestampedLanguageSettingsStorage st = storage.getSettingsStoreForConfig(currentCfgDescription);
-		return st.clone();
 	}
 
 	/**
-	 * Overridden to misuse this to populate the {@link #getSettingEntries setting
-	 * entries} on startup.<br>
-	 * {@inheritDoc}
+	 * Creates a Map-key suitable to minimize the set of CompilerBuiltinsDetector to
+	 * run.
+	 *
+	 * @param compilerCommand      the command name of the compiler
+	 * @param builtinDetectionArgs compiler arguments that affect built-ins
+	 *                             detection
+	 * @param sourceFileExtension  the extension of the source file name
 	 */
-	@Override
-	public void registerListener(ICConfigurationDescription cfgDescription) {
-		if (cfgDescription != null) {
-			// per-project or when the user just added this provider on the provider tab
-			currentCfgDescription = cfgDescription;
-			try {
-				tryParseJson(true, true);
-			} catch (CoreException ex) {
-				log.log(new Status(IStatus.ERROR, Plugin.PLUGIN_ID, "registerListener()", ex));
-			}
-		} else {
-			// per workspace (to populate on startup)
-			Display.getDefault().asyncExec(() -> {
-				IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-				IProject[] projects = workspaceRoot.getProjects();
-				CCorePlugin ccp = CCorePlugin.getDefault();
-				// parse JSOn file for any opened project that has a ScannerConfigNature...
-				for (IProject project : projects) {
-					try {
-						if (project.isOpen() && project.hasNature(ScannerConfigNature.NATURE_ID)) {
-							ICProjectDescription projectDescription = ccp.getProjectDescription(project, false);
-							if (projectDescription != null) {
-								ICConfigurationDescription activeConfiguration = projectDescription
-										.getActiveConfiguration();
-								if (activeConfiguration instanceof ILanguageSettingsProvidersKeeper) {
-									final List<ILanguageSettingsProvider> lsps = ((ILanguageSettingsProvidersKeeper) activeConfiguration)
-											.getLanguageSettingProviders();
-									for (ILanguageSettingsProvider lsp : lsps) {
-										if (CompileCommandsJsonParser.PROVIDER_ID.equals(lsp.getId())) {
-											currentCfgDescription = activeConfiguration;
-											tryParseJson(true, true);
-											break;
-										}
-									}
-								}
-							}
-						}
-					} catch (CoreException ex) {
-						log.log(new Status(IStatus.ERROR, Plugin.PLUGIN_ID, "registerListener()", ex));
-					}
-				}
-			});
+	@SuppressWarnings("nls")
+	private static String makeBuiltinsDetectorKey(String compilerCommand, List<String> builtinDetectionArgs,
+			String sourceFileExtension) {
+		switch (sourceFileExtension) {
+		case "C":
+		case "cc":
+		case "cpp":
+		case "CPP":
+		case "cp":
+		case "cxx":
+		case "c++":
+			// make sure we run built-ins detection only once for C++ files..
+			sourceFileExtension = "cpp";
+			break;
 		}
-		// release resources for garbage collector
-		currentCfgDescription = null;
+		return compilerCommand + "#" + sourceFileExtension + "#"
+		// make sure we run the compiler for built-ins detection for each set of args
+		// that affect built-ins detection..
+				+ String.join(" ", builtinDetectionArgs);
 	}
 
-	/*-
-	 * @see org.eclipse.cdt.core.language.settings.providers.ICListenerAgent#unregisterListener()
+	/**
+	 * @param file
+	 * @param result
 	 */
-	@Override
-	public void unregisterListener() {
+	private void rememberFileResult(String sourceFileName, IRawIndexerInfo result) {
+		if (fileResults == null)
+			fileResults = new HashMap<>();
+		fileResults.put(sourceFileName, result);
 	}
 
-	////////////////////////////////////////////////////////////////////
-	// inner classes
-	////////////////////////////////////////////////////////////////////
-	private static class TimestampedLanguageSettingsStorage extends LanguageSettingsStorage {
-		private static final boolean DEBUG = Boolean
-				.parseBoolean(Platform.getDebugOption(Plugin.PLUGIN_ID + "/CECC/indexer-entries"));
-		/** cached file modification time-stamp of last parse */
-		long lastModified = 0;
+	/**
+	 * @param sourceFileName       the name of the source file
+	 * @param builtinDetectionArgs the compiler arguments from the command-line that
+	 *                             affect built-in detection. For the GNU compilers,
+	 *                             these are options like {@code --sysroot} and
+	 *                             options that specify the language's standard
+	 *                             ({@code -std=c++17}.
+	 * @return a Map-key suitable to minimize the set of CompilerBuiltinsDetector to
+	 *         run
+	 */
+	private String rememberBuiltinsDetection(String sourceFileName,
+			IBuiltinsDetectionBehavior builtinsDetectionBehavior, String compilerCommand,
+			List<String> builtinDetectionArgs) {
+		if (builtinDetectorsToRun == null)
+			builtinDetectorsToRun = new HashMap<>(3, 1.0f);
 
-		/** one CompilerBuiltinsDetector for each source file language */
-		private Map<String, CompilerBuiltinsDetector> builtinDetectors;
-		/** the owning project, for reporting purpose only */
-		private IProject project;
-
-		TimestampedLanguageSettingsStorage(IProject project) {
-			this.project = project;
+		String extension = FilenameUtils.getExtension(sourceFileName);
+		String key = makeBuiltinsDetectorKey(compilerCommand, builtinDetectionArgs, extension);
+		if (!builtinDetectorsToRun.containsKey(key)) {
+			CompilerBuiltinsDetector detector = new CompilerBuiltinsDetector(builtinsDetectionBehavior, compilerCommand,
+					builtinDetectionArgs, extension);
+			builtinDetectorsToRun.put(key, detector);
 		}
+		// remember the built-ins detector for the source file
+		if (fileToBuiltinDetectorLinks == null)
+			fileToBuiltinDetectorLinks = new HashMap<>();
 
-		/**
-		 * Adds the specified language settings entries for this storages.
-		 *
-		 * @param rc         resource such as file or folder or project. If {@code null}
-		 *                   the entries are considered to be being defined as
-		 *                   project-level entries for child resources.
-		 * @param languageId language id. Must not be {@code null}
-		 * @param entries    language settings entries to set.
-		 */
-		private void addSettingEntries(IResource rc, String languageId, List<ICLanguageSettingEntry> entries) {
-			if (entries.size() == 0)
-				return;
-			if (DEBUG) {
-				System.out.printf("ADDING %d entries for language %s, resource %s, ...%n", entries.size(), languageId,
-						rc != null ? rc : project);
-				entries.stream().sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))
-						.forEach(e -> System.out.printf("  %s%n", e));
-			}
-			//      setLanguageScope(languageScope); TODO
-			/*
-			 * compile_commands.json holds entries per-file only and does not contain
-			 * per-project or per-folder entries. So we map the latter as project entries
-			 * (=> null) to make the UI show the include directories we detected.
-			 */
-			String rcPath = null;
-			if (rc != null && rc.getType() == IResource.FILE) {
-				rcPath = rc.getProjectRelativePath().toString();
-			}
-			List<ICLanguageSettingEntry> sentries = super.getSettingEntries(rcPath, languageId);
-			if (sentries != null) {
-				// make list mutable
-				List<ICLanguageSettingEntry> tmp = new ArrayList<>(sentries);
-				tmp.addAll(entries);
-				entries = tmp;
-			}
-			// also tells the CommandLauncherManager (since CDT 9.4) so it can translate
-			// paths from docker container
-			super.setSettingEntries(rcPath, languageId, entries);
-		}
-
-		/**
-		 * @param builtinDetctionArgs the compiler arguments from the command-line that
-		 *                            affect built-in detection. For the GNU compilers,
-		 *                            these are options like {@code --sysroot} and
-		 *                            options that specify the language's standard
-		 *                            ({@code -std=c++17}.
-		 */
-		private void addBuiltinsDetector(ICConfigurationDescription cfgDescription, String languageId,
-				IBuiltinsDetectionBehavior builtinDetection, String compilerCommand, List<String> builtinDetctionArgs) {
-			if (builtinDetectors == null)
-				builtinDetectors = new HashMap<>(3, 1.0f);
-			if (!builtinDetectors.containsKey(languageId)) {
-				CompilerBuiltinsDetector detector = new CompilerBuiltinsDetector(cfgDescription, languageId,
-						builtinDetection, compilerCommand, builtinDetctionArgs);
-				builtinDetectors.put(languageId, detector);
-			}
-		}
-
-		/**
-		 * Gets the compiler built-ins detectors.
-		 *
-		 * @return the detectors, one for each source file language
-		 */
-		private Iterable<CompilerBuiltinsDetector> getBuiltinsDetectors() {
-			return builtinDetectors == null ? Collections.emptySet()
-					: Collections.unmodifiableCollection(builtinDetectors.values());
-		}
-
-		@Override
-		public TimestampedLanguageSettingsStorage clone() {
-			TimestampedLanguageSettingsStorage cloned = new TimestampedLanguageSettingsStorage(this.project);
-			cloned.lastModified = this.lastModified;
-			cloned.fStorage.putAll(super.fStorage);
-			return cloned;
-		}
-
-		@Override
-		public void clear() {
-			synchronized (fStorage) {
-				super.clear();
-				lastModified = 0;
-			}
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = super.hashCode();
-			result = prime * result + (int) (lastModified ^ (lastModified >>> 32));
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (!super.equals(obj))
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			TimestampedLanguageSettingsStorage other = (TimestampedLanguageSettingsStorage) obj;
-			if (lastModified != other.lastModified)
-				return false;
-			return true;
-		}
-
-	} // TimestampedLanguageSettingsStorage
-
-	private static class PerConfigLanguageSettingsStorage implements Cloneable {
-
-		/**
-		 * Storage to keep settings entries. Key is
-		 * {@link ICConfigurationDescription#getId()}
-		 */
-		private Map<String, TimestampedLanguageSettingsStorage> storages = new WeakHashMap<>();
-
-		/**
-		 * Gets the settings storage for the specified configuration. Creates a new
-		 * settings storage, if none exists.
-		 *
-		 * @return the storage, never {@code null}
-		 */
-		private TimestampedLanguageSettingsStorage getSettingsStoreForConfig(
-				ICConfigurationDescription cfgDescription) {
-			TimestampedLanguageSettingsStorage store = storages.get(cfgDescription.getId());
-			if (store == null) {
-				store = new TimestampedLanguageSettingsStorage(cfgDescription.getProjectDescription().getProject());
-				storages.put(cfgDescription.getId(), store);
-			}
-			return store;
-		}
-
-	} // PerConfigLanguageSettingsStorage
+		fileToBuiltinDetectorLinks.put(sourceFileName, key);
+		return key;
+	}
 
 }

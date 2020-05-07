@@ -28,7 +28,7 @@ public class NvccLangStdArglet extends BuiltinDetctionArgsGeneric implements IAr
 	 * @see org.eclipse.cdt.cmake.is.IArglet#processArgs(java.lang.String)
 	 */
 	@Override
-	public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-		return processArgument(parseContext, argsLine, optionMatchers);
+	public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+		return processArgument(resultCollector, argsLine, optionMatchers);
 	}
 }

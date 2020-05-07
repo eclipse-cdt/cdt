@@ -37,13 +37,7 @@ public class NvccToolDetectionParticipant extends DefaultToolDetectionParticipan
 				new Arglets.SystemIncludePath_C(), new NvccLangStdArglet() };
 
 		private ToolCommandlineParser() {
-			super(COM_NVIDIA_CUDA_LANGUAGE_ID, new ResponseFileArglets.At(), new NvccBuiltinDetectionBehavior(),
-					arglets);
-		}
-
-		@Override
-		public Set<String> getCustomLanguageIds() {
-			return Collections.singleton(COM_NVIDIA_CUDA_LANGUAGE_ID);
+			super(new ResponseFileArglets.At(), new NvccBuiltinDetectionBehavior(), arglets);
 		}
 	}
 }

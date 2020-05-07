@@ -15,13 +15,14 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
+import org.eclipse.cdt.cmake.is.core.IRawIndexerInfoCollector;
 import org.eclipse.cdt.cmake.is.core.builtins.GccOutputProcessor;
-import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsOutputProcessor;
 import org.eclipse.cdt.cmake.is.core.builtins.OutputSniffer;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,7 +45,7 @@ public class NvccOutputProcessorTest {
 	@Test
 	public void testProcessFile() throws IOException {
 		// pass resource content line-wise to the testee...
-		ProcessingContextMock pc = new ProcessingContextMock();
+		RawIndexerInfoMock pc = new RawIndexerInfoMock();
 		try (InputStream is = getClass().getResourceAsStream("cbd-nvcc.output.txt");
 				OutputSniffer os = new OutputSniffer(testee, null, pc)) {
 			byte[] buffer = new byte[1024];
@@ -54,38 +55,43 @@ public class NvccOutputProcessorTest {
 			}
 		}
 
-		// check __GNUC__
-		for (ICLanguageSettingEntry entry : pc.entries) {
-			if (entry.getKind() == ICLanguageSettingEntry.MACRO) {
-				if ("__CUDACC_VER_BUILD__".equals(entry.getName()))
-					assertEquals("value (" + entry.getName() + ")", "85", entry.getValue());
-			}
-		}
+		assertEquals("# include paths", 6, pc.includePaths.size());
+		assertEquals("# macros", 242, pc.defines.size());
 
-		int inc = 0;
-		int macro = 0;
-		for (ICLanguageSettingEntry entry : pc.entries) {
-			if (entry.getKind() == ICLanguageSettingEntry.INCLUDE_PATH) {
-				inc++;
-				assertTrue("path", !"".equals(entry.getName()));
-			} else if (entry.getKind() == ICLanguageSettingEntry.MACRO) {
-				macro++;
-				assertTrue("macro", !"".equals(entry.getName()));
-				assertTrue("value (" + entry.getName() + ")", entry.getValue() != null);
-			}
-		}
-		assertEquals("# include paths", 6, inc);
-		assertEquals("# macros", 242, macro);
+		// check __CUDACC_VER_BUILD__
+		assertTrue("__CUDACC_VER_BUILD__", pc.defines.containsKey("__GNUC__"));
+		assertEquals("value", "85", pc.defines.get("__CUDACC_VER_BUILD__"));
 	}
 
-	private static class ProcessingContextMock implements IBuiltinsOutputProcessor.IProcessingContext {
-
-		private final List<ICLanguageSettingEntry> entries = Collections
-				.synchronizedList(new ArrayList<ICLanguageSettingEntry>());
+	private static class RawIndexerInfoMock implements IRawIndexerInfoCollector {
+		private final Map<String, String> defines = new HashMap<>();
+		private final List<String> undefines = new ArrayList<>();
+		private final List<String> includePaths = new ArrayList<>();
+		private final List<String> systemIncludePaths = new ArrayList<>();
 
 		@Override
-		public void addSettingEntry(ICLanguageSettingEntry entry) {
-			entries.add(entry);
+		public void addDefine(String name, String value) {
+			Objects.requireNonNull(name);
+			value = Objects.toString(value, ""); //$NON-NLS-1$
+			defines.put(name, value);
+		}
+
+		@Override
+		public void addUndefine(String name) {
+			Objects.requireNonNull(name);
+			undefines.add(name);
+		}
+
+		@Override
+		public void addIncludePath(String path) {
+			Objects.requireNonNull(path);
+			includePaths.add(path);
+		}
+
+		@Override
+		public void addSystemIncludePath(String path) {
+			Objects.requireNonNull(path);
+			systemIncludePaths.add(path);
 		}
 	}
 }

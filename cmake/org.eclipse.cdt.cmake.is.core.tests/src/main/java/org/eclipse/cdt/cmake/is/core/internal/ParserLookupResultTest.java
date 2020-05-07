@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016-2017 Martin Weber.
+ * Copyright (c) 2016-2020 Martin Weber.
  *
  * Content is provided to you under the terms and conditions of the Eclipse Public License Version 2.0 "EPL".
  * A copy of the EPL is available at http://www.eclipse.org/legal/epl-2.0.
@@ -11,17 +11,9 @@ package org.eclipse.cdt.cmake.is.core.internal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.CompileCommandsJsonParser;
 import org.junit.Test;
 
-/**
- * @author weber
- *
- */
 public class ParserLookupResultTest {
-
-	CompileCommandsJsonParser testee = new CompileCommandsJsonParser();
-
 	/**
 	 * Test method for
 	 * {@link org.eclipse.cdt.cmake.is.core.internal.ParserDetection#determineDetector(String, String,boolean)}
@@ -52,9 +44,6 @@ public class ParserLookupResultTest {
 		String cmd = compiler + " " + args;
 		ParserDetection.ParserDetectionResult result = ParserDetection.determineDetector(cmd, null, false);
 		assertNotNull(result);
-		// verify that we got a C++ parser
-		assertEquals("C++", "org.eclipse.cdt.core.g++",
-				result.getDetectorWithMethod().getToolDetectionParticipant().getParser().getLanguageId("cpp"));
 		assertEquals("reducedCommandLine", args, result.getReducedCommandLine());
 
 		// test without leading path
@@ -62,9 +51,6 @@ public class ParserLookupResultTest {
 		cmd = compiler + " " + args;
 		result = ParserDetection.determineDetector(cmd, null, false);
 		assertNotNull(result);
-		// verify that we got a C++ parser
-		assertEquals("C++", "org.eclipse.cdt.core.g++",
-				result.getDetectorWithMethod().getToolDetectionParticipant().getParser().getLanguageId("cpp"));
 		assertEquals("reducedCommandLine", args, result.getReducedCommandLine());
 	}
 
@@ -82,9 +68,6 @@ public class ParserLookupResultTest {
 		String cmd = compiler + " " + args;
 		ParserDetection.ParserDetectionResult result = ParserDetection.determineDetector(cmd, null, false);
 		assertNotNull(result);
-		// verify that we got a C++ parser
-		assertEquals("C++", "org.eclipse.cdt.core.g++",
-				result.getDetectorWithMethod().getToolDetectionParticipant().getParser().getLanguageId("cpp"));
 		assertEquals("command", compiler, result.getCommandLine().getCommand());
 		assertEquals("args", args, result.getCommandLine().getArguments());
 
@@ -93,9 +76,6 @@ public class ParserLookupResultTest {
 		cmd = compiler + " " + args;
 		result = ParserDetection.determineDetector(cmd, null, false);
 		assertNotNull(result);
-		// verify that we got a C++ parser
-		assertEquals("C++", "org.eclipse.cdt.core.g++",
-				result.getDetectorWithMethod().getToolDetectionParticipant().getParser().getLanguageId("cpp"));
 		assertEquals("command", compiler, result.getCommandLine().getCommand());
 		assertEquals("args", args, result.getCommandLine().getArguments());
 	}

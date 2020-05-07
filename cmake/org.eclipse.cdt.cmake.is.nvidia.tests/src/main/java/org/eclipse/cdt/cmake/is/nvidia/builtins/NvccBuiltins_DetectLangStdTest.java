@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Martin Weber.
+ * Copyright (c) 2019-2020 Martin Weber.
  *
  * Content is provided to you under the terms and conditions of the Eclipse Public License Version 2.0 "EPL".
  * A copy of the EPL is available at http://www.eclipse.org/legal/epl-2.0.
@@ -38,7 +38,7 @@ public class NvccBuiltins_DetectLangStdTest {
 	 */
 	@Test
 	public final void testProcessArgument_std() {
-		DefaultToolCommandlineParser tcp = new DefaultToolCommandlineParser("egal", null, null, testee);
+		DefaultToolCommandlineParser tcp = new DefaultToolCommandlineParser(null, null, testee);
 
 		final String more = " -g -MMD -MT CMakeFiles/execut1.dir/util1.c.o -MF \"CMakeFiles/execut1.dir/util1.c.o.d\""
 				+ " -o CMakeFiles/execut1.dir/util1.c.o -c /testprojects/C-subsrc/src/src-sub/main1.c";
@@ -79,7 +79,7 @@ public class NvccBuiltins_DetectLangStdTest {
 	public final void testProcessArgument_std2() {
 		final String more = " -g -MMD -MT CMakeFiles/execut1.dir/util1.c.o -MF \"CMakeFiles/execut1.dir/util1.c.o.d\""
 				+ " -o CMakeFiles/execut1.dir/util1.c.o -c /testprojects/C-subsrc/src/src-sub/main1.c";
-		DefaultToolCommandlineParser tcp = new DefaultToolCommandlineParser("egal", null, null, testee);
+		DefaultToolCommandlineParser tcp = new DefaultToolCommandlineParser(null, null, testee);
 
 		String parsed;
 

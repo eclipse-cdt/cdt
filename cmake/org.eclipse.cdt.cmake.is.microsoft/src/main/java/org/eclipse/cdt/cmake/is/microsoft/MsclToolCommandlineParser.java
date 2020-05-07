@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Martin Weber.
+ * Copyright (c) 2019-2020 Martin Weber.
  *
  * Content is provided to you under the terms and conditions of the Eclipse Public License Version 2.0 "EPL".
  * A copy of the EPL is available at http://www.eclipse.org/legal/epl-2.0.
@@ -31,15 +31,7 @@ class MsclToolCommandlineParser extends DefaultToolCommandlineParser {
 			new MacroUndefine_C_CL() };
 
 	public MsclToolCommandlineParser() {
-		super(null, new ResponseFileArglets.At(), null, arglets);
-	}
-
-	/**
-	 * Overridden to get the language ID from the file name extension.
-	 */
-	@Override
-	public String getLanguageId(String sourceFileExtension) {
-		return super.determineLanguageId(sourceFileExtension).orElse(null);
+		super(new ResponseFileArglets.At(), null, arglets);
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -71,8 +63,8 @@ class MsclToolCommandlineParser extends DefaultToolCommandlineParser {
 		 * @see org.eclipse.cdt.cmake.is.IArglet#processArgs(java.lang.String)
 		 */
 		@Override
-		public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-			return processArgument(parseContext, cwd, argsLine, optionMatchers);
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(false, resultCollector, cwd, argsLine, optionMatchers);
 		}
 	}
 
@@ -97,8 +89,8 @@ class MsclToolCommandlineParser extends DefaultToolCommandlineParser {
 		 * @see org.eclipse.cdt.cmake.is.IArglet#processArgs(java.lang.String)
 		 */
 		@Override
-		public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-			return processArgument(parseContext, argsLine, optionMatchers);
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(resultCollector, argsLine, optionMatchers);
 		}
 	}
 
@@ -115,8 +107,8 @@ class MsclToolCommandlineParser extends DefaultToolCommandlineParser {
 		 * @see org.eclipse.cdt.cmake.is.IArglet#processArgument(java.util.List, java.lang.String)
 		 */
 		@Override
-		public int processArgument(IParseContext parseContext, IPath cwd, String argsLine) {
-			return processArgument(parseContext, argsLine, optionMatcher);
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(resultCollector, argsLine, optionMatcher);
 		}
 	}
 }

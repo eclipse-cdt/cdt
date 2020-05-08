@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "efcf87bf_25ad0690",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/elf/Elf.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 1104,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2020-05-08T17:57:50Z",
+      "side": 1,
+      "message": "this was very well hidden, had to trace it to find the issue. :) Then again when you have a great hammer. :)",
+      "range": {
+        "startLine": 1104,
+        "startChar": 0,
+        "endLine": 1104,
+        "endChar": 39
+      },
+      "revId": "8e03af3433521ceceb13649af5f2ecc15f50d36b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

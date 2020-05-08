@@ -18,13 +18,17 @@ import static org.eclipse.cdt.internal.core.ByteUtils.makeInt;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeLong;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeShort;
 
+import java.io.Closeable;
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
@@ -58,6 +62,7 @@ public class Elf {
 	private boolean areSectionsMapped; // Have sections been mapped? Used to clean up properly in Elf.Dispose.
 
 	protected String EMPTY_STRING = ""; //$NON-NLS-1$
+	private long elfOffset;
 
 	public class ELFhdr {
 
@@ -696,6 +701,7 @@ public class Elf {
 
 	public Elf(String file, long offset) throws IOException {
 		commonSetup(file, offset);
+		elfOffset = offset;
 	}
 
 	public Elf(String file) throws IOException {
@@ -971,7 +977,6 @@ public class Elf {
 			if (efile != null) {
 				efile.close();
 				efile = null;
-
 				// ensure the mappings get cleaned up
 				if (areSectionsMapped)
 					System.gc();
@@ -1073,6 +1078,93 @@ public class Elf {
 		return sections;
 	}
 
+	/**
+	 * Symbol iterator, iterates over an elf file. Note: the iterator must be closed at the end in order to avoid resource leaks.
+	 *
+	 * TODO: move to another file when @link {@Link Symbol} can be made static.
+	 */
+	private class ElfSectionIterator implements Iterator<Symbol>, Closeable {
+
+		private final int nbSymbols;
+		private final ERandomAccessFile innerEfile;
+		private final Section section;
+		private final byte arch;
+		private int position = 0;
+
+		public ElfSectionIterator(ERandomAccessFile eFile, byte b, Section sectionToRead, byte architecture)
+				throws IOException {
+			int numSyms = 1;
+			section = sectionToRead;
+			if (section.sh_entsize != 0) {
+				numSyms = (int) section.sh_size / (int) section.sh_entsize;
+			}
+			section.makeSureNotCompressed();
+			nbSymbols = numSyms;
+			innerEfile = new ERandomAccessFile(eFile.getPath(), "r"); //$NON-NLS-1$
+			innerEfile.setFileOffset(elfOffset);
+			innerEfile.setEndian(efile.order() == ByteOrder.LITTLE_ENDIAN);
+			arch = architecture;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return position < nbSymbols;
+		}
+
+		@Override
+		public Symbol next() {
+			long innerOffset = section.sh_entsize * position + section.sh_offset;
+			position++;
+			try {
+				innerEfile.seek(innerOffset);
+				Symbol symbol = new Symbol(section);
+
+				switch (arch) {
+				case ELFhdr.ELFCLASS32: {
+					byte[] addrArray = new byte[ELF32_ADDR_SIZE];
+
+					symbol.st_name = innerEfile.readIntE();
+					innerEfile.readFullyE(addrArray);
+					symbol.st_value = new Addr32(addrArray);
+					symbol.st_size = innerEfile.readIntE();
+					symbol.st_info = innerEfile.readByte();
+					symbol.st_other = innerEfile.readByte();
+					symbol.st_shndx = innerEfile.readShortE();
+					break;
+				}
+				case ELFhdr.ELFCLASS64: {
+					byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+
+					symbol.st_name = innerEfile.readIntE();
+					symbol.st_info = innerEfile.readByte();
+					symbol.st_other = innerEfile.readByte();
+					symbol.st_shndx = innerEfile.readShortE();
+					innerEfile.readFullyE(addrArray);
+					symbol.st_value = new Addr64(addrArray);
+					symbol.st_size = innerEfile.readLongE();
+					if (symbol.st_size < 0) {
+						throw new NoSuchElementException("Maximal file offset is " + Long.toHexString(Long.MAX_VALUE) + //$NON-NLS-1$
+								" given offset is " + Long.toHexString(symbol.st_size)); //$NON-NLS-1$
+					}
+					break;
+				}
+				case ELFhdr.ELFCLASSNONE:
+				default:
+					throw new NoSuchElementException("Unknown ELF class " + arch); //$NON-NLS-1$
+				}
+				return symbol;
+			} catch (IOException e) {
+				throw new NoSuchElementException(e.getMessage());
+			}
+		}
+
+		@Override
+		public void close() throws IOException {
+			innerEfile.close();
+		}
+
+	}
+
 	private Symbol[] loadSymbolsBySection(Section section) throws IOException {
 		int numSyms = 1;
 		if (section.sh_entsize != 0) {
@@ -1080,46 +1172,28 @@ public class Elf {
 		}
 		section.makeSureNotCompressed();
 		ArrayList<Symbol> symList = new ArrayList<>(numSyms);
-		long offset = section.sh_offset;
-		for (int c = 0; c < numSyms; offset += section.sh_entsize, c++) {
-			efile.seek(offset);
-			Symbol symbol = new Symbol(section);
-			switch (ehdr.e_ident[ELFhdr.EI_CLASS]) {
-			case ELFhdr.ELFCLASS32: {
-				byte[] addrArray = new byte[ELF32_ADDR_SIZE];
-
-				symbol.st_name = efile.readIntE();
-				efile.readFullyE(addrArray);
-				symbol.st_value = new Addr32(addrArray);
-				symbol.st_size = efile.readIntE();
-				symbol.st_info = efile.readByte();
-				symbol.st_other = efile.readByte();
-				symbol.st_shndx = efile.readShortE();
+		try (ElfSectionIterator elfIterator = symbolIterator(section)) {
+			while (elfIterator.hasNext()) {
+				Symbol symbol = elfIterator.next();
+				if (symbol.st_info == 0)
+					continue;
+				symList.add(symbol);
 			}
-				break;
-			case ELFhdr.ELFCLASS64: {
-				byte[] addrArray = new byte[ELF64_ADDR_SIZE];
-
-				symbol.st_name = efile.readIntE();
-				symbol.st_info = efile.readByte();
-				symbol.st_other = efile.readByte();
-				symbol.st_shndx = efile.readShortE();
-				efile.readFullyE(addrArray);
-				symbol.st_value = new Addr64(addrArray);
-				symbol.st_size = readUnsignedLong(efile);
-			}
-				break;
-			case ELFhdr.ELFCLASSNONE:
-			default:
-				throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
-			}
-			if (symbol.st_info == 0)
-				continue;
-			symList.add(symbol);
 		}
 		Symbol[] results = symList.toArray(new Symbol[0]);
 		Arrays.sort(results);
 		return results;
+	}
+
+	/**
+	 * Get a symbol iterator
+	 * @param section the section to iterate over
+	 * @return an iterator that returns symbols of a given section
+	 * @throws IOException If the file is corrupt
+	 * @since 6.12
+	 */
+	public ElfSectionIterator symbolIterator(Section section) throws IOException {
+		return new ElfSectionIterator(efile, ehdr.e_ident[ELFhdr.EI_CLASS], section, ehdr.e_ident[ELFhdr.EI_CLASS]);
 	}
 
 	public void loadSymbols() throws IOException {
@@ -1131,7 +1205,6 @@ public class Elf {
 				symbolsTableSection = section[0];
 				symbolsTable = loadSymbolsBySection(section[0]);
 			} else {
-				symbolsTableSection = null;
 				symbolsTable = new Symbol[0];
 			}
 
@@ -1140,15 +1213,12 @@ public class Elf {
 				dynamicSymbolSection = section[0];
 				dynamicSymbols = loadSymbolsBySection(section[0]);
 			} else {
-				dynamicSymbolSection = null;
 				dynamicSymbols = new Symbol[0];
 			}
 
 			if (symbolsTableSection != null) {
-				// sym = symtab_sym;
 				symbols = symbolsTable;
 			} else if (dynamicSymbolSection != null) {
-				// sym = dynsym_sym;
 				symbols = dynamicSymbols;
 			}
 		}

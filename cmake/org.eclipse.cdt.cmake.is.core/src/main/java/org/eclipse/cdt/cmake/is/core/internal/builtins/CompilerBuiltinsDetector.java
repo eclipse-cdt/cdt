@@ -24,7 +24,8 @@ import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsOutputProcessor;
 import org.eclipse.cdt.cmake.is.core.builtins.OutputSniffer;
 import org.eclipse.cdt.cmake.is.core.internal.Plugin;
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.PreferenceConstants;
+import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferences;
+import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferencesAccess;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ICommandLauncher;
@@ -40,7 +41,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Detects preprocessor macros and include paths that are built-in to a
@@ -239,8 +241,10 @@ public class CompilerBuiltinsDetector {
 	 */
 	@SuppressWarnings("nls")
 	private IConsole startOutputConsole(IConsole console) throws CoreException {
-		IPreferenceStore prefStore = Plugin.getDefault().getPreferenceStore();
-		if (!prefStore.getBoolean(PreferenceConstants.P_WITH_CONSOLE)) {
+		IParserPreferences prefs = EclipseContextFactory
+				.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
+				.get(IParserPreferencesAccess.class).getWorkspacePreferences();
+		if (!prefs.getAllocateConsole()) {
 			return null; // no console to allocate
 		} else {
 			IProject project = buildConfiguration.getProject();

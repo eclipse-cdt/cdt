@@ -22,3 +22,6 @@ Require-Bundle: org.eclipse.ui.workbench;bundle-version="3.8.0",
  com.google.gson,
  org.apache.commons.io;bundle-version="2.6.0"
 Automatic-Module-Name: org.eclipse.cdt.cmake.is.core
+Import-Package: org.eclipse.e4.core.contexts;version="1.7.0",
+ org.osgi.service.component.annotations;version="1.2.0"
+Service-Component: OSGI-INF/org.eclipse.cdt.cmake.is.core.internal.ParserPreferencesAccess.xml

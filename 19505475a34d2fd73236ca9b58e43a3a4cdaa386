@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cc9e3a2f_cad7052d",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core.ui/src/org/eclipse/cdt/cmake/is/core/ui/internal/IndexerSupportPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-09T20:16:32Z",
+      "side": 1,
+      "message": "Here is the right place to use OptionStorage#save",
+      "revId": "19505475a34d2fd73236ca9b58e43a3a4cdaa386",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2d7bd5dd_e7c22ef9",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParserPreferencesAccess.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-09T20:16:32Z",
+      "side": 1,
+      "message": "I would rather promote this to public",
+      "revId": "19505475a34d2fd73236ca9b58e43a3a4cdaa386",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "046d7ca2_856b4aa9",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/language/settings/providers/IParserPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-09T20:16:32Z",
+      "side": 1,
+      "message": "I would avoid interface methods to set preference until it is really needed. Who needs to set in practice? Typically it is UI that edits it (preference page or property page), so it may be reasonable to remove \"direct\" setters from API and provide access to the right OptionStorage instance.",
+      "revId": "19505475a34d2fd73236ca9b58e43a3a4cdaa386",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

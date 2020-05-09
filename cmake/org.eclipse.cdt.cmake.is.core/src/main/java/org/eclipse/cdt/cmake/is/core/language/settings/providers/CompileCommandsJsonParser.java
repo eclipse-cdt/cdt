@@ -53,7 +53,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.osgi.framework.FrameworkUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -92,6 +93,7 @@ public class CompileCommandsJsonParser {
 
 	private final CBuildConfiguration cBuildConfiguration;
 	private final IIndexerInfoConsumer indexerInfoConsumer;
+	private final IParserPreferencesAccess prefsAccess;
 
 	/**
 	 * last known working tool detector and its tool option parsers or {@code null},
@@ -135,6 +137,8 @@ public class CompileCommandsJsonParser {
 	public CompileCommandsJsonParser(CBuildConfiguration buildConfiguration, IIndexerInfoConsumer indexerInfoConsumer) {
 		this.cBuildConfiguration = Objects.requireNonNull(buildConfiguration, "buildConfiguration");
 		this.indexerInfoConsumer = Objects.requireNonNull(indexerInfoConsumer, "indexerInfoConsumer");
+		prefsAccess = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
+				.get(IParserPreferencesAccess.class);
 	}
 
 	/**
@@ -377,8 +381,8 @@ public class CompileCommandsJsonParser {
 	 *         returned.
 	 */
 	private ParserDetectionResult fastDetermineDetector(String line) {
+		final IParserPreferences prefs = prefsAccess.getWorkspacePreferences();
 		// try last known matching detector first...
-		IPreferenceStore prefStore = Plugin.getDefault().getPreferenceStore();
 		if (lastDetector != null) {
 			Optional<DefaultToolDetectionParticipant.MatchResult> matchResult = Optional.empty();
 			final IToolDetectionParticipant detector = lastDetector.getToolDetectionParticipant();
@@ -390,15 +394,15 @@ public class CompileCommandsJsonParser {
 				matchResult = detector.basenameWithExtensionMatches(line, lastDetector.isMatchBackslash());
 				break;
 			case WITH_VERSION:
-				if (prefStore.getBoolean(PreferenceConstants.P_PATTERN_ENABLED)) {
+				if (prefs.getTryVersionSuffix()) {
 					matchResult = detector.basenameWithVersionMatches(line, lastDetector.isMatchBackslash(),
-							prefStore.getString(PreferenceConstants.P_PATTERN));
+							prefs.getVersionSuffixPattern());
 				}
 				break;
 			case WITH_VERSION_EXTENSION:
-				if (prefStore.getBoolean(PreferenceConstants.P_PATTERN_ENABLED)) {
+				if (prefs.getTryVersionSuffix()) {
 					matchResult = detector.basenameWithVersionAndExtensionMatches(line, lastDetector.isMatchBackslash(),
-							prefStore.getString(PreferenceConstants.P_PATTERN));
+							prefs.getVersionSuffixPattern());
 				}
 				break;
 			default:
@@ -412,9 +416,7 @@ public class CompileCommandsJsonParser {
 		}
 
 		// no working detector found, determine a new one...
-		String versionPattern = prefStore.getBoolean(PreferenceConstants.P_PATTERN_ENABLED)
-				? prefStore.getString(PreferenceConstants.P_PATTERN)
-				: null;
+		String versionPattern = prefs.getTryVersionSuffix() ? prefs.getVersionSuffixPattern() : null;
 		ParserDetection.ParserDetectionResult result = ParserDetection.determineDetector(line, versionPattern,
 				File.separatorChar == '\\');
 		if (result != null) {

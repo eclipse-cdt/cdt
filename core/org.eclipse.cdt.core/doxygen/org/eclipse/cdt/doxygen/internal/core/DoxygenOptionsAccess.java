@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.doxygen.internal.core;
 
-import org.eclipse.cdt.core.options.OptionStorage;
 import org.eclipse.cdt.doxygen.DoxygenMetadata;
 import org.eclipse.cdt.doxygen.DoxygenOptions;
+import org.eclipse.core.runtime.preferences.IPreferenceMetadataStore;
 
 final class DoxygenOptionsAccess implements DoxygenOptions {
 
-	private final OptionStorage optionStorage;
+	private final IPreferenceMetadataStore optionStorage;
 	private final DoxygenMetadata doxygenMetadata;
 
-	public DoxygenOptionsAccess(OptionStorage optionStorage, DoxygenMetadata doxygenMetadata) {
+	public DoxygenOptionsAccess(IPreferenceMetadataStore optionStorage, DoxygenMetadata doxygenMetadata) {
 		this.optionStorage = optionStorage;
 		this.doxygenMetadata = doxygenMetadata;
 	}

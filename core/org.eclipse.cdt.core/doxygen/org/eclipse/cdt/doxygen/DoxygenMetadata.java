@@ -15,7 +15,7 @@ package org.eclipse.cdt.doxygen;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.options.OptionMetadata;
+import org.eclipse.core.runtime.preferences.PreferenceMetadata;
 
 /**
  * The metadata for options to configure doxygen
@@ -30,7 +30,7 @@ public interface DoxygenMetadata {
 	 *
 	 * @see DoxygenOptions#useBriefTags()
 	 */
-	OptionMetadata<Boolean> useBriefTagOption();
+	PreferenceMetadata<Boolean> useBriefTagOption();
 
 	/**
 	 * Returns the metadata for the "Use structural commands" option, must not return <code>null</code>.
@@ -39,7 +39,7 @@ public interface DoxygenMetadata {
 	 *
 	 * @see DoxygenOptions#useStructuralCommands()
 	 */
-	OptionMetadata<Boolean> useStructuralCommandsOption();
+	PreferenceMetadata<Boolean> useStructuralCommandsOption();
 
 	/**
 	 * Returns the metadata for the "Use javadoc style for tags" option, must not return <code>null</code>.
@@ -48,7 +48,7 @@ public interface DoxygenMetadata {
 	 *
 	 * @see DoxygenOptions#useJavadocStyle()
 	 */
-	OptionMetadata<Boolean> useJavadocStyleOption();
+	PreferenceMetadata<Boolean> useJavadocStyleOption();
 
 	/**
 	 * Returns the metadata for the "Add new line after brief tag" option, must not return <code>null</code>.
@@ -57,7 +57,7 @@ public interface DoxygenMetadata {
 	 *
 	 * @see DoxygenOptions#newLineAfterBrief()
 	 */
-	OptionMetadata<Boolean> newLineAfterBriefOption();
+	PreferenceMetadata<Boolean> newLineAfterBriefOption();
 
 	/**
 	 * Returns the metadata for the "Add pre/post tags to functions" option, must not return <code>null</code>.
@@ -66,13 +66,13 @@ public interface DoxygenMetadata {
 	 *
 	 * @see DoxygenOptions#usePrePostTag()
 	 */
-	OptionMetadata<Boolean> usePrePostTagOption();
+	PreferenceMetadata<Boolean> usePrePostTagOption();
 
 	/**
 	 * Returns the list of available boolean options to be shown in UI, must not return <code>null</code>.
 	 *
 	 * @return the list of boolean options
 	 */
-	List<OptionMetadata<Boolean>> booleanOptions();
+	List<PreferenceMetadata<Boolean>> booleanOptions();
 
 }

@@ -14,20 +14,22 @@
 package org.eclipse.cdt.doxygen.internal.core;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.options.OptionStorage;
-import org.eclipse.cdt.core.options.OsgiPreferenceStorage;
 import org.eclipse.cdt.doxygen.DoxygenMetadata;
 import org.eclipse.cdt.doxygen.DoxygenOptions;
 import org.eclipse.cdt.doxygen.core.DoxygenConfiguration;
 import org.eclipse.cdt.doxygen.core.DoxygenPreferences;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferenceMetadataStore;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.OsgiPreferenceMetadataStore;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.prefs.Preferences;
 
 @Component
 public class DoxygenPreferenceAccess implements DoxygenConfiguration, DoxygenPreferences {
@@ -39,14 +41,14 @@ public class DoxygenPreferenceAccess implements DoxygenConfiguration, DoxygenPre
 	}
 
 	@Override
-	public OptionStorage workspaceStorage() {
-		return new OsgiPreferenceStorage(preferences(InstanceScope.INSTANCE));
+	public IPreferenceMetadataStore workspaceStorage() {
+		return new OsgiPreferenceMetadataStore(preferences(InstanceScope.INSTANCE));
 	}
 
 	@Override
-	public OptionStorage projectStorage(IProject project) {
+	public IPreferenceMetadataStore projectStorage(IProject project) {
 		Objects.requireNonNull(DoxygenCoreMessages.DoxygenPreferenceAccess_e_null_project);
-		return new OsgiPreferenceStorage(preferences(new ProjectScope(project)));
+		return new OsgiPreferenceMetadataStore(preferences(new ProjectScope(project)));
 	}
 
 	@Override
@@ -65,8 +67,14 @@ public class DoxygenPreferenceAccess implements DoxygenConfiguration, DoxygenPre
 		return new DoxygenOptionsAccess(projectStorage(project), doxygenMetadata);
 	}
 
-	private Preferences preferences(IScopeContext scope) {
-		return scope.getNode(nodeQualifier()).node(nodePath());
+	private IEclipsePreferences preferences(IScopeContext scope) {
+		return Optional.ofNullable(scope.getNode(nodeQualifier()))//
+				.map(n -> n.node(nodePath()))//
+				.filter(IEclipsePreferences.class::isInstance)//
+				.map(IEclipsePreferences.class::cast)//
+				.orElseThrow(() -> new IllegalStateException(//
+						NLS.bind(DoxygenCoreMessages.DoxygenPreferenceAccess_e_get_preferences, //
+								nodeQualifier(), nodePath())));
 	}
 
 	private String nodeQualifier() {

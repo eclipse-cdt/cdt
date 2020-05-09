@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.doxygen.core;
 
-import org.eclipse.cdt.core.options.OptionStorage;
 import org.eclipse.cdt.doxygen.DoxygenMetadata;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.preferences.IPreferenceMetadataStore;
 
 public interface DoxygenPreferences {
 
@@ -24,7 +24,7 @@ public interface DoxygenPreferences {
 	 *
 	 * @return the workspace storage for doxygen options
 	 */
-	OptionStorage workspaceStorage();
+	IPreferenceMetadataStore workspaceStorage();
 
 	/**
 	 * Returns the project-specific storage for doxygen options to be used in UI, must not return <code>null</code>
@@ -32,7 +32,7 @@ public interface DoxygenPreferences {
 	 * @param project scope for the storage, must not be <code>null</code>
 	 * @return the project-specific storage for doxygen options
 	 */
-	OptionStorage projectStorage(IProject project);
+	IPreferenceMetadataStore projectStorage(IProject project);
 
 	/**
 	 * Return the metadata for the options to be used in UI, must not return <code>null</code>

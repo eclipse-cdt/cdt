@@ -18,13 +18,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.options.OptionMetadata;
-import org.eclipse.cdt.core.options.OptionStorage;
 import org.eclipse.cdt.doxygen.DoxygenMetadata;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.core.runtime.preferences.IPreferenceMetadataStore;
+import org.eclipse.core.runtime.preferences.PreferenceMetadata;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
@@ -44,7 +44,7 @@ public class DocCommentOwnerArea {
 	private final Combo combo;
 	private final IDocCommentOwner owners[];
 
-	private final Map<OptionMetadata<Boolean>, Button> buttons;
+	private final Map<PreferenceMetadata<Boolean>, Button> buttons;
 
 	public DocCommentOwnerArea(Composite pane, DoxygenMetadata metadata, String descriptionText,
 			String comboLabelText) {
@@ -73,7 +73,7 @@ public class DocCommentOwnerArea {
 		return created;
 	}
 
-	private Button createCheckBox(Composite parent, OptionMetadata<Boolean> option) {
+	private Button createCheckBox(Composite parent, PreferenceMetadata<Boolean> option) {
 		Button checkBox = new Button(parent, SWT.CHECK);
 		checkBox.setText(option.name());
 		checkBox.setToolTipText(option.description());
@@ -98,7 +98,7 @@ public class DocCommentOwnerArea {
 		return result.toArray(new IDocCommentOwner[result.size()]);
 	}
 
-	public void initialize(IDocCommentOwner initial, OptionStorage storage) {
+	public void initialize(IDocCommentOwner initial, IPreferenceMetadataStore storage) {
 		selectDocumentOwner(initial, combo);
 		buttons.entrySet().stream().forEach(e -> e.getValue().setSelection(storage.load(e.getKey())));
 	}
@@ -134,7 +134,7 @@ public class DocCommentOwnerArea {
 		return index == 0 ? NullDocCommentOwner.INSTANCE : owners[index - 1];
 	}
 
-	public void apply(OptionStorage storage) {
+	public void apply(IPreferenceMetadataStore storage) {
 		buttons.entrySet().stream().forEach(e -> storage.save(e.getValue().getSelection(), e.getKey()));
 	}
 

@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.options.OptionStorage;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.doxygen.DoxygenMetadata;
@@ -38,6 +37,7 @@ import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 import org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenMultilineAutoEditStrategy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IPreferenceMetadataStore;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -52,7 +52,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	private HashMap<String, String> fOptions;
 	protected ICProject fCProject;
 	private DoxygenPreferences doxygenPreferences;
-	private OptionStorage workspaceStorage;
+	private IPreferenceMetadataStore workspaceStorage;
 	private DoxygenMetadata doxygenMetadata;
 
 	/**

@@ -27,6 +27,7 @@ public class DoxygenCoreMessages extends NLS {
 	public static String DoxygenMetadataDefaults_use_pre_post_tags_name;
 	public static String DoxygenMetadataDefaults_use_structured_commands_description;
 	public static String DoxygenMetadataDefaults_use_structured_commands_name;
+	public static String DoxygenPreferenceAccess_e_get_preferences;
 	public static String DoxygenPreferenceAccess_e_null_project;
 	static {
 		// initialize resource bundle

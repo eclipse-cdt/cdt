@@ -14,8 +14,8 @@ package org.eclipse.tm.internal.terminal.model;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.LineSegment;
-import org.eclipse.tm.terminal.model.Style;
-import org.eclipse.tm.terminal.model.StyleColor;
+import org.eclipse.tm.terminal.model.TerminalColor;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 import junit.framework.TestCase;
 
@@ -199,9 +199,9 @@ abstract public class AbstractITerminalTextDataTest extends TestCase {
 	}
 
 	public void testGetLineSegments() {
-		Style s1 = getDefaultStyle();
-		Style s2 = s1.setBold(true);
-		Style s3 = s1.setUnderline(true);
+		TerminalStyle s1 = getDefaultStyle();
+		TerminalStyle s2 = s1.setBold(true);
+		TerminalStyle s3 = s1.setUnderline(true);
 		ITerminalTextData term = makeITerminalTextData();
 		term.setDimensions(8, 8);
 		LineSegment[] segments;
@@ -273,7 +273,7 @@ abstract public class AbstractITerminalTextDataTest extends TestCase {
 
 	}
 
-	void assertSegment(int col, String text, Style style, LineSegment segment) {
+	void assertSegment(int col, String text, TerminalStyle style, LineSegment segment) {
 		assertEquals(col, segment.getColumn());
 		assertEqualsTerm(text, segment.getText());
 		assertEquals(style, segment.getStyle());
@@ -333,26 +333,25 @@ abstract public class AbstractITerminalTextDataTest extends TestCase {
 
 	public void testGetStyle() {
 		ITerminalTextData term = makeITerminalTextData();
-		Style style = getDefaultStyle();
+		TerminalStyle style = getDefaultStyle();
 		term.setDimensions(6, 3);
 		for (int line = 0; line < term.getHeight(); line++) {
 			for (int column = 0; column < term.getWidth(); column++) {
 				char c = (char) ('a' + column + line);
-				term.setChar(line, column, c, style.setForground(StyleColor.getStyleColor("" + c)));
+				term.setChar(line, column, c, style.setForeground(TerminalColor.getForTest(c)));
 			}
 		}
 		for (int line = 0; line < term.getHeight(); line++) {
 			for (int column = 0; column < term.getWidth(); column++) {
 				char c = (char) ('a' + column + line);
-				assertSame(style.setForground(StyleColor.getStyleColor("" + c)), term.getStyle(line, column));
+				assertSame(style.setForeground(TerminalColor.getForTest(c)), term.getStyle(line, column));
 			}
 		}
 
 	}
 
-	protected Style getDefaultStyle() {
-		return Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false, false,
-				false);
+	protected TerminalStyle getDefaultStyle() {
+		return TerminalStyle.getDefaultStyle();
 	}
 
 	public void testSetChar() {

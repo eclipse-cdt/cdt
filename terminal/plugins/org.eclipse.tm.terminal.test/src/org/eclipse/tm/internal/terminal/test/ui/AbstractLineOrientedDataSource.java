@@ -11,7 +11,7 @@
 package org.eclipse.tm.internal.terminal.test.ui;
 
 import org.eclipse.tm.terminal.model.ITerminalTextData;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * Adds line by line
@@ -20,7 +20,7 @@ import org.eclipse.tm.terminal.model.Style;
 abstract class AbstractLineOrientedDataSource implements IDataSource {
 	abstract public char[] dataSource();
 
-	abstract public Style getStyle();
+	abstract public TerminalStyle getStyle();
 
 	abstract public void next();
 
@@ -28,7 +28,7 @@ abstract class AbstractLineOrientedDataSource implements IDataSource {
 	public int step(ITerminalTextData terminal) {
 		next();
 		char[] chars = dataSource();
-		Style style = getStyle();
+		TerminalStyle style = getStyle();
 		int len;
 		// keep the synchronized block short!
 		synchronized (terminal) {

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.test.ui;
 
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 final class FastDataSource extends AbstractLineOrientedDataSource {
 	char lines[][] = new char[][] {
@@ -25,7 +25,7 @@ final class FastDataSource extends AbstractLineOrientedDataSource {
 	}
 
 	@Override
-	public Style getStyle() {
+	public TerminalStyle getStyle() {
 		return null;
 	}
 

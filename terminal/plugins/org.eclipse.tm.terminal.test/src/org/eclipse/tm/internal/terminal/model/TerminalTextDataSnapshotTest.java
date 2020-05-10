@@ -13,7 +13,6 @@ package org.eclipse.tm.internal.terminal.model;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
-import org.eclipse.tm.terminal.model.TerminalColor;
 import org.eclipse.tm.terminal.model.TerminalStyle;
 
 import junit.framework.TestCase;
@@ -322,7 +321,7 @@ public class TerminalTextDataSnapshotTest extends TestCase {
 		for (int line = 0; line < term.getHeight(); line++) {
 			for (int column = 0; column < term.getWidth(); column++) {
 				char c = (char) ('a' + column + line);
-				term.setChar(line, column, c, style.setForeground(TerminalColor.getForTest(c)));
+				term.setChar(line, column, c, style.setForeground(c));
 			}
 		}
 		ITerminalTextDataSnapshot snapshot = term.makeSnapshot();
@@ -331,7 +330,7 @@ public class TerminalTextDataSnapshotTest extends TestCase {
 		for (int line = 0; line < term.getHeight(); line++) {
 			for (int column = 0; column < term.getWidth(); column++) {
 				char c = (char) ('a' + column + line);
-				assertSame(style.setForeground(TerminalColor.getForTest(c)), snapshot.getStyle(line, column));
+				assertSame(style.setForeground(c), snapshot.getStyle(line, column));
 			}
 		}
 

@@ -74,6 +74,16 @@ public class StyleMap {
 
 	public RGB getForegrondRGB(TerminalStyle style) {
 		style = defaultIfNull(style);
+		RGB foregroundRGB;
+		if (style.isReverse()) {
+			foregroundRGB = style.getBackgroundRGB();
+		} else {
+			foregroundRGB = style.getForegroundRGB();
+		}
+		if (foregroundRGB != null) {
+			return foregroundRGB;
+		}
+
 		TerminalColor color;
 		if (style.isReverse()) {
 			color = style.getBackgroundTerminalColor();
@@ -91,6 +101,16 @@ public class StyleMap {
 
 	public RGB getBackgroundRGB(TerminalStyle style) {
 		style = defaultIfNull(style);
+		RGB backgroundRGB;
+		if (style.isReverse()) {
+			backgroundRGB = style.getForegroundRGB();
+		} else {
+			backgroundRGB = style.getBackgroundRGB();
+		}
+		if (backgroundRGB != null) {
+			return backgroundRGB;
+		}
+
 		TerminalColor color;
 		if (style.isReverse()) {
 			color = style.getForegroundTerminalColor();

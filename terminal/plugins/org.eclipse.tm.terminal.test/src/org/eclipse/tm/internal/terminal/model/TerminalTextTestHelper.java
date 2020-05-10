@@ -15,7 +15,6 @@ package org.eclipse.tm.internal.terminal.model;
 
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
-import org.eclipse.tm.terminal.model.TerminalColor;
 import org.eclipse.tm.terminal.model.TerminalStyle;
 
 public class TerminalTextTestHelper {
@@ -66,7 +65,7 @@ public class TerminalTextTestHelper {
 		term.setDimensions(s.length(), 1);
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
-			term.setChar(i, 0, c, style.setForeground(TerminalColor.getForTest(c)));
+			term.setChar(i, 0, c, style.setForeground(c));
 		}
 	}
 
@@ -105,7 +104,7 @@ public class TerminalTextTestHelper {
 				yy++;
 				xx = column;
 			} else {
-				term.setChar(yy, xx, c, style.setForeground(TerminalColor.getForTest(c)));
+				term.setChar(yy, xx, c, style.setForeground(c));
 				xx++;
 			}
 		}

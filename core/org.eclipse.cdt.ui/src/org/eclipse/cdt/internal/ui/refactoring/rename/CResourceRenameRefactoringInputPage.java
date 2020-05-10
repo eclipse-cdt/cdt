@@ -21,7 +21,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceProcessor;
+import org.eclipse.ltk.core.refactoring.participants.IRenameResourceProcessor;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -48,10 +48,10 @@ public class CResourceRenameRefactoringInputPage extends UserInputWizardPage {
 	private IDialogSettings fDialogSettings;
 
 	private Text fNameField;
-	private RenameResourceProcessor fRefactoringProcessor;
+	private IRenameResourceProcessor fRefactoringProcessor;
 	private Button updateReferences;
 
-	public CResourceRenameRefactoringInputPage(RenameResourceProcessor processor) {
+	public CResourceRenameRefactoringInputPage(IRenameResourceProcessor processor) {
 		super("CResourceRenameRefactoringInputPage"); //$NON-NLS-1$
 		fRefactoringProcessor = processor;
 		IDialogSettings ds = CUIPlugin.getDefault().getDialogSettings();

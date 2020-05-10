@@ -14,7 +14,7 @@
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceProcessor;
+import org.eclipse.ltk.core.refactoring.participants.IRenameResourceProcessor;
 import org.eclipse.ltk.ui.refactoring.resource.RenameResourceWizard;
 
 public class CResourceRenameRefactoringWizard extends RenameResourceWizard {
@@ -25,7 +25,7 @@ public class CResourceRenameRefactoringWizard extends RenameResourceWizard {
 
 	@Override
 	protected void addUserInputPages() {
-		RenameResourceProcessor processor = getRefactoring().getAdapter(RenameResourceProcessor.class);
+		IRenameResourceProcessor processor = getRefactoring().getAdapter(IRenameResourceProcessor.class);
 		addPage(new CResourceRenameRefactoringInputPage(processor));
 	}
 

@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7212f1f_bb7abcb7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompilationDatabaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-10T15:47:00Z",
+      "side": 1,
+      "message": "just CoreException?",
+      "revId": "8a107d5fbe4f1949d5565344fbac3a9270b2507d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c25173d_71528aa6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompilationDatabaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-10T15:47:00Z",
+      "side": 1,
+      "message": "I suggest to move `isValid` check here and throw CoreException is not, this should simplify client code.",
+      "revId": "8a107d5fbe4f1949d5565344fbac3a9270b2507d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5726b124_c7938c4a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompilationDatabaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-10T15:47:00Z",
+      "side": 1,
+      "message": "here we lost information regarding failure during variable resolution",
+      "revId": "8a107d5fbe4f1949d5565344fbac3a9270b2507d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "29462f28_6d5f98b9",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompilationDatabaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-10T15:47:00Z",
+      "side": 1,
+      "message": "we may throw this exception just from `resolve` method to simplify the logic here",
+      "revId": "8a107d5fbe4f1949d5565344fbac3a9270b2507d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "206e0197_b3ed1613",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/internal/ui/language/settings/providers/CompilationDatabaseParserOptionPage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-10T15:47:00Z",
+      "side": 1,
+      "message": "here we duplicates code from `CompilationDatabaseParser`\n\n* hiding potential root cause of failure from user\n* doing extra validity check\n* recreating Status that we can just get from CoreException",
+      "revId": "8a107d5fbe4f1949d5565344fbac3a9270b2507d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -22,7 +22,7 @@ import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * This class is thread safe.
@@ -136,24 +136,24 @@ public class TerminalTextData implements ITerminalTextData {
 	}
 
 	@Override
-	public Style getStyle(int line, int column) {
+	public TerminalStyle getStyle(int line, int column) {
 		return fData.getStyle(line, column);
 	}
 
 	@Override
-	public void setChar(int line, int column, char c, Style style) {
+	public void setChar(int line, int column, char c, TerminalStyle style) {
 		fData.setChar(line, column, c, style);
 		sendLineChangedToSnapshots(line);
 	}
 
 	@Override
-	public void setChars(int line, int column, char[] chars, Style style) {
+	public void setChars(int line, int column, char[] chars, TerminalStyle style) {
 		fData.setChars(line, column, chars, style);
 		sendLineChangedToSnapshots(line);
 	}
 
 	@Override
-	public void setChars(int line, int column, char[] chars, int start, int len, Style style) {
+	public void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style) {
 		fData.setChars(line, column, chars, start, len, style);
 		sendLineChangedToSnapshots(line);
 	}
@@ -279,7 +279,7 @@ public class TerminalTextData implements ITerminalTextData {
 	}
 
 	@Override
-	public Style[] getStyles(int line) {
+	public TerminalStyle[] getStyles(int line) {
 		return fData.getStyles(line);
 	}
 

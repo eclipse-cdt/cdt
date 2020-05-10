@@ -15,7 +15,7 @@
 package org.eclipse.tm.terminal.model;
 
 /**
- * A writable matrix of characters and {@link Style}. This is intended to be the
+ * A writable matrix of characters and {@link TerminalStyle}. This is intended to be the
  * low level representation of the text of a Terminal. Higher layers are
  * responsible to fill the text and styles into this representation.
  * <p>
@@ -41,33 +41,36 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	int getMaxHeight();
 
 	/**
-	 * Set a single character and the associated {@link Style}.
+	 * Set a single character and the associated {@link TerminalStyle}.
 	 * @param line line must be >=0 and < height
 	 * @param column column must be >=0 and < width
 	 * @param c the new character at this position
 	 * @param style the style or null
+	 * @since 5.0
 	 */
-	void setChar(int line, int column, char c, Style style);
+	void setChar(int line, int column, char c, TerminalStyle style);
 
 	/**
-	 * Set an array of characters showing in the same {@link Style}.
+	 * Set an array of characters showing in the same {@link TerminalStyle}.
 	 * @param line line must be >=0 and < height
 	 * @param column column must be >=0 and < width
 	 * @param chars the new characters at this position
 	 * @param style the style or null
+	 * @since 5.0
 	 */
-	void setChars(int line, int column, char[] chars, Style style);
+	void setChars(int line, int column, char[] chars, TerminalStyle style);
 
 	/**
-	 * Set a subrange of an array of characters showing in the same {@link Style}.
+	 * Set a subrange of an array of characters showing in the same {@link TerminalStyle}.
 	 * @param line line must be >=0 and < height
 	 * @param column column must be >=0 and < width
 	 * @param chars the new characters at this position
 	 * @param start the start index in the chars array
 	 * @param len the number of characters to insert. Characters beyond width are not inserted.
 	 * @param style the style or null
+	 * @since 5.0
 	 */
-	void setChars(int line, int column, char[] chars, int start, int len, Style style);
+	void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style);
 
 	/**
 	 * Cleans the entire line.
@@ -77,7 +80,7 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 
 	/**
 	 * Shifts some lines up or down. The "empty" space is filled with <code>'\000'</code> chars
-	 * and <code>null</code> {@link Style}
+	 * and <code>null</code> {@link TerminalStyle}
 	 * <p>To illustrate shift, here is some sample data:
 	 * <pre>
 	 * 0 aaaa

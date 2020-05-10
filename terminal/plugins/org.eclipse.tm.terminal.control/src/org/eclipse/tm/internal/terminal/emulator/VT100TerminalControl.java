@@ -52,21 +52,26 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.SocketException;
 import java.nio.charset.Charset;
+import java.util.EnumMap;
+import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -81,6 +86,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -98,6 +104,7 @@ import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalMessages;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.tm.internal.terminal.preferences.ITerminalConstants;
+import org.eclipse.tm.internal.terminal.preferences.TerminalColorPresets;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
@@ -108,6 +115,7 @@ import org.eclipse.tm.internal.terminal.textcanvas.TextCanvas;
 import org.eclipse.tm.internal.terminal.textcanvas.TextLineRenderer;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
+import org.eclipse.tm.terminal.model.TerminalColor;
 import org.eclipse.tm.terminal.model.TerminalTextDataFactory;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
@@ -144,7 +152,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	private TerminalFocusListener fFocusListener;
 	private ITerminalConnector fConnector;
 	private final ITerminalConnector[] fConnectors;
-	private final boolean fUseCommonPrefs;
+	private final IPreferenceStore fPreferenceStore;
 	private boolean connectOnEnterIfClosed = true;
 
 	PipedInputStream fInputStream;
@@ -165,17 +173,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/**
 	 * Listens to changes in the preferences
 	 */
-	private final IPropertyChangeListener fPreferenceListener = event -> {
-		if (event.getProperty().equals(ITerminalConstants.PREF_BUFFERLINES)
-				|| event.getProperty().equals(ITerminalConstants.PREF_INVERT_COLORS)) {
-			updatePreferences();
-		}
-	};
-	private final IPropertyChangeListener fFontListener = event -> {
-		if (event.getProperty().equals(ITerminalConstants.FONT_DEFINITION)) {
-			onTerminalFontChanged();
-		}
-	};
+	private final IPropertyChangeListener fPreferenceListener = this::updatePreferences;
+	private final IPropertyChangeListener fFontListener = this::updateFont;
 
 	/**
 	 * Is protected by synchronize on this
@@ -184,12 +183,22 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	private PollingTextCanvasModel fPollingTextCanvasModel;
 
+	/**
+	 * Instantiate a Terminal widget.
+	 * @param target Callback for notifying the owner of Terminal state changes.
+	 * @param wndParent The Window parent to embed the Terminal in.
+	 * @param connectors Provided connectors.
+	 * @param preferenceStore If non-<code>null</code>, the Terminal widget will pick up settings
+	 *    from the given store.
+	 * @since 3.2
+	 */
 	public VT100TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors) {
-		this(target, wndParent, connectors, false);
+		this(target, wndParent, connectors, null);
 	}
 
 	/**
-	 * Instantiate a Terminal widget.
+	 * Instantiate a Terminal widget using the <code>org.eclipse.tm.terminal.TerminalPreferencePage</code> Preference page's
+	 * default preference store.
 	 * @param target Callback for notifying the owner of Terminal state changes.
 	 * @param wndParent The Window parent to embed the Terminal in.
 	 * @param connectors Provided connectors.
@@ -200,8 +209,22 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	 */
 	public VT100TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors,
 			boolean useCommonPrefs) {
+		this(target, wndParent, connectors, useCommonPrefs ? TerminalPlugin.getDefault().getPreferenceStore() : null);
+	}
+
+	/**
+	 * Instantiate a Terminal widget.
+	 * @param target Callback for notifying the owner of Terminal state changes.
+	 * @param wndParent The Window parent to embed the Terminal in.
+	 * @param connectors Provided connectors.
+	 * @param preferenceStore If non-<code>null</code>, the Terminal widget will pick up settings
+	 *    from the given store.
+	 * @since 5.0
+	 */
+	public VT100TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors,
+			IPreferenceStore preferenceStore) {
 		fConnectors = connectors;
-		fUseCommonPrefs = useCommonPrefs;
+		fPreferenceStore = preferenceStore;
 		fTerminalListener = target;
 		fTerminalModel = TerminalTextDataFactory.makeTerminalTextData();
 		fTerminalModel.setMaxHeight(1000);
@@ -373,10 +396,10 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	@Override
 	public void disposeTerminal() {
 		Logger.log("entered."); //$NON-NLS-1$
-		if (fUseCommonPrefs) {
-			TerminalPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
-			JFaceResources.getFontRegistry().removeListener(fFontListener);
+		if (fPreferenceStore != null) {
+			fPreferenceStore.removePropertyChangeListener(fPreferenceListener);
 		}
+		JFaceResources.getFontRegistry().removeListener(fFontListener);
 		disconnectTerminal();
 		fClipboard.dispose();
 		getTerminalText().dispose();
@@ -642,12 +665,11 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		setupControls(parent);
 		setCommandInputField(fCommandInputField);
 		setupListeners();
-		if (fUseCommonPrefs && wasDisposed) {
-			updatePreferences();
-			onTerminalFontChanged();
-			TerminalPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPreferenceListener);
-			JFaceResources.getFontRegistry().addListener(fFontListener);
+		if (fPreferenceStore != null && wasDisposed) {
+			updatePreferences(null);
+			fPreferenceStore.addPropertyChangeListener(fPreferenceListener);
 		}
+		JFaceResources.getFontRegistry().addListener(fFontListener);
 		setupHelp(fWndParent, TerminalPlugin.HELP_VIEW);
 
 		if (!wasDisposed) {
@@ -655,18 +677,58 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		}
 	}
 
-	private void updatePreferences() {
-		int bufferLineLimit = Platform.getPreferencesService().getInt(TerminalPlugin.PLUGIN_ID,
-				ITerminalConstants.PREF_BUFFERLINES, 0, null);
-		boolean invert = Platform.getPreferencesService().getBoolean(TerminalPlugin.PLUGIN_ID,
-				ITerminalConstants.PREF_INVERT_COLORS, false, null);
+	private void updatePreferences(PropertyChangeEvent unused) {
+		int bufferLineLimit = fPreferenceStore.getInt(ITerminalConstants.PREF_BUFFERLINES);
+		boolean invert = fPreferenceStore.getBoolean(ITerminalConstants.PREF_INVERT_COLORS);
 		setBufferLineLimit(bufferLineLimit);
 		setInvertedColors(invert);
+		onTerminalColorsChanged();
+		onTerminalFontChanged();
+	}
+
+	private void onTerminalColorsChanged() {
+		Map<TerminalColor, RGB> map = new EnumMap<>(TerminalColor.class);
+		TerminalColor[] values = TerminalColor.values();
+		for (TerminalColor terminalColor : values) {
+			RGB rgb = null;
+			if (fPreferenceStore != null) {
+				try {
+					rgb = StringConverter.asRGB(
+							fPreferenceStore.getString(ITerminalConstants.getPrefForTerminalColor(terminalColor)));
+				} catch (DataFormatException dfe) {
+					// bad color, use default preset value instead
+				}
+			}
+
+			if (rgb == null) {
+				rgb = TerminalColorPresets.INSTANCE.getDefaultPreset().getRGB(terminalColor);
+			}
+			map.put(terminalColor, rgb);
+		}
+		fCtlText.updateColors(map);
+	}
+
+	private String getFontDefinition() {
+		String definition;
+		if (fPreferenceStore != null) {
+			definition = fPreferenceStore.getString(ITerminalConstants.PREF_FONT_DEFINITION);
+		} else {
+			definition = ITerminalConstants.DEFAULT_FONT_DEFINITION;
+		}
+		if (definition == null || definition.isEmpty()) {
+			definition = "org.eclipse.jface.textfont"; //$NON-NLS-1$
+		}
+		return definition;
 	}
 
 	private void onTerminalFontChanged() {
-		// set the font for all
-		setFont(ITerminalConstants.FONT_DEFINITION);
+		setFont(getFontDefinition());
+	}
+
+	private void updateFont(PropertyChangeEvent event) {
+		if (event.getProperty().equals(getFontDefinition())) {
+			onTerminalFontChanged();
+		}
 	}
 
 	@Override

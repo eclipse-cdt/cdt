@@ -43,6 +43,7 @@
     <li><a href="#dsf">DSF and DSF-GDB API Changes.</a></li>
     <li><a href="#oldStyleProjects">Partial removal of CDT 3.X project support.</a></li>
     <li><a href="#optionsAPI">Removal of CDT Core Options API.</a></li>
+    <li><a href="#terminal">TM Terminal has major changes to support new color and preference functionality.</a></li>
   </ol>
   <p>
     Planned Removals after June 2022
@@ -227,6 +228,34 @@
   <p>
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=565154" target="_blank">Bug 565154</a>.
   </p>
+
+  <h3>12. <a name="terminal">TM Terminal has major changes to support new color and preference functionality.</a></h3>
+  <p>
+    The TM Terminal's control (org.eclipse.tm.terminal.control) bundle has a major new version to support numerous API
+    changes to support features such as new colors, preference sharing and some other code clean-up.
+  </p>
+  <ul>
+    <li>org.eclipse.tm.terminal.model.Style removed and is mostly replaced by
+      org.eclipse.tm.terminal.model.TerminalStyle. To handle
+      new API and color handling, the entire Style class was replaced with TerminalStyle that operates in a similar way.
+      Because some methods in TerminalStyle have similar signatures to those in removed Style class a new class was
+      introduced to prevent accidental use of incorrect API. See <a
+        href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=549697" target="_blank">Bug 562495</a>.</li>
+    <li>org.eclipse.tm.terminal.model.StyleColor removed. Replaced by a new way of representing standard color in the
+      terminal using the new enum org.eclipse.tm.terminal.model.TerminalColor.. See <a
+        href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=549697" target="_blank">Bug 562495</a>.
+    </li>
+    <li>org.eclipse.tm.terminal.model.ITerminalTextData method taking or returning Style now use TerminalStyle. See <a
+        href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=549697" target="_blank">Bug 562495</a>.
+    </li>
+    <li>org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly method taking or returning Style now use TerminalStyle.
+      See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=549697" target="_blank">Bug 562495</a>.
+    </li>
+    <li>org.eclipse.tm.terminal.model.LineSegment method taking or returning Style now use TerminalStyle. See <a
+        href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=549697" target="_blank">Bug 562495</a>.
+    </li>
+  </ul>
+
 
   <hr>
 

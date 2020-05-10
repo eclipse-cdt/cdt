@@ -36,9 +36,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * @noreference This class is not intended to be referenced by clients.
  */
 public class TerminalPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	protected BooleanFieldEditor fInvertColors;
-
-	protected IntegerFieldEditor fEditorBufferSize;
 
 	public TerminalPreferencePage() {
 		super(GRID);
@@ -69,14 +66,12 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
 	}
 
 	protected void setupEditors() {
-		fInvertColors = new BooleanFieldEditor(ITerminalConstants.PREF_INVERT_COLORS, TerminalMessages.INVERT_COLORS,
-				getFieldEditorParent());
-		fEditorBufferSize = new IntegerFieldEditor(ITerminalConstants.PREF_BUFFERLINES, TerminalMessages.BUFFERLINES,
-				getFieldEditorParent());
+		addField(new BooleanFieldEditor(ITerminalConstants.PREF_INVERT_COLORS, TerminalMessages.INVERT_COLORS,
+				getFieldEditorParent()));
 
-		fEditorBufferSize.setValidRange(0, Integer.MAX_VALUE);
+		addField(new IntegerFieldEditor(ITerminalConstants.PREF_BUFFERLINES, TerminalMessages.BUFFERLINES,
+				getFieldEditorParent()));
 
-		addField(fInvertColors);
-		addField(fEditorBufferSize);
+		addField(new TerminalColorsFieldEditor(getFieldEditorParent()));
 	}
 }

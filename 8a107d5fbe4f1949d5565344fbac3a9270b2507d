@@ -70,6 +70,24 @@
     },
     {
       "key": {
+        "uuid": "d91754dc_4ab8a254",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompilationDatabaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-05-10T16:59:54Z",
+      "side": 1,
+      "message": "I was hesitant because it wasn\u0027t clear to me that resolve meant also validating the file being readable whereas the semantic of \u0027resolve\u0027 fits with the the term resolve of platform variables and CDT variables. Anyway, I can just add javadoc to the resolveCompilationDataBasePath to make it more clear.",
+      "parentUuid": "29462f28_6d5f98b9",
+      "revId": "8a107d5fbe4f1949d5565344fbac3a9270b2507d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "206e0197_b3ed1613",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/internal/ui/language/settings/providers/CompilationDatabaseParserOptionPage.java",
         "patchSetId": 4

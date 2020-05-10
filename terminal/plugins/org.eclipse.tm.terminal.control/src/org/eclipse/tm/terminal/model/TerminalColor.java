@@ -20,6 +20,15 @@ import org.eclipse.swt.widgets.Display;
  * the colors with well known names defined by the ANSI Escape Sequences, plus other colors needed
  * to render a display (such as Background color).
  *
+ * Rather than name all the colors when using ANSI 8-bit indexed colors, the indexed colors
+ * can be accessed via the {@link #getIndexedRGBColor(int)} or {@link #getIndexedRGBColor(int)}
+ * (use {@link #isIndexedTerminalColor(int)} to determine which one is appropriate.
+ *
+ * The {@link TerminalStyle} supports any arbitrary color by using {@link RGB} defined colors.
+ * This class provides the connection between the names exposed to the user in preferences
+ * and their use in the terminal, along with how colors change when other attributes (such as
+ * bright and invertColors) are applied to them.
+ *
  * @since 5.0
  */
 public enum TerminalColor {
@@ -158,11 +167,37 @@ public enum TerminalColor {
 	}
 
 	/**
-	 * FOR TEST ONLY.
+	 * Query for whether the 8-bit color index will return a named color, in which case
+	 * {@link #getIndexedTerminalColor(int)} must be called to get the named color. Use
+	 * {@link #convertColor(boolean, boolean)} if this method returns false.
 	 *
-	 * @noreference This enum method is not intended to be referenced by clients.
+	 * @param index 8-bit index.
+	 * @return true for named colors, false for RGB colors
 	 */
-	public static TerminalColor getForTest(int c) {
-		return TerminalColor.values()[c % TerminalColor.values().length];
+	public static boolean isIndexedTerminalColor(int index) {
+		Assert.isLegal(index >= 0 && index < 256, "Invalid 8-bit table index out of range 0-255"); //$NON-NLS-1$
+		return index < table8bitIndexedTerminalColors.length && index >= 0;
+	}
+
+	/**
+	 * Return the named color for the given 8-bit index.
+	 *
+	 * @param index 8-bit index in 0-15 range.
+	 * @return named color
+	 */
+	public static TerminalColor getIndexedTerminalColor(int index) {
+		Assert.isLegal(isIndexedTerminalColor(index), "Invalid table index used for ANSI Color"); //$NON-NLS-1$
+		return table8bitIndexedTerminalColors[index];
+	}
+
+	/**
+	 * Return the RGB color for the given 8-bit index.
+	 *
+	 * @param index 8-bit index in 16-255 range.
+	 * @return RGB color
+	 */
+	public static RGB getIndexedRGBColor(int index) {
+		Assert.isLegal(index >= 16 && index < 256, "Invalid table index used for RGB Color"); //$NON-NLS-1$
+		return table8bitIndexedRGB[index - 16];
 	}
 }

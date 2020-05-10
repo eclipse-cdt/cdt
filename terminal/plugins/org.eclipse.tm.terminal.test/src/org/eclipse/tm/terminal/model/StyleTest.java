@@ -13,9 +13,9 @@ package org.eclipse.tm.terminal.model;
 import junit.framework.TestCase;
 
 public class StyleTest extends TestCase {
-	final TerminalColor c1 = TerminalColor.getForTest(1);
-	final TerminalColor c2 = TerminalColor.getForTest(2);
-	final TerminalColor c3 = TerminalColor.getForTest(3);
+	final TerminalColor c1 = TerminalColor.getIndexedTerminalColor(1);
+	final TerminalColor c2 = TerminalColor.getIndexedTerminalColor(2);
+	final TerminalColor c3 = TerminalColor.getIndexedTerminalColor(3);
 
 	public void testGetStyle() {
 		TerminalStyle s1 = TerminalStyle.getStyle(c1, c2, true, false, true, false);

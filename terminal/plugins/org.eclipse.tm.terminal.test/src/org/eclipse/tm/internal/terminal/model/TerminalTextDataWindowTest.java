@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.LineSegment;
-import org.eclipse.tm.terminal.model.TerminalColor;
 import org.eclipse.tm.terminal.model.TerminalStyle;
 
 public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
@@ -214,7 +213,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		for (int line = 0; line < term.getHeight(); line++) {
 			for (int column = 0; column < term.getWidth(); column++) {
 				char c = (char) ('a' + column + line);
-				term.setChar(line, column, c, style.setForeground(TerminalColor.getForTest(c)));
+				term.setChar(line, column, c, style.setForeground(c));
 			}
 		}
 		for (int line = 0; line < term.getHeight(); line++) {
@@ -222,7 +221,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 				char c = (char) ('a' + column + line);
 				TerminalStyle s = null;
 				if (line >= fOffset && line < fOffset + fSize)
-					s = style.setForeground(TerminalColor.getForTest(c));
+					s = style.setForeground(c);
 				assertSame(s, term.getStyle(line, column));
 			}
 		}

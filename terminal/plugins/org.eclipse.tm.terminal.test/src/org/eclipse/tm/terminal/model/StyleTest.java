@@ -18,8 +18,8 @@ public class StyleTest extends TestCase {
 	final TerminalColor c3 = TerminalColor.getForTest(3);
 
 	public void testGetStyle() {
-		Style s1 = Style.getStyle(c1, c2, true, false, true, false);
-		Style s2 = Style.getStyle(c1, c2, true, false, true, false);
+		TerminalStyle s1 = TerminalStyle.getStyle(c1, c2, true, false, true, false);
+		TerminalStyle s2 = TerminalStyle.getStyle(c1, c2, true, false, true, false);
 		assertEquals(s1, s2);
 		assertSame(s1, s2);
 		s1 = s1.setBlink(!s1.isBlink());
@@ -30,8 +30,8 @@ public class StyleTest extends TestCase {
 	}
 
 	public void testSetForeground() {
-		Style s1 = Style.getStyle(c1, c2, true, false, true, false);
-		Style s2 = s1;
+		TerminalStyle s1 = TerminalStyle.getStyle(c1, c2, true, false, true, false);
+		TerminalStyle s2 = s1;
 		s2 = s1.setForeground(c3);
 		assertNotSame(s1, s2);
 		assertFalse(s1.equals(s2));
@@ -44,8 +44,8 @@ public class StyleTest extends TestCase {
 	}
 
 	public void testSetBackground() {
-		Style s1 = Style.getStyle(c1, c2, true, false, true, false);
-		Style s2 = s1;
+		TerminalStyle s1 = TerminalStyle.getStyle(c1, c2, true, false, true, false);
+		TerminalStyle s2 = s1;
 		s2 = s1.setBackground(c3);
 		assertNotSame(s1, s2);
 		assertFalse(s1.equals(s2));
@@ -58,8 +58,8 @@ public class StyleTest extends TestCase {
 	}
 
 	public void testSetBold() {
-		Style s1 = getDefaultStyle();
-		Style s2 = s1;
+		TerminalStyle s1 = getDefaultStyle();
+		TerminalStyle s2 = s1;
 		assertSame(s1, s2);
 		assertFalse(s2.isBold());
 		s2 = s2.setBold(true);
@@ -71,8 +71,8 @@ public class StyleTest extends TestCase {
 	}
 
 	public void testSetBlink() {
-		Style s1 = getDefaultStyle();
-		Style s2 = s1;
+		TerminalStyle s1 = getDefaultStyle();
+		TerminalStyle s2 = s1;
 		assertSame(s1, s2);
 		assertFalse(s2.isBlink());
 		s2 = s2.setBlink(true);
@@ -84,8 +84,8 @@ public class StyleTest extends TestCase {
 	}
 
 	public void testSetUnderline() {
-		Style s1 = getDefaultStyle();
-		Style s2 = s1;
+		TerminalStyle s1 = getDefaultStyle();
+		TerminalStyle s2 = s1;
 		assertSame(s1, s2);
 		assertFalse(s2.isUnderline());
 		s2 = s2.setUnderline(true);
@@ -97,8 +97,8 @@ public class StyleTest extends TestCase {
 	}
 
 	public void testSetReverse() {
-		Style s1 = getDefaultStyle();
-		Style s2 = s1;
+		TerminalStyle s1 = getDefaultStyle();
+		TerminalStyle s2 = s1;
 		assertSame(s1, s2);
 		assertFalse(s2.isReverse());
 		s2 = s2.setReverse(true);
@@ -109,8 +109,8 @@ public class StyleTest extends TestCase {
 		assertFalse(s2.isReverse());
 	}
 
-	private Style getDefaultStyle() {
-		return Style.getStyle(c1, c2, false, false, false, false);
+	private TerminalStyle getDefaultStyle() {
+		return TerminalStyle.getStyle(c1, c2, false, false, false, false);
 	}
 
 }

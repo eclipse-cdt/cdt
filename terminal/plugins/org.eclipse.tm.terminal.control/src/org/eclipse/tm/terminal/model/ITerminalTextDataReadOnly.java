@@ -51,7 +51,7 @@ public interface ITerminalTextDataReadOnly {
 	 * @return style at column,line or null
 	 * @since 5.0
 	 */
-	Style getStyle(int line, int column);
+	TerminalStyle getStyle(int line, int column);
 
 	/**
 	 * Creates a new instance of {@link ITerminalTextDataSnapshot} that
@@ -71,7 +71,7 @@ public interface ITerminalTextDataReadOnly {
 	/**
 	 * @since 5.0
 	 */
-	Style[] getStyles(int line);
+	TerminalStyle[] getStyles(int line);
 
 	/**
 	 * @return the line in which the cursor is at the moment

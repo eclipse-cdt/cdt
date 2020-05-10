@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  *
@@ -100,17 +100,17 @@ public interface IVT100EmulatorBackend {
 	 */
 	void deleteLines(int n);
 
-	Style getDefaultStyle();
+	TerminalStyle getDefaultStyle();
 
-	void setDefaultStyle(Style defaultStyle);
+	void setDefaultStyle(TerminalStyle defaultStyle);
 
-	Style getStyle();
+	TerminalStyle getStyle();
 
 	/**
 	 * Sets the style to be used from now on
 	 * @param style
 	 */
-	void setStyle(Style style);
+	void setStyle(TerminalStyle style);
 
 	/**
 	 * This method displays a subset of the newly-received text in the Terminal

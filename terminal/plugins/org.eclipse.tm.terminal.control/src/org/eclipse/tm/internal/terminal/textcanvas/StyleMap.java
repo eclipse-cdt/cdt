@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.internal.terminal.preferences.ITerminalConstants;
 import org.eclipse.tm.internal.terminal.preferences.TerminalColorPresets;
 import org.eclipse.tm.terminal.model.TerminalColor;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * The split between responsibilities of StyleMap and TerminalStyle are not always clear. Generally
@@ -42,14 +42,14 @@ public class StyleMap {
 
 	String fFontName = ITerminalConstants.FONT_DEFINITION;
 	private Point fCharSize;
-	private final Style fDefaultStyle;
+	private final TerminalStyle fDefaultStyle;
 	private boolean fInvertColors;
 	private boolean fProportional;
 	private final int[] fOffsets = new int[256];
 	private final Map<TerminalColor, RGB> fColorMap = new EnumMap<>(TerminalColor.class);
 
 	public StyleMap() {
-		fDefaultStyle = Style.getDefaultStyle();
+		fDefaultStyle = TerminalStyle.getDefaultStyle();
 		initFont();
 		initColors();
 	}
@@ -72,7 +72,7 @@ public class StyleMap {
 		return fColorMap.get(color);
 	}
 
-	public RGB getForegrondRGB(Style style) {
+	public RGB getForegrondRGB(TerminalStyle style) {
 		style = defaultIfNull(style);
 		TerminalColor color;
 		if (style.isReverse()) {
@@ -89,7 +89,7 @@ public class StyleMap {
 		return getRGB(color);
 	}
 
-	public RGB getBackgroundRGB(Style style) {
+	public RGB getBackgroundRGB(TerminalStyle style) {
 		style = defaultIfNull(style);
 		TerminalColor color;
 		if (style.isReverse()) {
@@ -106,7 +106,7 @@ public class StyleMap {
 		return getRGB(color);
 	}
 
-	private Style defaultIfNull(Style style) {
+	private TerminalStyle defaultIfNull(TerminalStyle style) {
 		if (style == null)
 			style = fDefaultStyle;
 		return style;
@@ -116,7 +116,7 @@ public class StyleMap {
 		fInvertColors = invert;
 	}
 
-	public Font getFont(Style style) {
+	public Font getFont(TerminalStyle style) {
 		style = defaultIfNull(style);
 		if (style.isBold()) {
 			return JFaceResources.getFontRegistry().getBold(fFontName);

@@ -18,12 +18,12 @@ import static org.eclipse.tm.terminal.model.TerminalColor.YELLOW;
 import java.util.Random;
 
 import org.eclipse.tm.terminal.model.ITerminalTextData;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 public class RandomDataSource implements IDataSource {
 	Random fRandom = new Random();
-	Style styleNormal = Style.getStyle(BLACK, GREEN);
-	Style styles[] = new Style[] { styleNormal, styleNormal.setBold(true),
+	TerminalStyle styleNormal = TerminalStyle.getStyle(BLACK, GREEN);
+	TerminalStyle styles[] = new TerminalStyle[] { styleNormal, styleNormal.setBold(true),
 			styleNormal.setForeground(RED), styleNormal.setForeground(YELLOW),
 			styleNormal.setBold(true).setUnderline(true), styleNormal.setReverse(true),
 			styleNormal.setReverse(true).setBold(true), styleNormal.setReverse(true).setUnderline(true) };
@@ -38,7 +38,7 @@ public class RandomDataSource implements IDataSource {
 				int line = fRandom.nextInt(h);
 				int col = fRandom.nextInt(w);
 				char c = (char) ('A' + fRandom.nextInt('z' - 'A'));
-				Style style = styles[fRandom.nextInt(styles.length)];
+				TerminalStyle style = styles[fRandom.nextInt(styles.length)];
 				terminal.setChar(line, col, c, style);
 			}
 		}

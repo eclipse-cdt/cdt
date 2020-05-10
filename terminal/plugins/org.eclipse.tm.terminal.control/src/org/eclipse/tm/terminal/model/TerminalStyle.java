@@ -26,17 +26,17 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
  */
 // TODO add an Object for user data, use weak map to keep track of styles with associated
 // user data
-public class Style {
+public class TerminalStyle {
 	private final TerminalColor fForegroundTerminalColor;
 	private final TerminalColor fBackgroundTerminalColor;
 	private final boolean fBold;
 	private final boolean fBlink;
 	private final boolean fUnderline;
 	private final boolean fReverse;
-	private final static Map<Style, Style> fgStyles = Collections
-			.synchronizedMap(new LinkedHashMap<Style, Style>() {
+	private final static Map<TerminalStyle, TerminalStyle> fgStyles = Collections
+			.synchronizedMap(new LinkedHashMap<TerminalStyle, TerminalStyle>() {
 				@Override
-				protected boolean removeEldestEntry(Map.Entry<Style, Style> eldest) {
+				protected boolean removeEldestEntry(Map.Entry<TerminalStyle, TerminalStyle> eldest) {
 					int size = size();
 					boolean removeEldest = size >= 1000;
 					if (TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_VT100BACKEND)) {
@@ -50,7 +50,7 @@ public class Style {
 				}
 			});
 
-	private Style(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor, boolean bold,
+	private TerminalStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor, boolean bold,
 			boolean blink, boolean underline, boolean reverse) {
 		fForegroundTerminalColor = foregroundTerminalColor;
 		fBackgroundTerminalColor = backgroundTerminalColor;
@@ -60,51 +60,51 @@ public class Style {
 		fReverse = reverse;
 	}
 
-	public static Style getStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor,
+	public static TerminalStyle getStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor,
 			boolean bold, boolean blink, boolean underline, boolean reverse) {
-		Style style = new Style(foregroundTerminalColor, backgroundTerminalColor, bold, blink,
+		TerminalStyle style = new TerminalStyle(foregroundTerminalColor, backgroundTerminalColor, bold, blink,
 				underline, reverse);
 		// If set had a computeIfAbsent we would use a set, instead just store 1-2-1 mapping
 		return fgStyles.computeIfAbsent(style, (s) -> style);
 	}
 
-	public static Style getDefaultStyle() {
+	public static TerminalStyle getDefaultStyle() {
 		return getStyle(TerminalColor.FOREGROUND, TerminalColor.BACKGROUND);
 	}
 
-	public static Style getStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor) {
+	public static TerminalStyle getStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor) {
 		return getStyle(foregroundTerminalColor, backgroundTerminalColor, false, false, false, false);
 	}
 
-	public Style setForeground(TerminalColor foregroundTerminalColor) {
+	public TerminalStyle setForeground(TerminalColor foregroundTerminalColor) {
 		return getStyle(foregroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
 	}
 
-	public Style setBackground(TerminalColor backgroundTerminalColor) {
+	public TerminalStyle setBackground(TerminalColor backgroundTerminalColor) {
 		return getStyle(fForegroundTerminalColor, backgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
 	}
 
-	public Style setForeground(Style other) {
+	public TerminalStyle setForeground(TerminalStyle other) {
 		return getStyle(other.fForegroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
 	}
 
-	public Style setBackground(Style other) {
+	public TerminalStyle setBackground(TerminalStyle other) {
 		return getStyle(fForegroundTerminalColor, other.fBackgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
 	}
 
-	public Style setBold(boolean bold) {
+	public TerminalStyle setBold(boolean bold) {
 		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, bold, fBlink, fUnderline, fReverse);
 	}
 
-	public Style setBlink(boolean blink) {
+	public TerminalStyle setBlink(boolean blink) {
 		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fBold, blink, fUnderline, fReverse);
 	}
 
-	public Style setUnderline(boolean underline) {
+	public TerminalStyle setUnderline(boolean underline) {
 		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, underline, fReverse);
 	}
 
-	public Style setReverse(boolean reverse) {
+	public TerminalStyle setReverse(boolean reverse) {
 		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, fUnderline, reverse);
 	}
 
@@ -153,7 +153,7 @@ public class Style {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Style other = (Style) obj;
+		TerminalStyle other = (TerminalStyle) obj;
 		if (fBackgroundTerminalColor != other.fBackgroundTerminalColor)
 			return false;
 		if (fBlink != other.fBlink)

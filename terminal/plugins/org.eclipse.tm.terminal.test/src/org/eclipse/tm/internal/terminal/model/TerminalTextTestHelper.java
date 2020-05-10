@@ -16,7 +16,7 @@ package org.eclipse.tm.internal.terminal.model;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.TerminalColor;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 public class TerminalTextTestHelper {
 	static public String toSimple(ITerminalTextDataReadOnly term) {
@@ -62,7 +62,7 @@ public class TerminalTextTestHelper {
 	 * @param s each character is one line
 	 */
 	static public void fillSimple(ITerminalTextData term, String s) {
-		Style style = Style.getDefaultStyle();
+		TerminalStyle style = TerminalStyle.getDefaultStyle();
 		term.setDimensions(s.length(), 1);
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
@@ -98,7 +98,7 @@ public class TerminalTextTestHelper {
 	static public void fill(ITerminalTextData term, int column, int line, String s) {
 		int xx = column;
 		int yy = line;
-		Style style = Style.getDefaultStyle();
+		TerminalStyle style = TerminalStyle.getDefaultStyle();
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
 			if (c == '\n') {

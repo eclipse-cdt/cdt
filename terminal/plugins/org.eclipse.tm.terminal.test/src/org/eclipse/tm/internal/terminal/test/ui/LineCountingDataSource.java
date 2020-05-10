@@ -15,12 +15,12 @@ import static org.eclipse.tm.terminal.model.TerminalColor.BLUE;
 import static org.eclipse.tm.terminal.model.TerminalColor.RED;
 import static org.eclipse.tm.terminal.model.TerminalColor.YELLOW;
 
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 final class LineCountingDataSource extends AbstractLineOrientedDataSource {
-	Style styleNormal = Style.getStyle(BLACK, RED);
+	TerminalStyle styleNormal = TerminalStyle.getStyle(BLACK, RED);
 
-	Style styles[] = new Style[] { styleNormal, styleNormal.setBold(true),
+	TerminalStyle styles[] = new TerminalStyle[] { styleNormal, styleNormal.setBold(true),
 			styleNormal.setForeground(BLUE), styleNormal.setForeground(YELLOW),
 			styleNormal.setBold(true).setUnderline(true), styleNormal.setReverse(true),
 			styleNormal.setReverse(true).setBold(true), styleNormal.setReverse(true).setUnderline(true) };
@@ -34,7 +34,7 @@ final class LineCountingDataSource extends AbstractLineOrientedDataSource {
 	}
 
 	@Override
-	public Style getStyle() {
+	public TerminalStyle getStyle() {
 		return styles[pos % styles.length];
 	}
 

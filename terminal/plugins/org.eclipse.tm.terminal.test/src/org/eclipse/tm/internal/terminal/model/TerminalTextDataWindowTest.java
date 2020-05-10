@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.LineSegment;
 import org.eclipse.tm.terminal.model.TerminalColor;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 	int fOffset;
@@ -137,9 +137,9 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 
 	@Override
 	public void testGetLineSegments() {
-		Style s1 = getDefaultStyle();
-		Style s2 = s1.setBold(true);
-		Style s3 = s1.setUnderline(true);
+		TerminalStyle s1 = getDefaultStyle();
+		TerminalStyle s2 = s1.setBold(true);
+		TerminalStyle s3 = s1.setUnderline(true);
 		ITerminalTextData term = makeITerminalTextData();
 		term.setDimensions(8, 8);
 		LineSegment[] segments;
@@ -209,7 +209,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 	@Override
 	public void testGetStyle() {
 		ITerminalTextData term = makeITerminalTextData();
-		Style style = getDefaultStyle();
+		TerminalStyle style = getDefaultStyle();
 		term.setDimensions(6, 3);
 		for (int line = 0; line < term.getHeight(); line++) {
 			for (int column = 0; column < term.getWidth(); column++) {
@@ -220,7 +220,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		for (int line = 0; line < term.getHeight(); line++) {
 			for (int column = 0; column < term.getWidth(); column++) {
 				char c = (char) ('a' + column + line);
-				Style s = null;
+				TerminalStyle s = null;
 				if (line >= fOffset && line < fOffset + fSize)
 					s = style.setForeground(TerminalColor.getForTest(c));
 				assertSame(s, term.getStyle(line, column));

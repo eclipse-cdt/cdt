@@ -14,7 +14,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * Reads the file in an infinite loop.
@@ -28,11 +28,11 @@ final class FileDataSource extends AbstractLineOrientedDataSource {
 
 	String line;
 
-	Style style;
+	TerminalStyle style;
 
-	Style styleNormal = Style.getDefaultStyle();
+	TerminalStyle styleNormal = TerminalStyle.getDefaultStyle();
 
-	Style styleBold = styleNormal.setBold(true);
+	TerminalStyle styleBold = styleNormal.setBold(true);
 
 	FileDataSource(String file) {
 		fFile = file;
@@ -44,7 +44,7 @@ final class FileDataSource extends AbstractLineOrientedDataSource {
 	}
 
 	@Override
-	public Style getStyle() {
+	public TerminalStyle getStyle() {
 		return style;
 	}
 

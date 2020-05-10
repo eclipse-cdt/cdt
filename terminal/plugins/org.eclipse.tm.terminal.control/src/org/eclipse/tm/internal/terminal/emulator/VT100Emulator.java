@@ -48,7 +48,7 @@ import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.tm.terminal.model.TerminalStyle;
 
 /**
  * This class processes character data received from the remote host and
@@ -169,7 +169,7 @@ public class VT100Emulator implements ControlListener {
 			text = new VT100EmulatorBackend(data);
 
 		//		text.setDimensions(24, 80);
-		Style style = Style.getDefaultStyle();
+		TerminalStyle style = TerminalStyle.getDefaultStyle();
 		text.setDefaultStyle(style);
 		text.setStyle(style);
 	}
@@ -850,7 +850,7 @@ public class VT100Emulator implements ControlListener {
 
 			ansiParameters[0].append('0');
 		}
-		Style style = text.getStyle();
+		TerminalStyle style = text.getStyle();
 		// There are a non-zero number of ANSI parameters. Process each one in
 		// order.
 

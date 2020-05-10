@@ -15,12 +15,18 @@ public class LineSegment {
 	private final int fCol;
 	private final Style fStyle;
 
+	/**
+	 * @since 5.0
+	 */
 	public LineSegment(int col, String text, Style style) {
 		fCol = col;
 		fText = text;
 		fStyle = style;
 	}
 
+	/**
+	 * @since 5.0
+	 */
 	public Style getStyle() {
 		return fStyle;
 	}

@@ -16,13 +16,16 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
-import junit.framework.TestCase;
+import static org.eclipse.tm.terminal.model.TerminalColor.BLACK;
+import static org.eclipse.tm.terminal.model.TerminalColor.WHITE;
 
 import org.eclipse.tm.internal.terminal.model.TerminalTextDataStore;
 import org.eclipse.tm.internal.terminal.model.TerminalTextTestHelper;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.Style;
+
+import junit.framework.TestCase;
 
 public class VT100EmulatorBackendTest extends TestCase {
 
@@ -592,7 +595,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 	public void testGetDefaultStyle() {
 		ITerminalTextData term = makeITerminalTextData();
 		IVT100EmulatorBackend vt100 = makeBakend(term);
-		Style style = Style.getStyle("white", "black");
+		Style style = Style.getStyle(WHITE, BLACK);
 		vt100.setDefaultStyle(style);
 		assertSame(style, vt100.getDefaultStyle());
 		Style style2 = style.setBold(true);
@@ -603,7 +606,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 	public void testGetStyle() {
 		ITerminalTextData term = makeITerminalTextData();
 		IVT100EmulatorBackend vt100 = makeBakend(term);
-		Style style = Style.getStyle("white", "black");
+		Style style = Style.getStyle(WHITE, BLACK);
 		vt100.setStyle(style);
 		assertSame(style, vt100.getStyle());
 		Style style2 = style.setBold(true);
@@ -668,7 +671,6 @@ public class VT100EmulatorBackendTest extends TestCase {
 		assertEqualsTerm("klmn\n" + "opqr\n" + "sABC\n" + "DEFG\n" + "HIJK\n" + "L   ", toMultiLineText(term));
 		assertEquals(2, vt100.getCursorLine());
 		assertEquals(1, vt100.getCursorColumn());
-
 	}
 
 	public void testProcessNewline() {

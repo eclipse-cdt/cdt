@@ -13,9 +13,9 @@ package org.eclipse.tm.terminal.model;
 import junit.framework.TestCase;
 
 public class StyleTest extends TestCase {
-	final StyleColor c1 = StyleColor.getStyleColor("c1");
-	final StyleColor c2 = StyleColor.getStyleColor("c2");
-	final StyleColor c3 = StyleColor.getStyleColor("c3");
+	final TerminalColor c1 = TerminalColor.getForTest(1);
+	final TerminalColor c2 = TerminalColor.getForTest(2);
+	final TerminalColor c3 = TerminalColor.getForTest(3);
 
 	public void testGetStyle() {
 		Style s1 = Style.getStyle(c1, c2, true, false, true, false);
@@ -29,17 +29,17 @@ public class StyleTest extends TestCase {
 		assertSame(s1, s2);
 	}
 
-	public void testSetForground() {
+	public void testSetForeground() {
 		Style s1 = Style.getStyle(c1, c2, true, false, true, false);
 		Style s2 = s1;
-		s2 = s1.setForground(c3);
+		s2 = s1.setForeground(c3);
 		assertNotSame(s1, s2);
 		assertFalse(s1.equals(s2));
-		assertSame(s2.getForground(), c3);
-		assertSame(s1.getForground(), c1);
-		assertSame(s1.getBackground(), c2);
-		assertSame(s2.getBackground(), c2);
-		s2 = s2.setForground(c1);
+		assertSame(s2.getForegroundTerminalColor(), c3);
+		assertSame(s1.getForegroundTerminalColor(), c1);
+		assertSame(s1.getBackgroundTerminalColor(), c2);
+		assertSame(s2.getBackgroundTerminalColor(), c2);
+		s2 = s2.setForeground(c1);
 		assertSame(s1, s2);
 	}
 
@@ -49,10 +49,10 @@ public class StyleTest extends TestCase {
 		s2 = s1.setBackground(c3);
 		assertNotSame(s1, s2);
 		assertFalse(s1.equals(s2));
-		assertSame(s2.getForground(), c1);
-		assertSame(s1.getForground(), c1);
-		assertSame(s1.getBackground(), c2);
-		assertSame(s2.getBackground(), c3);
+		assertSame(s2.getForegroundTerminalColor(), c1);
+		assertSame(s1.getForegroundTerminalColor(), c1);
+		assertSame(s1.getBackgroundTerminalColor(), c2);
+		assertSame(s2.getBackgroundTerminalColor(), c3);
 		s2 = s2.setBackground(c2);
 		assertSame(s1, s2);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2020 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -21,93 +21,99 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
  * @author scharf
  * Flyweight
  * Threadsafe.
+ * @since 5.0
  *
  */
 // TODO add an Object for user data, use weak map to keep track of styles with associated
 // user data
 public class Style {
-	private final StyleColor fForground;
-	private final StyleColor fBackground;
+	private final TerminalColor fForegroundTerminalColor;
+	private final TerminalColor fBackgroundTerminalColor;
 	private final boolean fBold;
 	private final boolean fBlink;
 	private final boolean fUnderline;
 	private final boolean fReverse;
-	private final static Map<Style, Style> fgStyles = Collections.synchronizedMap(new LinkedHashMap<Style, Style>() {
-		@Override
-		protected boolean removeEldestEntry(Map.Entry<Style, Style> eldest) {
-			int size = size();
-			boolean removeEldest = size >= 1000;
-			if (TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_VT100BACKEND)) {
-				if (removeEldest) {
-					Logger.log("Removing eldest Style from style cache, size = " + size); //$NON-NLS-1$
-				} else {
-					Logger.log("Leaving eldest Style in style cache, size = " + size); //$NON-NLS-1$
+	private final static Map<Style, Style> fgStyles = Collections
+			.synchronizedMap(new LinkedHashMap<Style, Style>() {
+				@Override
+				protected boolean removeEldestEntry(Map.Entry<Style, Style> eldest) {
+					int size = size();
+					boolean removeEldest = size >= 1000;
+					if (TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_VT100BACKEND)) {
+						if (removeEldest) {
+							Logger.log("Removing eldest Style from style cache, size = " + size); //$NON-NLS-1$
+						} else {
+							Logger.log("Leaving eldest Style in style cache, size = " + size); //$NON-NLS-1$
+						}
+					}
+					return removeEldest;
 				}
-			}
-			return removeEldest;
-		}
-	});
+			});
 
-	private Style(StyleColor forground, StyleColor background, boolean bold, boolean blink, boolean underline,
-			boolean reverse) {
-		fForground = forground;
-		fBackground = background;
+	private Style(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor, boolean bold,
+			boolean blink, boolean underline, boolean reverse) {
+		fForegroundTerminalColor = foregroundTerminalColor;
+		fBackgroundTerminalColor = backgroundTerminalColor;
 		fBold = bold;
 		fBlink = blink;
 		fUnderline = underline;
 		fReverse = reverse;
 	}
 
-	public static Style getStyle(StyleColor forground, StyleColor background, boolean bold, boolean blink,
-			boolean underline, boolean reverse) {
-		Style style = new Style(forground, background, bold, blink, underline, reverse);
+	public static Style getStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor,
+			boolean bold, boolean blink, boolean underline, boolean reverse) {
+		Style style = new Style(foregroundTerminalColor, backgroundTerminalColor, bold, blink,
+				underline, reverse);
 		// If set had a computeIfAbsent we would use a set, instead just store 1-2-1 mapping
 		return fgStyles.computeIfAbsent(style, (s) -> style);
 	}
 
-	public static Style getStyle(String forground, String background) {
-		return getStyle(StyleColor.getStyleColor(forground), StyleColor.getStyleColor(background), false, false, false,
-				false);
+	public static Style getDefaultStyle() {
+		return getStyle(TerminalColor.FOREGROUND, TerminalColor.BACKGROUND);
 	}
 
-	public static Style getStyle(StyleColor forground, StyleColor background) {
-		return getStyle(forground, background, false, false, false, false);
+	public static Style getStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor) {
+		return getStyle(foregroundTerminalColor, backgroundTerminalColor, false, false, false, false);
 	}
 
-	public Style setForground(StyleColor forground) {
-		return getStyle(forground, fBackground, fBold, fBlink, fUnderline, fReverse);
+	public Style setForeground(TerminalColor foregroundTerminalColor) {
+		return getStyle(foregroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
 	}
 
-	public Style setBackground(StyleColor background) {
-		return getStyle(fForground, background, fBold, fBlink, fUnderline, fReverse);
+	public Style setBackground(TerminalColor backgroundTerminalColor) {
+		return getStyle(fForegroundTerminalColor, backgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
 	}
 
-	public Style setForground(String colorName) {
-		return getStyle(StyleColor.getStyleColor(colorName), fBackground, fBold, fBlink, fUnderline, fReverse);
+	public Style setForeground(Style other) {
+		return getStyle(other.fForegroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
 	}
 
-	public Style setBackground(String colorName) {
-		return getStyle(fForground, StyleColor.getStyleColor(colorName), fBold, fBlink, fUnderline, fReverse);
+	public Style setBackground(Style other) {
+		return getStyle(fForegroundTerminalColor, other.fBackgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
 	}
 
 	public Style setBold(boolean bold) {
-		return getStyle(fForground, fBackground, bold, fBlink, fUnderline, fReverse);
+		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, bold, fBlink, fUnderline, fReverse);
 	}
 
 	public Style setBlink(boolean blink) {
-		return getStyle(fForground, fBackground, fBold, blink, fUnderline, fReverse);
+		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fBold, blink, fUnderline, fReverse);
 	}
 
 	public Style setUnderline(boolean underline) {
-		return getStyle(fForground, fBackground, fBold, fBlink, underline, fReverse);
+		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, underline, fReverse);
 	}
 
 	public Style setReverse(boolean reverse) {
-		return getStyle(fForground, fBackground, fBold, fBlink, fUnderline, reverse);
+		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, fUnderline, reverse);
 	}
 
-	public StyleColor getBackground() {
-		return fBackground;
+	public TerminalColor getForegroundTerminalColor() {
+		return fForegroundTerminalColor;
+	}
+
+	public TerminalColor getBackgroundTerminalColor() {
+		return fBackgroundTerminalColor;
 	}
 
 	public boolean isBlink() {
@@ -116,10 +122,6 @@ public class Style {
 
 	public boolean isBold() {
 		return fBold;
-	}
-
-	public StyleColor getForground() {
-		return fForground;
 	}
 
 	public boolean isReverse() {
@@ -134,10 +136,10 @@ public class Style {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((fBackground == null) ? 0 : fBackground.hashCode());
+		result = prime * result + ((fBackgroundTerminalColor == null) ? 0 : fBackgroundTerminalColor.hashCode());
 		result = prime * result + (fBlink ? 1231 : 1237);
 		result = prime * result + (fBold ? 1231 : 1237);
-		result = prime * result + ((fForground == null) ? 0 : fForground.hashCode());
+		result = prime * result + ((fForegroundTerminalColor == null) ? 0 : fForegroundTerminalColor.hashCode());
 		result = prime * result + (fReverse ? 1231 : 1237);
 		result = prime * result + (fUnderline ? 1231 : 1237);
 		return result;
@@ -151,15 +153,14 @@ public class Style {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final Style other = (Style) obj;
-		// background == is the same as equals
-		if (fBackground != other.fBackground)
+		Style other = (Style) obj;
+		if (fBackgroundTerminalColor != other.fBackgroundTerminalColor)
 			return false;
 		if (fBlink != other.fBlink)
 			return false;
 		if (fBold != other.fBold)
 			return false;
-		if (fForground != other.fForground)
+		if (fForegroundTerminalColor != other.fForegroundTerminalColor)
 			return false;
 		if (fReverse != other.fReverse)
 			return false;
@@ -172,9 +173,9 @@ public class Style {
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		result.append("Style(foreground="); //$NON-NLS-1$
-		result.append(fForground);
+		result.append(fForegroundTerminalColor);
 		result.append(", background="); //$NON-NLS-1$
-		result.append(fBackground);
+		result.append(fBackgroundTerminalColor);
 		if (fBlink)
 			result.append(", blink"); //$NON-NLS-1$
 		if (fBold)

@@ -15,7 +15,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.eclipse.tm.terminal.model.Style;
-import org.eclipse.tm.terminal.model.StyleColor;
 
 /**
  * Reads the file in an infinite loop.
@@ -31,7 +30,7 @@ final class FileDataSource extends AbstractLineOrientedDataSource {
 
 	Style style;
 
-	Style styleNormal = Style.getStyle(StyleColor.getStyleColor("black"), StyleColor.getStyleColor("white"));
+	Style styleNormal = Style.getDefaultStyle();
 
 	Style styleBold = styleNormal.setBold(true);
 

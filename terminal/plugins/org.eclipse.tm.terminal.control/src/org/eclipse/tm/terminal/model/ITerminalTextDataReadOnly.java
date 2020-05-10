@@ -49,6 +49,7 @@ public interface ITerminalTextDataReadOnly {
 	 * @param line must be >=0 and < height
 	 * @param column must be >=0 and < width
 	 * @return style at column,line or null
+	 * @since 5.0
 	 */
 	Style getStyle(int line, int column);
 
@@ -67,6 +68,9 @@ public interface ITerminalTextDataReadOnly {
 
 	char[] getChars(int line);
 
+	/**
+	 * @since 5.0
+	 */
 	Style[] getStyles(int line);
 
 	/**

@@ -16,15 +16,20 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.LineSegment;
+import org.eclipse.tm.terminal.model.TerminalColor;
 import org.eclipse.tm.terminal.model.Style;
 
 /**
@@ -32,10 +37,11 @@ import org.eclipse.tm.terminal.model.Style;
  */
 public class TextLineRenderer implements ILinelRenderer {
 	private final ITextCanvasModel fModel;
-	StyleMap fStyleMap = new StyleMap();
+	private final StyleMap fStyleMap;
 
 	public TextLineRenderer(TextCanvas c, ITextCanvasModel model) {
 		fModel = model;
+		fStyleMap = new StyleMap();
 	}
 
 	@Override
@@ -102,7 +108,7 @@ public class TextLineRenderer implements ILinelRenderer {
 
 	private void fillBackground(GC gc, int x, int y, int width, int height) {
 		Color bg = gc.getBackground();
-		gc.setBackground(getDefaultBackgroundColor());
+		gc.setBackground(getDefaultBackgroundColor(gc.getDevice()));
 		gc.fillRectangle(x, y, width, height);
 		gc.setBackground(bg);
 
@@ -110,8 +116,14 @@ public class TextLineRenderer implements ILinelRenderer {
 
 	@Override
 	public Color getDefaultBackgroundColor() {
+		return getDefaultBackgroundColor(Display.getDefault());
+	}
+
+	@Override
+	public Color getDefaultBackgroundColor(Device device) {
 		// null == default style
-		return fStyleMap.getBackgroundColor(null);
+		RGB backgroundRGB = fStyleMap.getBackgroundRGB(null);
+		return new Color(device, backgroundRGB);
 	}
 
 	private void drawCursor(ITextCanvasModel model, GC gc, int row, int x, int y, int colFirst) {
@@ -125,7 +137,7 @@ public class TextLineRenderer implements ILinelRenderer {
 				Style style = getTerminalText().getStyle(row, cursorColumn);
 				if (style == null) {
 					// TODO make the cursor color customizable
-					style = Style.getStyle("BLACK", "WHITE"); //$NON-NLS-1$//$NON-NLS-2$
+					style = Style.getStyle(TerminalColor.FOREGROUND, TerminalColor.BACKGROUND);
 				}
 				style = style.setReverse(!style.isReverse());
 				setupGC(gc, style);
@@ -157,8 +169,11 @@ public class TextLineRenderer implements ILinelRenderer {
 	}
 
 	private void setupGC(GC gc, Style style) {
-		gc.setForeground(fStyleMap.getForegrondColor(style));
-		gc.setBackground(fStyleMap.getBackgroundColor(style));
+		RGB foregrondColor = fStyleMap.getForegrondRGB(style);
+		gc.setForeground(new Color(gc.getDevice(), foregrondColor));
+		RGB backgroundColor = fStyleMap.getBackgroundRGB(style);
+		gc.setBackground(new Color(gc.getDevice(), backgroundColor));
+
 		Font f = fStyleMap.getFont(style);
 		if (f != gc.getFont()) {
 			gc.setFont(f);
@@ -177,6 +192,11 @@ public class TextLineRenderer implements ILinelRenderer {
 	@Override
 	public void updateFont(String fontName) {
 		fStyleMap.updateFont(fontName);
+	}
+
+	@Override
+	public void updateColors(Map<TerminalColor, RGB> map) {
+		fStyleMap.updateColors(map);
 	}
 
 	@Override

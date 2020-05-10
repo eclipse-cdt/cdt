@@ -46,6 +46,7 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * @param column column must be >=0 and < width
 	 * @param c the new character at this position
 	 * @param style the style or null
+	 * @since 5.0
 	 */
 	void setChar(int line, int column, char c, Style style);
 
@@ -55,6 +56,7 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * @param column column must be >=0 and < width
 	 * @param chars the new characters at this position
 	 * @param style the style or null
+	 * @since 5.0
 	 */
 	void setChars(int line, int column, char[] chars, Style style);
 
@@ -66,6 +68,7 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * @param start the start index in the chars array
 	 * @param len the number of characters to insert. Characters beyond width are not inserted.
 	 * @param style the style or null
+	 * @since 5.0
 	 */
 	void setChars(int line, int column, char[] chars, int start, int len, Style style);
 

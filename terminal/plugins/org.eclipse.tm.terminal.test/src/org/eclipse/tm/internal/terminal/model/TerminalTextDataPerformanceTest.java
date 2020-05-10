@@ -13,7 +13,6 @@ package org.eclipse.tm.internal.terminal.model;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.Style;
-import org.eclipse.tm.terminal.model.StyleColor;
 
 import junit.framework.TestCase;
 
@@ -46,8 +45,7 @@ public class TerminalTextDataPerformanceTest extends TestCase {
 	}
 
 	private void method0(ITerminalTextData term, String label) {
-		Style style = Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false,
-				false, false);
+		Style style = Style.getDefaultStyle();
 		initPerformance(term);
 		String s = "This is a test string";
 		long n = 0;
@@ -90,8 +88,7 @@ public class TerminalTextDataPerformanceTest extends TestCase {
 	}
 
 	private void method1(ITerminalTextData term, String label) {
-		Style style = Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false,
-				false, false);
+		Style style = Style.getDefaultStyle();
 		initPerformance(term);
 		String s = "This is a test string";
 		long n = 0;
@@ -115,8 +112,7 @@ public class TerminalTextDataPerformanceTest extends TestCase {
 
 	public void testPerformance2() {
 		TerminalTextData term = new TerminalTextData();
-		Style style = Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false,
-				false, false);
+		Style style = Style.getDefaultStyle();
 		initPerformance(term);
 		TerminalTextData copy = new TerminalTextData();
 		copy.copy(term);
@@ -144,8 +140,7 @@ public class TerminalTextDataPerformanceTest extends TestCase {
 	public void testPerformance2a() {
 		TerminalTextData term = new TerminalTextData();
 		ITerminalTextDataSnapshot snapshot = term.makeSnapshot();
-		Style style = Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false,
-				false, false);
+		Style style = Style.getDefaultStyle();
 		initPerformance(term);
 		TerminalTextData copy = new TerminalTextData();
 		copy.copy(term);
@@ -178,8 +173,7 @@ public class TerminalTextDataPerformanceTest extends TestCase {
 		ITerminalTextDataSnapshot snapshot = term.makeSnapshot();
 		N = 0;
 		snapshot.addListener(snapshot1 -> N++);
-		Style style = Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false,
-				false, false);
+		Style style = Style.getDefaultStyle();
 		initPerformance(term);
 		TerminalTextData copy = new TerminalTextData();
 		copy.copy(term);
@@ -207,8 +201,7 @@ public class TerminalTextDataPerformanceTest extends TestCase {
 
 	public void testPerformance3() {
 		TerminalTextData term = new TerminalTextData();
-		Style style = Style.getStyle(StyleColor.getStyleColor("fg"), StyleColor.getStyleColor("bg"), false, false,
-				false, false);
+		Style style = Style.getDefaultStyle();
 		initPerformance(term);
 		TerminalTextData copy = new TerminalTextData();
 		copy.copy(term);

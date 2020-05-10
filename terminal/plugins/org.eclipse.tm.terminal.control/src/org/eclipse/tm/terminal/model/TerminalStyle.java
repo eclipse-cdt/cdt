@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 
@@ -29,6 +31,8 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 public class TerminalStyle {
 	private final TerminalColor fForegroundTerminalColor;
 	private final TerminalColor fBackgroundTerminalColor;
+	private final RGB fForegroundRGB;
+	private final RGB fBackgroundRGB;
 	private final boolean fBold;
 	private final boolean fBlink;
 	private final boolean fUnderline;
@@ -50,10 +54,16 @@ public class TerminalStyle {
 				}
 			});
 
-	private TerminalStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor, boolean bold,
-			boolean blink, boolean underline, boolean reverse) {
+	private TerminalStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor,
+			RGB foregroundRGB, RGB backgroundRGB, boolean bold, boolean blink, boolean underline, boolean reverse) {
+		Assert.isLegal(foregroundTerminalColor == null || foregroundRGB == null,
+				"Only one of ANSI or RGB colors can be specified as a foreground color"); //$NON-NLS-1$
+		Assert.isLegal(backgroundTerminalColor == null || backgroundRGB == null,
+				"Only one of ANSI or RGB colors can be specified as a background color"); //$NON-NLS-1$
 		fForegroundTerminalColor = foregroundTerminalColor;
 		fBackgroundTerminalColor = backgroundTerminalColor;
+		fForegroundRGB = foregroundRGB;
+		fBackgroundRGB = backgroundRGB;
 		fBold = bold;
 		fBlink = blink;
 		fUnderline = underline;
@@ -61,11 +71,21 @@ public class TerminalStyle {
 	}
 
 	public static TerminalStyle getStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor,
-			boolean bold, boolean blink, boolean underline, boolean reverse) {
-		TerminalStyle style = new TerminalStyle(foregroundTerminalColor, backgroundTerminalColor, bold, blink,
-				underline, reverse);
+			RGB foregroundRGB, RGB backgroundRGB, boolean bold, boolean blink, boolean underline, boolean reverse) {
+		TerminalStyle style = new TerminalStyle(foregroundTerminalColor, backgroundTerminalColor, foregroundRGB,
+				backgroundRGB, bold, blink, underline, reverse);
 		// If set had a computeIfAbsent we would use a set, instead just store 1-2-1 mapping
 		return fgStyles.computeIfAbsent(style, (s) -> style);
+	}
+
+	public static TerminalStyle getStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor,
+			boolean bold, boolean blink, boolean underline, boolean reverse) {
+		return getStyle(foregroundTerminalColor, backgroundTerminalColor, null, null, bold, blink, underline, reverse);
+	}
+
+	public static TerminalStyle getStyle(RGB foregroundRGB, RGB backgroundRGB, boolean bold, boolean blink,
+			boolean underline, boolean reverse) {
+		return getStyle(null, null, foregroundRGB, backgroundRGB, bold, blink, underline, reverse);
 	}
 
 	public static TerminalStyle getDefaultStyle() {
@@ -73,39 +93,83 @@ public class TerminalStyle {
 	}
 
 	public static TerminalStyle getStyle(TerminalColor foregroundTerminalColor, TerminalColor backgroundTerminalColor) {
-		return getStyle(foregroundTerminalColor, backgroundTerminalColor, false, false, false, false);
+		return getStyle(foregroundTerminalColor, backgroundTerminalColor, null, null, false, false, false, false);
 	}
 
 	public TerminalStyle setForeground(TerminalColor foregroundTerminalColor) {
-		return getStyle(foregroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
+		return getStyle(foregroundTerminalColor, fBackgroundTerminalColor, null, fBackgroundRGB, fBold, fBlink,
+				fUnderline, fReverse);
 	}
 
 	public TerminalStyle setBackground(TerminalColor backgroundTerminalColor) {
-		return getStyle(fForegroundTerminalColor, backgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
+		return getStyle(fForegroundTerminalColor, backgroundTerminalColor, fForegroundRGB, null, fBold, fBlink,
+				fUnderline, fReverse);
+	}
+
+	public TerminalStyle setForeground(RGB foregroundRGB) {
+		return getStyle(null, fBackgroundTerminalColor, foregroundRGB, fBackgroundRGB, fBold, fBlink, fUnderline,
+				fReverse);
+	}
+
+	public TerminalStyle setBackground(RGB backgroundRGB) {
+		return getStyle(fForegroundTerminalColor, null, fForegroundRGB, backgroundRGB, fBold, fBlink, fUnderline,
+				fReverse);
 	}
 
 	public TerminalStyle setForeground(TerminalStyle other) {
-		return getStyle(other.fForegroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
+		return getStyle(other.fForegroundTerminalColor, fBackgroundTerminalColor, other.fForegroundRGB, fBackgroundRGB,
+				fBold, fBlink, fUnderline, fReverse);
 	}
 
 	public TerminalStyle setBackground(TerminalStyle other) {
-		return getStyle(fForegroundTerminalColor, other.fBackgroundTerminalColor, fBold, fBlink, fUnderline, fReverse);
+		return getStyle(fForegroundTerminalColor, other.fBackgroundTerminalColor, fForegroundRGB, other.fBackgroundRGB,
+				fBold, fBlink, fUnderline, fReverse);
+	}
+
+	public TerminalStyle setForeground(int eightBitindexedColor) {
+		boolean isIndexTerminalColor = TerminalColor.isIndexedTerminalColor(eightBitindexedColor);
+		if (isIndexTerminalColor) {
+			TerminalColor foregroundTerminalColor = TerminalColor.getIndexedTerminalColor(eightBitindexedColor);
+			return getStyle(foregroundTerminalColor, fBackgroundTerminalColor, null, fBackgroundRGB, fBold, fBlink,
+					fUnderline, fReverse);
+		} else {
+			RGB foregroundRGB = TerminalColor.getIndexedRGBColor(eightBitindexedColor);
+			return getStyle(null, fBackgroundTerminalColor, foregroundRGB, fBackgroundRGB, fBold, fBlink, fUnderline,
+					fReverse);
+		}
+	}
+
+	public TerminalStyle setBackground(int eightBitindexedColor) {
+		boolean isIndexTerminalColor = TerminalColor.isIndexedTerminalColor(eightBitindexedColor);
+		if (isIndexTerminalColor) {
+			TerminalColor backgroundTerminalColor = TerminalColor.getIndexedTerminalColor(eightBitindexedColor);
+			return getStyle(fForegroundTerminalColor, backgroundTerminalColor, fForegroundRGB, null, fBold, fBlink,
+					fUnderline, fReverse);
+		} else {
+			RGB backgroundRGB = TerminalColor.getIndexedRGBColor(eightBitindexedColor);
+			return getStyle(fForegroundTerminalColor, null, fForegroundRGB, backgroundRGB, fBold, fBlink, fUnderline,
+					fReverse);
+		}
 	}
 
 	public TerminalStyle setBold(boolean bold) {
-		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, bold, fBlink, fUnderline, fReverse);
+		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fForegroundRGB, fBackgroundRGB, bold,
+				fBlink, fUnderline, fReverse);
 	}
 
 	public TerminalStyle setBlink(boolean blink) {
-		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fBold, blink, fUnderline, fReverse);
+		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fForegroundRGB, fBackgroundRGB, fBold,
+				blink, fUnderline, fReverse);
 	}
 
 	public TerminalStyle setUnderline(boolean underline) {
-		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, underline, fReverse);
+		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fForegroundRGB, fBackgroundRGB, fBold,
+				fBlink, underline, fReverse);
 	}
 
 	public TerminalStyle setReverse(boolean reverse) {
-		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fBold, fBlink, fUnderline, reverse);
+		return getStyle(fForegroundTerminalColor, fBackgroundTerminalColor, fForegroundRGB, fBackgroundRGB, fBold,
+				fBlink, fUnderline, reverse);
 	}
 
 	public TerminalColor getForegroundTerminalColor() {
@@ -114,6 +178,14 @@ public class TerminalStyle {
 
 	public TerminalColor getBackgroundTerminalColor() {
 		return fBackgroundTerminalColor;
+	}
+
+	public RGB getForegroundRGB() {
+		return fForegroundRGB;
+	}
+
+	public RGB getBackgroundRGB() {
+		return fBackgroundRGB;
 	}
 
 	public boolean isBlink() {
@@ -137,9 +209,11 @@ public class TerminalStyle {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((fBackgroundTerminalColor == null) ? 0 : fBackgroundTerminalColor.hashCode());
+		result = prime * result + ((fBackgroundRGB == null) ? 0 : fBackgroundRGB.hashCode());
 		result = prime * result + (fBlink ? 1231 : 1237);
 		result = prime * result + (fBold ? 1231 : 1237);
 		result = prime * result + ((fForegroundTerminalColor == null) ? 0 : fForegroundTerminalColor.hashCode());
+		result = prime * result + ((fForegroundRGB == null) ? 0 : fForegroundRGB.hashCode());
 		result = prime * result + (fReverse ? 1231 : 1237);
 		result = prime * result + (fUnderline ? 1231 : 1237);
 		return result;
@@ -156,11 +230,21 @@ public class TerminalStyle {
 		TerminalStyle other = (TerminalStyle) obj;
 		if (fBackgroundTerminalColor != other.fBackgroundTerminalColor)
 			return false;
+		if (fBackgroundRGB == null) {
+			if (other.fBackgroundRGB != null)
+				return false;
+		} else if (!fBackgroundRGB.equals(other.fBackgroundRGB))
+			return false;
 		if (fBlink != other.fBlink)
 			return false;
 		if (fBold != other.fBold)
 			return false;
 		if (fForegroundTerminalColor != other.fForegroundTerminalColor)
+			return false;
+		if (fForegroundRGB == null) {
+			if (other.fForegroundRGB != null)
+				return false;
+		} else if (!fForegroundRGB.equals(other.fForegroundRGB))
 			return false;
 		if (fReverse != other.fReverse)
 			return false;
@@ -173,9 +257,17 @@ public class TerminalStyle {
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		result.append("Style(foreground="); //$NON-NLS-1$
-		result.append(fForegroundTerminalColor);
+		if (fForegroundTerminalColor != null) {
+			result.append(fForegroundTerminalColor);
+		} else {
+			result.append(fForegroundRGB);
+		}
 		result.append(", background="); //$NON-NLS-1$
-		result.append(fBackgroundTerminalColor);
+		if (fForegroundTerminalColor != null) {
+			result.append(fBackgroundTerminalColor);
+		} else {
+			result.append(fBackgroundRGB);
+		}
 		if (fBlink)
 			result.append(", blink"); //$NON-NLS-1$
 		if (fBold)

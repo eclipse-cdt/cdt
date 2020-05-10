@@ -40,9 +40,11 @@ import static org.eclipse.tm.terminal.model.TerminalColor.YELLOW;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
@@ -859,6 +861,19 @@ public class VT100Emulator implements ControlListener {
 
 		while (parameterIndex < totalParameters && ansiParameters[parameterIndex].length() > 0) {
 			int ansiParameter = getAnsiParameter(parameterIndex);
+			if (ansiParameter == 1) {
+				String parameter = ansiParameters[parameterIndex].toString();
+				// Special case for  ITU's T.416 foreground/background color specification
+				// which uses : to separate parameters instead of ;
+				if (parameter.startsWith("38:") || parameter.startsWith("48:")) { //$NON-NLS-1$ //$NON-NLS-2$
+					String[] split = parameter.split(":"); //$NON-NLS-1$
+					ProcessExtendedColorsReturn retval = processExtendedColors(split, style, true);
+					style = retval.style();
+					parameterIndex++;
+					continue;
+				}
+
+			}
 
 			switch (ansiParameter) {
 			case 0:
@@ -974,6 +989,14 @@ public class VT100Emulator implements ControlListener {
 				style = style.setBackground(text.getDefaultStyle());
 				break;
 
+			case 38: // Foreground color defined by sequence
+			case 48: // Background color defined by sequence
+				CharSequence[] params = Arrays.copyOfRange(ansiParameters, parameterIndex, ansiParameters.length);
+				ProcessExtendedColorsReturn retval = processExtendedColors(params, style, false);
+				parameterIndex += retval.consumed() - 1;
+				style = retval.style();
+				break;
+
 			default:
 				Logger.log("Unsupported graphics rendition parameter: " + ansiParameter); //$NON-NLS-1$
 				break;
@@ -982,6 +1005,110 @@ public class VT100Emulator implements ControlListener {
 			++parameterIndex;
 		}
 		text.setStyle(style);
+	}
+
+	private interface ProcessExtendedColorsReturn {
+		/**
+		 * @return the new style
+		 */
+		TerminalStyle style();
+
+		/**
+		 * @return number of parameters consumed
+		 */
+		int consumed();
+	}
+
+	/**
+	 *
+	 * @param params array of parameters, starting with 38 or 48 being the command
+	 * @param colorspace if a colorspace may be included (ITU T.416 mode)
+	 */
+	private ProcessExtendedColorsReturn processExtendedColors(CharSequence[] paramStrings, TerminalStyle style,
+			boolean colorspace) {
+		int params[] = new int[paramStrings.length];
+		for (int i = 0; i < params.length; i++) {
+			try {
+				int parseInt = Integer.parseInt(paramStrings[i].toString());
+				int inMagnitude = parseInt % 256;
+				int inRange = inMagnitude < 0 ? inMagnitude + 256 : inMagnitude;
+				params[i] = inRange;
+			} catch (NumberFormatException ex) {
+				params[i] = 0;
+			}
+		}
+
+		boolean foreground = params[0] == 38;
+		int consumed = 1;
+		if (params.length > 1) {
+			int colorDepth = params[1];
+			switch (colorDepth) {
+			case 2: // 24-bit RGB color
+				int r = 0, g = 0, b = 0;
+				if (colorspace) {
+					if (params.length < 6) {
+						Logger.log(
+								"Not enough parameters for 24-bit color depth, expected 5, one for color space and one for each of RGB"); //$NON-NLS-1$
+					}
+				} else {
+					if (params.length < 5) {
+						Logger.log("Not enough parameters for 24-bit color depth, expected 3, one for each of RGB"); //$NON-NLS-1$
+					}
+				}
+				int start = colorspace ? 3 : 2;
+				if (params.length > start + 0) {
+					r = params[start + 0];
+				}
+				if (params.length > start + 1) {
+					g = params[start + 1];
+				}
+				if (params.length > start + 2) {
+					b = params[start + 2];
+				}
+
+				RGB rgb = new RGB(r, g, b);
+				if (foreground) {
+					style = style.setForeground(rgb);
+				} else {
+					style = style.setBackground(rgb);
+				}
+				consumed = Math.min(6, params.length);
+				break;
+			case 5: // 8-bit color table lookup
+				int index = 0;
+				if (params.length < 3) {
+					Logger.log("Missing parameter for 8-bit color depth"); //$NON-NLS-1$
+				} else {
+					index = params[2];
+				}
+				if (foreground) {
+					style = style.setForeground(index);
+				} else {
+					style = style.setBackground(index);
+				}
+				consumed = Math.min(3, params.length);
+				break;
+			default:
+				Logger.log("Unsupported color depth " + colorDepth + " for: " + params[0]); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+		} else {
+			Logger.log("Missing color depth for " + params[0]); //$NON-NLS-1$
+		}
+
+		TerminalStyle finalStyle = style;
+		int finalConsumed = consumed;
+		return new ProcessExtendedColorsReturn() {
+			@Override
+			public TerminalStyle style() {
+				return finalStyle;
+			}
+
+			@Override
+			public int consumed() {
+				return finalConsumed;
+			}
+		};
 	}
 
 	/**
@@ -1096,7 +1223,7 @@ public class VT100Emulator implements ControlListener {
 	 * most recent escape sequence.
 	 *
 	 * @return The <i>parameterIndex</i>th numeric ANSI parameter or -1 if the
-	 *         index is out of range.
+	 *         index is out of range or 1 if parse failed (1 is also a legitimate value)
 	 */
 	private int getAnsiParameter(int parameterIndex) {
 		if (parameterIndex < 0 || parameterIndex >= ansiParameters.length) {
@@ -1109,6 +1236,7 @@ public class VT100Emulator implements ControlListener {
 		if (parameter.length() == 0)
 			return 1;
 
+		// return 1 on failed parseInt
 		int parameterValue = 1;
 
 		// Don't trust the remote endpoint to send well formed numeric

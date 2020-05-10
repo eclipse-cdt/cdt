@@ -17,6 +17,7 @@ import static org.eclipse.tm.terminal.model.TerminalColor.WHITE;
 import static org.eclipse.tm.terminal.model.TerminalColor.YELLOW;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.swt.widgets.Display;
 import org.junit.AfterClass;
@@ -79,4 +80,75 @@ public class TerminalColorUITest {
 		assertEquals(WHITE.convertColor(false, true), BLACK.convertColor(true, true));
 		assertNotEquals(WHITE.convertColor(false, true), BLACK.convertColor(false, true));
 	}
+
+	@Test
+	public void testIndexesResolveToStandardColors() {
+		// check explicit colors
+		assertEquals(TerminalColor.BLACK.convertColor(false, false),
+				TerminalColor.getIndexedTerminalColor(0).convertColor(false, false));
+		assertEquals(TerminalColor.RED.convertColor(false, false),
+				TerminalColor.getIndexedTerminalColor(1).convertColor(false, false));
+
+		// Now check all colors
+		for (int i = 0; i < 8; i++) {
+			assertEquals(TerminalColor.values()[i].convertColor(false, false),
+					TerminalColor.getIndexedTerminalColor(i).convertColor(false, false));
+		}
+	}
+
+	@Test
+	public void testIndexesResolveToBrightColors() {
+		// check explicit colors
+		assertEquals(TerminalColor.BLACK.convertColor(false, true),
+				TerminalColor.getIndexedTerminalColor(8).convertColor(false, false));
+		assertEquals(TerminalColor.RED.convertColor(false, true),
+				TerminalColor.getIndexedTerminalColor(9).convertColor(false, false));
+
+		// Now check all colors
+		for (int i = 0; i < 8; i++) {
+			assertEquals(TerminalColor.values()[i].convertColor(false, true),
+					TerminalColor.getIndexedTerminalColor(i + 8).convertColor(false, false));
+		}
+	}
+
+	@Test
+	public void testIndexesInRange() {
+		for (int i = 0; i < 16; i++) {
+			assertNotNull(TerminalColor.getIndexedTerminalColor(i));
+		}
+		for (int i = 16; i < 256; i++) {
+			assertNotNull(TerminalColor.getIndexedRGBColor(i));
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testIndexesOutOfRange_m1TerminalColor() {
+		assertNotNull(TerminalColor.getIndexedTerminalColor(-1));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testIndexesOutOfRange_m1RGBColor() {
+		assertNotNull(TerminalColor.getIndexedRGBColor(-1));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testIndexesOutOfRange_16() {
+		assertNotNull(TerminalColor.getIndexedTerminalColor(16));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testIndexesOutOfRange_15() {
+		assertNotNull(TerminalColor.getIndexedRGBColor(15));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testIndexesOutOfRange_256TerminalColor() {
+		assertNotNull(TerminalColor.getIndexedTerminalColor(256));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testIndexesOutOfRange_256RGBColor() {
+		assertNotNull(TerminalColor.getIndexedRGBColor(256));
+	}
+
 }

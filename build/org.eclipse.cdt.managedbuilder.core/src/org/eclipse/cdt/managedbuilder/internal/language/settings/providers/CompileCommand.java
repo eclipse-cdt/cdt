@@ -18,6 +18,7 @@ public class CompileCommand {
 	public String directory;
 	public String command;
 	public String file;
+	public String[] arguments;
 
 	public String getDirectory() {
 		return directory;
@@ -31,4 +32,7 @@ public class CompileCommand {
 		return file;
 	}
 
+	public String[] getArguments() {
+		return arguments;
+	}
 }

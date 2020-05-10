@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Marc-Andre Laperle.
+ * Copyright (c) 2019, 2020 Marc-Andre Laperle.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -88,11 +88,11 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 	}
 
 	private void createTestProject() throws Exception {
-		createTestProject(true, true, true, true, true);
+		createTestProject(true, true, true, true, true, false);
 	}
 
 	private void createTestProject(boolean useAbsoluteSourcePath, boolean haveCommandDir, boolean validCommandDir,
-			boolean haveCommandLine, boolean validCommandLine) throws Exception {
+			boolean haveCommandLine, boolean validCommandLine, boolean haveCommandArguments) throws Exception {
 		fProject = ResourceHelper.createCDTProjectWithConfig(getName());
 		fFolder = ResourceHelper.createFolder(fProject, "folder");
 
@@ -140,6 +140,10 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 			else
 				command.command = "foo";
 		}
+		if (haveCommandArguments) {
+			command.arguments = new String[] { "g++", "-I" + fFolder.getLocation().toOSString(), "-DFOO=2",
+					sourceFilePath };
+		}
 
 		// Command for proj/test.cpp
 		CompileCommand command2 = new CompileCommand();
@@ -160,6 +164,11 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				command2.command = "g++ -I" + fFolder.getLocation().toOSString() + " -DFOO=3 " + sourceFilePath2;
 			else
 				command2.command = "foo";
+		}
+
+		if (haveCommandArguments) {
+			command2.arguments = new String[] { "g++", "-I" + fFolder.getLocation().toOSString(), "-DFOO=3",
+					sourceFilePath2 };
 		}
 
 		CompileCommand[] commands = new CompileCommand[2];
@@ -641,7 +650,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 	}
 
 	public void testParseCDB_RelativePaths() throws Exception {
-		createTestProject(false, true, true, true, true);
+		createTestProject(false, true, true, true, true, false);
 
 		ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(fProject);
 		ICElement ce = CCorePlugin.getDefault().getCoreModel().create(fOutsideCdbSourceFile.getFullPath());
@@ -671,7 +680,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 	}
 
 	public void testParseCDB_InvalidCommandDir() throws Exception {
-		createTestProject(true, true, false, true, true);
+		createTestProject(true, true, false, true, true, false);
 
 		ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(fProject);
 		ICElement ce = CCorePlugin.getDefault().getCoreModel().create(fOutsideCdbSourceFile.getFullPath());
@@ -715,7 +724,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 	}
 
 	public void testParseCDB_NoCommandDir() throws Exception {
-		createTestProject(true, false, true, true, true);
+		createTestProject(true, false, true, true, true, false);
 
 		ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(fProject);
 		ICElement ce = CCorePlugin.getDefault().getCoreModel().create(fOutsideCdbSourceFile.getFullPath());
@@ -759,7 +768,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 	}
 
 	public void testParseCDB_InvalidCommandLine() throws Exception {
-		createTestProject(true, true, true, true, false);
+		createTestProject(true, true, true, true, false, false);
 
 		ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(fProject);
 		ICElement ce = CCorePlugin.getDefault().getCoreModel().create(fOutsideCdbSourceFile.getFullPath());
@@ -790,7 +799,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 	}
 
 	public void testParseCDB_NoCommandLine() throws Exception {
-		createTestProject(true, true, true, false, true);
+		createTestProject(true, true, true, false, true, false);
 
 		ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(fProject);
 		ICElement ce = CCorePlugin.getDefault().getCoreModel().create(fOutsideCdbSourceFile.getFullPath());
@@ -818,6 +827,34 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertNull(parser.getSettingEntries(resCfgDescription, fSourceFile2, GPPLanguage.ID));
 
 		assertFalse(CDataUtil.isExcluded(tu.getPath(), resCfgDescription.getSourceEntries()));
+	}
+
+	public void testParseCDB_CommandArguments() throws Exception {
+		createTestProject(true, true, true, false, false, true);
+
+		ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(fProject);
+		ICElement ce = CCorePlugin.getDefault().getCoreModel().create(fOutsideCdbSourceFile.getFullPath());
+		ITranslationUnit tu = (ITranslationUnit) ce;
+		assertFalse(
+				CDataUtil.isExcluded(tu.getPath(), getConfigurationDescription(fProject, false).getSourceEntries()));
+
+		CompilationDatabaseParser parser = (CompilationDatabaseParser) LanguageSettingsManager
+				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
+		assertTrue(parser.isEmpty());
+		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
+		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
+		addLanguageSettingsProvider(parser);
+
+		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
+
+		parser.processCompileCommandsFile(null, cfgDescription);
+		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
+				cfgDescription.getProjectDescription());
+		joingLanguageSettingsJobs();
+
+		assertExpectedEntries(parser);
+
+		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 	}
 
 	public void testClear() throws Exception {

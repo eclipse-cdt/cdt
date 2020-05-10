@@ -304,7 +304,18 @@ public class CompilationDatabaseParser extends LanguageSettingsSerializableProvi
 				}
 			}
 
-			outputParser.processLine(c.getCommand());
+			String command = c.getCommand();
+			if (command != null) {
+				outputParser.processLine(command);
+			} else {
+				//				StringBuilder b = new StringBuilder();
+				//				for (String arg : c.getArguments()) {
+				//					b.append(arg.replaceAll(" ", "\\\\ "));
+				//					b.append(' ');
+				//				}
+				//				outputParser.processLine(b.toString());
+				outputParser.processLine(String.join(" ", c.getArguments())); //$NON-NLS-1$
+			}
 			parseCmdsMonitor.worked(1);
 		}
 		LanguageSettingsStorage storage = outputParser.copyStorage();

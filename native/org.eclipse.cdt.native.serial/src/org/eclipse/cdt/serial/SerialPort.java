@@ -38,7 +38,7 @@ public class SerialPort {
 	private boolean isOpen;
 	private boolean isPaused;
 	private Object pauseMutex = new Object();
-	private BaudRate baudRate = BaudRate.B115200;
+	private int baudRate = BaudRate.B115200.getRate();
 	private ByteSize byteSize = ByteSize.B8;
 	private Parity parity = Parity.None;
 	private StopBits stopBits = StopBits.S1;
@@ -325,7 +325,7 @@ public class SerialPort {
 	}
 
 	public synchronized void open() throws IOException {
-		handle = open0(portName, baudRate.getRate(), byteSize.getSize(), parity.ordinal(), stopBits.ordinal());
+		handle = open0(portName, baudRate, byteSize.getSize(), parity.ordinal(), stopBits.ordinal());
 		isOpen = true;
 
 		synchronized (openPorts) {
@@ -393,20 +393,51 @@ public class SerialPort {
 				return;
 			}
 			isPaused = false;
-			handle = open0(portName, baudRate.getRate(), byteSize.getSize(), parity.ordinal(), stopBits.ordinal());
+			handle = open0(portName, baudRate, byteSize.getSize(), parity.ordinal(), stopBits.ordinal());
 			isOpen = true;
 			pauseMutex.notifyAll();
 		}
 	}
 
+	/**
+	 *
+	 * @param rate
+	 * @throws IOException
+	 * @deprecated Use {@link #setBaudRateValue(int)}
+	 */
+	@Deprecated
 	public void setBaudRate(BaudRate rate) throws IOException {
+		if (isOpen) {
+			throw new IOException(PORT_OPEN);
+		}
+		this.baudRate = rate.getRate();
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public void setBaudRateValue(int rate) throws IOException {
 		if (isOpen) {
 			throw new IOException(PORT_OPEN);
 		}
 		this.baudRate = rate;
 	}
 
+	/**
+	 * @return the baud rate or closest match. Will only
+	 * return same value as {@link #setBaudRate(BaudRate)},
+	 * may not match value passed {@link #setBaudRateValue(int)}
+	 * @deprecated Use {@link #getBaudRateValue()}
+	 */
+	@Deprecated
 	public BaudRate getBaudRate() {
+		return BaudRate.getClosest(baudRate);
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public int getBaudRateValue() {
 		return baudRate;
 	}
 

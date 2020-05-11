@@ -71,7 +71,7 @@ public class SerialConnector extends TerminalConnectorImpl {
 
 		serialPort = new SerialPort(settings.getPortName());
 		try {
-			serialPort.setBaudRate(settings.getBaudRate());
+			serialPort.setBaudRateValue(settings.getBaudRateValue());
 			serialPort.setByteSize(settings.getByteSize());
 			serialPort.setParity(settings.getParity());
 			serialPort.setStopBits(settings.getStopBits());

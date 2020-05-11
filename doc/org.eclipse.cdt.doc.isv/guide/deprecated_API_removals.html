@@ -44,6 +44,7 @@
   </p>
   <ol>
     <li><a href="#binaryparsers">32-bit Binary parsers with 64-bit replacements</a></li>
+    <li><a href="#baudrate">BaudRate enum in org.eclipse.cdt.serial</a></li>
   </ol>
 
   <hr>
@@ -203,6 +204,28 @@
   </ul>
   <p>
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=562495" target="_blank">Bug 562495</a>.
+  </p>
+
+  <h3>2. <a name="baudrate">BaudRate enum in org.eclipse.cdt.serial</a></h3>
+  <p>
+    The BaudRate enum in org.eclipse.cdt.serial package will be removed. The following
+    APIs will be removed, listed with their replacement.
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.serial.BaudRate, use org.eclipse.cdt.serial.BaudRateValues to obtain typical baud rate values
+    </li>
+    <li>org.eclipse.cdt.serial.SerialPort.setBaudRate(BaudRate), use
+      org.eclipse.cdt.serial.SerialPort.setBaudRateValue(int) instead</li>
+    <li>org.eclipse.cdt.serial.SerialPort.getBaudRate(), use org.eclipse.cdt.serial.SerialPort.getBaudRateValue()
+      instead</li>
+    <li>org.eclipse.tm.terminal.connector.cdtserial.connector.SerialSettings.getBaudRate(), use
+      org.eclipse.tm.terminal.connector.cdtserial.connector.SerialSettings.getBaudRateValue() instead</li>
+    <li>org.eclipse.tm.terminal.connector.cdtserial.connector.SerialSettings.setBaudRate(BaudRate), use
+      org.eclipse.tm.terminal.connector.cdtserial.connector.SerialSettings.setBaudRateValue(int) instead</li>
+
+  </ul>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=563108" target="_blank">Bug 563108</a>.
   </p>
 </body>
 

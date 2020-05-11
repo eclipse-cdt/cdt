@@ -37,5 +37,6 @@ public class Messages extends NLS {
 	public static String SerialTerminalSettingsPage_Parity;
 	public static String SerialTerminalSettingsPage_SerialPort;
 	public static String SerialTerminalSettingsPage_StopBits;
+	public static String SerialConnector_FailedToOpen;
 
 }

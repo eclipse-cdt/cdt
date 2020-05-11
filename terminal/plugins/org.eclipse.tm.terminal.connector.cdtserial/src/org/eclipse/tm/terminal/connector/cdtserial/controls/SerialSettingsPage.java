@@ -14,10 +14,10 @@ package org.eclipse.tm.terminal.connector.cdtserial.controls;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.serial.BaudRate;
 import org.eclipse.cdt.serial.ByteSize;
 import org.eclipse.cdt.serial.Parity;
 import org.eclipse.cdt.serial.SerialPort;
+import org.eclipse.cdt.serial.StandardBaudRates;
 import org.eclipse.cdt.serial.StopBits;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -50,7 +50,7 @@ public class SerialSettingsPage extends AbstractSettingsPage {
 	private Combo stopBitsCombo;
 
 	private String portName;
-	private BaudRate baudRate;
+	private int baudRate;
 	private ByteSize byteSize;
 	private Parity parity;
 	private StopBits stopBits;
@@ -65,16 +65,14 @@ public class SerialSettingsPage extends AbstractSettingsPage {
 		portName = dialogSettings.get(SerialSettings.PORT_NAME_ATTR);
 
 		String baudRateStr = dialogSettings.get(SerialSettings.BAUD_RATE_ATTR);
-		if (baudRateStr == null || baudRateStr.isEmpty()) {
-			baudRate = BaudRate.getDefault();
-		} else {
-			String[] rates = BaudRate.getStrings();
-			for (int i = 0; i < rates.length; ++i) {
-				if (baudRateStr.equals(rates[i])) {
-					baudRate = BaudRate.fromStringIndex(i);
-					break;
-				}
+		if (baudRateStr != null && !baudRateStr.isEmpty()) {
+			try {
+				baudRate = Integer.parseInt(baudRateStr);
+			} catch (NumberFormatException e) {
 			}
+		}
+		if (baudRate <= 0) {
+			baudRate = StandardBaudRates.getDefault();
 		}
 
 		String byteSizeStr = dialogSettings.get(SerialSettings.BYTE_SIZE_ATTR);
@@ -152,11 +150,9 @@ public class SerialSettingsPage extends AbstractSettingsPage {
 		Label baudRateLabel = new Label(comp, SWT.NONE);
 		baudRateLabel.setText(Messages.SerialTerminalSettingsPage_BaudRate);
 
-		baudRateCombo = new Combo(comp, SWT.READ_ONLY);
+		baudRateCombo = new Combo(comp, SWT.DROP_DOWN);
 		baudRateCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		for (String baudRateStr : BaudRate.getStrings()) {
-			baudRateCombo.add(baudRateStr);
-		}
+		baudRateCombo.setItems(StandardBaudRates.asStringArray());
 
 		Label byteSizeLabel = new Label(comp, SWT.NONE);
 		byteSizeLabel.setText(Messages.SerialTerminalSettingsPage_DataSize);
@@ -212,11 +208,11 @@ public class SerialSettingsPage extends AbstractSettingsPage {
 			portCombo.select(0);
 		}
 
-		BaudRate baudRate = settings.getBaudRate();
-		if (baudRate == null) {
+		int baudRate = settings.getBaudRateValue();
+		if (baudRate <= 0) {
 			baudRate = this.baudRate;
 		}
-		baudRateCombo.select(BaudRate.getStringIndex(baudRate));
+		baudRateCombo.setText(Integer.toString(baudRate));
 
 		ByteSize byteSize = settings.getByteSize();
 		if (byteSize == null) {
@@ -240,13 +236,21 @@ public class SerialSettingsPage extends AbstractSettingsPage {
 	@Override
 	public void saveSettings() {
 		settings.setPortName(portCombo.getText());
-		settings.setBaudRate(BaudRate.fromStringIndex(baudRateCombo.getSelectionIndex()));
+		int baudRateValue = 0;
+		try {
+			baudRateValue = Integer.parseInt(baudRateCombo.getText());
+		} catch (NumberFormatException e) {
+		}
+		if (baudRateValue <= 0) {
+			baudRateValue = StandardBaudRates.getDefault();
+		}
+		settings.setBaudRateValue(baudRateValue);
 		settings.setByteSize(ByteSize.fromStringIndex(byteSizeCombo.getSelectionIndex()));
 		settings.setParity(Parity.fromStringIndex(parityCombo.getSelectionIndex()));
 		settings.setStopBits(StopBits.fromStringIndex(stopBitsCombo.getSelectionIndex()));
 
 		dialogSettings.put(SerialSettings.PORT_NAME_ATTR, portCombo.getText());
-		dialogSettings.put(SerialSettings.BAUD_RATE_ATTR, BaudRate.getStrings()[baudRateCombo.getSelectionIndex()]);
+		dialogSettings.put(SerialSettings.BAUD_RATE_ATTR, Integer.toString(baudRateValue));
 		dialogSettings.put(SerialSettings.BYTE_SIZE_ATTR, ByteSize.getStrings()[byteSizeCombo.getSelectionIndex()]);
 		dialogSettings.put(SerialSettings.PARITY_ATTR, Parity.getStrings()[parityCombo.getSelectionIndex()]);
 		dialogSettings.put(SerialSettings.STOP_BITS_ATTR, StopBits.getStrings()[stopBitsCombo.getSelectionIndex()]);

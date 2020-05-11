@@ -27,7 +27,7 @@ public class SerialSettings {
 	public static final String STOP_BITS_ATTR = "cdtserial.stopBits"; //$NON-NLS-1$
 
 	private String portName;
-	private BaudRate baudRate;
+	private int baudRate;
 	private ByteSize byteSize;
 	private Parity parity;
 	private StopBits stopBits;
@@ -39,16 +39,13 @@ public class SerialSettings {
 		portName = store.get(PORT_NAME_ATTR, ""); //$NON-NLS-1$
 
 		String baudRateStr = store.get(BAUD_RATE_ATTR, ""); //$NON-NLS-1$
-		if (baudRateStr.isEmpty()) {
-			baudRate = BaudRate.getDefault();
-		} else {
-			String[] rates = BaudRate.getStrings();
-			for (int i = 0; i < rates.length; ++i) {
-				if (baudRateStr.equals(rates[i])) {
-					baudRate = BaudRate.fromStringIndex(i);
-					break;
-				}
-			}
+		baudRate = 0;
+		try {
+			baudRate = Integer.parseInt(baudRateStr);
+		} catch (NumberFormatException e) {
+		}
+		if (baudRate <= 0) {
+			baudRate = BaudRate.getDefault().getRate();
 		}
 
 		String byteSizeStr = store.get(BYTE_SIZE_ATTR, ""); //$NON-NLS-1$
@@ -96,7 +93,7 @@ public class SerialSettings {
 	 */
 	public void save(ISettingsStore store) {
 		store.put(PORT_NAME_ATTR, portName);
-		store.put(BAUD_RATE_ATTR, BaudRate.getStrings()[BaudRate.getStringIndex(baudRate)]);
+		store.put(BAUD_RATE_ATTR, Integer.toString(baudRate));
 		store.put(BYTE_SIZE_ATTR, ByteSize.getStrings()[ByteSize.getStringIndex(byteSize)]);
 		store.put(PARITY_ATTR, Parity.getStrings()[Parity.getStringIndex(parity)]);
 		store.put(STOP_BITS_ATTR, StopBits.getStrings()[StopBits.getStringIndex(stopBits)]);
@@ -110,11 +107,33 @@ public class SerialSettings {
 		this.portName = portName;
 	}
 
+	/**
+	 * @deprecated Use {@link #getBaudRateValue()}
+	 */
+	@Deprecated
 	public BaudRate getBaudRate() {
+		return BaudRate.getClosest(baudRate);
+	}
+
+	/**
+	 * @since 4.7
+	 */
+	public int getBaudRateValue() {
 		return baudRate;
 	}
 
+	/**
+	 * @deprecated Use {@link #setBaudRate(int)}
+	 */
+	@Deprecated
 	public void setBaudRate(BaudRate baudRate) {
+		this.baudRate = baudRate.getRate();
+	}
+
+	/**
+	 * @since 4.7
+	 */
+	public void setBaudRateValue(int baudRate) {
 		this.baudRate = baudRate;
 	}
 

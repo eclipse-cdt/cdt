@@ -19,11 +19,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.serial.SerialPort;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 import org.eclipse.tm.terminal.connector.cdtserial.activator.Activator;
+import org.eclipse.tm.terminal.connector.cdtserial.nls.Messages;
 
 public class SerialConnector extends TerminalConnectorImpl {
 
@@ -71,13 +73,20 @@ public class SerialConnector extends TerminalConnectorImpl {
 
 		serialPort = new SerialPort(settings.getPortName());
 		try {
-			serialPort.setBaudRate(settings.getBaudRate());
+			serialPort.setBaudRateValue(settings.getBaudRateValue());
 			serialPort.setByteSize(settings.getByteSize());
 			serialPort.setParity(settings.getParity());
 			serialPort.setStopBits(settings.getStopBits());
 			serialPort.open();
 		} catch (IOException e) {
 			Activator.log(e);
+			String error = NLS.bind(Messages.SerialConnector_FailedToOpen, settings.getPortName(),
+					e.getLocalizedMessage());
+			try {
+				control.getRemoteToTerminalOutputStream().write(error.getBytes());
+			} catch (IOException e1) {
+				Activator.log(e);
+			}
 			control.setState(TerminalState.CLOSED);
 			return;
 		}

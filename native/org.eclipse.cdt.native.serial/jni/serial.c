@@ -27,6 +27,9 @@
 #include <strings.h>
 #include <errno.h>
 #include <sys/ioctl.h>
+#ifndef __APPLE__
+#include <linux/serial.h>
+#endif
 #else
 #define WIN32_LEAN_AND_MEAN
 #define UNICODE
@@ -35,6 +38,29 @@
 #include <jni.h>
 
 #define FUNC(x) Java_org_eclipse_cdt_serial_SerialPort_ ## x
+
+#ifdef __MINGW32__
+static void closeAndthrowIOException(HANDLE handle, JNIEnv *env, const char *msg)
+#else
+static void closeAndthrowIOException(int fd, JNIEnv *env, const char *msg)
+#endif
+{
+	char buff[256];
+#ifndef __MINGW32__
+	sprintf(buff, "%s: %s", msg, strerror(errno));
+#else
+	sprintf_s(buff, sizeof(buff), "%s (%d)", msg, GetLastError());
+#endif
+
+#ifdef __MINGW32__
+	CloseHandle(handle);
+#else
+	close(fd);
+#endif
+
+	jclass cls = (*env)->FindClass(env, "java/io/IOException");
+	(*env)->ThrowNew(env, cls, buff);
+}
 
 static void throwIOException(JNIEnv *env, const char *msg)
 {
@@ -69,6 +95,7 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	tcgetattr(fd, &options);
 	options.c_cflag |= (CLOCAL | CREAD);
 
+#ifndef __APPLE__
 	speed_t baud;
 	switch (baudRate) {
 	case 110:
@@ -104,12 +131,82 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	case 115200:
 		baud = B115200;
 		break;
+	case 230400:
+		baud = B230400;
+		break;
+	case 460800:
+		baud = B460800;
+		break;
+	case 500000:
+		baud = B500000;
+		break;
+	case 576000:
+		baud = B576000;
+		break;
+	case 921600:
+		baud = B921600;
+		break;
+	case 1000000:
+		baud = B1000000;
+		break;
+	case 1152000:
+		baud = B1152000;
+		break;
+	case 1500000:
+		baud = B1500000;
+		break;
+	case 2000000:
+		baud = B2000000;
+		break;
+	case 2500000:
+		baud = B2500000;
+		break;
+	case 3000000:
+		baud = B3000000;
+		break;
+	case 3500000:
+		baud = B3500000;
+		break;
+	case 4000000:
+		baud = B4000000;
+		break;
 	default:
-		baud = B115200;
+		baud = B0;
+		break;
 	}
-	// Set baud rate
-	cfsetispeed(&options, baud);
-	cfsetospeed(&options, baud);
+
+	if (baud == B0) {
+		// Use custom linux baud rates if possible: https://bugs.eclipse.org/bugs/show_bug.cgi?id=543122#c8
+		struct serial_struct serial_options;
+		options.c_cflag |= B38400;
+
+		if (ioctl(fd, TIOCGSERIAL, &serial_options) != 0) {
+			closeAndthrowIOException(fd, env, "Failed to use custom baud rate. Error using TIOCGSERIAL");
+			return -1;
+		}
+		serial_options.custom_divisor = serial_options.baud_base / baudRate;
+		if (serial_options.custom_divisor == 0) {
+			serial_options.custom_divisor = 1;
+		}
+
+		serial_options.flags &= ~ASYNC_SPD_MASK;
+		serial_options.flags |= ASYNC_SPD_CUST;
+
+		if (ioctl(fd, TIOCSSERIAL, &serial_options) != 0) {
+			closeAndthrowIOException(fd, env, "Failed to use custom baud rate. Error using TIOCSSERIAL");
+			return -1;
+		}
+	} else {
+		// Set baud rate
+		cfsetispeed(&options, baud);
+		cfsetospeed(&options, baud);
+	}
+
+#else
+	// On OSX speed_t is simply the baud rate: https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/cfsetispeed.3.html
+	cfsetispeed(&options, baudRate);
+	cfsetospeed(&options, baudRate);
+#endif
 
 	// set data size
 	options.c_cflag &= ~CSIZE;
@@ -191,7 +288,7 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	DCB dcb = { 0 };
 
 	if (!GetCommState(handle, &dcb)) {
-		throwIOException(env, "Error getting DCB");
+		closeAndthrowIOException(handle, env, "Error getting DCB");
 		return -1;
 	}
 
@@ -223,7 +320,7 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	}
 
 	if (!SetCommState(handle, &dcb)) {
-		throwIOException(env, "Error setting DCB");
+		closeAndthrowIOException(handle, env, "Error setting DCB");
 		return -1;
 	}
 
@@ -232,7 +329,7 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	timeouts.ReadTotalTimeoutMultiplier = MAXDWORD;
 	timeouts.ReadTotalTimeoutConstant = 200;
 	if (!SetCommTimeouts(handle, &timeouts)) {
-		throwIOException(env, "Error setting timeouts");
+		closeAndthrowIOException(handle, env, "Error setting timeouts");
 		return -1;
 	}
 

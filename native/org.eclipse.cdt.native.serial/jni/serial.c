@@ -70,6 +70,10 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	options.c_cflag |= (CLOCAL | CREAD);
 
 	speed_t baud;
+#ifdef __APPLE__
+	// On OSX speed_t is simply the baud rate: https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/cfsetispeed.3.html
+	baud = baudRate;
+#else
 	switch (baudRate) {
 	case 110:
 		baud = B110;
@@ -92,6 +96,9 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	case 9600:
 		baud = B9600;
 		break;
+	case 14400:
+		throwIOException(env, "14400 is not a supported speed");
+		break;
 	case 19200:
 		baud = B19200;
 		break;
@@ -104,9 +111,50 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	case 115200:
 		baud = B115200;
 		break;
+	case 230400:
+		baud = B230400;
+		break;
+	case 460800:
+		baud = B460800;
+		break;
+	case 500000:
+		baud = B500000;
+		break;
+	case 576000:
+		baud = B576000;
+		break;
+	case 921600:
+		baud = B921600;
+		break;
+	case 1000000:
+		baud = B1000000;
+		break;
+	case 1152000:
+		baud = B1152000;
+		break;
+	case 1500000:
+		baud = B1500000;
+		break;
+	case 2000000:
+		baud = B2000000;
+		break;
+	case 2500000:
+		baud = B2500000;
+		break;
+	case 3000000:
+		baud = B3000000;
+		break;
+	case 3500000:
+		baud = B3500000;
+		break;
+	case 4000000:
+		baud = B4000000;
+		break;
 	default:
 		baud = B115200;
 	}
+#endif
+
 	// Set baud rate
 	cfsetispeed(&options, baud);
 	cfsetospeed(&options, baud);

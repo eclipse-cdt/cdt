@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2015, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,56 +13,120 @@
  *******************************************************************************/
 package org.eclipse.cdt.serial;
 
+import java.util.Arrays;
+
 /**
  * @since 1.0
  */
 public enum BaudRate {
 
-	B110(110), B300(300), B600(600), B1200(1200), B2400(2400), B4800(4800), B9600(9600), B14400(14400), B19200(19200),
-	B38400(38400), B57600(57600), B115200(115200);
+	B110, //
+	B300, //
+	B600, //
+	B1200, //
+	B2400, //
+	B4800, //
+	B9600,
+	/**
+	 * 14,400 is not actually supported on Linux using the
+	 * current serial.c implementation. Using that speed
+	 * will result in an exception.
+	 */
+	B14400, //
+	B19200, //
+	B38400, //
+	B57600, //
+	B115200,
+	/**
+	* @since 1.2
+	*/
+	B230400,
+	/**
+	* @since 1.2
+	*/
+	B460800,
+	/**
+	* @since 1.2
+	*/
+	B500000,
+	/**
+	* @since 1.2
+	*/
+	B576000,
+	/**
+	* @since 1.2
+	*/
+	B921600,
+	/**
+	* @since 1.2
+	*/
+	B1000000,
+	/**
+	* @since 1.2
+	*/
+	B1152000,
+	/**
+	* @since 1.2
+	*/
+	B1500000,
+	/**
+	* @since 1.2
+	*/
+	B2000000,
+	/**
+	* @since 1.2
+	*/
+	B2500000,
+	/**
+	* @since 1.2
+	*/
+	B3000000,
+	/**
+	* @since 1.2
+	*/
+	B3500000,
+	/**
+	* @since 1.2
+	*/
+	B4000000;
 
 	private final int rate;
+	private static String[] strings;
+	private String speedString;
 
-	private BaudRate(int rate) {
-		this.rate = rate;
+	BaudRate() {
+		speedString = toString().substring(1);
+		this.rate = Integer.parseInt(speedString);
 	}
 
 	public int getRate() {
 		return rate;
 	}
 
-	private static final String[] strings = { "110", //$NON-NLS-1$
-			"300", //$NON-NLS-1$
-			"600", //$NON-NLS-1$
-			"1200", //$NON-NLS-1$
-			"2400", //$NON-NLS-1$
-			"4800", //$NON-NLS-1$
-			"9600", //$NON-NLS-1$
-			"14400", //$NON-NLS-1$
-			"19200", //$NON-NLS-1$
-			"38400", //$NON-NLS-1$
-			"57600", //$NON-NLS-1$
-			"115200" //$NON-NLS-1$
-	};
+	/**
+	 * @since 1.2
+	 */
+	public String getSpeedString() {
+		return speedString;
+	}
+
+	static {
+		strings = Arrays.asList(values()).stream().map(BaudRate::getSpeedString).toArray(String[]::new);
+	}
 
 	public static String[] getStrings() {
 		return strings;
 	}
 
-	private static final BaudRate[] rates = { B110, B300, B600, B1200, B2400, B4800, B9600, B14400, B19200, B38400,
-			B57600, B115200 };
-
 	public static BaudRate fromStringIndex(int rate) {
-		return rates[rate];
+		if (rate < values().length && rate >= 0) {
+			return values()[rate];
+		}
+		return getDefault();
 	}
 
 	public static int getStringIndex(BaudRate rate) {
-		for (int i = 0; i < rates.length; ++i) {
-			if (rate.equals(rates[i])) {
-				return i;
-			}
-		}
-		return getStringIndex(getDefault());
+		return rate.ordinal();
 	}
 
 	public static BaudRate getDefault() {

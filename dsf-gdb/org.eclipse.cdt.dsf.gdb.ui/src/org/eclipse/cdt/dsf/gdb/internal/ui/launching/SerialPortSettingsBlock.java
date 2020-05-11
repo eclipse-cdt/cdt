@@ -22,8 +22,10 @@ import org.eclipse.cdt.debug.internal.ui.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.LayoutUtil;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.StringDialogField;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.serial.BaudRate;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.layout.PixelConverter;
@@ -46,11 +48,8 @@ public class SerialPortSettingsBlock extends Observable {
 
 	private ComboDialogField fSpeedField;
 
-	private String fSpeedChoices[] = { "9600", "19200", "38400", "57600", "115200", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			"230400", "460800", "921600", "1000000", "1152000", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			"1500000", "2000000", "2500000", "3000000", "3500000", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			"4000000" //$NON-NLS-1$
-	};
+	private String fSpeedChoices[] = Platform.OS_LINUX.equals(Platform.getOS()) ? BaudRate.getLinuxStrings()
+			: BaudRate.getStrings();
 	private Control fControl;
 
 	private String fErrorMessage = null;
@@ -98,8 +97,7 @@ public class SerialPortSettingsBlock extends Observable {
 		if (fDeviceField != null)
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, fDeviceField.getText().trim());
 		if (fSpeedField != null) {
-			int index = fSpeedField.getSelectionIndex();
-			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, getSpeedItem(index));
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, fSpeedField.getText());
 		}
 	}
 
@@ -117,7 +115,8 @@ public class SerialPortSettingsBlock extends Observable {
 	}
 
 	private ComboDialogField createSpeedField() {
-		ComboDialogField field = new ComboDialogField(SWT.DROP_DOWN | SWT.READ_ONLY);
+		ComboDialogField field = new ComboDialogField(
+				SWT.DROP_DOWN | (Platform.OS_LINUX.equals(Platform.getOS()) ? SWT.READ_ONLY : 0));
 		field.setLabelText(LaunchUIMessages.getString("SerialPortSettingsBlock.1")); //$NON-NLS-1$
 		field.setItems(fSpeedChoices);
 		field.setDialogFieldListener(new IDialogFieldListener() {
@@ -154,25 +153,15 @@ public class SerialPortSettingsBlock extends Observable {
 
 	private void initializeSpeed(ILaunchConfiguration configuration) {
 		if (fSpeedField != null) {
-			int index = 0;
+
 			try {
-				index = getSpeedItemIndex(configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED,
-						DEFAULT_ASYNC_DEVICE_SPEED));
+				String baudRateStr = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED,
+						DEFAULT_ASYNC_DEVICE_SPEED);
+				fSpeedField.setText(baudRateStr);
 			} catch (CoreException e) {
+				fSpeedField.selectItem(0);
 			}
-			fSpeedField.selectItem(index);
 		}
-	}
-
-	private String getSpeedItem(int index) {
-		return (index >= 0 && index < fSpeedChoices.length) ? fSpeedChoices[index] : null;
-	}
-
-	private int getSpeedItemIndex(String item) {
-		for (int i = 0; i < fSpeedChoices.length; ++i)
-			if (fSpeedChoices[i].equals(item))
-				return i;
-		return 0;
 	}
 
 	public Control getControl() {

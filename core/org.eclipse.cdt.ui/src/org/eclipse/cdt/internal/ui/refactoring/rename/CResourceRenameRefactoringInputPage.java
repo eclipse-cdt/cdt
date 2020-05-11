@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kichwa Coders Ltd and others.
+ * Copyright (c) 2018, 2020 Kichwa Coders Ltd and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,29 +15,23 @@ package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.cdt.internal.ui.preferences.OrganizeIncludesPreferencePage;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceProcessor;
-import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
+import org.eclipse.ltk.core.refactoring.participants.IRenameResourceProcessor;
+import org.eclipse.ltk.ui.refactoring.resource.RenameResourceWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-public class CResourceRenameRefactoringInputPage extends UserInputWizardPage {
+public class CResourceRenameRefactoringInputPage
+		extends RenameResourceWizard.RenameResourceRefactoringConfigurationPage {
 
 	/**
 	 * Dialog settings key for default setting of update references checkbox.
@@ -47,13 +41,10 @@ public class CResourceRenameRefactoringInputPage extends UserInputWizardPage {
 	private static final String DIALOG_SETTINGS_KEY = "CResourceRenameRefactoringInputPage"; //$NON-NLS-1$
 	private IDialogSettings fDialogSettings;
 
-	private Text fNameField;
-	private RenameResourceProcessor fRefactoringProcessor;
 	private Button updateReferences;
 
-	public CResourceRenameRefactoringInputPage(RenameResourceProcessor processor) {
-		super("CResourceRenameRefactoringInputPage"); //$NON-NLS-1$
-		fRefactoringProcessor = processor;
+	public CResourceRenameRefactoringInputPage(IRenameResourceProcessor renameResourceProcessor) {
+		super(renameResourceProcessor);
 		IDialogSettings ds = CUIPlugin.getDefault().getDialogSettings();
 		fDialogSettings = ds.getSection(DIALOG_SETTINGS_KEY);
 		if (fDialogSettings == null) {
@@ -63,32 +54,11 @@ public class CResourceRenameRefactoringInputPage extends UserInputWizardPage {
 
 	@Override
 	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		composite.setFont(parent.getFont());
-
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(RenameMessages.CResourceRenameRefactoringInputPage_new_name);
-		label.setLayoutData(new GridData());
-
-		fNameField = new Text(composite, SWT.BORDER);
-		String resourceName = fRefactoringProcessor.getNewResourceName();
-		fNameField.setText(resourceName);
-		fNameField.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
-		fNameField.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validatePage();
-			}
-		});
-
-		int lastIndexOfDot = resourceName.lastIndexOf('.');
-		if ((fRefactoringProcessor.getResource().getType() == IResource.FILE) && (lastIndexOfDot > 0)) {
-			fNameField.setSelection(0, lastIndexOfDot);
-		} else {
-			fNameField.selectAll();
-		}
+		super.createControl(parent);
+		Control control = getControl();
+		Assert.isTrue(control instanceof Composite,
+				"super class has changed from using composite to something else for the main control."); //$NON-NLS-1$
+		Composite composite = (Composite) control;
 
 		updateReferences = new Button(composite, SWT.CHECK);
 		updateReferences.setText(RenameMessages.CResourceRenameRefactoringInputPage_update_references);
@@ -115,48 +85,17 @@ public class CResourceRenameRefactoringInputPage extends UserInputWizardPage {
 				dialog.open();
 			}
 		});
-
-		Dialog.applyDialogFont(composite);
-
-		setPageComplete(false);
-		setControl(composite);
 	}
 
 	@Override
-	public void setVisible(boolean visible) {
-		if (visible) {
-			fNameField.setFocus();
-		}
-		super.setVisible(visible);
-	}
-
-	private void validatePage() {
-		String text = fNameField.getText();
-		RefactoringStatus status = fRefactoringProcessor.validateNewElementName(text);
-		setPageComplete(status);
-	}
-
-	@Override
-	protected boolean performFinish() {
-		saveRefactoringSettings();
-		saveDialogSettings();
-		return super.performFinish();
-	}
-
-	@Override
-	public IWizardPage getNextPage() {
-		saveRefactoringSettings();
-		saveDialogSettings();
-		return super.getNextPage();
-	}
-
-	private void saveDialogSettings() {
+	protected void storeSettings() {
+		super.storeSettings();
 		fDialogSettings.put(KEY_UPDATE_REFERENCES, updateReferences.getSelection());
 	}
 
-	private void saveRefactoringSettings() {
-		fRefactoringProcessor.setNewResourceName(fNameField.getText());
-		fRefactoringProcessor.setUpdateReferences(updateReferences.getSelection());
+	@Override
+	protected void initializeRefactoring() {
+		super.initializeRefactoring();
+		getProcessor().setUpdateReferences(updateReferences.getSelection());
 	}
-
 }

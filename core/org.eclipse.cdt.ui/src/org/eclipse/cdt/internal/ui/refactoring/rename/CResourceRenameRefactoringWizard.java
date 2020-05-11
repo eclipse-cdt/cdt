@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kichwa Coders Ltd and others.
+ * Copyright (c) 2018, 2020 Kichwa Coders Ltd and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceProcessor;
 import org.eclipse.ltk.ui.refactoring.resource.RenameResourceWizard;
 
 public class CResourceRenameRefactoringWizard extends RenameResourceWizard {
@@ -25,8 +24,7 @@ public class CResourceRenameRefactoringWizard extends RenameResourceWizard {
 
 	@Override
 	protected void addUserInputPages() {
-		RenameResourceProcessor processor = getRefactoring().getAdapter(RenameResourceProcessor.class);
-		addPage(new CResourceRenameRefactoringInputPage(processor));
+		addPage(new CResourceRenameRefactoringInputPage(getProcessor()));
 	}
 
 }

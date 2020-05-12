@@ -229,6 +229,30 @@
     },
     {
       "key": {
+        "uuid": "b241277d_403f7d87",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/core/memory/transport/ReadMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T17:21:51Z",
+      "side": 1,
+      "message": ":-)",
+      "parentUuid": "2b7a9078_82322777",
+      "range": {
+        "startLine": 32,
+        "startChar": 31,
+        "endLine": 32,
+        "endChar": 42
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e2c607ac_5fe58733",
         "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/core/memory/transport/ReadMemory.java",
         "patchSetId": 4
@@ -258,6 +282,24 @@
       "side": 1,
       "message": "I am still not sure regarding signature and contract of this method:\nas \"transport\" code shows nobody checks the returned bytes for isReadable. \n\u003d\u003e we can throw exceptions for \"out of range\" values\n\u003d\u003e I can change it back to return `byte[]`\n\nBut in any case you are right regarding the contract description: it is mostly absent.",
       "parentUuid": "e2c607ac_5fe58733",
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ebb52941_8cd8d0ff",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/core/memory/transport/ReadMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T17:21:51Z",
+      "side": 1,
+      "message": "The memory exporters today don\u0027t check - which is an interesting decision and perhaps the correct way as the output files have no way of representing that info. Other areas certainly do set readable flag and render that in the UI. Additionally memory is a great example of where CDT\u0027s core code does not have much in it, but extenders have much more complicated setup, including multiple memories at the same addresses (memory spaces) and other such complexities.",
+      "parentUuid": "4192d5c4_e6d4b6cf",
       "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

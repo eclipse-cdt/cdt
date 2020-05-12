@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "867e2d03_568e7ac4",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T18:46:31Z",
+      "side": 1,
+      "message": "added FIXME to rework later",
+      "parentUuid": "8155c021_c47b2349",
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c88c11a4_a21a863c",
         "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
         "patchSetId": 4
@@ -84,6 +102,30 @@
     },
     {
       "key": {
+        "uuid": "8512eb71_fa04b5d9",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T18:46:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0fb2910c_1ab8a9a2",
+      "range": {
+        "startLine": 39,
+        "startChar": 26,
+        "endLine": 39,
+        "endChar": 37
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b1163ca8_0f11c253",
         "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
         "patchSetId": 4
@@ -119,6 +161,30 @@
       "side": 1,
       "message": "it was orElseThrow, but it is also not an excuse to leave it here. \nMoreover this type needs rework and its own tests otherwise we have too many assumptions. I suggest to provide another gerrit for this.",
       "parentUuid": "b1163ca8_0f11c253",
+      "range": {
+        "startLine": 52,
+        "startChar": 16,
+        "endLine": 52,
+        "endChar": 78
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b1b799c_26130ab1",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T18:46:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "835ccd8d_93568560",
       "range": {
         "startLine": 52,
         "startChar": 16,
@@ -194,6 +260,30 @@
       "writtenOn": "2020-05-12T14:57:16Z",
       "side": 1,
       "message": "converting the list to the array seems unneeded here just to compare them in the test method.",
+      "range": {
+        "startLine": 75,
+        "startChar": 9,
+        "endLine": 75,
+        "endChar": 49
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4565c9d2_143a0f36",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/PlainTextTransportTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T18:46:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e0ee2b0d_eedec276",
       "range": {
         "startLine": 75,
         "startChar": 9,
@@ -300,6 +390,24 @@
       "side": 1,
       "message": "The memory exporters today don\u0027t check - which is an interesting decision and perhaps the correct way as the output files have no way of representing that info. Other areas certainly do set readable flag and render that in the UI. Additionally memory is a great example of where CDT\u0027s core code does not have much in it, but extenders have much more complicated setup, including multiple memories at the same addresses (memory spaces) and other such complexities.",
       "parentUuid": "4192d5c4_e6d4b6cf",
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7cbc781f_947b2228",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/core/memory/transport/ReadMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T18:46:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ebb52941_8cd8d0ff",
       "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

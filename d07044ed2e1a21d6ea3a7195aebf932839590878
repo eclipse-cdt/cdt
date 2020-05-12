@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8155c021_c47b2349",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T16:39:56Z",
+      "side": 1,
+      "message": "You are totally right. Memory emulation may be useful but I think it should go to regular bundle mostly to have its own tests.",
+      "parentUuid": "25214bfa_95d3ed21",
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c88c11a4_a21a863c",
         "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
         "patchSetId": 4
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "0fb2910c_1ab8a9a2",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T16:39:56Z",
+      "side": 1,
+      "message": "who knows where I\u0027ve got this spelling, thanks for patience",
+      "parentUuid": "c88c11a4_a21a863c",
+      "range": {
+        "startLine": 39,
+        "startChar": 26,
+        "endLine": 39,
+        "endChar": 37
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b1163ca8_0f11c253",
         "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
         "patchSetId": 4
@@ -53,6 +95,30 @@
       "writtenOn": "2020-05-12T14:57:16Z",
       "side": 1,
       "message": "this is an abuse of Optional. You shouldn\u0027t be creating an Optional to simply replace an if statement. See item 12 from https://dzone.com/articles/using-optional-correctly-is-not-optional\n\nHowever as you are using a map, you should just use the map\u0027s built-in methods:\n\n    storage.getOrDefault(offset.add(increment), new byte[0]);",
+      "range": {
+        "startLine": 52,
+        "startChar": 16,
+        "endLine": 52,
+        "endChar": 78
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "835ccd8d_93568560",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T16:39:56Z",
+      "side": 1,
+      "message": "it was orElseThrow, but it is also not an excuse to leave it here. \nMoreover this type needs rework and its own tests otherwise we have too many assumptions. I suggest to provide another gerrit for this.",
+      "parentUuid": "b1163ca8_0f11c253",
       "range": {
         "startLine": 52,
         "startChar": 16,
@@ -99,6 +165,24 @@
     },
     {
       "key": {
+        "uuid": "9948b084_cf225a5c",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/PlainTextTransportTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T16:39:56Z",
+      "side": 1,
+      "message": "I don\u0027t like monsters from Apache Commons :)\nBut this can be improved, thank you for comments!",
+      "parentUuid": "2e85bcb3_349c3b8e",
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e0ee2b0d_eedec276",
         "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/PlainTextTransportTest.java",
         "patchSetId": 4
@@ -122,6 +206,29 @@
     },
     {
       "key": {
+        "uuid": "2b7a9078_82322777",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/core/memory/transport/ReadMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T16:39:56Z",
+      "side": 1,
+      "message": "Can you see it? I\u0027m not hopeless :)",
+      "range": {
+        "startLine": 32,
+        "startChar": 31,
+        "endLine": 32,
+        "endChar": 42
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e2c607ac_5fe58733",
         "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/core/memory/transport/ReadMemory.java",
         "patchSetId": 4
@@ -139,6 +246,24 @@
     },
     {
       "key": {
+        "uuid": "4192d5c4_e6d4b6cf",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/core/memory/transport/ReadMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T16:39:56Z",
+      "side": 1,
+      "message": "I am still not sure regarding signature and contract of this method:\nas \"transport\" code shows nobody checks the returned bytes for isReadable. \n\u003d\u003e we can throw exceptions for \"out of range\" values\n\u003d\u003e I can change it back to return `byte[]`\n\nBut in any case you are right regarding the contract description: it is mostly absent.",
+      "parentUuid": "e2c607ac_5fe58733",
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d8815f78_69a594b0",
         "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/internal/core/memory/transport/PlainTextExport.java",
         "patchSetId": 4
@@ -150,6 +275,30 @@
       "writtenOn": "2020-05-12T14:57:16Z",
       "side": 1,
       "message": "It seems to me that FileExport should take an OutputStream (or similar) rather than a file directly. That would mean that the tests would not be IO bound and would make it easier to implement things such as \"export to clipboard\" or other functionality in the future that does not require a temporary file.",
+      "range": {
+        "startLine": 28,
+        "startChar": 53,
+        "endLine": 28,
+        "endChar": 66
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f10a7c94_67806813",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/internal/core/memory/transport/PlainTextExport.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-12T16:39:56Z",
+      "side": 1,
+      "message": "Agreed. Actually I did that in FileExport but then reverted because it needs more changes. I suggest to use another gerrit to try it out.",
+      "parentUuid": "d8815f78_69a594b0",
       "range": {
         "startLine": 28,
         "startChar": 53,

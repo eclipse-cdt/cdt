@@ -1,0 +1,164 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25214bfa_95d3ed21",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T14:57:16Z",
+      "side": 1,
+      "message": "This way of storing the data means that tests that don\u0027t read and write in identical patterns won\u0027t work.",
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c88c11a4_a21a863c",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T14:57:16Z",
+      "side": 1,
+      "message": "spelled \"addressable\"",
+      "range": {
+        "startLine": 39,
+        "startChar": 26,
+        "endLine": 39,
+        "endChar": 37
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1163ca8_0f11c253",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T14:57:16Z",
+      "side": 1,
+      "message": "this is an abuse of Optional. You shouldn\u0027t be creating an Optional to simply replace an if statement. See item 12 from https://dzone.com/articles/using-optional-correctly-is-not-optional\n\nHowever as you are using a map, you should just use the map\u0027s built-in methods:\n\n    storage.getOrDefault(offset.add(increment), new byte[0]);",
+      "range": {
+        "startLine": 52,
+        "startChar": 16,
+        "endLine": 52,
+        "endChar": 78
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee1b6d5d_b395f3ce",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/EmulateMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T14:57:16Z",
+      "side": 1,
+      "message": "The other unreachable case is the memory at offset being unreadable, but the memory after being readable. However I don\u0027t know (or think) that happens in practice.",
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e85bcb3_349c3b8e",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/PlainTextTransportTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T14:57:16Z",
+      "side": 1,
+      "message": "This method feels like reinventing wheel a little - its small though so not a big deal.\n\nConsider using org.apache.commons.io.FileUtils.contentEquals(File, File) and contentEqualsIgnoreEOL(File, File, String) depending on whether you care about EOL",
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e0ee2b0d_eedec276",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory.tests/src/org/eclipse/cdt/debug/core/memory/tests/PlainTextTransportTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T14:57:16Z",
+      "side": 1,
+      "message": "converting the list to the array seems unneeded here just to compare them in the test method.",
+      "range": {
+        "startLine": 75,
+        "startChar": 9,
+        "endLine": 75,
+        "endChar": 49
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2c607ac_5fe58733",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/core/memory/transport/ReadMemory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T14:57:16Z",
+      "side": 1,
+      "message": "This method has nearly the same signature as org.eclipse.debug.core.model.IMemoryBlockExtension.getBytesFromOffset(BigInteger, long) - perhaps it should be documented as such.",
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8815f78_69a594b0",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/internal/core/memory/transport/PlainTextExport.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T14:57:16Z",
+      "side": 1,
+      "message": "It seems to me that FileExport should take an OutputStream (or similar) rather than a file directly. That would mean that the tests would not be IO bound and would make it easier to implement things such as \"export to clipboard\" or other functionality in the future that does not require a temporary file.",
+      "range": {
+        "startLine": 28,
+        "startChar": 53,
+        "endLine": 28,
+        "endChar": 66
+      },
+      "revId": "d07044ed2e1a21d6ea3a7195aebf932839590878",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

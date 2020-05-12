@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "537e5f2f_e01e6bc5",
+        "filename": "native/org.eclipse.cdt.native.serial/jni/serial.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T15:44:11Z",
+      "side": 1,
+      "message": "See https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d543122#c8",
+      "revId": "eee5b91f80d500e3b68d4922655d146a866fd7cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b606910_6a026fcd",
+        "filename": "native/org.eclipse.cdt.native.serial/jni/serial.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-12T15:44:11Z",
+      "side": 1,
+      "message": "See https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d543122#c8",
+      "revId": "eee5b91f80d500e3b68d4922655d146a866fd7cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

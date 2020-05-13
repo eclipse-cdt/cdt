@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "82da2143_12a1e605",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/core/memory/transport/ReadMemory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-13T19:35:02Z",
+      "side": 1,
+      "message": "I do not think that \"I\" prefix is our main problem for today, renaming interface to meet expectations looks more \"energy effective\" at the moment.",
+      "parentUuid": "62dcb6ca_408a757e",
+      "range": {
+        "startLine": 26,
+        "startChar": 17,
+        "endLine": 26,
+        "endChar": 27
+      },
+      "revId": "67c6bf5c36507ef2b2e27cc57aa33bbc61b95c24",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4f9344f0_2e1db7d9",
         "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/internal/core/memory/transport/SRecordExport.java",
         "patchSetId": 8

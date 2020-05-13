@@ -75,7 +75,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
-	private static final String TAB_NAME = "Debugger";
+	private static final String TAB_NAME = Messages.getString("GDBJtagDebuggerTab.tabName"); //$NON-NLS-1$
 	private static final String TAB_ID = "org.eclipse.cdt.debug.gdbjtag.ui.debuggertab.dsf"; //$NON-NLS-1$
 	private static final String DEFAULT_JTAG_DEVICE_ID = "org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.genericDevice"; //$NON-NLS-1$
 
@@ -122,13 +122,13 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		group.setLayoutData(gd);
-		group.setText(Messages.getString("GDBJtagDebuggerTab.gdbSetupGroup_Text"));
+		group.setText(Messages.getString("GDBJtagDebuggerTab.gdbSetupGroup_Text")); //$NON-NLS-1$
 
 		createCommandControl(group);
 		createRemoteControl(comp);
 
 		fUpdateThreadlistOnSuspend = new Button(comp, SWT.CHECK);
-		fUpdateThreadlistOnSuspend.setText(Messages.getString("GDBJtagDebuggerTab.update_thread_list_on_suspend"));
+		fUpdateThreadlistOnSuspend.setText(Messages.getString("GDBJtagDebuggerTab.update_thread_list_on_suspend")); //$NON-NLS-1$
 		fUpdateThreadlistOnSuspend.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -176,7 +176,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		comp.setLayoutData(gd);
 
 		Label label = new Label(comp, SWT.NONE);
-		label.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandLabel"));
+		label.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandLabel")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
@@ -192,16 +192,16 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		});
 
 		Button button = new Button(comp, SWT.NONE);
-		button.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandBrowse"));
+		button.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandBrowse")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				browseButtonSelected(Messages.getString("GDBJtagDebuggerTab.gdbCommandBrowse_Title"), gdbCommand);
+				browseButtonSelected(Messages.getString("GDBJtagDebuggerTab.gdbCommandBrowse_Title"), gdbCommand); //$NON-NLS-1$
 			}
 		});
 
 		button = new Button(comp, SWT.NONE);
-		button.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandVariable"));
+		button.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandVariable")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -217,11 +217,11 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		group.setLayoutData(gd);
-		group.setText(Messages.getString("GDBJtagDebuggerTab.remoteGroup_Text"));
+		group.setText(Messages.getString("GDBJtagDebuggerTab.remoteGroup_Text")); //$NON-NLS-1$
 
 		useRemote = new Button(group, SWT.CHECK);
 		useRemote.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
-		useRemote.setText(Messages.getString("GDBJtagDebuggerTab.useRemote_Text"));
+		useRemote.setText(Messages.getString("GDBJtagDebuggerTab.useRemote_Text")); //$NON-NLS-1$
 		useRemote.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -231,8 +231,8 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		});
 
 		remoteTimeoutEnabled = new Button(group, SWT.CHECK);
-		remoteTimeoutEnabled.setText(Messages.getString("GDBJtagDebuggerTab.remoteTimeout"));
-		remoteTimeoutEnabled.setToolTipText(Messages.getString("GDBJtagDebuggerTab.remoteTimeoutTooltip"));
+		remoteTimeoutEnabled.setText(Messages.getString("GDBJtagDebuggerTab.remoteTimeout")); //$NON-NLS-1$
+		remoteTimeoutEnabled.setToolTipText(Messages.getString("GDBJtagDebuggerTab.remoteTimeoutTooltip")); //$NON-NLS-1$
 		remoteTimeoutEnabled.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -244,7 +244,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		gd = new GridData();
 		gd.widthHint = 125;
 		remoteTimeoutValue.setLayoutData(gd);
-		remoteTimeoutValue.setToolTipText(Messages.getString("GDBJtagDebuggerTab.remoteTimeoutTooltip"));
+		remoteTimeoutValue.setToolTipText(Messages.getString("GDBJtagDebuggerTab.remoteTimeoutTooltip")); //$NON-NLS-1$
 
 		Composite comp = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
@@ -253,7 +253,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		comp.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
 
 		Label label = new Label(comp, SWT.NONE);
-		label.setText(Messages.getString("GDBJtagDebuggerTab.jtagDeviceLabel"));
+		label.setText(Messages.getString("GDBJtagDebuggerTab.jtagDeviceLabel")); //$NON-NLS-1$
 
 		jtagDevice = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
 

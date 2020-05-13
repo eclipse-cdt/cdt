@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0f401e75_6bf26891",
+        "filename": "native/org.eclipse.cdt.native.serial/src/org/eclipse/cdt/serial/BaudRateValues.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-13T08:36:39Z",
+      "side": 1,
+      "message": "-1 missed header",
+      "revId": "5a700644c1de3e9e362dd17caf53b523b5d78367",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

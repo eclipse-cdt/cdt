@@ -32,7 +32,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.gdbjtag.ui";
+	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.gdbjtag.ui"; //$NON-NLS-1$
 
 	private static final String HARDWARE_LAUNCH_TYPE = "org.eclipse.cdt.debug.gdbjtag.launchConfigurationType"; //$NON-NLS-1$
 

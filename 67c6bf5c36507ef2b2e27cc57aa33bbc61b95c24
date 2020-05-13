@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea638cbc_4a827aca",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/core/memory/transport/ReadMemory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2020-05-13T17:58:45Z",
+      "side": 1,
+      "message": "By convention, I would expect this interface to be named \"IReadMemory\".",
+      "range": {
+        "startLine": 26,
+        "startChar": 17,
+        "endLine": 26,
+        "endChar": 27
+      },
+      "revId": "67c6bf5c36507ef2b2e27cc57aa33bbc61b95c24",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4f9344f0_2e1db7d9",
+        "filename": "memory/org.eclipse.cdt.debug.core.memory/src/org/eclipse/cdt/debug/internal/core/memory/transport/SRecordExport.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2020-05-13T17:58:45Z",
+      "side": 1,
+      "message": "This addresses my concerns on efficient fetching of memory.",
+      "revId": "67c6bf5c36507ef2b2e27cc57aa33bbc61b95c24",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -73,12 +73,13 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -140,7 +141,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	private KeyListener fKeyHandler;
 	private final ITerminalListener fTerminalListener;
 	private String fMsg = ""; //$NON-NLS-1$
-	private TerminalMouseTrackListener fFocusListener;
+	private TerminalFocusListener fFocusListener;
 	private ITerminalConnector fConnector;
 	private final ITerminalConnector[] fConnectors;
 	private final boolean fUseCommonPrefs;
@@ -741,10 +742,10 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	protected void setupListeners() {
 		fKeyHandler = new TerminalKeyHandler();
-		fFocusListener = new TerminalMouseTrackListener();
+		fFocusListener = new TerminalFocusListener();
 
 		getCtlText().addKeyListener(fKeyHandler);
-		getCtlText().addMouseTrackListener(fFocusListener);
+		getCtlText().addFocusListener(fFocusListener);
 
 	}
 
@@ -817,20 +818,16 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		return fTerminalText;
 	}
 
-	protected class TerminalMouseTrackListener implements MouseTrackListener {
+	protected class TerminalFocusListener implements FocusListener {
 		private IContextActivation terminalContextActivation = null;
 		private IContextActivation editContextActivation = null;
 
-		protected TerminalMouseTrackListener() {
+		protected TerminalFocusListener() {
 			super();
 		}
 
 		@Override
-		public void mouseHover(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseEnter(MouseEvent e) {
+		public void focusGained(FocusEvent event) {
 			// Disable all keyboard accelerators (e.g., Control-B) so the Terminal view
 			// can see every keystroke.  Without this, Emacs, vi, and Bash are unusable
 			// in the Terminal view.
@@ -842,7 +839,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		}
 
 		@Override
-		public void mouseExit(MouseEvent e) {
+		public void focusLost(FocusEvent event) {
 			// Enable all keybindings.
 			captureKeyEvents(false);
 

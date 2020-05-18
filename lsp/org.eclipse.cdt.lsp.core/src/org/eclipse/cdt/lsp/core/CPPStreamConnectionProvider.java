@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017-2019 Ericsson and others.
+ * Copyright (c) 2017-2020 Ericsson and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -10,6 +10,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558516
+ *     Philip Langer <planger@eclipsesource.com> - Bug 563280
  *******************************************************************************/
 
 package org.eclipse.cdt.lsp.core;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.internal.cquery.core.CqueryLanguageServer;
@@ -66,7 +68,7 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 		if (languageServerLocation != null) {
 			commands.add(languageServerLocation.getAbsolutePath());
 			if (!flags.isEmpty()) {
-				commands.add(flags);
+				commands.addAll(Arrays.asList(flags.split("\\s"))); //$NON-NLS-1$
 			}
 			parent = languageServerLocation.getParent();
 		}

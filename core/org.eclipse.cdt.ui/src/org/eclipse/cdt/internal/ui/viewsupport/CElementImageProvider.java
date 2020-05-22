@@ -16,6 +16,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -113,6 +116,12 @@ public class CElementImageProvider {
 		DESC_OBJ_PROJECT = images.getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT);
 		//DESC_OBJ_FOLDER= 		 images.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 	}
+
+	/**
+	 * Map of a descriptor back to its canonical one. This is needed to work around a bug in
+	 * the Eclipse platform, see Bug 563454
+	 */
+	private final Map<CElementImageDescriptor, CElementImageDescriptor> allDescriptors = new HashMap<>();
 
 	public CElementImageProvider() {
 	}
@@ -300,7 +309,9 @@ public class CElementImageProvider {
 		Point size = useSmallSize(flags) ? SMALL_SIZE : BIG_SIZE;
 		ImageDescriptor desc = getBaseImageDescriptor(element, flags);
 		if (desc != null) {
-			return new CElementImageDescriptor(desc, adornmentFlags, size);
+			CElementImageDescriptor descriptor = new CElementImageDescriptor(desc, adornmentFlags, size);
+			descriptor = allDescriptors.computeIfAbsent(descriptor, (k) -> k);
+			return descriptor;
 		}
 		return null;
 	}

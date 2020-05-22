@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0613346e_233559c9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/CElementImageProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-22T09:48:19Z",
+      "side": 1,
+      "message": "As it looks as a temporary solution, I suggest to add a comment that references a bugzilla record.",
+      "revId": "28316adf76611668cc297e902b75f73040467a0d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

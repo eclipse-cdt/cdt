@@ -248,7 +248,8 @@ public class CompilerBuiltinsDetector {
 			return null; // no console to allocate
 		} else {
 			IProject project = buildConfiguration.getProject();
-			if (console != null) {
+			if (console == null) {
+				// need to allocate console, but none is given
 				String consoleId = CONSOLE_ID + "." + project.getName();
 				console = CCorePlugin.getDefault().getConsole(CONSOLE_ID, consoleId, null, null);
 			}

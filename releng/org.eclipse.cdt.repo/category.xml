@@ -150,7 +150,7 @@
    <iu id="org.eclipse.cdt.remote.core.source" version="0.0.0"/>
    <iu id="javax.activation" version="0.0.0"/>
    <iu id="javax.xml" version="0.0.0"/>
-   <iu id="javax.xml.bind" version="0.0.0"/>
+   <iu id="jakarta.xml.bind" version="0.0.0"/>
    <iu id="javax.xml.stream" version="0.0.0"/>
    <iu id="com.google.gson" version="0.0.0"/>
    <iu id="org.freemarker" version="0.0.0"/>

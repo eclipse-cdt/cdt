@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ca5cab24_ba1eb920",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerTargetTypeProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2020-05-22T21:36:10Z",
+      "side": 1,
+      "message": "I\u0027ve removed this field.",
+      "parentUuid": "653d3816_6b3727a0",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4a1d83d0_39eafac3",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerTargetTypeProvider.java",
         "patchSetId": 1
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "30824095_98af1eb0",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerTargetTypeProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2020-05-22T21:36:10Z",
+      "side": 1,
+      "message": "Agreed.  I have switched to use a JobGroup and look for getState() to be NONE.  I decided against using join() as I added the Jobs to avoid a deadlock we were running into and so am choosing to do the sleep for the time being.",
+      "parentUuid": "ce6dc975_9ec4a609",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ac728bc_8d24b90a",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerTargetTypeProvider.java",
         "patchSetId": 1
@@ -64,6 +100,24 @@
       "writtenOn": "2020-04-21T07:54:04Z",
       "side": 1,
       "message": "We should not use synchronized inside Job#run",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a82bed6a_9c73e395",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerTargetTypeProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2020-05-22T21:36:10Z",
+      "side": 1,
+      "message": "Agreed.  Using a JobGroup with maxThreads 1 accomplishes what I wanted which is to never execute the Jobs simultaneously.",
+      "parentUuid": "8ac728bc_8d24b90a",
       "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "d71e9446_42efbf03",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2020-05-22T21:36:10Z",
+      "side": 1,
+      "message": "It is used in two different contexts (for args and for the connection uri).  I have renamed to NONE.",
+      "parentUuid": "34dafdaa_efecc91e",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b301f7c1_43b3d893",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
         "patchSetId": 1
@@ -98,6 +170,24 @@
       "writtenOn": "2020-04-21T07:54:04Z",
       "side": 1,
       "message": "As empty project name is not legal I would inline constant here",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a21eb897_ff671932",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2020-05-22T21:36:10Z",
+      "side": 1,
+      "message": "That is why I am using it as a default.  I check for an empty name just below which means the attribute was not set.",
+      "parentUuid": "b301f7c1_43b3d893",
       "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +211,24 @@
     },
     {
       "key": {
+        "uuid": "59a72a87_f8a30e3a",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2020-05-22T21:36:10Z",
+      "side": 1,
+      "message": "This is temporary as I cannot add/modify public interfaces until our 2020-09 10.0 release.  I can revisit for then.  I would like this to be tested in the wild by our test team in 2020-06 to see if using the JobGroup and forcing the flush solves the intermittent target problem.  Thiss is a kludge to get around the fact that no new interfaces can be added and I can\u0027t get at the ContainerTargetTypeProvider instance being used by the ILaunchTargetManager at the moment except by this workaround.",
+      "parentUuid": "47bf145c_3ccdc1cf",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c22b51ca_2130fe6a",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
         "patchSetId": 1
@@ -132,6 +240,24 @@
       "writtenOn": "2020-04-21T07:54:04Z",
       "side": 1,
       "message": "This should be reworked to avoid null suppression",
+      "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b2b83ba_4c494431",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2020-05-22T21:36:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c22b51ca_2130fe6a",
       "revId": "5ed671c6cbee1288f3b0c5fc12ba9b13fb868804",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

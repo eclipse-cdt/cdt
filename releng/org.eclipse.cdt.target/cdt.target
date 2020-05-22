@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="81">
+<target name="cdt" sequenceNumber="82">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
@@ -50,7 +50,7 @@
 <unit id="com.google.gson" version="0.0.0"/>
 <unit id="com.sun.xml.bind" version="0.0.0"/>
 <unit id="javax.activation" version="0.0.0"/>
-<unit id="javax.xml.bind" version="0.0.0"/>
+<unit id="jakarta.xml.bind" version="0.0.0"/>
 <unit id="javax.xml.stream" version="0.0.0"/>
 <unit id="net.sourceforge.lpg.lpgjavaruntime" version="0.0.0"/>
 <unit id="org.antlr.runtime" version="0.0.0"/>

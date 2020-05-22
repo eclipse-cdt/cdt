@@ -191,7 +191,7 @@
         <requirement
             name="javax.activation"/>
         <requirement
-            name="javax.xml.bind"/>
+            name="jakarta.xml.bind"/>
         <requirement
             name="javax.xml.stream"/>
         <requirement

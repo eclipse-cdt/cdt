@@ -16,6 +16,24 @@
       "revId": "bc6f09ce4837229332d01708f9fc98e4a4e839c3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c9915d2_2303adc8",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/core/CPPStreamConnectionProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 7214
+      },
+      "writtenOn": "2020-05-22T19:40:37Z",
+      "side": 1,
+      "message": "Thanks for pointing me to that util! I tested it in my setup (Linux and clangd-11) and it works great. I\u0027ve updated this change to use CommandLineUtil in PS2 now.",
+      "parentUuid": "99bb4ec3_92303080",
+      "revId": "bc6f09ce4837229332d01708f9fc98e4a4e839c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

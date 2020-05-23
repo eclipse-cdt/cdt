@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "843fda81_bf15ea2e",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-23T08:16:07Z",
+      "side": 1,
+      "message": "let\u0027s return non-null id",
+      "range": {
+        "startLine": 617,
+        "startChar": 11,
+        "endLine": 617,
+        "endChar": 15
+      },
+      "revId": "83541bbec35ab5229f80ac01e395b3c2fcb2db4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1191e5f2_7b46a549",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 627,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-23T08:16:07Z",
+      "side": 1,
+      "message": "return defValue;",
+      "revId": "83541bbec35ab5229f80ac01e395b3c2fcb2db4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b7de0876_5d450f27",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-23T08:16:07Z",
+      "side": 1,
+      "message": "return Collections.emptyMap();",
+      "revId": "83541bbec35ab5229f80ac01e395b3c2fcb2db4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8798d311_f016bd39",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 637,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-23T08:16:07Z",
+      "side": 1,
+      "message": "I would throw UnsupportedOperationException",
+      "revId": "83541bbec35ab5229f80ac01e395b3c2fcb2db4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c2425987_5d809e72",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 686,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-23T08:16:07Z",
+      "side": 1,
+      "message": "BTW, why we do not consider to have here \n`project \u003d resources[0].getProject();`\n?",
+      "revId": "83541bbec35ab5229f80ac01e395b3c2fcb2db4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d30f52d0_676cb925",
+        "filename": "tools.templates/org.eclipse.tools.templates.freemarker/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-23T09:45:31Z",
+      "side": 1,
+      "message": "But is this necessary if we are switching to jakarta.xml.bind?",
+      "revId": "c98b4efd81b586d3d928a8154593b644e54f3916",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a2fd4c1_284afd0d",
+        "filename": "tools.templates/org.eclipse.tools.templates.freemarker/build.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-23T09:45:31Z",
+      "side": 1,
+      "message": "why we do not want to add explicit dependency to jakarta.xml.bind?",
+      "revId": "c98b4efd81b586d3d928a8154593b644e54f3916",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

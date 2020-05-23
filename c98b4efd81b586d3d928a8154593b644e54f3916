@@ -69,6 +69,24 @@
       "revId": "c98b4efd81b586d3d928a8154593b644e54f3916",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f40fd01_a890bf9a",
+        "filename": "tools.templates/org.eclipse.tools.templates.freemarker/build.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-23T19:10:01Z",
+      "side": 1,
+      "message": "All that I have is also not perfect. Let\u0027s try your solution to fix master and then we can have more experiments.",
+      "parentUuid": "2c7289ca_359d546b",
+      "revId": "c98b4efd81b586d3d928a8154593b644e54f3916",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

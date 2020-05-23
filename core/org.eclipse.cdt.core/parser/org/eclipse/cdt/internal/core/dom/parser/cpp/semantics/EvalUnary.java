@@ -329,6 +329,25 @@ public class EvalUnary extends CPPDependentEvaluation {
 			}
 		}
 
+		/**
+		 * Stop recursion if unary expression like sizeof(*this) or alignof(*this) are used.
+		 */
+		if (arg instanceof EvalUnary) {
+			EvalFixed fixed = null;
+			ICPPEvaluation tmp = arg;
+			while (fixed == null && tmp instanceof EvalUnary && ((EvalUnary) tmp).getArgument() != null) {
+				tmp = ((EvalUnary) tmp).getArgument();
+				if (tmp instanceof EvalFixed) {
+					fixed = (EvalFixed) tmp;
+				}
+			}
+			if (fixed != null) {
+				if (fixed.getValue() == IntegralValue.THIS) {
+					return IntegralValue.THIS;
+				}
+			}
+		}
+
 		switch (fOperator) {
 		case op_sizeof: {
 			SizeAndAlignment info = SizeofCalculator.getSizeAndAlignment(fArgument.getType());

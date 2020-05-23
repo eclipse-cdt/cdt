@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c976d14_5a4ec603",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalUnary.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-23T08:45:43Z",
+      "side": 1,
+      "message": "I would extract separate method\n`Optional\u003cEvalFixed\u003e fixedEval(EvalUnary arg)`\n\nActually I would extract separate type to reduce code complexity and simplify testing :)\n\n`final class FixedEval implements Function\u003cEvalUnary, Optional\u003cEvalFixed\u003e\u003e`",
+      "revId": "049e9228eb667a59a5d7f78604f91ebfaecc1b6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

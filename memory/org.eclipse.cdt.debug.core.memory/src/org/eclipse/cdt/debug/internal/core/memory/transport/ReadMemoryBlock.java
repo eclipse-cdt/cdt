@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Alexander Fedorov (ArSysOp) - initial API and implementation
+ *     John Dallaway - use absolute memory address (bug 562164)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.memory.transport;
 
@@ -33,8 +34,8 @@ public final class ReadMemoryBlock implements IReadMemory {
 	}
 
 	@Override
-	public MemoryByte[] from(BigInteger offset, long units) throws DebugException {
-		return memory.getBytesFromOffset(offset, units);
+	public MemoryByte[] from(BigInteger address, long units) throws DebugException {
+		return memory.getBytesFromAddress(address, units);
 	}
 
 }

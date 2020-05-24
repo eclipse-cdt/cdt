@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Alexander Fedorov (ArSysOp) - initial API and implementation
+ *     John Dallaway - use absolute memory address (bug 562164)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.memory.transport;
 
@@ -26,17 +27,17 @@ import org.eclipse.debug.core.model.MemoryByte;
 public interface IReadMemory {
 
 	/**
-	 * Reads an array of bytes from a memory starting from the given offset. If requested to retrieve data beyond the memory
+	 * Reads an array of bytes from a memory starting from the given address. If requested to retrieve data beyond the memory
 	 * boundaries, implementations should return memory bytes with the <code>READABLE</code> bit turned off for each byte outside the
 	 * of the accessible range. An exception should not be thrown in this case.
 	 *
-	 * @param offset zero based offset at which to start retrieving bytes in terms of addressable units
+	 * @param address address at which to begin retrieving bytes in terms of addressable units
 	 * @param units the number of addressable units to retrieve
 	 * @return the obtained data, {@link MemoryByte#isReadable()} needs to be checked
 	 * @throws DebugException if unable to retrieve the specified bytes due to a failure communicating with the target
 	 *
 	 * @see {@link MemoryByte}
 	 */
-	MemoryByte[] from(BigInteger offset, long units) throws DebugException;
+	MemoryByte[] from(BigInteger address, long units) throws DebugException;
 
 }

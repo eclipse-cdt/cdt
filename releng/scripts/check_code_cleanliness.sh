@@ -135,8 +135,10 @@ fi
 ##
 # Make sure all versions have been bumped appropriately compared to the baseline
 ##
-echo "Running 'mvn verify -P baseline-compare-and-replace' to make sure all versions have been appropriately incremented"
-logfile=$(mktemp /tmp/baseline-compare-and-replace.XXXXXX)
+logfile=baseline-compare-and-replace.log
+echo "Running 'mvn verify -P baseline-compare-and-replace' to make sure all versions"
+echo "have been appropriately incremented. The check output is very verbose, so it is"
+echo "redirected to ${logfile} which is archived as part of the build artifacts."
 if ${MVN:-mvn} \
         clean verify -B -V \
         -DskipDoc=true \
@@ -165,6 +167,5 @@ else
         echo "log of the failed maven run which is available as part of the artifacts in a"
         echo "file called baseline-compare-and-replace.log"
     fi
-    cp ${logfile} baseline-compare-and-replace.log
     exit 1
 fi

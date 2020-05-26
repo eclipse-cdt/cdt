@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "98947f13_53bda339",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-26T18:53:21Z",
+      "side": 1,
+      "message": "This should be 1.2.501 on 9.11 branch when cherry-picked.",
+      "revId": "c7581e5bf27b49fa97e87992657b83511151b325",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

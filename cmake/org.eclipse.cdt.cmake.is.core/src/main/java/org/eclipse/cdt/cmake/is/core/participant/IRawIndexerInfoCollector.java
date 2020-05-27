@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.cmake.is.core;
+package org.eclipse.cdt.cmake.is.core.participant;
 
 /**
  * Gathers information about C preprocessor symbols and include paths collected

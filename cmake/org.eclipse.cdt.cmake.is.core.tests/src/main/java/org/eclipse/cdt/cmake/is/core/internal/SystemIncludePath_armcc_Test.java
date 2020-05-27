@@ -10,7 +10,7 @@ package org.eclipse.cdt.cmake.is.core.internal;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.cdt.cmake.is.core.Arglets.SystemIncludePath_armcc;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.SystemIncludePath_armcc;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;

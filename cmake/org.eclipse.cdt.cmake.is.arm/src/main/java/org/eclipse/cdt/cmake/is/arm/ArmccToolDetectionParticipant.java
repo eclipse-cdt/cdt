@@ -9,10 +9,10 @@
 
 package org.eclipse.cdt.cmake.is.arm;
 
-import org.eclipse.cdt.cmake.is.core.Arglets;
-import org.eclipse.cdt.cmake.is.core.DefaultToolCommandlineParser;
-import org.eclipse.cdt.cmake.is.core.DefaultToolDetectionParticipant;
-import org.eclipse.cdt.cmake.is.core.IArglet;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets;
+import org.eclipse.cdt.cmake.is.core.participant.DefaultToolCommandlineParser;
+import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant;
+import org.eclipse.cdt.cmake.is.core.participant.IArglet;
 
 /**
  * armcc C & C++.

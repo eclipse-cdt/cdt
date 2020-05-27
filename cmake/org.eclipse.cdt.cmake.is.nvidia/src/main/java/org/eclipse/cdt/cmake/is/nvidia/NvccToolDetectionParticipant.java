@@ -12,11 +12,11 @@ package org.eclipse.cdt.cmake.is.nvidia;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.cdt.cmake.is.core.Arglets;
-import org.eclipse.cdt.cmake.is.core.DefaultToolCommandlineParser;
-import org.eclipse.cdt.cmake.is.core.DefaultToolDetectionParticipant;
-import org.eclipse.cdt.cmake.is.core.IArglet;
-import org.eclipse.cdt.cmake.is.core.ResponseFileArglets;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets;
+import org.eclipse.cdt.cmake.is.core.participant.DefaultToolCommandlineParser;
+import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant;
+import org.eclipse.cdt.cmake.is.core.participant.IArglet;
+import org.eclipse.cdt.cmake.is.core.participant.ResponseFileArglets;
 
 /**
  * CUDA: nvcc compilers (POSIX compatible).

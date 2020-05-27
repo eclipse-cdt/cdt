@@ -9,9 +9,9 @@
 
 package org.eclipse.cdt.cmake.is.nvidia;
 
-import org.eclipse.cdt.cmake.is.core.Arglets.IncludePathGeneric;
-import org.eclipse.cdt.cmake.is.core.Arglets.NameOptionMatcher;
-import org.eclipse.cdt.cmake.is.core.IArglet;
+import org.eclipse.cdt.cmake.is.core.participant.IArglet;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.IncludePathGeneric;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.NameOptionMatcher;
 import org.eclipse.core.runtime.IPath;
 
 /**

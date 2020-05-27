@@ -10,8 +10,8 @@ package org.eclipse.cdt.cmake.is.core.internal;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.cdt.cmake.is.core.Arglets;
-import org.eclipse.cdt.cmake.is.core.Arglets.Sysroot_GCC;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.Sysroot_GCC;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.junit.Before;

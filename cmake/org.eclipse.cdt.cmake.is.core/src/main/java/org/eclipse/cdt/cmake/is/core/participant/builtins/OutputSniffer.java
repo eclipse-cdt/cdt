@@ -7,13 +7,13 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.cmake.is.core.builtins;
+package org.eclipse.cdt.cmake.is.core.participant.builtins;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
 
-import org.eclipse.cdt.cmake.is.core.IRawIndexerInfoCollector;
+import org.eclipse.cdt.cmake.is.core.participant.IRawIndexerInfoCollector;
 
 /**
  * An OutputStream that passes each line written to it to a

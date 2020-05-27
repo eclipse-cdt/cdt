@@ -7,13 +7,13 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.cmake.is.core.builtins;
+package org.eclipse.cdt.cmake.is.core.participant.builtins;
 
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.cmake.is.core.IRawIndexerInfoCollector;
+import org.eclipse.cdt.cmake.is.core.participant.IRawIndexerInfoCollector;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;

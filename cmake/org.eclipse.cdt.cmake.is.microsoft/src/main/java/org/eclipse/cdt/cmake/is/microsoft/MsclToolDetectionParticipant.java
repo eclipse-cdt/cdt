@@ -9,7 +9,7 @@
 
 package org.eclipse.cdt.cmake.is.microsoft;
 
-import org.eclipse.cdt.cmake.is.core.DefaultToolDetectionParticipant;
+import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant;
 
 /**
  * Microsoft C and C++ compiler (cl).

@@ -6,12 +6,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.cmake.is.core;
+package org.eclipse.cdt.cmake.is.core.participant;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsDetectionBehavior;
+import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.core.runtime.IPath;
 
 /**

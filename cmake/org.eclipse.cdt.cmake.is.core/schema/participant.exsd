@@ -6,8 +6,8 @@
          <meta.schema plugin="org.eclipse.cdt.cmake.is.core" id="detectionParticipant" name="Tool Detection Participants"/>
       </appinfo>
       <documentation>
-         Allows plug-ins to contribute to detection of compiler include paths, preprocessor defines and preprocessor un-defines from a command-line text.
-&lt;p&gt;This extension point teaches the &lt;i&gt;CMAKE_EXPORT_COMPILE_COMMANDS Parser&lt;/i&gt; and the &lt;i&gt;CMAKE_EXPORT_COMPILE_COMMANDS Compiler Built-ins&lt;/i&gt; language settings providers to analyze compiler-specific command-lines incl. options for a specific compiler. The detected include paths, preprocessor defines and preprocessor un-defines from the compiler command-line get passed to the CDT indexer.&lt;/p&gt;
+         Allows plug-ins to contribute to detection of compiler include paths and preprocessor defines from a command-line text.
+&lt;p&gt;This extension point teaches the &lt;i&gt;CompileCommandsParser&lt;/i&gt; to analyze compiler-specific command-lines incl. options for a specific compiler. The detected include paths, preprocessor defines and preprocessor un-defines from the compiler command-line get passed to the CDT indexer.&lt;/p&gt;
 &lt;p&gt;Third party compiler vendors may use this extension point to add their compiler (or other tool) for improved syntax highlighting in the CDT&apos;s C/C++ editors.
 &lt;/p&gt;
       </documentation>
@@ -60,11 +60,11 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of a class that implements &lt;code&gt;org.eclipse.cdt.cmake.is.IToolDetectionParticipant&lt;/code&gt;, The implementation must provide a public no-argument constructor.&lt;br/&gt;
-You may want to consider sub-classing &lt;code&gt;org.eclipse.cdt.cmake.is.DefaultToolDetectionParticipant&lt;/code&gt; for convenience instead of directly implementing the interface.
+                  The fully qualified name of a class that implements &lt;code&gt;org.eclipse.cdt.cmake.is.participant.IToolDetectionParticipant&lt;/code&gt;, The implementation must provide a public no-argument constructor.&lt;br/&gt;
+You may want to consider sub-classing &lt;code&gt;org.eclipse.cdt.cmake.is.participant.DefaultToolDetectionParticipant&lt;/code&gt; for convenience instead of directly implementing the interface.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.cmake.is.IToolDetectionParticipant"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.cmake.is.participant.IToolDetectionParticipant"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -90,7 +90,7 @@ You may want to consider sub-classing &lt;code&gt;org.eclipse.cdt.cmake.is.Defau
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         2.0.0
+         1.0.0
       </documentation>
    </annotation>
 
@@ -129,8 +129,8 @@ Example file &lt;code&gt;help_content_extension.xml&lt;/code&gt;:
 &lt;/p&gt;
 
 &lt;p&gt;
-The easiest way to implement a tool detection participant would be to sub-class &lt;code&gt;org.eclipse.cdt.cmake.is.DefaultToolDetectionParticipant&lt;/code&gt;. 
-To configure your class, pass an instance of &lt;code&gt;org.eclipse.cdt.cmake.is.DefaultToolCommandlineParser&lt;/code&gt; in its super-constructor.&lt;br/&gt;
+The easiest way to implement a tool detection participant would be to sub-class &lt;code&gt;org.eclipse.cdt.cmake.is.participant.DefaultToolDetectionParticipant&lt;/code&gt;. 
+To configure your class, pass an instance of &lt;code&gt;org.eclipse.cdt.cmake.is.participant.DefaultToolCommandlineParser&lt;/code&gt; in its super-constructor.&lt;br/&gt;
 Some predifined parsers for tool arguments can be found in the classes &lt;code&gt;Arglets&lt;/code&gt; and &lt;code&gt;ResponseFileArglets&lt;/code&gt;.
 &lt;/p&gt;
       </documentation>
@@ -152,7 +152,7 @@ See, for example &lt;code&gt;de/marw/cmake/cdt/lsp/intel/IccToolDetectionPartici
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2019 Martin Weber&lt;br&gt;
+         Copyright (c) 2019-20 Martin Weber&lt;br&gt;
 All rights reserved. Content is provided to you under the terms and conditions of the Eclipse Public License Version 2.0 &quot;EPL&quot;.
 A copy of the EPL is available at http://www.eclipse.org/legal/epl-2.0.
       </documentation>

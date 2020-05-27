@@ -13,8 +13,8 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Locale;
 
-import org.eclipse.cdt.cmake.is.core.IToolDetectionParticipant;
-import org.eclipse.cdt.cmake.is.core.ParticipantTestUtil;
+import org.eclipse.cdt.cmake.is.core.participant.IToolDetectionParticipant;
+import org.eclipse.cdt.cmake.is.core.participant.ParticipantTestUtil;
 import org.junit.Test;
 
 /**

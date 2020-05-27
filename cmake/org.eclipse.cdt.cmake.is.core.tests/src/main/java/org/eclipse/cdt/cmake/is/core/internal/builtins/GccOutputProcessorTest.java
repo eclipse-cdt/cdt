@@ -16,8 +16,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.eclipse.cdt.cmake.is.core.builtins.GccOutputProcessor;
-import org.eclipse.cdt.cmake.is.core.builtins.OutputSniffer;
+import org.eclipse.cdt.cmake.is.core.participant.builtins.GccOutputProcessor;
+import org.eclipse.cdt.cmake.is.core.participant.builtins.OutputSniffer;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

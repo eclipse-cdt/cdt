@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.eclipse.cdt.cmake.is.core.IRawIndexerInfoCollector;
-import org.eclipse.cdt.cmake.is.core.builtins.GccOutputProcessor;
-import org.eclipse.cdt.cmake.is.core.builtins.OutputSniffer;
+import org.eclipse.cdt.cmake.is.core.participant.IRawIndexerInfoCollector;
+import org.eclipse.cdt.cmake.is.core.participant.builtins.GccOutputProcessor;
+import org.eclipse.cdt.cmake.is.core.participant.builtins.OutputSniffer;
 import org.junit.Before;
 import org.junit.Test;
 

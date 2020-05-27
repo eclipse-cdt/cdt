@@ -16,10 +16,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import org.eclipse.cdt.cmake.is.core.Arglets;
-import org.eclipse.cdt.cmake.is.core.DefaultToolCommandlineParser;
-import org.eclipse.cdt.cmake.is.core.IToolCommandlineParser;
-import org.eclipse.cdt.cmake.is.core.ResponseFileArglets;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets;
+import org.eclipse.cdt.cmake.is.core.participant.DefaultToolCommandlineParser;
+import org.eclipse.cdt.cmake.is.core.participant.IToolCommandlineParser;
+import org.eclipse.cdt.cmake.is.core.participant.ResponseFileArglets;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.junit.Test;

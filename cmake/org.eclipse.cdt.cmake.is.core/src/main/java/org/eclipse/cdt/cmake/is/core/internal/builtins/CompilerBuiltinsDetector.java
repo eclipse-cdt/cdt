@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.eclipse.cdt.cmake.is.core.IRawIndexerInfo;
-import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsDetectionBehavior;
-import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsOutputProcessor;
-import org.eclipse.cdt.cmake.is.core.builtins.OutputSniffer;
 import org.eclipse.cdt.cmake.is.core.internal.Plugin;
 import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferences;
 import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferencesAccess;
+import org.eclipse.cdt.cmake.is.core.participant.IRawIndexerInfo;
+import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsDetectionBehavior;
+import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsOutputProcessor;
+import org.eclipse.cdt.cmake.is.core.participant.builtins.OutputSniffer;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ICommandLauncher;

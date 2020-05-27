@@ -6,12 +6,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.cmake.is.core;
+package org.eclipse.cdt.cmake.is.core.participant;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.cmake.is.core.IArglet.IArgumentCollector;
+import org.eclipse.cdt.cmake.is.core.participant.IArglet.IArgumentCollector;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -179,7 +179,7 @@ public final class Arglets {
 		/**
 		 * @param isSystemIncludePath <code>true</code> if the include path is a system include path otherwise <code>false</code>
 		 * @param cwd the current working directory of the compiler at its invocation
-		 * @see org.eclipse.cdt.cmake.is.core.IArglet#processArgument(IArgumentCollector,
+		 * @see org.eclipse.cdt.cmake.is.core.participant.IArglet#processArgument(IArgumentCollector,
 		 *      IPath, String)
 		 */
 		protected final int processArgument(boolean isSystemIncludePath, IArgumentCollector resultCollector, IPath cwd,
@@ -351,7 +351,7 @@ public final class Arglets {
 	 */
 	public static abstract class BuiltinDetctionArgsGeneric {
 		/**
-		 * @see org.eclipse.cdt.cmake.is.core.IArglet#processArgument(IArgumentCollector,
+		 * @see org.eclipse.cdt.cmake.is.core.participant.IArglet#processArgument(IArgumentCollector,
 		 *      IPath, String)
 		 */
 		protected final int processArgument(IArgumentCollector resultCollector, String argsLine,

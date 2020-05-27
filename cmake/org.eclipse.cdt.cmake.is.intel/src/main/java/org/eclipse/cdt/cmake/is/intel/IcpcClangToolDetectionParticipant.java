@@ -9,7 +9,7 @@
 
 package org.eclipse.cdt.cmake.is.intel;
 
-import org.eclipse.cdt.cmake.is.core.DefaultToolDetectionParticipant;
+import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant;
 
 /**
  * C++, OS X, clang.

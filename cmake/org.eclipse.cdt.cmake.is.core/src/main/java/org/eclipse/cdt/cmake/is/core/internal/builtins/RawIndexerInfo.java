@@ -20,9 +20,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import org.eclipse.cdt.cmake.is.core.IRawIndexerInfo;
-import org.eclipse.cdt.cmake.is.core.IRawIndexerInfoCollector;
 import org.eclipse.cdt.cmake.is.core.internal.Plugin;
+import org.eclipse.cdt.cmake.is.core.participant.IRawIndexerInfo;
+import org.eclipse.cdt.cmake.is.core.participant.IRawIndexerInfoCollector;
 import org.eclipse.core.runtime.Platform;
 
 /**

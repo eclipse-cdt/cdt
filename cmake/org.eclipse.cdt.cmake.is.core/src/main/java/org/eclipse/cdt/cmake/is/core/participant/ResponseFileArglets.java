@@ -7,14 +7,14 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.cmake.is.core;
+package org.eclipse.cdt.cmake.is.core.participant;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.regex.Matcher;
 
-import org.eclipse.cdt.cmake.is.core.Arglets.NameOptionMatcher;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.NameOptionMatcher;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 

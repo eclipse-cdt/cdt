@@ -12,8 +12,8 @@ package org.eclipse.cdt.cmake.is.nvidia;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.cmake.is.core.Arglets.BuiltinDetctionArgsGeneric;
-import org.eclipse.cdt.cmake.is.core.IArglet;
+import org.eclipse.cdt.cmake.is.core.participant.IArglet;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.BuiltinDetctionArgsGeneric;
 import org.eclipse.core.runtime.IPath;
 
 /**

@@ -7,9 +7,9 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.cmake.is.core.builtins;
+package org.eclipse.cdt.cmake.is.core.participant.builtins;
 
-import org.eclipse.cdt.cmake.is.core.IRawIndexerInfoCollector;
+import org.eclipse.cdt.cmake.is.core.participant.IRawIndexerInfoCollector;
 
 /**
  * Responsible for parsing the output that is produced when a compiler is

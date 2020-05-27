@@ -13,8 +13,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
-import org.eclipse.cdt.cmake.is.core.Arglets;
-import org.eclipse.cdt.cmake.is.core.Arglets.MacroDefine_C_POSIX;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.MacroDefine_C_POSIX;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.junit.Before;

@@ -9,15 +9,15 @@
 
 package org.eclipse.cdt.cmake.is.microsoft;
 
-import org.eclipse.cdt.cmake.is.core.Arglets.IncludePathGeneric;
-import org.eclipse.cdt.cmake.is.core.Arglets.MacroDefineGeneric;
-import org.eclipse.cdt.cmake.is.core.Arglets.MacroUndefineGeneric;
-import org.eclipse.cdt.cmake.is.core.Arglets.NameOptionMatcher;
-import org.eclipse.cdt.cmake.is.core.Arglets.NameValueOptionMatcher;
-import org.eclipse.cdt.cmake.is.core.DefaultToolCommandlineParser;
-import org.eclipse.cdt.cmake.is.core.IArglet;
-import org.eclipse.cdt.cmake.is.core.IToolCommandlineParser;
-import org.eclipse.cdt.cmake.is.core.ResponseFileArglets;
+import org.eclipse.cdt.cmake.is.core.participant.DefaultToolCommandlineParser;
+import org.eclipse.cdt.cmake.is.core.participant.IArglet;
+import org.eclipse.cdt.cmake.is.core.participant.IToolCommandlineParser;
+import org.eclipse.cdt.cmake.is.core.participant.ResponseFileArglets;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.IncludePathGeneric;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.MacroDefineGeneric;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.MacroUndefineGeneric;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.NameOptionMatcher;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.NameValueOptionMatcher;
 import org.eclipse.core.runtime.IPath;
 
 /**

@@ -10,8 +10,8 @@ package org.eclipse.cdt.cmake.is.core.internal;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.cdt.cmake.is.core.Arglets.MacroUndefine_C_POSIX;
-import org.eclipse.cdt.cmake.is.core.IArglet.IArgumentCollector;
+import org.eclipse.cdt.cmake.is.core.participant.Arglets.MacroUndefine_C_POSIX;
+import org.eclipse.cdt.cmake.is.core.participant.IArglet.IArgumentCollector;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.junit.Before;

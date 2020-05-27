@@ -12,9 +12,9 @@ package org.eclipse.cdt.cmake.is.core.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.cmake.is.core.IArglet;
-import org.eclipse.cdt.cmake.is.core.IToolCommandlineParser;
 import org.eclipse.cdt.cmake.is.core.internal.builtins.RawIndexerInfo;
+import org.eclipse.cdt.cmake.is.core.participant.IArglet;
+import org.eclipse.cdt.cmake.is.core.participant.IToolCommandlineParser;
 
 /**
  * Default implementation of IArgumentCollector.

@@ -10,8 +10,8 @@ package org.eclipse.cdt.cmake.is.nvidia.builtins;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.cdt.cmake.is.core.DefaultToolCommandlineParser;
-import org.eclipse.cdt.cmake.is.core.IToolCommandlineParser.IResult;
+import org.eclipse.cdt.cmake.is.core.participant.DefaultToolCommandlineParser;
+import org.eclipse.cdt.cmake.is.core.participant.IToolCommandlineParser.IResult;
 import org.eclipse.cdt.cmake.is.nvidia.NvccLangStdArglet;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;

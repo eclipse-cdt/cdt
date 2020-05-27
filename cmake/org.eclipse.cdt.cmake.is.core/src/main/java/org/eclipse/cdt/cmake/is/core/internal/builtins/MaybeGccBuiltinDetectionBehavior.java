@@ -12,9 +12,9 @@ package org.eclipse.cdt.cmake.is.core.internal.builtins;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.cmake.is.core.builtins.GccOutputProcessor;
-import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsDetectionBehavior;
-import org.eclipse.cdt.cmake.is.core.builtins.IBuiltinsOutputProcessor;
+import org.eclipse.cdt.cmake.is.core.participant.builtins.GccOutputProcessor;
+import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsDetectionBehavior;
+import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsOutputProcessor;
 
 /**
  * The {link IBuiltinsDetectionBehavior} for the GNU C and GNU C++ compiler

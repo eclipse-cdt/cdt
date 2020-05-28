@@ -221,12 +221,6 @@
         <requirement
             name="org.eclipse.lsp4e.debug"/>
         <requirement
-            name="org.eclipse.remote.console.feature.group"/>
-        <requirement
-            name="org.eclipse.remote.feature.group"/>
-        <requirement
-            name="org.eclipse.remote.serial.feature.group"/>
-        <requirement
             name="org.eclipse.sdk.feature.group"/>
         <requirement
             name="org.eclipse.swtbot.eclipse.feature.group"/>
@@ -302,8 +296,6 @@
           </repository>
           <repository
               url="https://download.eclipse.org/tools/orbit/downloads/2020-03/"/>
-          <repository
-              url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
         </repositoryList>
         <repositoryList
             name="2020-06">
@@ -338,8 +330,6 @@
           </repository>
           <repository
               url="https://download.eclipse.org/tools/orbit/downloads/2020-06/"/>
-          <repository
-              url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
         </repositoryList>
       </targlet>
     </setupTask>

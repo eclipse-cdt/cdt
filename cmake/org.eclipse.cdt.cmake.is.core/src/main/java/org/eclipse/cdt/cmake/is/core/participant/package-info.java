@@ -8,8 +8,11 @@
  *******************************************************************************/
 
 /**
- * Language Setting Providers
+ * Classes and interfaces allowing for third-party compiler vendors so they can
+ * provide a plugin that understands their compiler specific command-line
+ * options and participates in command-line analysis in order to support the CDT
+ * indexer/ syntax highlighting.
  *
  * @author Martin Weber
  */
-package org.eclipse.cdt.cmake.is.core.internal;
+package org.eclipse.cdt.cmake.is.core.participant;

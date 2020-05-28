@@ -5,5 +5,5 @@
   <contribution content="doc/compiler.xhtml#builtins"
     path="/de.marw.cdt.cmake.core/doc/html/builtins-detection.xhtml#extra_detection_participant_builtins_list"/>
   <contribution content="doc/compiler.xhtml#builtins_enhanced"
-    path="/de.marw.cdt.cmake.core/doc/html/builtins-detection.xhtml#extra_lsp_detection_participant_builtins_enhanced_list"/>
+    path="/de.marw.cdt.cmake.core/doc/html/builtins-detection.xhtml#extra_detection_participant_builtins_enhanced_list"/>
 </contentExtension>

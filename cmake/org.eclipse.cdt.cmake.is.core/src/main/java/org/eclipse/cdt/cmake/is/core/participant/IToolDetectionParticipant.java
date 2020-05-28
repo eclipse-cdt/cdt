@@ -12,15 +12,22 @@ package org.eclipse.cdt.cmake.is.core.participant;
 import java.util.Optional;
 
 /**
- * Responsible to match the first argument (the tool command) of a command-line
- * and to provide a parser for the tool-specific command-line arguments.
+ * Participates in generating {@link org.eclipse.cdt.core.parser.IScannerInfo}
+ * objects for the files being compiled in order to support the CDT indexer/
+ * syntax highlighting.<br>
+ * Generation of the {@code IScannerInfo} objects is done by analyzing a
+ * {@code compile_commands.json} file produced by cmake.
+ * <p>
+ * This interface is the expected interface for extensions provided for the
+ * {@code org.eclipse.cdt.cmake.is.core.detectionParticipant} extension point.
+ * </p>
  *
  * @author Martin Weber
  */
 public interface IToolDetectionParticipant {
 
 	/**
-	 * Gets the for the parser for the tool-specific command-line arguments.
+	 * Gets the parser for the tool-specific command-line arguments.
 	 *
 	 * @return the parser, never {@code null}
 	 */
@@ -37,14 +44,14 @@ public interface IToolDetectionParticipant {
 
 	/**
 	 * Gets, whether the parser for the tool arguments can properly parse the
-	 * specified command-line string. If so, the remaining arguments of the
-	 * command-line are returned.
+	 * specified command-line string.
 	 *
 	 * @param commandLine    the command line to match
 	 * @param matchBackslash whether to match on file system paths with backslashes
 	 *                       in the compiler argument or to match an paths with
 	 *                       forward slashes
-	 * @return An empty {@code Optional} if the matcher did not match the tool name in the
+	 * @return An empty {@code Optional} if the tool/compiler handled by this object
+	 *         does not match the first argument (the tool name) from the
 	 *         command-line string. Otherwise, if the tool name matches, a
 	 *         MatchResult holding the de-composed command-line is returned.
 	 */
@@ -52,9 +59,8 @@ public interface IToolDetectionParticipant {
 
 	/**
 	 * Gets, whether the parser for the tool arguments can properly parse the
-	 * specified command-line string. If so, the remaining arguments of the
-	 * command-line are returned. This is time-consuming, since it creates a Matcher
-	 * object on each invocation.
+	 * specified command-line string. This may be time-consuming, since it creates a
+	 * Matcher object on each invocation.
 	 *
 	 * @param commandLine    the command-line to match
 	 * @param matchBackslash whether to match on file system paths with backslashes
@@ -62,7 +68,8 @@ public interface IToolDetectionParticipant {
 	 *                       forward slashes
 	 * @param versionRegex   a regular expression that matches the version string in
 	 *                       the name of the tool to detect.
-	 * @return An empty {@code Optional} if the matcher did not match the tool name in the
+	 * @return An empty {@code Optional} if the tool/compiler handled by this object
+	 *         does not match the first argument (the tool name) from the
 	 *         command-line string. Otherwise, if the tool name matches, a
 	 *         MatchResult holding the de-composed command-line is returned.
 	 */
@@ -70,14 +77,14 @@ public interface IToolDetectionParticipant {
 
 	/**
 	 * Gets, whether the parser for the tool arguments can properly parse the
-	 * specified command-line string. If so, the remaining arguments of the
-	 * command-line are returned.
+	 * specified command-line string.
 	 *
 	 * @param commandLine    the command-line to match
 	 * @param matchBackslash whether to match on file system paths with backslashes
 	 *                       in the compiler argument or to match an paths with
 	 *                       forward slashes
-	 * @return An empty {@code Optional} if the matcher did not match the tool name in the
+	 * @return An empty {@code Optional} if the tool/compiler handled by this object
+	 *         does not match the first argument (the tool name) from the
 	 *         command-line string. Otherwise, if the tool name matches, a
 	 *         MatchResult holding the de-composed command-line is returned.
 	 */
@@ -85,9 +92,8 @@ public interface IToolDetectionParticipant {
 
 	/**
 	 * Gets, whether the parser for the tool arguments can properly parse the
-	 * specified command-line string. If so, the remaining arguments of the
-	 * command-line are returned. This is time-consuming, since it creates a Matcher
-	 * object on each invocation.
+	 * specified command-line string. This may be time-consuming, since it creates a
+	 * Matcher object on each invocation.
 	 *
 	 * @param commandLine    the command-line to match
 	 * @param matchBackslash whether to match on file system paths with backslashes
@@ -95,7 +101,8 @@ public interface IToolDetectionParticipant {
 	 *                       forward slashes
 	 * @param versionRegex   a regular expression that matches the version string in
 	 *                       the name of the tool to detect.
-	 * @return An empty {@code Optional} if the matcher did not match the tool name in the
+	 * @return An empty {@code Optional} if the tool/compiler handled by this object
+	 *         does not match the first argument (the tool name) from the
 	 *         command-line string. Otherwise, if the tool name matches, a
 	 *         MatchResult holding the de-composed command-line is returned.
 	 */
@@ -111,7 +118,7 @@ public interface IToolDetectionParticipant {
 
 		/**
 		 * @param command   the command from the command-line, without the argument
-		 *                  string. . If the command contains space characters, the
+		 *                  string. If the command contains space characters, the
 		 *                  surrounding quotes must have been removed,
 		 * @param arguments the remaining arguments from the command-line, without the
 		 *                  command

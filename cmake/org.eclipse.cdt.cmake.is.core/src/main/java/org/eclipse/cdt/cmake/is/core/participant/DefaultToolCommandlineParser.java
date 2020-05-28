@@ -35,13 +35,6 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 
 	/**
 	 * Constructs a new object with the given values.
-	 * <p>
-	 * NOTE: Concerning the {@code languageID} argument, please note that CDT
-	 * expects "org.eclipse.cdt.core.gcc" for the C language and
-	 * "org.eclipse.cdt.core.g++" for the C++ language. Some extension to CDT may
-	 * recognize different language IDs, such as
-	 * "com.nvidia.cuda.toolchain.language.cuda.cu"
-	 * </p>
 	 *
 	 * @param responseFileArglet        the parsers for the response-file
 	 *                                  command-line argument for the tool or
@@ -114,10 +107,10 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 		private final IPath cwd;
 
 		/**
-		* @param cwd  the current working directory of the compiler at the time of its
-		*             invocation
-		*
-		* @throws NullPointerException if any of the arguments is {@code null}
+		 * @param cwd the current working directory of the compiler at the time of its
+		 *            invocation
+		 *
+		 * @throws NullPointerException if any of the arguments is {@code null}
 		 */
 		public ParserHandler(IPath cwd) {
 			this.cwd = Objects.requireNonNull(cwd, "cwd"); //$NON-NLS-1$

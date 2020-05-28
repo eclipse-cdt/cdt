@@ -111,11 +111,11 @@ the Foobar company:
 &lt;p&gt;
 To provide online help that lists the supported compilers anlong with and the recognized arguments,
 the extension point &lt;code&gt;org.eclipse.help.contentExtension&lt;/code&gt; can be used.&lt;br/&gt;
-Plugin &lt;i&gt;de.marw.cdt.cmake.core&lt;/i&gt; provides predefined help-anchors that allow to integrate the online help:
+Plugin &lt;i&gt;org.eclipse.cdt.cmake.is.core.doc&lt;/i&gt; provides predefined help-anchors that allow to integrate the online help:
 &lt;ol&gt;
 &lt;li&gt;&lt;i&gt;extra_detection_participant_list&lt;/i&gt; for the commandline parser,&lt;/li&gt; 
 &lt;li&gt;&lt;i&gt;extra_detection_participant_builtins_list&lt;/i&gt; and 
-&lt;i&gt;extra_lsp_detection_participant_builtins_enhanced_list&lt;/i&gt; for the compiler built-ins parser.&lt;/li&gt;
+&lt;i&gt;extra_detection_participant_builtins_enhanced_list&lt;/i&gt; for the compiler built-ins parser.&lt;/li&gt;
 &lt;/ol&gt;
 Example file &lt;code&gt;help_content_extension.xml&lt;/code&gt;:
 &lt;pre&gt;

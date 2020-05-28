@@ -8,7 +8,10 @@
  *******************************************************************************/
 
 /**
- * Language Setting Providers
+ * Classes and interfaces to parse a file 'compile_commands.json' produced by
+ * cmake and to generate information about preprocessor symbols and include
+ * paths of the files being compiled in order to support the CDT indexer/ syntax
+ * highlighting.
  *
  * @author Martin Weber
  */

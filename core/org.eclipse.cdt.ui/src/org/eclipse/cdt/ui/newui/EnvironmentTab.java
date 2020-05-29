@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.internal.core.envvar.EnvVarDescriptor;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
@@ -83,6 +84,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 
 	private class TabData implements Comparable<TabData> {
 		IEnvironmentVariable var;
+		private boolean isCaseSensitive = StorableCdtVariables.isCaseSensitive;
 
 		TabData(IEnvironmentVariable _var) {
 			var = _var;
@@ -92,7 +94,11 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		public int compareTo(TabData a) {
 			String s = var.getName();
 			if (a != null && s != null && a.var != null)
-				return (s.compareTo(a.var.getName()));
+				if (isCaseSensitive) {
+					return (s.compareTo(a.var.getName()));
+				} else {
+					return (s.compareToIgnoreCase(a.var.getName()));
+				}
 			return 0;
 		}
 	}

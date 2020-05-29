@@ -19,11 +19,11 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 
 /**
- * A {link IBuiltinsOutputProcessor} for the GNU C and GNU C++ compiler.
+ * A {link IBuiltinsOutputProcessor} for the GNU C and GNU C++ compiler and derivatives.
  *
  * @author Martin Weber
  */
-public class GccOutputProcessor implements IBuiltinsOutputProcessor {
+public final class GccOutputProcessor implements IBuiltinsOutputProcessor {
 	@SuppressWarnings("nls")
 	private static final OutputLineProcessor[] macros = {
 			new OutputLineProcessor("#define\\s+(\\S+)\\s*(.*)", 1, 2, false, 0),

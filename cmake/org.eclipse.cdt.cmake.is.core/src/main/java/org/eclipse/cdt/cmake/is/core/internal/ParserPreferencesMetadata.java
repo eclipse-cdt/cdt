@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.cmake.is.core.internal;
 
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferencesMetadata;
+import org.eclipse.cdt.cmake.is.core.IParserPreferencesMetadata;
 import org.eclipse.cdt.core.options.BaseOption;
 import org.eclipse.cdt.core.options.OptionMetadata;
 

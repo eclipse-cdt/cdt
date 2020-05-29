@@ -13,9 +13,9 @@ package org.eclipse.cdt.cmake.is.core.ui.internal;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferences;
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferencesAccess;
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferencesMetadata;
+import org.eclipse.cdt.cmake.is.core.IParserPreferences;
+import org.eclipse.cdt.cmake.is.core.IParserPreferencesAccess;
+import org.eclipse.cdt.cmake.is.core.IParserPreferencesMetadata;
 import org.eclipse.cdt.core.options.OptionMetadata;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.jface.layout.GridDataFactory;

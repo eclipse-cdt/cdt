@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.cmake.is.core.language.settings.providers;
+package org.eclipse.cdt.cmake.is.core;
 
 /**
  * Preferences to configure the {@code compile_commands.json} parser.

@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.eclipse.cdt.cmake.is.core.IParserPreferences;
+import org.eclipse.cdt.cmake.is.core.IParserPreferencesAccess;
 import org.eclipse.cdt.cmake.is.core.internal.Plugin;
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferences;
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferencesAccess;
 import org.eclipse.cdt.cmake.is.core.participant.IRawIndexerInfo;
 import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsOutputProcessor;

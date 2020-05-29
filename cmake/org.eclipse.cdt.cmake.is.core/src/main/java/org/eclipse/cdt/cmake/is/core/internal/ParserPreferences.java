@@ -13,8 +13,8 @@ package org.eclipse.cdt.cmake.is.core.internal;
 
 import java.util.Objects;
 
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferences;
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferencesMetadata;
+import org.eclipse.cdt.cmake.is.core.IParserPreferences;
+import org.eclipse.cdt.cmake.is.core.IParserPreferencesMetadata;
 import org.eclipse.cdt.core.options.OptionStorage;
 
 /**

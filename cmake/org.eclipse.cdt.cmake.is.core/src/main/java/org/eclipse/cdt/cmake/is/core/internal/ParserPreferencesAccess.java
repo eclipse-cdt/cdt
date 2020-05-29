@@ -11,9 +11,9 @@
 
 package org.eclipse.cdt.cmake.is.core.internal;
 
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferences;
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferencesAccess;
-import org.eclipse.cdt.cmake.is.core.language.settings.providers.IParserPreferencesMetadata;
+import org.eclipse.cdt.cmake.is.core.IParserPreferences;
+import org.eclipse.cdt.cmake.is.core.IParserPreferencesAccess;
+import org.eclipse.cdt.cmake.is.core.IParserPreferencesMetadata;
 import org.eclipse.cdt.core.options.OptionStorage;
 import org.eclipse.cdt.core.options.OsgiPreferenceStorage;
 import org.eclipse.core.runtime.preferences.IScopeContext;

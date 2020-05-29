@@ -14,10 +14,10 @@
 package org.eclipse.cdt.internal.core.cdtvariables;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
@@ -26,24 +26,33 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier.VarKey;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * This class represents the set of Build Macros that could be loaded
  * and stored in XML
+ *
+ * On all OS (except windows) variables are treated case sensitive.
  *
  * @since 3.0
  *
  */
 public class StorableCdtVariables implements IStorableCdtVariables {
 	public static final String MACROS_ELEMENT_NAME = "macros"; //$NON-NLS-1$
-	private HashMap<String, ICdtVariable> fMacros;
+	private TreeMap<String, ICdtVariable> fMacros;
 	private boolean fIsDirty = false;
 	private boolean fIsChanged = false;
 	private boolean fIsReadOnly;
+	public static boolean isCaseSensitive = !Platform.getOS().equals(Platform.OS_WIN32);
 
-	private HashMap<String, ICdtVariable> getMap() {
+	private TreeMap<String, ICdtVariable> getMap() {
 		if (fMacros == null)
-			fMacros = new HashMap<>();
+			if (isCaseSensitive) {
+				fMacros = new TreeMap<>();
+			} else {
+				fMacros = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+			}
+
 		return fMacros;
 	}
 
@@ -53,12 +62,17 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 
 	@SuppressWarnings("unchecked")
 	public StorableCdtVariables(StorableCdtVariables base, boolean readOnly) {
-		fMacros = (HashMap<String, ICdtVariable>) base.getMap().clone();
+		fMacros = (TreeMap<String, ICdtVariable>) base.getMap().clone();
 		fIsReadOnly = readOnly;
 	}
 
 	public StorableCdtVariables(ICdtVariable vars[], boolean readOnly) {
-		fMacros = new HashMap<>(vars.length);
+		if (isCaseSensitive) {
+			fMacros = new TreeMap<>();
+		} else {
+			fMacros = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+		}
+
 		for (ICdtVariable var : vars) {
 			addMacro(var);
 		}

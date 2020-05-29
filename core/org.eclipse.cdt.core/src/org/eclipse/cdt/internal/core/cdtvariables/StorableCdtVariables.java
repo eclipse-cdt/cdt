@@ -24,9 +24,9 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.IStorableCdtVariables;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier.VarKey;
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * This class represents the set of Build Macros that could be loaded
@@ -43,7 +43,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	private boolean fIsDirty = false;
 	private boolean fIsChanged = false;
 	private boolean fIsReadOnly;
-	public static boolean isCaseSensitive = !Platform.getOS().equals(Platform.OS_WIN32);
+	public static boolean isCaseSensitive = EnvironmentVariableManager.getDefault().isVariableCaseSensitive();
 
 	private TreeMap<String, ICdtVariable> getMap() {
 		if (fMacros == null)

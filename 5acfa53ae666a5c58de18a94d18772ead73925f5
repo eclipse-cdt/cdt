@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f4f7d2fa_6d8dbc3c",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/cdtvariables/StorableCdtVariables.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-30T13:56:48Z",
+      "side": 1,
+      "message": "I would use `getMap()` here to remove code duplication.\n\nActually I would rework `fMacros` to be final, but this is out of scope for this change.",
+      "revId": "5acfa53ae666a5c58de18a94d18772ead73925f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

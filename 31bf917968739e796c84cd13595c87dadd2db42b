@@ -144,6 +144,24 @@
     },
     {
       "key": {
+        "uuid": "cefe975b_255bed9a",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-05-30T00:58:19Z",
+      "side": 1,
+      "message": "This change of moving result from a field to locally defined breaks response file handling - fortunately there is a test for that! Now we just need to get the tests running in the build.\n\nThe test that breaks is org.eclipse.cdt.cmake.is.core.internal.ToolCommandlineParserTest.testResponseFileArgumentParser_At()",
+      "parentUuid": "068d1b26_a7caf6bd",
+      "revId": "31bf917968739e796c84cd13595c87dadd2db42b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c0843f7a_b11341a8",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParseContext.java",
         "patchSetId": 1

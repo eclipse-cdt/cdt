@@ -162,6 +162,24 @@
     },
     {
       "key": {
+        "uuid": "ad6897eb_f0206674",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/DefaultToolCommandlineParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-05-30T10:14:21Z",
+      "side": 1,
+      "message": "@Jonah: Sorry I do not understand \u0027moving result from a field to locally\u0027 here. The languageID? It is no longer needed, we have a better mechanism now to reduce the number of compiler invocations for builtin detection.\n\nI did not spot the breaking tests. I use to run \u0027mvn -f cmake/aggregator verify\u0027 before I commit, but for some reasons failing tests do not fail the build as expected. Is this some CDT magic?",
+      "parentUuid": "cefe975b_255bed9a",
+      "revId": "31bf917968739e796c84cd13595c87dadd2db42b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c0843f7a_b11341a8",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParseContext.java",
         "patchSetId": 1

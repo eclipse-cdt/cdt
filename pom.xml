@@ -228,6 +228,7 @@
 		<module>testsrunner/org.eclipse.cdt.testsrunner.tap</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.feature</module>
 
+
 		<module>util/org.eclipse.cdt.util</module>
 
 		<module>visualizer/org.eclipse.cdt.visualizer.core</module>
@@ -255,6 +256,8 @@
 		<module>tools.templates/org.eclipse.tools.templates.ui</module>
 
 		<module>terminal</module>
+
+		<module>cmake</module>
 
 		<module>releng/org.eclipse.cdt.native-feature</module>
 		<module>releng/org.eclipse.cdt</module>

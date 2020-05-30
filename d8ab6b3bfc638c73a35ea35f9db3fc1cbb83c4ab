@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a0990d6_dee4e4ae",
+        "filename": "cmake/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-05-30T08:06:57Z",
+      "side": 1,
+      "message": "License header",
+      "revId": "d8ab6b3bfc638c73a35ea35f9db3fc1cbb83c4ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

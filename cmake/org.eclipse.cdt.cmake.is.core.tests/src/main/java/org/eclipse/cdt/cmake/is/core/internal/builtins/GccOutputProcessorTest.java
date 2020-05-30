@@ -57,7 +57,7 @@ public class GccOutputProcessorTest {
 			}
 		}
 
-		assertEquals("# include paths", 5, pc.getIncludePaths().size());
+		assertEquals("# include paths", 5, pc.getSystemIncludePaths().size());
 		assertEquals("# macros", 238, pc.getDefines().size());
 
 		// check __GNUC__

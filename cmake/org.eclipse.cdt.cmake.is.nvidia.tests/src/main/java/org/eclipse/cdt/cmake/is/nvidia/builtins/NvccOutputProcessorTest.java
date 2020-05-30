@@ -55,7 +55,7 @@ public class NvccOutputProcessorTest {
 			}
 		}
 
-		assertEquals("# include paths", 6, pc.includePaths.size());
+		assertEquals("# include paths", 6, pc.systemIncludePaths.size());
 		assertEquals("# macros", 242, pc.defines.size());
 
 		// check __CUDACC_VER_BUILD__

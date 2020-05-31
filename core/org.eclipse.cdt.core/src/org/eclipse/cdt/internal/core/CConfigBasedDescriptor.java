@@ -24,6 +24,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -206,7 +207,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 
 		@Override
 		public void setExtensionData(String key, String value) throws CoreException {
-			if (!CDataUtil.objectsEqual(fCfgExtRef.getExtensionData(key), value)) {
+			if (!Objects.equals(fCfgExtRef.getExtensionData(key), value)) {
 				fIsDirty = true;
 				fCfgExtRef.setExtensionData(key, value);
 				checkApply();

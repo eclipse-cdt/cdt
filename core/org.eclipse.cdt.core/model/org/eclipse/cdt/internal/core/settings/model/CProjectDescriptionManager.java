@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -1404,7 +1405,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			CConfigurationSpecSettings oldSettings = ((IInternalCCfgInfo) oldCfg).getSpecSettings();
 			String newId = newSettings.getCOwnerId();
 			String oldId = oldSettings.getCOwnerId();
-			if (!CDataUtil.objectsEqual(newId, oldId))
+			if (!Objects.equals(newId, oldId))
 				flags |= ICDescriptionDelta.OWNER;
 
 			Map<String, CConfigExtensionReference[]> newMap = newSettings.getExtensionMapCopy();
@@ -1505,7 +1506,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				delta.addChangeFlags(ICDescriptionDelta.NAME);
 			}
 
-			if (!CDataUtil.objectsEqual(newCfg.getDescription(), oldCfg.getDescription())) {
+			if (!Objects.equals(newCfg.getDescription(), oldCfg.getDescription())) {
 				delta.addChangeFlags(ICDescriptionDelta.DESCRIPTION);
 			}
 
@@ -1808,7 +1809,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		CProjectDescriptionDelta delta = new CProjectDescriptionDelta(newLs, oldLs);
 
 		if (delta.getDeltaKind() == ICDescriptionDelta.CHANGED) {
-			if (!CDataUtil.objectsEqual(newLs.getLanguageId(), oldLs.getLanguageId()))
+			if (!Objects.equals(newLs.getLanguageId(), oldLs.getLanguageId()))
 				delta.addChangeFlags(ICDescriptionDelta.LANGUAGE_ID);
 
 			int kinds[] = KindBasedStore.getLanguageEntryKinds();

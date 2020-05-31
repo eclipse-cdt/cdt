@@ -14,6 +14,7 @@
 package org.eclipse.cdt.core.settings.model.extension.impl;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentContributor;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
@@ -80,7 +81,7 @@ public class CDefaultBuildData extends CBuildData {
 
 	@Override
 	public void setBuilderCWD(IPath path) {
-		if (CDataUtil.objectsEqual(path, fCWD))
+		if (Objects.equals(path, fCWD))
 			return;
 
 		fCWD = path;

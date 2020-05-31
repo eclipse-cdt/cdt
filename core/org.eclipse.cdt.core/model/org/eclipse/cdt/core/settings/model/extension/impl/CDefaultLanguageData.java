@@ -14,6 +14,7 @@
 package org.eclipse.cdt.core.settings.model.extension.impl;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
@@ -132,7 +133,7 @@ public class CDefaultLanguageData extends CLanguageData {
 
 	@Override
 	public void setLanguageId(String id) {
-		if (CDataUtil.objectsEqual(id, fLanguageId))
+		if (Objects.equals(id, fLanguageId))
 			return;
 
 		fLanguageId = id;

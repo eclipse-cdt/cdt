@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea47ba21_3bde2ce3",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/cdtvariables/UserDefinedVariableSupplier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2020-05-31T23:58:37Z",
+      "side": 1,
+      "message": "The fnameonly is a bad way to only test on the name.\nIf you want this I would make 2 methods.\nequal which test the full data load\nequalname (or equalID) which checks if the 2 have the same name (which should be case insensitive on windows and case sensitive on linux)\nAt least that is my view\n\nOriginal remark\nNot sure why the extra tests are there as they are repeated in StorableCdtVariables.equal",
+      "revId": "2fcbd6fc8affbc25429911c5b8b33e45587d5043",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

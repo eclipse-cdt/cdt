@@ -13,17 +13,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.cdtvariables;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.IStorableCdtVariables;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
-import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier.VarKey;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 
@@ -36,14 +37,12 @@ import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
  */
 public class StorableCdtVariables implements IStorableCdtVariables {
 	public static final String MACROS_ELEMENT_NAME = "macros"; //$NON-NLS-1$
-	private HashMap<String, ICdtVariable> fMacros;
+	private final HashMap<String, ICdtVariable> fMacros = new HashMap<>();
 	private boolean fIsDirty = false;
 	private boolean fIsChanged = false;
 	private boolean fIsReadOnly;
 
 	private HashMap<String, ICdtVariable> getMap() {
-		if (fMacros == null)
-			fMacros = new HashMap<>();
 		return fMacros;
 	}
 
@@ -51,14 +50,12 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		fIsReadOnly = readOnly;
 	}
 
-	@SuppressWarnings("unchecked")
 	public StorableCdtVariables(StorableCdtVariables base, boolean readOnly) {
-		fMacros = (HashMap<String, ICdtVariable>) base.getMap().clone();
+		fMacros.putAll(base.getMap());
 		fIsReadOnly = readOnly;
 	}
 
 	public StorableCdtVariables(ICdtVariable vars[], boolean readOnly) {
-		fMacros = new HashMap<>(vars.length);
 		for (ICdtVariable var : vars) {
 			addMacro(var);
 		}
@@ -88,17 +85,16 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	}
 
 	public void serialize(ICStorageElement element) {
-		if (fMacros != null) {
-			for (ICdtVariable v : fMacros.values()) {
-				StorableCdtVariable macro = (StorableCdtVariable) v;
-				ICStorageElement macroEl;
-				if (CdtVariableResolver.isStringListVariable(macro.getValueType()))
-					macroEl = element.createChild(StorableCdtVariable.STRINGLIST_MACRO_ELEMENT_NAME);
-				else
-					macroEl = element.createChild(StorableCdtVariable.STRING_MACRO_ELEMENT_NAME);
-				macro.serialize(macroEl);
-			}
+		for (ICdtVariable v : fMacros.values()) {
+			StorableCdtVariable macro = (StorableCdtVariable) v;
+			ICStorageElement macroEl;
+			if (CdtVariableResolver.isStringListVariable(macro.getValueType()))
+				macroEl = element.createChild(StorableCdtVariable.STRINGLIST_MACRO_ELEMENT_NAME);
+			else
+				macroEl = element.createChild(StorableCdtVariable.STRING_MACRO_ELEMENT_NAME);
+			macro.serialize(macroEl);
 		}
+
 		fIsDirty = false;
 	}
 
@@ -114,61 +110,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	public ICdtVariable createMacro(String name, int type, String value) {
 		if (name == null || "".equals(name = name.trim()) || CdtVariableResolver.isStringListVariable(type)) //$NON-NLS-1$
 			return null;
-
-		ICdtVariable macro = checkMacro(name, type, value);
-		if (macro == null) {
-			macro = new StorableCdtVariable(name, type, value);
-			addMacro(macro);
-			fIsDirty = true;
-			fIsChanged = true;
-		}
-		return macro;
-	}
-
-	public ICdtVariable checkMacro(String name, int type, String value) {
-		if (fIsReadOnly)
-			throw ExceptionFactory.createIsReadOnlyException();
-		ICdtVariable macro = getMacro(name);
-		if (macro != null) {
-			if (macro.getName().equals(name) && macro.getValueType() == type) {
-				try {
-					String val = macro.getStringValue();
-					if ((val != null && val.equals(value)) || val == value) {
-						return macro;
-					}
-				} catch (CdtVariableException e) {
-				}
-			}
-		}
-		return null;
-	}
-
-	public ICdtVariable checkMacro(String name, int type, String value[]) {
-		if (fIsReadOnly)
-			throw ExceptionFactory.createIsReadOnlyException();
-		ICdtVariable macro = getMacro(name);
-		if (macro != null) {
-			if (macro.getName().equals(name) && macro.getValueType() == type) {
-				try {
-					String val[] = macro.getStringListValue();
-					if (val != null) {
-						if (value != null && value.length == val.length) {
-							int i;
-							for (i = 0; i < val.length; i++) {
-								if (!value[i].equals(val[i]))
-									break;
-							}
-							if (i == value.length)
-								return macro;
-						}
-					} else if (value == val) {
-						return macro;
-					}
-				} catch (CdtVariableException e) {
-				}
-			}
-		}
-		return null;
+		return createMacro(new StorableCdtVariable(name, type, value));
 	}
 
 	/**
@@ -179,27 +121,8 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	public void setMacros(ICdtVariable macros[]) {
 		if (fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
-		if (macros == null || macros.length == 0)
-			deleteAll();
-		else {
-			if (getMap().size() != 0) {
-				Set<String> existing = new HashSet<>();
-				Set<String> macroNames = new HashSet<>();
-
-				for (ICdtVariable m : getMap().values()) {
-					existing.add(m.getName());
-				}
-
-				for (ICdtVariable m : macros) {
-					macroNames.add(m.getName());
-				}
-
-				for (String name : existing) {
-					if (!macroNames.contains(name)) {
-						deleteMacro(name);
-					}
-				}
-			}
+		deleteAll();
+		if (macros != null) {
 			createMacros(macros);
 		}
 	}
@@ -215,7 +138,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 
 	@Override
 	public boolean isEmpty() {
-		return fMacros == null || fMacros.isEmpty();
+		return fMacros.isEmpty();
 	}
 
 	@Override
@@ -226,48 +149,38 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		if (name == null || "".equals(name = name.trim())) //$NON-NLS-1$
 			return null;
 
-		int type = copy.getValueType();
-
-		ICdtVariable macro = null;
-		try {
-			if (CdtVariableResolver.isStringListVariable(type)) {
-				String value[] = copy.getStringListValue();
-				macro = checkMacro(name, type, value);
-				if (macro == null) {
-					macro = new StorableCdtVariable(name, type, value);
-					addMacro(macro);
-					fIsDirty = true;
-					fIsChanged = true;
+		Optional<ICdtVariable> entry = getEntry(copy);
+		if (entry.isPresent()) {
+			return entry.get();
+		} else {
+			int type = copy.getValueType();
+			StorableCdtVariable macro;
+			try {
+				if (CdtVariableResolver.isStringListVariable(type)) {
+					macro = new StorableCdtVariable(name, type, copy.getStringListValue());
+				} else {
+					macro = new StorableCdtVariable(name, type, copy.getStringValue());
 				}
-			} else {
-				String value = copy.getStringValue();
-				macro = checkMacro(name, type, value);
-				if (macro == null) {
-					macro = new StorableCdtVariable(name, type, value);
-					addMacro(macro);
-					fIsDirty = true;
-					fIsChanged = true;
-				}
+				addMacro(macro);
+				fIsDirty = true;
+				fIsChanged = true;
+				return macro;
+			} catch (CdtVariableException e) {
+				CCorePlugin.log(e);
+				// Unreachable in practice, it is a programming error, there
+				// probably should have been an assert in getStringListValue/getStringValue
+				// instead of a throw.
+				// There are no bugzillas ever for a CdtVariableException.
+				return null;
 			}
-
-		} catch (CdtVariableException e) {
 		}
-		return macro;
 	}
 
 	@Override
 	public ICdtVariable createMacro(String name, int type, String value[]) {
 		if (name == null || "".equals(name = name.trim()) || !CdtVariableResolver.isStringListVariable(type)) //$NON-NLS-1$
 			return null;
-
-		ICdtVariable macro = checkMacro(name, type, value);
-		if (macro == null) {
-			macro = new StorableCdtVariable(name, type, value);
-			addMacro(macro);
-			fIsDirty = true;
-			fIsChanged = true;
-		}
-		return macro;
+		return createMacro(new StorableCdtVariable(name, type, value));
 	}
 
 	/**
@@ -383,16 +296,57 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		return false;
 	}
 
-	@Override
-	public boolean contains(ICdtVariable var) {
-		ICdtVariable curVar = getMacro(var.getName());
-		if (curVar == null)
+	/**
+	 * ICdtVariable does not have {@link #equals(Object)} implemented,
+	 * so this method does the equals.
+	 *
+	 * XXX: It would be nice if ICdtVariable provided equals, but the
+	 * consequences of this change > 10 years after originally written
+	 * are unknown, so this helper is used instead.
+	 */
+	public static boolean equals(ICdtVariable o1, ICdtVariable o2) {
+		if (o1 == o2) {
+			return true;
+		}
+		if (o1 == null || o2 == null) {
+			return false;
+		}
+		if (!CDataUtil.objectsEqual(o1.getName(), o2.getName()))
 			return false;
 
-		if (new VarKey(curVar, false).equals(new VarKey(var, false)))
+		if (o1.getValueType() != o2.getValueType())
+			return false;
+		try {
+
+			if (CdtVariableResolver.isStringListVariable(o1.getValueType())) {
+				if (!Arrays.equals(o1.getStringListValue(), o2.getStringListValue()))
+					return false;
+
+			} else {
+				if (!CDataUtil.objectsEqual(o1.getStringValue(), o2.getStringValue()))
+					return false;
+			}
+		} catch (CdtVariableException e) {
+			CCorePlugin.log(e);
+			// Unreachable in practice, it is a programming error, there
+			// probably should have been an assert in getStringListValue/getStringValue
+			// instead of a throw.
+			// There are no bugzillas ever for a CdtVariableException.
 			return true;
+		}
+		return true;
+	}
 
-		return false;
+	private Optional<ICdtVariable> getEntry(ICdtVariable var) {
+		ICdtVariable curVar = getMacro(var.getName());
+		if (equals(var, curVar)) {
+			return Optional.of(curVar);
+		}
+		return Optional.empty();
+	}
 
+	@Override
+	public boolean contains(ICdtVariable var) {
+		return getEntry(var).isPresent();
 	}
 }

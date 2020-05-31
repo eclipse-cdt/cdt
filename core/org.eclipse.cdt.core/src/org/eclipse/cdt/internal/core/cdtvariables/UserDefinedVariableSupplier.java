@@ -18,7 +18,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -298,26 +297,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 			if (fNameOnly)
 				return true;
 
-			if (fVar.getValueType() != otherVar.getValueType())
-				return false;
-
-			if (CdtVariableResolver.isStringListVariable(fVar.getValueType())) {
-				try {
-					if (!Arrays.equals(fVar.getStringListValue(), otherVar.getStringListValue()))
-						return false;
-				} catch (CdtVariableException e) {
-					CCorePlugin.log(e);
-				}
-			} else {
-				try {
-					if (!CDataUtil.objectsEqual(fVar.getStringValue(), otherVar.getStringValue()))
-						return false;
-				} catch (CdtVariableException e) {
-					CCorePlugin.log(e);
-				}
-			}
-
-			return true;
+			return StorableCdtVariables.equals(fVar, otherVar);
 		}
 
 		@Override

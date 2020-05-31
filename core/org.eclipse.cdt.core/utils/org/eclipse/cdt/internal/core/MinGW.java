@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core;
 import java.io.File;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.WeakHashMap;
 
@@ -298,8 +299,8 @@ public class MinGW {
 
 		// isMinGWLocationCached is used to figure fact of caching when all
 		// cached objects are null
-		if (isMinGWLocationCached && CDataUtil.objectsEqual(envPathValue, envPathValueCached)
-				&& CDataUtil.objectsEqual(envMinGWHomeValue, envMinGWHomeValueCached)) {
+		if (isMinGWLocationCached && Objects.equals(envPathValue, envPathValueCached)
+				&& Objects.equals(envMinGWHomeValue, envMinGWHomeValueCached)) {
 			return minGWLocation;
 		}
 
@@ -337,7 +338,7 @@ public class MinGW {
 
 		// isMSysLocationCached is used to figure whether it was cached when all
 		// cached objects are null
-		if (isMSysLocationCached && CDataUtil.objectsEqual(envMinGWHomeValue, envMinGWHomeValueCached_msys)) {
+		if (isMSysLocationCached && Objects.equals(envMinGWHomeValue, envMinGWHomeValueCached_msys)) {
 			return mSysLocation;
 		}
 

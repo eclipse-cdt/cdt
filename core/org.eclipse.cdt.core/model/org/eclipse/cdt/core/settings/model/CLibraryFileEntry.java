@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import java.util.Objects;
+
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -156,11 +158,11 @@ public final class CLibraryFileEntry extends ACPathEntry implements ICLibraryFil
 	}
 
 	private boolean sourceAttachmentSettingsEqual(CLibraryFileEntry otherEntry) {
-		if (!CDataUtil.objectsEqual(fSourceAttachmentPath, otherEntry.fSourceAttachmentPath))
+		if (!Objects.equals(fSourceAttachmentPath, otherEntry.fSourceAttachmentPath))
 			return false;
-		if (!CDataUtil.objectsEqual(fSourceAttachmentRootPath, otherEntry.fSourceAttachmentRootPath))
+		if (!Objects.equals(fSourceAttachmentRootPath, otherEntry.fSourceAttachmentRootPath))
 			return false;
-		if (!CDataUtil.objectsEqual(fSourceAttachmentPrefixMapping, otherEntry.fSourceAttachmentPrefixMapping))
+		if (!Objects.equals(fSourceAttachmentPrefixMapping, otherEntry.fSourceAttachmentPrefixMapping))
 			return false;
 		return true;
 	}

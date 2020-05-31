@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.cdtvariables;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
@@ -188,7 +189,7 @@ public class CdtVariableManager implements ICdtVariableManager {
 	}
 
 	private static boolean variablesEqual(ICdtVariable var1, ICdtVariable var2) {
-		if (CDataUtil.objectsEqual(var1, var2))
+		if (Objects.equals(var1, var2))
 			return true;
 
 		if (var1 == null || var2 == null)
@@ -207,7 +208,7 @@ public class CdtVariableManager implements ICdtVariableManager {
 				if (!Arrays.equals(v1, v2))
 					return false;
 			} else {
-				if (!CDataUtil.objectsEqual(var1.getStringValue(), var2.getStringValue()))
+				if (!Objects.equals(var1.getStringValue(), var2.getStringValue()))
 					return false;
 			}
 		} catch (CdtVariableException e) {

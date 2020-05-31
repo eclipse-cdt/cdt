@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.settings.model.extension.impl;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
@@ -192,7 +193,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 
 	@Override
 	public void setDescription(String description) {
-		if (CDataUtil.objectsEqual(description, fDescription))
+		if (Objects.equals(description, fDescription))
 			return;
 		fDescription = description;
 
@@ -238,7 +239,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 
 	@Override
 	public void setName(String name) {
-		if (CDataUtil.objectsEqual(name, fName))
+		if (Objects.equals(name, fName))
 			return;
 		fName = name;
 		setModified(true);

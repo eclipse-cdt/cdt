@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -107,10 +108,12 @@ public class CDataUtil {
 				suffix;
 	}
 
+	/**
+	 * @deprecated Use {@link Object#equals(Object)}
+	 */
+	@Deprecated
 	public static boolean objectsEqual(Object o1, Object o2) {
-		if (o1 == null)
-			return o2 == null;
-		return o1.equals(o2);
+		return Objects.equals(o1, o2);
 	}
 
 	public static String arrayToString(String[] array, String separator) {

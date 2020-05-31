@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -370,7 +371,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 	public void setName(String name) {
 		if (isReadOnly())
 			throw ExceptionFactory.createIsReadOnlyException();
-		if (!CDataUtil.objectsEqual(fName, name)) {
+		if (!Objects.equals(fName, name)) {
 			fName = name;
 			fIsModified = true;
 		}
@@ -383,7 +384,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 	public void setId(String id) {
 		if (isReadOnly())
 			throw ExceptionFactory.createIsReadOnlyException();
-		if (!CDataUtil.objectsEqual(fId, id)) {
+		if (!Objects.equals(fId, id)) {
 			fId = id;
 			fIsModified = true;
 		}
@@ -392,7 +393,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 	void setBuildSystemId(String id) {
 		if (isReadOnly())
 			throw ExceptionFactory.createIsReadOnlyException();
-		if (!CDataUtil.objectsEqual(fBuildSystemId, id)) {
+		if (!Objects.equals(fBuildSystemId, id)) {
 			fBuildSystemId = id;
 			fIsModified = true;
 		}

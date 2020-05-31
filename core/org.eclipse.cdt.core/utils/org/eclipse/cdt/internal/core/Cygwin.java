@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
@@ -251,8 +252,8 @@ public class Cygwin {
 		String envCygwinHomeValue = varCygwinHome != null ? varCygwinHome.getValue() : null;
 
 		// isCygwinLocationCached is used to figure fact of caching when all cached objects are null
-		if (isCygwinLocationCached && CDataUtil.objectsEqual(envPathValue, envPathValueCached)
-				&& CDataUtil.objectsEqual(envCygwinHomeValue, envCygwinHomeValueCached)) {
+		if (isCygwinLocationCached && Objects.equals(envPathValue, envPathValueCached)
+				&& Objects.equals(envCygwinHomeValue, envCygwinHomeValueCached)) {
 			return cygwinLocation;
 		}
 

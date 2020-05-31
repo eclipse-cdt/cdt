@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.settings.model.extension.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
@@ -92,7 +93,7 @@ public class CDefaultFolderData extends CFolderData {
 
 	@Override
 	public void setPath(IPath path) {
-		if (CDataUtil.objectsEqual(path, fPath))
+		if (Objects.equals(path, fPath))
 			return;
 
 		fPath = path;

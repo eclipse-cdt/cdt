@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -292,7 +293,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 			if (fVar == otherVar)
 				return true;
 
-			if (!CDataUtil.objectsEqual(fVar.getName(), otherVar.getName()))
+			if (!Objects.equals(fVar.getName(), otherVar.getName()))
 				return false;
 
 			if (fNameOnly)
@@ -310,7 +311,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 				}
 			} else {
 				try {
-					if (!CDataUtil.objectsEqual(fVar.getStringValue(), otherVar.getStringValue()))
+					if (!Objects.equals(fVar.getStringValue(), otherVar.getStringValue()))
 						return false;
 				} catch (CdtVariableException e) {
 					CCorePlugin.log(e);

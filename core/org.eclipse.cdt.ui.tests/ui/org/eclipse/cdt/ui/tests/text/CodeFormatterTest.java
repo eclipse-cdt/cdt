@@ -4777,4 +4777,15 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testNoexcept_Bug562723() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void foo(int...) {}
+	//int main() {}
+
+	//void foo(int ...) {
+	//}
+	//int main() {
+	//}
+	public void testVariadicFunction_Bug487990() throws Exception {
+		assertFormatterResult();
+	}
 }

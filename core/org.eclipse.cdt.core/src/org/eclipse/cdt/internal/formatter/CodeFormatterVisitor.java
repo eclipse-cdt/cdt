@@ -2605,7 +2605,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					}
 					if (addEllipsis) {
 						if (i > 0) {
-							scribe.printNextToken(options.fSeparatorToken, options.fSpaceBeforeSeparator);
+							if (peekNextToken() == options.fSeparatorToken) {
+								scribe.printNextToken(options.fSeparatorToken, options.fSpaceBeforeSeparator);
+							}
 							scribe.printTrailingComment();
 						}
 						scribe.alignFragment(alignment, i);

@@ -112,7 +112,9 @@ public class EvalBinding extends CPPDependentEvaluation {
 		if (fBinding == null) {
 			// fParameterOwner is guaranteed to be not null.
 			ICPPParameter[] parameters = fParameterOwner.getParameters();
-			fBinding = parameters[fParameterPosition];
+			if (parameters.length > fParameterPosition) {
+				fBinding = parameters[fParameterPosition];
+			}
 		}
 		return fBinding;
 	}

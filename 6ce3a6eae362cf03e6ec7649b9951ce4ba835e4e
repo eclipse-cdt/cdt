@@ -16,6 +16,24 @@
       "revId": "6ce3a6eae362cf03e6ec7649b9951ce4ba835e4e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3914b4b8_4a66c386",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerDataVolumeDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2020-06-01T18:53:52Z",
+      "side": 1,
+      "message": "Yes.  It can use the new IDockerContainerMount so no references to org.mandas.  You will no longer need to patch to build CDT as the old volumes() call still exists with my replacement patch and returns null.  You would only be missing the check which needed a fix anyway.  Gerrit is not co-operating today and had to retrigger.",
+      "parentUuid": "2158fd2b_1e454f5e",
+      "revId": "6ce3a6eae362cf03e6ec7649b9951ce4ba835e4e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

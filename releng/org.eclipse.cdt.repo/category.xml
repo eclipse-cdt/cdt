@@ -66,12 +66,12 @@
    <feature url="features/org.eclipse.cdt.meson.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.meson.source" version="0.0.0">
       <category name="extra"/>
    </feature>
-   <!-- <feature url="features/org.eclipse.cdt.docker.launcher_0.0.0.qualifier.jar" id="org.eclipse.cdt.docker.launcher" version="0.0.0">
+   <feature url="features/org.eclipse.cdt.docker.launcher_0.0.0.qualifier.jar" id="org.eclipse.cdt.docker.launcher" version="0.0.0">
       <category name="extra"/>
    </feature>
    <feature url="features/org.eclipse.cdt.docker.launcher.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.docker.launcher.source" version="0.0.0">
       <category name="extra"/>
-   </feature> -->
+   </feature>
    <feature url="features/org.eclipse.cdt.testsrunner.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.testsrunner.feature" version="0.0.0">
       <category name="extra"/>
    </feature>

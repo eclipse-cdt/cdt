@@ -60,6 +60,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.mandas.docker.client.messages.ContainerMount;
 
 /**
  * @author xcoulon
@@ -375,11 +376,20 @@ public class ContainerDataVolumeDialog extends Dialog {
 				return ValidationStatus.error(null);
 			}
 			final IDockerContainerInfo selectedContainerInfo = container.info();
-			if (selectedContainerInfo != null && selectedContainerInfo.volumes() != null
-					&& !selectedContainerInfo.volumes().containsKey(model.getContainerPath())) {
-				return ValidationStatus
-						.warning(WizardMessages.getFormattedString("ContainerDataVolumeDialog.volumeWarning", //$NON-NLS-1$
-								model.getContainerPath()));
+			if (selectedContainerInfo != null && selectedContainerInfo.mounts() != null
+					&& model.getContainerPath() != null) {
+				boolean shouldWarn = true;
+				for (ContainerMount mount : selectedContainerInfo.mounts()) {
+					if (model.getContainerPath().equals(mount.source())) {
+						shouldWarn = false;
+						break;
+					}
+				}
+				if(shouldWarn) {
+					return ValidationStatus
+							.warning(WizardMessages.getFormattedString("ContainerDataVolumeDialog.volumeWarning", //$NON-NLS-1$
+									model.getContainerPath()));
+				}
 			}
 		}
 		return ValidationStatus.ok();

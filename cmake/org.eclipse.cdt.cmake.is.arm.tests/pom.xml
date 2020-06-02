@@ -20,11 +20,12 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
+				<!-- give me back the surefire defaults! -->
 				<configuration>
 					<includes>
-						<!-- give me back the surefire defaults! -->
 						<include>**/*Test.java</include>
 					</includes>
+                    <testFailureIgnore>false</testFailureIgnore>
 				</configuration>
 			</plugin>
 

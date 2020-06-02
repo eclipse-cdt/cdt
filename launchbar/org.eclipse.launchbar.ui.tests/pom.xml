@@ -27,7 +27,6 @@
 					<includes>
 						<include>**/AutomatedIntegrationSuite.*</include>
 					</includes>
-					<testFailureIgnore>true</testFailureIgnore>
 					<dependencies>
 						<dependency>
 							<type>p2-installable-unit</type>

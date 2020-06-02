@@ -47,7 +47,6 @@
 					<includes>
 						<include>**/AutomatedIntegrationSuite.*</include>
 					</includes>
-					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
 			<plugin>

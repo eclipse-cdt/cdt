@@ -69,7 +69,6 @@
 					<includes>
 						<include>**/AutomatedSuite.*</include>
 					</includes>
-					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
 			<plugin>

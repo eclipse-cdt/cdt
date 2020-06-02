@@ -63,7 +63,6 @@
 					<includes>
 						<include>**/${dsf.gdb.tests.gdbTestSuite}</include>
 					</includes>
-					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
 			<plugin>

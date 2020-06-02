@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9c99477_328ab702",
+        "filename": "core/org.eclipse.cdt.core.tests/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-02T19:35:00Z",
+      "side": 0,
+      "message": "This was the origin line that all the others were copied and pasted from.",
+      "revId": "0563a98c6e08122671a49dfc0a81fe518232abc5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

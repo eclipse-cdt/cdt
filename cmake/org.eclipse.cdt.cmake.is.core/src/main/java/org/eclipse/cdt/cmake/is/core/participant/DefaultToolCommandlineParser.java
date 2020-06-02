@@ -105,6 +105,7 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 	private class ParserHandler implements IParserHandler {
 
 		private final IPath cwd;
+		private final ParseContext result = new ParseContext();
 
 		/**
 		 * @param cwd the current working directory of the compiler at the time of its
@@ -122,7 +123,6 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 		 */
 		@SuppressWarnings("nls")
 		private IResult parseArguments(IResponseFileArglet responseFileArglet, String args) {
-			ParseContext result = new ParseContext();
 			// eat buildOutput string argument by argument..
 			while (!(args = StringUtil.trimLeadingWS(args)).isEmpty()) {
 				boolean argParsed = false;

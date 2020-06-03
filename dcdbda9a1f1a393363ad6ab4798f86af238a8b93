@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b30cba58_352260da",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/internal/ui/commands/BuildConfigurationsJob.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-03T15:04:48Z",
+      "side": 1,
+      "message": "2005, 2020",
+      "revId": "dcdbda9a1f1a393363ad6ab4798f86af238a8b93",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6aeb26ab_c479a98c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/NewVarDialog.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-03T15:04:48Z",
+      "side": 1,
+      "message": "2005, 2020",
+      "revId": "dcdbda9a1f1a393363ad6ab4798f86af238a8b93",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

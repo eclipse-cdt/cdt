@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 Intel Corporation and others.
+ * Copyright (c) 2005, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,9 +10,11 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Sergei Kovalchuk (NXP USA Inc)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
+import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -48,8 +50,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * the dialog used to create or edit the build macro

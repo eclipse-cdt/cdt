@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fdb2e3f7_199b9149",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/META-INF/MANIFEST.MF",
+        "patchSetId": 6
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-03T16:30:38Z",
+      "side": 1,
+      "message": "it may be more practical to specify it as \n`OSGI-INF/*`",
+      "revId": "2abe8b5f31f67b4ab6cc7915d60149ee96137bdd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab3a4007_964daf8a",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/build.properties",
+        "patchSetId": 6
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-03T16:30:38Z",
+      "side": 1,
+      "message": "it may be more practical to specify it as \n`OSGI-INF/`",
+      "revId": "2abe8b5f31f67b4ab6cc7915d60149ee96137bdd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f2da5ed4_e20e064d",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParserPreferencesMetadata.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-03T16:30:38Z",
+      "side": 1,
+      "message": "needs i18n later",
+      "revId": "2abe8b5f31f67b4ab6cc7915d60149ee96137bdd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "949676b2_225bc2b1",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParserPreferencesMetadata.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-03T16:30:38Z",
+      "side": 1,
+      "message": "needs i18n later",
+      "revId": "2abe8b5f31f67b4ab6cc7915d60149ee96137bdd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "56afeed7_a17e9f03",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParserPreferencesMetadata.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-03T16:30:38Z",
+      "side": 1,
+      "message": "needs i18n later",
+      "revId": "2abe8b5f31f67b4ab6cc7915d60149ee96137bdd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

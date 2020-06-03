@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2020 Andrew Gvozdev and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,8 +10,11 @@
  *
  * Contributors:
  *     Andrew Gvozdev (Quoin Inc) - initial API and implementation
+ *     Sergei Kovalchuk (NXP USA Inc)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui.commands;
+
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -24,8 +27,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A job to build CDT build configurations.

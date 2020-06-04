@@ -53,7 +53,7 @@
    <element name="tool">
       <annotation>
          <documentation>
-            Specifies the details for detectiion of a specific compiler by its executable name and how the include paths, preprocessor defines and preprocessor un-defines are processed.
+            Specifies the details for detection of a specific compiler by its executable name and how the include paths, preprocessor defines and preprocessor un-defines are processed.
          </documentation>
       </annotation>
       <complexType>
@@ -109,7 +109,7 @@ the Foobar company:
 &lt;/pre&gt;
 &lt;/p&gt;
 &lt;p&gt;
-To provide online help that lists the supported compilers anlong with and the recognized arguments,
+To provide online help that lists the supported compilers along with the recognized arguments,
 the extension point &lt;code&gt;org.eclipse.help.contentExtension&lt;/code&gt; can be used.&lt;br/&gt;
 Plugin &lt;i&gt;org.eclipse.cdt.cmake.is.core.doc&lt;/i&gt; provides predefined help-anchors that allow to integrate the online help:
 &lt;ol&gt;
@@ -121,9 +121,9 @@ Example file &lt;code&gt;help_content_extension.xml&lt;/code&gt;:
 &lt;pre&gt;
 &lt;contentExtension&gt;
   &lt;contribution content=&quot;doc/compiler.xhtml#lsp&quot;
-    path=&quot;/de.marw.cdt.cmake.core/doc/html/languageSettingsProviders.xhtml#extra_detection_participant_list&quot;/&gt;
+    path=&quot;/org.eclipse.cdt.cmake.is.core.doc/doc/html/languageSettingsProviders.xhtml#extra_detection_participant_list&quot;/&gt;
   &lt;contribution content=&quot;doc/compiler.xhtml#builtins&quot;
-    path=&quot;/de.marw.cdt.cmake.core/doc/html/builtins-detection.xhtml#extra_detection_participant_builtins_list&quot;/&gt;
+    path=&quot;/org.eclipse.cdt.cmake.is.core.doc/doc/html/builtins-detection.xhtml#extra_detection_participant_builtins_list&quot;/&gt;
 &lt;/contentExtension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -142,8 +142,8 @@ Some predifined parsers for tool arguments can be found in the classes &lt;code&
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         The plugin org.eclipse.cdt.cmake.is.intel provides implementations for various compiler made by Intel Corp.&lt;/br&gt;
-See, for example &lt;code&gt;org/eclipse/cdt/cmake/is/intel/IcpcToolDetectionParticipant.java&lt;/code&gt;.
+         The plugin &lt;i&gt;org.eclipse.cdt.cmake.is.intel&lt;i&gt; provides implementations for various compiler made by Intel Corp.&lt;/br&gt;
+See, for example &lt;code&gt;org.eclipse.cdt.cmake.is.intel.IcpcToolDetectionParticipant.java&lt;/code&gt;.
       </documentation>
    </annotation>
 

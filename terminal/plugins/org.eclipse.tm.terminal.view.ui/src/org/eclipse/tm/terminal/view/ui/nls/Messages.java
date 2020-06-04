@@ -106,6 +106,7 @@ public class Messages extends NLS {
 
 	public static String LaunchTerminalSettingsDialog_error_title;
 	public static String LaunchTerminalSettingsDialog_error_invalidSettings;
+	public static String LaunchTerminalSettingsDialog_error_no_terminal_connectors;
 	public static String LaunchTerminalSettingsDialog_error_unknownReason;
 
 	public static String EncodingSelectionDialog_title;

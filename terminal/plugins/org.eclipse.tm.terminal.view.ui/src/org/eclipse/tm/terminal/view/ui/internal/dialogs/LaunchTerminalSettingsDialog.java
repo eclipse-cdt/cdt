@@ -39,14 +39,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done;
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
 import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 import org.eclipse.tm.terminal.view.ui.controls.ConfigurationPanelControl;
 import org.eclipse.tm.terminal.view.ui.help.IContextHelpIds;
 import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel;
+import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
 import org.eclipse.tm.terminal.view.ui.interfaces.IExternalExecutablesProperties;
 import org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate;
 import org.eclipse.tm.terminal.view.ui.interfaces.tracing.ITraceIds;
+import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
 import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager;
 import org.eclipse.tm.terminal.view.ui.local.showin.ExternalExecutablesManager;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
@@ -57,6 +61,12 @@ import org.eclipse.ui.PlatformUI;
  * Launch terminal settings dialog implementation.
  */
 public class LaunchTerminalSettingsDialog extends TrayDialog {
+	/**
+	 * Special label for terminal (not shown to user) when there are no terminal
+	 * connectors installed.
+	 */
+	private static final String NO_CONNECTORS_LABEL = "none"; //$NON-NLS-1$
+
 	private String contextHelpId = null;
 
 	// The parent selection
@@ -494,6 +504,37 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 				}
 			}
 
+		}
+
+		if (items.isEmpty()) {
+			// No connectors at all installed - display warning to user.
+			ILauncherDelegate noDelegate = new AbstractLauncherDelegate() {
+
+				@Override
+				public boolean needsUserConfiguration() {
+					return false;
+				}
+
+				@Override
+				public IConfigurationPanel getPanel(IConfigurationPanelContainer container) {
+					return new ErrorSettingsPanel(container,
+							Messages.LaunchTerminalSettingsDialog_error_no_terminal_connectors);
+				}
+
+				@Override
+				public void execute(Map<String, Object> properties, Done done) {
+					throw new UnsupportedOperationException();
+				}
+
+				@Override
+				public ITerminalConnector createTerminalConnector(Map<String, Object> properties) {
+					throw new UnsupportedOperationException();
+				}
+
+			};
+
+			label2delegate.put(NO_CONNECTORS_LABEL, noDelegate);
+			items.add(NO_CONNECTORS_LABEL);
 		}
 
 		return items;

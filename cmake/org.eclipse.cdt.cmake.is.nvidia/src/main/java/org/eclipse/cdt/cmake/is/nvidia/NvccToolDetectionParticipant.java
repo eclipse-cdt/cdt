@@ -9,9 +9,6 @@
 
 package org.eclipse.cdt.cmake.is.nvidia;
 
-import java.util.Collections;
-import java.util.Set;
-
 import org.eclipse.cdt.cmake.is.core.participant.Arglets;
 import org.eclipse.cdt.cmake.is.core.participant.DefaultToolCommandlineParser;
 import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant;
@@ -24,10 +21,9 @@ import org.eclipse.cdt.cmake.is.core.participant.ResponseFileArglets;
  * @author Martin Weber
  */
 public class NvccToolDetectionParticipant extends DefaultToolDetectionParticipant {
-	static final String COM_NVIDIA_CUDA_LANGUAGE_ID = "com.nvidia.cuda.toolchain.language.cuda.cu";
 
 	public NvccToolDetectionParticipant() {
-		super("nvcc", true, "exe", new ToolCommandlineParser());
+		super("nvcc", true, "exe", new ToolCommandlineParser()); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	private static class ToolCommandlineParser extends DefaultToolCommandlineParser {

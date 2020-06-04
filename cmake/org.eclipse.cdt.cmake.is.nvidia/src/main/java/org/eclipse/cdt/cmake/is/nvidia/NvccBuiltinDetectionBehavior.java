@@ -23,6 +23,7 @@ import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsOutputProcess
  */
 class NvccBuiltinDetectionBehavior implements IBuiltinsDetectionBehavior {
 	// -E -Xcompiler -P -Xcompiler -dM for macros, -Xcompiler -v for include paths
+	@SuppressWarnings("nls")
 	private final List<String> enablingArgs = Arrays.asList("-E", "-Xcompiler", "-P", "-Xcompiler", "-dM", "-Xcompiler",
 			"-v");
 

@@ -9,9 +9,9 @@
 
 package org.eclipse.cdt.cmake.is.nvidia;
 
-import org.eclipse.cdt.cmake.is.core.participant.IArglet;
 import org.eclipse.cdt.cmake.is.core.participant.Arglets.IncludePathGeneric;
 import org.eclipse.cdt.cmake.is.core.participant.Arglets.NameOptionMatcher;
+import org.eclipse.cdt.cmake.is.core.participant.IArglet;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -25,9 +25,9 @@ import org.eclipse.core.runtime.IPath;
 class NvccSystemIncludePathArglet extends IncludePathGeneric implements IArglet {
 	static final NameOptionMatcher[] optionMatchers = {
 			/* quoted directory */
-			new NameOptionMatcher("-isystem=" + "([\"'])(.+?)\\1", 2),
+			new NameOptionMatcher("-isystem=" + "([\"'])(.+?)\\1", 2), //$NON-NLS-1$ //$NON-NLS-2$
 			/* unquoted directory */
-			new NameOptionMatcher("-isystem=" + "([^\\s]+)", 1), };
+			new NameOptionMatcher("-isystem=" + "([^\\s]+)", 1), }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/*-
 	 * @see org.eclipse.cdt.cmake.is.IArglet#processArgs(java.lang.String)

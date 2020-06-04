@@ -49,7 +49,7 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 	public IndexerSupportPreferencePage() {
 		prefsAccess = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
 				.get(IParserPreferencesAccess.class);
-		setDescription("Configure how macros and include paths get extracted from the compile_commands.json file");
+		setDescription(Messages.IndexerSupportPreferencePage_description);
 	}
 
 	/**
@@ -64,12 +64,13 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 		composite.setLayout(new GridLayout(1, false));
 		GridDataFactory.swtDefaults().applyTo(composite);
 
-		final Group gr = createGroup(composite, SWT.FILL, 1, "For compilers with version in name", 2);
+		final Group gr = createGroup(composite, SWT.FILL, 1,
+				Messages.IndexerSupportPreferencePage_label_version_suffix_group, 2);
 		btnVersionsEnabled = createCheckbox(gr, SWT.BEGINNING, 2, prefsMeta.tryVersionSuffix());
 		btnVersionsEnabled.setSelection(prefs.getTryVersionSuffix());
 		{
 			Label label = new Label(gr, SWT.NONE);
-			label.setText("&Suffix pattern:");
+			label.setText(Messages.IndexerSupportPreferencePage_label_suffix_pattern);
 			GridDataFactory.defaultsFor(label).applyTo(label);
 		}
 
@@ -87,7 +88,7 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 						Pattern.compile(text);
 						setErrorMessage(null);
 					} catch (PatternSyntaxException ex) {
-						String msg = String.format("Suffix pattern regular expression: %1$s in '%2$s' at index %3$d",
+						String msg = String.format(Messages.IndexerSupportPreferencePage_errmsg_suffix_regex,
 								ex.getDescription(), ex.getPattern(), ex.getIndex());
 						setErrorMessage(msg);
 					}

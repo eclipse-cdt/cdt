@@ -23,7 +23,7 @@ import org.eclipse.cdt.cmake.is.core.participant.ResponseFileArglets;
 public class HpeC99ToolDetectionParticipant extends DefaultToolDetectionParticipant {
 
 	public HpeC99ToolDetectionParticipant() {
-		super("c99", true, "exe", new ToolCommandlineParser());
+		super("c99", true, "exe", new ToolCommandlineParser()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private static class ToolCommandlineParser extends DefaultToolCommandlineParser {

@@ -23,7 +23,7 @@ import org.eclipse.cdt.cmake.is.core.participant.ResponseFileArglets;
 public class IclCandCppToolDetectionParticipant extends DefaultToolDetectionParticipant {
 
 	public IclCandCppToolDetectionParticipant() {
-		super("icl", true, "exe", new CandCppToolCommandlineParser());
+		super("icl", true, "exe", new CandCppToolCommandlineParser()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private static class CandCppToolCommandlineParser extends DefaultToolCommandlineParser {

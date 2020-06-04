@@ -19,7 +19,7 @@ import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant
 public class IccToolDetectionParticipant extends DefaultToolDetectionParticipant {
 
 	public IccToolDetectionParticipant() {
-		super("icc", IntelCToolCommandlineParser.INSTANCE);
+		super("icc", IntelCToolCommandlineParser.INSTANCE); //$NON-NLS-1$
 		// for the record: builtin detection: -EP -dM for macros, -H for include FILES.
 		// NOTE: Windows: /QdM.
 	}

@@ -19,6 +19,6 @@ import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant
 public class MsclToolDetectionParticipant extends DefaultToolDetectionParticipant {
 
 	public MsclToolDetectionParticipant() {
-		super("cl", true, "exe", new MsclToolCommandlineParser());
+		super("cl", true, "exe", new MsclToolCommandlineParser()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

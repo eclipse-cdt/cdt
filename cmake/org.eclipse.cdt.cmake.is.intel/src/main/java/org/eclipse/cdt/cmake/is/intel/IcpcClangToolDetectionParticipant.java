@@ -19,6 +19,6 @@ import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant
 public class IcpcClangToolDetectionParticipant extends DefaultToolDetectionParticipant {
 
 	public IcpcClangToolDetectionParticipant() {
-		super("icl\\+\\+", IntelCppToolCommandlineParser.INSTANCE);
+		super("icl\\+\\+", IntelCppToolCommandlineParser.INSTANCE); //$NON-NLS-1$
 	}
 }

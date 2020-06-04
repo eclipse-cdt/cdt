@@ -35,8 +35,8 @@ import org.eclipse.cdt.cmake.is.core.internal.builtins.CompilerBuiltinsDetector;
 import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant;
 import org.eclipse.cdt.cmake.is.core.participant.IRawIndexerInfo;
 import org.eclipse.cdt.cmake.is.core.participant.IToolCommandlineParser;
-import org.eclipse.cdt.cmake.is.core.participant.IToolDetectionParticipant;
 import org.eclipse.cdt.cmake.is.core.participant.IToolCommandlineParser.IResult;
+import org.eclipse.cdt.cmake.is.core.participant.IToolDetectionParticipant;
 import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
@@ -87,7 +87,7 @@ public class CompileCommandsJsonParser {
 	private static final QualifiedName TIMESTAMP_COMPILE_COMMANDS_PROPERTY = new QualifiedName(null,
 			"timestamp:compile_commands.json"); //$NON-NLS-1$
 
-	private static final String WORKBENCH_WILL_NOT_KNOW_ALL_MSG = "Your workbench will not know all include paths and preprocessor defines.";
+	private static final String WORKBENCH_WILL_NOT_KNOW_ALL_MSG = Messages.CompileCommandsJsonParser_MSG_WORKBENCH_WILL_NOT_KNOW;
 
 	private static final String MARKER_ID = Plugin.PLUGIN_ID + ".CompileCommandsJsonParserMarker"; //$NON-NLS-1$
 
@@ -135,8 +135,8 @@ public class CompileCommandsJsonParser {
 	 *                            information for each source file
 	 */
 	public CompileCommandsJsonParser(CBuildConfiguration buildConfiguration, IIndexerInfoConsumer indexerInfoConsumer) {
-		this.cBuildConfiguration = Objects.requireNonNull(buildConfiguration, "buildConfiguration");
-		this.indexerInfoConsumer = Objects.requireNonNull(indexerInfoConsumer, "indexerInfoConsumer");
+		this.cBuildConfiguration = Objects.requireNonNull(buildConfiguration, "buildConfiguration"); //$NON-NLS-1$
+		this.indexerInfoConsumer = Objects.requireNonNull(indexerInfoConsumer, "indexerInfoConsumer"); //$NON-NLS-1$
 		prefsAccess = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
 				.get(IParserPreferencesAccess.class);
 	}
@@ -165,8 +165,8 @@ public class CompileCommandsJsonParser {
 		final java.nio.file.Path jsonFile = buildRoot.resolve("compile_commands.json"); //$NON-NLS-1$
 		if (!Files.exists(jsonFile)) {
 			// no json file was produced in the build
-			final String msg = "File '" + jsonFile + "' was not created in the build. "
-					+ WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
+			final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_file_not_found, jsonFile,
+					WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
 			createMarker(project, msg);
 			return false;
 		}
@@ -184,7 +184,7 @@ public class CompileCommandsJsonParser {
 		Long sessionLastModified = (Long) buildContainer.getSessionProperty(TIMESTAMP_COMPILE_COMMANDS_PROPERTY);
 		if (sessionLastModified == null || sessionLastModified.longValue() < tsJsonModified) {
 			// must parse json file...
-			monitor.setTaskName("Processing compile_commands.json");
+			monitor.setTaskName(Messages.CompileCommandsJsonParser_msg_processing);
 			project.deleteMarkers(MARKER_ID, false, IResource.DEPTH_INFINITE);
 
 			try (Reader in = new FileReader(jsonFile.toFile())) {
@@ -196,11 +196,13 @@ public class CompileCommandsJsonParser {
 				}
 			} catch (JsonSyntaxException | JsonIOException ex) {
 				// file format error
-				final String msg = "File does not seem to be in JSON format. " + WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
+				final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_not_json, jsonFile,
+						WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
 				createMarker(jsonFileRc, msg);
 				return false;
 			} catch (IOException ex) {
-				final String msg = "Failed to read file " + jsonFile + ". " + WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
+				final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_read_error, jsonFile,
+						WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
 				createMarker(jsonFileRc, msg);
 				return false;
 			}
@@ -259,14 +261,16 @@ public class CompileCommandsJsonParser {
 				}
 				knownUnsupportedTools.add(unkownMarker);
 
-				String message = "No parser for command '" + cmdLine + "'. " + WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
-				createMarker(jsonFile, message);
+				final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_no_parser_for_commandline, cmdLine,
+						WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
+				createMarker(jsonFile, msg);
 			}
 			return;
 		}
 		// unrecognized entry, skipping
-		final String msg = "File format error: " + "'file', 'command' or 'directory' missing in JSON object. "
-				+ WORKBENCH_WILL_NOT_KNOW_ALL_MSG;
+		final String msg = String.format(
+				Messages.CompileCommandsJsonParser_errmsg_unexpected_json, jsonFile,
+				WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
 		createMarker(jsonFile, msg);
 	}
 
@@ -284,7 +288,7 @@ public class CompileCommandsJsonParser {
 			throws CoreException {
 		if (builtinDetectorsToRun == null || builtinDetectorsToRun.isEmpty())
 			return;
-		monitor.setTaskName("Detecting compiler built-ins");
+		monitor.setTaskName(Messages.CompileCommandsJsonParser_msg_detecting_builtins);
 
 		java.nio.file.Path buildDir = cBuildConfiguration.getBuildDirectory();
 		// run each built-in detector and collect the results..

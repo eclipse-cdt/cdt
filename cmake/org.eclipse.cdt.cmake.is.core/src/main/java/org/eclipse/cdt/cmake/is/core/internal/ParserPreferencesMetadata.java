@@ -26,11 +26,11 @@ final class ParserPreferencesMetadata implements IParserPreferencesMetadata {
 
 	public ParserPreferencesMetadata() {
 		this.tryVersionSuffixOption = new BaseOption<>(Boolean.class, "versionSuffixPatternEnabled", false, //$NON-NLS-1$
-				"&Also try with version suffix", "Can recognize gcc-12.9.2, clang++-7.5.4, ...");
+				Messages.ParserPreferencesMetadata_label_try_suffix, Messages.ParserPreferencesMetadata_ttip_try_suffix);
 		this.versionSuffixPatternOption = new BaseOption<>(String.class, "versionSuffixPattern", "-?\\d+(\\.\\d+)*", //$NON-NLS-1$ //$NON-NLS-2$
-				"&Suffix pattern:", "Specify a Java regular expression pattern here");
+				Messages.ParserPreferencesMetadata_label_suffix, Messages.ParserPreferencesMetadata_ttip_suffix);
 		this.allocateConsoleOption = new BaseOption<>(Boolean.class, "allocateConsole", false, //$NON-NLS-1$
-				"&Show output of compiler built-in detection in a console in the Console View");
+				Messages.ParserPreferencesMetadata_label_console);
 	}
 
 	@Override

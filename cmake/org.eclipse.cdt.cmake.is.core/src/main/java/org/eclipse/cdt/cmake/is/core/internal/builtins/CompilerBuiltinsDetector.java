@@ -55,11 +55,9 @@ public class CompilerBuiltinsDetector {
 	 * console ID for extension point org.eclipse.cdt.core.CBuildConsole (see
 	 * plugin.xml)
 	 */
-	@SuppressWarnings("nls")
-	private static final String CONSOLE_ID = Plugin.PLUGIN_ID + ".detectorConsole";
+	private static final String CONSOLE_ID = Plugin.PLUGIN_ID + ".detectorConsole"; //$NON-NLS-1$
 	/** error marker ID */
-	@SuppressWarnings("nls")
-	private static final String MARKER_ID = Plugin.PLUGIN_ID + ".CompilerBuiltinsDetectorMarker";
+	private static final String MARKER_ID = Plugin.PLUGIN_ID + ".CompilerBuiltinsDetectorMarker"; //$NON-NLS-1$
 
 	private final String sourceFileExtension;
 	private final String command;
@@ -80,13 +78,12 @@ public class CompilerBuiltinsDetector {
 	 *                                  {@code -std=c++17}).
 	 * @param sourceFileExtension       the extension of the source file name
 	 */
-	@SuppressWarnings("nls")
 	public CompilerBuiltinsDetector(IBuiltinsDetectionBehavior builtinsDetectionBehavior, String command,
 			List<String> builtinsDetectionArgs, String sourceFileExtension) {
-		this.sourceFileExtension = Objects.requireNonNull(sourceFileExtension, "sourceFileExtension");
-		this.builtinsDetectionBehavior = Objects.requireNonNull(builtinsDetectionBehavior, "builtinsDetectionBehavior");
-		this.command = Objects.requireNonNull(command, "command");
-		this.builtinsDetectionArgs = Objects.requireNonNull(builtinsDetectionArgs, "builtinsDetectionArgs");
+		this.sourceFileExtension = Objects.requireNonNull(sourceFileExtension, "sourceFileExtension"); //$NON-NLS-1$
+		this.builtinsDetectionBehavior = Objects.requireNonNull(builtinsDetectionBehavior, "builtinsDetectionBehavior"); //$NON-NLS-1$
+		this.command = Objects.requireNonNull(command, "command"); //$NON-NLS-1$
+		this.builtinsDetectionArgs = Objects.requireNonNull(builtinsDetectionArgs, "builtinsDetectionArgs"); //$NON-NLS-1$
 	}
 
 	/**
@@ -138,10 +135,10 @@ public class CompilerBuiltinsDetector {
 			if (console != null) {
 				final ConsoleOutputStream cis = console.getInfoStream();
 				try {
-					cis.write(String
-							.format("Detecting compiler built-ins took %d ms.\n", System.currentTimeMillis() - start)
-							.getBytes());
-				} catch (IOException ignore) {
+					cis.write(String.format(Messages.CompilerBuiltinsDetector_msg_detection_finished,
+							System.currentTimeMillis() - start).getBytes());
+					cis.write("\n".getBytes()); //$NON-NLS-1$
+} catch (IOException ignore) {
 				}
 			}
 			if (state != ICommandLauncher.COMMAND_CANCELED) {
@@ -149,7 +146,8 @@ public class CompilerBuiltinsDetector {
 				final int exitValue = proc.exitValue();
 				if (exitValue != 0 && !builtinsDetectionBehavior.suppressErrormessage()) {
 					// compiler had errors...
-					String errMsg = String.format("%1$s exited with status %2$d.", command, exitValue);
+					String errMsg = String.format(Messages.CompilerBuiltinsDetector_errmsg_command_failed, command,
+							exitValue);
 					createMarker(errMsg);
 				}
 			}
@@ -181,14 +179,13 @@ public class CompilerBuiltinsDetector {
 	 * @return String array of environment variables in format "var=value". Does not
 	 *         return {@code null}.
 	 */
-	@SuppressWarnings("nls")
 	private String[] getEnvp() {
 		IEnvironmentVariableManager mngr = CCorePlugin.getDefault().getBuildEnvironmentManager();
 		IEnvironmentVariable[] vars = mngr.getVariables(buildConfiguration, true);
 		// Convert into envp strings
 		Set<String> strings = new HashSet<>(vars.length);
 		for (IEnvironmentVariable var : vars) {
-			if (var.getName().startsWith("LANGUAGE" + '=') || var.getName().startsWith("LC_ALL" + '='))
+			if (var.getName().startsWith("LANGUAGE" + '=') || var.getName().startsWith("LC_ALL" + '=')) //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			strings.add(var.getName() + '=' + var.getValue());
 		}
@@ -198,8 +195,8 @@ public class CompilerBuiltinsDetector {
 		// of the language as long as the encoding is set to UTF-8.
 		// English language is set for parser because it relies on English messages
 		// in the output of the 'gcc -v' builtinsDetectionArgs.
-		strings.add("LANGUAGE" + "=en"); // override for GNU gettext
-		strings.add("LC_ALL" + "=C.UTF-8"); // for other parts of the system libraries
+		strings.add("LANGUAGE" + "=en"); // override for GNU gettext //$NON-NLS-1$ //$NON-NLS-2$
+		strings.add("LC_ALL" + "=C.UTF-8"); // for other parts of the system libraries //$NON-NLS-1$ //$NON-NLS-2$
 
 		return strings.toArray(new String[strings.size()]);
 	}
@@ -239,7 +236,6 @@ public class CompilerBuiltinsDetector {
 	 *
 	 * @throws CoreException
 	 */
-	@SuppressWarnings("nls")
 	private IConsole startOutputConsole(IConsole console) throws CoreException {
 		IParserPreferences prefs = EclipseContextFactory
 				.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
@@ -250,23 +246,20 @@ public class CompilerBuiltinsDetector {
 			IProject project = buildConfiguration.getProject();
 			if (console == null) {
 				// need to allocate console, but none is given
-				String consoleId = CONSOLE_ID + "." + project.getName();
+				String consoleId = CONSOLE_ID + "." + project.getName(); //$NON-NLS-1$
 				console = CCorePlugin.getDefault().getConsole(CONSOLE_ID, consoleId, null, null);
 			}
 
 			console.start(project);
 			try {
 				final ConsoleOutputStream cis = console.getInfoStream();
-				cis.write(SimpleDateFormat.getTimeInstance().format(new Date()).getBytes());
-				cis.write(" Detecting compiler built-ins: ".getBytes());
-				cis.write(project.getName().getBytes());
-				if (!buildConfiguration.getName().isEmpty()) {
-					cis.write("::".getBytes());
-					cis.write(buildConfiguration.getName().getBytes());
-				}
-				cis.write(" for ".getBytes());
-				cis.write(sourceFileExtension.getBytes());
-				cis.write(" files\n".getBytes());
+				String msg;
+				msg = String.format(Messages.CompilerBuiltinsDetector_msg_detection_start,
+						SimpleDateFormat.getTimeInstance().format(new Date()), project.getName(),
+						buildConfiguration.getName().isEmpty() ? "?" : buildConfiguration.getName(), //$NON-NLS-1$
+						String.join(" ", builtinsDetectionArgs)); //$NON-NLS-1$
+				cis.write(msg.getBytes());
+				cis.write("\n".getBytes()); //$NON-NLS-1$
 			} catch (IOException ignore) {
 			}
 		}

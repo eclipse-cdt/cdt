@@ -19,6 +19,6 @@ import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant
 public class IclToolDetectionParticipant extends DefaultToolDetectionParticipant {
 
 	public IclToolDetectionParticipant() {
-		super("icl", IntelCToolCommandlineParser.INSTANCE);
+		super("icl", IntelCToolCommandlineParser.INSTANCE); //$NON-NLS-1$
 	}
 }

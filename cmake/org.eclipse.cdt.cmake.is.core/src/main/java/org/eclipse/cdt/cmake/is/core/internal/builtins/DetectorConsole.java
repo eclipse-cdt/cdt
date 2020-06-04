@@ -22,7 +22,7 @@ public class DetectorConsole extends AbstractConsole {
 
 	@Override
 	protected IBuildConsoleManager getConsoleManager() {
-		return CUIPlugin.getDefault().getConsoleManager("Compiler Built-ins Detection Console",
+		return CUIPlugin.getDefault().getConsoleManager(Messages.DetectorConsole_title,
 				CONSOLE_CONTEXT_MENU_ID);
 	}
 

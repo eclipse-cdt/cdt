@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Intel Corporation and others.
+ * Copyright (c) 2007, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,9 +10,11 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Sergei Kovalchuk (NXP)
  *******************************************************************************/
 package org.eclipse.cdt.build.internal.core.scannerconfig;
 
+import java.text.MessageFormat;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,8 +31,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.core.runtime.Assert;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class CfgScannerConfigUtil {
 	public static CfgInfoContext adjustPerRcTypeContext(CfgInfoContext context) {

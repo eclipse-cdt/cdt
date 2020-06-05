@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,13 +11,13 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
+ * Sergei Kovalchuk (NXP)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class BuildModelMessages {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildModelMessages"; //$NON-NLS-1$

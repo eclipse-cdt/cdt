@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Marc-Andre Laperle.
+ * Copyright (c) 2019, 2020 Marc-Andre Laperle.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,9 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ *  Contributors:
+ *  Sergei Kovalchuk (NXP)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.language.settings.providers;
 
@@ -17,6 +20,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -57,7 +61,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 
 import com.google.gson.Gson;
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This language settings provider takes a compile_commands.json file as input (aka, Compilation Database or CDB) and parses the commands

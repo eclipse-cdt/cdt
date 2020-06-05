@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ff445ba6_8bda5358",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core.ui/src/org/eclipse/cdt/cmake/is/core/ui/internal/messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-05T19:18:54Z",
+      "side": 1,
+      "message": "License header missed",
+      "revId": "8d37ebd69bbd64d8d3a6a38d3a85ab28e12fcc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "35bb33a2_199b48c1",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/builtins/messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-05T19:18:54Z",
+      "side": 1,
+      "message": "License header missed",
+      "revId": "8d37ebd69bbd64d8d3a6a38d3a85ab28e12fcc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aff07606_ae6b4e46",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-05T19:18:54Z",
+      "side": 1,
+      "message": "License header missed",
+      "revId": "8d37ebd69bbd64d8d3a6a38d3a85ab28e12fcc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3869849f_7ab12ae3",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-05T19:18:54Z",
+      "side": 1,
+      "message": "License header missed",
+      "revId": "8d37ebd69bbd64d8d3a6a38d3a85ab28e12fcc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

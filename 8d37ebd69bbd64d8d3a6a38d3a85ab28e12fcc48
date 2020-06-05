@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "37a5d58e_590694b9",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/Messages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-05T19:33:10Z",
+      "side": 1,
+      "message": "As org.eclipse.cdt.cmake.is.core package is intended to eventually be API - I would mark this class as @noextend @noreference @noinstantiate\n\nSee http://help.eclipse.org/topic/org.eclipse.pde.doc.user/reference/api-tooling/api_javadoc_tags.htm\n\nAlternatively you can make it package private or move the Messages to an internal package.",
+      "revId": "8d37ebd69bbd64d8d3a6a38d3a85ab28e12fcc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "35bb33a2_199b48c1",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/builtins/messages.properties",
         "patchSetId": 2

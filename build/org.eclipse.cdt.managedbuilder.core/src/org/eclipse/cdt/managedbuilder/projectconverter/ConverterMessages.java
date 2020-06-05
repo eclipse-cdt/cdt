@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 Intel Corporation and others.
+ * Copyright (c) 2004, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,13 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Sergei Kovalchuk (NXP)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.projectconverter;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -30,16 +30,6 @@ public class ConverterMessages {
 	private ConverterMessages() {
 	}
 
-	/*
-		public static String getString(String key) {
-			// TODO Auto-generated method stub
-			try {
-				return RESOURCE_BUNDLE.getString(key);
-			} catch (MissingResourceException e) {
-				return '!' + key + '!';
-			}
-		}
-	*/
 	public static String getResourceString(String key) {
 		try {
 			return RESOURCE_BUNDLE.getString(key);

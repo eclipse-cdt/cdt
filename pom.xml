@@ -864,9 +864,6 @@
 						<!-- Default configuration, UI tests may have to override these -->
 						<useUIHarness>false</useUIHarness>
 						<useUIThread>false</useUIThread>
-						<includes>
-							<include>**/AutomatedIntegrationSuite.*</include>
-						</includes>
 						<dependencies>
 							<dependency>
 								<type>p2-installable-unit</type>

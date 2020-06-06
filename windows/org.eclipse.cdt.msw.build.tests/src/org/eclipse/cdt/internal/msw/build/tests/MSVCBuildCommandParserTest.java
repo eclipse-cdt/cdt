@@ -48,7 +48,7 @@ import org.junit.Test;
 /**
  * Test cases to test build command parsers.
  */
-public class MSVCBuildCommandParserTests {
+public class MSVCBuildCommandParserTest {
 	// ID of the parser taken from the extension point
 	private static final String MSVC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.msw.build.core.MSVCBuildCommandParser"; //$NON-NLS-1$
 	private static final String PROJECT_NAME = "MSVCBuildCommandParserTest";

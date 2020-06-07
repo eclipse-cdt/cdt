@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "783446aa_c987a526",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2659,
+      "author": {
+        "id": 13743
+      },
+      "writtenOn": "2020-06-07T11:20:43Z",
+      "side": 1,
+      "message": "Sorry if I\u0027m silly but why not just return instead of assigning the variable?",
+      "range": {
+        "startLine": 2659,
+        "startChar": 2,
+        "endLine": 2659,
+        "endChar": 87
+      },
+      "revId": "0c0d14f04e4e880fd72779e7673b6d89a1c61543",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

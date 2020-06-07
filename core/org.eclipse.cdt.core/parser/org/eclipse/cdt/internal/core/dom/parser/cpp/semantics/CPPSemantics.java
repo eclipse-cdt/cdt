@@ -44,6 +44,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -998,7 +999,7 @@ public class CPPSemantics {
 			size = map.size();
 		} else {
 			if (source instanceof Object[])
-				objs = ArrayUtil.trim(Object.class, (Object[]) source);
+				objs = Arrays.stream((Object[]) source).filter(Objects::nonNull).toArray(Object[]::new);
 			else
 				objs = new Object[] { source };
 			size = objs.length;
@@ -2006,7 +2007,7 @@ public class CPPSemantics {
 	}
 
 	public static IBinding resolveAmbiguities(IASTName name, Object[] bindings) {
-		bindings = ArrayUtil.trim(Object.class, bindings);
+		bindings = Arrays.stream(bindings).filter(Objects::nonNull).toArray(Object[]::new);
 		if (bindings == null || bindings.length == 0) {
 			return null;
 		} else if (bindings.length == 1) {
@@ -2351,7 +2352,7 @@ public class CPPSemantics {
 				bindings = ArrayUtil.append(bindings, type);
 				bindings = ArrayUtil.addAll(bindings, fns.keyArray());
 			}
-			bindings = ArrayUtil.trim(IBinding.class, bindings);
+			bindings = Arrays.stream(bindings).filter(Objects::nonNull).toArray(IBinding[]::new);
 			ICPPUsingDeclaration composite = new CPPUsingDeclaration(lookupName, bindings);
 			return composite;
 		}
@@ -2655,6 +2656,7 @@ public class CPPSemantics {
 				}
 			}
 		}
+		result = Arrays.stream(result).filter(Objects::nonNull).toArray(ICPPFunction[]::new);
 		return result;
 	}
 

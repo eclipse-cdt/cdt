@@ -2655,6 +2655,7 @@ public class CPPSemantics {
 				}
 			}
 		}
+		result = ArrayUtil.trim(ICPPFunction.class, result);
 		return result;
 	}
 

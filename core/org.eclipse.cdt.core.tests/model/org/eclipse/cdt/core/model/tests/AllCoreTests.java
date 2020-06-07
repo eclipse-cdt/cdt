@@ -14,9 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
-import org.eclipse.cdt.core.language.settings.providers.AllLanguageSettingsProvidersCoreTests;
-import org.eclipse.cdt.core.settings.model.AllCProjectDescriptionTests;
-import org.eclipse.cdt.core.settings.model.PathSettingsContainerTests;
+import org.eclipse.cdt.core.language.settings.providers.AllLanguageSettingsProvidersCoreTest;
+import org.eclipse.cdt.core.settings.model.AllCProjectDescriptionTest;
+import org.eclipse.cdt.core.settings.model.PathSettingsContainerTest;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -41,30 +41,30 @@ public class AllCoreTests {
 
 		// Just add more test cases here as you create them for
 		// each class being tested
-		suite.addTest(AllLanguageInterfaceTests.suite());
-		suite.addTest(CModelTests.suite());
-		suite.addTest(CModelElementsTests.suite());
-		suite.addTest(CModelIdentifierTests.suite());
+		suite.addTest(AllLanguageInterfaceTest.suite());
+		suite.addTest(CModelTest.suite());
+		suite.addTest(CModelElementsTest.suite());
+		suite.addTest(CModelIdentifierTest.suite());
 		suite.addTest(CModelExceptionTest.suite());
 		suite.addTest(CModelBuilderInactiveCodeTest.suite());
-		suite.addTest(FlagTests.suite());
-		suite.addTest(ArchiveTests.suite());
-		suite.addTest(BinaryTests.suite());
-		suite.addTest(TranslationUnitTests.suite());
-		suite.addTest(DeclaratorsTests.suite());
-		suite.addTest(MacroTests.suite());
-		//		suite.addTest(FailedMacroTests.suite());
+		suite.addTest(FlagTest.suite());
+		suite.addTest(ArchiveTest.suite());
+		suite.addTest(BinaryTest.suite());
+		suite.addTest(TranslationUnitTest.suite());
+		suite.addTest(DeclaratorsTest.suite());
+		suite.addTest(MacroTest.suite());
+		//		suite.addTest(FailedMacroTest.suite());
 		suite.addTest(CPathEntryTest.suite());
 		//the CProjectDescriptionTests now groups all New Project Model related tests
 		//which includes the CConfigurationDescriptionReferenceTests
-		suite.addTest(AllCProjectDescriptionTests.suite());
-		suite.addTest(PathSettingsContainerTests.suite());
-		suite.addTest(ASTCacheTests.suite());
+		suite.addTest(AllCProjectDescriptionTest.suite());
+		suite.addTest(PathSettingsContainerTest.suite());
+		suite.addTest(ASTCacheTest.suite());
 		suite.addTest(AsmModelBuilderTest.suite());
 		suite.addTest(CModelBuilderBugsTest.suite());
 		suite.addTest(Bug311189.suite());
 
-		suite.addTest(AllLanguageSettingsProvidersCoreTests.suite());
+		suite.addTest(AllLanguageSettingsProvidersCoreTest.suite());
 		return suite;
 
 	}

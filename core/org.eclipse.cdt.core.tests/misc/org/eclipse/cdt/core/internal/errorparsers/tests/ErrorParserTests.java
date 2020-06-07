@@ -23,14 +23,14 @@ public class ErrorParserTests {
 
 		// Just add more test cases here as you create them for
 		// each class being tested
-		suite.addTest(GCCErrorParserTests.suite());
-		suite.addTest(GLDErrorParserTests.suite());
-		suite.addTest(MakeErrorParserTests.suite());
-		suite.addTest(FileBasedErrorParserTests.suite());
+		suite.addTest(GCCErrorParserTest.suite());
+		suite.addTest(GLDErrorParserTest.suite());
+		suite.addTest(MakeErrorParserTest.suite());
+		suite.addTest(FileBasedErrorParserTest.suite());
 		suite.addTest(ErrorParserManagerTest.suite());
 		suite.addTest(ErrorParserFileMatchingTest.suite());
 		suite.addTest(ErrorParserEfsFileMatchingTest.suite());
-		suite.addTest(RegexErrorParserTests.suite());
+		suite.addTest(RegexErrorParserTest.suite());
 		return suite;
 	}
 

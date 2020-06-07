@@ -60,7 +60,7 @@ public class TestMacro implements IConfigurationBuildMacroSupplier, IProjectBuil
 	 */
 	@Override
 	public IBuildMacro getMacro(String macroName, IConfiguration configuration, IBuildMacroProvider provider) {
-		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_ONE_CONFIG;
+		ManagedBuildMacrosTest.functionCalled |= ManagedBuildMacrosTest.GET_ONE_CONFIG;
 
 		IBuildMacro ms = null;
 		if (!(provider instanceof TestMacro)) {
@@ -71,7 +71,7 @@ public class TestMacro implements IConfigurationBuildMacroSupplier, IProjectBuil
 
 	@Override
 	public IBuildMacro getMacro(String macroName, IManagedProject mproj, IBuildMacroProvider provider) {
-		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_ONE_PROJECT;
+		ManagedBuildMacrosTest.functionCalled |= ManagedBuildMacrosTest.GET_ONE_PROJECT;
 
 		IBuildMacro ms = null;
 		if (!(provider instanceof TestMacro)) {
@@ -87,7 +87,7 @@ public class TestMacro implements IConfigurationBuildMacroSupplier, IProjectBuil
 	 */
 	@Override
 	public IBuildMacro[] getMacros(IConfiguration configuration, IBuildMacroProvider provider) {
-		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_MANY_CONFIG;
+		ManagedBuildMacrosTest.functionCalled |= ManagedBuildMacrosTest.GET_MANY_CONFIG;
 		IBuildMacro[] ms = null;
 		if (!(provider instanceof TestMacro)) {
 			ms = provider.getMacros(IBuildMacroProvider.CONTEXT_CONFIGURATION, configuration, false);
@@ -109,7 +109,7 @@ public class TestMacro implements IConfigurationBuildMacroSupplier, IProjectBuil
 	 */
 	@Override
 	public IBuildMacro[] getMacros(IManagedProject mproj, IBuildMacroProvider provider) {
-		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_MANY_PROJECT;
+		ManagedBuildMacrosTest.functionCalled |= ManagedBuildMacrosTest.GET_MANY_PROJECT;
 		IBuildMacro[] ms = null;
 		if (!(provider instanceof TestMacro)) {
 			ms = provider.getMacros(IBuildMacroProvider.CONTEXT_PROJECT, mproj, false);
@@ -133,7 +133,7 @@ public class TestMacro implements IConfigurationBuildMacroSupplier, IProjectBuil
 	 */
 	@Override
 	public boolean isReservedName(String macroName, IConfiguration configuration) {
-		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.RESERVED_NAME;
+		ManagedBuildMacrosTest.functionCalled |= ManagedBuildMacrosTest.RESERVED_NAME;
 		if (macroName.equalsIgnoreCase("USERNAME")) //$NON-NLS-1$
 			return true;
 		return false;

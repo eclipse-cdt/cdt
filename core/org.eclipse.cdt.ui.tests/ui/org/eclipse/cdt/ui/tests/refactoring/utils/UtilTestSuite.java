@@ -25,7 +25,7 @@ public class UtilTestSuite extends TestSuite {
 
 	public static Test suite() throws Exception {
 		UtilTestSuite suite = new UtilTestSuite();
-		suite.addTest(IdentifierHelperTest.suite());
+		suite.addTest(IdentifierHelperTests.suite());
 		suite.addTestSuite(DefinitionFinderTest.class);
 		suite.addTestSuite(PseudoNameGeneratorTest.class);
 		suite.addTestSuite(NameComposerTest.class);

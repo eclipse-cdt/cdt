@@ -28,41 +28,41 @@ public class PDOMTests extends TestSuite {
 		TestSuite suite = new PDOMTests();
 
 		suite.addTest(DatabaseTest.suite());
-		suite.addTest(DBPropertiesTests.suite());
+		suite.addTest(DBPropertiesTest.suite());
 		suite.addTest(PDOMCBugsTest.suite());
 		suite.addTest(PDOMCPPBugsTest.suite());
 		suite.addTest(PDOMSearchTest.suite());
-		suite.addTest(PDOMLocationTests.suite());
-		suite.addTest(PDOMNameTests.suite());
-		suite.addTest(PDOMProviderTests.suite());
-		suite.addTest(EnumerationTests.suite());
-		suite.addTest(ClassTests.suite());
-		suite.addTest(TypesTests.suite());
-		suite.addTest(IncludesTests.suite());
-		suite.addTest(OverloadsWithinSingleTUTests.suite());
-		suite.addTest(OverloadsWithinCommonHeaderTests.suite());
-		suite.addTest(BTreeTests.suite());
-		suite.addTest(PDOMStringSetTests.suite());
-		suite.addTest(PDOMTagIndexTests.suite());
-		suite.addTest(FilesOnReindexTests.suite());
+		suite.addTest(PDOMLocationTest.suite());
+		suite.addTest(PDOMNameTest.suite());
+		suite.addTest(PDOMProviderTest.suite());
+		suite.addTest(EnumerationTest.suite());
+		suite.addTest(ClassTest.suite());
+		suite.addTest(TypesTest.suite());
+		suite.addTest(IncludesTest.suite());
+		suite.addTest(OverloadsWithinSingleTUTest.suite());
+		suite.addTest(OverloadsWithinCommonHeaderTest.suite());
+		suite.addTest(BTreeTest.suite());
+		suite.addTest(PDOMStringSetTest.suite());
+		suite.addTest(PDOMTagIndexTest.suite());
+		suite.addTest(FilesOnReindexTest.suite());
 		suite.addTest(GeneratePDOMApplicationTest.suite());
 
-		suite.addTest(CPPFieldTests.suite());
-		suite.addTest(CPPFunctionTests.suite());
-		suite.addTest(CPPVariableTests.suite());
-		suite.addTest(CPPClassTemplateTests.suite());
-		suite.addTest(CPPFunctionTemplateTests.suite());
-		suite.addTest(MethodTests.suite());
-		suite.addTest(NamespaceTests.suite());
-		suite.addTest(ClassMemberVisibilityTests.suite());
+		suite.addTest(CPPFieldTest.suite());
+		suite.addTest(CPPFunctionTest.suite());
+		suite.addTest(CPPVariableTest.suite());
+		suite.addTest(CPPClassTemplateTest.suite());
+		suite.addTest(CPPFunctionTemplateTest.suite());
+		suite.addTest(MethodTest.suite());
+		suite.addTest(NamespaceTest.suite());
+		suite.addTest(ClassMemberVisibilityTest.suite());
 
-		suite.addTest(CFunctionTests.suite());
-		suite.addTest(CVariableTests.suite());
-		suite.addTest(CCompositeTypeTests.suite());
+		suite.addTest(CFunctionTest.suite());
+		suite.addTest(CVariableTest.suite());
+		suite.addTest(CCompositeTypeTest.suite());
 
-		suite.addTest(DefDeclTests.suite());
+		suite.addTest(DefDeclTest.suite());
 		suite.addTest(RaceCondition157992Test.suite());
-		suite.addTest(ChangeConfigurationTests.suite());
+		suite.addTest(ChangeConfigurationTest.suite());
 
 		return suite;
 	}

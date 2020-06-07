@@ -47,8 +47,8 @@ import org.junit.runners.Suite;
 		CompletionTest_VariableType_NestedPrefix.class, CompletionTest_VariableType_NoPrefix.class,
 		CompletionTest_VariableType_Prefix.class,
 
-		CompletionTests.class, HelpProposalTests.class, CompletionTests_PlainC.class, ParameterHintTests.class,
-		CPPParameterGuessingTests.class, CParameterGuessingTests.class,
+		CompletionTest.class, HelpProposalTest.class, CompletionTests_PlainC.class, ParameterHintTest.class,
+		CPPParameterGuessingTest.class, CParameterGuessingTest.class,
 
 		ShowCamelCasePreferenceTest.class,
 

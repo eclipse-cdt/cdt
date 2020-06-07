@@ -2655,7 +2655,7 @@ public class CPPSemantics {
 				}
 			}
 		}
-		return result;
+		return ArrayUtil.trim(result);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 QNX Software Systems and others.
+ * Copyright (c) 2002, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,13 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Sergei Kovalchuk (NXP)
  *******************************************************************************/
 package org.eclipse.cdt.newmake.internal.core;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class MakeMessages {
 

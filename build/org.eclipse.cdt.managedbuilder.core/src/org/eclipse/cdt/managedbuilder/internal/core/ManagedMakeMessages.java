@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
+ *  Copyright (c) 2004, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,13 @@
  *
  *  Contributors:
  *  IBM - Initial API and implementation
+ *  Sergei Kovalchuk (NXP)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @since 2.0

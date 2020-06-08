@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b9444867_77aa689c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/core/tests/ManagedBuildMacrosTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-08T17:36:41Z",
+      "side": 1,
+      "message": "This - along with other whitespace changes - seem to have been introduced by this change.",
+      "range": {
+        "startLine": 608,
+        "startChar": 0,
+        "endLine": 608,
+        "endChar": 1
+      },
+      "revId": "4b5f7f6510b6bdff6bea3c6af5e4767ee01b72a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

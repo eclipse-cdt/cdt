@@ -35,12 +35,12 @@ import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.utils.Platform;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 
 import com.google.gson.Gson;

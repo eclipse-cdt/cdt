@@ -16,6 +16,7 @@ package org.eclipse.cdt.utils;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
 
 /**

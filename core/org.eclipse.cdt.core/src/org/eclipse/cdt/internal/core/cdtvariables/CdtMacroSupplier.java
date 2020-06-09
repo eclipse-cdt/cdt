@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.cdtvariables.CdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.utils.Platform;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;

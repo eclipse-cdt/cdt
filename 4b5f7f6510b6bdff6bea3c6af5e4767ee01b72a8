@@ -22,6 +22,29 @@
       "revId": "4b5f7f6510b6bdff6bea3c6af5e4767ee01b72a8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baaf5272_8ba2408c",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.test/src/org/eclipse/tm/terminal/model/AllTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-09T15:55:39Z",
+      "side": 1,
+      "message": "As I am sure you will notice - this class name no longer matches the filename.",
+      "range": {
+        "startLine": 23,
+        "startChar": 13,
+        "endLine": 23,
+        "endChar": 21
+      },
+      "revId": "4b5f7f6510b6bdff6bea3c6af5e4767ee01b72a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

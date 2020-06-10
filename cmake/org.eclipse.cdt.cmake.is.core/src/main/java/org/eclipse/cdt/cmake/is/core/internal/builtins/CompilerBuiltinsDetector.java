@@ -51,11 +51,6 @@ import org.osgi.framework.FrameworkUtil;
  * @author Martin Weber
  */
 public class CompilerBuiltinsDetector {
-	/**
-	 * console ID for extension point org.eclipse.cdt.core.CBuildConsole (see
-	 * plugin.xml)
-	 */
-	private static final String CONSOLE_ID = Plugin.PLUGIN_ID + ".detectorConsole"; //$NON-NLS-1$
 	/** error marker ID */
 	private static final String MARKER_ID = Plugin.PLUGIN_ID + ".CompilerBuiltinsDetectorMarker"; //$NON-NLS-1$
 
@@ -94,8 +89,7 @@ public class CompilerBuiltinsDetector {
 	 * @param launcher           the launcher that can run in docker container, if
 	 *                           any
 	 * @param console            the console to print the compiler output to or
-	 *                           <code>null</code> if a separate console is to be
-	 *                           allocated.
+	 *                           <code>null</code> if no console output is requested.
 	 * @throws CoreException
 	 */
 	public IRawIndexerInfo detectBuiltins(IBuildConfiguration buildConfiguration, java.nio.file.Path theBuildDirectory,
@@ -240,16 +234,8 @@ public class CompilerBuiltinsDetector {
 		IParserPreferences prefs = EclipseContextFactory
 				.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
 				.get(IParserPreferencesAccess.class).getWorkspacePreferences();
-		if (!prefs.getAllocateConsole()) {
-			return null; // no console to allocate
-		} else {
+		if (console != null && prefs.getAllocateConsole()) {
 			IProject project = buildConfiguration.getProject();
-			if (console == null) {
-				// need to allocate console, but none is given
-				String consoleId = CONSOLE_ID + "." + project.getName(); //$NON-NLS-1$
-				console = CCorePlugin.getDefault().getConsole(CONSOLE_ID, consoleId, null, null);
-			}
-
 			console.start(project);
 			try {
 				final ConsoleOutputStream cis = console.getInfoStream();
@@ -262,8 +248,9 @@ public class CompilerBuiltinsDetector {
 				cis.write("\n".getBytes()); //$NON-NLS-1$
 			} catch (IOException ignore) {
 			}
+			return console;
 		}
-		return console;
+		return null; // no console to allocate
 	}
 
 }

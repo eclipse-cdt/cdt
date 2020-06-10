@@ -92,7 +92,7 @@ public class CompileCommandsJsonParser {
 	private static final String MARKER_ID = Plugin.PLUGIN_ID + ".CompileCommandsJsonParserMarker"; //$NON-NLS-1$
 
 	private final CBuildConfiguration cBuildConfiguration;
-	private final IIndexerInfoConsumer indexerInfoConsumer;
+	private IIndexerInfoConsumer indexerInfoConsumer;
 	private final IParserPreferencesAccess prefsAccess;
 
 	/**
@@ -131,12 +131,10 @@ public class CompileCommandsJsonParser {
 	 * file in the build directory of the specified {@code CBuildConfiguration}.
 	 *
 	 * @param buildConfiguration  the CBuildConfiguration of the project
-	 * @param indexerInfoConsumer the objects that receives the indexer relevant
-	 *                            information for each source file
 	 */
-	public CompileCommandsJsonParser(CBuildConfiguration buildConfiguration, IIndexerInfoConsumer indexerInfoConsumer) {
+	// TODO interface ICBuildConfiguration should be sufficient here
+	public CompileCommandsJsonParser(CBuildConfiguration buildConfiguration) {
 		this.cBuildConfiguration = Objects.requireNonNull(buildConfiguration, "buildConfiguration"); //$NON-NLS-1$
-		this.indexerInfoConsumer = Objects.requireNonNull(indexerInfoConsumer, "indexerInfoConsumer"); //$NON-NLS-1$
 		prefsAccess = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
 				.get(IParserPreferencesAccess.class);
 	}
@@ -431,8 +429,12 @@ public class CompileCommandsJsonParser {
 
 	/**
 	 * Parses the {@code compile_commands.json} file in the build directory of the
-	 * project if necessary and generates indexer information.
+	 * build configuration if necessary and generates indexer information. If the JSON file did not change since the last invocation
+	 * of this method on the same build configuration, parsing of the file will be skipped; that is:
+	 * Method {@link IIndexerInfoConsumer#accept()} is not invoked.
 	 *
+	 * @param indexerInfoConsumer the objects that receives the indexer relevant
+	 *                            information for each source file
 	 * @param launcher the launcher to run the compiler for built-in detection.
 	 *                 Should be capable to run in docker container, if build in
 	 *                 container is configured for the project.
@@ -447,7 +449,9 @@ public class CompileCommandsJsonParser {
 	 *         indexer should be notified.
 	 * @throws CoreException
 	 */
-	public boolean parse(ICommandLauncher launcher, IConsole console, IProgressMonitor monitor) throws CoreException {
+	public boolean parse(IIndexerInfoConsumer indexerInfoConsumer, ICommandLauncher launcher, IConsole console,
+			IProgressMonitor monitor) throws CoreException {
+		this.indexerInfoConsumer = Objects.requireNonNull(indexerInfoConsumer, "indexerInfoConsumer"); //$NON-NLS-1$
 		long start = 0;
 		try {
 			if (DEBUG_TIME) {
@@ -457,6 +461,7 @@ public class CompileCommandsJsonParser {
 			}
 			return processJsonFile(launcher, console, monitor);
 		} finally {
+			indexerInfoConsumer.shutdown();
 			if (DEBUG_TIME) {
 				long end = System.currentTimeMillis();
 				System.out.printf("Project %s parsed compile_commands.json file in %dms%n", //$NON-NLS-1$

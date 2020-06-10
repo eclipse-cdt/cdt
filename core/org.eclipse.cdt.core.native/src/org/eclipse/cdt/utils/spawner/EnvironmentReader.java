@@ -13,48 +13,41 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.Platform;
 
 /**
- * This class provides environment variables supplied as {@link Properties} class.
+ * This class provides OS owned environment variables supplied as {@link Properties} class.
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class EnvironmentReader {
 	private static Properties envVars = null;
-	private static Properties envVarsNormalized = null;
-	private static ArrayList<String> rawVars = null;
+	private static List<String> toUppercaseEnvironmentVars = Arrays.asList("PATH", "SOMETHINGELSE"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static synchronized void init() {
 		if (envVars == null) {
+			boolean isWindows = Platform.OS_WIN32.equals(Platform.getOS());
 			envVars = new Properties();
-			// on Windows environment variable names are case-insensitive
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				envVarsNormalized = new Properties();
-			} else {
-				envVarsNormalized = envVars;
-			}
-			rawVars = new ArrayList<>();
 			Map<String, String> envMap = System.getenv();
-			for (String var : envMap.keySet()) {
-				String value = envMap.get(var);
-				envVars.setProperty(var, value);
-				if (envVarsNormalized != envVars) {
-					envVarsNormalized.setProperty(var.toUpperCase(), value);
+			for (Map.Entry<String, String> curEnvVar : envMap.entrySet()) {
+				String key = curEnvVar.getKey();
+				String value = curEnvVar.getValue();
+				if (isWindows && toUppercaseEnvironmentVars.contains(key.toUpperCase())) {
+					key = key.toUpperCase();
 				}
-				rawVars.add(var + "=" + value); //$NON-NLS-1$
+				envVars.setProperty(key, value);
 			}
-			rawVars.trimToSize();
 		}
 	}
 
 	/**
-	 * @return list of environment variables.
+	 * @return a clone of the list of environment variables.
 	 */
 	public static Properties getEnvVars() {
 		init();
@@ -67,15 +60,7 @@ public class EnvironmentReader {
 	 */
 	public static String getEnvVar(String key) {
 		init();
-		return envVarsNormalized.getProperty(key);
+		return envVars.getProperty(key);
 	}
 
-	/**
-	 * @deprecated since CDT 6.1. {@link #getEnvVars()} provides all the data.
-	 */
-	@Deprecated
-	public static String[] getRawEnvVars() {
-		init();
-		return rawVars.toArray(new String[rawVars.size()]);
-	}
 }

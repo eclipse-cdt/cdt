@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "865d44e5_e92ac0a9",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/CompileCommandsJsonParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-06-10T19:52:30Z",
+      "side": 1,
+      "message": "Would it be better style to pass the args in the ctor?",
+      "range": {
+        "startLine": 452,
+        "startChar": 16,
+        "endLine": 452,
+        "endChar": 21
+      },
+      "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "76af8200_474a9c61",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/IIndexerInfoConsumer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-06-10T19:52:30Z",
+      "side": 1,
+      "message": "Or close()?",
+      "range": {
+        "startLine": 52,
+        "startChar": 6,
+        "endLine": 52,
+        "endChar": 14
+      },
+      "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

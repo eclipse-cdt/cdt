@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd22f957_2577b773",
+        "filename": "build/org.eclipse.cdt.make.core.tests/src/org/eclipse/cdt/make/core/tests/AutomatedIntegrationSuite.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T00:57:53Z",
+      "side": 0,
+      "message": "See new comment I added to https://git.eclipse.org/r/c/164456 - this class is still explicitly referenced  from core/org.eclipse.cdt.core.tests/pom.xml line 48 causing error in build:\n\n14:30:39  [ERROR] Failed to execute goal org.eclipse.tycho:tycho-surefire-plugin:1.6.0:test (default-test) on project org.eclipse.cdt.core.tests: No tests found. -\u003e [Help 1]",
+      "revId": "df69d7c60855bf60f1f1d384270beaee039c7514",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

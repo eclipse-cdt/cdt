@@ -1,0 +1,159 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ee80a14f_c3417901",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T22:03:34Z",
+      "side": 1,
+      "message": "As there are breaking API changes here we need to bump the major version of the bundle -\u003e in MANIFEST 5.10.400.qualifier becomes 6.0.0.qualifier\n\nThis has the knock on effect of all the fragments (org.eclipse.cdt.core.\u003cplatform\u003e) need to change their versions and their host versions too:\n\ne.g. the org.eclipse.cdt.core.linux fragment would get these lines\n\n    Bundle-Version: 6.0.0.qualifier\n    Fragment-Host: org.eclipse.cdt.core.native;bundle-version\u003d\"[6.0.0,7.0.0)\"",
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dd3e6bcd_a4d4f6ff",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T22:03:34Z",
+      "side": 1,
+      "message": "lets not leave this test code in the commit (note comment is about SOMETHINGELSE only.",
+      "range": {
+        "startLine": 31,
+        "startChar": 81,
+        "endLine": 31,
+        "endChar": 94
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee4ebe29_0b78c871",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T22:03:34Z",
+      "side": 1,
+      "message": "feel free to change this to static block too if you desire - that would remove the synchronized and requirements to call init() everywhere here :-)",
+      "range": {
+        "startLine": 33,
+        "startChar": 1,
+        "endLine": 33,
+        "endChar": 42
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b7dab00_891c2884",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T22:03:34Z",
+      "side": 1,
+      "message": "Lets fix this return type while we are at it - either in this commit or as part of your cleanup. I recommend it from here as I noticed in CBuildConfiguration you had to write a few lines of code to copy from properties to map - how about we just return Map\u003cString, String\u003e in the first place? \n\nPerhaps there is a reason to keep Properties - if so then disregard this comment.",
+      "range": {
+        "startLine": 52,
+        "startChar": 15,
+        "endLine": 52,
+        "endChar": 25
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "573c7655_845aa189",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T22:03:34Z",
+      "side": 1,
+      "message": "this for loop is the extra work I referred to in EnvironmentReader\u0027s return type comment",
+      "range": {
+        "startLine": 441,
+        "startChar": 3,
+        "endLine": 441,
+        "endChar": 14
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2bc93ebf_9b05f2d0",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T22:03:34Z",
+      "side": 1,
+      "message": "mixed space and tab indentation and the next few lines are misformatted as well. The Jenkins job reports this is the diff you need to apply to your change to make it match formatting requirements of CDT:\n\n    12:23:43  diff --git a/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java b/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java\n    12:23:43  index f5171c1ac4..7fde565b58 100644\n    12:23:43  --- a/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java\n    12:23:43  +++ b/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java\n    12:23:43  @@ -439,10 +439,10 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu\n    12:23:43   \t\t\tProperties environmentVariables \u003d EnvironmentReader.getEnvVars();\n    12:23:43   \t\t\tMap\u003cString, String\u003e env \u003d new HashMap\u003c\u003e();\n    12:23:43   \t\t\tfor (String key : environmentVariables.stringPropertyNames()) {\n    12:23:43  -\t\t\t    String value \u003d environmentVariables.getProperty(key);\n    12:23:43  -\t\t\t    env.put(key, value);\n    12:23:43  +\t\t\t\tString value \u003d environmentVariables.getProperty(key);\n    12:23:43  +\t\t\t\tenv.put(key, value);\n    12:23:43   \t\t\t}\n    12:23:43  -\t\t\t\n    12:23:43  +\n    12:23:43   \t\t\tsetBuildEnvironment(env);\n    12:23:43   \n    12:23:43   \t\t\tString pathStr \u003d env.get(\"PATH\"); //$NON-NLS-1$\n\n\nBTW - to get mixed space and tab indents it looks like your setup is not as expected. I assume you are using Eclipse to make the Java code changes? If so, I don\u0027t know how the formatting got screwed up as the file formats on save. If you are not using Eclipse you will have to maintain code cleanliness another way as gerrits are checked for code style.",
+      "range": {
+        "startLine": 442,
+        "startChar": 3,
+        "endLine": 442,
+        "endChar": 8
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6941f63d_dc9d6ba3",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.core/src/org/eclipse/tm/terminal/view/core/utils/Env.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T22:03:34Z",
+      "side": 1,
+      "message": "this code breaks for variables whose value contains an \u003d - note the original code used indexOf(\u0027\u003d\u0027) for this reason.",
+      "range": {
+        "startLine": 52,
+        "startChar": 5,
+        "endLine": 54,
+        "endChar": 25
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

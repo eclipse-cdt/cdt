@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c90b62f_1e79e072",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.core/src/org/eclipse/tm/terminal/view/core/utils/Env.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T22:03:34Z",
+      "side": 0,
+      "message": "oh my goodness - this code has not been updated since Java 1.4 or 1.5 API. EnvironmentReader in CDT used to do it this way too.",
+      "range": {
+        "startLine": 161,
+        "startChar": 21,
+        "endLine": 161,
+        "endChar": 43
+      },
+      "revId": "5841f050f96cbf967929b45b9f2692ce26ddfe33",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

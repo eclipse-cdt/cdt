@@ -23,9 +23,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
+import org.eclipse.cdt.cmake.is.core.CompileCommandsJsonParser;
+import org.eclipse.cdt.cmake.is.core.IIndexerInfoConsumer;
+import org.eclipse.cdt.cmake.is.core.ParseRequest;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
@@ -34,12 +40,17 @@ import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -54,6 +65,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public static final String CLEAN_COMMAND = "cmake.command.clean"; //$NON-NLS-1$
 
 	private ICMakeToolChainFile toolChainFile;
+	private Map<IResource, IScannerInfo> infoPerResource;
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
@@ -95,6 +107,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			}
 
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+			infoPerResource = new HashMap<>();
 
 			ConsoleOutputStream outStream = console.getOutputStream();
 
@@ -223,7 +236,9 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
 				// Load compile_commands.json file
-				processCompileCommandsFile(monitor);
+				// built-ins detection output goes to the build console, if the user requested
+				// output
+				processCompileCommandsFile2(console, monitor);
 
 				outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingComplete, epm.getErrorCount(),
 						epm.getWarningCount(), buildDir.toString()));
@@ -290,6 +305,20 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
+	/**
+	 * @param console the console to print the compiler output during built-ins
+	 *                detection to or <code>null</code> if a separate console is to
+	 *                be allocated. Ignored if workspace preferences indicate that
+	 *                no console output is wanted.
+	 * @param monitor the job's progress monitor
+	 */
+	private void processCompileCommandsFile2(IConsole console, IProgressMonitor monitor) throws CoreException {
+		CompileCommandsJsonParser parser = new CompileCommandsJsonParser(
+				new ParseRequest(this, new CMakeIndexerInfoConsumer(this::setScannerInformation),
+						CommandLauncherManager.getInstance().getCommandLauncher(this), console));
+		parser.parse(monitor);
+	}
+
 	private void processCompileCommandsFile(IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
 		Path commandsFile = getBuildDirectory().resolve("compile_commands.json"); //$NON-NLS-1$
@@ -321,7 +350,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
-	/** Recursively removes any files and directories found in the specified Path.
+	/**
+	 * Recursively removes any files and directories found below the specified Path.
 	 */
 	private static void cleanDirectory(Path dir) throws IOException {
 		SimpleFileVisitor<Path> deltor = new SimpleFileVisitor<Path>() {
@@ -350,5 +380,89 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		if (Files.isDirectory(buildDir))
 			cleanDirectory(buildDir);
 		// TODO: not a directory should we do something?
+	}
+
+	/**
+	 * Overridden since the ScannerInfoCache mechanism does not satisfy our needs.
+	 */
+	// interface IScannerInfoProvider
+	@Override
+	public IScannerInfo getScannerInformation(IResource resource) {
+		if (infoPerResource == null) {
+			// no build was run yet, nothing detected
+			infoPerResource = new HashMap<>();
+			try {
+				processCompileCommandsFile2(null, new NullProgressMonitor());
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
+		}
+		return infoPerResource.get(resource);
+	}
+
+	private void setScannerInformation(Map<IResource, IScannerInfo> infoPerResource) {
+		this.infoPerResource = infoPerResource;
+	}
+
+	private static class CMakeIndexerInfoConsumer implements IIndexerInfoConsumer {
+		/**
+		 * gathered IScannerInfo objects or <code>null</code> if no new IScannerInfo was
+		 * received
+		 */
+		private Map<IResource, IScannerInfo> infoPerResource = new HashMap<>();
+		private boolean haveUpdates;
+		private final Consumer<Map<IResource, IScannerInfo>> resultSetter;
+
+		/**
+		 * @param resultSetter receives the all scanner information when processing is
+		 *                     finished
+		 */
+		public CMakeIndexerInfoConsumer(Consumer<Map<IResource, IScannerInfo>> resultSetter) {
+			this.resultSetter = Objects.requireNonNull(resultSetter);
+		}
+
+		@Override
+		public void acceptSourceFileInfo(String sourceFileName, List<String> systemIncludePaths,
+				Map<String, String> definedSymbols, List<String> includePaths) {
+			IFile file = getFileForCMakePath(sourceFileName);
+			if (file != null) {
+				ExtendedScannerInfo info = new ExtendedScannerInfo(definedSymbols,
+						systemIncludePaths.stream().toArray(String[]::new), null, null,
+						includePaths.stream().toArray(String[]::new));
+				infoPerResource.put(file, info);
+				haveUpdates = true;
+			}
+		}
+
+		/**
+		 * Gets an IFile object that corresponds to the source file name given in CMake
+		 * notation.
+		 *
+		 * @param sourceFileName the name of the source file, in CMake notation. Note
+		 *                       that on windows, CMake writes filenames with forward
+		 *                       slashes (/) such as {@code H://path//to//source.c}.
+		 * @return a IFile object or <code>null</code>
+		 */
+		private IFile getFileForCMakePath(String sourceFileName) {
+			org.eclipse.core.runtime.Path path = new org.eclipse.core.runtime.Path(sourceFileName);
+			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+			// TODO maybe we need to introduce a strategy here to get the workbench resource
+			// Possible build scenarios:
+			// 1) linux native: should be OK as is
+			// 2) linux host, building in container: should be OK as is
+			// 3) windows native: Path.fromOSString()?
+			// 4) windows host, building in linux container: ??? needs testing on windows
+			return file;
+		}
+
+		@Override
+		public void shutdown() {
+			if (haveUpdates) {
+				// we received updates
+				resultSetter.accept(infoPerResource);
+				infoPerResource = null;
+				haveUpdates = false;
+			}
+		}
 	}
 }

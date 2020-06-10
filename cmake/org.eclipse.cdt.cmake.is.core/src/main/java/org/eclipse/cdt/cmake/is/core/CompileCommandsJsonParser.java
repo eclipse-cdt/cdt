@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,9 +39,7 @@ import org.eclipse.cdt.cmake.is.core.participant.IToolCommandlineParser;
 import org.eclipse.cdt.cmake.is.core.participant.IToolCommandlineParser.IResult;
 import org.eclipse.cdt.cmake.is.core.participant.IToolDetectionParticipant;
 import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsDetectionBehavior;
-import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
-import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -68,13 +67,6 @@ import com.google.gson.JsonSyntaxException;
  *
  * @author Martin Weber
  */
-/*
- * TODO introduce separate packages for consumers of this class and for
- * implementors of the extension point (this package vs. packages
- * org.eclipse.cdt.cmake.is.core, org.eclipse.cdt.cmake.is.core.builtins)
- *
- *
- */
 public class CompileCommandsJsonParser {
 	private static final boolean DEBUG_TIME = Boolean
 			.parseBoolean(Platform.getDebugOption(Plugin.PLUGIN_ID + "/debug/performance")); //$NON-NLS-1$
@@ -91,8 +83,8 @@ public class CompileCommandsJsonParser {
 
 	private static final String MARKER_ID = Plugin.PLUGIN_ID + ".CompileCommandsJsonParserMarker"; //$NON-NLS-1$
 
-	private final CBuildConfiguration cBuildConfiguration;
-	private final IIndexerInfoConsumer indexerInfoConsumer;
+	private ParseRequest parseRequest;
+
 	private final IParserPreferencesAccess prefsAccess;
 
 	/**
@@ -128,29 +120,20 @@ public class CompileCommandsJsonParser {
 
 	/**
 	 * Creates a new object that will try to parse the {@code compile_commands.json}
-	 * file in the build directory of the specified {@code CBuildConfiguration}.
+	 * file in the build directory specified in the {@code ParseRequest#getBuildConfiguration()}.
 	 *
-	 * @param buildConfiguration  the CBuildConfiguration of the project
-	 * @param indexerInfoConsumer the objects that receives the indexer relevant
-	 *                            information for each source file
+	 * @param parseRequest  the parser configuration
 	 */
-	public CompileCommandsJsonParser(CBuildConfiguration buildConfiguration, IIndexerInfoConsumer indexerInfoConsumer) {
-		this.cBuildConfiguration = Objects.requireNonNull(buildConfiguration, "buildConfiguration"); //$NON-NLS-1$
-		this.indexerInfoConsumer = Objects.requireNonNull(indexerInfoConsumer, "indexerInfoConsumer"); //$NON-NLS-1$
+	// TODO interface ICBuildConfiguration should be sufficient here
+	public CompileCommandsJsonParser(ParseRequest parseRequest) {
+		this.parseRequest = Objects.requireNonNull(parseRequest, "parseRequest"); //$NON-NLS-1$
 		prefsAccess = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
 				.get(IParserPreferencesAccess.class);
 	}
 
 	/**
 	 * Parses the content of the 'compile_commands.json' file corresponding to the
-	 * specified configuration, if timestamps differ.
-	 *
-	 * @param launcher the launcher to run the compiler for built-in detection.
-	 *                 Should be capable to run in docker container, if build in
-	 *                 container is configured for the project.
-	 * @param console  the console to print the compiler output during built-in
-	 *                 detection to or <code>null</code> if a separate console is to
-	 *                 be allocated.
+	 * specified configuration, if time-stamps differ.
 	 * @param monitor  the job's progress monitor
 	 *
 	 * @return {@code true} if the json file did change since the last invocation of
@@ -158,10 +141,11 @@ public class CompileCommandsJsonParser {
 	 *         {@code false}
 	 * @throws CoreException
 	 */
-	private boolean processJsonFile(ICommandLauncher launcher, IConsole console, IProgressMonitor monitor)
-			throws CoreException {
-		final IProject project = cBuildConfiguration.getBuildConfiguration().getProject();
-		java.nio.file.Path buildRoot = cBuildConfiguration.getBuildDirectory();
+	private boolean processJsonFile(IProgressMonitor monitor) throws CoreException {
+		final CBuildConfiguration configuration = parseRequest.getBuildConfiguration();
+		final IProject project = configuration.getBuildConfiguration().getProject();
+		java.nio.file.Path buildRoot = Paths.get(configuration.getBuildDirectoryURI());
+
 		final java.nio.file.Path jsonFile = buildRoot.resolve("compile_commands.json"); //$NON-NLS-1$
 		if (!Files.exists(jsonFile)) {
 			// no json file was produced in the build
@@ -178,7 +162,7 @@ public class CompileCommandsJsonParser {
 			// tread as 'file does nor exist'
 			return false;
 		}
-		IContainer buildContainer = cBuildConfiguration.getBuildContainer();
+		IContainer buildContainer = configuration.getBuildContainer();
 		final IFile jsonFileRc = buildContainer.getFile(new Path("compile_commands.json")); //$NON-NLS-1$
 
 		Long sessionLastModified = (Long) buildContainer.getSessionProperty(TIMESTAMP_COMPILE_COMMANDS_PROPERTY);
@@ -207,7 +191,7 @@ public class CompileCommandsJsonParser {
 				return false;
 			}
 
-			detectBuiltins(launcher, console, monitor);
+			detectBuiltins(monitor);
 			// store time-stamp
 			buildContainer.setSessionProperty(TIMESTAMP_COMPILE_COMMANDS_PROPERTY, tsJsonModified);
 			return true;
@@ -274,31 +258,25 @@ public class CompileCommandsJsonParser {
 	}
 
 	/**
-	 * @param launcher the launcher to run the compiler for built-in detection.
-	 *                 Should be capable to run in docker container, if build in
-	 *                 container is configured for the project.
-	 * @param console  the console to print the compiler output during built-in
-	 *                 detection to or <code>null</code> if a separate console is to
-	 *                 be allocated.
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void detectBuiltins(ICommandLauncher launcher, IConsole console, IProgressMonitor monitor)
-			throws CoreException {
-		if (builtinDetectorsToRun == null || builtinDetectorsToRun.isEmpty())
+	private void detectBuiltins(IProgressMonitor monitor) throws CoreException {
+		if (builtinDetectorsToRun.isEmpty())
 			return;
 		monitor.setTaskName(Messages.CompileCommandsJsonParser_msg_detecting_builtins);
 
-		java.nio.file.Path buildDir = cBuildConfiguration.getBuildDirectory();
+		java.nio.file.Path buildDir = parseRequest.getBuildConfiguration().getBuildDirectory();
 		// run each built-in detector and collect the results..
 		Map<String, IRawIndexerInfo> builtinDetectorsResults = new HashMap<>();
 		for (Entry<String, CompilerBuiltinsDetector> entry : builtinDetectorsToRun.entrySet()) {
-			IRawIndexerInfo result = entry.getValue().detectBuiltins(cBuildConfiguration.getBuildConfiguration(),
-					buildDir, launcher, console, monitor);
+			IRawIndexerInfo result = entry.getValue().detectBuiltins(
+					parseRequest.getBuildConfiguration().getBuildConfiguration(), buildDir, parseRequest.getLauncher(),
+					parseRequest.getConsole(), monitor);
 			// store detector key with result
 			builtinDetectorsResults.put(entry.getKey(), result);
 		}
-		// all built-in detectors have been run at this point
+		// all built-in detectors have been run at this point, reduce memory footprint
 		builtinDetectorsToRun.clear();
 
 		// most of the time we get different String objects for different source files
@@ -361,7 +339,8 @@ public class CompileCommandsJsonParser {
 				.map(stringPooler).collect(Collectors.toList());
 
 		// feed the paths and defines with the file name to the indexer..
-		indexerInfoConsumer.acceptSourceFileInfo(sourceFileName, systemIncludePaths, effectiveDefines, includePaths);
+		parseRequest.getIndexerInfoConsumer().acceptSourceFileInfo(sourceFileName, systemIncludePaths, effectiveDefines,
+				includePaths);
 	}
 
 	private static void createMarker(IResource rc, String message) throws CoreException {
@@ -431,14 +410,9 @@ public class CompileCommandsJsonParser {
 
 	/**
 	 * Parses the {@code compile_commands.json} file in the build directory of the
-	 * project if necessary and generates indexer information.
-	 *
-	 * @param launcher the launcher to run the compiler for built-in detection.
-	 *                 Should be capable to run in docker container, if build in
-	 *                 container is configured for the project.
-	 * @param console  the console to print the compiler output during built-in
-	 *                 detection to or <code>null</code> if a separate console is to
-	 *                 be allocated.
+	 * build configuration if necessary and generates indexer information. If the JSON file did not change since the last invocation
+	 * of this method on the same build configuration, parsing of the file will be skipped; that is:
+	 * Method {@link IIndexerInfoConsumer#accept()} is not invoked.
 	 * @param monitor  the job's progress monitor
 	 *
 	 * @return {@code true} if the {@code compile_commands.json} file did change
@@ -447,20 +421,25 @@ public class CompileCommandsJsonParser {
 	 *         indexer should be notified.
 	 * @throws CoreException
 	 */
-	public boolean parse(ICommandLauncher launcher, IConsole console, IProgressMonitor monitor) throws CoreException {
+	public boolean parse(IProgressMonitor monitor) throws CoreException {
 		long start = 0;
+		fileResults = new HashMap<>();
+		builtinDetectorsToRun = new HashMap<>();
+		fileToBuiltinDetectorLinks = new HashMap<>();
+
 		try {
 			if (DEBUG_TIME) {
 				System.out.printf("Project %s parsing compile_commands.json ...%n", //$NON-NLS-1$
-						cBuildConfiguration.getProject().getName());
+						parseRequest.getBuildConfiguration().getProject().getName());
 				start = System.currentTimeMillis();
 			}
-			return processJsonFile(launcher, console, monitor);
+			return processJsonFile(monitor);
 		} finally {
+			parseRequest.getIndexerInfoConsumer().shutdown();
 			if (DEBUG_TIME) {
 				long end = System.currentTimeMillis();
 				System.out.printf("Project %s parsed compile_commands.json file in %dms%n", //$NON-NLS-1$
-						cBuildConfiguration.getProject().getName(), end - start);
+						parseRequest.getBuildConfiguration().getProject().getName(), end - start);
 			}
 			// clean up
 			builtinDetectorsToRun = null;
@@ -474,9 +453,14 @@ public class CompileCommandsJsonParser {
 	 * run.
 	 *
 	 * @param compilerCommand      the command name of the compiler
-	 * @param builtinDetectionArgs compiler arguments that affect built-ins
-	 *                             detection
+	 * @param builtinDetectionArgs the compiler arguments from the command-line that
+	 *                             affect built-in detection. For the GNU compilers,
+	 *                             these are options like {@code --sysroot} and
+	 *                             options that specify the language's standard
+	 *                             ({@code -std=c++17}.
 	 * @param sourceFileExtension  the extension of the source file name
+	 * @return a Map-key suitable to minimize the set of CompilerBuiltinsDetector to
+	 *         run
 	 */
 	@SuppressWarnings("nls")
 	private static String makeBuiltinsDetectorKey(String compilerCommand, List<String> builtinDetectionArgs,
@@ -504,27 +488,20 @@ public class CompileCommandsJsonParser {
 	 * @param result
 	 */
 	private void rememberFileResult(String sourceFileName, IRawIndexerInfo result) {
-		if (fileResults == null)
-			fileResults = new HashMap<>();
 		fileResults.put(sourceFileName, result);
 	}
 
 	/**
 	 * @param sourceFileName       the name of the source file
+	 * @param compilerCommand      the command name of the compiler
 	 * @param builtinDetectionArgs the compiler arguments from the command-line that
 	 *                             affect built-in detection. For the GNU compilers,
 	 *                             these are options like {@code --sysroot} and
 	 *                             options that specify the language's standard
 	 *                             ({@code -std=c++17}.
-	 * @return a Map-key suitable to minimize the set of CompilerBuiltinsDetector to
-	 *         run
 	 */
-	private String rememberBuiltinsDetection(String sourceFileName,
-			IBuiltinsDetectionBehavior builtinsDetectionBehavior, String compilerCommand,
-			List<String> builtinDetectionArgs) {
-		if (builtinDetectorsToRun == null)
-			builtinDetectorsToRun = new HashMap<>(3, 1.0f);
-
+	private void rememberBuiltinsDetection(String sourceFileName, IBuiltinsDetectionBehavior builtinsDetectionBehavior,
+			String compilerCommand, List<String> builtinDetectionArgs) {
 		String extension = FilenameUtils.getExtension(sourceFileName);
 		String key = makeBuiltinsDetectorKey(compilerCommand, builtinDetectionArgs, extension);
 		if (!builtinDetectorsToRun.containsKey(key)) {
@@ -533,11 +510,7 @@ public class CompileCommandsJsonParser {
 			builtinDetectorsToRun.put(key, detector);
 		}
 		// remember the built-ins detector for the source file
-		if (fileToBuiltinDetectorLinks == null)
-			fileToBuiltinDetectorLinks = new HashMap<>();
-
 		fileToBuiltinDetectorLinks.put(sourceFileName, key);
-		return key;
 	}
 
 }

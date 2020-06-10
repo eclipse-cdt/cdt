@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0000ebaa_a01993db",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T00:34:11Z",
+      "side": 1,
+      "message": "wrong package - should be org.eclipse.cdt.utils.Platform",
+      "range": {
+        "startLine": 7,
+        "startChar": 18,
+        "endLine": 7,
+        "endChar": 42
+      },
+      "revId": "b3e66b96102db130fed89d3fa9984400f7007328",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3461afdb_41e43587",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T00:34:11Z",
+      "side": 1,
+      "message": "I did test - please change this to say:\n\nThe class overrode org.eclipse.core.runtime.Platform to\nworkaround bugs in the platform that have since been fixed.\nAs 32-bit x86 and PPC support has been removed this\nclass is no longer needed as all the code is now \nunreachable anyway.",
+      "range": {
+        "startLine": 9,
+        "startChar": 1,
+        "endLine": 9,
+        "endChar": 53
+      },
+      "revId": "b3e66b96102db130fed89d3fa9984400f7007328",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "964f7fd7_e5f08347",
+        "filename": "build/org.eclipse.cdt.meson.core/src/org/eclipse/cdt/internal/meson/core/MesonBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-10T00:34:11Z",
+      "side": 1,
+      "message": "As this is the first change for CDT 10.0 to this plug-in the version needs to be bumped. Quoting from the check_code_cleanliness log:\n\n18:58:26  Bundle \u0027org.eclipse.cdt.meson.core\u0027 is missing a service segment version bump\n18:58:26  Please bump service segment by 100 if on master branch\n\nSo, please update the MANIFEST.MF to bump version by 100 - \ni.e. new version should be 1.0.400.qualifier",
+      "revId": "b3e66b96102db130fed89d3fa9984400f7007328",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

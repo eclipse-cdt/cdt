@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d7cbdf7_3c672458",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-11T17:54:42Z",
+      "side": 1,
+      "message": "I can try out various Linux native/host configurations to understand the problem best.\n\n@Alexander IIRC you are normally on Windows? Do either 3 or 4 of these cases work for you? It would be nice to resolve this TODO.\n\nEither way I hope that getFileForLocation will do the correct thing. If there are general issues, now is a good time to get them resolved in platform",
+      "range": {
+        "startLine": 441,
+        "startChar": 11,
+        "endLine": 441,
+        "endChar": 21
+      },
+      "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "ed8970ea_9a8a1567",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-11T15:45:11Z",
+      "side": 1,
+      "message": "Too many manipulations with this field: we have lazy creation and assignments, and we use null value as a state flag. It should be simplified.",
+      "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "34098742_415719aa",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-11T15:45:11Z",
+      "side": 1,
+      "message": "May be extract to a separate type later?",
+      "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5d4cbab_b3615af1",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-11T15:45:11Z",
+      "side": 1,
+      "message": "This call looks like a stub. Should we throw UnsupportedOperationException here? Or may be we can change interface to avoid the implementation of this method. Let\u0027s discuss it separately.",
+      "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "865d44e5_e92ac0a9",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/CompileCommandsJsonParser.java",
         "patchSetId": 1
@@ -25,6 +76,30 @@
     },
     {
       "key": {
+        "uuid": "686a5a23_413c87bf",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/CompileCommandsJsonParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-11T15:45:11Z",
+      "side": 1,
+      "message": "If you really need it as a field - it is better to have it in ctor.\n\nI also have another suggestion to make the usage more clear\n```\nSupplier\u003cIIndexInfoConsumer\u003e supplier\ntry(IIndexInfoConsumer consumer \u003d supplier.get()) {\n//do what is needed with consumer and auto close it at the end\n}\n```",
+      "parentUuid": "865d44e5_e92ac0a9",
+      "range": {
+        "startLine": 452,
+        "startChar": 16,
+        "endLine": 452,
+        "endChar": 21
+      },
+      "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "76af8200_474a9c61",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/IIndexerInfoConsumer.java",
         "patchSetId": 1
@@ -36,6 +111,30 @@
       "writtenOn": "2020-06-10T19:52:30Z",
       "side": 1,
       "message": "Or close()?",
+      "range": {
+        "startLine": 52,
+        "startChar": 6,
+        "endLine": 52,
+        "endChar": 14
+      },
+      "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a1c8f631_e2f40b1b",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/IIndexerInfoConsumer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-11T15:45:11Z",
+      "side": 1,
+      "message": "Do you want to allow its usage inside try-with-resources?",
+      "parentUuid": "76af8200_474a9c61",
       "range": {
         "startLine": 52,
         "startChar": 6,

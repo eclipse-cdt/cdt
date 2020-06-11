@@ -118,6 +118,30 @@
       "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7be0fd2_eafd18cf",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-11T21:24:27Z",
+      "side": 1,
+      "message": "@Martin - thanks for the docker work goes to Linux Tools, which includes Jeff and others.\n\nIt should be because of docker and eclipse remote that the mapping \"just works\". But as you say it needs someone on a Windows host (@Alexander?) to care about these use cases. That is a very reasonable thing to do and I am fine with it.\n\n\u003e [I am doing this in my spare time]\n\nWhich is very appreciated!",
+      "parentUuid": "9a9ac097_621417ac",
+      "range": {
+        "startLine": 441,
+        "startChar": 11,
+        "endLine": 441,
+        "endChar": 21
+      },
+      "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

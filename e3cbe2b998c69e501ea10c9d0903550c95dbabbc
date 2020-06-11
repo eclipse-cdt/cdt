@@ -94,6 +94,30 @@
       "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a9ac097_621417ac",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-06-11T20:17:46Z",
+      "side": 1,
+      "message": "Sorry, to be more precise: Look at the line that gives the file name to find the IFile resource for:\n\"file\": \"H:/develop/ccdl/runtime-core/build/Debug/include/inc- \n\nMaybe conversion is a no-op. AFAIK, NTFS is fine with forward slashes. So the build will succeed.\nThe problem lies in\n4) windows host, building in linux container. Path names might be sth. like ´/h/develop/ccdl/.../a.c´. Would a Path.fromOSString() in Eclipse hosted on windows return a proper IFile resource? That is what I like to be tested.\n\nI would be fine to mark this as *potential problem* with a TODO in the source and a reference in the online docs that tells end-users bitten by the problem being *actual* to sponsor to help resolve the problem (giving man-power, hardware, windows licenses).\n[I am doing this in my spare time]",
+      "parentUuid": "a43da205_005a65e9",
+      "range": {
+        "startLine": 441,
+        "startChar": 11,
+        "endLine": 441,
+        "endChar": 21
+      },
+      "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

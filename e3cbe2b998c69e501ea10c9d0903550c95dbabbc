@@ -22,6 +22,30 @@
       "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "32f32065_a5c13c4c",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-11T18:11:12Z",
+      "side": 1,
+      "message": "It is not clear for me why we expect to find a workspace IFile for a file name given by external tool in its own notation.\n\nI would recommend to use `findFilesForLocationURI` method instead and then analyze the result.\n\nLet\u0027s define the test case that we can run on different platform to have the same input for the result comparision",
+      "parentUuid": "8d7cbdf7_3c672458",
+      "range": {
+        "startLine": 441,
+        "startChar": 11,
+        "endLine": 441,
+        "endChar": 21
+      },
+      "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

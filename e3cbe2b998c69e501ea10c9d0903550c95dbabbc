@@ -46,6 +46,30 @@
       "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "92bee195_df902af1",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-06-11T18:47:47Z",
+      "side": 1,
+      "message": "\u003e I can try out various Linux native/host configurations...\n\nMy experience on 2) linux with managed-build in docker and cmake4eclipse: That person who added the docker build stuff did a cool job! new Path(sourcefilename) or Path.fromOSString() works OOTB.\n\nSame for 3) windows native.\n\nConcerning 4) windows host, building in linux container scenario, I did not try that. But cmake4eclipse never received any issues. Or nobody uses that scenario. Or THE DOCKERIZER did a REALLY cool job.\n\n@Alexander Maybe my cmake project generator could be useful to you to set up testing on windows. It generates a cmake project (CMakeLists.txt + C-sourcefiles, but no eclipse project).",
+      "parentUuid": "8d7cbdf7_3c672458",
+      "range": {
+        "startLine": 441,
+        "startChar": 11,
+        "endLine": 441,
+        "endChar": 21
+      },
+      "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

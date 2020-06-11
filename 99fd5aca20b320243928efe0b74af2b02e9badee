@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "a9b580b6_18a4b0d6",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-06-11T18:47:47Z",
+      "side": 1,
+      "message": "Oops, this should NOT slip in. It was me who commented this method (in a different change).\n\nMaybe it could be moved to some util class in core.",
+      "parentUuid": "34098742_415719aa",
+      "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f5d4cbab_b3615af1",
         "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
         "patchSetId": 1
@@ -47,6 +65,24 @@
       "writtenOn": "2020-06-11T15:45:11Z",
       "side": 1,
       "message": "This call looks like a stub. Should we throw UnsupportedOperationException here? Or may be we can change interface to avoid the implementation of this method. Let\u0027s discuss it separately.",
+      "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "363edf47_4dc26470",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-06-11T18:47:47Z",
+      "side": 1,
+      "message": "Not quite sure whether I fully understood your comment.\n\nAre you suggesting a change to interface IScannerInfoProvider?\nI just took implemtation in super-class as a guidance which logs the exception.\nI appreciate any guidance and ideas on how to handle the exception here.\n\nprocessCompileCommandsFile2() should replace processCompileCommandsFile() later. I kept the latter to switch easily for performance comparison.\nAs far as I found out, getScannerInformation() is called on the ???CReconciler thread when an editor opens/is activated.",
+      "parentUuid": "f5d4cbab_b3615af1",
       "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -100,6 +136,30 @@
     },
     {
       "key": {
+        "uuid": "8708bfec_3d629ca9",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/CompileCommandsJsonParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-06-11T18:47:47Z",
+      "side": 1,
+      "message": "I do not need it as fields, I could pass it down to the called methods or set it in the ctor. Maybe except the monitor.\n\nAuto-close is a cool idea!\nBut I already need a finally block here, so using try-with-resources does not give me much benefit.\n\nCould you elaborate more on the usage of this parser and the info-consumer? I do not have a view of a user of this; I\u0027m just the coder:-)",
+      "parentUuid": "686a5a23_413c87bf",
+      "range": {
+        "startLine": 452,
+        "startChar": 16,
+        "endLine": 452,
+        "endChar": 21
+      },
+      "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "76af8200_474a9c61",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/IIndexerInfoConsumer.java",
         "patchSetId": 1
@@ -135,6 +195,30 @@
       "side": 1,
       "message": "Do you want to allow its usage inside try-with-resources?",
       "parentUuid": "76af8200_474a9c61",
+      "range": {
+        "startLine": 52,
+        "startChar": 6,
+        "endLine": 52,
+        "endChar": 14
+      },
+      "revId": "99fd5aca20b320243928efe0b74af2b02e9badee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "407aabb9_f1fd378f",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/IIndexerInfoConsumer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-06-11T18:47:47Z",
+      "side": 1,
+      "message": "Cool!",
+      "parentUuid": "a1c8f631_e2f40b1b",
       "range": {
         "startLine": 52,
         "startChar": 6,

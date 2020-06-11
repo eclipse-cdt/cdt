@@ -70,6 +70,30 @@
       "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a43da205_005a65e9",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-06-11T18:59:31Z",
+      "side": 1,
+      "message": "\u003e It is not clear for me why we expect to find a workspace IFile for a file name given by external tool in its own notation.\n\nhttp://eclipse.1072660.n5.nabble.com/CMake-plugins-tp190259p193496.html",
+      "parentUuid": "32f32065_a5c13c4c",
+      "range": {
+        "startLine": 441,
+        "startChar": 11,
+        "endLine": 441,
+        "endChar": 21
+      },
+      "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

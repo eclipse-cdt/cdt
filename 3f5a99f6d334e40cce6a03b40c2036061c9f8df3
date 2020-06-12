@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f4db912b_89253f06",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2020-06-12T13:30:37Z",
+      "side": 1,
+      "message": "The breaking of the api is caused by deleting a deprecated method (which I did as I was there anyway)\nWhen I try to change the version my I get errors everywhere I don\u0027t know how to handle.\nMy way out .. do not do the cleanup :-s",
+      "parentUuid": "ee80a14f_c3417901",
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dd3e6bcd_a4d4f6ff",
         "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
         "patchSetId": 1
@@ -77,6 +95,30 @@
       "side": 1,
       "message": "You are overestimating my java knowledge.\nIn other words I have no clue what you are talking about.",
       "parentUuid": "ee4ebe29_0b78c871",
+      "range": {
+        "startLine": 33,
+        "startChar": 1,
+        "endLine": 33,
+        "endChar": 42
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b334dccd_b892c42e",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2020-06-12T13:30:37Z",
+      "side": 1,
+      "message": "I looked it up. Did the change.",
+      "parentUuid": "bd0f2545_181484d5",
       "range": {
         "startLine": 33,
         "startChar": 1,
@@ -170,6 +212,30 @@
       "writtenOn": "2020-06-10T22:03:34Z",
       "side": 1,
       "message": "mixed space and tab indentation and the next few lines are misformatted as well. The Jenkins job reports this is the diff you need to apply to your change to make it match formatting requirements of CDT:\n\n    12:23:43  diff --git a/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java b/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java\n    12:23:43  index f5171c1ac4..7fde565b58 100644\n    12:23:43  --- a/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java\n    12:23:43  +++ b/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java\n    12:23:43  @@ -439,10 +439,10 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu\n    12:23:43   \t\t\tProperties environmentVariables \u003d EnvironmentReader.getEnvVars();\n    12:23:43   \t\t\tMap\u003cString, String\u003e env \u003d new HashMap\u003c\u003e();\n    12:23:43   \t\t\tfor (String key : environmentVariables.stringPropertyNames()) {\n    12:23:43  -\t\t\t    String value \u003d environmentVariables.getProperty(key);\n    12:23:43  -\t\t\t    env.put(key, value);\n    12:23:43  +\t\t\t\tString value \u003d environmentVariables.getProperty(key);\n    12:23:43  +\t\t\t\tenv.put(key, value);\n    12:23:43   \t\t\t}\n    12:23:43  -\t\t\t\n    12:23:43  +\n    12:23:43   \t\t\tsetBuildEnvironment(env);\n    12:23:43   \n    12:23:43   \t\t\tString pathStr \u003d env.get(\"PATH\"); //$NON-NLS-1$\n\n\nBTW - to get mixed space and tab indents it looks like your setup is not as expected. I assume you are using Eclipse to make the Java code changes? If so, I don\u0027t know how the formatting got screwed up as the file formats on save. If you are not using Eclipse you will have to maintain code cleanliness another way as gerrits are checked for code style.",
+      "range": {
+        "startLine": 442,
+        "startChar": 3,
+        "endLine": 442,
+        "endChar": 8
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5e3d87d_edc1a017",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2020-06-12T13:30:37Z",
+      "side": 1,
+      "message": "The reason for that is probably because I turned formatting on save of because a file introduced lots of formatting changes",
+      "parentUuid": "2bc93ebf_9b05f2d0",
       "range": {
         "startLine": 442,
         "startChar": 3,

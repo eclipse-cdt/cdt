@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae20bc29_4c6f54cf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-12T17:12:21Z",
+      "side": 1,
+      "message": "Your commit message has two Change-Ids the last one is the one that counts. This normally happens when two commits are squashed. Please remove this change-id to not confuse future readers of the git history.",
+      "revId": "c475b7f948676a345e67757da6b686a2ee5e2243",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

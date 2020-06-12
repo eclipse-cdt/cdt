@@ -2655,15 +2655,37 @@ public class Tool extends HoldsOptions
 					boolean generateDefaultCommand = true;
 					IOptionCommandGenerator commandGenerator = option.getCommandGenerator();
 					if (commandGenerator != null) {
-						IMacroContextInfo info = provider.getMacroContextInfo(BuildMacroProvider.CONTEXT_FILE,
-								new FileContextData(inputFileLocation, outputFileLocation, option, this));
-						if (info != null) {
-							macroSubstitutor.setMacroContextInfo(info);
-							String command = commandGenerator.generateCommand(option, macroSubstitutor);
-							if (command != null) {
-								sb.append(command);
-								generateDefaultCommand = false;
+						switch (option.getValueType()) {
+						case IOption.BOOLEAN:
+						case IOption.ENUMERATED:
+						case IOption.TREE:
+						case IOption.STRING:
+						case IOption.STRING_LIST:
+						case IOption.INCLUDE_FILES:
+						case IOption.INCLUDE_PATH:
+						case IOption.LIBRARY_PATHS:
+						case IOption.LIBRARY_FILES:
+						case IOption.MACRO_FILES:
+						case IOption.UNDEF_INCLUDE_FILES:
+						case IOption.UNDEF_INCLUDE_PATH:
+						case IOption.UNDEF_LIBRARY_PATHS:
+						case IOption.UNDEF_LIBRARY_FILES:
+						case IOption.UNDEF_MACRO_FILES:
+						case IOption.PREPROCESSOR_SYMBOLS:
+						case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+							IMacroContextInfo info = provider.getMacroContextInfo(BuildMacroProvider.CONTEXT_FILE,
+									new FileContextData(inputFileLocation, outputFileLocation, option, this));
+							if (info != null) {
+								macroSubstitutor.setMacroContextInfo(info);
+								String command = commandGenerator.generateCommand(option, macroSubstitutor);
+								if (command != null) {
+									sb.append(command);
+									generateDefaultCommand = false;
+								}
 							}
+							break;
+						default:
+							break;
 						}
 					}
 					if (generateDefaultCommand) {

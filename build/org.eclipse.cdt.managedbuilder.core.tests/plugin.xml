@@ -4944,21 +4944,23 @@
          <configuration
                id="cdt.test.customOptionCommand.one"
                name="One">
-            <toolChain isSystem="true"
+            <toolChain
                   id="cdt.test.customOptionCommand.Toolchain"
                   isAbstract="false"
-                  name="Tools">
+                  isSystem="true"
+                  name="Tools"
+                  targetTool="cdt.test.customOptionCommand.Tool2">
                 <tool
 		            command="xxx"
-		            id="cdt.test.customOptionCommand.Tool"
+		            id="cdt.test.customOptionCommand.Tool1"
 		            isAbstract="false"
-		            name="Tool"
+		            name="Tool1"
 		            natureFilter="both"
 		            outputFlag="-o">
 		         <optionCategory
 		               id="cdt.test.customOptionCommand.optionCategory1"
 		               name="Test Options"
-		               owner="cdt.test.customOptionCommand.Tool"/>
+		               owner="cdt.test.customOptionCommand.Tool1"/>
 		         <option
 		               category="cdt.test.customOptionCommand.optionCategory1"
 		               command="-opt1="
@@ -4986,6 +4988,178 @@
 		               id="cdt.test.customOptionCommand.option4"
 		               name="Option4"
 		               valueType="string"/>
+                </tool>
+                <tool
+		            command="xxx"
+		            id="cdt.test.customOptionCommand.Tool2"
+		            isAbstract="false"
+		            name="Tool2"
+		            natureFilter="both"
+		            outputFlag="-o">
+		         <optionCategory
+		               id="cdt.test.customOptionCommand.optionCategory2"
+		               name="Test Options"
+		               owner="cdt.test.customOptionCommand.Tool2"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optString="
+		               id="cdt.test.customOptionCommand.optionString"
+		               name="OptionString"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="string"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optStringList="
+		               id="cdt.test.customOptionCommand.optionStringList"
+		               name="OptionStringList"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="stringList"/>
+		         <option
+                 category="cdt.test.customOptionCommand.optionCategory2"
+                 command="-optBoolean=true"
+                 commandFalse="-optBoolean=false"
+                 commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+                 id="cdt.test.customOptionCommand.optionBoolean"
+                 name="OptionBoolean"
+                 valueType="boolean"/>
+		         <option
+                 category="cdt.test.customOptionCommand.optionCategory2"
+                 command="-optEnumerated="
+                 commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+                 id="cdt.test.customOptionCommand.optionEnumerated"
+                 name="OptionEnumerated"
+                 valueType="enumerated">
+              <enumeratedOptionValue
+                    command="-optEnumerated=value1"
+                    id="org.eclipse.cdt.managedbuilder.core.tests.enumeratedOptionValue1"
+                    name="EnumeratedOptionValue1">
+              </enumeratedOptionValue>
+              <enumeratedOptionValue
+                    command="-optEnumerated=value2"
+                    id="org.eclipse.cdt.managedbuilder.core.tests.enumeratedOptionValue2"
+                    name="EnumeratedOptionValue2">
+              </enumeratedOptionValue>
+           </option>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optIncludePath="
+		               id="cdt.test.customOptionCommand.optionIncludePath"
+		               name="OptionIncludePath"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="includePath"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optDefinedSymbols="
+		               id="cdt.test.customOptionCommand.optionDefinedSymbols"
+		               name="OptionDefinedSymbols"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="definedSymbols"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optLibs="
+		               id="cdt.test.customOptionCommand.optionLibs"
+		               name="OptionLibs"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="libs"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optUserObjs="
+		               id="cdt.test.customOptionCommand.optionUserObjs"
+		               name="OptionUserObjs"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="userObjs"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optSymbolFiles="
+		               id="cdt.test.customOptionCommand.optionSymbolFiles"
+		               name="OptionSymbolFiles"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="symbolFiles"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optIncludeFiles="
+		               id="cdt.test.customOptionCommand.optionIncludeFiles"
+		               name="OptionIncludeFiles"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="includeFiles"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optLibPaths="
+		               id="cdt.test.customOptionCommand.optionLibPaths"
+		               name="OptionLibPaths"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="libPaths"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optLibFiles="
+		               id="cdt.test.customOptionCommand.optionLibFiles"
+		               name="OptionLibFiles"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="libFiles"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optUndefIncludePath="
+		               id="cdt.test.customOptionCommand.optionUndefIncludePath"
+		               name="OptionUndefIncludePath"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="undefIncludePath"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optUndefDefinedSymbols="
+		               id="cdt.test.customOptionCommand.optionUndefDefinedSymbols"
+		               name="OptionUndefDefinedSymbols"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="undefDefinedSymbols"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optUndefLibPaths="
+		               id="cdt.test.customOptionCommand.optionUndefLibPaths"
+		               name="OptionUndefLibPaths"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="undefLibPaths"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optUndefLibFiles="
+		               id="cdt.test.customOptionCommand.optionUndefLibFiles"
+		               name="OptionUndefLibFiles"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="undefLibFiles"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optUndefIncludeFiles="
+		               id="cdt.test.customOptionCommand.optionUndefIncludeFiles"
+		               name="OptionUndefIncludeFiles"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="undefIncludeFiles"/>
+		         <option
+		               category="cdt.test.customOptionCommand.optionCategory2"
+		               command="-optUndefSymbolFiles="
+		               id="cdt.test.customOptionCommand.optionUndefSymbolFiles"
+		               name="OptionUndefSymbolFiles"
+		               commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+		               valueType="undefSymbolFiles"/>
+		         <option
+                 category="cdt.test.customOptionCommand.optionCategory2"
+                 command="-optTree="
+                 commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+                 id="cdt.test.customOptionCommand.optionTree"
+                 name="OptionTree"
+                 valueType="tree">
+              <treeOptionRoot
+                    id="org.eclipse.cdt.managedbuilder.core.tests.treeOptionRoot1"
+                    name="org.eclipse.cdt.managedbuilder.core.tests.treeOptionRoot1">
+                 <treeOption
+                       command="-optTree=value1"
+                       id="org.eclipse.cdt.managedbuilder.core.tests.treeOption1"
+                       name="TreeOption1">
+                 </treeOption>
+                 <treeOption
+                       command="-optTree=value2"
+                       id="org.eclipse.cdt.managedbuilder.core.tests.treeOption2"
+                       name="TreeOption2">
+                 </treeOption>
+              </treeOptionRoot>
+           </option>
                 </tool>
 				<builder
 				    id="cdt.test.customOptionCommand.builder"

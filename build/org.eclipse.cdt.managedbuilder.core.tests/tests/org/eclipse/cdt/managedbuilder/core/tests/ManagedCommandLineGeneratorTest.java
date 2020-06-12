@@ -15,6 +15,7 @@
 package org.eclipse.cdt.managedbuilder.core.tests;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -194,8 +195,8 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 					"cdt.test.customOptionCommand.ProjectType");
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 			IConfiguration config = info.getDefaultConfiguration();
-			ITool[] tools = config.getToolsBySuperClassId("cdt.test.customOptionCommand.Tool");
-			assertEquals(tools.length, 1);
+			ITool[] tools = config.getToolsBySuperClassId("cdt.test.customOptionCommand.Tool1");
+			assertEquals(1, tools.length);
 
 			ITool tool = tools[0];
 
@@ -225,6 +226,124 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 
 			ManagedBuildTestHelper.removeProject("COCG");
 		} catch (Exception e) {
+			fail("Test failed on project creation: " + e.getLocalizedMessage());
+		}
+	}
+
+	public final void testCustomOptionCommandGenerator2() {
+		try {
+			IProject project = ManagedBuildTestHelper.createProject("COCG2", null, (IPath) null,
+					"cdt.test.customOptionCommand.ProjectType");
+			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+			IConfiguration config = info.getDefaultConfiguration();
+
+			ITool[] tools = config.getToolsBySuperClassId("cdt.test.customOptionCommand.Tool2");
+			assertEquals(1, tools.length);
+
+			ITool tool = tools[0];
+
+			IOption optionString = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.optionString");
+			IOption optionStringList = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.optionStringList");
+			IOption optionBoolean = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.optionBoolean");
+			IOption optionEnumerated = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.optionEnumerated");
+			IOption optionIncludePath = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.optionIncludePath");
+			IOption optionDefinedSymbols = tool
+					.getOptionBySuperClassId("cdt.test.customOptionCommand.optionDefinedSymbols");
+			IOption optionLibs = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.optionLibs");
+			IOption optionUserObjs = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.optionUserObjs");
+			IOption optionSymbolFiles = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.optionSymbolFiles");
+			IOption optionIncludeFiles = tool
+					.getOptionBySuperClassId("cdt.test.customOptionCommand.optionIncludeFiles");
+			IOption optionLibPaths = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.optionLibPaths");
+			IOption optionLibFiles = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.optionLibFiles");
+			IOption optionUndefIncludePath = tool
+					.getOptionBySuperClassId("cdt.test.customOptionCommand.optionUndefIncludePath");
+			IOption optionUndefDefinedSymbols = tool
+					.getOptionBySuperClassId("cdt.test.customOptionCommand.optionUndefDefinedSymbols");
+			IOption optionUndefLibPaths = tool
+					.getOptionBySuperClassId("cdt.test.customOptionCommand.optionUndefLibPaths");
+			IOption optionUndefLibFiles = tool
+					.getOptionBySuperClassId("cdt.test.customOptionCommand.optionUndefLibFiles");
+			IOption optionUndefIncludeFiles = tool
+					.getOptionBySuperClassId("cdt.test.customOptionCommand.optionUndefIncludeFiles");
+			IOption optionUndefSymbolFiles = tool
+					.getOptionBySuperClassId("cdt.test.customOptionCommand.optionUndefSymbolFiles");
+			IOption optionTree = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.optionTree");
+
+			assertTrue(optionString.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionStringList.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionBoolean.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionEnumerated.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionIncludePath.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionDefinedSymbols.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionLibs.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionUserObjs.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionSymbolFiles.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionIncludeFiles.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionLibPaths.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionLibFiles.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionUndefIncludePath.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionUndefDefinedSymbols.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionUndefLibPaths.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionUndefLibFiles.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionUndefIncludeFiles.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionUndefSymbolFiles.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(optionTree.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+
+			optionString = config.setOption(tool, optionString, "${ProjName}");
+			optionStringList = config.setOption(tool, optionStringList, new String[] { "val1", "${ProjName}" });
+			optionBoolean = config.setOption(tool, optionBoolean, true);
+			optionEnumerated = config.setOption(tool, optionEnumerated,
+					"org.eclipse.cdt.managedbuilder.core.tests.enumeratedOptionValue2");
+			optionIncludePath = config.setOption(tool, optionIncludePath, new String[] { "val2", "${ProjName}" });
+			optionDefinedSymbols = config.setOption(tool, optionDefinedSymbols, new String[] { "val3", "${ProjName}" });
+			optionLibs = config.setOption(tool, optionLibs, new String[] { "val4", "${ProjName}" });
+			optionUserObjs = config.setOption(tool, optionUserObjs, new String[] { "val5", "${ProjName}" });
+			optionSymbolFiles = config.setOption(tool, optionSymbolFiles, new String[] { "val6", "${ProjName}" });
+			optionIncludeFiles = config.setOption(tool, optionIncludeFiles, new String[] { "val7", "${ProjName}" });
+			optionLibPaths = config.setOption(tool, optionLibPaths, new String[] { "val8", "${ProjName}" });
+			optionLibFiles = config.setOption(tool, optionLibFiles, new String[] { "val9", "${ProjName}" });
+			optionUndefIncludePath = config.setOption(tool, optionUndefIncludePath,
+					new String[] { "val10", "${ProjName}" });
+			optionUndefDefinedSymbols = config.setOption(tool, optionUndefDefinedSymbols,
+					new String[] { "val11", "${ProjName}" });
+			optionUndefLibPaths = config.setOption(tool, optionUndefLibPaths, new String[] { "val12", "${ProjName}" });
+			optionUndefLibFiles = config.setOption(tool, optionUndefLibFiles, new String[] { "val13", "${ProjName}" });
+			optionUndefIncludeFiles = config.setOption(tool, optionUndefIncludeFiles,
+					new String[] { "val14", "${ProjName}" });
+			optionUndefSymbolFiles = config.setOption(tool, optionUndefSymbolFiles,
+					new String[] { "val15", "${ProjName}" });
+			optionTree = config.setOption(tool, optionTree, "org.eclipse.cdt.managedbuilder.core.tests.treeOption2");
+
+			String command = tool.getToolCommandFlagsString(null, null);
+			assertEquals(String.join(" ", "-optString=COCG2", //
+					"-optStringList=\"val1;COCG2;\"", //
+					"-optBoolean=true", //
+					"-optEnumerated=value2", //
+					"-optIncludePath=\"val2;COCG2;\"", //
+					"-optDefinedSymbols=\"val3;COCG2;\"", //
+					"-optSymbolFiles=\"val6;COCG2;\"", //
+					"-optIncludeFiles=\"val7;COCG2;\"", //
+					"-optLibPaths=\"val8;COCG2;\"", //
+					"-optLibFiles=\"val9;COCG2;\"", //
+					"-optUndefIncludePath=\"val10;COCG2;\"", //
+					"-optUndefDefinedSymbols=\"val11;COCG2;\"", //
+					"-optUndefLibPaths=\"val12;COCG2;\"", //
+					"-optUndefLibFiles=\"val13;COCG2;\"", //
+					"-optUndefIncludeFiles=\"val14;COCG2;\"", //
+					"-optUndefSymbolFiles=\"val15;COCG2;\"", //
+					"-optTree=value2"), //
+					command);
+
+			String[] libs = config.getLibs(config.getArtifactExtension());
+			assertEquals(Arrays.asList("-optLibs=\"val4;COCG2;\"").toString(), Arrays.asList(libs).toString());
+
+			String[] userObjs = config.getUserObjects(config.getArtifactExtension());
+			assertEquals(Arrays.asList("-optUserObjs=\"val5;COCG2;\"").toString(), Arrays.asList(userObjs).toString());
+
+			ManagedBuildTestHelper.removeProject("COCG2");
+		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Test failed on project creation: " + e.getLocalizedMessage());
 		}
 	}

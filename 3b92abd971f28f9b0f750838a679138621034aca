@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "779e8ccd_a272e8d8",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-12T07:49:00Z",
+      "side": 1,
+      "message": "My concern here was regarding \"stub\" parameters to call the cc.json parser. In general, I don\u0027t like the idea of returning null (here from the map) and then thinking what to do with it on the client side. But I found that I do not understand pretty clear at the moment how to make the good replacement for IScannerInfoProvider. May be it should be Optional\u003cIScannerInfo\u003e or `NoScannerInfo implements IScannerInfo` (not yet exists).\nWe can postpone this discussion.",
+      "revId": "3b92abd971f28f9b0f750838a679138621034aca",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70faf761_70bb41a3",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/CompileCommandsJsonParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-12T07:49:00Z",
+      "side": 1,
+      "message": "Looks like all 3 maps can be final, we do not gain a lot from its lazy creation.\n\nMay be we can have `CompileCommandJsonParser implements AutoClosable`? This will allow us to make it mostly immutable and have close() method to do the clean-up.",
+      "revId": "3b92abd971f28f9b0f750838a679138621034aca",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

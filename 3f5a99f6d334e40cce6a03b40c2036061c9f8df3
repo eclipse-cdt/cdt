@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "52903d40_2e3d50b1",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-12T17:12:21Z",
+      "side": 1,
+      "message": "Ok - don\u0027t do that cleanup as part of this commit - I, or someone else, can do it instead if you don\u0027t want to.",
+      "parentUuid": "f4db912b_89253f06",
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dd3e6bcd_a4d4f6ff",
         "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
         "patchSetId": 1
@@ -119,6 +137,30 @@
       "side": 1,
       "message": "I looked it up. Did the change.",
       "parentUuid": "bd0f2545_181484d5",
+      "range": {
+        "startLine": 33,
+        "startChar": 1,
+        "endLine": 33,
+        "endChar": 42
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f06b78ef_99160dd7",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-12T17:12:21Z",
+      "side": 1,
+      "message": "Great. Looking forward to seeing it in a subsequent commit.",
+      "parentUuid": "b334dccd_b892c42e",
       "range": {
         "startLine": 33,
         "startChar": 1,
@@ -236,6 +278,30 @@
       "side": 1,
       "message": "The reason for that is probably because I turned formatting on save of because a file introduced lots of formatting changes",
       "parentUuid": "2bc93ebf_9b05f2d0",
+      "range": {
+        "startLine": 442,
+        "startChar": 3,
+        "endLine": 442,
+        "endChar": 8
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0af6603c_f26eb6a1",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-12T17:12:21Z",
+      "side": 1,
+      "message": "If a file introduced lots of formatting changes that is a bug - if you let me know which file I will fix it. All files checked into to git should be properly formatted.",
+      "parentUuid": "f5e3d87d_edc1a017",
       "range": {
         "startLine": 442,
         "startChar": 3,

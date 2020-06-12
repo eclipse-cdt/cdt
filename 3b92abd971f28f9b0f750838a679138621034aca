@@ -33,6 +33,24 @@
       "revId": "3b92abd971f28f9b0f750838a679138621034aca",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6f77745c_f14b06e8",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/CompileCommandsJsonParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-06-12T19:08:38Z",
+      "side": 1,
+      "message": "I played around with the AutoClosable idea but came to the conclusion that it would complicate the to use this class.\n\nEach of the 3 maps is just carrying internal state used  only while the parse method runs.\n\nIMHO, the problem is that some of the information needed to parse the JSON file is passed in the ctor, some of the information is passed in the parse() method.\n\nWhat if we change method \u0027parse()\u0027 to be static and take each needed parameter? parse() would then construct a CCJS object to carry the internal state while parsing. No method or ctor except that static parse() method would be the public then.\nClients would then just call\nCCJP.parse( CBuildConfiguration, IIndexerInfoConsumer, ICommandLauncher, IConsole , IProgressMonitor);\n\nWDYT?",
+      "parentUuid": "70faf761_70bb41a3",
+      "revId": "3b92abd971f28f9b0f750838a679138621034aca",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

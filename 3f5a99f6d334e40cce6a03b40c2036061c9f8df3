@@ -65,6 +65,30 @@
     },
     {
       "key": {
+        "uuid": "bd0f2545_181484d5",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2020-06-12T12:35:31Z",
+      "side": 1,
+      "message": "You are overestimating my java knowledge.\nIn other words I have no clue what you are talking about.",
+      "parentUuid": "ee4ebe29_0b78c871",
+      "range": {
+        "startLine": 33,
+        "startChar": 1,
+        "endLine": 33,
+        "endChar": 42
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0b7dab00_891c2884",
         "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
         "patchSetId": 1
@@ -76,6 +100,30 @@
       "writtenOn": "2020-06-10T22:03:34Z",
       "side": 1,
       "message": "Lets fix this return type while we are at it - either in this commit or as part of your cleanup. I recommend it from here as I noticed in CBuildConfiguration you had to write a few lines of code to copy from properties to map - how about we just return Map\u003cString, String\u003e in the first place? \n\nPerhaps there is a reason to keep Properties - if so then disregard this comment.",
+      "range": {
+        "startLine": 52,
+        "startChar": 15,
+        "endLine": 52,
+        "endChar": 25
+      },
+      "revId": "3f5a99f6d334e40cce6a03b40c2036061c9f8df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1b864a5_e1ab3ea3",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2020-06-12T12:35:31Z",
+      "side": 1,
+      "message": "If I change this method we will have problems with all existing code using envVarReader\nI have considered to add a getEnvVarsMap.\nI opted not to do so as there was only 1 mapping to be done.\nI kind of like properties, I do not have the skills to chose between properties or map\u003cstring,string\u003e for this usage",
+      "parentUuid": "0b7dab00_891c2884",
       "range": {
         "startLine": 52,
         "startChar": 15,

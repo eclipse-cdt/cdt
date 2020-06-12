@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "bffaf208_92a3d69c",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-06-12T17:43:05Z",
+      "side": 1,
+      "message": "Because the JSON parser gives me a String",
+      "parentUuid": "817357cb_67b2ab11",
+      "revId": "e3cbe2b998c69e501ea10c9d0903550c95dbabbc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8d7cbdf7_3c672458",
         "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
         "patchSetId": 2

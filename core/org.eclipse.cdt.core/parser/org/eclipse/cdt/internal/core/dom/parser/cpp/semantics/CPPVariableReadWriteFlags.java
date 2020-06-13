@@ -186,6 +186,9 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 					int argPos = ArrayUtil.indexOf(args, argument);
 					Optional<Integer> cumulative = Optional.empty();
 					for (ICPPFunction f : candidates) {
+						if (f == null) {
+							continue;
+						}
 						IType type = f.getType();
 						if (type instanceof IFunctionType) {
 							Optional<Integer> res = rwArgumentForFunctionCall((IFunctionType) type, argPos,

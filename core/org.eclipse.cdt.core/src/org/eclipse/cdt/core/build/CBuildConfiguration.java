@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -66,6 +67,7 @@ import org.eclipse.cdt.internal.core.model.BinaryRunner;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.parser.ParserSettings2;
 import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
@@ -434,16 +436,18 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 			if (cmdPath.isAbsolute()) {
 				return cmdPath;
 			}
+			Properties environmentVariables = EnvironmentReader.getEnvVars();
+			Map<String, String> env = new HashMap<>();
+			for (String key : environmentVariables.stringPropertyNames()) {
+				String value = environmentVariables.getProperty(key);
+				env.put(key, value);
+			}
 
-			Map<String, String> env = new HashMap<>(System.getenv());
 			setBuildEnvironment(env);
 
 			String pathStr = env.get("PATH"); //$NON-NLS-1$
 			if (pathStr == null) {
-				pathStr = env.get("Path"); // for Windows //$NON-NLS-1$
-				if (pathStr == null) {
-					return null; // no idea
-				}
+				return null; // no idea
 			}
 			String[] path = pathStr.split(File.pathSeparator);
 			for (String dir : path) {

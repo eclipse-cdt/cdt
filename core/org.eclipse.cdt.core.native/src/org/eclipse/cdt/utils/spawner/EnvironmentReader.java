@@ -69,13 +69,4 @@ public class EnvironmentReader {
 		init();
 		return envVarsNormalized.getProperty(key);
 	}
-
-	/**
-	 * @deprecated since CDT 6.1. {@link #getEnvVars()} provides all the data.
-	 */
-	@Deprecated
-	public static String[] getRawEnvVars() {
-		init();
-		return rawVars.toArray(new String[rawVars.size()]);
-	}
 }

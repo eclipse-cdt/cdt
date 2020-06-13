@@ -141,7 +141,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	/**
 	 * Returns whether this type is declared 'nodiscard'.
 	 *
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public boolean isNoDiscard();
 }

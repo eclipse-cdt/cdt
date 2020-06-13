@@ -102,7 +102,7 @@ Export-Package: org.eclipse.cdt.internal.corext;x-internal:=true,
  org.eclipse.cdt.ui.wizards,
  org.eclipse.cdt.ui.wizards.conversion,
  org.eclipse.cdt.utils.ui.controls
-Require-Bundle: org.eclipse.cdt.core;bundle-version="[6.9.0,7.0.0)",
+Require-Bundle: org.eclipse.cdt.core;bundle-version="[7.0.0,8.0.0)",
  org.eclipse.compare;bundle-version="[3.7.700,4.0.0)",
  org.eclipse.core.expressions;bundle-version="[3.6.500,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.7.500,2.0.0)",

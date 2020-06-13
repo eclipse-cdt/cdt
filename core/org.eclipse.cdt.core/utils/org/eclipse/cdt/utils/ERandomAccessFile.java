@@ -105,7 +105,7 @@ public class ERandomAccessFile extends RandomAccessFile {
 
 	/**
 	 * Get the path of the file reader
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public String getPath() {
 		return path;
@@ -127,7 +127,7 @@ public class ERandomAccessFile extends RandomAccessFile {
 	/**
 	 * Get the byte order of the file
 	 * @return {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public ByteOrder order() {
 		return isle ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;

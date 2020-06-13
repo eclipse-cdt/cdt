@@ -103,13 +103,13 @@ public interface ICPPASTFunctionDeclarator
 
 	/**
 	 * When used as a lambda declarator, it can be constexpr.
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public boolean isConstexpr();
 
 	/**
 	 * When used as a lambda declarator, it can be constexpr.
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public void setConstexpr(boolean value);
 

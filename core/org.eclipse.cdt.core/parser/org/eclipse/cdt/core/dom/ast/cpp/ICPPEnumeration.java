@@ -46,7 +46,7 @@ public interface ICPPEnumeration extends IEnumeration, ICPPBinding {
 
 	/**
 	 * Returns weather the enum is marked as 'nodiscard'
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	boolean isNoDiscard();
 }

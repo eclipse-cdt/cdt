@@ -58,7 +58,7 @@ public class AttributeUtil {
 
 	/**
 	 * Returns {@code true} if the node has a "nodiscard" attribute.
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public static boolean hasNodiscardAttribute(IASTAttributeOwner node) {
 		return hasAttribute(node, ATTRIBUTE_NODISCARD);

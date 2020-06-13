@@ -33,6 +33,7 @@
   </p>
   <ol>
     <li><a href="#java11">Eclipse CDT requires Java 11 as a minimum to build and run.</a></li>
+    <li><a href="#deprecatedRemovals">Some deprecated methods and classes have been removed.</a></li>
     <li><a href="#internals">Previously exported packages that were not API are now correctly marked as such.</a></li>
     <li><a href="#activators">Activators removed for all bundles where possible.</a></li>
     <li><a href="#NewClassCreationWizardPage">NewClassCreationWizardPage breaking changes.</a></li>
@@ -55,7 +56,16 @@
   <p>
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=562494" target="_blank">Bug 562494</a>.
   </p>
-  <h3>2. <a name="internals">Previously exported packages that were not API are now correctly marked as such.</a></h3>
+
+  <h3>2. <a name="deprecatedRemovals">Some deprecated methods and classes have been removed.</a></h3>
+  <p>
+    Across the CDT code base some previously deprecated code has been removed.
+    <ul>
+      <li>EnvironmentReader.getRawEnvVars has been removed. Use EnvironmentReader.getEnvVars instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564123" target="_blank">Bug 564123</a>.</li>
+    </ul>
+  </p>
+
+  <h3>3. <a name="internals">Previously exported packages that were not API are now correctly marked as such.</a></h3>
   <p>
     A review of the previously exported API of CDT was performed. A lot of what was previously marked as public API has
     now been marked as internal. This means the API has either had <code>x-internal</code> or <code>x-friends</code>
@@ -91,7 +101,7 @@
     </ul>
   </p>
 
-  <h3>3. <a name="activators">Activators removed for all bundles where possible.</a></h3>
+  <h3>4. <a name="activators">Activators removed for all bundles where possible.</a></h3>
   <p>
     Where possible bundles have had their Activators removed. Some of these activators were API and are no longer
     available. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=561635" target="_blank">Bug 561635</a> for
@@ -104,7 +114,7 @@
     </ul>
   </p>
 
-  <h3>4. <a name="NewClassCreationWizardPage">NewClassCreationWizardPage breaking changes.</a></h3>
+  <h3>5. <a name="NewClassCreationWizardPage">NewClassCreationWizardPage breaking changes.</a></h3>
   <p>
     The NewClassCreationWizardPage has some API breaking changes due to how some protected fields, especially
     <code>ALL_FIELDS</code> was used. While this breaks binary
@@ -113,7 +123,7 @@
       href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=561770" target="_blank">Bug 561770</a>.
   </p>
 
-  <h3>5. <a name="arduino">Arduino plug-ins and features removed.</a></h3>
+  <h3>6. <a name="arduino">Arduino plug-ins and features removed.</a></h3>
   <p>
     The CDT Arduino plug-ins and features have been removed. Arduino can still be used with CDT with manual maintenance
     of packages, etc. Or a third-party add-on such as <a href="https://eclipse.baeyens.it/">Sloeber</a> can be used as a
@@ -132,7 +142,7 @@
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=562498" target="_blank">Bug 562498</a>.
   </p>
 
-  <h3>6. <a name="oldparsers">Remove LRParser, XLC and UPC.</a></h3>
+  <h3>7. <a name="oldparsers">Remove LRParser, XLC and UPC.</a></h3>
   <p>
     The LR, UPC and XLC support have been removed from CDT. The bundles have not been maintained for a while and were
     not functional anymore.
@@ -169,7 +179,7 @@
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=562498" target="_blank">Bug 562498</a>.
   </p>
 
-  <h3>7. <a name="cdtutilsPlatform">Remove org.eclipse.cdt.utils.Platform.</a></h3>
+  <h3>8. <a name="cdtutilsPlatform">Remove org.eclipse.cdt.utils.Platform.</a></h3>
   <p>
     Class org.eclipse.cdt.utils.Platform has been removed. Use org.eclipse.core.runtime.Platform instead.
   </p>

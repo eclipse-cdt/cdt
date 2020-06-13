@@ -122,7 +122,7 @@ Export-Package: org.eclipse.cdt.core,
  org.eclipse.cdt.utils.som.parser,
  org.eclipse.cdt.utils.xcoff,
  org.eclipse.cdt.utils.xcoff.parser
-Require-Bundle: org.eclipse.cdt.core.native;bundle-version="[5.10.100,6.0.0)";visibility:=reexport,
+Require-Bundle: org.eclipse.cdt.core.native;bundle-version="[6.0.0,7.0.0)";visibility:=reexport,
  org.eclipse.core.contenttype;bundle-version="[3.7.400,4.0.0)",
  org.eclipse.core.expressions;bundle-version="[3.6.500,4.0.0)",
  org.eclipse.core.filebuffers;bundle-version="[3.6.700,4.0.0)",

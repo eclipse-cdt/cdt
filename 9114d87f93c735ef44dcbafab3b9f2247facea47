@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a7239d3_bfe62255",
+        "filename": "core/org.eclipse.cdt.core.linux.ppc64le/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-13T14:11:41Z",
+      "side": 1,
+      "message": "This should be \n\n    Bundle-Version: 6.0.0.qualifier",
+      "revId": "9114d87f93c735ef44dcbafab3b9f2247facea47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "734d7889_198829ae",
+        "filename": "core/org.eclipse.cdt.core.linux.x86_64/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-13T14:11:41Z",
+      "side": 1,
+      "message": "This should be \n\n    Bundle-Version: 6.0.0.qualifier",
+      "revId": "9114d87f93c735ef44dcbafab3b9f2247facea47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05e9dd45_6223c1cc",
+        "filename": "core/org.eclipse.cdt.core.linux/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-13T14:11:41Z",
+      "side": 1,
+      "message": "This should be \n\n    Bundle-Version: 6.0.0.qualifier",
+      "revId": "9114d87f93c735ef44dcbafab3b9f2247facea47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e0ca9f34_6c1c8908",
+        "filename": "core/org.eclipse.cdt.core.macosx/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-13T14:11:41Z",
+      "side": 1,
+      "message": "This should be \n\n    Bundle-Version: 6.0.0.qualifier",
+      "revId": "9114d87f93c735ef44dcbafab3b9f2247facea47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f76deeb6_61910430",
+        "filename": "core/org.eclipse.cdt.core.native/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-13T14:11:41Z",
+      "side": 1,
+      "message": "This should be \n\n    Bundle-Version: 6.0.0.qualifier",
+      "revId": "9114d87f93c735ef44dcbafab3b9f2247facea47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c50f1387_19da74e6",
+        "filename": "core/org.eclipse.cdt.core.win32.x86_64/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-13T14:11:41Z",
+      "side": 1,
+      "message": "This should be \n\n    Bundle-Version: 6.0.0.qualifier",
+      "revId": "9114d87f93c735ef44dcbafab3b9f2247facea47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23ed3857_af39adfd",
+        "filename": "core/org.eclipse.cdt.core.win32/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-13T14:11:41Z",
+      "side": 1,
+      "message": "This should be \n\n    Bundle-Version: 6.0.0.qualifier",
+      "revId": "9114d87f93c735ef44dcbafab3b9f2247facea47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

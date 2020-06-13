@@ -1631,7 +1631,7 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see CCorePlugin#INSERT
 	 * @see CCorePlugin#DO_NOT_INSERT
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public static final String FORMATTER_INSERT_SPACE_AFTER_DEDUCTION_GUIDE_ARROW = CCorePlugin.PLUGIN_ID
 			+ ".formatter.insert_space_after_deduction_guide_arrow"; //$NON-NLS-1$
@@ -1644,7 +1644,7 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see CCorePlugin#INSERT
 	 * @see CCorePlugin#DO_NOT_INSERT
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public static final String FORMATTER_INSERT_SPACE_BEFORE_DEDUCTION_GUIDE_ARROW = CCorePlugin.PLUGIN_ID
 			+ ".formatter.insert_space_before_deduction_guide_arrow"; //$NON-NLS-1$

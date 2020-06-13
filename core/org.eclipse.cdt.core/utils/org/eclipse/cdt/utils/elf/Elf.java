@@ -1190,7 +1190,7 @@ public class Elf {
 	 * @param section the section to iterate over
 	 * @return an iterator that returns symbols of a given section
 	 * @throws IOException If the file is corrupt
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public ElfSectionIterator symbolIterator(Section section) throws IOException {
 		return new ElfSectionIterator(efile, ehdr.e_ident[ELFhdr.EI_CLASS], section, ehdr.e_ident[ELFhdr.EI_CLASS]);

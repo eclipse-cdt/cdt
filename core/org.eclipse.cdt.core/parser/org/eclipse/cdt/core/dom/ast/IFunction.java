@@ -70,7 +70,7 @@ public interface IFunction extends IBinding {
 	 * Returns {@code true} if return value of this function must not be discarded.
 	 * Based on 'nodiscard' attribute in the function declaration or in C using
 	 * the flag 'warn_unused_result'
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public boolean isNoDiscard();
 }

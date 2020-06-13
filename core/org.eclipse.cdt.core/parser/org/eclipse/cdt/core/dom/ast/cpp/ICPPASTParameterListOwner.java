@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 
 /**
  * Internal interface to describe the ability of having a parameter list
- * @since 6.12
+ * @since 7.0
  */
 public interface ICPPASTParameterListOwner {
 

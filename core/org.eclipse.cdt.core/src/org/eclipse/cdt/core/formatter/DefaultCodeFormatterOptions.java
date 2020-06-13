@@ -225,11 +225,11 @@ public class DefaultCodeFormatterOptions {
 	 */
 	public boolean insert_space_before_lambda_return;
 	/**
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public boolean insert_space_after_deduction_guide_arrow;
 	/**
-	 * @since 6.12
+	 * @since 7.0
 	 */
 	public boolean insert_space_before_deduction_guide_arrow;
 	public boolean insert_space_before_assignment_operator;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2020 Symbian Software Limited and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Bala Torati (Symbian) - Initial API and implementation
+ * Alexander Fedorov (ArSysOp) - Bug 564276
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine.process;
 
@@ -18,19 +19,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
+import org.eclipse.cdt.internal.core.templateengine.TemplateProcessTypes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * Factory class for creating the Process Runners.
  */
 public class ProcessRunnerFactory {
-	private static final String EXTENSION_POINT_PROCESSES = CCorePlugin.PLUGIN_ID + ".templateProcessTypes"; //$NON-NLS-1$
 	private static final String ELEM_NAME = "name"; //$NON-NLS-1$
 	private static final String ELEM_PROCESS_RUNNER = "processRunner"; //$NON-NLS-1$
 	private static ProcessRunnerFactory instance;
@@ -51,7 +50,7 @@ public class ProcessRunnerFactory {
 	 */
 	private synchronized void initializeProcessRunners() {
 		processRunnerMap = new HashMap<>();
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_PROCESSES);
+		IExtensionPoint point = new TemplateProcessTypes().getExtensionPoint();
 		IExtension[] extensions = point.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			IExtension extension = extensions[i];

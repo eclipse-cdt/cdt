@@ -15,17 +15,17 @@ import java.util.Objects;
 
 import org.eclipse.cdt.cmake.is.core.IParserPreferences;
 import org.eclipse.cdt.cmake.is.core.IParserPreferencesMetadata;
-import org.eclipse.cdt.core.options.OptionStorage;
+import org.eclipse.core.runtime.preferences.IPreferenceMetadataStore;
 
 /**
  * @author weber
  */
 final class ParserPreferences implements IParserPreferences {
 
-	private final OptionStorage optionStorage;
+	private final IPreferenceMetadataStore optionStorage;
 	private final IParserPreferencesMetadata metadata;
 
-	public ParserPreferences(OptionStorage optionStorage, IParserPreferencesMetadata metadata) {
+	public ParserPreferences(IPreferenceMetadataStore optionStorage, IParserPreferencesMetadata metadata) {
 		this.optionStorage = Objects.requireNonNull(optionStorage, "optionStorage"); //$NON-NLS-1$
 		this.metadata = Objects.requireNonNull(metadata, "metadata"); //$NON-NLS-1$
 	}

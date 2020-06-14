@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dcaf8cb6_d1a35375",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-14T02:26:13Z",
+      "side": 1,
+      "message": "This needs i18n",
+      "range": {
+        "startLine": 15,
+        "startChar": 13,
+        "endLine": 15,
+        "endChar": 47
+      },
+      "revId": "324fb274b1d95f1e04ee8fd753cad8be855c3098",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

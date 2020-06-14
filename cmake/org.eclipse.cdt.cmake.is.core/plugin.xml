@@ -10,4 +10,15 @@
             id="org.eclipse.cdt.cmake.is.core.detectorConsole">
       </CBuildConsole>
  </extension>
+ <extension
+       id="CompileCommandsJsonParserMarker"
+       name="CMake compile_commands.json parser"
+       point="org.eclipse.core.resources.markers">
+    <persistent
+          value="false">
+    </persistent>
+    <super
+          type="org.eclipse.core.resources.problemmarker">
+    </super>
+ </extension>
 </plugin>

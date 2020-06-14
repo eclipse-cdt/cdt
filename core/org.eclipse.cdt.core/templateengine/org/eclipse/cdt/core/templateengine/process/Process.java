@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -165,7 +164,7 @@ public class Process {
 		}
 		resolve();
 		processRunner.process(template, args, id, monitor);
-		return new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, IStatus.OK,
+		return new Status(IStatus.INFO, getClass(), IStatus.OK,
 				getProcessMessage(IStatus.OK, Messages.getString("Process.executedSuccessfully") + Arrays.asList(args)), //$NON-NLS-1$
 				null);
 	}

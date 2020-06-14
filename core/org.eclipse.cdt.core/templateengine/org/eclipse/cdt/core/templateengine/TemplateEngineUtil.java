@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2020 Symbian Software Limited and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.cdt.core.templateengine;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -45,7 +44,7 @@ public class TemplateEngineUtil {
 				t = t.getCause();
 			} while (t != null && t instanceof ProcessFailureException);
 		} else {
-			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.OK,
+			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, TemplateEngineUtil.class, IStatus.OK,
 					t.getMessage() == null ? t.toString() : t.getMessage(), t));
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2020 Symbian Software Limited and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Bala Torati (Symbian) - Initial API and implementation
  *     Mark Espiritu (VaST Systems) - bug 215960
+ *     Alexander Fedorov (ArSysOp) - Bug 564276
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine;
 
@@ -31,6 +32,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.FrameworkUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -377,7 +379,7 @@ public class TemplateEngine {
 	 */
 	public URL getTemplateSchemaURL() throws IOException {
 		return FileLocator
-				.toFileURL(Platform.getBundle(CCorePlugin.PLUGIN_ID).getEntry("schema/TemplateDescriptorSchema.xsd")); //$NON-NLS-1$
+				.toFileURL(FrameworkUtil.getBundle(getClass()).getEntry("schema/TemplateDescriptorSchema.xsd")); //$NON-NLS-1$
 	}
 
 	/**

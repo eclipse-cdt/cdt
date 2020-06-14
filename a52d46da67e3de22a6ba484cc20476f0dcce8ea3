@@ -16,6 +16,24 @@
       "revId": "a52d46da67e3de22a6ba484cc20476f0dcce8ea3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e68cbb4_1a9b23a3",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParserPreferencesAccess.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-14T15:13:10Z",
+      "side": 1,
+      "message": "Yes, it is my fault, I missed this point during discussion with Equinox guru. I plan to formulate suggestion for platform code.",
+      "parentUuid": "7fa540f8_b74afb2a",
+      "revId": "a52d46da67e3de22a6ba484cc20476f0dcce8ea3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

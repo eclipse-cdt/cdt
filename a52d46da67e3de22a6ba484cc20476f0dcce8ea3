@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7fa540f8_b74afb2a",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/main/java/org/eclipse/cdt/cmake/is/core/internal/ParserPreferencesAccess.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-14T12:38:21Z",
+      "side": 1,
+      "message": "This method content feels like common code that should be provided by platform.",
+      "revId": "a52d46da67e3de22a6ba484cc20476f0dcce8ea3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -1032,9 +1032,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		// declarator
 		final ICPPASTFunctionDeclarator declarator = node.getDeclarator();
-		skipNonWhitespaceToNode(declarator);
+		if (declarator != null) {
+			skipNonWhitespaceToNode(declarator);
+		}
 		boolean hasSpace = scribe.printComment();
-		boolean hasPointerOps = declarator.getPointerOperators().length > 0;
+		boolean hasPointerOps = declarator != null ? declarator.getPointerOperators().length > 0 : false;
 		boolean needSpace = (hasPointerOps && hasSpace) || (!hasPointerOps && peekNextToken() == Token.tIDENTIFIER);
 		if (needSpace) {
 			scribe.space();
@@ -1047,11 +1049,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					preferences.insert_space_before_opening_brace_in_method_declaration, false);
 			scribe.setTailFormatter(tailFormatter);
 		}
-		declarator.accept(this);
+		if (declarator != null) {
+			declarator.accept(this);
 
-		IASTAttributeSpecifier[] attributes = declarator.getAttributeSpecifiers();
-		if (attributes.length > 0) {
-			formatAttributes(declarator, true, false);
+			IASTAttributeSpecifier[] attributes = declarator.getAttributeSpecifiers();
+			if (attributes.length > 0) {
+				formatAttributes(declarator, true, false);
+			}
 		}
 
 		if (tailFormatter != null) {

@@ -4825,4 +4825,19 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testVariadicFunction_Bug487990() throws Exception {
 		assertFormatterResult();
 	}
+
+	//int main() {
+	//	const int a = []{return 12;}();
+	//	return 0;
+	//}
+
+	//int main() {
+	//	const int a = [] {
+	//		return 12;
+	//	}();
+	//	return 0;
+	//}
+	public void testLambdaWithoutParens_Bug564273() throws Exception {
+		assertFormatterResult();
+	}
 }

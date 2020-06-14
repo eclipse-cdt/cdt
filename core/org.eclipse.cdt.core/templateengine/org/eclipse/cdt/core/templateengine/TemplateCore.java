@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.core.templateengine.process.TemplateProcessHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -219,8 +218,7 @@ public class TemplateCore {
 			result[0] = getProcessHandler().processAll(monitor);
 		} catch (ProcessFailureException e) {
 			TemplateEngineUtil.log(e);
-			result[0] = new IStatus[] {
-					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e) };
+			result[0] = new IStatus[] { new Status(IStatus.ERROR, getClass(), IStatus.ERROR, e.getMessage(), e) };
 		}
 		return result[0];
 	}

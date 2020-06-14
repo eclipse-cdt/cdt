@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
@@ -216,7 +215,7 @@ public class ConditionalProcessGroup {
 		}
 		if (!isConditionValueTrue()) {
 			List<IStatus> statuses = new ArrayList<>(1);
-			statuses.add(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.INFO,
+			statuses.add(new Status(IStatus.ERROR, getClass(), IStatus.INFO,
 					Messages.getString("ConditionalProcessGroup.notExecuting") + id, null)); //$NON-NLS-1$
 			return statuses;
 		}

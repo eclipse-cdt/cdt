@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "e96dded4_0b526a4d",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-14T08:48:29Z",
+      "side": 1,
+      "message": "I would like to have it declared from \"org.eclipse.cdt.jsoncdb\" bundles, as mentioned at cdt-dev mailing list.",
+      "revId": "324fb274b1d95f1e04ee8fd753cad8be855c3098",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dcaf8cb6_d1a35375",
         "filename": "cmake/org.eclipse.cdt.cmake.is.core/plugin.xml",
         "patchSetId": 1

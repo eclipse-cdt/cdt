@@ -19,6 +19,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.cmake.is.core.internal.messages"; //$NON-NLS-1$
+	public static String ParserPreferencesAccess_e_get_preferences;
 	public static String ParserPreferencesMetadata_label_console;
 	public static String ParserPreferencesMetadata_label_suffix;
 	public static String ParserPreferencesMetadata_label_try_suffix;

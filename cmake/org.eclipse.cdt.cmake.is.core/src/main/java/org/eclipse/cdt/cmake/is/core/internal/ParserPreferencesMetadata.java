@@ -12,40 +12,40 @@
 package org.eclipse.cdt.cmake.is.core.internal;
 
 import org.eclipse.cdt.cmake.is.core.IParserPreferencesMetadata;
-import org.eclipse.cdt.core.options.BaseOption;
-import org.eclipse.cdt.core.options.OptionMetadata;
+import org.eclipse.core.runtime.preferences.PreferenceMetadata;
 
 /**
  * @author weber
  */
 final class ParserPreferencesMetadata implements IParserPreferencesMetadata {
 
-	private final OptionMetadata<Boolean> tryVersionSuffixOption;
-	private final OptionMetadata<String> versionSuffixPatternOption;
-	private final OptionMetadata<Boolean> allocateConsoleOption;
+	private final PreferenceMetadata<Boolean> tryVersionSuffixOption;
+	private final PreferenceMetadata<String> versionSuffixPatternOption;
+	private final PreferenceMetadata<Boolean> allocateConsoleOption;
 
 	public ParserPreferencesMetadata() {
-		this.tryVersionSuffixOption = new BaseOption<>(Boolean.class, "versionSuffixPatternEnabled", false, //$NON-NLS-1$
+		this.tryVersionSuffixOption = new PreferenceMetadata<>(Boolean.class, "versionSuffixPatternEnabled", false, //$NON-NLS-1$
 				Messages.ParserPreferencesMetadata_label_try_suffix,
 				Messages.ParserPreferencesMetadata_ttip_try_suffix);
-		this.versionSuffixPatternOption = new BaseOption<>(String.class, "versionSuffixPattern", "-?\\d+(\\.\\d+)*", //$NON-NLS-1$ //$NON-NLS-2$
+		this.versionSuffixPatternOption = new PreferenceMetadata<>(String.class, "versionSuffixPattern", //$NON-NLS-1$
+				"-?\\d+(\\.\\d+)*", //$NON-NLS-1$
 				Messages.ParserPreferencesMetadata_label_suffix, Messages.ParserPreferencesMetadata_ttip_suffix);
-		this.allocateConsoleOption = new BaseOption<>(Boolean.class, "allocateConsole", false, //$NON-NLS-1$
+		this.allocateConsoleOption = new PreferenceMetadata<>(Boolean.class, "allocateConsole", false, //$NON-NLS-1$
 				Messages.ParserPreferencesMetadata_label_console);
 	}
 
 	@Override
-	public OptionMetadata<Boolean> tryVersionSuffix() {
+	public PreferenceMetadata<Boolean> tryVersionSuffix() {
 		return tryVersionSuffixOption;
 	}
 
 	@Override
-	public OptionMetadata<String> versionSuffixPattern() {
+	public PreferenceMetadata<String> versionSuffixPattern() {
 		return versionSuffixPatternOption;
 	}
 
 	@Override
-	public OptionMetadata<Boolean> allocateConsole() {
+	public PreferenceMetadata<Boolean> allocateConsole() {
 		return allocateConsoleOption;
 	}
 }

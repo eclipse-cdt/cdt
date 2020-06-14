@@ -11,15 +11,18 @@
 
 package org.eclipse.cdt.cmake.is.core.internal;
 
+import java.util.Optional;
+
 import org.eclipse.cdt.cmake.is.core.IParserPreferences;
 import org.eclipse.cdt.cmake.is.core.IParserPreferencesAccess;
 import org.eclipse.cdt.cmake.is.core.IParserPreferencesMetadata;
-import org.eclipse.cdt.core.options.OptionStorage;
-import org.eclipse.cdt.core.options.OsgiPreferenceStorage;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferenceMetadataStore;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.OsgiPreferenceMetadataStore;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.prefs.Preferences;
 
 /**
  * @author weber
@@ -33,8 +36,8 @@ public class ParserPreferencesAccess implements IParserPreferencesAccess {
 		this.metadata = new ParserPreferencesMetadata();
 	}
 
-	private OptionStorage workspaceStorage() {
-		return new OsgiPreferenceStorage(preferences(InstanceScope.INSTANCE));
+	private IPreferenceMetadataStore workspaceStorage() {
+		return new OsgiPreferenceMetadataStore(preferences(InstanceScope.INSTANCE));
 	}
 
 	@Override
@@ -47,8 +50,14 @@ public class ParserPreferencesAccess implements IParserPreferencesAccess {
 		return metadata;
 	}
 
-	private Preferences preferences(IScopeContext scope) {
-		return scope.getNode(nodeQualifier()).node(nodePath());
+	private IEclipsePreferences preferences(IScopeContext scope) {
+		return Optional.ofNullable(scope.getNode(nodeQualifier()))//
+				.map(n -> n.node(nodePath()))//
+				.filter(IEclipsePreferences.class::isInstance)//
+				.map(IEclipsePreferences.class::cast)//
+				.orElseThrow(() -> new IllegalStateException(//
+						NLS.bind(Messages.ParserPreferencesAccess_e_get_preferences, //
+								nodeQualifier(), nodePath())));
 	}
 
 	private String nodeQualifier() {

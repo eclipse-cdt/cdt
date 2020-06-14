@@ -16,7 +16,7 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.cdt.cmake.is.core.IParserPreferences;
 import org.eclipse.cdt.cmake.is.core.IParserPreferencesAccess;
 import org.eclipse.cdt.cmake.is.core.IParserPreferencesMetadata;
-import org.eclipse.cdt.core.options.OptionMetadata;
+import org.eclipse.core.runtime.preferences.PreferenceMetadata;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.PreferencePage;
@@ -155,7 +155,7 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 	 * @param text                text to display on the check-box
 	 */
 	private static Button createCheckbox(Composite parent, int horizontalAlignment, int horizontalSpan,
-			OptionMetadata<Boolean> option) {
+			PreferenceMetadata<Boolean> option) {
 		Button b = new Button(parent, SWT.CHECK);
 		b.setText(option.name());
 		b.setToolTipText(option.description());

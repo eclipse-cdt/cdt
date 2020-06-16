@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,16 +11,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Hofer - Bug 326265
+ *     Sergei Kovalchul (NXP)
  *******************************************************************************/
 
 // this file is based on org.eclipse.cdt.internal.ui.actions.FoldingMessages
 
 package org.eclipse.cdt.make.internal.ui.actions;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Class that gives access to the folding messages resource bundle.

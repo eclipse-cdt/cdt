@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 QNX Software Systems and others.
+ * Copyright (c) 2000, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,9 +10,11 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Sergei Kovalchuk (NXP)
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.views;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -29,8 +31,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.

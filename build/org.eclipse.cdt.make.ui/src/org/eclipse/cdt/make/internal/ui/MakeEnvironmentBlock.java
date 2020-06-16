@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 QNX Software Systems and others.
+ * Copyright (c) 2004, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,9 +10,11 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Sergei Kovalchuk (NXP) - Switch dependency from com.ibm.icu to java.text
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui;
 
+import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -67,8 +69,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties

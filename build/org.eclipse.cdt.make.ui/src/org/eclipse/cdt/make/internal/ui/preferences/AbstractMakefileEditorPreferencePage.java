@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2016 QNX Software Systems and others.
+ * Copyright (c) 2002, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Sergei Kovalchuk (NXP) - Switch dependency from com.ibm.icu to java.text
  *******************************************************************************/
 
 package org.eclipse.cdt.make.internal.ui.preferences;
@@ -17,6 +18,7 @@ package org.eclipse.cdt.make.internal.ui.preferences;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,8 +43,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * AbstraceMakeEditorPreferencePage

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Andrew Gvozdev.
+ * Copyright (c) 2008, 2020 Andrew Gvozdev and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,10 +10,12 @@
  *
  * Contributors:
  *    Andrew Gvozdev (Quoin Inc.) - Initial implementation
+ *    Sergei Kovalchuk (NXP) - Switch dependency from com.ibm.icu to java.text
  *******************************************************************************/
 
 package org.eclipse.cdt.make.internal.ui.dnd;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +29,6 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * {@code TextTransferDropTargetListener} handles dropping of selected text to

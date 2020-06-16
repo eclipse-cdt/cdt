@@ -158,6 +158,9 @@ public class Elf {
 		/** @since 6.0 */
 		public static final int EM_AARCH64 = 183;
 
+		/** @since 7.0 */
+		public static final int EM_RISCV = 243;
+
 		public static final int EM_NIOS = 0xFEBB;
 		public static final int EM_CYGNUS_POWERPC = 0x9025;
 		public static final int EM_CYGNUS_M32R = 0x9041;
@@ -907,6 +910,9 @@ public class Elf {
 			break;
 		case Elf.ELFhdr.EM_RS08:
 			attrib.cpu = "rs08"; //$NON-NLS-1$
+			break;
+		case Elf.ELFhdr.EM_RISCV:
+			attrib.cpu = "riscv"; //$NON-NLS-1$
 			break;
 		case Elf.ELFhdr.EM_NONE:
 		default:

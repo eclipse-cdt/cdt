@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.msw"
       label="C/C++ Visual C++ Support"
-      version="9.11.1.qualifier"
+      version="9.11.2.qualifier"
       provider-name="Eclipse CDT"
       plugin="org.eclipse.cdt.msw.build"
       license-feature="org.eclipse.license"

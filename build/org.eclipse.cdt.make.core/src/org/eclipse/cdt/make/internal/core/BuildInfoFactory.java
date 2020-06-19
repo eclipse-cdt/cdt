@@ -46,7 +46,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.osgi.service.environment.Constants;
 
 public class BuildInfoFactory {
 
@@ -115,14 +114,8 @@ public class BuildInfoFactory {
 		public Map<String, String> getExpandedEnvironment() {
 			Map<String, String> env = getEnvironment();
 			HashMap<String, String> envMap = new HashMap<>(env.entrySet().size());
-			boolean win32 = Platform.getOS().equals(Constants.OS_WIN32);
 			for (Map.Entry<String, String> entry : env.entrySet()) {
 				String key = entry.getKey();
-				if (win32) {
-					// Win32 vars are case insensitive. Uppercase everything so
-					// that (for example) "pAtH" will correctly replace "PATH"
-					key = key.toUpperCase();
-				}
 				String value = entry.getValue();
 				// translate any string substitution variables
 				String translated = value;

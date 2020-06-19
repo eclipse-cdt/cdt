@@ -23,7 +23,6 @@ import org.eclipse.cdt.internal.core.envvar.EnvVarDescriptor;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
@@ -49,8 +48,6 @@ public class StoredBuildPathEnvironmentContainer extends StorableEnvironmentLoad
 	private IConfiguration fConfiguration;
 	private StorableEnvironment fEnvironment;
 	private int fPathType;
-	private boolean fIsVariableCaseSensitive = ManagedBuildManager.getEnvironmentVariableProvider()
-			.isVariableCaseSensitive();
 
 	public StoredBuildPathEnvironmentContainer(int pathType) {
 		fPathType = pathType == IEnvVarBuildPath.BUILDPATH_LIBRARY ? IEnvVarBuildPath.BUILDPATH_LIBRARY
@@ -190,7 +187,7 @@ public class StoredBuildPathEnvironmentContainer extends StorableEnvironmentLoad
 	 * returns true if the variable names are equal and false otherwise
 	 */
 	private boolean varNamesEqual(String name1, String name2) {
-		return fIsVariableCaseSensitive ? name1.equals(name2) : name1.equalsIgnoreCase(name2);
+		return name1.equals(name2);
 	}
 
 	/* (non-Javadoc)

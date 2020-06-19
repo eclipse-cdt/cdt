@@ -57,7 +57,6 @@ public class ManagedBuildMacrosTests extends TestCase {
 	IConfiguration[] cfgs = null;
 	IBuildMacroProvider mp = null;
 	IWorkspace worksp = null;
-	boolean windows = false;
 
 	boolean print = false; // allows to print most of macros on console
 	boolean flag = false; // uplevel flag for getMacro/getMacros methods
@@ -605,7 +604,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 		}
 		// check that "isReservedName" was not called before
 		assertEquals(functionCalled & RESERVED_NAME, 0);
-
+	
 		// Config #2 contains "...Supplier" macro. Result: PATH unresolved, USERNAME resolved.
 		try {
 			String a = mp.resolveValue(p1 + p2, UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[2]);
@@ -821,7 +820,6 @@ public class ManagedBuildMacrosTests extends TestCase {
 		assertNotNull(mp);
 		cfgs = mproj.getConfigurations();
 		assertNotNull(cfgs);
-		windows = System.getProperty("os.name").toLowerCase().startsWith("windows"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

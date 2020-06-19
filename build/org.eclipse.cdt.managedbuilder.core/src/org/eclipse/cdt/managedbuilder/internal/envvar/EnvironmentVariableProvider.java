@@ -92,18 +92,6 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 	}
 
 	@Override
-	public IBuildEnvironmentVariable getVariable(String variableName, Object level, boolean includeParentLevels,
-			boolean resolveMacros) {
-		if (variableName == null || variableName.isEmpty())
-			return null;
-
-		if (level instanceof IConfiguration) {
-			return wrap(getVariable(variableName, (IConfiguration) level, resolveMacros));
-		}
-		return null;
-	}
-
-	@Override
 	public IEnvironmentVariable getVariable(String variableName, IConfiguration cfg, boolean resolveMacros) {
 		return getVariable(variableName, cfg, resolveMacros, true);
 	}
@@ -157,31 +145,9 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 		return buildVars;
 	}
 
-	/*	protected ICConfigurationDescription getDescription(IConfiguration cfg) {
-			IProject project = cfg.getOwner().getProject();
-			ICProjectDescription des = CoreModel.getDefault().getProjectDescription(project, false);
-			if (des != null) {
-				return des.getConfigurationById(cfg.getId());
-			}
-			return null;
-		}
-	*/
-	@Override
-	public IBuildEnvironmentVariable[] getVariables(Object level, boolean includeParentLevels, boolean resolveMacros) {
-		if (level instanceof IConfiguration) {
-			return wrap(getVariables((IConfiguration) level, resolveMacros));
-		}
-		return new IBuildEnvironmentVariable[0];
-	}
-
 	@Override
 	public String getDefaultDelimiter() {
 		return fMngr.getDefaultDelimiter();
-	}
-
-	@Override
-	public boolean isVariableCaseSensitive() {
-		return fMngr.isVariableCaseSensitive();
 	}
 
 	@Override

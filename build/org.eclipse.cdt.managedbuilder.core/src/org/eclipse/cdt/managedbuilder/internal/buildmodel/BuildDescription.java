@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
@@ -56,7 +57,6 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
@@ -1498,11 +1498,11 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	protected Map<String, String> calculateEnvironment() {
-		IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(fCfg,
-				true, true);
+		IEnvironmentVariable[] variables = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(fCfg,
+				true);
 		Map<String, String> map = new HashMap<>();
 
-		for (IBuildEnvironmentVariable var : variables) {
+		for (IEnvironmentVariable var : variables) {
 			map.put(var.getName(), var.getValue());
 		}
 		return map;

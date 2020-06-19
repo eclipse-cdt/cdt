@@ -51,13 +51,10 @@ public class EnvVarCollector {
 			ICoreEnvironmentVariableSupplier supplier) {
 		if (vars == null)
 			return;
-		boolean isCaseInsensitive = !EnvironmentVariableManager.getDefault().isVariableCaseSensitive();
 		for (int i = 0; i < vars.length; i++) {
 			IEnvironmentVariable var = vars[i];
 			if (var != null) {
 				String name = var.getName();
-				if (isCaseInsensitive)
-					name = name.toUpperCase();
 
 				boolean noCheck = false;
 
@@ -108,10 +105,6 @@ public class EnvVarCollector {
 	public EnvVarDescriptor getVariable(String name) {
 		if (fMap == null)
 			return null;
-
-		if (!EnvironmentVariableManager.getDefault().isVariableCaseSensitive())
-			name = name.toUpperCase();
-
 		return fMap.get(name);
 	}
 

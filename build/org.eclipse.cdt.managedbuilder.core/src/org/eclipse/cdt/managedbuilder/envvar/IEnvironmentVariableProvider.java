@@ -102,12 +102,6 @@ public interface IEnvironmentVariableProvider {
 	public String getDefaultDelimiter();
 
 	/**
-	 * @return true if the OS supports case sensitive variables (Unix-like systems) or false
-	 * if it does not (Win32 systems)
-	 */
-	public boolean isVariableCaseSensitive();
-
-	/**
 	 * This method is defined to be used basically by the UI classes and should not be used by the
 	 * tool-integrator
 	 * @return the array of the provider-internal suppliers for the given level

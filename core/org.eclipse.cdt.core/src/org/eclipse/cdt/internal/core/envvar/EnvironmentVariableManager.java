@@ -365,11 +365,6 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 		return isWin32() ? DELIMITER_WIN32 : DELIMITER_UNIX;
 	}
 
-	@Override
-	public boolean isVariableCaseSensitive() {
-		return !isWin32();
-	}
-
 	public ICoreEnvironmentVariableSupplier[] getSuppliers(Object level) {
 		IEnvironmentContextInfo info = getContextInfo(level);
 		if (info != null)

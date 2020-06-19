@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -36,7 +37,6 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IProject;
@@ -147,8 +147,8 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 					IProgressMonitor monitor = new NullProgressMonitor();
 					IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 					IConfiguration config = info.getDefaultConfiguration();
-					IBuildEnvironmentVariable[] vars = ManagedBuildManager.getEnvironmentVariableProvider()
-							.getVariables(config, true, true);
+					IEnvironmentVariable[] vars = ManagedBuildManager.getEnvironmentVariableProvider()
+							.getVariables(config, true);
 					Properties env = new Properties();
 					if (vars != null)
 						for (int i = 0; i < vars.length; ++i)

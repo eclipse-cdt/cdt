@@ -180,11 +180,6 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 	}
 
 	@Override
-	public boolean isVariableCaseSensitive() {
-		return fMngr.isVariableCaseSensitive();
-	}
-
-	@Override
 	public IEnvironmentVariableSupplier[] getSuppliers(Object level) {
 		return null;
 	}

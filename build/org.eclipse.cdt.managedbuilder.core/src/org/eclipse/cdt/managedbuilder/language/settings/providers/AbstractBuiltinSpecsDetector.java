@@ -777,9 +777,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		Map<String, String> envMap = new HashMap<>();
 		for (IEnvironmentVariable var : getEnvironmentVariables()) {
 			String name = var.getName();
-			if (!envMngr.isVariableCaseSensitive()) {
-				name = name.toUpperCase();
-			}
 			envMap.put(name, var.getValue());
 		}
 		return envMap;
@@ -920,7 +917,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * Return the best extension to use for calculating spec file from a list of extensions.
 	 * @param extensions list of possible extensions to choose from
 	 * @return one of the extensions deemed the best one to use from the list
-	 * @since 8.9
+	 * @since 9.0
 	 */
 	protected Optional<String> selectBestSpecFileExtension(List<String> extensions) {
 		return extensions.stream().filter(s -> s != null && !s.isEmpty()).findFirst().map(ext -> {

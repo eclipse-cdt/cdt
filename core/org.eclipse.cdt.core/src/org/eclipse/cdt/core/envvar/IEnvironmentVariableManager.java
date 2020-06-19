@@ -101,11 +101,5 @@ public interface IEnvironmentVariableManager {
 	 */
 	public String getDefaultDelimiter();
 
-	/**
-	 * @return true if the OS supports case sensitive variables (Unix-like systems) or false
-	 * if it does not (Win32 systems)
-	 */
-	public boolean isVariableCaseSensitive();
-
 	public IContributedEnvironment getContributedEnvironment();
 }

@@ -19,7 +19,6 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * Supplies some default environment variables for the Autotools toolchain. For
@@ -40,10 +39,7 @@ public class AutotoolsEnvironmentVariableSupplier implements IConfigurationEnvir
 		}
 
 		private static boolean isVar(String name) {
-			// Windows has case insensitive env var names
-			return Platform.getOS().equals(Platform.OS_WIN32)
-					? name.equalsIgnoreCase(VerboseEnvironmentVariable.VERBOSE_VAR_NAME)
-					: name.equals(VerboseEnvironmentVariable.VERBOSE_VAR_NAME);
+			return name.equals(VerboseEnvironmentVariable.VERBOSE_VAR_NAME);
 		}
 
 		private static IBuildEnvironmentVariable create() {

@@ -101,7 +101,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	private String convertToId;
 	private FileContextBuildMacroValues fileContextBuildMacroValues;
 	private String builderVariablePattern;
-	private Boolean isVariableCaseSensitive;
 	private String[] reservedMacroNames;
 	private IReservedMacroNameSupplier reservedMacroNameSupplier;
 	private IConfigurationElement reservedMacroNameSupplierElement;
@@ -315,9 +314,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		builderVariablePattern = builder.builderVariablePattern;
 
-		if (builder.isVariableCaseSensitive != null)
-			isVariableCaseSensitive = builder.isVariableCaseSensitive;
-
 		if (builder.reservedMacroNames != null)
 			reservedMacroNames = builder.reservedMacroNames.clone();
 
@@ -472,11 +468,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		// get the 'variableFormat' attribute
 		builderVariablePattern = SafeStringInterner.safeIntern(element.getAttribute(VARIABLE_FORMAT));
-
-		// get the 'isVariableCaseSensitive' attribute
-		String isCS = element.getAttribute(IS_VARIABLE_CASE_SENSITIVE);
-		if (isCS != null)
-			isVariableCaseSensitive = Boolean.parseBoolean(isCS);
 
 		// get the reserved macro names
 		String reservedNames = element.getAttribute(RESERVED_MACRO_NAMES);
@@ -1482,16 +1473,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if (builderVariablePattern == null && superClass != null)
 			return getSuperClass().getBuilderVariablePattern();
 		return builderVariablePattern;
-	}
-
-	@Override
-	public boolean isVariableCaseSensitive() {
-		if (isVariableCaseSensitive == null) {
-			if (superClass != null)
-				return getSuperClass().isVariableCaseSensitive();
-			return true;
-		}
-		return isVariableCaseSensitive.booleanValue();
 	}
 
 	@Override

@@ -380,10 +380,12 @@ public class NewVarDialog extends Dialog {
 		}
 	}
 
+	//JABA This is for build variables only
+	//I fail to understand why it is here ad you have case sensitive vars
 	private boolean macroNamesEqual(String name1, String name2) {
 		name1 = name1.trim();
 		name2 = name2.trim();
-		return name1.equalsIgnoreCase(name2);
+		return name1.equals(name2);
 	}
 
 	/*

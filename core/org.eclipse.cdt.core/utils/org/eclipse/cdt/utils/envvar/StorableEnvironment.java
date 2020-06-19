@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
-import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.utils.envvar.StorableEnvironmentLoader.ISerializeInfo;
 
@@ -315,8 +314,6 @@ public class StorableEnvironment {
 	String getNameForMap(String name) {
 		if (name == null || (name = name.trim()).length() == 0)
 			return null;
-		if (!EnvironmentVariableManager.getDefault().isVariableCaseSensitive())
-			return name.toUpperCase();
 		return name;
 	}
 

@@ -63,9 +63,7 @@ public class CrossEnvironmentVariableSupplier implements IConfigurationEnvironme
 		}
 
 		public static boolean isVar(String name) {
-			// Windows has case insensitive env var names
-			return Platform.getOS().equals(Platform.OS_WIN32) ? name.equalsIgnoreCase(PathEnvironmentVariable.name)
-					: name.equals(PathEnvironmentVariable.name);
+			return name.equals(PathEnvironmentVariable.name);
 		}
 
 		@Override

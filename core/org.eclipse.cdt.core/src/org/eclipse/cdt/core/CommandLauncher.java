@@ -134,9 +134,6 @@ public class CommandLauncher implements ICommandLauncher {
 				if (pos < 0)
 					pos = envStr.length();
 				String key = envStr.substring(0, pos);
-				if (Platform.getOS().equals(Platform.OS_WIN32)) {
-					key = key.toUpperCase();
-				}
 				String value = envStr.substring(pos + 1);
 				fEnvironment.put(key, value);
 			}

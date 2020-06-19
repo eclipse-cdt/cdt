@@ -28,7 +28,8 @@ import org.eclipse.core.runtime.Platform;
  */
 public class EnvironmentReader {
 	private static Properties envVars;
-	private static List<String> toUppercaseEnvironmentVars = Arrays.asList("PATH"); //$NON-NLS-1$
+	@SuppressWarnings("nls")
+	private static List<String> toUppercaseEnvironmentVars = Arrays.asList("PATH", "CYGWIN_HOME", "LANG");
 
 	static {
 		boolean isWindows = Platform.OS_WIN32.equals(Platform.getOS());

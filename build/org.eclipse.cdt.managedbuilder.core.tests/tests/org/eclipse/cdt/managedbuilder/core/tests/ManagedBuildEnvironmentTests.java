@@ -14,11 +14,11 @@
 
 package org.eclipse.cdt.managedbuilder.core.tests;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListener;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.core.resources.IProject;
@@ -85,12 +85,12 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 		doInit();
 		IConfiguration cfg = mproj.getConfigurations()[0];
 		// CWD/PWD vars should NOT be overwritten anywhere
-		IBuildEnvironmentVariable a = envProvider.getVariable(NAME_CWD, cfg, true, false);
+		IEnvironmentVariable a = envProvider.getVariable(NAME_CWD, cfg, false);
 		assertNotNull(a);
 		if (VAL_CWDPWD.equals(a.getValue()))
 			fail("CWD should not be rewritten !"); //$NON-NLS-1$
 
-		a = envProvider.getVariable(NAME_PWD, cfg, true, false);
+		a = envProvider.getVariable(NAME_PWD, cfg, false);
 		assertNotNull(a);
 		if (VAL_CWDPWD.equals(a.getValue()))
 			fail("PWD should not be rewritten !"); //$NON-NLS-1$
@@ -128,28 +128,20 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 	public void testEnvGetParams() {
 		doInit();
 		IEnvironmentVariableProvider envProvider = ManagedBuildManager.getEnvironmentVariableProvider();
-		IBuildEnvironmentVariable x = null;
-		IBuildEnvironmentVariable y = null;
+
+		// if "path" and "PATH" exist they should be equal
+		IEnvironmentVariable x = envProvider.getVariable("PATH", mproj.getConfigurations()[0], false);
+		IEnvironmentVariable y = envProvider.getVariable("path", mproj.getConfigurations()[0], false);
+		assertNotNull(x);
+		if (y != null) {
+			assertFalse(x.getName().equals(y.getName()));
+		}
+
 		if (System.getProperty("os.name").toLowerCase().startsWith("windows")) { //$NON-NLS-1$ //$NON-NLS-2$
 			assertEquals(envProvider.getDefaultDelimiter(), DEL_WIN);
-			assertFalse(envProvider.isVariableCaseSensitive());
-			// these var instances are different although contents is equal.
-			x = envProvider.getVariable("PATH", mproj.getConfigurations()[0], true, false);
-			assertNotNull(x);
-			y = envProvider.getVariable("path", mproj.getConfigurations()[0], true, false);
-			assertNotNull(y);
-			assertEquals(x.getName(), y.getName());
-			assertEquals(x.getValue(), y.getValue());
 		} else {
 			assertEquals(envProvider.getDefaultDelimiter(), DEL_UNIX);
-			assertTrue(envProvider.isVariableCaseSensitive());
-			// "path" is different var (may absent);
-			x = envProvider.getVariable("PATH", mproj.getConfigurations()[0], true, false);
-			assertNotNull(x);
-			y = envProvider.getVariable("path", mproj.getConfigurations()[0], true, false);
-			if (y != null) {
-				assertFalse(x.getName().equals(y.getName()));
-			}
+
 		}
 	}
 
@@ -158,18 +150,17 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 	 */
 	public void testEnvProvider() {
 		doInit();
-		IBuildEnvironmentVariable a = envProvider.getVariable(TestMacro.PRJ_VAR, mproj.getConfigurations()[0], true,
-				false);
+		IEnvironmentVariable a = envProvider.getVariable(TestMacro.PRJ_VAR, mproj.getConfigurations()[0], false);
 		assertNotNull(a);
 		assertEquals(TestMacro.PRJ_VAR + mproj.getName(), a.getValue());
 
 		IConfiguration[] cfgs = mproj.getConfigurations();
-		a = envProvider.getVariable(TestMacro.CFG_VAR, cfgs[0], true, false);
+		a = envProvider.getVariable(TestMacro.CFG_VAR, cfgs[0], false);
 		assertNotNull(a);
 		assertEquals(TestMacro.CFG_VAR + cfgs[0].getName(), a.getValue());
 
 		// no provider for another configurations
-		a = envProvider.getVariable(TestMacro.CFG_VAR, cfgs[1], true, false);
+		a = envProvider.getVariable(TestMacro.CFG_VAR, cfgs[1], false);
 		assertNull(a);
 
 	}

@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -47,7 +48,6 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IBuildModelBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.ParallelBuilder;
@@ -978,8 +978,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			launcher.showCommand(true);
 
 			// Set the environmennt
-			IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider()
-					.getVariables(cfg, true, true);
+			IEnvironmentVariable[] variables = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,
+					true);
 			String[] envp = null;
 			ArrayList<String> envList = new ArrayList<>();
 			if (variables != null) {

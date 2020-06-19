@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
-import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 
 /**
  * This is an utility class that implements environment variable operations
@@ -225,7 +224,6 @@ public class EnvVarOperationProcessor {
 
 	/**
 	 * normalizes the variable name. That is: removes prepended and appended spaces
-	 * and converts the name to upper-case for Win32 systems
 	 * @return the normalized name or <code>null</code> in case the name is not valid
 	 */
 	static public String normalizeName(String name) {
@@ -233,8 +231,6 @@ public class EnvVarOperationProcessor {
 			return null;
 		if ("".equals(name = name.trim())) //$NON-NLS-1$
 			return null;
-		if (!EnvironmentVariableManager.getDefault().isVariableCaseSensitive())
-			name = name.toUpperCase();
 		return name;
 	}
 

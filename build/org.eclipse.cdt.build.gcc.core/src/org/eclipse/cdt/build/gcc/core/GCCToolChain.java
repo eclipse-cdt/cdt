@@ -122,7 +122,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		IEnvironmentVariable pathVar = null;
 		if (envVars != null) {
 			for (IEnvironmentVariable envVar : envVars) {
-				if (envVar.getName().equalsIgnoreCase("PATH")) { //$NON-NLS-1$
+				if (envVar.getName().equals("PATH")) { //$NON-NLS-1$
 					pathVar = envVar;
 				}
 			}

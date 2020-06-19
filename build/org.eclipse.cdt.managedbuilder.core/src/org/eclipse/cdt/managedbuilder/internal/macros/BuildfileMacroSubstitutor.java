@@ -53,7 +53,6 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 	private static final String PATTERN_MACRO_NAME = "="; //$NON-NLS-1$
 	private IConfiguration fConfiguration;
 	private IBuilder fBuilder;
-	private HashSet<String> fCaseInsensitiveReferencedNames;
 	private ICdtVariableManager fVarMngr;
 	private ICConfigurationDescription fCfgDes;
 
@@ -257,24 +256,14 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 		String macroName = macro.getName();
 		String ref = null;
 		IReservedMacroNameSupplier supplier = getReservedMacroNameSupplier();
-		//on win32 all environment variable names are converted to upper case
 		macroName = EnvVarOperationProcessor.normalizeName(macroName);
 		if (supplier == null || !supplier.isReservedName(macroName, fConfiguration)) {
 			String pattern = fBuilder.getBuilderVariablePattern();
 			if (pattern != null && pattern.indexOf(PATTERN_MACRO_NAME) != -1) {
-				if (fBuilder.isVariableCaseSensitive()
-						|| getCaseInsensitiveReferencedNames().add(macroName.toUpperCase())) {
-					ref = pattern.replaceAll(PATTERN_MACRO_NAME, macroName);
-				}
+				ref = pattern.replaceAll(PATTERN_MACRO_NAME, macroName);
 			}
 		}
 		return ref;
-	}
-
-	protected Set<String> getCaseInsensitiveReferencedNames() {
-		if (fCaseInsensitiveReferencedNames == null)
-			fCaseInsensitiveReferencedNames = new HashSet<>();
-		return fCaseInsensitiveReferencedNames;
 	}
 
 	/* (non-Javadoc)

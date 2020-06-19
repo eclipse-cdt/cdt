@@ -85,7 +85,8 @@ public class Env {
 	//This is supposed to be a straight copy (no modifications)
 	//except for making getEnvVars private to avoid errors/warnings
 	private static Properties envVars;
-	private static List<String> toUppercaseEnvironmentVars = Arrays.asList("PATH"); //$NON-NLS-1$
+	@SuppressWarnings("nls")
+	private static List<String> toUppercaseEnvironmentVars = Arrays.asList("PATH", "CYGWIN_HOME", "LANG");
 
 	static {
 		boolean isWindows = Platform.OS_WIN32.equals(Platform.getOS());

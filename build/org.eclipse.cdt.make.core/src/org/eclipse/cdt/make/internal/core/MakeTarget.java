@@ -33,11 +33,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.osgi.service.environment.Constants;
 
 public class MakeTarget extends PlatformObject implements IMakeTarget {
 	private final static int USE_PROJECT_ENV_SETTING = 3;
@@ -245,14 +243,8 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		}
 
 		HashMap<String, String> envMap = new HashMap<>(env.entrySet().size());
-		boolean win32 = Platform.getOS().equals(Constants.OS_WIN32);
 		for (Entry<String, String> entry : env.entrySet()) {
 			String key = entry.getKey();
-			if (win32) {
-				// Win32 vars are case insensitive. Uppercase everything so
-				// that (for example) "pAtH" will correctly replace "PATH"
-				key = key.toUpperCase();
-			}
 			String value = entry.getValue();
 			// translate any string substitution variables
 			String translated = value;

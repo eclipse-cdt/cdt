@@ -46,7 +46,6 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	public static final String CONVERT_TO_ID = "convertToId"; //$NON-NLS-1$
 
 	public static final String VARIABLE_FORMAT = "variableFormat"; //$NON-NLS-1$
-	public static final String IS_VARIABLE_CASE_SENSITIVE = "isVariableCaseSensitive"; //$NON-NLS-1$
 	public static final String RESERVED_MACRO_NAMES = "reservedMacroNames"; //$NON-NLS-1$
 	public static final String RESERVED_MACRO_NAME_SUPPLIER = "reservedMacroNameSupplier"; //$NON-NLS-1$
 	public static final String IS_SYSTEM = "isSystem"; //$NON-NLS-1$
@@ -272,13 +271,6 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 * @return String
 	 */
 	public String getBuilderVariablePattern();
-
-	/**
-	 * Returns whether the builder supports case sensitive variables or not
-	 *
-	 * @return boolean
-	 */
-	public boolean isVariableCaseSensitive();
 
 	/**
 	 * Returns an array of Strings representing the patterns of the builder/buildfile-generator

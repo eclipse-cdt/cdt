@@ -19,8 +19,8 @@ import junit.framework.TestSuite;
 public class AutomatedIntegrationSuite extends TestSuite {
 
 	public static Test suite() throws Exception {
-		return new TestSuite(ASTUtilTests.class, QMakeTests.class, QGadgetTests.class, QObjectTests.class,
-				QtContentAssistantTests.class, QtIndexTests.class, QtRegressionTests.class, QmlRegistrationTests.class,
+		return new TestSuite(ASTUtilTest.class, QMakeTest.class, QGadgetTest.class, QObjectTest.class,
+				QtContentAssistantTest.class, QtIndexTest.class, QtRegressionTest.class, QmlRegistrationTest.class,
 				QtProjectFileModifierTest.class, QtProjectFileParserTest.class);
 	}
 }

@@ -45,7 +45,7 @@ public class ManagedBuildTCSupportedTest extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.addResourceCreated(ManagedBuildMacrosTests.proj);
+		ResourceHelper.addResourceCreated(ManagedBuildMacrosTest.proj);
 		ResourceHelper.cleanUp(getName());
 		super.tearDown();
 	}
@@ -54,9 +54,9 @@ public class ManagedBuildTCSupportedTest extends TestCase {
 	 * testIsSupported() -
 	 */
 	public void testIsSupported() {
-		ManagedBuildMacrosTests.createManagedProject("Merde"); //$NON-NLS-1$
+		ManagedBuildMacrosTest.createManagedProject("Merde"); //$NON-NLS-1$
 
-		IManagedProject mproj = ManagedBuildMacrosTests.mproj;
+		IManagedProject mproj = ManagedBuildMacrosTest.mproj;
 		assertNotNull(mproj);
 		IProjectType pt = mproj.getProjectType();
 		assertNotNull(pt);

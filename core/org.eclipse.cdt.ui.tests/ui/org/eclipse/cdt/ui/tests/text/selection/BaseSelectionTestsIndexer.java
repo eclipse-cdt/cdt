@@ -54,7 +54,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  *
  * @author dsteffle
  */
-public class BaseSelectionTestsIndexer extends BaseSelectionTests {
+public class BaseSelectionTestsIndexer extends BaseSelectionTest {
 	protected ICProject fCProject;
 	static FileManager fileManager = new FileManager();
 	IProgressMonitor monitor = new NullProgressMonitor();

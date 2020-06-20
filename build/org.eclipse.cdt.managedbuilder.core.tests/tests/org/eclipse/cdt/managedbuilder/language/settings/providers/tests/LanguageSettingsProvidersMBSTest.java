@@ -19,7 +19,7 @@ import java.util.List;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsPersistenceProjectTests;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsPersistenceProjectTest;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -41,8 +41,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	private static final String USER_LANGUAGE_SETTINGS_PROVIDER_ID = ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID;
 	private static final String GCC_SPECS_DETECTOR_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector";
 	private static final String PROJECT_TYPE_EXECUTABLE_GNU = "cdt.managedbuild.target.gnu.exe";
-	private static final String LANGUAGE_SETTINGS_PROJECT_XML = LanguageSettingsPersistenceProjectTests.LANGUAGE_SETTINGS_PROJECT_XML;
-	private static final String LANGUAGE_SETTINGS_WORKSPACE_XML = LanguageSettingsPersistenceProjectTests.LANGUAGE_SETTINGS_WORKSPACE_XML;
+	private static final String LANGUAGE_SETTINGS_PROJECT_XML = LanguageSettingsPersistenceProjectTest.LANGUAGE_SETTINGS_PROJECT_XML;
+	private static final String LANGUAGE_SETTINGS_WORKSPACE_XML = LanguageSettingsPersistenceProjectTest.LANGUAGE_SETTINGS_WORKSPACE_XML;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -148,7 +148,7 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 		assertEquals(true, xmlStorageFile.getParent().exists()); // .settings folder
 
 		// settings file in workspace area
-		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests
+		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTest
 				.getStoreLocationInWorkspaceArea(project.getName() + '.' + LANGUAGE_SETTINGS_WORKSPACE_XML);
 		java.io.File xmlStorageFilePrjWsp = new java.io.File(xmlPrjWspStorageFileLocation);
 		assertEquals(true, xmlStorageFilePrjWsp.exists());
@@ -181,7 +181,7 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 		assertEquals(true, xmlStorageFile.exists());
 
 		// no settings file in workspace area
-		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests
+		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTest
 				.getStoreLocationInWorkspaceArea(project.getName() + '.' + LANGUAGE_SETTINGS_WORKSPACE_XML);
 		java.io.File xmlStorageFilePrjWsp = new java.io.File(xmlPrjWspStorageFileLocation);
 		assertEquals(false, xmlStorageFilePrjWsp.exists());

@@ -24,9 +24,9 @@ public class ScannerDiscoveryTests extends TestSuite {
 
 	public ScannerDiscoveryTests() {
 		super(ScannerDiscoveryTests.class.getName());
-		addTestSuite(ScannerConfigDiscoveryTests.class);
-		addTest(GCCScannerInfoConsoleParserTests.suite());
-		addTest(GCCPerFileBOPConsoleParserTests.suite());
-		addTestSuite(ScannerConfigProfileTests.class);
+		addTestSuite(ScannerConfigDiscoveryTest.class);
+		addTest(GCCScannerInfoConsoleParserTest.suite());
+		addTest(GCCPerFileBOPConsoleParserTest.suite());
+		addTestSuite(ScannerConfigProfileTest.class);
 	}
 }

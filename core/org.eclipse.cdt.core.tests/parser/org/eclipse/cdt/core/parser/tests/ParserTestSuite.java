@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
-import org.eclipse.cdt.core.model.tests.CModelElementsTests;
-import org.eclipse.cdt.core.model.tests.StructuralCModelElementsTests;
+import org.eclipse.cdt.core.model.tests.CModelElementsTest;
+import org.eclipse.cdt.core.model.tests.StructuralCModelElementsTest;
 import org.eclipse.cdt.core.parser.tests.ast2.DOMGCCParserExtensionTestSuite;
 import org.eclipse.cdt.core.parser.tests.ast2.DOMParserTestSuite;
-import org.eclipse.cdt.core.parser.tests.ast2.SemanticsTests;
+import org.eclipse.cdt.core.parser.tests.ast2.SemanticsTest;
 import org.eclipse.cdt.core.parser.tests.scanner.ScannerTestSuite;
 
 import junit.framework.Test;
@@ -35,11 +35,11 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite(CharArrayUtilsTest.class);
 		suite.addTestSuite(SegmentMatcherTest.class);
 		suite.addTestSuite(ContentAssistMatcherFactoryTest.class);
-		suite.addTestSuite(CModelElementsTests.class);
-		suite.addTestSuite(StructuralCModelElementsTests.class);
+		suite.addTestSuite(CModelElementsTest.class);
+		suite.addTestSuite(StructuralCModelElementsTest.class);
 		suite.addTestSuite(CharArrayObjectMapTest.class);
 		suite.addTestSuite(ObjectMapTest.class);
-		suite.addTestSuite(SemanticsTests.class);
+		suite.addTestSuite(SemanticsTest.class);
 		suite.addTest(ScannerTestSuite.suite());
 		suite.addTest(DOMParserTestSuite.suite());
 		suite.addTest(DOMGCCParserExtensionTestSuite.suite());

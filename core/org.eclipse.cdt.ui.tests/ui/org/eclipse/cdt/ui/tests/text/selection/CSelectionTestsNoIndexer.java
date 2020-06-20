@@ -48,7 +48,7 @@ import junit.framework.TestSuite;
  *
  * @author dsteffle
  */
-public class CSelectionTestsNoIndexer extends BaseSelectionTests {
+public class CSelectionTestsNoIndexer extends BaseSelectionTest {
 
 	private static final String INDEX_FILE_ID = "2324852323"; //$NON-NLS-1$
 	static NullProgressMonitor monitor;

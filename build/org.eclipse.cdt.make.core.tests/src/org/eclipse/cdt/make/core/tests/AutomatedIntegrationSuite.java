@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core.tests;
 
-import org.eclipse.cdt.make.builder.tests.StandardBuildTests;
+import org.eclipse.cdt.make.builder.tests.StandardBuildTest;
 import org.eclipse.cdt.make.scannerdiscovery.ScannerDiscoveryTests;
 
 import junit.framework.Test;
@@ -41,9 +41,9 @@ public class AutomatedIntegrationSuite extends TestSuite {
 	public static Test suite() {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
 
-		suite.addTest(StandardBuildTests.suite());
+		suite.addTest(StandardBuildTest.suite());
 		suite.addTest(ScannerDiscoveryTests.suite());
-		suite.addTest(MakefileReaderProviderTests.suite());
+		suite.addTest(MakefileReaderProviderTest.suite());
 		return suite;
 	}
 }

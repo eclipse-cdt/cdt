@@ -14,6 +14,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ MSVCBuildCommandParserTests.class })
+@Suite.SuiteClasses({ MSVCBuildCommandParserTest.class })
 public class AutomatedIntegrationSuite {
 }

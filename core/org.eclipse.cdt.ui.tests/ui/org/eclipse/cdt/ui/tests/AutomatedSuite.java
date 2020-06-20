@@ -34,7 +34,7 @@ import org.junit.runners.Suite;
 		org.eclipse.cdt.ui.tests.text.contentassist2.ContentAssist2TestSuite.class,
 		org.eclipse.cdt.ui.tests.text.selection.SelectionTestSuite.class,
 		org.eclipse.cdt.ui.tests.quickfix.AssistQuickFixTest.class,
-		org.eclipse.cdt.ui.tests.buildconsole.BuildConsoleTests.class,
+		org.eclipse.cdt.ui.tests.buildconsole.BuildConsoleTest.class,
 		org.eclipse.cdt.ui.tests.search.SearchTestSuite.class,
 		org.eclipse.cdt.ui.tests.refactoring.RefactoringTestSuite.class, org.eclipse.cdt.ui.tests.chelp.CHelpTest.class,
 		org.eclipse.cdt.ui.tests.wizards.classwizard.ClassWizardTestSuite.class,

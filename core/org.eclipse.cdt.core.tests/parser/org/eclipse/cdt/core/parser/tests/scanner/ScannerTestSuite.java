@@ -20,16 +20,16 @@ public class ScannerTestSuite extends TestSuite {
 
 	public static Test suite() {
 		TestSuite suite = new ScannerTestSuite();
-		suite.addTest(LexerTests.suite());
-		suite.addTest(LocationMapTests.suite());
-		suite.addTest(PortedScannerTests.suite());
-		suite.addTest(PreprocessorTests.suite());
-		suite.addTest(InclusionTests.suite());
-		suite.addTest(PreprocessorBugsTests.suite());
-		suite.addTest(ExpansionExplorerTests.suite());
-		suite.addTest(InactiveCodeTests.suite());
-		suite.addTest(StreamHasherTests.suite());
-		suite.addTest(FileCharArrayTests.suite());
+		suite.addTest(LexerTest.suite());
+		suite.addTest(LocationMapTest.suite());
+		suite.addTest(PortedScannerTest.suite());
+		suite.addTest(PreprocessorTest.suite());
+		suite.addTest(InclusionTest.suite());
+		suite.addTest(PreprocessorBugsTest.suite());
+		suite.addTest(ExpansionExplorerTest.suite());
+		suite.addTest(InactiveCodeTest.suite());
+		suite.addTest(StreamHasherTest.suite());
+		suite.addTest(FileCharArrayTest.suite());
 		return suite;
 	}
 }

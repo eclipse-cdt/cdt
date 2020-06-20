@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
-import org.eclipse.cdt.core.parser.tests.ast2.cxx14.GenericLambdaIndexTests;
-import org.eclipse.cdt.core.parser.tests.ast2.cxx14.ReturnTypeDeductionIndexTests;
-import org.eclipse.cdt.core.parser.tests.ast2.cxx17.StructuredBindingIndexTests;
-import org.eclipse.cdt.core.parser.tests.ast2.cxx17.TemplateAutoIndexTests;
+import org.eclipse.cdt.core.parser.tests.ast2.cxx14.GenericLambdaIndexTest;
+import org.eclipse.cdt.core.parser.tests.ast2.cxx14.ReturnTypeDeductionIndexTest;
+import org.eclipse.cdt.core.parser.tests.ast2.cxx17.StructuredBindingIndexTest;
+import org.eclipse.cdt.core.parser.tests.ast2.cxx17.TemplateAutoIndexTest;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -29,27 +29,27 @@ public class IndexTests extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new IndexTests();
 
-		suite.addTest(IndexCompositeTests.suite());
+		suite.addTest(IndexCompositeTest.suite());
 		suite.addTest(IndexListenerTest.suite());
 		suite.addTest(IndexLocationTest.suite());
 		suite.addTest(IndexSearchTest.suite());
 		suite.addTest(IndexIncludeTest.suite());
-		suite.addTest(IndexUpdateTests.suite());
+		suite.addTest(IndexUpdateTest.suite());
 		suite.addTest(IndexUpdateMultiFileTest.suite());
-		suite.addTest(IndexBugsTests.suite());
-		suite.addTest(IndexNamesTests.suite());
+		suite.addTest(IndexBugsTest.suite());
+		suite.addTest(IndexNamesTest.suite());
 		suite.addTest(TeamSharedIndexTest.suite());
 		suite.addTest(IndexProviderManagerTest.suite());
 		suite.addTest(IndexMultiVariantHeaderTest.suite());
 		suite.addTest(IndexMultiFileTest.suite());
 
 		// C++14 index test suites
-		suite.addTestSuite(ReturnTypeDeductionIndexTests.class);
-		suite.addTestSuite(GenericLambdaIndexTests.class);
+		suite.addTestSuite(ReturnTypeDeductionIndexTest.class);
+		suite.addTestSuite(GenericLambdaIndexTest.class);
 
 		// C++17 index test suites
-		suite.addTestSuite(TemplateAutoIndexTests.class);
-		suite.addTestSuite(StructuredBindingIndexTests.class);
+		suite.addTestSuite(TemplateAutoIndexTest.class);
+		suite.addTestSuite(StructuredBindingIndexTest.class);
 
 		IndexCPPBindingResolutionBugs.addTests(suite);
 		IndexCPPBindingResolutionTest.addTests(suite);

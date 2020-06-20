@@ -15,36 +15,36 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.tests.suite;
 
-import org.eclipse.cdt.build.core.scannerconfig.tests.CfgScannerConfigProfileManagerTests;
+import org.eclipse.cdt.build.core.scannerconfig.tests.CfgScannerConfigProfileManagerTest;
 import org.eclipse.cdt.build.core.scannerconfig.tests.GCCSpecsConsoleParserTest;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.managedbuilder.core.regressions.RegressionTests;
-import org.eclipse.cdt.managedbuilder.core.tests.BuildDescriptionModelTests;
-import org.eclipse.cdt.managedbuilder.core.tests.BuildSystem40Tests;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
+import org.eclipse.cdt.managedbuilder.core.regressions.RegressionTest;
+import org.eclipse.cdt.managedbuilder.core.tests.BuildDescriptionModelTest;
+import org.eclipse.cdt.managedbuilder.core.tests.BuildSystem40Test;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests_SharedToolOptions;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyCalculatorTests;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyLibsTests;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildEnvironmentTests;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildMacrosTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyCalculatorTest;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyLibsTest;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildEnvironmentTest;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildMacrosTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildTCSupportedTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedCommandLineGeneratorTest;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject21MakefileTests;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject30MakefileTests;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedProjectUpdateTests;
-import org.eclipse.cdt.managedbuilder.core.tests.MultiVersionSupportTests;
-import org.eclipse.cdt.managedbuilder.core.tests.OptionCategoryEnablementTests;
-import org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject21MakefileTest;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject30MakefileTest;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedProjectUpdateTest;
+import org.eclipse.cdt.managedbuilder.core.tests.MultiVersionSupportTest;
+import org.eclipse.cdt.managedbuilder.core.tests.OptionCategoryEnablementTest;
+import org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTest;
 import org.eclipse.cdt.managedbuilder.core.tests.PathConverterTest;
-import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTest;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.tests.AllLanguageSettingsProvidersMBSTests;
 import org.eclipse.cdt.managedbuilder.templateengine.tests.AllTemplateEngineTests;
-import org.eclipse.cdt.projectmodel.tests.BackwardCompatiblityTests;
-import org.eclipse.cdt.projectmodel.tests.CProjectDescriptionSerializationTests;
-import org.eclipse.cdt.projectmodel.tests.OptionStringListValueTests;
-import org.eclipse.cdt.projectmodel.tests.ProjectModelTests;
+import org.eclipse.cdt.projectmodel.tests.BackwardCompatiblityTest;
+import org.eclipse.cdt.projectmodel.tests.CProjectDescriptionSerializationTest;
+import org.eclipse.cdt.projectmodel.tests.OptionStringListValueTest;
+import org.eclipse.cdt.projectmodel.tests.ProjectModelTest;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -67,44 +67,44 @@ public class AutomatedIntegrationSuite {
 		suite.addTestSuite(Preconditions.class);
 
 		// build.core.scannerconfig.tests
-		suite.addTest(CfgScannerConfigProfileManagerTests.suite());
+		suite.addTest(CfgScannerConfigProfileManagerTest.suite());
 		suite.addTestSuite(GCCSpecsConsoleParserTest.class);
 
 		// language settings providers tests
 		suite.addTest(AllLanguageSettingsProvidersMBSTests.suite());
 
 		// managedbuilder.core.tests
-		suite.addTest(ManagedBuildDependencyLibsTests.suite());
+		suite.addTest(ManagedBuildDependencyLibsTest.suite());
 		suite.addTest(ManagedBuildCoreTests20.suite());
-		suite.addTest(ManagedBuildCoreTests.suite());
-		suite.addTest(ManagedProjectUpdateTests.suite());
+		suite.addTest(ManagedBuildCoreTest.suite());
+		suite.addTest(ManagedProjectUpdateTest.suite());
 		suite.addTest(ManagedCommandLineGeneratorTest.suite());
-		suite.addTest(ResourceBuildCoreTests.suite());
-		suite.addTest(ManagedProject21MakefileTests.suite());
-		suite.addTest(ManagedProject30MakefileTests.suite());
-		suite.addTest(BuildSystem40Tests.suite());
+		suite.addTest(ResourceBuildCoreTest.suite());
+		suite.addTest(ManagedProject21MakefileTest.suite());
+		suite.addTest(ManagedProject30MakefileTest.suite());
+		suite.addTest(BuildSystem40Test.suite());
 		suite.addTest(ManagedBuildCoreTests_SharedToolOptions.suite());
-		suite.addTest(ManagedBuildEnvironmentTests.suite());
-		suite.addTest(ManagedBuildMacrosTests.suite());
+		suite.addTest(ManagedBuildEnvironmentTest.suite());
+		suite.addTest(ManagedBuildMacrosTest.suite());
 		suite.addTest(ManagedBuildTCSupportedTest.suite());
-		suite.addTest(MultiVersionSupportTests.suite());
-		suite.addTest(OptionEnablementTests.suite());
-		suite.addTest(OptionCategoryEnablementTests.suite());
-		suite.addTest(ManagedBuildDependencyCalculatorTests.suite());
-		suite.addTest(BuildDescriptionModelTests.suite());
+		suite.addTest(MultiVersionSupportTest.suite());
+		suite.addTest(OptionEnablementTest.suite());
+		suite.addTest(OptionCategoryEnablementTest.suite());
+		suite.addTest(ManagedBuildDependencyCalculatorTest.suite());
+		suite.addTest(BuildDescriptionModelTest.suite());
 		suite.addTest(PathConverterTest.suite());
 
 		// managedbuilder.templateengine.tests
 		suite.addTest(AllTemplateEngineTests.suite());
 
 		// projectmodel.tests
-		suite.addTest(BackwardCompatiblityTests.suite());
-		suite.addTest(CProjectDescriptionSerializationTests.suite());
-		suite.addTest(OptionStringListValueTests.suite());
-		suite.addTest(ProjectModelTests.suite());
+		suite.addTest(BackwardCompatiblityTest.suite());
+		suite.addTest(CProjectDescriptionSerializationTest.suite());
+		suite.addTest(OptionStringListValueTest.suite());
+		suite.addTest(ProjectModelTest.suite());
 
 		// regression tests
-		suite.addTest(RegressionTests.suite());
+		suite.addTest(RegressionTest.suite());
 
 		//$JUnit-END$
 		return suite;

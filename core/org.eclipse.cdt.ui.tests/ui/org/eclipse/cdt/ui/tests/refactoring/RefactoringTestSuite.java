@@ -25,7 +25,7 @@ import org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 import org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.includes.IncludesTestSuite;
 import org.eclipse.cdt.ui.tests.refactoring.overridemethods.OverrideMethodsRefactoringTest;
-import org.eclipse.cdt.ui.tests.refactoring.rename.RenameRegressionTests;
+import org.eclipse.cdt.ui.tests.refactoring.rename.RenameRegressionTest;
 import org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.utils.UtilTestSuite;
 import org.junit.runner.RunWith;
@@ -35,7 +35,7 @@ import org.junit.runners.Suite;
  * @author Emanuel Graf
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ UtilTestSuite.class, RenameRegressionTests.class, ExtractFunctionRefactoringTest.class,
+@Suite.SuiteClasses({ UtilTestSuite.class, RenameRegressionTest.class, ExtractFunctionRefactoringTest.class,
 		ExtractConstantRefactoringTest.class, HideMethodRefactoringTest.class, GenerateGettersAndSettersTest.class,
 		ImplementMethodRefactoringTest.class, ExtractLocalVariableRefactoringTest.class, ToggleRefactoringTest.class,
 		IncludesTestSuite.class, OverrideMethodsRefactoringTest.class

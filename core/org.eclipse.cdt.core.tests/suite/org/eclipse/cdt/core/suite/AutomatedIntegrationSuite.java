@@ -16,25 +16,25 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.suite;
 
-import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorOldTests;
-import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
-import org.eclipse.cdt.core.envvar.IEnvironmentVariableManagerTests;
-import org.eclipse.cdt.core.internal.efsextension.tests.EFSExtensionTests;
+import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorOldTest;
+import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTest;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariableManagerTest;
+import org.eclipse.cdt.core.internal.efsextension.tests.EFSExtensionTest;
 import org.eclipse.cdt.core.internal.errorparsers.tests.ErrorParserTests;
 import org.eclipse.cdt.core.internal.tests.BaseOptionTest;
 import org.eclipse.cdt.core.internal.tests.OsgiPreferenceStorageTest;
-import org.eclipse.cdt.core.internal.tests.PositionTrackerTests;
-import org.eclipse.cdt.core.internal.tests.ResourceLookupTests;
+import org.eclipse.cdt.core.internal.tests.PositionTrackerTest;
+import org.eclipse.cdt.core.internal.tests.ResourceLookupTest;
 import org.eclipse.cdt.core.internal.tests.StringBuilderTest;
 import org.eclipse.cdt.core.language.AllLanguageTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
-import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
-import org.eclipse.cdt.core.model.tests.WorkingCopyTests;
+import org.eclipse.cdt.core.model.tests.ElementDeltaTest;
+import org.eclipse.cdt.core.model.tests.WorkingCopyTest;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
-import org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr.AllConstexprEvalTests;
+import org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr.AllConstexprEvalTest;
 import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTests;
 import org.eclipse.cdt.core.preferences.tests.TestScopeOfBuildConfigResourceChangesPreference;
-import org.eclipse.cdt.core.resources.tests.RefreshScopeTests;
+import org.eclipse.cdt.core.resources.tests.RefreshScopeTest;
 import org.eclipse.cdt.internal.index.tests.IndexTests;
 import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
 import org.eclipse.cdt.utils.ByteUtilsTest;
@@ -77,20 +77,20 @@ public class AutomatedIntegrationSuite extends TestSuite {
 
 		// Has intermittent failures
 		if (System.getProperty("cdt.skip.known.test.failures") == null) {
-			suite.addTest(CDescriptorTests.suite());
+			suite.addTest(CDescriptorTest.suite());
 		}
-		suite.addTest(AllConstexprEvalTests.suite());
+		suite.addTest(AllConstexprEvalTest.suite());
 		suite.addTest(ParserTestSuite.suite());
-		suite.addTest(CDescriptorOldTests.suite());
-		suite.addTest(IEnvironmentVariableManagerTests.suite());
+		suite.addTest(CDescriptorOldTest.suite());
+		suite.addTest(IEnvironmentVariableManagerTest.suite());
 		suite.addTest(ErrorParserTests.suite());
 		suite.addTest(AllCoreTests.suite());
-		suite.addTest(ElementDeltaTests.suite());
-		suite.addTest(WorkingCopyTests.suite());
+		suite.addTest(ElementDeltaTest.suite());
+		suite.addTest(WorkingCopyTest.suite());
 		suite.addTest(new JUnit4TestAdapter(BaseOptionTest.class));
 		suite.addTest(new JUnit4TestAdapter(OsgiPreferenceStorageTest.class));
-		suite.addTest(PositionTrackerTests.suite());
-		suite.addTest(ResourceLookupTests.suite());
+		suite.addTest(PositionTrackerTest.suite());
+		suite.addTest(ResourceLookupTest.suite());
 		suite.addTest(StringBuilderTest.suite());
 		suite.addTest(AllLanguageTests.suite());
 		suite.addTest(RewriteTests.suite());
@@ -99,7 +99,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(CommandLineUtilTest.suite());
 		suite.addTest(WeakHashSetTest.suite());
 		suite.addTest(FindProgramLocationTest.suite());
-		suite.addTest(EFSExtensionTests.suite());
+		suite.addTest(EFSExtensionTest.suite());
 		suite.addTest(ByteUtilsTest.suite());
 		suite.addTest(UNCPathConverterTest.suite());
 		suite.addTest(TestScopeOfBuildConfigResourceChangesPreference.suite());
@@ -110,7 +110,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(PDOMTests.suite());
 		suite.addTest(IndexTests.suite());
 
-		suite.addTest(RefreshScopeTests.suite());
+		suite.addTest(RefreshScopeTest.suite());
 
 		return suite;
 	}

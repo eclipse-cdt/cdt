@@ -22,7 +22,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 
 		// selection tests
-		ResolveBindingTests.class, CPPSelectionTestsNoIndexer.class, CSelectionTestsNoIndexer.class,
+		ResolveBindingTest.class, CPPSelectionTestsNoIndexer.class, CSelectionTestsNoIndexer.class,
 		CPPSelectionTestsIndexer.class, CSelectionTestsIndexer.class,
 
 })

@@ -58,7 +58,7 @@ import junit.framework.TestFailure;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
-public class BaseTestCase extends TestCase {
+public abstract class BaseTestCase extends TestCase {
 	private static final String DEFAULT_INDEXER_TIMEOUT_SEC = "10";
 	private static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
 	/**

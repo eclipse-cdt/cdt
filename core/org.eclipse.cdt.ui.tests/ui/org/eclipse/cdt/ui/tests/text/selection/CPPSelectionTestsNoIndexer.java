@@ -62,7 +62,7 @@ import junit.framework.TestSuite;
  *
  * @author dsteffle
  */
-public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
+public class CPPSelectionTestsNoIndexer extends BaseSelectionTest {
 	private static final String INDEX_FILE_ID = "2946365241"; //$NON-NLS-1$
 	static NullProgressMonitor monitor;
 	static IWorkspace workspace;

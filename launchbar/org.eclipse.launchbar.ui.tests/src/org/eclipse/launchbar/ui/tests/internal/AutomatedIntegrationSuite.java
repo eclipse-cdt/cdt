@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ CreateLaunchConfigTests.class })
+@Suite.SuiteClasses({ CreateLaunchConfigTest.class })
 public class AutomatedIntegrationSuite {
 
 }

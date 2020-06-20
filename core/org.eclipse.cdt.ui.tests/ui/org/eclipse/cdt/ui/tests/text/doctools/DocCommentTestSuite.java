@@ -27,7 +27,7 @@ public class DocCommentTestSuite extends TestSuite {
 	public DocCommentTestSuite() {
 		super(DocCommentTestSuite.class.getName());
 
-		addTest(CommentOwnerManagerTests.suite());
+		addTest(CommentOwnerManagerTest.suite());
 		addTest(DocCommentHighlightingTest.suite());
 		addTest(DoxygenCCommentAutoEditStrategyTest.suite());
 		addTest(DoxygenCCommentSingleAutoEditStrategyTest.suite());

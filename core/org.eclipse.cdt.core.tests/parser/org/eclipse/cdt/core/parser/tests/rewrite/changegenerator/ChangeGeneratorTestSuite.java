@@ -25,10 +25,10 @@ public class ChangeGeneratorTestSuite {
 	public static Test suite() throws Exception {
 		TestSuite suite = new TestSuite(ChangeGeneratorTestSuite.class.getName());
 
-		suite.addTest(AppendTests.suite());
-		suite.addTest(InsertBeforeTests.suite());
-		suite.addTest(RemoveTests.suite());
-		suite.addTest(ReplaceTests.suite());
+		suite.addTest(AppendTest.suite());
+		suite.addTest(InsertBeforeTest.suite());
+		suite.addTest(RemoveTest.suite());
+		suite.addTest(ReplaceTest.suite());
 
 		return suite;
 	}

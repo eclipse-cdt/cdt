@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.Plugin;
  * TODO: add description
  */
 @SuppressWarnings("nls")
-public class CodanTestCase extends BaseTestCase {
+public abstract class CodanTestCase extends BaseTestCase {
 	ArrayList<File> tempFiles = new ArrayList<>();
 	protected File tmpDir;
 	protected ICProject cproject;

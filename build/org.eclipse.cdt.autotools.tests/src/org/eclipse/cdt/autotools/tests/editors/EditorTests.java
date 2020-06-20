@@ -17,6 +17,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ AutomakeColourizationTests.class, AutomakeTextHoverTest.class, AutomakeEditorTests.class })
+@Suite.SuiteClasses({ AutomakeColourizationTest.class, AutomakeTextHoverTest.class, AutomakeEditorTest.class })
 public class EditorTests {
 }

@@ -24,7 +24,7 @@ public class AllLanguageTests extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new AllLanguageTests();
 
-		suite.addTest(LanguageInheritanceTests.suite());
+		suite.addTest(LanguageInheritanceTest.suite());
 
 		return suite;
 	}

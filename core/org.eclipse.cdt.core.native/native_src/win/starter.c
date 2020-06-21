@@ -24,6 +24,7 @@
 #include <tchar.h>
 #include <stdio.h>
 #include <psapi.h>
+#include <stdbool.h>
 
 //#define DEBUG_MONITOR 
 #define MAX_CMD_LINE_LENGTH (2049)
@@ -99,7 +100,7 @@ bool isCygwin(HANDLE process) {
 
 bool runCygwinCommand(wchar_t * command) {
 	wchar_t cygcmd[1024];
-	swprintf(cygcmd, L"%s\\%s", cygwinBin, command);
+	swprintf(cygcmd, sizeof(cygcmd)/sizeof(cygcmd[0]), L"%s\\%s", cygwinBin, command);
 	
 	STARTUPINFO si;
 	ZeroMemory(&si, sizeof(si));
@@ -210,9 +211,9 @@ int main() {
 	wchar_t outPipeName[PIPE_NAME_LENGTH];
 	wchar_t errPipeName[PIPE_NAME_LENGTH];
 
-	swprintf(inPipeName, L"\\\\.\\pipe\\stdin%08i%010i", parentPid, nCounter);
-	swprintf(outPipeName, L"\\\\.\\pipe\\stdout%08i%010i", parentPid, nCounter);
-	swprintf(errPipeName, L"\\\\.\\pipe\\stderr%08i%010i", parentPid, nCounter);
+	swprintf(inPipeName,  sizeof(inPipeName)/sizeof(inPipeName[0]),   L"\\\\.\\pipe\\stdin%08i%010i", parentPid, nCounter);
+	swprintf(outPipeName, sizeof(outPipeName)/sizeof(outPipeName[0]), L"\\\\.\\pipe\\stdout%08i%010i", parentPid, nCounter);
+	swprintf(errPipeName, sizeof(errPipeName)/sizeof(errPipeName[0]), L"\\\\.\\pipe\\stderr%08i%010i", parentPid, nCounter);
 #ifdef DEBUG_MONITOR
 	swprintf(buffer, _T("Pipes: %s, %s, %s\n"), inPipeName, outPipeName, errPipeName);
 	OutputDebugStringW(buffer);
@@ -230,7 +231,7 @@ int main() {
 			(INVALID_HANDLE_VALUE == (stdHandles[2] = CreateFileW(errPipeName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, &sa))))
 	{
 #ifdef DEBUG_MONITOR
-		swprintf(buffer, _T("Failed to open pipe %i, %i, %i: %i\n"), stdHandles[0], stdHandles[1], stdHandles[2], GetLastError());
+		swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Failed to open pipe %i, %i, %i: %i\n"), stdHandles[0], stdHandles[1], stdHandles[2], GetLastError());
 		OutputDebugStringW(buffer);
 #endif
 		CloseHandle(stdHandles[0]);
@@ -246,7 +247,7 @@ int main() {
 			!SetStdHandle(STD_OUTPUT_HANDLE, stdHandles[1]) ||
 			!SetStdHandle(STD_ERROR_HANDLE, stdHandles[2])) {
 #ifdef DEBUG_MONITOR
-		swprintf(buffer, _T("Failed to reassign standard streams: %i\n"), GetLastError());
+		swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Failed to reassign standard streams: %i\n"), GetLastError());
 		OutputDebugStringW(buffer);
 #endif
 		CloseHandle(stdHandles[0]);
@@ -267,7 +268,7 @@ int main() {
 
 		OutputDebugStringW(_T("Starter: Environment\n"));
 		for (wchar_t * lpszVariable = (wchar_t *) lpvEnv; *lpszVariable; lpszVariable+=wcslen(lpszVariable) + 1) {
-			swprintf(buffer, _T("%s\n"), lpszVariable);
+			swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("%s\n"), lpszVariable);
 			OutputDebugStringW(buffer);
 		}
 
@@ -275,7 +276,7 @@ int main() {
 	}
 #endif
 #ifdef DEBUG_MONITOR
-	swprintf(buffer, _T("Starting: %s\n"), szCmdLine);
+	swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Starting: %s\n"), szCmdLine);
 	OutputDebugStringW(buffer);
 #endif
 	// Create job object
@@ -317,7 +318,7 @@ int main() {
 	
 	if (f) {
 #ifdef DEBUG_MONITOR
-		swprintf(buffer, _T("Process %i started\n"), pi.dwProcessId);
+		swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Process %i started\n"), pi.dwProcessId);
 		OutputDebugStringW(buffer);
 #endif
 		SetEvent(waitEvent); // Means that process has been spawned
@@ -327,7 +328,7 @@ int main() {
 		if(NULL != hJob) {
 			if(!AssignProcessToJobObject(hJob, pi.hProcess)) {
 #ifdef DEBUG_MONITOR
-				swprintf(buffer, _T("Cannot assign process %i to a job\n"), pi.dwProcessId);
+				swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Cannot assign process %i to a job\n"), pi.dwProcessId);
 				OutputDebugStringW(buffer);
 				DisplayErrorMessage();
 #endif
@@ -344,13 +345,13 @@ int main() {
 			case WAIT_OBJECT_0 + 0: // SIGINT
 			case WAIT_OBJECT_0 + 4: // CTRL-C
 #ifdef DEBUG_MONITOR
-				swprintf(buffer, _T("starter (PID %i) received CTRL-C event\n"), currentPID);
+				swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("starter (PID %i) received CTRL-C event\n"), currentPID);
 				OutputDebugStringW(buffer);
 #endif
 				if ((event == (WAIT_OBJECT_0 + 0)) && isCygwin(h[1])) {
 					// Need to issue a kill command
 					wchar_t kill[1024];
-					swprintf(kill, L"kill -SIGINT %d", pi.dwProcessId);
+					swprintf(kill, sizeof(kill)/sizeof(kill[0]), L"kill -SIGINT %d", pi.dwProcessId);
 					if (!runCygwinCommand(kill)) {
 						// fall back to console event
 						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
@@ -365,7 +366,7 @@ int main() {
 			case WAIT_OBJECT_0 + 1: // App terminated normally
 				// Make it's exit code our exit code
 #ifdef DEBUG_MONITOR
-				swprintf(buffer, _T("starter: launched process has been terminated(PID %i)\n"),
+				swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("starter: launched process has been terminated(PID %i)\n"),
 						pi.dwProcessId);
 				OutputDebugStringW(buffer);
 #endif
@@ -382,13 +383,13 @@ int main() {
 			{
 				const wchar_t* signal = (event == WAIT_OBJECT_0 + 2) ? L"TERM" : L"KILL";
 #ifdef DEBUG_MONITOR
-				swprintf(buffer, _T("starter received %s event (PID %i)\n"), signal, currentPID);
+				swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("starter received %s event (PID %i)\n"), signal, currentPID);
 				OutputDebugStringW(buffer);
 #endif
 				if (isCygwin(h[1])) {
 					// Need to issue a kill command
 					wchar_t kill[1024];
-					swprintf(kill, L"kill -%s %d", signal, pi.dwProcessId);
+					swprintf(kill, sizeof(kill)/sizeof(kill[0]), L"kill -%s %d", signal, pi.dwProcessId);
 					if (!runCygwinCommand(kill)) {
 						// fall back to console event
 						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
@@ -424,7 +425,7 @@ int main() {
 		}
 	} else {
 #ifdef DEBUG_MONITOR
-		swprintf(buffer, _T("Cannot start: %s\n"), szCmdLine);
+		swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Cannot start: %s\n"), szCmdLine);
 		OutputDebugStringW(buffer);
 
 		DisplayErrorMessage();

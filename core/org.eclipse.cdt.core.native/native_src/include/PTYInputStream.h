@@ -7,9 +7,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#undef org_eclipse_cdt_utils_pty_PTYInputStream_SKIP_BUFFER_SIZE
-#define org_eclipse_cdt_utils_pty_PTYInputStream_SKIP_BUFFER_SIZE 2048L
-/* Inaccessible static: skipBuffer */
+#undef org_eclipse_cdt_utils_pty_PTYInputStream_MAX_SKIP_BUFFER_SIZE
+#define org_eclipse_cdt_utils_pty_PTYInputStream_MAX_SKIP_BUFFER_SIZE 2048L
 /*
  * Class:     org_eclipse_cdt_utils_pty_PTYInputStream
  * Method:    read0

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2017 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
  *     Wind River Systems, Inc.
  *     Mikhail Zabaluev (Nokia) - bug 82744
  *     Corey Ashford (IBM) - bug 272370, bug 272372
- *     Martin Oberhuber - [519886] align w/ Linux, support OSX 10.13
  *******************************************************************************/
 
 /* _XOPEN_SOURCE is needed to bring in the header for ptsname */
@@ -93,7 +92,11 @@ ptym_open(char * pts_name)
 	char *ptr;
 
 	strcpy(pts_name, "/dev/ptmx");
+#ifdef __APPLE__
 	fdm = posix_openpt(O_RDWR|O_NOCTTY);
+#else
+	fdm = getpt();
+#endif
 	if (fdm < 0)
 		return -1;
 	if (grantpt(fdm) < 0) { /* grant access to slave */

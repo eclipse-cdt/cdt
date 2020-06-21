@@ -17,15 +17,14 @@
  *  This is a JNI implementation of spawner 
  *******************************************************************************/
  
-#include "stdafx.h"
 #include <string.h>
 #include <stdlib.h>
 #include <process.h>
+#include <tchar.h>
+#include <windows.h>
+#include <jni.h>
+
 #include "Spawner.h"
-
-#include "jni.h"
-#include "io.h"
-
 
 #define PIPE_SIZE 512			// Size of pipe buffer
 #define MAX_CMD_SIZE 2049		// Initial size of command line
@@ -103,7 +102,9 @@ static int nCounter = 0; // We use it to build unique synchronization object nam
 //          [out] channels - streams handlers
 /////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef __cplusplus
 extern "C"
+#endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
   (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir, jintArray channels, jstring slaveName, jint fdm, jboolean console)
 {
@@ -128,7 +129,9 @@ void ensureSize(wchar_t** ptr, int* psize, int requiredLength)
     }
 }
 
+#ifdef __cplusplus
 extern "C"
+#endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
   (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir, jintArray channels) 
 {
@@ -186,9 +189,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 	// Create pipe names
    EnterCriticalSection(&cs);
-   swprintf(inPipeName,  L"\\\\.\\pipe\\stdin%08i%010i",  pid, nCounter); 
-   swprintf(outPipeName, L"\\\\.\\pipe\\stdout%08i%010i", pid, nCounter); 
-   swprintf(errPipeName, L"\\\\.\\pipe\\stderr%08i%010i", pid, nCounter); 
+   swprintf(inPipeName,  sizeof(inPipeName)/sizeof(inPipeName[0]),   L"\\\\.\\pipe\\stdin%08i%010i",  pid, nCounter);
+   swprintf(outPipeName, sizeof(outPipeName)/sizeof(outPipeName[0]), L"\\\\.\\pipe\\stdout%08i%010i", pid, nCounter);
+   swprintf(errPipeName, sizeof(errPipeName)/sizeof(errPipeName[0]), L"\\\\.\\pipe\\stderr%08i%010i", pid, nCounter);
    nLocalCounter = nCounter;
    ++nCounter;
    LeaveCriticalSection(&cs);
@@ -210,13 +213,13 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
    } 
 
 #ifdef DEBUG_MONITOR
-	swprintf(buffer, _T("Opened pipes: %s, %s, %s\n"), inPipeName, outPipeName, errPipeName);
+	swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Opened pipes: %s, %s, %s\n"), inPipeName, outPipeName, errPipeName);
 	OutputDebugStringW(buffer);
 #endif
 	
 
-	nCmdTokens = env->GetArrayLength(cmdarray);
-    nEnvVars   = env->GetArrayLength(envp);
+	nCmdTokens = (*env)->GetArrayLength(env, cmdarray);
+    nEnvVars   = (*env)->GetArrayLength(env, envp);
 
 	pCurProcInfo = createProcInfo();
 
@@ -227,11 +230,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 		}
 
 	// Construct starter's command line
-	swprintf(eventBreakName, L"SABreak%04x%08x", pid, nLocalCounter);
-	swprintf(eventWaitName, L"SAWait%004x%08x", pid, nLocalCounter);
-	swprintf(eventTerminateName, L"SATerm%004x%08x", pid, nLocalCounter);
-	swprintf(eventKillName, L"SAKill%04x%08x", pid, nLocalCounter);
-	swprintf(eventCtrlcName, L"SACtrlc%04x%08x", pid, nLocalCounter);
+	swprintf(eventBreakName, sizeof(eventBreakName)/sizeof(eventBreakName[0]), L"SABreak%04x%08x", pid, nLocalCounter);
+	swprintf(eventWaitName, sizeof(eventWaitName)/sizeof(eventWaitName[0]), L"SAWait%04x%08x", pid, nLocalCounter);
+	swprintf(eventTerminateName, sizeof(eventTerminateName)/sizeof(eventTerminateName[0]), L"SATerm%04x%08x", pid, nLocalCounter);
+	swprintf(eventKillName, sizeof(eventKillName)/sizeof(eventKillName[0]), L"SAKill%04x%08x", pid, nLocalCounter);
+	swprintf(eventCtrlcName, sizeof(eventCtrlcName)/sizeof(eventCtrlcName[0]), L"SACtrlc%04x%08x", pid, nLocalCounter);
 
 	pCurProcInfo->eventBreak     = CreateEventW(NULL, FALSE, FALSE, eventBreakName);
     if(NULL == pCurProcInfo->eventBreak || GetLastError() == ERROR_ALREADY_EXISTS)
@@ -244,16 +247,16 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	pCurProcInfo->eventKill      = CreateEventW(NULL, FALSE, FALSE, eventKillName);
 	pCurProcInfo->eventCtrlc     = CreateEventW(NULL, FALSE, FALSE, eventCtrlcName);
 
-	swprintf(szCmdLine, L"\"%sstarter.exe\" %i %i %s %s %s %s %s ", path, pid, nLocalCounter, eventBreakName, eventWaitName, eventTerminateName, eventKillName, eventCtrlcName);
+	swprintf(szCmdLine, nCmdLineLength, L"\"%sstarter.exe\" %i %i %s %s %s %s %s ", path, pid, nLocalCounter, eventBreakName, eventWaitName, eventTerminateName, eventKillName, eventCtrlcName);
 	nPos = wcslen(szCmdLine);
 
 	// Prepare command line
 	for(i = 0; i < nCmdTokens; ++i) 
     	{
-		jstring item = (jstring)env->GetObjectArrayElement(cmdarray, i);
-		jsize    len = env->GetStringLength(item);
+		jstring item = (jstring)(*env)->GetObjectArrayElement(env, cmdarray, i);
+		jsize    len = (*env)->GetStringLength(env, item);
 		int nCpyLen;
-		const wchar_t *  str = (const wchar_t *)env->GetStringChars(item, 0);	
+		const wchar_t *  str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
 		if(NULL != str) 
 			{
 			int requiredSize= nPos+len+2;
@@ -275,13 +278,13 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 			nPos += nCpyLen;
 			szCmdLine[nPos] = _T(' ');
 			++nPos;
-			env->ReleaseStringChars(item, (const jchar *)str);
+			(*env)->ReleaseStringChars(env, item, (const jchar *)str);
 		}
 	}
 	szCmdLine[nPos] = _T('\0');
 
 #ifdef DEBUG_MONITOR
-	swprintf(buffer, _T("There are %i environment variables \n"), nEnvVars);
+	swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("There are %i environment variables \n"), nEnvVars);
 	OutputDebugStringW(buffer);
 #endif
 	// Prepare environment block
@@ -291,9 +294,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 		szEnvBlock = (wchar_t *)malloc(nBlkSize * sizeof(wchar_t));
 		for(i = 0; i < nEnvVars; ++i) 
 			{
-			jstring item = (jstring)env->GetObjectArrayElement(envp, i);
-			jsize    len = env->GetStringLength(item);
-			const wchar_t *  str = (const wchar_t *)env->GetStringChars(item, 0);	
+			jstring item = (jstring)(*env)->GetObjectArrayElement(env, envp, i);
+			jsize    len = (*env)->GetStringLength(env, item);
+			const wchar_t *  str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
 			if(NULL != str)
 				{
 				while((nBlkSize - nPos) <= (len + 2)) // +2 for two '\0'
@@ -306,20 +309,20 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 						return 0;
 						}
 #ifdef DEBUG_MONITOR
-					swprintf(buffer, _T("Realloc environment block; new length is  %i \n"), nBlkSize);
+					swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Realloc environment block; new length is  %i \n"), nBlkSize);
 					OutputDebugStringW(buffer);
 #endif
 
 					}
 #ifdef DEBUG_MONITOR
-				swprintf(buffer, _T("%s\n"), str);
+				swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("%s\n"), str);
 				OutputDebugStringW(buffer);
 #endif
 				wcsncpy(szEnvBlock + nPos, str, len);
 				nPos += len;
 				szEnvBlock[nPos] = _T('\0');
 				++nPos;
-				env->ReleaseStringChars(item, (const jchar *)str);
+				(*env)->ReleaseStringChars(env, item, (const jchar *)str);
 				}
 			}
 			szEnvBlock[nPos] = _T('\0');
@@ -329,11 +332,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
     if (dir != 0) 
 		{ 
-		const wchar_t * str = (const wchar_t *)env->GetStringChars(dir, 0);
+		const wchar_t * str = (const wchar_t *)(*env)->GetStringChars(env, dir, 0);
 		if(NULL != str)
 			{
 			cwd = wcsdup(str);
-			env->ReleaseStringChars(dir, (const jchar *)str);
+			(*env)->ReleaseStringChars(env, dir, (const jchar *)str);
 			}
 		}
 
@@ -417,7 +420,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 		if(what != WAIT_OBJECT_0) // CreateProcess failed
 			{
 #ifdef DEBUG_MONITOR
-			swprintf(buffer, _T("Process %i failed\n"), pi.dwProcessId);
+			swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Process %i failed\n"), pi.dwProcessId);
 			OutputDebugStringW(buffer);
 #endif
 			cleanUpProcBlock(pCurProcInfo);
@@ -434,7 +437,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 			file_handles[0] = (int)stdHandles[0];
 			file_handles[1] = (int)stdHandles[1];
 			file_handles[2] = (int)stdHandles[2];
-			env->SetIntArrayRegion(channels, 0, 3, (jint *)file_handles);
+			(*env)->SetIntArrayRegion(env, channels, 0, 3, (jint *)file_handles);
 
 			// do the cleanup so launch the according thread
 			// create a copy of the PROCESS_INFORMATION as this might get destroyed
@@ -464,7 +467,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 //			[in]  envp - array of environment variables
 //			[in]  dir - working directory
 /////////////////////////////////////////////////////////////////////////////////////
+#ifdef __cplusplus
 extern "C"
+#endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
   (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir) 
 {
@@ -494,18 +499,18 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
     sa.bInheritHandle = TRUE;
 
 
-	nCmdTokens = env->GetArrayLength(cmdarray);
-    nEnvVars   = env->GetArrayLength(envp);
+	nCmdTokens = (*env)->GetArrayLength(env, cmdarray);
+    nEnvVars   = (*env)->GetArrayLength(env, envp);
 
 	nPos = 0;
 
 	// Prepare command line
 	for(i = 0; i < nCmdTokens; ++i) 
 		{
-		jstring item = (jstring)env->GetObjectArrayElement(cmdarray, i);
-		jsize    len = env->GetStringLength(item);
+		jstring item = (jstring)(*env)->GetObjectArrayElement(env, cmdarray, i);
+		jsize    len = (*env)->GetStringLength(env, item);
 		int nCpyLen;
-		const wchar_t *  str = (const wchar_t *)env->GetStringChars(item, 0);	
+		const wchar_t *  str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
 		if(NULL != str)
 			{
 			int requiredSize= nPos+len+2;
@@ -527,7 +532,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 			nPos += nCpyLen;
 			szCmdLine[nPos] = _T(' ');
 			++nPos;
-			env->ReleaseStringChars(item, (const jchar *)str);
+			(*env)->ReleaseStringChars(env, item, (const jchar *)str);
 			}
 		}
 
@@ -540,9 +545,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 		nPos = 0;
 		for(i = 0; i < nEnvVars; ++i) 
 			{
-			jstring item = (jstring)env->GetObjectArrayElement(envp, i);
-			jsize    len = env->GetStringLength(item);
-			const wchar_t *  str = (const wchar_t *)env->GetStringChars(item, 0);	
+			jstring item = (jstring)(*env)->GetObjectArrayElement(env, envp, i);
+			jsize    len = (*env)->GetStringLength(env, item);
+			const wchar_t *  str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
 			if(NULL != str)
 				{
 				while((nBlkSize - nPos) <= (len + 2)) // +2 for two '\0'
@@ -559,7 +564,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 				nPos += len;
 				szEnvBlock[nPos] = _T('\0');
 				++nPos;
-				env->ReleaseStringChars(item, (const jchar *)str);
+				(*env)->ReleaseStringChars(env, item, (const jchar *)str);
 				}
 			}
     	szEnvBlock[nPos] = _T('\0');
@@ -570,11 +575,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
     if (dir != 0) 
 		{ 
-		const wchar_t * str = (const wchar_t *)env->GetStringChars(dir, 0);
+		const wchar_t * str = (const wchar_t *)(*env)->GetStringChars(env, dir, 0);
 		if(NULL != str) 
 			{
 			cwd = wcsdup(str);
-			env->ReleaseStringChars(dir, (const jchar *)str);
+			(*env)->ReleaseStringChars(env, dir, (const jchar *)str);
 			}
 		}
 
@@ -648,7 +653,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 //			[in]  uid - unique process ID
 //			[in]  signal - signal to raise
 /////////////////////////////////////////////////////////////////////////////////////
+#ifdef __cplusplus
 extern "C"
+#endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
   (JNIEnv * env, jobject process, jint uid, jint signal) 
 {
@@ -668,7 +675,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 	}
 
 #ifdef DEBUG_MONITOR
-	swprintf(buffer, _T("Spawner received signal %i for process %i\n"), signal, pCurProcInfo -> pid);
+	swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Spawner received signal %i for process %i\n"), signal, pCurProcInfo -> pid);
 	OutputDebugStringW(buffer);
 #endif
 	
@@ -689,7 +696,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 			break;
 		case SIG_TERM:
 #ifdef DEBUG_MONITOR
-			swprintf(buffer, _T("Spawner received TERM signal for process %i\n"),
+			swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Spawner received TERM signal for process %i\n"),
 				pCurProcInfo -> pid);
 			OutputDebugStringW(buffer);
 #endif
@@ -702,7 +709,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 
 		case SIG_KILL:
 #ifdef DEBUG_MONITOR
-			swprintf(buffer, _T("Spawner received KILL signal for process %i\n"),
+			swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Spawner received KILL signal for process %i\n"),
 				pCurProcInfo -> pid);
 			OutputDebugStringW(buffer);
 #endif
@@ -739,7 +746,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 // Arguments: (see Spawner.java)
 //			[in]  uid - unique process ID
 /////////////////////////////////////////////////////////////////////////////////////
+#ifdef __cplusplus
 extern "C"
+#endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor
   (JNIEnv * env, jobject process, jint uid) 
 {
@@ -785,13 +794,13 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor
 /////////////////////////////////////////////////////////////////////////////////////
 void ThrowByName(JNIEnv *env, const char *name, const char *msg)
 {
-    jclass cls = env->FindClass(name);
+    jclass cls = (*env)->FindClass(env, name);
 
     if (cls != 0) /* Otherwise an exception has already been thrown */
-        env->ThrowNew(cls, msg);
+        (*env)->ThrowNew(env, cls, msg);
 
     /* It's a good practice to clean up the local references. */
-    env->DeleteLocalRef(cls);
+    (*env)->DeleteLocalRef(env, cls);
 }
 
 
@@ -916,7 +925,7 @@ void _cdecl waitProcTermination(void* pv)
 		{
 			cleanUpProcBlock(pInfo + i);
 #ifdef DEBUG_MONITOR
-				swprintf(buffer, _T("waitProcTermination: set PID %i to 0\n"), 
+				swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("waitProcTermination: set PID %i to 0\n"),
 				    pi->dwProcessId);
 				OutputDebugStringW(buffer);
 #endif

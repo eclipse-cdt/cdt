@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <sys/stat.h>
 
 #ifndef PATH_MAX
 #define PATH_MAX 1024
@@ -53,6 +54,7 @@ char * pfind(const char *name, char * const envp[])
 	char *sp;
 	char *path;
 	char fullpath[PATH_MAX+1];
+	struct stat sb;
 
 	/* Sanity check.  */
 	if (name == NULL) {
@@ -83,9 +85,11 @@ char * pfind(const char *name, char * const envp[])
 	while (tok != NULL) {
 		snprintf(fullpath, sizeof(fullpath) - 1, "%s/%s", tok, name);
 
-		if (access(fullpath, X_OK) == 0) {
-			free(path);
-			return strdup(fullpath);
+		if (stat(fullpath, &sb) == 0 && S_ISREG(sb.st_mode)) { /* fullpath is a file */
+			if (access(fullpath, X_OK) == 0) { /* fullpath is executable */
+				free(path);
+				return strdup(fullpath);
+			}
 		}
 
 		tok = strtok_r( NULL, ":", &sp );

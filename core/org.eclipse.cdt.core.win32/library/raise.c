@@ -15,11 +15,10 @@
  *
  *  This is a part of JNI implementation of spawner 
  *******************************************************************************/
-#include "stdafx.h"
-#include "Spawner.h"
+#include <jni.h>
+#include <windows.h>
 
-
-#include "jni.h"
+#include "spawner.h"
 
 extern void JNICALL ThrowByName(JNIEnv *env, const char *name, const char *msg);
 
@@ -90,6 +89,7 @@ int interruptProcess(int pid)
 			HANDLE proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)pid);
 			if (proc != NULL) 
 			{
+				typedef BOOL WINAPI (*DebugBreakProcessFunc)(HANDLE);
 				DebugBreakProcessFunc pDebugBreakProcess = (DebugBreakProcessFunc)procaddr;
 				success = (*pDebugBreakProcess)(proc); 
 				CloseHandle(proc);

@@ -14,15 +14,13 @@
 // ProcList.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
+#include <stdio.h>
 
-#include "listtasks.h"
+#include <windows.h>
 #include <tlhelp32.h>
 #include <vdmdbg.h>
-#include <iostream>
-#include <iomanip>
 
-using namespace std;
+typedef BOOL (CALLBACK *PROCENUMPROC)( DWORD, WORD, LPSTR, LPARAM ) ;
 
 typedef struct
 {
@@ -31,6 +29,8 @@ typedef struct
   DWORD          lParam ;
   BOOL           bEnd ;
 } EnumInfoStruct ;
+
+BOOL WINAPI EnumProcs( PROCENUMPROC lpProc, LPARAM lParam ) ;
 
 BOOL WINAPI Enum16( DWORD dwThreadId, WORD hMod16, WORD hTask16,
   PSZ pszModName, PSZ pszFileName, LPARAM lpUserDefined ) ;
@@ -114,7 +114,7 @@ BOOL WINAPI EnumProcs( PROCENUMPROC lpProc, LPARAM lParam )
      SYSTEM_INFO systemInfo;
 
      GetSystemInfo(&systemInfo);
-     bool isWin64 = systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64;
+     BOOL isWin64 = systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64;
 
      if(!isWin64)
      {
@@ -342,8 +342,8 @@ BOOL WINAPI Enum16( DWORD dwThreadId, WORD hMod16, WORD hTask16,
   return !bRet;
 } 
 
-BOOL CALLBACK OutProcInfo( DWORD pid, WORD, LPSTR procName, LPARAM ) 
+BOOL CALLBACK OutProcInfo( DWORD pid, WORD dummy1, LPSTR procName, LPARAM dummy2) 
 {
-	cout << setw(10) <<  pid << '\t' << procName << '\n';
+	printf("%10d\t%s\n", pid, procName);
 	return TRUE;
 }

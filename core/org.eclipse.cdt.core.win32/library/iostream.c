@@ -16,15 +16,12 @@
  *  This is a part of JNI implementation of spawner 
  *  Includes implementation of JNI methods (see Spawner.java)
  *******************************************************************************/
-#include "stdafx.h"
 #include <string.h>
 #include <stdlib.h>
-#include "spawner.h"
-#include "SpawnerInputStream.h"
-#include "SpawnerOutputStream.h"
+#include <jni.h>
+#include <windows.h>
 
-#include "jni.h"
-#include "io.h"
+#include "spawner.h"
 
 //#define READ_REPORT
 
@@ -38,7 +35,9 @@ void ThrowByName(JNIEnv *env, const char *name, const char *msg);
  * Method:    read0
  * Signature: (I)I
  */
+#ifdef __cplusplus
 extern "C"
+#endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_read0
   (JNIEnv * env, jobject proc, jint fd, jbyteArray buf, jint len)
 {
@@ -142,7 +141,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 				}
 			}
 		if(nNumberOfBytesRead > 0)
-			env->SetByteArrayRegion(buf, nBuffOffset, nNumberOfBytesRead, tmpBuf);
+			(*env)->SetByteArrayRegion(env, buf, nBuffOffset, nNumberOfBytesRead, tmpBuf);
 		else
 			break;
 		nBuffOffset += nNumberOfBytesRead;
@@ -152,7 +151,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 			{
 			// Is there data left in the pipe?
 			DWORD bytesAvailable = 0;
-			if (!::PeekNamedPipe((HANDLE)fd, NULL, 0, NULL, &bytesAvailable, NULL)
+			if (!PeekNamedPipe((HANDLE)fd, NULL, 0, NULL, &bytesAvailable, NULL)
 				|| bytesAvailable == 0)
 				// No bytes left
 				break;
@@ -174,7 +173,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
  * Method:    close0
  * Signature: (I)I
  */
+#ifdef __cplusplus
 extern "C"
+#endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_close0
   (JNIEnv * env, jobject proc, jint fd)
 {
@@ -192,7 +193,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_clo
 		return (rc ? GetLastError() : 0);
 }
 
+#ifdef __cplusplus
 extern "C"
+#endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_available0
   (JNIEnv * env, jobject proc, jint fd)
 {
@@ -210,7 +213,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_ava
  * Method:    write0
  * Signature: (I[BI)I
  */
+#ifdef __cplusplus
 extern "C"
+#endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_write0
   (JNIEnv * env, jobject proc, jint fd, jbyteArray buf, jint len)
 {
@@ -222,7 +227,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_wr
 		{
 		DWORD nNumberOfBytesToWrite = min(len - nBuffOffset, BUFF_SIZE);
 		DWORD nNumberOfBytesWritten;
-		env->GetByteArrayRegion(buf, nBuffOffset, nNumberOfBytesToWrite, tmpBuf);
+		(*env)->GetByteArrayRegion(env, buf, nBuffOffset, nNumberOfBytesToWrite, tmpBuf);
 		if(0 == WriteFile((HANDLE)fd, tmpBuf, nNumberOfBytesToWrite, &nNumberOfBytesWritten, NULL)) 
 			{
 			char * lpMsgBuf;
@@ -252,7 +257,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_wr
  * Method:    close0
  * Signature: (I)I
  */
+#ifdef __cplusplus
 extern "C"
+#endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_close0
   (JNIEnv * env, jobject proc, jint fd)
 {

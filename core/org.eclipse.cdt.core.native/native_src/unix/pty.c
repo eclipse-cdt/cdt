@@ -57,7 +57,7 @@ Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj, jboole
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size
   (JNIEnv *env, jobject jobj, jint fdm, jint width, jint height)
 {
-#ifdef	TIOCGWINSZ
+#if (defined(__APPLE__) && defined(TIOCSWINSZ)) || (!defined(__APPLE__) && defined(TIOCGWINSZ))
 	struct winsize win;
 
 	win.ws_col = width;

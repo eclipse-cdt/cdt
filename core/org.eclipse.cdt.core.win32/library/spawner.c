@@ -16,8 +16,8 @@
  *  This is a part of JNI implementation of spawner 
  *******************************************************************************/
 
-#include "stdafx.h"
-#include "spawner.h"
+#include "StdAfx.h"
+#include "Spawner.h"
 
 
 CRITICAL_SECTION cs;
@@ -25,7 +25,9 @@ CRITICAL_SECTION cs;
 
 wchar_t path[MAX_PATH + 1] = {_T('\0') };  // Directory where spawner.dll is located
 
+#if __cplusplus
 extern "C"
+#endif
 BOOL APIENTRY DllMain( HINSTANCE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved

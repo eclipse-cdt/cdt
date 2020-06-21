@@ -1,5 +1,5 @@
 #*******************************************************************************
-# Copyright (c) 2002, 2015 QNX Software Systems and others.
+# Copyright (c) 2002, 2015, 2020 QNX Software Systems and others.
 #
 # This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License 2.0
@@ -12,124 +12,63 @@
 #     QNX Software Systems - initial API and implementation
 #     Alex Blewitt - MacOSX with a 64-bit vm 
 # Martin Oberhuber (Wind River) - Bug 476709 - Fix change_window_size()
+#     Torbjörn Svensson - Bug 521515 - Adopted jenkins build
 #*******************************************************************************/
 
-# makefile for libspawner.so
-# See http://developer.apple.com/documentation/Java/Conceptual/Java141Development/Core_APIs/chapter_6_section_4.html
+ifeq ($(JAVA_HOME),)
+$(error Please define JAVA_HOME)
+endif
 
-JAVA_HOME = $(shell echo /Library/Java/JavaVirtualMachines/jdk1.[78].0_*.jdk/Contents/Home)
+CC := x86_64-apple-darwin17-clang
+CFLAGS += -I. -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC -D_REENTRANT
+LDFLAGS += -dynamiclib -lc -framework JavaVM
 
-# Defaults which can be overridden.
-OS = macosx
-ARCH_X86 = x86
-ARCH_X86_64 = x86_64
+BUILD_DIR_X86 := build/x86
+BUILD_DIR_X86_64 := build/x86_64
 
-CC=gcc
-LD=libtool
-CPPFLAGS = -I. -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin
-CFLAGS +=-fPIC -D_REENTRANT
+INSTALL_DIR_X86 := ../os/macosx/x86
+INSTALL_DIR_X86_64 := ../os/macosx/x86_64
 
-ARCH_FLAG_X86 = -arch i386
-ARCH_FLAG_X86_64 = -arch x86_64
+LIB_NAME_SPAWNER := libspawner.jnilib
+OBJS_SPAWNER := spawner.o io.o exec_unix.o exec_pty.o openpty.o pfind.o
+OBJS_SPAWNER_X86 := $(addprefix $(BUILD_DIR_X86)/,$(OBJS_SPAWNER))
+OBJS_SPAWNER_X86_64 := $(addprefix $(BUILD_DIR_X86_64)/,$(OBJS_SPAWNER))
 
-INSTALL_DIR_X86 = ../os/$(OS)/$(ARCH_X86)
-INSTALL_DIR_X86_64 = ../os/$(OS)/$(ARCH_X86_64)
 
-LIB_NAME_FULL_SPAWNER_X86 = $(INSTALL_DIR_X86)/libspawner.jnilib
-LIB_NAME_FULL_SPAWNER_X86_64 = $(INSTALL_DIR_X86_64)/libspawner.jnilib
-OBJS_SPAWNER_X86 = spawner_$(ARCH_X86).o \
-                   io_$(ARCH_X86).o \
-                   exec_unix_$(ARCH_X86).o \
-                   exec_pty_$(ARCH_X86).o \
-                   openpty_$(ARCH_X86).o \
-                   pfind_$(ARCH_X86).o
-OBJS_SPAWNER_X86_64 = spawner_$(ARCH_X86_64).o \
-                   io_$(ARCH_X86_64).o \
-                   exec_unix_$(ARCH_X86_64).o \
-                   exec_pty_$(ARCH_X86_64).o \
-                   openpty_$(ARCH_X86_64).o \
-                   pfind_$(ARCH_X86_64).o
+LIB_NAME_PTY := libpty.jnilib
+OBJS_PTY := openpty.o pty.o ptyio.o
+OBJS_PTY_X86 := $(addprefix $(BUILD_DIR_X86)/,$(OBJS_PTY))
+OBJS_PTY_X86_64 := $(addprefix $(BUILD_DIR_X86_64)/,$(OBJS_PTY))
 
-LIB_NAME_FULL_PTY_X86 = $(INSTALL_DIR_X86)/libpty.jnilib
-LIB_NAME_FULL_PTY_X86_64 = $(INSTALL_DIR_X86_64)/libpty.jnilib
-OBJS_PTY_X86 = openpty_$(ARCH_X86).o pty_$(ARCH_X86).o ptyio_$(ARCH_X86).o
-OBJS_PTY_X86_64 = openpty_$(ARCH_X86_64).o pty_$(ARCH_X86_64).o ptyio_$(ARCH_X86_64).o
-
-OBJS_X86 = $(OBJS_SPAWNER_X86) $(OBJS_PTY_X86) $(OBJS_SERIAL_X86)
-OBJS_X86_64 = $(OBJS_SPAWNER_X86_64) $(OBJS_PTY_X86_64) $(OBJS_SERIAL_X86_64)
 
 all: x86 x86_64
 
-x86: $(LIB_NAME_FULL_SPAWNER_X86) $(LIB_NAME_FULL_PTY_X86)
+x86: $(addprefix $(INSTALL_DIR_X86)/,$(LIB_NAME_SPAWNER) $(LIB_NAME_PTY))
 
-x86_64: $(LIB_NAME_FULL_SPAWNER_X86_64) $(LIB_NAME_FULL_PTY_X86_64)
+x86_64: $(addprefix $(INSTALL_DIR_X86_64)/,$(LIB_NAME_SPAWNER) $(LIB_NAME_PTY))
 
 rebuild: clean all
 
-$(LIB_NAME_FULL_SPAWNER_X86) : $(OBJS_SPAWNER_X86)
-	mkdir -p $(INSTALL_DIR_X86)
-	$(CC) -dynamiclib $(ARCH_FLAG_X86) -o $(LIB_NAME_FULL_SPAWNER_X86) $(OBJS_SPAWNER_X86) -lc -framework JavaVM
+$(INSTALL_DIR_X86) $(INSTALL_DIR_X86_64) $(BUILD_DIR_X86) $(BUILD_DIR_X86_64):
+	@mkdir -p $@
 
-$(LIB_NAME_FULL_SPAWNER_X86_64) : $(OBJS_SPAWNER_X86_64)
-	mkdir -p $(INSTALL_DIR_X86_64)
-	$(CC) -dynamiclib $(ARCH_FLAG_X86_64) -o $(LIB_NAME_FULL_SPAWNER_X86_64) $(OBJS_SPAWNER_X86_64) -lc -framework JavaVM
+$(BUILD_DIR_X86)/%.o: %.c $(BUILD_DIR_X86)
+	$(CC) -arch i386 $(CFLAGS) -c -o $@ $<
 
-$(LIB_NAME_FULL_PTY_X86): $(OBJS_PTY_X86)
-	mkdir -p $(INSTALL_DIR_X86)
-	$(CC) -dynamiclib  $(ARCH_FLAG_X86) -o $(LIB_NAME_FULL_PTY_X86) $(OBJS_PTY_X86) -lc -framework JavaVM
+$(BUILD_DIR_X86_64)/%.o: %.c $(BUILD_DIR_X86_64)
+	$(CC) -arch x86_64 $(CFLAGS) -c -o $@ $<
 
-$(LIB_NAME_FULL_PTY_X86_64): $(OBJS_PTY_X86_64)
-	mkdir -p $(INSTALL_DIR_X86_64)
-	$(CC) -dynamiclib  $(ARCH_FLAG_X86_64) -o $(LIB_NAME_FULL_PTY_X86_64) $(OBJS_PTY_X86_64) -lc -framework JavaVM
+$(INSTALL_DIR_X86)/$(LIB_NAME_SPAWNER) : $(INSTALL_DIR_X86) $(OBJS_SPAWNER_X86)
+	$(CC) -arch i386 -o $@ $(OBJS_SPAWNER_X86) $(LDFLAGS)
 
-spawner_$(ARCH_X86).o: spawner.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ spawner.c
+$(INSTALL_DIR_X86_64)/$(LIB_NAME_SPAWNER) : $(INSTALL_DIR_X86_64) $(OBJS_SPAWNER_X86_64)
+	$(CC) -arch x86_64 -o $@ $(OBJS_SPAWNER_X86_64) $(LDFLAGS)
 
-io_$(ARCH_X86).o: io.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ io.c
+$(INSTALL_DIR_X86)/$(LIB_NAME_PTY) : $(INSTALL_DIR_X86) $(OBJS_PTY_X86)
+	$(CC) -arch i386 -o $@ $(OBJS_PTY_X86) $(LDFLAGS)
 
-exec_unix_$(ARCH_X86).o: exec_unix.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ exec_unix.c
-
-exec_pty_$(ARCH_X86).o: exec_pty.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ exec_pty.c
-
-openpty_$(ARCH_X86).o: openpty.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ openpty.c
-
-pfind_$(ARCH_X86).o: pfind.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ pfind.c
-
-pty_$(ARCH_X86).o: pty.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ pty.c
-
-ptyio_$(ARCH_X86).o: ptyio.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ ptyio.c
-
-spawner_$(ARCH_X86_64).o: spawner.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ spawner.c
-
-io_$(ARCH_X86_64).o: io.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ io.c
-
-exec_unix_$(ARCH_X86_64).o: exec_unix.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ exec_unix.c
-
-exec_pty_$(ARCH_X86_64).o: exec_pty.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ exec_pty.c
-
-openpty_$(ARCH_X86_64).o: openpty.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ openpty.c
-
-pfind_$(ARCH_X86_64).o: pfind.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ pfind.c
-
-pty_$(ARCH_X86_64).o: pty.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ pty.c
-
-ptyio_$(ARCH_X86_64).o: ptyio.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ ptyio.c
+$(INSTALL_DIR_X86_64)/$(LIB_NAME_PTY) : $(INSTALL_DIR_X86_64) $(OBJS_PTY_X86_64)
+	$(CC) -arch x86_64 -o $@ $(OBJS_PTY_X86_64) $(LDFLAGS)
 
 clean :
-	$(RM) $(OBJS_X86) $(LIB_NAME_FULL_SPAWNER_X86) $(LIB_NAME_FULL_PTY_X86)
-	$(RM) $(OBJS_X86_64) $(LIB_NAME_FULL_SPAWNER_X86_64) $(LIB_NAME_FULL_PTY_X86_64)
+	$(RM) -r $(BUILD_DIR_X86) $(BUILD_DIR_X86_64)

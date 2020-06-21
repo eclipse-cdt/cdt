@@ -15,7 +15,7 @@
  *
  *  This is a part of JNI implementation of spawner 
  *******************************************************************************/
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Spawner.h"
 
 
@@ -90,6 +90,7 @@ int interruptProcess(int pid)
 			HANDLE proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)pid);
 			if (proc != NULL) 
 			{
+				typedef BOOL WINAPI (*DebugBreakProcessFunc)(HANDLE);
 				DebugBreakProcessFunc pDebugBreakProcess = (DebugBreakProcessFunc)procaddr;
 				success = (*pDebugBreakProcess)(proc); 
 				CloseHandle(proc);

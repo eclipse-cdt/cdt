@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5c70bfed_13680de1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-06-22T19:44:14Z",
+      "side": 1,
+      "message": "I\u0027m unsure if it\u0027s right to go to 5.9.000 here or if it should be 5.9.100.",
+      "range": {
+        "startLine": 6,
+        "startChar": 16,
+        "endLine": 6,
+        "endChar": 23
+      },
+      "revId": "d96ec6f726f0b77cd392eb4c4fd2f82b386dfad5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

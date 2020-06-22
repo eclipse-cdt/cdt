@@ -40,6 +40,7 @@
     <li><a href="#arduino">Arduino plug-ins and features removed.</a></li>
     <li><a href="#oldparsers">Remove LRParser, XLC and UPC.</a></li>
     <li><a href="#cdtutilsPlatform">Remove org.eclipse.cdt.utils.Platform.</a></li>
+    <li><a href="#dsf">DSF and DSF-GDB API Changes.</a></li>
   </ol>
   <p>
     Planned Removals after June 2022
@@ -185,6 +186,16 @@
   </p>
   <p>
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564123" target="_blank">Bug 564123</a>.
+  </p>
+
+  <h3>9. <a name="dsf">DSF and DSF-GDB API Changes</a></h3>
+  <p>
+    DSF and DSF-GDB have had some small API changes, but they are still breaking changes and are listed here:
+  <ul>
+    <li>org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.getCLILabel(ILaunchConfiguration, String) has been removed.
+      Use org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.getCLILabel(GdbLaunch, ILaunchConfiguration, String)
+      instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564553" target="_blank">Bug 564553</a>.</li>
+  </ul>
   </p>
 
   <hr>

@@ -206,7 +206,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 		launch.initializeControl();
 
 		// Add the GDB process object to the launch.
-		launch.addCLIProcess(getCLILabel(config, gdbVersion));
+		launch.addCLIProcess(getCLILabel(launch, config, gdbVersion));
 
 		monitor.worked(1);
 
@@ -266,10 +266,11 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 
 	/**
 	 * Return the label to be used for the CLI node
-	 * @since 4.6
+	 * @since 5.9
 	 */
-	protected String getCLILabel(ILaunchConfiguration config, String gdbVersion) throws CoreException {
-		return LaunchUtils.getGDBPath(config).toString().trim() + " (" + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	protected String getCLILabel(GdbLaunch launch, ILaunchConfiguration config, String gdbVersion)
+			throws CoreException {
+		return launch.getGDBPath().toString().trim() + " (" + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

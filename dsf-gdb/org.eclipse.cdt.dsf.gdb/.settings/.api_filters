@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.dsf.gdb" version="2">
+    <resource path="src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java" type="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate">
+        <filter comment="Use GdbLaunch.getGDBPath() rather than LaunchUtils.getGDBPath() so that sub-classes can override the path if needed." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"/>
+                <message_argument value="getCLILabel(ILaunchConfiguration, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

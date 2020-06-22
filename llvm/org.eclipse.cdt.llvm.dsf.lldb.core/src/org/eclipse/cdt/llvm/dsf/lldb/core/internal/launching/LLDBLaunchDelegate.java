@@ -44,18 +44,6 @@ public class LLDBLaunchDelegate extends GdbLaunchDelegate {
 		super(requireCProject);
 	}
 
-	/*
-	 * TODO: The fact that both getCLILabel and GdbLaunch.getGDBPath have to be
-	 * overridden and made consistent seems error prone. getCLILabel should call
-	 * GdbLaunch.getGDBPath somehow by default. This is something that should be
-	 * looked into in dsf-gdb.
-	 */
-	@Override
-	protected String getCLILabel(ILaunchConfiguration config, String gdbVersion) throws CoreException {
-		return LLDBLaunch.getLLDBPath(config).toString().trim() + " (" + Messages.LLDBLaunchDelegate_mimicking_gdb //$NON-NLS-1$
-				+ " gdb " + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
 	@Override
 	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
 		return new LLDBServiceFactory(version, config);

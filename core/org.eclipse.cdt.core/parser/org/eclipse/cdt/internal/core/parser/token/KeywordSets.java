@@ -416,6 +416,7 @@ public class KeywordSets {
 		ALL_CPP.add(Keywords.EXPORT);
 		ALL_CPP.add(Keywords.EXTERN);
 		ALL_CPP.add(Keywords.FALSE);
+		ALL_CPP.add(Keywords.FINAL);
 		ALL_CPP.add(Keywords.FLOAT);
 		ALL_CPP.add(Keywords.FOR);
 		ALL_CPP.add(Keywords.FRIEND);
@@ -434,6 +435,7 @@ public class KeywordSets {
 		ALL_CPP.add(Keywords.OPERATOR);
 		ALL_CPP.add(Keywords.OR);
 		ALL_CPP.add(Keywords.OR_EQ);
+		ALL_CPP.add(Keywords.OVERRIDE);
 		ALL_CPP.add(Keywords.PRIVATE);
 		ALL_CPP.add(Keywords.PROTECTED);
 		ALL_CPP.add(Keywords.PUBLIC);
@@ -512,6 +514,7 @@ public class KeywordSets {
 		KEYWORDS_CPP.add(Keywords.EXPORT);
 		KEYWORDS_CPP.add(Keywords.EXTERN);
 		KEYWORDS_CPP.add(Keywords.FALSE);
+		KEYWORDS_CPP.add(Keywords.FINAL);
 		KEYWORDS_CPP.add(Keywords.FLOAT);
 		KEYWORDS_CPP.add(Keywords.FOR);
 		KEYWORDS_CPP.add(Keywords.FRIEND);
@@ -530,6 +533,7 @@ public class KeywordSets {
 		KEYWORDS_CPP.add(Keywords.OPERATOR);
 		KEYWORDS_CPP.add(Keywords.OR);
 		KEYWORDS_CPP.add(Keywords.OR_EQ);
+		KEYWORDS_CPP.add(Keywords.OVERRIDE);
 		KEYWORDS_CPP.add(Keywords.PRIVATE);
 		KEYWORDS_CPP.add(Keywords.PROTECTED);
 		KEYWORDS_CPP.add(Keywords.PUBLIC);

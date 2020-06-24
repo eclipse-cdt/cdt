@@ -22,6 +22,53 @@
       "revId": "d96ec6f726f0b77cd392eb4c4fd2f82b386dfad5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a1abdbd_7c2ea049",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T18:18:33Z",
+      "side": 1,
+      "message": "6.0.0 actually :-) \n\nThe API filter should not normally be used except in cases where we are (reasonably) sure that the breaking API change won\u0027t affect consumers. In this case there were actually places that overrode the removed API.",
+      "parentUuid": "5c70bfed_13680de1",
+      "range": {
+        "startLine": 6,
+        "startChar": 16,
+        "endLine": 6,
+        "endChar": 23
+      },
+      "revId": "d96ec6f726f0b77cd392eb4c4fd2f82b386dfad5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90e4b477_662be54c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T18:18:33Z",
+      "side": 1,
+      "message": "getGDBPath can return null. So I changed this to fall back on original version in that case. In practice I don\u0027t think it can really return null as that would indicate a pretty serious problem.\n\nPlease comment if you think the fall back should be different?",
+      "range": {
+        "startLine": 273,
+        "startChar": 9,
+        "endLine": 273,
+        "endChar": 28
+      },
+      "revId": "d96ec6f726f0b77cd392eb4c4fd2f82b386dfad5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

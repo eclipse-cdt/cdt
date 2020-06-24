@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "a247046d_f1edfa2d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T19:56:30Z",
+      "side": 1,
+      "message": "Yes - Eclipse PDE could have helped more. There were two error markers (once I removed the .api_filters). One said to add api filter, the other, on this line in the manifest, gave the option to increment major version number.",
+      "parentUuid": "507d9dc0_4c0a3752",
+      "range": {
+        "startLine": 6,
+        "startChar": 16,
+        "endLine": 6,
+        "endChar": 23
+      },
+      "revId": "d96ec6f726f0b77cd392eb4c4fd2f82b386dfad5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "90e4b477_662be54c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
         "patchSetId": 1

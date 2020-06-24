@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "507d9dc0_4c0a3752",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-06-24T19:42:20Z",
+      "side": 1,
+      "message": "Eclipse was mad at me without adding the API filter, so that\u0027s why I added it.\nI\u0027ve never done this sort of API breaking changes before, so I was not aware of how to correct procedure was.",
+      "parentUuid": "0a1abdbd_7c2ea049",
+      "range": {
+        "startLine": 6,
+        "startChar": 16,
+        "endLine": 6,
+        "endChar": 23
+      },
+      "revId": "d96ec6f726f0b77cd392eb4c4fd2f82b386dfad5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "90e4b477_662be54c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
         "patchSetId": 1
@@ -60,6 +84,30 @@
       "writtenOn": "2020-06-24T18:18:33Z",
       "side": 1,
       "message": "getGDBPath can return null. So I changed this to fall back on original version in that case. In practice I don\u0027t think it can really return null as that would indicate a pretty serious problem.\n\nPlease comment if you think the fall back should be different?",
+      "range": {
+        "startLine": 273,
+        "startChar": 9,
+        "endLine": 273,
+        "endChar": 28
+      },
+      "revId": "d96ec6f726f0b77cd392eb4c4fd2f82b386dfad5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "556a78e5_7fff4ec6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-06-24T19:42:20Z",
+      "side": 1,
+      "message": "Fair enough.\nTo be honest, I did not run the code before pushing it to review. I faced the issue at work the same day where the text presented to the user did not align with the binary executed, so I just updated the places I knew were wrong to get the ball going and have some feedback on the change.",
+      "parentUuid": "90e4b477_662be54c",
       "range": {
         "startLine": 273,
         "startChar": 9,

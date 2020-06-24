@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dd846c37_2c64bb9c",
+        "filename": "releng/scripts/check_code_cleanliness.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T21:39:06Z",
+      "side": 1,
+      "message": "Thank you for adding the new items to this check. However since I wrote this I wrote the README.md in the root of the project and on revisiting this I think it is best to change this whole block to simply:\n\nmvn process-resources -Dnative\u003dall",
+      "revId": "690c1a3cf2d1c90722de500e8b9204e109764555",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

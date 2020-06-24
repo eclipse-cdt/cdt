@@ -1,0 +1,158 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5d446428_9d0e5b97",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/core/tests/ManagedBuildEnvironmentTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T21:19:57Z",
+      "side": 1,
+      "message": "This test has been pointless since at least 2007 when the referenced getVariables was deleted.\n\nSimply delete this test along with the other deletion.",
+      "revId": "be134faf8f3cb38b95a1ba8434a403bc89d29df8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4beb0d5e_8144a64d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/core/tests/ManagedBuildEnvironmentTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T21:19:57Z",
+      "side": 1,
+      "message": "Remove this if block now along with other case sensitive checks.",
+      "revId": "be134faf8f3cb38b95a1ba8434a403bc89d29df8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36897b35_605e022f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/macros/BuildfileMacroSubstitutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T21:19:57Z",
+      "side": 1,
+      "message": "Hmmm. Not sure what this was supposed to have been doing. It is certainly strange. \n\nAs I read it, on Windows it was always doing the replaceAll, but on non-windows it was only doing the replaceAll if that was the first time it was called.\n\nTherefore, as the old behaviour was almost certainly wrong, your change looks correct.",
+      "revId": "be134faf8f3cb38b95a1ba8434a403bc89d29df8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bb3d6ca4_7f735de5",
+        "filename": "build/org.eclipse.cdt.managedbuilder.gnu.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T21:19:57Z",
+      "side": 1,
+      "message": "should be [9.0.0,10.0.0)",
+      "range": {
+        "startLine": 14,
+        "startChar": 52,
+        "endLine": 14,
+        "endChar": 60
+      },
+      "revId": "be134faf8f3cb38b95a1ba8434a403bc89d29df8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "823b8998_4d0fe994",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T21:19:57Z",
+      "side": 1,
+      "message": "should be [9.0.0,10.0.0)",
+      "range": {
+        "startLine": 20,
+        "startChar": 52,
+        "endLine": 20,
+        "endChar": 60
+      },
+      "revId": "be134faf8f3cb38b95a1ba8434a403bc89d29df8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d24d0ec_4b2c4799",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/NewVarDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T21:19:57Z",
+      "side": 1,
+      "message": "This method is called in only two conditions.\n\nIn condition 1:\n\nname1 always equals \"\"\n\nIn condition 2:\n\nname1 always equals name2\n\nSo the insensitive vs not is irrelevant and can be replaced with a standard equals.",
+      "revId": "be134faf8f3cb38b95a1ba8434a403bc89d29df8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5201608d_be375375",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T21:19:57Z",
+      "side": 1,
+      "message": "I think each entry here should be documented as to why. \n\nI see GnuCygwinConfigurationEnvironmentSupplier does some stuff with CYGWIN_HOME, but it also does System.getenv() and variableName.equalsIgnoreCase(ENV_PATH)",
+      "range": {
+        "startLine": 32,
+        "startChar": 79,
+        "endLine": 32,
+        "endChar": 101
+      },
+      "revId": "be134faf8f3cb38b95a1ba8434a403bc89d29df8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d357cb5c_a2245eed",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T21:19:57Z",
+      "side": 1,
+      "message": "Unrelated change - if you were getting an error it was probably while the target platform was unstable due to a dependency change.",
+      "revId": "be134faf8f3cb38b95a1ba8434a403bc89d29df8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

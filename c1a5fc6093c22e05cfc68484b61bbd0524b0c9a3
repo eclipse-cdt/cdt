@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b7de540_bcc3a3cd",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/envvar/EnvironmentVariableProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T21:19:57Z",
+      "side": 0,
+      "message": "lets delete wrap too while we are at it.",
+      "range": {
+        "startLine": 101,
+        "startChar": 10,
+        "endLine": 101,
+        "endChar": 14
+      },
+      "revId": "c1a5fc6093c22e05cfc68484b61bbd0524b0c9a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96a7dfb4_e757e4b2",
+        "filename": "core/org.eclipse.cdt.core/browser/org/eclipse/cdt/core/browser/PathUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-06-24T21:19:57Z",
+      "side": 0,
+      "message": "Please try to keep unrelated changes in separate commits.",
+      "revId": "c1a5fc6093c22e05cfc68484b61bbd0524b0c9a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -139,6 +139,30 @@
     },
     {
       "key": {
+        "uuid": "64237467_d55ab520",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/EnvironmentReader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2020-06-25T13:33:33Z",
+      "side": 1,
+      "message": "I added CYGWIN_HOME and LANG to be sure and because I see no reason why it would hurt.\nMy problem is that I don\u0027t know how to test this. And a test would require installing cygwin which I do not want to do.\n\nNext to that my java code reading skills did not help me to figure out whether this method was used or not. \n\nNot sure the above would count as good enough documentation",
+      "parentUuid": "5201608d_be375375",
+      "range": {
+        "startLine": 32,
+        "startChar": 79,
+        "endLine": 32,
+        "endChar": 101
+      },
+      "revId": "be134faf8f3cb38b95a1ba8434a403bc89d29df8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d357cb5c_a2245eed",
         "filename": "launch/org.eclipse.cdt.docker.launcher/META-INF/MANIFEST.MF",
         "patchSetId": 1

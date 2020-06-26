@@ -30,9 +30,6 @@ INSTALL_DIR = ..\..\org.eclipse.cdt.core.$(OS).$(ARCH)\os\$(OS)\$(ARCH)
 DLL_SPAWNER = spawner.dll
 OBJS_SPAWNER=StdAfx.obj Win32ProcessEx.obj iostream.obj raise.obj spawner.obj
 
-DLL_WINREG = winreg.dll
-OBJS_WINREG=winreg/winreg.obj
-
 EXE_STARTER = starter.exe
 OBJS_STARTER=starter/starter.obj
 
@@ -52,19 +49,16 @@ listtasks/listtasks.obj:
 spawner: $(OBJS_SPAWNER)
 	link /dll /nologo /out:$(DLL_SPAWNER) $(OBJS_SPAWNER) User32.lib
 
-winreg: $(OBJS_WINREG)
-	link /dll /nologo /out:$(DLL_WINREG) $(OBJS_WINREG) Advapi32.lib
-	
 starter: $(OBJS_STARTER)
 	link /nologo /out:$(EXE_STARTER) $(OBJS_STARTER) Psapi.Lib Shell32.lib
 	
 listtasks: $(OBJS_LISTTASKS)
 	link /nologo /out:$(EXE_LISTTASKS) $(OBJS_LISTTASKS) Psapi.Lib
 
-all: spawner winreg starter listtasks
+all: spawner starter listtasks
 
 clean:
-	del *.obj *.lib *.exp *.exe *.dll winreg\*.obj starter\*.obj listtasks\*.obj
+	del *.obj *.lib *.exp *.exe *.dll starter\*.obj listtasks\*.obj
 
 rebuild: clean all
 

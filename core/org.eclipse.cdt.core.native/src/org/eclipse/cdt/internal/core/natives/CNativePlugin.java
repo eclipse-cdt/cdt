@@ -14,7 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.natives;
 
+import org.eclipse.cdt.utils.WindowsRegistry;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 
@@ -92,4 +98,35 @@ public class CNativePlugin extends Plugin {
 		getDefault().getLog().log(status);
 	}
 
+	/**
+	 * Get the WindowsRegistry contributed class for the platform.
+	 */
+	public WindowsRegistry getWindowsRegistry() throws CoreException {
+		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID, "WindowsRegistry"); //$NON-NLS-1$
+		if (extension != null) {
+			IExtension[] extensions = extension.getExtensions();
+			IConfigurationElement defaultContributor = null;
+			for (IExtension extension2 : extensions) {
+				IConfigurationElement[] configElements = extension2.getConfigurationElements();
+				for (IConfigurationElement configElement : configElements) {
+					if (configElement.getName().equals("windowsRegistry")) { //$NON-NLS-1$
+						String platform = configElement.getAttribute("platform"); //$NON-NLS-1$
+						if (platform == null) { // first contributor found with
+												// not platform will be default.
+							if (defaultContributor == null) {
+								defaultContributor = configElement;
+							}
+						} else if (platform.equals(Platform.getOS())) {
+							// found explicit contributor for this platform.
+							return (WindowsRegistry) configElement.createExecutableExtension("class"); //$NON-NLS-1$
+						}
+					}
+				}
+			}
+			if (defaultContributor != null) {
+				return (WindowsRegistry) defaultContributor.createExecutableExtension("class"); //$NON-NLS-1$
+			}
+		}
+		return null;
+	}
 }

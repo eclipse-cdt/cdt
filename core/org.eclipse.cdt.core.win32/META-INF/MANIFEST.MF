@@ -9,3 +9,6 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-PlatformFilter: (osgi.os=win32)
 Automatic-Module-Name: org.eclipse.cdt.core.win32
+Require-Bundle: org.eclipse.cdt.core;bundle-version="7.0.0",
+ com.sun.jna;bundle-version="4.5.1",
+ com.sun.jna.platform;bundle-version="4.5.1"

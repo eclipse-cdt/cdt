@@ -11,38 +11,31 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *******************************************************************************/
-/**
- *
- */
 package org.eclipse.cdt.utils;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.cdt.internal.core.natives.CNativePlugin;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author DSchaefer
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class WindowsRegistry {
+public abstract class WindowsRegistry {
 
-	private static boolean failed = false;
 	private static WindowsRegistry registry;
 
-	private WindowsRegistry() {
+	/**
+	 * @since 6.0
+	 */
+	protected WindowsRegistry() {
 	}
 
 	public static WindowsRegistry getRegistry() {
-		if (registry == null && !failed) {
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				try {
-					System.loadLibrary("winreg"); //$NON-NLS-1$
-					registry = new WindowsRegistry();
-				} catch (UnsatisfiedLinkError e) {
-					failed = true;
-					return null;
-				}
-			} else
-				failed = true;
+		if (registry == null) {
+			try {
+				registry = CNativePlugin.getDefault().getWindowsRegistry();
+			} catch (CoreException e) {
+			}
 		}
 
 		return registry;
@@ -56,7 +49,7 @@ public class WindowsRegistry {
 	 * @param name name of the registry value
 	 * @return registry value or null if not found
 	 */
-	public native String getLocalMachineValue(String subkey, String name);
+	public abstract String getLocalMachineValue(String subkey, String name);
 
 	/**
 	 * Given a subkey of HKEY_LOCAL_MACHINE, and an index (starting from 0)
@@ -68,7 +61,7 @@ public class WindowsRegistry {
 	 * @param index    index to the subkey's array of values, starting from 0.
 	 * @return name of registry value or null if not found
 	 */
-	public native String getLocalMachineValueName(String subkey, int index);
+	public abstract String getLocalMachineValueName(String subkey, int index);
 
 	/**
 	 * Given a subkey of HKEY_LOCAL_MACHINE, and an index (starting from 0)
@@ -80,7 +73,7 @@ public class WindowsRegistry {
 	 * @param index    index to the subkey's array of values, starting from 0.
 	 * @return name of registry value or null if not found
 	 */
-	public native String getLocalMachineKeyName(String subkey, int index);
+	public abstract String getLocalMachineKeyName(String subkey, int index);
 
 	/**
 	 * Gets the registry value for the subkey of HKEY_CURRENT_USER with the
@@ -90,7 +83,7 @@ public class WindowsRegistry {
 	 * @param name name of the registry value
 	 * @return registry value or null if not found
 	 */
-	public native String getCurrentUserValue(String subkey, String name);
+	public abstract String getCurrentUserValue(String subkey, String name);
 
 	/**
 	 * Given a subkey of HKEY_CURRENT_USER, and an index (starting from 0)
@@ -102,7 +95,7 @@ public class WindowsRegistry {
 	 * @param index    index to the subkey's array of values, starting from 0.
 	 * @return name of registry value or null if not found
 	 */
-	public native String getCurrentUserValueName(String subkey, int index);
+	public abstract String getCurrentUserValueName(String subkey, int index);
 
 	/**
 	 * Given a subkey of HKEY_CURRENT_USER, and an index (starting from 0)
@@ -114,6 +107,5 @@ public class WindowsRegistry {
 	 * @param index    index to the subkey's array of values, starting from 0.
 	 * @return name of registry value or null if not found
 	 */
-	public native String getCurrentUserKeyName(String subkey, int index);
-
+	public abstract String getCurrentUserKeyName(String subkey, int index);
 }

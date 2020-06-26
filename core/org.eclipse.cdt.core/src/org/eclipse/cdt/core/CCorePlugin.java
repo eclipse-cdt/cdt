@@ -1110,6 +1110,41 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
+	 * Get the IWindowsRegistry contributed interface for the platform.
+	 *
+	 * @since 7.0
+	 */
+	public IWindowsRegistry getWindowsRegistry() throws CoreException {
+		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
+				"WindowsRegistry"); //$NON-NLS-1$
+		if (extension != null) {
+			IExtension[] extensions = extension.getExtensions();
+			IConfigurationElement defaultContributor = null;
+			for (IExtension extension2 : extensions) {
+				IConfigurationElement[] configElements = extension2.getConfigurationElements();
+				for (IConfigurationElement configElement : configElements) {
+					if (configElement.getName().equals("windowsRegistry")) { //$NON-NLS-1$
+						String platform = configElement.getAttribute("platform"); //$NON-NLS-1$
+						if (platform == null) { // first contributor found with
+												// not platform will be default.
+							if (defaultContributor == null) {
+								defaultContributor = configElement;
+							}
+						} else if (platform.equals(Platform.getOS())) {
+							// found explicit contributor for this platform.
+							return (IWindowsRegistry) configElement.createExecutableExtension("class"); //$NON-NLS-1$
+						}
+					}
+				}
+			}
+			if (defaultContributor != null) {
+				return (IWindowsRegistry) defaultContributor.createExecutableExtension("class"); //$NON-NLS-1$
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * @deprecated since CDT 6.1. Use {@link ErrorParserManager#getErrorParserAvailableIds()} instead
 	 */
 	@Deprecated

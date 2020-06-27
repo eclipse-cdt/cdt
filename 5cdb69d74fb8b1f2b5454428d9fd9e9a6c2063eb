@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "de1720f9_97314d4d",
+        "filename": "core/org.eclipse.cdt.core.win32/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-27T06:08:34Z",
+      "side": 1,
+      "message": "Is it really needed?",
+      "revId": "5cdb69d74fb8b1f2b5454428d9fd9e9a6c2063eb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

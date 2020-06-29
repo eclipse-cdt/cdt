@@ -27,18 +27,18 @@ import org.eclipse.core.runtime.CoreException;
 
 public class QtFactory {
 
-	private static final char[] QT_VERSION = "QT_VERSION".toCharArray();
+	private static final char[] QT_VERSION = "QT_VERSION".toCharArray(); //$NON-NLS-1$
 
 	public static QtIndex create(IProject project) {
 		CDTIndex cdtIndex = getCDTIndex(project);
 		if (cdtIndex == null) {
-			Activator.log("could not get CDT index from project " + project.getName());
+			Activator.log("could not get CDT index from project " + project.getName()); //$NON-NLS-1$
 			return null;
 		}
 
 		QtVersion qtVersion = cdtIndex.get(QtVersionAccessor);
 		if (qtVersion == null) {
-			Activator.log("could not find Qt version in CDT index from project " + project.getName());
+			Activator.log("could not find Qt version in CDT index from project " + project.getName()); //$NON-NLS-1$
 			return null;
 		}
 
@@ -79,7 +79,7 @@ public class QtFactory {
 
 		// QT_VERSION looks like 0x040805
 		private static final Pattern Version_regex = Pattern
-				.compile("0x([a-fA-F\\d]{1,2})([a-fA-F\\d]{2})([a-fA-F\\d]{2})");
+				.compile("0x([a-fA-F\\d]{1,2})([a-fA-F\\d]{2})([a-fA-F\\d]{2})"); //$NON-NLS-1$
 
 		public static QtVersion create(String version) {
 			Matcher m = Version_regex.matcher(version);

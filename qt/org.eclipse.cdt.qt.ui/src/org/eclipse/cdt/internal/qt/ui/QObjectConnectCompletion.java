@@ -81,8 +81,8 @@ public class QObjectConnectCompletion {
 		public final String display;
 		public final int cursorOffset;
 
-		public static final Data SIGNAL = new Data("SIGNAL()", "SIGNAL(a)", -1);
-		public static final Data SLOT = new Data("SLOT()", "SLOT(a)", -1);
+		public static final Data SIGNAL = new Data("SIGNAL()", "SIGNAL(a)", -1); //$NON-NLS-1$ //$NON-NLS-2$
+		public static final Data SLOT = new Data("SLOT()", "SLOT(a)", -1); //$NON-NLS-1$ //$NON-NLS-2$
 
 		public Data(String replacement) {
 			this(replacement, replacement, 0);
@@ -228,7 +228,7 @@ public class QObjectConnectCompletion {
 			int parseOffset = context.getParseOffset();
 			int invocationOffset = context.getInvocationOffset();
 
-			String unparsed = "";
+			String unparsed = ""; //$NON-NLS-1$
 			try {
 				unparsed = context.getDocument().get(parseOffset, invocationOffset - parseOffset);
 			} catch (BadLocationException e) {

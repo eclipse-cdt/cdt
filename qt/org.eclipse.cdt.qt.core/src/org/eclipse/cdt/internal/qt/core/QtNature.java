@@ -97,7 +97,7 @@ public class QtNature implements IProjectNature {
 		// this doesn't happen then the PDOM could have the current version (so
 		// nothing would trigger
 		// an update) but no Qt content.
-		CCorePlugin.log(IStatus.INFO, "Reindexing " + project.getName() + " because Qt nature has been added");
+		CCorePlugin.log(IStatus.INFO, "Reindexing " + project.getName() + " because Qt nature has been added"); //$NON-NLS-1$ //$NON-NLS-2$
 		CCorePlugin.getIndexManager().reindex(cProject);
 	}
 

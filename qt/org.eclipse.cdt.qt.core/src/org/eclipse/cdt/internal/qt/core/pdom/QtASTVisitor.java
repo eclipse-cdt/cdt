@@ -57,12 +57,12 @@ public class QtASTVisitor extends ASTVisitor {
 	private final IIndexSymbols symbols;
 	private final LocationMap locationMap;
 
-	private static final Pattern expansionParamRegex = Pattern.compile("^(?:Q_ENUMS|Q_FLAGS)\\s*\\((.*)\\)$",
+	private static final Pattern expansionParamRegex = Pattern.compile("^(?:Q_ENUMS|Q_FLAGS)\\s*\\((.*)\\)$", //$NON-NLS-1$
 			Pattern.DOTALL);
-	private static final Pattern qualNameRegex = Pattern.compile("\\s*((?:[^\\s:]+\\s*::\\s*)*[^\\s:]+).*");
+	private static final Pattern qualNameRegex = Pattern.compile("\\s*((?:[^\\s:]+\\s*::\\s*)*[^\\s:]+).*"); //$NON-NLS-1$
 
 	private static final Pattern declareFlagsRegex = Pattern
-			.compile("^Q_DECLARE_FLAGS\\s*\\(\\s*([^\\s]+),\\s*([^\\s]+)\\s*\\)$", Pattern.DOTALL);
+			.compile("^Q_DECLARE_FLAGS\\s*\\(\\s*([^\\s]+),\\s*([^\\s]+)\\s*\\)$", Pattern.DOTALL); //$NON-NLS-1$
 
 	/**
 	 * A regular expression for scanning the Q_CLASSINFO expansion and extracting the
@@ -73,12 +73,12 @@ public class QtASTVisitor extends ASTVisitor {
 	 * The key must not have embedded quotes.
 	 */
 	private static final Pattern classInfoRegex = Pattern
-			.compile("^Q_CLASSINFO\\s*\\(\\s*\"([^\"]+)\"\\s*,\\s*\"(.*)\"\\s*\\)$", Pattern.DOTALL);
+			.compile("^Q_CLASSINFO\\s*\\(\\s*\"([^\"]+)\"\\s*,\\s*\"(.*)\"\\s*\\)$", Pattern.DOTALL); //$NON-NLS-1$
 
-	private static final Pattern leadingWhitespaceRegex = Pattern.compile("^\\s*([^\\s].*)$");
+	private static final Pattern leadingWhitespaceRegex = Pattern.compile("^\\s*([^\\s].*)$"); //$NON-NLS-1$
 
 	private static final Pattern qPropertyRegex = Pattern.compile(
-			"^Q_PROPERTY\\s*\\(\\s*(.+?)\\s*([a-zA-Z_][\\w]*+)(?:(?:\\s+(READ\\s+.*))|\\s*)\\s*\\)$", Pattern.DOTALL);
+			"^Q_PROPERTY\\s*\\(\\s*(.+?)\\s*([a-zA-Z_][\\w]*+)(?:(?:\\s+(READ\\s+.*))|\\s*)\\s*\\)$", Pattern.DOTALL); //$NON-NLS-1$
 
 	/**
 	 * A regular expression for scanning Q_PROPERTY attributes.  The regular expression is built
@@ -97,9 +97,9 @@ public class QtASTVisitor extends ASTVisitor {
 		for (IQProperty.Attribute attr : IQProperty.Attribute.values()) {
 			if (attr.ordinal() > 0)
 				regexBuilder.append('|');
-			regexBuilder.append("(:?");
+			regexBuilder.append("(:?"); //$NON-NLS-1$
 			regexBuilder.append(attr.identifier);
-			regexBuilder.append(")");
+			regexBuilder.append(")"); //$NON-NLS-1$
 		}
 		qPropertyAttributeRegex = Pattern.compile(regexBuilder.toString());
 	}

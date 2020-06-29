@@ -34,7 +34,7 @@ public class LinuxQtInstallProvider implements IQtInstallProvider {
 			Path qmakePath = Paths.get("/usr/bin/qmake"); //$NON-NLS-1$
 			if (Files.exists(qmakePath)) {
 				QtInstall install = new QtInstall(qmakePath);
-				install.setProperty(IToolChain.ATTR_PACKAGE, "system");
+				install.setProperty(IToolChain.ATTR_PACKAGE, "system"); //$NON-NLS-1$
 				return Arrays.asList(install);
 			}
 		}

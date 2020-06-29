@@ -31,7 +31,7 @@ public class QtIndexImpl extends QtIndex {
 	private final CDTIndex cdtIndex;
 
 	private static final Pattern QmlTypeNameRegex = Pattern.compile(
-			"^(?:" + QtKeywords.QML_REGISTER_TYPE + '|' + QtKeywords.QML_REGISTER_UNCREATABLE_TYPE + ")<.*>\0(.*)$");
+			"^(?:" + QtKeywords.QML_REGISTER_TYPE + '|' + QtKeywords.QML_REGISTER_UNCREATABLE_TYPE + ")<.*>\0(.*)$"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static final IndexFilter QtLinkageFilter = new IndexFilter() {
 		@Override

@@ -89,8 +89,8 @@ public class QPropertyAttributeProposal {
 		case SCRIPTABLE:
 		case STORED:
 		case USER:
-			return Arrays.asList(new QPropertyAttributeProposal("true", IMethodAttribute.BaseRelevance + 11),
-					new QPropertyAttributeProposal("false", IMethodAttribute.BaseRelevance + 10));
+			return Arrays.asList(new QPropertyAttributeProposal("true", IMethodAttribute.BaseRelevance + 11), //$NON-NLS-1$
+					new QPropertyAttributeProposal("false", IMethodAttribute.BaseRelevance + 10)); //$NON-NLS-1$
 
 		// propose appropriate methods for method-based attributes
 		case READ:
@@ -200,7 +200,7 @@ public class QPropertyAttributeProposal {
 		sig.append(' ');
 		if (includeClassname) {
 			sig.append(method.getOwner().getName());
-			sig.append("::");
+			sig.append("::"); //$NON-NLS-1$
 		}
 		sig.append(method.getName());
 		sig.append('(');
@@ -209,7 +209,7 @@ public class QPropertyAttributeProposal {
 			if (first)
 				first = false;
 			else
-				sig.append(", ");
+				sig.append(", "); //$NON-NLS-1$
 
 			String defValue = null;
 			if (param instanceof CPPParameter) {
@@ -299,12 +299,12 @@ public class QPropertyAttributeProposal {
 				return BaseRelevance + 20;
 
 			// accessor with "get" prefix is the 2nd highest rank
-			if (methodName.equalsIgnoreCase("get" + propertyName))
+			if (methodName.equalsIgnoreCase("get" + propertyName)) //$NON-NLS-1$
 				return BaseRelevance + 19;
 
 			// method names that include the property name anywhere are the next
 			// most relevant
-			if (methodName.matches(".*(?i)" + propertyName + ".*"))
+			if (methodName.matches(".*(?i)" + propertyName + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 				return BaseRelevance + 18;
 
 			// otherwise return default relevance
@@ -357,12 +357,12 @@ public class QPropertyAttributeProposal {
 				return BaseRelevance + 20;
 
 			// accessor with "get" prefix is the 2nd highest rank
-			if (methodName.equalsIgnoreCase("set" + propertyName))
+			if (methodName.equalsIgnoreCase("set" + propertyName)) //$NON-NLS-1$
 				return BaseRelevance + 19;
 
 			// method names that include the property name anywhere are the next
 			// most relevant
-			if (methodName.matches(".*(?i)" + propertyName + ".*"))
+			if (methodName.matches(".*(?i)" + propertyName + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 				return BaseRelevance + 18;
 
 			// otherwise return default relevance
@@ -408,12 +408,12 @@ public class QPropertyAttributeProposal {
 				return 0;
 
 			// accessor with "reet" prefix is the most relevant
-			if (methodName.equalsIgnoreCase("reset" + propertyName))
+			if (methodName.equalsIgnoreCase("reset" + propertyName)) //$NON-NLS-1$
 				return BaseRelevance + 20;
 
 			// method names that include the property name anywhere are the next
 			// most relevant
-			if (methodName.matches(".*(?i)" + propertyName + ".*"))
+			if (methodName.matches(".*(?i)" + propertyName + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 				return BaseRelevance + 18;
 
 			// otherwise return default relevance

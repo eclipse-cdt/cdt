@@ -94,7 +94,7 @@ public class ASTUtil {
 			}
 
 		String ownerName = getFullyQualifiedName(binding.getOwner());
-		return (ownerName == null ? "" : ownerName) + "::" + binding.getName();
+		return (ownerName == null ? "" : ownerName) + "::" + binding.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class ASTUtil {
 			if (first)
 				first = false;
 			else
-				str.append("::");
+				str.append("::"); //$NON-NLS-1$
 			str.append(name);
 		}
 		return str.toString();
@@ -122,7 +122,7 @@ public class ASTUtil {
 	// The regex trims leading and trailing whitespace within the expansion parameter.  This is needed
 	// so that the start of the capture group provides the proper offset into the expansion.
 	public static final Pattern Regex_MacroExpansion = Pattern
-			.compile("(?s)([_a-zA-Z]\\w*)\\s*\\(\\s*(.*?)\\s*\\)\\s*");
+			.compile("(?s)([_a-zA-Z]\\w*)\\s*\\(\\s*(.*?)\\s*\\)\\s*"); //$NON-NLS-1$
 
 	public static IType getBaseType(IType type) {
 		while (type instanceof ITypeContainer)

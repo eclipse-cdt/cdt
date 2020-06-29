@@ -194,7 +194,7 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo {
 			Map<String, String> envMap = qmakeEnvInfo != null ? qmakeEnvInfo.getEnvironment()
 					: Collections.<String, String>emptyMap();
 			for (Map.Entry<String, String> entry : envMap.entrySet()) {
-				envList.add(entry.getKey() + "=" + entry.getValue());
+				envList.add(entry.getKey() + "=" + entry.getValue()); //$NON-NLS-1$
 			}
 
 			// calculates actual QMake info

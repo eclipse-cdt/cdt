@@ -39,8 +39,16 @@ public interface IQProperty extends IQObject.IMember {
 		// This enum is used when scanning Q_PROPERTY expansions, only attributes listed here
 		// will be extracted from the expansion.  This enum should be expanded with new values
 		// as needed (based on the version of Qt).  See QProperty#scanAttributes.
-		READ("getFunction"), WRITE("setFunction"), RESET("resetFunction"), NOTIFY("notifySignal"), REVISION("int"),
-		DESIGNABLE("bool"), SCRIPTABLE("bool"), STORED("bool"), USER("bool"), CONSTANT(null), FINAL(null);
+		READ("getFunction"), //$NON-NLS-1$
+		WRITE("setFunction"), //$NON-NLS-1$
+		RESET("resetFunction"), //$NON-NLS-1$
+		NOTIFY("notifySignal"), //$NON-NLS-1$
+		REVISION("int"), //$NON-NLS-1$
+		DESIGNABLE("bool"), //$NON-NLS-1$
+		SCRIPTABLE("bool"), //$NON-NLS-1$
+		STORED("bool"), //$NON-NLS-1$
+		USER("bool"), //$NON-NLS-1$
+		CONSTANT(null), FINAL(null);
 
 		/**
 		 * A string containing the C++ identifier for this attribute.

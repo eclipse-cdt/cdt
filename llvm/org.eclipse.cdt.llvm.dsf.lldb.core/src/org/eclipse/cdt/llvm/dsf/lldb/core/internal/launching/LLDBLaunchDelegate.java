@@ -16,6 +16,7 @@ import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
 import org.eclipse.cdt.llvm.dsf.lldb.core.internal.service.LLDBServiceFactory;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ISourceLocator;
 
@@ -42,6 +43,16 @@ public class LLDBLaunchDelegate extends GdbLaunchDelegate {
 	 */
 	public LLDBLaunchDelegate(boolean requireCProject) {
 		super(requireCProject);
+	}
+
+	@Override
+	protected String getCLILabel(GdbLaunch launch, ILaunchConfiguration config, String gdbVersion)
+			throws CoreException {
+		IPath path = launch.getGDBPath();
+		if (path == null) {
+			path = LLDBLaunch.getLLDBPath(config);
+		}
+		return path.toString().trim() + " (" + Messages.LLDBLaunchDelegate_mimicking_gdb + " gdb " + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	@Override

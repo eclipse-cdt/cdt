@@ -258,7 +258,7 @@ public class UIResourceManager extends ResourceManager {
 	/** Gets/creates font with specified properties */
 	protected Font getCachedFont(String fontName, int height, int style) {
 		Font result = null;
-		String fontID = fontName + "," + height + "," + style;
+		String fontID = fontName + "," + height + "," + style; //$NON-NLS-1$ //$NON-NLS-2$
 
 		// look for the cached font (this checks the parent manager too)
 		result = getCachedFont(fontID);
@@ -333,7 +333,7 @@ public class UIResourceManager extends ResourceManager {
 	/** Gets/creates color with specified properties */
 	protected Color getCachedColor(int red, int green, int blue) {
 		Color result = null;
-		String colorID = "Color[R=" + red + ",G=" + green + ",B=" + blue + "]";
+		String colorID = "Color[R=" + red + ",G=" + green + ",B=" + blue + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 		// look for the cached color (this checks the parent manager too)
 		result = getCachedColor(colorID);

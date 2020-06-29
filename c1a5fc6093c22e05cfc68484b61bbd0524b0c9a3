@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3bf38baa_26470082",
+        "filename": "llvm/org.eclipse.cdt.llvm.dsf.lldb.core/src/org/eclipse/cdt/llvm/dsf/lldb/core/internal/launching/LLDBLaunchDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-06-29T16:17:27Z",
+      "side": 0,
+      "message": "You removed the fact that it was telling users which version of gdb lldb is mimicking. If you\u0027d like to keep it this way, the \"mimicking\" message key is not used anymore and can be removed.",
+      "revId": "c1a5fc6093c22e05cfc68484b61bbd0524b0c9a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

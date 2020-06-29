@@ -23,7 +23,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = DockerLaunchUIPlugin.getDefault().getPreferenceStore();
-		store.setDefault(PreferenceConstants.DEFAULT_IMAGE, "");
+		store.setDefault(PreferenceConstants.DEFAULT_IMAGE, ""); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.KEEP_CONTAINER_AFTER_LAUNCH, false);
 	}
 

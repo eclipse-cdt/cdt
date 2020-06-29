@@ -79,8 +79,8 @@ public class ExposedPortModel extends BaseDatabindingModel implements Comparable
 	public static List<String> toArrayString(final Collection<ExposedPortModel> exposedPorts) {
 		final List<String> exposedPortList = new ArrayList<>();
 		for (ExposedPortModel exposedPort : exposedPorts) {
-			final String exposedPortString = exposedPort.toString();
 			if (exposedPort != null) {
+				final String exposedPortString = exposedPort.toString();
 				exposedPortList.add(exposedPortString);
 			}
 		}
@@ -101,7 +101,7 @@ public class ExposedPortModel extends BaseDatabindingModel implements Comparable
 		final int firstColumnSeparator = exposedPortInfo.indexOf(SEPARATOR);
 		if (firstColumnSeparator == -1 && exposedPortInfo.indexOf(CONTAINER_TYPE_SEPARATOR) != -1) {
 			final String type = exposedPortInfo.substring(exposedPortInfo.indexOf(CONTAINER_TYPE_SEPARATOR)); // $NON-NLS-1$
-			final ExposedPortModel exposedPort = new ExposedPortModel(privatePort, type, "", privatePort); // $NON-NLS-1$
+			final ExposedPortModel exposedPort = new ExposedPortModel(privatePort, type, "", privatePort); //$NON-NLS-1$
 			return exposedPort; // $NON-NLS-1$
 		} else {
 			final int secondColumnSeparator = exposedPortInfo.indexOf(SEPARATOR, firstColumnSeparator + 1);
@@ -223,7 +223,7 @@ public class ExposedPortModel extends BaseDatabindingModel implements Comparable
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(containerPort + CONTAINER_TYPE_SEPARATOR + portType + SEPARATOR
-				+ (hostAddress != null ? hostAddress : "") + SEPARATOR + hostPort + SEPARATOR + selected);
+				+ (hostAddress != null ? hostAddress : "") + SEPARATOR + hostPort + SEPARATOR + selected); //$NON-NLS-1$
 		return buffer.toString();
 	}
 

@@ -136,7 +136,7 @@ public class MemoryBlock extends CDTDebugElement implements IMemoryBlockExtensio
 	@Override
 	public MemoryByte[] getBytesFromAddress(BigInteger address, long units) throws DebugException {
 		MemoryRequestArguments memoryRequestArguments = new MemoryRequestArguments();
-		memoryRequestArguments.setAddress("0x" + address.toString(16));
+		memoryRequestArguments.setAddress("0x" + address.toString(16)); //$NON-NLS-1$
 		memoryRequestArguments.setLength(units);
 		CompletableFuture<MemoryContents> memory = getDebugProtocolServer().memory(memoryRequestArguments);
 		MemoryContents body = complete(memory);

@@ -78,7 +78,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 	private List directoriesList;
 	private String imageName;
 	private String connectionName;
-	private String connectionUri = "";
+	private String connectionUri = ""; //$NON-NLS-1$
 	private Boolean keepValue;
 	private Boolean stdinValue;
 	private Boolean privilegedValue;
@@ -217,7 +217,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 		Composite composite = createComposite(parent, 1, 1,
 				GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
 		composite.setFont(font);
-		newButton = createPushButton(composite, Messages.ContainerTab_New_Button, null); //$NON-NLS-1$
+		newButton = createPushButton(composite, Messages.ContainerTab_New_Button, null);
 		newButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridData gdb = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 		gdb.grabExcessHorizontalSpace = false;
@@ -231,7 +231,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 			}
 		});
 
-		removeButton = createPushButton(composite, Messages.ContainerTab_Remove_Button, null); //$NON-NLS-1$
+		removeButton = createPushButton(composite, Messages.ContainerTab_Remove_Button, null);
 		removeButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -612,7 +612,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 					tableViewer.setChecked(m, true);
 				}
 			}
-			connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, "");
+			connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, ""); //$NON-NLS-1$
 			int defaultIndex = 0;
 			connections = DockerConnectionManager.getInstance().getConnections();
 			if (connections.length > 0) {
@@ -628,7 +628,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 					connectionUri = connections[0].getUri();
 				}
 			}
-			imageName = configuration.getAttribute(ILaunchConstants.ATTR_IMAGE, "");
+			imageName = configuration.getAttribute(ILaunchConstants.ATTR_IMAGE, ""); //$NON-NLS-1$
 			imageCombo.setText(imageName);
 			keepValue = configuration.getAttribute(ILaunchConstants.ATTR_KEEP_AFTER_LAUNCH, false);
 			keepButton.setSelection(keepValue);
@@ -638,7 +638,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 			privilegedButton.setSelection(privilegedValue);
 		} catch (CoreException e) {
 			setErrorMessage(
-					Messages.bind(Messages.ContainerTab_Error_Reading_Configuration, e.getStatus().getMessage())); //$NON-NLS-1$
+					Messages.bind(Messages.ContainerTab_Error_Reading_Configuration, e.getStatus().getMessage()));
 			DockerLaunchUIPlugin.log(e);
 		}
 	}
@@ -663,7 +663,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 			String image = launchConfig.getAttribute(ILaunchConstants.ATTR_IMAGE, (String) null);
 			if (image == null)
 				return false;
-			int index = image.lastIndexOf(':'); //$NON-NLS-1$
+			int index = image.lastIndexOf(':');
 			if (index <= 0)
 				return false;
 			if (connection.hasImage(image.substring(0, index), image.substring(index + 1))) {
@@ -722,8 +722,8 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 		} else {
 			setErrorMessage(Messages.ContainerTab_Error_No_Connections);
 			connection = null;
-			connectionUri = "";
-			connectionSelector.setText("");
+			connectionUri = ""; //$NON-NLS-1$
+			connectionSelector.setText(""); //$NON-NLS-1$
 		}
 		connectionSelector.addModifyListener(connectionModifyListener);
 	}

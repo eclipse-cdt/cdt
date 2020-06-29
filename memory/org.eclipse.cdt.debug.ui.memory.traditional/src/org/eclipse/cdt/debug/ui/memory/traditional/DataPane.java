@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class DataPane extends AbstractPane {
 	private Shell fToolTipShell;
-	private final static String UNICODE_NORTH_WEST_ARROW = "\u2196";
+	private final static String UNICODE_NORTH_WEST_ARROW = "\u2196"; //$NON-NLS-1$
 
 	public DataPane(Rendering parent) {
 		super(parent);
@@ -542,7 +542,7 @@ public class DataPane extends AbstractPane {
 				}
 
 				// Display the associated textual information
-				String info = fRendering.buildAddressInfoString(startAddress, ",", false);
+				String info = fRendering.buildAddressInfoString(startAddress, ",", false); //$NON-NLS-1$
 				if (info.length() > 0) {
 					// Add one character e.g. up arrow, to indicate the start of the data i.e. upper or lower row
 					gc.drawText(UNICODE_NORTH_WEST_ARROW + info, location.x, location.y + getCellTextHeight());
@@ -654,9 +654,8 @@ public class DataPane extends AbstractPane {
 		// TODO consider adding finer granularity?
 		boolean anyByteEditing = false;
 		for (int n = 0; n < bytes.length && !anyByteEditing; n++)
-			if (bytes[n] instanceof TraditionalMemoryByte)
-				if (bytes[n].isEdited())
-					anyByteEditing = true;
+			if (bytes[n].isEdited())
+				anyByteEditing = true;
 
 		TraditionalRendering ren = fRendering.getTraditionalRendering();
 
@@ -758,13 +757,13 @@ public class DataPane extends AbstractPane {
 
 		private void diplayToolTip(Point hoverPoint, BigInteger subAddress) {
 			// Show the current hovering address as the first line in the tooltip
-			StringBuilder sb = new StringBuilder("0x").append(subAddress.toString(16));
+			StringBuilder sb = new StringBuilder("0x").append(subAddress.toString(16)); //$NON-NLS-1$
 
 			// Add additional address information, if available
 			if (fRendering.hasAddressInfo(subAddress)) {
-				String info = fRendering.buildAddressInfoString(subAddress, "\n", true);
+				String info = fRendering.buildAddressInfoString(subAddress, "\n", true); //$NON-NLS-1$
 				if (info.length() > 0) {
-					sb.append("\n").append(info);
+					sb.append("\n").append(info); //$NON-NLS-1$
 				}
 			}
 

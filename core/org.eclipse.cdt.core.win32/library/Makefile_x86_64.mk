@@ -36,18 +36,11 @@ OBJS_WINREG=winreg/winreg.obj
 EXE_STARTER = starter.exe
 OBJS_STARTER=starter/starter.obj
 
-EXE_LISTTASKS = listtasks.exe
-OBJS_LISTTASKS=listtasks/listtasks.obj listtasks/StdAfx.obj
-
 .c.obj:
 	cl /c $(CFLAGS_UNICODE) $*.c /Fo$@
 
 .cpp.obj:
 	cl /c $(CFLAGS_UNICODE) $*.cpp /Fo$@
-
-#TODO: Use unicode for listtasks, see bug 353460
-listtasks/listtasks.obj:
-	cl /c $(CFLAGS) $*.cpp /Fo$@
 
 spawner: $(OBJS_SPAWNER)
 	link /dll /nologo /out:$(DLL_SPAWNER) $(OBJS_SPAWNER) User32.lib
@@ -58,13 +51,10 @@ winreg: $(OBJS_WINREG)
 starter: $(OBJS_STARTER)
 	link /nologo /out:$(EXE_STARTER) $(OBJS_STARTER) Psapi.Lib Shell32.lib
 	
-listtasks: $(OBJS_LISTTASKS)
-	link /nologo /out:$(EXE_LISTTASKS) $(OBJS_LISTTASKS) Psapi.Lib
-
-all: spawner winreg starter listtasks
+all: spawner winreg starter
 
 clean:
-	del *.obj *.lib *.exp *.exe *.dll winreg\*.obj starter\*.obj listtasks\*.obj
+	del *.obj *.lib *.exp *.exe *.dll winreg\*.obj starter\*.obj
 
 rebuild: clean all
 

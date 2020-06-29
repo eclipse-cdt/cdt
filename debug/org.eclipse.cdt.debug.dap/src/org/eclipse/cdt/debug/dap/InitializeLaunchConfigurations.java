@@ -40,22 +40,22 @@ public class InitializeLaunchConfigurations {
 	public Optional<String> getVSCodeLocation(String appendPathSuffix) {
 		String res = null;
 		if (Platform.getOS().equals(Platform.OS_LINUX)) {
-			res = "/usr/share/code";
+			res = "/usr/share/code"; //$NON-NLS-1$
 		} else if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			res = "C:/Program Files (x86)/Microsoft VS Code";
+			res = "C:/Program Files (x86)/Microsoft VS Code"; //$NON-NLS-1$
 		} else if (Platform.getOS().equals(Platform.OS_MACOSX)) {
-			res = "/Applications/Visual Studio Code.app";
+			res = "/Applications/Visual Studio Code.app"; //$NON-NLS-1$
 
 			IPath path = new Path(appendPathSuffix);
 			// resources/ maps to Contents/Resources on macOS
-			if (path.segmentCount() > 1 && path.segment(0).equals("resources")) {
+			if (path.segmentCount() > 1 && path.segment(0).equals("resources")) { //$NON-NLS-1$
 				path = path.removeFirstSegments(1);
-				appendPathSuffix = new Path("/Contents/Resources").append(path).toOSString();
+				appendPathSuffix = new Path("/Contents/Resources").append(path).toOSString(); //$NON-NLS-1$
 			}
 		}
 		if (res != null && new File(res).isDirectory()) {
-			if (res.contains(" ") && Platform.getOS().equals(Platform.OS_WIN32)) {
-				return Optional.of("\"" + res + appendPathSuffix + "\"");
+			if (res.contains(" ") && Platform.getOS().equals(Platform.OS_WIN32)) { //$NON-NLS-1$
+				return Optional.of("\"" + res + appendPathSuffix + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return Optional.of(res + appendPathSuffix);
 		}
@@ -64,16 +64,16 @@ public class InitializeLaunchConfigurations {
 
 	public Optional<String> getNodeJsLocation() {
 		{
-			String nodeJsLocation = System.getProperty("org.eclipse.wildwebdeveloper.nodeJSLocation");
+			String nodeJsLocation = System.getProperty("org.eclipse.wildwebdeveloper.nodeJSLocation"); //$NON-NLS-1$
 			if (nodeJsLocation != null && Files.exists(Paths.get(nodeJsLocation))) {
 				return Optional.of(nodeJsLocation);
 			}
 		}
 
-		String res = "/path/to/node";
-		String[] command = new String[] { "/bin/bash", "-c", "which node" };
+		String res = "/path/to/node"; //$NON-NLS-1$
+		String[] command = new String[] { "/bin/bash", "-c", "which node" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			command = new String[] { "cmd", "/c", "where node" };
+			command = new String[] { "cmd", "/c", "where node" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		try (BufferedReader reader = new BufferedReader(
@@ -86,7 +86,7 @@ public class InitializeLaunchConfigurations {
 
 		// Try default install path as last resort
 		if (res == null && Platform.getOS().equals(Platform.OS_MACOSX)) {
-			res = "/usr/local/bin/node";
+			res = "/usr/local/bin/node"; //$NON-NLS-1$
 		}
 
 		if (res != null && Files.exists(Paths.get(res))) {

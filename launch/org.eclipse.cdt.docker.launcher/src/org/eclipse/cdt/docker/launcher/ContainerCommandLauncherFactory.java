@@ -329,7 +329,7 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 						.append("HEADERS").append(getCleanName(connectionName)) //$NON-NLS-1$
 						.append(getCleanName(imageName));
 				toolchain.setProperty("cdt.needScannerRefresh", //$NON-NLS-1$
-						pluginPath.toFile().exists() ? "false" : "true"); //$NON-NLS-2$
+						pluginPath.toFile().exists() ? "false" : "true"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return includePaths;

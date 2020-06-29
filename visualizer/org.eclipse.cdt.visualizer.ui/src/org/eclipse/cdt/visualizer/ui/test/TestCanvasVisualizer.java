@@ -34,7 +34,7 @@ public class TestCanvasVisualizer extends GraphicCanvasVisualizer {
 	// --- constants ---
 
 	/** Eclipse ID for this visualizer */
-	public static final String ECLIPSE_ID = "org.eclipse.cdt.visualizer.ui.test.TestCanvasVisualizer";
+	public static final String ECLIPSE_ID = "org.eclipse.cdt.visualizer.ui.test.TestCanvasVisualizer"; //$NON-NLS-1$
 
 	// --- members ---
 
@@ -55,7 +55,7 @@ public class TestCanvasVisualizer extends GraphicCanvasVisualizer {
 	/** Returns non-localized unique name for this visualizer. */
 	@Override
 	public String getName() {
-		return "default";
+		return "default"; //$NON-NLS-1$
 	}
 
 	/** Returns localized name to display for this visualizer. */

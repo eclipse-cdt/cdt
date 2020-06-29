@@ -67,7 +67,7 @@ public class ExtensionElement {
 
 	/** Creates and returns instance of implementing class, using class name found in "class" attribute. */
 	public <T> T getClassAttribute() {
-		return getClassAttribute("class");
+		return getClassAttribute("class"); //$NON-NLS-1$
 	}
 
 	/** Creates and returns instance of implementing class, using class name found in specified attribute. */

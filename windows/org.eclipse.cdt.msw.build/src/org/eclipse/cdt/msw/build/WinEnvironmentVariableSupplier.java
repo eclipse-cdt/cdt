@@ -50,7 +50,7 @@ public class WinEnvironmentVariableSupplier
 
 		@Override
 		public String getDelimiter() {
-			return ";";
+			return ";"; //$NON-NLS-1$
 		}
 
 		@Override
@@ -98,10 +98,10 @@ public class WinEnvironmentVariableSupplier
 	}
 
 	private static String getSoftwareKey(WindowsRegistry reg, String subkey, String name) {
-		String value = reg.getLocalMachineValue("SOFTWARE\\" + subkey, name);
+		String value = reg.getLocalMachineValue("SOFTWARE\\" + subkey, name); //$NON-NLS-1$
 		// Visual Studio is a 32 bit application so on Windows 64 the keys will be in Wow6432Node
 		if (value == null) {
-			value = reg.getLocalMachineValue("SOFTWARE\\Wow6432Node\\" + subkey, name);
+			value = reg.getLocalMachineValue("SOFTWARE\\Wow6432Node\\" + subkey, name); //$NON-NLS-1$
 		}
 		return value;
 	}
@@ -111,36 +111,36 @@ public class WinEnvironmentVariableSupplier
 	// or Windows SDK 7.0 with Visual C++ 9.0
 	private static String getSDKDir() {
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
-		String sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder");
+		String sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (sdkDir != null)
 			return sdkDir;
-		sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v7.1", "InstallationFolder");
+		sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v7.1", "InstallationFolder"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (sdkDir != null)
 			return sdkDir;
-		return getSoftwareKey(reg, "Microsoft SDKs\\Windows\\v7.0", "InstallationFolder");
+		return getSoftwareKey(reg, "Microsoft SDKs\\Windows\\v7.0", "InstallationFolder"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private static String getVCDir() {
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
-		String vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "11.0");
+		String vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "11.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (vcDir != null)
 			return vcDir;
-		vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "10.0");
+		vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "10.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (vcDir != null)
 			return vcDir;
-		return getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "9.0");
+		return getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "9.0"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static IPath[] getIncludePath() {
 		// Include paths
 		List<IPath> includePaths = new ArrayList<>();
 		if (sdkDir != null) {
-			includePaths.add(new Path(sdkDir.concat("Include")));
-			includePaths.add(new Path(sdkDir.concat("Include\\gl")));
+			includePaths.add(new Path(sdkDir.concat("Include"))); //$NON-NLS-1$
+			includePaths.add(new Path(sdkDir.concat("Include\\gl"))); //$NON-NLS-1$
 		}
 
 		if (vcDir != null) {
-			includePaths.add(new Path(vcDir.concat("Include")));
+			includePaths.add(new Path(vcDir.concat("Include"))); //$NON-NLS-1$
 		}
 		return includePaths.toArray(new IPath[0]);
 	}
@@ -168,32 +168,32 @@ public class WinEnvironmentVariableSupplier
 		for (IPath path : includePaths) {
 			buff.append(path.toOSString()).append(';');
 		}
-		addvar(new WindowsBuildEnvironmentVariable("INCLUDE", buff.toString(),
+		addvar(new WindowsBuildEnvironmentVariable("INCLUDE", buff.toString(), //$NON-NLS-1$
 				IBuildEnvironmentVariable.ENVVAR_PREPEND));
 
 		// LIB
 		buff = new StringBuilder();
 		if (vcDir != null)
-			buff.append(vcDir).append("Lib;");
+			buff.append(vcDir).append("Lib;"); //$NON-NLS-1$
 		if (sdkDir != null) {
-			buff.append(sdkDir).append("Lib;");
-			buff.append(sdkDir).append("Lib\\win8\\um\\x86;");
+			buff.append(sdkDir).append("Lib;"); //$NON-NLS-1$
+			buff.append(sdkDir).append("Lib\\win8\\um\\x86;"); //$NON-NLS-1$
 		}
 
-		addvar(new WindowsBuildEnvironmentVariable("LIB", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND));
+		addvar(new WindowsBuildEnvironmentVariable("LIB", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND)); //$NON-NLS-1$
 
 		// PATH
 		buff = new StringBuilder();
 		if (vcDir != null) {
-			buff.append(vcDir).append("..\\Common7\\IDE;");
-			buff.append(vcDir).append("..\\Common7\\Tools;");
-			buff.append(vcDir).append("Bin;");
-			buff.append(vcDir).append("vcpackages;");
+			buff.append(vcDir).append("..\\Common7\\IDE;"); //$NON-NLS-1$
+			buff.append(vcDir).append("..\\Common7\\Tools;"); //$NON-NLS-1$
+			buff.append(vcDir).append("Bin;"); //$NON-NLS-1$
+			buff.append(vcDir).append("vcpackages;"); //$NON-NLS-1$
 		}
 		if (sdkDir != null) {
-			buff.append(sdkDir).append("Bin;");
+			buff.append(sdkDir).append("Bin;"); //$NON-NLS-1$
 		}
-		addvar(new WindowsBuildEnvironmentVariable("PATH", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND));
-	}
+		addvar(new WindowsBuildEnvironmentVariable("PATH", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND)); //$NON-NLS-1$
+	};
 
 }

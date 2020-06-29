@@ -74,7 +74,7 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 				IDE.openEditor(activePage, file);
 			}
 		} catch (PartInitException e) {
-			log("Failed to open editor", e);
+			log("Failed to open editor", e); //$NON-NLS-1$
 		}
 	}
 

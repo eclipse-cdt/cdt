@@ -93,7 +93,7 @@ public class TestCanvas extends GraphicCanvas {
 	/** Draw string, wrapping if there are any newline chars. */
 	public static void drawStringWrapNewlines(GC gc, String text, int x, int y, int lineHeight) {
 		if (text != null) {
-			String[] lines = text.split("\n");
+			String[] lines = text.split("\n"); //$NON-NLS-1$
 			for (int i = 0; i < lines.length; i++) {
 				gc.drawString(lines[i], x, y, true); // transparent
 				y += lineHeight;

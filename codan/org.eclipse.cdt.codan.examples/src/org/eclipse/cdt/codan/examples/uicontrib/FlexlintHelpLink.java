@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.codan.ui.AbstractCodanProblemDetailsProvider;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Example of codan problem details provider for flexlint integration
@@ -45,7 +46,8 @@ public class FlexlintHelpLink extends AbstractCodanProblemDetailsProvider {
 	@Override
 	public String getStyledProblemDescription() {
 		String helpId = parseHelpId(getProblemMessage());
-		String url = "http://www.gimpel-online.com/MsgRef.html#" + helpId;
-		return "<a href=\"" + url + "\">" + url + "</a>";
+		return NLS.bind(
+				"<a href=\"http://www.gimpel-online.com/MsgRef.html#{0}\">http://www.gimpel-online.com/MsgRef.html#{0}</a>",
+				helpId);
 	}
 }

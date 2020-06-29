@@ -15,6 +15,7 @@ package org.eclipse.cdt.codan.examples.uicontrib;
 
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.cdt.codan.ui.AbstractCodanProblemDetailsProvider;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Example of codan problem details provider for string search integration
@@ -22,13 +23,12 @@ import org.eclipse.cdt.codan.ui.AbstractCodanProblemDetailsProvider;
 public class GrepCheckerHelpLink extends AbstractCodanProblemDetailsProvider {
 	@Override
 	public boolean isApplicable(String id) {
-		return id.startsWith("org.eclipse.cdt.codan.examples.checkers.GrepCheckerProblem");
+		return id.startsWith("org.eclipse.cdt.codan.examples.checkers.GrepCheckerProblem"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getStyledProblemDescription() {
 		String arg = CodanProblemMarker.getProblemArgument(marker, 0);
-		String url = "http://www.google.ca/search?q=" + arg;
-		return "Google " + "<a href=\"" + url + "\">" + arg + "</a>";
+		return NLS.bind("Google <a href=\"http://www.google.ca/search?q={0}\">{0}</a>", arg);
 	}
 }

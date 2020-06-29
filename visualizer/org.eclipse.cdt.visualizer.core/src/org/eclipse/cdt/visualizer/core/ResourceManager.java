@@ -56,7 +56,7 @@ public class ResourceManager {
 	 * Assumes string resources are in the file "messages.properties".
 	 */
 	public ResourceManager(Plugin plugin) {
-		this(plugin, "messages.properties");
+		this(plugin, "messages.properties"); //$NON-NLS-1$
 	}
 
 	/** Constructor */
@@ -102,7 +102,7 @@ public class ResourceManager {
 			String filename = m_stringResourceFilename;
 
 			// The ".properties" extension is assumed, so we trim it here
-			String propertiesExtension = ".properties";
+			String propertiesExtension = ".properties"; //$NON-NLS-1$
 			if (filename.endsWith(propertiesExtension)) {
 				filename = filename.substring(0, filename.length() - propertiesExtension.length());
 			}
@@ -116,7 +116,7 @@ public class ResourceManager {
 
 			// we'll check for .properties file first
 			// in the same directory as the plugin activator class
-			String propertyFileName1 = m_pluginID + ".plugin." + filename;
+			String propertyFileName1 = m_pluginID + ".plugin." + filename; //$NON-NLS-1$
 			try {
 				m_stringResources = ResourceBundle.getBundle(propertyFileName1, locale, classLoader);
 			} catch (MissingResourceException e) {
@@ -155,7 +155,7 @@ public class ResourceManager {
 		if (strings == null) {
 			// if we can't get the registry, display the key instead,
 			// so we know what's missing (e.g. the .properties file)
-			result = "(" + key + ")";
+			result = "(" + key + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			try {
 				result = strings.getString(key);
@@ -175,7 +175,7 @@ public class ResourceManager {
 		// if we still fail, display the key instead,
 		// so we know what's missing
 		if (result == null)
-			result = "[" + key + "]";
+			result = "[" + key + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
 	}
 

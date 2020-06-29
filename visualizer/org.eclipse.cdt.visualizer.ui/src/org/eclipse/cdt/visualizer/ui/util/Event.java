@@ -61,23 +61,23 @@ public class Event {
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		result.append(getClass().getSimpleName());
-		result.append("[");
+		result.append("["); //$NON-NLS-1$
 		if (m_type != UNDEFINED) {
 			result.append(typeToString(m_type));
 		}
-		result.append("]");
+		result.append("]"); //$NON-NLS-1$
 		return result.toString();
 	}
 
 	/** Converts event type to string */
 	public String typeToString(int type) {
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		switch (type) {
 		case UNDEFINED:
-			result = "UNDEFINED";
+			result = "UNDEFINED"; //$NON-NLS-1$
 			break;
 		default:
-			result = "OTHER(" + type + ")";
+			result = "OTHER(" + type + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			break;
 		}
 		return result;

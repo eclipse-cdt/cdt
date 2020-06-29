@@ -58,7 +58,7 @@ public class NewContainerTargetWizardPage extends WizardPage
 	private IDockerImageListener wizardPage;
 	private String imageName;
 	private String connectionName;
-	private String connectionUri = "";
+	private String connectionUri = ""; //$NON-NLS-1$
 
 	public NewContainerTargetWizardPage(ILaunchTarget launchTarget) {
 		super(NewContainerTargetWizardPage.class.getName());
@@ -259,8 +259,8 @@ public class NewContainerTargetWizardPage extends WizardPage
 		} else {
 			setErrorMessage(Messages.NewContainerTargetWizardPage_no_connections);
 			connection = null;
-			connectionUri = "";
-			connectionSelector.setText("");
+			connectionUri = ""; //$NON-NLS-1$
+			connectionSelector.setText(""); //$NON-NLS-1$
 		}
 		connectionSelector.addModifyListener(connectionModifyListener);
 	}

@@ -57,7 +57,7 @@ public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
 		String category = type.getCategory();
 
 		return type.isPublic() && !(config.getAttribute(ILaunchManager.ATTR_PRIVATE, false))
-				&& !("org.eclipse.ui.externaltools.builder".equals(category)); // $NON-NLS-1$
+				&& !("org.eclipse.ui.externaltools.builder".equals(category)); //$NON-NLS-1$
 	}
 
 	@Override

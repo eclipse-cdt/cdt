@@ -87,8 +87,8 @@ public class GDBJtagDeviceContributionFactory {
 		String elementValue = configurationElement.getAttribute(name);
 		if (elementValue == null)
 			Activator.log(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR,
-					"Extension " + configurationElement.getDeclaringExtension().getUniqueIdentifier()
-							+ " missing required attribute: " + name,
+					"Extension " + configurationElement.getDeclaringExtension().getUniqueIdentifier() //$NON-NLS-1$
+							+ " missing required attribute: " + name, //$NON-NLS-1$
 					null));
 		return elementValue;
 	}

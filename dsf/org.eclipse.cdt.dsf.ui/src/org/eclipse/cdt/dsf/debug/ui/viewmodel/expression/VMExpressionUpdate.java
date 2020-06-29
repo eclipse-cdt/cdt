@@ -85,7 +85,7 @@ class VMExpressionUpdate extends VMViewerUpdate implements IExpressionUpdate {
 		if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled()
 				&& VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
 			DsfUIPlugin.debug(DsfPlugin.getDebugTime() + " " + LoggingUtils.toString(this) + " marked done; element = " //$NON-NLS-1$//$NON-NLS-2$
-					+ LoggingUtils.toString(getElement()) + "\n   expression = "
+					+ LoggingUtils.toString(getElement()) + "\n   expression = " //$NON-NLS-1$
 					+ (fExpressionElement != null ? LoggingUtils.toString(fExpressionElement) : "<unset>")); //$NON-NLS-1$
 		}
 

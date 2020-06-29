@@ -112,7 +112,7 @@ public class DapGdbJtagLaunchDelegate extends DapLaunchDelegate {
 				String symbolsOffset = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_SYMBOLS_OFFSET,
 						IGDBJtagConstants.DEFAULT_SYMBOLS_OFFSET);
 				if (symbolsOffset != null && symbolsOffset.length() > 0) {
-					symbolsOffset = "0x" + symbolsOffset;
+					symbolsOffset = "0x" + symbolsOffset; //$NON-NLS-1$
 				}
 				List<String> commands = new ArrayList<>();
 				jtagDevice.doLoadSymbol(symbolsFileName, symbolsOffset, commands);
@@ -170,7 +170,7 @@ public class DapGdbJtagLaunchDelegate extends DapLaunchDelegate {
 				String imageOffset = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_IMAGE_OFFSET,
 						IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
 				if (imageOffset != null && imageOffset.length() > 0) {
-					imageOffset = "0x" + CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_IMAGE_OFFSET,
+					imageOffset = "0x" + CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_IMAGE_OFFSET, //$NON-NLS-1$
 							IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
 				}
 				List<String> commands = new ArrayList<>();
@@ -353,7 +353,7 @@ public class DapGdbJtagLaunchDelegate extends DapLaunchDelegate {
 	private GDBJtagDeviceContribution getGDBJtagDeviceContribution(Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes.containsKey(IGDBJtagConstants.ATTR_JTAG_DEVICE_ID)) {
-			String deviceId = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE_ID, "");
+			String deviceId = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE_ID, ""); //$NON-NLS-1$
 			if (!deviceId.isEmpty()) {
 				return GDBJtagDeviceContributionFactory.getInstance().findByDeviceId(deviceId);
 			}
@@ -361,7 +361,7 @@ public class DapGdbJtagLaunchDelegate extends DapLaunchDelegate {
 
 		// Fall back to old behavior with name only if ID is missing
 		if (attributes.containsKey(IGDBJtagConstants.ATTR_JTAG_DEVICE)) {
-			String deviceName = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE, "");
+			String deviceName = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE, ""); //$NON-NLS-1$
 			if (!deviceName.isEmpty()) {
 				return GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(deviceName);
 			}

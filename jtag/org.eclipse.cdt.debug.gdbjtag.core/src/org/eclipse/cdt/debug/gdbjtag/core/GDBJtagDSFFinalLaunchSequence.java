@@ -195,7 +195,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	}
 
 	/** @since 8.2 */
-	protected static final String GROUP_JTAG = "GROUP_JTAG";
+	protected static final String GROUP_JTAG = "GROUP_JTAG"; //$NON-NLS-1$
 
 	@Override
 	protected String[] getExecutionOrder(String group) {
@@ -209,14 +209,16 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			}));
 
 			// Now insert our steps before the data model initialized event is sent
-			orderList.add(orderList.indexOf("stepDataModelInitializationComplete"), GROUP_JTAG);
+			orderList.add(orderList.indexOf("stepDataModelInitializationComplete"), GROUP_JTAG); //$NON-NLS-1$
 
 			return orderList.toArray(new String[orderList.size()]);
 		}
 
 		// Finally, deal with our groups and their steps.
 		if (GROUP_JTAG.equals(group)) {
-			return new String[] { "stepInitializeJTAGFinalLaunchSequence", "stepRetrieveJTAGDevice", //$NON-NLS-2$
+			return new String[] { //
+					"stepInitializeJTAGFinalLaunchSequence", //$NON-NLS-1$
+					"stepRetrieveJTAGDevice", //$NON-NLS-1$
 					"stepLoadSymbols", //$NON-NLS-1$
 					"stepConnectToTarget", //$NON-NLS-1$
 					"stepResetBoard", //$NON-NLS-1$
@@ -354,7 +356,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 				String symbolsOffset = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_SYMBOLS_OFFSET,
 						IGDBJtagConstants.DEFAULT_SYMBOLS_OFFSET);
 				if (symbolsOffset.length() > 0) {
-					symbolsOffset = "0x" + symbolsOffset;
+					symbolsOffset = "0x" + symbolsOffset; //$NON-NLS-1$
 				}
 				List<String> commands = new ArrayList<>();
 				fGdbJtagDevice.doLoadSymbol(symbolsFileName, symbolsOffset, commands);
@@ -553,8 +555,8 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 				String imageOffset = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_OFFSET,
 						IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
 				if (imageOffset.length() > 0) {
-					imageOffset = (imageFileName.endsWith(".elf")) ? "" //$NON-NLS-2$
-							: "0x" + CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_OFFSET,
+					imageOffset = (imageFileName.endsWith(".elf")) ? "" //$NON-NLS-1$//$NON-NLS-2$
+							: "0x" + CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_OFFSET, //$NON-NLS-1$
 									IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
 				}
 				List<String> commands = new ArrayList<>();
@@ -756,7 +758,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	private GDBJtagDeviceContribution getGDBJtagDeviceContribution() {
 		Map<String, Object> attributes = getAttributes();
 		if (attributes.containsKey(IGDBJtagConstants.ATTR_JTAG_DEVICE_ID)) {
-			String deviceId = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE_ID, "");
+			String deviceId = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE_ID, ""); //$NON-NLS-1$
 			if (!deviceId.isEmpty()) {
 				return GDBJtagDeviceContributionFactory.getInstance().findByDeviceId(deviceId);
 			}
@@ -764,7 +766,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 
 		// Fall back to old behavior with name only if ID is missing
 		if (attributes.containsKey(IGDBJtagConstants.ATTR_JTAG_DEVICE)) {
-			String deviceName = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE, "");
+			String deviceName = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE, ""); //$NON-NLS-1$
 			if (!deviceName.isEmpty()) {
 				return GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(deviceName);
 			}

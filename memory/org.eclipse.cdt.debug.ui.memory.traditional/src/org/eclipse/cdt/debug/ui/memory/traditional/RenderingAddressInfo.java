@@ -481,7 +481,7 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 			List<IMemoryBlockAddressInfoItem> infoItems) {
 		if (infoItems == null || infoItems.size() < 1) {
 			// No information to display
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 
 		// The container string builder for all types
@@ -496,7 +496,7 @@ public class RenderingAddressInfo extends Rendering implements IDebugContextList
 			if (typeBuilder == null) {
 				// Create a String builder per information type
 				if (addTypeHeaders) {
-					typeBuilder = new StringBuilder(infoType).append(":").append(separator);
+					typeBuilder = new StringBuilder(infoType).append(":").append(separator); //$NON-NLS-1$
 				} else {
 					typeBuilder = new StringBuilder();
 				}

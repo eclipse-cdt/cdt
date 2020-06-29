@@ -484,7 +484,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		// has a memory-space-specific background color been set for the associated memory space?
 		if (fMemorySpaceId != null) {
 			String key = fMemSpacePreferenceHelper.getMemorySpaceKey(fMemorySpaceId);
-			if (store.getString(key) != "") {
+			if (store.getString(key) != "") { //$NON-NLS-1$
 				colorBackground = new Color(Display.getDefault(), PreferenceConverter.getColor(store, key));
 			}
 		}

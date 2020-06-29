@@ -987,7 +987,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 					block.setValue(offset, byteValue);
 				} catch (Exception e) {
 					MemoryViewUtil.openError(
-							TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_WRITE_MEMORY"), "", e);
+							TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_WRITE_MEMORY"), "", e); //$NON-NLS-1$ //$NON-NLS-2$
 
 					logError(TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_WRITE_MEMORY"), e); //$NON-NLS-1$
 				}
@@ -1009,7 +1009,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 	public void setVisibleAddressBar(boolean visible) {
 		fAddressBarControl.setVisible(visible);
 		if (visible) {
-			String selectedStr = "0x" + getCaretAddress().toString(16);
+			String selectedStr = "0x" + getCaretAddress().toString(16); //$NON-NLS-1$
 			Text text = fAddressBar.getExpressionWidget();
 			text.setText(selectedStr);
 			text.setSelection(0, text.getCharCount());
@@ -1444,9 +1444,9 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 	protected void setCurrentScrollSelection() {
 		BigInteger viewportStartAddress = getViewportStartAddress();
 		if (TraceOptions.DEBUG) {
-			TraceOptions.trace(MessageFormat.format("Update scroll for viewrange[0x{0} : 0x{1}]:\n",
+			TraceOptions.trace(MessageFormat.format("Update scroll for viewrange[0x{0} : 0x{1}]:\n", //$NON-NLS-1$
 					viewportStartAddress.toString(16), getViewportEndAddress().toString(16)));
-			TraceOptions.trace(MessageFormat.format("  current ScrollRange=[0x{0} : 0x{1}]; selection = {2}\n",
+			TraceOptions.trace(MessageFormat.format("  current ScrollRange=[0x{0} : 0x{1}]; selection = {2}\n", //$NON-NLS-1$
 					getScrollStartAddress().toString(16), getScrollEndAddress().toString(16), fCurrentScrollSelection));
 		}
 		BigInteger addressableRow = BigInteger.valueOf(getAddressableCellsPerRow());
@@ -1460,7 +1460,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			setScrollStartAddress(newScrollStart);
 
 			if (TraceOptions.DEBUG) {
-				TraceOptions.trace(MessageFormat.format("  new ScrollRange=[0x{0} : 0x{1}]\n",
+				TraceOptions.trace(MessageFormat.format("  new ScrollRange=[0x{0} : 0x{1}]\n", //$NON-NLS-1$
 						getScrollStartAddress().toString(16), getScrollEndAddress().toString(16)));
 			}
 		} else if (getViewportEndAddress().compareTo(getScrollEndAddress()) >= 0) {
@@ -1477,7 +1477,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			setScrollStartAddress(newScrollStart);
 
 			if (TraceOptions.DEBUG) {
-				TraceOptions.trace(MessageFormat.format("  new ScrollRange=[0x{0} : 0x{1}]\n",
+				TraceOptions.trace(MessageFormat.format("  new ScrollRange=[0x{0} : 0x{1}]\n", //$NON-NLS-1$
 						getScrollStartAddress().toString(16), getScrollEndAddress().toString(16)));
 			}
 		}
@@ -1486,7 +1486,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		fCurrentScrollSelection = viewportStartAddress.subtract(getScrollStartAddress()).divide(addressableRow)
 				.intValue() + 1;
 		if (TraceOptions.DEBUG) {
-			TraceOptions.trace(MessageFormat.format("  new selection={0}\n", fCurrentScrollSelection));
+			TraceOptions.trace(MessageFormat.format("  new selection={0}\n", fCurrentScrollSelection)); //$NON-NLS-1$
 		}
 		getVerticalBar().setSelection(fCurrentScrollSelection);
 	}
@@ -1581,14 +1581,14 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 	protected String getCharacterSet(int mode) {
 		switch (mode) {
 		case Rendering.TEXT_UTF8:
-			return "UTF8";
+			return "UTF8"; //$NON-NLS-1$
 		case Rendering.TEXT_UTF16:
-			return "UTF16";
+			return "UTF16"; //$NON-NLS-1$
 		case Rendering.TEXT_USASCII:
-			return "US-ASCII";
+			return "US-ASCII"; //$NON-NLS-1$
 		case Rendering.TEXT_ISO_8859_1:
 		default:
-			return "ISO-8859-1";
+			return "ISO-8859-1"; //$NON-NLS-1$
 		}
 	}
 
@@ -1711,7 +1711,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		try {
 			clip = new Clipboard(getDisplay());
 
-			String addressString = "0x" + getCaretAddress().toString(16);
+			String addressString = "0x" + getCaretAddress().toString(16); //$NON-NLS-1$
 
 			TextTransfer plainTextTransfer = TextTransfer.getInstance();
 			clip.setContents(new Object[] { addressString }, new Transfer[] { plainTextTransfer });
@@ -2024,7 +2024,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 	 *            type e.g. Variables, Registers, etc.
 	 */
 	String buildAddressInfoString(BigInteger address, String separator, boolean addTypeHeaders) {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**

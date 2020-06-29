@@ -49,7 +49,7 @@ public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName 
 		if (simpleID == null) {
 			IASTInitializerClause[] args = fnCall.getArguments();
 			simpleID = (functionInstanceBinding.getName()
-					+ ASTTypeUtil.getArgumentListString(functionInstanceBinding.getTemplateArguments(), true) + "\0("
+					+ ASTTypeUtil.getArgumentListString(functionInstanceBinding.getTemplateArguments(), true) + "\0(" //$NON-NLS-1$
 					+ asStringForName(args, 0) + ',' + asStringForName(args, 1) + ',' + asStringForName(args, 2) + ','
 					+ asStringForName(args, 3) + ')').toCharArray();
 		}
@@ -108,7 +108,7 @@ public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName 
 
 	private String asStringForName(IASTInitializerClause[] args, int index) {
 		String arg = args.length <= index ? null : asString(args[index]);
-		return arg == null ? "" : arg;
+		return arg == null ? "" : arg; //$NON-NLS-1$
 	}
 
 	private String getArgAsStringOrNull(int index) {

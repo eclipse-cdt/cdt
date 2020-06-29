@@ -32,7 +32,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 @SuppressWarnings("restriction")
 public class QObjectDeclarationCompletion {
 
-	private static final String TEMPLATE = "class ${name} : public ${QObject}\n{\nQ_OBJECT\n\n${cursor}\n};";
+	private static final String TEMPLATE = "class ${name} : public ${QObject}\n{\nQ_OBJECT\n\n${cursor}\n};"; //$NON-NLS-1$
 
 	private final static TranslationUnitContextType context;
 	static {
@@ -44,7 +44,7 @@ public class QObjectDeclarationCompletion {
 			IASTName name) {
 
 		String token = name.getLastName().toString();
-		if (token.isEmpty() || !"class".startsWith(token))
+		if (token.isEmpty() || !"class".startsWith(token)) //$NON-NLS-1$
 			return null;
 
 		Position position = getPosition(ctx);

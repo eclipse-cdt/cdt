@@ -21,30 +21,30 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
  * Declares constants related to tokens that are special in Qt applications.
  */
 public class QtKeywords {
-	public static final String CONNECT = "connect";
-	public static final String DISCONNECT = "disconnect";
-	public static final String Q_CLASSINFO = "Q_CLASSINFO";
-	public static final String Q_DECLARE_FLAGS = "Q_DECLARE_FLAGS";
-	public static final String Q_ENUMS = "Q_ENUMS";
-	public static final String Q_FLAGS = "Q_FLAGS";
-	public static final String Q_GADGET = "Q_GADGET";
-	public static final String Q_INVOKABLE = "Q_INVOKABLE";
-	public static final String Q_OBJECT = "Q_OBJECT";
-	public static final String Q_PROPERTY = "Q_PROPERTY";
-	public static final String Q_REVISION = "Q_REVISION";
-	public static final String Q_SIGNAL = "Q_SIGNAL";
-	public static final String Q_SIGNALS = "Q_SIGNALS";
-	public static final String Q_SLOT = "Q_SLOT";
-	public static final String Q_SLOTS = "Q_SLOTS";
-	public static final String QMETAMETHOD = "QMetaMethod";
-	public static final String QML_ATTACHED_PROPERTIES = "qmlAttachedProperties";
-	public static final String QML_REGISTER_TYPE = "qmlRegisterType";
-	public static final String QML_REGISTER_UNCREATABLE_TYPE = "qmlRegisterUncreatableType";
-	public static final String QOBJECT = "QObject";
-	public static final String SIGNAL = "SIGNAL";
-	public static final String SIGNALS = "signals";
-	public static final String SLOT = "SLOT";
-	public static final String SLOTS = "slots";
+	public static final String CONNECT = "connect"; //$NON-NLS-1$
+	public static final String DISCONNECT = "disconnect"; //$NON-NLS-1$
+	public static final String Q_CLASSINFO = "Q_CLASSINFO"; //$NON-NLS-1$
+	public static final String Q_DECLARE_FLAGS = "Q_DECLARE_FLAGS"; //$NON-NLS-1$
+	public static final String Q_ENUMS = "Q_ENUMS"; //$NON-NLS-1$
+	public static final String Q_FLAGS = "Q_FLAGS"; //$NON-NLS-1$
+	public static final String Q_GADGET = "Q_GADGET"; //$NON-NLS-1$
+	public static final String Q_INVOKABLE = "Q_INVOKABLE"; //$NON-NLS-1$
+	public static final String Q_OBJECT = "Q_OBJECT"; //$NON-NLS-1$
+	public static final String Q_PROPERTY = "Q_PROPERTY"; //$NON-NLS-1$
+	public static final String Q_REVISION = "Q_REVISION"; //$NON-NLS-1$
+	public static final String Q_SIGNAL = "Q_SIGNAL"; //$NON-NLS-1$
+	public static final String Q_SIGNALS = "Q_SIGNALS"; //$NON-NLS-1$
+	public static final String Q_SLOT = "Q_SLOT"; //$NON-NLS-1$
+	public static final String Q_SLOTS = "Q_SLOTS"; //$NON-NLS-1$
+	public static final String QMETAMETHOD = "QMetaMethod"; //$NON-NLS-1$
+	public static final String QML_ATTACHED_PROPERTIES = "qmlAttachedProperties"; //$NON-NLS-1$
+	public static final String QML_REGISTER_TYPE = "qmlRegisterType"; //$NON-NLS-1$
+	public static final String QML_REGISTER_UNCREATABLE_TYPE = "qmlRegisterUncreatableType"; //$NON-NLS-1$
+	public static final String QOBJECT = "QObject"; //$NON-NLS-1$
+	public static final String SIGNAL = "SIGNAL"; //$NON-NLS-1$
+	public static final String SIGNALS = "signals"; //$NON-NLS-1$
+	public static final String SLOT = "SLOT"; //$NON-NLS-1$
+	public static final String SLOTS = "slots"; //$NON-NLS-1$
 
 	/**
 	 * Returns true if the argument type is for Qt's QObject class and false otherwise.

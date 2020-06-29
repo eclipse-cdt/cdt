@@ -116,7 +116,7 @@ public class QtMethodUtil {
 		boolean first = true;
 		List<String> signatures = new ArrayList<>();
 		qtEncSignatures = qtEncSignatures.substring(i + 1);
-		Pattern p = Pattern.compile("^([a-zA-Z0-9+/=]*)(@?).*$");
+		Pattern p = Pattern.compile("^([a-zA-Z0-9+/=]*)(@?).*$"); //$NON-NLS-1$
 		while (!qtEncSignatures.isEmpty()) {
 			Matcher m = p.matcher(qtEncSignatures);
 			if (!m.matches())
@@ -193,21 +193,22 @@ public class QtMethodUtil {
 	}
 
 	private static String stripWS(String str) {
-		return str.trim().replaceAll("\\s+", " ").replaceAll(" ([\\*&,()<>]+)", "$1").replaceAll("([\\*&,()<>]+) ",
-				"$1");
+		return str.trim().replaceAll("\\s+", " "). //$NON-NLS-1$ //$NON-NLS-2$
+				replaceAll(" ([\\*&,()<>]+)", "$1"). //$NON-NLS-1$ //$NON-NLS-2$
+				replaceAll("([\\*&,()<>]+) ", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private static String asString(IASTPointerOperator ptr) {
 		if (ptr instanceof ICPPASTReferenceOperator)
-			return "&";
+			return "&"; //$NON-NLS-1$
 		if (ptr instanceof IASTPointer) {
 			StringBuilder str = new StringBuilder();
 			IASTPointer astPtr = (IASTPointer) ptr;
 			str.append('*');
 			if (astPtr.isConst())
-				str.append(" const");
+				str.append(" const"); //$NON-NLS-1$
 			if (astPtr.isVolatile())
-				str.append(" volatile");
+				str.append(" volatile"); //$NON-NLS-1$
 			return str.toString();
 		}
 
@@ -239,7 +240,7 @@ public class QtMethodUtil {
 
 		if (isConst || stripLastPtrConst) {
 			if (!pruneConst)
-				result.append("const ");
+				result.append("const "); //$NON-NLS-1$
 			else {
 				// Qt signature generation converts const value and const reference types
 				// into simple value types.  E.g.,
@@ -255,14 +256,14 @@ public class QtMethodUtil {
 					if (lastPtr instanceof ICPPASTReferenceOperator)
 						ptrs = Arrays.copyOf(ptrs, ptrs.length - 1);
 					else if (!(lastPtr instanceof IASTPointer) || !((IASTPointer) lastPtr).isConst())
-						result.append("const ");
+						result.append("const "); //$NON-NLS-1$
 				}
 			}
 		}
 
 		// Qt does no special handling for volatile.  This is likely an oversight.
 		if (cppSpec.isVolatile())
-			result.append("volatile ");
+			result.append("volatile "); //$NON-NLS-1$
 
 		IASTNode[] children = cppSpec.getChildren();
 		if (children == null || children.length <= 0) {
@@ -270,8 +271,8 @@ public class QtMethodUtil {
 			// type (without following typedefs, etc.), and then strip out all const
 			// which has already been handled.
 			String raw = cppSpec.toString();
-			raw = raw.replaceAll("const\\s", "");
-			raw = raw.replaceAll("\\sconst", "");
+			raw = raw.replaceAll("const\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			raw = raw.replaceAll("\\sconst", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			result.append(raw);
 		} else {
 			for (IASTNode child : children) {
@@ -294,7 +295,7 @@ public class QtMethodUtil {
 			if (!stripLastPtrConst || i < ptrs.length - 1)
 				result.append(asString(ptrs[i]));
 			else
-				result.append(asString(ptrs[i]).replaceAll("const", ""));
+				result.append(asString(ptrs[i]).replaceAll("const", "")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -332,7 +333,7 @@ public class QtMethodUtil {
 			if (first)
 				first = false;
 			else
-				result.append(", ");
+				result.append(", "); //$NON-NLS-1$
 			append(result, child);
 		}
 		result.append('>');

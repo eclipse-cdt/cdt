@@ -66,10 +66,10 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 	 */
 	private long qtInstallHeadersModTime;
 
-	private static final String ATTR_QMAKE = "qmake";
-	private static final String ATTR_QMAKE_MOD = "qmakeModification";
-	private static final String ATTR_QT_INSTALL_HEADERS = "QT_INSTALL_HEADERS";
-	private static final String ATTR_QT_INSTALL_HEADERS_MOD = "qtInstallHeadersModification";
+	private static final String ATTR_QMAKE = "qmake"; //$NON-NLS-1$
+	private static final String ATTR_QMAKE_MOD = "qmakeModification"; //$NON-NLS-1$
+	private static final String ATTR_QT_INSTALL_HEADERS = "QT_INSTALL_HEADERS"; //$NON-NLS-1$
+	private static final String ATTR_QT_INSTALL_HEADERS_MOD = "qtInstallHeadersModification"; //$NON-NLS-1$
 
 	/**
 	 * Create a new instance of the include path wrapper for the Qt installation for
@@ -198,7 +198,7 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 		try {
 			return Long.parseLong(value);
 		} catch (NumberFormatException e) {
-			Activator.log("attribute name:" + attr + " value:" + value, e);
+			Activator.log("attribute name:" + attr + " value:" + value, e); //$NON-NLS-1$ //$NON-NLS-2$
 			return 0;
 		}
 	}
@@ -223,7 +223,7 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 		BufferedReader reader = null;
 		Process process = null;
 		try {
-			process = ProcessFactory.getFactory().exec(new String[] { qmakePath, "-query", "QT_INSTALL_HEADERS" });
+			process = ProcessFactory.getFactory().exec(new String[] { qmakePath, "-query", "QT_INSTALL_HEADERS" }); //$NON-NLS-1$ //$NON-NLS-2$
 			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			qtInstallHeadersPath = reader.readLine();
 		} catch (IOException e) {

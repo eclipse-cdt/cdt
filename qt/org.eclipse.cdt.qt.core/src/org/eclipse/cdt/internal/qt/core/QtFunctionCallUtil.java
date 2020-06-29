@@ -60,9 +60,9 @@ import org.eclipse.cdt.core.dom.ast.IType;
  */
 public class QtFunctionCallUtil {
 
-	private static final Pattern SignalRegex = Pattern.compile("^\\s*" + QtKeywords.SIGNAL + ".*");
+	private static final Pattern SignalRegex = Pattern.compile("^\\s*" + QtKeywords.SIGNAL + ".*"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final Pattern MethodRegex = Pattern
-			.compile("^\\s*(?:" + QtKeywords.SIGNAL + '|' + QtKeywords.SLOT + ").*");
+			.compile("^\\s*(?:" + QtKeywords.SIGNAL + '|' + QtKeywords.SLOT + ").*"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * Return true if the specified name is a QObject::connect or QObject::disconnect function

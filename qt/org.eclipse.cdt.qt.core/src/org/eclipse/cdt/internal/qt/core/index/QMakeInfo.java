@@ -29,9 +29,9 @@ import org.eclipse.cdt.utils.spawner.ProcessFactory;
 public final class QMakeInfo implements IQMakeInfo {
 
 	// reg. exp. for parsing output of "qmake -query" command
-	public static final Pattern PATTERN_QUERY_LINE = Pattern.compile("^(\\w+):(.*)$");
+	public static final Pattern PATTERN_QUERY_LINE = Pattern.compile("^(\\w+):(.*)$"); //$NON-NLS-1$
 	// reg. exp. for parsing output of "qmake -E file.pro" command (for QMake 3.0 only)
-	public static final Pattern PATTERN_EVAL_LINE = Pattern.compile("^([a-zA-Z0-9_\\.]+)\\s*=\\s*(.*)$");
+	public static final Pattern PATTERN_EVAL_LINE = Pattern.compile("^([a-zA-Z0-9_\\.]+)\\s*=\\s*(.*)$"); //$NON-NLS-1$
 
 	/**
 	 * Instance that is used to present an invalid IQMakeInfo.
@@ -88,7 +88,7 @@ public final class QMakeInfo implements IQMakeInfo {
 		}
 
 		// run "qmake -query"
-		Map<String, String> qmake1 = exec(PATTERN_QUERY_LINE, extraEnv, qmakePath, "-query");
+		Map<String, String> qmake1 = exec(PATTERN_QUERY_LINE, extraEnv, qmakePath, "-query"); //$NON-NLS-1$
 		if (qmake1 == null) {
 			return INVALID;
 		}
@@ -99,7 +99,7 @@ public final class QMakeInfo implements IQMakeInfo {
 		// TODO - no support for pre-3.0
 		// for QMake version 3.0 or newer, run "qmake -E file.pro"
 		Map<String, String> qmake2 = version != null && version.getMajor() >= 3
-				? exec(PATTERN_EVAL_LINE, extraEnv, qmakePath, "-E", proPath)
+				? exec(PATTERN_EVAL_LINE, extraEnv, qmakePath, "-E", proPath) //$NON-NLS-1$
 				: Collections.<String, String>emptyMap();
 		return new QMakeInfo(true, qmake1, qmake2);
 	}
@@ -184,7 +184,7 @@ public final class QMakeInfo implements IQMakeInfo {
 	 */
 	private static Map<String, String> exec(Pattern regex, String[] extraEnv, String... command) {
 		if (command.length < 1 || !new File(command[0]).exists()) {
-			Activator.log("qmake: cannot run command: " + (command.length > 0 ? command[0] : ""));
+			Activator.log("qmake: cannot run command: " + (command.length > 0 ? command[0] : "")); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 		BufferedReader reader = null;

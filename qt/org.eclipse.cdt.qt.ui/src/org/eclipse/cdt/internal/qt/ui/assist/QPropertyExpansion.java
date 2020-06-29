@@ -73,15 +73,15 @@ public class QPropertyExpansion {
 	private static final Pattern TYPENAME_REGEX;
 	static {
 		StringBuilder regexBuilder = new StringBuilder();
-		regexBuilder.append("^(?:Q_PROPERTY\\s*\\()?\\s*(.*?)(\\s+)(?:");
+		regexBuilder.append("^(?:Q_PROPERTY\\s*\\()?\\s*(.*?)(\\s+)(?:"); //$NON-NLS-1$
 		for (IQProperty.Attribute attr : IQProperty.Attribute.values()) {
 			if (attr.ordinal() > 0)
 				regexBuilder.append('|');
-			regexBuilder.append("(?:");
+			regexBuilder.append("(?:"); //$NON-NLS-1$
 			regexBuilder.append(attr.identifier);
-			regexBuilder.append(")");
+			regexBuilder.append(")"); //$NON-NLS-1$
 		}
-		regexBuilder.append(").*$");
+		regexBuilder.append(").*$"); //$NON-NLS-1$
 		TYPENAME_REGEX = Pattern.compile(regexBuilder.toString());
 	}
 
@@ -295,12 +295,12 @@ public class QPropertyExpansion {
 			// Otherwise create a template where the content depends on the type of the attribute's parameter.
 			String display = attribute.identifier + ' ' + attribute.paramName;
 			String replacement = attribute.identifier;
-			if ("bool".equals(attribute.paramName))
-				replacement += " ${true}";
-			else if ("int".equals(attribute.paramName))
-				replacement += " ${0}";
+			if ("bool".equals(attribute.paramName)) //$NON-NLS-1$
+				replacement += " ${true}"; //$NON-NLS-1$
+			else if ("int".equals(attribute.paramName)) //$NON-NLS-1$
+				replacement += " ${0}"; //$NON-NLS-1$
 			else if (attribute.paramName != null)
-				replacement += " ${" + attribute.paramName + '}';
+				replacement += " ${" + attribute.paramName + '}'; //$NON-NLS-1$
 
 			return templateProposal(contextId, context, display, replacement, relevance);
 		}
@@ -308,7 +308,7 @@ public class QPropertyExpansion {
 
 	private static ICompletionProposal templateProposal(String contextId,
 			ICEditorContentAssistInvocationContext context, String display, String replacement, int relevance) {
-		Template template = new Template(display, "Q_PROPERTY declaration parameter", contextId, replacement, true);
+		Template template = new Template(display, "Q_PROPERTY declaration parameter", contextId, replacement, true); //$NON-NLS-1$
 
 		TemplateContextType ctxType = new CContextType();
 		ctxType.setId(contextId);
@@ -366,10 +366,10 @@ public class QPropertyExpansion {
 			}
 
 			if (prefix != null) {
-				if (attr.identifier.startsWith(prefix) && (!expansion.matches(".*\\s+" + attr.identifier + "\\s+.*")
+				if (attr.identifier.startsWith(prefix) && (!expansion.matches(".*\\s+" + attr.identifier + "\\s+.*") //$NON-NLS-1$ //$NON-NLS-2$
 						|| attr.identifier.equals(currIdentifier.ident)))
 					unspecifiedAttributes.add(new Attribute(attr));
-			} else if (!expansion.matches(".*\\s+" + attr.identifier + "\\s+.*"))
+			} else if (!expansion.matches(".*\\s+" + attr.identifier + "\\s+.*")) //$NON-NLS-1$ //$NON-NLS-2$
 				unspecifiedAttributes.add(new Attribute(attr));
 		}
 
@@ -417,7 +417,7 @@ public class QPropertyExpansion {
 		if (cursor >= expansion.length())
 			return expansion + '|';
 		if (cursor < 0)
-			return "|" + expansion;
+			return "|" + expansion; //$NON-NLS-1$
 
 		return expansion.substring(0, cursor) + '|' + expansion.substring(cursor);
 	}

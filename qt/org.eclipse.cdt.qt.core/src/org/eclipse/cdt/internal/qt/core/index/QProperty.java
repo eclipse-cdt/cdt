@@ -22,7 +22,7 @@ public class QProperty extends AbstractQField implements IQProperty {
 	}
 
 	public void setAttribute(IQProperty.Attribute attr, String value) {
-		values[attr.ordinal()] = (value == null ? "" : value);
+		values[attr.ordinal()] = (value == null ? "" : value); //$NON-NLS-1$
 	}
 
 	@Override

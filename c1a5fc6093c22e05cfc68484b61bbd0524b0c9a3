@@ -16,6 +16,24 @@
       "revId": "c1a5fc6093c22e05cfc68484b61bbd0524b0c9a3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82d0d9ac_8db17424",
+        "filename": "llvm/org.eclipse.cdt.llvm.dsf.lldb.core/src/org/eclipse/cdt/llvm/dsf/lldb/core/internal/launching/LLDBLaunchDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-06-29T17:31:37Z",
+      "side": 0,
+      "message": "@Marc-André: Can you take this gerrit for a spin and see if it restores the behavior that you expect for LLDB? https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/165578",
+      "parentUuid": "3bf38baa_26470082",
+      "revId": "c1a5fc6093c22e05cfc68484b61bbd0524b0c9a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

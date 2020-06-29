@@ -31,8 +31,8 @@ public class VersionComparator {
 	 *  VersionComparator.compare("1.5.1", "1.5.1")  returns 0
 	 */
 	public static int compare(String v1, String v2) {
-		String[] v1digits = v1.split("\\.");
-		String[] v2digits = v2.split("\\.");
+		String[] v1digits = v1.split("\\."); //$NON-NLS-1$
+		String[] v2digits = v2.split("\\."); //$NON-NLS-1$
 
 		for (int i = 0; i < v1digits.length && i < v2digits.length; i++) {
 			int d1 = Integer.valueOf(v1digits[i]);

@@ -81,8 +81,7 @@ public class MesonProjectGenerator extends FMProjectGenerator {
 			}
 		}
 
-		entries.add(CoreModel.newOutputEntry(buildFolder.getFullPath(), // $NON-NLS-1$
-				new IPath[] {})); //$NON-NLS-1$
+		entries.add(CoreModel.newOutputEntry(buildFolder.getFullPath(), new IPath[] {}));
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);
 	}

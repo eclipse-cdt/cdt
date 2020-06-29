@@ -43,7 +43,7 @@ public class AutoconfOutlineErrorHandler {
 		try {
 			IPath absPath = input.getStorage().getFullPath();
 			IPath rootPath = root.getLocation();
-			IPath relPath = new Path("");
+			IPath relPath = new Path(""); //$NON-NLS-1$
 
 			for (int i = 0; i < rootPath.segmentCount(); ++i) {
 				relPath = relPath.append("../"); //$NON-NLS-1$

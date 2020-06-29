@@ -64,7 +64,7 @@ public abstract class AbstractConfigurationOption implements IConfigureOption {
 	}
 
 	public String getParameterName() {
-		return "--" + getName();
+		return "--" + getName(); //$NON-NLS-1$
 	}
 
 	@Override

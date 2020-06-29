@@ -55,9 +55,9 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
  */
 public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPage {
 
-	private static final String WZ_TITLE = "WizardAutotoolsProjectConversion.title"; //$NON-NLS-1$
-	private static final String WZ_DESC = "WizardAutotoolsProjectConversion.description"; //$NON-NLS-1$
-	private static final String PREFIX = "WizardAutotoolsProjectConversion";
+	private static final String PREFIX = "WizardAutotoolsProjectConversion"; //$NON-NLS-1$
+	private static final String WZ_TITLE = PREFIX + ".title"; //$NON-NLS-1$
+	private static final String WZ_DESC = PREFIX + ".description"; //$NON-NLS-1$
 	protected static final String MSG_ADD_NATURE = PREFIX + ".message.add_nature"; //$NON-NLS-1$
 	protected static final String MSG_ADD_BUILDER = PREFIX + ".message.add_builder"; //$NON-NLS-1$
 	protected static final String MSG_SAVE = PREFIX + ".message.save"; //$NON-NLS-1$

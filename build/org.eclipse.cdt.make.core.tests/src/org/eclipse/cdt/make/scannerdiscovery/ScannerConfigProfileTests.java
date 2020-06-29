@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 /**
  * This class tests ScannerConfigProfileManager
  */
+@SuppressWarnings("nls")
 public class ScannerConfigProfileTests extends BaseTestCase {
 	private IProject fCProject = null;
 	private IFile fCFile = null;

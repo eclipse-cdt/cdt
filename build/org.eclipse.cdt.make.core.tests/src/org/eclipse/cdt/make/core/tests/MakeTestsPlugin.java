@@ -22,6 +22,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The main plugin class to be used in the desktop.
  */
+@SuppressWarnings("nls")
 public class MakeTestsPlugin extends Plugin {
 	//The shared instance.
 	private static MakeTestsPlugin plugin;

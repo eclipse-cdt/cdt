@@ -73,8 +73,8 @@ import org.xml.sax.SAXException;
 
 public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 
-	public static final String LOCAL_AUTOCONF_MACROS_DOC_NAME = "macros/acmacros";
-	public static final String LOCAL_AUTOMAKE_MACROS_DOC_NAME = "macros/ammacros";
+	public static final String LOCAL_AUTOCONF_MACROS_DOC_NAME = "macros/acmacros"; //$NON-NLS-1$
+	public static final String LOCAL_AUTOMAKE_MACROS_DOC_NAME = "macros/ammacros"; //$NON-NLS-1$
 	public static final String AUTOCONF_MACROS_DOC_NAME = "http://www.sourceware.org/eclipse/autotools/acmacros"; //$NON-NLS-1$
 	public static final String AUTOMAKE_MACROS_DOC_NAME = "http://www.sourceware.org/eclipse/autotools/ammacros"; //$NON-NLS-1$
 
@@ -296,7 +296,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 			Element elem = document.getElementById(name);
 			if (null != elem) {
 				int prototypeCount = 0;
-				buffer.append("<B>Macro:</B> ").append(name);
+				buffer.append("<B>Macro:</B> ").append(name); //$NON-NLS-1$
 				NodeList nl = elem.getChildNodes();
 				for (int i = 0; i < nl.getLength(); ++i) {
 					Node n = nl.item(i);
@@ -305,11 +305,11 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 						StringBuilder prototype = new StringBuilder();
 						++prototypeCount;
 						if (prototypeCount == 1) {
-							buffer.append(" (");
+							buffer.append(" ("); //$NON-NLS-1$
 						} else {
-							buffer.append("    <B>or</B> "); //$NON-NLS-2$
+							buffer.append("    <B>or</B> "); //$NON-NLS-1$
 							buffer.append(name);
-							buffer.append(" (<I>"); //$NON-NLS-2$
+							buffer.append(" (<I>"); //$NON-NLS-1$
 						}
 						NodeList varList = n.getChildNodes();
 						for (int j = 0; j < varList.getLength(); ++j) {
@@ -322,14 +322,14 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 								if (prototype.length() == 0)
 									prototype.append(parm);
 								else
-									prototype.append(", ").append(parm);
+									prototype.append(", ").append(parm); //$NON-NLS-1$
 							}
 						}
 						buffer.append(prototype).append("</I>)<br>"); //$NON-NLS-1$
 					}
 					if (nodeName.equals("synopsis")) { //$NON-NLS-1$
 						Node textNode = n.getLastChild();
-						buffer.append("<br><B>Synopsis:</B> ");
+						buffer.append("<br><B>Synopsis:</B> "); //$NON-NLS-1$
 						buffer.append(textNode.getNodeValue());
 					}
 				}
@@ -444,11 +444,11 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 								String parm = parmNode.getNodeValue();
 								// Check for first optional parameter which means
 								// we know the minimum number of parameters needed.
-								if (minParmCount < 0 && (parm.charAt(0) == '[' || parm.startsWith("...")))
+								if (minParmCount < 0 && (parm.charAt(0) == '[' || parm.startsWith("..."))) //$NON-NLS-1$
 									minParmCount = parmCount - 1;
 								// Old style documentation sometimes had '[' in
 								// prototypes so look for one at end of a parm too.
-								else if (minParmCount < 0 && parm.endsWith("["))
+								else if (minParmCount < 0 && parm.endsWith("[")) //$NON-NLS-1$
 									minParmCount = parmCount;
 								p.setParmName(prototypeCount, parmCount - 1, parm);
 							}

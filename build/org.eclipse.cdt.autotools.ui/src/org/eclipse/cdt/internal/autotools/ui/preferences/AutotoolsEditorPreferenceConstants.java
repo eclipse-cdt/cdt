@@ -59,9 +59,9 @@ public class AutotoolsEditorPreferenceConstants {
 
 	public static final String EDITOR_FOLDING_ENABLED = "editor_folding_enabled"; //$NON-NLS-1$
 
-	public static final String AUTOCONF_VERSION = "autoconf_version";
+	public static final String AUTOCONF_VERSION = "autoconf_version"; //$NON-NLS-1$
 
-	public static final String AUTOMAKE_VERSION = "automake_version";
+	public static final String AUTOMAKE_VERSION = "automake_version"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 

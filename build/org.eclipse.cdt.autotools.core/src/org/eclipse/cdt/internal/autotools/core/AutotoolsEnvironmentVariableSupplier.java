@@ -32,8 +32,8 @@ import org.eclipse.core.runtime.Platform;
 public class AutotoolsEnvironmentVariableSupplier implements IConfigurationEnvironmentVariableSupplier {
 
 	private static class VerboseEnvironmentVariable extends EnvironmentVariable implements IBuildEnvironmentVariable {
-		private static final String VERBOSE_VAR_NAME = "V";
-		private static final String VERBOSE_VAR_VALUE = "1";
+		private static final String VERBOSE_VAR_NAME = "V"; //$NON-NLS-1$
+		private static final String VERBOSE_VAR_VALUE = "1"; //$NON-NLS-1$
 
 		private VerboseEnvironmentVariable(String name, String value, int op, String delimiter) {
 			super(name, value, op, delimiter);

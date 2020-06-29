@@ -39,6 +39,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+@SuppressWarnings("nls")
 public class StandardBuildTests extends TestCase {
 	private static final boolean OFF = false;
 	private static final boolean ON = true;

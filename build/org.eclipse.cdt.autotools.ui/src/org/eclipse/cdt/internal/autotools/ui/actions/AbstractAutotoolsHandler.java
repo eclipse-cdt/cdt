@@ -359,7 +359,7 @@ public abstract class AbstractAutotoolsHandler extends AbstractHandler {
 						for (String arg : argumentList) {
 							command1.append(' ').append(arg);
 						}
-						newArgumentList = new String[] { "-c", command1.toString() };
+						newArgumentList = new String[] { "-c", command1.toString() }; //$NON-NLS-1$
 
 						OutputStream stdout = consoleOutStream;
 						OutputStream stderr = consoleOutStream;

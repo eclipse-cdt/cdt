@@ -71,7 +71,7 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 		if (marker != null) {
 			// Check to see if addProblemMarker exists.
 			try {
-				Method method = eoParser.getClass().getMethod("addProblemMarker", ProblemMarkerInfo.class);
+				Method method = eoParser.getClass().getMethod("addProblemMarker", ProblemMarkerInfo.class); //$NON-NLS-1$
 				try {
 					method.invoke(eoParser, marker);
 					return true;
@@ -145,7 +145,7 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 		int lineNumber = getErrorConfigLineNumber(name);
 
 		// now open configure file.
-		File file = new File(sourcePath + "/configure");
+		File file = new File(sourcePath + "/configure"); //$NON-NLS-1$
 		// If the log file is not present there is nothing we can do.
 		if (!file.exists())
 			return null;
@@ -166,13 +166,13 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 				Matcher m = errorPattern.matcher(line);
 				if (m.matches()) {
 					String typeString = m.group(1);
-					if (typeString.equals("prog"))
+					if (typeString.equals("prog")) //$NON-NLS-1$
 						return AutotoolsProblemMarkerInfo.Type.PROG;
-					if (typeString.equals("header"))
+					if (typeString.equals("header")) //$NON-NLS-1$
 						return AutotoolsProblemMarkerInfo.Type.HEADER;
-					if (typeString.equals("file"))
+					if (typeString.equals("file")) //$NON-NLS-1$
 						return AutotoolsProblemMarkerInfo.Type.FILE;
-					if (typeString.equals("lib"))
+					if (typeString.equals("lib")) //$NON-NLS-1$
 						return AutotoolsProblemMarkerInfo.Type.LIB;
 
 					return null;
@@ -194,7 +194,7 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 	 * @return
 	 */
 	private int getErrorConfigLineNumber(String name) {
-		File file = new File(buildDir + "/config.log");
+		File file = new File(buildDir + "/config.log"); //$NON-NLS-1$
 		// If the log file is not present there is nothing we can do.
 		if (!file.exists())
 			return -1;

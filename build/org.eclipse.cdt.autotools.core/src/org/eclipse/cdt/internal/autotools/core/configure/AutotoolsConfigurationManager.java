@@ -417,19 +417,19 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 									String childName = children.get(k);
 									IConfigureOption childopt = cfg.getOption(childName);
 									p.println("<flagvalue id=\"" + childopt.getName() + "\" value=\"" //$NON-NLS-1$ //$NON-NLS-2$
-											+ xmlEscape(childopt.getValue()) + "\"/>"); //$NON-NLS-3$
+											+ xmlEscape(childopt.getValue()) + "\"/>"); //$NON-NLS-1$
 								}
 								p.println("</flag>"); //$NON-NLS-1$
 							} else if (!opt.isCategory() && !opt.isFlagValue())
 								p.println("<option id=\"" + option.getName() + "\" value=\"" + xmlEscape(opt.getValue()) //$NON-NLS-1$ //$NON-NLS-2$
-										+ "\"/>"); //$NON-NLS-3$
+										+ "\"/>"); //$NON-NLS-1$
 						}
 						p.println("</configuration>"); //$NON-NLS-1$
 						// Sync name field as this configuration is now
 						// officially saved
 						syncNameField(cfgd);
 					}
-					p.println("</configurations>");
+					p.println("</configurations>"); //$NON-NLS-1$
 				}
 			}
 		} catch (IOException e) {
@@ -503,7 +503,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 							p.println("</configuration>"); //$NON-NLS-1$
 						}
 					}
-					p.println("</configurations>");
+					p.println("</configurations>"); //$NON-NLS-1$
 				}
 			}
 		} catch (IOException e) {
@@ -602,7 +602,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 
 	private String createDummyId() {
 		for (;;) {
-			String id = "TEMP_" + rand.nextInt();
+			String id = "TEMP_" + rand.nextInt(); //$NON-NLS-1$
 			if (tmpConfigs.get(id) == null)
 				return id;
 		}

@@ -37,12 +37,13 @@ public class AutotoolsPropertyConstants {
 	public static final QualifiedName LIBTOOLIZE_TOOL = new QualifiedName(PREFIX, "LibtoolizePath"); //$NON-NLS-1$
 	public static final QualifiedName CLEAN_DELETE = new QualifiedName(PREFIX, "CleanDelete"); //$NON-NLS-1$
 	public static final QualifiedName CLEAN_MAKE_TARGET = new QualifiedName(PREFIX, "CleanMakeTarget"); //$NON-NLS-1$
-	public static final QualifiedName SCANNER_USE_MAKE_W = new QualifiedName(PREFIX, "ScannerUseMakeW");
+	public static final QualifiedName SCANNER_USE_MAKE_W = new QualifiedName(PREFIX, "ScannerUseMakeW"); //$NON-NLS-1$
 	public static final QualifiedName AUTO_BUILD_NAME = new QualifiedName(PREFIX, "AutoBuildName"); //$NON-NLS-1$
 	public static final QualifiedName OPEN_INCLUDE = new QualifiedName(PREFIX, "IncludeResourceMapping"); //$NON-NLS-1$
 	public static final QualifiedName OPEN_INCLUDE_P = new QualifiedName(PREFIX, "PersistentIncludeResourceMapping"); //$NON-NLS-1$
-	public static final QualifiedName SCANNER_INFO_DIRTY = new QualifiedName(PREFIX, "ScannerInfoDirty"); // $NON-NLSp-1$
+	public static final QualifiedName SCANNER_INFO_DIRTY = new QualifiedName(PREFIX, "ScannerInfoDirty"); //$NON-NLS-1$
 
+	@SuppressWarnings("nls")
 	public static final String[] fACVersions = { "2.13", "2.59", "2.61", "2.67", "2.68" }; //$NON-NLS-1$
 	public static final String AC_VERSION_2_13 = fACVersions[0];
 	public static final String AC_VERSION_2_59 = fACVersions[1];
@@ -51,6 +52,7 @@ public class AutotoolsPropertyConstants {
 	public static final String AC_VERSION_2_68 = fACVersions[4];
 	public static final String LATEST_AC_VERSION = fACVersions[fACVersions.length - 1];
 
+	@SuppressWarnings("nls")
 	public static final String[] fAMVersions = { "1.4-p6", "1.9.5", "1.9.6", "1.11.1" }; //$NON-NLS-1$
 	public static final String LATEST_AM_VERSION = fAMVersions[fAMVersions.length - 1];
 

@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.Path;
 
 import junit.framework.TestSuite;
 
+@SuppressWarnings("nls")
 public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 	private final static IMarkerGenerator MARKER_GENERATOR = new IMarkerGenerator() {
 		@Override

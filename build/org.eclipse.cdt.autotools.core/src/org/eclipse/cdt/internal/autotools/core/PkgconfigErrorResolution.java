@@ -62,7 +62,7 @@ public class PkgconfigErrorResolution implements IMarkerResolution {
 
 	public PkgconfigErrorResolution(String pkgconfigRequirement) {
 		// Get the pkgconfig package name from the requirement message.
-		Pattern p = Pattern.compile("(.*?)[\\s,>,<,=].*");
+		Pattern p = Pattern.compile("(.*?)[\\s,>,<,=].*"); //$NON-NLS-1$
 		Matcher m = p.matcher(pkgconfigRequirement);
 		if (m.matches()) {
 			pkgName = m.group(1);
@@ -98,7 +98,7 @@ public class PkgconfigErrorResolution implements IMarkerResolution {
 			// Use CDT launcher to run rpm to query the package that provides
 			// the pkgconfig .pc file for the package in question.
 			ConsoleOutputStream output = new ConsoleOutputStream();
-			Process proc = launcher.execute(commandPath, commandArgs, null, new Path("."), new NullProgressMonitor());
+			Process proc = launcher.execute(commandPath, commandArgs, null, new Path("."), new NullProgressMonitor()); //$NON-NLS-1$
 			if (proc != null) {
 				try {
 					// Close the input of the process since we will never write to
@@ -111,7 +111,7 @@ public class PkgconfigErrorResolution implements IMarkerResolution {
 				} else {
 					String result = output.readBuffer();
 					if (!result.startsWith("error:")) //$NON-NLS-1$
-						System.out.println("need to execute update of " + result);
+						System.out.println("need to execute update of " + result); //$NON-NLS-1$
 				}
 			}
 

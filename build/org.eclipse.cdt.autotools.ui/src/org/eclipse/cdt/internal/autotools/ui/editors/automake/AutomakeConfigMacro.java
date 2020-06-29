@@ -28,6 +28,6 @@ public class AutomakeConfigMacro extends Directive {
 
 	@Override
 	public String toString() {
-		return name + "\n";
+		return name + "\n"; //$NON-NLS-1$
 	}
 }

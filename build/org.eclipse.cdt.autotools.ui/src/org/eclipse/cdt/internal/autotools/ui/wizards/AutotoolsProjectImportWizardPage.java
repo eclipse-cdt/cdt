@@ -50,8 +50,8 @@ public class AutotoolsProjectImportWizardPage extends NewMakeProjFromExistingPag
 	private Button langcpp;
 
 	protected AutotoolsProjectImportWizardPage() {
-		setTitle(AutotoolsWizardMessages.getResourceString("ImportWizardPage.title"));
-		setDescription(AutotoolsWizardMessages.getResourceString("ImportWizardPage.description"));
+		setTitle(AutotoolsWizardMessages.getResourceString("ImportWizardPage.title")); //$NON-NLS-1$
+		setDescription(AutotoolsWizardMessages.getResourceString("ImportWizardPage.description")); //$NON-NLS-1$
 	}
 
 	protected IProjectType getProjectType() {
@@ -110,10 +110,10 @@ public class AutotoolsProjectImportWizardPage extends NewMakeProjFromExistingPag
 				AutotoolsUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 7); //$NON-NLS-1$
 		IConfiguration defaultCfg = null;
 		try {
-			monitor.subTask(AutotoolsUIPlugin.getResourceString("adding project nature"));
+			monitor.subTask(AutotoolsUIPlugin.getResourceString("adding project nature")); //$NON-NLS-1$
 			ManagedCProjectNature.addManagedNature(project, SubMonitor.convert(monitor, 1));
 			AutotoolsNewProjectNature.addAutotoolsNature(project, SubMonitor.convert(monitor, 1));
-			monitor.subTask(AutotoolsUIPlugin.getResourceString("adding builder"));
+			monitor.subTask(AutotoolsUIPlugin.getResourceString("adding builder")); //$NON-NLS-1$
 			AutotoolsNewProjectNature.addAutotoolsBuilder(project, SubMonitor.convert(monitor, 1));
 			project.setPersistentProperty(AutotoolsPropertyConstants.SCANNER_USE_MAKE_W,
 					AutotoolsPropertyConstants.TRUE);
@@ -167,7 +167,7 @@ public class AutotoolsProjectImportWizardPage extends NewMakeProjFromExistingPag
 			}
 
 			// Save the build options
-			monitor.subTask(AutotoolsUIPlugin.getResourceString("saving project"));
+			monitor.subTask(AutotoolsUIPlugin.getResourceString("saving project")); //$NON-NLS-1$
 			if (info != null) {
 				info.setValid(true);
 				ManagedBuildManager.saveBuildInfo(project, true);

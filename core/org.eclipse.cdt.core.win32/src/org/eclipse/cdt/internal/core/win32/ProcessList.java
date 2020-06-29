@@ -14,91 +14,99 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.win32;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
-import org.eclipse.cdt.internal.core.natives.CNativePlugin;
-import org.eclipse.cdt.utils.spawner.ProcessFactory;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Bundle;
 
-/*
- * Currently this will only work for Windows XP since tasklist
- * is only shipped on XP. This could change to some JNI
- * call out to get the list since the source to 'tlist' is
- * on the msdn web site but that can be done later.
- */
+import com.sun.jna.Native;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.Win32Exception;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32APIOptions;
 
 public class ProcessList implements IProcessList {
+	// TODO: Remove this inner class when JNA 5.6 is available
+	private static abstract class PsapiUtil {
+		public interface Psapi extends com.sun.jna.platform.win32.Psapi {
+			Psapi INSTANCE = Native.loadLibrary("psapi", Psapi.class, W32APIOptions.DEFAULT_OPTIONS); //$NON-NLS-1$
+
+			boolean EnumProcesses(int[] lpidProcess, int cb, IntByReference lpcbNeeded);
+		}
+
+		public static int[] enumProcesses() {
+			int size = 0;
+			int[] lpidProcess = null;
+			IntByReference lpcbNeeded = new IntByReference();
+			do {
+				size += 1024;
+				lpidProcess = new int[size];
+				if (!Psapi.INSTANCE.EnumProcesses(lpidProcess, size * DWORD.SIZE, lpcbNeeded)) {
+					throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+				}
+			} while (size == lpcbNeeded.getValue() / DWORD.SIZE);
+
+			return Arrays.copyOf(lpidProcess, lpcbNeeded.getValue() / DWORD.SIZE);
+		}
+	}
+
+	// TODO: Remove this inner class when JNA 5.6 is available
+	private static abstract class Kernel32Util extends com.sun.jna.platform.win32.Kernel32Util {
+		public static final String QueryFullProcessImageName(int pid, int dwFlags) {
+			HANDLE hProcess = null;
+			Win32Exception we = null;
+
+			try {
+				hProcess = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION | WinNT.PROCESS_VM_READ, false,
+						pid);
+				if (hProcess == null) {
+					throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+				}
+				return QueryFullProcessImageName(hProcess, dwFlags);
+			} catch (Win32Exception e) {
+				we = e;
+				throw we; // re-throw to invoke finally block
+			} finally {
+				try {
+					closeHandle(hProcess);
+				} catch (Win32Exception e) {
+					if (we == null) {
+						we = e;
+					} else {
+						we.addSuppressed(e);
+					}
+				}
+				if (we != null) {
+					throw we;
+				}
+			}
+		}
+	}
 
 	private IProcessInfo[] NOPROCESS = new IProcessInfo[0];
 
 	@Override
 	public IProcessInfo[] getProcessList() {
-		Process p = null;
-		String command = null;
-		InputStream in = null;
-		Bundle bundle = Platform.getBundle(CNativePlugin.PLUGIN_ID);
-		IProcessInfo[] procInfos = NOPROCESS;
-
 		try {
-			URL url = FileLocator.find(bundle, new Path("$os$/listtasks.exe"), null); //$NON-NLS-1$
-			if (url != null) {
-				url = FileLocator.resolve(url);
-				String path = url.getFile();
-				File file = new File(path);
-				if (file.exists()) {
-					command = file.getCanonicalPath();
-					if (command != null) {
-						try {
-							p = ProcessFactory.getFactory().exec(command);
-							in = p.getInputStream();
-							InputStreamReader reader = new InputStreamReader(in);
-							procInfos = parseListTasks(reader);
-						} finally {
-							if (in != null)
-								in.close();
-							if (p != null)
-								p.destroy();
-						}
-					}
+			List<IProcessInfo> processList = new ArrayList<>();
+
+			for (int pid : PsapiUtil.enumProcesses()) {
+				try {
+					String name = Kernel32Util.QueryFullProcessImageName(pid, 0);
+					processList.add(new ProcessInfo(pid, name));
+				} catch (Win32Exception e) {
+					// Intentionally ignored exception. Probable cause is access denied.
 				}
 			}
-		} catch (IOException e) {
-		}
-		return procInfos;
-	}
 
-	public IProcessInfo[] parseListTasks(InputStreamReader reader) {
-		BufferedReader br = new BufferedReader(reader);
-		ArrayList processList = new ArrayList();
-		try {
-			String line;
-			while ((line = br.readLine()) != null) {
-				int tab = line.indexOf('\t');
-				if (tab != -1) {
-					String proc = line.substring(0, tab).trim();
-					String name = line.substring(tab).trim();
-					if (proc.length() > 0 && name.length() > 0) {
-						try {
-							int pid = Integer.parseInt(proc);
-							processList.add(new ProcessInfo(pid, name));
-						} catch (NumberFormatException e) {
-						}
-					}
-				}
-			}
-		} catch (IOException e) {
+			return processList.toArray(new IProcessInfo[processList.size()]);
+		} catch (Win32Exception e) {
+			return NOPROCESS;
 		}
-		return (IProcessInfo[]) processList.toArray(new IProcessInfo[processList.size()]);
 	}
 }

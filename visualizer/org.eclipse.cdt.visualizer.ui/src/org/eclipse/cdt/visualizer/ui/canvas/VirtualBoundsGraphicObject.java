@@ -97,7 +97,7 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 	/** Returns string representation. */
 	@Override
 	public String toString() {
-		return String.format("Class: %s, Real bounds: %s, Virtual bounds: %s" + ", Draw container bounds: %s ",
+		return String.format("Class: %s, Real bounds: %s, Virtual bounds: %s, Draw container bounds: %s ", //$NON-NLS-1$
 				this.getClass().getSimpleName(), this.getBounds().toString(), m_virtualBounds.toString(),
 				m_drawContainerBounds);
 	}
@@ -211,16 +211,16 @@ public class VirtualBoundsGraphicObject extends GraphicObject {
 	/** Performs a sanity check of the virtual bounds of this object */
 	private void checkVirtualBounds() {
 		if (m_virtualBounds.x < 0) {
-			throw new IllegalArgumentException("Illegal x: " + m_virtualBounds.x);
+			throw new IllegalArgumentException("Illegal x: " + m_virtualBounds.x); //$NON-NLS-1$
 		}
 		if (m_virtualBounds.y < 0) {
-			throw new IllegalArgumentException("Illegal y: " + m_virtualBounds.y);
+			throw new IllegalArgumentException("Illegal y: " + m_virtualBounds.y); //$NON-NLS-1$
 		}
 		if (m_virtualBounds.width <= 0) {
-			throw new IllegalArgumentException("Illegal width: " + m_virtualBounds.width);
+			throw new IllegalArgumentException("Illegal width: " + m_virtualBounds.width); //$NON-NLS-1$
 		}
 		if (m_virtualBounds.height <= 0) {
-			throw new IllegalArgumentException("Illegal height: " + m_virtualBounds.height);
+			throw new IllegalArgumentException("Illegal height: " + m_virtualBounds.height); //$NON-NLS-1$
 		}
 	}
 

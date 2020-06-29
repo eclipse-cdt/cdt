@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal.connector.cdtserial;singleton:=true
-Bundle-Version: 4.7.0.qualifier
+Bundle-Version: 4.7.100.qualifier
 Bundle-Activator: org.eclipse.tm.terminal.connector.cdtserial.activator.Activator
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.400",
@@ -21,3 +21,4 @@ Export-Package: org.eclipse.tm.terminal.connector.cdtserial.activator;x-internal
  org.eclipse.tm.terminal.connector.cdtserial.controls,
  org.eclipse.tm.terminal.connector.cdtserial.launcher,
  org.eclipse.tm.terminal.connector.cdtserial.nls;x-internal:=true
+Automatic-Module-Name: org.eclipse.tm.terminal.connector.cdtserial

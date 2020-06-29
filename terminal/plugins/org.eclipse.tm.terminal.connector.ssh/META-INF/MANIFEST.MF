@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal.connector.ssh;singleton:=true
-Bundle-Version: 4.6.0.qualifier
+Bundle-Version: 4.6.100.qualifier
 Bundle-Activator: org.eclipse.tm.terminal.connector.ssh.activator.UIPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.400",
@@ -22,3 +22,4 @@ Export-Package: org.eclipse.tm.terminal.connector.ssh.activator;x-internal:=true
  org.eclipse.tm.terminal.connector.ssh.controls,
  org.eclipse.tm.terminal.connector.ssh.launcher,
  org.eclipse.tm.terminal.connector.ssh.nls;x-internal:=true
+Automatic-Module-Name: org.eclipse.tm.terminal.connector.ssh

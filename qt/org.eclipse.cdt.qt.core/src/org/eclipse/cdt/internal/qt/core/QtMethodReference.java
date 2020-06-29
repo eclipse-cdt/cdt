@@ -41,7 +41,8 @@ import org.eclipse.core.resources.IProject;
 public class QtMethodReference extends ASTNameReference {
 
 	public static enum Type {
-		Signal("sender", "SIGNAL", "signal"), Slot("receiver", "SLOT", "member");
+		Signal("sender", "SIGNAL", "signal"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		Slot("receiver", "SLOT", "member"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		public final String roleName;
 		public final String macroName;

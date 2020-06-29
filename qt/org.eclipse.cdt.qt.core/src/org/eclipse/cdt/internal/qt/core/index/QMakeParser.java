@@ -27,20 +27,20 @@ import org.eclipse.cdt.internal.qt.core.Activator;
  */
 public final class QMakeParser {
 
-	public static final String KEY_QMAKE_VERSION = "QMAKE_VERSION";
-	public static final String KEY_QT_VERSION = "QT_VERSION";
-	public static final String KEY_QT_INSTALL_IMPORTS = "QT_INSTALL_IMPORTS";
-	public static final String KEY_QT_INSTALL_QML = "QT_INSTALL_QML";
-	public static final String KEY_QT_INSTALL_DOCS = "QT_INSTALL_DOCS";
-	public static final String KEY_QMAKE_INTERNAL_INCLUDED_FILES = "QMAKE_INTERNAL_INCLUDED_FILES";
-	public static final String KEY_SOURCES = "SOURCES";
-	public static final String KEY_HEADERS = "HEADERS";
-	public static final String KEY_INCLUDEPATH = "INCLUDEPATH";
-	public static final String KEY_DEFINES = "DEFINES";
-	public static final String KEY_RESOURCES = "RESOURCES";
-	public static final String KEY_FORMS = "FORMS";
-	public static final String KEY_OTHER_FILES = "OTHER_FILES";
-	public static final String KEY_QML_IMPORT_PATH = "QML_IMPORT_PATH";
+	public static final String KEY_QMAKE_VERSION = "QMAKE_VERSION"; //$NON-NLS-1$
+	public static final String KEY_QT_VERSION = "QT_VERSION"; //$NON-NLS-1$
+	public static final String KEY_QT_INSTALL_IMPORTS = "QT_INSTALL_IMPORTS"; //$NON-NLS-1$
+	public static final String KEY_QT_INSTALL_QML = "QT_INSTALL_QML"; //$NON-NLS-1$
+	public static final String KEY_QT_INSTALL_DOCS = "QT_INSTALL_DOCS"; //$NON-NLS-1$
+	public static final String KEY_QMAKE_INTERNAL_INCLUDED_FILES = "QMAKE_INTERNAL_INCLUDED_FILES"; //$NON-NLS-1$
+	public static final String KEY_SOURCES = "SOURCES"; //$NON-NLS-1$
+	public static final String KEY_HEADERS = "HEADERS"; //$NON-NLS-1$
+	public static final String KEY_INCLUDEPATH = "INCLUDEPATH"; //$NON-NLS-1$
+	public static final String KEY_DEFINES = "DEFINES"; //$NON-NLS-1$
+	public static final String KEY_RESOURCES = "RESOURCES"; //$NON-NLS-1$
+	public static final String KEY_FORMS = "FORMS"; //$NON-NLS-1$
+	public static final String KEY_OTHER_FILES = "OTHER_FILES"; //$NON-NLS-1$
+	public static final String KEY_QML_IMPORT_PATH = "QML_IMPORT_PATH"; //$NON-NLS-1$
 
 	/**
 	 * Parses QMake output via a specified reg. exp.
@@ -57,13 +57,13 @@ public final class QMakeParser {
 		while ((line = reader.readLine()) != null) {
 			Matcher m = regex.matcher(line);
 			if (!m.matches() || m.groupCount() != 2) {
-				Activator.log("qmake: cannot decode query line '" + line + '\'');
+				Activator.log("qmake: cannot decode query line '" + line + '\''); //$NON-NLS-1$
 			} else {
 				String key = m.group(1);
 				String value = m.group(2);
 				String oldValue = result.put(key, value);
 				if (oldValue != null)
-					Activator.log("qmake: duplicate keys in query info '" + line + "' was '" + oldValue + '\'');
+					Activator.log("qmake: duplicate keys in query info '" + line + "' was '" + oldValue + '\''); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 

@@ -44,9 +44,9 @@ public class QtIncludePathsProvider extends LanguageSettingsSerializableProvider
 	/**
 	 * The build configuration stores the path to the qmake binary as an environment variable.
 	 */
-	private static final String ENVVAR_QMAKE = "QMAKE";
+	private static final String ENVVAR_QMAKE = "QMAKE"; //$NON-NLS-1$
 
-	private static final String ELEMENT_QMAKE = "qmake";
+	private static final String ELEMENT_QMAKE = "qmake"; //$NON-NLS-1$
 
 	@Override
 	public boolean equals(Object obj) {

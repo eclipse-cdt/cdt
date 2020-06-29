@@ -42,7 +42,7 @@ public class QmlRegistration implements IQmlRegistration {
 		this.kind = IQmlRegistration.Kind.Type;
 
 		String qobjName = pdom.getQObjectName();
-		this.ownerName = qobjName == null ? null : qobjName.split("::");
+		this.ownerName = qobjName == null ? null : qobjName.split("::"); //$NON-NLS-1$
 
 		this.version = pdom.getVersion();
 		this.uri = pdom.getUri();
@@ -57,7 +57,7 @@ public class QmlRegistration implements IQmlRegistration {
 		this.kind = IQmlRegistration.Kind.Uncreatable;
 
 		String qobjName = pdom.getQObjectName();
-		this.ownerName = qobjName == null ? null : qobjName.split("::");
+		this.ownerName = qobjName == null ? null : qobjName.split("::"); //$NON-NLS-1$
 
 		this.version = pdom.getVersion();
 		this.uri = pdom.getUri();

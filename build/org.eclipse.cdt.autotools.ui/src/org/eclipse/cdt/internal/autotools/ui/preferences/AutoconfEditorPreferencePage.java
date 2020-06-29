@@ -52,9 +52,11 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
  */
 public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 
+	@SuppressWarnings("nls")
 	private static String[] fACVersions = { "2.13", "2.59", "2.61", "2.68" };
 	public static final String LATEST_AC_VERSION = fACVersions[fACVersions.length - 1];
 
+	@SuppressWarnings("nls")
 	private static String[] fAMVersions = { "1.4-p6", "1.9.5", "1.9.6", "1.11.1" };
 	public static final String LATEST_AM_VERSION = fAMVersions[fAMVersions.length - 1];
 

@@ -40,7 +40,7 @@ public class ConfigureOptionCategory implements IConfigureOption {
 
 	@Override
 	public String getParameter() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -50,12 +50,12 @@ public class ConfigureOptionCategory implements IConfigureOption {
 
 	@Override
 	public String getToolTip() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
 	public String getValue() {
-		return "null";
+		return "null"; //$NON-NLS-1$
 	}
 
 	@Override

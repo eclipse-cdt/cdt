@@ -95,7 +95,7 @@ public class CMakePropertyPage extends PropertyPage {
 				if (launcher instanceof ICBuildCommandLauncher) {
 					((ICBuildCommandLauncher) launcher).setBuildConfiguration(cconfig);
 				}
-				IPath buildPath = project.getLocation().append("build")
+				IPath buildPath = project.getLocation().append("build") //$NON-NLS-1$
 						.append(((CBuildConfiguration) cconfig).getName());
 				Process p = launcher.execute(new Path("cmake"), new String[] { "-LAH", "." }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						new String[0], buildPath, new NullProgressMonitor());
@@ -153,7 +153,7 @@ public class CMakePropertyPage extends PropertyPage {
 		args.add("-LAH"); //$NON-NLS-1$
 		for (ICMakePropertyPageControl control : componentList) {
 			if (control.isValueChanged()) {
-				args.add(control.getConfiguredString()); //$NON-NLS-1$ //$NON-NLS-2$
+				args.add(control.getConfiguredString());
 			}
 		}
 		if (args.size() == 2) {
@@ -170,7 +170,7 @@ public class CMakePropertyPage extends PropertyPage {
 			if (launcher instanceof ICBuildCommandLauncher) {
 				((ICBuildCommandLauncher) launcher).setBuildConfiguration(buildConfig);
 			}
-			args.add(".");
+			args.add("."); //$NON-NLS-1$
 			Process p = launcher.execute(new Path("cmake"), args.toArray(new String[0]), new String[0], buildDir, //$NON-NLS-1$
 					new NullProgressMonitor());
 			int rc = -1;
@@ -259,19 +259,19 @@ public class CMakePropertyPage extends PropertyPage {
 							String optionString = optionMatcher.group(1).trim();
 							String[] options = optionString.split("\\s+"); //$NON-NLS-1$
 							for (int i = 0; i < options.length; ++i) {
-								options[i] = options[i].replaceAll("\\(.*?\\)", "").trim(); //$NON-NLS-1$
+								options[i] = options[i].replaceAll("\\(.*?\\)", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 							ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name, options,
 									initialValue, lastComment);
 							controls.add(control);
 						} else {
-							if ("BOOL".equals(type)) {
-								if ("ON".equals(initialValue) || ("OFF".equals(initialValue))) {
+							if ("BOOL".equals(type)) { //$NON-NLS-1$
+								if ("ON".equals(initialValue) || ("OFF".equals(initialValue))) { //$NON-NLS-1$ //$NON-NLS-2$
 									ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name,
 											new String[] { "ON", "OFF" }, //$NON-NLS-1$ //$NON-NLS-2$
 											initialValue, lastComment);
 									controls.add(control);
-								} else if ("YES".equals(initialValue) || "NO".equals(initialValue)) {
+								} else if ("YES".equals(initialValue) || "NO".equals(initialValue)) { //$NON-NLS-1$ //$NON-NLS-2$
 									ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name,
 											new String[] { "YES", "NO" }, //$NON-NLS-1$ //$NON-NLS-2$
 											initialValue, lastComment);

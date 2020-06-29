@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.Path;
 
 import junit.framework.Assert;
 
+@SuppressWarnings("nls")
 public class StandardBuildTestHelper {
 	/* (non-Javadoc)
 	 * Create a new project named <code>name</code> or return the project in

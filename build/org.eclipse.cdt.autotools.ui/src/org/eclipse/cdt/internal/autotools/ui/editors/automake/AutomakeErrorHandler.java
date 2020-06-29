@@ -27,14 +27,14 @@ import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.ui.IEditorInput;
 
 public class AutomakeErrorHandler {
-	public static final String AUTOMAKE_ERROR_MARKER_ID = AutotoolsUIPlugin.PLUGIN_ID + ".parsefileerror";
+	public static final String AUTOMAKE_ERROR_MARKER_ID = AutotoolsUIPlugin.PLUGIN_ID + ".parsefileerror"; //$NON-NLS-1$
 
 	private IDocument document;
 	private AnnotationModel fAnnotationModel;
 
-	public static final String CDT_ANNOTATION_INFO = "org.eclipse.cdt.ui.info";
-	public static final String CDT_ANNOTATION_WARNING = "org.eclipse.cdt.ui.warning";
-	public static final String CDT_ANNOTATION_ERROR = "org.eclipse.cdt.ui.error";
+	public static final String CDT_ANNOTATION_INFO = "org.eclipse.cdt.ui.info"; //$NON-NLS-1$
+	public static final String CDT_ANNOTATION_WARNING = "org.eclipse.cdt.ui.warning"; //$NON-NLS-1$
+	public static final String CDT_ANNOTATION_ERROR = "org.eclipse.cdt.ui.error"; //$NON-NLS-1$
 
 	// TODO: no quickfixes yet implemented, but maybe in the future
 	private static class AutomakeAnnotation extends Annotation implements IQuickFixableAnnotation {

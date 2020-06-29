@@ -49,7 +49,7 @@ public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler imple
 			//			SortedSet<Integer> nums = new TreeSet<Integer>();
 			IConfiguration configuration = (IConfiguration) buildObject;
 			ICConfigurationDescription cfgd = ManagedBuildManager.getDescriptionForConfiguration(configuration);
-			if (option.getName().equals("Name") && cfgd != null) {
+			if (option.getName().equals("Name") && cfgd != null) { //$NON-NLS-1$
 				String cfgId = cfgd.getId();
 				if (!value.isEmpty() && !value.equals(cfgId)) {
 					// we have a cloned configuration and we know that the
@@ -95,7 +95,7 @@ public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler imple
 
 	private String fixName(String cfgName) {
 		// Replace whitespace with underscores.
-		return cfgName.replaceAll("\\s", "_");
+		return cfgName.replaceAll("\\s", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	// IOptionApplicability methods

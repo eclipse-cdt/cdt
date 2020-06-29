@@ -80,7 +80,7 @@ public class AutotoolsProjectGenerator extends FMProjectGenerator {
 			}
 		}
 
-		entries.add(CoreModel.newOutputEntry(getProject().getFullPath())); //$NON-NLS-1$
+		entries.add(CoreModel.newOutputEntry(getProject().getFullPath()));
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);
 

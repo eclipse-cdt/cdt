@@ -355,7 +355,6 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 				}
 			}
 		} catch (CoreException e) {
-			mProj = null;
 		}
 
 		if (mProj == null) {

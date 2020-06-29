@@ -28,7 +28,7 @@ public class AutoconfContentProvider implements ITreeContentProvider {
 
 	private IDocumentProvider documentProvider;
 	private AutoconfEditor editor;
-	protected final static String SECTION_POSITIONS = "section_positions";
+	protected final static String SECTION_POSITIONS = "section_positions"; //$NON-NLS-1$
 	protected IPositionUpdater positionUpdater = new DefaultPositionUpdater(SECTION_POSITIONS);
 
 	public AutoconfContentProvider(ITextEditor editor) {

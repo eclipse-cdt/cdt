@@ -573,7 +573,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 	 * An Autoconf directive of the form @xxx@
 	 */
 	protected AutomakeConfigMacro parseConfigMacro(String line) {
-		String extraChars = "_-";
+		String extraChars = "_-"; //$NON-NLS-1$
 		char[] ch = line.toCharArray();
 		int i = 1;
 		while (Character.isLetterOrDigit(ch[i]) || extraChars.indexOf(ch[i]) >= 0) {
@@ -646,7 +646,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 		}
 		directories = dirs.toArray(new String[0]);
 		if (pattern == null) {
-			pattern = "";
+			pattern = ""; //$NON-NLS-1$
 		}
 		return new VPath(this, pattern, directories);
 	}

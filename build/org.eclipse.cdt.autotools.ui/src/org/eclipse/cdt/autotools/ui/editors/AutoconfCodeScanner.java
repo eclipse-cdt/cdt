@@ -120,7 +120,7 @@ public class AutoconfCodeScanner extends RuleBasedScanner {
 		rules.add(new AutoconfIdentifierRule(other));
 
 		// Make sure we don't treat "\#" as comment start.
-		rules.add(new SingleLineRule("\\#", null, Token.UNDEFINED));
+		rules.add(new SingleLineRule("\\#", null, Token.UNDEFINED)); //$NON-NLS-1$
 
 		rules.add(new WhitespaceRule(new AutoconfWhitespaceDetector()));
 

@@ -54,10 +54,10 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Version;
 
 public class Option extends BuildObject implements IOption, IBuildPropertiesRestriction {
-	private static final String IS_BUILTIN_EMPTY = "IS_BUILTIN_EMPTY";
-	private static final String IS_VALUE_EMPTY = "IS_VALUE_EMPTY";
+	private static final String IS_BUILTIN_EMPTY = "IS_BUILTIN_EMPTY"; //$NON-NLS-1$
+	private static final String IS_VALUE_EMPTY = "IS_VALUE_EMPTY"; //$NON-NLS-1$
 	// Static default return values
-	public static final String EMPTY_STRING = "";
+	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	public static final OptionStringValue[] EMPTY_LV_ARRAY = new OptionStringValue[0];
 

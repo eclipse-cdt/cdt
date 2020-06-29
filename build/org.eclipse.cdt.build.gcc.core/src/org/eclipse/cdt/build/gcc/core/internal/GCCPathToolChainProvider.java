@@ -77,10 +77,10 @@ public class GCCPathToolChainProvider implements IToolChainProvider {
 										break;
 									default:
 										switch (tuple[2]) {
-										case "linux":
+										case "linux": //$NON-NLS-1$
 											gcc.setProperty(IToolChain.ATTR_OS, Platform.OS_LINUX);
 											break;
-										case "elf":
+										case "elf": //$NON-NLS-1$
 											gcc.setProperty(IToolChain.ATTR_OS, tuple[1]);
 											break;
 										}

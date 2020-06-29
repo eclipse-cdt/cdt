@@ -133,11 +133,11 @@ public class AutotoolsConfiguration implements IAConfiguration {
 					IConfigureOption.BIN),
 			new Option(AutotoolsOptionConstants.FLAG_CFLAGS, "cflags", AutotoolsOptionConstants.FLAG_CFLAGS_FLAGS, //$NON-NLS-1$
 					IConfigureOption.FLAG),
-			new Option(AutotoolsOptionConstants.OPT_CFLAGS_DEBUG, "cflags_debug", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$
-			new Option(AutotoolsOptionConstants.OPT_CFLAGS_GPROF, "cflags_gprof", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$
-			new Option(AutotoolsOptionConstants.OPT_CFLAGS_GCOV, "cflags_gcov", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$
+			new Option(AutotoolsOptionConstants.OPT_CFLAGS_DEBUG, "cflags_debug", IConfigureOption.FLAGVALUE), //$NON-NLS-1$
+			new Option(AutotoolsOptionConstants.OPT_CFLAGS_GPROF, "cflags_gprof", IConfigureOption.FLAGVALUE), //$NON-NLS-1$
+			new Option(AutotoolsOptionConstants.OPT_CFLAGS_GCOV, "cflags_gcov", IConfigureOption.FLAGVALUE), //$NON-NLS-1$
 			new Option(AutotoolsOptionConstants.OPT_USER, IConfigureOption.MULTIARG),
-			new Option(AutotoolsOptionConstants.TOOL_AUTOGEN, "autogen", "autogen.sh", IConfigureOption.TOOL), //$NON-NLS-1$
+			new Option(AutotoolsOptionConstants.TOOL_AUTOGEN, "autogen", "autogen.sh", IConfigureOption.TOOL), //$NON-NLS-1$ //$NON-NLS-2$
 			new Option(AutotoolsOptionConstants.CATEGORY_OPTIONS, IConfigureOption.CATEGORY),
 			new Option(AutotoolsOptionConstants.OPT_AUTOGENOPTS, IConfigureOption.MULTIARG), };
 
@@ -406,12 +406,12 @@ public class AutotoolsConfiguration implements IAConfiguration {
 
 	@Override
 	public void setConfigToolDirectory(String configToolDirectory) {
-		setOption("configdir", configToolDirectory);
+		setOption("configdir", configToolDirectory); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getConfigToolDirectory() {
-		IConfigureOption option = configOptions.get("configdir");
+		IConfigureOption option = configOptions.get("configdir"); //$NON-NLS-1$
 		return option.getValue();
 	}
 

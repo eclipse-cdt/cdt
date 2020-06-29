@@ -54,7 +54,7 @@ public class StringConfigureOption extends AbstractConfigurationOption {
 	public String getParameter() {
 		if (isParmSet())
 			return getParameterName() + "=" + getValue(); //$NON-NLS-1$
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override

@@ -81,8 +81,8 @@ public class AutoconfMacroCodeScanner extends RuleBasedScanner {
 		List<IRule> rules = new ArrayList<>();
 
 		// Add rule for single line comments.
-		rules.add(new RestrictedEndOfLineRule("dnl", "[]", comment)); //$NON-NLS-1$
-		rules.add(new RestrictedEndOfLineRule("#", "[]", comment, '\\')); //$NON-NLS-1$
+		rules.add(new RestrictedEndOfLineRule("dnl", "[]", comment)); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new RestrictedEndOfLineRule("#", "[]", comment, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Add special recursive rule for strings which allows variable
 		// references to be internally tokenized.

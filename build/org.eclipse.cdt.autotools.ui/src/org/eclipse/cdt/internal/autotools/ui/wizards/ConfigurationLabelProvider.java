@@ -34,7 +34,7 @@ public class ConfigurationLabelProvider extends LabelProvider implements ITableL
 			else
 				return (tmpConfig.getName() + " ( " + tmpConfig.getDescription() + " )"); //$NON-NLS-1$	//$NON-NLS-2$
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override

@@ -26,7 +26,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class AutotoolsConfigurePrefStore implements IPreferenceStore {
 
-	public final static String EMPTY_STRING = "";
+	public final static String EMPTY_STRING = ""; //$NON-NLS-1$
 	public final static String ALL_OPTIONS_ID = EMPTY_STRING;
 
 	private static AutotoolsConfigurePrefStore instance = null;

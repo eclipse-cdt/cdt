@@ -22,3 +22,4 @@ Export-Package: org.eclipse.tm.terminal.connector.ssh.activator;x-internal:=true
  org.eclipse.tm.terminal.connector.ssh.controls,
  org.eclipse.tm.terminal.connector.ssh.launcher,
  org.eclipse.tm.terminal.connector.ssh.nls;x-internal:=true
+Automatic-Module-Name: org.eclipse.tm.terminal.connector.ssh

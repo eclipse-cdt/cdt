@@ -274,7 +274,7 @@ public class VisualizerViewer extends PageBook
 
 		if (visualizers != null) {
 			for (Extension e : visualizers) {
-				String id = e.getAttribute("id");
+				String id = e.getAttribute("id"); //$NON-NLS-1$
 				IVisualizer visualizerInstance = e.getClassAttribute();
 				if (id != null && visualizerInstance != null) {
 					// Add visualizer's control to viewer's "pagebook" of controls.
@@ -412,8 +412,8 @@ public class VisualizerViewer extends PageBook
 	public void paint(GC gc) {
 		gc.fillRectangle(getClientArea());
 		if (m_visualizers == null || m_visualizers.size() == 0) {
-			String noVisualizersMessage = CDTVisualizerUIPlugin.getString("VisualizerViewer.no.visualizers.defined");
-			gc.drawString("(" + noVisualizersMessage + ")", 10, 10);
+			String noVisualizersMessage = CDTVisualizerUIPlugin.getString("VisualizerViewer.no.visualizers.defined"); //$NON-NLS-1$
+			gc.drawString("(" + noVisualizersMessage + ")", 10, 10); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

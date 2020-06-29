@@ -401,7 +401,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	private final Category fMessageSendArgumentsCategory = new Category(
 			DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
 			"class Other {static void bar(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9) {}};" //$NON-NLS-1$
-					+ "void foo() {Other::bar(100, 200, 300, 400, 500, 600, 700, 800, 900);}",
+					+ "void foo() {Other::bar(100, 200, 300, 400, 500, 600, 700, 800, 900);}", //$NON-NLS-1$
 			FormatterMessages.LineWrappingTabPage_arguments, FormatterMessages.LineWrappingTabPage_arguments_lowercase);
 
 	private final Category fMethodThrowsClauseCategory = new Category(

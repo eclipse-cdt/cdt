@@ -68,11 +68,11 @@ public class GrepCheckerExamplePreferenceChangeListener implements INodeChangeLi
 			if (GrepChecker.ID.equals(event.getKey())) {
 				// severity or enablement has changed
 				String val = (String) event.getNewValue();
-				String fors = (" for " + ((project == null) ? "workspace" : project.getName()));
-				if (val != null && !val.startsWith("-")) {
-					trace("grep checker enabled :)" + fors);
+				String fors = (" for " + ((project == null) ? "workspace" : project.getName())); //$NON-NLS-1$ //$NON-NLS-2$
+				if (val != null && !val.startsWith("-")) { //$NON-NLS-1$
+					trace("grep checker enabled :)" + fors); //$NON-NLS-1$
 				} else {
-					trace("grep checker disabled :(" + fors);
+					trace("grep checker disabled :(" + fors); //$NON-NLS-1$
 				}
 
 			}
@@ -86,12 +86,12 @@ public class GrepCheckerExamplePreferenceChangeListener implements INodeChangeLi
 
 	@Override
 	public void added(NodeChangeEvent event) {
-		trace("node added " + event);
+		trace("node added " + event); //$NON-NLS-1$
 	}
 
 	@Override
 	public void removed(NodeChangeEvent event) {
-		trace("node removed " + event);
+		trace("node removed " + event); //$NON-NLS-1$
 	}
 
 	/**

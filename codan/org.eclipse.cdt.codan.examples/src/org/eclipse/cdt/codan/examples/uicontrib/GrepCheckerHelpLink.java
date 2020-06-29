@@ -22,13 +22,13 @@ import org.eclipse.cdt.codan.ui.AbstractCodanProblemDetailsProvider;
 public class GrepCheckerHelpLink extends AbstractCodanProblemDetailsProvider {
 	@Override
 	public boolean isApplicable(String id) {
-		return id.startsWith("org.eclipse.cdt.codan.examples.checkers.GrepCheckerProblem");
+		return id.startsWith("org.eclipse.cdt.codan.examples.checkers.GrepCheckerProblem"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getStyledProblemDescription() {
 		String arg = CodanProblemMarker.getProblemArgument(marker, 0);
-		String url = "http://www.google.ca/search?q=" + arg;
-		return "Google " + "<a href=\"" + url + "\">" + arg + "</a>";
+		String url = "http://www.google.ca/search?q=" + arg; //$NON-NLS-1$
+		return "Google " + "<a href=\"" + url + "\">" + arg + "</a>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 }

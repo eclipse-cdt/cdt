@@ -45,7 +45,7 @@ public class FlexlintHelpLink extends AbstractCodanProblemDetailsProvider {
 	@Override
 	public String getStyledProblemDescription() {
 		String helpId = parseHelpId(getProblemMessage());
-		String url = "http://www.gimpel-online.com/MsgRef.html#" + helpId;
-		return "<a href=\"" + url + "\">" + url + "</a>";
+		String url = "http://www.gimpel-online.com/MsgRef.html#" + helpId; //$NON-NLS-1$
+		return "<a href=\"" + url + "\">" + url + "</a>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

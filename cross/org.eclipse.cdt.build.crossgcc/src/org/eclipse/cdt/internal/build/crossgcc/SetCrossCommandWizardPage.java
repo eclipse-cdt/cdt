@@ -53,8 +53,8 @@ public class SetCrossCommandWizardPage extends MBSCustomPage {
 
 	// Note: The shared defaults keys don't have "cross" in them because we want to keep
 	// compatibility with defaults that were saved when it used to be a template
-	static final String SHARED_DEFAULTS_PREFIX_KEY = "prefix";
-	static final String SHARED_DEFAULTS_PATH_KEY = "path";
+	static final String SHARED_DEFAULTS_PREFIX_KEY = "prefix"; //$NON-NLS-1$
+	static final String SHARED_DEFAULTS_PATH_KEY = "path"; //$NON-NLS-1$
 
 	public SetCrossCommandWizardPage() {
 		pageID = PAGE_ID;

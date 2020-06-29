@@ -21,3 +21,4 @@ Export-Package: org.eclipse.tm.terminal.connector.cdtserial.activator;x-internal
  org.eclipse.tm.terminal.connector.cdtserial.controls,
  org.eclipse.tm.terminal.connector.cdtserial.launcher,
  org.eclipse.tm.terminal.connector.cdtserial.nls;x-internal:=true
+Automatic-Module-Name: org.eclipse.tm.terminal.connector.cdtserial

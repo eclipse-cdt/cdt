@@ -137,7 +137,7 @@ public class DOMSearchUtil {
 
 		IBinding binding = searchName.resolveBinding();
 		if (binding instanceof IIndexBinding) {
-			fail("Not implemented");
+			fail("Not implemented"); //$NON-NLS-1$
 			//			try {
 			//				ArrayList pdomNames = new ArrayList();
 			//				IPDOMResolver pdom= ((PDOMBinding) binding).getPDOM();

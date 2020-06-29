@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Text;
 public class AutotoolsCategoryPropertyOptionPage extends AbstractConfigurePropertyOptionsPage {
 
 	private static final int MARGIN = 3;
-	private String catName = "";
+	private String catName = ""; //$NON-NLS-1$
 	private IAConfiguration cfg;
 
 	//  Label class for a preference page.
@@ -153,7 +153,7 @@ public class AutotoolsCategoryPropertyOptionPage extends AbstractConfigureProper
 			@Override
 			protected void configureShell(Shell newShell) {
 				super.configureShell(newShell);
-				newShell.setText(AutotoolsPropertyMessages.getString("NewEnvVarDialog.title"));
+				newShell.setText(AutotoolsPropertyMessages.getString("NewEnvVarDialog.title")); //$NON-NLS-1$
 			}
 
 			@Override
@@ -171,7 +171,7 @@ public class AutotoolsCategoryPropertyOptionPage extends AbstractConfigureProper
 				int fieldWidthHint = convertWidthInCharsToPixels(metrics, 50);
 
 				Label label = new Label(composite, SWT.NONE);
-				label.setText(AutotoolsPropertyMessages.getString("NewEnvVarDialog.name_field"));
+				label.setText(AutotoolsPropertyMessages.getString("NewEnvVarDialog.name_field")); //$NON-NLS-1$
 				fTextName = new Text(composite, SWT.SINGLE | SWT.BORDER);
 				GridData gd = new GridData(GridData.FILL_BOTH);
 				gd.grabExcessHorizontalSpace = true;
@@ -188,7 +188,7 @@ public class AutotoolsCategoryPropertyOptionPage extends AbstractConfigureProper
 					}
 				});
 				label = new Label(composite, SWT.NONE);
-				label.setText(AutotoolsPropertyMessages.getString("NewEnvVarDialog.value_field"));
+				label.setText(AutotoolsPropertyMessages.getString("NewEnvVarDialog.value_field")); //$NON-NLS-1$
 				fTextValue = new Text(composite, SWT.SINGLE | SWT.BORDER);
 				gd = new GridData(GridData.FILL_BOTH);
 				gd.grabExcessHorizontalSpace = true;

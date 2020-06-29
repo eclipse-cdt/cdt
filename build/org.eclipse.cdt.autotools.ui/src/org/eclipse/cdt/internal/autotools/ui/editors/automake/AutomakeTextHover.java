@@ -54,13 +54,13 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 		}
 
 		// Automatic variables
-		if (hoverText.startsWith("$")) {
+		if (hoverText.startsWith("$")) { //$NON-NLS-1$
 			IDirective containingDirective = makefile.getDirectiveContainingLine(hoverLine);
 			if (containingDirective instanceof TargetRule) {
 				target = (TargetRule) containingDirective;
 			}
 			if (target == null)
-				return "";
+				return ""; //$NON-NLS-1$
 			switch (hoverText.charAt(1)) {
 			case '@':
 				return target.getTarget().toString();
@@ -103,7 +103,7 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 			}
 		}
 
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override

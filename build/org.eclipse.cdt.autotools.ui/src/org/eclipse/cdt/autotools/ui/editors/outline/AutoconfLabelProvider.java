@@ -88,21 +88,21 @@ public class AutoconfLabelProvider implements ILabelProvider {
 			String result;
 			String name = e.getName();
 			if (name.length() > 31)
-				name = name.substring(0, 31) + "...";
+				name = name.substring(0, 31) + "..."; //$NON-NLS-1$
 			String var = e.getVar();
 			if (var != null) {
 				if (var.length() > 15)
-					var = var.substring(0, 15) + "...";
+					var = var.substring(0, 15) + "..."; //$NON-NLS-1$
 				var = " " + var; //$NON-NLS-1$
 			} else {
-				var = "";
+				var = ""; //$NON-NLS-1$
 			}
-			result = (name + var).replaceAll("(\r|\n| |\t|\f)+", " ");
+			result = (name + var).replaceAll("(\r|\n| |\t|\f)+", " "); //$NON-NLS-1$ //$NON-NLS-2$
 			return result;
 		} else if (element instanceof String) {
 			return (String) element;
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 }

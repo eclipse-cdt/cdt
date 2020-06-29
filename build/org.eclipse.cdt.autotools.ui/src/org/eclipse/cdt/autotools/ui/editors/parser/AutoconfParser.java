@@ -56,7 +56,8 @@ public class AutoconfParser {
 	private AutoconfTokenizer tokenizer;
 	private IAutoconfMacroDetector macroDetector;
 
-	private static final String M4_BUILTINS = "define undefine defn pushdef popdef indir builtin ifdef ifelse shift reverse cond " //$NON-NLS-1$
+	@SuppressWarnings("nls")
+	private static final String M4_BUILTINS = "define undefine defn pushdef popdef indir builtin ifdef ifelse shift reverse cond "
 			+ "dumpdef traceon traceoff debugmode debugfile dnl changequote changecom changeword " + "m4wrap "
 			+ "include sinclude divert undivert divnum len index regexp substr translit patsubst "
 			+ "format incr decr eval syscmd esyscmd sysval mkstemp maketemp errprint m4exit "
@@ -240,9 +241,9 @@ public class AutoconfParser {
 		} else {
 			String exp;
 			if (block instanceof AutoconfIfElement || block instanceof AutoconfElifElement)
-				exp = "then";
+				exp = "then"; //$NON-NLS-1$
 			else
-				exp = "do";
+				exp = "do"; //$NON-NLS-1$
 
 			handleError(token, AutoconfEditorMessages.getFormattedString(MISSING_SPECIFIER, exp));
 
@@ -606,6 +607,7 @@ public class AutoconfParser {
 				// fall through
 
 				// 5. Abort on unexpected tokens
+				//$FALL-THROUGH$
 			case ITokenConstants.SH_DO:
 			case ITokenConstants.SH_THEN:
 				handleError(token, AutoconfEditorMessages.getFormattedString(INVALID_SPECIFIER, token.getText()));
@@ -863,11 +865,11 @@ public class AutoconfParser {
 
 	private void validateMacroParameterCount(AutoconfMacroElement macro, Token token, int count) {
 		if (macro.getParameterCount() < count) {
-			handleError(token, AutoconfEditorMessages.getFormattedString("M4MacroArgsTooFew", macro.getName(),
-					Integer.valueOf(2))); //$NON-NLS-1$
+			handleError(token, AutoconfEditorMessages.getFormattedString("M4MacroArgsTooFew", macro.getName(), //$NON-NLS-1$
+					Integer.valueOf(2)));
 		} else if (macro.getParameterCount() > count) {
-			handleError(token, AutoconfEditorMessages.getFormattedString("M4MacroArgsTooMany", macro.getName(),
-					Integer.valueOf(2))); //$NON-NLS-1$
+			handleError(token, AutoconfEditorMessages.getFormattedString("M4MacroArgsTooMany", macro.getName(), //$NON-NLS-1$
+					Integer.valueOf(2)));
 		}
 	}
 

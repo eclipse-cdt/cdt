@@ -37,7 +37,7 @@ public class FlagValueConfigureOption extends BinConfigureOption implements IFla
 
 	@Override
 	public String getParameter() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override

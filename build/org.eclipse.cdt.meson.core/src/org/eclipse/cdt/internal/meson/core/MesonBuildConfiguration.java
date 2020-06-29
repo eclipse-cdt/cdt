@@ -159,11 +159,11 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 				String userArgs = getProperty(IMesonConstants.MESON_ARGUMENTS);
 				if (userArgs != null && !userArgs.isEmpty()) {
-					commandList.addAll(Arrays.asList(userArgs.split(" ")));
+					commandList.addAll(Arrays.asList(userArgs.split(" "))); //$NON-NLS-1$
 				}
 				String projOptions = getProperty(IMesonConstants.MESON_PROJECT_OPTIONS);
 				if (projOptions != null && !projOptions.isEmpty()) {
-					commandList.addAll(Arrays.asList(projOptions.split(" ")));
+					commandList.addAll(Arrays.asList(projOptions.split(" "))); //$NON-NLS-1$
 				}
 				commandList.add(getBuildDirectory().toString());
 

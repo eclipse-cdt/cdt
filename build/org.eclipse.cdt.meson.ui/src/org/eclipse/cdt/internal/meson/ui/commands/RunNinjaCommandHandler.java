@@ -79,7 +79,7 @@ public class RunNinjaCommandHandler extends AbstractMesonCommandHandler {
 							String[] ninjaArgs = null;
 							if (argString != null) {
 								List<String> ninjaArgList = new ArrayList<>();
-								Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(argString);
+								Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(argString); //$NON-NLS-1$
 								while (m.find()) {
 									ninjaArgList.add(m.group(1));
 								}

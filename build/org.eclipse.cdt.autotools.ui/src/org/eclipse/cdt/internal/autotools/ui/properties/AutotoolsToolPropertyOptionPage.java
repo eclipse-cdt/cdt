@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 public class AutotoolsToolPropertyOptionPage extends AbstractConfigurePropertyOptionsPage {
 
 	private static final int MARGIN = 3;
-	private String toolName = "";
+	private String toolName = ""; //$NON-NLS-1$
 	private IAConfiguration cfg;
 
 	public AutotoolsToolPropertyOptionPage(ToolListElement element, IAConfiguration cfg) {

@@ -59,7 +59,7 @@ public class NullMakefile extends AbstractMakefile {
 
 	@Override
 	public String toString() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override

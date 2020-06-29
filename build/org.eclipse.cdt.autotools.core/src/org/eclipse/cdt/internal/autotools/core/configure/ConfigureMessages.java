@@ -26,7 +26,7 @@ public class ConfigureMessages {
 	}
 
 	public static String getConfigureDescription(String name) {
-		return getString("Option.configure." + name); //$NON-NLS-11$
+		return getString("Option.configure." + name); //$NON-NLS-1$
 	}
 
 	public static String getConfigureTip(String name) {

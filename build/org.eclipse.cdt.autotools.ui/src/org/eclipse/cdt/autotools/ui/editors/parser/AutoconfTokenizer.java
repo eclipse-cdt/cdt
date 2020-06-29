@@ -69,7 +69,7 @@ public class AutoconfTokenizer {
 		this.chars = document.get().toCharArray();
 		this.offset = 0;
 
-		this.eofToken = new Token(ITokenConstants.EOF, "", document, chars.length, 0);
+		this.eofToken = new Token(ITokenConstants.EOF, "", document, chars.length, 0); //$NON-NLS-1$
 
 		this.m4OpenQuote = "`"; //$NON-NLS-1$
 		this.m4CloseQuote = "'"; //$NON-NLS-1$
@@ -179,7 +179,7 @@ public class AutoconfTokenizer {
 				}
 				if (!found) {
 					handleError(startOffset, offset, AutoconfEditorMessages.getFormattedString(UNMATCHED_CLOSE_COMMENT,
-							m4CloseComment.equals("\n") ? "newline" : m4CloseComment)); //$NON-NLS-1$
+							m4CloseComment.equals("\n") ? "newline" : m4CloseComment)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return makeToken(ITokenConstants.M4_COMMENT);
 			}
@@ -270,35 +270,39 @@ public class AutoconfTokenizer {
 		String text = buffer.toString();
 
 		if (!isM4Context) {
-			// detect sh tokens
-			if ("case".equals(text))
-				return makeToken(ITokenConstants.SH_CASE, text);
-			if ("in".equals(text))
-				return makeToken(ITokenConstants.SH_IN, text);
-			if ("esac".equals(text))
-				return makeToken(ITokenConstants.SH_ESAC, text);
-			if ("while".equals(text))
-				return makeToken(ITokenConstants.SH_WHILE, text);
-			if ("select".equals(text))
-				return makeToken(ITokenConstants.SH_SELECT, text);
-			if ("until".equals(text))
-				return makeToken(ITokenConstants.SH_UNTIL, text);
-			if ("for".equals(text))
-				return makeToken(ITokenConstants.SH_FOR, text);
-			if ("do".equals(text))
-				return makeToken(ITokenConstants.SH_DO, text);
-			if ("done".equals(text))
-				return makeToken(ITokenConstants.SH_DONE, text);
-			if ("if".equals(text))
-				return makeToken(ITokenConstants.SH_IF, text);
-			if ("then".equals(text))
-				return makeToken(ITokenConstants.SH_THEN, text);
-			if ("else".equals(text))
-				return makeToken(ITokenConstants.SH_ELSE, text);
-			if ("elif".equals(text))
-				return makeToken(ITokenConstants.SH_ELIF, text);
-			if ("fi".equals(text))
-				return makeToken(ITokenConstants.SH_FI, text);
+			if (text != null) {
+				// detect sh tokens
+				switch (text) {
+				case "case": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_CASE, text);
+				case "in": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_IN, text);
+				case "esac": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_ESAC, text);
+				case "while": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_WHILE, text);
+				case "select": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_SELECT, text);
+				case "until": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_UNTIL, text);
+				case "for": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_FOR, text);
+				case "do": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_DO, text);
+				case "done": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_DONE, text);
+				case "if": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_IF, text);
+				case "then": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_THEN, text);
+				case "else": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_ELSE, text);
+				case "elif": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_ELIF, text);
+				case "fi": //$NON-NLS-1$
+					return makeToken(ITokenConstants.SH_FI, text);
+				}
+			}
 		}
 
 		// other identifier-looking word
@@ -360,7 +364,7 @@ public class AutoconfTokenizer {
 		}
 
 		if (ch != terminal) {
-			handleError(startOffset, offset, AutoconfEditorMessages.getFormattedString(UNTERMINATED_STRING, "" + ch));
+			handleError(startOffset, offset, AutoconfEditorMessages.getFormattedString(UNTERMINATED_STRING, "" + ch)); //$NON-NLS-1$
 		}
 
 		return makeToken(type, buffer.toString());

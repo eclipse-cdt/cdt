@@ -33,20 +33,17 @@ import org.eclipse.jface.text.rules.WordRule;
 
 public class AutomakefileCodeScanner extends AbstractMakefileCodeScanner {
 
-	private final static String[] keywords = { "define", "endef", "ifdef", "ifndef", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"ifeq", "ifneq", "else", "endif", "include", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			"-include", "sinclude", "override", "endef", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"export", "unexport", "vpath", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			"if", "@if", "@endif" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	@SuppressWarnings("nls")
+	private final static String[] keywords = { "define", "endef", "ifdef", "ifndef", "ifeq", "ifneq", "else", "endif",
+			"include", "-include", "sinclude", "override", "endef", "export", "unexport", "vpath", "if", "@if",
+			"@endif" };
 
-	private final static String[] functions = { "subst", "patsubst", "strip", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			"findstring", "filter", "sort", "dir", "notdir", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			"suffix", "basename", "addsuffix", "addprefix", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"join", "word", "words", "wordlist", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"firstword", "wildcard", "error", "warning", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"shell", "origin", "foreach", "call" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	};
+	@SuppressWarnings("nls")
+	private final static String[] functions = { "subst", "patsubst", "strip", "findstring", "filter", "sort", "dir",
+			"notdir", "suffix", "basename", "addsuffix", "addprefix", "join", "word", "words", "wordlist", "firstword",
+			"wildcard", "error", "warning", "shell", "origin", "foreach", "call" };
 
+	@SuppressWarnings("nls")
 	private final static String[] automaticVariables = { "$<", "$*", "$@", "$?", "$%" };
 
 	static final String[] fTokenProperties = new String[] { ColorManager.MAKE_COMMENT_COLOR,
@@ -117,7 +114,7 @@ public class AutomakefileCodeScanner extends AbstractMakefileCodeScanner {
 		rules.add(new AutoconfIdentifierRule(other));
 
 		// Make sure we don't treat "\#" as comment start.
-		rules.add(new SingleLineRule("\\#", null, Token.UNDEFINED));
+		rules.add(new SingleLineRule("\\#", null, Token.UNDEFINED)); //$NON-NLS-1$
 
 		rules.add(new WhitespaceRule(new AutoconfWhitespaceDetector()));
 

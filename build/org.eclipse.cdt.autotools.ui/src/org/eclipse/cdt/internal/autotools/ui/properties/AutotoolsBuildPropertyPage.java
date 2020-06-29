@@ -70,7 +70,7 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 		composite.setLayout(layout);
 
 		Group g = new Group(composite, SWT.SHADOW_ETCHED_IN);
-		g.setText(AutotoolsPropertyMessages.getString("CleanBehavior.title"));
+		g.setText(AutotoolsPropertyMessages.getString("CleanBehavior.title")); //$NON-NLS-1$
 		gd = new GridData(
 				GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;

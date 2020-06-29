@@ -466,31 +466,44 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		boolean prj = page.isForProject();
 		if (prj || tool != null) {
 			for (ICConfigurationDescription cf : page.getCfgsEditable()) {
-				IConfiguration c = null;
-				ITool t = null;
+				String s = null;
 				if (prj) {
-					c = getCfg(cf);
+					IConfiguration c = getCfg(cf);
+					switch (field) {
+					case PRECMD:
+						s = c.getPrebuildStep();
+						break;
+					case PREANN:
+						s = c.getPreannouncebuildStep();
+						break;
+					case PSTCMD:
+						s = c.getPostbuildStep();
+						break;
+					case PSTANN:
+						s = c.getPostannouncebuildStep();
+						break;
+					}
 				} else {
+					ITool t = null;
 					ICResourceDescription r = cf.getResourceDescription(cfgdescr.getPath(), true);
 					if (r != null && r instanceof ICFileDescription)
 						t = getRcbsTool((IFileInfo) getResCfg(r));
 					if (t == null)
 						continue; // there's no specific resconfig for this configuration
-				}
-				String s = null;
-				switch (field) {
-				case PRECMD:
-					s = prj ? c.getPrebuildStep() : getInputTypes(t);
-					break;
-				case PREANN:
-					s = prj ? c.getPreannouncebuildStep() : getOutputNames(t);
-					break;
-				case PSTCMD:
-					s = prj ? c.getPostbuildStep() : t.getToolCommand();
-					break;
-				case PSTANN:
-					s = prj ? c.getPostannouncebuildStep() : t.getAnnouncement();
-					break;
+					switch (field) {
+					case PRECMD:
+						s = getInputTypes(t);
+						break;
+					case PREANN:
+						s = getOutputNames(t);
+						break;
+					case PSTCMD:
+						s = t.getToolCommand();
+						break;
+					case PSTANN:
+						s = t.getAnnouncement();
+						break;
+					}
 				}
 				if (s != null && s.trim().length() > 0)
 					set.add(s.trim());

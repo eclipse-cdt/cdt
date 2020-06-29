@@ -82,7 +82,7 @@ public class Token implements ITokenConstants {
 		char[] text = document.get().toCharArray();
 		if (offset == 0)
 			return false;
-		return (" \t\r\n\f".indexOf(text[offset - 1]) >= 0);
+		return (" \t\r\n\f".indexOf(text[offset - 1]) >= 0); //$NON-NLS-1$
 	}
 
 }

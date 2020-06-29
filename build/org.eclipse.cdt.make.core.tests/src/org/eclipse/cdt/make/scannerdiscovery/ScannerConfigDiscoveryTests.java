@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  *
  * @author vhirsl
  */
+@SuppressWarnings("nls")
 public class ScannerConfigDiscoveryTests extends BaseTestCase {
 	private IProject fCProject = null;
 	private IFile fCFile = null;

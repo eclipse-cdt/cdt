@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class MesonBuildTab extends CommonBuildTab {
 
-	private static final String NINJA = "Ninja";
+	private static final String NINJA = "Ninja"; //$NON-NLS-1$
 	private Button unixGenButton;
 	private Button ninjaGenButton;
 	private Text mesonArgsText;
@@ -135,7 +135,7 @@ public class MesonBuildTab extends CommonBuildTab {
 	}
 
 	private void updateGeneratorButtons(String generator) {
-		if (generator == null || generator.equals(NINJA)) { //$NON-NLS-1$
+		if (generator == null || generator.equals(NINJA)) {
 			ninjaGenButton.setSelection(true);
 		} else {
 			unixGenButton.setSelection(true);
@@ -149,7 +149,7 @@ public class MesonBuildTab extends CommonBuildTab {
 		ICBuildConfiguration buildConfig = getBuildConfiguration();
 
 		buildConfig.setProperty(IMesonConstants.MESON_GENERATOR,
-				ninjaGenButton.getSelection() ? NINJA : "Unix Makefiles"); //$NON-NLS-1$ //$NON-NLS-2$
+				ninjaGenButton.getSelection() ? NINJA : "Unix Makefiles"); //$NON-NLS-1$
 
 		String mesonArgs = mesonArgsText.getText().trim();
 		if (!mesonArgs.isEmpty()) {
@@ -176,7 +176,7 @@ public class MesonBuildTab extends CommonBuildTab {
 	@Override
 	protected void saveProperties(Map<String, String> properties) {
 		super.saveProperties(properties);
-		properties.put(IMesonConstants.MESON_GENERATOR, ninjaGenButton.getSelection() ? NINJA : "Unix Makefiles"); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put(IMesonConstants.MESON_GENERATOR, ninjaGenButton.getSelection() ? NINJA : "Unix Makefiles"); //$NON-NLS-1$
 
 		properties.put(IMesonConstants.MESON_ARGUMENTS, mesonArgsText.getText().trim());
 		properties.put(IMesonConstants.BUILD_COMMAND, buildCommandText.getText().trim());
@@ -190,7 +190,7 @@ public class MesonBuildTab extends CommonBuildTab {
 		String gen = properties.get(IMesonConstants.MESON_GENERATOR);
 		if (gen != null) {
 			switch (gen) {
-			case NINJA: //$NON-NLS-1$
+			case NINJA:
 				ninjaGenButton.setSelection(true);
 				unixGenButton.setSelection(false);
 				break;

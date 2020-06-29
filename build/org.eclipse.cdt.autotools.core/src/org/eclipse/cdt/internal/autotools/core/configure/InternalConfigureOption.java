@@ -52,7 +52,7 @@ public class InternalConfigureOption extends AbstractConfigurationOption {
 
 	@Override
 	public String getParameter() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override

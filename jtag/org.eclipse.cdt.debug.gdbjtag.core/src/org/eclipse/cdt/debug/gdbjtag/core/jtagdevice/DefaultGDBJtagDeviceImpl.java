@@ -77,16 +77,16 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 
 	@Override
 	public void doLoadImage(String imageFileName, String imageOffset, Collection<String> commands) {
-		addCmd(commands, "load " + escapeScpaces(imageFileName) + ' ' + imageOffset);
+		addCmd(commands, "load " + escapeScpaces(imageFileName) + ' ' + imageOffset); //$NON-NLS-1$
 	}
 
 	@Override
 	public void doLoadSymbol(String symbolFileName, String symbolOffset, Collection<String> commands) {
 		String file = escapeScpaces(symbolFileName);
 		if (symbolOffset == null || (symbolOffset.length() == 0)) {
-			addCmd(commands, "symbol-file " + file);
+			addCmd(commands, "symbol-file " + file); //$NON-NLS-1$
 		} else {
-			addCmd(commands, "add-symbol-file " + file + " " + symbolOffset);
+			addCmd(commands, "add-symbol-file " + file + " " + symbolOffset); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

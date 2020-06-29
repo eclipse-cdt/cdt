@@ -134,7 +134,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			int index = connectionSelector.getSelectionIndex();
 			if (index < 0) {
 				connection = null;
-				connectionName = "";
+				connectionName = ""; //$NON-NLS-1$
 				return;
 			}
 			if (connection != null)
@@ -142,7 +142,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			connection = connections[index];
 			connectionUri = connection.getUri();
 			if (!connectionName.equals(connection.getName())) {
-				imageCombo.setText("");
+				imageCombo.setText(""); //$NON-NLS-1$
 				initialImageId = null;
 				refreshImages();
 				setVolumeControlsEnabled(new Button[] { addButton }, false);
@@ -308,7 +308,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).grab(true, false).applyTo(addButton);
 		addButton.setText(WizardMessages.getString("ImageRunResourceVolVarPage.addButton")); //$NON-NLS-1$
 		addButton.addSelectionListener(onAddDataVolume(dataVolumesTableViewer));
-		if (imageCombo.getText() != null && !imageCombo.getText().equals("")) {
+		if (imageCombo.getText() != null && !imageCombo.getText().equals("")) { //$NON-NLS-1$
 			setVolumeControlsEnabled(new Button[] { addButton }, true);
 		}
 		final Button editButton = new Button(buttonsContainers, SWT.NONE);
@@ -967,8 +967,8 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			connection = null;
 			model.setConnection(null);
 			model.setSelectedImage(null);
-			connectionUri = "";
-			connectionSelector.setText("");
+			connectionUri = ""; //$NON-NLS-1$
+			connectionSelector.setText(""); //$NON-NLS-1$
 		}
 		connectionSelector.addModifyListener(connectionModifyListener);
 	}

@@ -113,7 +113,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			setErrorMessage(null);
 			setMessage(null);
 		} else {
-			setErrorMessage(Messages.GDBDebuggerPage0); //$NON-NLS-1$
+			setErrorMessage(Messages.GDBDebuggerPage0);
 			setMessage(null);
 		}
 		return valid;

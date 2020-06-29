@@ -213,7 +213,7 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain,
 				if (baseScannerInfo.getDefinedSymbols() != null) {
 					for (Map.Entry<String, String> macro : baseScannerInfo.getDefinedSymbols().entrySet()) {
 						if (macro.getValue() != null && !macro.getValue().isEmpty()) {
-							commandLine.add("-D" + macro.getKey() + "=" + macro.getValue()); //$NON-NLS-1$
+							commandLine.add("-D" + macro.getKey() + "=" + macro.getValue()); //$NON-NLS-1$ //$NON-NLS-2$
 						} else {
 							commandLine.add("-D" + macro.getKey()); //$NON-NLS-1$
 						}
@@ -331,7 +331,7 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain,
 				if (baseScannerInfo.getDefinedSymbols() != null) {
 					for (Map.Entry<String, String> macro : baseScannerInfo.getDefinedSymbols().entrySet()) {
 						if (macro.getValue() != null && !macro.getValue().isEmpty()) {
-							commandLine.add("-D" + macro.getKey() + "=" + macro.getValue()); //$NON-NLS-1$
+							commandLine.add("-D" + macro.getKey() + "=" + macro.getValue()); //$NON-NLS-1$ //$NON-NLS-2$
 						} else {
 							commandLine.add("-D" + macro.getKey()); //$NON-NLS-1$
 						}

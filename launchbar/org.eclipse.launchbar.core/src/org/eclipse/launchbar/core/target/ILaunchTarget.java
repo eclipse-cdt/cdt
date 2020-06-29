@@ -36,7 +36,7 @@ public interface ILaunchTarget extends IAdaptable {
 		@Override
 		public ILaunchTargetWorkingCopy getWorkingCopy() {
 			throw new UnsupportedOperationException(Messages.ILaunchTarget_notSupported);
-		};
+		}
 	};
 
 	/**

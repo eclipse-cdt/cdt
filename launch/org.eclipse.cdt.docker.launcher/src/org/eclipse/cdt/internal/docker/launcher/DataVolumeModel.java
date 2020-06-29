@@ -177,7 +177,7 @@ public class DataVolumeModel extends BaseDatabindingModel implements Comparable<
 		model.setHostPathMount(convertToWin32Path(Platform.getOS(), items[0]));
 		model.containerPath = items[1];
 		model.mountType = MountType.HOST_FILE_SYSTEM;
-		if (items[2].equals("ro")) {
+		if (items[2].equals("ro")) { //$NON-NLS-1$
 			model.setReadOnly(true);
 		} else {
 			model.setReadOnly(false);
@@ -242,7 +242,7 @@ public class DataVolumeModel extends BaseDatabindingModel implements Comparable<
 		}
 		firePropertyChange(MOUNT_TYPE, this.mountType, this.mountType = mountType);
 		if (this.mountType == MountType.NONE) {
-			setMount("");
+			setMount(""); //$NON-NLS-1$
 		}
 
 	}

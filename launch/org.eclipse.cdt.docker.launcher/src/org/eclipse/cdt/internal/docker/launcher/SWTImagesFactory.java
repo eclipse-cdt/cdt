@@ -46,11 +46,11 @@ public class SWTImagesFactory {
 	public static final String IMG_WARNING = NAME_PREFIX + "warning_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_ERROR = NAME_PREFIX + "error_obj.gif"; //$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_CONTAINER = createManaged("", IMG_CONTAINER);
-	public static final ImageDescriptor DESC_FOLDER_CLOSED = createManaged("", IMG_FOLDER_CLOSED);
-	public static final ImageDescriptor DESC_FILE = createManaged("", IMG_FILE);
-	public static final ImageDescriptor DESC_WARNING = createManaged("", IMG_WARNING);
-	public static final ImageDescriptor DESC_ERROR = createManaged("", IMG_ERROR);
+	public static final ImageDescriptor DESC_CONTAINER = createManaged("", IMG_CONTAINER); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FOLDER_CLOSED = createManaged("", IMG_FOLDER_CLOSED); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FILE = createManaged("", IMG_FILE); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_WARNING = createManaged("", IMG_WARNING); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ERROR = createManaged("", IMG_ERROR); //$NON-NLS-1$
 
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);

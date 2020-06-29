@@ -39,7 +39,7 @@ public class InlineDataRule implements IRule {
 	/** Buffer used for pattern detection */
 	private StringBuilder fBuffer = new StringBuilder();
 
-	private String fStartingSequence = "<<";
+	private String fStartingSequence = "<<"; //$NON-NLS-1$
 
 	public InlineDataRule(IToken inToken) {
 		token = inToken;

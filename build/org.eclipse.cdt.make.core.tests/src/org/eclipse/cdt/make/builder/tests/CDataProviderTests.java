@@ -31,6 +31,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+@SuppressWarnings("nls")
 public class CDataProviderTests extends TestCase {
 	/**
 	 * @param name

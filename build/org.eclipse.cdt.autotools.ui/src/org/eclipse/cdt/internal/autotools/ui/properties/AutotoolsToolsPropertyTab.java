@@ -89,7 +89,7 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 
 		/* text window for automake path */
 		fAutomakePath = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		fAutomakePath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.automakePath.tooltip")); //$NON-NLS-1#
+		fAutomakePath.setToolTipText(AutotoolsPropertyMessages.getString("Autotools.automakePath.tooltip")); //$NON-NLS-1$
 		gd = new GridData(
 				GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		fAutomakePath.setLayoutData(gd);

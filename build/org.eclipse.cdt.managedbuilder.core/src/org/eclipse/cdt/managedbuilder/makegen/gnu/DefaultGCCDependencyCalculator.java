@@ -103,7 +103,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 				+ IManagedBuilderMakefileGenerator.WHITESPACE + "-n" //$NON-NLS-1$
 				+ IManagedBuilderMakefileGenerator.WHITESPACE).append(depRule)
 				.append(IManagedBuilderMakefileGenerator.WHITESPACE + "$(dir $@)" //$NON-NLS-1$
-						+ IManagedBuilderMakefileGenerator.WHITESPACE + ">"
+						+ IManagedBuilderMakefileGenerator.WHITESPACE + ">" //$NON-NLS-1$
 						+ IManagedBuilderMakefileGenerator.WHITESPACE)
 				.append(depRule)
 				.append(IManagedBuilderMakefileGenerator.WHITESPACE + IManagedBuilderMakefileGenerator.LOGICAL_AND

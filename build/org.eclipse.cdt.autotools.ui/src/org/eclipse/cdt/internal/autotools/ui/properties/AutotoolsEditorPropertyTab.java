@@ -92,8 +92,8 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 			acVer = project.getPersistentProperty(AutotoolsPropertyConstants.AUTOCONF_VERSION);
 			amVer = project.getPersistentProperty(AutotoolsPropertyConstants.AUTOMAKE_VERSION);
 		} catch (CoreException e) {
-			acVer = "";
-			amVer = "";
+			acVer = ""; //$NON-NLS-1$
+			amVer = ""; //$NON-NLS-1$
 		}
 		int index = fACVersionCombo.getSelectionIndex();
 		String acVerSelected = fACVersionCombo.getItem(index);
@@ -179,7 +179,7 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 	}
 
 	void initializeACVersion() {
-		String version = "";
+		String version = ""; //$NON-NLS-1$
 		try {
 			version = project.getPersistentProperty(AutotoolsPropertyConstants.AUTOCONF_VERSION);
 			if (version == null)
@@ -202,7 +202,7 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 	}
 
 	void initializeAMVersion() {
-		String version = "";
+		String version = ""; //$NON-NLS-1$
 		try {
 			version = project.getPersistentProperty(AutotoolsPropertyConstants.AUTOMAKE_VERSION);
 			if (version == null)

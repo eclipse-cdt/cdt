@@ -250,7 +250,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 			}
 		} catch (IOException e) {
 			GnuUIPlugin.getDefault()
-					.log(new Status(IStatus.ERROR, GnuUIPlugin.PLUGIN_ID, "Error executing program [" + cmd + "]", e));
+					.log(new Status(IStatus.ERROR, GnuUIPlugin.PLUGIN_ID, "Error executing program [" + cmd + "]", e)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return result;
 	}

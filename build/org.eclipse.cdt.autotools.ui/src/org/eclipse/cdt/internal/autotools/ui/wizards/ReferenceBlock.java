@@ -171,7 +171,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask(AutotoolsWizardMessages.getResourceString("ReferenceBlock_task_ReferenceProjects"), 1);
+			monitor.beginTask(AutotoolsWizardMessages.getResourceString("ReferenceBlock_task_ReferenceProjects"), 1); //$NON-NLS-1$
 			try {
 				IProjectDescription description = project.getDescription();
 				description.setReferencedProjects(refProjects);

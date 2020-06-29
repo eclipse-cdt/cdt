@@ -40,7 +40,7 @@ public class SWTImagesFactory {
 	private static final String NAME_PREFIX = Activator.PLUGIN_ID + '.';
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
 	public static final String IMG_MESON = NAME_PREFIX + "meson-logo.png"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_MESON = createManaged("", IMG_MESON);
+	public static final ImageDescriptor DESC_MESON = createManaged("", IMG_MESON); //$NON-NLS-1$
 
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);

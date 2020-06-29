@@ -93,6 +93,8 @@ import org.eclipse.remote.core.exception.RemoteConnectionException;
 @SuppressWarnings("deprecation")
 public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
 	public static final String CONFIG_STATUS = "config.status"; //$NON-NLS-1$
 	public static final String MAKEFILE = "Makefile"; //$NON-NLS-1$
 	public static final String MAKEFILE_CVS = "Makefile.cvs"; //$NON-NLS-1$
@@ -114,7 +116,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private static final String TARGET_USE_DEFAULT_CMD = "useDefaultCommand"; //$NON-NLS-1$
 	private static final String TARGET_ARGUMENTS = "buildArguments"; //$NON-NLS-1$
 	private static final String TARGET_COMMAND = "buildCommand"; //$NON-NLS-1$
-	private static final String TARGET_RUN_ALL_BUILDERS = "runAllBuilders";
+	private static final String TARGET_RUN_ALL_BUILDERS = "runAllBuilders"; //$NON-NLS-1$
 	private static final String TARGET = "buildTarget"; //$NON-NLS-1$
 	private static final String DEFAULT_AUTORECONF = "autoreconf"; //$NON-NLS-1$
 
@@ -127,7 +129,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private IPath buildLocation;
 	private String buildDir;
 	private String srcDir;
-	private String winOSType = "";
+	private String winOSType = EMPTY_STRING;
 
 	private IConfiguration cfg;
 	private ICConfigurationDescription cdesc;
@@ -154,7 +156,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		buildDir = buildDirectory.toString();
 		srcDir = a.getConfigToolDirectory();
 		try {
-			String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValue(srcDir, "", null,
+			String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValue(srcDir, EMPTY_STRING, null,
 					IBuildMacroProvider.CONTEXT_CONFIGURATION, c);
 			srcDir = resolved;
 		} catch (BuildMacroException e) {
@@ -169,7 +171,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		this.cfg = info.getDefaultConfiguration();
 		this.builder = cfg.getBuilder();
 		this.monitor = monitor;
-		CUIPlugin.getDefault().getPreferenceStore().getString("dummy");
+		CUIPlugin.getDefault().getPreferenceStore().getString("dummy"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -250,7 +252,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		// Create or get the handle for the build directory
 		IPath path = new Path(dirName);
 		boolean rc = true;
-		if (dirName.length() == 0 || dirName.equals("."))
+		if (dirName.length() == 0 || dirName.equals(".")) //$NON-NLS-1$
 			path = getProjectLocation().append(dirName);
 		File f = path.toFile();
 		if (!f.exists()) {
@@ -297,7 +299,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				Status rc = regenerateMakefiles(icfg, reconfigure);
 				if (!rc.isOK()) {
 					if (status == null) {
-						status = new MultiStatus(AutotoolsPlugin.getUniqueIdentifier(), IStatus.ERROR, "", null);
+						status = new MultiStatus(AutotoolsPlugin.getUniqueIdentifier(), IStatus.ERROR, EMPTY_STRING,
+								null);
 					}
 					status.add(rc);
 				}
@@ -305,14 +308,12 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		} else {
 			Status rc = regenerateMakefiles(cfg, reconfigure);
 			if (!rc.isOK()) {
-				if (status == null) {
-					status = new MultiStatus(AutotoolsPlugin.getUniqueIdentifier(), IStatus.ERROR, "", null);
-				}
+				status = new MultiStatus(AutotoolsPlugin.getUniqueIdentifier(), IStatus.ERROR, EMPTY_STRING, null);
 				status.add(rc);
 			}
 		}
 		if (status == null) {
-			status = new MultiStatus(ManagedBuilderCorePlugin.getUniqueIdentifier(), IStatus.OK, "", null);
+			status = new MultiStatus(ManagedBuilderCorePlugin.getUniqueIdentifier(), IStatus.OK, EMPTY_STRING, null);
 		}
 		return status;
 	}
@@ -320,7 +321,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private Status regenerateMakefiles(IConfiguration icfg, boolean reconfigure) throws CoreException {
 		MultiStatus status;
 		int rc = IStatus.OK;
-		String errMsg = "";
+		String errMsg = EMPTY_STRING;
 		boolean needFullConfigure = false;
 
 		// See if the user has cancelled the build
@@ -645,46 +646,46 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	 * @return stripped command
 	 */
 	public static String stripEnvVars(String command, List<String> envVars) {
-		Pattern p1 = Pattern.compile("(\\w+[=]\\\".*?\\\"\\s+)\\w+.*");
-		Pattern p2 = Pattern.compile("(\\w+[=]'.*?'\\s+)\\w+.*");
-		Pattern p3 = Pattern.compile("(\\w+[=][^\\s]+\\s+)\\w+.*");
-		Pattern p4 = Pattern.compile("\\w+\\s+(\\w+[=]\\\".*?\\\"\\s*)+.*");
-		Pattern p5 = Pattern.compile("\\w+\\s+(\\w+[=]'.*?'\\s*)+.*");
-		Pattern p6 = Pattern.compile("\\w+\\s+(\\w+[=][^\\s]+).*");
+		Pattern p1 = Pattern.compile("(\\w+[=]\\\".*?\\\"\\s+)\\w+.*"); //$NON-NLS-1$
+		Pattern p2 = Pattern.compile("(\\w+[=]'.*?'\\s+)\\w+.*"); //$NON-NLS-1$
+		Pattern p3 = Pattern.compile("(\\w+[=][^\\s]+\\s+)\\w+.*"); //$NON-NLS-1$
+		Pattern p4 = Pattern.compile("\\w+\\s+(\\w+[=]\\\".*?\\\"\\s*)+.*"); //$NON-NLS-1$
+		Pattern p5 = Pattern.compile("\\w+\\s+(\\w+[=]'.*?'\\s*)+.*"); //$NON-NLS-1$
+		Pattern p6 = Pattern.compile("\\w+\\s+(\\w+[=][^\\s]+).*"); //$NON-NLS-1$
 		boolean finished = false;
 		while (!finished) {
 			Matcher m1 = p1.matcher(command);
 			if (m1.matches()) {
-				command = command.replaceFirst("\\w+[=]\\\".*?\\\"", "").trim();
+				command = command.replaceFirst("\\w+[=]\\\".*?\\\"", EMPTY_STRING).trim(); //$NON-NLS-1$
 				String s = m1.group(1).trim();
-				envVars.add(s.replaceAll("\\\"", ""));
+				envVars.add(s.replaceAll("\\\"", EMPTY_STRING)); //$NON-NLS-1$
 			} else {
 				Matcher m2 = p2.matcher(command);
 				if (m2.matches()) {
-					command = command.replaceFirst("\\w+[=]'.*?'", "").trim();
+					command = command.replaceFirst("\\w+[=]'.*?'", EMPTY_STRING).trim(); //$NON-NLS-1$
 					String s = m2.group(1).trim();
-					envVars.add(s.replaceAll("'", ""));
+					envVars.add(s.replaceAll("'", EMPTY_STRING)); //$NON-NLS-1$
 				} else {
 					Matcher m3 = p3.matcher(command);
 					if (m3.matches()) {
-						command = command.replaceFirst("\\w+[=][^\\s]+", "").trim();
+						command = command.replaceFirst("\\w+[=][^\\s]+", EMPTY_STRING).trim(); //$NON-NLS-1$
 						envVars.add(m3.group(1).trim());
 					} else {
 						Matcher m4 = p4.matcher(command);
 						if (m4.matches()) {
-							command = command.replaceFirst("\\w+[=]\\\".*?\\\"", "").trim();
+							command = command.replaceFirst("\\w+[=]\\\".*?\\\"", EMPTY_STRING).trim(); //$NON-NLS-1$
 							String s = m4.group(1).trim();
-							envVars.add(s.replaceAll("\\\"", ""));
+							envVars.add(s.replaceAll("\\\"", EMPTY_STRING)); //$NON-NLS-1$
 						} else {
 							Matcher m5 = p5.matcher(command);
 							if (m5.matches()) {
-								command = command.replaceFirst("\\w+[=]'.*?'", "").trim();
+								command = command.replaceFirst("\\w+[=]'.*?'", EMPTY_STRING).trim(); //$NON-NLS-1$
 								String s = m5.group(1).trim();
-								envVars.add(s.replaceAll("'", ""));
+								envVars.add(s.replaceAll("'", EMPTY_STRING)); //$NON-NLS-1$
 							} else {
 								Matcher m6 = p6.matcher(command);
 								if (m6.matches()) {
-									command = command.replaceFirst("\\w+[=][^\\s+]+", "").trim();
+									command = command.replaceFirst("\\w+[=][^\\s+]+", EMPTY_STRING).trim(); //$NON-NLS-1$
 									envVars.add(m6.group(1).trim());
 								} else {
 									finished = true;
@@ -707,26 +708,26 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	 * @return stripped option
 	 */
 	public static String stripEnvVarsFromOption(String str, List<String> envVars) {
-		Pattern p1 = Pattern.compile("(\\w+[=]\\\".*?\\\"\\s*).*");
-		Pattern p2 = Pattern.compile("(\\w+[=]'.*?'\\s*).*");
-		Pattern p3 = Pattern.compile("(\\w+[=][^\\s]+).*");
+		Pattern p1 = Pattern.compile("(\\w+[=]\\\".*?\\\"\\s*).*"); //$NON-NLS-1$
+		Pattern p2 = Pattern.compile("(\\w+[=]'.*?'\\s*).*"); //$NON-NLS-1$
+		Pattern p3 = Pattern.compile("(\\w+[=][^\\s]+).*"); //$NON-NLS-1$
 		boolean finished = false;
 		while (!finished) {
 			Matcher m1 = p1.matcher(str);
 			if (m1.matches()) {
-				str = str.replaceFirst("\\w+[=]\\\".*?\\\"", "").trim();
+				str = str.replaceFirst("\\w+[=]\\\".*?\\\"", EMPTY_STRING).trim(); //$NON-NLS-1$
 				String s = m1.group(1).trim();
-				envVars.add(s.replaceAll("\\\"", ""));
+				envVars.add(s.replaceAll("\\\"", EMPTY_STRING)); //$NON-NLS-1$
 			} else {
 				Matcher m2 = p2.matcher(str);
 				if (m2.matches()) {
-					str = str.replaceFirst("\\w+[=]'.*?'", "").trim();
+					str = str.replaceFirst("\\w+[=]'.*?'", EMPTY_STRING).trim(); //$NON-NLS-1$
 					String s = m2.group(1).trim();
-					envVars.add(s.replaceAll("'", ""));
+					envVars.add(s.replaceAll("'", EMPTY_STRING)); //$NON-NLS-1$
 				} else {
 					Matcher m3 = p3.matcher(str);
 					if (m3.matches()) {
-						str = str.replaceFirst("\\w+[=][^\\s]+", "").trim();
+						str = str.replaceFirst("\\w+[=][^\\s]+", EMPTY_STRING).trim(); //$NON-NLS-1$
 						envVars.add(m3.group(1).trim());
 					} else {
 						finished = true;
@@ -766,7 +767,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		if (configOption != null)
 			command = stripEnvVars(configOption.getValue().trim(), envVars);
 
-		String[] tokens = command.split("\\s");
+		String[] tokens = command.split("\\s"); //$NON-NLS-1$
 		if (tokens.length > 1) {
 			command = tokens[0];
 			for (int i = 1; i < tokens.length; ++i)
@@ -798,7 +799,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		if (autogenOption != null)
 			command = stripEnvVars(autogenOption.getValue().trim(), envVars);
 
-		String[] tokens = command.split("\\s");
+		String[] tokens = command.split("\\s"); //$NON-NLS-1$
 		if (tokens.length > 1) {
 			command = tokens[0];
 			for (int i = 1; i < tokens.length; ++i)
@@ -840,8 +841,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			// try to resolve the build macros in any argument
 			try {
 				String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
-						configTargets[i], "", //$NON-NLS-1$
-						" ", //$NON-NLS-1$
+						configTargets[i], EMPTY_STRING, " ", //$NON-NLS-1$
 						IBuildMacroProvider.CONTEXT_CONFIGURATION, cfg);
 				configTargets[i] = resolved;
 			} catch (BuildMacroException e) {
@@ -1062,10 +1062,10 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private String getPathString(IPath path) {
 		String s = path.toString();
 		if (getOSName().equals(Platform.OS_WIN32)) {
-			if (getWinOSType().equals("cygwin")) {
-				s = s.replaceAll("^([a-zA-Z]):", "/cygdrive/$1");
+			if (getWinOSType().equals("cygwin")) { //$NON-NLS-1$
+				s = s.replaceAll("^([a-zA-Z]):", "/cygdrive/$1"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				s = s.replaceAll("^([a-zA-Z]):", "/$1");
+				s = s.replaceAll("^([a-zA-Z]):", "/$1"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return s;
@@ -1073,9 +1073,9 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 	// Fix any escape characters in sh -c command arguments
 	private String fixEscapeChars(String s) {
-		s = s.replaceAll("\\\\", "\\\\\\\\");
-		s = s.replaceAll("\\(", "\\\\(");
-		s = s.replaceAll("\\)", "\\\\)");
+		s = s.replaceAll("\\\\", "\\\\\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
+		s = s.replaceAll("\\(", "\\\\("); //$NON-NLS-1$ //$NON-NLS-2$
+		s = s.replaceAll("\\)", "\\\\)"); //$NON-NLS-1$ //$NON-NLS-2$
 		return s;
 	}
 
@@ -1116,16 +1116,15 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			if (command == null)
 				command = arg;
 			else
-				command += " " + arg;
+				command += " " + arg; //$NON-NLS-1$
 		}
-		configTargets = new String[] { "-c", command };
+		configTargets = new String[] { "-c", command }; //$NON-NLS-1$
 
 		for (int i = 0; i < configTargets.length; ++i) {
 			// try to resolve the build macros in any argument
 			try {
 				String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
-						configTargets[i], "", //$NON-NLS-1$
-						" ", //$NON-NLS-1$
+						configTargets[i], EMPTY_STRING, " ", //$NON-NLS-1$
 						IBuildMacroProvider.CONTEXT_CONFIGURATION, cfg);
 				// strip any env-var settings from options
 				// fix for bug #356278
@@ -1161,12 +1160,12 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			// Display command-line environment variables that have been stripped by us
 			// because launch showCommand won't do this.
 			if (additionalEnvs != null && additionalEnvs.size() > 0) {
-				buf.append(AutotoolsPlugin.getResourceString("MakeGenerator.commandline.envvars"));
+				buf.append(AutotoolsPlugin.getResourceString("MakeGenerator.commandline.envvars")); //$NON-NLS-1$
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$	//$NON-NLS-2$
-				buf.append("\t");
+				buf.append("\t"); //$NON-NLS-1$
 				for (int i = 0; i < additionalEnvs.size(); ++i) {
 					String envvar = additionalEnvs.get(i);
-					buf.append(envvar.replaceFirst("(\\w+=)(.*)", " $1\"$2\""));
+					buf.append(envvar.replaceFirst("(\\w+=)(.*)", " $1\"$2\"")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$	//$NON-NLS-2$
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$	//$NON-NLS-2$
@@ -1474,7 +1473,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		Class<? extends IMakeTargetManager> c = makeTargetManager.getClass();
 		boolean targetsAdded = false;
 		try {
-			Method m = c.getMethod("setTargets", IContainer.class, IMakeTarget[].class);
+			Method m = c.getMethod("setTargets", IContainer.class, IMakeTarget[].class); //$NON-NLS-1$
 			m.invoke(makeTargetManager, project, makeTargetArray);
 			targetsAdded = true;
 		} catch (NoSuchMethodException | IllegalArgumentException | IllegalAccessException

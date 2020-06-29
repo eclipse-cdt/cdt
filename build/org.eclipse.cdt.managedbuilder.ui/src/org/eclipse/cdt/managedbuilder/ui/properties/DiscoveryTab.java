@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -31,7 +32,6 @@ import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySu
 import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
 import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -734,13 +734,13 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 
 	private boolean settingsEqual(IScannerConfigBuilderInfo2 info1, IScannerConfigBuilderInfo2 info2) {
-		if (!CDataUtil.objectsEqual(info1.getSelectedProfileId(), info2.getSelectedProfileId()))
+		if (!Objects.equals(info1.getSelectedProfileId(), info2.getSelectedProfileId()))
 			return false;
-		if (!CDataUtil.objectsEqual(info1.getBuildOutputFilePath(), info2.getBuildOutputFilePath()))
+		if (!Objects.equals(info1.getBuildOutputFilePath(), info2.getBuildOutputFilePath()))
 			return false;
-		if (!CDataUtil.objectsEqual(info1.getContext(), info2.getContext()))
+		if (!Objects.equals(info1.getContext(), info2.getContext()))
 			return false;
-		if (!CDataUtil.objectsEqual(info1.getSelectedProfileId(), info2.getSelectedProfileId()))
+		if (!Objects.equals(info1.getSelectedProfileId(), info2.getSelectedProfileId()))
 			return false;
 		if (info1.isAutoDiscoveryEnabled() != info2.isAutoDiscoveryEnabled()
 				|| info1.isBuildOutputFileActionEnabled() != info2.isBuildOutputFileActionEnabled()

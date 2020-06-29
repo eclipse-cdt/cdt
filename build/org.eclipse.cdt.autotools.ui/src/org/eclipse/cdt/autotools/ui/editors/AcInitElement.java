@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.autotools.core.VersionComparator;
 
 public class AcInitElement extends AutoconfMacroElement {
 
-	private static final String BAD_VERSION_NUMBER = "AC_INIT_badVersionNumber";
+	private static final String BAD_VERSION_NUMBER = "AC_INIT_badVersionNumber"; //$NON-NLS-1$
 
 	public AcInitElement(String name) {
 		super(name);
@@ -56,7 +56,7 @@ public class AcInitElement extends AutoconfMacroElement {
 		AutoconfElement argument = this.getChildren()[1];
 		// match a digit followed by a dot zero or more times
 		// but always end with a digit
-		if (!argument.getName().matches("(\\d*\\.)*((\\d+))")) {
+		if (!argument.getName().matches("(\\d*\\.)*((\\d+))")) { //$NON-NLS-1$
 			throw new InvalidMacroException(AutoconfEditorMessages.getString(BAD_VERSION_NUMBER), argument);
 		}
 	}

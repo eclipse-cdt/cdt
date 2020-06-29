@@ -43,7 +43,7 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 		StringBuilder parms = new StringBuilder();
 		// Multiple flags are designated by putting multiple flags together using "|" as delimiter
 		String[] flagNames = getValue().split("\\|"); //$NON-NLS-1$
-		String flagSeparator = "";
+		String flagSeparator = ""; //$NON-NLS-1$
 		for (String flagName : flagNames) {
 			parms.append(flagSeparator);
 			flagSeparator = " "; //$NON-NLS-1$

@@ -189,10 +189,10 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 			} else if (element instanceof AutomakeIfElse) {
 				AutomakeIfElse ifelse = (AutomakeIfElse) element;
 				// FIXME:  make this not a string comparison
-				if (ifelse.getType().equals("if")) {
-					name = "if " + ifelse.getCondition();
+				if (ifelse.getType().equals("if")) { //$NON-NLS-1$
+					name = "if " + ifelse.getCondition(); //$NON-NLS-1$
 				} else
-					name = "else";
+					name = "else"; //$NON-NLS-1$
 			} else if (element instanceof AutomakeConfigMacro) {
 				AutomakeConfigMacro macro = (AutomakeConfigMacro) element;
 				name = macro.getName();

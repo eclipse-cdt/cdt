@@ -43,7 +43,7 @@ public class AutoconfPartitionScanner extends RuleBasedPartitionScanner {
 		rules.add(new AutoconfMacroPartitionRule(macro));
 
 		rules.add(new EndOfLineRule("dnl", comment)); //$NON-NLS-1$
-		rules.add(new SingleLineRule("\\#", null, Token.UNDEFINED));
+		rules.add(new SingleLineRule("\\#", null, Token.UNDEFINED)); //$NON-NLS-1$
 		rules.add(new EndOfLineRule("#", comment, '\\')); //$NON-NLS-1$
 
 		// We want to process identifiers that might have macro

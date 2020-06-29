@@ -60,7 +60,7 @@ public class ExportMemoryDialog extends SelectionDialog {
 
 	private IDialogSettings fProperties = MemoryTransportPlugin.getDefault().getDialogSettings(EXPORT_SETTINGS);
 
-	private final String INITIAL_ADDRESS = "Initial address";
+	private final String INITIAL_ADDRESS = "Initial address"; //$NON-NLS-1$
 
 	public ExportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, BigInteger initialStartAddr) {
 		super(parent);
@@ -183,14 +183,14 @@ public class ExportMemoryDialog extends SelectionDialog {
 			IConfigurationElement element = points[i];
 			if ("exporter".equals(element.getName())) //$NON-NLS-1$
 			{
-				String maxSizeStr = element.getAttribute("maxmemorysize");
+				String maxSizeStr = element.getAttribute("maxmemorysize"); //$NON-NLS-1$
 				if (maxSizeStr != null) {
 					if (fMemoryBlock instanceof IMemoryBlockExtension) {
 						IMemoryBlockExtension memBlock = (IMemoryBlockExtension) fMemoryBlock;
 						try {
 							BigInteger endAddress = memBlock.getBigBaseAddress();
 							BigInteger length = memBlock.getBigLength();
-							if (length != null && !length.equals(new BigInteger("-1", 10))) {
+							if (length != null && !length.equals(new BigInteger("-1", 10))) { //$NON-NLS-1$
 								endAddress = endAddress.add(length);
 							}
 							int maxAddressSizeInBits = endAddress.bitLength();

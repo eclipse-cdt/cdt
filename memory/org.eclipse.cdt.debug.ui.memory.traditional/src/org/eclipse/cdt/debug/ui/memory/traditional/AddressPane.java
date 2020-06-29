@@ -74,7 +74,7 @@ public class AddressPane extends AbstractPane {
 		GC gc = new GC(this);
 		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < getCellCharacterCount(); i++)
-			buf.append("0");
+			buf.append("0"); //$NON-NLS-1$
 		int width = gc.textExtent(buf.toString()).x;
 		gc.dispose();
 		return width;

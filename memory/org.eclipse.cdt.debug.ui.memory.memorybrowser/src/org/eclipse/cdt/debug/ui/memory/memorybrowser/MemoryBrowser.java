@@ -585,7 +585,7 @@ public class MemoryBrowser extends ViewPart
 							// widgets update require Display
 							runOnUIThread(() -> fGotoAddressBar
 									.handleExpressionStatus(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID,
-											Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e1)));
+											Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e1))); //$NON-NLS-1$
 						}
 					}
 				}.start();
@@ -621,11 +621,11 @@ public class MemoryBrowser extends ViewPart
 				IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval) tab.getParent().getData(KEY_RETRIEVAL);
 				if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
 					label = ((IMemorySpaceAwareMemoryBlockRetrieval) retrieval)
-							.encodeAddress("0x" + viewportAddress.toString(16), memorySpaceID);
+							.encodeAddress("0x" + viewportAddress.toString(16), memorySpaceID); //$NON-NLS-1$
 				}
 			}
 			if (label == null) {
-				label = "0x" + viewportAddress.toString(16);
+				label = "0x" + viewportAddress.toString(16); //$NON-NLS-1$
 			}
 
 			// If the expression that was went to ("Go") is not a hex address,
@@ -639,13 +639,13 @@ public class MemoryBrowser extends ViewPart
 			//
 			String expression = (String) tab.getData(KEY_EXPRESSION);
 			BigInteger evaluatedAddress = (BigInteger) tab.getData(KEY_EXPRESSION_ADDRESS);
-			if (expression != null && !expression.equals("0x" + viewportAddress.toString(16))) {
-				label += " - " + expression;
+			if (expression != null && !expression.equals("0x" + viewportAddress.toString(16))) { //$NON-NLS-1$
+				label += " - " + expression; //$NON-NLS-1$
 				BigInteger delta = evaluatedAddress.subtract(viewportAddress);
 				if (!delta.equals(BigInteger.ZERO)) {
-					label += "(";
+					label += "("; //$NON-NLS-1$
 					label += delta.signum() < 0 ? '+' : '-';
-					label += "0x" + delta.abs().toString(16) + ")";
+					label += "0x" + delta.abs().toString(16) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 

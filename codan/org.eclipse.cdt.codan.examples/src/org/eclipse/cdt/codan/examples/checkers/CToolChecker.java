@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.Path;
  *
  */
 public class CToolChecker extends AbstractCElementChecker {
-	public final static String ID = "org.eclipse.cdt.codan.examples.checkers.CToolChecker.error";
+	public final static String ID = "org.eclipse.cdt.codan.examples.checkers.CToolChecker.error"; //$NON-NLS-1$
 	public static final String MAKE_PLUGIN_ID = "org.eclipse.cdt.make.core"; //$NON-NLS-1$
 	final ExternalToolInvoker externalToolInvoker = new ExternalToolInvoker();
 
@@ -56,16 +56,16 @@ public class CToolChecker extends AbstractCElementChecker {
 	public void processUnit(ITranslationUnit unit) {
 		IScannerInfo scannerInfo = unit.getScannerInfo(true);
 		List<String> res = getCompilerOptionsList(scannerInfo);
-		res.add("-c");
-		res.add("-o/dev/null");
-		res.add("-O2");
-		res.add("-Wall");
-		res.add("-Werror");
+		res.add("-c"); //$NON-NLS-1$
+		res.add("-o/dev/null"); //$NON-NLS-1$
+		res.add("-O2"); //$NON-NLS-1$
+		res.add("-Wall"); //$NON-NLS-1$
+		res.add("-Werror"); //$NON-NLS-1$
 		res.add(unit.getFile().getLocation().toPortableString());
 		String args[] = res.toArray(new String[res.size()]);
 		try {
 			externalToolInvoker.launchOnBuildConsole(unit.getResource().getProject(),
-					new IConsoleParser[] { getConsoleParser(unit) }, "check", getToolPath(), args, new String[] {},
+					new IConsoleParser[] { getConsoleParser(unit) }, "check", getToolPath(), args, new String[] {}, //$NON-NLS-1$
 					getWorkingDirectory(), new NullProgressMonitor());
 		} catch (CoreException | InvocationFailure e) {
 			Activator.log(e);
@@ -76,24 +76,24 @@ public class CToolChecker extends AbstractCElementChecker {
 		final Map<String, String> symbols = scannerInfo.getDefinedSymbols();
 		List<String> res = new ArrayList<>();
 		for (String macro : symbols.keySet()) {
-			if (macro.startsWith("_")) {
+			if (macro.startsWith("_")) { //$NON-NLS-1$
 				continue; // likely embedded macro
 			}
 			String value = symbols.get(macro);
 			if (value.isEmpty()) {
-				res.add("-D" + macro);
+				res.add("-D" + macro); //$NON-NLS-1$
 			} else {
-				res.add("-D" + macro + "=" + value);
+				res.add("-D" + macro + "=" + value); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		for (String inc : scannerInfo.getIncludePaths()) {
-			res.add("-I" + inc);
+			res.add("-I" + inc); //$NON-NLS-1$
 		}
 		return res;
 	}
 
 	protected Path getToolPath() {
-		return new Path("gcc");
+		return new Path("gcc"); //$NON-NLS-1$
 	}
 
 	protected IConsoleParser getConsoleParser(ITranslationUnit unit) {

@@ -66,10 +66,10 @@ public class VisualizerViewerEvent extends Event {
 	/** Converts event type to string */
 	@Override
 	public String typeToString(int type) {
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		switch (type) {
 		case VISUALIZER_CHANGED:
-			result = "VISUALIZER_CHANGED";
+			result = "VISUALIZER_CHANGED"; //$NON-NLS-1$
 			break;
 		default:
 			result = super.typeToString(type);

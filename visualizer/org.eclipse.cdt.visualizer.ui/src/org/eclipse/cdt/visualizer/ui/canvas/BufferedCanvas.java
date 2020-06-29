@@ -165,7 +165,8 @@ public class BufferedCanvas extends Canvas implements PaintListener, ControlList
 		} catch (Throwable t) {
 			// Throwing an exception in painting code can hang Eclipse,
 			// so catch any exceptions here.
-			System.err.println("BufferedCanvas: Exception thrown in painting code: \n" + t);
+			System.err.println("BufferedCanvas: Exception thrown in painting code: \n"); //$NON-NLS-1$
+			t.printStackTrace(System.err);
 		}
 
 		// then copy image buffer to actual canvas (reduces repaint flickering)

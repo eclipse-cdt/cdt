@@ -93,7 +93,7 @@ public class ControlFlowGraphView extends ViewPart {
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
-	public static final String ID = "org.eclipse.cdt.codan.ui.cfgview.views.ControlFlowGraphView";
+	public static final String ID = "org.eclipse.cdt.codan.ui.cfgview.views.ControlFlowGraphView"; //$NON-NLS-1$
 	private TreeViewer viewer;
 	private DrillDownAdapter drillDownAdapter;
 	private Action actionSync;
@@ -188,7 +188,7 @@ public class ControlFlowGraphView extends ViewPart {
 		public String getText(Object obj) {
 			if (obj == null)
 				return null;
-			String strdata = "";
+			String strdata = ""; //$NON-NLS-1$
 			if (obj instanceof ICfgData) {
 				strdata = ((AbstractBasicBlock) obj).toStringData();
 			}
@@ -205,25 +205,25 @@ public class ControlFlowGraphView extends ViewPart {
 		 * @return
 		 */
 		protected String blockHexLabel(Object obj) {
-			return "0x" + Integer.toHexString(System.identityHashCode(obj));
+			return "0x" + Integer.toHexString(System.identityHashCode(obj)); //$NON-NLS-1$
 		}
 
 		@Override
 		public Image getImage(Object obj) {
-			String imageKey = "task.png";
+			String imageKey = "task.png"; //$NON-NLS-1$
 			if (obj instanceof IDecisionNode || obj instanceof IControlFlowGraph)
-				imageKey = "decision.png";
+				imageKey = "decision.png"; //$NON-NLS-1$
 			else if (obj instanceof IExitNode)
-				imageKey = "exit.png";
+				imageKey = "exit.png"; //$NON-NLS-1$
 			else if (obj instanceof IStartNode)
-				imageKey = "start.png";
+				imageKey = "start.png"; //$NON-NLS-1$
 			else if (obj instanceof IJumpNode)
-				imageKey = "jump.png";
+				imageKey = "jump.png"; //$NON-NLS-1$
 			else if (obj instanceof IBranchNode)
-				imageKey = "labeled.png";
+				imageKey = "labeled.png"; //$NON-NLS-1$
 			else if (obj instanceof IConnectorNode)
-				imageKey = "connector.png";
-			return ControlFlowGraphPlugin.getDefault().getImage("icons/" + imageKey);
+				imageKey = "connector.png"; //$NON-NLS-1$
+			return ControlFlowGraphPlugin.getDefault().getImage("icons/" + imageKey); //$NON-NLS-1$
 		}
 	}
 
@@ -251,7 +251,7 @@ public class ControlFlowGraphView extends ViewPart {
 	}
 
 	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(manager -> ControlFlowGraphView.this.fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
@@ -305,7 +305,7 @@ public class ControlFlowGraphView extends ViewPart {
 		};
 		actionSync.setText("Synchronize");
 		actionSync.setToolTipText("Synchronize");
-		actionSync.setImageDescriptor(ControlFlowGraphPlugin.getDefault().getImageDescriptor("icons/refresh_view.gif"));
+		actionSync.setImageDescriptor(ControlFlowGraphPlugin.getDefault().getImageDescriptor("icons/refresh_view.gif")); //$NON-NLS-1$
 	}
 
 	protected void processAst(IASTTranslationUnit ast) {

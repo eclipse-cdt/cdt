@@ -35,29 +35,26 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_BACKGROUND, true);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_SELECTION, true);
 
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED, "255,0,0");
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED, "255,0,0"); //$NON-NLS-1$
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_ITALIC, false);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_BOLD, false);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED_BOX, true);
 
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT, "0,255,0");
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT, "0,255,0"); //$NON-NLS-1$
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_ITALIC, true);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_BOLD, false);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT_BOX, true);
 
 		Color systemSelection = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_SELECTION,
-				systemSelection.getRed() + "," + systemSelection.getGreen() + "," + systemSelection.getBlue());
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_SELECTION, toColorString(systemSelection));
 
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS, "5");
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS, "5"); //$NON-NLS-1$
 
 		Color systemText = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_TEXT,
-				systemText.getRed() + "," + systemText.getGreen() + "," + systemText.getBlue());
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_TEXT, toColorString(systemText));
 
 		Color systemBackground = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND,
-				systemBackground.getRed() + "," + systemBackground.getGreen() + "," + systemBackground.getBlue());
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND, toColorString(systemBackground));
 
 		// Set the default background colors, for known memory spaces
 		IMemorySpacePreferencesHelper util = TraditionalMemoryRenderingFactory.getMemorySpacesPreferencesHelper();
@@ -74,9 +71,12 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE,
 				TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY);
 
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT, "1");
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT, "1"); //$NON-NLS-1$
 
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_CROSS_REFERENCE_INFO, true);
 	}
 
+	private String toColorString(Color color) {
+		return String.format("%d,%d,%d", color.getRed(), color.getGreen(), color.getBlue()); //$NON-NLS-1$
+	}
 }

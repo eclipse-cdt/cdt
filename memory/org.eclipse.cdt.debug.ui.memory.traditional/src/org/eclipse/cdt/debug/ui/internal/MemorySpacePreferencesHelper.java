@@ -41,6 +41,7 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 	private final IPreferenceStore fStore;
 
 	// List of RGB colors that we can use, by default, for memory space backgrounds
+	@SuppressWarnings("nls")
 	private static final String[] fColorPool = { "238,192,192", "250,238,195", "255,179,0", "122,245,0", "184,242,255",
 			"166,189,215", "206,162,98", "245,138,157", "244,200,0", "255,136,56", "244,255,128" };
 
@@ -55,7 +56,7 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 	 */
 	private String[] getMemorySpaceIds() {
 		String csv = fStore.getString(TraditionalRenderingPreferenceConstants.MEM_KNOWN_MEMORY_SPACE_ID_LIST_CSV);
-		return csv.isEmpty() ? new String[0] : csv.split(",");
+		return csv.isEmpty() ? new String[0] : csv.split(","); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -94,7 +95,7 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 		for (int i = 0; i < memorySpaces.length; i++) {
 			csv.append(memorySpaces[i]);
 			if (i < memorySpaces.length - 1) {
-				csv.append(",");
+				csv.append(","); //$NON-NLS-1$
 			}
 		}
 
@@ -113,14 +114,14 @@ public class MemorySpacePreferencesHelper implements IMemorySpacePreferencesHelp
 	public Map<String, String> getMemorySpaceLabels() {
 		String prefix = TraditionalRenderingPreferenceConstants.MEM_MEMORY_SPACE_ID_PREFIX;
 		String labelPrefix = TraditionalRenderingMessages
-				.getString("TraditionalRenderingPreferencePage_BackgroundColorMemorySpacePrefix");
+				.getString("TraditionalRenderingPreferencePage_BackgroundColorMemorySpacePrefix"); //$NON-NLS-1$
 		String[] ids = getMemorySpaceIds();
 
 		Map<String, String> keysToLabels = new HashMap<>();
 		String key, label;
 		for (int i = 0; i < ids.length; i++) {
 			key = prefix + ids[i];
-			label = labelPrefix + " " + ids[i];
+			label = labelPrefix + " " + ids[i]; //$NON-NLS-1$
 			keysToLabels.put(key, label);
 		}
 		return keysToLabels;

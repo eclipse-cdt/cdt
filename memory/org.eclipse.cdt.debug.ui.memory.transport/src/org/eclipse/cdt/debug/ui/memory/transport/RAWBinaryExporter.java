@@ -311,7 +311,7 @@ public class RAWBinaryExporter implements IMemoryExporter {
 
 					if (length.compareTo(BigInteger.ZERO) <= 0) {
 						if (endAddress.compareTo(BigInteger.ZERO) < 0) {
-							endString = endAddress.toString(16); //$NON-NLS-1$
+							endString = endAddress.toString(16);
 						} else {
 							endString = "0x" + endAddress.toString(16); //$NON-NLS-1$
 						}

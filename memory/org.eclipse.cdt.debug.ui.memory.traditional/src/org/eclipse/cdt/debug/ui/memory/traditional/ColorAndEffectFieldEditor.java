@@ -56,15 +56,15 @@ public class ColorAndEffectFieldEditor extends FieldEditor {
 		colorSelector.getButton().setLayoutData(new GridData());
 
 		checkBold = new Button(parent, SWT.CHECK);
-		checkBold.setText(TraditionalRenderingMessages.getString("ColorAndEffectFieldEditor.bold"));
+		checkBold.setText(TraditionalRenderingMessages.getString("ColorAndEffectFieldEditor.bold")); //$NON-NLS-1$
 		checkBold.setLayoutData(new GridData());
 
 		checkItalic = new Button(parent, SWT.CHECK);
-		checkItalic.setText(TraditionalRenderingMessages.getString("ColorAndEffectFieldEditor.italic"));
+		checkItalic.setText(TraditionalRenderingMessages.getString("ColorAndEffectFieldEditor.italic")); //$NON-NLS-1$
 		checkItalic.setLayoutData(new GridData());
 
 		checkBox = new Button(parent, SWT.CHECK);
-		checkBox.setText(TraditionalRenderingMessages.getString("ColorAndEffectFieldEditor.box"));
+		checkBox.setText(TraditionalRenderingMessages.getString("ColorAndEffectFieldEditor.box")); //$NON-NLS-1$
 		checkBox.setLayoutData(new GridData());
 	}
 

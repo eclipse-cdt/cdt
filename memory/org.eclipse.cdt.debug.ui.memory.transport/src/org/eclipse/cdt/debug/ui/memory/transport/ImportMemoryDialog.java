@@ -70,7 +70,7 @@ public class ImportMemoryDialog extends SelectionDialog {
 
 	private IMemoryRenderingSite fMemoryView;
 
-	private final String INITIAL_ADDRESS = "Initial address";
+	private final String INITIAL_ADDRESS = "Initial address"; //$NON-NLS-1$
 
 	public ImportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, BigInteger initialStartAddr,
 			IMemoryRenderingSite renderingSite) {
@@ -221,7 +221,7 @@ public class ImportMemoryDialog extends SelectionDialog {
 			IConfigurationElement element = points[i];
 			if ("importer".equals(element.getName())) //$NON-NLS-1$
 			{
-				String maxSizeStr = element.getAttribute("maxmemorysize");
+				String maxSizeStr = element.getAttribute("maxmemorysize"); //$NON-NLS-1$
 				if (maxSizeStr != null) {
 					if (fMemoryBlock instanceof IMemoryBlockExtension) {
 						IMemoryBlockExtension memBlock = (IMemoryBlockExtension) fMemoryBlock;

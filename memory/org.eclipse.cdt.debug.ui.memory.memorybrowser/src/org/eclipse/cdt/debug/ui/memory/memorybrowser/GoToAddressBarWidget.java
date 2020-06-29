@@ -49,7 +49,7 @@ public class GoToAddressBarWidget {
 	 * Character sequence that is unlikely to appear naturally in a recurring
 	 * debug context ID or memory space ID
 	 */
-	private static String SEPARATOR = "<seperator>";
+	private static String SEPARATOR = "<seperator>"; //$NON-NLS-1$
 
 	/**
 	 * At a minimum, the expression history is kept on a per launch
@@ -57,7 +57,7 @@ public class GoToAddressBarWidget {
 	 * provide a recurring ID, we further divide the history by those IDs. This
 	 * constant is used when no recurring context ID is available.
 	 */
-	private static String UNKNOWN_CONTEXT_ID = "Unknown";
+	private static String UNKNOWN_CONTEXT_ID = "Unknown"; //$NON-NLS-1$
 	private Combo fExpression;
 	private ControlDecoration fEmptyExpression;
 	private ControlDecoration fWrongExpression;
@@ -120,12 +120,12 @@ public class GoToAddressBarWidget {
 		String contextID = getRecurringContextID(context);
 
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
-		String currentExpressions = "";
+		String currentExpressions = ""; //$NON-NLS-1$
 		if (launchConfiguration != null) {
 			try {
 				ILaunchConfigurationWorkingCopy wc = launchConfiguration.getWorkingCopy();
 				if (wc != null) {
-					currentExpressions = wc.getAttribute(getSaveExpressionKey(contextID, memorySpace), "");
+					currentExpressions = wc.getAttribute(getSaveExpressionKey(contextID, memorySpace), ""); //$NON-NLS-1$
 
 					StringTokenizer st = new StringTokenizer(currentExpressions, ","); //$NON-NLS-1$
 					/*
@@ -143,10 +143,10 @@ public class GoToAddressBarWidget {
 							list.remove(0);
 						}
 
-						currentExpressions = "";
+						currentExpressions = ""; //$NON-NLS-1$
 						for (int idx = 0; idx < list.size(); idx++) {
 							if (idx > 0) {
-								currentExpressions += ",";
+								currentExpressions += ","; //$NON-NLS-1$
 							}
 							currentExpressions += list.get(idx);
 						}
@@ -233,10 +233,10 @@ public class GoToAddressBarWidget {
 		}
 
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
-		String expressions = "";
+		String expressions = ""; //$NON-NLS-1$
 		if (launchConfiguration != null) {
 			expressions = launchConfiguration
-					.getAttribute(getSaveExpressionKey(getRecurringContextID(context), memorySpace), "");
+					.getAttribute(getSaveExpressionKey(getRecurringContextID(context), memorySpace), ""); //$NON-NLS-1$
 		}
 
 		StringTokenizer st = new StringTokenizer(expressions, ","); //$NON-NLS-1$

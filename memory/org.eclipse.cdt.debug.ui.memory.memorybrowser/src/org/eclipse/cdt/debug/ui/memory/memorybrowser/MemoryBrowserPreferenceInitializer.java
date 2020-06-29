@@ -26,7 +26,7 @@ public class MemoryBrowserPreferenceInitializer extends AbstractPreferenceInitia
 		IPreferenceStore store = MemoryBrowserPlugin.getDefault().getPreferenceStore();
 
 		// The following preferences should be kept in the store
-		store.setDefault(MemoryBrowser.PREF_DEFAULT_RENDERING, "");
+		store.setDefault(MemoryBrowser.PREF_DEFAULT_RENDERING, ""); //$NON-NLS-1$
 	}
 
 }

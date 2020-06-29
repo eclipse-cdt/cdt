@@ -30,10 +30,10 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 @SuppressWarnings("restriction")
 public class QPropertyCompletion {
 
-	private static final String CONTEXT_ID = Activator.PLUGIN_ID + ".proposal.Q_PROPERTY";
+	private static final String CONTEXT_ID = Activator.PLUGIN_ID + ".proposal.Q_PROPERTY"; //$NON-NLS-1$
 
-	private static final Template QPropertyTemplate = new Template("Q_PROPERTY", "Q_PROPERTY declaration", CONTEXT_ID,
-			"Q_PROPERTY( ${type} ${name} READ ${accessor} ${cursor} )", true);
+	private static final Template QPropertyTemplate = new Template("Q_PROPERTY", "Q_PROPERTY declaration", CONTEXT_ID, //$NON-NLS-1$ //$NON-NLS-2$
+			"Q_PROPERTY( ${type} ${name} READ ${accessor} ${cursor} )", true); //$NON-NLS-1$
 
 	public static Collection<ICompletionProposal> getAttributeProposals(
 			ICEditorContentAssistInvocationContext context) {

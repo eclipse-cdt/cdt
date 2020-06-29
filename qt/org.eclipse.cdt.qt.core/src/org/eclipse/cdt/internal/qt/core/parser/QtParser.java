@@ -47,7 +47,7 @@ public class QtParser extends GNUCPPSourceParser {
 	public static ICPPASTFunctionDeclarator parseQtMethodReference(String str) {
 		// Reject strings that have embedded line terminators.  This is needed to properly check that
 		// one that is about to be added.
-		if (str == null || str.contains(";"))
+		if (str == null || str.contains(";")) //$NON-NLS-1$
 			return null;
 
 		QtParser parser = new QtParser(str + ';');

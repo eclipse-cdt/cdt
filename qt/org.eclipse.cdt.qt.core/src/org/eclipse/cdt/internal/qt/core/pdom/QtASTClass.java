@@ -320,7 +320,7 @@ public class QtASTClass {
 		// and long suffixes are allowed but are excluded from the capture group.  The matcher's
 		// input string should be trimmed and have all newlines replaced.
 		private static final Pattern QREVISION_REGEX = Pattern
-				.compile("^Q_REVISION\\s*\\(\\s*((?:0x)?[\\da-fA-F]+)[ulUL]*\\s*\\)$");
+				.compile("^Q_REVISION\\s*\\(\\s*((?:0x)?[\\da-fA-F]+)[ulUL]*\\s*\\)$"); //$NON-NLS-1$
 
 		public Revision(int offset, Long revision) {
 			this.offset = offset;
@@ -351,7 +351,7 @@ public class QtASTClass {
 				return null;
 
 			// Trim leading and trailing whitespace and remove all newlines.
-			Matcher m = QREVISION_REGEX.matcher(raw.trim().replaceAll("\\s+", ""));
+			Matcher m = QREVISION_REGEX.matcher(raw.trim().replaceAll("\\s+", "")); //$NON-NLS-1$ //$NON-NLS-2$
 			if (m.matches()) {
 				try {
 					return new Revision(offset, Long.parseLong(m.group(1)));

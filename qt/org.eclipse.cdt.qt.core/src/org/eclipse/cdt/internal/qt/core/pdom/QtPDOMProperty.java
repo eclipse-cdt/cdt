@@ -151,7 +151,7 @@ public class QtPDOMProperty extends QtPDOMBinding {
 
 				IQProperty.Attribute attr = IQProperty.Attribute.values()[attrId];
 
-				String val = valRec == 0 ? "" : linkage.getDB().getString(valRec).getString();
+				String val = valRec == 0 ? "" : linkage.getDB().getString(valRec).getString(); //$NON-NLS-1$
 				return new Attribute(attr, val, cppRec);
 			}
 

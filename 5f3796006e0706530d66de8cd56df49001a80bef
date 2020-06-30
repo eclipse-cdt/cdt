@@ -16,6 +16,24 @@
       "revId": "5f3796006e0706530d66de8cd56df49001a80bef",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62225cc2_3a437ab2",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-06-30T18:35:16Z",
+      "side": 1,
+      "message": "I thought about it and was unsure if that was desired.\nWhat if QMakeParser.parse() would return an empty map? Is that the same as QMakeInfo.INVALID?",
+      "parentUuid": "ef1295e8_f84d3f88",
+      "revId": "5f3796006e0706530d66de8cd56df49001a80bef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

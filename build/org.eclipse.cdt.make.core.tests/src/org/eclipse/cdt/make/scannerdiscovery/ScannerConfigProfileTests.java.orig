@@ -32,8 +32,11 @@ import org.junit.Ignore;
 /**
  * This class tests ScannerConfigProfileManager
  */
+<<<<<<< HEAD
 @SuppressWarnings("nls")
+=======
 @Ignore("Some tests fail and this class was not included through AutomatedIntegrationSuite. See bug 564002")
+>>>>>>> 95096a9da4... Bug 564002: Restore the default pattern of the surefire-plugin
 public class ScannerConfigProfileTests extends BaseTestCase {
 	private IProject fCProject = null;
 	private IFile fCFile = null;

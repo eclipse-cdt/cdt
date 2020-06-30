@@ -10,28 +10,29 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tm.internal.terminal.emulator;
+
+package org.eclipse.tm.terminal.test;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Terminal emulator test cases.
- * Runs in emulator package to allow access to default visible items.
+ * Master Test Suite to run all Terminal plug-in tests.
  */
-public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
-
+public class AutomatedPluginTestSuite extends TestCase {
+	/**
+	 * Call each AllTestSuite class from each of the test packages.
+	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(VT100EmulatorBackendTest.class);
+		TestSuite suite = new TestSuite(AutomatedPluginTestSuite.class.getName());
+		//These tests require Eclipse Platform to be up
+		suite.addTestSuite(org.eclipse.tm.internal.terminal.connector.TerminalConnectorPluginTest.class);
+		suite.addTestSuite(org.eclipse.tm.internal.terminal.connector.TerminalConnectorFactoryTest.class);
+
+		//These tests must run as plain JUnit because they require access
+		//to "package" protected methods
+		//suite.addTest(AutomatedTestSuite.suite());
 		return suite;
 	}
 

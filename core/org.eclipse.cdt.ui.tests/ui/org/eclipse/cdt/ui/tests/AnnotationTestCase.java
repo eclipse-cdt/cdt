@@ -36,7 +36,7 @@ import org.eclipse.ui.PartInitException;
  * default is "src". To make it read comment from java class, you need to
  * include this source directory (with test java files) into the build bundle.
  */
-public class AnnotationTestCase extends UITestCaseWithProject {
+public abstract class AnnotationTestCase extends UITestCaseWithProject {
 	private IAnnotationModel fAnnotationModel;
 	private Object fAnnotationModelLockObject;
 	protected Annotation[] annotations;

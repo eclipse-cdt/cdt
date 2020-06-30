@@ -37,7 +37,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-public class CallHierarchyBaseTest extends BaseUITestCase {
+public abstract class CallHierarchyBaseTest extends BaseUITestCase {
 	private static int sProjectCounter = 0;
 
 	protected ICProject fCProject;

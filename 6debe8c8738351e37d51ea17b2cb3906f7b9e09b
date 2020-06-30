@@ -16,6 +16,24 @@
       "revId": "6debe8c8738351e37d51ea17b2cb3906f7b9e09b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "100b625e_1a9c46f8",
+        "filename": "llvm/org.eclipse.cdt.llvm.dsf.lldb.core/src/org/eclipse/cdt/llvm/dsf/lldb/core/internal/launching/LLDBLaunchDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-06-30T18:39:08Z",
+      "side": 1,
+      "message": "I know that this is not the right way, I was just restoring the old way, while using the GdbLaunch as the primary source for the GDB path.\n\nI can move this to the proper NLS way that you are referring to, but is that part of the original ticket or should that be a new gerrit?",
+      "parentUuid": "b0bb8cbe_0de51cca",
+      "revId": "6debe8c8738351e37d51ea17b2cb3906f7b9e09b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

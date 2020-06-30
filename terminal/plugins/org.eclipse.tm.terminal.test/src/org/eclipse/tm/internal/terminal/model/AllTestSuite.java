@@ -20,17 +20,17 @@ import junit.framework.TestSuite;
  * Internal Terminal Model test cases.
  * Runs in internal model package to allow access to default visible items.
  */
-public class AllTests extends TestCase {
-	public AllTests() {
+public class AllTestSuite extends TestCase {
+	public AllTestSuite() {
 		super(null);
 	}
 
-	public AllTests(String name) {
+	public AllTestSuite(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
+		TestSuite suite = new TestSuite(AllTestSuite.class.getName());
 		suite.addTestSuite(SnapshotChangesTest.class);
 		suite.addTestSuite(SynchronizedTerminalTextDataTest.class);
 		suite.addTestSuite(TerminalTextDataFastScrollTest.class);

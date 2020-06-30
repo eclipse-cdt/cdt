@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-public class BaseQtTestCase extends BaseTestCase {
+public abstract class BaseQtTestCase extends BaseTestCase {
 
 	// TODO There is a problem with the unit test framework where it sometimes will not wait
 	//      long enough for the index to be updated.  For now mask this problem by stopping

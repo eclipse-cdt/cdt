@@ -29,8 +29,7 @@ public class IllegalCharCaseTest extends TestCase {
 		super("Check Illegal Character Identifier"); //$NON-NLS-1$
 	}
 
-	@Override
-	public void runTest() {
+	public void test() {
 		IdentifierResult result;
 
 		result = IdentifierHelper.checkIdentifierName("a~"); //$NON-NLS-1$

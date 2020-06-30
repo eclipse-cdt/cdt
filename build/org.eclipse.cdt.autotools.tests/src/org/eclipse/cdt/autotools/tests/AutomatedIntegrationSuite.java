@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests;
 
-import org.eclipse.cdt.autotools.tests.editors.EditorTests;
+import org.eclipse.cdt.autotools.tests.editors.EditorTestSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /** On Windows requires either Cygwin or MinGW to be in PATH */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ AutotoolsProjectTest0.class, AutotoolsProjectNatureTest.class, AutotoolsProjectTest1.class,
-		AutotoolsProjectTest2.class, AutotoolsVirtualFolderTest.class, AutotoolsEnvironmentVarTest.class,
-		LibtoolGCCBuildCommandParserTest.class, UpdateConfigureTest.class, EditorTests.class })
+@Suite.SuiteClasses({ AutotoolsProject0Test.class, AutotoolsProjectNatureTest.class, AutotoolsProject1Test.class,
+		AutotoolsProject2Test.class, AutotoolsVirtualFolderTest.class, AutotoolsEnvironmentVarTest.class,
+		LibtoolGCCBuildCommandParserTest.class, UpdateConfigureTest.class, EditorTestSuite.class })
 public class AutomatedIntegrationSuite {
 }

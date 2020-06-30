@@ -19,6 +19,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +27,11 @@ import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfTokenizer;
 import org.eclipse.cdt.autotools.ui.editors.parser.ITokenConstants;
 import org.eclipse.cdt.autotools.ui.editors.parser.ParseException;
 import org.eclipse.cdt.autotools.ui.editors.parser.Token;
+import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -39,6 +43,22 @@ import org.junit.Test;
 public class TestTokenizer {
 
 	private ArrayList<ParseException> tokenizerErrors;
+
+	@BeforeClass
+	public static void beforeClassMethod() {
+		// Verify that the necessary binaries are available, and if they are not,
+		// the tests will be ignored.
+		String[] testBinaryCommands = { "libtool --version", "autoconf --version", "automake --version" };
+		try {
+			for (String cmd : testBinaryCommands) {
+				Process process = ProcessFactory.getFactory().exec(cmd);
+				process.destroy();
+			}
+		} catch (IOException e) {
+			// If we cannot find any binary, just ignore the tests.
+			Assume.assumeNoException(e);
+		}
+	}
 
 	protected IDocument createDocument(String text) {
 		return new Document(text);

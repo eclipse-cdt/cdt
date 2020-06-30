@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.CoreException;
  * causes the subdir.mk to be regenerated, and associated dervied
  * files should be deleted.
  */
-public class Bug_303953 extends AbstractBuilderTest {
+public class Bug_303953Test extends AbstractBuilderTest {
 
 	public void testBuildAfterSourcefileDelete() throws CoreException {
 		setWorkspace("regressions");

@@ -20,9 +20,9 @@ import junit.framework.TestSuite;
 /**
  * @author Thomas Corbat
  */
-public class IdentifierHelperTest extends TestSuite {
+public class IdentifierHelperTestSuite extends TestSuite {
 
-	public IdentifierHelperTest() {
+	public IdentifierHelperTestSuite() {
 		super("Identifier Helper Test"); //$NON-NLS-1$
 	}
 

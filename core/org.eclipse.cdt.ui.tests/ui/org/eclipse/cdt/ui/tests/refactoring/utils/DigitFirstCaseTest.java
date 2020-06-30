@@ -29,8 +29,7 @@ public class DigitFirstCaseTest extends TestCase {
 		super("Check Digit First Identifier"); //$NON-NLS-1$
 	}
 
-	@Override
-	public void runTest() {
+	public void test() {
 		IdentifierResult result;
 
 		result = IdentifierHelper.checkIdentifierName("0"); //$NON-NLS-1$

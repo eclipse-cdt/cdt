@@ -34,7 +34,7 @@ import junit.framework.TestCase;
  * @author jcamelon
  *
  */
-public class TranslationUnitBaseTest extends TestCase {
+public abstract class TranslationUnitBaseTest extends TestCase {
 	/**
 	 *
 	 */

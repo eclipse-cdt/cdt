@@ -19,14 +19,14 @@ import junit.framework.TestSuite;
 /**
  * Test suite to test language settings providers defined in cdt.managedbuilder.core.
  */
-public class AllLanguageSettingsProvidersMBSTests extends TestSuite {
+public class AllLanguageSettingsProvidersMBSTestSuite extends TestSuite {
 
 	public static TestSuite suite() {
-		return new AllLanguageSettingsProvidersMBSTests();
+		return new AllLanguageSettingsProvidersMBSTestSuite();
 	}
 
-	public AllLanguageSettingsProvidersMBSTests() {
-		super(AllLanguageSettingsProvidersMBSTests.class.getName());
+	public AllLanguageSettingsProvidersMBSTestSuite() {
+		super(AllLanguageSettingsProvidersMBSTestSuite.class.getName());
 
 		addTestSuite(LanguageSettingsProvidersMBSTest.class);
 		addTestSuite(GCCBuildCommandParserTest.class);

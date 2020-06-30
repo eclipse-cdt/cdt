@@ -27,11 +27,13 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.junit.Ignore;
 
 /**
  * This class tests ScannerConfigProfileManager
  */
 @SuppressWarnings("nls")
+@Ignore("Some tests fail and this class was not included through AutomatedIntegrationSuite. See bug 564002")
 public class ScannerConfigProfileTests extends BaseTestCase {
 	private IProject fCProject = null;
 	private IFile fCFile = null;

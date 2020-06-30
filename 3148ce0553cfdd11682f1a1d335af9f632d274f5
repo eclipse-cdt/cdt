@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47acc86e_2a8b595f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-06-30T13:07:49Z",
+      "side": 1,
+      "message": "Bug number looks wrong :)",
+      "revId": "3148ce0553cfdd11682f1a1d335af9f632d274f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

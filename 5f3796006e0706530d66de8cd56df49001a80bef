@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ef1295e8_f84d3f88",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-30T18:20:44Z",
+      "side": 1,
+      "message": "This is unreachable after the change, should we check the map for isEmpty() instead?",
+      "revId": "5f3796006e0706530d66de8cd56df49001a80bef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

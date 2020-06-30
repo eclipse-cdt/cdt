@@ -63,7 +63,7 @@ import junit.framework.TestSuite;
 /*
  *  These tests exercise CDT 2.0 manifest file functionality
  */
-public class ManagedBuildCoreTests20 extends TestCase {
+public class ManagedBuildCore20Tests extends TestCase {
 	private static final boolean boolVal = true;
 	private static final String testConfigId = "test.config.override";
 	private static final String testConfigName = "Tester";
@@ -78,24 +78,24 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	private static final String anotherStringVal = "thevalue";
 	private static final String subExt = "bus";
 
-	public ManagedBuildCoreTests20(String name) {
+	public ManagedBuildCore20Tests(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ManagedBuildCoreTests20.class.getName());
+		TestSuite suite = new TestSuite(ManagedBuildCore20Tests.class.getName());
 
 		// Note that some of the tests are dependent on others so run the suite as a whole
-		suite.addTest(new ManagedBuildCoreTests20("testExtensions"));
-		suite.addTest(new ManagedBuildCoreTests20("testProjectCreation"));
-		suite.addTest(new ManagedBuildCoreTests20("testConfigurations"));
-		suite.addTest(new ManagedBuildCoreTests20("testConfigurationReset"));
-		suite.addTest(new ManagedBuildCoreTests20("testConfigBuildArtifact"));
-		suite.addTest(new ManagedBuildCoreTests20("testMakeCommandManipulation"));
-		suite.addTest(new ManagedBuildCoreTests20("testScannerInfoInterface"));
-		suite.addTest(new ManagedBuildCoreTests20("testProjectRename"));
-		suite.addTest(new ManagedBuildCoreTests20("testErrorParsers"));
-		suite.addTest(new ManagedBuildCoreTests20("cleanup"));
+		suite.addTest(new ManagedBuildCore20Tests("testExtensions"));
+		suite.addTest(new ManagedBuildCore20Tests("testProjectCreation"));
+		suite.addTest(new ManagedBuildCore20Tests("testConfigurations"));
+		suite.addTest(new ManagedBuildCore20Tests("testConfigurationReset"));
+		suite.addTest(new ManagedBuildCore20Tests("testConfigBuildArtifact"));
+		suite.addTest(new ManagedBuildCore20Tests("testMakeCommandManipulation"));
+		suite.addTest(new ManagedBuildCore20Tests("testScannerInfoInterface"));
+		suite.addTest(new ManagedBuildCore20Tests("testProjectRename"));
+		suite.addTest(new ManagedBuildCore20Tests("testErrorParsers"));
+		suite.addTest(new ManagedBuildCore20Tests("cleanup"));
 
 		return suite;
 	}

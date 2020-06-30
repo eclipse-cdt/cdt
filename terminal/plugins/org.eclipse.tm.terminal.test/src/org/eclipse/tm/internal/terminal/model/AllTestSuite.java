@@ -10,30 +10,37 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tm.terminal.model;
+package org.eclipse.tm.internal.terminal.model;
 
-import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Public Terminal Model test cases.
+ * Internal Terminal Model test cases.
  * Runs in internal model package to allow access to default visible items.
  */
-public class AllTests extends TestCase {
-	public AllTests() {
+public class AllTestSuite extends TestCase {
+	public AllTestSuite() {
 		super(null);
 	}
 
-	public AllTests(String name) {
+	public AllTestSuite(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(new JUnit4TestAdapter(TerminalColorUITest.class));
-		suite.addTestSuite(StyleTest.class);
+		TestSuite suite = new TestSuite(AllTestSuite.class.getName());
+		suite.addTestSuite(SnapshotChangesTest.class);
+		suite.addTestSuite(SynchronizedTerminalTextDataTest.class);
+		suite.addTestSuite(TerminalTextDataFastScrollTest.class);
+		suite.addTestSuite(TerminalTextDataFastScrollMaxHeightTest.class);
+		suite.addTestSuite(TerminalTextDataPerformanceTest.class);
+		suite.addTestSuite(TerminalTextDataSnapshotTest.class);
+		suite.addTestSuite(TerminalTextDataSnapshotWindowTest.class);
+		suite.addTestSuite(TerminalTextDataStoreTest.class);
+		suite.addTestSuite(TerminalTextDataTest.class);
+		suite.addTestSuite(TerminalTextDataWindowTest.class);
 		return suite;
 	}
 

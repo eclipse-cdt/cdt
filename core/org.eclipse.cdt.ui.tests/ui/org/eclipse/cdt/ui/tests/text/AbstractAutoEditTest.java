@@ -33,7 +33,7 @@ import org.eclipse.jface.text.TextUtilities;
 /**
  * IAutoEditStrategy related tests
  */
-public class AbstractAutoEditTest extends BaseTestCase {
+public abstract class AbstractAutoEditTest extends BaseTestCase {
 
 	protected AbstractAutoEditTest(String name) {
 		super(name);

@@ -14,9 +14,9 @@
 package org.eclipse.cdt.dsf.gdb.tests;
 
 import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest;
-import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest.GDBRegisterTest_NoContainerTest;
-import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest.GDBRegisterTest_WithAlternativeProcessIdTest;
-import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest.GDBRegisterTest_WithContainerDMContextTest;
+import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest_NoContainerTest;
+import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest_WithAlternativeProcessIdTest;
+import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest_WithContainerDMContextTest;
 import org.eclipse.cdt.dsf.mi.service.command.commands.TestMIBreakInsertCommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.TestMICommandConstructCommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.TestMIGDBSetSysroot;

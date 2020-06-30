@@ -19,12 +19,12 @@ import org.eclipse.cdt.build.core.scannerconfig.tests.CfgScannerConfigProfileMan
 import org.eclipse.cdt.build.core.scannerconfig.tests.GCCSpecsConsoleParserTest;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.managedbuilder.core.regressions.RegressionTests;
+import org.eclipse.cdt.managedbuilder.core.regressions.RegressionTestSuite;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildDescriptionModelTests;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildSystem40Tests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests_SharedToolOptions;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCore20Tests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCore_SharedToolOptionsTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyCalculatorTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyLibsTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildEnvironmentTests;
@@ -39,8 +39,8 @@ import org.eclipse.cdt.managedbuilder.core.tests.OptionCategoryEnablementTests;
 import org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests;
 import org.eclipse.cdt.managedbuilder.core.tests.PathConverterTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTests;
-import org.eclipse.cdt.managedbuilder.language.settings.providers.tests.AllLanguageSettingsProvidersMBSTests;
-import org.eclipse.cdt.managedbuilder.templateengine.tests.AllTemplateEngineTests;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.tests.AllLanguageSettingsProvidersMBSTestSuite;
+import org.eclipse.cdt.managedbuilder.templateengine.tests.AllTemplateEngineTestSuite;
 import org.eclipse.cdt.projectmodel.tests.BackwardCompatiblityTests;
 import org.eclipse.cdt.projectmodel.tests.CProjectDescriptionSerializationTests;
 import org.eclipse.cdt.projectmodel.tests.OptionStringListValueTests;
@@ -64,18 +64,18 @@ public class AutomatedIntegrationSuite {
 		TestSuite suite = new TestSuite("Test for org.eclipse.cdt.managedbuild.core.tests");
 		//$JUnit-BEGIN$
 		// Preconditions
-		suite.addTestSuite(Preconditions.class);
+		suite.addTestSuite(ManagedBuilderPreconditionsTests.class);
 
 		// build.core.scannerconfig.tests
 		suite.addTest(CfgScannerConfigProfileManagerTests.suite());
 		suite.addTestSuite(GCCSpecsConsoleParserTest.class);
 
 		// language settings providers tests
-		suite.addTest(AllLanguageSettingsProvidersMBSTests.suite());
+		suite.addTest(AllLanguageSettingsProvidersMBSTestSuite.suite());
 
 		// managedbuilder.core.tests
 		suite.addTest(ManagedBuildDependencyLibsTests.suite());
-		suite.addTest(ManagedBuildCoreTests20.suite());
+		suite.addTest(ManagedBuildCore20Tests.suite());
 		suite.addTest(ManagedBuildCoreTests.suite());
 		suite.addTest(ManagedProjectUpdateTests.suite());
 		suite.addTest(ManagedCommandLineGeneratorTest.suite());
@@ -83,7 +83,7 @@ public class AutomatedIntegrationSuite {
 		suite.addTest(ManagedProject21MakefileTests.suite());
 		suite.addTest(ManagedProject30MakefileTests.suite());
 		suite.addTest(BuildSystem40Tests.suite());
-		suite.addTest(ManagedBuildCoreTests_SharedToolOptions.suite());
+		suite.addTest(ManagedBuildCore_SharedToolOptionsTests.suite());
 		suite.addTest(ManagedBuildEnvironmentTests.suite());
 		suite.addTest(ManagedBuildMacrosTests.suite());
 		suite.addTest(ManagedBuildTCSupportedTest.suite());
@@ -95,7 +95,7 @@ public class AutomatedIntegrationSuite {
 		suite.addTest(PathConverterTest.suite());
 
 		// managedbuilder.templateengine.tests
-		suite.addTest(AllTemplateEngineTests.suite());
+		suite.addTest(AllTemplateEngineTestSuite.suite());
 
 		// projectmodel.tests
 		suite.addTest(BackwardCompatiblityTests.suite());
@@ -104,7 +104,7 @@ public class AutomatedIntegrationSuite {
 		suite.addTest(ProjectModelTests.suite());
 
 		// regression tests
-		suite.addTest(RegressionTests.suite());
+		suite.addTest(RegressionTestSuite.suite());
 
 		//$JUnit-END$
 		return suite;

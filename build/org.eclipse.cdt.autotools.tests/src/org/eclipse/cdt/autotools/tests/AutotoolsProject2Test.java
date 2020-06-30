@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -27,7 +28,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AutotoolsProjectTest0 {
+// This test verifies an autogen.sh project that builds configure, but
+// does not run it.
+public class AutotoolsProject2Test {
 
 	private IProject testProject;
 
@@ -35,7 +38,7 @@ public class AutotoolsProjectTest0 {
 	public void setUp() throws Exception {
 		if (!ProjectTools.setup())
 			fail("could not perform basic project workspace setup");
-		testProject = ProjectTools.createProject("testProject0");
+		testProject = ProjectTools.createProject("testProject2");
 		if (testProject == null) {
 			fail("Unable to create test project");
 		}
@@ -44,25 +47,39 @@ public class AutotoolsProjectTest0 {
 
 	/**
 	 * Test sample project which has a hello world program. The top-level
-	 * configure is found in the top-level directory.  The hello world source
-	 * is found in sample/hello.c.
+	 * contains autogen.sh which will build configure, but not run it.
+	 * The hello world source is found in
+	 * src/sample/hello.c so configuration must create multiple
+	 * Makefiles.
 	 * @throws Exception
 	 */
 	@Test
-	public void testAutotoolsProject0() throws Exception {
-		Path p = new Path("zip/project1.zip");
-		ProjectTools.addSourceContainerWithImport(testProject, null, p, true);
+	public void testAutotoolsProject2() throws Exception {
+		Path p = new Path("zip/project2.zip");
+		ProjectTools.addSourceContainerWithImport(testProject, "src", p);
 		assertTrue(testProject.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID));
-		org.eclipse.core.runtime.Path x = new org.eclipse.core.runtime.Path("ChangeLog");
+		org.eclipse.core.runtime.Path x = new org.eclipse.core.runtime.Path("src/ChangeLog");
 		assertTrue(testProject.exists(x));
-		x = new org.eclipse.core.runtime.Path("configure");
-		ProjectTools.markExecutable(testProject, "configure");
-		ProjectTools.markExecutable(testProject, "config.guess");
-		ProjectTools.markExecutable(testProject, "config.sub");
-		ProjectTools.markExecutable(testProject, "missing");
-		ProjectTools.markExecutable(testProject, "mkinstalldirs");
-		ProjectTools.markExecutable(testProject, "install-sh");
+		x = new org.eclipse.core.runtime.Path("src/configure");
+		ProjectTools.setConfigDir(testProject, "src");
+		ProjectTools.markExecutable(testProject, "src/autogen.sh");
+		x = new org.eclipse.core.runtime.Path("src/configure");
+		assertFalse(testProject.exists(x));
+		x = new org.eclipse.core.runtime.Path("src/Makefile.in");
+		assertFalse(testProject.exists(x));
+		x = new org.eclipse.core.runtime.Path("src/sample/Makefile.in");
+		assertFalse(testProject.exists(x));
+		x = new org.eclipse.core.runtime.Path("src/aclocal.m4");
+		assertFalse(testProject.exists(x));
 		assertTrue(ProjectTools.build());
+		x = new org.eclipse.core.runtime.Path("src/configure");
+		assertTrue(testProject.exists(x));
+		x = new org.eclipse.core.runtime.Path("src/Makefile.in");
+		assertTrue(testProject.exists(x));
+		x = new org.eclipse.core.runtime.Path("src/sample/Makefile.in");
+		assertTrue(testProject.exists(x));
+		x = new org.eclipse.core.runtime.Path("src/aclocal.m4");
+		assertTrue(testProject.exists(x));
 		x = new org.eclipse.core.runtime.Path("config.status");
 		assertTrue(testProject.exists(x));
 		x = new org.eclipse.core.runtime.Path("Makefile");
@@ -83,4 +100,5 @@ public class AutotoolsProjectTest0 {
 			//FIXME: Why does a ResourceException occur when deleting the project??
 		}
 	}
+
 }

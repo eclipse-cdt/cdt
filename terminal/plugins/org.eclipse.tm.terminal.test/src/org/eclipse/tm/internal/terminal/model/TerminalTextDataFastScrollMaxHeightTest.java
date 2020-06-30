@@ -12,7 +12,7 @@ package org.eclipse.tm.internal.terminal.model;
 
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 
-public class TerminalTextDataFastScrollTestMaxHeigth extends AbstractITerminalTextDataTest {
+public class TerminalTextDataFastScrollMaxHeightTest extends AbstractITerminalTextDataTest {
 	@Override
 	protected ITerminalTextData makeITerminalTextData() {
 		return new TerminalTextDataFastScroll(1);

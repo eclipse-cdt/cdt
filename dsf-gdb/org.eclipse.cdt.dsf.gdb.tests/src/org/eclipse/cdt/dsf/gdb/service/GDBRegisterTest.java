@@ -18,9 +18,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.eclipse.cdt.debug.internal.core.model.IRegisterGroupDescriptor;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIRegisters.MIRegisterDMC;
@@ -129,73 +127,5 @@ public class GDBRegisterTest extends CommonDsfTest {
 		}
 
 		assertTrue(Arrays.equals(expectedRegisterGroups, savedRegisterGroups));
-	}
-
-	/* -----------------  ----------------- */
-
-	/**
-	 * Variant of {@link GDBRegisterTest} where register groups are saved without a container id.
-	 * This is the default behavior for register group persistence.
-	 */
-	public static class GDBRegisterTest_NoContainerTest extends GDBRegisterTest {
-
-		@Override
-		protected GDBRegisters createGdbRegisters() {
-			return new GDBRegisters(fSession) {
-				@Override
-				protected boolean useProcessIdAsRegisterGroupPersistanceId() {
-					return false;
-				}
-			};
-		}
-
-		@Override
-		protected void checkAfterAdding_GroupA(IMIContainerDMContext containerA, IMIContainerDMContext containerB,
-				MIRegisterGroupDMC registerGroupA) {
-			checkRegisterGroupMemento(containerA, registerGroupA);
-			checkRegisterGroupMemento(containerB, registerGroupA);
-		}
-
-		@Override
-		protected void checkAfterAdding_GroupB(IMIContainerDMContext containerA, IMIContainerDMContext containerB,
-				MIRegisterGroupDMC registerGroupA, MIRegisterGroupDMC registerGroupB) {
-			checkRegisterGroupsMemento(containerA, array(registerGroupA, registerGroupB));
-			checkRegisterGroupsMemento(containerB, array(registerGroupA, registerGroupB));
-		}
-	}
-
-	public static class GDBRegisterTest_WithAlternativeProcessIdTest extends GDBRegisterTest {
-
-		@Override
-		protected GDBRegisters createGdbRegisters() {
-			return new GDBRegisters(fSession) {
-				@Override
-				protected boolean useProcessIdAsRegisterGroupPersistanceId() {
-					return true;
-				}
-
-				@Override
-				protected String getPersistenceIdForRegisterGroupContainer(IContainerDMContext contDmc) {
-					return super.getPersistenceIdForRegisterGroupContainer(contDmc) + "XXX";
-				}
-			};
-		}
-
-	}
-
-	public static class GDBRegisterTest_WithContainerDMContextTest extends GDBRegisterTest {
-
-		@Override
-		protected GDBRegisters createGdbRegisters() {
-			return new GDBRegisters(fSession) {
-				@Override
-				protected String getPersistenceIdForRegisterGroupContainer(IContainerDMContext contDmc) {
-					IMIContainerDMContext contextDmc = DMContexts.getAncestorOfType(contDmc,
-							IMIContainerDMContext.class);
-					return contextDmc.getGroupId();
-				}
-			};
-		}
-
 	}
 }

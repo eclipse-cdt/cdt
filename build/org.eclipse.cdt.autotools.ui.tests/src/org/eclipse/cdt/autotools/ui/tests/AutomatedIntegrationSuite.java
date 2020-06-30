@@ -14,12 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.ui.tests;
 
-import java.io.IOException;
-
-import org.eclipse.cdt.autotools.ui.tests.autoconf.AutoconfTests;
-import org.eclipse.cdt.utils.spawner.ProcessFactory;
-import org.junit.Assume;
-import org.junit.BeforeClass;
+import org.eclipse.cdt.autotools.ui.tests.autoconf.AutoconfTestSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -30,25 +25,9 @@ import org.junit.runners.Suite;
 		 * 	TestToolActions.class,
 		 *  TestEnvironmentVars.class,
 		 *  TestMakeTargets.class,
-		 *  SetConfigurationParameter.class,
+		 *  SetConfigurationParameterTest.class,
 		 */
-		AutoconfTests.class })
+		AutoconfTestSuite.class })
 
 public class AutomatedIntegrationSuite {
-	// needed for this class to compile
-	@BeforeClass
-	public static void beforeClassMethod() {
-		// Verify that the necessary binaries are available, and if they are not,
-		// the tests will be ignored.
-		String[] testBinaryCommands = { "libtool --version", "autoconf --version", "automake --version" };
-		try {
-			for (String cmd : testBinaryCommands) {
-				Process process = ProcessFactory.getFactory().exec(cmd);
-				process.destroy();
-			}
-		} catch (IOException e) {
-			// If we cannot find any binary, just ignore the tests.
-			Assume.assumeNoException(e);
-		}
-	}
 }

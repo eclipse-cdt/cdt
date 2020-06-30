@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "a2a625f7_b0f1b796",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-30T17:01:23Z",
+      "side": 1,
+      "message": "Difficult to say without trying, may be here is to late to check and it should be done earlier. In any case it is out of scope.",
+      "parentUuid": "1fe4dab8_27d408ff",
+      "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bc38852a_0f7ff7b9",
         "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
         "patchSetId": 2
@@ -139,6 +157,24 @@
       "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "691e75cf_7d0286fa",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-30T17:01:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d9b864f7_808323d6",
+      "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

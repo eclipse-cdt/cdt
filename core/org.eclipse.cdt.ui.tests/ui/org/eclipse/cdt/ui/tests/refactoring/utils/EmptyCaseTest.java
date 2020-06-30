@@ -29,8 +29,7 @@ public class EmptyCaseTest extends TestCase {
 		super("Check Empty Identifier"); //$NON-NLS-1$
 	}
 
-	@Override
-	public void runTest() {
+	public void test() {
 		IdentifierResult result;
 
 		result = IdentifierHelper.checkIdentifierName(""); //$NON-NLS-1$

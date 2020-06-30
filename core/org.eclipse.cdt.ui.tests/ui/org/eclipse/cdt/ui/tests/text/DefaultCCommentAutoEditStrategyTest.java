@@ -33,12 +33,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.junit.Ignore;
 
 import junit.framework.Test;
 
 /**
  * Testing the auto indent strategies.
  */
+@Ignore("Some tests fail and this class was not included through AutomatedIntegrationSuite. See bug 564002")
 public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	private HashMap<String, String> fOptions;
 

@@ -39,7 +39,7 @@ import junit.framework.TestCase;
 /**
  * @author dsteffle
  */
-public class DOMFileBasePluginTest extends TestCase {
+public abstract class DOMFileBasePluginTest extends TestCase {
 	static NullProgressMonitor monitor;
 	static IWorkspace workspace;
 	static IProject project;

@@ -19,7 +19,7 @@ import java.text.BreakIterator;
 
 import junit.framework.TestCase;
 
-public class BreakIteratorTest extends TestCase {
+public abstract class BreakIteratorTest extends TestCase {
 
 	protected BreakIterator fBreakIterator;
 

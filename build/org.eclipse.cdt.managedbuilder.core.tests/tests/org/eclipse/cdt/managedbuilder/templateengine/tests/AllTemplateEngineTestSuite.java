@@ -23,10 +23,10 @@ import junit.framework.TestSuite;
  *
  * @since 4.0
  */
-public class AllTemplateEngineTests extends TestSuite {
+public class AllTemplateEngineTestSuite extends TestSuite {
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(AllTemplateEngineTests.suite());
+		junit.textui.TestRunner.run(AllTemplateEngineTestSuite.suite());
 	}
 
 	/**

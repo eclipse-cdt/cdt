@@ -43,7 +43,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-public class TypeHierarchyBaseTest extends BaseUITestCase {
+public abstract class TypeHierarchyBaseTest extends BaseUITestCase {
 	protected ICProject fCProject;
 	protected IIndex fIndex;
 

@@ -40,7 +40,7 @@ import org.junit.runners.Suite;
 		org.eclipse.cdt.ui.tests.wizards.classwizard.ClassWizardTestSuite.class,
 		org.eclipse.cdt.ui.tests.wizards.settingswizards.SettingsWizardTestSuite.class,
 		org.eclipse.cdt.ui.tests.misc.MiscTestSuite.class, org.eclipse.cdt.ui.tests.editor.EditorTestSuite.class,
-		org.eclipse.cdt.ui.tests.templateengine.AllTemplateEngineTests.class,
+		org.eclipse.cdt.ui.tests.templateengine.AllTemplateEngineTestSuite.class,
 
 })
 public class AutomatedSuite {

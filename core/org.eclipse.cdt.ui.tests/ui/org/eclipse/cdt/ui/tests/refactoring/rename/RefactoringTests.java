@@ -35,7 +35,7 @@ import org.eclipse.text.edits.TextEditGroup;
 /**
  * @author markus.schorn@windriver.com
  */
-public class RefactoringTests extends BaseTestFramework {
+public abstract class RefactoringTests extends BaseTestFramework {
 	private int fBufferSize;
 
 	public RefactoringTests() {

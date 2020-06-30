@@ -50,7 +50,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.index.tests.IndexBindingResolutionTestBase;
 
-public class TestBase extends IndexBindingResolutionTestBase {
+public abstract class TestBase extends IndexBindingResolutionTestBase {
 	private static final String TEST_CODE = "<testcode>";
 	private static final IParserLogService NULL_LOG = new NullLogService();
 	private static final ScannerInfo SCANNER_INFO = new ScannerInfo(getStdMap());

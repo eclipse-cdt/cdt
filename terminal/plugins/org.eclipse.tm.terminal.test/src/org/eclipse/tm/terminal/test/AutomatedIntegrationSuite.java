@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ AutomatedPluginTests.class, AutomatedTests.class })
+@Suite.SuiteClasses({ AutomatedPluginTestSuite.class, AutomatedTestSuite.class })
 public class AutomatedIntegrationSuite {
 
 }

@@ -67,6 +67,7 @@
 					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} ${extra.vmargs.indexer.timeout} ${extra.vmargs.displayhelper.timeoutmultipler}</argLine>
 					<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
 					<includes>
+<!-- Workatound for Bug 565063: test execution outcome is order dependent -->
 						<include>**/AutomatedSuite.*</include>
 					</includes>
 				</configuration>

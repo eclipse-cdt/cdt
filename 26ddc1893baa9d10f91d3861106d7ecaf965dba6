@@ -125,6 +125,24 @@
     },
     {
       "key": {
+        "uuid": "e8e0391e_be1e0de5",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-30T17:01:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2a625f7_b0f1b796",
+      "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bc38852a_0f7ff7b9",
         "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
         "patchSetId": 2

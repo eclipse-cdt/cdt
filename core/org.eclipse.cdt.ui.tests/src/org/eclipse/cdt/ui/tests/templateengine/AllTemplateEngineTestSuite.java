@@ -29,5 +29,5 @@ import org.junit.runners.Suite;
 		TestProcesses.class, TestTemplateEngineBugs.class,
 
 })
-public class AllTemplateEngineTests {
+public class AllTemplateEngineTestSuite {
 }

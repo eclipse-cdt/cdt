@@ -16,14 +16,14 @@ package org.eclipse.cdt.make.scannerdiscovery;
 
 import junit.framework.TestSuite;
 
-public class ScannerDiscoveryTests extends TestSuite {
+public class ScannerDiscoveryTestSuite extends TestSuite {
 
 	public static TestSuite suite() {
-		return new ScannerDiscoveryTests();
+		return new ScannerDiscoveryTestSuite();
 	}
 
-	public ScannerDiscoveryTests() {
-		super(ScannerDiscoveryTests.class.getName());
+	public ScannerDiscoveryTestSuite() {
+		super(ScannerDiscoveryTestSuite.class.getName());
 		addTestSuite(ScannerConfigDiscoveryTests.class);
 		addTest(GCCScannerInfoConsoleParserTests.suite());
 		addTest(GCCPerFileBOPConsoleParserTests.suite());

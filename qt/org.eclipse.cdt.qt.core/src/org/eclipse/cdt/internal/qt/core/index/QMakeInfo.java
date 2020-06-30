@@ -98,9 +98,10 @@ public final class QMakeInfo implements IQMakeInfo {
 
 		// TODO - no support for pre-3.0
 		// for QMake version 3.0 or newer, run "qmake -E file.pro"
-		Map<String, String> qmake2 = version != null && version.getMajor() >= 3
-				? exec(PATTERN_EVAL_LINE, extraEnv, qmakePath, "-E", proPath) //$NON-NLS-1$
-				: Collections.<String, String>emptyMap();
+		Map<String, String> qmake2 = Collections.emptyMap();
+		if (version != null && version.getMajor() >= 3) {
+			qmake2 = exec(PATTERN_EVAL_LINE, extraEnv, qmakePath, "-E", proPath); //$NON-NLS-1$
+		}
 		return new QMakeInfo(true, qmake1, qmake2);
 	}
 
@@ -185,9 +186,8 @@ public final class QMakeInfo implements IQMakeInfo {
 	private static Map<String, String> exec(Pattern regex, String[] extraEnv, String... command) {
 		if (command.length < 1 || !new File(command[0]).exists()) {
 			Activator.log("qmake: cannot run command: " + (command.length > 0 ? command[0] : "")); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
+			return Collections.emptyMap();
 		}
-		BufferedReader reader = null;
 		Process process = null;
 		try {
 			if (extraEnv != null && extraEnv.length > 0) {
@@ -195,18 +195,13 @@ public final class QMakeInfo implements IQMakeInfo {
 			} else {
 				process = ProcessFactory.getFactory().exec(command);
 			}
-			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			return QMakeParser.parse(regex, reader);
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+				return QMakeParser.parse(regex, reader);
+			}
 		} catch (IOException e) {
 			Activator.log(e);
-			return null;
+			return Collections.emptyMap();
 		} finally {
-			if (reader != null)
-				try {
-					reader.close();
-				} catch (IOException e) {
-					/* ignore */
-				}
 			if (process != null) {
 				process.destroy();
 			}

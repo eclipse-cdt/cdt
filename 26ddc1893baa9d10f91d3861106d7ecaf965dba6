@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "09b77a33_d19f9e76",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-30T09:09:53Z",
+      "side": 1,
+      "message": "It looks unrelated with the rest of changes, do we need it here?",
+      "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0891e2a3_b6d8e1eb",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-30T09:09:53Z",
+      "side": 1,
+      "message": "It looks unrelated with the rest of changes, do we need it here?",
+      "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "937438a5_7dcd3aae",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-30T09:09:53Z",
+      "side": 1,
+      "message": "We may need another Gerrit to fix this: I believe there should be different messages to make the log entry useful.",
+      "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc38852a_0f7ff7b9",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-06-30T09:09:53Z",
+      "side": 1,
+      "message": "We may need another Gerrit to fix this: returning `null` instead of `Map` is not really good idea.",
+      "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

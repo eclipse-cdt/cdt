@@ -20,10 +20,10 @@ import junit.framework.TestSuite;
 /**
  * Regression tests for builder bugs
  */
-public class RegressionTests extends TestCase {
+public class RegressionTestSuite extends TestCase {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(RegressionTests.class.getName());
+		TestSuite suite = new TestSuite(RegressionTestSuite.class.getName());
 
 		// Test that common builder does the correct amount of work.
 		suite.addTestSuite(Bug_303953.class);
@@ -31,11 +31,11 @@ public class RegressionTests extends TestCase {
 		return suite;
 	}
 
-	public RegressionTests() {
+	public RegressionTestSuite() {
 		super(null);
 	}
 
-	public RegressionTests(String name) {
+	public RegressionTestSuite(String name) {
 		super(name);
 	}
 }

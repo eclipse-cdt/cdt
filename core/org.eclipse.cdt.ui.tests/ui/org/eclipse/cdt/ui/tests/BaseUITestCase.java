@@ -54,7 +54,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 
-public class BaseUITestCase extends BaseTestCase {
+public abstract class BaseUITestCase extends BaseTestCase {
 	public BaseUITestCase() {
 		super();
 	}

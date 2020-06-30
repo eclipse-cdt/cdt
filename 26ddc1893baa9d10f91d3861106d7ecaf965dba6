@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3a6f5993_a6043a65",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-06-30T10:00:30Z",
+      "side": 1,
+      "message": "\u0027git commit --fixup \u003chash\u003e\u0027 followed by \u0027git rebase -i --autosquash origin/master\u0027 put the fix in the wrong commit.\nThanks for spotting!",
+      "parentUuid": "09b77a33_d19f9e76",
+      "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0891e2a3_b6d8e1eb",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/META-INF/MANIFEST.MF",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f9b86954_a51555fd",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-06-30T10:00:30Z",
+      "side": 1,
+      "message": "\u0027git commit --fixup \u003chash\u003e\u0027 followed by \u0027git rebase -i --autosquash origin/master\u0027 put the fix in the wrong commit.\nThanks for spotting!",
+      "parentUuid": "0891e2a3_b6d8e1eb",
+      "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {

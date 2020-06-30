@@ -88,8 +88,11 @@ public final class QMakeInfo implements IQMakeInfo {
 		}
 
 		// run "qmake -query"
-		Map<String, String> qmake1 = exec(PATTERN_QUERY_LINE, extraEnv, qmakePath, "-query"); //$NON-NLS-1$
-		if (qmake1 == null) {
+		Map<String, String> qmake1;
+		try {
+			qmake1 = exec(PATTERN_QUERY_LINE, extraEnv, qmakePath, "-query"); //$NON-NLS-1$
+		} catch (IOException e) {
+			Activator.log(e);
 			return INVALID;
 		}
 
@@ -98,9 +101,15 @@ public final class QMakeInfo implements IQMakeInfo {
 
 		// TODO - no support for pre-3.0
 		// for QMake version 3.0 or newer, run "qmake -E file.pro"
-		Map<String, String> qmake2 = version != null && version.getMajor() >= 3
-				? exec(PATTERN_EVAL_LINE, extraEnv, qmakePath, "-E", proPath) //$NON-NLS-1$
-				: Collections.<String, String>emptyMap();
+		Map<String, String> qmake2 = Collections.emptyMap();
+		if (version != null && version.getMajor() >= 3) {
+			try {
+				qmake2 = exec(PATTERN_EVAL_LINE, extraEnv, qmakePath, "-E", proPath); //$NON-NLS-1$
+			} catch (IOException e) {
+				Activator.log(e);
+				// Continue with an empty map.
+			}
+		}
 		return new QMakeInfo(true, qmake1, qmake2);
 	}
 
@@ -181,13 +190,12 @@ public final class QMakeInfo implements IQMakeInfo {
 	 * @param extraEnv the extra environment for command
 	 * @param cmd the command line
 	 * @return the map of resolved key-value pairs
+	 * @throws IOException If command execution failed
 	 */
-	private static Map<String, String> exec(Pattern regex, String[] extraEnv, String... command) {
+	private static Map<String, String> exec(Pattern regex, String[] extraEnv, String... command) throws IOException {
 		if (command.length < 1 || !new File(command[0]).exists()) {
-			Activator.log("qmake: cannot run command: " + (command.length > 0 ? command[0] : "")); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
+			throw new IOException("qmake: cannot run command: " + (command.length > 0 ? command[0] : "")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		BufferedReader reader = null;
 		Process process = null;
 		try {
 			if (extraEnv != null && extraEnv.length > 0) {
@@ -195,18 +203,10 @@ public final class QMakeInfo implements IQMakeInfo {
 			} else {
 				process = ProcessFactory.getFactory().exec(command);
 			}
-			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			return QMakeParser.parse(regex, reader);
-		} catch (IOException e) {
-			Activator.log(e);
-			return null;
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+				return QMakeParser.parse(regex, reader);
+			}
 		} finally {
-			if (reader != null)
-				try {
-					reader.close();
-				} catch (IOException e) {
-					/* ignore */
-				}
 			if (process != null) {
 				process.destroy();
 			}

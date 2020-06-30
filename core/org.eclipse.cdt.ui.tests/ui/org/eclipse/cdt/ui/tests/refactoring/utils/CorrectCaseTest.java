@@ -29,8 +29,7 @@ public class CorrectCaseTest extends TestCase {
 		super("Check Correct Identifier"); //$NON-NLS-1$
 	}
 
-	@Override
-	public void runTest() {
+	public void test() {
 		IdentifierResult result;
 
 		result = IdentifierHelper.checkIdentifierName("A"); //$NON-NLS-1$

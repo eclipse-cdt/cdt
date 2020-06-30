@@ -28,8 +28,7 @@ public class KeywordCaseTest extends TestCase {
 		super("Check Keyword Identifier"); //$NON-NLS-1$
 	}
 
-	@Override
-	public void runTest() {
+	public void test() {
 		IdentifierResult result;
 
 		result = IdentifierHelper.checkIdentifierName("using"); //$NON-NLS-1$

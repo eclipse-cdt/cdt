@@ -31,7 +31,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-public class IncludeBrowserBaseTest extends BaseUITestCase {
+public abstract class IncludeBrowserBaseTest extends BaseUITestCase {
 	protected static IProgressMonitor NPM = new NullProgressMonitor();
 
 	private ICProject fCProject;

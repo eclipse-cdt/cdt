@@ -18,6 +18,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,9 +31,12 @@ import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfParser;
 import org.eclipse.cdt.autotools.ui.editors.parser.IAutoconfErrorHandler;
 import org.eclipse.cdt.autotools.ui.editors.parser.IAutoconfMacroValidator;
 import org.eclipse.cdt.autotools.ui.editors.parser.ParseException;
+import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 public abstract class BaseParserTest {
 
@@ -41,6 +45,22 @@ public abstract class BaseParserTest {
 	private IAutoconfMacroValidator macroValidator;
 	private Set<String> macroNames;
 	private AutoconfMacroDetector macroDetector;
+
+	@BeforeClass
+	public static void beforeClassMethod() {
+		// Verify that the necessary binaries are available, and if they are not,
+		// the tests will be ignored.
+		String[] testBinaryCommands = { "libtool --version", "autoconf --version", "automake --version" };
+		try {
+			for (String cmd : testBinaryCommands) {
+				Process process = ProcessFactory.getFactory().exec(cmd);
+				process.destroy();
+			}
+		} catch (IOException e) {
+			// If we cannot find any binary, just ignore the tests.
+			Assume.assumeNoException(e);
+		}
+	}
 
 	@Before
 	public void setUp() {

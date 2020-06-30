@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  *
  */
 @SuppressWarnings("nls")
-public class CheckerTestCase extends CodanTestCase {
+public abstract class CheckerTestCase extends CodanTestCase {
 	protected IMarker[] markers;
 
 	public IMarker checkErrorLine(int i) {

@@ -20,19 +20,14 @@ import junit.framework.TestSuite;
 /**
  * @author Thomas Corbat
  */
-public class IdentifierHelperTest extends TestSuite {
+public class IdentifierHelperTestSuite extends TestSuite {
 
-	public IdentifierHelperTest() {
+	public IdentifierHelperTestSuite() {
 		super("Identifier Helper Test"); //$NON-NLS-1$
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test for Identifier Helper"); //$NON-NLS-1$
-		suite.addTest(new CorrectCaseTest());
-		suite.addTest(new DigitFirstCaseTest());
-		suite.addTest(new EmptyCaseTest());
-		suite.addTest(new IllegalCharCaseTest());
-		suite.addTest(new KeywordCaseTest());
-		return suite;
+		return new TestSuite(CorrectCaseTest.class, DigitFirstCaseTest.class, EmptyCaseTest.class,
+				IllegalCharCaseTest.class, KeywordCaseTest.class);
 	}
 }

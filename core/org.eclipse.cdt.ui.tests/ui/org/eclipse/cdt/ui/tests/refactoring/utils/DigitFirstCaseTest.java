@@ -25,12 +25,7 @@ import junit.framework.TestCase;
  */
 public class DigitFirstCaseTest extends TestCase {
 
-	public DigitFirstCaseTest() {
-		super("Check Digit First Identifier"); //$NON-NLS-1$
-	}
-
-	@Override
-	public void runTest() {
+	public void testDigitFirst() {
 		IdentifierResult result;
 
 		result = IdentifierHelper.checkIdentifierName("0"); //$NON-NLS-1$

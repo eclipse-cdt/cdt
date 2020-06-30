@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "1fe4dab8_27d408ff",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-06-30T10:09:44Z",
+      "side": 1,
+      "message": "I think the issue here is a bit more serious. The part where the command[0] must be an absolute path feels wrong. I don\u0027t have a working Qt development environment, so I can\u0027t easily test this, but I think that the parameter can be simply \u0027qmake\u0027 and that the application should be resolved from the PATH environment symbol. In this case, the exec fails.\nI think that this use-case is covered by the ProcessFactory exec method, so I think it should be safe to remove the check that the file exist here.\n\nRegarding the message; what would you like it to say?\nIf the check for existence is removed, I guess something like \"qmake: trying to execute a command that is empty\" would do.",
+      "parentUuid": "937438a5_7dcd3aae",
+      "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bc38852a_0f7ff7b9",
         "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
         "patchSetId": 2
@@ -100,6 +118,24 @@
       "writtenOn": "2020-06-30T09:09:53Z",
       "side": 1,
       "message": "We may need another Gerrit to fix this: returning `null` instead of `Map` is not really good idea.",
+      "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9b864f7_808323d6",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-06-30T10:09:44Z",
+      "side": 1,
+      "message": "Have prepared a gerrit where the return value is Collections.emptyMap() instead of null on the 2 places.",
+      "parentUuid": "bc38852a_0f7ff7b9",
       "revId": "26ddc1893baa9d10f91d3861106d7ecaf965dba6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

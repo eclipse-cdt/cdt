@@ -16,6 +16,24 @@
       "revId": "3148ce0553cfdd11682f1a1d335af9f632d274f5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "125db79d_e1f3e68a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-06-30T13:40:40Z",
+      "side": 1,
+      "message": "Oops. Corrected.\nHow do I remove the link that was done from bug 56553 in bugzilla?",
+      "parentUuid": "47acc86e_2a8b595f",
+      "revId": "3148ce0553cfdd11682f1a1d335af9f632d274f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

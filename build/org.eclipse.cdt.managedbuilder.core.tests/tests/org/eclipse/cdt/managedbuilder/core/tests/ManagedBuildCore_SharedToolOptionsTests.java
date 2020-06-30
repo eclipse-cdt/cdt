@@ -56,7 +56,7 @@ import junit.framework.TestSuite;
 /*
  *  These tests exercise CDT 3.0 shared tool options extensions
  */
-public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
+public class ManagedBuildCore_SharedToolOptionsTests extends TestCase {
 
 	class IconComparator {
 		static final int None = 0;
@@ -173,7 +173,7 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 	private IconComparator iconComparator;
 	private ValueHandlerComparator valueHandlerComparator;
 
-	public ManagedBuildCoreTests_SharedToolOptions(String name) {
+	public ManagedBuildCore_SharedToolOptionsTests(String name) {
 		super(name);
 
 		iconComparator = new IconComparator();
@@ -181,12 +181,12 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ManagedBuildCoreTests_SharedToolOptions.class.getName());
+		TestSuite suite = new TestSuite(ManagedBuildCore_SharedToolOptionsTests.class.getName());
 
-		suite.addTest(new ManagedBuildCoreTests_SharedToolOptions("testIcons"));
-		suite.addTest(new ManagedBuildCoreTests_SharedToolOptions("testValueHandlers"));
-		suite.addTest(new ManagedBuildCoreTests_SharedToolOptions("testOptions"));
-		suite.addTest(new ManagedBuildCoreTests_SharedToolOptions("testConfiguration"));
+		suite.addTest(new ManagedBuildCore_SharedToolOptionsTests("testIcons"));
+		suite.addTest(new ManagedBuildCore_SharedToolOptionsTests("testValueHandlers"));
+		suite.addTest(new ManagedBuildCore_SharedToolOptionsTests("testOptions"));
+		suite.addTest(new ManagedBuildCore_SharedToolOptionsTests("testConfiguration"));
 
 		return suite;
 	}

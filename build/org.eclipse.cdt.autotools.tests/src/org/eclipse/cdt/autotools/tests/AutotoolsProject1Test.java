@@ -27,7 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AutotoolsProjectTest1 {
+public class AutotoolsProject1Test {
 
 	private IProject testProject;
 

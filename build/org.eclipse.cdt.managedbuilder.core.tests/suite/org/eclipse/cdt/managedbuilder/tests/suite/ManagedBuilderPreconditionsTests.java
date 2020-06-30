@@ -26,7 +26,11 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 
 import junit.framework.TestCase;
 
-public class Preconditions extends TestCase {
+/**
+ * Check that preconditions for running managed builder tests are in place,
+ * see individual tests in this class for details.
+ */
+public class ManagedBuilderPreconditionsTests extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 	}

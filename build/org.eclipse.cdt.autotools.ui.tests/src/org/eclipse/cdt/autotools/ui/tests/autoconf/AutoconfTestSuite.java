@@ -18,6 +18,6 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ TestMacroParser.class, TestTokenizer.class, TestShellParser.class })
-public class AutoconfTests {
+public class AutoconfTestSuite {
 
 }

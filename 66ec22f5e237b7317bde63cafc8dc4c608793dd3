@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d7e42887_a695d613",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/GoToAddressBarWidget.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-01T08:32:54Z",
+      "side": 1,
+      "message": "It looks like it, but I have no idea where the original string is defined. Do I need to investigate this or can we accept it as-is?",
+      "parentUuid": "948de424_fd6dbaa3",
+      "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "845aab51_6f0f56bf",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2020-06-30T09:24:10Z",
       "side": 1,
       "message": "Not related change, but looks trivial",
+      "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7185b97_ed1c127d",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-01T08:32:54Z",
+      "side": 1,
+      "message": "Since \"bytes\" is already declared as a TraditionalMemoryByte, the check is redundant.",
+      "parentUuid": "845aab51_6f0f56bf",
       "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

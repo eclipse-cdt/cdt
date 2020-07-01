@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.llvm.dsf.lldb.core.internal.launching;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
@@ -52,7 +54,7 @@ public class LLDBLaunchDelegate extends GdbLaunchDelegate {
 		if (path == null) {
 			path = LLDBLaunch.getLLDBPath(config);
 		}
-		return path.toString().trim() + " (" + Messages.LLDBLaunchDelegate_mimicking_gdb + " gdb " + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return MessageFormat.format(Messages.LLDBLaunchDelegate_cli_label, path.toString().trim(), gdbVersion);
 	}
 
 	@Override

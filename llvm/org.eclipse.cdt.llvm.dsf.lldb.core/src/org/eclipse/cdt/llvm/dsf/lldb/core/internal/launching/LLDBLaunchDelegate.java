@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A specific LLDB launch delegate that allows customization such as setting the
@@ -52,7 +53,7 @@ public class LLDBLaunchDelegate extends GdbLaunchDelegate {
 		if (path == null) {
 			path = LLDBLaunch.getLLDBPath(config);
 		}
-		return path.toString().trim() + " (" + Messages.LLDBLaunchDelegate_mimicking_gdb + " gdb " + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return NLS.bind(Messages.LLDBLaunchDelegate_cli_label, path.toString().trim(), gdbVersion);
 	}
 
 	@Override

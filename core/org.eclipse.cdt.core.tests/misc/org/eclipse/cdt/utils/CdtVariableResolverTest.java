@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
+import static org.junit.Assert.assertNotEquals;
+
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableStatus;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
@@ -23,6 +25,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class CdtVariableResolverTest extends TestCase {
+	private static String acceptedChars = "\\<>&é\"'(§è!çà|@#^¨* []?./+,;:=~)";
 
 	public static Test suite() {
 		return new TestSuite(CdtVariableResolverTest.class);
@@ -35,11 +38,20 @@ public class CdtVariableResolverTest extends TestCase {
 			if (macroName.equals("null")) {
 				return null;
 			}
+			if (macroName.equals("op")) {
+				return "op";
+			}
+			if (macroName.equals("ro")) {
+				return "ro";
+			}
 			if (macroName.equals("loop")) {
 				return "${LOOP}";
 			}
 			if (macroName.equals("LOOP")) {
 				return "${loop}";
+			}
+			if (macroName.equals(acceptedChars)) {
+				return "OK";
 			}
 			if (macroName.equals("throw")) {
 				throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_UNDEFINED, null, null, null);
@@ -64,50 +76,60 @@ public class CdtVariableResolverTest extends TestCase {
 
 	private MockSubstitutor mockSubstitutor = new MockSubstitutor();
 
+	//wrapper method to make code easier to read
+	private String resolveToString(String key) throws CdtVariableException {
+		return CdtVariableResolver.resolveToString(key, mockSubstitutor);
+	}
+
 	public void testResolveToString() throws CdtVariableException {
 
-		assertEquals("", CdtVariableResolver.resolveToString(null, mockSubstitutor));
-		assertEquals("", CdtVariableResolver.resolveToString("", mockSubstitutor));
-		assertEquals("Text", CdtVariableResolver.resolveToString("Text", mockSubstitutor));
-		assertEquals("#Macro#", CdtVariableResolver.resolveToString("${Macro}", mockSubstitutor));
-		assertEquals("", CdtVariableResolver.resolveToString("${}", mockSubstitutor));
-		assertEquals("${Nomacro", CdtVariableResolver.resolveToString("${Nomacro", mockSubstitutor));
-		assertEquals("Nomacro}", CdtVariableResolver.resolveToString("Nomacro}", mockSubstitutor));
-		assertEquals("Text/#Macro#", CdtVariableResolver.resolveToString("Text/${Macro}", mockSubstitutor));
-		assertEquals("#Macro#/Text", CdtVariableResolver.resolveToString("${Macro}/Text", mockSubstitutor));
-		assertEquals("#Macro1#/#Macro2#", CdtVariableResolver.resolveToString("${Macro1}/${Macro2}", mockSubstitutor));
-		assertEquals("${Macro}", CdtVariableResolver.resolveToString("\\${Macro}", mockSubstitutor));
-		assertEquals("${Macro}:#Macro#", CdtVariableResolver.resolveToString("\\${Macro}:${Macro}", mockSubstitutor));
-		assertEquals("\\#Macro#", CdtVariableResolver.resolveToString("\\\\${Macro}", mockSubstitutor));
-		assertEquals("\\${Macro}", CdtVariableResolver.resolveToString("\\\\\\${Macro}", mockSubstitutor));
-		assertEquals("C:\\tmp\\", CdtVariableResolver.resolveToString("C:\\tmp\\", mockSubstitutor));
+		assertEquals("", resolveToString(null));
+		assertEquals("", resolveToString(""));
+		assertEquals("Text", resolveToString("Text"));
+		assertEquals("#Macro#", resolveToString("${Macro}"));
+		assertEquals("", resolveToString("${}"));
+		assertEquals("${Nomacro", resolveToString("${Nomacro"));
+		assertEquals("Nomacro}", resolveToString("Nomacro}"));
+		assertEquals("Text/#Macro#", resolveToString("Text/${Macro}"));
+		assertEquals("#Macro#/Text", resolveToString("${Macro}/Text"));
+		assertEquals("#Macro1#/#Macro2#", resolveToString("${Macro1}/${Macro2}"));
+		assertEquals("#=Macro#", resolveToString("${=Macro}"));
+		assertEquals("#=Macro#:#Macro#", resolveToString("${=Macro}:${Macro}"));
+		assertEquals("\\#Macro#", resolveToString("\\${Macro}"));
+		assertEquals("\\#=Macro#", resolveToString("\\${=Macro}"));
+		assertEquals("Text/#=Macro#", resolveToString("Text/${=Macro}"));
+		assertEquals("Text/#=Macro#text", resolveToString("Text/${=Macro}text"));
+		assertEquals("Text/#Macro#text", resolveToString("Text/${Macro}text"));
+		assertEquals("Text/#Macro#text", resolveToString("Text/${Mac${ro}}text"));
+		assertEquals("C:\\tmp\\", resolveToString("C:\\tmp\\"));
+		assertEquals("OK", resolveToString("${" + acceptedChars + "}"));
+		//resolve should only resolve 1 level deep
+		assertNotEquals(resolveToString("${LOOP}"), resolveToString(resolveToString("${LOOP}")));
 
-		assertEquals("#workspace_loc:#Macro##",
-				CdtVariableResolver.resolveToString("${workspace_loc:${Macro}}", mockSubstitutor));
-		assertEquals("#workspace_loc:#Macro1#/#Macro2##",
-				CdtVariableResolver.resolveToString("${workspace_loc:${Macro1}/${Macro2}}", mockSubstitutor));
+		assertEquals("#workspace_loc:#Macro##", resolveToString("${workspace_loc:${Macro}}"));
+		assertEquals("#workspace_loc:#Macro1#/#Macro2##", resolveToString("${workspace_loc:${Macro1}/${Macro2}}"));
 		assertEquals("#workspace_loc:#project_loc:/#Macro###",
-				CdtVariableResolver.resolveToString("${workspace_loc:${project_loc:/${Macro}}}", mockSubstitutor));
+				resolveToString("${workspace_loc:${project_loc:/${Macro}}}"));
 
 	}
 
 	public void testExceptions() throws CdtVariableException {
 		// test exceptions
 		try {
-			assertEquals("Unreacheable", CdtVariableResolver.resolveToString("${null}", mockSubstitutor));
+			assertEquals("Unreacheable", resolveToString("${null}"));
 			fail("Exception expected");
 		} catch (CdtVariableException e) {
 			// expected behavior
 		}
 		try {
-			assertEquals("Unreacheable", CdtVariableResolver.resolveToString("${throw}", mockSubstitutor));
+			assertEquals("Unreacheable", resolveToString("${throw}"));
 			fail("Exception expected");
 		} catch (CdtVariableException e) {
 			// expected behavior
 		}
 
 		// make sure there is no infinite loop
-		assertEquals("${LOOP}", CdtVariableResolver.resolveToString("${loop}", mockSubstitutor));
+		assertEquals("${LOOP}", resolveToString("${loop}"));
 	}
 
 	public void testAsList() throws CdtVariableException {

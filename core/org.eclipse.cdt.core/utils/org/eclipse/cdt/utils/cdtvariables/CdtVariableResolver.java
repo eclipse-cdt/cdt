@@ -62,17 +62,10 @@ public class CdtVariableResolver {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	public static final String VARIABLE_PREFIX = "${"; //$NON-NLS-1$
-	private static final String VARIABLE_PREFIX_MASKED = "$\1"; //$NON-NLS-1$
 	public static final char VARIABLE_SUFFIX = '}';
-	private static final char VARIABLE_SUFFIX_MASKED = '\2';
-	public static final char VARIABLE_ESCAPE_CHAR = '\\';
-	private static final char VARIABLE_ESCAPE_CHAR_MASKED = '\3';
-
-	// Regular expression fragments
 	private static final String RE_VPREFIX = "\\$\\{"; //$NON-NLS-1$
 	private static final String RE_VSUFFIX = "\\}"; //$NON-NLS-1$
 	private static final String RE_VNAME = "[^${}]*"; //$NON-NLS-1$
-	private static final String RE_BSLASH = "[\\\\]"; // *one* backslash //$NON-NLS-1$
 
 	/**
 	 * Converts list of strings to one string using given string as delimiter,
@@ -99,8 +92,9 @@ public class CdtVariableResolver {
 	/**
 	 * Resolves macros of kind ${Macro} in the given string by calling the macro substitutor
 	 * for each macro reference found. Macros can be inside one another like
-	 * ${workspace_loc:/${ProjName}/} but resolved just once. No recursive or concatenated
-	 * macro names are allowed. It is possible to prevent macro from expanding using backslash \$.
+	 * ${workspace_loc:/${ProjName}/} but resolved just once. No recursive
+	 * macro names are allowed.
+	 * It is not possible to prevent macros from expanding.
 	 *
 	 * @param string - macro expression.
 	 * @param substitutor - macro resolution provider to retrieve macro values.
@@ -113,43 +107,35 @@ public class CdtVariableResolver {
 			return EMPTY_STRING;
 		}
 
-		final Pattern pattern = Pattern
-				.compile(".*?(" + RE_BSLASH + "*)(" + RE_VPREFIX + "(" + RE_VNAME + ")" + RE_VSUFFIX + ").*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		final Pattern pattern = Pattern.compile("(\\$\\{([^${}]*)\\})"); //$NON-NLS-1$
+		final String VARIABLE_PREFIX_MASKED = "$\1"; //$NON-NLS-1$
+		final char VARIABLE_SUFFIX_MASKED = '\2';
 
 		StringBuilder buffer = new StringBuilder(string);
 		int limit = string.length();
-		for (Matcher matcher = pattern.matcher(buffer); matcher.matches(); matcher = pattern.matcher(buffer)) {
-			String bSlashes = matcher.group(1);
-			String macro = matcher.group(2);
-			String name = matcher.group(3);
+		Matcher matcher = pattern.matcher(buffer);
+		while (matcher.find()) {
+			String name = matcher.group(2);
 			String resolved = name.length() > 0 ? substitutor.resolveToString(name) : EMPTY_STRING;
 			if (resolved == null) {
 				throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_UNDEFINED, null, string, name);
 			}
-			if (limit-- < 0) {
-				// to prevent incidental looping
-				throw new CdtVariableException(ICdtVariableStatus.TYPE_ERROR, name, matcher.group(0), resolved);
-			}
 
-			int nBSlashes = bSlashes.length();
-			if ((nBSlashes & 1) == 1) {
-				// if odd number of backslashes in front of "${...}" do not expand macro
-				resolved = macro;
+			if (limit-- < 0) {
+				// to prevent incidental endless looping
+				throw new CdtVariableException(ICdtVariableStatus.TYPE_ERROR, name, string, resolved);
 			}
 			// Only one expansion is allowed, so hide any text interfering with macro syntax
 			resolved = resolved.replace(VARIABLE_PREFIX, VARIABLE_PREFIX_MASKED);
 			resolved = resolved.replace(VARIABLE_SUFFIX, VARIABLE_SUFFIX_MASKED);
-			buffer.replace(matcher.start(2), matcher.end(2), resolved);
-			// collapse and hide backslashes  \\\\${Macro} -> \\MacroValue or \\\\\${Macro} -> \\${Macro}
-			buffer.replace(matcher.start(1), matcher.end(1),
-					bSlashes.substring(0, nBSlashes / 2).replace(VARIABLE_ESCAPE_CHAR, VARIABLE_ESCAPE_CHAR_MASKED));
+
+			buffer.replace(matcher.start(1), matcher.end(1), resolved);
+			matcher = pattern.matcher(buffer);
 		}
 		String result = buffer.toString();
-
 		// take hidden data back
 		result = result.replace(VARIABLE_PREFIX_MASKED, VARIABLE_PREFIX);
 		result = result.replace(VARIABLE_SUFFIX_MASKED, VARIABLE_SUFFIX);
-		result = result.replace(VARIABLE_ESCAPE_CHAR_MASKED, VARIABLE_ESCAPE_CHAR);
 
 		return result;
 	}

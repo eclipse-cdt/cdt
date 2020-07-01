@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class CdtVariableResolverTest extends TestCase {
+	private static String acceptedChars = "\\<>&é\"'(§è!çà|@#^¨* []?./+,;:=~)";
 
 	public static Test suite() {
 		return new TestSuite(CdtVariableResolverTest.class);
@@ -35,11 +36,20 @@ public class CdtVariableResolverTest extends TestCase {
 			if (macroName.equals("null")) {
 				return null;
 			}
+			if (macroName.equals("op")) {
+				return "op";
+			}
+			if (macroName.equals("ro")) {
+				return "ro";
+			}
 			if (macroName.equals("loop")) {
 				return "${LOOP}";
 			}
 			if (macroName.equals("LOOP")) {
 				return "${loop}";
+			}
+			if (macroName.equals(acceptedChars)) {
+				return "OK";
 			}
 			if (macroName.equals("throw")) {
 				throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_UNDEFINED, null, null, null);
@@ -76,11 +86,16 @@ public class CdtVariableResolverTest extends TestCase {
 		assertEquals("Text/#Macro#", CdtVariableResolver.resolveToString("Text/${Macro}", mockSubstitutor));
 		assertEquals("#Macro#/Text", CdtVariableResolver.resolveToString("${Macro}/Text", mockSubstitutor));
 		assertEquals("#Macro1#/#Macro2#", CdtVariableResolver.resolveToString("${Macro1}/${Macro2}", mockSubstitutor));
-		assertEquals("${Macro}", CdtVariableResolver.resolveToString("\\${Macro}", mockSubstitutor));
-		assertEquals("${Macro}:#Macro#", CdtVariableResolver.resolveToString("\\${Macro}:${Macro}", mockSubstitutor));
-		assertEquals("\\#Macro#", CdtVariableResolver.resolveToString("\\\\${Macro}", mockSubstitutor));
-		assertEquals("\\${Macro}", CdtVariableResolver.resolveToString("\\\\\\${Macro}", mockSubstitutor));
+		assertEquals("#=Macro#", CdtVariableResolver.resolveToString("${=Macro}", mockSubstitutor));
+		assertEquals("#=Macro#:#Macro#", CdtVariableResolver.resolveToString("${=Macro}:${Macro}", mockSubstitutor));
+		assertEquals("\\#Macro#", CdtVariableResolver.resolveToString("\\${Macro}", mockSubstitutor));
+		assertEquals("\\#=Macro#", CdtVariableResolver.resolveToString("\\${=Macro}", mockSubstitutor));
+		assertEquals("Text/#=Macro#", CdtVariableResolver.resolveToString("Text/${=Macro}", mockSubstitutor));
+		assertEquals("Text/#=Macro#text", CdtVariableResolver.resolveToString("Text/${=Macro}text", mockSubstitutor));
+		assertEquals("Text/#Macro#text", CdtVariableResolver.resolveToString("Text/${Macro}text", mockSubstitutor));
+		assertEquals("Text/#Macro#text", CdtVariableResolver.resolveToString("Text/${Mac${ro}}text", mockSubstitutor));
 		assertEquals("C:\\tmp\\", CdtVariableResolver.resolveToString("C:\\tmp\\", mockSubstitutor));
+		assertEquals("OK", CdtVariableResolver.resolveToString("${" + acceptedChars + "}", mockSubstitutor));
 
 		assertEquals("#workspace_loc:#Macro##",
 				CdtVariableResolver.resolveToString("${workspace_loc:${Macro}}", mockSubstitutor));

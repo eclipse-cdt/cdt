@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.llvm.dsf.lldb.core.internal.launching.messages"; //$NON-NLS-1$
 	public static String LLDBLaunch_minimum_version_error;
-	public static String LLDBLaunchDelegate_mimicking_gdb;
+	public static String LLDBLaunchDelegate_cli_label;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

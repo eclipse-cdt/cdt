@@ -34,6 +34,24 @@
       "revId": "6debe8c8738351e37d51ea17b2cb3906f7b9e09b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c2372f4_d0d1e074",
+        "filename": "llvm/org.eclipse.cdt.llvm.dsf.lldb.core/src/org/eclipse/cdt/llvm/dsf/lldb/core/internal/launching/LLDBLaunchDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-01T06:18:34Z",
+      "side": 1,
+      "message": "It\u0027s my fault, I knew better and didn\u0027t do it! I don\u0027t think it necessarily needs to be fixed in this commit.",
+      "parentUuid": "100b625e_1a9c46f8",
+      "revId": "6debe8c8738351e37d51ea17b2cb3906f7b9e09b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

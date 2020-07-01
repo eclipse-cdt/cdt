@@ -35,6 +35,12 @@ public class CdtVariableResolverTest extends TestCase {
 			if (macroName.equals("null")) {
 				return null;
 			}
+			if (macroName.equals("op")) {
+				return "op";
+			}
+			if (macroName.equals("ro")) {
+				return "ro";
+			}
 			if (macroName.equals("loop")) {
 				return "${LOOP}";
 			}
@@ -76,10 +82,14 @@ public class CdtVariableResolverTest extends TestCase {
 		assertEquals("Text/#Macro#", CdtVariableResolver.resolveToString("Text/${Macro}", mockSubstitutor));
 		assertEquals("#Macro#/Text", CdtVariableResolver.resolveToString("${Macro}/Text", mockSubstitutor));
 		assertEquals("#Macro1#/#Macro2#", CdtVariableResolver.resolveToString("${Macro1}/${Macro2}", mockSubstitutor));
-		assertEquals("${Macro}", CdtVariableResolver.resolveToString("\\${Macro}", mockSubstitutor));
-		assertEquals("${Macro}:#Macro#", CdtVariableResolver.resolveToString("\\${Macro}:${Macro}", mockSubstitutor));
-		assertEquals("\\#Macro#", CdtVariableResolver.resolveToString("\\\\${Macro}", mockSubstitutor));
-		assertEquals("\\${Macro}", CdtVariableResolver.resolveToString("\\\\\\${Macro}", mockSubstitutor));
+		assertEquals("#=Macro#", CdtVariableResolver.resolveToString("${=Macro}", mockSubstitutor));
+		assertEquals("#=Macro#:#Macro#", CdtVariableResolver.resolveToString("${=Macro}:${Macro}", mockSubstitutor));
+		assertEquals("\\#Macro#", CdtVariableResolver.resolveToString("\\${Macro}", mockSubstitutor));
+		assertEquals("\\#=Macro#", CdtVariableResolver.resolveToString("\\${=Macro}", mockSubstitutor));
+		assertEquals("Text/#=Macro#", CdtVariableResolver.resolveToString("Text/${=Macro}", mockSubstitutor));
+		assertEquals("Text/#=Macro#text", CdtVariableResolver.resolveToString("Text/${=Macro}text", mockSubstitutor));
+		assertEquals("Text/#Macro#text", CdtVariableResolver.resolveToString("Text/${Macro}text", mockSubstitutor));
+		assertEquals("Text/#Macro#text", CdtVariableResolver.resolveToString("Text/${Mac${ro}}text", mockSubstitutor));
 		assertEquals("C:\\tmp\\", CdtVariableResolver.resolveToString("C:\\tmp\\", mockSubstitutor));
 
 		assertEquals("#workspace_loc:#Macro##",
@@ -106,8 +116,13 @@ public class CdtVariableResolverTest extends TestCase {
 			// expected behavior
 		}
 
-		// make sure there is no infinite loop
-		assertEquals("${LOOP}", CdtVariableResolver.resolveToString("${loop}", mockSubstitutor));
+		try {
+			// make sure there is no infinite loop
+			assertEquals("${LOOP}", CdtVariableResolver.resolveToString("${loop}", mockSubstitutor));
+			fail("Exception expected");
+		} catch (CdtVariableException e) {
+			// expected behavior
+		}
 	}
 
 	public void testAsList() throws CdtVariableException {

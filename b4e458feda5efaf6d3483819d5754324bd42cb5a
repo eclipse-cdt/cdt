@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "807d1c8d_6ed13082",
+        "filename": "llvm/org.eclipse.cdt.llvm.dsf.lldb.core/src/org/eclipse/cdt/llvm/dsf/lldb/core/internal/launching/LLDBLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-01T21:28:29Z",
+      "side": 1,
+      "message": "I\u0027ve never used java.text.MessageFormat.format().\nWhenever I do NLS strings, I always end up using org.eclipse.osgi.util.NLS.bind() and I think that would be the expected here too.",
+      "range": {
+        "startLine": 57,
+        "startChar": 9,
+        "endLine": 57,
+        "endChar": 29
+      },
+      "revId": "b4e458feda5efaf6d3483819d5754324bd42cb5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

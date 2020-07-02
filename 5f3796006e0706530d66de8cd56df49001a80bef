@@ -34,6 +34,24 @@
       "revId": "5f3796006e0706530d66de8cd56df49001a80bef",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e5a9b7e_7ad62c09",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-02T08:22:27Z",
+      "side": 1,
+      "message": "OK, let\u0027s throw Exception from exec method to not mix normal and error flow",
+      "parentUuid": "62225cc2_3a437ab2",
+      "revId": "5f3796006e0706530d66de8cd56df49001a80bef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

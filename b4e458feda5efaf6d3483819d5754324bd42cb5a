@@ -22,6 +22,30 @@
       "revId": "b4e458feda5efaf6d3483819d5754324bd42cb5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ad443e7_fe86683b",
+        "filename": "llvm/org.eclipse.cdt.llvm.dsf.lldb.core/src/org/eclipse/cdt/llvm/dsf/lldb/core/internal/launching/LLDBLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-02T05:52:32Z",
+      "side": 1,
+      "message": "MessageFormat can do a bit more but is a bit slower. We used com.ibm.icu.text.MessageFormat a lot in the past too (but we should stop to trop that dependency). So it\u0027s a bit of an inconsistent mess. I can switch to NLS.bind here I don\u0027t mind.",
+      "parentUuid": "807d1c8d_6ed13082",
+      "range": {
+        "startLine": 57,
+        "startChar": 9,
+        "endLine": 57,
+        "endChar": 29
+      },
+      "revId": "b4e458feda5efaf6d3483819d5754324bd42cb5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -52,6 +52,24 @@
       "revId": "6debe8c8738351e37d51ea17b2cb3906f7b9e09b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e0abbcb1_b83faef3",
+        "filename": "llvm/org.eclipse.cdt.llvm.dsf.lldb.core/src/org/eclipse/cdt/llvm/dsf/lldb/core/internal/launching/LLDBLaunchDelegate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-02T17:20:27Z",
+      "side": 1,
+      "message": "Done with https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/165704",
+      "parentUuid": "6c2372f4_d0d1e074",
+      "revId": "6debe8c8738351e37d51ea17b2cb3906f7b9e09b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

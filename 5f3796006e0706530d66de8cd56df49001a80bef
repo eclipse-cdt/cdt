@@ -52,6 +52,24 @@
       "revId": "5f3796006e0706530d66de8cd56df49001a80bef",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9841afad_0d68cf37",
+        "filename": "qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/index/QMakeInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-02T08:46:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6e5a9b7e_7ad62c09",
+      "revId": "5f3796006e0706530d66de8cd56df49001a80bef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "05df4876_fad75a81",
+        "filename": "releng/scripts/check_features.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-04T19:58:56Z",
+      "side": 1,
+      "message": "Hmm, \u0027git ls-files feature.xml\u0027 doesn\u0027t output anything for me",
+      "revId": "00b2b22f64a5ac166e208d5f364df97fa842975d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

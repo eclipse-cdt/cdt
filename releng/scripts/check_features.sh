@@ -18,7 +18,7 @@ set -e # error out on any failed commands
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 echo "Normalizing branding content on all features"
-find * -name feature.xml -not -path */target/* | while read feature_xml; do
+git ls-files -- \*/feature.xml | while read feature_xml; do
     plugin=$(xmllint --xpath 'string(//feature/@plugin)' $feature_xml)
     if [ -z "$plugin" ]; then
         plugin=$(xmllint --xpath 'string(//feature/@id)' $feature_xml)

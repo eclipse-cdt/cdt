@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "389386b5_95c058bf",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/src/org/eclipse/cdt/debug/ui/memory/memorybrowser/GoToAddressBarWidget.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-04T08:28:31Z",
+      "side": 1,
+      "message": "It looks low pri for me",
+      "parentUuid": "d7e42887_a695d613",
+      "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "845aab51_6f0f56bf",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
         "patchSetId": 2
@@ -69,6 +87,24 @@
       "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "feb74014_631a82c5",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-04T08:28:31Z",
+      "side": 1,
+      "message": "yes, this is what I tried to say",
+      "parentUuid": "d7185b97_ed1c127d",
+      "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

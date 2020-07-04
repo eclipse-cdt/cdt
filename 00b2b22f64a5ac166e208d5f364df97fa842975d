@@ -16,6 +16,24 @@
       "revId": "00b2b22f64a5ac166e208d5f364df97fa842975d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b49facf_29e1c943",
+        "filename": "releng/scripts/check_features.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-04T20:02:21Z",
+      "side": 1,
+      "message": "This works though:\ngit ls-files */feature.xml",
+      "parentUuid": "05df4876_fad75a81",
+      "revId": "00b2b22f64a5ac166e208d5f364df97fa842975d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

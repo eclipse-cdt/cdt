@@ -116,6 +116,14 @@ if test -e native/org.eclipse.cdt.native.serial/jni; then
 fi
 
 ##
+# Mark Windows binaries as executable
+##
+echo "Marking Windows binaries as executable"
+git ls-files -- \*.exe \*.dll | while read line; do
+    chmod +x "$line"
+done
+
+##
 # Check that none of the above caused any changes
 ##
 if test -z "$(git status -s)"; then

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac4d62a4_398b170a",
+        "filename": "releng/scripts/check_code_cleanliness.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-05T20:45:53Z",
+      "side": 1,
+      "message": "Maybe we should exit 1 if they are not marked as executable so that it fails the (CI) build? Or would it fail because the directory becomes dirty? Probably Jonah can give advice here (or suggest a better place to put this)",
+      "revId": "0c3c14f9de5a9a7790309fc9e193cdd31831bf6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

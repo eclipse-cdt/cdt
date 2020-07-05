@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b3e9f65d_1b1b3501",
+        "filename": "codan/org.eclipse.cdt.codan.examples/src/org/eclipse/cdt/codan/examples/uicontrib/FlexlintHelpLink.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-05T07:49:18Z",
+      "side": 1,
+      "message": "I believe this should be externalized",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19b00023_a2dc21ff",
+        "filename": "codan/org.eclipse.cdt.codan.examples/src/org/eclipse/cdt/codan/examples/uicontrib/GrepCheckerHelpLink.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-05T07:49:18Z",
+      "side": 1,
+      "message": "I believe this should be externalized",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ce38538_00f54a9d",
+        "filename": "codan/org.eclipse.cdt.codan.examples/src/org/eclipse/cdt/codan/examples/uicontrib/GrepCheckerHelpLink.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-05T07:49:18Z",
+      "side": 1,
+      "message": "Here `Google` is a part of the message to be externalized",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8318b372_350f3dab",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.core/src/org/eclipse/cdt/visualizer/core/ResourceManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-05T07:49:18Z",
+      "side": 1,
+      "message": "User visible string, should be externalized",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f5be8cc_87201d84",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/test/TestCanvasVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-05T07:49:18Z",
+      "side": 1,
+      "message": "TODO asks to use a resource here",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ab4a07d_cfc220c1",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/test/TestCanvasVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-05T07:49:18Z",
+      "side": 1,
+      "message": "TODO asks to use a resource here",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

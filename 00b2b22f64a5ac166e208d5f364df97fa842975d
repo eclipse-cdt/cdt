@@ -34,6 +34,24 @@
       "revId": "00b2b22f64a5ac166e208d5f364df97fa842975d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e04afe80_6b571187",
+        "filename": "releng/scripts/check_features.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-05T07:37:38Z",
+      "side": 1,
+      "message": "Good catch!\nI did not notice that I no longer actually checked any thing, I just saw that the check did not fail any more when I have a mvn repository in a sub-directory of the root of the cdt checkout.",
+      "parentUuid": "6b49facf_29e1c943",
+      "revId": "00b2b22f64a5ac166e208d5f364df97fa842975d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

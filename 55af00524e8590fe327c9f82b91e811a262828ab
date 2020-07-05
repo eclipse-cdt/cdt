@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "553c56b8_6101a6a7",
+        "filename": "codan/org.eclipse.cdt.codan.examples/src/org/eclipse/cdt/codan/examples/uicontrib/FlexlintHelpLink.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-05T08:23:32Z",
+      "side": 1,
+      "message": "I\u0027m not sure where to put the externalized string, so I just updated it with NLS.bind() call with a fixed string (that should be moved).",
+      "parentUuid": "b3e9f65d_1b1b3501",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "19b00023_a2dc21ff",
         "filename": "codan/org.eclipse.cdt.codan.examples/src/org/eclipse/cdt/codan/examples/uicontrib/GrepCheckerHelpLink.java",
         "patchSetId": 3
@@ -33,6 +51,24 @@
       "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71d189ea_7bd1b25b",
+        "filename": "codan/org.eclipse.cdt.codan.examples/src/org/eclipse/cdt/codan/examples/uicontrib/GrepCheckerHelpLink.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-05T08:23:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "19b00023_a2dc21ff",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "9ee8849b_5e594b87",
+        "filename": "codan/org.eclipse.cdt.codan.examples/src/org/eclipse/cdt/codan/examples/uicontrib/GrepCheckerHelpLink.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-05T08:23:32Z",
+      "side": 1,
+      "message": "I\u0027m not sure where to put the externalized string, so I just updated it with NLS.bind() call with a fixed string (that should be moved).",
+      "parentUuid": "0ce38538_00f54a9d",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8318b372_350f3dab",
         "filename": "visualizer/org.eclipse.cdt.visualizer.core/src/org/eclipse/cdt/visualizer/core/ResourceManager.java",
         "patchSetId": 3
@@ -67,6 +121,24 @@
       "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2a8a1d4_e7a6c59e",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.core/src/org/eclipse/cdt/visualizer/core/ResourceManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-05T08:23:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8318b372_350f3dab",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "6dd4a01b_0379a504",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/test/TestCanvasVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-05T08:23:32Z",
+      "side": 1,
+      "message": "I though this class was only used for testing and thus, the warning is of no interest, but okay.",
+      "parentUuid": "5f5be8cc_87201d84",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0ab4a07d_cfc220c1",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/test/TestCanvasVisualizer.java",
         "patchSetId": 3
@@ -101,6 +191,24 @@
       "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "028a79ea_a55a10eb",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/test/TestCanvasVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-05T08:23:32Z",
+      "side": 1,
+      "message": "I though this class was only used for testing and thus, the warning is of no interest, but okay.",
+      "parentUuid": "0ab4a07d_cfc220c1",
+      "revId": "55af00524e8590fe327c9f82b91e811a262828ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

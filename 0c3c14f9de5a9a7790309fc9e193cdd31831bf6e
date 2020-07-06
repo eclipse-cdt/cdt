@@ -16,6 +16,24 @@
       "revId": "0c3c14f9de5a9a7790309fc9e193cdd31831bf6e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9dc95a9_e5d39e09",
+        "filename": "releng/scripts/check_code_cleanliness.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-06T03:08:29Z",
+      "side": 1,
+      "message": "It\u0027s like you say, it fails as the working tree will be dirty if the mode was not set, at least on Linux with core.fileMode\u003dtrue.",
+      "parentUuid": "ac4d62a4_398b170a",
+      "revId": "0c3c14f9de5a9a7790309fc9e193cdd31831bf6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

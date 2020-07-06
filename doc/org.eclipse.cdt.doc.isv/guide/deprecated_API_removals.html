@@ -41,6 +41,7 @@
     <li><a href="#oldparsers">Remove LRParser, XLC and UPC.</a></li>
     <li><a href="#cdtutilsPlatform">Remove org.eclipse.cdt.utils.Platform.</a></li>
     <li><a href="#dsf">DSF and DSF-GDB API Changes.</a></li>
+    <li><a href="#oldStyleProjects">Partial removal of CDT 3.X project support.</a></li>
   </ol>
   <p>
     Planned Removals after June 2022
@@ -196,6 +197,22 @@
       Use org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.getCLILabel(GdbLaunch, ILaunchConfiguration, String)
       instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564553" target="_blank">Bug 564553</a>.</li>
   </ul>
+  </p>
+
+  <h3>10. <a name="oldStyleProjects">Partial removal of CDT 3.X project support</a></h3>
+  <p>
+    CDT 3.X projects have been deprecated since CDT 4.0. Some classes supporting this old version have been removed:
+  <ul>
+    <li>org.eclipse.cdt.make.ui.wizards.ConvertToMakeProjectWizard</li>
+    <li>org.eclipse.cdt.make.ui.wizards.ConvertToMakeProjectWizardPage</li>
+    <li>org.eclipse.cdt.make.ui.wizards.MakeProjectWizardOptionPage</li>
+    <li>org.eclipse.cdt.make.ui.wizards.NewMakeCCProjectWizard</li>
+    <li>org.eclipse.cdt.make.ui.wizards.NewMakeCProjectWizard</li>
+    <li>org.eclipse.cdt.make.ui.wizards.NewMakeProjectWizard</li>
+  </ul>
+  </p>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564949" target="_blank">Bug 564949</a>.
   </p>
 
   <hr>

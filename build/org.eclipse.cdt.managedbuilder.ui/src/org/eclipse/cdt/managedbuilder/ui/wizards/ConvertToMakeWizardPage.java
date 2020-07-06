@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.wizards.Messages;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
@@ -53,9 +53,6 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
-	private static final String WZ_TITLE = "WizardMakeProjectConversion.title"; //$NON-NLS-1$
-	private static final String WZ_DESC = "WizardMakeProjectConversion.description"; //$NON-NLS-1$
-
 	/**
 	 * @since 5.1
 	 */
@@ -96,14 +93,13 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		layoutData.heightHint = 200;
 		optionsGroup.setLayoutData(layoutData);
 		optionsGroup.setLayout(new GridLayout(1, true));
-		optionsGroup.setText(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.projectOptions.title")); //$NON-NLS-1$
+		optionsGroup.setText(Messages.WizardMakeProjectConversion_projectOptions_title);
 		Composite c = new Composite(optionsGroup, SWT.NONE);
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 		c.setLayout(new GridLayout(2, true));
 
 		specifyProjectTypeButton = new Button(c, SWT.CHECK);
-		specifyProjectTypeButton
-				.setText(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.projectOptions.projectType")); //$NON-NLS-1$
+		specifyProjectTypeButton.setText(Messages.WizardMakeProjectConversion_projectOptions_projectType);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		specifyProjectTypeButton.setLayoutData(gd);
@@ -115,8 +111,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		});
 
 		left_label = new Label(c, SWT.NONE);
-		left_label
-				.setText(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.projectOptions.projectTypeTable")); //$NON-NLS-1$
+		left_label.setText(Messages.WizardMakeProjectConversion_projectOptions_projectTypeTable);
 		left_label.setFont(container.getFont());
 		left_label.setLayoutData(new GridData(GridData.BEGINNING));
 
@@ -141,7 +136,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 
 		show_sup = new Button(c, SWT.CHECK);
 		show_sup.setSelection(true);
-		show_sup.setText(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.projectOptions.showSuppressed")); //$NON-NLS-1$
+		show_sup.setText(Messages.WizardMakeProjectConversion_projectOptions_showSuppressed);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		show_sup.setLayoutData(gd);
@@ -233,7 +228,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 	 */
 	@Override
 	protected String getWzTitleResource() {
-		return MakeUIPlugin.getResourceString(WZ_TITLE);
+		return Messages.WizardMakeProjectConversion_title;
 	}
 
 	/**
@@ -242,7 +237,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 	 */
 	@Override
 	protected String getWzDescriptionResource() {
-		return MakeUIPlugin.getResourceString(WZ_DESC);
+		return Messages.WizardMakeProjectConversion_description;
 	}
 
 	/**
@@ -265,8 +260,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 
 	@Override
 	public void convertProject(IProject project, String bsId, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), //$NON-NLS-1$
-				3);
+		monitor.beginTask(Messages.WizardMakeProjectConversion_monitor_convertingToMakeProject, 3);
 		try {
 			boolean wasCDTProject = AbstractPage.isCDTPrj(project);
 			super.convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
@@ -280,8 +274,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 
 	@Override
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
-		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), //$NON-NLS-1$
-				3);
+		monitor.beginTask(Messages.WizardMakeProjectConversion_monitor_convertingToMakeProject, 3);
 		try {
 			boolean wasCDTProject = AbstractPage.isCDTPrj(project);
 			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);

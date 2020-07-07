@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "756f97cf_5902f667",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-07T04:33:40Z",
+      "side": 1,
+      "message": "I\u0027ll update this list as I go in later commits, potentially listing whole packages instead, etc.",
+      "revId": "18f869a4be37074cc170b577854d5de888e33d95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

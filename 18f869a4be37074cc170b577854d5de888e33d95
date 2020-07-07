@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "eb7a6cdb_2e451a72",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/ConvertToMakeWizardPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-07T04:40:02Z",
+      "side": 1,
+      "message": "I tested this wizard displays the stings correctly still.",
+      "revId": "18f869a4be37074cc170b577854d5de888e33d95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "756f97cf_5902f667",
         "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
         "patchSetId": 2
@@ -16,6 +33,24 @@
       "revId": "18f869a4be37074cc170b577854d5de888e33d95",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea13ac07_5f8abd50",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-07T04:40:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "756f97cf_5902f667",
+      "revId": "18f869a4be37074cc170b577854d5de888e33d95",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

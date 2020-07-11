@@ -52,6 +52,8 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.gson" version="0.0.0"/>
+<unit id="com.sun.jna" version="0.0.0"/>
+<unit id="com.sun.jna.platform" version="0.0.0"/>
 <unit id="com.sun.xml.bind" version="0.0.0"/>
 <unit id="javax.activation" version="1.1.0.v201211130549"/>
 <unit id="javax.xml.bind" version="0.0.0"/>

@@ -69,6 +69,24 @@
       "revId": "dd96fc0fbc62576d22857e3e0d8f0b65c2e5139a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e1a78672_51596c8f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompileCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-11T15:17:47Z",
+      "side": 1,
+      "message": "Sounds good. Would you like to suggest the bundle/package for this? We can create new if needed.\nClosing this item to discuss it in the dedicated bugzilla when it will apppear 😉",
+      "parentUuid": "1155566d_dcd3da08",
+      "revId": "dd96fc0fbc62576d22857e3e0d8f0b65c2e5139a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

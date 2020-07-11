@@ -154,28 +154,6 @@
       <description>An API baseline based on the target platform named 'Modular API Baseline Target'</description>
     </setupTask>
     <setupTask
-        xsi:type="git:GitCloneTask"
-        id="git.clone.cdt"
-        remoteURI="cdt/org.eclipse.cdt"
-        checkoutBranch="master">
-      <annotation
-          source="http://www.eclipse.org/oomph/setup/InducedChoices">
-        <detail
-            key="inherit">
-          <value>eclipse.git.gerrit.remoteURIs</value>
-        </detail>
-        <detail
-            key="label">
-          <value>${scope.project.label} Git or Gerrit Repository</value>
-        </detail>
-        <detail
-            key="target">
-          <value>remoteURI</value>
-        </detail>
-      </annotation>
-      <description>CDT</description>
-    </setupTask>
-    <setupTask
         xsi:type="setup.targlets:TargletTask"
         programArguments="-consolelog"
         vmArguments="-Xms40m -Xmx512M -ea">
@@ -342,6 +320,28 @@
               url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
         </repositoryList>
       </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="git:GitCloneTask"
+        id="git.clone.cdt"
+        remoteURI="cdt/org.eclipse.cdt"
+        checkoutBranch="master">
+      <annotation
+          source="http://www.eclipse.org/oomph/setup/InducedChoices">
+        <detail
+            key="inherit">
+          <value>eclipse.git.gerrit.remoteURIs</value>
+        </detail>
+        <detail
+            key="label">
+          <value>${scope.project.label} Git or Gerrit Repository</value>
+        </detail>
+        <detail
+            key="target">
+          <value>remoteURI</value>
+        </detail>
+      </annotation>
+      <description>CDT</description>
     </setupTask>
     <setupTask
         xsi:type="projects:ProjectsImportTask">

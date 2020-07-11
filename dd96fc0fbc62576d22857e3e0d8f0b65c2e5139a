@@ -87,6 +87,24 @@
       "revId": "dd96fc0fbc62576d22857e3e0d8f0b65c2e5139a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b50edde9_e0aeece1",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompileCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-11T21:16:52Z",
+      "side": 1,
+      "message": "https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d565148\nI originally had this class extracted to a new bundle with cmake.core and meson also reusing it. But it was so small that I changed my mind. We can revisit this now.",
+      "parentUuid": "e1a78672_51596c8f",
+      "revId": "dd96fc0fbc62576d22857e3e0d8f0b65c2e5139a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

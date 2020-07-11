@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e82348a0_107c7e49",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/language/settings/providers/tests/CompilationDatabaseParserTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-11T05:49:56Z",
+      "side": 1,
+      "message": "I would keep the previous signature and delegate it to the new one to reduce the diff.\n\n```\nprivate void createTestProject(boolean useAbsoluteSourcePath, boolean haveCommandDir, boolean validCommandDir, boolean haveCommandLine, boolean validCommandLine) throws Exception {\n    createTestProject(useAbsoluteSourcePath, haveCommandDir, validCommandDir, haveCommandLine, validCommandLine, false);\n}\n```\n\nIn general this method asks to refactor it to to a \"Builder\" with fluent API (out of scope for this Gerrit)",
+      "revId": "dd96fc0fbc62576d22857e3e0d8f0b65c2e5139a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a835ee22_b465e27d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompileCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-11T05:49:56Z",
+      "side": 1,
+      "message": "Personally I would prefer to avoid public array field with potential `null` value, and this can be achieved with introducing Serilaizer/Deserializer to have cleaner API.\nBut these comments are definitely out of scope.",
+      "revId": "dd96fc0fbc62576d22857e3e0d8f0b65c2e5139a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

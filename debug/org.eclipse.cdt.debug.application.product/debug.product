@@ -336,6 +336,7 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.jetty.util"/>
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.jface.databinding"/>
+      <plugin id="org.eclipse.jface.notifications"/>
       <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.launchbar.core"/>
       <plugin id="org.eclipse.launchbar.ui"/>
@@ -372,7 +373,6 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.ui.views.properties.tabbed"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
-      <plugin id="org.eclipse.update.configurator"/>
       <plugin id="org.eclipse.urischeme"/>
       <plugin id="org.freemarker"/>
       <plugin id="org.sat4j.core"/>
@@ -391,7 +391,6 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
-      <plugin id="org.eclipse.update.configurator" autoStart="true" startLevel="3" />
    </configurations>
 
    <repositories>

@@ -169,6 +169,8 @@
         <requirement
             name="com.google.gson"/>
         <requirement
+            name="com.sun.jna"/>
+        <requirement
             name="com.sun.xml.bind"/>
         <requirement
             name="javax.activation"/>

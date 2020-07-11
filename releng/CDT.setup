@@ -248,42 +248,6 @@
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
         <repositoryList
-            name="2020-03">
-          <repository
-              url="https://download.eclipse.org/cbi/updates/license/"/>
-          <repository
-              url="https://download.eclipse.org/eclipse/updates/4.15/"/>
-          <repository
-              url="https://download.eclipse.org/egit/updates-5.7/"/>
-          <repository
-              url="https://download.eclipse.org/linuxtools/update-2020-03-docker/"/>
-          <repository
-              url="https://download.eclipse.org/lsp4e/releases/0.14.0/"/>
-          <repository
-              url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.22/"/>
-          <repository
-              url="https://download.eclipse.org/mylyn/docs/releases/3.0.36/"/>
-          <repository
-              url="https://download.eclipse.org/mylyn/releases/3.24/"/>
-          <repository
-              url="https://download.eclipse.org/technology/swtbot/releases/2.8.0/"/>
-          <repository
-              url="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
-          <repository
-              url="https://download.eclipse.org/tools/cdt/releases/9.11/cdt-9.11.0/">
-            <annotation>
-              <detail
-                  key="description">
-                <value>We explicitly have CDT in target platform so that developers can develop org.eclipse.cdt.core/ui without requiring all the projects from CDT in their workspace.</value>
-              </detail>
-            </annotation>
-          </repository>
-          <repository
-              url="https://download.eclipse.org/tools/orbit/downloads/2020-03/"/>
-          <repository
-              url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
-        </repositoryList>
-        <repositoryList
             name="2020-06">
           <repository
               url="https://download.eclipse.org/cbi/updates/license/"/>
@@ -316,6 +280,42 @@
           </repository>
           <repository
               url="https://download.eclipse.org/tools/orbit/downloads/2020-06/"/>
+          <repository
+              url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-03">
+          <repository
+              url="https://download.eclipse.org/cbi/updates/license/"/>
+          <repository
+              url="https://download.eclipse.org/eclipse/updates/4.15/"/>
+          <repository
+              url="https://download.eclipse.org/egit/updates-5.7/"/>
+          <repository
+              url="https://download.eclipse.org/linuxtools/update-2020-03-docker/"/>
+          <repository
+              url="https://download.eclipse.org/lsp4e/releases/0.14.0/"/>
+          <repository
+              url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.22/"/>
+          <repository
+              url="https://download.eclipse.org/mylyn/docs/releases/3.0.36/"/>
+          <repository
+              url="https://download.eclipse.org/mylyn/releases/3.24/"/>
+          <repository
+              url="https://download.eclipse.org/technology/swtbot/releases/2.8.0/"/>
+          <repository
+              url="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
+          <repository
+              url="https://download.eclipse.org/tools/cdt/releases/9.11/cdt-9.11.0/">
+            <annotation>
+              <detail
+                  key="description">
+                <value>We explicitly have CDT in target platform so that developers can develop org.eclipse.cdt.core/ui without requiring all the projects from CDT in their workspace.</value>
+              </detail>
+            </annotation>
+          </repository>
+          <repository
+              url="https://download.eclipse.org/tools/orbit/downloads/2020-03/"/>
           <repository
               url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
         </repositoryList>

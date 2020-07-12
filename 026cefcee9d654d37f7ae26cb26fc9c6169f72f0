@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f39bae3e_9b33e15e",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/BufferedCanvas.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-12T21:03:10Z",
+      "side": 1,
+      "message": ":-) for not losing stack trace anymore - but this catch still makes me cringe!",
+      "revId": "026cefcee9d654d37f7ae26cb26fc9c6169f72f0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

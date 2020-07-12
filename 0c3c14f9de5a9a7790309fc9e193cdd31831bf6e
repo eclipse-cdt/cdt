@@ -52,6 +52,24 @@
       "revId": "0c3c14f9de5a9a7790309fc9e193cdd31831bf6e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5d37e34_10a0e6c0",
+        "filename": "releng/scripts/check_code_cleanliness.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-12T21:59:55Z",
+      "side": 1,
+      "message": "Marking resolved (a new Gerrit feature - I like it)",
+      "parentUuid": "ae93dd1c_03135ffb",
+      "revId": "0c3c14f9de5a9a7790309fc9e193cdd31831bf6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

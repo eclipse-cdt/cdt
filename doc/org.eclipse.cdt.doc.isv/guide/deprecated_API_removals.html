@@ -42,6 +42,7 @@
     <li><a href="#cdtutilsPlatform">Remove org.eclipse.cdt.utils.Platform.</a></li>
     <li><a href="#dsf">DSF and DSF-GDB API Changes.</a></li>
     <li><a href="#oldStyleProjects">Partial removal of CDT 3.X project support.</a></li>
+    <li><a href="#optionsAPI">Removal of CDT Core Options API.</a></li>
   </ol>
   <p>
     Planned Removals after June 2022
@@ -213,6 +214,18 @@
   </p>
   <p>
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564949" target="_blank">Bug 564949</a>.
+  </p>
+
+  <h3>11. <a name="optionsAPI">Removal of CDT Core Options API</a></h3>
+  <p>
+    The CDT Core Options API and implementation has been removed as now it is a part of Eclipse Equinox 4.16 Preferences API, the removed packages are:
+  <ul>
+    <li>org.eclipse.cdt.core.options</li>
+    <li>org.eclipse.cdt.internal.core.options</li>
+  </ul>
+  </p>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=565154" target="_blank">Bug 565154</a>.
   </p>
 
   <hr>

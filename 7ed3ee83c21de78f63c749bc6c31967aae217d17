@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3fd0f35b_1a10fb6b",
+        "filename": "native/org.eclipse.cdt.native.serial.tests/resources/deosai.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-12T18:45:03Z",
+      "side": 1,
+      "message": "Did you write this yourself? If not, it can\u0027t be included here.",
+      "revId": "7ed3ee83c21de78f63c749bc6c31967aae217d17",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b6fae4e1_55d53452",
+        "filename": "native/org.eclipse.cdt.native.serial.tests/resources/lorem-ipsum.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-12T18:45:03Z",
+      "side": 1,
+      "message": "Same here.",
+      "revId": "7ed3ee83c21de78f63c749bc6c31967aae217d17",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

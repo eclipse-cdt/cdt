@@ -105,6 +105,24 @@
       "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f606279_c28f9777",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-12T21:25:48Z",
+      "side": 1,
+      "message": "\u003e Since \"bytes\" is already declared as a TraditionalMemoryByte, the check is redundant.\n\nThe instanceof still did null check - that has been removed with this change - I tried to follow code paths, and while I can\u0027t find any definite null array entries, the code is too complicated to be sure.\n\nIf you had already determined the null check was redundant, please disregard my comment, otherwise I would appreciate the null check being reintroduced.",
+      "parentUuid": "feb74014_631a82c5",
+      "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -8,7 +8,6 @@
 	<classpathentry kind="src" path="utils"/>
 	<classpathentry kind="src" path="parser"/>
 	<classpathentry kind="src" path="templateengine"/>
-	<classpathentry kind="src" path="options"/>
 	<classpathentry kind="src" path="doxygen"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

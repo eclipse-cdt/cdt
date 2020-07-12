@@ -21,8 +21,6 @@ import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManagerTests;
 import org.eclipse.cdt.core.internal.efsextension.tests.EFSExtensionTests;
 import org.eclipse.cdt.core.internal.errorparsers.tests.ErrorParserTests;
-import org.eclipse.cdt.core.internal.tests.BaseOptionTest;
-import org.eclipse.cdt.core.internal.tests.OsgiPreferenceStorageTest;
 import org.eclipse.cdt.core.internal.tests.PositionTrackerTests;
 import org.eclipse.cdt.core.internal.tests.ResourceLookupTests;
 import org.eclipse.cdt.core.internal.tests.StringBuilderTest;
@@ -87,8 +85,6 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(AllCoreTests.suite());
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());
-		suite.addTest(new JUnit4TestAdapter(BaseOptionTest.class));
-		suite.addTest(new JUnit4TestAdapter(OsgiPreferenceStorageTest.class));
 		suite.addTest(PositionTrackerTests.suite());
 		suite.addTest(ResourceLookupTests.suite());
 		suite.addTest(StringBuilderTest.suite());

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0c3b05a0_0d8a0c25",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-12T19:57:29Z",
+      "side": 1,
+      "message": "Thank you for documenting this.",
+      "revId": "97c1151f0103fb0f194d3a30317473310e39cc93",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

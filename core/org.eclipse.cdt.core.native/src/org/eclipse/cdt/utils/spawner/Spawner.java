@@ -326,6 +326,14 @@ public class Spawner extends Process {
 	}
 
 	private void exec(String[] cmdarray, String[] envp, String dirpath) throws IOException {
+		if (System.getenv("FLATPAK_SANDBOX_DIR") != null && !cmdarray[0].equals("gdb")) { //$NON-NLS-1$ //$NON-NLS-2$
+			String[] newArray = new String[cmdarray.length + 3];
+			System.arraycopy(cmdarray, 0, newArray, 3, cmdarray.length);
+			newArray[0] = "flatpak-spawn"; //$NON-NLS-1$
+			newArray[1] = "--host"; //$NON-NLS-1$
+			newArray[2] = "--watch-bus"; //$NON-NLS-1$
+			cmdarray = newArray;
+		}
 		String command = cmdarray[0];
 		SecurityManager s = System.getSecurityManager();
 		if (s != null)
@@ -354,6 +362,14 @@ public class Spawner extends Process {
 	}
 
 	private void exec_pty(String[] cmdarray, String[] envp, String dirpath, final PTY pty) throws IOException {
+		if (System.getenv("FLATPAK_SANDBOX_DIR") != null && !cmdarray[0].equals("gdb")) { //$NON-NLS-1$ //$NON-NLS-2$
+			String[] newArray = new String[cmdarray.length + 3];
+			System.arraycopy(cmdarray, 0, newArray, 3, cmdarray.length);
+			newArray[0] = "flatpak-spawn"; //$NON-NLS-1$
+			newArray[1] = "--host"; //$NON-NLS-1$
+			newArray[2] = "--watch-bus"; //$NON-NLS-1$
+			cmdarray = newArray;
+		}
 		String command = cmdarray[0];
 		SecurityManager s = System.getSecurityManager();
 		if (s != null)
@@ -392,6 +408,14 @@ public class Spawner extends Process {
 	}
 
 	public void exec_detached(String[] cmdarray, String[] envp, String dirpath) throws IOException {
+		if (System.getenv("FLATPAK_SANDBOX_DIR") != null && !cmdarray[0].equals("gdb")) { //$NON-NLS-1$ //$NON-NLS-2$
+			String[] newArray = new String[cmdarray.length + 3];
+			System.arraycopy(cmdarray, 0, newArray, 3, cmdarray.length);
+			newArray[0] = "flatpak-spawn"; //$NON-NLS-1$
+			newArray[1] = "--host"; //$NON-NLS-1$
+			newArray[2] = "--watch-bus"; //$NON-NLS-1$
+			cmdarray = newArray;
+		}
 		String command = cmdarray[0];
 		SecurityManager s = System.getSecurityManager();
 		if (s != null)

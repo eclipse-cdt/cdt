@@ -141,6 +141,24 @@
       "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1917e534_6237842a",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-13T13:02:34Z",
+      "side": 1,
+      "message": "\u003e array can be `null` only in the very specific state\n\nMy concern is not the array being null, but rather the array containing null elements. Is that what you meant?\n\nI am glad you have reviewed the cases, when I got to this snippet of code that creates the array I decided the null element check made more sense than me spending more of my life on this:\n\n    cachedBytesAsByteSequence[unit * unitSize + unitbyte] \u003d cachedBytes[unit * unitSize\t\t\t\t\t+ unitSize - unitbyte];\n\n\nI do agree that it looks unlikely that there are null elements. \n\nNext time it would probably be better to not mix seemingly trivial changes in with unrelated changes. I do appreciate the warning fixes.",
+      "parentUuid": "f8fb0039_c1fbc160",
+      "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

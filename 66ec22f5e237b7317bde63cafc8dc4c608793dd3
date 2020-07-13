@@ -123,6 +123,24 @@
       "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8fb0039_c1fbc160",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/DataPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-13T08:32:09Z",
+      "side": 1,
+      "message": "I would prefer to not have `null` check here and better ensure above that argument is valid. As I can see from the surrounding code this array can be `null` only in the very specific state and I would say this state is illegal and the control flow will fail earlier. Marking as resolved.",
+      "parentUuid": "3f606279_c28f9777",
+      "revId": "66ec22f5e237b7317bde63cafc8dc4c608793dd3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

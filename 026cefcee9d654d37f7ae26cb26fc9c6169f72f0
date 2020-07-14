@@ -16,6 +16,24 @@
       "revId": "026cefcee9d654d37f7ae26cb26fc9c6169f72f0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64a54e55_07175374",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/BufferedCanvas.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-14T14:30:33Z",
+      "side": 1,
+      "message": "I was unsure if there was a reason to not write the error to the log file, but rather than risking of introducing a deadlock or something, I decided to simply write the stack trace to stderr as t.toString() is likely not going to expose the reason for the error.\n\nThe code appears to have been like this since it was first introduced back in 2012.",
+      "parentUuid": "f39bae3e_9b33e15e",
+      "revId": "026cefcee9d654d37f7ae26cb26fc9c6169f72f0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

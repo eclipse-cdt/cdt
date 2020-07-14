@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "cd774886_a7d72920",
+        "filename": "codan/org.eclipse.cdt.codan.examples/src/org/eclipse/cdt/codan/examples/uicontrib/FlexlintHelpLink.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-14T15:07:10Z",
+      "side": 1,
+      "message": "Fixed. Thanks for spotting.",
+      "parentUuid": "01dbfa13_8de0f378",
+      "revId": "026cefcee9d654d37f7ae26cb26fc9c6169f72f0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f39bae3e_9b33e15e",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/BufferedCanvas.java",
         "patchSetId": 4

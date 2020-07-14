@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "af1af5fd_b64ee72c",
+        "filename": "native/org.eclipse.cdt.native.serial.tests/resources/deosai.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 816
+      },
+      "writtenOn": "2020-07-14T19:07:34Z",
+      "side": 1,
+      "message": "This review\u0027s been dead for a long time, no one responded on the issue to help try the problems that were reported against my patches, so I haven\u0027t looked at this for two years.\n\nAnyways, I think I copied some of this text from wikipedia:\nhttps://en.wikipedia.org/wiki/Deosai_National_Park\n\nBut this is a small problem to fix (compared to all the effort I put in to write the tests), if there is still interest in having these patches accepted.",
+      "parentUuid": "3fd0f35b_1a10fb6b",
+      "revId": "7ed3ee83c21de78f63c749bc6c31967aae217d17",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b6fae4e1_55d53452",
         "filename": "native/org.eclipse.cdt.native.serial.tests/resources/lorem-ipsum.txt",
         "patchSetId": 1

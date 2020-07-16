@@ -34,6 +34,24 @@
       "revId": "cd992b516b1d89d0286fc9fa4d88ecb99efeba5e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ddea0182_b765237b",
+        "filename": "core/org.eclipse.cdt.core.win32/src/org/eclipse/cdt/internal/core/win32/ProcessList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-16T07:35:22Z",
+      "side": 1,
+      "message": "Oh right, I\u0027ve missed the name.length()\u003e0 part of the expression where the PID is converted from String to int. I\u0027ll fix that shortly.\n\nOn PID 0, the exception will be invalid parameter or something similar while others may be access denied.\n\nTo be honest, I\u0027ve not run the code inside CDT as I have trouble setting up my dev environment on Windows, but I did verify that the output from running the list was equal to what listtasks.exe was outputting. Sorry for missing the empty string part!",
+      "parentUuid": "f87db129_9e0c79c1",
+      "revId": "cd992b516b1d89d0286fc9fa4d88ecb99efeba5e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

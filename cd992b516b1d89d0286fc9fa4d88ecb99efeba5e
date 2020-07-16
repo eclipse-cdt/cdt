@@ -16,6 +16,24 @@
       "revId": "cd992b516b1d89d0286fc9fa4d88ecb99efeba5e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f87db129_9e0c79c1",
+        "filename": "core/org.eclipse.cdt.core.win32/src/org/eclipse/cdt/internal/core/win32/ProcessList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-16T04:01:36Z",
+      "side": 1,
+      "message": "I was just going to post that. We tested at the same time :)\nI got java.lang.IllegalArgumentException\n\tat org.eclipse.ui.internal.misc.TextMatcher.match(TextMatcher.java:96)\n\tat org.eclipse.ui.dialogs.SearchPattern.matches(SearchPattern.java:176)\n\tat org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompterDialog$1.match(ProcessPrompterDialog.java:92)\n\nThis one due to the empty string handling",
+      "parentUuid": "09c6253e_8108cfab",
+      "revId": "cd992b516b1d89d0286fc9fa4d88ecb99efeba5e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "09c6253e_8108cfab",
+        "filename": "core/org.eclipse.cdt.core.win32/src/org/eclipse/cdt/internal/core/win32/ProcessList.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-16T03:28:18Z",
+      "side": 1,
+      "message": "Unfortunately this code did not work for me. When I try to use Attach to C/C++ Application launch configuration I get lots of exceptions. That is because we need to handle this case differently, if an exception is thrown, the item should not be added to the list. That matches the existing listtasks behaviour. The exception I see mostly is access denied, but I also got a different error on PID 0 (forgot to write down what message from win32 in that case).\n\nIf I add a empty string check around line 100 this code works great.",
+      "revId": "cd992b516b1d89d0286fc9fa4d88ecb99efeba5e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

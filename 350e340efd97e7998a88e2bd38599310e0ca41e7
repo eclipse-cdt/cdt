@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "04390162_a26a76ae",
+        "filename": "core/org.eclipse.cdt.core.win32/src/org/eclipse/cdt/internal/core/win32/WindowsRegistryImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-16T01:43:57Z",
+      "side": 1,
+      "message": "This falls outside my knowledge base - but if JNA does not support the ANSI version I think we don\u0027t need to worry about it. In other words, if it is good enough for all other users of JNA it should be good enough for CDT! Of course, timing this with CDT 10.0 is good. In the migration guide (which I guess means part of doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html for now - if there are other issues it may be best to have an additional document?) we should say something like ANSI API is not supported anymore. That should cover this case and the listtasks replacement too (https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/165739)?",
+      "parentUuid": "8622962c_160a6fff",
+      "range": {
+        "startLine": 80,
+        "startChar": 11,
+        "endLine": 80,
+        "endChar": 43
+      },
+      "revId": "350e340efd97e7998a88e2bd38599310e0ca41e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d807e1be_9fdfee34",
         "filename": "core/org.eclipse.cdt.core.win32/src/org/eclipse/cdt/internal/core/win32/WindowsRegistryImpl.java",
         "patchSetId": 8

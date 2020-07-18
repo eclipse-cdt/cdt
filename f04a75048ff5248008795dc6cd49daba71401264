@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cdf4ce21_d7e074ba",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/ICBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-18T09:29:44Z",
+      "side": 1,
+      "message": "I would like to avoid this method in the API\nThe reason is that we already have \n`CBuildConfiguration::setActive(IProgressMonitor monitor) throws CoreException` that does a different thing and this leads to confusion.\n\nOr at least let\u0027s rename this method to `reindex` as this is what it does. \nActually I have deeper concerns why `CoreBuildLaunchBarTracker` needs to do so much heavy work on simple event - but this is another story.",
+      "revId": "f04a75048ff5248008795dc6cd49daba71401264",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

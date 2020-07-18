@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -141,6 +142,12 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	}
 
 	/**
+	 * The URI for the directory in which the build is executed.
+	 * @since 7.0
+	 */
+	URI getBuildDirectoryURI() throws CoreException;
+
+	/**
 	 * Set the environment for the builds. Generally the environment from a
 	 * ProcessBuilder would be passed here.
 	 *
@@ -235,4 +242,9 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 		return false;
 	}
 
+	/**
+	 * Mark the Build Configuration as active
+	 * @since 7.0
+	 */
+	void setActive();
 }

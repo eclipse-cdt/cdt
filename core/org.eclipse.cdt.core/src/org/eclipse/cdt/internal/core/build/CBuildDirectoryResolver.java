@@ -15,7 +15,6 @@ import java.net.URI;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
-import org.eclipse.cdt.core.build.ICBuildConfiguration2;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
@@ -45,11 +44,9 @@ public class CBuildDirectoryResolver implements IDynamicVariableResolver {
 			return null;
 		}
 
-		if (coreConfig instanceof ICBuildConfiguration2) {
-			URI uri = ((ICBuildConfiguration2) coreConfig).getBuildDirectoryURI();
-			if (uri != null) {
-				return new File(uri).getAbsolutePath();
-			}
+		URI uri = coreConfig.getBuildDirectoryURI();
+		if (uri != null) {
+			return new File(uri).getAbsolutePath();
 		}
 
 		return null;

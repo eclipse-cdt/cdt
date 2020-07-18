@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.build.ErrorBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
-import org.eclipse.cdt.core.build.ICBuildConfiguration2;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
@@ -199,7 +198,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 							finalProject.setDescription(desc, monitor);
 						}
 						// notify the active build config that it is active
-						((ICBuildConfiguration2) buildConfig).setActive();
+						buildConfig.setActive();
 					}
 
 					return Status.OK_STATUS;

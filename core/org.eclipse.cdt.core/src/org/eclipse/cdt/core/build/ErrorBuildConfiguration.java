@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.PlatformObject;
  *
  * @since 6.9
  */
-public class ErrorBuildConfiguration extends PlatformObject implements ICBuildConfiguration, ICBuildConfiguration2 {
+public class ErrorBuildConfiguration extends PlatformObject implements ICBuildConfiguration {
 
 	private final IBuildConfiguration config;
 	private String errorMessage;

@@ -32,8 +32,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -104,8 +104,8 @@ import com.google.gson.JsonParseException;
  *
  * @since 6.0
  */
-public abstract class CBuildConfiguration extends PlatformObject implements ICBuildConfiguration, ICBuildConfiguration2,
-		IMarkerGenerator, IConsoleParser2, IElementChangedListener {
+public abstract class CBuildConfiguration extends PlatformObject
+		implements ICBuildConfiguration, IMarkerGenerator, IConsoleParser2, IElementChangedListener {
 
 	private static final String LAUNCH_MODE = "cdt.launchMode"; //$NON-NLS-1$
 

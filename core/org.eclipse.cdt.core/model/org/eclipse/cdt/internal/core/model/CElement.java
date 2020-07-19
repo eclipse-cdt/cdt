@@ -24,6 +24,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
+import org.eclipse.cdt.core.model.ICElementVisitor2;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ICProject;
@@ -526,6 +527,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 			for (int i = 0; i < children.length; ++i) {
 				children[i].accept(visitor);
 			}
+		}
+		if (visitor instanceof ICElementVisitor2) {
+			((ICElementVisitor2) visitor).leave(this);
 		}
 	}
 

@@ -22,8 +22,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
@@ -54,6 +56,7 @@ import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -130,14 +133,54 @@ public class CompilationDatabaseParser extends LanguageSettingsSerializableProvi
 		return lastModifiedTime.toMillis();
 	}
 
-	// Wanted to use this as a base to also count the number of translation unit
-	// for the progress monitor but it's too slow so only use it to exclude for now.
-	private abstract class SourceFilesVisitor implements ICElementVisitor {
+	/**
+	 * Visit all folders and exclude all files that do not have entries coming from the CDB.
+	 * The algorithm detects when whole folders can be excluded to prevent a large number of
+	 * individual file exclusions.
+	 */
+	private final class ExcludeSourceFilesVisitor implements ICElementVisitor {
+		private final ICConfigurationDescription cfgDescription;
+		ICSourceEntry[] entries = null;
+		private final IProgressMonitor monitor;
+		private final int sourceFilesCount;
+		private int nbChecked = 0;
+
+		// Keep track of excluded files and folders as we visit each folder in a depth-first manner.
+		private Stack<FolderExclusionInfo> folderExclusionInfos = new Stack<>();
+
+		private class FolderExclusionInfo {
+			// In case not all files are excluded in this folder, we need to keep track of which folders we'll exclude individually.
+			private ArrayList<IPath> childrenFoldersWithAllFilesExcluded = new ArrayList<>();
+			// In case not all files are excluded in this folder, we need to keep track of which files we'll exclude individually.
+			private ArrayList<IPath> excludedSourceFiles = new ArrayList<>();
+			// True if all children of the folder are excluded, recursively.
+			// Children folders can set this to false on their parent when non-excluded files are detected.
+			// Therefore, this value is reliable only when all children are visited.
+			private boolean allFilesExcluded = true;
+		}
+
+		//Note: monitor already has ticks allocated for number of source files (not considering exclusions though)
+		private ExcludeSourceFilesVisitor(IProgressMonitor monitor, int sourceFilesCount,
+				ICConfigurationDescription cfgDescription) {
+			this.monitor = monitor;
+			this.sourceFilesCount = sourceFilesCount;
+			this.cfgDescription = cfgDescription;
+			this.entries = cfgDescription.getSourceEntries();
+		}
+
+		public ICSourceEntry[] getSourceEntries() {
+			return entries;
+		}
+
 		@Override
 		public boolean visit(ICElement element) throws CoreException {
 			int elementType = element.getElementType();
 			if (elementType != ICElement.C_UNIT) {
-				return elementType == ICElement.C_CCONTAINER || elementType == ICElement.C_PROJECT;
+				boolean isSourceContainer = elementType == ICElement.C_CCONTAINER || elementType == ICElement.C_PROJECT;
+				if (isSourceContainer) {
+					folderExclusionInfos.push(new FolderExclusionInfo());
+				}
+				return isSourceContainer;
 			}
 
 			ITranslationUnit tu = (ITranslationUnit) element;
@@ -147,47 +190,51 @@ public class CompilationDatabaseParser extends LanguageSettingsSerializableProvi
 			return false;
 		}
 
-		abstract void handleTranslationUnit(ITranslationUnit tu) throws CoreException;
-	}
-
-	private final class ExcludeSourceFilesVisitor extends SourceFilesVisitor {
-		private final ICConfigurationDescription cfgDescription;
-		ICSourceEntry[] entries = null;
-		private final IProgressMonitor monitor;
-		private final int sourceFilesCount;
-		private int nbChecked = 0;
-
-		//Note: monitor already has ticks allocated for number of source files (not considering exclusions though)
-		private ExcludeSourceFilesVisitor(IProgressMonitor monitor, int sourceFilesCount,
-				ICConfigurationDescription cfgDescription) {
-			this.monitor = monitor;
-			this.sourceFilesCount = sourceFilesCount;
-			this.cfgDescription = cfgDescription;
-		}
-
-		public ICSourceEntry[] getSourceEntries() {
-			return entries;
-		}
-
-		@Override
-		void handleTranslationUnit(ITranslationUnit tu) throws CoreException {
-			boolean isExcluded = CDataUtil.isExcluded(tu.getPath(), cfgDescription.getSourceEntries());
-			if (!isExcluded) {
-				List<ICLanguageSettingEntry> list = getSettingEntries(cfgDescription, tu.getResource(),
-						tu.getLanguage().getId());
-				if (list == null) {
-					if (entries == null) {
-						entries = cfgDescription.getSourceEntries();
-					}
-					entries = CDataUtil.setExcluded(tu.getResource().getFullPath(), false, true, entries);
-				}
+		private void handleTranslationUnit(ITranslationUnit tu) throws CoreException {
+			FolderExclusionInfo folderInfo = folderExclusionInfos.peek();
+			List<ICLanguageSettingEntry> list = getSettingEntries(cfgDescription, tu.getResource(),
+					tu.getLanguage().getId());
+			if (list == null) {
+				folderInfo.excludedSourceFiles.add(tu.getResource().getFullPath());
+			} else {
+				folderInfo.allFilesExcluded = false;
 			}
+
 			monitor.worked(1);
 			if (nbChecked % 100 == 0) {
 				monitor.subTask(String.format(Messages.CompilationDatabaseParser_ProgressExcludingFiles, nbChecked,
 						sourceFilesCount));
 			}
 			nbChecked++;
+		}
+
+		@Override
+		public void leave(ICElement element) throws CoreException {
+			int elementType = element.getElementType();
+			if (elementType == ICElement.C_CCONTAINER || elementType == ICElement.C_PROJECT) {
+
+				FolderExclusionInfo folderInfo = folderExclusionInfos.pop();
+
+				if (folderInfo.allFilesExcluded && !folderExclusionInfos.isEmpty()) {
+					// Consider this folder for exclusion later, maybe the parent will also be excluded
+					folderExclusionInfos.peek().childrenFoldersWithAllFilesExcluded.add(element.getPath());
+				} else {
+					if (!folderExclusionInfos.isEmpty()) {
+						folderExclusionInfos.peek().allFilesExcluded = false;
+					}
+
+					// Exclude all children folders previously considered for exclusion, since the parent
+					// (the currently visited element) cannot be excluded, we have to exclude them individually.
+					for (IPath excludedFolder : folderInfo.childrenFoldersWithAllFilesExcluded) {
+						entries = CDataUtil.setExcluded(excludedFolder, true, true, entries);
+					}
+
+					// Exclude all direct children files that need to be excluded.
+					for (IPath excludedFile : folderInfo.excludedSourceFiles) {
+						entries = CDataUtil.setExcluded(excludedFile, false, true, entries);
+					}
+				}
+			}
 		}
 	}
 

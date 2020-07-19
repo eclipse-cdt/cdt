@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ISourceRoot;
@@ -268,6 +270,41 @@ public class CModelTests extends TestCase {
 		assertTrue("Invalid C file", !CoreModel.isValidTranslationUnitName(null, "not.c.file"));
 		assertTrue("Invalid C file", !CoreModel.isValidTranslationUnitName(null, "not.ca"));
 		assertTrue("Valid C file", CoreModel.isValidTranslationUnitName(null, "areal.c"));
+	}
+
+	public void testCElementVisitorLeave() throws Exception {
+		ICProject testProject;
+		String projectName = "bug257609";
+		testProject = CProjectHelper.createCProject(projectName, "none", IPDOMManager.ID_NO_INDEXER);
+
+		IFolder testFolder = testProject.getProject().getFolder("test");
+		testFolder.create(true, true, monitor);
+		IFolder subFolder1 = testFolder.getFolder("1");
+		subFolder1.create(true, true, monitor);
+		IFolder subFolder2 = testFolder.getFolder("2");
+		subFolder2.create(true, true, monitor);
+		IFolder subFolder3 = subFolder2.getFolder("3");
+		subFolder3.create(true, true, monitor);
+		IFile file0 = testFolder.getFile("test0.c");
+		file0.create(new ByteArrayInputStream(new byte[0]), true, monitor);
+
+		List<String> expected = Arrays.asList("visit " + projectName, "visit " + projectName, "visit test", "visit 1",
+				"leave 1", "visit 2", "visit 3", "leave 3", "leave 2", "visit test0.c", "leave test0.c", "leave test",
+				"leave " + projectName, "leave " + projectName);
+		final List<String> actual = new ArrayList<>();
+		testProject.accept(new ICElementVisitor() {
+			@Override
+			public boolean visit(ICElement element) throws CoreException {
+				actual.add("visit " + element.getResource().getName());
+				return true;
+			}
+
+			@Override
+			public void leave(ICElement element) throws CoreException {
+				actual.add("leave " + element.getResource().getName());
+			}
+		});
+		assertEquals(expected, actual);
 	}
 
 	// bug 275609

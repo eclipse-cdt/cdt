@@ -26,4 +26,10 @@ public interface ICElementVisitor {
 	 */
 	public boolean visit(ICElement element) throws CoreException;
 
+	/**
+	 * Called when leaving a member in the ICElement tree.
+	 * @since 7.0
+	 */
+	public default void leave(ICElement element) throws CoreException {
+	}
 }

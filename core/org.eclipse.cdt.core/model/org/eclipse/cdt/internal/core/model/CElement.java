@@ -527,6 +527,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 				children[i].accept(visitor);
 			}
 		}
+		visitor.leave(this);
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
@@ -47,6 +49,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -71,6 +74,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 	private IFile fOutsideCdbSourceFile;
 	private IProject fProject;
 	private IFolder fFolder;
+	private IFolder fFolderAllExcluded;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -101,25 +105,27 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 			boolean haveCommandLine, boolean validCommandLine, boolean haveCommandArguments) throws Exception {
 		fProject = ResourceHelper.createCDTProjectWithConfig(getName());
 		fFolder = ResourceHelper.createFolder(fProject, "folder");
+		fFolderAllExcluded = ResourceHelper.createFolder(fProject, "folder-all-excluded");
+		IFolder subfolderAllExcluded = fFolderAllExcluded.getFolder("subfolder-all-excluded");
+		subfolderAllExcluded.create(true, true, new NullProgressMonitor());
 
-		IFile sourceFile = fFolder.getFile("test.cpp");
-		if (sourceFile.exists()) {
-			sourceFile.delete(true, null);
-		}
+		fSourceFile = fFolder.getFile("test.cpp");
+		fSourceFile2 = fProject.getFile("test.cpp");
+		fOutsideCdbSourceFile = fFolder.getFile("outside.cpp");
+		List<IFile> files = Arrays.asList(fSourceFile, fSourceFile2, fOutsideCdbSourceFile,
+				fFolderAllExcluded.getFile("file1.cpp"), fFolderAllExcluded.getFile("file2.cpp"),
+				fFolderAllExcluded.getFile("file2.cpp"), subfolderAllExcluded.getFile("file3.cpp"));
 
-		IFile sourceFile2 = fProject.getFile("test.cpp");
-		if (sourceFile2.exists()) {
-			sourceFile2.delete(true, null);
-		}
-
-		fSourceFile = ResourceHelper.createFile(sourceFile, "//comment");
-		fSourceFile2 = ResourceHelper.createFile(sourceFile2, "//comment2");
-
-		IFile outsideSourceFile = fFolder.getFile("outside.cpp");
-		if (outsideSourceFile.exists()) {
-			outsideSourceFile.delete(true, null);
-		}
-		fOutsideCdbSourceFile = ResourceHelper.createFile(outsideSourceFile, "//comment");
+		files.forEach(file -> {
+			try {
+				if (file.exists()) {
+					file.delete(true, null);
+				}
+				ResourceHelper.createFile(file, "//comment " + file.getLocation());
+			} catch (CoreException e) {
+				throw new RuntimeException(e);
+			}
+		});
 
 		IFile file = fProject.getFile("compile_commands.json");
 		if (file.exists()) {
@@ -334,7 +340,13 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertExpectedEntries(parser);
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
-		assertTrue(CDataUtil.isExcluded(tu.getPath(), resCfgDescription.getSourceEntries()));
+		ICSourceEntry[] sourceEntries = resCfgDescription.getSourceEntries();
+		assertTrue(CDataUtil.isExcluded(tu.getPath(), sourceEntries));
+		assertTrue(CDataUtil.isExcluded(fFolderAllExcluded.getFullPath(), sourceEntries));
+		assertFalse(CDataUtil.isExcluded(fFolder.getFullPath(), sourceEntries));
+		assertFalse(CDataUtil.isExcluded(fProject.getFullPath(), sourceEntries));
+		assertFalse(CDataUtil.isExcluded(fSourceFile.getFullPath(), sourceEntries));
+		assertFalse(CDataUtil.isExcluded(fSourceFile2.getFullPath(), sourceEntries));
 	}
 
 	public void testParseCDB_NoBuildCommandParser() throws Exception {

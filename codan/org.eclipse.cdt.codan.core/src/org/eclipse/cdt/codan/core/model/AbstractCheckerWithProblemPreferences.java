@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -278,5 +282,83 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 				return true;
 		}
 		return false;
+	}
+
+	private static void makeAccessible(Field field) {
+		if (field.isAccessible()) {
+			return;
+		}
+		AccessController.doPrivileged(new PrivilegedAction<Void>() {
+			@Override
+			public Void run() {
+				field.setAccessible(true);
+				return null;
+			}
+		});
+	}
+
+	/**
+	 * Iterates over declared field of current class marked with {@link ProblemPreference} annotation
+	 * and registers preference with {@link #addPreference(IProblemWorkingCopy, IProblemPreference, Object)} method.
+	 *
+	 * Value of static field from specified NLS-class is used as preference label. Such field should be named
+	 * in form <tt>ClassName_key</tt> where ClassName is the current class name after last dot.
+	 *
+	 * Initial value of field is used as default preference value.
+	 *
+	 * @since 4.1
+	 */
+	protected void addPreferencesForAnnotatedFields(IProblemWorkingCopy problem) {
+		String clsName = this.getClass().getName();
+		String clsKey = clsName.substring(clsName.lastIndexOf('.') + 1);
+
+		for (Field field : this.getClass().getDeclaredFields()) {
+			ProblemPreference annotation = field.getAnnotation(ProblemPreference.class);
+			if (annotation == null) {
+				continue;
+			}
+
+			try {
+				makeAccessible(field);
+				Object defaultValue = field.get(this);
+				String labelKey = clsKey + "_" + annotation.key(); //$NON-NLS-1$
+
+				String label = labelKey;
+				Field labelField = annotation.nls().getField(labelKey);
+				if (labelField != null && String.class.isAssignableFrom(labelField.getType())
+						&& Modifier.isStatic(labelField.getModifiers())) {
+					label = (String) labelField.get(null);
+				}
+
+				this.addPreference(problem, annotation.key(), label, defaultValue);
+			} catch (ReflectiveOperationException exc) {
+				throw new RuntimeException(
+						"Unable to process @ProblemPreference for field " + field + ": " + exc.getMessage(), exc); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+
+	/**
+	 * Iterates over declared field of current class marked with {@link ProblemPreference} annotation
+	 * and fill them with preferences obtained with {{@link #getPreference(IProblem, String)} method.
+	 *
+	 * @since 4.1
+	 */
+	protected void loadPreferencesForAnnotatedFields(IProblem problem) {
+		for (Field field : this.getClass().getDeclaredFields()) {
+			ProblemPreference annotation = field.getAnnotation(ProblemPreference.class);
+			if (annotation == null) {
+				continue;
+			}
+
+			try {
+				makeAccessible(field);
+				Object preferenceValue = getPreference(problem, annotation.key());
+				field.set(this, preferenceValue);
+			} catch (ReflectiveOperationException exc) {
+				throw new RuntimeException(
+						"Unable to process @ProblemPreference for field " + field + ": " + exc.getMessage(), exc); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 }

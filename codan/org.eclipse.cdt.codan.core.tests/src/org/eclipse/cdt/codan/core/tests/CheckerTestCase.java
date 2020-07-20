@@ -17,6 +17,7 @@ package org.eclipse.cdt.codan.core.tests;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
@@ -56,11 +57,23 @@ public class CheckerTestCase extends CodanTestCase {
 		assertEquals(args.length, markers.length);
 	}
 
+	/**
+	 * @deprecated Use {@link #checkErrorComments(String)} instead
+	 */
+	@Deprecated
 	public void checkErrorComments() {
 		for (Object i : errLines) {
 			checkErrorLine((Integer) i);
 		}
 		assertEquals("Expected number of errors " + errLines.size(), errLines.size(), markers.length);
+	}
+
+	public void checkErrorComments(String problemId) {
+		for (Object i : errLines) {
+			checkErrorLine((Integer) i);
+		}
+		assertEquals("Expected number of errors " + errLines.size(), errLines.size(),
+				Arrays.stream(markers).map(CodanProblemMarker::getProblemId).filter(problemId::equals).count());
 	}
 
 	public IMarker checkErrorLine(int i, String problemId) {

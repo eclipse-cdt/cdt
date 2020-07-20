@@ -34,6 +34,24 @@
       "revId": "f04a75048ff5248008795dc6cd49daba71401264",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5f94b91_74b6515e",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/ICBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-20T10:33:59Z",
+      "side": 1,
+      "message": "\u003e Do you want us to both collapse the interfaces and change the method at the same time?\n\nYou are right, may be not in the same Gerrit. But generally yes, I would like to avoid the API of procedural \"setter\" style, it makes things more complex than really needed. As we already have incompartible change in upcoming 10.0 it may be a good time to proceed with rename. \n\n\u003e I don\u0027t know enough about Core build to make the right call. Who does?\n\nMay be nobody, but with declaring this formally new method with the current contract and implementation we \"introduce\" the API defect, as implementation does not corresponds to the method contract.\n\n\nIdeally we should avoid this \"force reindex\" lever at all, because what we are saying is:\n```\nhey, user is clicking something related, let\u0027s follow and do the very heavy reindex for every click!\n```\nThis is the way of thinking that we offer for CDT developers with an API like this.",
+      "parentUuid": "da8063a5_38059ddf",
+      "revId": "f04a75048ff5248008795dc6cd49daba71401264",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

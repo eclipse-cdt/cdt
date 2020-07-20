@@ -684,5 +684,47 @@
                messagePattern="%problem.messagePattern.NoDiscard"
                name="%problem.name.NoDiscard"/>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.metrics.CyclomaticComplexityChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.metrics.CyclomaticComplexityChecker"
+            name="%checker.name.CyclomaticComplexityChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.Metrics"
+               defaultSeverity="Warning"
+               description="%problem.description.CyclomaticComplexityExceeded"
+               id="org.eclipse.cdt.codan.internal.checkers.CyclomaticComplexityExceededProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.CyclomaticComplexityExceeded"
+               name="%problem.name.CyclomaticComplexityExceeded">
+         </problem>
+      </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.metrics.LinesOfCodeChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.metrics.LinesOfCodeChecker"
+            name="%checker.name.LinesOfCodeChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.Metrics"
+               defaultSeverity="Warning"
+               description="%problem.description.LinesOfCodeExceeded"
+               id="org.eclipse.cdt.codan.internal.checkers.LinesOfCodeExceededProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.LinesOfCodeExceeded"
+               name="%problem.name.LinesOfCodeExceeded">
+         </problem>
+      </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.metrics.NestedBlockDepthChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.metrics.NestedBlockDepthChecker"
+            name="%checker.name.NestedBlockDepthChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.Metrics"
+               defaultSeverity="Warning"
+               description="%problem.description.NestedBlockDepthExceeded"
+               id="org.eclipse.cdt.codan.internal.checkers.NestedBlockDepthExceededProblem"
+               markerType="org.eclipse.cdt.codan.core.codanProblem"
+               messagePattern="%problem.messagePattern.NestedBlockDepthExceeded"
+               name="%problem.name.NestedBlockDepthExceeded">
+         </problem>
+      </checker>
    </extension>
 </plugin>

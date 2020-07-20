@@ -412,7 +412,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		setEmpty(true);
 		setLast(true);
 		loadCodeAndRunCpp(getAboveComment());
-		checkErrorComments();
+		checkErrorComments(ER_ID);
 	}
 
 	// void foo(void) {

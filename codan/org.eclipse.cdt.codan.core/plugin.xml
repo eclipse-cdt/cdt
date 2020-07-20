@@ -87,6 +87,10 @@
       name="%category.name.CompilerErrors"
       />
             <category
+      id="org.eclipse.cdt.codan.core.categories.Metrics"
+      name="%category.name.Metrics"
+      />
+            <category
       id="org.eclipse.cdt.codan.core.categories.Security"
       name="%category.name.Security"
       />

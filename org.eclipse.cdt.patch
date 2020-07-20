@@ -1,0 +1,27 @@
+diff --git a/codan/org.eclipse.cdt.codan.core/OSGI-INF/l10n/bundle.properties b/codan/org.eclipse.cdt.codan.core/OSGI-INF/l10n/bundle.properties
+index 93d5bf3..deb65d5 100644
+--- a/codan/org.eclipse.cdt.codan.core/OSGI-INF/l10n/bundle.properties
++++ b/codan/org.eclipse.cdt.codan.core/OSGI-INF/l10n/bundle.properties
+@@ -20,6 +20,7 @@
+ category.name.ProgrammingErrors = Potential Programming Problems
+ category.name.CodeStyle = Coding Style
+ category.name.CompilerErrors = Syntax and Semantic Errors
++category.name.Metrics= Code Metrics
+ codeAnalysisCheckersExtensionPoint = Code Analysis Checkers
+ checkerEnablementExtensionPoint = Verification of Checker Enablement
+ 
+diff --git a/codan/org.eclipse.cdt.codan.core/plugin.xml b/codan/org.eclipse.cdt.codan.core/plugin.xml
+index 4d43413..9503f1b 100644
+--- a/codan/org.eclipse.cdt.codan.core/plugin.xml
++++ b/codan/org.eclipse.cdt.codan.core/plugin.xml
+@@ -87,6 +87,10 @@
+       name="%category.name.CompilerErrors"
+       />
+             <category
++      id="org.eclipse.cdt.codan.core.categories.Metrics"
++      name="%category.name.Metrics"
++      />
++            <category
+       id="org.eclipse.cdt.codan.core.categories.Security"
+       name="%category.name.Security"
+       />

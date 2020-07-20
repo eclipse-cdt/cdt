@@ -1,0 +1,413 @@
+diff --git a/codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties b/codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties
+index 7654d0e..bd4cef4 100644
+--- a/codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties
++++ b/codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties
+@@ -217,3 +217,13 @@
+ problem.description.NoDiscard = This rule will flag the use of functions marked as 'no discard' without taking into account return value
+ problem.messagePattern.NoDiscard = Return value from ''{0}'' not evaluated
+ problem.name.NoDiscard = Return value not evaluated
++
++checker.name.CyclomaticComplexityChecker = Cyclomatic complexity
++problem.name.CyclomaticComplexityExceeded = Function cyclomatic complexity exceeded
++problem.description.CyclomaticComplexityExceeded = This rule will mark first expression or statement where function cyclomatic complexity is exceeded 
++problem.messagePattern.CyclomaticComplexityExceeded = Function is too complex (cyclomatic complexity exceeded) starting from this point
++
++checker.name.NestedBlockDepthChecker = Nested block depth
++problem.name.NestedBlockDepthExceeded = Nested block depth exceeded
++problem.description.NestedBlockDepthExceeded = This rule will mark statements nested into each other too deep 
++problem.messagePattern.NestedBlockDepthExceeded = Statement nested too deep ({0})
+diff --git a/codan/org.eclipse.cdt.codan.checkers/plugin.xml b/codan/org.eclipse.cdt.codan.checkers/plugin.xml
+index 08c0b92..cfb0fa9 100644
+--- a/codan/org.eclipse.cdt.codan.checkers/plugin.xml
++++ b/codan/org.eclipse.cdt.codan.checkers/plugin.xml
+@@ -684,5 +684,33 @@
+                messagePattern="%problem.messagePattern.NoDiscard"
+                name="%problem.name.NoDiscard"/>
+       </checker>
++      <checker
++            class="org.eclipse.cdt.codan.internal.checkers.metrics.CyclomaticComplexityChecker"
++            id="org.eclipse.cdt.codan.internal.checkers.metrics.CyclomaticComplexityChecker"
++            name="%checker.name.CyclomaticComplexityChecker">
++         <problem
++               category="org.eclipse.cdt.codan.core.categories.Metrics"
++               defaultSeverity="Warning"
++               description="%problem.description.CyclomaticComplexityExceeded"
++               id="org.eclipse.cdt.codan.internal.checkers.CyclomaticComplexityExceededProblem"
++               markerType="org.eclipse.cdt.codan.core.codanProblem"
++               messagePattern="%problem.messagePattern.CyclomaticComplexityExceeded"
++               name="%problem.name.CyclomaticComplexityExceeded">
++         </problem>
++      </checker>
++      <checker
++            class="org.eclipse.cdt.codan.internal.checkers.metrics.NestedBlockDepthChecker"
++            id="org.eclipse.cdt.codan.internal.checkers.metrics.NestedBlockDepthChecker"
++            name="%checker.name.NestedBlockDepthChecker">
++         <problem
++               category="org.eclipse.cdt.codan.core.categories.Metrics"
++               defaultSeverity="Warning"
++               description="%problem.description.NestedBlockDepthExceeded"
++               id="org.eclipse.cdt.codan.internal.checkers.NestedBlockDepthExceededProblem"
++               markerType="org.eclipse.cdt.codan.core.codanProblem"
++               messagePattern="%problem.messagePattern.NestedBlockDepthExceeded"
++               name="%problem.name.NestedBlockDepthExceeded">
++         </problem>
++      </checker>
+    </extension>
+ </plugin>
+diff --git a/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/CheckersMessages.properties b/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/CheckersMessages.properties
+new file mode 100644
+index 0000000..d978be5
+--- /dev/null
++++ b/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/CheckersMessages.properties
+@@ -0,0 +1,31 @@
++###############################################################################
++# Copyright (c) 2020 Sergey Vladimirov
++#
++# This program and the accompanying materials
++# are made available under the terms of the Eclipse Public License 2.0
++# which accompanies this distribution, and is available at
++# https://www.eclipse.org/legal/epl-2.0/
++#
++# SPDX-License-Identifier: EPL-2.0
++#
++# Contributors:
++#     Sergey Vladimirov - initial API and implementation
++###############################################################################
++
++CyclomaticComplexityChecker_countBooleanAnd=Count boolean 'and' operator as plus one
++CyclomaticComplexityChecker_countBooleanOr=Count boolean 'or' operator as plus one
++CyclomaticComplexityChecker_countCase=Count 'case' and 'default' bodies as plus one (in addition to 'switch')
++CyclomaticComplexityChecker_countDo=Count 'do' as plus one
++CyclomaticComplexityChecker_countFor=Count 'for' as plus one
++CyclomaticComplexityChecker_countIf=Count 'if' as plus one
++CyclomaticComplexityChecker_countSwitch=Count 'switch' as plus one (in addition to 'case' and 'default')
++CyclomaticComplexityChecker_countWhile=Count 'while' as plus one
++CyclomaticComplexityChecker_maxCyclomaticComplexity=Maximum value of function cyclomatic complexity
++
++NestedBlockDepthChecker_countCase=Count 'case' and 'default' bodies as plus one level (in addition to 'switch')
++NestedBlockDepthChecker_countDo=Count 'do' as plus one level
++NestedBlockDepthChecker_countFor=Count 'for' as plus one level
++NestedBlockDepthChecker_countIf=Count 'if' (and 'else') as plus one level
++NestedBlockDepthChecker_countSwitch=Count 'switch' as plus one level (in addition to 'case' and 'default')
++NestedBlockDepthChecker_countWhile=Count 'while' as plus one level
++NestedBlockDepthChecker_maxDepth=Maximum nested block depth
+diff --git a/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/CyclomaticComplexityChecker.java b/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/CyclomaticComplexityChecker.java
+new file mode 100644
+index 0000000..aee01a6
+--- /dev/null
++++ b/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/CyclomaticComplexityChecker.java
+@@ -0,0 +1,133 @@
++/*******************************************************************************
++ * Copyright (c) 2020 Sergey Vladimirov
++ *
++ * This program and the accompanying materials
++ * are made available under the terms of the Eclipse Public License 2.0
++ * which accompanies this distribution, and is available at
++ * https://www.eclipse.org/legal/epl-2.0/
++ *
++ * SPDX-License-Identifier: EPL-2.0
++ *
++ * Contributors:
++ *     Sergey Vladimirov - initial implementation
++ *******************************************************************************/
++package org.eclipse.cdt.codan.internal.checkers.metrics;
++
++import org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker;
++import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
++import org.eclipse.cdt.codan.core.model.ProblemPreference;
++import org.eclipse.cdt.core.dom.ast.ASTVisitor;
++import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
++import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
++import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
++import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
++import org.eclipse.cdt.core.dom.ast.IASTExpression;
++import org.eclipse.cdt.core.dom.ast.IASTForStatement;
++import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
++import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
++import org.eclipse.cdt.core.dom.ast.IASTNode;
++import org.eclipse.cdt.core.dom.ast.IASTStatement;
++import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
++import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
++import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
++
++public class CyclomaticComplexityChecker extends AbstractAstFunctionChecker {
++
++	public static final String ER_CYCLOMATIC_COMPLEXITY_EXCEEDED_ID = "org.eclipse.cdt.codan.internal.checkers.CyclomaticComplexityExceededProblem"; //$NON-NLS-1$
++
++	@ProblemPreference(key = "countBooleanAnd", nls = MetricCheckersMessages.class)
++	private boolean countBooleanAnd = true;
++
++	@ProblemPreference(key = "countBooleanOr", nls = MetricCheckersMessages.class)
++	private boolean countBooleanOr = true;
++
++	@ProblemPreference(key = "countCase", nls = MetricCheckersMessages.class)
++	private boolean countCase = true;
++
++	@ProblemPreference(key = "countDo", nls = MetricCheckersMessages.class)
++	private boolean countDo = true;
++
++	@ProblemPreference(key = "countFor", nls = MetricCheckersMessages.class)
++	private boolean countFor = true;
++
++	@ProblemPreference(key = "countIf", nls = MetricCheckersMessages.class)
++	private boolean countIf = true;
++
++	@ProblemPreference(key = "countSwitch", nls = MetricCheckersMessages.class)
++	private boolean countSwitch = false;
++
++	@ProblemPreference(key = "countWhile", nls = MetricCheckersMessages.class)
++	private boolean countWhile = true;
++
++	@ProblemPreference(key = "maxCyclomaticComplexity", nls = MetricCheckersMessages.class)
++	private int maxCyclomaticComplexity = 11;
++
++	private boolean countAsPlusOne(IASTExpression expression) {
++		if (expression instanceof IASTBinaryExpression) {
++			int operator = ((IASTBinaryExpression) expression).getOperator();
++			return this.countBooleanAnd && operator == IASTBinaryExpression.op_binaryAnd
++					|| this.countBooleanOr && operator == IASTBinaryExpression.op_binaryOr;
++		}
++		return false;
++	}
++
++	private boolean countAsPlusOne(IASTStatement statement) {
++		return (this.countCase && (statement instanceof IASTCaseStatement || statement instanceof IASTDefaultStatement))
++				|| (this.countDo && statement instanceof IASTDoStatement)
++				|| (this.countFor && statement instanceof IASTForStatement)
++				|| (this.countIf && statement instanceof IASTIfStatement)
++				|| (this.countSwitch && statement instanceof IASTSwitchStatement)
++				|| (this.countWhile && statement instanceof IASTWhileStatement);
++	}
++
++	@Override
++	public void initPreferences(IProblemWorkingCopy problem) {
++		super.initPreferences(problem);
++		super.addPreferencesForAnnotatedFields(problem);
++	}
++
++	@Override
++	public void processAst(IASTTranslationUnit ast) {
++		super.loadPreferencesForAnnotatedFields(getProblemById(ER_CYCLOMATIC_COMPLEXITY_EXCEEDED_ID, getFile()));
++		super.processAst(ast);
++	}
++
++	@Override
++	protected void processFunction(IASTFunctionDefinition func) {
++		func.accept(new ASTVisitor(false) {
++
++			private int perFunctionCounter = 1;
++
++			{
++				super.shouldVisitExpressions = true;
++				super.shouldVisitStatements = true;
++			}
++
++			private int checkAndReport(IASTNode node) {
++				if (this.perFunctionCounter > maxCyclomaticComplexity) {
++					// report problem only once per function
++					reportProblem(ER_CYCLOMATIC_COMPLEXITY_EXCEEDED_ID, node, this.perFunctionCounter);
++					return PROCESS_ABORT;
++				}
++
++				return PROCESS_CONTINUE;
++			}
++
++			@Override
++			public int visit(IASTExpression expression) {
++				if (countAsPlusOne(expression)) {
++					this.perFunctionCounter++;
++				}
++				return checkAndReport(expression);
++			}
++
++			@Override
++			public int visit(IASTStatement statement) {
++				if (countAsPlusOne(statement)) {
++					this.perFunctionCounter++;
++				}
++				return checkAndReport(statement);
++			}
++		});
++	}
++}
+diff --git a/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/MetricCheckersMessages.java b/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/MetricCheckersMessages.java
+new file mode 100644
+index 0000000..a66ba75
+--- /dev/null
++++ b/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/MetricCheckersMessages.java
+@@ -0,0 +1,48 @@
++/*******************************************************************************
++ * Copyright (c) 2020 Sergey Vladimirov
++ *
++ * This program and the accompanying materials
++ * are made available under the terms of the Eclipse Public License 2.0
++ * which accompanies this distribution, and is available at
++ * https://www.eclipse.org/legal/epl-2.0/
++ *
++ * SPDX-License-Identifier: EPL-2.0
++ *
++ * Contributors:
++ *     Sergey Vladimirov - initial implementation
++ *******************************************************************************/
++package org.eclipse.cdt.codan.internal.checkers.metrics;
++
++import org.eclipse.osgi.util.NLS;
++
++/**
++ * Messages
++ */
++public class MetricCheckersMessages extends NLS {
++
++	public static String CyclomaticComplexityChecker_countBooleanAnd;
++	public static String CyclomaticComplexityChecker_countBooleanOr;
++	public static String CyclomaticComplexityChecker_countCase;
++	public static String CyclomaticComplexityChecker_countDo;
++	public static String CyclomaticComplexityChecker_countFor;
++	public static String CyclomaticComplexityChecker_countIf;
++	public static String CyclomaticComplexityChecker_countSwitch;
++	public static String CyclomaticComplexityChecker_countWhile;
++	public static String CyclomaticComplexityChecker_maxCyclomaticComplexity;
++
++	public static String NestedBlockDepthChecker_countCase;
++	public static String NestedBlockDepthChecker_countDo;
++	public static String NestedBlockDepthChecker_countFor;
++	public static String NestedBlockDepthChecker_countIf;
++	public static String NestedBlockDepthChecker_countSwitch;
++	public static String NestedBlockDepthChecker_countWhile;
++	public static String NestedBlockDepthChecker_maxDepth;
++
++	static {
++		NLS.initializeMessages(MetricCheckersMessages.class.getName(), MetricCheckersMessages.class);
++	}
++
++	// Do not instantiate
++	private MetricCheckersMessages() {
++	}
++}
+diff --git a/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/NestedBlockDepthChecker.java b/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/NestedBlockDepthChecker.java
+new file mode 100644
+index 0000000..31f4050
+--- /dev/null
++++ b/codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/metrics/NestedBlockDepthChecker.java
+@@ -0,0 +1,121 @@
++/*******************************************************************************
++ * Copyright (c) 2020 Sergey Vladimirov
++ *
++ * This program and the accompanying materials
++ * are made available under the terms of the Eclipse Public License 2.0
++ * which accompanies this distribution, and is available at
++ * https://www.eclipse.org/legal/epl-2.0/
++ *
++ * SPDX-License-Identifier: EPL-2.0
++ *
++ * Contributors:
++ *     Sergey Vladimirov - initial implementation
++ *******************************************************************************/
++package org.eclipse.cdt.codan.internal.checkers.metrics;
++
++import java.util.Map;
++import java.util.WeakHashMap;
++
++import org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker;
++import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
++import org.eclipse.cdt.codan.core.model.ProblemPreference;
++import org.eclipse.cdt.core.dom.ast.ASTVisitor;
++import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
++import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
++import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
++import org.eclipse.cdt.core.dom.ast.IASTForStatement;
++import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
++import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
++import org.eclipse.cdt.core.dom.ast.IASTNode;
++import org.eclipse.cdt.core.dom.ast.IASTStatement;
++import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
++import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
++import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
++
++public class NestedBlockDepthChecker extends AbstractAstFunctionChecker {
++
++	private final class NestedBlockDepthVisitor extends ASTVisitor {
++		private final Map<IASTNode, Integer> depth = new WeakHashMap<>();
++
++		NestedBlockDepthVisitor(IASTFunctionDefinition func) {
++			super(false);
++			super.shouldVisitStatements = true;
++			depth.put(func.getBody(), 0);
++		}
++
++		@Override
++		public int visit(IASTStatement statement) {
++			if (!countAsPlusOne(statement)) {
++				return PROCESS_CONTINUE;
++			}
++
++			IASTNode parent = statement;
++			Integer parentDepth = null;
++			while (parentDepth == null) {
++				parent = parent.getParent();
++				if (parent == null) {
++					return PROCESS_SKIP;
++				}
++				parentDepth = this.depth.get(parent);
++			}
++
++			int currentDepth = parentDepth + 1;
++			if (currentDepth > NestedBlockDepthChecker.this.maxDepth) {
++				reportProblem(ER_NESTED_BLOCK_DEPTH_EXCEEDED_ID, statement, currentDepth);
++				return PROCESS_SKIP;
++			} else {
++				depth.put(statement, currentDepth);
++				return PROCESS_CONTINUE;
++			}
++		}
++	}
++
++	public static final String ER_NESTED_BLOCK_DEPTH_EXCEEDED_ID = "org.eclipse.cdt.codan.internal.checkers.NestedBlockDepthExceededProblem"; //$NON-NLS-1$
++
++	@ProblemPreference(key = "countCase", nls = MetricCheckersMessages.class)
++	private boolean countCase = true;
++
++	@ProblemPreference(key = "countDo", nls = MetricCheckersMessages.class)
++	private boolean countDo = true;
++
++	@ProblemPreference(key = "countFor", nls = MetricCheckersMessages.class)
++	private boolean countFor = true;
++
++	@ProblemPreference(key = "countIf", nls = MetricCheckersMessages.class)
++	private boolean countIf = true;
++
++	@ProblemPreference(key = "countSwitch", nls = MetricCheckersMessages.class)
++	private boolean countSwitch = false;
++
++	@ProblemPreference(key = "countWhile", nls = MetricCheckersMessages.class)
++	private boolean countWhile = true;
++
++	@ProblemPreference(key = "maxDepth", nls = MetricCheckersMessages.class)
++	private int maxDepth = 5;
++
++	private boolean countAsPlusOne(IASTStatement statement) {
++		return (this.countCase && (statement instanceof IASTCaseStatement || statement instanceof IASTDefaultStatement))
++				|| (this.countDo && statement instanceof IASTDoStatement)
++				|| (this.countFor && statement instanceof IASTForStatement)
++				|| (this.countIf && statement instanceof IASTIfStatement)
++				|| (this.countSwitch && statement instanceof IASTSwitchStatement)
++				|| (this.countWhile && statement instanceof IASTWhileStatement);
++	}
++
++	@Override
++	public void initPreferences(IProblemWorkingCopy problem) {
++		super.initPreferences(problem);
++		super.addPreferencesForAnnotatedFields(problem);
++	}
++
++	@Override
++	public void processAst(IASTTranslationUnit ast) {
++		super.loadPreferencesForAnnotatedFields(getProblemById(ER_NESTED_BLOCK_DEPTH_EXCEEDED_ID, getFile()));
++		super.processAst(ast);
++	}
++
++	@Override
++	protected void processFunction(IASTFunctionDefinition func) {
++		func.accept(new NestedBlockDepthVisitor(func));
++	}
++}

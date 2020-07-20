@@ -1,0 +1,133 @@
+diff --git a/codan/org.eclipse.cdt.codan.core/OSGI-INF/l10n/bundle.properties b/codan/org.eclipse.cdt.codan.core/OSGI-INF/l10n/bundle.properties
+index 93d5bf3..deb65d5 100644
+--- a/codan/org.eclipse.cdt.codan.core/OSGI-INF/l10n/bundle.properties
++++ b/codan/org.eclipse.cdt.codan.core/OSGI-INF/l10n/bundle.properties
+@@ -20,6 +20,7 @@
+ category.name.ProgrammingErrors = Potential Programming Problems
+ category.name.CodeStyle = Coding Style
+ category.name.CompilerErrors = Syntax and Semantic Errors
++category.name.Metrics= Code Metrics
+ codeAnalysisCheckersExtensionPoint = Code Analysis Checkers
+ checkerEnablementExtensionPoint = Verification of Checker Enablement
+ 
+diff --git a/codan/org.eclipse.cdt.codan.core/plugin.xml b/codan/org.eclipse.cdt.codan.core/plugin.xml
+index 4d43413..9503f1b 100644
+--- a/codan/org.eclipse.cdt.codan.core/plugin.xml
++++ b/codan/org.eclipse.cdt.codan.core/plugin.xml
+@@ -87,6 +87,10 @@
+       name="%category.name.CompilerErrors"
+       />
+             <category
++      id="org.eclipse.cdt.codan.core.categories.Metrics"
++      name="%category.name.Metrics"
++      />
++            <category
+       id="org.eclipse.cdt.codan.core.categories.Security"
+       name="%category.name.Security"
+       />
+diff --git a/codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/model/AbstractCheckerWithProblemPreferences.java b/codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/model/AbstractCheckerWithProblemPreferences.java
+index ac91b3d..2238a10 100644
+--- a/codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/model/AbstractCheckerWithProblemPreferences.java
++++ b/codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/model/AbstractCheckerWithProblemPreferences.java
+@@ -14,6 +14,10 @@
+  *******************************************************************************/
+ package org.eclipse.cdt.codan.core.model;
+ 
++import java.lang.reflect.Field;
++import java.lang.reflect.Modifier;
++import java.security.AccessController;
++import java.security.PrivilegedAction;
+ import java.util.Collection;
+ import java.util.Iterator;
+ 
+@@ -279,4 +283,65 @@
+ 		}
+ 		return false;
+ 	}
++
++	private static void makeAccessible(Field field) {
++		if (field.isAccessible()) {
++			return;
++		}
++		AccessController.doPrivileged(new PrivilegedAction<Void>() {
++			@Override
++			public Void run() {
++				field.setAccessible(true);
++				return null;
++			}
++		});
++	}
++
++	protected void addPreferencesForAnnotatedFields(IProblemWorkingCopy problem) {
++		String clsName = this.getClass().getName();
++		String clsKey = clsName.substring(clsName.lastIndexOf('.') + 1);
++
++		for (Field field : this.getClass().getDeclaredFields()) {
++			ProblemPreference annotation = field.getAnnotation(ProblemPreference.class);
++			if (annotation == null) {
++				continue;
++			}
++
++			try {
++				makeAccessible(field);
++				Object defaultValue = field.get(this);
++				String labelKey = clsKey + "_" + annotation.key(); //$NON-NLS-1$
++
++				String label = labelKey;
++				Field labelField = annotation.nls().getField(labelKey);
++				if (labelField != null && String.class.isAssignableFrom(labelField.getType())
++						&& Modifier.isStatic(labelField.getModifiers())) {
++					label = (String) labelField.get(null);
++				}
++
++				this.addPreference(problem, annotation.key(), label, defaultValue);
++			} catch (ReflectiveOperationException exc) {
++				throw new RuntimeException(
++						"Unable to process @ProblemPreference for field " + field + ": " + exc.getMessage(), exc); //$NON-NLS-1$ //$NON-NLS-2$
++			}
++		}
++	}
++
++	protected void loadPreferencesForAnnotatedFields(IProblem problem) {
++		for (Field field : this.getClass().getDeclaredFields()) {
++			ProblemPreference annotation = field.getAnnotation(ProblemPreference.class);
++			if (annotation == null) {
++				continue;
++			}
++
++			try {
++				makeAccessible(field);
++				Object preferenceValue = getPreference(problem, annotation.key());
++				field.set(this, preferenceValue);
++			} catch (ReflectiveOperationException exc) {
++				throw new RuntimeException(
++						"Unable to process @ProblemPreference for field " + field + ": " + exc.getMessage(), exc); //$NON-NLS-1$ //$NON-NLS-2$
++			}
++		}
++	}
+ }
+diff --git a/codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/model/ProblemPreference.java b/codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/model/ProblemPreference.java
+new file mode 100644
+index 0000000..7015e98
+--- /dev/null
++++ b/codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/model/ProblemPreference.java
+@@ -0,0 +1,19 @@
++package org.eclipse.cdt.codan.core.model;
++
++import static java.lang.annotation.ElementType.FIELD;
++import static java.lang.annotation.RetentionPolicy.RUNTIME;
++
++import java.lang.annotation.Retention;
++import java.lang.annotation.Target;
++
++import org.eclipse.osgi.util.NLS;
++
++@Retention(RUNTIME)
++@Target(FIELD)
++public @interface ProblemPreference {
++
++	String key();
++
++	Class<? extends NLS> nls();
++
++}

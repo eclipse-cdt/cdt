@@ -27,6 +27,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
+		enableProblems(ER_ID);
 		// Set default preferences.
 		setEmpty(false);
 		setLast(true);

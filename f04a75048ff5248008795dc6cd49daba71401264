@@ -16,6 +16,24 @@
       "revId": "f04a75048ff5248008795dc6cd49daba71401264",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da8063a5_38059ddf",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/ICBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-20T02:54:29Z",
+      "side": 1,
+      "message": "\"I would like to avoid this method in the API\"\nIt\u0027s already in the API, in ICBuildConfiguration2. Do you want us to both collapse the interfaces and change the method at the same time? It seems more risky to rename something that could change its semantics for implementers. The other setActive(IProgressMonitor monitor) also doesn\u0027t seem to be called either so maybe it should be removed instead. I don\u0027t know enough about Core build to make the right call. Who does?",
+      "parentUuid": "cdf4ce21_d7e074ba",
+      "revId": "f04a75048ff5248008795dc6cd49daba71401264",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -31,6 +31,7 @@ import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.ListEditor;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -200,6 +201,12 @@ public class ParametersComposite extends Composite {
 				}
 				case TYPE_FILE: {
 					FileFieldEditor fe = new FileFieldEditor(info.getQualifiedKey(), info.getLabel(),
+							getFieldEditorParent());
+					addField(fe);
+					break;
+				}
+				case TYPE_INTEGER: {
+					IntegerFieldEditor fe = new IntegerFieldEditor(info.getQualifiedKey(), info.getLabel(),
 							getFieldEditorParent());
 					addField(fe);
 					break;

@@ -45,6 +45,9 @@ import org.eclipse.cdt.codan.core.internal.checkers.UsingInHeaderCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.VariableShadowingCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.VariablesCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.VirtualMethodCallCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.metrics.CyclomaticComplexityCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.metrics.LinesOfCodeCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.metrics.NestedBlockDepthCheckerTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.AssignmentInConditionQuickFixTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixBreakTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixCommentTest;
@@ -111,6 +114,10 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(ShallowCopyCheckerTest.class);
 		suite.addTestSuite(MagicNumberCheckerTest.class);
 		suite.addTestSuite(NoDiscardCheckerTest.class);
+		// metric checkers
+		suite.addTestSuite(CyclomaticComplexityCheckerTest.class);
+		suite.addTestSuite(LinesOfCodeCheckerTest.class);
+		suite.addTestSuite(NestedBlockDepthCheckerTest.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes

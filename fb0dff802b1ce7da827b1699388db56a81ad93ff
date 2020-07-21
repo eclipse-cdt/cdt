@@ -22,6 +22,30 @@
       "revId": "fb0dff802b1ce7da827b1699388db56a81ad93ff",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89aece8c_9764dbce",
+        "filename": "core/org.eclipse.cdt.core.win32/src/org/eclipse/cdt/internal/core/win32/WindowsRegistryImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-21T19:19:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec031fc1_1dc95299",
+      "range": {
+        "startLine": 32,
+        "startChar": 3,
+        "endLine": 32,
+        "endChar": 13
+      },
+      "revId": "fb0dff802b1ce7da827b1699388db56a81ad93ff",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

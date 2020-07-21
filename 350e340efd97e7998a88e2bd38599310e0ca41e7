@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "dbbb0c9e_6e0d4209",
+        "filename": "core/org.eclipse.cdt.core.win32/src/org/eclipse/cdt/internal/core/win32/WindowsRegistryImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-21T19:19:32Z",
+      "side": 1,
+      "message": "I think there is nothing more to do here.",
+      "parentUuid": "df4bc863_d75327ce",
+      "range": {
+        "startLine": 80,
+        "startChar": 11,
+        "endLine": 80,
+        "endChar": 43
+      },
+      "revId": "350e340efd97e7998a88e2bd38599310e0ca41e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d807e1be_9fdfee34",
         "filename": "core/org.eclipse.cdt.core.win32/src/org/eclipse/cdt/internal/core/win32/WindowsRegistryImpl.java",
         "patchSetId": 8
@@ -93,6 +117,30 @@
       "revId": "350e340efd97e7998a88e2bd38599310e0ca41e7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcdfd80d_78b6ecd6",
+        "filename": "core/org.eclipse.cdt.core.win32/src/org/eclipse/cdt/internal/core/win32/WindowsRegistryImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-21T19:19:32Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "d807e1be_9fdfee34",
+      "range": {
+        "startLine": 103,
+        "startChar": 11,
+        "endLine": 103,
+        "endChar": 40
+      },
+      "revId": "350e340efd97e7998a88e2bd38599310e0ca41e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

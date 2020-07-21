@@ -684,5 +684,18 @@
                messagePattern="%problem.messagePattern.NoDiscard"
                name="%problem.name.NoDiscard"/>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.OctalNotationChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.OctalNotationChecker">
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+               defaultEnabled="true"
+               defaultSeverity="Warning"
+               description="%problem.description.OctalNotationProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.OctalNotationProblem"
+               messagePattern="%problem.messagePattern.OctalNotationProblem"
+               name="%problem.name.OctalNotationProblem">
+         </problem>
+      </checker>
    </extension>
 </plugin>

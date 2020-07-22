@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c59a04e7_46a9d2c8",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/WindowsRegistry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-22T02:52:40Z",
+      "side": 1,
+      "message": "I added this because I was having failures loading the registry that were being swallowed up by this empty catch. If there was some other reason this was empty, let me know.",
+      "revId": "3ca25348f7253f37d23e6c12719df21df7bce0cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e71dcdd0_644af387",
+        "filename": "core/org.eclipse.cdt.core.win32/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-22T02:52:40Z",
+      "side": 1,
+      "message": "Lock down the ranges (and hope that JNA does close enough to Semantic versioning :-)",
+      "revId": "3ca25348f7253f37d23e6c12719df21df7bce0cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3e31eeee_2bc036d8",
+        "filename": "core/org.eclipse.cdt.core.win32/src/org/eclipse/cdt/internal/core/win32/WindowsRegistryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-22T02:52:40Z",
+      "side": 1,
+      "message": "At some point some new methods were added and we needed to choose one as they were not distinguishable with all nulls.",
+      "range": {
+        "startLine": 98,
+        "startChar": 12,
+        "endLine": 98,
+        "endChar": 22
+      },
+      "revId": "3ca25348f7253f37d23e6c12719df21df7bce0cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f0b0ea73_92efb1e4",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-07-22T02:52:40Z",
+      "side": 1,
+      "message": "These changes should not be submitted.",
+      "revId": "3ca25348f7253f37d23e6c12719df21df7bce0cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

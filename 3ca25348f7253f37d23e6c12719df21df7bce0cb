@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8d7f9bb0_5fb06ad2",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/WindowsRegistry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-07-22T06:09:31Z",
+      "side": 1,
+      "message": "You\u0027ll get a stack-trace on every non-windows platform, but I guess a simple if-statement that checks that we are on Windows should work to see the errors there.",
+      "parentUuid": "c59a04e7_46a9d2c8",
+      "revId": "3ca25348f7253f37d23e6c12719df21df7bce0cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e71dcdd0_644af387",
         "filename": "core/org.eclipse.cdt.core.win32/META-INF/MANIFEST.MF",
         "patchSetId": 1

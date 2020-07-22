@@ -19,7 +19,6 @@ import java.util.Objects;
 import org.eclipse.cdt.core.envvar.IEnvironmentContributor;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.core.runtime.IPath;
 
 public class CDefaultBuildData extends CBuildData {

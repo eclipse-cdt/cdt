@@ -24,7 +24,6 @@ import java.util.Objects;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.core.runtime.IPath;

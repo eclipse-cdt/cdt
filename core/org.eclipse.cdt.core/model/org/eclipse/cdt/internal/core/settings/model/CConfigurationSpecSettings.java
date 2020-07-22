@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
 import org.eclipse.cdt.internal.core.CExtensionInfo;
 import org.eclipse.cdt.internal.core.COwner;

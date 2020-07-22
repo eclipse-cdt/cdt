@@ -20,7 +20,6 @@ import java.util.Objects;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.core.runtime.IPath;
 
 public class CDefaultFolderData extends CFolderData {

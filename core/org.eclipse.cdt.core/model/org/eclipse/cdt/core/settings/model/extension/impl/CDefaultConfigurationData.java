@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;

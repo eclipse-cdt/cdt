@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.settings.model;
 
 import java.util.Objects;
 
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;

@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
 import org.eclipse.cdt.internal.core.CExtensionInfo;
 import org.eclipse.cdt.internal.core.COwner;
@@ -520,14 +519,14 @@ public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageS
 				fExternalSettingsProviderMap = new HashMap();
 			return fExternalSettingsProviderMap;
 		}
-
+	
 		public ExternalSettingInfo getExternalSettingsProviderInfo(String id){
 			Map map = getExternalSettingsProviderMap(false);
 			if(map != null)
 				return (ExternalSettingInfo)map.get(id);
 			return null;
 		}
-
+	
 		public void setExternalSettingsProviderInfo(ExternalSettingInfo info){
 			getExternalSettingsProviderMap(true).put(info.fProvider.getId(), info.fProvider);
 		}

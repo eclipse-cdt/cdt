@@ -35,6 +35,7 @@ public abstract class WindowsRegistry {
 			try {
 				registry = CNativePlugin.getDefault().getWindowsRegistry();
 			} catch (CoreException e) {
+				CNativePlugin.log("Failed to load WindowsRegistry", e); //$NON-NLS-1$
 			}
 		}
 

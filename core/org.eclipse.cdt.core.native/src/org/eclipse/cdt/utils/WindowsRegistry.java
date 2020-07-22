@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @author DSchaefer
@@ -33,14 +34,19 @@ public abstract class WindowsRegistry {
 	}
 
 	public static WindowsRegistry getRegistry() {
-		if (registry == null) {
-			try {
-				registry = CNativePlugin.getDefault().getWindowsRegistry();
-			} catch (CoreException e) {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			if (registry == null) {
+				try {
+					registry = CNativePlugin.getDefault().getWindowsRegistry();
+				} catch (CoreException e) {
+					CNativePlugin.log("Failed to load WindowsRegistry", e); //$NON-NLS-1$
+				}
 			}
+			return registry;
+		} else {
+			return null;
 		}
 
-		return registry;
 	}
 
 	/**

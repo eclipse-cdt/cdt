@@ -47,7 +47,7 @@
 					<plugin>
 						<groupId>org.eclipse.tycho.extras</groupId>
 						<artifactId>tycho-eclipserun-plugin</artifactId>
-						<version>${tycho-extras-version}</version>
+						<version>${tycho-version}</version>
 						<configuration>
 							<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile build-index.xml build.index</appArgLine>
 							<dependencies>

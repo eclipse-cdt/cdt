@@ -30,8 +30,7 @@
 			 runs with. It may work with older versions, but this is not
 			 tested or supported. -->
 		<required-maven-version>3.6.3</required-maven-version>
-		<tycho-version>1.6.0</tycho-version>
-		<tycho-extras-version>1.6.0</tycho-extras-version>
+		<tycho-version>1.7.0</tycho-version>
 		<cbi-plugins.version>1.1.7</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
@@ -423,7 +422,7 @@
 					<plugin>
 						<groupId>org.eclipse.tycho.extras</groupId>
 						<artifactId>tycho-source-feature-plugin</artifactId>
-						<version>${tycho-extras-version}</version>
+						<version>${tycho-version}</version>
 						<executions>
 							<execution>
 								<id>source-feature</id>
@@ -563,7 +562,7 @@
 					<plugin>
 						<groupId>org.eclipse.tycho.extras</groupId>
 						<artifactId>tycho-pack200a-plugin</artifactId>
-						<version>${tycho-extras-version}</version>
+						<version>${tycho-version}</version>
 						<executions>
 							<execution>
 								<id>pack200-normalize</id>
@@ -591,7 +590,7 @@
 					<plugin>
 						<groupId>org.eclipse.tycho.extras</groupId>
 						<artifactId>tycho-pack200b-plugin</artifactId>
-						<version>${tycho-extras-version}</version>
+						<version>${tycho-version}</version>
 						<executions>
 							<execution>
 								<id>pack200-pack</id>
@@ -711,7 +710,7 @@
 			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-source-feature-plugin</artifactId>
-				<version>${tycho-extras-version}</version>
+				<version>${tycho-version}</version>
 				<configuration>
 					<includeBinaryFeature>false</includeBinaryFeature>
 				</configuration>
@@ -847,12 +846,12 @@
 						<dependency>
 							<groupId>org.eclipse.tycho.extras</groupId>
 							<artifactId>tycho-buildtimestamp-jgit</artifactId>
-							<version>${tycho-extras-version}</version>
+							<version>${tycho-version}</version>
 						</dependency>
 						<dependency>
 							<groupId>org.eclipse.tycho.extras</groupId>
 							<artifactId>tycho-sourceref-jgit</artifactId>
-							<version>${tycho-extras-version}</version>
+							<version>${tycho-version}</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -961,7 +960,7 @@
 				<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-eclipserun-plugin</artifactId>
-				<version>${tycho-extras-version}</version>
+				<version>${tycho-version}</version>
 				<configuration>
 					<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile customBuildCallbacks.xml build.index</appArgLine>
 					<dependencies>

@@ -17,6 +17,7 @@ import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.utils.WindowsRegistry;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Advapi32;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Advapi32Util.EnumKey;
@@ -94,7 +95,7 @@ public class WindowsRegistryImpl extends WindowsRegistry {
 				char[] lpValueName = new char[Advapi32.MAX_KEY_LENGTH];
 				IntByReference lpcchValueName = new IntByReference(Advapi32.MAX_KEY_LENGTH);
 				int rc = Advapi32.INSTANCE.RegEnumValue(phkKey.getValue(), index, lpValueName, lpcchValueName, null,
-						null, null, null);
+						null, (Pointer) null, null);
 
 				if (rc != W32Errors.ERROR_SUCCESS) {
 					throw new Win32Exception(rc);

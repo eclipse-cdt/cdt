@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="88">
+<target name="cdt" sequenceNumber="89">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
@@ -72,6 +72,9 @@
 <unit id="org.junit.jupiter.api" version="0.0.0"/>
 <unit id="org.mockito" version="0.0.0"/>
 <unit id="org.slf4j.impl.log4j12" version="0.0.0"/>
+<!-- Once Bug 565796 is resolved, this extra inclusions for JNA can be removed as they should come from Eclipse Platform -->
+<unit id="com.sun.jna" version="5.6.0.v20200716-0148"/>
+<unit id="com.sun.jna.platform" version="5.6.0.v20200722-0209"/>
 <repository location="https://download.eclipse.org/tools/orbit/downloads/2020-09/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">

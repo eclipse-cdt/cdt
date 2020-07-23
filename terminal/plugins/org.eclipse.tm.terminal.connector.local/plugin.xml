@@ -118,6 +118,49 @@
             </visibleWhen>
          </command>
       </menuContribution>
+
+      <!-- Bndtools Explorer "Show In" contribution -->
+      <menuContribution locationURI="popup:org.eclipse.tm.terminal.view.ui.BndtoolsExplorer.menu.showIn?after=additions">
+         <command
+               commandId="org.eclipse.tm.terminal.connector.local.command.launch"
+               id="org.eclipse.tm.terminal.connector.local.commands.showin.launch"
+               label="%menu.showIn.localterminal.label"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <or>
+	              <with variable="selection">
+	                 <iterate operator="and" ifEmpty="false">
+	                    <adapt type="org.eclipse.core.resources.IResource">
+	                      <not>
+	                         <!-- The JDT Project Explorer contributions are adding the "Navigate -> Show In" quick menu.
+	                              See o.e.jdt.internal.ui.navigator.JavaNavigatorActionProvider -->
+	                         <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.jdt.core.javanature" />
+	                      </not> 
+	                    </adapt>
+	                 </iterate>
+	              </with>
+                  <and>
+		              <with variable="selection">
+		                 <iterate operator="and" ifEmpty="false">
+		                    <adapt type="org.eclipse.core.resources.IResource">
+		                         <!-- The JDT Project Explorer contributions are adding the "Navigate -> Show In" quick menu.
+		                              See o.e.jdt.internal.ui.navigator.JavaNavigatorActionProvider -->
+		                         <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.jdt.core.javanature" />
+		                    </adapt>
+		                 </iterate>
+		              </with>
+	                  <with
+	                        variable="org.eclipse.tm.terminal.external.executable.configured">
+	                     <equals
+	                           value="TRUE">
+	                     </equals>
+	                  </with>
+                  </and>
+               </or>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
 
 <!-- Command contributions -->

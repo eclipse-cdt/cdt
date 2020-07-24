@@ -121,7 +121,7 @@ Example file &lt;code&gt;help_content_extension.xml&lt;/code&gt;:
 &lt;pre&gt;
 &lt;contentExtension&gt;
   &lt;contribution content=&quot;doc/compiler.xhtml#lsp&quot;
-    path=&quot;/org.eclipse.cdt.cmake.is.core.doc/doc/html/languageSettingsProviders.xhtml#extra_detection_participant_list&quot;/&gt;
+    path=&quot;/org.eclipse.cdt.cmake.is.core.doc/doc/html/supported-compilers.xhtml#extra_detection_participant_list&quot;/&gt;
   &lt;contribution content=&quot;doc/compiler.xhtml#builtins&quot;
     path=&quot;/org.eclipse.cdt.cmake.is.core.doc/doc/html/builtins-detection.xhtml#extra_detection_participant_builtins_list&quot;/&gt;
 &lt;/contentExtension&gt;

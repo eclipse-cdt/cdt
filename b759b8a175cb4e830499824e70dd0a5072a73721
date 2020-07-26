@@ -16,6 +16,24 @@
       "revId": "b759b8a175cb4e830499824e70dd0a5072a73721",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7bf4e420_28b03edf",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ICElementVisitor2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-26T20:10:13Z",
+      "side": 1,
+      "message": "I think adding a default method here is a perfect fit!",
+      "parentUuid": "b98dbb02_827c695a",
+      "revId": "b759b8a175cb4e830499824e70dd0a5072a73721",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

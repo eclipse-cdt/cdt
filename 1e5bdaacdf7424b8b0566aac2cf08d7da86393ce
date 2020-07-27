@@ -16,6 +16,24 @@
       "revId": "1e5bdaacdf7424b8b0566aac2cf08d7da86393ce",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19473511_15eb6a83",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-27T04:28:50Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "f6b972e1_7d39ca23",
+      "revId": "1e5bdaacdf7424b8b0566aac2cf08d7da86393ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

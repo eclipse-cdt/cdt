@@ -135,7 +135,6 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 */
 	protected static abstract class AbstractOptionParser {
 		private final int kind;
-		private final String patternStr;
 		private final Pattern pattern;
 		private final String nameExpression;
 		private final String valueExpression;
@@ -143,25 +142,28 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 		private String parsedName;
 		private String parsedValue;
+		private final Pattern removeExtraFileNamePattern;
 
 		/**
 		 * Constructor.
 		 *
 		 * @param kind - kind of language settings entries being parsed by the parser.
 		 * @param pattern - regular expression pattern being parsed by the parser.
-		 * @param nameExpression - capturing group expression defining name of an entry.
-		 * @param valueExpression - capturing group expression defining value of an entry.
+		 * 					The pattern may be embedded into another pattern for intermediate
+		 * 					parsing so it is best to avoid using numbered group back-reference e.g. \1
+		 * @param nameExpression - capturing group expression (numbered or named) defining name of an entry.
+		 * @param valueExpression - capturing group expression (numbered or named) defining value of an entry.
 		 * @param extraFlag - extra-flag to add while creating language settings entry.
 		 */
 		public AbstractOptionParser(int kind, String pattern, String nameExpression, String valueExpression,
 				int extraFlag) {
 			this.kind = kind;
-			this.patternStr = pattern;
 			this.nameExpression = nameExpression;
 			this.valueExpression = valueExpression;
 			this.extraFlag = extraFlag;
 
 			this.pattern = Pattern.compile(pattern);
+			this.removeExtraFileNamePattern = Pattern.compile("(" + pattern + ").*"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		/**
@@ -213,8 +215,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		 */
 		public boolean parseOption(String optionString) {
 			// get rid of extra text at the end (for example file name could be confused for an argument)
-			@SuppressWarnings("nls")
-			String option = optionString.replaceFirst("(" + patternStr + ").*", "$1");
+			Matcher matcherReplaceFirst = removeExtraFileNamePattern.matcher(optionString);
+			String option = optionString;
+			if (!matcherReplaceFirst.matches()) {
+				return false;
+			}
+			option = matcherReplaceFirst.group(1);
 
 			Matcher matcher = pattern.matcher(option);
 			boolean isMatch = matcher.matches();

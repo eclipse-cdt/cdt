@@ -418,8 +418,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 
 		@Override
 		public void run() {
-			fPCLastAddress = getTopAddress();
-			refreshView(10);
+			refresh();
 		}
 	}
 
@@ -3274,5 +3273,13 @@ public abstract class DisassemblyPart extends WorkbenchPart
 			bottomAddress = fEndAddress.subtract(BigInteger.ONE);
 		}
 		return bottomAddress;
+	}
+
+	@Override
+	public void refresh() {
+		asyncExec(() -> {
+			fPCLastAddress = getTopAddress();
+			refreshView(10);
+		});
 	}
 }

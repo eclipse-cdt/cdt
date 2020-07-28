@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *.    Aravinth Sundaram - Changed getOutput(limitBytes)
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 

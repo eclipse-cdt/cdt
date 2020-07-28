@@ -3275,4 +3275,9 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		}
 		return bottomAddress;
 	}
+
+	@Override
+	public void refresh() {
+		asyncExec(() -> refreshView(0));
+	}
 }

@@ -105,4 +105,9 @@ public interface IDisassemblyPartCallback {
 
 	/** Thread-safe */
 	void asyncExec(Runnable runnable);
+
+	/**
+	 * Refreshes associated Disassembly part.
+	 */
+	void refresh();
 }

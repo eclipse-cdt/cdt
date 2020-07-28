@@ -81,24 +81,8 @@ public class Objdump {
 	 */
 	public byte[] getOutput(int limitBytes) throws IOException {
 		Process objdump = ProcessFactory.getFactory().exec(args);
-		try {
-			StringBuilder buffer = new StringBuilder();
-			BufferedReader stdout = new BufferedReader(new InputStreamReader(objdump.getInputStream()));
-			char[] buf = new char[4096];
-			int len;
-			while ((len = stdout.read(buf, 0, buf.length)) != -1) {
-				if (limitBytes > 0 && buffer.length() + len >= limitBytes) {
-					buffer.append(buf, 0, Math.min(len, limitBytes - buffer.length()));
-					break;
-				}
-				buffer.append(buf, 0, len);
-			}
-			try {
-				stdout.close();
-			} catch (IOException e) {
-				// ignore that
-			}
-			return buffer.toString().getBytes();
+		try (InputStream in = objdump.getInputStream()) {
+        		return limitBytes > 0 ? in.readNBytes(limitBytes) : in.readAllBytes();
 		} finally {
 			objdump.destroy();
 		}

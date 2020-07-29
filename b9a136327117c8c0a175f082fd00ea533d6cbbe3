@@ -16,6 +16,24 @@
       "revId": "b9a136327117c8c0a175f082fd00ea533d6cbbe3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72fe09cb_6973f5fc",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-07-29T16:43:29Z",
+      "side": 1,
+      "message": "Sorry, I don\u0027t quite understand. The field is in ExcludeSourceFilesVisitor and it\u0027s initialized in ExcludeSourceFilesVisitor and it\u0027s modified in ExcludeSourceFilesVisitor (leave method).\nI did notice I forgot to remove the null check when I moved the block of code",
+      "parentUuid": "627fce3b_897e7889",
+      "revId": "b9a136327117c8c0a175f082fd00ea533d6cbbe3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3adb9e41_2e5f6396",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/disassembly/dsf/IDisassemblyPartCallback.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-29T09:51:18Z",
+      "side": 1,
+      "message": "Let\u0027s inform that the implementation is thread-safe",
+      "revId": "eda5d5e693740b8834f55e3c3688f9f4172e5e46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13517bc7_cfad0e45",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/disassembly/dsf/IDisassemblyPartCallback.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-29T09:51:18Z",
+      "side": 1,
+      "message": "Would it be reasonable to add delay parameter here? May be not, I just do not have usage examples at the moment.",
+      "revId": "eda5d5e693740b8834f55e3c3688f9f4172e5e46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a46d6fe_e2222b1c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyPart.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3281,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-29T09:51:18Z",
+      "side": 1,
+      "message": "What was the reason to make it different from ActionRefreshView::run?",
+      "revId": "eda5d5e693740b8834f55e3c3688f9f4172e5e46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

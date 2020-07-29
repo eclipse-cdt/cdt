@@ -34,6 +34,24 @@
       "revId": "b9a136327117c8c0a175f082fd00ea533d6cbbe3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "35da6e1e_f30b6cc5",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-29T17:01:34Z",
+      "side": 1,
+      "message": "My bad. Due to the level of nesting I misplaced the initialization. \nPlease consider my comment as generic concern regarding the style that was here before your change.",
+      "parentUuid": "72fe09cb_6973f5fc",
+      "revId": "b9a136327117c8c0a175f082fd00ea533d6cbbe3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

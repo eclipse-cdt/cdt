@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "627fce3b_897e7889",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-07-29T10:03:05Z",
+      "side": 1,
+      "message": "We have a mutable array field with null value that is initialized from the constructor of the inner type. Something is wrong with this design. Can we have a number of simple immutable objects instead?",
+      "revId": "b9a136327117c8c0a175f082fd00ea533d6cbbe3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

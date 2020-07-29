@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "95f47087_677a1211",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/disassembly/dsf/IDisassemblyPartCallback.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 269080
+      },
+      "writtenOn": "2020-07-29T13:31:30Z",
+      "side": 1,
+      "message": "Yes, I checked it later and it takes care of going to PC, thanks",
+      "parentUuid": "6434f2f0_fcbef96f",
+      "revId": "eda5d5e693740b8834f55e3c3688f9f4172e5e46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4a46d6fe_e2222b1c",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyPart.java",
         "patchSetId": 3
@@ -119,6 +137,24 @@
       "side": 1,
       "message": "Sorry, I was not precise enough. \nWhat I can see in ActionRefreshViewer::run is\n\n```\n\t\t\tfPCLastAddress \u003d getTopAddress();\n\t\t\trefreshView(10);\n```\n\nDo you think we can extract this code to a method and literally reuse for the introduced `refresh` call?",
       "parentUuid": "d685a841_e782e275",
+      "revId": "eda5d5e693740b8834f55e3c3688f9f4172e5e46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "633d2b86_2ba2818d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyPart.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3281,
+      "author": {
+        "id": 269080
+      },
+      "writtenOn": "2020-07-29T13:31:30Z",
+      "side": 1,
+      "message": "good idea, will do so",
+      "parentUuid": "e1914268_0ff7f4e6",
       "revId": "eda5d5e693740b8834f55e3c3688f9f4172e5e46",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

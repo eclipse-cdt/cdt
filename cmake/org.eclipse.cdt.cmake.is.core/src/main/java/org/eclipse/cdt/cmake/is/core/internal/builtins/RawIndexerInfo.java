@@ -40,6 +40,8 @@ public class RawIndexerInfo implements IRawIndexerInfo, IRawIndexerInfoCollector
 	private final List<String> undefines = new ArrayList<>();
 	private final List<String> includePaths = new ArrayList<>();
 	private final List<String> systemIncludePaths = new ArrayList<>();
+	private final List<String> macroFiles = new ArrayList<>(0);
+	private final List<String> includeFiles = new ArrayList<>(0);
 
 	@Override
 	public void addDefine(String name, String value) {
@@ -88,6 +90,22 @@ public class RawIndexerInfo implements IRawIndexerInfo, IRawIndexerInfoCollector
 	}
 
 	@Override
+	public void addMacroFile(String path) {
+		Objects.requireNonNull(path);
+		if (DEBUG)
+			System.out.printf("    Added macro file: %s%n", path); //$NON-NLS-1$
+		macroFiles.add(path);
+	}
+
+	@Override
+	public void addIncludeFile(String path) {
+		Objects.requireNonNull(path);
+		if (DEBUG)
+			System.out.printf("    Added include file: %s%n", path); //$NON-NLS-1$
+		includeFiles.add(path);
+	}
+
+	@Override
 	public Map<String, String> getDefines() {
 		return Collections.unmodifiableMap(defines);
 	}
@@ -105,5 +123,15 @@ public class RawIndexerInfo implements IRawIndexerInfo, IRawIndexerInfoCollector
 	@Override
 	public List<String> getSystemIncludePaths() {
 		return Collections.unmodifiableList(systemIncludePaths);
+	}
+
+	@Override
+	public List<String> getMacroFiles() {
+		return Collections.unmodifiableList(macroFiles);
+	}
+
+	@Override
+	public List<String> getIncludeFiles() {
+		return Collections.unmodifiableList(includeFiles);
 	}
 }

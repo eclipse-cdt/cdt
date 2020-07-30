@@ -93,5 +93,16 @@ public class NvccOutputProcessorTest {
 			Objects.requireNonNull(path);
 			systemIncludePaths.add(path);
 		}
+
+		@Override
+		public void addMacroFile(String path) {
+			// nvcc does not have a corresponding option
+		}
+
+		@Override
+		public void addIncludeFile(String path) {
+			// nvcc does not have a corresponding option
+
+		}
 	}
 }

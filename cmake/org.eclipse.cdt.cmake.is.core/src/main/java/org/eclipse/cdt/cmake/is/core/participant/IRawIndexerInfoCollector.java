@@ -45,10 +45,25 @@ public interface IRawIndexerInfoCollector {
 	void addIncludePath(String path);
 
 	/**
+	 * Adds the name of a file that will be pre-processed by the compiler before parsing the source-file in
+	 * order to populate the preprocessor macro-dictionary.
+	 *
+	 * @param path the name of the file
+	 */
+	void addSystemIncludePath(String path);
+
+	/**
+	 * Adds the name of a file that will be pre-processed by the compiler as if
+	 * an {@code #include "file"} directive appeared as the first line of the source file.
+	 *
+	 * @param path the name of the file
+	 */
+	void addMacroFile(String path);
+
+	/**
 	 * Adds a preprocessor system include path.
 	 *
 	 * @param path the name of the include directory
 	 */
-	void addSystemIncludePath(String path);
-
+	void addIncludeFile(String path);
 }

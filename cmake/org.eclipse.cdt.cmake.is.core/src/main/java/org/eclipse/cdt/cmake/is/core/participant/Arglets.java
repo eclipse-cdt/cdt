@@ -210,6 +210,56 @@ public final class Arglets {
 		}
 	}
 
+	/**
+	 * A tool argument parser capable to parse a C-compiler include file argument.
+	 */
+	public static abstract class IncludeFileGeneric {
+		/**
+		 * @param cwd
+		 *          the current working directory of the compiler at its invocation
+		 */
+		protected final int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine,
+				NameOptionMatcher[] optionMatchers) {
+			for (NameOptionMatcher oMatcher : optionMatchers) {
+				final Matcher matcher = oMatcher.matcher;
+
+				matcher.reset(argsLine);
+				if (matcher.lookingAt()) {
+					String name = matcher.group(oMatcher.nameGroup);
+					resultCollector.addIncludeFile(name);
+					final int end = matcher.end();
+					return end;
+				}
+			}
+			return 0;// no input consumed
+		}
+	}
+
+	/**
+	 * A tool argument parser capable to parse a C-compiler macros file argument.
+	 */
+	public static abstract class MacrosFileGeneric {
+		/**
+		 * @param cwd
+		 *          the current working directory of the compiler at its invocation
+		 */
+		protected final int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine,
+				NameOptionMatcher[] optionMatchers) {
+			for (NameOptionMatcher oMatcher : optionMatchers) {
+				final Matcher matcher = oMatcher.matcher;
+
+				matcher.reset(argsLine);
+				if (matcher.lookingAt()) {
+					String name = matcher.group(oMatcher.nameGroup);
+					resultCollector.addMacroFile(name);
+					final int end = matcher.end();
+					return end;
+				}
+			}
+			return 0;// no input consumed
+		}
+	}
+
 	////////////////////////////////////////////////////////////////////
 	// POSIX compatible option parsers
 	////////////////////////////////////////////////////////////////////
@@ -364,6 +414,44 @@ public final class Arglets {
 				}
 			}
 			return 0;// no input consumed
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////
+	/**
+	 * A tool argument parser capable to parse a GCC include file argument {@code -include <file>}.
+	 */
+	public static class IncludeFile_GCC extends IncludeFileGeneric implements IArglet {
+		@SuppressWarnings("nls")
+		private static final NameOptionMatcher[] optionMatchers = {
+				/* "-include=" quoted directory */
+				new NameOptionMatcher("-include" + REGEX_INCLUDEPATH_QUOTED_DIR, 2),
+				/* "-include=" unquoted directory */
+				new NameOptionMatcher("-include" + REGEX_INCLUDEPATH_UNQUOTED_DIR, 1), };
+
+		@Override
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(resultCollector, cwd, argsLine, optionMatchers);
+		}
+	}
+
+	/**
+	 * A tool argument parser capable to parse a GCC macros file argument {@code -imacros <file>}.
+	 */
+	public static class MacrosFile_GCC extends MacrosFileGeneric implements IArglet {
+		@SuppressWarnings("nls")
+		private static final NameOptionMatcher[] optionMatchers = {
+				/* "-include=" quoted directory */
+				new NameOptionMatcher("-imacros" + REGEX_INCLUDEPATH_QUOTED_DIR, 2),
+				/* "-include=" unquoted directory */
+				new NameOptionMatcher("-imacros" + REGEX_INCLUDEPATH_UNQUOTED_DIR, 1), };
+
+		/*-
+		 * @see de.marw.cmake.cdt.lsp.IArglet#processArgs(java.lang.String)
+		 */
+		@Override
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(resultCollector, cwd, argsLine, optionMatchers);
 		}
 	}
 

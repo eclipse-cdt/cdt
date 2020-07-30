@@ -25,8 +25,8 @@ import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant
 import org.eclipse.cdt.cmake.is.core.participant.IArglet;
 import org.eclipse.cdt.cmake.is.core.participant.IToolCommandlineParser;
 import org.eclipse.cdt.cmake.is.core.participant.IToolDetectionParticipant;
-import org.eclipse.cdt.cmake.is.core.participant.ResponseFileArglets;
 import org.eclipse.cdt.cmake.is.core.participant.IToolDetectionParticipant.MatchResult;
+import org.eclipse.cdt.cmake.is.core.participant.ResponseFileArglets;
 import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -63,7 +63,8 @@ public final class ParserDetection {
 			final IArglet[] gcc_args = { new Arglets.IncludePath_C_POSIX(), new Arglets.MacroDefine_C_POSIX(),
 					new Arglets.MacroUndefine_C_POSIX(),
 					// not defined by POSIX, but does not harm..
-					new Arglets.SystemIncludePath_C(), new Arglets.LangStd_GCC(), new Arglets.Sysroot_GCC() };
+					new Arglets.SystemIncludePath_C(), new Arglets.LangStd_GCC(), new Arglets.Sysroot_GCC(),
+					new Arglets.IncludeFile_GCC(), new Arglets.MacrosFile_GCC() };
 
 			IBuiltinsDetectionBehavior btbGccMaybee = new MaybeGccBuiltinDetectionBehavior();
 			IBuiltinsDetectionBehavior btbGcc = new GccBuiltinDetectionBehavior();

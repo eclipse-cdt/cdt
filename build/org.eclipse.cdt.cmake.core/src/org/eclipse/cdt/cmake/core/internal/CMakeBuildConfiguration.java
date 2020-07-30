@@ -389,12 +389,13 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 		@Override
 		public void acceptSourceFileInfo(String sourceFileName, List<String> systemIncludePaths,
-				Map<String, String> definedSymbols, List<String> includePaths) {
+				Map<String, String> definedSymbols, List<String> includePaths, List<String> macroFiles,
+				List<String> includeFiles) {
 			IFile file = getFileForCMakePath(sourceFileName);
 			if (file != null) {
 				ExtendedScannerInfo info = new ExtendedScannerInfo(definedSymbols,
-						systemIncludePaths.stream().toArray(String[]::new), null, null,
-						includePaths.stream().toArray(String[]::new));
+						systemIncludePaths.stream().toArray(String[]::new), macroFiles.stream().toArray(String[]::new),
+						includeFiles.stream().toArray(String[]::new), includePaths.stream().toArray(String[]::new));
 				infoPerResource.put(file, info);
 				haveUpdates = true;
 			}

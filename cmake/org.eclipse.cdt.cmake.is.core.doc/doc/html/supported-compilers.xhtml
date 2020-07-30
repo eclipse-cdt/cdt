@@ -27,6 +27,8 @@ th, td {
 	<th>Macros</th>
 	<th>Include directories</th>
 	<th>System include<br/>directories</th>
+    <th>Macros file</th>
+    <th>Include file</th>
 	<th>Compiler executables</th>
 	</tr>
 	</thead>
@@ -38,6 +40,8 @@ th, td {
 	<td>Yes</td>
 	<td>Yes</td>
 	<td>Yes</td>
+    <td>Yes (-imacros)</td>
+    <td>Yes (-include)</td>
 	<td>cc, cc.exe, gcc, gcc.exe, <a href="#fw-gcc-cross">".+-gcc"</a>, <a href="#fw-gcc-cross">".+-gcc.exe"</a></td>
 	</tr>
 	<tr>
@@ -47,6 +51,8 @@ th, td {
 	<td>Yes</td>
 	<td>Yes</td>
 	<td>Yes</td>
+    <td>Yes (-imacros)</td>
+    <td>Yes (-include)</td>
 	<td>c++, c++.exe, g++, g++.exe, <a href="#fw-g++-cross">".+-g\+\+"</a>, <a href="#fw-g++-cross">".+-g\+\+.exe"</a>
 	  , <a href="#fw-g++-cross">".+-c\+\+"</a>, <a href="#fw-g++-cross">".+-c\+\+.exe"</a></td>
 	</tr>
@@ -57,6 +63,8 @@ th, td {
 	<td>Yes</td>
 	<td>Yes</td>
 	<td>Yes</td>
+    <td>N/A</td>
+    <td>Yes (-include)</td>
 	<td>clang, clang.exe</td>
 	</tr>
 	<tr>
@@ -66,6 +74,8 @@ th, td {
 	<td>Yes</td>
 	<td>Yes</td>
 	<td>Yes</td>
+    <td>N/A</td>
+    <td>Yes (-include)</td>
 	<td>clang++, clang++.exe</td>
 	</tr>
 	<tr>
@@ -75,6 +85,8 @@ th, td {
 	<td>Yes</td>
 	<td>Yes</td>
 	<td>No</td>
+    <td>No</td>
+    <td>No</td>
 	<td>cc, cc.exe</td>
 	</tr>
 	<tr>
@@ -84,6 +96,8 @@ th, td {
 	<td>Yes</td>
 	<td>Yes</td>
 	<td>No</td>
+    <td>No</td>
+    <td>No</td>
 	<td>c++, c++.exe</td>
 	</tr>
     </tbody>

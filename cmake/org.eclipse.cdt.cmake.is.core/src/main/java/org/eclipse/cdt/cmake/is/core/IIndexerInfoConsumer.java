@@ -41,9 +41,16 @@ public interface IIndexerInfoConsumer {
 	 * 		the preprocessor macros used to compile the given source file
 	 * @param includePaths
 	 * 		the local include paths ({@code #include "..."}) used to compile the given source file
+	 * @param macroFiles
+	 * 		the names of files that will be pre-processed by the compiler before parsing the source-file in
+	 *		order to populate the preprocessor macro-dictionary
+	 * @param includeFiles
+	 * 		the names of files that will be pre-processed by the compiler as if
+	 * 		an {@code #include "file"} directive appeared as the first line of the source file
 	 */
 	void acceptSourceFileInfo(String sourceFileName, List<String> systemIncludePaths,
-			Map<String, String> definedSymbols, List<String> includePaths);
+			Map<String, String> definedSymbols, List<String> includePaths, List<String> macroFiles,
+			List<String> includeFiles);
 
 	/**
 	 * Notifies this consumer that no further calls to {link {@link #acceptSourceFileInfo(String, List, Map, List)} will

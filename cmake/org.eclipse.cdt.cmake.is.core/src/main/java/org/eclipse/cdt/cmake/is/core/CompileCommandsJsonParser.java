@@ -337,10 +337,12 @@ public class CompileCommandsJsonParser {
 				.concat(fileResult.getSystemIncludePaths().stream(),
 						builtinDetectorsResult.getSystemIncludePaths().stream())
 				.map(stringPooler).collect(Collectors.toList());
+		List<String> macroFiles = fileResult.getMacroFiles();
+		List<String> includeFiles = fileResult.getIncludeFiles();
 
 		// feed the paths and defines with the file name to the indexer..
 		parseRequest.getIndexerInfoConsumer().acceptSourceFileInfo(sourceFileName, systemIncludePaths, effectiveDefines,
-				includePaths);
+				includePaths, macroFiles, includeFiles);
 	}
 
 	private static void createMarker(IResource rc, String message) throws CoreException {

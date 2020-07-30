@@ -41,4 +41,16 @@ public interface IRawIndexerInfo {
 	 * Gets the preprocessor system include paths collected from the command-line.
 	 */
 	List<String> getSystemIncludePaths();
+
+	/**
+	 * Gets the names of files will be pre-processed by the compiler before parsing the source-file in
+	 * order to populate the preprocessor macro-dictionary.
+	 */
+	List<String> getMacroFiles();
+
+	/**
+	 * Gets the names of files that will be pre-processed by the compiler as if
+	 * an {@code #include "file"} directive appeared as the first line of the source file.
+	 */
+	List<String> getIncludeFiles();
 }

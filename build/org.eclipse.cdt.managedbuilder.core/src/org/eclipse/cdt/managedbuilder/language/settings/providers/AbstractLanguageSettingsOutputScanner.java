@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.LRUCache;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.utils.EFSExtensionManager;
@@ -88,6 +90,14 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 	protected String parsedResourceName = null;
 	protected boolean isResolvingPaths = true;
+
+	private static final int FIND_RESOURCES_CACHE_SIZE = 100;
+
+	private LRUCache<URI, IResource[]> workspaceRootFindContainersForLocationURICache = new LRUCache<>(
+			FIND_RESOURCES_CACHE_SIZE);
+	private LRUCache<URI, IResource[]> workspaceRootFindFilesForLocationURICache = new LRUCache<>(
+			FIND_RESOURCES_CACHE_SIZE);
+	private HashMap<IProject, LRUCache<IPath, List<IResource>>> findPathInProjectCache = new HashMap<>();
 
 	/** @since 8.2 */
 	protected EFSExtensionProvider efsProvider = null;
@@ -438,6 +448,13 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		currentLanguageId = null;
 		currentResource = null;
 		cwdTracker = null;
+		clearCaches();
+	}
+
+	private void clearCaches() {
+		workspaceRootFindContainersForLocationURICache.clear();
+		workspaceRootFindFilesForLocationURICache.clear();
+		findPathInProjectCache.clear();
 	}
 
 	@Override
@@ -671,15 +688,20 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * Find file resource in the workspace for a given URI with a preference for the resource
 	 * to reside in the given project.
 	 */
-	private static IResource findFileForLocationURI(URI uri, IProject preferredProject, boolean checkExistence) {
+	private IResource findFileForLocationURI(URI uri, IProject preferredProject, boolean checkExistence) {
 		if (!uri.isAbsolute()) {
 			// IWorkspaceRoot.findFilesForLocationURI(URI) below requires an absolute URI
 			// therefore we haven't/aren't going to find the file based on this URI.
 			return null;
 		}
 		IResource sourceFile = null;
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IResource[] resources = root.findFilesForLocationURI(uri);
+
+		IResource[] resources = workspaceRootFindFilesForLocationURICache.get(uri);
+		if (resources == null) {
+			resources = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(uri);
+			workspaceRootFindFilesForLocationURICache.put(uri, resources);
+		}
+
 		for (IResource rc : resources) {
 			if (!checkExistence || rc.isAccessible()) {
 				if (rc.getProject().equals(preferredProject)) {
@@ -698,9 +720,15 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * Return a resource in workspace corresponding the given folder {@link URI} preferable residing in
 	 * the provided project.
 	 */
-	private static IResource findContainerForLocationURI(URI uri, IProject preferredProject, boolean checkExistence) {
+	private IResource findContainerForLocationURI(URI uri, IProject preferredProject, boolean checkExistence) {
 		IResource resource = null;
-		IResource[] resources = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(uri);
+
+		IResource[] resources = workspaceRootFindContainersForLocationURICache.get(uri);
+		if (resources == null) {
+			resources = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(uri);
+			workspaceRootFindContainersForLocationURICache.put(uri, resources);
+		}
+
 		for (IResource rc : resources) {
 			if ((rc instanceof IProject || rc instanceof IFolder) && (!checkExistence || rc.isAccessible())) { // treat IWorkspaceRoot as non-workspace path
 				if (rc.getProject().equals(preferredProject)) {
@@ -913,6 +941,23 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
+	 * Find all resources in the project which might be represented by relative path passed.
+	 */
+	private List<IResource> findPathInProject(IPath path, IProject project) {
+		LRUCache<IPath, List<IResource>> cache = findPathInProjectCache.get(project);
+		if (cache == null) {
+			cache = new LRUCache<>(FIND_RESOURCES_CACHE_SIZE);
+			findPathInProjectCache.put(project, cache);
+		} else if (cache.containsKey(path)) {
+			return cache.get(path);
+		}
+
+		List<IResource> resources = findPathInFolder(path, project);
+		cache.put(path, resources);
+		return resources;
+	}
+
+	/**
 	 * Find all resources in the folder which might be represented by relative path passed.
 	 */
 	private static List<IResource> findPathInFolder(IPath path, IContainer folder) {
@@ -952,7 +997,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 		// prefer current project
 		if (currentProject != null) {
-			List<IResource> result = findPathInFolder(path, currentProject);
+			List<IResource> result = findPathInProject(path, currentProject);
 			int size = result.size();
 			if (size == 1) { // found the one
 				return result.get(0);
@@ -969,7 +1014,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			for (String prjName : referencedProjectsNames) {
 				IProject prj = root.getProject(prjName);
 				if (prj.isOpen()) {
-					List<IResource> result = findPathInFolder(path, prj);
+					List<IResource> result = findPathInProject(path, prj);
 					int size = result.size();
 					if (size == 1 && rc == null) {
 						rc = result.get(0);
@@ -991,7 +1036,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			IResource rc = null;
 			for (IProject prj : projects) {
 				if (!prj.equals(currentProject) && !referencedProjectsNames.contains(prj.getName()) && prj.isOpen()) {
-					List<IResource> result = findPathInFolder(path, prj);
+					List<IResource> result = findPathInProject(path, prj);
 					int size = result.size();
 					if (size == 1 && rc == null) {
 						rc = result.get(0);

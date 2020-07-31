@@ -145,7 +145,6 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 */
 	protected static abstract class AbstractOptionParser {
 		private final int kind;
-		private final String patternStr;
 		private final Pattern pattern;
 		private final String nameExpression;
 		private final String valueExpression;
@@ -153,6 +152,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 		private String parsedName;
 		private String parsedValue;
+		private final Pattern removeExtraFileNamePattern;
 
 		/**
 		 * Constructor.
@@ -168,12 +168,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		public AbstractOptionParser(int kind, String pattern, String nameExpression, String valueExpression,
 				int extraFlag) {
 			this.kind = kind;
-			this.patternStr = pattern;
 			this.nameExpression = nameExpression;
 			this.valueExpression = valueExpression;
 			this.extraFlag = extraFlag;
 
 			this.pattern = Pattern.compile(pattern);
+			this.removeExtraFileNamePattern = Pattern.compile("(" + pattern + ").*"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		/**
@@ -225,8 +225,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		 */
 		public boolean parseOption(String optionString) {
 			// get rid of extra text at the end (for example file name could be confused for an argument)
-			@SuppressWarnings("nls")
-			String option = optionString.replaceFirst("(" + patternStr + ").*", "$1");
+			Matcher matcherRemoveExtra = removeExtraFileNamePattern.matcher(optionString);
+			String option = optionString;
+			if (!matcherRemoveExtra.matches()) {
+				return false;
+			}
+			option = matcherRemoveExtra.group(1);
 
 			Matcher matcher = pattern.matcher(option);
 			boolean isMatch = matcher.matches();

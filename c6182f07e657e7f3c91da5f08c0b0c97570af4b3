@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "243f16e4_48fa64e9",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-08-02T17:15:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6d2f6ad_a80edc7e",
+      "revId": "c6182f07e657e7f3c91da5f08c0b0c97570af4b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "44c9aca4_b0376fe6",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "dfd433a0_cb5d17e2",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 726,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-08-02T17:15:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "44c9aca4_b0376fe6",
+      "revId": "c6182f07e657e7f3c91da5f08c0b0c97570af4b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08590277_b010d0bb",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
         "patchSetId": 1
@@ -50,6 +86,24 @@
       "revId": "c6182f07e657e7f3c91da5f08c0b0c97570af4b3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3bf44f3e_e2b2414f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 947,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-08-02T17:15:35Z",
+      "side": 1,
+      "message": "I didn\u0027t want to needlessly check if the LRUCache that was just created contained the path (the \u0027else if\u0027). But maybe it\u0027s OK because the number of times we hit this case is much much lower.",
+      "parentUuid": "08590277_b010d0bb",
+      "revId": "c6182f07e657e7f3c91da5f08c0b0c97570af4b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

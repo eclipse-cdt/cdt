@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "22d3c853_a0531f01",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-08-02T04:49:11Z",
+      "side": 1,
+      "message": "This is not about the indexer directly, the build command parser (more generically a language settings provider) feeds the indexer. But there can be other ways to pass preprocessor information (scanner info) to the indexer. The indexer component will never know about the response file existence. So I\u0027d change the title to \"GCC build command parser should support responsive file @file\"",
+      "revId": "daf09c82aa82536d8fa09c08fdd730af80a31512",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d283ed7_1df73db9",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-08-02T04:49:11Z",
+      "side": 1,
+      "message": "This is an abstract class that is compiler-agnostic. We shouldn\u0027t do any sort of compiler-specific parsing here. Instead, I think we should try to augment AbstractOptionParser so that it can generate more option strings to be queued. Then in GCCBuildCommandParser, it would handle the gcc-specific @file option and feed more options.",
+      "revId": "daf09c82aa82536d8fa09c08fdd730af80a31512",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6d2f6ad_a80edc7e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-02T08:02:11Z",
+      "side": 1,
+      "message": "`Map.computeIfAbsent` ?",
+      "revId": "c6182f07e657e7f3c91da5f08c0b0c97570af4b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44c9aca4_b0376fe6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 726,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-02T08:02:11Z",
+      "side": 1,
+      "message": "`Map.computeIfAbsent` ?",
+      "revId": "c6182f07e657e7f3c91da5f08c0b0c97570af4b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08590277_b010d0bb",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 947,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-02T08:02:11Z",
+      "side": 1,
+      "message": "`Map.computeIfAbsent` ?",
+      "revId": "c6182f07e657e7f3c91da5f08c0b0c97570af4b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

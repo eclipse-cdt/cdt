@@ -80,7 +80,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		try {
-			joingLanguageSettingsJobs();
+			joinLanguageSettingsJobs();
 		} catch (Exception e) {
 			// ignore
 		}
@@ -195,7 +195,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 				cfgDescription.getProjectDescription());
 	}
 
-	private void joingLanguageSettingsJobs() throws InterruptedException {
+	private void joinLanguageSettingsJobs() throws InterruptedException {
 		Job.getJobManager().join(CompilationDatabaseParser.JOB_FAMILY_COMPILATION_DATABASE_PARSER, null);
 		Job.getJobManager().join(AbstractBuildCommandParser.JOB_FAMILY_BUILD_COMMAND_PARSER, null);
 		Job.getJobManager().join(LanguageSettingsProvidersSerializer.JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_PROJECT,
@@ -219,18 +219,25 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		return cfgDescriptions[0];
 	}
 
-	private void addLanguageSettingsProvider(ILanguageSettingsProvider provider) throws CoreException {
-		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
+	private void addLanguageSettingsProvider(CompilationDatabaseParser provider) throws Exception {
+		addLanguageSettingsProvider(getConfigurationDescription(fProject, true), provider);
+	}
+
+	private void addLanguageSettingsProvider(ICConfigurationDescription cfgDescription,
+			CompilationDatabaseParser parser) {
 		List<ILanguageSettingsProvider> providers = new ArrayList<>(
 				((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
-		providers.add(provider);
+		providers.add(parser);
 		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
-		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
-				cfgDescription.getProjectDescription());
 	}
 
 	private CompilationDatabaseParser getCompilationDatabaseParser() throws CoreException {
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, false);
+		return getCompilationDatabaseParser(cfgDescription);
+	}
+
+	private CompilationDatabaseParser getCompilationDatabaseParser(ICConfigurationDescription cfgDescription)
+			throws CoreException {
 		List<ILanguageSettingsProvider> settingProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
 				.getLanguageSettingProviders();
 		for (ILanguageSettingsProvider languageSettingsProvider : settingProviders) {
@@ -292,38 +299,10 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertFalse(parser.isEmpty());
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		assertExpectedEntries(parser);
-
-		assertFalse(CDataUtil.isExcluded(tu.getPath(), resCfgDescription.getSourceEntries()));
-	}
-
-	public void testParseCDB_ReadonlyConfigDesc() throws Exception {
-		createTestProject();
-
-		ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(fProject);
-		ICElement ce = CCorePlugin.getDefault().getCoreModel().create(fOutsideCdbSourceFile.getFullPath());
-		ITranslationUnit tu = (ITranslationUnit) ce;
-		assertFalse(
-				CDataUtil.isExcluded(tu.getPath(), getConfigurationDescription(fProject, false).getSourceEntries()));
-
-		CompilationDatabaseParser parser = (CompilationDatabaseParser) LanguageSettingsManager
-				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
-		assertTrue(parser.isEmpty());
-		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
-		addLanguageSettingsProvider(parser);
-
-		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, false);
-
-		parser.processCompileCommandsFile(null, cfgDescription);
-		// processCompileCommandsFile restarts itself in a WorkspaceJob with a writable config desc so we have to wait for the job.
-		joingLanguageSettingsJobs();
-
-		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
-		assertExpectedEntries(getCompilationDatabaseParser());
 
 		assertFalse(CDataUtil.isExcluded(tu.getPath(), resCfgDescription.getSourceEntries()));
 	}
@@ -350,38 +329,9 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		parser.processCompileCommandsFile(null, cfgDescription);
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		assertExpectedEntries(parser);
-
-		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
-		assertTrue(CDataUtil.isExcluded(tu.getPath(), resCfgDescription.getSourceEntries()));
-	}
-
-	public void testParseCDB_ReadonlyConfigDescWithExclusions() throws Exception {
-		createTestProject();
-
-		ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(fProject);
-		ICElement ce = CCorePlugin.getDefault().getCoreModel().create(fOutsideCdbSourceFile.getFullPath());
-		ITranslationUnit tu = (ITranslationUnit) ce;
-		assertFalse(
-				CDataUtil.isExcluded(tu.getPath(), getConfigurationDescription(fProject, false).getSourceEntries()));
-
-		CompilationDatabaseParser parser = (CompilationDatabaseParser) LanguageSettingsManager
-				.getExtensionProviderCopy(COMPILATION_DATABASE_PARSER_EXT, true);
-		assertTrue(parser.isEmpty());
-		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
-		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
-		parser.setExcludeFiles(true);
-		addLanguageSettingsProvider(parser);
-
-		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, false);
-
-		parser.processCompileCommandsFile(null, cfgDescription);
-		// processCompileCommandsFile restarts itself in a WorkspaceJob with a writable config desc so we have to wait for the job.
-		joingLanguageSettingsJobs();
-
-		assertExpectedEntries(getCompilationDatabaseParser());
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		assertTrue(CDataUtil.isExcluded(tu.getPath(), resCfgDescription.getSourceEntries()));
@@ -401,14 +351,14 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertTrue(parser.isEmpty());
 		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		parser.setExcludeFiles(true);
-		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
+		addLanguageSettingsProvider(cfgDescription, parser);
 
 		assertThrows(CoreException.class, () -> parser.processCompileCommandsFile(null, cfgDescription));
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		CompilationDatabaseParser resultParser = getCompilationDatabaseParser();
@@ -434,14 +384,14 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT + "foo");
 		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		parser.setExcludeFiles(true);
-		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
+		addLanguageSettingsProvider(cfgDescription, parser);
 
 		assertThrows(CoreException.class, () -> parser.processCompileCommandsFile(null, cfgDescription));
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		CompilationDatabaseParser resultParser = getCompilationDatabaseParser();
@@ -467,14 +417,14 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
 		parser.setCompilationDataBasePathProperty(new Path("/testParseCDB_NonExistantCDB").toOSString());
 		parser.setExcludeFiles(true);
-		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
+		addLanguageSettingsProvider(cfgDescription, parser);
 
 		assertThrows(CoreException.class, () -> parser.processCompileCommandsFile(null, cfgDescription));
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		CompilationDatabaseParser resultParser = getCompilationDatabaseParser();
@@ -500,14 +450,14 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
 		parser.setCompilationDataBasePathProperty("");
 		parser.setExcludeFiles(true);
-		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
+		addLanguageSettingsProvider(cfgDescription, parser);
 
 		assertThrows(CoreException.class, () -> parser.processCompileCommandsFile(null, cfgDescription));
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		CompilationDatabaseParser resultParser = getCompilationDatabaseParser();
@@ -533,14 +483,14 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
 		parser.setCompilationDataBasePathProperty(fCdbFile.getParent().getLocation().toOSString());
 		parser.setExcludeFiles(true);
-		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
+		addLanguageSettingsProvider(cfgDescription, parser);
 
 		assertThrows(CoreException.class, () -> parser.processCompileCommandsFile(null, cfgDescription));
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		CompilationDatabaseParser resultParser = getCompilationDatabaseParser();
@@ -571,7 +521,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertFalse(parser.isEmpty());
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		assertExpectedEntries(parser);
 
@@ -601,7 +551,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertFalse(parser.isEmpty());
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		assertExpectedEntries(parser);
 
@@ -636,15 +586,15 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
 		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
 		parser.setExcludeFiles(true);
-		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
+		addLanguageSettingsProvider(cfgDescription, parser);
 
 		assertThrows(CoreException.class, () -> parser.processCompileCommandsFile(null, cfgDescription));
 
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		CompilationDatabaseParser resultParser = getCompilationDatabaseParser();
@@ -677,7 +627,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertFalse(parser.isEmpty());
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		assertExpectedEntries(parser);
 
@@ -707,7 +657,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertFalse(parser.isEmpty());
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(resCfgDescription, fSourceFile2,
@@ -751,7 +701,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertFalse(parser.isEmpty());
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(resCfgDescription, fSourceFile2,
@@ -795,7 +745,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertFalse(parser.isEmpty());
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		assertNull(parser.getSettingEntries(resCfgDescription, fSourceFile, GPPLanguage.ID));
@@ -826,7 +776,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertFalse(parser.isEmpty());
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 		assertNull(parser.getSettingEntries(resCfgDescription, fSourceFile, GPPLanguage.ID));
@@ -856,11 +806,9 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		parser.processCompileCommandsFile(null, cfgDescription);
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
 		assertExpectedEntries(parser);
-
-		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
 	}
 
 	public void testClear() throws Exception {
@@ -948,7 +896,16 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertEquals(cloned.getProperty(ATTR_CDB_MODIFIED_TIME), parser.getProperty(ATTR_CDB_MODIFIED_TIME));
 	}
 
-	public void testParseCDB_testUpdateWithModifiedCDB() throws Exception {
+	/*
+	 * This test not only checks that the language settings are updated when the CDB file timestamp changes,
+	 * it also tests the scenario where the parser is called with a read-only configuration description,
+	 * which typically happens when the configuration gets first loaded. Testing the read-only case on
+	 * its own is difficult because there is currently no way to clear the entries without reloading them when
+	 * the project description is written so running the parser again after that with the read-only config
+	 * would not yield any language settings differences. Updating the time-stamp allows us to see a
+	 * difference before/after even running on a read-only config.
+	 */
+	public void testParseCDB_UpdateWithModifiedCDB_ReadonlyConfig() throws Exception {
 		createTestProject();
 
 		ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(fProject);
@@ -962,20 +919,19 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		assertTrue(parser.isEmpty());
 		parser.setBuildParserId(GCC_BUILD_COMMAND_PARSER_EXT);
 		parser.setCompilationDataBasePathProperty(fCdbFile.getLocation().toOSString());
-		addLanguageSettingsProvider(parser);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription(fProject, true);
-
-		parser.processCompileCommandsFile(null, cfgDescription);
-		assertFalse(parser.isEmpty());
+		addLanguageSettingsProvider(cfgDescription, parser);
 		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
 				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
+		parser = getCompilationDatabaseParser();
+		assertFalse(parser.isEmpty());
 
-		ICConfigurationDescription resCfgDescription = getConfigurationDescription(fProject, false);
+		cfgDescription = getConfigurationDescription(fProject, false);
 		assertExpectedEntries(parser);
 
-		assertFalse(CDataUtil.isExcluded(tu.getPath(), resCfgDescription.getSourceEntries()));
+		assertFalse(CDataUtil.isExcluded(tu.getPath(), cfgDescription.getSourceEntries()));
 
 		// Modify the CDB, only to contain one file with different macro definition.
 		String sourceFilePath = fSourceFile.getLocation().toOSString();
@@ -994,18 +950,19 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 		}
 		fCdbFile.setContents(inputStream, IFile.FORCE, null);
 
+		parser = getCompilationDatabaseParser(cfgDescription);
+		parser.setExcludeFiles(true);
+		// Intentionally using a read-only cfgDescription to test this case.
 		parser.processCompileCommandsFile(null, cfgDescription);
-		assertFalse(parser.isEmpty());
-		CoreModel.getDefault().setProjectDescription(cfgDescription.getProjectDescription().getProject(),
-				cfgDescription.getProjectDescription());
-		joingLanguageSettingsJobs();
+		joinLanguageSettingsJobs();
 
-		resCfgDescription = getConfigurationDescription(fProject, false);
+		cfgDescription = getConfigurationDescription(fProject, false);
+		parser = getCompilationDatabaseParser(cfgDescription);
 
-		assertFalse(CDataUtil.isExcluded(tu.getPath(), resCfgDescription.getSourceEntries()));
+		assertTrue(CDataUtil.isExcluded(tu.getPath(), cfgDescription.getSourceEntries()));
 
 		assertFalse(parser.isEmpty());
-		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(resCfgDescription, fSourceFile, GPPLanguage.ID);
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, fSourceFile, GPPLanguage.ID);
 
 		CIncludePathEntry expected = new CIncludePathEntry("/${ProjName}/folder",
 				CIncludePathEntry.VALUE_WORKSPACE_PATH);
@@ -1018,7 +975,7 @@ public class CompilationDatabaseParserTest extends BaseTestCase {
 
 		assertEquals(new CMacroEntry("FOO", "200", 0), entries.get(1));
 
-		entries = parser.getSettingEntries(resCfgDescription, fSourceFile2, GPPLanguage.ID);
+		entries = parser.getSettingEntries(cfgDescription, fSourceFile2, GPPLanguage.ID);
 		assertNull(entries);
 	}
 }

@@ -34,6 +34,24 @@
       "revId": "9e7b5beaa96f6741df5b25336b750279cb58458b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e38654e9_dec5f275",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-03T17:33:58Z",
+      "side": 0,
+      "message": "\u003e \u003e Should this be changed to 2020-09? \n\u003e Generaly yes, but it was not working for me when I was around this a month ago, needs to be checked.\n\nOK - I am working through my checklist https://github.com/eclipse-cdt/cdt-infra/issues/28 and will make that update.\n \n\n\n\u003e \u003e And should the 2020-06 and -03 be removed from the repo lists as they no longer work with CDT master?\n\u003e \n\u003e I was thinking to keep them to support older targets, but if they will not work for sure it should be removed.\n\nI was wondering what the parameters were for \"working\"? As the current CDT master requires 4.17 platform should these versions be kept for other branches, or is there some other way that is handled. With .target files devs are just expected to use the target file of the given branch.",
+      "parentUuid": "3d6e4425_933e117c",
+      "revId": "9e7b5beaa96f6741df5b25336b750279cb58458b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

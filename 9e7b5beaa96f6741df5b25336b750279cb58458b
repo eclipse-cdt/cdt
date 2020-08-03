@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf7c4d07_ec5d166c",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-03T17:06:40Z",
+      "side": 0,
+      "message": "Should this be changed to 2020-09? And should the 2020-06 and -03 be removed from the repo lists as they no longer work with CDT master?",
+      "revId": "9e7b5beaa96f6741df5b25336b750279cb58458b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

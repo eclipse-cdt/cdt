@@ -417,39 +417,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 													new ImmediateDataRequestMonitor<List<String>>(rm) {
 														@Override
 														protected void handleSuccess() {
-															List<String> dbgPids = getData();
-
-															// Prompt the user to choose one or more processes
-															new PromptForPidJob(
-																	LaunchUIMessages
-																			.getString("ProcessPrompter.PromptJob"), //$NON-NLS-1$
-																	procInfoList.toArray(
-																			new IProcessExtendedInfo[procInfoList
-																					.size()]),
-																	dbgPids,
-																	new DataRequestMonitor<Object>(fExecutor, rm) {
-																		@Override
-																		protected void handleCancel() {
-																			rm.cancel();
-																			rm.done();
-																		}
-
-																		@Override
-																		protected void handleSuccess() {
-																			Object data = getData();
-																			if (data instanceof IProcessExtendedInfo[]) {
-																				attachToProcesses(controlCtx,
-																						(IProcessExtendedInfo[]) data,
-																						rm);
-																			} else {
-																				rm.done(new Status(IStatus.ERROR,
-																						GdbUIPlugin.PLUGIN_ID,
-																						IDsfStatusConstants.INTERNAL_ERROR,
-																						"Invalid return type for process prompter", //$NON-NLS-1$
-																						null));
-																			}
-																		}
-																	}).schedule();
+															connectToProcesses(controlCtx, procInfoList, getData(), rm);
 														}
 													});
 										}
@@ -538,7 +506,43 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 		});
 	}
 
-	private void attachToProcesses(final ICommandControlDMContext controlDmc, IProcessExtendedInfo[] processes,
+	/**
+	 * This method is called by {@link #connect(RequestMonitor)}.<br>
+	 * The default implementation schedules a {@link PromptForPidJob}, which calls
+	 * {@link #attachToProcesses(ICommandControlDMContext, IProcessExtendedInfo[], RequestMonitor)} on success.
+	 *
+	 * @param controlDmc
+	 * @param processes
+	 * @param dbgPids
+	 * @param rm
+	 */
+	protected void connectToProcesses(final ICommandControlDMContext controlDmc,
+			final List<IProcessExtendedInfo> processes, List<String> debuggedProcesses, final RequestMonitor rm) {
+		// Prompt the user to choose one or more processes
+		new PromptForPidJob(LaunchUIMessages.getString("ProcessPrompter.PromptJob"), //$NON-NLS-1$
+				processes.toArray(new IProcessExtendedInfo[processes.size()]), debuggedProcesses,
+				new DataRequestMonitor<Object>(fExecutor, rm) {
+					@Override
+					protected void handleCancel() {
+						rm.cancel();
+						rm.done();
+					}
+
+					@Override
+					protected void handleSuccess() {
+						Object data = getData();
+						if (data instanceof IProcessExtendedInfo[]) {
+							attachToProcesses(controlDmc, (IProcessExtendedInfo[]) data, rm);
+						} else {
+							rm.done(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
+									"Invalid return type for process prompter", //$NON-NLS-1$
+									null));
+						}
+					}
+				}).schedule();
+	}
+
+	protected void attachToProcesses(final ICommandControlDMContext controlDmc, IProcessExtendedInfo[] processes,
 			final RequestMonitor rm) {
 
 		// For a local attach, GDB can figure out the binary automatically,

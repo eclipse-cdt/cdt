@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9b0c5fa3_fd5289d5",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/WindowsRegistry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-03T18:25:34Z",
+      "side": 1,
+      "message": "I added this if - but as it turns out all places in CDT actually have this check before calling WindowsRegistry.getRegistry, so it is somewhat redundant.",
+      "revId": "f48c8dd694d26c1b77bc93c41e89a38d4c316891",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

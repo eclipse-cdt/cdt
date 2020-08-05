@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "634e5c59_3ba7947c",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-05T19:57:49Z",
+      "side": 1,
+      "message": "@Jonah: I\u0027m not sure how you got this to work in o.e.c.native.serial, but every time I add the built spawner.dll and starter.exe and amend the commit, I get a new timestamp, so then the build fails again as it\u0027s \"dirty\" due to the changed timestamp in the files.\nDo I need to update the binaries in a different gerrit or is there a better way?",
+      "range": {
+        "startLine": 68,
+        "startChar": 1,
+        "endLine": 68,
+        "endChar": 63
+      },
+      "revId": "f2647efabab56b6055004e02aacde53c96bbd724",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

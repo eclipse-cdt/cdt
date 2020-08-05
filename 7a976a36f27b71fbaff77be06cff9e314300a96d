@@ -34,6 +34,24 @@
       "revId": "7a976a36f27b71fbaff77be06cff9e314300a96d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f3a68c8_6c4bc2e1",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/iostream.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-05T23:28:23Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e9efdd63_8e6829c1",
+      "revId": "7a976a36f27b71fbaff77be06cff9e314300a96d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

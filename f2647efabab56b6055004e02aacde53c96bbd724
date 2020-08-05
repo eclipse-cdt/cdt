@@ -22,6 +22,30 @@
       "revId": "f2647efabab56b6055004e02aacde53c96bbd724",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8035b2b_5a1ccb9e",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-05T23:28:23Z",
+      "side": 1,
+      "message": "See the README.md in the root where I wrote how to do it (if you have another suggestion of how to resolve this problem I am keen to hear it). The key is:\n\nGIT_COMMITTER_DATE\u003d$(git log -1 --pretty\u003dformat:%cI -- $DIR)",
+      "parentUuid": "634e5c59_3ba7947c",
+      "range": {
+        "startLine": 68,
+        "startChar": 1,
+        "endLine": 68,
+        "endChar": 63
+      },
+      "revId": "f2647efabab56b6055004e02aacde53c96bbd724",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

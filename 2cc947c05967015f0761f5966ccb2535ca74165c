@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d710b296_f4f047a5",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/unix/pty.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-05T18:53:36Z",
+      "side": 1,
+      "message": "Well, this is one of the strange diffs between Linux and mac implementations. I\u0027d be happy to leave it as it was for Linux, but I don\u0027t know why it was different on mac to begin with.\n@Jonah: Should I leave it as it were on Linux or what do you think?",
+      "parentUuid": "7a046d96_085feaa1",
+      "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5857ea06_f5fdfad6",
         "filename": "core/org.eclipse.cdt.core.native/native_src/win/starter.c",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2020-08-05T18:29:30Z",
       "side": 1,
       "message": "Was this code simply broken before? How did it work?",
+      "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "77f64ca0_e6c78664",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/starter.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-05T18:53:36Z",
+      "side": 1,
+      "message": "Don\u0027t know if this compiles on VS, but with MINGW, there is an compilation error without the size_t __count parameter.\n\nConsider the following sample code:\n```\n#include \u003cwindows.h\u003e\n#include \u003ctchar.h\u003e\n\n#define PIPE_NAME_LENGTH 100\n\nint main() {\n  wchar_t inPipeName[PIPE_NAME_LENGTH];\n  int parentPid \u003d 42, nCounter \u003d 3;\n  return swprintf(inPipeName, L\"\\\\\\\\.\\\\pipe\\\\stdin%08i%010i\", parentPid, nCounter);\n}\n```\n\nThe compilation will show:\n```\nfoo.c: In function ‘main’:\nfoo.c:9:31: warning: passing argument 2 of ‘swprintf’ makes integer from pointer without a cast [-Wint-conversion]\n   return swprintf(inPipeName, L\"\\\\\\\\.\\\\pipe\\\\stdin%08i%010i\", parentPid, nCounter);\n                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nIn file included from /usr/share/mingw-w64/include/wchar.h:727:0,\n                 from /usr/share/mingw-w64/include/tchar.h:92,\n                 from foo.c:2:\n/usr/x86_64-w64-mingw32/include/swprintf.inl:30:5: note: expected ‘size_t {aka long long unsigned int}’ but argument is of type ‘short unsigned int *’\n int swprintf (wchar_t *__stream, size_t __count, const wchar_t *__format, ...)\n     ^~~~~~~~\nfoo.c:9:63: warning: passing argument 3 of ‘swprintf’ makes pointer from integer without a cast [-Wint-conversion]\n   return swprintf(inPipeName, L\"\\\\\\\\.\\\\pipe\\\\stdin%08i%010i\", parentPid, nCounter);\n                                                               ^~~~~~~~~\nIn file included from /usr/share/mingw-w64/include/wchar.h:727:0,\n                 from /usr/share/mingw-w64/include/tchar.h:92,\n                 from foo.c:2:\n/usr/x86_64-w64-mingw32/include/swprintf.inl:30:5: note: expected ‘const wchar_t * {aka const short unsigned int *}’ but argument is of type ‘int’\n int swprintf (wchar_t *__stream, size_t __count, const wchar_t *__format, ...)\n     ^~~~~~~~\n```\n\nI don\u0027t know if this means that VS have a different signature than MINGW or if it\u0027s a bug in the currently built library.",
+      "parentUuid": "5857ea06_f5fdfad6",
       "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
@@ -67,6 +103,24 @@
       "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f38e115e_671cac0d",
+        "filename": "releng/scripts/check_code_cleanliness.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-05T18:53:36Z",
+      "side": 1,
+      "message": "Ok. Will push an update with this later on.",
+      "parentUuid": "5187abff_850f997b",
+      "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {

@@ -16,6 +16,24 @@
       "revId": "7a976a36f27b71fbaff77be06cff9e314300a96d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9efdd63_8e6829c1",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/iostream.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-05T18:53:36Z",
+      "side": 1,
+      "message": "The file used to be compile with:\n`cl /c $(CFLAGS_UNICODE) $*.c /Fo$@`\n\t\t\nIt was a normal C file before too, but I\u0027m not sure if cl.exe is for C or C++. I\u0027m not so familiar with the command line tools of VS.",
+      "parentUuid": "bd20a17e_77b65288",
+      "revId": "7a976a36f27b71fbaff77be06cff9e314300a96d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

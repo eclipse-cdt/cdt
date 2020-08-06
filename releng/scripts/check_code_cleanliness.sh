@@ -105,10 +105,10 @@ done
 ##
 # Make sure that natives are up to date
 ##
-if test -e native/org.eclipse.cdt.native.serial/jni; then
+if test -e native/org.eclipse.cdt.native.serial/native_src; then
     echo "Rebuilding natives to make sure they match source"
     logfile=$(mktemp /tmp/make-natives-log.XXXXXX)
-    if ! make -C native/org.eclipse.cdt.native.serial/jni rebuild >${logfile} 2>&1; then
+    if ! make -C native/org.eclipse.cdt.native.serial/native_src rebuild >${logfile} 2>&1; then
         echo "Rebuilding of natives failed. The log is part of the artifacts of the build"
         cp ${logfile} make-natives.log
         exit 1

@@ -46,7 +46,7 @@
 								<phase>process-resources</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" failOnError="true" dir="./jni">
+										<exec executable="make" newenvironment="false" failOnError="true" dir="./native_src">
 											<arg value="rebuild" />
 										</exec>
 									</target>
@@ -79,7 +79,7 @@
 								<configuration>
 									<target>
 										<exec executable="docker" newenvironment="false" failOnError="true">
-										<!-- docker run -\-rm -t -v $(git rev-parse -\-show-toplevel):/work -w /work/$(git rev-parse -\-show-prefix) quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest  make -C jni rebuild -->
+										<!-- docker run -\-rm -t -v $(git rev-parse -\-show-toplevel):/work -w /work/$(git rev-parse -\-show-prefix) quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest  make -C native_src rebuild -->
 											<arg value="run" />
 											<arg value="--rm" />
 											<arg value="-t" />
@@ -90,7 +90,7 @@
 											<arg value="quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest" />
 											<arg value="make" />
 											<arg value="-C" />
-											<arg value="jni" />
+											<arg value="native_src" />
 											<arg value="rebuild" />
 										</exec>
 									</target>
@@ -122,7 +122,7 @@
 								<phase>process-resources</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./jni">
+										<exec executable="make" newenvironment="false" dir="./native_src">
 											<arg value="LIBS=../os/linux/x86_64/libserial.so" />
 										</exec>
 									</target>
@@ -136,7 +136,7 @@
 								<phase>clean</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./jni">
+										<exec executable="make" newenvironment="false" dir="./native_src">
 											<arg value="LIBS=../os/linux/x86_64/libserial.so" />
 											<arg value="clean" />
 										</exec>
@@ -169,7 +169,7 @@
 								<phase>process-resources</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./jni">
+										<exec executable="make" newenvironment="false" dir="./native_src">
 											<arg value="LIBS=../os/linux/ppc64le/libserial.so" />
 										</exec>
 									</target>
@@ -183,7 +183,7 @@
 								<phase>clean</phase>
 								<configuration>
 									<target>
-										<exec executable="make" newenvironment="false" dir="./jni">
+										<exec executable="make" newenvironment="false" dir="./native_src">
 											<arg value="LIBS=../os/linux/ppc64le/libserial.so" />
 											<arg value="clean" />
 										</exec>

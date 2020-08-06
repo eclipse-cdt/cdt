@@ -162,6 +162,24 @@
     },
     {
       "key": {
+        "uuid": "3eeaaab1_ff3abab0",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/starter.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-06T20:24:05Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "7764e10e_00e3f50b",
+      "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1e72642b_10ca82cb",
         "filename": "releng/scripts/check_code_cleanliness.sh",
         "patchSetId": 4

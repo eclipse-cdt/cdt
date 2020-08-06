@@ -144,6 +144,24 @@
     },
     {
       "key": {
+        "uuid": "7764e10e_00e3f50b",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/starter.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-06T14:27:59Z",
+      "side": 1,
+      "message": "I don\u0027t mind either way. I will look into how this could possibly have been working in the before case before spending any other time on it. Because if it turns out this code is just broken, then deleting will be better than .c or .cpp ;-)",
+      "parentUuid": "abb707a1_b3ad3710",
+      "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1e72642b_10ca82cb",
         "filename": "releng/scripts/check_code_cleanliness.sh",
         "patchSetId": 4

@@ -46,6 +46,30 @@
       "revId": "f2647efabab56b6055004e02aacde53c96bbd724",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e735060d_1f3008b2",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-06T08:01:03Z",
+      "side": 1,
+      "message": "Ah, right. Works now 😊",
+      "parentUuid": "f8035b2b_5a1ccb9e",
+      "range": {
+        "startLine": 68,
+        "startChar": 1,
+        "endLine": 68,
+        "endChar": 63
+      },
+      "revId": "f2647efabab56b6055004e02aacde53c96bbd724",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

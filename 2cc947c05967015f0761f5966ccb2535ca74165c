@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "a8193a68_52a1dde6",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/unix/pty.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-06T08:01:03Z",
+      "side": 1,
+      "message": "Looks like it builds, so I go for that.",
+      "parentUuid": "53822884_5767af6e",
+      "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5857ea06_f5fdfad6",
         "filename": "core/org.eclipse.cdt.core.native/native_src/win/starter.c",
         "patchSetId": 4
@@ -102,6 +120,24 @@
       "side": 1,
       "message": "OK - I think I will do some more digging on this. What this says to me is that this code wasn\u0027t used as I can\u0027t see how it could have worked, so I will try to debug it to verify the code is actually reachable. Maybe we can delete something here :-) The VS signature is the same. Leave it with me.",
       "parentUuid": "77f64ca0_e6c78664",
+      "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abb707a1_b3ad3710",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/starter.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-06T08:01:03Z",
+      "side": 1,
+      "message": "This used to be a .cpp file, but as the C++ compiler was not in the docker image, I change it to a normal .c file as there is no C++ statements in the file.\nMaybe C++ have some overloaded signature for swprintf()?\nAs the C++ compiler is now in the docker image, I guess I should probably revert back to a .cpp file again, or what do you think @Jonah?",
+      "parentUuid": "3bd3bd27_0e981fd6",
       "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

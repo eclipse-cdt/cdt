@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c2a41d6f_21f2622b",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/Makefile",
+        "patchSetId": 8
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-06T15:45:21Z",
+      "side": 1,
+      "message": "Here is the problem (or at least the difference from the serial Makefile). The debug info causes differences:\n\ne.g.:\n\n    diff --git a/core/org.eclipse.cdt.core.linux.x86_64/os/linux/x86_64/libpty.so b/core/org.eclipse.cdt.core.linux.x86_64/os/linux/x86_64/libpty.so\n    index 12f627eb19..87adce97a1 100755\n    --- a/core/org.eclipse.cdt.core.linux.x86_64/os/linux/x86_64/libpty.so\n    +++ b/core/org.eclipse.cdt.core.linux.x86_64/os/linux/x86_64/libpty.so\n    @@ -6,7 +6,7 @@ COMPILE_UNIT\u003cheader overall offset \u003d 0x00000000\u003e:\n                        DW_AT_producer              GNU C11 7.5.0 -m64 -mtune\u003dgeneric -march\u003dx86-64 -g -fpic -fstack-protector-strong\n                        DW_AT_language              DW_LANG_C99\n                        DW_AT_name                  unix/openpty.c\n    -                    DW_AT_comp_dir              /work/core/org.eclipse.cdt.core.native/native_src\n    +                    DW_AT_comp_dir              /home/jenkins/agent/workspace/cdt-verify-code-cleanliness-pipeline/core/org.eclipse.cdt.core.native/native_src\n                        DW_AT_low_pc                0x00000c8a\n                        DW_AT_high_pc               \u003coffset-from-lowpc\u003e642\n                        DW_AT_stmt_list             0x00000000\n\nwith my diff\u0027s textconv being dwarfdump",
+      "range": {
+        "startLine": 85,
+        "startChar": 109,
+        "endLine": 85,
+        "endChar": 111
+      },
+      "revId": "e1d9577b16d725e0558dcf9c2696fcec8e2b548f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

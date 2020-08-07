@@ -65,7 +65,7 @@ public class Spawner extends Process {
 
 	int pid = 0;
 	int status;
-	final int[] fChannels = { -1, -1, -1 };
+	final IChannel[] fChannels = { null, null, null };
 	boolean isDone;
 	OutputStream out;
 	InputStream in;
@@ -363,7 +363,7 @@ public class Spawner extends Process {
 
 		Reaper reaper = new Reaper(cmdarray, envp, dirpath) {
 			@Override
-			int execute(String[] cmd, String[] env, String dir, int[] channels) throws IOException {
+			int execute(String[] cmd, String[] env, String dir, IChannel[] channels) throws IOException {
 				return pty.exec_pty(Spawner.this, cmd, env, dir, channels);
 			}
 
@@ -429,7 +429,7 @@ public class Spawner extends Process {
 	/**
 	 * Native method use in normal exec() calls.
 	 */
-	native int exec0(String[] cmdarray, String[] envp, String dir, int[] chan) throws IOException;
+	native int exec0(String[] cmdarray, String[] envp, String dir, IChannel[] chan) throws IOException;
 
 	/**
 	 * Native method use in no redirect meaning to streams will created.
@@ -440,8 +440,8 @@ public class Spawner extends Process {
 	 * Native method when executing with a terminal emulation.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public native int exec2(String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD,
-			boolean console) throws IOException;
+	public native int exec2(String[] cmdarray, String[] envp, String dir, IChannel[] chan, String slaveName,
+			int masterFD, boolean console) throws IOException;
 
 	/**
 	 * Native method to drop a signal on the process with pid.
@@ -464,6 +464,35 @@ public class Spawner extends Process {
 		}
 	}
 
+	/**
+	 * @since 6.0
+	 */
+	public static interface IChannel {
+	}
+
+	/**
+	 * @since 6.0
+	 */
+	public static class WinChannel implements IChannel {
+		final long handle;
+
+		public WinChannel(long handle) {
+			this.handle = handle;
+		}
+	}
+
+	/**
+	 * @since 6.0
+	 */
+	public static class UnixChannel implements IChannel {
+		final int fd;
+
+		public UnixChannel(int fd) {
+			System.err.println("Creating UnixChannel for " + fd);
+			this.fd = fd;
+		}
+	}
+
 	// Spawn a thread to handle the forking and waiting
 	// We do it this way because on linux the SIGCHLD is
 	// send to the one thread.  So do the forking and
@@ -482,7 +511,7 @@ public class Spawner extends Process {
 			fException = null;
 		}
 
-		int execute(String[] cmdarray, String[] envp, String dir, int[] channels) throws IOException {
+		int execute(String[] cmdarray, String[] envp, String dir, IChannel[] channels) throws IOException {
 			return exec0(cmdarray, envp, dir, channels);
 		}
 

@@ -29,20 +29,39 @@ void ThrowByName(JNIEnv *env, const char *name, const char *msg);
 
 #define BUFF_SIZE  (1024)
 
+static HANDLE channelToHandle(JNIEnv * env, jobject channel)
+{
+	if (channel == 0) {
+		ThrowByName(env, "java/io/IOException", "Invalid channel object");
+		return NULL;
+	}
+
+	jclass cls = (*env)->GetObjectClass(env, channel);
+	if (cls == NULL) {
+		ThrowByName(env, "java/io/IOException", "Unable to get channel class");
+		return NULL;
+	}
+
+	jfieldID fid = (*env)->GetFieldID(env, cls, "handle", "J");
+	if (fid == NULL) {
+		ThrowByName(env, "java/io/IOException", "Unable to find handle");
+		return NULL;
+	}
+
+	jlong handle = (*env)->GetLongField(env, channel, fid);
+	return (HANDLE)handle;
+}
+
 /* Inaccessible static: skipBuffer */
-/*
- * Class:     SpawnerInputStream
- * Method:    read0
- * Signature: (I)I
- */
 #ifdef __cplusplus
 extern "C"
 #endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_read0
-  (JNIEnv * env, jobject proc, jint fd, jbyteArray buf, jint len)
+  (JNIEnv * env, jobject proc, jobject channel, jbyteArray buf, jint len)
 {
 	jbyte tmpBuf[BUFF_SIZE];	
 	int nBuffOffset = 0;
+	HANDLE handle = channelToHandle(env, channel);
 #ifdef DEBUG_MONITOR
 	_TCHAR buffer[1000];
 #endif
@@ -84,7 +103,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 		{
 		DWORD nNumberOfBytesToRead = min(len - nBuffOffset, BUFF_SIZE);
 		DWORD nNumberOfBytesRead;
-	    if(0 == ReadFile((HANDLE)fd, tmpBuf, nNumberOfBytesToRead, &nNumberOfBytesRead, &overlapped ))
+	    if(0 == ReadFile(handle, tmpBuf, nNumberOfBytesToRead, &nNumberOfBytesRead, &overlapped ))
 			{
 			int err = GetLastError();
 
@@ -92,7 +111,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 				{ 
 				// asynchronous i/o is still in progress 
 				// check on the results of the asynchronous read 
-				if(GetOverlappedResult((HANDLE)fd, &overlapped, 
+				if(GetOverlappedResult(handle, &overlapped,
 						&nNumberOfBytesRead, TRUE))
 					err = 0;
 				// if there was a problem ... 
@@ -151,7 +170,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 			{
 			// Is there data left in the pipe?
 			DWORD bytesAvailable = 0;
-			if (!PeekNamedPipe((HANDLE)fd, NULL, 0, NULL, &bytesAvailable, NULL)
+			if (!PeekNamedPipe(handle, NULL, 0, NULL, &bytesAvailable, NULL)
 				|| bytesAvailable == 0)
 				// No bytes left
 				break;
@@ -168,24 +187,20 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 
 }
 
-/*
- * Class:     SpawnerInputStream
- * Method:    close0
- * Signature: (I)I
- */
 #ifdef __cplusplus
 extern "C"
 #endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_close0
-  (JNIEnv * env, jobject proc, jint fd)
+  (JNIEnv * env, jobject proc, jobject channel)
 {
 	int rc;
+	HANDLE handle = channelToHandle(env, channel);
 #ifdef DEBUG_MONITOR
 		_TCHAR buffer[1000];
 		_stprintf(buffer, _T("Close %i\n"), fd);
 		OutputDebugStringW(buffer);
 #endif
-		rc = (CloseHandle((HANDLE)fd) ? 0 : -1);	
+		rc = (CloseHandle(handle) ? 0 : -1);
 #ifdef DEBUG_MONITOR
 		_stprintf(buffer, _T("Closed %i\n"), fd);
 		OutputDebugStringW(buffer);
@@ -197,38 +212,34 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_clo
 extern "C"
 #endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_available0
-  (JNIEnv * env, jobject proc, jint fd)
+  (JNIEnv * env, jobject proc, jobject channel)
 {
 	DWORD nAvail = 0;
+	HANDLE handle = channelToHandle(env, channel);
 
-	if (0 == PeekNamedPipe((HANDLE)fd, NULL, 0, NULL, &nAvail, NULL)) {
+	if (0 == PeekNamedPipe(handle, NULL, 0, NULL, &nAvail, NULL)) {
 		// error
 		return 0;
 	}
 	return nAvail;
 }
 
-/*
- * Class:     SpawnerOutputStream
- * Method:    write0
- * Signature: (I[BI)I
- */
 #ifdef __cplusplus
 extern "C"
 #endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_write0
-  (JNIEnv * env, jobject proc, jint fd, jbyteArray buf, jint len)
+  (JNIEnv * env, jobject proc, jobject channel, jbyteArray buf, jint len)
 {
 	jbyte tmpBuf[BUFF_SIZE];	
 	int nBuffOffset = 0;
-
+	HANDLE handle = channelToHandle(env, channel);
 
 	while(len > nBuffOffset)
 		{
 		DWORD nNumberOfBytesToWrite = min(len - nBuffOffset, BUFF_SIZE);
 		DWORD nNumberOfBytesWritten;
 		(*env)->GetByteArrayRegion(env, buf, nBuffOffset, nNumberOfBytesToWrite, tmpBuf);
-		if(0 == WriteFile((HANDLE)fd, tmpBuf, nNumberOfBytesToWrite, &nNumberOfBytesWritten, NULL)) 
+		if(0 == WriteFile(handle, tmpBuf, nNumberOfBytesToWrite, &nNumberOfBytesWritten, NULL))
 			{
 			char * lpMsgBuf;
 			FormatMessage( 
@@ -252,25 +263,21 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_wr
 	return 0;
 }
 
-/*
- * Class:     SpawnerOutputStream
- * Method:    close0
- * Signature: (I)I
- */
 #ifdef __cplusplus
 extern "C"
 #endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_close0
-  (JNIEnv * env, jobject proc, jint fd)
+  (JNIEnv * env, jobject proc, jobject channel)
 {
 	int rc;
+	HANDLE handle = channelToHandle(env, channel);
 #ifdef DEBUG_MONITOR
 		_TCHAR buffer[1000];
 		_stprintf(buffer, _T("Close %i\n"), fd);
 		OutputDebugStringW(buffer);
 #endif
-		FlushFileBuffers((HANDLE)fd);
-		rc = (CloseHandle((HANDLE)fd) ? 0 : -1);	
+		FlushFileBuffers(handle);
+		rc = (CloseHandle(handle) ? 0 : -1);
 #ifdef DEBUG_MONITOR
 		_stprintf(buffer, _T("Closed %i\n"), fd);
 		OutputDebugStringW(buffer);

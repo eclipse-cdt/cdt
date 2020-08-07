@@ -80,3 +80,8 @@ requires.11.namespace = org.eclipse.equinox.p2.iu
 requires.11.name = org.eclipse.cdt.core.win32.x86_64
 #requires.11.range = [5.2, 6.0)
 requires.11.filter = (&(osgi.os=win32)(osgi.arch=x86_64))
+
+requires.12.namespace = org.eclipse.equinox.p2.iu
+requires.12.name = org.eclipse.cdt.core.linux.aarch64
+#requires.12.range = [5.2, 6.0)
+requires.12.filter = (&(osgi.os=linux)(osgi.arch=aarch64))

@@ -16,19 +16,22 @@ package org.eclipse.cdt.utils.spawner;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.eclipse.cdt.utils.spawner.Spawner.IChannel;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class SpawnerOutputStream extends OutputStream {
-	private int fd;
+	private IChannel channel;
 
 	/**
 	 * From a Unix valid file descriptor set a Reader.
-	 * @param fd file descriptor.
+	 * @param channel file descriptor.
+	 * @since 6.0
 	 */
-	public SpawnerOutputStream(int fd) {
-		this.fd = fd;
+	public SpawnerOutputStream(IChannel channel) {
+		this.channel = channel;
 	}
 
 	/**
@@ -45,7 +48,7 @@ public class SpawnerOutputStream extends OutputStream {
 		}
 		byte[] tmpBuf = new byte[len];
 		System.arraycopy(b, off, tmpBuf, off, len);
-		write0(fd, tmpBuf, len);
+		write0(channel, tmpBuf, len);
 	}
 
 	/**
@@ -66,12 +69,12 @@ public class SpawnerOutputStream extends OutputStream {
 	 */
 	@Override
 	public void close() throws IOException {
-		if (fd == -1)
+		if (channel == null)
 			return;
-		int status = close0(fd);
+		int status = close0(channel);
 		if (status == -1)
 			throw new IOException("close error"); //$NON-NLS-1$
-		fd = -1;
+		channel = null;
 	}
 
 	@Override
@@ -79,9 +82,9 @@ public class SpawnerOutputStream extends OutputStream {
 		close();
 	}
 
-	private native int write0(int fd, byte[] b, int len) throws IOException;
+	private native int write0(IChannel channel, byte[] b, int len) throws IOException;
 
-	private native int close0(int fd);
+	private native int close0(IChannel channel);
 
 	static {
 		System.loadLibrary("spawner"); //$NON-NLS-1$

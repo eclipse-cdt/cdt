@@ -18,16 +18,17 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.cdt.internal.core.natives.Messages;
+import org.eclipse.cdt.utils.spawner.Spawner.IChannel;
 
 class SpawnerInputStream extends InputStream {
-	private int fd;
+	private IChannel channel;
 
 	/**
 	 * From a Unix valid file descriptor set a Reader.
 	 * @param fd file descriptor.
 	 */
-	public SpawnerInputStream(int fd) {
-		this.fd = fd;
+	public SpawnerInputStream(IChannel channel) {
+		this.channel = channel;
 	}
 
 	/**
@@ -48,7 +49,7 @@ class SpawnerInputStream extends InputStream {
 	 */
 	@Override
 	public int read(byte[] buf, int off, int len) throws IOException {
-		if (fd == -1) {
+		if (channel == null) {
 			return -1;
 		}
 		if (buf == null) {
@@ -60,7 +61,7 @@ class SpawnerInputStream extends InputStream {
 		}
 		byte[] tmpBuf = off > 0 ? new byte[len] : buf;
 
-		len = read0(fd, tmpBuf, len);
+		len = read0(channel, tmpBuf, len);
 		if (len <= 0)
 			return -1;
 
@@ -76,21 +77,21 @@ class SpawnerInputStream extends InputStream {
 	 */
 	@Override
 	public void close() throws IOException {
-		if (fd == -1)
+		if (channel == null)
 			return;
-		int status = close0(fd);
+		int status = close0(channel);
 		if (status == -1)
 			throw new IOException(Messages.Util_exception_closeError);
-		fd = -1;
+		channel = null;
 	}
 
 	@Override
 	public int available() throws IOException {
-		if (fd == -1) {
+		if (channel == null) {
 			return 0;
 		}
 		try {
-			return available0(fd);
+			return available0(channel);
 		} catch (UnsatisfiedLinkError e) {
 			// for those platforms that do not implement available0
 			return super.available();
@@ -102,11 +103,11 @@ class SpawnerInputStream extends InputStream {
 		close();
 	}
 
-	private native int read0(int fileDesc, byte[] buf, int len) throws IOException;
+	private native int read0(IChannel channel, byte[] buf, int len) throws IOException;
 
-	private native int close0(int fileDesc) throws IOException;
+	private native int close0(IChannel channel) throws IOException;
 
-	private native int available0(int fileDesc) throws IOException;
+	private native int available0(IChannel channel) throws IOException;
 
 	static {
 		System.loadLibrary("spawner"); //$NON-NLS-1$

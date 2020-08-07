@@ -70,6 +70,8 @@ static int copyTo(wchar_t * target, const wchar_t  * source, int cpyLenght, int 
 // Use this function to clean project descriptor and return it to the pool of available blocks.
 static void cleanUpProcBlock(pProcInfo_t pCurProcInfo);
 
+int interruptProcess(int pid);
+
 
 // Signal codes
 typedef enum {
@@ -106,7 +108,7 @@ static int nCounter = 0; // We use it to build unique synchronization object nam
 extern "C"
 #endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
-  (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir, jintArray channels, jstring slaveName, jint fdm, jboolean console)
+  (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir, jobjectArray channels, jstring slaveName, jint fdm, jboolean console)
 {
 	return -1;
 }
@@ -133,7 +135,7 @@ void ensureSize(wchar_t** ptr, int* psize, int requiredLength)
 extern "C"
 #endif
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
-  (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir, jintArray channels) 
+  (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir, jobjectArray channels)
 {
 	HANDLE stdHandles[3];
     PROCESS_INFORMATION pi = {0}, *piCopy;
@@ -169,6 +171,28 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	wchar_t inPipeName[PIPE_NAME_LENGTH];
 	wchar_t outPipeName[PIPE_NAME_LENGTH];
 	wchar_t errPipeName[PIPE_NAME_LENGTH];
+	jclass channelClass = NULL;
+	jmethodID channelConstructor = NULL;
+
+	if (channels == NULL)
+		{
+		ThrowByName(env, "java/io/IOException", "Channels can't be null");
+		return 0;
+		}
+
+	channelClass = (*env)->FindClass(env, "org/eclipse/cdt/utils/spawner/Spawner$WinChannel");
+	if (channelClass == 0)
+		{
+		ThrowByName(env, "java/io/IOException", "Unable to find channel class");
+		return 0;
+		}
+
+	channelConstructor = (*env)->GetMethodID(env, channelClass, "<init>", "(J)V");
+	if (channelConstructor == 0)
+		{
+		ThrowByName(env, "java/io/IOException", "Unable to find channel constructor");
+		return 0;
+		}
 
     nCmdLineLength= MAX_CMD_SIZE;
     szCmdLine= (wchar_t *)malloc(nCmdLineLength * sizeof(wchar_t));
@@ -406,7 +430,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 		}
     else
 		{
-    	int file_handles[3];
 		HANDLE h[2];
 		int what;
 
@@ -434,10 +457,10 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 			ret = (long)(pCurProcInfo -> uid);
 			
 			// Prepare stream handlers to return to java program
-			file_handles[0] = (int)stdHandles[0];
-			file_handles[1] = (int)stdHandles[1];
-			file_handles[2] = (int)stdHandles[2];
-			(*env)->SetIntArrayRegion(env, channels, 0, 3, (jint *)file_handles);
+			for (jsize i = 0; i < 3; i++) {
+				jobject chan = (*env)->NewObject(env, channelClass, channelConstructor, (jlong)stdHandles[i]);
+				(*env)->SetObjectArrayElement(env, channels, i, chan);
+			}
 
 			// do the cleanup so launch the according thread
 			// create a copy of the PROCESS_INFORMATION as this might get destroyed

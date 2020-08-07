@@ -21,15 +21,44 @@
 /* Header for class _org_eclipse_cdt_utils_spawner_SpawnerInputStream */
 /* Header for class _org_eclipse_cdt_utils_spawner_SpawnerOutputStream */
 
-/*
- * Class:     org_eclipse_cdt_utils_spawner_SpawnerInputStream
- * Method:    read0
- * Signature: (I)I
- */
+static void ThrowByName(JNIEnv *env, const char *name, const char *msg)
+{
+    jclass cls = (*env)->FindClass(env, name);
+
+    if (cls != 0) /* Otherwise an exception has already been thrown */
+        (*env)->ThrowNew(env, cls, msg);
+
+    /* It's a good practice to clean up the local references. */
+    (*env)->DeleteLocalRef(env, cls);
+}
+
+static int channelToFileDesc(JNIEnv * env, jobject channel)
+{
+    if (channel == 0) {
+        ThrowByName(env, "java/io/IOException", "Invalid channel object");
+        return -1;
+    }
+
+    jclass cls = (*env)->GetObjectClass(env, channel);
+    if (cls == 0) {
+        ThrowByName(env, "java/io/IOException", "Unable to get channel class");
+        return -1;
+    }
+
+    jfieldID fid = (*env)->GetFieldID(env, cls, "fd", "I");
+    if (fid == 0) {
+        ThrowByName(env, "java/io/IOException", "Unable to find fd");
+        return -1;
+    }
+
+    jint fd = (*env)->GetIntField(env, channel, fid);
+    return fd;
+}
+
 JNIEXPORT jint JNICALL
 Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_read0(JNIEnv * env,
                                                           jobject jobj,
-                                                          jint jfd,
+                                                          jobject channel,
                                                           jbyteArray buf,
                                                           jint buf_len)
 {
@@ -40,7 +69,7 @@ Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_read0(JNIEnv * env,
 
     data = (*env)->GetByteArrayElements(env, buf, 0);
     data_len = buf_len;
-    fd = jfd;
+    fd = channelToFileDesc(env, channel);
 
     status = read( fd, data, data_len );
     (*env)->ReleaseByteArrayElements(env, buf, data, 0);
@@ -62,28 +91,19 @@ Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_read0(JNIEnv * env,
 }
 
 
-/*
- * Class:     org_eclipse_cdt_utils_spawner_SpawnerInputStream
- * Method:    close0
- * Signature: (I)I
- */
 JNIEXPORT jint JNICALL
 Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_close0(JNIEnv * env,
                                                            jobject jobj,
-                                                           jint fd)
+                                                           jobject channel)
 {
+    int fd = channelToFileDesc(env, channel);
     return close(fd);
 }
 
-/*
- * Class:     org_eclipse_cdt_utils_spawner_SpawnerOutputStream
- * Method:    write0
- * Signature: (II)I
- */
 JNIEXPORT jint JNICALL
 Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_write0(JNIEnv * env,
                                                             jobject jobj,
-                                                            jint jfd,
+                                                            jobject channel,
                                                             jbyteArray buf,
                                                             jint buf_len)
 {
@@ -94,7 +114,7 @@ Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_write0(JNIEnv * env,
 
     data = (*env)->GetByteArrayElements(env, buf, 0);
     data_len = buf_len;
-    fd = jfd;
+    fd = channelToFileDesc(env, channel);
 
     status = write(fd, data, data_len);
     (*env)->ReleaseByteArrayElements(env, buf, data, 0);
@@ -103,15 +123,11 @@ Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_write0(JNIEnv * env,
 }
 
 
-/*
- * Class:     org_eclipse_cdt_utils_spawner_SpawnerOutputStream
- * Method:    close0
- * Signature: (I)I
- */
 JNIEXPORT jint JNICALL
 Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_close0(JNIEnv * env,
                                                             jobject jobj,
-                                                            jint fd)
+                                                            jobject channel)
 {
+    int fd = channelToFileDesc(env, channel);
     return close(fd);
 }

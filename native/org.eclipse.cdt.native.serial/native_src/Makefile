@@ -26,6 +26,7 @@ ifeq ($(UNAME),Linux)
 LIBS = \
 	$(OS_DIR)/win32/x86_64/serial.dll \
 	$(OS_DIR)/linux/x86_64/libserial.so \
+	$(OS_DIR)/linux/aarch64/libserial.so \
 	$(OS_DIR)/macosx/x86_64/libserial.jnilib
 else
 ifeq ($(UNAME),Darwin)
@@ -56,6 +57,10 @@ $(OS_DIR)/win32/x86_64/serial.dll:	serial.c
 $(OS_DIR)/linux/x86_64/libserial.so:	serial.c
 	mkdir -p $(dir $@)
 	gcc -m64 $(CFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
+
+$(OS_DIR)/linux/aarch64/libserial.so:	serial.c
+	mkdir -p $(dir $@)
+	aarch64-linux-gnu-gcc $(CFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
 
 $(OS_DIR)/linux/ppc64le/libserial.so:	serial.c
 	mkdir -p $(dir $@)

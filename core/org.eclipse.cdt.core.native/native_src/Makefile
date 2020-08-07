@@ -19,6 +19,7 @@ endif
 
 OS_DIR_WIN32_X86_64 := ../../org.eclipse.cdt.core.win32.x86_64/os/win32/x86_64
 OS_DIR_LINUX_X86_64 := ../../org.eclipse.cdt.core.linux.x86_64/os/linux/x86_64
+OS_DIR_LINUX_AARCH64 := ../../org.eclipse.cdt.core.linux.aarch64/os/linux/aarch64
 OS_DIR_LINUX_PPC64LE := ../../org.eclipse.cdt.core.linux.ppc64le/os/linux/ppc64le
 OS_DIR_MACOS_X86_64 := ../../org.eclipse.cdt.core.macosx/os/macosx/x86_64
 OS_DIR_MACOS_X86 := ../../org.eclipse.cdt.core.macosx/os/macosx/x86
@@ -31,6 +32,8 @@ LIBS = \
 	$(OS_DIR_WIN32_X86_64)/spawner.dll \
 	$(OS_DIR_LINUX_X86_64)/libspawner.so \
 	$(OS_DIR_LINUX_X86_64)/libpty.so \
+	$(OS_DIR_LINUX_AARCH64)/libspawner.so \
+	$(OS_DIR_LINUX_AARCH64)/libpty.so \
 	$(OS_DIR_MACOS_X86_64)/libspawner.jnilib \
 	$(OS_DIR_MACOS_X86_64)/libpty.jnilib \
 	$(OS_DIR_MACOS_X86)/libspawner.jnilib \
@@ -90,6 +93,21 @@ $(OS_DIR_LINUX_X86_64)/libspawner.so: unix/spawner.c unix/io.c unix/exec_unix.c 
 $(OS_DIR_LINUX_X86_64)/libpty.so: unix/openpty.c unix/pty.c unix/ptyio.c
 	mkdir -p $(dir $@) && \
 	gcc -m64 -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
+		-D_REENTRANT -D_GNU_SOURCE \
+		unix/openpty.c unix/pty.c unix/ptyio.c \
+		-shared -lc
+
+# Linux aarch64
+$(OS_DIR_LINUX_AARCH64)/libspawner.so: unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c
+	mkdir -p $(dir $@) && \
+	aarch64-linux-gnu-gcc  -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
+		-D_REENTRANT -D_GNU_SOURCE \
+		unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c \
+		-shared -lc
+
+$(OS_DIR_LINUX_AARCH64)/libpty.so: unix/openpty.c unix/pty.c unix/ptyio.c
+	mkdir -p $(dir $@) && \
+	aarch64-linux-gnu-gcc  -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
 		-D_REENTRANT -D_GNU_SOURCE \
 		unix/openpty.c unix/pty.c unix/ptyio.c \
 		-shared -lc

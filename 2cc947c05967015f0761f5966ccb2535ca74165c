@@ -198,6 +198,24 @@
     },
     {
       "key": {
+        "uuid": "299adbe3_b1ba81b8",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/starter.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-07T06:49:33Z",
+      "side": 1,
+      "message": "Interesting that they decided to change the function signature rather than adding a new one with the extra parameter...\nI wonder how many bugs this triggers in all the software out there. 💩",
+      "parentUuid": "6d1546ec_0aafe773",
+      "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1e72642b_10ca82cb",
         "filename": "releng/scripts/check_code_cleanliness.sh",
         "patchSetId": 4

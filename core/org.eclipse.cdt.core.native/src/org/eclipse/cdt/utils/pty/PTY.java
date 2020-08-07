@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.internal.core.natives.Messages;
 import org.eclipse.cdt.utils.spawner.Spawner;
+import org.eclipse.cdt.utils.spawner.Spawner.IChannel;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -223,7 +224,8 @@ public class PTY {
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 5.6
 	 */
-	public int exec_pty(Spawner spawner, String[] cmdarray, String[] envp, String dir, int[] chan) throws IOException {
+	public int exec_pty(Spawner spawner, String[] cmdarray, String[] envp, String dir, IChannel[] chan)
+			throws IOException {
 		if (isWinPTY) {
 			return exec2(cmdarray, envp, dir, chan, slave, master, console);
 		} else {
@@ -250,7 +252,7 @@ public class PTY {
 	/**
 	 * Native method when executing with a terminal emulation (winpty only).
 	 */
-	native int exec2(String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD,
+	native int exec2(String[] cmdarray, String[] envp, String dir, IChannel[] chan, String slaveName, int masterFD,
 			boolean console) throws IOException;
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,10 +27,10 @@ extern "C" {
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
  * Method:    exec0
- * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[I)I
+ * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[Lorg/eclipse/cdt/utils/spawner/Spawner/IChannel;)I
  */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
-  (JNIEnv *, jobject, jobjectArray, jobjectArray, jstring, jintArray);
+  (JNIEnv *, jobject, jobjectArray, jobjectArray, jstring, jobjectArray);
 
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
@@ -43,10 +43,10 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
  * Method:    exec2
- * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[ILjava/lang/String;IZ)I
+ * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[Lorg/eclipse/cdt/utils/spawner/Spawner/IChannel;Ljava/lang/String;IZ)I
  */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
-  (JNIEnv *, jobject, jobjectArray, jobjectArray, jstring, jintArray, jstring, jint, jboolean);
+  (JNIEnv *, jobject, jobjectArray, jobjectArray, jstring, jobjectArray, jstring, jint, jboolean);
 
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
@@ -64,15 +64,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor
   (JNIEnv *, jobject, jint);
 
-// #define DEBUG_MONITOR
-
-int interruptProcess(int pid);
-
-
 #ifdef __cplusplus
 }
 #endif
-
-// #define DEBUG_MONITOR
-
 #endif

@@ -180,6 +180,24 @@
     },
     {
       "key": {
+        "uuid": "6d1546ec_0aafe773",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/starter.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-07T00:53:30Z",
+      "side": 1,
+      "message": "OK - it turns out swprintf did used to have a different signature, in Windows land at least. With C99 swprintf is standardized to what you have written.\n\nOld version: https://docs.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-6.0/aa272937(v\u003dvs.60)\n\nNewer version: https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/sprintf-sprintf-l-swprintf-swprintf-l-swprintf-l?view\u003dvs-2019\n\nConfusing, certainly, but I am glad that we are bringing the code up to modern (C99 only 20 years old ;-) standards!",
+      "parentUuid": "3eeaaab1_ff3abab0",
+      "revId": "2cc947c05967015f0761f5966ccb2535ca74165c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1e72642b_10ca82cb",
         "filename": "releng/scripts/check_code_cleanliness.sh",
         "patchSetId": 4

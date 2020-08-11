@@ -133,6 +133,11 @@ public class XmlUtil {
 	 * to pretty print XML. This method prepares DOM {@code Document} for the transformer
 	 * to be pretty printed, i.e. providing proper indentations for enclosed tags.
 	 *
+	 * Note, while this was originally a workaround, the user community of CDT
+	 * has come to expect the format of the .cproject file and others to be
+	 * unchanging, therefore CDT always uses this and does not attempt
+	 * to format with the Transformer.
+	 *
 	 * @param doc - DOM document to be pretty printed
 	 */
 	public static void prettyFormat(Document doc) {
@@ -143,6 +148,11 @@ public class XmlUtil {
 	 * As a workaround for {@code javax.xml.transform.Transformer} not being able
 	 * to pretty print XML. This method prepares DOM {@code Document} for the transformer
 	 * to be pretty printed, i.e. providing proper indentations for enclosed tags.
+	 *
+	 * Note, while this was originally a workaround, the user community of CDT
+	 * has come to expect the format of the .cproject file and others to be
+	 * unchanging, therefore CDT always uses this and does not attempt
+	 * to format with the Transformer.
 	 *
 	 * @param doc - DOM document to be pretty printed
 	 * @param indent - custom indentation as a string of white spaces
@@ -291,6 +301,7 @@ public class XmlUtil {
 
 		String utfString = new String(toByteArray(doc), ENCODING_UTF_8);
 		utfString = XmlUtil.replaceLineSeparatorInternal(utfString, lineSeparator);
+		utfString = XmlUtil.insertNewlineAfterXMLVersionTag(utfString, lineSeparator);
 
 		FileOutputStream output = getFileOutputStreamWorkaround(storeFile);
 		output.write(utfString.getBytes(ENCODING_UTF_8));
@@ -347,7 +358,8 @@ public class XmlUtil {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, ENCODING_UTF_8);
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+			// Indentation is done with XmlUtil.prettyFormat(doc).
+			transformer.setOutputProperty(OutputKeys.INDENT, "no"); //$NON-NLS-1$
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(stream);
 			transformer.transform(source, result);
@@ -376,6 +388,30 @@ public class XmlUtil {
 	}
 
 	/**
+	 * <b>Do not use outside of CDT.</b>
+	 *
+	 * This method is used to workaround changing implementations of {@link javax.xml.transform.Transformer}
+	 * to maintain the same file content for CDT users. See {@link #prettyFormat(Document)} and Bug 565628
+	 *
+	 * This method inserts a newline between the <?... xml ... ?> and first tag in the document
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 *    This is an internal method which ideally should be made private.
+	 */
+	public static String insertNewlineAfterXMLVersionTag(String string, String lineSeparator) {
+		if (string == null) {
+			return null;
+		}
+
+		int indexOf = string.indexOf("?><"); //$NON-NLS-1$
+		if (indexOf < 0 || string.length() < indexOf + 2) {
+			return string;
+		}
+
+		return string.substring(0, indexOf + 2) + lineSeparator + string.substring(indexOf + 2);
+	}
+
+	/**
 	 * Serialize XML Document into a workspace file.<br/>
 	 * Note: clients should synchronize access to this method.
 	 *
@@ -390,6 +426,7 @@ public class XmlUtil {
 			String utfString = new String(toByteArray(doc), ENCODING_UTF_8);
 			String lineSeparator = Util.getLineSeparator(file);
 			utfString = XmlUtil.replaceLineSeparatorInternal(utfString, lineSeparator);
+			utfString = XmlUtil.insertNewlineAfterXMLVersionTag(utfString, lineSeparator);
 			byte[] newContents = utfString.getBytes(ENCODING_UTF_8);
 			InputStream input = new ByteArrayInputStream(newContents);
 

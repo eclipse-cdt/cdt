@@ -514,7 +514,10 @@ public class XmlStorageElement implements ICStorageElement {
 			try {
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				Transformer transformer = TransformerFactory.newInstance().newTransformer();
-				transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+				// Indentation is done with XmlUtil.prettyFormat(doc).
+				// For debugging, the prettyFormat may not have been run yet,
+				// so turning this to "yes" may be helpful on occasion.
+				transformer.setOutputProperty(OutputKeys.INDENT, "no"); //$NON-NLS-1$
 
 				DOMSource source = new DOMSource(fElement);
 				StreamResult result = new StreamResult(stream);

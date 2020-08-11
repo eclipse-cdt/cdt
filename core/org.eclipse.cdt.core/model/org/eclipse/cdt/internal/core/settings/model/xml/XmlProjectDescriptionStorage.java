@@ -546,7 +546,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+			// Indentation is done with XmlUtil.prettyFormat(doc)
+			transformer.setOutputProperty(OutputKeys.INDENT, "no"); //$NON-NLS-1$
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(stream);
 			transformer.transform(source, result);
@@ -584,6 +585,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				utfString = stream.toString("UTF-8"); //$NON-NLS-1$
 				String eol = Util.getLineSeparator(projectFile);
 				utfString = XmlUtil.replaceLineSeparatorInternal(utfString, eol);
+				utfString = XmlUtil.insertNewlineAfterXMLVersionTag(utfString, eol);
 			} finally {
 				if (stream != null)
 					stream.close(); // Cleanup the stream

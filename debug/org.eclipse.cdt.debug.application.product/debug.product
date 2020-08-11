@@ -205,7 +205,6 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.cdt.core"/>
       <plugin id="org.eclipse.cdt.core.linux" fragment="true"/>
       <plugin id="org.eclipse.cdt.core.linux.x86_64" fragment="true"/>
-      <plugin id="org.eclipse.cdt.core.linux.aarch64" fragment="true"/>
       <plugin id="org.eclipse.cdt.core.macosx" fragment="true"/>
       <plugin id="org.eclipse.cdt.core.native"/>
       <plugin id="org.eclipse.cdt.core.win32" fragment="true"/>

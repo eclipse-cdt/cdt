@@ -178,7 +178,8 @@ public class CProjectDescriptionStorageManager {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+			// Indentation is done with XmlUtil.prettyFormat(doc)
+			transformer.setOutputProperty(OutputKeys.INDENT, "no"); //$NON-NLS-1$
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(stream);
 			transformer.transform(source, result);

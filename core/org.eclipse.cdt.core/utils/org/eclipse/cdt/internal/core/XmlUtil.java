@@ -53,7 +53,7 @@ import org.w3c.dom.NodeList;
 public class XmlUtil {
 	private static final String ENCODING_UTF_8 = "UTF-8"; //$NON-NLS-1$
 	private static final String EOL_XML = "\n"; //$NON-NLS-1$
-	private static final String DEFAULT_IDENT = "\t"; //$NON-NLS-1$
+	private static final String DEFAULT_INDENT = "\t"; //$NON-NLS-1$
 	private static String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
 
 	/**
@@ -136,7 +136,7 @@ public class XmlUtil {
 	 * @param doc - DOM document to be pretty printed
 	 */
 	public static void prettyFormat(Document doc) {
-		prettyFormat(doc, DEFAULT_IDENT);
+		prettyFormat(doc, DEFAULT_INDENT);
 	}
 
 	/**
@@ -145,13 +145,13 @@ public class XmlUtil {
 	 * to be pretty printed, i.e. providing proper indentations for enclosed tags.
 	 *
 	 * @param doc - DOM document to be pretty printed
-	 * @param ident - custom indentation as a string of white spaces
+	 * @param indent - custom indentation as a string of white spaces
 	 */
-	public static void prettyFormat(Document doc, String ident) {
+	public static void prettyFormat(Document doc, String indent) {
 		doc.normalize();
 		Element documentElement = doc.getDocumentElement();
 		if (documentElement != null) {
-			prettyFormat(documentElement, "", ident); //$NON-NLS-1$
+			prettyFormat(documentElement, "", indent); //$NON-NLS-1$
 		}
 	}
 
@@ -159,17 +159,17 @@ public class XmlUtil {
 	 * The method inserts end-of-line+indentation Text nodes where indentation is necessary.
 	 *
 	 * @param node - node to be pretty formatted
-	 * @param identLevel - initial indentation level of the node
-	 * @param ident - additional indentation inside the node
+	 * @param indentLevel - initial indentation level of the node
+	 * @param indent - additional indentation inside the node
 	 */
-	private static void prettyFormat(Node node, String identLevel, String ident) {
+	private static void prettyFormat(Node node, String indentLevel, String indent) {
 		NodeList nodelist = node.getChildNodes();
 		int iStart = 0;
 		Node item = nodelist.item(0);
 		if (item != null) {
 			short type = item.getNodeType();
 			if (type == Node.ELEMENT_NODE || type == Node.COMMENT_NODE) {
-				Node newChild = node.getOwnerDocument().createTextNode(EOL_XML + identLevel + ident);
+				Node newChild = node.getOwnerDocument().createTextNode(EOL_XML + indentLevel + indent);
 				node.insertBefore(newChild, item);
 				iStart = 1;
 			}
@@ -180,25 +180,25 @@ public class XmlUtil {
 				short type = item.getNodeType();
 				if (type == Node.TEXT_NODE && item.getNodeValue().trim().length() == 0) {
 					if (i + 1 < nodelist.getLength()) {
-						item.setNodeValue(EOL_XML + identLevel + ident);
+						item.setNodeValue(EOL_XML + indentLevel + indent);
 					} else {
-						item.setNodeValue(EOL_XML + identLevel);
+						item.setNodeValue(EOL_XML + indentLevel);
 					}
 				} else if (type == Node.ELEMENT_NODE) {
-					prettyFormat(item, identLevel + ident, ident);
+					prettyFormat(item, indentLevel + indent, indent);
 					if (i + 1 < nodelist.getLength()) {
 						Node nextItem = nodelist.item(i + 1);
 						if (nextItem != null) {
 							short nextType = nextItem.getNodeType();
 							if (nextType == Node.ELEMENT_NODE || nextType == Node.COMMENT_NODE) {
-								Node newChild = node.getOwnerDocument().createTextNode(EOL_XML + identLevel + ident);
+								Node newChild = node.getOwnerDocument().createTextNode(EOL_XML + indentLevel + indent);
 								node.insertBefore(newChild, nextItem);
 								i++;
 								continue;
 							}
 						}
 					} else {
-						Node newChild = node.getOwnerDocument().createTextNode(EOL_XML + identLevel);
+						Node newChild = node.getOwnerDocument().createTextNode(EOL_XML + indentLevel);
 						node.appendChild(newChild);
 						i++;
 						continue;

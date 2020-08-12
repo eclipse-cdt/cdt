@@ -24,7 +24,7 @@
 #include <windows.h>
 #include <jni.h>
 
-#include "Spawner.h"
+#include "org_eclipse_cdt_utils_spawner_Spawner.h"
 
 #define PIPE_SIZE 512			// Size of pipe buffer
 #define MAX_CMD_SIZE 2049		// Initial size of command line

@@ -105,6 +105,14 @@ done
 ##
 # Make sure that natives are up to date
 ##
+
+echo "Rebuilding JNI headers to make sure they match source"
+logfile=jni-header.log
+if ! ${MVN:-mvn} -B -V process-resources -DuseSimrelRepo -P jniheaders -f core/org.eclipse.cdt.core.native >${logfile} 2>&1; then
+    echo "Rebuilding of JNI headers failed. The log (${logfile}) is part of the artifacts of the build"
+    exit 1
+fi
+
 for p in native/org.eclipse.cdt.native.serial/native_src core/org.eclipse.cdt.core.native/native_src; do
     echo "Rebuilding $p natives to make sure they match source"
     logfile=make-natives-${p//\//-}.log

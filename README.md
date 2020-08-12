@@ -76,6 +76,11 @@ mvn generate-resources -DuseSimrelRepo -f build/org.eclipse.cdt.meson.docs -Preg
 mvn generate-resources -DuseSimrelRepo -f build/org.eclipse.cdt.autotools.docs -PregenHelp
 ```
 
+#### jniheaders
+
+The `jniheaders` profile can be used on the core/org.eclipse.cdt.core.native to rebuild the
+header files for JNI natives. See also `native` property below.
+
 ### Properties
 
 There are a number of properties (-D to mvn) to control the behaviour of the build. Refer to the
@@ -145,3 +150,5 @@ An additional tip is to set the following in `.gitconfig` to allow you to diff `
     textconv = objdump -x
     binary = true
 ```
+
+See also `jniheaders` profile above.

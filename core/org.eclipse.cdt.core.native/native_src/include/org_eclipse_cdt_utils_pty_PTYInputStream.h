@@ -9,6 +9,10 @@ extern "C" {
 #endif
 #undef org_eclipse_cdt_utils_pty_PTYInputStream_MAX_SKIP_BUFFER_SIZE
 #define org_eclipse_cdt_utils_pty_PTYInputStream_MAX_SKIP_BUFFER_SIZE 2048L
+#undef org_eclipse_cdt_utils_pty_PTYInputStream_DEFAULT_BUFFER_SIZE
+#define org_eclipse_cdt_utils_pty_PTYInputStream_DEFAULT_BUFFER_SIZE 8192L
+#undef org_eclipse_cdt_utils_pty_PTYInputStream_MAX_BUFFER_SIZE
+#define org_eclipse_cdt_utils_pty_PTYInputStream_MAX_BUFFER_SIZE 2147483639L
 /*
  * Class:     org_eclipse_cdt_utils_pty_PTYInputStream
  * Method:    read0

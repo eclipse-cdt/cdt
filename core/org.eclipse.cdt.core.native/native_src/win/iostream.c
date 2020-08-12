@@ -21,7 +21,7 @@
 #include <jni.h>
 #include <windows.h>
 
-#include "Spawner.h"
+#include "org_eclipse_cdt_utils_spawner_Spawner.h"
 
 //#define READ_REPORT
 

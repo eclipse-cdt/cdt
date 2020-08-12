@@ -13,7 +13,7 @@
  *     Wind River Systems, Inc.
  *******************************************************************************/
 #include <sys/ioctl.h>
-#include "PTY.h"
+#include "org_eclipse_cdt_utils_pty_PTY.h"
 #include "openpty.h"
 
 /*

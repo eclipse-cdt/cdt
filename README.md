@@ -128,6 +128,14 @@ However, the challenge is that dll files on Windows have a timestamp in them. To
 4. `git add -- $DIR`
 5. `GIT_COMMITTER_DATE=$(git log -1 --pretty=format:%cI -- $DIR) git commit --amend --reuse-message=HEAD`
 
+The example for the core native bundle is:
+
+1. `DIR=core/org.eclipse.cdt.core.native`
+2. `mvn process-resources -DuseSimrelRepo -Dnative=docker -f $DIR`
+3. `git add -- core/org.eclipse.cdt.core.win32.x86_64/os/win32/x86_64`
+4. `GIT_COMMITTER_DATE=$(git log -1 --pretty=format:%cI -- $DIR) git commit --amend --reuse-message=HEAD`
+
+
 As a CDT contributor if you are having an issue recreating the above flow, please reach out on cdt-dev mailing list or in the bug/gerrit you submit. A CDT committer can help ensure the native libraries are correctly rebuilt.
 
 An additional tip is to set the following in `.gitconfig` to allow you to diff `.dll` files. This will show the timestamp of the DLL in the diff as part of the DLL headers.

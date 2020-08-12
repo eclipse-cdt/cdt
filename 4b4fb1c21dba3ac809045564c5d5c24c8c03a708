@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3adbe710_f828b53a",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/Spawner.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T15:29:45Z",
+      "side": 0,
+      "message": "Copyright block restored.",
+      "parentUuid": "d87810d7_5a18b3b8",
+      "revId": "4b4fb1c21dba3ac809045564c5d5c24c8c03a708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "79e10dab_0bfad09f",
         "filename": "core/org.eclipse.cdt.core.native/native_src/include/SpawnerInputStream.h",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "3a269e0c_03b9b98d",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/SpawnerInputStream.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T15:29:45Z",
+      "side": 0,
+      "message": "Copyright block restored.",
+      "parentUuid": "79e10dab_0bfad09f",
+      "revId": "4b4fb1c21dba3ac809045564c5d5c24c8c03a708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ea0ee056_90d1c2da",
         "filename": "core/org.eclipse.cdt.core.native/native_src/include/SpawnerOutputStream.h",
         "patchSetId": 1
@@ -50,6 +86,24 @@
       "revId": "4b4fb1c21dba3ac809045564c5d5c24c8c03a708",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82b4959a_3eec4c0f",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/SpawnerOutputStream.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T15:29:45Z",
+      "side": 0,
+      "message": "Copyright block restored.",
+      "parentUuid": "ea0ee056_90d1c2da",
+      "revId": "4b4fb1c21dba3ac809045564c5d5c24c8c03a708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

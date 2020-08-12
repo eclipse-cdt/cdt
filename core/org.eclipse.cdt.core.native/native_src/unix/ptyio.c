@@ -13,8 +13,8 @@
  *******************************************************************************/
 #include <jni.h>
 #include <stdio.h>
-#include <PTYInputStream.h>
-#include <PTYOutputStream.h>
+#include <org_eclipse_cdt_utils_pty_PTYInputStream.h>
+#include <org_eclipse_cdt_utils_pty_PTYOutputStream.h>
 #include <unistd.h>
 
 /* Header for class _org_eclipse_cdt_utils_pty_PTYInputStream */

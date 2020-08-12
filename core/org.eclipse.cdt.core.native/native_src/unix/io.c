@@ -14,8 +14,8 @@
  *******************************************************************************/
 #include <jni.h>
 #include <stdio.h>
-#include <SpawnerInputStream.h>
-#include <SpawnerOutputStream.h>
+#include <org_eclipse_cdt_utils_spawner_SpawnerInputStream.h>
+#include <org_eclipse_cdt_utils_spawner_SpawnerOutputStream.h>
 #include <unistd.h>
 
 /* Header for class _org_eclipse_cdt_utils_spawner_SpawnerInputStream */

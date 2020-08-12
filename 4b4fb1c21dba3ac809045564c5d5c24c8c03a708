@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d87810d7_5a18b3b8",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/Spawner.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T14:57:30Z",
+      "side": 0,
+      "message": "Did this copyright disappear because of \"machine generated\"?",
+      "revId": "4b4fb1c21dba3ac809045564c5d5c24c8c03a708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79e10dab_0bfad09f",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/SpawnerInputStream.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T14:57:30Z",
+      "side": 0,
+      "message": "ditto about copyright",
+      "revId": "4b4fb1c21dba3ac809045564c5d5c24c8c03a708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea0ee056_90d1c2da",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/SpawnerOutputStream.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T14:57:30Z",
+      "side": 0,
+      "message": "ditto about copyright",
+      "revId": "4b4fb1c21dba3ac809045564c5d5c24c8c03a708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

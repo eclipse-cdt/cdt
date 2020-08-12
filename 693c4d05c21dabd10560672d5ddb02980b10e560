@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "24303b95_edc52eb9",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T14:57:30Z",
+      "side": 1,
+      "message": "Need to remove this line (or add it as log)",
+      "revId": "693c4d05c21dabd10560672d5ddb02980b10e560",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

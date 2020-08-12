@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "24119e6c_eefb9f5e",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/org_eclipse_cdt_utils_pty_PTY.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T23:55:12Z",
+      "side": 1,
+      "message": "The winpty is a bigger job as the underlying library is substantially different. The library is part of vscode and theia too these days.\n\nBut I guess I better get on it as it may be broken now. I suspect that means the TM Terminal is broken on Windows. The build \u0026 debug and console all were working fine based on your earlier commit.",
+      "parentUuid": "eef055f0_0300f0fd",
+      "range": {
+        "startLine": 32,
+        "startChar": 59,
+        "endLine": 32,
+        "endChar": 71
+      },
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c409ce38_8af13892",
         "filename": "core/org.eclipse.cdt.core.native/native_src/unix/pty.c",
         "patchSetId": 1

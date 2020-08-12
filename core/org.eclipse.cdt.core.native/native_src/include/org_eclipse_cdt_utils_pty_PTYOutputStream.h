@@ -7,6 +7,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef org_eclipse_cdt_utils_pty_PTYOutputStream_EOT
+#define org_eclipse_cdt_utils_pty_PTYOutputStream_EOT 4L
 /*
  * Class:     org_eclipse_cdt_utils_pty_PTYOutputStream
  * Method:    write0

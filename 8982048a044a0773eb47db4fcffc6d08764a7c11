@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "eef055f0_0300f0fd",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/org_eclipse_cdt_utils_pty_PTY.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-12T22:03:40Z",
+      "side": 1,
+      "message": "Oh right. This means that the gerrit that you submitted earlier today does not actually work on Windows, at least not when using PTY since I haven\u0027t update the implementation for Windows...\n\nAre you still working on updating winpty or should I try to get the pty.dll built in docker too?",
+      "parentUuid": "431c9af7_6d32d763",
+      "range": {
+        "startLine": 32,
+        "startChar": 59,
+        "endLine": 32,
+        "endChar": 71
+      },
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c409ce38_8af13892",
         "filename": "core/org.eclipse.cdt.core.native/native_src/unix/pty.c",
         "patchSetId": 1
@@ -36,6 +60,24 @@
       "writtenOn": "2020-08-12T21:53:17Z",
       "side": 1,
       "message": "The newly generated files have full package names as part of them. Rather than try to match how it used to be I changed the includes to be what javac -h generates.",
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d8ae8684_e903ea57",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/unix/pty.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-12T22:03:40Z",
+      "side": 1,
+      "message": "+1 on that!",
+      "parentUuid": "c409ce38_8af13892",
       "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

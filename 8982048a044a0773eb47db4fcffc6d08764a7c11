@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "431c9af7_6d32d763",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/org_eclipse_cdt_utils_pty_PTY.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T21:53:17Z",
+      "side": 1,
+      "message": "Note that this method had the wrong declaration in the header file - I guess that demonstrates that the autogen is worthwhile.",
+      "range": {
+        "startLine": 32,
+        "startChar": 59,
+        "endLine": 32,
+        "endChar": 71
+      },
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c409ce38_8af13892",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/unix/pty.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T21:53:17Z",
+      "side": 1,
+      "message": "The newly generated files have full package names as part of them. Rather than try to match how it used to be I changed the includes to be what javac -h generates.",
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "94ac035b_0af1016d",
+        "filename": "core/org.eclipse.cdt.core.native/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T21:53:17Z",
+      "side": 1,
+      "message": "This needs to be in the README.md in the root of CDT.",
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a3935d9d_978da62e",
+        "filename": "releng/scripts/check_code_cleanliness.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T21:53:17Z",
+      "side": 1,
+      "message": "I quickly threw this together to see if it would work. It would be nice to handle the logs in a similar way to the make calls a couple of lines down.",
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

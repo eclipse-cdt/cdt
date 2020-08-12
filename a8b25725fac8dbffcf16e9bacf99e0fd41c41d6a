@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e174be4_47caca38",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/org_eclipse_cdt_utils_spawner_Spawner.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-12T21:53:17Z",
+      "side": 0,
+      "message": "These generated files lost their copyright header - of course their sources (the java files) still have it.",
+      "revId": "a8b25725fac8dbffcf16e9bacf99e0fd41c41d6a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

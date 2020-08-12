@@ -176,7 +176,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				// end Bug 249951 & Bug 310007
 				serializingLock.acquire();
 				LanguageSettingsProvidersSerializer.serializeLanguageSettings(fDes);
-				projectModificaitonStamp = serialize(fDes.getProject(),
+				projectModificationStamp = serialize(fDes.getProject(),
 						ICProjectDescriptionStorageType.STORAGE_FILE_NAME, fElement);
 				((ContributedEnvironment) CCorePlugin.getDefault().getBuildEnvironmentManager()
 						.getContributedEnvironment()).serialize(fDes);
@@ -192,7 +192,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	 *  Volatile provides a memory barrier in Java 5+ */
 	private volatile Reference<ICProjectDescription> fProjectDescription = new SoftReference<>(null);
 	/** The last modification stamp of the .cproject project description file */
-	private volatile long projectModificaitonStamp = IResource.NULL_STAMP;
+	private volatile long projectModificationStamp = IResource.NULL_STAMP;
 
 	/** A lock that is held during project description serialization
 	 *  This lock is also head during load to prevent a load overlapping
@@ -305,9 +305,9 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		// If loaded, and we have cached the modification stamp, reload
 		long currentModificationStamp = getModificationStamp(
 				project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME));
-		if (projectModificaitonStamp != currentModificationStamp) {
+		if (projectModificationStamp != currentModificationStamp) {
 			setCurrentDescription(null, true);
-			projectModificaitonStamp = currentModificationStamp;
+			projectModificationStamp = currentModificationStamp;
 			return true;
 		}
 		return false;
@@ -499,7 +499,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 					ICProjectDescriptionStorageType.STORAGE_FILE_NAME, true, false, false);
 			try {
 				// Update the modification stamp
-				projectModificaitonStamp = getModificationStamp(
+				projectModificationStamp = getModificationStamp(
 						project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME));
 				CProjectDescription des = new CProjectDescription(project, new XmlStorage(storage), storage, true,
 						false);

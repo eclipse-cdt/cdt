@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "0c24b8d4_f006a9ed",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/Spawner.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-12T19:48:30Z",
+      "side": 0,
+      "message": "As it was not included in the generated file and I intend to push another changeset that will add generation of the header file in the clean check, I did not manually add the header as it will go away later on again. I also saw that there were other generated files that did not have the header, so I thought it was okay without it.\n\nI still need to identify how to properly generate the headers with Java10 and above since the \u0027javah\u0027 tool has been removed.",
+      "parentUuid": "3adbe710_f828b53a",
+      "revId": "4b4fb1c21dba3ac809045564c5d5c24c8c03a708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "79e10dab_0bfad09f",
         "filename": "core/org.eclipse.cdt.core.native/native_src/include/SpawnerInputStream.h",
         "patchSetId": 1

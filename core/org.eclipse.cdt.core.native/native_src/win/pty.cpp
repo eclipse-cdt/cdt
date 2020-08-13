@@ -12,9 +12,9 @@
  * Wind River Systems - initial API and implementation
  *******************************************************************************/
 
-#include "PTY.h"
-#include "PTYInputStream.h"
-#include "PTYOutputStream.h"
+#include "org_eclipse_cdt_utils_pty_PTY.h"
+#include "org_eclipse_cdt_utils_pty_PTYInputStream.h"
+#include "org_eclipse_cdt_utils_pty_PTYOutputStream.h"
 #include "winpty.h"
 
 #include <string>
@@ -316,12 +316,11 @@ static std::wstring argvToCommandLine(const std::vector<std::wstring> &argv)
  * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[ILjava/lang/String;IZ)I
  */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_exec2
-	(JNIEnv *env, jobject jobj, jobjectArray jcmd, jobjectArray jenv, jstring jdir, jintArray jchannels, jstring jslaveName, jint masterFD, jboolean console)
+	(JNIEnv *env, jobject jobj, jobjectArray jcmd, jobjectArray jenv, jstring jdir, jobjectArray jchannels, jstring jslaveName, jint masterFD, jboolean console)
 {
     int fd;
     std::map<int, winpty_t*> :: iterator fd2pty_Iter;
 
-    jint *channels = env->GetIntArrayElements(jchannels, 0);
     const wchar_t *cwdW = (const wchar_t *) env->GetStringChars(jdir, NULL);
     const char *pts_name = env->GetStringUTFChars(jslaveName, NULL);
 
@@ -331,7 +330,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_exec2
     jint argc = env->GetArrayLength(jcmd);
     jint envc = env->GetArrayLength(jenv);
 
-    if (channels == NULL)
+    if (jchannels == NULL || env->GetArrayLength(jchannels) != 3)
         goto bail_out;
 
     fd = masterFD;
@@ -378,7 +377,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_exec2
     }
 
 bail_out:
-    env->ReleaseIntArrayElements(jchannels, channels, 0);
     env->ReleaseStringChars(jdir, (const jchar *) cwdW);
     env->ReleaseStringUTFChars(jslaveName, pts_name);
 

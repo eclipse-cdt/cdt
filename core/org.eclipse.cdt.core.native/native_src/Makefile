@@ -30,6 +30,7 @@ ifeq ($(UNAME),Linux)
 LIBS = \
 	$(OS_DIR_WIN32_X86_64)/starter.exe \
 	$(OS_DIR_WIN32_X86_64)/spawner.dll \
+	$(OS_DIR_WIN32_X86_64)/pty.dll \
 	$(OS_DIR_LINUX_X86_64)/libspawner.so \
 	$(OS_DIR_LINUX_X86_64)/libpty.so \
 	$(OS_DIR_LINUX_AARCH64)/libspawner.so \
@@ -81,6 +82,14 @@ $(OS_DIR_WIN32_X86_64)/spawner.dll: win/iostream.c win/raise.c win/spawner.c win
 		-DUNICODE \
 		win/iostream.c win/raise.c win/spawner.c win/Win32ProcessEx.c \
 		-Wl,--kill-at --shared
+
+$(OS_DIR_WIN32_X86_64)/pty.dll: win/pty.cpp win/pty_dllmain.cpp
+	mkdir -p $(dir $@) && \
+	SOURCE_DATE_EPOCH=$(shell git log -1 --pretty=format:%ct -- .) \
+	x86_64-w64-mingw32-g++ -o $@ -Iinclude -Iwin/include -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
+		-DUNICODE \
+		win/pty.cpp win/pty_dllmain.cpp \
+		-Wl,--kill-at --shared -L$(OS_DIR_WIN32_X86_64) -lwinpty # -static-libstdc++ -static-libgcc
 
 # Linux x86_64
 $(OS_DIR_LINUX_X86_64)/libspawner.so: unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c

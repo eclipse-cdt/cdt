@@ -194,6 +194,8 @@
 		<module>launch/org.eclipse.cdt.launch</module>
 		<module>launch/org.eclipse.cdt.docker.launcher</module>
 		<module>launch/org.eclipse.cdt.docker.launcher-feature</module>
+		<module>launch/org.eclipse.cdt.flatpak.launcher</module>
+		<module>launch/org.eclipse.cdt.flatpak.launcher-feature</module>
 
 		<module>llvm/org.eclipse.cdt.managedbuilder.llvm.ui</module>
 		<module>llvm/org.eclipse.cdt.managedbuilder.llvm-feature</module>

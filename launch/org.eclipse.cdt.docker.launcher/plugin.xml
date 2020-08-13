@@ -99,8 +99,9 @@
        name="%ContainerCommandLauncherFactory.name"
        point="org.eclipse.cdt.core.CommandLauncherFactory">
        <factory
-          id="ContainerCommandLauncherFactory"
-          class="org.eclipse.cdt.docker.launcher.ContainerCommandLauncherFactory">
+             class="org.eclipse.cdt.docker.launcher.ContainerCommandLauncherFactory"
+             id="ContainerCommandLauncherFactory"
+             priority="5">
       </factory>
    </extension>
    <extension

@@ -22,6 +22,30 @@
       "revId": "f0317bdec4c02a73ad37525269350baf35970941",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec35bd5d_4ca79d09",
+        "filename": "releng/scripts/check_code_cleanliness.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-13T02:21:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d0ef517c_ecb19711",
+      "range": {
+        "startLine": 110,
+        "startChar": 0,
+        "endLine": 110,
+        "endChar": 3
+      },
+      "revId": "f0317bdec4c02a73ad37525269350baf35970941",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

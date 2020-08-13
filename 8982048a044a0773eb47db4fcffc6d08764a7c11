@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "1cdf6f23_412c09bb",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/org_eclipse_cdt_utils_pty_PTY.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-13T02:21:12Z",
+      "side": 1,
+      "message": "For another bug",
+      "parentUuid": "24119e6c_eefb9f5e",
+      "range": {
+        "startLine": 32,
+        "startChar": 59,
+        "endLine": 32,
+        "endChar": 71
+      },
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c409ce38_8af13892",
         "filename": "core/org.eclipse.cdt.core.native/native_src/unix/pty.c",
         "patchSetId": 1
@@ -125,6 +149,24 @@
     },
     {
       "key": {
+        "uuid": "e3f7ce05_1f51805b",
+        "filename": "core/org.eclipse.cdt.core.native/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-13T02:21:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "94ac035b_0af1016d",
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a3935d9d_978da62e",
         "filename": "releng/scripts/check_code_cleanliness.sh",
         "patchSetId": 1
@@ -139,6 +181,24 @@
       "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4ad36a3_0c4bae93",
+        "filename": "releng/scripts/check_code_cleanliness.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-13T02:21:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3935d9d_978da62e",
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

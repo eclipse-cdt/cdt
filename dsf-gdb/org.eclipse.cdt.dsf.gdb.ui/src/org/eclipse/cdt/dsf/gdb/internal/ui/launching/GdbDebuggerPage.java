@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 QNX Software Systems and others.
+ * Copyright (c) 2008, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.cdt.debug.ui.AbstractCDebuggerPage;
+import org.eclipse.cdt.dsf.gdb.IGDBFlatpakLaunchConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
@@ -42,6 +43,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -66,6 +68,12 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 	protected Button fUpdateThreadlistOnSuspend;
 	protected Button fDebugOnFork;
+
+	protected Text fGDBServerCommandText;
+	protected Text fGDBServerPortNumberText;
+	protected Button fRemoteTimeoutEnabledCheckbox;
+	protected Text fRemoteTimeoutValueText;
+
 	/**
 	 * Checkbox for using GDB's new-console -- only displayed on Windows. Will be null if unsupported.
 	 */
@@ -118,6 +126,18 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 		if (fSolibBlock != null)
 			fSolibBlock.setDefaults(configuration);
+
+		if (System.getenv("FLATPAK_SANDBOX_DIR") != null) { //$NON-NLS-1$
+			configuration.setAttribute(IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_COMMAND,
+					IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
+			configuration.setAttribute(IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_PORT,
+					IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_PORT_DEFAULT);
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
+					IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_ENABLED_DEFAULT);
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
+					IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_VALUE_DEFAULT);
+		}
+
 	}
 
 	@Override
@@ -186,6 +206,23 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fDebugOnFork.setSelection(debugOnFork);
 		if (fExternalConsole != null) {
 			fExternalConsole.setSelection(externalConsole);
+		}
+
+		if (System.getenv("FLATPAK_SANDBOX_DIR") != null) { //$NON-NLS-1$
+			String gdbServerCommand = getStringAttr(configuration, IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_COMMAND,
+					IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
+			boolean remoteTimeoutEnabled = getBooleanAttr(configuration,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
+					preferenceStore.getBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_ENABLED));
+			String remoteTimeOut = getStringAttr(configuration,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
+					preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_VALUE));
+			String port = getStringAttr(configuration, IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_PORT,
+					IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_PORT_DEFAULT);
+			fGDBServerCommandText.setText(gdbServerCommand);
+			fRemoteTimeoutEnabledCheckbox.setSelection(remoteTimeoutEnabled);
+			fRemoteTimeoutValueText.setText(remoteTimeOut);
+			fGDBServerPortNumberText.setText(port);
 		}
 
 		updateTracepointModeFromConfig(configuration);
@@ -289,6 +326,18 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 		if (fSolibBlock != null)
 			fSolibBlock.performApply(configuration);
+
+		if (System.getenv("FLATPAK_SANDBOX_DIR") != null) { //$NON-NLS-1$
+			configuration.setAttribute(IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_COMMAND,
+					fGDBServerCommandText.getText());
+			configuration.setAttribute(IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_PORT,
+					fGDBServerPortNumberText.getText());
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED,
+					fRemoteTimeoutEnabledCheckbox.getSelection());
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE,
+					fRemoteTimeoutValueText.getText());
+		}
+
 	}
 
 	@Override
@@ -327,6 +376,87 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	public void createTabs(TabFolder tabFolder) {
 		createMainTab(tabFolder);
 		createSolibTab(tabFolder);
+		if (System.getenv("FLATPAK_SANDBOX_DIR") != null) { //$NON-NLS-1$
+			createFlatpakTab(tabFolder);
+		}
+	}
+
+	public void createFlatpakTab(TabFolder tabFolder) {
+		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+		tabItem.setText(LaunchUIMessages.getString("GDBDebuggerPage.flatpak_tab_name")); //$NON-NLS-1$
+		Composite comp = ControlFactory.createCompositeEx(tabFolder, 1, GridData.FILL_BOTH);
+		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
+		tabItem.setControl(comp);
+
+		Composite subComp = new Composite(comp, SWT.NULL);
+		subComp.setLayout(new GridLayout(2, true));
+		subComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		((GridLayout) subComp.getLayout()).makeColumnsEqualWidth = false;
+		subComp.setFont(tabFolder.getFont());
+
+		Label label = new Label(subComp, SWT.LEFT);
+		label.setText(LaunchUIMessages.getString("GDBDebuggerPage.gdbserver_name_textfield_label")); //$NON-NLS-1$
+		GridData gd = new GridData();
+		label.setLayoutData(gd);
+
+		fGDBServerCommandText = new Text(subComp, SWT.SINGLE | SWT.BORDER);
+		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
+		fGDBServerCommandText.setLayoutData(data);
+		fGDBServerCommandText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		label = new Label(subComp, SWT.LEFT);
+		label.setText(LaunchUIMessages.getString("GDBDebuggerPage.port_number_textfield_label")); //$NON-NLS-1$
+		gd = new GridData();
+		label.setLayoutData(gd);
+
+		fGDBServerPortNumberText = new Text(subComp, SWT.SINGLE | SWT.BORDER);
+		data = new GridData(SWT.FILL, SWT.TOP, true, false);
+		fGDBServerPortNumberText.setLayoutData(data);
+		fGDBServerPortNumberText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+
+		fRemoteTimeoutEnabledCheckbox = new Button(subComp, SWT.CHECK);
+		fRemoteTimeoutEnabledCheckbox
+				.setText(LaunchUIMessages.getString("GDBDebuggerPage.gdbserver_Settings_Remotetimeout_label")); //$NON-NLS-1$
+		fRemoteTimeoutEnabledCheckbox
+				.setToolTipText(LaunchUIMessages.getString("GDBDebuggerPage.gdbserver_Settings_Remotetimeout_tooltip")); //$NON-NLS-1$
+		gd = new GridData();
+		fRemoteTimeoutEnabledCheckbox.setLayoutData(gd);
+		fRemoteTimeoutEnabledCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				remoteTimeoutEnabledChanged();
+				updateLaunchConfigurationDialog();
+			}
+		});
+
+		fRemoteTimeoutValueText = new Text(subComp, SWT.SINGLE | SWT.BORDER);
+		data = new GridData(SWT.FILL, SWT.TOP, true, false);
+		fRemoteTimeoutValueText.setLayoutData(data);
+		fRemoteTimeoutValueText
+				.setToolTipText(LaunchUIMessages.getString("GDBDebuggerPage.gdbserver_Settings_Remotetimeout_tooltip")); //$NON-NLS-1$
+		fRemoteTimeoutValueText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		remoteTimeoutEnabledChanged();
+	}
+
+	private void remoteTimeoutEnabledChanged() {
+		fRemoteTimeoutValueText.setEnabled(fRemoteTimeoutEnabledCheckbox.getSelection());
 	}
 
 	public void createMainTab(TabFolder tabFolder) {

@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "3c1a4288_dfd92db8",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/org_eclipse_cdt_utils_pty_PTY.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-13T08:11:58Z",
+      "side": 1,
+      "message": "As an intermediate step, could we simply get the hands on a header file that matches our library version and use that to fix the pty.dll? Then as a later step, upgrade to something newer as mentioned in bug 562776.",
+      "parentUuid": "1cdf6f23_412c09bb",
+      "range": {
+        "startLine": 32,
+        "startChar": 59,
+        "endLine": 32,
+        "endChar": 71
+      },
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c409ce38_8af13892",
         "filename": "core/org.eclipse.cdt.core.native/native_src/unix/pty.c",
         "patchSetId": 1

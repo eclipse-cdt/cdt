@@ -107,10 +107,9 @@ done
 ##
 for p in native/org.eclipse.cdt.native.serial/native_src core/org.eclipse.cdt.core.native/native_src; do
     echo "Rebuilding $p natives to make sure they match source"
-    logfile=$(mktemp /tmp/make-natives-log.XXXXXX)
+    logfile=make-natives-${p//\//-}.log
     if ! make -C $p rebuild >${logfile} 2>&1; then
-        echo "Rebuilding of $p natives failed. The log is part of the artifacts of the build"
-        cp ${logfile} make-${p//\//_}.log
+        echo "Rebuilding of $p natives failed. The log (${logfile}) is part of the artifacts of the build"
         exit 1
     fi
 done

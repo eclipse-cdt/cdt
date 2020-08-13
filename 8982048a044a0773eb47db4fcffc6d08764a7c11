@@ -121,6 +121,30 @@
     },
     {
       "key": {
+        "uuid": "f3ee353a_39c68e91",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/include/org_eclipse_cdt_utils_pty_PTY.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-13T10:44:14Z",
+      "side": 1,
+      "message": "Sure - the sources are in Bugzilla somewhere IIRC. Maybe ipzilla though. If you can\u0027t find them I can try to when I am at my computer (writing this on my phone)",
+      "parentUuid": "3c1a4288_dfd92db8",
+      "range": {
+        "startLine": 32,
+        "startChar": 59,
+        "endLine": 32,
+        "endChar": 71
+      },
+      "revId": "8982048a044a0773eb47db4fcffc6d08764a7c11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c409ce38_8af13892",
         "filename": "core/org.eclipse.cdt.core.native/native_src/unix/pty.c",
         "patchSetId": 1

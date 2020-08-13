@@ -80,6 +80,14 @@
 <unit id="org.eclipse.remote.serial.feature.group" version="0.0.0"/>
 <repository location="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
 </location>
+	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+		<repository location="http://download.eclipse.org/linuxtools/updates-nightly/"/>
+		<unit id="org.eclipse.linuxtools.profiling.feature.group" version="8.0.0.202008111601"/>
+		<unit id="org.eclipse.linuxtools.valgrind.feature.group" version="8.0.0.202008111601"/>
+		<unit id="org.eclipse.linuxtools.gcov.feature.group" version="8.0.0.202008111601"/>
+		<unit id="org.eclipse.linuxtools.gprof.feature.feature.group" version="8.0.0.202008111601"/>
+		<unit id="org.eclipse.linuxtools.perf.feature.feature.group" version="8.0.0.202008111601"/>
+	</location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 <launcherArgs>

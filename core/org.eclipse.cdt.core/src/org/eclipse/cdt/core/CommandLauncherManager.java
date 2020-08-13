@@ -334,6 +334,14 @@ public class CommandLauncherManager {
 		return includePaths;
 	}
 
+	public boolean checkIfIncludesChanged(ICBuildConfiguration config) {
+		ICommandLauncherFactory factory = getBestFactory(config);
+		if (factory != null && factory instanceof ICommandLauncherFactory3) {
+			return ((ICommandLauncherFactory3) factory).checkIfIncludesChanged(config);
+		}
+		return false;
+	}
+
 	public void setLanguageSettingEntries(IProject project, List<? extends ICLanguageSettingEntry> entries) {
 		ICommandLauncherFactory factory = getBestFactory(project);
 		if (factory != null) {

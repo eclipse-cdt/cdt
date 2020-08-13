@@ -152,4 +152,9 @@ An additional tip is to set the following in `.gitconfig` to allow you to diff `
     binary = true
 ```
 
+When the host is Windows, getting docker to behave as encoded in the pom.xml may be challenging, instead a command like this will probably work (replace your path to git root). Note that running this in git bash causes problems because of the /work in the command line arguments. (TODO integrate this command line way of running into the pom.xml so the original instructions work.)
+
+docker 'run' '--rm' '-t' '-v' 'D:\cdt\git\org.eclipse.cdt:/work' '-w' '/work/core/org.eclipse.cdt.core.native' 'quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest' 'make' '-C' 'native_src' 'rebuild'
+
 See also `jniheaders` profile above.
+

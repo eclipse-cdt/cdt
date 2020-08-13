@@ -262,18 +262,22 @@ public class PTY {
 
 	static {
 		try {
+			if (Platform.OS_WIN32.equals(Platform.getOS())) {
+				// When we used to build with VC++ we used DelayLoadDLLs (See Gerrit 167674 and Bug 521515) so that the winpty
+				// could be found. When we ported to mingw we didn't port across this feature because it was simpler to just
+				// manually load winpty first.
+				System.loadLibrary("winpty"); //$NON-NLS-1$
+			}
 			System.loadLibrary("pty"); //$NON-NLS-1$
 			hasPTY = true;
 			isWinPTY = Platform.OS_WIN32.equals(Platform.getOS());
 			// on windows console mode is not supported except for experimental use
 			// to enable it, set system property org.eclipse.cdt.core.winpty_console_mode=true
 			isConsoleModeSupported = !isWinPTY || Boolean.getBoolean("org.eclipse.cdt.core.winpty_console_mode"); //$NON-NLS-1$
-		} catch (SecurityException e) {
-			// Comment out it worries the users too much
-			//CCorePlugin.log(e);
-		} catch (UnsatisfiedLinkError e) {
-			// Comment out it worries the users too much
-			//CCorePlugin.log(e);
+		} catch (SecurityException | UnsatisfiedLinkError e) {
+			CNativePlugin.log(
+					"Failed to load the PTY library. This may indicate a configuration problem, but can be ignored if no further problems are observed.", //$NON-NLS-1$
+					e);
 		}
 	}
 

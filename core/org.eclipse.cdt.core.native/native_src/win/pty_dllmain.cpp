@@ -68,4 +68,6 @@ FARPROC WINAPI PTYDliNotifyHook( unsigned dliNotify, PDelayLoadInfo pdli )
   return NULL;
 }
 
-extern "C" PfnDliHook __pfnDliNotifyHook2 = PTYDliNotifyHook;
+extern "C" {
+PfnDliHook __pfnDliNotifyHook2 = PTYDliNotifyHook;
+}

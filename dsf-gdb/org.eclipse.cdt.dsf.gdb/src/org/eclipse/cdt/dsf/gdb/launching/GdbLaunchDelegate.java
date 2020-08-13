@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 QNX Software Systems and others.
+ * Copyright (c) 2008, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@
  * Marc-Andre Laperle      - Bug 382462
  * Marc Khouzam (Ericsson - Show GDB version in debug view node label (Bug 455408)
  * Samuel Hultgren (STMicroelectronics) - Bug 533769
+ * Red Hat Inc.           - add Flatpak support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -37,6 +38,7 @@ import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.launching.FlatpakLaunch;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
@@ -114,6 +116,13 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 			throws CoreException {
 		if (monitor.isCanceled()) {
 			return;
+		}
+
+		if (System.getenv("FLATPAK_SANDBOX_DIR") != null) { //$NON-NLS-1$
+			FlatpakLaunch flatpak = new FlatpakLaunch();
+			if (flatpak.prelaunch(config, l, monitor) != 0) {
+				return;
+			}
 		}
 
 		SessionType sessionType = LaunchUtils.getSessionType(config);

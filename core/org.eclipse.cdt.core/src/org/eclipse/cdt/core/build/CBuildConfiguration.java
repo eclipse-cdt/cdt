@@ -37,6 +37,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IConsoleParser2;
 import org.eclipse.cdt.core.IMarkerGenerator;
@@ -497,6 +498,13 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 			}
 			commands.set(0, commandPath.toString());
 
+			// check if includes have been removed/refreshed and scanner info refresh is needed
+			boolean needRefresh = CommandLauncherManager.getInstance().checkIfIncludesChanged(this);
+			IToolChain t = getToolChain();
+			if (t != null) {
+				t.setProperty(NEED_REFRESH, Boolean.valueOf(needRefresh).toString());
+			}
+
 			ProcessBuilder processBuilder = new ProcessBuilder(commands).directory(buildDirectory.toFile());
 			// Override environment variables
 			Map<String, String> environment = processBuilder.environment();
@@ -894,11 +902,9 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 				boolean needScannerRefresh = false;
 
-				if (toolChain instanceof IToolChain2) {
-					String needRefresh = toolChain.getProperty(NEED_REFRESH);
-					if ("true".equals(needRefresh)) { //$NON-NLS-1$
-						needScannerRefresh = true;
-					}
+				String needRefresh = toolChain.getProperty(NEED_REFRESH);
+				if ("true".equals(needRefresh)) { //$NON-NLS-1$
+					needScannerRefresh = true;
 				}
 
 				for (IResource resource : resources) {
@@ -1024,11 +1030,9 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 				boolean needScannerRefresh = false;
 
-				if (toolChain instanceof IToolChain2) {
-					String needRefresh = toolChain.getProperty(NEED_REFRESH);
-					if ("true".equals(needRefresh)) { //$NON-NLS-1$
-						needScannerRefresh = true;
-					}
+				String needRefresh = toolChain.getProperty(NEED_REFRESH);
+				if ("true".equals(needRefresh)) { //$NON-NLS-1$
+					needScannerRefresh = true;
 				}
 
 				for (IResource resource : resources) {

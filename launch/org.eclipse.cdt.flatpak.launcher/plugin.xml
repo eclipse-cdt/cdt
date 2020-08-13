@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+>
+   <extension-point id="flatpakPreferencePages" name="%FlatpakPreferencePages.name" schema="schema/flatpakPreferencePages.exsd"/>
+<!--
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            id="org.eclipse.cdt.flatpak.launcher.launchConfigurationType"
+            name="%LaunchConfigurationType.name"
+            public="true">
+      </launchConfigurationType>
+   </extension>
+   <extension point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            id="org.eclipse.cdt.flatpak.launcher.launchConfigurationType"
+            type="org.eclipse.cdt.flatpak.launcher.launchConfigurationType"
+            modes="run,debug"
+            name="%LaunchConfigurationType.name"
+            delegate="org.eclipse.cdt.internal.flatpak.launcher.FlatpakLaunchConfigurationDelegate"
+            delegateDescription="%Delegate.desc"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+       </launchDelegate>
+   </extension>
+   <extension
+       point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+       <launchConfigurationTabGroup
+            class="org.eclipse.cdt.internal.flatpak.launcher.FlatpakLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.flatpak.launcher.launchConfigurationTabGroup"
+            type="org.eclipse.cdt.flatpak.launcher.launchConfigurationType">
+       </launchConfigurationTabGroup>
+   </extension>
+   <extension
+       point="org.eclipse.core.runtime.preferences">
+       <initializer
+            class="org.eclipse.cdt.internal.flatpak.launcher.ui.preferences.PreferenceInitializer">
+       </initializer>
+   </extension>
+   <extension
+       point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+       <launchConfigurationTypeImage
+            configTypeID="org.eclipse.cdt.flatpak.launcher.launchConfigurationType"
+            icon="icons/c_app.gif"
+            id="org.eclipse.cdt.flatpak.launcher.launchConfigurationTypeImage1">
+       </launchConfigurationTypeImage>
+   </extension>
+       <extension
+         point="org.eclipse.launchbar.core.launchTargetTypes">
+      <launchTargetType
+            id="org.eclipse.cdt.flatpak.launcher.launchTargetType.flatpak"
+            provider="org.eclipse.cdt.flatpak.launcher.FlatpakTargetTypeProvider">
+      </launchTargetType>
+   </extension>
+   <extension
+        point="org.eclipse.launchbar.ui.launchTargetTypeUI">
+     <launchTargetTypeUI
+           id="org.eclipse.cdt.flatpak.launcher.launchTargetType.flatpak"
+           labelProvider="org.eclipse.cdt.internal.flatpak.launcher.ui.launchbar.FlatpakTargetLabelProvider">
+     </launchTargetTypeUI>
+     <wizard2
+           class="org.eclipse.cdt.internal.flatpak.launcher.ui.launchbar.NewFlatpakTargetWizard"
+           icon="icons/repository-middle.gif"
+           id="org.eclipse.cdt.flatpak.launcher.launchTargetType.flatpak"
+           name="%ContainerTarget.name">
+     </wizard2>
+  </extension>
+  -->
+   <extension
+         point="org.eclipse.cdt.core.CommandLauncherFactory">
+      <factory
+            class="org.eclipse.cdt.flatpak.launcher.FlatpakCommandLauncherFactory"
+            id="FlatpakCommandLauncherFactory"
+            priority="0">
+      </factory>
+   </extension>
+    <extension
+         point="org.eclipse.cdt.flatpak.launcher.flatpakPreferencePages">
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.flatpak.launcher.ui.preferences.FlatpakHeaderPreferencePage"
+            id="org.eclipse.cdt.flatpak.launcher.page2"
+            name="%FlatpakHeaderPreferencePage.name">
+      </page>
+    </extension>
+   
+</plugin>

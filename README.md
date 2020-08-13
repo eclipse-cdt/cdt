@@ -78,8 +78,9 @@ mvn generate-resources -DuseSimrelRepo -f build/org.eclipse.cdt.autotools.docs -
 
 #### jniheaders
 
-The `jniheaders` profile can be used on the core/org.eclipse.cdt.core.native to rebuild the
-header files for JNI natives. See also `native` property below.
+The `jniheaders` profile can be used on the core/org.eclipse.cdt.core.native and
+native/org.eclipse.cdt.native.serial to rebuild the header files for JNI natives.
+See also `native` property below.
 
 ### Properties
 
@@ -114,14 +115,14 @@ For running CDT's DSF-GDB tests, this specifies the executable names of the gdbs
 
 The `native` property can be used to build the native libraries. Defining the `native` property will activate profiles to add the extra steps to compile the natives libraries used by CDT. The main CDT build by default will not build the libraries, but instead use the versions of the libraries checked into git. Therefore when users modify the sources of the native libraries, they have to build and commit the changed library binaries as part of the commit.
 
-The releng/scripts/check_code_cleanliness.sh, which is run on the build machine as part of the gerrit and main build flows, will ensure that the libraries that are checked in are indeed up to date with their sources. (*This is only supported for serial library at the time of writing, see [Bug 521515](https://bugs.eclipse.org/bugs/show_bug.cgi?id=521515) to track current state.)
+The `releng/scripts/check_code_cleanliness.sh`, which is run on the build machine as part of the gerrit and main build flows, will ensure that the libraries that are checked in are indeed up to date with their sources.
 
 The `native` property can be one of the following:
 
 - `linux.x86_64` - uses local tools and builds only linux.x86_64 libraries
 - `linux.ppc64le` - uses local tools and builds only linux.ppc64le libraries
-- `docker` - uses CDT's docker releng images to do the native builds for all platforms (*This is only supported for serial library at the time of writing, see [Bug 521515](https://bugs.eclipse.org/bugs/show_bug.cgi?id=521515) to track current state.)
- - `all` - uses local tools to do the native builds for all platforms (*This is only supported for serial library at the time of writing, see [Bug 521515](https://bugs.eclipse.org/bugs/show_bug.cgi?id=521515) to track current state.)
+- `docker` - uses CDT's docker releng images to do the native builds for all platforms
+ - `all` - uses local tools to do the native builds for all platforms
 
 Therefore to build all the natives using docker do `mvn process-resources -Dnative=docker`. 
 

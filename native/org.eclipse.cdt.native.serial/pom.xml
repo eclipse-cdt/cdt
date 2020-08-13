@@ -198,5 +198,34 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>jniheaders</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.8.1</version>
+						<executions>
+							<execution>
+								<id>headers</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<compilerArgs>
+										<arg>-h</arg>
+										<arg>${project.basedir}/native_src/include</arg>
+									</compilerArgs>
+									<source>11</source>
+									<target>11</target>
+									<encoding>UTF-8</encoding>
+								</configuration>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>

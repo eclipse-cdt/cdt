@@ -36,6 +36,7 @@
 #include <windows.h>
 #endif
 #include <jni.h>
+#include <org_eclipse_cdt_serial_SerialPort.h>
 
 #define FUNC(x) Java_org_eclipse_cdt_serial_SerialPort_ ## x
 

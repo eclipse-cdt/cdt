@@ -18,7 +18,6 @@ package org.eclipse.cdt.lsp.core;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.eclipse.cdt.cquery.CqueryInactiveRegions;
 import org.eclipse.cdt.cquery.CquerySemanticHighlights;
@@ -28,7 +27,6 @@ import org.eclipse.cdt.internal.cquery.CqueryMessages;
 import org.eclipse.cdt.internal.cquery.ui.HighlightingNames;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
-import org.eclipse.cdt.lsp.internal.text.DocumentUri;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
@@ -59,12 +57,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 @SuppressWarnings("restriction")
 public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
-	private final DocumentUri uri;
-
-	public Server2ClientProtocolExtension() {
-		this.uri = new DocumentUri();
-	}
-
 	@JsonNotification("$cquery/progress")
 	public final void indexingProgress(IndexingProgressStats stats) {
 
@@ -92,18 +84,18 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 	public final void setInactiveRegions(CqueryInactiveRegions regions) {
 		URI uriReceived = regions.getUri();
 		List<Range> inactiveRegions = regions.getInactiveRegions();
-		//FIXME: AF: extract the retrieval of this document to a separate method
 		IDocument doc = null;
+
 		// To get the document for the received URI.
 		for (PresentationReconcilerCPP eachReconciler : PresentationReconcilerCPP.presentationReconcilers) {
 			IDocument currentReconcilerDoc = eachReconciler.getTextViewer().getDocument();
-			Optional<URI> currentReconcilerUri = uri.apply(currentReconcilerDoc);
+			URI currentReconcilerUri = getUri(currentReconcilerDoc);
 
-			if (currentReconcilerUri.isEmpty()) {
+			if (currentReconcilerUri == null) {
 				continue;
 			}
 
-			if (uriReceived.equals(currentReconcilerUri.get())) {
+			if (uriReceived.equals(currentReconcilerUri)) {
 				doc = currentReconcilerDoc;
 				break;
 			}
@@ -146,17 +138,17 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 		URI uriReceived = highlights.getUri();
 
 		// List of PresentationReconcilerCPP objects attached with same C++ source file.
-		//FIXME: AF: extract the retrieval of this list to a separate method
 		List<PresentationReconcilerCPP> matchingReconcilers = new ArrayList<>();
 
 		for (PresentationReconcilerCPP eachReconciler : PresentationReconcilerCPP.presentationReconcilers) {
 			IDocument currentReconcilerDoc = eachReconciler.getTextViewer().getDocument();
-			Optional<URI> currentReconcilerUri = uri.apply(currentReconcilerDoc);
-			if (currentReconcilerUri.isEmpty()) {
+			URI currentReconcilerUri = getUri(currentReconcilerDoc);
+
+			if (currentReconcilerUri == null) {
 				continue;
 			}
 
-			if (uriReceived.equals(currentReconcilerUri.get())) {
+			if (uriReceived.equals(currentReconcilerUri)) {
 				matchingReconcilers.add(eachReconciler);
 			}
 		}

@@ -24,7 +24,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,7 +39,6 @@ import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
 import org.eclipse.cdt.internal.ui.text.PartitionDamager;
 import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.TokenStore;
-import org.eclipse.cdt.lsp.internal.text.DocumentUri;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
 import org.eclipse.cdt.ui.text.AbstractCScanner;
@@ -73,8 +71,6 @@ import org.eclipse.ui.editors.text.TextEditor;
  * Server.
  */
 public class PresentationReconcilerCPP extends CPresentationReconciler {
-
-	private final DocumentUri documentUri;
 
 	private CCommentScanner fSinglelineCommentScanner;
 	private CCommentScanner fMultilineCommentScanner;
@@ -130,7 +126,6 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	}
 
 	public PresentationReconcilerCPP() {
-		this.documentUri = new DocumentUri();
 		fStringScanner = new SingleTokenCScanner(getTokenStoreFactory(), ICColorConstants.C_STRING);
 		fMultilineCommentScanner = new CCommentScanner(getTokenStoreFactory(), ICColorConstants.C_MULTI_LINE_COMMENT);
 		fSinglelineCommentScanner = new CCommentScanner(getTokenStoreFactory(), ICColorConstants.C_SINGLE_LINE_COMMENT);
@@ -185,8 +180,9 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		TextPresentation presentation = super.createPresentation(damage, document);
 
 		IDocument doc = textViewer.getDocument();
-		Optional<URI> uri = documentUri.apply(doc);
-		if (!uri.isPresent()) {
+		URI uri = Server2ClientProtocolExtension.getUri(doc);
+
+		if (uri == null) {
 			return presentation;
 		}
 

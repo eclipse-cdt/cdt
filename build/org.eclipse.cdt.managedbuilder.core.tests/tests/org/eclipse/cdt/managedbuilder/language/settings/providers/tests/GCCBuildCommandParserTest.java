@@ -20,6 +20,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
@@ -404,6 +406,59 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
 		CMacroEntry expected = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN);
 		assertEquals(expected, entries.get(0));
+	}
+
+	/**
+	 * Test that an option string containing extra characters after its pattern (often the source file name) gets trimmed properly.
+	 */
+	public void testAbstractBuildCommandParser_FileNameRemovalInOption() throws Exception {
+		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+
+		final IFile file = ResourceHelper.createFile(project, "file.cpp");
+		final IFile file2 = ResourceHelper.createFile(project, "file2.cpp");
+
+		AbstractBuildCommandParser parser = new MockBuildCommandParser() {
+			final Pattern GENERIC_OPTION_PATTERN = Pattern.compile("-.*");
+
+			@Override
+			protected AbstractOptionParser[] getOptionParsers() {
+				return new AbstractOptionParser[] { new IncludePathOptionParser("-Isimple", "simple"),
+						new IncludePathOptionParser("-I(arg)withbackreference\\1", "willnotwork"),
+						new IncludePathOptionParser("-I(?<mygroup>arg)withbackreference\\k<mygroup>",
+								"backreferenceworks") };
+			}
+
+			@Override
+			protected List<String> parseOptions(String line) {
+				List<String> options = new ArrayList<>();
+				Matcher optionMatcher = GENERIC_OPTION_PATTERN.matcher(line);
+				while (optionMatcher.find()) {
+					String option = optionMatcher.group(0);
+					if (option != null) {
+						options.add(option);
+					}
+				}
+				return options;
+			}
+		};
+		parser.startup(cfgDescription, null);
+		parser.processLine("command -Iargwithbackreferencearg file.cpp");
+		parser.processLine("command -Isimple file2.cpp");
+		parser.shutdown();
+
+		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
+		String languageId = ls.getLanguageId();
+
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
+		assertEquals(1, entries.size());
+		assertEquals(new CIncludePathEntry("/${ProjName}/backreferenceworks", ICSettingEntry.VALUE_WORKSPACE_PATH),
+				entries.get(0));
+
+		entries = parser.getSettingEntries(cfgDescription, file2, languageId);
+		assertEquals(1, entries.size());
+		assertEquals(new CIncludePathEntry("/${ProjName}/simple", ICSettingEntry.VALUE_WORKSPACE_PATH), entries.get(0));
 	}
 
 	/**

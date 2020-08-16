@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6d745ce5_7048bc73",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/internal/text/DocumentUri.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-08-16T23:08:23Z",
+      "side": 1,
+      "message": "By the name \"DocumentUri\", I would have expected this to be a more data/struct-like class (value class?) rather than a function. I don\u0027t know if something like DocumentUriExtractor makes more sense? There doesn\u0027t seem to be much of a naming convention.",
+      "revId": "fa3b48060d42a00036a7382d6e9fa993506bd3cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

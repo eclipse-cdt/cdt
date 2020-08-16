@@ -26,11 +26,20 @@ import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildC
  */
 public class MSVCBuildCommandParser extends AbstractBuildCommandParser implements ILanguageSettingsEditableProvider {
 
+	private static final String DOUBLE_BACKSLASH = "\\\\"; //$NON-NLS-1$
+	private static final Pattern DOUBLE_BACKSLASH_PATTERN = Pattern.compile(Pattern.quote(DOUBLE_BACKSLASH));
+	private static final String BACKSLASH_REPLACEMENT_STRING = "\\\\"; //$NON-NLS-1$
+	private static final String BACKSLASH_QUOTE = "\\\""; //$NON-NLS-1$
+	private static final Pattern BACKSLASH_QUOTE_PATTERN = Pattern.compile(Pattern.quote(BACKSLASH_QUOTE));
+	private static final String QUOTE_REPLACEMENT_STRING = "\""; //$NON-NLS-1$
+
 	private static String unescapeString(String value) {
 		// There are probably many other things to unescape but these are the most
 		// common.
-		value = value.replaceAll("\\\\\\\\", "\\\\"); //$NON-NLS-1$//$NON-NLS-2$
-		value = value.replaceAll("\\\\\"", "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (value.contains(DOUBLE_BACKSLASH))
+			value = DOUBLE_BACKSLASH_PATTERN.matcher(value).replaceAll(BACKSLASH_REPLACEMENT_STRING);
+		if (value.contains(BACKSLASH_QUOTE))
+			value = BACKSLASH_QUOTE_PATTERN.matcher(value).replaceAll(QUOTE_REPLACEMENT_STRING);
 		return value;
 	}
 

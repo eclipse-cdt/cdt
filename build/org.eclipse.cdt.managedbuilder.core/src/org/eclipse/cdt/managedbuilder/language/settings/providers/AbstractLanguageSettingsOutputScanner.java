@@ -159,8 +159,10 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		 *
 		 * @param kind - kind of language settings entries being parsed by the parser.
 		 * @param pattern - regular expression pattern being parsed by the parser.
-		 * @param nameExpression - capturing group expression defining name of an entry.
-		 * @param valueExpression - capturing group expression defining value of an entry.
+		 * 					The pattern may be embedded into another pattern for intermediate
+		 * 					parsing so it is best to avoid using numbered group back-reference e.g. \1
+		 * @param nameExpression - capturing group expression (numbered or named) defining name of an entry.
+		 * @param valueExpression - capturing group expression (numbered or named) defining value of an entry.
 		 * @param extraFlag - extra-flag to add while creating language settings entry.
 		 */
 		public AbstractOptionParser(int kind, String pattern, String nameExpression, String valueExpression,

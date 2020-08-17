@@ -70,6 +70,24 @@
       "revId": "fa3b48060d42a00036a7382d6e9fa993506bd3cd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84d28d69_9c69e99c",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/internal/text/DocumentUri.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-17T14:53:58Z",
+      "side": 1,
+      "message": "\u003e Would it be more clear if I rename it to \"ResolveDocumentUri\"?\n\nSure - but of course I have spent years reading code with -er etc, so not calling it \"DocumentUriResolver\" (or as Marc-Andre suggested \"DocumentUriExtractor\") is a cultural change that may be hard. If you want to make that cultural change, I am ok with it, the challenge is bringing everyone along with you.\n\n\u003e BTW, I would not consider`LSPEclipseUtils` as a good example - it is a collection of procedures for everything with a lot of dependencies and assumptions, and it has good potential to grow to a monster. I plan to provide more focused alternatives for it and then suggest it for LSP4E.\n\nLSPEclipseUtils is not an example - it has lots of useful functions that in a OO world should be methods on the document object. So I would add an adapter from IDocument -\u003e ILSPDocument (and back) and the ILSPDocument interface would have methods like getFile, getURI, getDocumentContentTypes, toPosition, etc. (Another related cultural change is the dropping of \"get\", and a third is not returning null - so lots of cultural style changes outside the scope).",
+      "parentUuid": "1fe5bbc7_54dadeda",
+      "revId": "fa3b48060d42a00036a7382d6e9fa993506bd3cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

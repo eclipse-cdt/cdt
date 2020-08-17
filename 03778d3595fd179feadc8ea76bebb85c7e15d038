@@ -22,6 +22,30 @@
       "revId": "03778d3595fd179feadc8ea76bebb85c7e15d038",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a193a60_08d51239",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/pty.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-17T19:19:22Z",
+      "side": 1,
+      "message": "I think I see the reason why it fails. My assumption (since the channels variable was checked for null and the array was fetched) was that the content should be valid, but in fact, for PTY, it should not.\nI do not see the reason why the channels array even needs to be part of the JNI interface. The unix part provides the different FDs, but they are never used? I might be missing something here, but I think it\u0027s safe to just remove the lines 336 to 340 from the changeset and it will work.\n\nCan you try that or do you want me to push again without those lines?\n\nI still do not have a Windows system here that I can test on, but I can try to find some time to do it at one of the systems at work in the week.",
+      "parentUuid": "20ec1105_965b30dc",
+      "range": {
+        "startLine": 319,
+        "startChar": 94,
+        "endLine": 319,
+        "endChar": 103
+      },
+      "revId": "03778d3595fd179feadc8ea76bebb85c7e15d038",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

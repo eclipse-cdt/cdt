@@ -52,6 +52,24 @@
       "revId": "fa3b48060d42a00036a7382d6e9fa993506bd3cd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fe5bbc7_54dadeda",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/internal/text/DocumentUri.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-17T14:30:23Z",
+      "side": 1,
+      "message": "I agree that it is important that we all can understand code faster and for this the convention could play critical role.\n\nWould it be more clear if I rename it to \"ResolveDocumentUri\"?\n\nBTW, I would not consider`LSPEclipseUtils` as a good example - it is a collection of procedures for everything with a lot of dependencies and assumptions, and it has good potential to grow to a monster. I plan to provide more focused alternatives for it and then suggest it for LSP4E.",
+      "parentUuid": "e9f2bb0c_80709644",
+      "revId": "fa3b48060d42a00036a7382d6e9fa993506bd3cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

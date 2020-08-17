@@ -16,6 +16,24 @@
       "revId": "fa3b48060d42a00036a7382d6e9fa993506bd3cd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd573e1c_27af5896",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/internal/text/DocumentUri.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-17T08:54:39Z",
+      "side": 1,
+      "message": "From OOP perspective [1][2] the er/or suffixes is bad choice because it pushes us to think about dummy data structures that are managed by smart procedures. It can be renamed to \"ResolvedDocumentUri\", but I think it would be exessive.\n\nBTW, I don\u0027t know if CDT currently requires to use OOP style or procedural style. I just assume that we should use OOP style while programming on Java. If I\u0027m wrong let\u0027s discuss it using \"cdt-dev\".\n\n[1] http://wiki.c2.com/?DontCreateVerbClasses\n[2] https://www.yegor256.com/2015/03/09/objects-end-with-er.html",
+      "parentUuid": "6d745ce5_7048bc73",
+      "revId": "fa3b48060d42a00036a7382d6e9fa993506bd3cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

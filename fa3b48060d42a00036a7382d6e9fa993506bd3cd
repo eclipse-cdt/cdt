@@ -34,6 +34,24 @@
       "revId": "fa3b48060d42a00036a7382d6e9fa993506bd3cd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e9f2bb0c_80709644",
+        "filename": "lsp/org.eclipse.cdt.lsp.core/src/org/eclipse/cdt/lsp/internal/text/DocumentUri.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-17T14:13:17Z",
+      "side": 1,
+      "message": "\u003e By the name \"DocumentUri\", I would have expected this to be a more data/struct-like class (value class?)\n\n+1\n\nI would expect a noun to contain data, not transform it. Indeed the c2 link has lots of discussion on this point. \n\nTraditionally the way Eclipse has solved this problem (i.e. the \"missing\" get URI method on IDocument) is to use adaptables - but that may just be too heavyweight for what is a simple method call. However LSP4E having an ILSPDocument that IDocument adapts to that provides all the (relevant) stuff in LSPEclipseUtils would be good.\n\nAnyway, none of this affects my vote on this change, more food for thought.\n\nA general discussion on coding styles should indeed happen on cdt-dev - however I would be keen to wherever possible not reinvent the wheel and follow Eclipse Platform lead.",
+      "parentUuid": "bd573e1c_27af5896",
+      "revId": "fa3b48060d42a00036a7382d6e9fa993506bd3cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

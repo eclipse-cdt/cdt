@@ -24,8 +24,7 @@ public class CqueryMessages extends NLS {
 	}
 
 	public static String CquerySymbolKind_e_illegal_value;
-	public static String Server2ClientProtocolExtension_cquery_busy;
-	public static String Server2ClientProtocolExtension_cquery_idle;
+	public static String Server2ClientProtocolExtension_cquery_name;
 	public static String StorageClass_e_illegal_value;
 
 	private CqueryMessages() {

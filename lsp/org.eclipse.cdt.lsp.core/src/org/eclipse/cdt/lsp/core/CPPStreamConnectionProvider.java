@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.internal.cquery.core.CqueryLanguageServer;
-import org.eclipse.cdt.lsp.internal.core.LspCoreMessages;
+import org.eclipse.cdt.lsp.LanguageServerConfiguration;
+import org.eclipse.cdt.lsp.internal.core.ContributedLanguageServers;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -43,29 +43,19 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 
 	private static final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
-	private ICPPLanguageServer languageServer;
+	private final LanguageServerConfiguration configuration;
 
-	public static final String CLANGD_ID = "clangd"; //$NON-NLS-1$
-
-	public static final String CQUERY_ID = "cquery"; //$NON-NLS-1$
-
-	//FIXME: AF: the list of available servers should be extracted from some service
 	public CPPStreamConnectionProvider() throws UnsupportedOperationException {
-		List<String> commands = new ArrayList<>();
-		if (store.getString(PreferenceConstants.P_SERVER_CHOICE).equals(CQUERY_ID)) {
-			languageServer = new CqueryLanguageServer();
-		} else if (store.getString(PreferenceConstants.P_SERVER_CHOICE).equals(CLANGD_ID)) {
-			languageServer = new ClangdLanguageServer();
-		} else {
-			throw new UnsupportedOperationException(LspCoreMessages.CPPStreamConnectionProvider_e_unsupported);
-		}
-		File defaultLSLocation = getDefaultLSLocation(store.getString(PreferenceConstants.P_SERVER_CHOICE));
+		//FIXME: should obtain an instance of interface
+		configuration = new ContributedLanguageServers().preferred();
+		File defaultLSLocation = getDefaultLSLocation(configuration.identifier());
 		if (defaultLSLocation != null) {
 			store.setDefault(PreferenceConstants.P_SERVER_PATH, defaultLSLocation.getAbsolutePath());
 		}
 		File languageServerLocation = getLanguageServerLocation();
 		String parent = ""; //$NON-NLS-1$
 		String flags = store.getString(PreferenceConstants.P_SERVER_OPTIONS);
+		List<String> commands = new ArrayList<>();
 		if (languageServerLocation != null) {
 			commands.add(languageServerLocation.getAbsolutePath());
 			if (!flags.isEmpty()) {
@@ -89,8 +79,7 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 	@Override
 	public Object getInitializationOptions(URI rootPath) {
 		installResourceChangeListener(rootPath);
-		Object defaultInitOptions = super.getInitializationOptions(rootPath);
-		return languageServer.getLSSpecificInitializationOptions(defaultInitOptions, rootPath);
+		return configuration.options(super.getInitializationOptions(rootPath), rootPath);
 	}
 
 	private void installResourceChangeListener(URI rootPath) {

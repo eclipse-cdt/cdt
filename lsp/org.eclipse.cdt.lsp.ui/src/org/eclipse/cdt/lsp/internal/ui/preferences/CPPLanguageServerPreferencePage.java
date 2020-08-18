@@ -18,7 +18,9 @@ package org.eclipse.cdt.lsp.internal.ui.preferences;
 
 import java.io.File;
 
+import org.eclipse.cdt.internal.cquery.core.CqueryLanguageServer;
 import org.eclipse.cdt.lsp.core.CPPStreamConnectionProvider;
+import org.eclipse.cdt.lsp.core.ClangdLanguageServer;
 import org.eclipse.cdt.lsp.core.PreferenceConstants;
 import org.eclipse.cdt.lsp.internal.ui.LspUiActivator;
 import org.eclipse.cdt.lsp.internal.ui.LspUiMessages;
@@ -52,9 +54,9 @@ public class CPPLanguageServerPreferencePage extends FieldEditorPreferencePage i
 		serverChoice = new RadioGroupFieldEditor(PreferenceConstants.P_SERVER_CHOICE,
 				LspUiMessages.CPPLanguageServerPreferencePage_server_selector, 1,
 				new String[][] {
-						{ LspUiMessages.CPPLanguageServerPreferencePage_clangd, CPPStreamConnectionProvider.CLANGD_ID },
+						{ LspUiMessages.CPPLanguageServerPreferencePage_clangd, ClangdLanguageServer.CLANGD_ID },
 						{ LspUiMessages.CPPLanguageServerPreferencePage_cquery,
-								CPPStreamConnectionProvider.CQUERY_ID } },
+								CqueryLanguageServer.CQUERY_ID } },
 				getFieldEditorParent());
 		addField(serverChoice);
 

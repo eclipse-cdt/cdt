@@ -13,11 +13,25 @@ package org.eclipse.cdt.lsp.core;
 
 import java.net.URI;
 
-public class ClangdLanguageServer implements ICPPLanguageServer {
+import org.eclipse.cdt.lsp.LanguageServerConfiguration;
+
+public class ClangdLanguageServer implements LanguageServerConfiguration {
+
+	public static final String CLANGD_ID = "clangd"; //$NON-NLS-1$
 
 	@Override
-	public Object getLSSpecificInitializationOptions(Object defaultInitOptions, URI rootPath) {
-		return defaultInitOptions;
+	public String identifier() {
+		return ClangdLanguageServer.CLANGD_ID;
+	}
+
+	@Override
+	public String label() {
+		return "ClangD";
+	}
+
+	@Override
+	public Object options(Object defaults, URI uri) {
+		return defaults;
 	}
 
 }

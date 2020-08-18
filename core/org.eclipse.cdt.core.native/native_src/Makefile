@@ -49,7 +49,8 @@ LIBS = \
 else
 LIBS = \
 	$(OS_DIR_WIN32_X86_64)/starter.exe \
-	$(OS_DIR_WIN32_X86_64)/spawner.dll
+	$(OS_DIR_WIN32_X86_64)/spawner.dll \
+	$(OS_DIR_WIN32_X86_64)/pty.dll
 endif
 endif
 

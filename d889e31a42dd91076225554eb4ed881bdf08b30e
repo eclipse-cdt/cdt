@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "55c6797e_8644e24e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/envvar/EnvironmentVariableProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-18T17:45:21Z",
+      "side": 0,
+      "message": "These set of wrap methods are the nonsense I wanted to remove need for.",
+      "revId": "d889e31a42dd91076225554eb4ed881bdf08b30e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ebb2e006_a8e506f9",
+        "filename": "llvm/org.eclipse.cdt.managedbuilder.llvm.ui/src/org/eclipse/cdt/managedbuilder/llvm/ui/LlvmBuildEnvironmentVariable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-18T17:45:21Z",
+      "side": 0,
+      "message": "I think this hard-coded ; is wrong - but I preserved it anyway in the supplier.",
+      "revId": "d889e31a42dd91076225554eb4ed881bdf08b30e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -31,7 +31,6 @@ import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.Highlighti
 import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -43,7 +42,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.lsp4e.LSPEclipseUtils;
 import org.eclipse.lsp4e.LanguageClientImpl;
 import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
@@ -247,16 +245,4 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 		});
 	}
 
-	/*
-	 * Returns the URI of the Document provided.
-	 * Can return null value.
-	 */
-	public static URI getUri(IDocument document) {
-		URI uri = null;
-		IFile file = LSPEclipseUtils.getFile(document);
-		if (file != null) {
-			uri = LSPEclipseUtils.toUri(file);
-		}
-		return uri;
-	}
 }

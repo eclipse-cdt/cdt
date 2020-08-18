@@ -24,6 +24,8 @@ public class LspCoreMessages extends NLS {
 	}
 
 	public static String CPPStreamConnectionProvider_e_unsupported;
+	public static String ShowStatus_busy;
+	public static String ShowStatus_idle;
 
 	private LspCoreMessages() {
 	}

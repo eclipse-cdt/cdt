@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c89dc51f_54e2ee3f",
+        "filename": "build/org.eclipse.cdt.build.gcc.core/src/org/eclipse/cdt/build/gcc/core/GCCToolChain.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-18T18:24:30Z",
+      "side": 1,
+      "message": "I am satisfied with this change (I assume JABA means TODO).\n\nThe pre-existing code already had issues with Path vs PATH, the new code is actually a little more consistent.",
+      "revId": "79356725b05a4cb245815d463245816654dd9ca3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

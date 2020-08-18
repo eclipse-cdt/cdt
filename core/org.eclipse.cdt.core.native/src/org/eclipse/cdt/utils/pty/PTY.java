@@ -262,7 +262,8 @@ public class PTY {
 
 	static {
 		try {
-			if (Platform.OS_WIN32.equals(Platform.getOS())) {
+			isWinPTY = Platform.OS_WIN32.equals(Platform.getOS());
+			if (isWinPTY) {
 				// When we used to build with VC++ we used DelayLoadDLLs (See Gerrit 167674 and Bug 521515) so that the winpty
 				// could be found. When we ported to mingw we didn't port across this feature because it was simpler to just
 				// manually load winpty first.
@@ -270,7 +271,6 @@ public class PTY {
 			}
 			System.loadLibrary("pty"); //$NON-NLS-1$
 			hasPTY = true;
-			isWinPTY = Platform.OS_WIN32.equals(Platform.getOS());
 			// on windows console mode is not supported except for experimental use
 			// to enable it, set system property org.eclipse.cdt.core.winpty_console_mode=true
 			isConsoleModeSupported = !isWinPTY || Boolean.getBoolean("org.eclipse.cdt.core.winpty_console_mode"); //$NON-NLS-1$

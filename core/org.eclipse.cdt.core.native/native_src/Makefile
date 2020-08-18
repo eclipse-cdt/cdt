@@ -89,7 +89,7 @@ $(OS_DIR_WIN32_X86_64)/pty.dll: win/pty.cpp win/pty_dllmain.cpp
 	x86_64-w64-mingw32-g++ -o $@ -Iinclude -Iwin/include -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
 		-DUNICODE \
 		win/pty.cpp win/pty_dllmain.cpp \
-		-Wl,--kill-at --shared -L$(OS_DIR_WIN32_X86_64) -lwinpty # -static-libstdc++ -static-libgcc
+		-Wl,--kill-at --shared -L$(OS_DIR_WIN32_X86_64) -lwinpty -static-libstdc++ -static-libgcc
 
 # Linux x86_64
 $(OS_DIR_LINUX_X86_64)/libspawner.so: unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c

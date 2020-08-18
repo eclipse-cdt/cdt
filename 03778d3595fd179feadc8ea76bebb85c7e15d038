@@ -46,6 +46,30 @@
       "revId": "03778d3595fd179feadc8ea76bebb85c7e15d038",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b863a983_373fc73a",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/pty.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-18T01:54:51Z",
+      "side": 1,
+      "message": "Resolved.",
+      "parentUuid": "7a193a60_08d51239",
+      "range": {
+        "startLine": 319,
+        "startChar": 94,
+        "endLine": 319,
+        "endChar": 103
+      },
+      "revId": "03778d3595fd179feadc8ea76bebb85c7e15d038",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

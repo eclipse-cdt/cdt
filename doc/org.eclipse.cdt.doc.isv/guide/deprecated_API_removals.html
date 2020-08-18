@@ -46,6 +46,7 @@
     <li><a href="#terminal">TM Terminal has major changes to support new color and preference functionality.</a></li>
     <li><a href="#pathutil">Remove org.eclipse.cdt.core.browser.PathUtil.</a></li>
     <li><a href="#casesensitive">Environment Variables are always case sensitive in CDT.</a></li>
+    <li><a href="#buildenvironmentvariable">Remove org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable.</a></li>
   </ol>
   <p>
     Planned Removals after June 2022
@@ -270,6 +271,20 @@
     The handling of environment and build variables in CDT has changed to being case sensitive. This means
     some API changes to remove methods such as isVariableCaseSensitive (see full list below). The PATH and
     dome other special environment variables in CDT are always uppercased, such as Path. See <a
+    href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564123" target="_blank">Bug 564123</a>.
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.managedbuilder.core.IBuilder.isVariableCaseSensitive() removed.</li>
+    <li>org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider.isVariableCaseSensitive() removed.</li>
+    <li>org.eclipse.cdt.core.envvar.IEnvironmentVariableManager.isVariableCaseSensitive() removed.</li></li>
+  </ul>
+
+  <h3>15. <a name="buildenvironmentvariable">Remove org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable.</a></h3>
+  <p>
+    The IBuildEnvironmentVariable that was specific to the managedbuilder has been replaced
+    by org.eclipse.cdt.core.envvar.IEnvironmentVariable. IEnvironment was a super-interface of
+    IBuildEnvironmentVariable since its introduction. This change means many classes have API
+    changes to return or take IEnvironmentVairable instead of IBuildEnvironmentVariable. See <a
     href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564123" target="_blank">Bug 564123</a>.
   </p>
   <ul>

@@ -14,16 +14,16 @@
 
 package org.eclipse.cdt.managedbuilder.core.tests;
 
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
-import org.eclipse.cdt.managedbuilder.internal.envvar.BuildEnvVar;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
@@ -145,10 +145,10 @@ public class TestMacro implements IConfigurationBuildMacroSupplier, IProjectBuil
 	 *
 	 */
 	@Override
-	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
+	public IEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		if (CFG_VAR.equals(variableName)) {
-			return new BuildEnvVar(CFG_VAR, CFG_VAR + configuration.getName());
+			return new EnvironmentVariable(CFG_VAR, CFG_VAR + configuration.getName());
 		} else
 			return null;
 	}
@@ -157,11 +157,10 @@ public class TestMacro implements IConfigurationBuildMacroSupplier, IProjectBuil
 	 *
 	 */
 	@Override
-	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration,
-			IEnvironmentVariableProvider provider) {
-		IBuildEnvironmentVariable v = getVariable(CFG_VAR, configuration, provider);
+	public IEnvironmentVariable[] getVariables(IConfiguration configuration, IEnvironmentVariableProvider provider) {
+		IEnvironmentVariable v = getVariable(CFG_VAR, configuration, provider);
 		if (v != null) {
-			IBuildEnvironmentVariable[] vs = new IBuildEnvironmentVariable[1];
+			IEnvironmentVariable[] vs = new IEnvironmentVariable[1];
 			vs[0] = v;
 			return (vs);
 		} else
@@ -174,10 +173,10 @@ public class TestMacro implements IConfigurationBuildMacroSupplier, IProjectBuil
 	 *
 	 */
 	@Override
-	public IBuildEnvironmentVariable getVariable(String variableName, IManagedProject project,
+	public IEnvironmentVariable getVariable(String variableName, IManagedProject project,
 			IEnvironmentVariableProvider provider) {
 		if (PRJ_VAR.equals(variableName)) {
-			return new BuildEnvVar(PRJ_VAR, PRJ_VAR + project.getName());
+			return new EnvironmentVariable(PRJ_VAR, PRJ_VAR + project.getName());
 		} else
 			return null;
 	}
@@ -186,10 +185,10 @@ public class TestMacro implements IConfigurationBuildMacroSupplier, IProjectBuil
 	 *
 	 */
 	@Override
-	public IBuildEnvironmentVariable[] getVariables(IManagedProject project, IEnvironmentVariableProvider provider) {
-		IBuildEnvironmentVariable v = getVariable(PRJ_VAR, project, provider);
+	public IEnvironmentVariable[] getVariables(IManagedProject project, IEnvironmentVariableProvider provider) {
+		IEnvironmentVariable v = getVariable(PRJ_VAR, project, provider);
 		if (v != null) {
-			IBuildEnvironmentVariable[] vs = new IBuildEnvironmentVariable[1];
+			IEnvironmentVariable[] vs = new IEnvironmentVariable[1];
 			vs[0] = v;
 			return (vs);
 		} else

@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
@@ -57,6 +58,7 @@ import org.osgi.service.prefs.Preferences;
 
 public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuildConfiguration, IQtInstallListener {
 
+	private static final String PATH = "PATH";
 	public static final String QMAKE_COMMAND = "cdt.qt.qmake.command"; //$NON-NLS-1$
 	public static final String QMAKE_ARGS = "cdt.qt.qmake.args"; //$NON-NLS-1$
 	public static final String BUILD_COMMAND = "cdt.qt.buildCommand"; //$NON-NLS-1$
@@ -70,27 +72,7 @@ public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuil
 	private Map<String, String> qtProperties;
 	private boolean doFullBuild;
 
-	private IEnvironmentVariable pathVar = new IEnvironmentVariable() {
-		@Override
-		public String getValue() {
-			return getQmakeCommand().getParent().toString();
-		}
-
-		@Override
-		public int getOperation() {
-			return IEnvironmentVariable.ENVVAR_PREPEND;
-		}
-
-		@Override
-		public String getName() {
-			return "PATH"; //$NON-NLS-1$
-		}
-
-		@Override
-		public String getDelimiter() {
-			return File.pathSeparator;
-		}
-	};
+	private IEnvironmentVariable pathVar = null;
 
 	public QtBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
@@ -284,7 +266,11 @@ public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuil
 
 	@Override
 	public IEnvironmentVariable getVariable(String name) {
-		if ("PATH".equals(name)) { //$NON-NLS-1$
+		if (PATH.equals(name)) {
+			if (pathVar == null) {
+				pathVar = new EnvironmentVariable(PATH, getQmakeCommand().getParent().toString(),
+						IEnvironmentVariable.ENVVAR_PREPEND);
+			}
 			return pathVar;
 		} else {
 			return null;
@@ -293,7 +279,7 @@ public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuil
 
 	@Override
 	public IEnvironmentVariable[] getVariables() {
-		return new IEnvironmentVariable[] { pathVar };
+		return new IEnvironmentVariable[] { getVariable(PATH) };
 	}
 
 	@Override

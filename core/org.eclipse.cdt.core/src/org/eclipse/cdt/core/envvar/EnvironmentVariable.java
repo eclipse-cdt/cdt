@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,6 +57,13 @@ public class EnvironmentVariable implements IEnvironmentVariable, Cloneable {
 
 	public EnvironmentVariable(IEnvironmentVariable var) {
 		this(var.getName(), var.getValue(), var.getOperation(), var.getDelimiter());
+	}
+
+	/**
+	 * @since 7.0
+	 */
+	public EnvironmentVariable(String name, String value, int op) {
+		this(name, value, op, EnvironmentVariableManager.getDefault().getDefaultDelimiter());
 	}
 
 	@Override

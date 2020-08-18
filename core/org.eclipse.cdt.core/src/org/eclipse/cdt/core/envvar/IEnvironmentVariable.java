@@ -38,7 +38,7 @@ public interface IEnvironmentVariable {
 	public String getValue();
 
 	/**
-	 * @return one of the IBuildEnvironmentVariable.ENVVAR_* operation types
+	 * @return one of the IEnvironmentVariable.ENVVAR_* operation types
 	 */
 	public int getOperation();
 

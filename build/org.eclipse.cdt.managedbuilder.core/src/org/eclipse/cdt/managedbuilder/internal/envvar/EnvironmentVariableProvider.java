@@ -27,7 +27,6 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListener;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier;
@@ -92,18 +91,6 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 	}
 
 	@Override
-	public IBuildEnvironmentVariable getVariable(String variableName, Object level, boolean includeParentLevels,
-			boolean resolveMacros) {
-		if (variableName == null || variableName.isEmpty())
-			return null;
-
-		if (level instanceof IConfiguration) {
-			return wrap(getVariable(variableName, (IConfiguration) level, resolveMacros));
-		}
-		return null;
-	}
-
-	@Override
 	public IEnvironmentVariable getVariable(String variableName, IConfiguration cfg, boolean resolveMacros) {
 		return getVariable(variableName, cfg, resolveMacros, true);
 	}
@@ -133,45 +120,7 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 				checkBuildPathVariables(cfg, vars);
 			return vars;
 		}
-		return new IBuildEnvironmentVariable[0];
-	}
-
-	public static IBuildEnvironmentVariable wrap(IEnvironmentVariable var) {
-		if (var == null)
-			return null;
-		if (var instanceof IBuildEnvironmentVariable)
-			return (IBuildEnvironmentVariable) var;
-		return new BuildEnvVar(var);
-	}
-
-	public static IBuildEnvironmentVariable[] wrap(IEnvironmentVariable vars[]) {
-		if (vars == null)
-			return null;
-		if (vars instanceof IBuildEnvironmentVariable[])
-			return (IBuildEnvironmentVariable[]) vars;
-
-		IBuildEnvironmentVariable[] buildVars = new IBuildEnvironmentVariable[vars.length];
-		for (int i = 0; i < vars.length; i++) {
-			buildVars[i] = wrap(vars[i]);
-		}
-		return buildVars;
-	}
-
-	/*	protected ICConfigurationDescription getDescription(IConfiguration cfg) {
-			IProject project = cfg.getOwner().getProject();
-			ICProjectDescription des = CoreModel.getDefault().getProjectDescription(project, false);
-			if (des != null) {
-				return des.getConfigurationById(cfg.getId());
-			}
-			return null;
-		}
-	*/
-	@Override
-	public IBuildEnvironmentVariable[] getVariables(Object level, boolean includeParentLevels, boolean resolveMacros) {
-		if (level instanceof IConfiguration) {
-			return wrap(getVariables((IConfiguration) level, resolveMacros));
-		}
-		return new IBuildEnvironmentVariable[0];
+		return new IEnvironmentVariable[0];
 	}
 
 	@Override

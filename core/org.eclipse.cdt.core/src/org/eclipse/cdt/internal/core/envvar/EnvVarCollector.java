@@ -80,7 +80,7 @@ public class EnvVarCollector {
 	 * Returns an array of variables held by this collector
 	 *
 	 * @param includeRemoved true if removed variables should be included in the resulting array
-	 * @return IBuildEnvironmentVariable[]
+	 * @return IEnvironmentVariable[]
 	 */
 	public EnvVarDescriptor[] toArray(boolean includeRemoved) {
 		if (fMap == null)
@@ -100,7 +100,7 @@ public class EnvVarCollector {
 	 * Returns a variable of a given name held by this collector
 	 *
 	 * @param name a variable name
-	 * @return IBuildEnvironmentVariable
+	 * @return IEnvironmentVariable
 	 */
 	public EnvVarDescriptor getVariable(String name) {
 		if (fMap == null)
@@ -112,7 +112,7 @@ public class EnvVarCollector {
 	 * Returns an array of variables held by this collector
 	 * The call to this method is equivalent of calling toArray(true)
 	 *
-	 * @return IBuildEnvironmentVariable[]
+	 * @return IEnvironmentVariable[]
 	 */
 	public EnvVarDescriptor[] getVariables() {
 		return toArray(true);

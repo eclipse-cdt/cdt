@@ -15,14 +15,13 @@
 package org.eclipse.cdt.managedbuilder.gnu.cygwin;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
-import org.eclipse.cdt.managedbuilder.internal.envvar.BuildEnvVar;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -38,7 +37,7 @@ public class GnuCygwinConfigurationEnvironmentSupplier implements IConfiguration
 	private static final String BACKSLASH = java.io.File.separator;
 
 	@Override
-	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
+	public IEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		if (variableName == null) {
 			return null;
@@ -51,7 +50,7 @@ public class GnuCygwinConfigurationEnvironmentSupplier implements IConfiguration
 		if (variableName.equalsIgnoreCase(ENV_PATH)) {
 			@SuppressWarnings("nls")
 			String path = "${" + Cygwin.ENV_CYGWIN_HOME + "}" + BACKSLASH + "bin";
-			return new BuildEnvVar(ENV_PATH, path, IBuildEnvironmentVariable.ENVVAR_PREPEND);
+			return new EnvironmentVariable(ENV_PATH, path, IEnvironmentVariable.ENVVAR_PREPEND);
 
 		} else if (variableName.equals(Cygwin.ENV_CYGWIN_HOME)) {
 			IEnvironmentVariable varCygwinHome = CCorePlugin.getDefault().getBuildEnvironmentManager()
@@ -63,7 +62,7 @@ public class GnuCygwinConfigurationEnvironmentSupplier implements IConfiguration
 					// If the variable is not defined still show it in the environment variables list as a hint to user
 					home = ""; //$NON-NLS-1$
 				}
-				return new BuildEnvVar(Cygwin.ENV_CYGWIN_HOME, new Path(home).toOSString());
+				return new EnvironmentVariable(Cygwin.ENV_CYGWIN_HOME, new Path(home).toOSString());
 			}
 			return null;
 
@@ -84,18 +83,17 @@ public class GnuCygwinConfigurationEnvironmentSupplier implements IConfiguration
 			} else {
 				langValue = "C.ISO-8859-1"; //$NON-NLS-1$
 			}
-			return new BuildEnvVar(ENV_LANG, langValue);
+			return new EnvironmentVariable(ENV_LANG, langValue);
 		}
 		return null;
 	}
 
 	@Override
-	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration,
-			IEnvironmentVariableProvider provider) {
-		IBuildEnvironmentVariable varHome = getVariable(Cygwin.ENV_CYGWIN_HOME, configuration, provider);
-		IBuildEnvironmentVariable varLang = getVariable(ENV_LANG, configuration, provider);
-		IBuildEnvironmentVariable varPath = getVariable(ENV_PATH, configuration, provider);
+	public IEnvironmentVariable[] getVariables(IConfiguration configuration, IEnvironmentVariableProvider provider) {
+		IEnvironmentVariable varHome = getVariable(Cygwin.ENV_CYGWIN_HOME, configuration, provider);
+		IEnvironmentVariable varLang = getVariable(ENV_LANG, configuration, provider);
+		IEnvironmentVariable varPath = getVariable(ENV_PATH, configuration, provider);
 
-		return new IBuildEnvironmentVariable[] { varHome, varLang, varPath };
+		return new IEnvironmentVariable[] { varHome, varLang, varPath };
 	}
 }

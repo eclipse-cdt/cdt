@@ -16,11 +16,11 @@ package org.eclipse.cdt.managedbuilder.internal.envvar;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -47,8 +47,8 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 		return null;
 	}
 
-	public IBuildEnvironmentVariable getConfigurationVariable(String name, IConfiguration configuration) {
-		IBuildEnvironmentVariable variable = null;
+	public IEnvironmentVariable getConfigurationVariable(String name, IConfiguration configuration) {
+		IEnvironmentVariable variable = null;
 		if ("CWD".equals(name) || "PWD".equals(name)) { //$NON-NLS-1$	//$NON-NLS-2$
 			IResource owner = configuration.getOwner();
 			if (owner != null) {
@@ -67,8 +67,8 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 				//					IPath workingDirectory = projectLocation.append(topBuildDir);
 				//					String value = workingDirectory.toOSString();
 				if (topBuildDir != null) {
-					variable = new BuildEnvVar(name, topBuildDir.toOSString(), IBuildEnvironmentVariable.ENVVAR_REPLACE,
-							null);
+					variable = new EnvironmentVariable(name, topBuildDir.toOSString(),
+							IEnvironmentVariable.ENVVAR_REPLACE, null);
 				}
 
 				//				}
@@ -83,15 +83,16 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if (context instanceof IConfiguration) {
-			List<IBuildEnvironmentVariable> variables = new ArrayList<>(2);
-			IBuildEnvironmentVariable var = getConfigurationVariable("CWD", (IConfiguration) context); //$NON-NLS-1$
+			List<IEnvironmentVariable> variables = new ArrayList<>(2);
+			IEnvironmentVariable var = getConfigurationVariable("CWD", (IConfiguration) context); //$NON-NLS-1$
 			if (var != null) {
 				variables.add(var);
-				variables.add(new BuildEnvVar("PWD", var.getValue(), IBuildEnvironmentVariable.ENVVAR_REPLACE, null)); //$NON-NLS-1$
+				variables
+						.add(new EnvironmentVariable("PWD", var.getValue(), IEnvironmentVariable.ENVVAR_REPLACE, null)); //$NON-NLS-1$
 			} else {
 				return null;
 			}
-			return variables.toArray(new IBuildEnvironmentVariable[variables.size()]);
+			return variables.toArray(new IEnvironmentVariable[variables.size()]);
 		}
 		return null;
 	}

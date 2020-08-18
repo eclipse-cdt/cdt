@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.envvar;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 
 /**
@@ -37,10 +38,11 @@ public interface IProjectEnvironmentVariableSupplier {
 	 * This is done to avoid infinite loops that could be caused if the supplier calls the provider
 	 * and the provider in turn calls that supplier again. Also the supplier should not know anything
 	 * about the environment variables defined for the higher levels.
-	 * @return the reference to the IBuildEnvironmentVariable interface representing
+	 * @return the reference to the IEnvironmentVariable interface representing
 	 * the variable of a given name
+	 * @since 9.0
 	 */
-	IBuildEnvironmentVariable getVariable(String variableName, IManagedProject project,
+	IEnvironmentVariable getVariable(String variableName, IManagedProject project,
 			IEnvironmentVariableProvider provider);
 
 	/**
@@ -56,7 +58,8 @@ public interface IProjectEnvironmentVariableSupplier {
 	 * This is done to avoid infinite loops that could be caused if the supplier calls the provider
 	 * and the provider in turn calls that supplier again. Also the supplier should not know anything
 	 * about the environment variables defined for the higher levels.
-	 * @return the array of IBuildEnvironmentVariable that represents the environment variables
+	 * @return the array of IEnvironmentVariable that represents the environment variables
+	 * @since 9.0
 	 */
-	IBuildEnvironmentVariable[] getVariables(IManagedProject project, IEnvironmentVariableProvider provider);
+	IEnvironmentVariable[] getVariables(IManagedProject project, IEnvironmentVariableProvider provider);
 }

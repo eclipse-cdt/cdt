@@ -21,7 +21,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.lsp4e.LSPEclipseUtils;
 
 @SuppressWarnings("restriction")
-public class ResolveDocumentUri implements Function<IDocument, Optional<URI>> {
+public final class ResolveDocumentUri implements Function<IDocument, Optional<URI>> {
 
 	@Override
 	public Optional<URI> apply(IDocument document) {

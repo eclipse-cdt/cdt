@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
@@ -85,7 +84,7 @@ public class ExternalExtensionEnvironmentSupplier implements IEnvironmentVariabl
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if (context == null)
 			return null;
-		IBuildEnvironmentVariable variables[] = null;
+		IEnvironmentVariable variables[] = null;
 		if (context instanceof IConfiguration) {
 			IConfiguration cfg = (IConfiguration) context;
 			IConfigurationEnvironmentVariableSupplier supplier = cfg.getEnvironmentVariableSupplier();
@@ -141,7 +140,7 @@ public class ExternalExtensionEnvironmentSupplier implements IEnvironmentVariabl
 		return name;
 	}
 
-	protected IEnvironmentVariable[] filterVariables(IBuildEnvironmentVariable variables[]) {
+	protected IEnvironmentVariable[] filterVariables(IEnvironmentVariable variables[]) {
 		return EnvVarOperationProcessor.filterVariables(variables, fNonOverloadableVariables);
 	}
 }

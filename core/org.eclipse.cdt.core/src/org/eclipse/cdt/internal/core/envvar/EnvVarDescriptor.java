@@ -85,7 +85,7 @@ public class EnvVarDescriptor implements IEnvironmentVariable {
 
 	/*	public String getResolvedValue(int contextType, Object contextData){
 			String value = null;
-			if(getOperation() != IBuildEnvironmentVariable.ENVVAR_REMOVE){
+			if(getOperation() != IEnvironmentVariable.ENVVAR_REMOVE){
 				String name = getName();
 				value = getValue();
 				if(value != null && value.length() > 0){

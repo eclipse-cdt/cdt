@@ -27,7 +27,7 @@ public interface IEnvironmentVariableSupplier {
 	 *
 	 * @param name the variable name
 	 * @param context the context
-	 * @return the reference to the IBuildEnvironmentVariable interface representing
+	 * @return the reference to the IEnvironmentVariable interface representing
 	 * the variable of a given name
 	 */
 	IEnvironmentVariable getVariable(String name, Object context);
@@ -35,7 +35,7 @@ public interface IEnvironmentVariableSupplier {
 	/**
 	 *
 	 * @param context the context
-	 * @return the array of IBuildEnvironmentVariable that represents the environment variables
+	 * @return the array of IEnvironmentVariable that represents the environment variables
 	 */
 	IEnvironmentVariable[] getVariables(Object context);
 }

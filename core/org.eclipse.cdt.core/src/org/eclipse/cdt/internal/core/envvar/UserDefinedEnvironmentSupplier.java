@@ -276,7 +276,7 @@ public class UserDefinedEnvironmentSupplier extends StorableEnvironmentLoader
 	 *
 	 * @param name Environment variable name
 	 * @param value Environment variable value
-	 * @param op one of the IBuildEnvironmentVariable.ENVVAR_* operation types
+	 * @param op one of the IEnvironmentVariable.ENVVAR_* operation types
 	 * @param delimiter delimiter to use or null for default
 	 * @return Overriding IEnvironmentVariable or null if name is not valid
 	 */

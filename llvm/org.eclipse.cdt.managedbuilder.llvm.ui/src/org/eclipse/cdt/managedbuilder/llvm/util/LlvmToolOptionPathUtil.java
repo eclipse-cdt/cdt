@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -28,7 +29,6 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.gnu.mingw.MingwEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.llvm.ui.LlvmEnvironmentVariableSupplier;
@@ -942,7 +942,7 @@ public class LlvmToolOptionPathUtil {
 	public static void addMissingCppIncludesForMingw() {
 		//try to find mingw path from MingwEnvironmentVariableSupplier
 		IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables = new MingwEnvironmentVariableSupplier();
-		IBuildEnvironmentVariable mingwPath = mingwEnvironmentVariables.getVariable("PATH", null, null); //$NON-NLS-1$
+		IEnvironmentVariable mingwPath = mingwEnvironmentVariables.getVariable("PATH", null, null); //$NON-NLS-1$
 		//may contain multiple paths therefore must be separated
 		String[] mingwPaths = mingwPath.getValue().split(Separators.getPathSeparator());
 		//bin folder is appended so it must be removed

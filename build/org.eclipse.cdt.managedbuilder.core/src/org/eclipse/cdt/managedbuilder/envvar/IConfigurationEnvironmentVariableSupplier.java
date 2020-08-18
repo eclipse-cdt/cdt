@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.envvar;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 
 /**
@@ -35,10 +36,11 @@ public interface IConfigurationEnvironmentVariableSupplier {
 	 *    This is done to avoid infinite loops that could be caused if the supplier calls the provider
 	 *    and the provider in turn calls that supplier again. Also the supplier should not know anything
 	 *    about the environment variables defined for the higher levels.
-	 * @return The reference to the IBuildEnvironmentVariable interface representing
+	 * @return The reference to the IEnvironmentVariable interface representing
 	 *    the variable of a given name or {@code null} if the variable is not defined.
+	 * @since 9.0
 	 */
-	IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
+	IEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider);
 
 	/**
@@ -53,8 +55,9 @@ public interface IConfigurationEnvironmentVariableSupplier {
 	 *    This is done to avoid infinite loops that could be caused if the supplier calls the provider
 	 *    and the provider in turn calls that supplier again. Also the supplier should not know anything
 	 *    about the environment variables defined for the higher levels.
-	 * @return The array of IBuildEnvironmentVariable that represents the environment variables.
+	 * @return The array of IEnvironmentVariable that represents the environment variables.
 	 *    The array may contain {@code null} values.
+	 * @since 9.0
 	 */
-	IBuildEnvironmentVariable[] getVariables(IConfiguration configuration, IEnvironmentVariableProvider provider);
+	IEnvironmentVariable[] getVariables(IConfiguration configuration, IEnvironmentVariableProvider provider);
 }

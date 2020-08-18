@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 QNX Software Systems and others.
+ * Copyright (c) 2007, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,9 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
@@ -32,69 +33,34 @@ import org.eclipse.core.runtime.Path;
 public class WinEnvironmentVariableSupplier
 		implements IConfigurationEnvironmentVariableSupplier, IProjectEnvironmentVariableSupplier {
 
-	private static Map<String, IBuildEnvironmentVariable> envvars;
+	private static Map<String, IEnvironmentVariable> envvars;
 	private static String sdkDir;
 	private static String vcDir;
-
-	private static class WindowsBuildEnvironmentVariable implements IBuildEnvironmentVariable {
-
-		private final String name;
-		private final String value;
-		private final int operation;
-
-		public WindowsBuildEnvironmentVariable(String name, String value, int operation) {
-			this.name = name;
-			this.value = value;
-			this.operation = operation;
-		}
-
-		@Override
-		public String getDelimiter() {
-			return ";"; //$NON-NLS-1$
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public String getValue() {
-			return value;
-		}
-
-		@Override
-		public int getOperation() {
-			return operation;
-		}
-
-	}
 
 	public WinEnvironmentVariableSupplier() {
 		initvars();
 	}
 
 	@Override
-	public IBuildEnvironmentVariable getVariable(String variableName, IManagedProject project,
+	public IEnvironmentVariable getVariable(String variableName, IManagedProject project,
 			IEnvironmentVariableProvider provider) {
 		return envvars.get(variableName);
 	}
 
 	@Override
-	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
+	public IEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		return envvars.get(variableName);
 	}
 
 	@Override
-	public IBuildEnvironmentVariable[] getVariables(IManagedProject project, IEnvironmentVariableProvider provider) {
-		return envvars.values().toArray(new IBuildEnvironmentVariable[envvars.size()]);
+	public IEnvironmentVariable[] getVariables(IManagedProject project, IEnvironmentVariableProvider provider) {
+		return envvars.values().toArray(new IEnvironmentVariable[envvars.size()]);
 	}
 
 	@Override
-	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration,
-			IEnvironmentVariableProvider provider) {
-		return envvars.values().toArray(new IBuildEnvironmentVariable[envvars.size()]);
+	public IEnvironmentVariable[] getVariables(IConfiguration configuration, IEnvironmentVariableProvider provider) {
+		return envvars.values().toArray(new IEnvironmentVariable[envvars.size()]);
 	}
 
 	private static String getSoftwareKey(WindowsRegistry reg, String subkey, String name) {
@@ -145,7 +111,7 @@ public class WinEnvironmentVariableSupplier
 		return includePaths.toArray(new IPath[0]);
 	}
 
-	private static void addvar(IBuildEnvironmentVariable var) {
+	private static void addvar(IEnvironmentVariable var) {
 		envvars.put(var.getName(), var);
 	}
 
@@ -168,8 +134,8 @@ public class WinEnvironmentVariableSupplier
 		for (IPath path : includePaths) {
 			buff.append(path.toOSString()).append(';');
 		}
-		addvar(new WindowsBuildEnvironmentVariable("INCLUDE", buff.toString(), //$NON-NLS-1$
-				IBuildEnvironmentVariable.ENVVAR_PREPEND));
+		addvar(new EnvironmentVariable("INCLUDE", buff.toString(), //$NON-NLS-1$
+				IEnvironmentVariable.ENVVAR_PREPEND));
 
 		// LIB
 		buff = new StringBuilder();
@@ -180,7 +146,7 @@ public class WinEnvironmentVariableSupplier
 			buff.append(sdkDir).append("Lib\\win8\\um\\x86;"); //$NON-NLS-1$
 		}
 
-		addvar(new WindowsBuildEnvironmentVariable("LIB", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND)); //$NON-NLS-1$
+		addvar(new EnvironmentVariable("LIB", buff.toString(), IEnvironmentVariable.ENVVAR_PREPEND)); //$NON-NLS-1$
 
 		// PATH
 		buff = new StringBuilder();
@@ -193,7 +159,7 @@ public class WinEnvironmentVariableSupplier
 		if (sdkDir != null) {
 			buff.append(sdkDir).append("Bin;"); //$NON-NLS-1$
 		}
-		addvar(new WindowsBuildEnvironmentVariable("PATH", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND)); //$NON-NLS-1$
-	};
+		addvar(new EnvironmentVariable("PATH", buff.toString(), IEnvironmentVariable.ENVVAR_PREPEND)); //$NON-NLS-1$
+	}
 
 }

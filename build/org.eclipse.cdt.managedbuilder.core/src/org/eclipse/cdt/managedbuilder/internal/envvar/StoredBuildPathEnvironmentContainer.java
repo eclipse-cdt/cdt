@@ -24,7 +24,6 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.cdt.utils.envvar.StorableEnvironmentLoader;
 import org.eclipse.core.resources.IProject;
@@ -81,12 +80,12 @@ public class StoredBuildPathEnvironmentContainer extends StorableEnvironmentLoad
 
 	private boolean haveIdenticalValues(IEnvironmentVariable var1, IEnvironmentVariable var2) {
 		if (var1 == null)
-			return var2 == null || var2.getOperation() == IBuildEnvironmentVariable.ENVVAR_REMOVE;
+			return var2 == null || var2.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE;
 		if (var2 == null)
-			return var1 == null || var1.getOperation() == IBuildEnvironmentVariable.ENVVAR_REMOVE;
+			return var1 == null || var1.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE;
 		int op1 = var1.getOperation();
 		int op2 = var2.getOperation();
-		if (op1 == IBuildEnvironmentVariable.ENVVAR_REMOVE || op2 == IBuildEnvironmentVariable.ENVVAR_REMOVE)
+		if (op1 == IEnvironmentVariable.ENVVAR_REMOVE || op2 == IEnvironmentVariable.ENVVAR_REMOVE)
 			return op1 == op2;
 
 		return maskNull(var1.getValue()).equals(maskNull(var2.getValue()));
@@ -110,7 +109,7 @@ public class StoredBuildPathEnvironmentContainer extends StorableEnvironmentLoad
 												provider.getVariable(des.getName(), configuration, true, false) : null*/;
 			if (!haveIdenticalValues(var, curVar)) {
 				if (curVar == null) {
-					env.createVariable(name, null, IBuildEnvironmentVariable.ENVVAR_REMOVE, null);
+					env.createVariable(name, null, IEnvironmentVariable.ENVVAR_REMOVE, null);
 				} else {
 					env.createVariable(curVar.getName(), curVar.getValue(), curVar.getOperation(),
 							curVar.getDelimiter());
@@ -163,7 +162,7 @@ public class StoredBuildPathEnvironmentContainer extends StorableEnvironmentLoad
 		for (int i = 0; i < varNames.length; i++) {
 			String name = varNames[i];
 			if (env.getVariable(name) == null)
-				env.createVariable(name, null, IBuildEnvironmentVariable.ENVVAR_REMOVE, null);
+				env.createVariable(name, null, IEnvironmentVariable.ENVVAR_REMOVE, null);
 		}
 
 		IEnvironmentVariable vars[] = env.getVariables();

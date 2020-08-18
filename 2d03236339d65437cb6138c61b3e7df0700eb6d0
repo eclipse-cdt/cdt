@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f37221de_8353aa5b",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-18T06:57:36Z",
+      "side": 1,
+      "message": "Should this part have been committed or should it have been static linked?",
+      "range": {
+        "startLine": 92,
+        "startChar": 58,
+        "endLine": 92,
+        "endChar": 93
+      },
+      "revId": "2d03236339d65437cb6138c61b3e7df0700eb6d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50ab2da3_07fc39ff",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTY.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-18T06:57:36Z",
+      "side": 1,
+      "message": "Maybe it would be cleaner to move up the isWinPTY assignment and use that in the if-statement?",
+      "range": {
+        "startLine": 265,
+        "startChar": 3,
+        "endLine": 265,
+        "endChar": 52
+      },
+      "revId": "2d03236339d65437cb6138c61b3e7df0700eb6d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

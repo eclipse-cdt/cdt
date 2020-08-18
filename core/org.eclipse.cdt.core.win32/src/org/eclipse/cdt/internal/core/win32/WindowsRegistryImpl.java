@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.win32;
 
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.utils.WindowsRegistry;
+import org.eclipse.core.runtime.Platform;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Advapi32;
@@ -32,6 +33,8 @@ import com.sun.jna.ptr.IntByReference;
  * @author Torbjörn Svensson
  */
 public class WindowsRegistryImpl extends WindowsRegistry {
+
+	private final static boolean DEBUG = Platform.getDebugBoolean(CNativePlugin.PLUGIN_ID + "/debug/win32/registry"); //$NON-NLS-1$
 
 	@Override
 	public String getLocalMachineValue(String subkey, String name) {
@@ -67,7 +70,9 @@ public class WindowsRegistryImpl extends WindowsRegistry {
 		try {
 			return Advapi32Util.registryGetStringValue(key, subkey, name);
 		} catch (Win32Exception e) {
-			CNativePlugin.log(String.format("Unable to get value for %s in %s", name, subkey), e); //$NON-NLS-1$
+			if (DEBUG) {
+				CNativePlugin.log(String.format("Unable to get value for %s in %s", name, subkey), e); //$NON-NLS-1$
+			}
 			return null;
 		}
 	}
@@ -82,7 +87,9 @@ public class WindowsRegistryImpl extends WindowsRegistry {
 				Advapi32Util.registryCloseKey(phkKey.getValue());
 			}
 		} catch (Win32Exception e) {
-			CNativePlugin.log(String.format("Unable to get keyname for %s at index %d", subkey, index), e); //$NON-NLS-1$
+			if (DEBUG) {
+				CNativePlugin.log(String.format("Unable to get keyname for %s at index %d", subkey, index), e); //$NON-NLS-1$
+			}
 			return null;
 		}
 	}
@@ -105,7 +112,9 @@ public class WindowsRegistryImpl extends WindowsRegistry {
 				Advapi32Util.registryCloseKey(phkKey.getValue());
 			}
 		} catch (Win32Exception e) {
-			CNativePlugin.log(String.format("Unable to get valuename for %s at index %d", subkey, index), e); //$NON-NLS-1$
+			if (DEBUG) {
+				CNativePlugin.log(String.format("Unable to get valuename for %s at index %d", subkey, index), e); //$NON-NLS-1$
+			}
 			return null;
 		}
 	}

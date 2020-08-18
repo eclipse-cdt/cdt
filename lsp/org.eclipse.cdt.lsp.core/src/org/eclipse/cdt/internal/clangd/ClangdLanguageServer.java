@@ -9,15 +9,29 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.lsp.core;
+package org.eclipse.cdt.internal.clangd;
 
 import java.net.URI;
 
-/*
- * Encapsulates functionality specific to a particular C++ language server (e.g., CQuery)
- */
-public interface ICPPLanguageServer {
+import org.eclipse.cdt.lsp.LanguageServerConfiguration;
 
-	public Object getLSSpecificInitializationOptions(Object defaultInitOptions, URI rootPath);
+public class ClangdLanguageServer implements LanguageServerConfiguration {
+
+	public static final String CLANGD_ID = "clangd"; //$NON-NLS-1$
+
+	@Override
+	public String identifier() {
+		return ClangdLanguageServer.CLANGD_ID;
+	}
+
+	@Override
+	public String label() {
+		return "ClangD";
+	}
+
+	@Override
+	public Object options(Object defaults, URI uri) {
+		return defaults;
+	}
 
 }

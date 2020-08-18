@@ -23,7 +23,6 @@ public class LspCoreMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, LspCoreMessages.class);
 	}
 
-	public static String CPPStreamConnectionProvider_e_unsupported;
 	public static String ShowStatus_busy;
 	public static String ShowStatus_idle;
 

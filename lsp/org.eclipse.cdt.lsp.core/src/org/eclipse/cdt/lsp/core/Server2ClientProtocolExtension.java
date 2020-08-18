@@ -28,11 +28,11 @@ import org.eclipse.cdt.internal.cquery.CqueryMessages;
 import org.eclipse.cdt.internal.cquery.ui.HighlightingNames;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
+import org.eclipse.cdt.lsp.internal.core.ShowStatus;
 import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
+import org.eclipse.cdt.lsp.internal.ui.StatusLineMessage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.jface.action.StatusLineContributionItem;
-import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;
@@ -45,45 +45,25 @@ import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.lsp4e.LanguageClientImpl;
 import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchWindow;
 
 //FIXME: AF: currently this extension is cquery-specific and it should be contributed from cquery-specific part
 @SuppressWarnings("restriction")
 public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
 	private final ResolveDocumentUri uri;
+	private final ShowStatus progress;
 
 	public Server2ClientProtocolExtension() {
 		this.uri = new ResolveDocumentUri();
+		this.progress = new ShowStatus(() -> CqueryMessages.Server2ClientProtocolExtension_cquery_name, new StatusLineMessage());
 	}
 
 	@JsonNotification("$cquery/progress")
 	public final void indexingProgress(IndexingProgressStats stats) {
-
-		Display.getDefault().asyncExec(() -> {
-			final String cqueryStatusFieldId = "org.eclipse.cdt.lsp.core.status"; //$NON-NLS-1$
-			final int width = 28;
-			IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
-			for (IWorkbenchWindow window : workbenchWindows) {
-				StatusLineManager statusLine = ((WorkbenchWindow) window).getStatusLineManager();
-				StatusLineContributionItem cqueryStatusField = (StatusLineContributionItem) statusLine
-						.find(cqueryStatusFieldId);
-				if (cqueryStatusField == null) {
-					cqueryStatusField = new StatusLineContributionItem(cqueryStatusFieldId, width);
-					statusLine.add(cqueryStatusField);
-				}
-				String msg = stats.getTotalJobs() > 0
-						? NLS.bind(CqueryMessages.Server2ClientProtocolExtension_cquery_busy, stats.getTotalJobs())
-						: CqueryMessages.Server2ClientProtocolExtension_cquery_idle;
-				cqueryStatusField.setText(msg);
-			}
-		});
+		progress.accept(stats::getTotalJobs);
 	}
 
 	@JsonNotification("$cquery/setInactiveRegions")

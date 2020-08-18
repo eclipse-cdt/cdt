@@ -37,6 +37,8 @@ LIBS = \
 	$(OS_DIR_LINUX_X86_64)/libpty.so \
 	$(OS_DIR_LINUX_AARCH64)/libspawner.so \
 	$(OS_DIR_LINUX_AARCH64)/libpty.so \
+	$(OS_DIR_LINUX_PPC64LE)/libspawner.so \
+	$(OS_DIR_LINUX_PPC64LE)/libpty.so \
 	$(OS_DIR_MACOS_X86_64)/libspawner.jnilib \
 	$(OS_DIR_MACOS_X86_64)/libpty.jnilib \
 	$(OS_DIR_MACOS_X86)/libspawner.jnilib \
@@ -126,14 +128,14 @@ $(OS_DIR_LINUX_AARCH64)/libpty.so: unix/openpty.c unix/pty.c unix/ptyio.c
 # Linux ppc64le
 $(OS_DIR_LINUX_PPC64LE)/libspawner.so: unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c
 	mkdir -p $(dir $@) && \
-	gcc -m64 -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
+	powerpc64le-linux-gnu-gcc -m64 -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
 		-D_REENTRANT -D_GNU_SOURCE \
 		$^ \
 		-shared -lc
 
 $(OS_DIR_LINUX_PPC64LE)/libpty.so: unix/openpty.c unix/pty.c unix/ptyio.c
 	mkdir -p $(dir $@) && \
-	gcc -m64 -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
+	powerpc64le-linux-gnu-gcc -m64 -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
 		-D_REENTRANT -D_GNU_SOURCE \
 		$^ \
 		-shared -lc

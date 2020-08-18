@@ -29,6 +29,7 @@ LIBS = \
 	$(OS_DIR)/win32/x86_64/serial.dll \
 	$(OS_DIR)/linux/x86_64/libserial.so \
 	$(OS_DIR)/linux/aarch64/libserial.so \
+	$(OS_DIR)/linux/ppc64le/libserial.so \
 	$(OS_DIR)/macosx/x86_64/libserial.jnilib
 else
 ifeq ($(UNAME),Darwin)
@@ -65,8 +66,8 @@ $(OS_DIR)/linux/aarch64/libserial.so:	serial.c
 	aarch64-linux-gnu-gcc $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ $^
 
 $(OS_DIR)/linux/ppc64le/libserial.so:	serial.c
-	mkdir -p $(dir $@) && \
-	gcc -m64 -mcpu=power8 $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ $^
+	mkdir -p $(dir $@)
+	powerpc64le-linux-gnu-gcc -m64 -mcpu=power8 $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
 
 $(OS_DIR)/macosx/x86_64/libserial.jnilib:	serial.c
 	mkdir -p $(dir $@) && \

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8ae4c192_f72d253f",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-18T12:22:22Z",
+      "side": 1,
+      "message": "Oops. Thanks for paying attention :-) It works on my main machine because I have those libraries lying around.\n\nLike I have been discussing with Liviu on the Aarch bug, we need some automatic checks to make sure there are no unexpected dependencies.",
+      "parentUuid": "f37221de_8353aa5b",
+      "range": {
+        "startLine": 92,
+        "startChar": 58,
+        "endLine": 92,
+        "endChar": 93
+      },
+      "revId": "2d03236339d65437cb6138c61b3e7df0700eb6d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "50ab2da3_07fc39ff",
         "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTY.java",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "2d03236339d65437cb6138c61b3e7df0700eb6d0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a2496ab_7f0aa012",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTY.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-18T12:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "50ab2da3_07fc39ff",
+      "range": {
+        "startLine": 265,
+        "startChar": 3,
+        "endLine": 265,
+        "endChar": 52
+      },
+      "revId": "2d03236339d65437cb6138c61b3e7df0700eb6d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

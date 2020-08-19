@@ -11,7 +11,7 @@
  * Contributors:
  *     Alexander Fedorov (ArSysOp) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.lsp.core.tests;
+package org.eclipse.cdt.lsp.internal.core.tests;
 
 import static org.junit.Assert.assertEquals;
 

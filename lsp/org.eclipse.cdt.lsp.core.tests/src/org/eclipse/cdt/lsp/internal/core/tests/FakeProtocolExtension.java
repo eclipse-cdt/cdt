@@ -11,19 +11,21 @@
  * Contributors:
  *     Alexander Fedorov (ArSysOp) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.lsp;
+package org.eclipse.cdt.lsp.internal.core.tests;
 
-import java.util.Collection;
+import org.eclipse.cdt.lsp.LanguageProtocolExtension;
 
-/**
- *
- * Provides access to the configurations of supported language servers.
- *
- */
-public interface SupportedLanguageServers {
+public class FakeProtocolExtension implements LanguageProtocolExtension {
 
-	Collection<LanguageServerConfiguration> all();
+	private final String id;
 
-	LanguageServerConfiguration preferred();
+	public FakeProtocolExtension(String id) {
+		this.id = id;
+	}
+
+	@Override
+	public String targetIdentifier() {
+		return id;
+	}
 
 }

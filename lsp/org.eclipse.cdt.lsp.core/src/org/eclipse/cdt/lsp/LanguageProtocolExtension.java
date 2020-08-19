@@ -13,17 +13,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.lsp;
 
-import java.util.Collection;
+import org.eclipse.lsp4j.jsonrpc.services.ServiceEndpoints;
 
 /**
  *
- * Provides access to the configurations of supported language servers.
+ * Declares the language protocol extension methods.
+ *
+ * @see ServiceEndpoints#getSupportedMethods(Class)
  *
  */
-public interface SupportedLanguageServers {
+public interface LanguageProtocolExtension {
 
-	Collection<LanguageServerConfiguration> all();
-
-	LanguageServerConfiguration preferred();
+	/**
+	 *
+	 * @return the identifier of the target language server
+	 * @see LanguageServerConfiguration#identifier()
+	 */
+	String targetIdentifier();
 
 }

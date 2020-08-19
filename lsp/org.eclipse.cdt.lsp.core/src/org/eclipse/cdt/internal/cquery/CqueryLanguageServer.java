@@ -25,17 +25,14 @@ import com.google.gson.JsonObject;
 @Component
 public class CqueryLanguageServer implements LanguageServerConfiguration {
 
-	//FIXME: remove this constant, it is not needed outside the class
-	public static final String CQUERY_ID = "cquery"; //$NON-NLS-1$
-
 	@Override
 	public String identifier() {
-		return CqueryLanguageServer.CQUERY_ID;
+		return "cquery"; //$NON-NLS-1$
 	}
 
 	@Override
 	public String label() {
-		return "CQuery";
+		return CqueryMessages.CqueryLanguageServer_label;
 	}
 
 	@Override

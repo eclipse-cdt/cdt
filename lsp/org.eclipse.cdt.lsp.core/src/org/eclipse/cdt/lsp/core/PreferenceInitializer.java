@@ -23,6 +23,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		//FIXME: how to determine the preferred LS implementation?
 		node.put(PreferenceConstants.P_SERVER_CHOICE, "clangd"); //$NON-NLS-1$
 		node.put(PreferenceConstants.P_SERVER_OPTIONS, ""); //$NON-NLS-1$
 	}

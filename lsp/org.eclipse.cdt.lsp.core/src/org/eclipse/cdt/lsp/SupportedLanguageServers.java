@@ -24,6 +24,6 @@ public interface SupportedLanguageServers {
 
 	Collection<LanguageServerConfiguration> all();
 
-	LanguageServerConfiguration preferred() throws IllegalStateException;
+	LanguageServerConfiguration preferred();
 
 }

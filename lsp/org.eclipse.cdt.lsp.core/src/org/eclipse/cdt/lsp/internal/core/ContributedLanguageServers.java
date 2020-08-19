@@ -16,26 +16,27 @@ package org.eclipse.cdt.lsp.internal.core;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
-import org.eclipse.cdt.internal.clangd.ClangdLanguageServer;
-import org.eclipse.cdt.internal.cquery.CqueryLanguageServer;
 import org.eclipse.cdt.lsp.LanguageServerConfiguration;
 import org.eclipse.cdt.lsp.SupportedLanguageServers;
 import org.eclipse.cdt.lsp.core.PreferenceConstants;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
-//FIXME ok, not really contributed at the moment, but will be
+@Component
 public final class ContributedLanguageServers implements SupportedLanguageServers {
 
+	private final LanguageServerConfiguration undefined;
 	private final Map<String, LanguageServerConfiguration> configs;
 
 	public ContributedLanguageServers() {
 		configs = new LinkedHashMap<>();
-		register(new ClangdLanguageServer());
-		register(new CqueryLanguageServer());
+		undefined = new UndefinedLanguageServer();
 	}
 
 	@Override
@@ -43,6 +44,7 @@ public final class ContributedLanguageServers implements SupportedLanguageServer
 		return configs.values();
 	}
 
+	@Reference(cardinality = ReferenceCardinality.MULTIPLE)
 	public void register(LanguageServerConfiguration configuration) {
 		configs.put(configuration.identifier(), configuration);
 	}
@@ -52,13 +54,13 @@ public final class ContributedLanguageServers implements SupportedLanguageServer
 	}
 
 	@Override
-	public LanguageServerConfiguration preferred() throws IllegalStateException {
-		return Optional.ofNullable(InstanceScope.INSTANCE.getNode(nodeQualifier()))//
-				.filter(IEclipsePreferences.class::isInstance)//
-				.map(IEclipsePreferences.class::cast)//
-				.flatMap(x -> Optional.ofNullable(x.get(nodePath(), null)))//
-				.map(configs::get)//
-				.orElseThrow(() -> new IllegalStateException("No preferred server was found"));
+	public LanguageServerConfiguration preferred() {
+		return configs.getOrDefault(preferredIdentifier(), undefined);
+	}
+
+	private String preferredIdentifier() {
+		return Platform.getPreferencesService().getString(nodeQualifier(), nodePath(), undefined.identifier(),
+				new IScopeContext[] { InstanceScope.INSTANCE });
 	}
 
 	private String nodeQualifier() {

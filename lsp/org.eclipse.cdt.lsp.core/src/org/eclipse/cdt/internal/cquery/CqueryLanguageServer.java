@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Manish Khurana , Nathan Ridge and others.
+ * Copyright (c) 2018, 2020 Manish Khurana , Nathan Ridge and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,11 +18,14 @@ import org.eclipse.cdt.lsp.LanguageServerConfiguration;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.osgi.service.component.annotations.Component;
 
 import com.google.gson.JsonObject;
 
+@Component
 public class CqueryLanguageServer implements LanguageServerConfiguration {
 
+	//FIXME: remove this constant, it is not needed outside the class
 	public static final String CQUERY_ID = "cquery"; //$NON-NLS-1$
 
 	@Override

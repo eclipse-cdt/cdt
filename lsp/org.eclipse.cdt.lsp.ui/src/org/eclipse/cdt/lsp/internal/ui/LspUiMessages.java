@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Eclipse Foundation and others.
+ * Copyright (c) 2019, 2020 Eclipse Foundation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -23,9 +23,6 @@ public class LspUiMessages extends NLS {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, LspUiMessages.class);
 	}
-
-	public static String CPPLanguageServerPreferencePage_clangd;
-	public static String CPPLanguageServerPreferencePage_cquery;
 
 	public static String CPPLanguageServerPreferencePage_description;
 	public static String CPPLanguageServerPreferencePage_server_options;

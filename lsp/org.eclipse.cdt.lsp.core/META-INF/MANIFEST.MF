@@ -27,6 +27,7 @@ Export-Package: org.eclipse.cdt.cquery;x-friends:="org.eclipse.cdt.lsp.ui",
  org.eclipse.cdt.internal.clangd;x-friends:="org.eclipse.cdt.lsp.ui",
  org.eclipse.cdt.internal.cquery;x-friends:="org.eclipse.cdt.lsp.ui",
  org.eclipse.cdt.internal.cquery.ui;x-internal:=true,
+ org.eclipse.cdt.lsp;x-friends:="org.eclipse.cdt.lsp.ui",
  org.eclipse.cdt.lsp.core;x-friends:="org.eclipse.cdt.lsp.ui",
  org.eclipse.cdt.lsp.internal.core;x-internal:=true,
  org.eclipse.cdt.lsp.internal.text;x-friends:="org.eclipse.cdt.lsp.ui"

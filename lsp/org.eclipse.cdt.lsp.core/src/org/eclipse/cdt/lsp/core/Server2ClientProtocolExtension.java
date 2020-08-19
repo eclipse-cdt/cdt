@@ -58,8 +58,7 @@ public class Server2ClientProtocolExtension extends LanguageClientImpl {
 
 	public Server2ClientProtocolExtension() {
 		this.uri = new ResolveDocumentUri();
-		this.progress = new ShowStatus(() -> CqueryMessages.Server2ClientProtocolExtension_cquery_name,
-				new StatusLineMessage());
+		this.progress = new ShowStatus(() -> CqueryMessages.CqueryLanguageServer_label, new StatusLineMessage());
 	}
 
 	@JsonNotification("$cquery/progress")

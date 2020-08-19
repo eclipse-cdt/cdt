@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018-2020 Manish Khurana, Nathan Ridge and others.
+ * Copyright (c) 2018, 2020 Manish Khurana, Nathan Ridge and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -17,14 +17,18 @@
 package org.eclipse.cdt.lsp.internal.ui.preferences;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import org.eclipse.cdt.internal.clangd.ClangdLanguageServer;
-import org.eclipse.cdt.internal.cquery.CqueryLanguageServer;
+import org.eclipse.cdt.lsp.LanguageServerConfiguration;
+import org.eclipse.cdt.lsp.SupportedLanguageServers;
 import org.eclipse.cdt.lsp.core.CPPStreamConnectionProvider;
 import org.eclipse.cdt.lsp.core.PreferenceConstants;
 import org.eclipse.cdt.lsp.internal.ui.LspUiActivator;
 import org.eclipse.cdt.lsp.internal.ui.LspUiMessages;
 import org.eclipse.cdt.ui.newui.MultiLineTextFieldEditor;
+import org.eclipse.core.runtime.ServiceCaller;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
@@ -52,10 +56,7 @@ public class CPPLanguageServerPreferencePage extends FieldEditorPreferencePage i
 	@Override
 	public void createFieldEditors() {
 		serverChoice = new RadioGroupFieldEditor(PreferenceConstants.P_SERVER_CHOICE,
-				LspUiMessages.CPPLanguageServerPreferencePage_server_selector, 1,
-				new String[][] {
-						{ LspUiMessages.CPPLanguageServerPreferencePage_clangd, ClangdLanguageServer.CLANGD_ID },
-						{ LspUiMessages.CPPLanguageServerPreferencePage_cquery, CqueryLanguageServer.CQUERY_ID } },
+				LspUiMessages.CPPLanguageServerPreferencePage_server_selector, 1, contributedServers(),
 				getFieldEditorParent());
 		addField(serverChoice);
 
@@ -81,5 +82,13 @@ public class CPPLanguageServerPreferencePage extends FieldEditorPreferencePage i
 
 	@Override
 	public void init(IWorkbench workbench) {
+	}
+
+	private String[][] contributedServers() {
+		List<LanguageServerConfiguration> servers = new ArrayList<>();
+		ServiceCaller.callOnce(getClass(), SupportedLanguageServers.class, x -> servers.addAll(x.all()));
+		return servers.stream()//
+				.map(x -> new String[] { x.label(), x.identifier() })//
+				.collect(Collectors.toList()).toArray(new String[0][]);
 	}
 }

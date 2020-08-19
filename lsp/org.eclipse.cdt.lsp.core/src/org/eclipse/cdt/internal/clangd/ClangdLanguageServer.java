@@ -19,17 +19,14 @@ import org.osgi.service.component.annotations.Component;
 @Component
 public class ClangdLanguageServer implements LanguageServerConfiguration {
 
-	//FIXME: remove this constant, it is not needed outside the class
-	public static final String CLANGD_ID = "clangd"; //$NON-NLS-1$
-
 	@Override
 	public String identifier() {
-		return ClangdLanguageServer.CLANGD_ID;
+		return "clangd"; //$NON-NLS-1$
 	}
 
 	@Override
 	public String label() {
-		return "ClangD";
+		return ClangdMessages.ClangdLanguageServer_label;
 	}
 
 	@Override

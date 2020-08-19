@@ -147,6 +147,17 @@ else
 fi
 
 ##
+# Error out if there are dependencies that are not allowed in the dlls, exes, sos
+##
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+echo "Checking dependencies of all .dll, .exe and .so files in CDT to make"
+echo "sure no dependencies on unexpected or newer libraries are accidentally"
+echo "introduced."
+${DIR}/check_dll_dependencies.sh
+${DIR}/check_glibc_dependencies.sh
+
+
+##
 # Make sure all versions have been bumped appropriately compared to the baseline
 ##
 logfile=baseline-compare-and-replace.log

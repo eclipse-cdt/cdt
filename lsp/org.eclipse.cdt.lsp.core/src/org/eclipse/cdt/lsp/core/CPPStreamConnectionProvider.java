@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017-2020 Ericsson and others.
+ * Copyright (c) 2017, 2020 Ericsson and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -25,14 +25,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.lsp.LanguageServerConfiguration;
-import org.eclipse.cdt.lsp.SupportedLanguageServers;
+import org.eclipse.cdt.lsp.internal.core.ResolvePreferredServer;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.ServiceCaller;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 
@@ -47,7 +46,7 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 	private final LanguageServerConfiguration configuration;
 
 	public CPPStreamConnectionProvider() throws UnsupportedOperationException {
-		configuration = configuration();
+		configuration = new ResolvePreferredServer().apply(getClass());
 		File defaultLSLocation = getDefaultLSLocation(configuration.identifier());
 		if (defaultLSLocation != null) {
 			store.setDefault(PreferenceConstants.P_SERVER_PATH, defaultLSLocation.getAbsolutePath());
@@ -65,13 +64,6 @@ public class CPPStreamConnectionProvider extends ProcessStreamConnectionProvider
 		}
 		setWorkingDirectory(parent);
 		setCommands(commands);
-	}
-
-	private LanguageServerConfiguration configuration() {
-		final LanguageServerConfiguration[] configs = new LanguageServerConfiguration[1];
-		ServiceCaller.callOnce(CPPStreamConnectionProvider.class, SupportedLanguageServers.class,
-				x -> configs[0] = x.preferred());
-		return configs[0];
 	}
 
 	@Override

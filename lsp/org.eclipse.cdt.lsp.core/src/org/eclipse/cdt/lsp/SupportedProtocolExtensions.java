@@ -17,13 +17,13 @@ import java.util.Collection;
 
 /**
  *
- * Provides access to the configurations of supported language servers.
+ * Provides access to the language protocol extensions.
  *
  */
-public interface SupportedLanguageServers {
+public interface SupportedProtocolExtensions {
 
-	Collection<LanguageServerConfiguration> all();
+	Collection<LanguageProtocolExtension> all();
 
-	LanguageServerConfiguration preferred();
+	Collection<LanguageProtocolExtension> applicable(LanguageServerConfiguration server);
 
 }

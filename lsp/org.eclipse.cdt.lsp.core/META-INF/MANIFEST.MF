@@ -35,4 +35,5 @@ Bundle-Activator: org.eclipse.cdt.lsp.core.Activator
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/org.eclipse.cdt.lsp.internal.core.ContributedLanguageServers.xml,
  OSGI-INF/org.eclipse.cdt.internal.clangd.ClangdLanguageServer.xml,
- OSGI-INF/org.eclipse.cdt.internal.cquery.CqueryLanguageServer.xml
+ OSGI-INF/org.eclipse.cdt.internal.cquery.CqueryLanguageServer.xml,
+ OSGI-INF/org.eclipse.cdt.lsp.internal.core.ContributedProtocolExtensions.xml

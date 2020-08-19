@@ -181,7 +181,7 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 	}
 
 	@Override
-	protected TextPresentation createPresentation(IRegion damage, IDocument document) {
+	public TextPresentation createPresentation(IRegion damage, IDocument document) {
 		TextPresentation presentation = super.createPresentation(damage, document);
 
 		IDocument doc = textViewer.getDocument();

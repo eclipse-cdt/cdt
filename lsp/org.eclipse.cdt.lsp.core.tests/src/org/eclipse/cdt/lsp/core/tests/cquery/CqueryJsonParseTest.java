@@ -23,7 +23,7 @@ import org.eclipse.cdt.cquery.HighlightSymbol;
 import org.eclipse.cdt.cquery.IndexingProgressStats;
 import org.eclipse.cdt.cquery.StorageClass;
 import org.eclipse.cdt.cquery.SymbolRole;
-import org.eclipse.cdt.lsp.core.Server2ClientProtocolExtension;
+import org.eclipse.cdt.internal.cquery.ui.CqueryProtocolExtension;
 import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.jsonrpc.json.JsonRpcMethod;
@@ -34,7 +34,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class CqueryJsonParseTest {
-	Map<String, JsonRpcMethod> methods = ServiceEndpoints.getSupportedMethods(Server2ClientProtocolExtension.class);
+	Map<String, JsonRpcMethod> methods = ServiceEndpoints.getSupportedMethods(CqueryProtocolExtension.class);
 	private MessageJsonHandler jsonHandler = new MessageJsonHandler(methods);
 
 	private void assertParse(final String json, final NotificationMessage expectedResult) {

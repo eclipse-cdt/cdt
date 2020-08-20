@@ -292,16 +292,12 @@ public class XmlUtil {
 	 */
 	public static void serializeXml(Document doc, URI uriLocation, String lineSeparator)
 			throws IOException, TransformerException, CoreException {
-		XmlUtil.prettyFormat(doc);
-
 		java.io.File storeFile = new java.io.File(uriLocation);
 		if (!storeFile.exists()) {
 			storeFile.createNewFile();
 		}
 
-		String utfString = new String(toByteArray(doc), ENCODING_UTF_8);
-		utfString = XmlUtil.replaceLineSeparatorInternal(utfString, lineSeparator);
-		utfString = XmlUtil.insertNewlineAfterXMLVersionTag(utfString, lineSeparator);
+		String utfString = toString(doc, lineSeparator);
 
 		FileOutputStream output = getFileOutputStreamWorkaround(storeFile);
 		output.write(utfString.getBytes(ENCODING_UTF_8));
@@ -351,8 +347,6 @@ public class XmlUtil {
 	 * @throws CoreException if something goes wrong.
 	 */
 	private static byte[] toByteArray(Document doc) throws CoreException {
-		XmlUtil.prettyFormat(doc);
-
 		try {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -420,13 +414,9 @@ public class XmlUtil {
 	 * @throws CoreException if something goes wrong.
 	 */
 	public static void serializeXml(Document doc, IFile file) throws CoreException {
-		XmlUtil.prettyFormat(doc);
-
 		try {
-			String utfString = new String(toByteArray(doc), ENCODING_UTF_8);
 			String lineSeparator = Util.getLineSeparator(file);
-			utfString = XmlUtil.replaceLineSeparatorInternal(utfString, lineSeparator);
-			utfString = XmlUtil.insertNewlineAfterXMLVersionTag(utfString, lineSeparator);
+			String utfString = toString(doc, lineSeparator);
 			byte[] newContents = utfString.getBytes(ENCODING_UTF_8);
 			InputStream input = new ByteArrayInputStream(newContents);
 
@@ -466,12 +456,36 @@ public class XmlUtil {
 
 	/**
 	 * Serialize XML Document into a string.
+	 * Note: This will return a non-pretty formatted string
 	 *
 	 * @param doc - DOM Document to serialize.
 	 * @return XML as a String.
 	 * @throws CoreException if something goes wrong.
 	 */
 	public static String toString(Document doc) throws CoreException {
-		return new String(toByteArray(doc));
+		try {
+			return new String(toByteArray(doc), ENCODING_UTF_8);
+		} catch (UnsupportedEncodingException e) {
+			throw new CoreException(CCorePlugin.createStatus(Messages.XmlUtil_InternalErrorSerializing, e));
+		}
+	}
+
+	/**
+	 * Serialize XML Document into a pretty formatted string.
+	 * Note: This will return a pretty formatted string
+	 *
+	 * @param doc - DOM Document to serialize.
+	 * @param lineSeparator - line separator
+	 * @return XML as a pretty formatted String.
+	 * @throws CoreException if something goes wrong.
+	 */
+	public static String toString(Document doc, String lineSeparator) throws CoreException {
+		XmlUtil.prettyFormat(doc);
+
+		String utfString = toString(doc);
+		utfString = XmlUtil.replaceLineSeparatorInternal(utfString, lineSeparator);
+		utfString = XmlUtil.insertNewlineAfterXMLVersionTag(utfString, lineSeparator);
+
+		return utfString;
 	}
 }

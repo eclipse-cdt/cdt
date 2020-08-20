@@ -40,6 +40,7 @@ import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.service.DsfServices;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.service.IDsfService;
+import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -321,7 +322,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			}
 		}
 		document.appendChild(expressionList);
-		return DebugPlugin.serializeDocument(document);
+		return XmlUtil.toString(document);
 	}
 
 	///////////////////////////////////////////////////////////////////////////

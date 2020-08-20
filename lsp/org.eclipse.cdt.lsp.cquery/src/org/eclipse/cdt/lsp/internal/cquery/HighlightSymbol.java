@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Manish Khurana , Nathan Ridge and others.
+ * Copyright (c) 2018, 2020 Manish Khurana , Nathan Ridge and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.cquery;
+package org.eclipse.cdt.lsp.internal.cquery;
 
 import java.util.List;
 

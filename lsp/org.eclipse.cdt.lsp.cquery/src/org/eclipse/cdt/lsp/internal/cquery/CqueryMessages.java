@@ -7,13 +7,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.internal.cquery;
+package org.eclipse.cdt.lsp.internal.cquery;
 
 import org.eclipse.osgi.util.NLS;
 
 public class CqueryMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.cquery.CqueryMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.lsp.internal.cquery.CqueryMessages"; //$NON-NLS-1$
 
 	static {
 		// initialize resource bundle
@@ -22,7 +22,6 @@ public class CqueryMessages extends NLS {
 
 	public static String CqueryLanguageServer_label;
 	public static String CquerySymbolKind_e_illegal_value;
-	public static String Server2ClientProtocolExtension_cquery_name;
 	public static String StorageClass_e_illegal_value;
 
 	private CqueryMessages() {

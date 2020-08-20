@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018-2019 Manish Khurana, Nathan Ridge and others.
+ * Copyright (c) 2018, 2020 Manish Khurana, Nathan Ridge and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -7,19 +7,20 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.internal.cquery.ui;
+package org.eclipse.cdt.lsp.internal.cquery.ui;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.cquery.ExtendedSymbolKindType;
-import org.eclipse.cdt.cquery.StorageClass;
-import org.eclipse.cdt.cquery.SymbolRole;
-import org.eclipse.cdt.internal.cquery.CquerySymbolKind;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
+import org.eclipse.cdt.lsp.internal.cquery.CquerySymbolKind;
+import org.eclipse.cdt.lsp.internal.cquery.ExtendedSymbolKindType;
+import org.eclipse.cdt.lsp.internal.cquery.StorageClass;
+import org.eclipse.cdt.lsp.internal.cquery.SymbolRole;
 import org.eclipse.lsp4j.SymbolKind;
 
 //FIXME: AF: rework this compilation unit from a container of static functions to a normal type
+@SuppressWarnings("restriction")
 public class HighlightingNames {
 
 	private static Map<Integer, String> semanticHighlightSymbolsMap = new HashMap<>();

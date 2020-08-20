@@ -42,6 +42,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBMemory;
 import org.eclipse.cdt.dsf.gdb.service.IGDBMemory2;
 import org.eclipse.cdt.dsf.service.DsfServices;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -445,7 +446,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements 
 			}
 		}
 		document.appendChild(expressionList);
-		return DebugPlugin.serializeDocument(document);
+		return XmlUtil.toString(document);
 	}
 
 	/* (non-Javadoc)

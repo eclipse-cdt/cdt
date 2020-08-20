@@ -11,17 +11,20 @@
  * Contributors:
  *     Alexander Fedorov (ArSysOp) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.clangd;
+package org.eclipse.cdt.lsp.internal.clangd;
 
 import org.eclipse.osgi.util.NLS;
 
 public class ClangdMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.clangd.ClangdMessages"; //$NON-NLS-1$
-	public static String ClangdLanguageServer_label;
+
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.lsp.internal.clangd.ClangdMessages"; //$NON-NLS-1$
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, ClangdMessages.class);
 	}
+
+	public static String ClangdLanguageServer_label;
 
 	private ClangdMessages() {
 	}

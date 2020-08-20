@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.cdt.msw"
-      label="C/C++ Visual C++ Support"
+      label="%featureName"
       version="10.0.0.qualifier"
-      provider-name="Eclipse CDT"
+      provider-name="%providerName"
       plugin="org.eclipse.cdt.msw.build"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

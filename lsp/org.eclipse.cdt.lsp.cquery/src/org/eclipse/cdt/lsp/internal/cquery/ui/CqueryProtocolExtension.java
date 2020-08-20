@@ -8,19 +8,20 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.cquery.ui;
+package org.eclipse.cdt.lsp.internal.cquery.ui;
 
-import org.eclipse.cdt.cquery.CqueryInactiveRegions;
-import org.eclipse.cdt.cquery.CquerySemanticHighlights;
-import org.eclipse.cdt.cquery.IndexingProgressStats;
-import org.eclipse.cdt.internal.cquery.CqueryMessages;
 import org.eclipse.cdt.lsp.LanguageProtocolExtension;
 import org.eclipse.cdt.lsp.internal.core.ShowStatus;
+import org.eclipse.cdt.lsp.internal.cquery.CqueryInactiveRegions;
+import org.eclipse.cdt.lsp.internal.cquery.CqueryMessages;
+import org.eclipse.cdt.lsp.internal.cquery.CquerySemanticHighlights;
+import org.eclipse.cdt.lsp.internal.cquery.IndexingProgressStats;
 import org.eclipse.cdt.lsp.internal.text.SetInactiveRegions;
 import org.eclipse.cdt.lsp.internal.ui.StatusLineMessage;
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
 import org.osgi.service.component.annotations.Component;
 
+@SuppressWarnings("restriction")
 @Component
 public class CqueryProtocolExtension implements LanguageProtocolExtension {
 

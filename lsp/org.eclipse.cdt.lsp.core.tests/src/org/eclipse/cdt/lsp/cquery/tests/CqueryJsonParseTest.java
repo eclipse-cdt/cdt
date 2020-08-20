@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Manish Khurana , Nathan Ridge and others.
+ * Copyright (c) 2018, 2020 Manish Khurana , Nathan Ridge and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,21 +9,21 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.lsp.core.tests.cquery;
+package org.eclipse.cdt.lsp.cquery.tests;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.cquery.CqueryInactiveRegions;
-import org.eclipse.cdt.cquery.CquerySemanticHighlights;
-import org.eclipse.cdt.cquery.ExtendedSymbolKindType;
-import org.eclipse.cdt.cquery.HighlightSymbol;
-import org.eclipse.cdt.cquery.IndexingProgressStats;
-import org.eclipse.cdt.cquery.StorageClass;
-import org.eclipse.cdt.cquery.SymbolRole;
-import org.eclipse.cdt.internal.cquery.ui.CqueryProtocolExtension;
+import org.eclipse.cdt.lsp.internal.cquery.CqueryInactiveRegions;
+import org.eclipse.cdt.lsp.internal.cquery.CquerySemanticHighlights;
+import org.eclipse.cdt.lsp.internal.cquery.ExtendedSymbolKindType;
+import org.eclipse.cdt.lsp.internal.cquery.HighlightSymbol;
+import org.eclipse.cdt.lsp.internal.cquery.IndexingProgressStats;
+import org.eclipse.cdt.lsp.internal.cquery.StorageClass;
+import org.eclipse.cdt.lsp.internal.cquery.SymbolRole;
+import org.eclipse.cdt.lsp.internal.cquery.ui.CqueryProtocolExtension;
 import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.Range;
 import org.eclipse.lsp4j.jsonrpc.json.JsonRpcMethod;

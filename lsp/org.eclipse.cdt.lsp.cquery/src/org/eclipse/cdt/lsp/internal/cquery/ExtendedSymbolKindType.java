@@ -1,23 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2018-2019 Manish Khurana, Nathan Ridge and others.
+ * Copyright (c) 2018, 2020 Manish Khurana, Nathan Ridge and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * https://www.eclipse.org/legal/epl-2.0/.
  *
  * SPDX-License-Identifier: EPL-2.0
- *
- * Contributors:
- *     Manish Khurana <mkmanishkhurana98@gmail.com> - initial API and implementation
- *     Nathan Ridge <zeratul976@hotmail.com> - initial API and implementation
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558516
  *******************************************************************************/
 
-package org.eclipse.cdt.cquery;
+package org.eclipse.cdt.lsp.internal.cquery;
 
 import java.lang.reflect.Type;
 
-import org.eclipse.cdt.internal.cquery.CquerySymbolKind;
 import org.eclipse.lsp4j.SymbolKind;
 
 import com.google.gson.JsonDeserializationContext;

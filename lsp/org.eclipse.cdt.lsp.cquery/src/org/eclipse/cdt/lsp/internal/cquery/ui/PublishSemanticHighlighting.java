@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.internal.cquery.ui;
+package org.eclipse.cdt.lsp.internal.cquery.ui;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import org.eclipse.cdt.cquery.CquerySemanticHighlights;
-import org.eclipse.cdt.cquery.HighlightSymbol;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
 import org.eclipse.cdt.lsp.core.Activator;
 import org.eclipse.cdt.lsp.core.PresentationReconcilerCPP;
+import org.eclipse.cdt.lsp.internal.cquery.CquerySemanticHighlights;
+import org.eclipse.cdt.lsp.internal.cquery.HighlightSymbol;
 import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -38,6 +38,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 //FIXME: needs more work
+@SuppressWarnings("restriction")
 public class PublishSemanticHighlighting implements Consumer<CquerySemanticHighlights> {
 
 	private final ResolveDocumentUri uri;

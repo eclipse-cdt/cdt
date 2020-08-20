@@ -9,12 +9,13 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.cquery;
+package org.eclipse.cdt.lsp.internal.cquery.ui;
 
 import java.net.URI;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.lsp.LanguageServerConfiguration;
+import org.eclipse.cdt.lsp.internal.cquery.CqueryMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -22,6 +23,7 @@ import org.osgi.service.component.annotations.Component;
 
 import com.google.gson.JsonObject;
 
+@SuppressWarnings("restriction")
 @Component
 public class CqueryLanguageServer implements LanguageServerConfiguration {
 

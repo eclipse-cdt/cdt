@@ -288,6 +288,8 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			} catch (CoreException e) {
 				// ignored, treat as default
 			}
+			// Unify line-endings to have a predictable format cross platform
+			newValue = newValue.replace("\r\n", "\n").replace("\r", "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			if (!Objects.equals(oldValue, newValue)) {
 				wc.setAttribute(ATTR_DEBUGGER_MEMORY_BLOCKS, newValue);
 				wc.doSave();

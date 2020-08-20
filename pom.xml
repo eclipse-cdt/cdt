@@ -203,6 +203,7 @@
 
 		<module>lsp/org.eclipse.cdt.lsp.core</module>
 		<module>lsp/org.eclipse.cdt.lsp.ui</module>
+		<module>lsp/org.eclipse.cdt.lsp.cquery</module>
 		<module>lsp/org.eclipse.cdt.lsp-feature</module>
 
 		<module>memory/org.eclipse.cdt.debug.core.memory</module>

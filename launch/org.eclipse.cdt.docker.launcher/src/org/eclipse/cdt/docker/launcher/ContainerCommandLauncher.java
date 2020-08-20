@@ -272,18 +272,7 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		// Add any specified volumes to additional dir list
 		if (selectedVolumeString != null && !selectedVolumeString.isEmpty()) {
 			String[] selectedVolumes = selectedVolumeString.split(VOLUME_SEPARATOR_REGEX);
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				for (String selectedVolume : selectedVolumes) {
-					IPath path = new Path(selectedVolume);
-					String selectedPath = path.toPortableString();
-					if (path.getDevice() != null) {
-						selectedPath = "/" + selectedPath.replace(':', '/'); //$NON-NLS-1$
-					}
-					additionalDirs.add(selectedPath);
-				}
-			} else {
-				additionalDirs.addAll(Arrays.asList(selectedVolumes));
-			}
+			additionalDirs.addAll(Arrays.asList(selectedVolumes));
 		}
 
 		if (connectionName == null) {

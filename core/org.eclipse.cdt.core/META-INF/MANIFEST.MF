@@ -49,6 +49,7 @@ Export-Package: org.eclipse.cdt.core,
  org.eclipse.cdt.internal.core;
   x-friends:="org.eclipse.cdt.codan.core.cxx,
    org.eclipse.cdt.debug.core,
+   org.eclipse.cdt.dsf,
    org.eclipse.cdt.dsf.gdb,
    org.eclipse.cdt.make.core,
    org.eclipse.cdt.make.ui,

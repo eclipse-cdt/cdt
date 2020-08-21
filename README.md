@@ -122,27 +122,16 @@ The `native` property can be one of the following:
 - `linux.x86_64` - uses local tools and builds only linux.x86_64 libraries
 - `linux.ppc64le` - uses local tools and builds only linux.ppc64le libraries
 - `docker` - uses CDT's docker releng images to do the native builds for all platforms
- - `all` - uses local tools to do the native builds for all platforms
+- `all` - uses local tools to do the native builds for all platforms
 
-Therefore to build all the natives using docker do `mvn process-resources -Dnative=docker`. 
+Therefore to build all the natives using docker add `-Dnative=docker` to your maven command line (e.g. `mvn verify -Dnative=docker`). 
 
-However, the challenge is that dll files on Windows have a timestamp in them. To have reproducible builds, we need to have a reproducible timestamp. Therefore we use the commit time of the commit to derive a timestamp (We use the `SOURCE_DATE_EPOCH` environemnt variable to achieve this, see the [Makefile](native/org.eclipse.cdt.native.serial/native_src/Makefile) for more info). Because we want to keep the DLL checked in so that contributors don't need to rebuild it all the time we need a way to have to check in the dll with the same commit time. To do this we use GIT_COMMITTER_DATE. So, after editing and committing your change, you need to rebuild one last time with the commit date and the commit it without changing the commit date again using:
+To build only the native libraries `mvn process-resources` can be used on the individual bundles with the simrel target platform, e.g.:
 
-1. Edit and commit change
-2. Set DIR to the name of the directory you are working on, e.g. `DIR=native/org.eclipse.cdt.native.serial`
-3. `mvn process-resources -DuseSimrelRepo -Dnative=docker -f $DIR`
-4. `git add -- $DIR`
-5. `GIT_COMMITTER_DATE=$(git log -1 --pretty=format:%cI -- $DIR) git commit --amend --reuse-message=HEAD`
+- Serial library: `mvn process-resources -Dnative=docker  -DuseSimrelRepo -f native/org.eclipse.cdt.native.serial`
+- Core library: `mvn process-resources -Dnative=docker  -DuseSimrelRepo -f core/org.eclipse.cdt.core.native`
 
-The example for the core native bundle is:
-
-1. `DIR=core/org.eclipse.cdt.core.native`
-2. `mvn process-resources -DuseSimrelRepo -Dnative=docker -f $DIR`
-3. `git add -- core/org.eclipse.cdt.core.win32.x86_64/os/win32/x86_64`
-4. `GIT_COMMITTER_DATE=$(git log -1 --pretty=format:%cI -- $DIR) git commit --amend --reuse-message=HEAD`
-
-
-As a CDT contributor if you are having an issue recreating the above flow, please reach out on cdt-dev mailing list or in the bug/gerrit you submit. A CDT committer can help ensure the native libraries are correctly rebuilt.
+However, the challenge is that dll files on Windows have a timestamp in them. To have reproducible builds, we need to have a reproducible timestamp. As [Microsoft](https://devblogs.microsoft.com/oldnewthing/20180103-00/?p=97705) has moved away from using a timestamp to rather use a hash of the source files as the value, we therefore hash the source files used by the library and the header files for the Java API and use that as the value.
 
 An additional tip is to set the following in `.gitconfig` to allow you to diff `.dll` files. This will show the timestamp of the DLL in the diff as part of the DLL headers.
 

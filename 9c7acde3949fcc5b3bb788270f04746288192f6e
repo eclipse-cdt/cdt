@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d850b97_ed7a9afc",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/internal/core/XmlUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 482,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-21T13:56:41Z",
+      "side": 1,
+      "message": "Maybe this could have a different name as the pretty or not is a fairly big difference.",
+      "range": {
+        "startLine": 482,
+        "startChar": 22,
+        "endLine": 482,
+        "endChar": 30
+      },
+      "revId": "9c7acde3949fcc5b3bb788270f04746288192f6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

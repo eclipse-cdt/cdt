@@ -22,6 +22,30 @@
       "revId": "9c7acde3949fcc5b3bb788270f04746288192f6e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b381d34_f46192bd",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/internal/core/XmlUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 482,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-21T14:12:29Z",
+      "side": 1,
+      "message": "Would toPrettyString() work? 😊\nThere is an \"API\" change here (although I only see test cases using it) and that is that toString(Document) will no longer call prettyFormat(Document).\nIf you can come up with a name scheme that makes it obvious when the pretty formatting will be applied, while still not breaking any external users, but then again, the class is in the CDT internal scope, so maybe I should not bother...",
+      "parentUuid": "8d850b97_ed7a9afc",
+      "range": {
+        "startLine": 482,
+        "startChar": 22,
+        "endLine": 482,
+        "endChar": 30
+      },
+      "revId": "9c7acde3949fcc5b3bb788270f04746288192f6e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

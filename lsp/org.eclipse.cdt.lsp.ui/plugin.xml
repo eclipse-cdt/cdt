@@ -39,7 +39,7 @@
    <extension
          point="org.eclipse.ui.genericeditor.presentationReconcilers">
       <presentationReconciler
-            class="org.eclipse.cdt.lsp.core.PresentationReconcilerCPP"
+            class="org.eclipse.cdt.lsp.internal.ui.text.PresentationReconcilerCPP"
             contentType="org.eclipse.cdt.lsp.core">
       </presentationReconciler>
    </extension>

@@ -17,6 +17,8 @@ ifeq ($(JAVA_HOME),)
 $(error JAVA_HOME not set in environment)
 endif
 
+REPRODUCIBLE_BUILD_WRAPPER := $(shell git rev-parse --show-toplevel)/releng/scripts/reproducible_build_wrapper.py
+
 OS_DIR_WIN32_X86_64 := ../../org.eclipse.cdt.core.win32.x86_64/os/win32/x86_64
 OS_DIR_LINUX_X86_64 := ../../org.eclipse.cdt.core.linux.x86_64/os/linux/x86_64
 OS_DIR_LINUX_AARCH64 := ../../org.eclipse.cdt.core.linux.aarch64/os/linux/aarch64
@@ -65,31 +67,30 @@ rebuild: clean all
 # Windows x86_64
 # Windows DLLs have a build timestamp in them. This makes it impossible to have reproducible builds.
 # However, x86_64-w64-mingw32-ld on Debian/Ubuntu has a patch that overrides the current date
-# using the SOURCE_DATE_EPOCH environment variable. Therefore we set SOURCE_DATE_EPOCH to a
-# consistent timestamp that can be reproduced. We base it off of the commit timestamp of the
-# most recent git commit in this directory.
+# using the SOURCE_DATE_EPOCH environment variable. Call REPRODUCIBLE_BUILD_WRAPPER to make sure the
+# same binary is produced for the same source each time.
 $(OS_DIR_WIN32_X86_64)/starter.exe: win/starter.c
 	mkdir -p $(dir $@) && \
-	SOURCE_DATE_EPOCH=$(shell git log -1 --pretty=format:%ct -- .) \
+	$(REPRODUCIBLE_BUILD_WRAPPER) $^ include Makefile -- \
 	x86_64-w64-mingw32-gcc -o $@ -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
 		-DUNICODE \
-		win/starter.c \
+		$^ \
 		-lpsapi
 
 $(OS_DIR_WIN32_X86_64)/spawner.dll: win/iostream.c win/raise.c win/spawner.c win/Win32ProcessEx.c
 	mkdir -p $(dir $@) && \
-	SOURCE_DATE_EPOCH=$(shell git log -1 --pretty=format:%ct -- .) \
+	$(REPRODUCIBLE_BUILD_WRAPPER) $^ include Makefile -- \
 	x86_64-w64-mingw32-gcc -o $@ -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
 		-DUNICODE \
-		win/iostream.c win/raise.c win/spawner.c win/Win32ProcessEx.c \
+		$^ \
 		-Wl,--kill-at --shared
 
 $(OS_DIR_WIN32_X86_64)/pty.dll: win/pty.cpp win/pty_dllmain.cpp
 	mkdir -p $(dir $@) && \
-	SOURCE_DATE_EPOCH=$(shell git log -1 --pretty=format:%ct -- .) \
+	$(REPRODUCIBLE_BUILD_WRAPPER) $^ include Makefile -- \
 	x86_64-w64-mingw32-g++ -o $@ -Iinclude -Iwin/include -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
 		-DUNICODE \
-		win/pty.cpp win/pty_dllmain.cpp \
+		$^ \
 		-Wl,--kill-at --shared -L$(OS_DIR_WIN32_X86_64) -lwinpty -static-libstdc++ -static-libgcc
 
 # Linux x86_64
@@ -97,14 +98,14 @@ $(OS_DIR_LINUX_X86_64)/libspawner.so: unix/spawner.c unix/io.c unix/exec_unix.c 
 	mkdir -p $(dir $@) && \
 	gcc -m64 -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
 		-D_REENTRANT -D_GNU_SOURCE \
-		unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c \
+		$^ \
 		-shared -lc
 
 $(OS_DIR_LINUX_X86_64)/libpty.so: unix/openpty.c unix/pty.c unix/ptyio.c
 	mkdir -p $(dir $@) && \
 	gcc -m64 -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
 		-D_REENTRANT -D_GNU_SOURCE \
-		unix/openpty.c unix/pty.c unix/ptyio.c \
+		$^ \
 		-shared -lc
 
 # Linux aarch64
@@ -112,14 +113,14 @@ $(OS_DIR_LINUX_AARCH64)/libspawner.so: unix/spawner.c unix/io.c unix/exec_unix.c
 	mkdir -p $(dir $@) && \
 	aarch64-linux-gnu-gcc  -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
 		-D_REENTRANT -D_GNU_SOURCE \
-		unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c \
+		$^ \
 		-shared -lc
 
 $(OS_DIR_LINUX_AARCH64)/libpty.so: unix/openpty.c unix/pty.c unix/ptyio.c
 	mkdir -p $(dir $@) && \
 	aarch64-linux-gnu-gcc  -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
 		-D_REENTRANT -D_GNU_SOURCE \
-		unix/openpty.c unix/pty.c unix/ptyio.c \
+		$^ \
 		-shared -lc
 
 # Linux ppc64le
@@ -127,14 +128,14 @@ $(OS_DIR_LINUX_PPC64LE)/libspawner.so: unix/spawner.c unix/io.c unix/exec_unix.c
 	mkdir -p $(dir $@) && \
 	gcc -m64 -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
 		-D_REENTRANT -D_GNU_SOURCE \
-		unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c \
+		$^ \
 		-shared -lc
 
 $(OS_DIR_LINUX_PPC64LE)/libpty.so: unix/openpty.c unix/pty.c unix/ptyio.c
 	mkdir -p $(dir $@) && \
 	gcc -m64 -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
 		-D_REENTRANT -D_GNU_SOURCE \
-		unix/openpty.c unix/pty.c unix/ptyio.c \
+		$^ \
 		-shared -lc
 
 # macos x86_64
@@ -142,14 +143,14 @@ $(OS_DIR_MACOS_X86_64)/libspawner.jnilib: unix/spawner.c unix/io.c unix/exec_uni
 	mkdir -p $(dir $@) && \
 	x86_64-apple-darwin17-clang -o $@ -arch x86_64 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
 		-D_REENTRANT \
-		unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c \
+		$^ \
 		-dynamiclib -lc -framework JavaVM
 
 $(OS_DIR_MACOS_X86_64)/libpty.jnilib: unix/openpty.c unix/pty.c unix/ptyio.c
 	mkdir -p $(dir $@) && \
 	x86_64-apple-darwin17-clang -o $@ -arch x86_64 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
 		-D_REENTRANT \
-		unix/openpty.c unix/pty.c unix/ptyio.c \
+		$^ \
 		-dynamiclib -lc -framework JavaVM
 
 # macos x86
@@ -157,12 +158,12 @@ $(OS_DIR_MACOS_X86)/libspawner.jnilib: unix/spawner.c unix/io.c unix/exec_unix.c
 	mkdir -p $(dir $@) && \
 	x86_64-apple-darwin17-clang -o $@ -arch i386 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
 		-D_REENTRANT \
-		unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c \
+		$^ \
 		-dynamiclib -lc -framework JavaVM
 
 $(OS_DIR_MACOS_X86)/libpty.jnilib: unix/openpty.c unix/pty.c unix/ptyio.c
 	mkdir -p $(dir $@) && \
 	x86_64-apple-darwin17-clang -o $@ -arch i386 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
 		-D_REENTRANT \
-		unix/openpty.c unix/pty.c unix/ptyio.c \
+		$^ \
 		-dynamiclib -lc -framework JavaVM

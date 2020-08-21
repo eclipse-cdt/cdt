@@ -16,8 +16,8 @@ import org.eclipse.cdt.lsp.internal.cquery.CqueryInactiveRegions;
 import org.eclipse.cdt.lsp.internal.cquery.CqueryMessages;
 import org.eclipse.cdt.lsp.internal.cquery.CquerySemanticHighlights;
 import org.eclipse.cdt.lsp.internal.cquery.IndexingProgressStats;
-import org.eclipse.cdt.lsp.internal.text.SetInactiveRegions;
 import org.eclipse.cdt.lsp.internal.ui.StatusLineMessage;
+import org.eclipse.cdt.lsp.internal.ui.text.SetInactiveRegions;
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
 import org.osgi.service.component.annotations.Component;
 

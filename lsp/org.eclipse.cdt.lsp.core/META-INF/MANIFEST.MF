@@ -7,22 +7,15 @@ Bundle-Name: %Bundle-Name
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.gson;bundle-version="2.8.2",
- org.eclipse.core.runtime,
- org.eclipse.core.commands,
- org.eclipse.core.expressions,
+ org.eclipse.cdt.core,
  org.eclipse.core.resources,
- org.eclipse.jface,
- org.eclipse.jface.text,
- org.eclipse.ui,
- org.eclipse.ui.genericeditor;bundle-version="1.0.0",
- org.eclipse.lsp4j,
+ org.eclipse.core.runtime,
  org.eclipse.lsp4e,
+ org.eclipse.lsp4j,
  org.eclipse.lsp4j.jsonrpc,
  org.eclipse.osgi.services;bundle-version="3.9.0";resolution:=optional,
- org.eclipse.cdt.core,
- org.eclipse.cdt.ui
-Import-Package: org.eclipse.ui.editors.text,
- org.eclipse.ui.texteditor
+ org.eclipse.text,
+ org.eclipse.ui
 Export-Package: org.eclipse.cdt.lsp;x-friends:="org.eclipse.cdt.lsp.ui,org.eclipse.cdt.lsp.clangd",
  org.eclipse.cdt.lsp.core;x-friends:="org.eclipse.cdt.lsp.ui",
  org.eclipse.cdt.lsp.internal.core;x-internal:=true,

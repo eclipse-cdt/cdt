@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.lsp.internal.text;
+package org.eclipse.cdt.lsp.internal.ui.text;
 
 import java.net.URI;
 import java.util.Collection;
@@ -16,7 +16,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import org.eclipse.cdt.lsp.core.Activator;
-import org.eclipse.cdt.lsp.core.PresentationReconcilerCPP;
+import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;

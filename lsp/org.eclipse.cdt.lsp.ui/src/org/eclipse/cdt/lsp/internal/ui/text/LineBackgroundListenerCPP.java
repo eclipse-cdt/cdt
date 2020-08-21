@@ -9,9 +9,10 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.lsp.core;
+package org.eclipse.cdt.lsp.internal.ui.text;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.lsp.core.Activator;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;

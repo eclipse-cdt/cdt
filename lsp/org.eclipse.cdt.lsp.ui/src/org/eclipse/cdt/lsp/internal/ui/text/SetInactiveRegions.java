@@ -42,7 +42,7 @@ public final class SetInactiveRegions implements BiConsumer<Supplier<URI>, Suppl
 		for (PresentationReconcilerCPP eachReconciler : PresentationReconcilerCPP.presentationReconcilers) {
 			IDocument currentReconcilerDoc = eachReconciler.getTextViewer().getDocument();
 			Optional<URI> currentReconcilerUri = resolve.apply(currentReconcilerDoc);
-			if (currentReconcilerUri.isEmpty()) {
+			if (!currentReconcilerUri.isPresent()) {
 				continue;
 			}
 			if (uriReceived.equals(currentReconcilerUri.get())) {

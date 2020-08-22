@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.lsp.text.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -32,14 +32,14 @@ public class ResolveDocumentUriTest {
 
 	@Test
 	public void emptyDocument() {
-		assertTrue(uri.apply(new Document()).isEmpty());
+		assertFalse(uri.apply(new Document()).isPresent());
 	}
 
 	@Test
 	public void externalDocument() {
 		Document document = new Document();
 		FileBuffers.createTextFileBufferManager().createEmptyDocument(new Path("some.c"), LocationKind.LOCATION);
-		assertTrue(uri.apply(document).isEmpty());
+		assertFalse(uri.apply(document).isPresent());
 	}
 
 	@Test
@@ -47,7 +47,7 @@ public class ResolveDocumentUriTest {
 		Document document = new Document();
 		FileBuffers.createTextFileBufferManager().createEmptyDocument(new Path("some.c"), LocationKind.LOCATION);
 		//it's a pity! see https://bugs.eclipse.org/bugs/show_bug.cgi?id=566044
-		assertTrue(uri.apply(document).isEmpty());
+		assertFalse(uri.apply(document).isPresent());
 	}
 
 }

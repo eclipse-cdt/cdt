@@ -16,6 +16,24 @@
       "revId": "baddefe9cf6b10d637635f4409188f1b3225eadc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e9c80e7_67ecb634",
+        "filename": "lsp/org.eclipse.cdt.lsp.core.tests/src/org/eclipse/cdt/lsp/text/tests/ResolveDocumentUriTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-22T05:41:01Z",
+      "side": 1,
+      "message": "Thank you, I\u0027ll change to `!isPresent`",
+      "parentUuid": "7c0edecc_fea8fac5",
+      "revId": "baddefe9cf6b10d637635f4409188f1b3225eadc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

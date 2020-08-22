@@ -57,7 +57,7 @@ public class PublishSemanticHighlighting implements Consumer<CquerySemanticHighl
 		for (PresentationReconcilerCPP eachReconciler : PresentationReconcilerCPP.presentationReconcilers) {
 			IDocument currentReconcilerDoc = eachReconciler.getTextViewer().getDocument();
 			Optional<URI> currentReconcilerUri = uri.apply(currentReconcilerDoc);
-			if (currentReconcilerUri.isEmpty()) {
+			if (!currentReconcilerUri.isPresent()) {
 				continue;
 			}
 

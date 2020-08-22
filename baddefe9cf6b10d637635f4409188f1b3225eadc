@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c0edecc_fea8fac5",
+        "filename": "lsp/org.eclipse.cdt.lsp.core.tests/src/org/eclipse/cdt/lsp/text/tests/ResolveDocumentUriTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-08-22T03:32:33Z",
+      "side": 1,
+      "message": "isEmpty is only in Java 11, so the BREE needs to be updated or change this to !isPresent ?",
+      "revId": "baddefe9cf6b10d637635f4409188f1b3225eadc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

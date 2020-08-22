@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85d0c4b2_957843f0",
+        "filename": "README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-22T01:44:48Z",
+      "side": 1,
+      "message": "I did some further mods to here because I realized we were left with no command that meant a dev could build the natives in the readme. I have put in the commands below that I run to build the natives.",
+      "revId": "4436080119abd1b9ef2370061f4d278a264cb6b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

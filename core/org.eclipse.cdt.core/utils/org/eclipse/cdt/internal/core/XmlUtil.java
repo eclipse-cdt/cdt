@@ -285,19 +285,40 @@ public class XmlUtil {
 	 *
 	 * @param doc - DOM Document to serialize.
 	 * @param uriLocation - URI of the file.
+	 *
+	 * @throws IOException in case of problems with file I/O
+	 * @throws TransformerException in case of problems with XML output
+	 */
+	public static void serializeXml(Document doc, URI uriLocation)
+			throws IOException, TransformerException, CoreException {
+		serializeXmlInternal(doc, uriLocation, null);
+	}
+
+	/**
+	 * Serialize XML Document into a file.<br/>
+	 * Note: clients should synchronize access to this method.
+	 *
+	 * @param doc - DOM Document to serialize.
+	 * @param uriLocation - URI of the file.
 	 * @param lineSeparator - line separator.
+	 * Note: This will serialize in pretty format
 	 *
 	 * @throws IOException in case of problems with file I/O
 	 * @throws TransformerException in case of problems with XML output
 	 */
 	public static void serializeXml(Document doc, URI uriLocation, String lineSeparator)
 			throws IOException, TransformerException, CoreException {
+		serializeXmlInternal(doc, uriLocation, lineSeparator);
+	}
+
+	private static void serializeXmlInternal(Document doc, URI uriLocation, String lineSeparator)
+			throws IOException, TransformerException, CoreException {
 		java.io.File storeFile = new java.io.File(uriLocation);
 		if (!storeFile.exists()) {
 			storeFile.createNewFile();
 		}
 
-		String utfString = toString(doc, lineSeparator);
+		String utfString = lineSeparator != null ? toString(doc, lineSeparator) : toString(doc);
 
 		FileOutputStream output = getFileOutputStreamWorkaround(storeFile);
 		output.write(utfString.getBytes(ENCODING_UTF_8));

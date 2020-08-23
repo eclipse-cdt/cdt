@@ -7,7 +7,7 @@ Bundle-SymbolicName: org.eclipse.cdt.cmake.is.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.cmake.is.core.internal.Plugin
 Export-Package: org.eclipse.cdt.cmake.is.core;x-friends:="org.eclipse.cdt.cmake.is.core.ui";

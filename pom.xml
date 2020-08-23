@@ -38,7 +38,7 @@
 		<repo-path>tools/cdt/builds/master/nightly</repo-path>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.java.source>1.8</sonar.java.source>
+		<sonar.java.source>11</sonar.java.source>
 		<target-platform>cdt</target-platform>
 
 		<!-- When changing this value, consider also bumping the version numbers of all the docs plug-ins so that compare&replace does not
@@ -645,7 +645,7 @@
 								<version>${required-maven-version}</version>
 							</requireMavenVersion>
 							<requireJavaVersion>
-								<version>1.8</version>
+								<version>11</version>
 							</requireJavaVersion>
 						</rules>
 						<fail>true</fail>
@@ -960,7 +960,7 @@
 					<configuration>
 						<sourceEncoding>utf-8</sourceEncoding>
 						<minimumTokens>100</minimumTokens>
-						<targetJdk>1.8</targetJdk>
+						<targetJdk>11</targetJdk>
 						<format>xml</format>
 						<failOnViolation>false</failOnViolation>
 					</configuration>
@@ -1008,7 +1008,7 @@
 						</goals>
 						<phase>compile</phase>
 						<configuration>
-							<executionEnvironment>JavaSE-1.8</executionEnvironment>
+							<executionEnvironment>JavaSE-11</executionEnvironment>
 						</configuration>
 					</execution>
 				</executions>

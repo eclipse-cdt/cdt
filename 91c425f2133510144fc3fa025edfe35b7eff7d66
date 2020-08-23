@@ -70,6 +70,30 @@
       "revId": "91c425f2133510144fc3fa025edfe35b7eff7d66",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57383b71_b88e32d5",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/internal/core/XmlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-08-23T13:46:59Z",
+      "side": 1,
+      "message": "No it doesn\u0027t make sense but it\u0027s private and we don\u0027t call it this way. I wanted the 2 *public* variants of serializeXml to mimic toString. I can make the common code in the private one check for null instead of a bool, it should not matter to external clients though. But it does remove the two parameter possibly being inconsistant for someone modifying this class in the future.",
+      "parentUuid": "a536fc5b_36c05b9c",
+      "range": {
+        "startLine": 321,
+        "startChar": 21,
+        "endLine": 321,
+        "endChar": 33
+      },
+      "revId": "91c425f2133510144fc3fa025edfe35b7eff7d66",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

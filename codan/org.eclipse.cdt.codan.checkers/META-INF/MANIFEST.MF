@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core,
  org.eclipse.cdt.codan.core.cxx
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.codan.checkers;x-internal:=true,
  org.eclipse.cdt.codan.internal.checkers;x-friends:="org.eclipse.cdt.codan.checkers.ui,org.eclipse.cdt.codan.core.test",

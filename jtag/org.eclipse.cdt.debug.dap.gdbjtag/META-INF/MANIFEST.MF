@@ -33,6 +33,6 @@ Require-Bundle: org.apache.commons.io,
  org.eclipse.cdt.debug.gdbjtag.ui;bundle-version="8.1.1",
  org.eclipse.cdt.debug.gdbjtag.core,
  org.eclipse.core.variables;bundle-version="3.4.600"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.eclipse.cdt.debug.dap.gdbjtag
 Bundle-ActivationPolicy: lazy

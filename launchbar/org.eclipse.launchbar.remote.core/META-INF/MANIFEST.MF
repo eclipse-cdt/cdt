@@ -8,7 +8,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.launchbar.core;bundle-version="2.0.0",
  org.eclipse.remote.core;bundle-version="2.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.launchbar.remote.core,
  org.eclipse.launchbar.remote.core.internal;x-friends:="org.eclipse.launchbar.remote.ui"

@@ -7,5 +7,5 @@ Bundle-Vendor: %Bundle-Vendor
 Fragment-Host: org.eclipse.cdt.cmake.is.nvidia
 Import-Package: org.eclipse.cdt.core.settings.model,
  org.junit
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.eclipse.cdt.cmake.is.nvidia.tests

@@ -4,7 +4,7 @@ Bundle-Name: Tests
 Bundle-SymbolicName: org.eclipse.cdt.meson.ui.tests
 Bundle-Vendor: Eclipse CDT
 Bundle-Version: 1.0.1.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.cdt.meson.core;bundle-version="1.0.0",
  org.eclipse.cdt.meson.ui;bundle-version="1.0.0",
  org.eclipse.swtbot.junit4_x;bundle-version="2.6.0",

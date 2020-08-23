@@ -22,6 +22,30 @@
       "revId": "91c425f2133510144fc3fa025edfe35b7eff7d66",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "414a804d_643f7262",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/internal/core/XmlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-08-23T01:01:47Z",
+      "side": 1,
+      "message": "I was making it consistent with toString. Do you think we should change toString as well?",
+      "parentUuid": "c54416a0_86cfbc42",
+      "range": {
+        "startLine": 321,
+        "startChar": 21,
+        "endLine": 321,
+        "endChar": 33
+      },
+      "revId": "91c425f2133510144fc3fa025edfe35b7eff7d66",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

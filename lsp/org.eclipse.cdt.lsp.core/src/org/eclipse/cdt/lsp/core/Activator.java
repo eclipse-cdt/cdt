@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.lsp.core;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -41,33 +39,4 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	/**
-	 * Creates an error status.
-	 *
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public static Status createErrorStatus(String message, Throwable e) {
-		return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, e);
-	}
-
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public static void log(Throwable e) {
-		log("Error", e); //$NON-NLS-1$
-	}
-
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public static void log(String message, Throwable e) {
-		log(createErrorStatus(message, e));
-	}
-
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
-	}
 }

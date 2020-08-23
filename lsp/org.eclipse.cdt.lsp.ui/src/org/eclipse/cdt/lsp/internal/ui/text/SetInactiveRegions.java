@@ -15,8 +15,8 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import org.eclipse.cdt.lsp.core.Activator;
 import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
@@ -57,7 +57,7 @@ public final class SetInactiveRegions implements BiConsumer<Supplier<URI>, Suppl
 		try {
 			doc.removePositionCategory(PresentationReconcilerCPP.INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY);
 		} catch (BadPositionCategoryException e) {
-			Activator.log(e);
+			Platform.getLog(getClass()).error(e.getMessage(), e);
 		}
 		// Again add Inactive Code Position Category to the document.
 		doc.addPositionCategory(PresentationReconcilerCPP.INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY);
@@ -68,7 +68,7 @@ public final class SetInactiveRegions implements BiConsumer<Supplier<URI>, Suppl
 				offset = doc.getLineOffset(region.getStart().getLine());
 				length = doc.getLineOffset(region.getEnd().getLine()) - offset;
 			} catch (BadLocationException e) {
-				Activator.log(e);
+				Platform.getLog(getClass()).error(e.getMessage(), e);
 			}
 
 			Position inactivePosition = new Position(offset, length);
@@ -76,7 +76,7 @@ public final class SetInactiveRegions implements BiConsumer<Supplier<URI>, Suppl
 				doc.addPosition(PresentationReconcilerCPP.INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY,
 						inactivePosition);
 			} catch (BadLocationException | BadPositionCategoryException e) {
-				Activator.log(e);
+				Platform.getLog(getClass()).error(e.getMessage(), e);
 			}
 		}
 	}

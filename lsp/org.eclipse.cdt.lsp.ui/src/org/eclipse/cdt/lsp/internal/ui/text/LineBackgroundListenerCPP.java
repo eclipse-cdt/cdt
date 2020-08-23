@@ -12,8 +12,8 @@
 package org.eclipse.cdt.lsp.internal.ui.text;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.lsp.core.Activator;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -45,7 +45,7 @@ public class LineBackgroundListenerCPP implements LineBackgroundListener {
 			inactivePositions = currentDocument
 					.getPositions(PresentationReconcilerCPP.INACTIVE_CODE_HIGHLIGHTING_POSITION_CATEGORY);
 		} catch (BadPositionCategoryException e) {
-			Activator.log(e);
+			Platform.getLog(getClass()).error(e.getMessage(), e);
 		}
 
 		if (inactivePositions == null) {
@@ -64,7 +64,7 @@ public class LineBackgroundListenerCPP implements LineBackgroundListener {
 				}
 			}
 		} catch (BadLocationException e) {
-			Activator.log(e);
+			Platform.getLog(getClass()).error(e.getMessage(), e);
 		}
 	}
 }

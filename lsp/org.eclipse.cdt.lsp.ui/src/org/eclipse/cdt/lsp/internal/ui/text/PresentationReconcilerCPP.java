@@ -40,7 +40,6 @@ import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
 import org.eclipse.cdt.internal.ui.text.PartitionDamager;
 import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.TokenStore;
-import org.eclipse.cdt.lsp.core.Activator;
 import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
@@ -51,6 +50,7 @@ import org.eclipse.cdt.ui.text.ICTokenScanner;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.IDocument;
@@ -205,7 +205,7 @@ public class PresentationReconcilerCPP extends CPresentationReconciler {
 		try {
 			returnedPositions = doc.getPositions(SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY);
 		} catch (BadPositionCategoryException e) {
-			Activator.log(e);
+			Platform.getLog(getClass()).error(e.getMessage(), e);
 		}
 
 		if (returnedPositions == null) {

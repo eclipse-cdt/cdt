@@ -17,13 +17,13 @@ import java.util.function.Consumer;
 
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
-import org.eclipse.cdt.lsp.core.Activator;
 import org.eclipse.cdt.lsp.internal.cquery.CquerySemanticHighlights;
 import org.eclipse.cdt.lsp.internal.cquery.HighlightSymbol;
 import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
 import org.eclipse.cdt.lsp.internal.ui.text.PresentationReconcilerCPP;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;
@@ -78,7 +78,7 @@ public class PublishSemanticHighlighting implements Consumer<CquerySemanticHighl
 		try {
 			doc.removePositionCategory(PresentationReconcilerCPP.SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY);
 		} catch (BadPositionCategoryException e) {
-			Activator.log(e);
+			Platform.getLog(getClass()).error(e.getMessage(), e);
 		}
 		// Again add Semantic Highlighting Position Category to the document.
 		doc.addPositionCategory(PresentationReconcilerCPP.SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY);
@@ -113,7 +113,7 @@ public class PublishSemanticHighlighting implements Consumer<CquerySemanticHighl
 					offset = doc.getLineOffset(range.getStart().getLine()) + range.getStart().getCharacter();
 					length = doc.getLineOffset(range.getEnd().getLine()) + range.getEnd().getCharacter() - offset;
 				} catch (BadLocationException e) {
-					Activator.log(e);
+					Platform.getLog(getClass()).error(e.getMessage(), e);
 				}
 
 				int textStyle = SWT.NORMAL;
@@ -139,7 +139,7 @@ public class PublishSemanticHighlighting implements Consumer<CquerySemanticHighl
 					doc.addPosition(PresentationReconcilerCPP.SEMANTIC_HIGHLIGHTING_POSITION_CATEGORY,
 							highlightedPosition);
 				} catch (BadLocationException | BadPositionCategoryException e) {
-					Activator.log(e);
+					Platform.getLog(getClass()).error(e.getMessage(), e);
 				}
 			}
 		}

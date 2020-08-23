@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.freemarker;visibility:=reexport,
  org.eclipse.tools.templates.core;bundle-version="1.1.2";visibility:=reexport,
  com.sun.xml.bind;bundle-version="2.2.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tools.templates.freemarker
 Bundle-Localization: plugin

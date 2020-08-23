@@ -135,7 +135,7 @@ Require-Bundle: org.eclipse.cdt.core.native;bundle-version="[6.0.0,7.0.0)";visib
  com.google.gson,
  org.eclipse.jdt.annotation;bundle-version="[2.0.0,3.0.0)";resolution:=optional
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Import-Package: javax.xml.bind;version="2.2.0"
 Automatic-Module-Name: org.eclipse.cdt.core
 Service-Component: OSGI-INF/*.xml

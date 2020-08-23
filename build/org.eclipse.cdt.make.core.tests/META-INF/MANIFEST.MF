@@ -14,6 +14,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core.tests
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Import-Package: org.eclipse.core.filesystem
 Automatic-Module-Name: org.eclipse.cdt.make.core.tests

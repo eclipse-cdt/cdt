@@ -46,6 +46,30 @@
       "revId": "91c425f2133510144fc3fa025edfe35b7eff7d66",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a536fc5b_36c05b9c",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/internal/core/XmlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-23T07:43:51Z",
+      "side": 1,
+      "message": "I do not follow here. toString has 2 variants, one taking a lineSeparator string that will do pretty format, and one without.\nThe question I ask myself is if it makes sense to call serializeXml(doc, uriLocation, null, true) or serializeXml(doc,uriLocation, \"\\n\", false)...\nThe second variant might be okay (simply ignore the lineSeparator value), but what about the first? What is the expected outcome then?",
+      "parentUuid": "414a804d_643f7262",
+      "range": {
+        "startLine": 321,
+        "startChar": 21,
+        "endLine": 321,
+        "endChar": 33
+      },
+      "revId": "91c425f2133510144fc3fa025edfe35b7eff7d66",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

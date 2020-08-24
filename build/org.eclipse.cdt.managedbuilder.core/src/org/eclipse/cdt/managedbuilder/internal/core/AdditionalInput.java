@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 Intel Corporation and others.
+ * Copyright (c) 2005, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -505,15 +505,14 @@ public class AdditionalInput implements IAdditionalInput {
 					return false;
 				if (libSO.length() == name.length())
 					return true; // we don't necessarily have a version extension
-				if (name.charAt(libSO.length()) != '.')
+				if (name.length() <= libSO.length() + 1 || name.charAt(libSO.length()) != '.')
 					return false;
-				String ext = libName.substring(libSO.length() + 1);
-				try {
-					Integer.parseInt(ext);
-					return true;
-				} catch (NumberFormatException e) {
-					return false;
-				}
+				String ext = name.substring(libSO.length() + 1);
+
+				// Check the version extension to be in form of "<Major>.<Minor>.<Build>",
+				// for example: "1.10.0", "1.10", "1" are the valid version extensions
+				//
+				return ext.matches("(?!\\.)(\\d+(\\.\\d+(\\.\\d+)?)?)(?![\\d\\.])$"); //$NON-NLS-1$
 			}
 
 			boolean equals(String a, String b) {

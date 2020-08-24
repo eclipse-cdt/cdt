@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.tools.templates.ui" version="2">
+    <resource path="src/org/eclipse/tools/templates/ui/internal/Activator.java" type="org.eclipse.tools.templates.ui.internal.Activator">
+        <filter comment="Bug 561734 - Clean-up Activator for CDT Tools Templates UI" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.tools.templates.ui.internal.Activator"/>
+                <message_argument value="createErrorStatus(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 561734 - Clean-up Activator for CDT Tools Templates UI" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.tools.templates.ui.internal.Activator"/>
+                <message_argument value="createErrorStatus(String, Throwable)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 561734 - Clean-up Activator for CDT Tools Templates UI" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.tools.templates.ui.internal.Activator"/>
+                <message_argument value="errorDialog(Shell, String, String, Throwable, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 561734 - Clean-up Activator for CDT Tools Templates UI" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.tools.templates.ui.internal.Activator"/>
+                <message_argument value="getId()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 561734 - Clean-up Activator for CDT Tools Templates UI" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.tools.templates.ui.internal.Activator"/>
+                <message_argument value="log(Exception)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 561734 - Clean-up Activator for CDT Tools Templates UI" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.tools.templates.ui.internal.Activator"/>
+                <message_argument value="log(IStatus)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 561734 - Clean-up Activator for CDT Tools Templates UI" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.tools.templates.ui.internal.Activator"/>
+                <message_argument value="log(String, Throwable)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

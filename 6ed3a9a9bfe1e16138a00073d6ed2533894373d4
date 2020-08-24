@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "94e4eae3_e71d67ad",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/ProcessFactory.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-24T21:49:13Z",
+      "side": 1,
+      "message": "can this be pulled out to a common bit of code somewhere - probably in this package, just a new class?",
+      "range": {
+        "startLine": 111,
+        "startChar": 6,
+        "endLine": 111,
+        "endChar": 42
+      },
+      "revId": "6ed3a9a9bfe1e16138a00073d6ed2533894373d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7e8e7f0_f05bc717",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ICommandLauncherFactory3.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-24T21:49:13Z",
+      "side": 1,
+      "message": "This should extend ICommandLauncherFactory2 and ICommandLaunchFactory2 (and base) should have @see for this new one. See https://wiki.eclipse.org/Evolving_Java-based_APIs_3#.222.22_Convention",
+      "revId": "6ed3a9a9bfe1e16138a00073d6ed2533894373d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "756af5af_289931f9",
+        "filename": "launch/org.eclipse.cdt.flatpak.launcher/.project",
+        "patchSetId": 12
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-24T21:49:13Z",
+      "side": 1,
+      "message": "Needs API tooling",
+      "revId": "6ed3a9a9bfe1e16138a00073d6ed2533894373d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9c0dff7a_e01160bd",
+        "filename": "launch/org.eclipse.cdt.flatpak.launcher/META-INF/MANIFEST.MF",
+        "patchSetId": 12
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-24T21:49:13Z",
+      "side": 1,
+      "message": "Needs to be Java 11",
+      "revId": "6ed3a9a9bfe1e16138a00073d6ed2533894373d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

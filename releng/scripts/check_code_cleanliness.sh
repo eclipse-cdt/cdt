@@ -103,6 +103,23 @@ git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
 done
 
 ##
+# Verify API Tooling is enabled for all non-test/example bundles
+##
+git ls-files  -- \*\*/.project | while read i ; do
+    d=`dirname $i`;
+    natures=$(xmllint --xpath 'string(//projectDescription/natures)' $i)
+    if [[ $natures == *"org.eclipse.pde.PluginNature"* ]] && [[ $natures == *"org.eclipse.jdt.core.javanature"* ]]; then
+        if [[ $natures != *"org.eclipse.pde.api.tools.apiAnalysisNature"* ]]; then
+            if ! echo $i | grep -E '\.tests?[/\.]' > /dev/null && ! echo $i | grep -E '\.examples?[/\.]' > /dev/null; then
+                echo "$d is missing API Tools Nature - Turn it on in Eclipse by 1) Right-click project 2) Plug-in tools -> API Tools Setup"
+                exit 1
+            fi
+        fi
+    fi
+done
+
+
+##
 # Make sure that natives are up to date
 ##
 for p in native/org.eclipse.cdt.native.serial core/org.eclipse.cdt.core.native; do

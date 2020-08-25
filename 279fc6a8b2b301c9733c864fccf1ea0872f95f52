@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "60229952_f1e78c2c",
+        "filename": "releng/org.eclipse.cdt.repo/category.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-25T02:02:54Z",
+      "side": 0,
+      "message": "Huh! Why did this all get deleted - https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d566339",
+      "revId": "279fc6a8b2b301c9733c864fccf1ea0872f95f52",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

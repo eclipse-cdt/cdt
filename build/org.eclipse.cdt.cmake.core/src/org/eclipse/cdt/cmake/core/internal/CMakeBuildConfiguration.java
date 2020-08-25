@@ -136,7 +136,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				runCMake = !Files.exists(buildDir.resolve("CMakeFiles")); //$NON-NLS-1$
 			}
 
-			if (runCMake) { // $NON-NLS-1$
+			if (runCMake) {
+				CMakeBuildConfiguration.deleteCMakeErrorMarkers(project);
 
 				console.getOutputStream().write(String.format(Messages.CMakeBuildConfiguration_Configuring, buildDir));
 				// clean output to make sure there is no content
@@ -175,6 +176,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 						getBuildDirectory().toString());
+				// TODO hook in cmake error parsing here
 				Process p = startBuildProcess(command, new IEnvironmentVariable[0], workingDir, console, monitor);
 				if (p == null) {
 					console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
@@ -320,7 +322,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	 * Recursively removes any files and directories found below the specified Path.
 	 */
 	private static void cleanDirectory(Path dir) throws IOException {
-		SimpleFileVisitor<Path> deltor = new SimpleFileVisitor<Path>() {
+		SimpleFileVisitor<Path> deltor = new SimpleFileVisitor<>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 				Files.delete(file);
@@ -454,5 +456,16 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	// interface IConsoleParser2
 	@Override
 	public void shutdown() {
+	}
+
+	/**
+	 * Deletes all CMake error markers on the specified project.
+	 *
+	 * @param project
+	 *          the project where to remove the error markers.
+	 * @throws CoreException
+	 */
+	private static void deleteCMakeErrorMarkers(IProject project) throws CoreException {
+		project.deleteMarkers(CMakeErrorParser.CMAKE_PROBLEM_MARKER_ID, false, IResource.DEPTH_INFINITE);
 	}
 }

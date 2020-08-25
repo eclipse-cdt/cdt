@@ -25,6 +25,7 @@ public class Messages extends NLS {
 	public static String CMakeBuildConfiguration_ProcCompCmds;
 	public static String CMakeBuildConfiguration_ProcCompJson;
 	public static String CMakeBuildConfiguration_Failure;
+	public static String CMakeErrorParser_NotAWorkspaceResource;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

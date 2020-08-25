@@ -280,7 +280,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 	 */
 	protected Process exec(String[] cmdLine, String[] environ, File workingDirectory) throws CoreException {
 		try {
-			if (PTY.isSupported()) {
+			if (PTY.isSupported(PTY.Mode.CONSOLE)) {
 				return ProcessFactory.getFactory().exec(cmdLine, environ, workingDirectory, new PTY());
 			} else {
 				return ProcessFactory.getFactory().exec(cmdLine, environ, workingDirectory);

@@ -39,7 +39,7 @@ public class PTY {
 		TERMINAL
 	}
 
-	final boolean console;
+	final Mode mode;
 	final String slave;
 	final PTYInputStream in;
 	final PTYOutputStream out;
@@ -72,6 +72,7 @@ public class PTY {
 	/**
 	 * @return whether PTY support for console mode is available on this platform
 	 */
+	@Deprecated
 	public static boolean isSupported() {
 		return isSupported(Mode.CONSOLE);
 	}
@@ -86,7 +87,7 @@ public class PTY {
 
 	/**
 	 * Create PTY for use with Eclipse console.
-	 * Identical to {@link PTY#PTY(boolean) PTY(Mode.CONSOLE)}.
+	 * Identical to {@link PTY#PTY(Mode.CONSOLE)}.
 	 */
 	public PTY() throws IOException {
 		this(Mode.CONSOLE);
@@ -114,7 +115,18 @@ public class PTY {
 	 * @since 5.6
 	 */
 	public PTY(Mode mode) throws IOException {
-		this(mode == Mode.CONSOLE);
+		this.mode = mode;
+		if (isConsole() && !isConsoleModeSupported) {
+			throw new IOException(Messages.Util_exception_cannotCreatePty);
+		}
+		slave = hasPTY ? openMaster(isConsole()) : null;
+
+		if (slave == null) {
+			throw new IOException(Messages.Util_exception_cannotCreatePty);
+		}
+
+		in = new PTYInputStream(new MasterFD());
+		out = new PTYOutputStream(new MasterFD(), !isWinPTY);
 	}
 
 	/**
@@ -142,18 +154,7 @@ public class PTY {
 	 */
 	@Deprecated
 	public PTY(boolean console) throws IOException {
-		this.console = console;
-		if (console && !isConsoleModeSupported) {
-			throw new IOException(Messages.Util_exception_cannotCreatePty);
-		}
-		slave = hasPTY ? openMaster(console) : null;
-
-		if (slave == null) {
-			throw new IOException(Messages.Util_exception_cannotCreatePty);
-		}
-
-		in = new PTYInputStream(new MasterFD());
-		out = new PTYOutputStream(new MasterFD(), !isWinPTY);
+		this(console ? Mode.CONSOLE : Mode.TERMINAL);
 	}
 
 	/**
@@ -165,8 +166,9 @@ public class PTY {
 	public void validateSlaveName() throws IOException {
 		// on windows the slave name is just an internal identifier
 		// and does not represent a real device
-		if (isWinPTY)
+		if (isWinPTY) {
 			throw new IOException("Slave name is not valid"); //$NON-NLS-1$
+		}
 	}
 
 	public String getSlaveName() {
@@ -183,7 +185,7 @@ public class PTY {
 	 * @since 5.2
 	 */
 	public final boolean isConsole() {
-		return console;
+		return mode == Mode.CONSOLE;
 	}
 
 	public PTYOutputStream getOutputStream() {
@@ -227,9 +229,9 @@ public class PTY {
 	public int exec_pty(Spawner spawner, String[] cmdarray, String[] envp, String dir, IChannel[] chan)
 			throws IOException {
 		if (isWinPTY) {
-			return exec2(cmdarray, envp, dir, chan, slave, master, console);
+			return exec2(cmdarray, envp, dir, chan, slave, master, isConsole());
 		} else {
-			return spawner.exec2(cmdarray, envp, dir, chan, slave, master, console);
+			return spawner.exec2(cmdarray, envp, dir, chan, slave, master, isConsole());
 		}
 	}
 

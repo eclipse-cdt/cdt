@@ -20,7 +20,10 @@ import java.io.InputStream;
 
 import org.eclipse.cdt.utils.pty.PTY.MasterFD;
 
-class PTYInputStream extends InputStream {
+/**
+ * @since 6.0
+ */
+public class PTYInputStream extends InputStream {
 
 	MasterFD master;
 

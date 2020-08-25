@@ -144,6 +144,22 @@
    <feature id="org.eclipse.launchbar.remote.source">
       <category name="launchbar"/>
    </feature>
+   <iu id="org.eclipse.cdt.util" version="0.0.0"/>
+   <iu id="org.eclipse.cdt.util.source" version="0.0.0"/>
+   <iu id="org.eclipse.cdt.remote.core" version="0.0.0"/>
+   <iu id="org.eclipse.cdt.remote.core.source" version="0.0.0"/>
+   <iu id="javax.activation" version="0.0.0"/>
+   <iu id="javax.xml" version="0.0.0"/>
+   <iu id="javax.xml.bind" version="0.0.0"/>
+   <iu id="javax.xml.stream" version="0.0.0"/>
+   <iu id="com.google.gson" version="0.0.0"/>
+   <iu id="org.freemarker" version="0.0.0"/>
+   <iu id="org.eclipse.tools.templates.core" version="0.0.0"/>
+   <iu id="org.eclipse.tools.templates.core.source" version="0.0.0"/>
+   <iu id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>
+   <iu id="org.eclipse.tools.templates.freemarker.source" version="0.0.0"/>
+   <iu id="org.eclipse.tools.templates.ui" version="0.0.0"/>
+   <iu id="org.eclipse.tools.templates.ui.source" version="0.0.0"/>
    <feature id="org.eclipse.tm.terminal.control.feature">
       <category name="terminal_main"/>
    </feature>

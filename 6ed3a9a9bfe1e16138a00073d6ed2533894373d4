@@ -59,6 +59,24 @@
     },
     {
       "key": {
+        "uuid": "0832e600_98f17923",
+        "filename": "launch/org.eclipse.cdt.flatpak.launcher/.project",
+        "patchSetId": 12
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 726
+      },
+      "writtenOn": "2020-08-25T10:46:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "756af5af_289931f9",
+      "revId": "6ed3a9a9bfe1e16138a00073d6ed2533894373d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9c0dff7a_e01160bd",
         "filename": "launch/org.eclipse.cdt.flatpak.launcher/META-INF/MANIFEST.MF",
         "patchSetId": 12
@@ -73,6 +91,24 @@
       "revId": "6ed3a9a9bfe1e16138a00073d6ed2533894373d4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "91605f8a_af2fe7a8",
+        "filename": "launch/org.eclipse.cdt.flatpak.launcher/META-INF/MANIFEST.MF",
+        "patchSetId": 12
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 726
+      },
+      "writtenOn": "2020-08-25T10:46:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9c0dff7a_e01160bd",
+      "revId": "6ed3a9a9bfe1e16138a00073d6ed2533894373d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

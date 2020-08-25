@@ -16,6 +16,8 @@
 package org.eclipse.cdt.utils.pty;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.internal.core.natives.Messages;
@@ -39,7 +41,7 @@ public class PTY {
 		TERMINAL
 	}
 
-	final boolean console;
+	final Mode mode;
 	final String slave;
 	final PTYInputStream in;
 	final PTYOutputStream out;
@@ -67,13 +69,6 @@ public class PTY {
 		void setFD(int fd) {
 			master = fd;
 		}
-	}
-
-	/**
-	 * @return whether PTY support for console mode is available on this platform
-	 */
-	public static boolean isSupported() {
-		return isSupported(Mode.CONSOLE);
 	}
 
 	/**
@@ -114,39 +109,11 @@ public class PTY {
 	 * @since 5.6
 	 */
 	public PTY(Mode mode) throws IOException {
-		this(mode == Mode.CONSOLE);
-	}
-
-	/**
-	 * Create pseudo terminal.
-	 *
-	 * <p>
-	 * The provided flag indicates whether the pseudo terminal is used with the interactive
-	 * Eclipse console:
-	 * <ul>
-	 * <li>If <code>true</code> the terminal is configured with no echo and stderr is
-	 * redirected to a pipe instead of the PTY. This mode is not supported on windows</li>
-	 * <li>If <code>false</code> the terminal is configured with echo and stderr is
-	 * connected to the PTY. This mode is best suited for use with a proper terminal emulation.
-	 * Note that this mode might not be supported on all platforms.
-	 * Known platforms which support this mode are:
-	 * <code>linux-x86</code>, <code>linux-x86_64</code>, <code>solaris-sparc</code>, <code>macosx</code>.
-	 * </li>
-	 * </ul>
-	 * </p>
-	 *
-	 * @param console  whether terminal is used with Eclipse console
-	 * @throws IOException  if the PTY could not be created
-	 * @deprecated Use {@link #PTY(Mode)} instead
-	 * @since 5.2
-	 */
-	@Deprecated
-	public PTY(boolean console) throws IOException {
-		this.console = console;
-		if (console && !isConsoleModeSupported) {
+		this.mode = mode;
+		if (isConsole() && !isConsoleModeSupported) {
 			throw new IOException(Messages.Util_exception_cannotCreatePty);
 		}
-		slave = hasPTY ? openMaster(console) : null;
+		slave = hasPTY ? openMaster(isConsole()) : null;
 
 		if (slave == null) {
 			throw new IOException(Messages.Util_exception_cannotCreatePty);
@@ -165,8 +132,9 @@ public class PTY {
 	public void validateSlaveName() throws IOException {
 		// on windows the slave name is just an internal identifier
 		// and does not represent a real device
-		if (isWinPTY)
+		if (isWinPTY) {
 			throw new IOException("Slave name is not valid"); //$NON-NLS-1$
+		}
 	}
 
 	public String getSlaveName() {
@@ -183,14 +151,20 @@ public class PTY {
 	 * @since 5.2
 	 */
 	public final boolean isConsole() {
-		return console;
+		return mode == Mode.CONSOLE;
 	}
 
-	public PTYOutputStream getOutputStream() {
+	/**
+	 * @since 6.0
+	 */
+	public OutputStream getOutputStream() {
 		return out;
 	}
 
-	public PTYInputStream getInputStream() {
+	/**
+	 * @since 6.0
+	 */
+	public InputStream getInputStream() {
 		return in;
 	}
 
@@ -227,9 +201,9 @@ public class PTY {
 	public int exec_pty(Spawner spawner, String[] cmdarray, String[] envp, String dir, IChannel[] chan)
 			throws IOException {
 		if (isWinPTY) {
-			return exec2(cmdarray, envp, dir, chan, slave, master, console);
+			return exec2(cmdarray, envp, dir, chan, slave, master, isConsole());
 		} else {
-			return spawner.exec2(cmdarray, envp, dir, chan, slave, master, console);
+			return spawner.exec2(cmdarray, envp, dir, chan, slave, master, isConsole());
 		}
 	}
 

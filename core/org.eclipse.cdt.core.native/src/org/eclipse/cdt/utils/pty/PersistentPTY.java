@@ -11,6 +11,8 @@
 package org.eclipse.cdt.utils.pty;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -87,12 +89,12 @@ public class PersistentPTY extends PTY {
 	}
 
 	@Override
-	public PTYInputStream getInputStream() {
+	public InputStream getInputStream() {
 		return in2;
 	}
 
 	@Override
-	public PTYOutputStream getOutputStream() {
+	public OutputStream getOutputStream() {
 		return out2;
 	}
 

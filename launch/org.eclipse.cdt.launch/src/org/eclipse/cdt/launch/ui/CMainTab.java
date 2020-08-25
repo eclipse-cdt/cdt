@@ -152,7 +152,7 @@ public class CMainTab extends CAbstractMainTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		fTerminalButton.setEnabled(PTY.isSupported());
+		fTerminalButton.setEnabled(PTY.isSupported(PTY.Mode.CONSOLE));
 	}
 
 	@Override

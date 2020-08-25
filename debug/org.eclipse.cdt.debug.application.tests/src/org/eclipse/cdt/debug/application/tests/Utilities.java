@@ -170,7 +170,7 @@ public class Utilities {
 		if (workDir == null) {
 			return ProcessFactory.getFactory().exec(commandArray, envp);
 		}
-		if (PTY.isSupported() && usePty) {
+		if (PTY.isSupported(PTY.Mode.CONSOLE) && usePty) {
 			return ProcessFactory.getFactory().exec(commandArray, envp, workDir, new PTY());
 		} else {
 			return ProcessFactory.getFactory().exec(commandArray, envp, workDir);

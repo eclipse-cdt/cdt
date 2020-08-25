@@ -113,7 +113,7 @@ public class ProcessSettingsPage extends AbstractSettingsPage {
 		localEchoSelectorControl = new Button(composite, SWT.CHECK);
 		localEchoSelectorControl.setText(Messages.ProcessSettingsPage_localEchoSelectorControl_label);
 		localEchoSelectorControl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		localEchoSelectorControl.setSelection(!PTY.isSupported());
+		localEchoSelectorControl.setSelection(!PTY.isSupported(PTY.Mode.CONSOLE));
 
 		// Initialize the control content
 		loadSettings();

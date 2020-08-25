@@ -136,7 +136,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				runCMake = !Files.exists(buildDir.resolve("CMakeFiles")); //$NON-NLS-1$
 			}
 
-			if (runCMake) { // $NON-NLS-1$
+			if (runCMake) {
+				CMakeErrorParser.deleteErrorMarkers(project);
 
 				console.getOutputStream().write(String.format(Messages.CMakeBuildConfiguration_Configuring, buildDir));
 				// clean output to make sure there is no content
@@ -175,6 +176,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 						getBuildDirectory().toString());
+				// TODO hook in cmake error parsing here
 				Process p = startBuildProcess(command, new IEnvironmentVariable[0], workingDir, console, monitor);
 				if (p == null) {
 					console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$

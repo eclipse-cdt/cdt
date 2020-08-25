@@ -32,7 +32,7 @@ public class ProcessSettings {
 	private PTY pty;
 	// Flag to control the local echo (defaults to true if
 	// the PTY is not supported on the current host platform)
-	private boolean localEcho = !PTY.isSupported();
+	private boolean localEcho = !PTY.isSupported(PTY.Mode.CONSOLE);
 	// The line separator setting
 	private String lineSeparator = null;
 	// The list of stdout output listeners

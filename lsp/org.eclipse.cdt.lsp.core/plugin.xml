@@ -30,7 +30,8 @@
             class="org.eclipse.cdt.lsp.core.CPPStreamConnectionProvider"
             id="org.eclipse.cdt.lsp.core"
             label="%server.label"
-            launcherBuilder="org.eclipse.cdt.lsp.internal.core.DelegatingLauncherBuilder">
+            launcherBuilder="org.eclipse.cdt.lsp.internal.core.DelegatingLauncherBuilder"
+            singleton="true">
       </server>
       <contentTypeMapping
             contentType="org.eclipse.cdt.lsp.core"

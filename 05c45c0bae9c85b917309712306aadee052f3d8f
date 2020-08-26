@@ -16,6 +16,24 @@
       "revId": "05c45c0bae9c85b917309712306aadee052f3d8f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "535d99b6_0b8c668e",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CommandLauncherManager.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2020-08-26T17:01:00Z",
+      "side": 1,
+      "message": "Good point.  Will post an additional patch.",
+      "parentUuid": "03fa0744_1fec72bc",
+      "revId": "05c45c0bae9c85b917309712306aadee052f3d8f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

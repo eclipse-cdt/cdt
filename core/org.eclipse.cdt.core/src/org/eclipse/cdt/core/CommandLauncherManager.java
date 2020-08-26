@@ -334,6 +334,9 @@ public class CommandLauncherManager {
 		return includePaths;
 	}
 
+	/**
+	 * @since 7.0
+	 */
 	public boolean checkIfIncludesChanged(ICBuildConfiguration config) {
 		ICommandLauncherFactory factory = getBestFactory(config);
 		if (factory != null && factory instanceof ICommandLauncherFactory3) {

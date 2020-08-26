@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2339f8b9_fd4f6702",
+        "filename": "build/org.eclipse.cdt.cmake.core/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-08-26T19:59:40Z",
+      "side": 1,
+      "message": "Good spot!",
+      "parentUuid": "f7e9911e_dde3d738",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "57e95b0a_c308b957",
         "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "0cf1770e_bb4c6084",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-08-26T19:59:40Z",
+      "side": 1,
+      "message": "What about inlining? It is used only once.\nMy idea was to hide the CMAKE_PROBLEM_MARKER_ID constant, but I forgot to make that private.",
+      "parentUuid": "57e95b0a_c308b957",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f3b49735_6fc71ec8",
         "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2020-08-26T09:05:45Z",
       "side": 1,
       "message": "IMO this class deserves to be a top level type",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea557972_9dc092fc",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-08-26T19:59:40Z",
+      "side": 1,
+      "message": "Why does it deserve that? It is just the base for the other MC_* classes and not inteneed to be used for sth. different.\nWell, the documentation on the cass is a little misleading. will change that...",
+      "parentUuid": "f3b49735_6fc71ec8",
       "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

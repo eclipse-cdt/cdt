@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7e9911e_dde3d738",
+        "filename": "build/org.eclipse.cdt.cmake.core/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-26T09:05:45Z",
+      "side": 1,
+      "message": "%cmakeproblem\n?",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57e95b0a_c308b957",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-26T09:05:45Z",
+      "side": 1,
+      "message": "This method looks strange inside OutputStream successor, I suggest to extract it",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3b49735_6fc71ec8",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-26T09:05:45Z",
+      "side": 1,
+      "message": "IMO this class deserves to be a top level type",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "553d822a_7cf2882b",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 356,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-26T09:05:45Z",
+      "side": 1,
+      "message": "Violates java naming convention, please avoid `_`",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e780ff3_f7a2a92d",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-26T09:05:45Z",
+      "side": 1,
+      "message": "Violates java naming convention, please avoid `_`",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9501c1de_3a416985",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-26T09:05:45Z",
+      "side": 1,
+      "message": "Violates java naming convention, please avoid `_`",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2b97bee_0fc49ebf",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-26T09:05:45Z",
+      "side": 1,
+      "message": "Violates java naming convention, please avoid `_`",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8354223f_91117b35",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-26T09:05:45Z",
+      "side": 1,
+      "message": "Violates java naming convention, please avoid `_`",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

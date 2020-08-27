@@ -13,6 +13,7 @@
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     Andy Jin - Added DSF debugging, bug 248593
  *     John Dallaway - Execute run commands before resume, bug 525692
+ *     John Dallaway - Eliminate deprecated API, bug 566462
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
@@ -122,7 +123,6 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 
 		createInitGroup(comp);
 		createLoadGroup(comp);
-		createRunOptionGroup(comp);
 		createRunGroup(comp);
 
 		sc.setMinSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -437,11 +437,6 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		symbolsFileName.setEnabled(enabled);
 		symbolsFileBrowseWs.setEnabled(enabled);
 		symbolsFileBrowse.setEnabled(enabled);
-	}
-
-	/** Implementation migrated to {@link #createRunGroup(Composite)} */
-	@Deprecated
-	public void createRunOptionGroup(Composite parent) {
 	}
 
 	public void createRunGroup(Composite parent) {

@@ -14,6 +14,7 @@
  *     John Dallaway - Disable reset and halt by default, bug 529171
  *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
  *     John Dallaway - Sort JTAG device list, bug 560186
+ *     John Dallaway - Eliminate deprecated API, bug 566462
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core;
@@ -29,9 +30,6 @@ public interface IGDBJtagConstants {
 	public static final String ATTR_USE_REMOTE_TARGET = Activator.PLUGIN_ID + ".useRemoteTarget"; //$NON-NLS-1$
 	public static final String ATTR_IP_ADDRESS = Activator.PLUGIN_ID + ".ipAddress"; //$NON-NLS-1$
 	public static final String ATTR_PORT_NUMBER = Activator.PLUGIN_ID + ".portNumber"; //$NON-NLS-1$
-	/** @deprecated Use {@link #ATTR_JTAG_DEVICE ID} instead */
-	@Deprecated
-	public static final String ATTR_JTAG_DEVICE = Activator.PLUGIN_ID + ".jtagDevice"; //$NON-NLS-1$
 	/** @since 9.2 */
 	public static final String ATTR_JTAG_DEVICE_ID = Activator.PLUGIN_ID + ".jtagDeviceId"; //$NON-NLS-1$
 
@@ -67,7 +65,7 @@ public interface IGDBJtagConstants {
 
 	public static final boolean DEFAULT_DO_RESET = false;
 	public static final boolean DEFAULT_DO_HALT = false;
-	public static final int DEFAULT_DELAY = 3;
+	public static final int DEFAULT_DELAY = 0;
 	public static final boolean DEFAULT_LOAD_IMAGE = true;
 	public static final boolean DEFAULT_LOAD_SYMBOLS = true;
 	public static final boolean DEFAULT_SET_PC_REGISTER = false;
@@ -101,19 +99,7 @@ public interface IGDBJtagConstants {
 	public static final String DEFAULT_PC_REGISTER = ""; //$NON-NLS-1$
 	/** @since 7.0 */
 	public static final String DEFAULT_STOP_AT = ""; //$NON-NLS-1$
-	/**
-	 * @since 9.2
-	 * @deprecated Use a local String if necessary
-	 */
-	@Deprecated
-	public static final String DEFAULT_JTAG_DEVICE_ID = ""; //$NON-NLS-1$
 	/** @since 9.2 */
 	public static final String DEFAULT_JTAG_DEVICE_NAME = ""; //$NON-NLS-1$
-	/**
-	 * @since 7.0
-	 * @deprecated Use a local String if necessary
-	 */
-	@Deprecated
-	public static final String DEFAULT_JTAG_DEVICE = ""; //$NON-NLS-1$
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 QNX Software Systems and others.
+ * Copyright (c) 2007, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,6 +23,7 @@
  *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
  *     John Dallaway - Report download progress (Bug 543149)
  *     John Dallaway - Use 'reset and halt' command (Bug 535163)
+ *     John Dallaway - Eliminate deprecated API (Bug 566462)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -97,6 +98,8 @@ import org.eclipse.core.variables.VariablesPlugin;
  * @since 7.0
  */
 public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
+
+	private static final String ATTR_JTAG_DEVICE = Activator.PLUGIN_ID + ".jtagDevice"; //$NON-NLS-1$
 
 	private abstract class DownloadStatusListener implements IEventListener {
 
@@ -754,7 +757,6 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		return IGDBJtagConstants.DEFAULT_JTAG_DEVICE_NAME;
 	}
 
-	@SuppressWarnings("deprecation")
 	private GDBJtagDeviceContribution getGDBJtagDeviceContribution() {
 		Map<String, Object> attributes = getAttributes();
 		if (attributes.containsKey(IGDBJtagConstants.ATTR_JTAG_DEVICE_ID)) {
@@ -765,8 +767,8 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		}
 
 		// Fall back to old behavior with name only if ID is missing
-		if (attributes.containsKey(IGDBJtagConstants.ATTR_JTAG_DEVICE)) {
-			String deviceName = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE, ""); //$NON-NLS-1$
+		if (attributes.containsKey(ATTR_JTAG_DEVICE)) {
+			String deviceName = CDebugUtils.getAttribute(attributes, ATTR_JTAG_DEVICE, ""); //$NON-NLS-1$
 			if (!deviceName.isEmpty()) {
 				return GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(deviceName);
 			}

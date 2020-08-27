@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Kichwa Coders Ltd and others.
+ * Copyright (c) 2019, 2020 Kichwa Coders Ltd and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     John Dallaway - Use 'reset and halt' command (Bug 535163)
+ *     John Dallaway - Eliminate deprecated API (Bug 566462)
  *******************************************************************************/
 package org.eclipse.cdt.debug.dap.gdbjtag;
 
@@ -58,6 +59,8 @@ public class DapGdbJtagLaunchDelegate extends DapLaunchDelegate {
 	public static final String IMAGE_OFFSET = "imageOffset"; //$NON-NLS-1$
 	// preRunCommands field
 	public static final String PRE_RUN_COMMANDS = "preRunCommands"; //$NON-NLS-1$
+
+	private static final String ATTR_JTAG_DEVICE = "org.eclipse.cdt.debug.gdbjtag.core.jtagDevice"; //$NON-NLS-1$
 
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor,
@@ -349,7 +352,6 @@ public class DapGdbJtagLaunchDelegate extends DapLaunchDelegate {
 		return IGDBJtagConstants.DEFAULT_JTAG_DEVICE_NAME;
 	}
 
-	@SuppressWarnings("deprecation")
 	private GDBJtagDeviceContribution getGDBJtagDeviceContribution(Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes.containsKey(IGDBJtagConstants.ATTR_JTAG_DEVICE_ID)) {
@@ -360,8 +362,8 @@ public class DapGdbJtagLaunchDelegate extends DapLaunchDelegate {
 		}
 
 		// Fall back to old behavior with name only if ID is missing
-		if (attributes.containsKey(IGDBJtagConstants.ATTR_JTAG_DEVICE)) {
-			String deviceName = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE, ""); //$NON-NLS-1$
+		if (attributes.containsKey(ATTR_JTAG_DEVICE)) {
+			String deviceName = CDebugUtils.getAttribute(attributes, ATTR_JTAG_DEVICE, ""); //$NON-NLS-1$
 			if (!deviceName.isEmpty()) {
 				return GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(deviceName);
 			}

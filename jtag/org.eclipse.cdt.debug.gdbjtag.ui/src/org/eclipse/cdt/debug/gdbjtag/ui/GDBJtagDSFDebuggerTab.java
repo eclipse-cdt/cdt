@@ -21,6 +21,7 @@
  *     John Dallaway - Ensure correct SessionType enabled, bug 334110
  *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
  *     John Dallaway - Sort JTAG device list, bug 560186
+ *     John Dallaway - Eliminate deprecated API, bug 566462
 *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
@@ -78,6 +79,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	private static final String TAB_NAME = Messages.getString("GDBJtagDebuggerTab.tabName"); //$NON-NLS-1$
 	private static final String TAB_ID = "org.eclipse.cdt.debug.gdbjtag.ui.debuggertab.dsf"; //$NON-NLS-1$
 	private static final String DEFAULT_JTAG_DEVICE_ID = "org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.genericDevice"; //$NON-NLS-1$
+	private static final String ATTR_JTAG_DEVICE = "org.eclipse.cdt.debug.gdbjtag.core.jtagDevice"; //$NON-NLS-1$
 
 	private Text gdbCommand;
 	private Button useRemote;
@@ -451,8 +453,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		}
 
 		// Fall back to old behavior with name only if ID is missing
-		@SuppressWarnings("deprecation")
-		String deviceName = configuration.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, (String) null);
+		String deviceName = configuration.getAttribute(ATTR_JTAG_DEVICE, (String) null);
 		if (deviceName != null) {
 			return GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(deviceName);
 		}

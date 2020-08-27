@@ -139,6 +139,7 @@ public class CdtVariableResolver {
 			// Only one expansion is allowed, so hide any text interfering with macro syntax
 			resolved = resolved.replace(VARIABLE_PREFIX, VARIABLE_PREFIX_MASKED);
 			resolved = resolved.replace(VARIABLE_SUFFIX, VARIABLE_SUFFIX_MASKED);
+			resolved = resolved.replace(VARIABLE_ESCAPE_CHAR, VARIABLE_ESCAPE_CHAR_MASKED);
 			buffer.replace(matcher.start(2), matcher.end(2), resolved);
 			// collapse and hide backslashes  \\\\${Macro} -> \\MacroValue or \\\\\${Macro} -> \\${Macro}
 			buffer.replace(matcher.start(1), matcher.end(1),

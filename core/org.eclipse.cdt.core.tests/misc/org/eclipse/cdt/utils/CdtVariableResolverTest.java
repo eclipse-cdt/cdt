@@ -35,6 +35,9 @@ public class CdtVariableResolverTest extends TestCase {
 			if (macroName.equals("null")) {
 				return null;
 			}
+			if (macroName.equals("backslash")) {
+				return "\\";
+			}
 			if (macroName.equals("loop")) {
 				return "${LOOP}";
 			}
@@ -65,7 +68,6 @@ public class CdtVariableResolverTest extends TestCase {
 	private MockSubstitutor mockSubstitutor = new MockSubstitutor();
 
 	public void testResolveToString() throws CdtVariableException {
-
 		assertEquals("", CdtVariableResolver.resolveToString(null, mockSubstitutor));
 		assertEquals("", CdtVariableResolver.resolveToString("", mockSubstitutor));
 		assertEquals("Text", CdtVariableResolver.resolveToString("Text", mockSubstitutor));
@@ -81,6 +83,10 @@ public class CdtVariableResolverTest extends TestCase {
 		assertEquals("\\#Macro#", CdtVariableResolver.resolveToString("\\\\${Macro}", mockSubstitutor));
 		assertEquals("\\${Macro}", CdtVariableResolver.resolveToString("\\\\\\${Macro}", mockSubstitutor));
 		assertEquals("C:\\tmp\\", CdtVariableResolver.resolveToString("C:\\tmp\\", mockSubstitutor));
+		assertEquals("#apath#\\#aconfig#",
+				CdtVariableResolver.resolveToString("${apath}${backslash}${aconfig}", mockSubstitutor));
+		assertEquals("#apath#\\#aconfig#",
+				CdtVariableResolver.resolveToString("${apath}\\\\${aconfig}", mockSubstitutor));
 
 		assertEquals("#workspace_loc:#Macro##",
 				CdtVariableResolver.resolveToString("${workspace_loc:${Macro}}", mockSubstitutor));

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bbd0a833_a2c25ff1",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTY.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-27T19:50:41Z",
+      "side": 0,
+      "message": "Deprecating, but not deleting this is good.",
+      "revId": "aa5d56554239b0bfe933ddb1b6d7ff76aeb344bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

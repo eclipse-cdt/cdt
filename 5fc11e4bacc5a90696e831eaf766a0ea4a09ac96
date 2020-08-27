@@ -22,6 +22,30 @@
       "revId": "5fc11e4bacc5a90696e831eaf766a0ea4a09ac96",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34082668_f07f4f71",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTY.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-27T21:53:54Z",
+      "side": 1,
+      "message": "AFAICT org.eclipse.remote and the other projects I have access to do not use it, so I have no concrete example of a problem - I guess we could just remove it.",
+      "parentUuid": "711865b8_60878a70",
+      "range": {
+        "startLine": 156,
+        "startChar": 1,
+        "endLine": 156,
+        "endChar": 49
+      },
+      "revId": "5fc11e4bacc5a90696e831eaf766a0ea4a09ac96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

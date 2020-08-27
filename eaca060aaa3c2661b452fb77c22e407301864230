@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0277e90b_f85438eb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-27T18:15:32Z",
+      "side": 1,
+      "message": "a bug number is needed for all non-trivial changes from non-committers.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "eaca060aaa3c2661b452fb77c22e407301864230",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74fd026e_9b4e02d1",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTY.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-27T18:15:32Z",
+      "side": 1,
+      "message": "This return type change breaks consumers in a possibly unexpected way - one of them is org.eclipse.remote.internal.proxy.server.core.commands.ServerShellCommand.ShellProcess.ShellProcess(ServerShellCommand, Process, PTY) - with the problem being that I don\u0027t think they will do a rebuild before 2020-09 cycle is finished.\n\nBecause this change is compatible at the source code level, but not at the binary level, I think we shouldn\u0027t merge it as I don\u0027t see much value to this.",
+      "revId": "eaca060aaa3c2661b452fb77c22e407301864230",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6798f20_9cdb71d8",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTY.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-27T18:15:32Z",
+      "side": 1,
+      "message": "Same here - but PTYInputStream has had a bug since forever, it is marked as package private. I don\u0027t know what the bytecode effect of changing PTYInputStream to public would be.",
+      "revId": "eaca060aaa3c2661b452fb77c22e407301864230",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

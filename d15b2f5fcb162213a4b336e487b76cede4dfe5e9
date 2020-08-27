@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "9c771660_fddf70a0",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-27T10:24:04Z",
+      "side": 1,
+      "message": "yes, inlining can also be good. my concern is that OutputStream successor does too much",
+      "parentUuid": "0cf1770e_bb4c6084",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f3b49735_6fc71ec8",
         "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
         "patchSetId": 1
@@ -101,6 +119,24 @@
       "side": 1,
       "message": "Why does it deserve that? It is just the base for the other MC_* classes and not inteneed to be used for sth. different.\nWell, the documentation on the cass is a little misleading. will change that...",
       "parentUuid": "f3b49735_6fc71ec8",
+      "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e51b2f7_a16f93a6",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-27T10:24:04Z",
+      "side": 1,
+      "message": "\u003e Why does it deserve that?\n\nTo make things more focused and better testable. At the moment there is a private class with public constructor and public methods , that does several things: parsing, path resolution, marker creation. I suggested to extract it to a package local type and better split it for several types with more clear contract.",
+      "parentUuid": "ea557972_9dc092fc",
       "revId": "d15b2f5fcb162213a4b336e487b76cede4dfe5e9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

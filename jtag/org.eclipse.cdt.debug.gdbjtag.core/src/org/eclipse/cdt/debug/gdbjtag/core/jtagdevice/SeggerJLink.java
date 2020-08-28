@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 QNX Software Systems and others.
+ * Copyright (c) 2008, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     John Dallaway - SEGGER J-Link extension, bug 548281
  *     John Dallaway - Provide 'reset and halt' command, bug 550963
+ *     John Dallaway - Eliminate deprecated API, bug 566462
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
@@ -21,12 +22,7 @@ import java.util.Collection;
 /**
  * @since 9.3
  */
-public class SeggerJLink extends DefaultGDBJtagDeviceImpl {
-
-	@Override
-	public String getDefaultPortNumber() {
-		return "2331"; //$NON-NLS-1$
-	}
+public class SeggerJLink extends DefaultGDBJtagConnectionImpl {
 
 	@Override
 	public void doDelay(int delay, Collection<String> commands) {

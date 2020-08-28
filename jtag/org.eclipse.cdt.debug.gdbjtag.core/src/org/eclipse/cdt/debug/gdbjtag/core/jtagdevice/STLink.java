@@ -12,6 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     John Dallaway - ST-LINK extension, bug 558266
+ *     John Dallaway - Eliminate deprecated API, bug 566462
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
@@ -20,12 +21,7 @@ import java.util.Collection;
 /**
  * @since 9.5
  */
-public class STLink extends DefaultGDBJtagDeviceImpl {
-
-	@Override
-	public String getDefaultPortNumber() {
-		return "61234"; //$NON-NLS-1$
-	}
+public class STLink extends DefaultGDBJtagConnectionImpl {
 
 	@Override
 	public void doDelay(int delay, Collection<String> commands) {

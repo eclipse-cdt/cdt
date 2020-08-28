@@ -378,7 +378,6 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	 * Hook up to remote target
 	 */
 	/** @since 8.2 */
-	@SuppressWarnings("deprecation")
 	@Execute
 	public void stepConnectToTarget(final RequestMonitor rm) {
 		try {
@@ -386,19 +385,27 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 					IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET)) {
 				List<String> commands = new ArrayList<>();
 				if (fGdbJtagDevice instanceof IGDBJtagConnection) {
-					URI uri = new URI(CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_CONNECTION,
-							IGDBJtagConstants.DEFAULT_CONNECTION));
+					String connection = IGDBJtagConstants.DEFAULT_CONNECTION;
+					String connectionUri = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_CONNECTION,
+							IGDBJtagConstants.DEFAULT_CONNECTION);
+					if (!IGDBJtagConstants.DEFAULT_CONNECTION.equals(connectionUri)) {
+						connection = new URI(connectionUri).getSchemeSpecificPart();
+					} else {
+						// Handle legacy launch configurations
+						String ipAddress = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IP_ADDRESS,
+								IGDBJtagConstants.DEFAULT_IP_ADDRESS);
+						int portNumber = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_PORT_NUMBER,
+								IGDBJtagConstants.DEFAULT_PORT_NUMBER);
+						if (!IGDBJtagConstants.DEFAULT_IP_ADDRESS.equals(ipAddress)) {
+							connection = String.format("%s:%d", ipAddress, portNumber); //$NON-NLS-1$
+						}
+					}
 					IGDBJtagConnection device = (IGDBJtagConnection) fGdbJtagDevice;
-					device.doRemote(uri.getSchemeSpecificPart(), commands);
+					device.doRemote(connection, commands);
+					queueCommands(commands, rm);
 				} else {
-					// Handle legacy network device contributions that don't understand URIs
-					String ipAddress = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IP_ADDRESS,
-							IGDBJtagConstants.DEFAULT_IP_ADDRESS);
-					int portNumber = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_PORT_NUMBER,
-							IGDBJtagConstants.DEFAULT_PORT_NUMBER);
-					fGdbJtagDevice.doRemote(ipAddress, portNumber, commands);
+					rm.done();
 				}
-				queueCommands(commands, rm);
 			} else {
 				rm.done();
 			}

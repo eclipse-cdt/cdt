@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 QNX Software Systems and others.
+ * Copyright (c) 2008, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     John Dallaway - PEmicro extension, bug 552597
+ *     John Dallaway - Eliminate deprecated API, bug 566462
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
@@ -20,12 +21,7 @@ import java.util.Collection;
 /**
  * @since 9.4
  */
-public class PEMicro extends DefaultGDBJtagDeviceImpl {
-
-	@Override
-	public String getDefaultPortNumber() {
-		return "7224"; //$NON-NLS-1$
-	}
+public class PEMicro extends DefaultGDBJtagConnectionImpl {
 
 	@Override
 	public void doDelay(int delay, Collection<String> commands) {

@@ -57,8 +57,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -86,9 +84,6 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	private Combo jtagDevice;
 	private Composite remoteConnectionParameters;
 	private StackLayout remoteConnectParmsLayout;
-	private Composite remoteTcpipBox;
-	private Text ipAddress;
-	private Text portNumber;
 	private Composite remoteConnectionBox;
 	private Text connection;
 	private String savedJtagDevice;
@@ -278,32 +273,6 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		remoteConnectionParameters.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
 
 		//
-		//  Create entry fields for TCP/IP connections
-		//
-
-		{
-			remoteTcpipBox = new Composite(remoteConnectionParameters, SWT.NO_TRIM | SWT.NO_FOCUS);
-			layout = new GridLayout();
-			layout.numColumns = 2;
-			remoteTcpipBox.setLayout(layout);
-			remoteTcpipBox.setBackground(remoteConnectionParameters.getParent().getBackground());
-
-			label = new Label(remoteTcpipBox, SWT.NONE);
-			label.setText(Messages.getString("GDBJtagDebuggerTab.ipAddressLabel")); //$NON-NLS-1$
-			ipAddress = new Text(remoteTcpipBox, SWT.BORDER);
-			gd = new GridData();
-			gd.widthHint = 125;
-			ipAddress.setLayoutData(gd);
-
-			label = new Label(remoteTcpipBox, SWT.NONE);
-			label.setText(Messages.getString("GDBJtagDebuggerTab.portNumberLabel")); //$NON-NLS-1$
-			portNumber = new Text(remoteTcpipBox, SWT.BORDER);
-			gd = new GridData();
-			gd.widthHint = 125;
-			portNumber.setLayoutData(gd);
-		}
-
-		//
 		//  Create entry fields for other types of connections
 		//
 
@@ -325,26 +294,6 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		//
 		//  Add watchers for user data entry
 		//
-
-		ipAddress.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				scheduleUpdateJob(); // provides much better performance for Text listeners
-			}
-		});
-		portNumber.addVerifyListener(new VerifyListener() {
-			@Override
-			public void verifyText(VerifyEvent e) {
-				e.doit = Character.isDigit(e.character) || Character.isISOControl(e.character);
-			}
-		});
-		portNumber.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				scheduleUpdateJob(); // provides much better performance for Text listeners
-			}
-		});
-
 		connection.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -356,7 +305,6 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @param text
 	 */
-	@SuppressWarnings("deprecation")
 	protected void updateDeviceIpPort(String selectedDeviceName) {
 		if (selectedDeviceName.equals(savedJtagDevice)) {
 			return;
@@ -372,10 +320,6 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 					if (selectedDevice instanceof IGDBJtagConnection) {
 						IGDBJtagConnection connectionDevice = (IGDBJtagConnection) selectedDevice;
 						connection.setText(connectionDevice.getDefaultDeviceConnection());
-					} else {
-						// support for deprecated TCP/IP based methods
-						ipAddress.setText(selectedDevice.getDefaultIpAddress());
-						portNumber.setText(selectedDevice.getDefaultPortNumber());
 					}
 					useRemoteChanged();
 					updateLaunchConfigurationDialog();
@@ -394,8 +338,6 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		remoteTimeoutEnabled.setEnabled(enabled);
 		remoteTimeoutValue.setEnabled(remoteTimeoutEnabled.getSelection());
 		jtagDevice.setEnabled(enabled);
-		ipAddress.setEnabled(enabled);
-		portNumber.setEnabled(enabled);
 		connection.setEnabled(enabled);
 		GDBJtagDeviceContribution selectedDeviceEntry = GDBJtagDeviceContributionFactory.getInstance()
 				.findByDeviceName(jtagDevice.getText());
@@ -408,8 +350,8 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				remoteConnectParmsLayout.topControl = remoteConnectionBox;
 				remoteConnectionBox.getParent().layout();
 			} else {
-				remoteConnectParmsLayout.topControl = remoteTcpipBox;
-				remoteTcpipBox.getParent().layout();
+				remoteConnectParmsLayout.topControl = null;
+				remoteConnectionParameters.layout();
 			}
 		}
 	}
@@ -495,34 +437,30 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				jtagDevice.select(index);
 			} else {
 				String storedAddress = ""; //$NON-NLS-1$
-				int storedPort = 0;
-				String storedConnection = ""; //$NON-NLS-1$
+				int storedPort = -1;
+				String storedConnection = null;
 
 				for (int i = 0; i < jtagDevice.getItemCount(); i++) {
 					if (jtagDevice.getItem(i).equals(savedJtagDevice)) {
 						storedAddress = configuration.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, ""); //$NON-NLS-1$
-						storedPort = configuration.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, 0);
-						storedConnection = configuration.getAttribute(IGDBJtagConstants.ATTR_CONNECTION, ""); //$NON-NLS-1$
+						storedPort = configuration.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, -1);
+						storedConnection = configuration.getAttribute(IGDBJtagConstants.ATTR_CONNECTION, (String) null);
 						jtagDevice.select(i);
 						break;
 					}
 				}
 
-				if (storedConnection != null) {
+				String connectionText = IGDBJtagConstants.DEFAULT_CONNECTION;
+				if (null != storedConnection) { // if a connection URI
 					try {
-						connection.setText(new URI(storedConnection).getSchemeSpecificPart());
+						connectionText = new URI(storedConnection).getSchemeSpecificPart();
 					} catch (URISyntaxException e) {
 						Activator.log(e);
 					}
+				} else if (storedPort != -1) { // if a legacy address:port
+					connectionText = String.format("%s:%d", storedAddress, storedPort); //$NON-NLS-1$
 				}
-				if (storedAddress != null) {
-					// Treat as legacy network probe
-					ipAddress.setText(storedAddress);
-					String portString = (0 < storedPort) && (storedPort <= 65535)
-							? Integer.valueOf(storedPort).toString()
-							: ""; //$NON-NLS-1$
-					portNumber.setText(portString);
-				}
+				connection.setText(connectionText);
 			}
 			boolean updateThreadsOnSuspend = configuration.getAttribute(
 					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
@@ -573,14 +511,10 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 					String conn = connection.getText().trim();
 					URI uri = new URI("gdb", conn, ""); //$NON-NLS-1$ //$NON-NLS-2$
 					configuration.setAttribute(IGDBJtagConstants.ATTR_CONNECTION, uri.toString());
+					configuration.removeAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS);
+					configuration.removeAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER);
 				} else {
-					String ip = ipAddress.getText().trim();
-					configuration.setAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, ip);
-					String port = portNumber.getText().trim();
-					if (!port.isEmpty()) {
-						configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER,
-								Integer.valueOf(port).intValue());
-					}
+					configuration.removeAttribute(IGDBJtagConstants.ATTR_CONNECTION);
 				}
 			} catch (URISyntaxException e) {
 				Activator.log(e);

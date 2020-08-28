@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Sage Electronic Engineering and others.
+ * Copyright (c) 2010, 2020 Sage Electronic Engineering and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     Bruce Griffith,Sage Electronic Engineering, LLC - bug 305943
  *              - API generalization to become transport-independent (e.g. to
  *                allow connections via serial ports and pipes).
+ *     John Dallaway - Eliminate deprecated API - bug 566462
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
@@ -49,16 +50,6 @@ public class DefaultGDBJtagConnectionImpl extends DefaultGDBJtagDeviceImpl imple
 	@Override
 	public String getDefaultDeviceConnection() {
 		return connection;
-	}
-
-	@Override
-	public String getDefaultIpAddress() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getDefaultPortNumber() {
-		throw new UnsupportedOperationException();
 	}
 
 }

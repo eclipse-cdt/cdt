@@ -313,24 +313,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 			e.printStackTrace();
 		}
 
-		// Get the project types for this project and all referenced projects
-		List<IProjectType> definedTypes = null;
-		// To Do
-
 		// Create the array and copy the elements over
 		int size = projectTypes != null ? projectTypes.size() : 0;
-		size += definedTypes != null ? definedTypes.size() : 0;
 
 		IProjectType[] types = new IProjectType[size];
 
-		if (size > 0) {
-			int n = 0;
-			for (int i = 0; i < projectTypes.size(); i++)
-				types[n++] = projectTypes.get(i);
-
-			if (definedTypes != null)
-				for (int i = 0; i < definedTypes.size(); i++)
-					types[n++] = definedTypes.get(i);
+		int n = 0;
+		for (IProjectType type : projectTypes) {
+			types[n++] = type;
 		}
 
 		return types;
@@ -1951,8 +1941,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 					//   o  The major versions are equal, but the remainder of the .cdtbuild version # is
 					//      greater than the MBS version #
 					boolean compatible = false;
-					if (version == null)
-						compatible = false;
 					if (buildInfoVersion.getMajor() != version.getMajor())
 						compatible = false;
 					if (buildInfoVersion.getMinor() > version.getMinor())

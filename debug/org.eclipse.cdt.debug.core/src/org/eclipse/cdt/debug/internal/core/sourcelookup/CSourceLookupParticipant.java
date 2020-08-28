@@ -25,9 +25,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceLookupChangeListener;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
@@ -77,7 +75,6 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 
 		// Workaround for cases when the stack frame doesn't contain the source file name
 		String name = null;
-		IBreakpoint breakpoint = null;
 		if (object instanceof String) {
 			name = (String) object;
 		}
@@ -96,20 +93,6 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 			}
 		}
 
-		// Source lookup participant order is preserved where possible except for one case:
-		//   - If we've stopped at a breakpoint the user has made on an IResource, we definitely want to show
-		//     that IResource before others
-		if (breakpoint != null && breakpoint.getMarker() != null && breakpoint.getMarker().getResource() != null) {
-			IResource breakpointResource = breakpoint.getMarker().getResource();
-			for (int i = 0; i < foundElements.length; i++) {
-				if (foundElements[i].equals(breakpointResource)) {
-					Object temp = foundElements[0];
-					foundElements[0] = foundElements[i];
-					foundElements[i] = temp;
-					break;
-				}
-			}
-		}
 		fCachedResults.put(object, foundElements);
 		return foundElements;
 	}

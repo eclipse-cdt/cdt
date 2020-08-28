@@ -46,6 +46,30 @@
       "revId": "5188547f317b1ac835c5e5da630484da284329f3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f3f9fc8_51b1d216",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/IGDBJtagConstants.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-28T16:51:22Z",
+      "side": 1,
+      "message": "No, no problem here.\nI just saw that you did a cleanup that I was thinking about and noticed that you also changed this value although the commit message did not mention it, but everything is good from my end 😊",
+      "parentUuid": "c10da22a_70d13d29",
+      "range": {
+        "startLine": 68,
+        "startChar": 1,
+        "endLine": 68,
+        "endChar": 43
+      },
+      "revId": "5188547f317b1ac835c5e5da630484da284329f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -132,6 +132,12 @@
    <feature url="features/org.eclipse.cdt.launch.serial.feature.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.launch.serial.feature.source" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature id="org.eclipse.cdt.lsp">
+      <category name="extra"/>
+   </feature>
+   <feature id="org.eclipse.cdt.lsp.source">
+      <category name="extra"/>
+   </feature>
    <feature id="org.eclipse.launchbar">
       <category name="launchbar"/>
    </feature>

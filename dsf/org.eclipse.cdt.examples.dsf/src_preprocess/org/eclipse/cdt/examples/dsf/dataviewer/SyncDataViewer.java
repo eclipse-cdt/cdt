@@ -100,7 +100,7 @@ public class SyncDataViewer implements IStructuredContentProvider, IDataGenerato
 					protected void handleSuccess() {
 						rm.setData(Arrays.asList(retVal));
 						rm.done();
-					};
+					}
 				};
 				for (int i = 0; i < finalCount; i++) {
 					final int finalI = i;

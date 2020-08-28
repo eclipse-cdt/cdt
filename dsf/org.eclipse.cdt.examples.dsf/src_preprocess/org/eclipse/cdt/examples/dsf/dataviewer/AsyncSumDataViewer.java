@@ -219,7 +219,7 @@ public class AsyncSumDataViewer implements ILazyContentProvider {
 					}
 					setValueToViewer(fIndex, result.toString());
 				}
-			};
+			}
 		};
 
 		// Request data from each data generator.

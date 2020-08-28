@@ -315,6 +315,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			List<IProblem> fReportedProblems;
 		}
 
+		private final IgnoredMarkerTypes ignored = new IgnoredMarkerTypes();
+
 		private final ThreadLocal<ProblemRequestorState> fProblemRequestorState = new ThreadLocal<>();
 		private int fStateCount;
 
@@ -340,6 +342,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			String markerType = MarkerUtilities.getMarkerType(marker);
 			if (markerType != null && markerType.startsWith(CMarkerAnnotation.C_MARKER_TYPE_PREFIX)) {
 				return new CMarkerAnnotation(marker);
+			}
+			if (ignored.test(markerType)) {
+				//the only way to not create the annotation
+				return null;
 			}
 			return super.createMarkerAnnotation(marker);
 		}

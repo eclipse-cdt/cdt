@@ -22,6 +22,30 @@
       "revId": "5188547f317b1ac835c5e5da630484da284329f3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c10da22a_70d13d29",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/IGDBJtagConstants.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2020-08-28T16:29:37Z",
+      "side": 1,
+      "message": "@Torbjörn, yes, this change was intentional. Zero delay seems like a more useful default value for the majority of users. Do you see any problem with this?\n\nMCU application developers will typically wish to reset and halt immeidately in preparation for flash programming. For larger devices, a delay following reset can be useful to allow a bootloader to setup SDRAM before the target is halted. I have no insight into the reasoning behind the previous default value.",
+      "parentUuid": "31752ab1_75d10d2f",
+      "range": {
+        "startLine": 68,
+        "startChar": 1,
+        "endLine": 68,
+        "endChar": 43
+      },
+      "revId": "5188547f317b1ac835c5e5da630484da284329f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

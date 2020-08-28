@@ -73,7 +73,7 @@ public class DataGeneratorCacheManager implements IDataGenerator.Listener {
 		@Override
 		protected void retrieve(org.eclipse.cdt.dsf.concurrent.DataRequestMonitor<Integer> rm) {
 			fDataGenerator.getValue(fIndex, rm);
-		};
+		}
 
 		/**
 		 * @see CountCache#countChanged()

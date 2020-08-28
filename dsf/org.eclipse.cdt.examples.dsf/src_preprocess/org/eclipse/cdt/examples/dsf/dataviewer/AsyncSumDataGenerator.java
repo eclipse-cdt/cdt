@@ -83,7 +83,7 @@ public class AsyncSumDataGenerator implements IDataGenerator {
 				int maxCount = counts[counts.length - 1];
 				rm.setData(maxCount);
 				rm.done();
-			};
+			}
 		};
 
 		// Each call to data generator fills in one value in array.
@@ -131,7 +131,7 @@ public class AsyncSumDataGenerator implements IDataGenerator {
 				}
 				rm.setData(sum);
 				rm.done();
-			};
+			}
 		};
 
 		// Each call to data generator fills in one value in array.

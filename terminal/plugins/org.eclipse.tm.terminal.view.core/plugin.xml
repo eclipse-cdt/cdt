@@ -11,7 +11,7 @@
  -->
 
 <plugin>
-   <extension-point id="contextPropertiesProviders" name="%contextPropertiesProviders" schema="schema/contextPropertiesProviders.exsd"/>
+   <extension-point id="contextPropertiesProviders" name="%ExtensionPoint.contextPropertiesProviders" schema="schema/contextPropertiesProviders.exsd"/>
 
 <!-- Property tester contributions -->
    <extension point="org.eclipse.core.expressions.propertyTesters">

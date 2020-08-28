@@ -17,3 +17,4 @@ Export-Package: org.eclipse.cdt.visualizer.examples,
  org.eclipse.cdt.visualizer.examples.problemvisualizer,
  org.eclipse.cdt.visualizer.examples.sourcegraph
 Automatic-Module-Name: org.eclipse.cdt.visualizer.examples
+Bundle-Localization: plugin

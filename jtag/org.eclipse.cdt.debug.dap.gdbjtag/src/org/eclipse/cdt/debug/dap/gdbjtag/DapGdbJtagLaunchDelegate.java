@@ -213,23 +213,27 @@ public class DapGdbJtagLaunchDelegate extends DapLaunchDelegate {
 				IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET)) {
 			List<String> commands = new ArrayList<>();
 			if (jtagDevice instanceof IGDBJtagConnection) {
-				URI uri;
-				try {
-					uri = new URI(CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_CONNECTION,
-							IGDBJtagConstants.DEFAULT_CONNECTION));
-				} catch (URISyntaxException e) {
-					throw newCoreException("Invalid remote target connection syntax", e);
+				String connection = IGDBJtagConstants.DEFAULT_CONNECTION;
+				String connectionUri = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_CONNECTION,
+						IGDBJtagConstants.DEFAULT_CONNECTION);
+				if (!IGDBJtagConstants.DEFAULT_CONNECTION.equals(connectionUri)) {
+					try {
+						connection = new URI(connectionUri).getSchemeSpecificPart();
+					} catch (URISyntaxException e) {
+						throw newCoreException("Invalid remote target connection syntax", e);
+					}
+				} else {
+					// Handle legacy launch configurations
+					String ipAddress = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_IP_ADDRESS,
+							IGDBJtagConstants.DEFAULT_IP_ADDRESS);
+					int portNumber = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_PORT_NUMBER,
+							IGDBJtagConstants.DEFAULT_PORT_NUMBER);
+					if (!IGDBJtagConstants.DEFAULT_IP_ADDRESS.equals(ipAddress)) {
+						connection = String.format("%s:%d", ipAddress, portNumber); //$NON-NLS-1$
+					}
 				}
-
 				IGDBJtagConnection device = (IGDBJtagConnection) jtagDevice;
-				device.doRemote(uri.getSchemeSpecificPart(), commands);
-			} else {
-				// Handle legacy network device contributions that don't understand URIs
-				String ipAddress = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_IP_ADDRESS,
-						IGDBJtagConstants.DEFAULT_IP_ADDRESS);
-				int portNumber = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_PORT_NUMBER,
-						IGDBJtagConstants.DEFAULT_PORT_NUMBER);
-				jtagDevice.doRemote(ipAddress, portNumber, commands);
+				device.doRemote(connection, commands);
 			}
 			target.put(CONNECT_COMMANDS, commands);
 		}

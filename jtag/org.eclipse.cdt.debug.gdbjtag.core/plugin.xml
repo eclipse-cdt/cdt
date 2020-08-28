@@ -27,16 +27,19 @@
          point="org.eclipse.cdt.debug.gdbjtag.core.JTagDevice">
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GenericDevice"
+            default_connection="localhost:10000"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.genericDevice"
             name="%Generic.name">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.AbatronBDI2000"
+            default_connection="bdi2000:2001"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.AbatronBDI2000"
             name="%AbatronBDI2000.name">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.MacraigorUsb2Demon"
+            default_connection="localhost:8888"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.MacraigorUsb2Demon"
             name="%MacraigorUsb2Demon.name">
       </device>
@@ -54,21 +57,25 @@
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCDSocket"
+            default_connection="localhost:3333"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCDSocket"
             name="%OpenOCDSocket.name">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.PEMicro"
+            default_connection="localhost:7224"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.PEMicro"
             name="%PEMicro.name">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.SeggerJLink"
+            default_connection="localhost:2331"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.SeggerJLink"
             name="%SeggerJLink.name">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.STLink"
+            default_connection="localhost:61234"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.STLink"
             name="%STLink.name">
       </device>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 QNX Software Systems and others.
+ * Copyright (c) 2008, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     John Dallaway - Use GDB/MI for temporary breakpoint, bug 525726
+ *     John Dallaway - Eliminate deprecated API, bug 566462
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
@@ -44,17 +45,6 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	@Override
 	public int getDefaultDelay() {
 		return 0;
-	}
-
-	@Override
-	public void doRemote(String ip, int port, Collection<String> commands) {
-		// The CLI version (target remote) does not let us know
-		// that we have properly connected.  For older GDBs (<= 6.8)
-		// we need this information for a DSF session.
-		// The MI version does tell us, which is why we must use it
-		// Bug 348043
-		String cmd = "-target-select remote " + ip + ":" + String.valueOf(port); //$NON-NLS-1$ //$NON-NLS-2$
-		addCmd(commands, cmd);
 	}
 
 	@Override
@@ -114,16 +104,6 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 */
 	protected void addCmd(Collection<String> commands, String cmd) {
 		commands.add(cmd + LINESEP);
-	}
-
-	@Override
-	public String getDefaultIpAddress() {
-		return "localhost"; //$NON-NLS-1$
-	}
-
-	@Override
-	public String getDefaultPortNumber() {
-		return "10000"; //$NON-NLS-1$
 	}
 
 }

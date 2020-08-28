@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 QNX Software Systems and others.
+ * Copyright (c) 2008, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     John Dallaway - Support 'reset and halt' command, bug 535163
+ *     John Dallaway - Eliminate deprecated API, bug 566462
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
@@ -84,25 +85,6 @@ public interface IGDBJtagDevice {
 	}
 
 	/**
-	 * Commands to connect to remote JTAG device
-	 *
-	 * @param ip
-	 *            host name of IP address of JTAG device
-	 * @param port
-	 *            TCP socket port number of JTAG device
-	 * @param commands
-	 *            implementation should populate the collection with the gdb
-	 *            commands that will connect to the device, or leave the
-	 *            collection as-is if that operation is either unsupported or
-	 *            not applicable
-	 * @deprecated an implementor should adapt to IGDBJtagConnection instead of
-	 *             implementing this method (implementation should throw
-	 *             UnsupportedOperationException)
-	 */
-	@Deprecated
-	public void doRemote(String ip, int port, Collection<String> commands);
-
-	/**
 	 * Commands to download the executable binary to target
 	 *
 	 * @param imageFileName
@@ -169,25 +151,4 @@ public interface IGDBJtagDevice {
 	 */
 	public void doContinue(Collection<String> commands);
 
-	/**
-	 * Device specific default hostname of IP address
-	 *
-	 * @return default hostname of IP address
-	 * @deprecated an implementor should adapt to IGDBJtagConnection instead of
-	 *             implementing this method (implementation should throw
-	 *             UnsupportedOperationException)
-	 */
-	@Deprecated
-	public String getDefaultIpAddress();
-
-	/**
-	 * Device specific default port number
-	 *
-	 * @return default port number
-	 * @deprecated an implementor should adapt to IGDBJtagConnection instead of
-	 *             implementing this method (implementation should throw
-	 *             UnsupportedOperationException)
-	 */
-	@Deprecated
-	public String getDefaultPortNumber();
 }

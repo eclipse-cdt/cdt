@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 - 2010 QNX Software Systems and others.
+ * Copyright (c) 2008 - 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Bruce Griffith, Sage Electronic Engineering, LLC - bug 305943
  *              - API generalization to become transport-independent (allow
  *                connections via serial ports and pipes).
+ *     John Dallaway - Eliminate deprecated API - bug 566462
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
@@ -95,7 +96,7 @@ public class GDBJtagDeviceContribution {
 			return device;
 		Object o = null;
 		try {
-			o = Platform.getBundle(deviceClassBundleName).loadClass(deviceClassName).newInstance();
+			o = Platform.getBundle(deviceClassBundleName).loadClass(deviceClassName).getConstructor().newInstance();
 			if (o instanceof IGDBJtagConnection) {
 				((IGDBJtagConnection) o).setDefaultDeviceConnection(deviceDefaultConnection);
 			}

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Launch Bar Core Tests
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.launchbar.core.tests;singleton:=true
 Bundle-Version: 1.0.100.qualifier
 Fragment-Host: org.eclipse.launchbar.core;bundle-version="1.0.0"
@@ -8,3 +8,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit;bundle-version="4.12.0",
  org.mockito;bundle-version="2.23.0"
 Automatic-Module-Name: org.eclipse.launchbar.core.tests
+Bundle-Localization: fragment

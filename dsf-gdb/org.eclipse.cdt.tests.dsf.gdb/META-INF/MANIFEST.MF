@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GDB/MI reference application tests
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.tests.dsf.gdb;singleton:=true
 Bundle-Version: 2.3.100.qualifier
 Bundle-Activator: org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin
-Bundle-Vendor: Ericsson
+Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.dsf,
  org.eclipse.cdt.core,
@@ -27,3 +27,4 @@ Export-Package: org.eclipse.cdt.dsf.mi.service;x-internal:=true,
  org.eclipse.cdt.tests.dsf.gdb.tests;x-internal:=true,
  org.eclipse.cdt.tests.dsf.gdb.tests.nonstop;x-internal:=true
 Automatic-Module-Name: org.eclipse.cdt.tests.dsf.gdb
+Bundle-Localization: plugin

@@ -1,10 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: DSF-GDB test fragment
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.dsf.gdb.tests;singleton:=true
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %providerName
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.eclipse.cdt.dsf.gdb
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit;bundle-version="4.8.1"
 Automatic-Module-Name: org.eclipse.cdt.dsf.gdb.tests
+Bundle-Localization: fragment

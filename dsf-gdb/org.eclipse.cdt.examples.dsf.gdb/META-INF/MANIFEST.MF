@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GDB DSF Debugger Extension Example
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.examples.dsf.gdb;singleton:=true
 Bundle-Version: 1.1.100.qualifier
 Bundle-Activator: org.eclipse.cdt.examples.dsf.gdb.GDBExamplePlugin
@@ -20,7 +20,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.tm.terminal.control
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %providerName
 Export-Package: org.eclipse.cdt.examples.dsf.gdb;x-internal:=true,
  org.eclipse.cdt.examples.dsf.gdb.launch;x-internal:=true,
  org.eclipse.cdt.examples.dsf.gdb.service;x-internal:=true,
@@ -28,3 +28,4 @@ Export-Package: org.eclipse.cdt.examples.dsf.gdb;x-internal:=true,
  org.eclipse.cdt.examples.dsf.gdb.service.command.commands;x-internal:=true,
  org.eclipse.cdt.examples.dsf.gdb.viewmodel;x-internal:=true
 Automatic-Module-Name: org.eclipse.cdt.examples.dsf.gdb
+Bundle-Localization: plugin

@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: MSVC Build Integration Plug-in Tests
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.msw.build.tests
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %providerName
 Automatic-Module-Name: org.eclipse.cdt.msw.build.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.15.0",
@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.15.0",
  org.junit,
  org.eclipse.cdt.msw.build
 Export-Package: org.eclipse.cdt.internal.msw.build.tests;x-internal:=true
+Bundle-Localization: plugin

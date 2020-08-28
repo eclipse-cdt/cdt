@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GCC ToolChain Support UI
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.build.gcc.ui;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipse.cdt.build.gcc.ui.internal.Activator
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.cdt.ui;bundle-version="6.3.0",
@@ -14,3 +14,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.cdt.build.gcc.ui
 Export-Package: org.eclipse.cdt.build.gcc.ui.internal;x-internal:=true
+Bundle-Localization: plugin

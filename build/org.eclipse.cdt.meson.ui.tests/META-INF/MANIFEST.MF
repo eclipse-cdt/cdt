@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Tests
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.meson.ui.tests
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %providerName
 Bundle-Version: 1.0.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.cdt.meson.core;bundle-version="1.0.0",
@@ -23,3 +23,4 @@ Require-Bundle: org.eclipse.cdt.meson.core;bundle-version="1.0.0",
  org.eclipse.ui.views.properties.tabbed;bundle-version="3.8.100"
 Import-Package: org.assertj.core.api;version="1.7.1"
 Automatic-Module-Name: org.eclipse.cdt.meson.ui.tests
+Bundle-Localization: plugin

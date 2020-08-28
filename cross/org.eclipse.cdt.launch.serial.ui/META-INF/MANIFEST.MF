@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Ui
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.launch.serial.ui;singleton:=true
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %providerName
 Bundle-Version: 1.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",
@@ -16,3 +16,4 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",
 Bundle-Activator: org.eclipse.cdt.launch.serial.ui.internal.Activator
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.cdt.launch.serial.ui
+Bundle-Localization: plugin

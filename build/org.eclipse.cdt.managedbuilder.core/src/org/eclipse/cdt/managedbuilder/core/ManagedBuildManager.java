@@ -2034,7 +2034,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 			throw e;
 		}
 
-		buildInfo.setValid(true);
+		if (buildInfo != null) {
+			buildInfo.setValid(true);
+		}
 		return buildInfo;
 	}
 

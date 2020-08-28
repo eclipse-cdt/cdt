@@ -1915,8 +1915,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 
 		// So there is a project file, load the information there
-		InputStream stream = new FileInputStream(cdtbuild);
-		try {
+		try (InputStream stream = new FileInputStream(cdtbuild)) {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document document = parser.parse(stream);
 			String fileVersion = null;
@@ -2030,8 +2029,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 				//project.setSessionProperty(buildInfoProperty, buildInfo);
 				setLoaddedBuildInfo(project, buildInfo);
 			}
-		} catch (Exception e) {
-			throw e;
 		}
 
 		buildInfo.setValid(true);

@@ -17,9 +17,9 @@ import java.util.function.Consumer;
 
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
+import org.eclipse.cdt.lsp.internal.core.workspace.ResolveDocumentUri;
 import org.eclipse.cdt.lsp.internal.cquery.CquerySemanticHighlights;
 import org.eclipse.cdt.lsp.internal.cquery.HighlightSymbol;
-import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
 import org.eclipse.cdt.lsp.internal.ui.text.PresentationReconcilerCPP;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;

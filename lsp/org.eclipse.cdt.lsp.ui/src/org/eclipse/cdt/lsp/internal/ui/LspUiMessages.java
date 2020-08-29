@@ -28,6 +28,7 @@ public class LspUiMessages extends NLS {
 	public static String CPPLanguageServerPreferencePage_server_options;
 	public static String CPPLanguageServerPreferencePage_server_path;
 	public static String CPPLanguageServerPreferencePage_server_selector;
+	public static String LanguageServerPropertyPage_w_ls_experimental;
 
 	private LspUiMessages() {
 	}

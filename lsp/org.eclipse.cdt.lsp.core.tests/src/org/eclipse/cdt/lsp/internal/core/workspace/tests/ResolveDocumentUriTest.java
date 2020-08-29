@@ -11,11 +11,11 @@
  * Contributors:
  *     Alexander Fedorov (ArSysOp) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.lsp.text.tests;
+package org.eclipse.cdt.lsp.internal.core.workspace.tests;
 
 import static org.junit.Assert.assertFalse;
 
-import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
+import org.eclipse.cdt.lsp.internal.core.workspace.ResolveDocumentUri;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.runtime.Path;

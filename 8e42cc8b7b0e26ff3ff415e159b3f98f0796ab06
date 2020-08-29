@@ -33,6 +33,24 @@
       "revId": "8e42cc8b7b0e26ff3ff415e159b3f98f0796ab06",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bc9cbfa2_5490ef98",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/CSourceLookupParticipant.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-29T04:50:52Z",
+      "side": 0,
+      "message": "Does that mean that the entire class(CSourceLookupParticipant) should be removed?",
+      "parentUuid": "4aa49fc5_037acb76",
+      "revId": "8e42cc8b7b0e26ff3ff415e159b3f98f0796ab06",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

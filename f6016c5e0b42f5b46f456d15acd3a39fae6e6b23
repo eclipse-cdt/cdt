@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a3f1042_4a12d84e",
+        "filename": "core/org.eclipse.cdt.core.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-29T01:02:25Z",
+      "side": 1,
+      "message": "As it was done by a script it probably wasn\u0027t extra effort, but test plugins don\u0027t need to be localized in CDT (I am sure there are plenty of exceptions). If there are localization warnings, they should be fixed by changing compiler/pde settings.\n\nSee the code cleanliness script - it already has some warning level exceptions for tests.",
+      "revId": "f6016c5e0b42f5b46f456d15acd3a39fae6e6b23",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "95629c65_2389f0f7",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/plugin.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-29T01:02:25Z",
+      "side": 1,
+      "message": "This is wrong. Should be Eclipse CDT.",
+      "revId": "f6016c5e0b42f5b46f456d15acd3a39fae6e6b23",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3eff3b04_e08ac031",
+        "filename": "launchbar/org.eclipse.launchbar.core.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-29T01:02:25Z",
+      "side": 1,
+      "message": "No bundle vendor?",
+      "revId": "f6016c5e0b42f5b46f456d15acd3a39fae6e6b23",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d17b39c_5ac09aa4",
+        "filename": "launchbar/org.eclipse.launchbar.remote.core/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-29T01:02:25Z",
+      "side": 1,
+      "message": "no bundle vendor?",
+      "revId": "f6016c5e0b42f5b46f456d15acd3a39fae6e6b23",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

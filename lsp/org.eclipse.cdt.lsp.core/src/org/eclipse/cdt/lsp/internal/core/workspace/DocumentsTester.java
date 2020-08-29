@@ -11,24 +11,29 @@
  * Contributors:
  *     Alexander Fedorov (ArSysOp) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.lsp.internal.text;
+package org.eclipse.cdt.lsp.internal.core.workspace;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.function.Function;
-
+import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.lsp4e.LSPEclipseUtils;
 
-@SuppressWarnings("restriction")
-public final class ResolveDocumentUri implements Function<IDocument, Optional<URI>> {
+public final class DocumentsTester extends PropertyTester {
+
+	private final String key = "prefer"; //$NON-NLS-1$
+	private final PreferLanguageServer predicate;
+
+	public DocumentsTester() {
+		this.predicate = new PreferLanguageServer();
+	}
 
 	@Override
-	public Optional<URI> apply(IDocument document) {
-		return Optional.ofNullable(document)//
-				//FIXME rewrite involved static utilities and contribute the result back to LSP4E
-				.flatMap(d -> Optional.ofNullable(LSPEclipseUtils.getFile(d)))
-				.flatMap(f -> Optional.ofNullable(LSPEclipseUtils.toUri(f)));
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+		if (key.equals(property)) {
+			if (receiver instanceof IDocument) {
+				IDocument document = (IDocument) receiver;
+				return predicate.test(document);
+			}
+		}
+		return false;
 	}
 
 }

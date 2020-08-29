@@ -25,10 +25,13 @@ import org.eclipse.cdt.lsp.LanguageServerConfiguration;
 import org.eclipse.cdt.lsp.SupportedLanguageServers;
 import org.eclipse.cdt.lsp.core.CPPStreamConnectionProvider;
 import org.eclipse.cdt.lsp.core.PreferenceConstants;
+import org.eclipse.cdt.lsp.internal.core.preferences.LanguageServerDefaults;
 import org.eclipse.cdt.lsp.internal.ui.LspUiActivator;
 import org.eclipse.cdt.lsp.internal.ui.LspUiMessages;
 import org.eclipse.cdt.ui.newui.MultiLineTextFieldEditor;
 import org.eclipse.core.runtime.ServiceCaller;
+import org.eclipse.core.runtime.preferences.PreferenceMetadata;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
@@ -55,6 +58,8 @@ public class CPPLanguageServerPreferencePage extends FieldEditorPreferencePage i
 
 	@Override
 	public void createFieldEditors() {
+		PreferenceMetadata<Boolean> prefer = new LanguageServerDefaults().preferLanguageServer();
+		addField(new BooleanFieldEditor(prefer.identifer(), prefer.name(), getFieldEditorParent()));
 		serverChoice = new RadioGroupFieldEditor(PreferenceConstants.P_SERVER_CHOICE,
 				LspUiMessages.CPPLanguageServerPreferencePage_server_selector, 1, contributedServers(),
 				getFieldEditorParent());

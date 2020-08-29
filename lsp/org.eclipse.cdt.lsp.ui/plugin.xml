@@ -23,6 +23,26 @@
       </page>
    </extension>
    <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            category="org.eclipse.cdt.ui.newui.Page_head_general"
+            class="org.eclipse.cdt.lsp.internal.ui.properties.LanguageServerPropertyPage"
+            id="org.eclipse.cdt.lsp.ui.properties.ls"
+            name="%properties.ls.name">
+         <filter
+               name="projectNature"
+               value="org.eclipse.cdt.core.cnature">
+         </filter>
+         <enabledWhen>
+            <or>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+               </adapt>
+            </or>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
          point="org.eclipse.ui.editors">
       <editorContentTypeBinding
             contentTypeId="org.eclipse.cdt.lsp.core"
@@ -51,5 +71,15 @@
             class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
             contentTypeId="org.eclipse.cdt.lsp.core">
       </participant>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.cdt.lsp.internal.ui.expressions.DocumentsTester"
+            id="org.eclipse.cdt.lsp.workspace.documents"
+            namespace="org.eclipse.cdt.lsp.documents"
+            properties="prefer"
+            type="org.eclipse.ui.texteditor.AbstractDecoratedTextEditor">
+      </propertyTester>
    </extension>
 </plugin>

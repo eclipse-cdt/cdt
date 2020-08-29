@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
+import org.eclipse.cdt.lsp.internal.core.workspace.ResolveDocumentUri;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;

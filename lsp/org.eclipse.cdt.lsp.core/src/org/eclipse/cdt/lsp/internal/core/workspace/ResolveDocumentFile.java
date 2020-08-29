@@ -11,24 +11,30 @@
  * Contributors:
  *     Alexander Fedorov (ArSysOp) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.lsp.internal.text;
+package org.eclipse.cdt.lsp.internal.core.workspace;
 
-import java.net.URI;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.lsp4e.LSPEclipseUtils;
 
-@SuppressWarnings("restriction")
-public final class ResolveDocumentUri implements Function<IDocument, Optional<URI>> {
+public final class ResolveDocumentFile implements Function<IDocument, Optional<IFile>> {
+
+	private final ResolveDocumentPath path;
+
+	public ResolveDocumentFile() {
+		path = new ResolveDocumentPath();
+	}
 
 	@Override
-	public Optional<URI> apply(IDocument document) {
+	public Optional<IFile> apply(IDocument document) {
 		return Optional.ofNullable(document)//
-				//FIXME rewrite involved static utilities and contribute the result back to LSP4E
-				.flatMap(d -> Optional.ofNullable(LSPEclipseUtils.getFile(d)))
-				.flatMap(f -> Optional.ofNullable(LSPEclipseUtils.toUri(f)));
+				.flatMap(path)//
+				.map(ResourcesPlugin.getWorkspace().getRoot()::findMember)//
+				.filter(IFile.class::isInstance)//
+				.map(IFile.class::cast);
 	}
 
 }

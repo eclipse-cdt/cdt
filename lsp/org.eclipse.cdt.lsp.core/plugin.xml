@@ -36,6 +36,12 @@
       <contentTypeMapping
             contentType="org.eclipse.cdt.lsp.core"
             id="org.eclipse.cdt.lsp.core">
+         <enabledWhen
+               description="Project-level settings">
+            <reference
+                  definitionId="org.eclipse.cdt.lsp.core.projectAllows">
+            </reference>
+         </enabledWhen>
       </contentTypeMapping>
    </extension>
    <extension
@@ -43,5 +49,36 @@
       <initializer
             class="org.eclipse.cdt.lsp.core.PreferenceInitializer">
       </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.cdt.lsp.core.projectAllows">
+         <and>
+            <reference
+                  definitionId="org.eclipse.ui.genericeditor.GenericEditor.active">
+            </reference>
+            <with
+                  variable="activeEditor">
+               <adapt
+                     type="org.eclipse.jface.text.IDocument">
+                  <test
+                        property="org.eclipse.cdt.lsp.documents.prefer"
+                        value="true">
+                  </test>
+               </adapt>
+            </with>
+         </and>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.cdt.lsp.internal.core.workspace.DocumentsTester"
+            id="org.eclipse.cdt.lsp.workspace.documents"
+            namespace="org.eclipse.cdt.lsp.documents"
+            properties="prefer"
+            type="org.eclipse.jface.text.IDocument">
+      </propertyTester>
    </extension>
 </plugin>

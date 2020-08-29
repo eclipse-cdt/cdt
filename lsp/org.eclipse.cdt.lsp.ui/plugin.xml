@@ -52,4 +52,14 @@
             contentTypeId="org.eclipse.cdt.lsp.core">
       </participant>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.ui.IEditorPart"
+            class="org.eclipse.cdt.lsp.internal.ui.EditorPartAdapterFactory">
+         <adapter
+               type="org.eclipse.jface.text.IDocument">
+         </adapter>
+      </factory>
+   </extension>
 </plugin>

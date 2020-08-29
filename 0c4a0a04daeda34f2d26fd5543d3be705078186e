@@ -16,6 +16,24 @@
       "revId": "0c4a0a04daeda34f2d26fd5543d3be705078186e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e8c048e8_188cb0aa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-29T08:51:16Z",
+      "side": 1,
+      "message": "No? That\u0027s not how it works?\nThe exception still embeds the location of where the exception was first frown. At least, that\u0027s what my dummy tests shows.\n\nFoo.java:\n```\npublic class Foo {\n\tpublic static void main(String[] args) {\n\t\ttry {\n\t\t\tInteger.parseInt(\"abc\");\n\t\t} catch (Exception e) {\n\t\t\tthrow e;\n\t\t}\n\t}\n}\n```\nOutput:\n```\nException in thread \"main\" java.lang.NumberFormatException: For input string: \"abc\"\n\tat java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:652)\n\tat java.base/java.lang.Integer.parseInt(Integer.java:770)\n\tat Foo.main(Foo.java:4)\n```",
+      "parentUuid": "8c8e97c6_77ec6cfb",
+      "revId": "0c4a0a04daeda34f2d26fd5543d3be705078186e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

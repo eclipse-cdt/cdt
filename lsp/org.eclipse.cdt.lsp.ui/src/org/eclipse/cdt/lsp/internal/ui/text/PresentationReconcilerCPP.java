@@ -40,7 +40,7 @@ import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
 import org.eclipse.cdt.internal.ui.text.PartitionDamager;
 import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.TokenStore;
-import org.eclipse.cdt.lsp.internal.text.ResolveDocumentUri;
+import org.eclipse.cdt.lsp.internal.core.workspace.ResolveDocumentUri;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ILanguageUI;
 import org.eclipse.cdt.ui.text.AbstractCScanner;

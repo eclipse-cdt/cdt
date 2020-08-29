@@ -8,3 +8,4 @@ Fragment-Host: org.eclipse.cdt.cmake.is.core
 Import-Package: org.junit
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.eclipse.cdt.cmake.is.core.tests
+Bundle-Name: %Bundle-Name

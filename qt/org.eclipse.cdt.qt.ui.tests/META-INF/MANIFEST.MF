@@ -20,5 +20,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.search
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Bundle-Vendor: %vendorName
+Bundle-Vendor: %providerName
 Automatic-Module-Name: org.eclipse.cdt.qt.ui.tests
+Bundle-Localization: plugin

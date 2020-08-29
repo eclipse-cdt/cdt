@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "594aa727_2c43093a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-29T01:18:55Z",
+      "side": 0,
+      "message": "A TODO from 2003 probably doesn\u0027t need to get done anymore. +1 for getting rid of this.",
+      "revId": "8e42cc8b7b0e26ff3ff415e159b3f98f0796ab06",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4aa49fc5_037acb76",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/CSourceLookupParticipant.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-29T01:18:55Z",
+      "side": 0,
+      "message": ":-) Another bit of CDI code lurking in CDT still - 4+ years later we\u0027re still disentangling (see Bug 484900). Well done.",
+      "revId": "8e42cc8b7b0e26ff3ff415e159b3f98f0796ab06",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

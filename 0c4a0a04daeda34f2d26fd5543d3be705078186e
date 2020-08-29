@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8c8e97c6_77ec6cfb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-29T01:11:47Z",
+      "side": 1,
+      "message": "worse than useless - throws the same exception, but that will replace the back trace, so the original exception location will be lost.",
+      "revId": "0c4a0a04daeda34f2d26fd5543d3be705078186e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

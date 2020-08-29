@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "251adbd3_44d6bc79",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2037,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-29T01:10:20Z",
+      "side": 1,
+      "message": "I don\u0027t know how you came across this, but well spotted.",
+      "revId": "63df021eb8d30c2b9babf00680d0a429a2b434da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

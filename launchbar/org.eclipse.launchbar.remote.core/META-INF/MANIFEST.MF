@@ -14,3 +14,4 @@ Export-Package: org.eclipse.launchbar.remote.core,
  org.eclipse.launchbar.remote.core.internal;x-friends:="org.eclipse.launchbar.remote.ui"
 Automatic-Module-Name: org.eclipse.launchbar.remote.core
 Bundle-Localization: plugin
+Bundle-Vendor: %providerName

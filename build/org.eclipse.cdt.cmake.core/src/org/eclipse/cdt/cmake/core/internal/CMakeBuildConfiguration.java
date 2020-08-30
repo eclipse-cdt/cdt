@@ -394,69 +394,6 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		this.infoPerResource = infoPerResource;
 	}
 
-	private static class CMakeIndexerInfoConsumer implements IIndexerInfoConsumer {
-		/**
-		 * gathered IScannerInfo objects or <code>null</code> if no new IScannerInfo was
-		 * received
-		 */
-		private Map<IResource, IScannerInfo> infoPerResource = new HashMap<>();
-		private boolean haveUpdates;
-		private final Consumer<Map<IResource, IScannerInfo>> resultSetter;
-
-		/**
-		 * @param resultSetter receives the all scanner information when processing is
-		 *                     finished
-		 */
-		public CMakeIndexerInfoConsumer(Consumer<Map<IResource, IScannerInfo>> resultSetter) {
-			this.resultSetter = Objects.requireNonNull(resultSetter);
-		}
-
-		@Override
-		public void acceptSourceFileInfo(String sourceFileName, List<String> systemIncludePaths,
-				Map<String, String> definedSymbols, List<String> includePaths, List<String> macroFiles,
-				List<String> includeFiles) {
-			IFile file = getFileForCMakePath(sourceFileName);
-			if (file != null) {
-				ExtendedScannerInfo info = new ExtendedScannerInfo(definedSymbols,
-						systemIncludePaths.stream().toArray(String[]::new), macroFiles.stream().toArray(String[]::new),
-						includeFiles.stream().toArray(String[]::new), includePaths.stream().toArray(String[]::new));
-				infoPerResource.put(file, info);
-				haveUpdates = true;
-			}
-		}
-
-		/**
-		 * Gets an IFile object that corresponds to the source file name given in CMake
-		 * notation.
-		 *
-		 * @param sourceFileName the name of the source file, in CMake notation. Note
-		 *                       that on windows, CMake writes filenames with forward
-		 *                       slashes (/) such as {@code H://path//to//source.c}.
-		 * @return a IFile object or <code>null</code>
-		 */
-		private IFile getFileForCMakePath(String sourceFileName) {
-			org.eclipse.core.runtime.Path path = new org.eclipse.core.runtime.Path(sourceFileName);
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-			// TODO maybe we need to introduce a strategy here to get the workbench resource
-			// Possible build scenarios:
-			// 1) linux native: should be OK as is
-			// 2) linux host, building in container: should be OK as is
-			// 3) windows native: Path.fromOSString()?
-			// 4) windows host, building in linux container: ??? needs testing on windows
-			return file;
-		}
-
-		@Override
-		public void shutdown() {
-			if (haveUpdates) {
-				// we received updates
-				resultSetter.accept(infoPerResource);
-				infoPerResource = null;
-				haveUpdates = false;
-			}
-		}
-	}
-
 	/** Overwritten to detect whether one of the CMakeLists.txt files in the project was modified since the last build.
 	 */
 	@Override
@@ -539,5 +476,68 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	 */
 	private static void deleteCMakeErrorMarkers(IProject project) throws CoreException {
 		project.deleteMarkers(CMakeErrorParser.CMAKE_PROBLEM_MARKER_ID, false, IResource.DEPTH_INFINITE);
+	}
+
+	private static class CMakeIndexerInfoConsumer implements IIndexerInfoConsumer {
+		/**
+		 * gathered IScannerInfo objects or <code>null</code> if no new IScannerInfo was
+		 * received
+		 */
+		private Map<IResource, IScannerInfo> infoPerResource = new HashMap<>();
+		private boolean haveUpdates;
+		private final Consumer<Map<IResource, IScannerInfo>> resultSetter;
+
+		/**
+		 * @param resultSetter receives the all scanner information when processing is
+		 *                     finished
+		 */
+		public CMakeIndexerInfoConsumer(Consumer<Map<IResource, IScannerInfo>> resultSetter) {
+			this.resultSetter = Objects.requireNonNull(resultSetter);
+		}
+
+		@Override
+		public void acceptSourceFileInfo(String sourceFileName, List<String> systemIncludePaths,
+				Map<String, String> definedSymbols, List<String> includePaths, List<String> macroFiles,
+				List<String> includeFiles) {
+			IFile file = getFileForCMakePath(sourceFileName);
+			if (file != null) {
+				ExtendedScannerInfo info = new ExtendedScannerInfo(definedSymbols,
+						systemIncludePaths.stream().toArray(String[]::new), macroFiles.stream().toArray(String[]::new),
+						includeFiles.stream().toArray(String[]::new), includePaths.stream().toArray(String[]::new));
+				infoPerResource.put(file, info);
+				haveUpdates = true;
+			}
+		}
+
+		/**
+		 * Gets an IFile object that corresponds to the source file name given in CMake
+		 * notation.
+		 *
+		 * @param sourceFileName the name of the source file, in CMake notation. Note
+		 *                       that on windows, CMake writes filenames with forward
+		 *                       slashes (/) such as {@code H://path//to//source.c}.
+		 * @return a IFile object or <code>null</code>
+		 */
+		private IFile getFileForCMakePath(String sourceFileName) {
+			org.eclipse.core.runtime.Path path = new org.eclipse.core.runtime.Path(sourceFileName);
+			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+			// TODO maybe we need to introduce a strategy here to get the workbench resource
+			// Possible build scenarios:
+			// 1) linux native: should be OK as is
+			// 2) linux host, building in container: should be OK as is
+			// 3) windows native: Path.fromOSString()?
+			// 4) windows host, building in linux container: ??? needs testing on windows
+			return file;
+		}
+
+		@Override
+		public void shutdown() {
+			if (haveUpdates) {
+				// we received updates
+				resultSetter.accept(infoPerResource);
+				infoPerResource = null;
+				haveUpdates = false;
+			}
+		}
 	}
 }

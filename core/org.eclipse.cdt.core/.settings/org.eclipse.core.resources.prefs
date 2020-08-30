@@ -3,3 +3,4 @@ encoding//parser/org/eclipse/cdt/internal/core/index/Messages.properties=8859_1
 encoding//parser/org/eclipse/cdt/internal/core/pdom/Messages.properties=8859_1
 encoding//parser/org/eclipse/cdt/internal/core/pdom/db/Messages.properties=8859_1
 encoding//parser/org/eclipse/cdt/internal/core/pdom/indexer/Messages.properties=8859_1
+encoding/<project>=UTF-8

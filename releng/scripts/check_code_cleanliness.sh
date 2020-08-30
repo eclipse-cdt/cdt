@@ -50,6 +50,24 @@ git ls-files | sed -E '-es@^.*/([^/]+)$@\1@' '-es@.+\.@\\\*\\.@'  | sort -u | wh
 done
 
 ##
+# Setup Eclipse Core Preferences
+##
+git ls-files  -- \*\*/.project | while read i ; do
+    d=`dirname $i`;
+    mkdir -p $d/.settings
+    if ! test -e $d/.settings/org.eclipse.core.resources.prefs; then
+        echo 'eclipse.preferences.version=1' > $d/.settings/org.eclipse.core.resources.prefs
+        echo 'encoding/<project>=UTF-8' >> $d/.settings/org.eclipse.core.resources.prefs
+    fi
+    if ! grep 'encoding/<project>=UTF-8' $d/.settings/org.eclipse.core.resources.prefs > /dev/null; then
+        echo 'encoding/<project>=UTF-8' >> $d/.settings/org.eclipse.core.resources.prefs
+    fi
+    if ! grep 'eclipse.preferences.version=1' $d/.settings/org.eclipse.core.resources.prefs > /dev/null; then
+        echo 'eclipse.preferences.version=1' >> $d/.settings/org.eclipse.core.resources.prefs
+    fi
+done
+
+##
 # Copy JDT/PDE preferences
 ##
 git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do

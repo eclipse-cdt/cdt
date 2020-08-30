@@ -119,12 +119,11 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			infoPerResource = new HashMap<>();
 
-			ConsoleOutputStream outStream = console.getOutputStream();
+			ConsoleOutputStream infoStream = console.getInfoStream();
 
 			Path buildDir = getBuildDirectory();
 
-			// TODO print to info stream here
-			outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
+			infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
 
 			// Make sure we have a toolchain file if cross
 			if (toolChainFile == null && !isLocal()) {
@@ -155,8 +154,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			if (runCMake) {
 				CMakeBuildConfiguration.deleteCMakeErrorMarkers(project);
 
-				// TODO print to info stream here
-				console.getOutputStream().write(String.format(Messages.CMakeBuildConfiguration_Configuring, buildDir));
+				infoStream.write(String.format(Messages.CMakeBuildConfiguration_Configuring, buildDir));
 				// clean output to make sure there is no content
 				// incompatible with current settings (cmake config would fail)
 				cleanBuildDirectory(buildDir);
@@ -190,7 +188,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				IContainer srcFolder = project;
 				command.add(new File(srcFolder.getLocationURI()).getAbsolutePath());
 
-				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
+				infoStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 						getBuildDirectory().toString());
@@ -239,7 +237,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					command.addAll(Arrays.asList(buildCommand.split(" "))); //$NON-NLS-1$
 				}
 
-				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
+				infoStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 						getBuildDirectory().toString());
@@ -259,8 +257,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				// output
 				processCompileCommandsFile(console, monitor);
 
-				// TODO print to info stream here
-				outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingComplete, epm.getErrorCount(),
+				infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingComplete, epm.getErrorCount(),
 						epm.getWarningCount(), buildDir.toString()));
 			}
 

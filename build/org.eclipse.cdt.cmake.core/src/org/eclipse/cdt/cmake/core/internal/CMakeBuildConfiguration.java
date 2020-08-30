@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015, 2016 QNX Software Systems and others.
+ * Copyright 2020 Martin Weber
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,14 +39,18 @@ import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -63,6 +68,15 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 	private ICMakeToolChainFile toolChainFile;
 	private Map<IResource, IScannerInfo> infoPerResource;
+	/** whether one of the CMakeLists.txt files in the project has been
+	 * modified and saved by the user since the last build.<br>
+	 * Cmake-generated build scripts re-run cmake if one of the CMakeLists.txt files was modified,
+	 * but that output goes through ErrorParserManager and is impossible to parse because cmake
+	 * outputs to both stderr and stdout and ErrorParserManager intermixes these streams making it
+	 * impossible to parse for errors.<br>
+	 * To work around that, we run cmake in advance with its dedicated working error parser.
+	 */
+	private boolean cmakeListsModified;
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
@@ -110,6 +124,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			Path buildDir = getBuildDirectory();
 
+			// TODO print to info stream here
 			outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
 
 			// Make sure we have a toolchain file if cross
@@ -124,21 +139,24 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				}
 			}
 
-			boolean runCMake;
-			switch (generator) {
-			case "Ninja": //$NON-NLS-1$
-				runCMake = !Files.exists(buildDir.resolve("build.ninja")); //$NON-NLS-1$
-				break;
-			case "Unix Makefiles": //$NON-NLS-1$
-				runCMake = !Files.exists(buildDir.resolve("Makefile")); //$NON-NLS-1$
-				break;
-			default:
-				runCMake = !Files.exists(buildDir.resolve("CMakeFiles")); //$NON-NLS-1$
+			boolean runCMake = cmakeListsModified;
+			if (!runCMake) {
+				switch (generator) {
+				case "Ninja": //$NON-NLS-1$
+					runCMake = !Files.exists(buildDir.resolve("build.ninja")); //$NON-NLS-1$
+					break;
+				case "Unix Makefiles": //$NON-NLS-1$
+					runCMake = !Files.exists(buildDir.resolve("Makefile")); //$NON-NLS-1$
+					break;
+				default:
+					runCMake = !Files.exists(buildDir.resolve("CMakeFiles")); //$NON-NLS-1$
+				}
 			}
 
 			if (runCMake) {
 				CMakeBuildConfiguration.deleteCMakeErrorMarkers(project);
 
+				// TODO print to info stream here
 				console.getOutputStream().write(String.format(Messages.CMakeBuildConfiguration_Configuring, buildDir));
 				// clean output to make sure there is no content
 				// incompatible with current settings (cmake config would fail)
@@ -170,20 +188,23 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					command.addAll(Arrays.asList(userArgs.trim().split("\\s+"))); //$NON-NLS-1$
 				}
 
-				command.add(new File(project.getLocationURI()).getAbsolutePath());
+				IContainer srcFolder = project;
+				command.add(new File(srcFolder.getLocationURI()).getAbsolutePath());
 
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 						getBuildDirectory().toString());
-				// TODO hook in cmake error parsing here
-				Process p = startBuildProcess(command, new IEnvironmentVariable[0], workingDir, console, monitor);
+				// hook in cmake error parsing
+				IConsole errConsole = new CMakeConsoleWrapper(srcFolder, console);
+				Process p = startBuildProcess(command, new IEnvironmentVariable[0], workingDir, errConsole, monitor);
 				if (p == null) {
 					console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
 					return null;
 				}
 
-				watchProcess(p, console);
+				watchProcess(p, errConsole);
+				cmakeListsModified = false;
 			}
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
@@ -239,6 +260,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				// output
 				processCompileCommandsFile(console, monitor);
 
+				// TODO print to info stream here
 				outStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingComplete, epm.getErrorCount(),
 						epm.getWarningCount(), buildDir.toString()));
 			}
@@ -433,6 +455,56 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				haveUpdates = false;
 			}
 		}
+	}
+
+	/** Overwritten to detect whether one of the CMakeLists.txt files in the project was modified since the last build.
+	 */
+	@Override
+	public void elementChanged(ElementChangedEvent event) {
+		super.elementChanged(event);
+		// Only respond to post change events
+		if (event.getType() != ElementChangedEvent.POST_CHANGE)
+			return;
+		if (!cmakeListsModified) {
+			processElementDelta(event.getDelta());
+		}
+	}
+
+	/** Processes the delta in order to detect whether one of the CMakeLists.txt files in the project has been
+	 * modified and saved by the user since the last build.
+	 * @return <code>true</code> to continue with delta processing, otherwise <code>false</code>
+	 */
+	private boolean processElementDelta(ICElementDelta delta) {
+		if (delta == null) {
+			return true;
+		}
+
+		if (delta.getKind() == ICElementDelta.CHANGED) {
+			// check for modified CMakeLists.txt file
+			if (0 != (delta.getFlags() & ICElementDelta.F_CONTENT)) {
+				IResourceDelta[] resourceDeltas = delta.getResourceDeltas();
+				if (resourceDeltas != null) {
+					for (IResourceDelta resourceDelta : resourceDeltas) {
+						IResource resource = resourceDelta.getResource();
+						if (resource.getType() == IResource.FILE) {
+							String name = resource.getName();
+							if (name.equals("CMakeLists.txt") || name.endsWith(".cmake")) { //$NON-NLS-1$ //$NON-NLS-2$
+								cmakeListsModified = true;
+								return false; // stop processing
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// recurse...
+		for (ICElementDelta child : delta.getAffectedChildren()) {
+			if (!processElementDelta(child)) {
+				return false; // stop processing
+			}
+		}
+		return true;
 	}
 
 	/** Overwritten since we do not parse console output to get scanner information.

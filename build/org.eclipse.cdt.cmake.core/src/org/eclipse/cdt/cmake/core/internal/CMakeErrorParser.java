@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.Status;
  *
  * @author Martin Weber
  */
-/* package */ class CMakeErrorParser extends OutputStream {
+/* package */ class CMakeErrorParser extends ConsoleOutputStream {
 
 	public static final String CMAKE_PROBLEM_MARKER_ID = Activator.getId() + ".cmakeproblem"; //$NON-NLS-1$
 

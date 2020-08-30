@@ -69,6 +69,13 @@
     Across the CDT code base some previously deprecated code has been removed.
     <ul>
       <li>EnvironmentReader.getRawEnvVars has been removed. Use EnvironmentReader.getEnvVars instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564123" target="_blank">Bug 564123</a>.</li>
+      <li>GDBJtagStartupTab.createRunOptionGroup has been removed. Override GDBJtagStartupTab.createRunGroup instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=566462" target="_blank">Bug 566462</a>.</li>
+      <li>IGDBJtagConstants.ATTR_JTAG_DEVICE has been removed. Use IGDBJtagConstants.ATTR_JTAG_DEVICE_ID to persist device ID rather than device name. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=566462" target="_blank">Bug 566462</a>.</li>
+      <li>IGDBJtagConstants.DEFAULT_JTAG_DEVICE has been removed. Use a local String if necessary. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=566462" target="_blank">Bug 566462</a>.</li>
+      <li>IGDBJtagConstants.DEFAULT_JTAG_DEVICE_ID has been removed. Use a local String if necessary. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=566462" target="_blank">Bug 566462</a>.</li>
+      <li>IGDBJtagDevice.getDefaultIpAddress has been removed. Implement IGDBJtagConnection and specify default_connection in JTagDevice extension XML instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=566462" target="_blank">Bug 566462</a>.</li>
+      <li>IGDBJtagDevice.getDefaultPortNumber has been removed. Implement IGDBJtagConnection and specify default_connection in JTagDevice extension XML instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=566462" target="_blank">Bug 566462</a>.</li>
+      <li>IGDBJtagDevice.doRemote has been removed. Implement IGDBJtagConnection.doRemote instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=566462" target="_blank">Bug 566462</a>.</li>
     </ul>
   </p>
 

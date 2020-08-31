@@ -34,6 +34,24 @@
       "revId": "0c4a0a04daeda34f2d26fd5543d3be705078186e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "03aefebd_781c1464",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-31T03:06:56Z",
+      "side": 1,
+      "message": "Sorry for the noise - I have recently been getting frustrated with lots of the below pattern in tests and went through this too quickly.\n\n  try {\n     // do something that throws an exception\n  } catch (Exception e) {\n    fail();\n  }\n\nOf course you are correct, this cleanup was removing useless, not worse than useless!",
+      "parentUuid": "e8c048e8_188cb0aa",
+      "revId": "0c4a0a04daeda34f2d26fd5543d3be705078186e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

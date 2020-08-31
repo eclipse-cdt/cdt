@@ -17,21 +17,10 @@
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
 
-      <!-- Deprecated, See Bug 517722 -->
-      <launchDelegate
-            delegate="org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate"
-            delegateDescription="%LaunchGroup.description"
-            id="org.eclipse.cdt.launch.launchGroup.delegate"
-            type="org.eclipse.cdt.launch.launchGroup"
-            modes="run,debug,profile"
-            name="%LaunchGroup.name"
-            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
-            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
-      </launchDelegate>
    </extension>
-   
+
    <extension
-         point="org.eclipse.debug.ui.launchConfigurationTabs">      
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
       <!-- Run launch tabs-->
       <tab
             id="org.eclipse.cdt.cdi.launch.runApplicationLaunch.mainTab"
@@ -72,50 +61,20 @@
             plugin="org.eclipse.cdt.launch"
             class="org.eclipse.cdt.launch.internal.ui.ProcessPrompter"
             id="org.eclipse.cdt.launch.statusHandler.processPrompter">
-      </statusHandler>  
+      </statusHandler>
       <statusHandler
             class="org.eclipse.cdt.launch.internal.ui.BuildErrPrompter"
             code="1002"
             id="org.eclipse.cdt.launch.statusHandler.buildErrPrompter"
             plugin="org.eclipse.cdt.launch">
-      </statusHandler>  
+      </statusHandler>
       <statusHandler
             class="org.eclipse.cdt.launch.internal.ui.BuildErrPrompter"
             code="1003"
             id="org.eclipse.cdt.launch.statusHandler.buildErrPrompter"
             plugin="org.eclipse.cdt.launch">
-      </statusHandler>  
+      </statusHandler>
 	</extension>
-
-    <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-      <!-- Deprecated, See Bug 517722 -->
-      <launchConfigurationType
-            id="org.eclipse.cdt.launch.launchGroup"
-            name="%LaunchGroup.name"
-            public="true">
-      </launchConfigurationType>
-   </extension>
-   
-      <extension
-         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-      <!-- Deprecated, See Bug 517722 -->
-      <launchConfigurationTabGroup
-            class="org.eclipse.cdt.launch.internal.ui.MultiLaunchConfigurationTabGroup"
-            id="org.eclipse.cdt.launch.launchGroup.tabgroup"
-            type="org.eclipse.cdt.launch.launchGroup">
-      </launchConfigurationTabGroup>
-   </extension>
-   
-   <extension
-         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
-      <!-- Deprecated, See Bug 517722 -->
-     <launchConfigurationTypeImage
-            icon="icons/obj16/exec_obj.gif"
-            configTypeID="org.eclipse.cdt.launch.launchGroup"
-            id="org.eclipse.cdt.launch.launchGroup.image">
-      </launchConfigurationTypeImage>
-   </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant

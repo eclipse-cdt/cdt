@@ -13,10 +13,11 @@
 set -e
 
 ##
-# Check the features are all branded
+# Check the features are all branded and all content has proper licenses
 ##
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 ${DIR}/check_features.sh
+${DIR}/check_license.sh
 
 ##
 # The next set of scripts automatically apply formatting and other rules

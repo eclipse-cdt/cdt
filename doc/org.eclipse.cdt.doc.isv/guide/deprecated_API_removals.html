@@ -45,6 +45,7 @@
     <li><a href="#optionsAPI">Removal of CDT Core Options API.</a></li>
     <li><a href="#terminal">TM Terminal has major changes to support new color and preference functionality.</a></li>
     <li><a href="#casesensitive">Environment Variables are always case sensitive in CDT.</a></li>
+    <li><a href="#escaping">Environment variables no longer support \${ to avoid expanding.</a></li>
   </ol>
   <p>
     Planned Removals after June 2022
@@ -278,6 +279,19 @@
     some API changes to remove methods such as isVariableCaseSensitive (see full list below). The PATH and
     dome other special environment variables in CDT are always uppercased, such as Path. See <a
     href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564123" target="_blank">Bug 564123</a>.
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.managedbuilder.core.IBuilder.isVariableCaseSensitive() removed.</li>
+    <li>org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider.isVariableCaseSensitive() removed.</li>
+    <li>org.eclipse.cdt.core.envvar.IEnvironmentVariableManager.isVariableCaseSensitive() removed.</li></li>
+  </ul>
+
+  <h3>14. <a name="escaping">Environment variables no longer support \${ to avoid expanding.</a></h3>
+  <p>
+   This change is not literally an api change but will impact your code if you used \${ to not
+    expand environment variables. It may impact your code if you import environment variables
+    and had to workaround path\${childPath} resolving to path${childPath}. See <a
+    href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=560330" target="_blank">Bug 560330</a>.
   </p>
   <ul>
     <li>org.eclipse.cdt.managedbuilder.core.IBuilder.isVariableCaseSensitive() removed.</li>

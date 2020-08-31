@@ -16,6 +16,24 @@
       "revId": "0cb1f7482a2b2e58e6714de41e203a0e82820f5e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c06504fc_5368a26f",
+        "filename": "cross/org.eclipse.cdt.launch.remote/.settings/org.eclipse.core.resources.prefs",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-08-31T19:04:11Z",
+      "side": 1,
+      "message": "And my comment was based on https://docs.oracle.com/javase/9/intl/internationalization-enhancements-jdk-9.htm#JSINT-GUID-974CF488-23E8-4963-A322-82006A7A14C7\nI have no further insight than that, but as CDT now requires Java11, I guess it makes sense to also have the .properties files in UTF-8 format and remove this kind of setting.",
+      "parentUuid": "275a5f14_4f575441",
+      "revId": "0cb1f7482a2b2e58e6714de41e203a0e82820f5e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

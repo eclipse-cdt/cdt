@@ -256,7 +256,6 @@
 
 		<module>tools.templates/org.eclipse.tools.templates.core</module>
 		<module>tools.templates/org.eclipse.tools.templates.freemarker</module>
-		<module>tools.templates/org.eclipse.tools.templates.freemarker.java11</module>
 		<module>tools.templates/org.eclipse.tools.templates.ui</module>
 
 		<module>terminal</module>

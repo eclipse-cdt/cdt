@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac2bb442_81792ffd",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+        "patchSetId": 5
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-31T14:19:48Z",
+      "side": 1,
+      "message": "Not sure this is correct - Activator has not actually been removed, just removed from published API.",
+      "revId": "abb17e371825ee76b69131b3e3761c94614f15a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

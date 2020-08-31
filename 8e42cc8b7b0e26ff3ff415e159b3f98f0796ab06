@@ -51,6 +51,24 @@
       "revId": "8e42cc8b7b0e26ff3ff415e159b3f98f0796ab06",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4ee36395_d3fa6906",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/CSourceLookupParticipant.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-31T14:11:22Z",
+      "side": 0,
+      "message": "No. CSourceLookupParticipant is used by CSourceLookupDirector which is the super class of DsfSourceLookupDirector - which is part of DSF. \n\nThe reason there is so much entangling is that when DSF was first brought it there was a lot of reuse of CDI, in part to avoid code duplication, but probably more importantly, to make transitioning back and forth between CDI and DSF easier by having same settings.\n\nDOes that fully answer your question.",
+      "parentUuid": "bc9cbfa2_5490ef98",
+      "revId": "8e42cc8b7b0e26ff3ff415e159b3f98f0796ab06",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

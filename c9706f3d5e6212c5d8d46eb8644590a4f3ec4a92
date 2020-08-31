@@ -16,6 +16,24 @@
       "revId": "c9706f3d5e6212c5d8d46eb8644590a4f3ec4a92",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48ecbbc5_4aa9a4ab",
+        "filename": "lsp/org.eclipse.cdt.lsp.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-08-31T19:30:38Z",
+      "side": 1,
+      "message": "I agree - it looks poor, in fact it was a quick way to complete the scenario. Removed with PS4",
+      "parentUuid": "d8c67c99_4622d962",
+      "revId": "c9706f3d5e6212c5d8d46eb8644590a4f3ec4a92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

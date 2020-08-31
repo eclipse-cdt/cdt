@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d8c67c99_4622d962",
+        "filename": "lsp/org.eclipse.cdt.lsp.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-31T02:59:45Z",
+      "side": 1,
+      "message": "This seems really wrong to me. This should be part of Eclipse Platform. Doing it here is not likely to end well, especially if someone else out there has ever made such an adapter factory as it will be luck of the draw which adapter factory gets chosen.\n\nIn addition, you are adapting AbstractDecoratedTextEditor in the factory, so at a minimum you should be advertising a factory that does that.",
+      "revId": "c9706f3d5e6212c5d8d46eb8644590a4f3ec4a92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

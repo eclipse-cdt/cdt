@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "275a5f14_4f575441",
+        "filename": "cross/org.eclipse.cdt.launch.remote/.settings/org.eclipse.core.resources.prefs",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-08-31T14:17:00Z",
+      "side": 1,
+      "message": "Based on a comment made by Torbjörn in https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/168412 I wonder if the above line is now incorrect (along with similar ones in other files)",
+      "revId": "0cb1f7482a2b2e58e6714de41e203a0e82820f5e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

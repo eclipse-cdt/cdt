@@ -69,5 +69,31 @@ git ls-files -- \*/feature.xml | while read feature_xml; do
         fi
     done
 
+    # Check the license and copyright settings of the feature
+    if [ "$(xmllint --xpath 'string(//feature/copyright)' $feature_xml | xargs)" != "%copyright" ]; then
+        echo "Copyright entry in $feature_xml should be %copyright"
+        exit 1
+    fi
+    if [ "$(xmllint --xpath 'string(//feature/license)' $feature_xml | xargs)" != "%license" ]; then
+        echo "License entry in $feature_xml should be %license"
+        exit 1
+    fi
+    if [ "$(xmllint --xpath 'string(//feature/license/@url)' $feature_xml | xargs)" != "%licenseURL" ]; then
+        echo "License URL in $feature_xml should be %licenseURL"
+        exit 1
+    fi
+    if [ "$(xmllint --xpath 'string(//feature/@license-feature)' $feature_xml | xargs)" != "org.eclipse.license" ]; then
+        echo "License feature in $feature_xml should be org.eclipse.license"
+        exit 1
+    fi
+    if [ "$(xmllint --xpath 'string(//feature/@license-feature-version)' $feature_xml | xargs)" != "0.0.0" ]; then
+        echo "License version in $feature_xml should be 0.0.0"
+        exit 1
+    fi
+    if [ -z "$(grep -E '^copyright=' $feature_dir/feature.properties)" ]; then
+        echo "Copyright entry in $feature_dir/feature.properties missing (key copyright= not found)"
+        exit 1
+    fi
+
 done
 

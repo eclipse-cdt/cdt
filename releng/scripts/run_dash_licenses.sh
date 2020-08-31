@@ -17,7 +17,7 @@ set -e
 
 
 echo Generate the list of dependencies according to Maven
-mvn package dependency:list -DappendOutput=true -DoutputFile=$PWD/deps-raw.log  >mvn-dependency-list.log 2>&1
+${MVN:-mvn} -B -V package dependency:list -DappendOutput=true -DoutputFile=$PWD/deps-raw.log  >mvn-dependency-list.log 2>&1
 echo Clean out the lines and whitespace that are not actually dependencies
 cat deps-raw.log | grep -v "The following files have been resolved" | grep -v "   none" | grep -Poh '[^ ]*' > deps-stripped.log
 echo Sort and uniqify and store all deps in deps.log that will be passed to the tool
@@ -30,7 +30,7 @@ else
     echo Clone and build Dash Licenses
     git clone https://github.com/eclipse/dash-licenses.git >git-clone.log  2>&1
 fi
-mvn -f dash-licenses clean package >dash-build.log  2>&1
+${MVN:-mvn} -B -V -f dash-licenses clean package >dash-build.log  2>&1
 
 echo Run the license check
 exit_code=0

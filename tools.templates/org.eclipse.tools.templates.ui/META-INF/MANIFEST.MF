@@ -13,6 +13,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tools.templates.ui,
- org.eclipse.tools.templates.ui.internal
+ org.eclipse.tools.templates.ui.internal;x-internal:=true
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin

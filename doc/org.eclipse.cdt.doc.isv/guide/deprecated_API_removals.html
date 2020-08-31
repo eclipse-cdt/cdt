@@ -44,7 +44,6 @@
     <li><a href="#oldStyleProjects">Partial removal of CDT 3.X project support.</a></li>
     <li><a href="#optionsAPI">Removal of CDT Core Options API.</a></li>
     <li><a href="#terminal">TM Terminal has major changes to support new color and preference functionality.</a></li>
-    <li><a href="#pathutil">Remove org.eclipse.cdt.core.browser.PathUtil.</a></li>
     <li><a href="#casesensitive">Environment Variables are always case sensitive in CDT.</a></li>
   </ol>
   <p>
@@ -76,6 +75,8 @@
       <li>IGDBJtagDevice.getDefaultIpAddress has been removed. Implement IGDBJtagConnection and specify default_connection in JTagDevice extension XML instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=566462" target="_blank">Bug 566462</a>.</li>
       <li>IGDBJtagDevice.getDefaultPortNumber has been removed. Implement IGDBJtagConnection and specify default_connection in JTagDevice extension XML instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=566462" target="_blank">Bug 566462</a>.</li>
       <li>IGDBJtagDevice.doRemote has been removed. Implement IGDBJtagConnection.doRemote instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=566462" target="_blank">Bug 566462</a>.</li>
+      <li>PTY constructor PTY(boolean console) has been removed. Use PTY(Mode mode) instead.</li>
+      <li>org.eclipse.cdt.core.browser.PathUtil has been removed. Use org.eclipse.cdt.utils.PathUtil instead. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564123" target="_blank">Bug 564123</a>.
     </ul>
   </p>
 
@@ -266,14 +267,7 @@
     </li>
   </ul>
 
-  <h3>13. <a name="pathutil">Remove org.eclipse.cdt.core.browser.PathUtil.</a></h3>
-  <p>
-    The deprecated class org.eclipse.cdt.core.browser.PathUtil has been removed. Use
-    org.eclipse.cdt.utils.PathUtil instead. See <a
-    href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564123" target="_blank">Bug 564123</a>.
-  </p>
-
-  <h3>14. <a name="casesensitive">Environment Variables are always case sensitive in CDT.</a></h3>
+  <h3>13. <a name="casesensitive">Environment Variables are always case sensitive in CDT.</a></h3>
   <p>
     The handling of environment and build variables in CDT has changed to being case sensitive. This means
     some API changes to remove methods such as isVariableCaseSensitive (see full list below). The PATH and

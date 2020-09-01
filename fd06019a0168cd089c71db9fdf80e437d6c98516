@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "184a08e9_4a29d105",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/suite/org/eclipse/cdt/managedbuilder/testplugin/ManagedBuildTestHelper.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 925,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-09-01T00:29:21Z",
+      "side": 1,
+      "message": "-1 redo this whole block with try with resources.",
+      "range": {
+        "startLine": 925,
+        "startChar": 0,
+        "endLine": 925,
+        "endChar": 10
+      },
+      "revId": "fd06019a0168cd089c71db9fdf80e437d6c98516",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

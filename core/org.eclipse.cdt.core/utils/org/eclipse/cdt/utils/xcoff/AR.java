@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.CCorePlugin;
  *
  * @author vhirsl
  */
-public class AR {
+public class AR implements AutoCloseable {
 	protected String filename;
 	private RandomAccessFile file;
 	private ARHeader header;
@@ -103,6 +103,11 @@ public class AR {
 			file.close();
 			throw new IOException(CCorePlugin.getResourceString("Util.exception.invalidArchive")); //$NON-NLS-1$
 		}
+	}
+
+	@Override
+	public void close() {
+		dispose();
 	}
 
 	public void dispose() {
@@ -365,4 +370,5 @@ public class AR {
 			e.printStackTrace();
 		}
 	}
+
 }

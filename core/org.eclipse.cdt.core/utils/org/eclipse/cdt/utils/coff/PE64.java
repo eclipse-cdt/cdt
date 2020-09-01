@@ -68,7 +68,7 @@ import org.eclipse.cdt.utils.debug.stabs.StabsReader;
  * </pre>
  * @since 6.9
  */
-public class PE64 {
+public class PE64 implements AutoCloseable {
 
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	RandomAccessFile rfile;
@@ -667,10 +667,14 @@ public class PE64 {
 	}
 
 	public static Attribute getAttribute(String file) throws IOException {
-		PE64 pe = new PE64(file);
-		Attribute attrib = pe.getAttribute();
-		pe.dispose();
-		return attrib;
+		try (PE64 pe = new PE64(file)) {
+			return pe.getAttribute();
+		}
+	}
+
+	@Override
+	public void close() throws IOException {
+		dispose();
 	}
 
 	public void dispose() throws IOException {

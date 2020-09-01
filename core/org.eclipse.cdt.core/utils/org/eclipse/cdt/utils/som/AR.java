@@ -26,7 +26,7 @@ import org.eclipse.cdt.utils.coff.ReadMemoryAccess;
  *
  * @author vhirsl
  */
-public class AR {
+public class AR implements AutoCloseable {
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	protected String filename;
@@ -188,6 +188,11 @@ public class AR {
 		}
 		// load a LST header
 		lstHeader = new LSTHeader();
+	}
+
+	@Override
+	public void close() {
+		dispose();
 	}
 
 	public void dispose() {

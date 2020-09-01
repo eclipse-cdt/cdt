@@ -46,9 +46,9 @@ public class DebugDump implements IDebugEntryRequestor {
 	}
 
 	void parse(String file) throws IOException {
-		Elf elf = new Elf(file);
-		parse(elf);
-		elf.dispose();
+		try (Elf elf = new Elf(file)) {
+			parse(elf);
+		}
 	}
 
 	void parse(Elf elf) throws IOException {

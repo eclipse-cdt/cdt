@@ -134,8 +134,9 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 							File buildIdFile = buildIdPath.toFile();
 							if (buildIdFile.exists()) {
 								// if the debug file exists from above, open it and get the section info from it
-								Elf debugInfo = new Elf(buildIdFile.getCanonicalPath());
-								sections = debugInfo.getSections();
+								try (Elf debugInfo = new Elf(buildIdFile.getCanonicalPath())) {
+									sections = debugInfo.getSections();
+								}
 								have_build_id = true;
 								debugInfoPath = new Path(buildIdFile.getCanonicalPath()).removeLastSegments(1);
 								break;
@@ -185,8 +186,9 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 							}
 							if (debugFile.exists()) {
 								// if the debug file exists from above, open it and get the section info from it
-								Elf debugInfo = new Elf(debugFile.getCanonicalPath());
-								sections = debugInfo.getSections();
+								try (Elf debugInfo = new Elf(debugFile.getCanonicalPath())) {
+									sections = debugInfo.getSections();
+								}
 								debugInfoPath = new Path(debugFile.getCanonicalPath()).removeLastSegments(1);
 							}
 						}
@@ -215,17 +217,17 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 						}
 						File altFile = altPath.toFile();
 						if (altFile.exists()) {
-							Elf altInfo = new Elf(altFile.getCanonicalPath());
-							Elf.Section[] altSections = altInfo.getSections();
-							for (Section altSection : altSections) {
-								String altName = altSection.toString();
-								for (String element : DWARF_ALT_SectionsToParse) {
-									if (altName.equals(element)) {
-										try {
-											dwarfAltSections.put(element, altSection.mapSectionData());
-										} catch (Exception e) {
-											e.printStackTrace();
-											CCorePlugin.log(e);
+							try (Elf altInfo = new Elf(altFile.getCanonicalPath())) {
+								Elf.Section[] altSections = altInfo.getSections();
+								for (Section altSection : altSections) {
+									String altName = altSection.toString();
+									for (String element : DWARF_ALT_SectionsToParse) {
+										if (altName.equals(element)) {
+											try {
+												dwarfAltSections.put(element, altSection.mapSectionData());
+											} catch (Exception e) {
+												CCorePlugin.log(e);
+											}
 										}
 									}
 								}

@@ -7,13 +7,14 @@ ifeq ($(BUILD_MODE),debug)
 else ifeq ($(BUILD_MODE),run)
 	CFLAGS += -O2
 else
-	$(error Build mode $(BUILD_MODE) not supported by this Makefile)
+	CFLAGS += -g -pg -fprofile-arcs -ftest-coverage
+	LDFLAGS += -pg -fprofile-arcs -ftest-coverage
 endif
 
 all:	${projectName}
 
 ${projectName}:	$(OBJS)
-	$(CXX) -o $@ $^
+	$(CXX) $(LDFLAGS) -o $@ $^
 
 %.o:	$(PROJECT_ROOT)%.cpp
 	$(CXX) -c $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS) -o $@ $<

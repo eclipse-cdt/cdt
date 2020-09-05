@@ -6,61 +6,18 @@
 
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
-		<artifactId>cdt-parent</artifactId>
+		<artifactId>cmake-parent</artifactId>
 		<version>10.0.0-SNAPSHOT</version>
-		<relativePath>../..</relativePath>
 	</parent>
 
 	<artifactId>cmake-aggregator</artifactId>
-	<version>1.0.0</version>
 	<packaging>pom</packaging>
     <!-- aggregates just the cmake bundles -->
 
 	<modules>
 		<module>../../releng/org.eclipse.cdt.target</module>
-		<module>../org.eclipse.cdt.cmake.is.core.doc</module>
-		<module>../org.eclipse.cdt.cmake.is.core</module>
-		<module>../org.eclipse.cdt.cmake.is.core.tests</module>
-        <module>../org.eclipse.cdt.cmake.is.core.ui</module>
-		<module>../org.eclipse.cdt.cmake.is.arm</module>
-		<module>../org.eclipse.cdt.cmake.is.arm.tests</module>
-		<module>../org.eclipse.cdt.cmake.is.hpenonstop</module>
-		<module>../org.eclipse.cdt.cmake.is.hpenonstop.tests</module>
-		<module>../org.eclipse.cdt.cmake.is.intel</module>
-		<module>../org.eclipse.cdt.cmake.is.nvidia</module>
-		<module>../org.eclipse.cdt.cmake.is.nvidia.tests</module>
-		<module>../org.eclipse.cdt.cmake.is.microsoft</module>
-		<module>../org.eclipse.cdt.cmake.is.microsoft.tests</module>
+        <module>..</module>
+        <!-- remove once org.eclipse.cdt.cmake bundles moved from /build below /cmake -->
+        <module>../../build/org.eclipse.cdt.cmake.core</module>
 	</modules>
-
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-install-plugin</artifactId>
-					<version>2.3.1</version>
-					<!-- do not pollute maven repo with useless stuff -->
-					<executions>
-						<execution>
-							<id>default-install</id>
-							<phase/>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.5</version>
-                    <!-- do not pollute maven repo with useless stuff -->
-                    <executions>
-                        <execution>
-                            <id>default-deploy</id>
-                            <phase/>
-                        </execution>
-                    </executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
 </project>

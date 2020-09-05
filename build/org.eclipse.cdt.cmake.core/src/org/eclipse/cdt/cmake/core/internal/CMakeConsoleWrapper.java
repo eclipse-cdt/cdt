@@ -15,33 +15,31 @@ import java.util.Objects;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
-/**
+/** Intercepts output to a console and forwards its error stream to a stream that does error parsing for processing.
+
  * @author Martin Weber
  *
  */
 class CMakeConsoleWrapper implements IConsole {
 	private final IConsole delegate;
-	private final ConsoleOutputStream out;
 	private final ConsoleOutputStream err;
 
 	/**
-	 * @param srcFolder
-	 *          the source root of the project being built
 	 * @param delegate
 	 * 			the console to wrap
+	 * @param parsingConsoleOutputStream
+	 *          the replacement of the error output stream of the wrapped console that parses for errors
 	 */
-	public CMakeConsoleWrapper(IContainer srcFolder, IConsole delegate) throws CoreException {
-		Objects.requireNonNull(srcFolder);
+	public CMakeConsoleWrapper(IConsole delegate, ConsoleOutputStream parsingConsoleErrOutputStream)
+			throws CoreException {
 		this.delegate = Objects.requireNonNull(delegate);
 		// NOTE: we need one parser for each stream, since the output streams are not synchronized
 		// when the process is started via o.e.c.core.CommandLauncher, causing loss of
 		// the internal parser state
-		out = new CMakeErrorParser(srcFolder, delegate.getOutputStream());
-		err = new CMakeErrorParser(srcFolder, delegate.getErrorStream());
+		err = Objects.requireNonNull(parsingConsoleErrOutputStream);
 	}
 
 	@Override
@@ -56,7 +54,7 @@ class CMakeConsoleWrapper implements IConsole {
 
 	@Override
 	public ConsoleOutputStream getOutputStream() throws CoreException {
-		return out;
+		return delegate.getOutputStream();
 	}
 
 	@Override

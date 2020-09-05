@@ -193,14 +193,19 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 						getBuildDirectory().toString());
 				// hook in cmake error parsing
-				IConsole errConsole = new CMakeConsoleWrapper(srcFolder, console);
-				Process p = startBuildProcess(command, new IEnvironmentVariable[0], workingDir, errConsole, monitor);
-				if (p == null) {
-					console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
-					return null;
-				}
+				try (CMakeErrorParser errorParser = new CMakeErrorParser(new CMakeExecutionMarkerFactory(srcFolder))) {
+					ParsingConsoleOutputStream errStream = new ParsingConsoleOutputStream(console.getErrorStream(),
+							errorParser);
+					IConsole errConsole = new CMakeConsoleWrapper(console, errStream);
+					Process p = startBuildProcess(command, new IEnvironmentVariable[0], workingDir, errConsole,
+							monitor);
+					if (p == null) {
+						console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
+						return null;
+					}
 
-				watchProcess(p, errConsole);
+					watchProcess(p, errConsole);
+				}
 				cmakeListsModified = false;
 			}
 
@@ -471,7 +476,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	 * @throws CoreException
 	 */
 	private static void deleteCMakeErrorMarkers(IProject project) throws CoreException {
-		project.deleteMarkers(CMakeErrorParser.CMAKE_PROBLEM_MARKER_ID, false, IResource.DEPTH_INFINITE);
+		project.deleteMarkers(ICMakeExecutionMarkerFactory.CMAKE_PROBLEM_MARKER_ID, false, IResource.DEPTH_INFINITE);
 	}
 
 	private static class CMakeIndexerInfoConsumer implements IIndexerInfoConsumer {

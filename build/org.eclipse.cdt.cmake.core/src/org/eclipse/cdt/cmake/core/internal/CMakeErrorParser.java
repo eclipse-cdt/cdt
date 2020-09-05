@@ -8,32 +8,136 @@
  *******************************************************************************/
 package org.eclipse.cdt.cmake.core.internal;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.ConsoleOutputStream;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
-/** Parses the output of cmake and reports errors and warnings as problem markers.
+/** Parses the error output stream of cmake and reports errors and warnings as problem markers.<p>
+ * As long as cmake keeps printing the output we are interested in to the standard error stream,
+ * attaching an instance of this class to cmake's standard <b>output</b>
+ * stream will have no positive effect.
+ * </p>
+ * <p>
+ * NOTE: There is no way properly handle output emitted by the cmake
+ * {@code MESSAGE(NOTICE "text")} or {@code MESSAGE("text")} command
+ * since that output is arbitrary text w/o any indication of the message type
+ * nor filename/line-number information.
+ * </p>
  *
  * @author Martin Weber
  */
-/* package */ class CMakeErrorParser extends ConsoleOutputStream {
+/* package */ class CMakeErrorParser implements AutoCloseable {
 
-	public static final String CMAKE_PROBLEM_MARKER_ID = Activator.getId() + ".cmakeproblem"; //$NON-NLS-1$
+	/** matches the Start of a message, also ending the previous message */
+	private static final Pattern PTN_MSG_START;
+
+	private static Map<String, MessageHandler> handlersByMessageStart = new HashMap<>();
+
+	/** the handler for the message we are currently gathering output for */
+	private MessageHandler currentHandler = new MhNull();
+	private final ICMakeExecutionMarkerFactory markerFactory;
+	private final StringBuilder buffer;
+
+	static {
+		// setup regex to match the start of a message...
+		StringBuilder ptnbuf = new StringBuilder("^"); //$NON-NLS-1$
+
+		List<MessageHandler> markerHandlers = Arrays.asList(new MhStartLog(), new MhStatus(), new MhDeprError(),
+				new MhDeprWarning(), new MhErrorDev(), new MhError(), new MhInternalError(), new MhWarningDev(),
+				new MhWarning());
+		for (Iterator<MessageHandler> it = markerHandlers.iterator(); it.hasNext();) {
+			MessageHandler h = it.next();
+			handlersByMessageStart.put(h.getMessageStart(), h);
+			ptnbuf.append(Pattern.quote(h.getMessageStart()));
+			if (it.hasNext()) {
+				ptnbuf.append('|');
+			}
+		}
+
+		PTN_MSG_START = Pattern.compile(ptnbuf.toString());
+	}
+
+	////////////////////////////////////////////////////////////////////
+	/**
+	 * @param markerFactory
+	 *          the object responsible for creating problem marker objects for the project being built
+	 */
+	public CMakeErrorParser(ICMakeExecutionMarkerFactory markerFactory) {
+		this.markerFactory = Objects.requireNonNull(markerFactory);
+		buffer = new StringBuilder(512);
+	}
+
+	/** Adds text from the output stream to parse.
+	 *
+	 * @param input
+	 * text from the output stream to parse
+	 */
+	public void addInput(CharSequence input) {
+		buffer.append(input);
+		processBuffer();
+	}
+
+	/** Closes this parser. Any remaining buffered input will be parsed.
+	 */
+	@Override
+	public void close() {
+		// process remaining bytes
+		processMessage(currentHandler, buffer.toString().trim());
+		buffer.delete(0, buffer.length());
+	}
+
+	private void processBuffer() {
+		Matcher matcher = PTN_MSG_START.matcher(""); //$NON-NLS-1$
+		while (true) {
+			matcher.reset(buffer.subSequence(currentHandler.getMessageStart().length(), buffer.length()));
+			if (matcher.find()) {
+				String handlerId = matcher.group();
+				MessageHandler newHandler = handlersByMessageStart.get(handlerId);
+				int end = matcher.start() + currentHandler.getMessageStart().length();
+				String message = buffer.substring(0, end);
+				processMessage(currentHandler, message.trim());
+				currentHandler = newHandler;
+				buffer.delete(0, end); // delete processed message
+				continue; // proceed with follow-up messages
+			} else {
+				// NO message arrived in buffer
+				return; // wait for more input
+			}
+		}
+	}
 
 	/**
-	 * Taken from cmMessenger.cxx#printMessagePreamble: <code>
-	 *
+	 * @param handler
+	 *          message handler
+	 * @param fullMessage
+	 *          the complete message, including the string the message starts with
+	 */
+	private void processMessage(MessageHandler handler, String fullMessage) {
+		try {
+			handler.processMessage(markerFactory, fullMessage);
+		} catch (CoreException e) {
+			Activator.getPlugin().getLog()
+					.log(new Status(IStatus.WARNING, Activator.getId(), "CMake output error parsing failed", e)); //$NON-NLS-1$
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////
+	// inner classes
+	////////////////////////////////////////////////////////////////////
+	/**
+	 * Message handler base class. Extracts the source-file name and line-number of errors from the output stream.<p>
+	 * Message matching regexes are taken from cmake code in
+	 * cmMessenger.cxx#printMessagePreamble: <code>
 	 * <pre>
 	if (t == cmake::FATAL_ERROR) {
 	msg << "CMake Error";
@@ -54,202 +158,36 @@ import org.eclipse.core.runtime.Status;
 	 * </pre>
 	 *
 	 * <code><br>
-	 * NOTE: We currently not handle output emitted by the cmake MESSAGE() command since the msg format
-	 * is unknown (or needs more investigation).
-	 *
-	 */
-	// message start markers...
-	private static final String START_DERROR = "CMake Deprecation Error"; //$NON-NLS-1$
-	private static final String START_DWARNING = "CMake Deprecation Warning"; //$NON-NLS-1$
-	private static final String START_ERROR = "CMake Error"; //$NON-NLS-1$
-	private static final String START_ERROR_DEV = "CMake Error (dev)"; //$NON-NLS-1$
-	private static final String START_IERROR = "CMake Internal Error (please report a bug)"; //$NON-NLS-1$
-	private static final String START_LOG = "CMake Debug Log"; //$NON-NLS-1$
-	private static final String START_WARNING = "CMake Warning"; //$NON-NLS-1$
-	private static final String START_WARNING_DEV = "CMake Warning (dev)"; //$NON-NLS-1$
-	private static final String START_STATUS = "--"; //$NON-NLS-1$
-	/** to terminate on the output of 'message("message test")' */
-	private static final String START_MSG_SIMPLE = "\\R\\R"; //$NON-NLS-1$
-	/** Start of a new error message, also ending the previous message. */
-	private static final Pattern PTN_MSG_START;
-
-	/** Name of the named-capturing group that holds a file name. */
-	private static final String GP_FILE = "File"; //$NON-NLS-1$
-	/** Name of the named-capturing group that holds a line number. */
-	private static final String GP_LINE = "Lineno"; //$NON-NLS-1$
-
-	static {
-		String ptn = "^" + String.join("|", START_DERROR, START_DWARNING, Pattern.quote(START_ERROR_DEV), START_ERROR, //$NON-NLS-1$ //$NON-NLS-2$
-				Pattern.quote(START_IERROR), START_LOG, Pattern.quote(START_WARNING_DEV), START_WARNING, START_STATUS,
-				START_MSG_SIMPLE);
-		PTN_MSG_START = Pattern.compile(ptn);
-	}
-
-	////////////////////////////////////////////////////////////////////
-	// the source root of the project being built
-	private final IContainer srcPath;
-	private final OutputStream os;
-
-	private final StringBuilder buffer;
-
-	/** <code>false</code> as long as the buffer contains leading junk in front of a start-of-message */
-	private boolean somSeen;
-
-	/**
-	 * @param srcFolder
-	 *          the source root of the project being built
-	 * @param outputStream
-	 *          the OutputStream to write to or {@code null}
-	 */
-	public CMakeErrorParser(IContainer srcFolder, OutputStream outputStream) {
-		this.srcPath = Objects.requireNonNull(srcFolder);
-		this.os = outputStream;
-		buffer = new StringBuilder(512);
-	}
-
-	private void processBuffer(boolean isEOF) {
-		Matcher matcher = PTN_MSG_START.matcher(""); //$NON-NLS-1$
-		for (;;) {
-			matcher.reset(buffer);
-			if (matcher.find()) {
-				// a new Start Of Message is present in the buffer
-				if (!somSeen) {
-					// this is the first Start Of Message seen in the output, discard leading junk
-					buffer.delete(0, matcher.start());
-					somSeen = true;
-					return;
-				}
-				String classification = matcher.group();
-				int start = matcher.end();
-				// get start of next message
-				if (matcher.find() || isEOF) {
-					int end = isEOF ? buffer.length() : matcher.start();
-					String fullMessage = buffer.substring(0, end);
-					// System.err.println("-###" + fullMessage.trim() + "\n###-");
-					String content = buffer.substring(start, end);
-					// buffer contains a complete message
-					processMessage(classification, content, fullMessage);
-					buffer.delete(0, end);
-				} else {
-					break;
-				}
-			} else {
-				// nothing found in buffer
-				return;
-			}
-		}
-	}
-
-	/**
-	 * @param classification
-	 *          message classification string
-	 * @param content
-	 *          message content, which is parsed according to the classification
-	 * @param fullMessage
-	 *          the complete message, including the classification
-	 */
-	private void processMessage(String classification, String content, String fullMessage) {
-		MarkerCreator creator;
-		switch (classification) {
-		case START_DERROR:
-			creator = new McDeprError(srcPath);
-			break;
-		case START_DWARNING:
-			creator = new McDeprWarning(srcPath);
-			break;
-		case START_ERROR:
-			creator = new McError(srcPath);
-			break;
-		case START_ERROR_DEV:
-			creator = new McErrorDev(srcPath);
-			break;
-		case START_IERROR:
-			creator = new McInternalError(srcPath);
-			break;
-		case START_WARNING:
-			creator = new McWarning(srcPath);
-			break;
-		case START_WARNING_DEV:
-			creator = new McWarningDev(srcPath);
-			break;
-		default:
-			return; // ignore message
-		}
-
-		try {
-			creator.createMarker(fullMessage, content);
-		} catch (CoreException e) {
-			Activator.getPlugin().getLog()
-					.log(new Status(IStatus.WARNING, Activator.getId(), "CMake output error parsing failed", e)); //$NON-NLS-1$
-		}
-	}
-
-	@Override
-	public void write(int c) throws IOException {
-		if (os != null)
-			os.write(c);
-		buffer.append(new String(new byte[] { (byte) c }));
-		processBuffer(false);
-	}
-
-	@Override
-	public void write(byte[] b, int off, int len) throws IOException {
-		if (os != null)
-			os.write(b, off, len);
-		buffer.append(new String(b, off, len));
-		processBuffer(false);
-	}
-
-	@Override
-	public void flush() throws IOException {
-		if (os != null)
-			os.flush();
-	}
-
-	@Override
-	public void close() throws IOException {
-		if (os != null)
-			os.close();
-		// process remaining bytes
-		processBuffer(true);
-	}
-
-	////////////////////////////////////////////////////////////////////
-	// inner classes
-	////////////////////////////////////////////////////////////////////
-	/**
-	 * Marker creator base class. Extracts the source-file name and line-number of errors from the output stream.
+	 * NOTE: We cannot properly handle output emitted by the cmake MESSAGE(NOTICE ...) command since
+	 * the output is arbitrary text w/o any indication of the message type nor filename/line-number information.
+	 * </p>
 	 *
 	 * @author Martin Weber
 	 */
-	private static abstract class MarkerCreator {
+	private static abstract class MessageHandler {
 
 		/** patterns used to extract file-name and line number information */
 		private static final Pattern[] PTN_LOCATION;
 
+		/** Name of the named-capturing group that holds a file name. */
+		private static final String GRP_FILE = "File"; //$NON-NLS-1$
+		/** Name of the named-capturing group that holds a line number. */
+		private static final String GRP_LINE = "Lineno"; //$NON-NLS-1$
+
 		static {
 			PTN_LOCATION = new Pattern[] {
-					Pattern.compile("(?m)^ at (?<" + GP_FILE + ">.+):(?<" + GP_LINE + ">\\d+).*$"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					Pattern.compile("(?s)^: Error in cmake code at.(?<" + GP_FILE + ">.+):(?<" + GP_LINE + ">\\d+).*$"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					Pattern.compile("(?m)^ in (?<" + GP_FILE + ">.+):(?<" + GP_LINE + ">\\d+).*$"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Pattern.compile("(?m)^ at (?<" + GRP_FILE + ">.+):(?<" + GRP_LINE + ">\\d+).*$"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Pattern.compile(
+							"(?s)^: Error in cmake code at.(?<" + GRP_FILE + ">.+):(?<" + GRP_LINE + ">\\d+).*$"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Pattern.compile("(?m)^ in (?<" + GRP_FILE + ">.+):(?<" + GRP_LINE + ">\\d+).*$"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Pattern.compile("(?m)^ in (?<" + GRP_FILE + ">.+?):.*$"), //$NON-NLS-1$ //$NON-NLS-2$
 					Pattern.compile("(?m)^:\\s.+$"), }; //$NON-NLS-1$
 		}
 
-		// the source root of the project being built
-		protected final IContainer srcPath;
-
 		/**
-		 * @param srcPath
-		 *          the source root of the project being built
+		 * Gets the string the error message is supposed to start with.
 		 */
-		public MarkerCreator(IContainer srcPath) {
-			this.srcPath = srcPath;
-		}
-
-		/**
-		 * Gets the message classification that this object handles.
-		 */
-		abstract String getClassification();
+		abstract String getMessageStart();
 
 		/**
 		 * @return the severity of the problem, see {@link IMarker} for acceptable severity values
@@ -259,95 +197,115 @@ import org.eclipse.core.runtime.Status;
 		/**
 		 * Creates the {@link IMarker marker object} that reflects the message.
 		 *
+		 * @param markerFactory
+		 *          the object responsible for creating problem marker objects for the project being built
 		 * @param fullMessage
-		 *          the complete message, including the classification
-		 * @param content
-		 *          the message, without the classification
+		 *          the complete message, including the string the message starts with
 		 * @throws CoreException
 		 */
-		public void createMarker(String fullMessage, String content) throws CoreException {
+		public void processMessage(ICMakeExecutionMarkerFactory markerFactory, String fullMessage)
+				throws CoreException {
+			String content = fullMessage.substring(getMessageStart().length());
+			// mandatory attributes for the marker
+			Map<String, Object> attributes = new HashMap<>(3);
+			attributes.put(IMarker.LOCATION, getClass().getSimpleName());
+
+			// filename is normally project source root relative but may be absolute FS path
+			String filename = null;
 			for (Pattern ptn : PTN_LOCATION) {
 				final Matcher matcher = ptn.matcher(content);
+				// try to extract filename and/or line number from message
 				if (matcher.find()) {
-					// normally project source root relative but may be absolute FS path
-					String filename = null;
 					try {
-						filename = matcher.group(GP_FILE);
+						filename = matcher.group(GRP_FILE);
 					} catch (IllegalArgumentException expected) {
+						// no file name in message
 					}
-					IMarker marker = createBasicMarker(filename, getSeverity(), fullMessage.trim());
+					// attach additional info to marker...
 					try {
-						String lineno = matcher.group(GP_LINE);
+						String lineno = matcher.group(GRP_LINE);
 						Integer lineNumber = Integer.parseInt(lineno);
-						marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+						attributes.put(IMarker.LINE_NUMBER, lineNumber);
 					} catch (IllegalArgumentException expected) {
+						// no line number in message
 					}
 					break;
 				}
 			}
+			markerFactory.createMarker(fullMessage, getSeverity(), filename, attributes);
 		}
-
-		/**
-		 * Creates a basic problem marker which should be enhanced with more problem information (e.g. severity, file name,
-		 * line number exact message).
-		 *
-		 * @param fileName
-		 *          the file where the problem occurred, relative to the source-root or <code>null</code> to denote just the
-		 *          current project being build
-		 * @param severity
-		 *          the severity of the problem, see {@link IMarker} for acceptable severity values
-		 * @param fullMessage
-		 *          the complete message, including the classification
-		 * @throws CoreException
-		 */
-		protected final IMarker createBasicMarker(String fileName, int severity, String fullMessage)
-				throws CoreException {
-			IMarker marker;
-			if (fileName == null) {
-				marker = srcPath.createMarker(CMAKE_PROBLEM_MARKER_ID);
-			} else {
-				// NOTE normally, cmake reports the file name relative to source root.
-				// BUT some messages give an absolute file-system path which is problematic when the build
-				// runs in a docker container
-				// So we do some heuristics here...
-				IPath path = new Path(fileName);
-				try {
-					// normal case: file is rel. to source root
-					marker = srcPath.getFile(path).createMarker(CMAKE_PROBLEM_MARKER_ID);
-				} catch (CoreException ign) {
-					// try abs. path
-					IPath srcLocation = srcPath.getLocation();
-					if (srcLocation.isPrefixOf(path)) {
-						// can resolve the cmake file
-						int segmentsToRemove = srcLocation.segmentCount();
-						path = path.removeFirstSegments(segmentsToRemove);
-						marker = srcPath.getFile(path).createMarker(CMAKE_PROBLEM_MARKER_ID);
-					} else {
-						// possibly a build in docker container. we would reach this if the source-dir path inside
-						// the container is NOT the same as the one in the host/IDE.
-						// for now, just add the markers to the source dir and lets users file issues:-)
-						marker = srcPath.createMarker(CMAKE_PROBLEM_MARKER_ID);
-						Activator.getPlugin().getLog().log(new Status(IStatus.INFO, Activator.getId(),
-								String.format(Messages.CMakeErrorParser_NotAWorkspaceResource, fileName)));
-						// Extra case: IDE runs on Linux, build runs on Windows, or vice versa...
-					}
-				}
-			}
-			marker.setAttribute(IMarker.MESSAGE, fullMessage);
-			marker.setAttribute(IMarker.SEVERITY, severity);
-			marker.setAttribute(IMarker.LOCATION, CMakeErrorParser.class.getName());
-			return marker;
-		}
-	} // MarkerCreator
+	} // MessageHandler
 
 	////////////////////////////////////////////////////////////////////
-	private static class McDeprError extends MarkerCreator {
-		public McDeprError(IContainer srcPath) {
-			super(srcPath);
+	private static class MhNull extends MessageHandler {
+
+		@Override
+		public void processMessage(ICMakeExecutionMarkerFactory markerFactory, String fullMessage)
+				throws CoreException {
 		}
 
 		@Override
-		String getClassification() {
+		String getMessageStart() {
+			return ""; //$NON-NLS-1$
+		}
+
+		@Override
+		int getSeverity() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public String toString() {
+			return super.toString() + ": " + getMessageStart(); //$NON-NLS-1$
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////
+	private static class MhStartLog extends MhNull {
+		private static final String START_LOG = "CMake Debug Log"; //$NON-NLS-1$
+
+		@Override
+		String getMessageStart() {
+			return START_LOG;
+		}
+
+		@Override
+		int getSeverity() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public String toString() {
+			return super.toString() + ": " + getMessageStart(); //$NON-NLS-1$
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////
+	private static class MhStatus extends MhNull {
+		private static final String START_STATUS = "-- "; //$NON-NLS-1$
+
+		@Override
+		String getMessageStart() {
+			return START_STATUS;
+		}
+
+		@Override
+		int getSeverity() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public String toString() {
+			return super.toString() + ": " + getMessageStart(); //$NON-NLS-1$
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////
+	private static class MhDeprError extends MessageHandler {
+		private static final String START_DERROR = "CMake Deprecation Error"; //$NON-NLS-1$
+
+		@Override
+		String getMessageStart() {
 			return START_DERROR;
 		}
 
@@ -355,15 +313,18 @@ import org.eclipse.core.runtime.Status;
 		int getSeverity() {
 			return IMarker.SEVERITY_ERROR;
 		}
-	}
-
-	private static class McDeprWarning extends MarkerCreator {
-		public McDeprWarning(IContainer srcPath) {
-			super(srcPath);
-		}
 
 		@Override
-		String getClassification() {
+		public String toString() {
+			return super.toString() + ": " + getMessageStart(); //$NON-NLS-1$
+		}
+	}
+
+	private static class MhDeprWarning extends MessageHandler {
+		private static final String START_DWARNING = "CMake Deprecation Warning"; //$NON-NLS-1$
+
+		@Override
+		String getMessageStart() {
 			return START_DWARNING;
 		}
 
@@ -371,15 +332,18 @@ import org.eclipse.core.runtime.Status;
 		int getSeverity() {
 			return IMarker.SEVERITY_WARNING;
 		}
-	}
-
-	private static class McError extends MarkerCreator {
-		public McError(IContainer srcPath) {
-			super(srcPath);
-		}
 
 		@Override
-		String getClassification() {
+		public String toString() {
+			return super.toString() + ": " + getMessageStart(); //$NON-NLS-1$
+		}
+	}
+
+	private static class MhError extends MessageHandler {
+		private static final String START_ERROR = "CMake Error"; //$NON-NLS-1$
+
+		@Override
+		String getMessageStart() {
 			return START_ERROR;
 		}
 
@@ -387,15 +351,18 @@ import org.eclipse.core.runtime.Status;
 		int getSeverity() {
 			return IMarker.SEVERITY_ERROR;
 		}
-	}
-
-	private static class McErrorDev extends MarkerCreator {
-		public McErrorDev(IContainer srcPath) {
-			super(srcPath);
-		}
 
 		@Override
-		String getClassification() {
+		public String toString() {
+			return super.toString() + ": " + getMessageStart(); //$NON-NLS-1$
+		}
+	}
+
+	private static class MhErrorDev extends MessageHandler {
+		private static final String START_ERROR_DEV = "CMake Error (dev)"; //$NON-NLS-1$
+
+		@Override
+		String getMessageStart() {
 			return START_ERROR_DEV;
 		}
 
@@ -403,15 +370,18 @@ import org.eclipse.core.runtime.Status;
 		int getSeverity() {
 			return IMarker.SEVERITY_ERROR;
 		}
-	}
-
-	private static class McInternalError extends MarkerCreator {
-		public McInternalError(IContainer srcPath) {
-			super(srcPath);
-		}
 
 		@Override
-		String getClassification() {
+		public String toString() {
+			return super.toString() + ": " + getMessageStart(); //$NON-NLS-1$
+		}
+	}
+
+	private static class MhInternalError extends MessageHandler {
+		private static final String START_IERROR = "CMake Internal Error (please report a bug)"; //$NON-NLS-1$
+
+		@Override
+		String getMessageStart() {
 			return START_IERROR;
 		}
 
@@ -419,15 +389,18 @@ import org.eclipse.core.runtime.Status;
 		int getSeverity() {
 			return IMarker.SEVERITY_ERROR;
 		}
-	}
-
-	private static class McWarning extends MarkerCreator {
-		public McWarning(IContainer srcPath) {
-			super(srcPath);
-		}
 
 		@Override
-		String getClassification() {
+		public String toString() {
+			return super.toString() + ": " + getMessageStart(); //$NON-NLS-1$
+		}
+	}
+
+	private static class MhWarning extends MessageHandler {
+		private static final String START_WARNING = "CMake Warning"; //$NON-NLS-1$
+
+		@Override
+		String getMessageStart() {
 			return START_WARNING;
 		}
 
@@ -435,21 +408,29 @@ import org.eclipse.core.runtime.Status;
 		int getSeverity() {
 			return IMarker.SEVERITY_WARNING;
 		}
-	}
-
-	private static class McWarningDev extends MarkerCreator {
-		public McWarningDev(IContainer srcPath) {
-			super(srcPath);
-		}
 
 		@Override
-		String getClassification() {
+		public String toString() {
+			return super.toString() + ": " + getMessageStart(); //$NON-NLS-1$
+		}
+	}
+
+	private static class MhWarningDev extends MessageHandler {
+		private static final String START_WARNING_DEV = "CMake Warning (dev)"; //$NON-NLS-1$
+
+		@Override
+		String getMessageStart() {
 			return START_WARNING_DEV;
 		}
 
 		@Override
 		int getSeverity() {
 			return IMarker.SEVERITY_WARNING;
+		}
+
+		@Override
+		public String toString() {
+			return super.toString() + ": " + getMessageStart(); //$NON-NLS-1$
 		}
 	}
 }

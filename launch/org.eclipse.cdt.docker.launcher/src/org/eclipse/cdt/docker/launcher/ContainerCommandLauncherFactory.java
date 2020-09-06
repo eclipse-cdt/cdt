@@ -27,8 +27,10 @@ import org.eclipse.cdt.core.ICommandLauncherFactory2;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.ICIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
@@ -41,6 +43,7 @@ import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildConfigurationDa
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.linuxtools.docker.ui.launch.ContainerLauncher;
 
@@ -163,6 +166,9 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 					for (ICLanguageSettingEntry entry : entries) {
 						if (entry instanceof ICIncludePathEntry) {
 							paths.add(entry.getValue());
+						} else if (entry instanceof ICIncludeFileEntry) {
+							paths.add(new org.eclipse.core.runtime.Path(entry.getValue()).removeLastSegments(1)
+									.toString());
 						}
 					}
 					if (paths.size() > 0) {
@@ -374,12 +380,19 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 										entry.getFlags());
 								newEntries.add(newEntry);
 								continue;
-							} else {
-								newEntries.add(entry);
 							}
-						} else {
-							newEntries.add(entry);
 						}
+						if (entry instanceof ICIncludeFileEntry) {
+							IPath p = new Path(((ICIncludeFileEntry) entry).getName());
+							if (copiedVolumes.contains(p.removeLastSegments(1).toString())) {
+								IPath newPath = hostDir.append(entry.getName());
+								CIncludeFileEntry newEntry = new CIncludeFileEntry(newPath.toString(),
+										entry.getFlags());
+								newEntries.add(newEntry);
+								continue;
+							}
+						}
+						newEntries.add(entry);
 					}
 					return newEntries;
 				}

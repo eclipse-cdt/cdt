@@ -48,6 +48,7 @@ import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -757,7 +758,20 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		}
 
 		// try to find absolute path in the workspace
-		if (sourceFile == null && new Path(parsedResourceName).isAbsolute()) {
+		Path parsedPath = new Path(parsedResourceName);
+		if (sourceFile == null && parsedPath.isAbsolute()) {
+			// It will often happen that the file will be under the project and in the local file system, so check there first.
+			IPath projectLocation = currentProject != null ? currentProject.getLocation() : null;
+			if (projectLocation != null) {
+				IPath relativePath = parsedPath.makeRelativeTo(projectLocation);
+				if (!relativePath.equals(parsedPath)) {
+					IFile file = currentProject.getFile(relativePath);
+					if (file.isAccessible()) {
+						return file;
+					}
+				}
+			}
+
 			URI uri = org.eclipse.core.filesystem.URIUtil.toURI(parsedResourceName);
 			sourceFile = findFileForLocationURI(uri, currentProject, /*checkExistence*/ true);
 		}

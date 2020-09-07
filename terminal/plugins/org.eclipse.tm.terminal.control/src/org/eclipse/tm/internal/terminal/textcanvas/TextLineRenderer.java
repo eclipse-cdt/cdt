@@ -18,7 +18,6 @@ package org.eclipse.tm.internal.terminal.textcanvas;
 
 import java.util.Map;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
@@ -78,8 +77,9 @@ public class TextLineRenderer implements ILinelRenderer {
 				drawCursor(model, doubleBufferGC, line, 0, 0, colFirst);
 			}
 			if (fModel.hasLineSelection(line)) {
-				doubleBufferGC.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
-				doubleBufferGC.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION));
+				TerminalStyle style = TerminalStyle.getStyle(TerminalColor.SELECTION_FOREGROUND,
+						TerminalColor.SELECTION_BACKGROUND);
+				setupGC(doubleBufferGC, style);
 				Point start = model.getSelectionStart();
 				Point end = model.getSelectionEnd();
 				char[] chars = model.getTerminalText().getChars(line);

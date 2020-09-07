@@ -145,6 +145,12 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 	public void registerLanguageSettingEntries(IProject project, List<? extends ICLanguageSettingEntry> langEntries) {
 		@SuppressWarnings("unchecked")
 		List<ICLanguageSettingEntry> entries = (List<ICLanguageSettingEntry>) langEntries;
+		if (langEntries == null) {
+			// langEntries can be null when the last item is removed from a list,
+			// see org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsEntriesTab.saveEntries(ILanguageSettingsProvider, List<ICLanguageSettingEntry>)
+			// for an example that passes null to mean "use parent entries instead".
+			return;
+		}
 		ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(project)
 				.getActiveConfiguration();
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd);

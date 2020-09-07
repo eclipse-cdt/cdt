@@ -75,5 +75,11 @@ IEclipsePreferences#org-eclipse-cdt-ui:org-eclipse-cdt-ui {
 		"semanticHighlighting.typedef.enabled=true"
 		"semanticHighlighting.typedef.bold=true"
 		"semanticHighlighting.typeParameter.color=191,164,164"
-		"semanticHighlighting.typeParameter.enabled=true"		
+		"semanticHighlighting.typeParameter.enabled=true"
+}
+
+
+IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-cdt-ui { /* pseudo attribute added to allow contributions without replacing this node, see Bug 466075 */
+	preferences:
+		"org.eclipse.cdt.ui.ColoredLabels.writeaccess_highlight=255,128,128"
 }

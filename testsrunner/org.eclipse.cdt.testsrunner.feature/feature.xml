@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.testsrunner.feature"
       label="%featureName"
-      version="10.0.0.qualifier"
+      version="10.1.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.testsrunner"
       license-feature="org.eclipse.license"

@@ -1,0 +1,32 @@
+= MinGW 5.x =
+
+First, you need to download MinGW. You can either click through the websites mentioned above or go directly to the [https://sourceforge.net/projects/mingw/files/ MinGW download area]. Look for the Package &quot;Automated MinGW Installer&quot;. There, download the file ending in .exe. The file name should be something like &quot;MinGW-5.1.4.exe&quot;. You can also download [http://downloads.sourceforge.net/mingw/MinGW-5.1.4.exe?modtime=1209244789&big_mirror=1 MinGW Version 5.1.4] from the link given here.
+
+You may also download an older version, and follow the instructions given in [[#older|???]]:
+
+* You may download [http://prdownloads.sourceforge.net/mingw/MinGW-4.1.0.exe?download MinGW 4] and follow the instructions in [[#mingw4|???]].
+* You may download [http://prdownloads.sourceforge.net/mingw/MinGW-3.1.0-1.exe?download MinGW 3] and follow the instructions in [[#mingw3|???]].
+
+Most of the options in the MinGW 5 installer are pretty straightforward. I will point out some of the more tricky options.
+
+The first one of such options is which &quot;MinGW&quot; package to install. Any of those should work just fine, but I would recommend <code>Current</code>.
+
+[[File:Mingw5_1.png|thumb|none|alt=MinGW 5 install|MinGW 5 install]]
+
+MinGW will ask which components to install. Either select <code>All</code> or at least make sure that you have the <code>g++ compiler</code> checked. This is needed for C++ support.
+
+[[File:Mingw5_2.png|thumb|none|alt=MinGW 5 install (2)|MinGW 5 install (2)]]
+
+When asked for the install folder, please do not change it. You will have a lot of trouble later on, especially if you chose a path that contains spaces.
+
+[[File:Mingw5_3.png|thumb|none|alt=MinGW 5 install (3)|MinGW 5 install (3)]]
+
+That's already it for MinGW. There are two more steps: MSYS and the Environment Variables.
+
+Checkpoint: To test if everything worked, please reboot. Then open up a terminal. (Start/Run, type CMD). Try these commands:
+
+<pre>gcc --version</pre>
+should print the version of gcc. If you get a &quot;File not found&quot;, try logging out and logging back in, or even rebooting your computer. If it still does not work, you have not installed MinGW correctly. You may also need to set your environment variables manually (see below).
+
+<pre>g++ --version</pre>
+should print the version for g++. You did select the &quot;g++ compiler&quot; I hope. If not, install again!

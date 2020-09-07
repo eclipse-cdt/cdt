@@ -1,0 +1,26 @@
+= Introduction =
+
+There are several freely available C and C++ development environments. Most of them have the disadvantage that they require one particular operating system. The Eclipse IDE was written as a cross-platform development environment. Initially just written for Java, it also has a very good C/C++ development mode.
+
+If you have already tried (and I assume failed, otherwise you wouldn't be reading this document) to install Eclipse CDT, you may want to go directly to [[#problems|???]].
+
+This document describes how to install everything necessary to develop with C or C++ using only free tools on the three major operating systems Windows, Linux, and Mac OS X. It uses the Eclipse IDE, which is the same on all operating systems, thus providing a consistent user experience once installed.
+
+There are two versions of this document:
+
+; The free online version
+: The [http://max.berger.name/howto/cdt free version of Setting up Eclipse CDT on Windows, Linux/Unix, Mac OS X] can be found on [http://max.berger.name/ Max Bergers website]. It will always be the previous major revision of the document.
+; A paid eBook version
+: The eBook version of Setting up Eclipse CDT on Windows, Linux/Unix, Mac OS X is distributed through Amazon.com, Amazon.co.uk, and Amazon.de. It will always be the current major revision of the document.
+;* [http://www.amazon.com/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=maxbergername-20 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.com]
+;* [http://www.amazon.co.uk/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=httpmaxberg02-21 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.co.uk]
+;* [http://www.amazon.de/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=httpmaxberger-21 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.de]
+;* [http://www.amazon.fr/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=httpmaxberg06-21 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.fr]
+;* [http://www.amazon.it/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=httpmaxberg08-21 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.it]
+;* [http://www.amazon.es/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=maxbergername-21 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.es]
+
+At this time, the eBook version contains updates for the following items which are not yet in the free version:
+
+* There are no updates in the ebook version at this time.
+
+Screenshots may still reflect older versions of the used software, they are only updated if there is a significant change.

@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Setting Up Eclipse CDT - Common Problems</title>
+		<link type="text/css" rel="stylesheet" href="../../book.css"/>
+	</head>
+	<body>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<th style="width: 100%" align="center" colspan="3">Common Problems</th>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Setting-up-Eclipse.html" title="Setting up Eclipse">
+						<img alt="Previous" border="0" src="../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Older-Instructions.html" title="Older Instructions">
+						<img alt="Next" border="0" src="../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Setting up Eclipse</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Older Instructions</td>
+			</tr>
+		</table><hr class="navigation-separator"/>
+		<h1 id="Common_Problems">Common Problems</h1>
+		<p>If you have followed these instructions everything should work. However, you may have ran into trouble, and then decided to look for the manual (at least, that's the way I would have done it). So now you have a problem and need an answer:</p>
+		<p>Please note if you are reading the online version: Some problems may covered in a newer version of this document, please refer to 
+			<a href="Setting-Up-Eclipse-CDT.html#Introduction">Introduction</a>.
+		</p>
+		<h2 id="How_to_fix_most_of_the_common_errors_on_Windows">How to fix most of the common errors on Windows</h2>
+		<p>Make sure you have done the following things:</p>
+		<ul>
+			<li>Installed the CDT</li>
+			<li>Installed (not just downloaded) MinGW and MSYS with Administrator privileges</li>
+			<li>Set up your path environment variable</li>
+		</ul>
+		<p>Especially made sure you did the last step. You 
+			<i>will</i> need to restart eclipse (full restart with shutdown, File / Restart is not sufficient). This solves about 99% of all support mails I've got so far.
+		</p>
+		<h2 id="How_to_fix_most_of_the_common_errors_on_Lion_.28Mac_OS_X_10.7.29">How to fix most of the common errors on Lion (Mac OS X 10.7)</h2>
+		<p>Make sure you have done the following this:</p>
+		<ul>
+			<li>Downloaded XCode from App Store</li>
+			<li>Installed XCode using the &quot;Install XCode button&quot;</li>
+		</ul>
+		<p>Both of these steps are important, in particular when you upgraded from an earlier version of Mac OS X. Upgrading to Lion breaks your existing developer tools! Read also the full description in 
+			<a href="Setting-up-a-compiler.html#Mac_OS_X_Compiler">Mac OS X Compiler</a>. It also covers problems during the XCode install.
+		</p>
+		<h2 id="Build_error_.28Exec_error:Launching_failed.29.2C_CreateProcess:_make_-k_all_error.3D2.2C">Build error (Exec error:Launching failed), CreateProcess: make -k all error=2,</h2>
+		<p>You have just tried the build the hello world program, and you get this error message instead of an executable. This means that <code>make</code> is not in your path. Open up a command prompt (In OS X: Terminal in Applications/Utilities, in Windows: Start/Run, type in cmd) and type in <code>make</code>. If that doesn't work, try <code>gmake</code>.</p>
+		<p>If <code>gmake</code> worked, see 
+			<a href="Setting-up-Eclipse.html#Configuring_the_CDT">Configuring the CDT</a>.
+		</p>
+		<p>If neither worked, make sure you install make (See 
+			<a href="Setting-up-a-compiler.html#Setting_up_a_compiler">Setting up a compiler</a>) and set your path (See 
+			<a href="Setting-up-a-compiler.html#Environment_Variables">Environment Variables</a> in the case of Windows).
+		</p>
+		<p>To check your path (on windows), open up <code>cmd</code> and type in <code>echo %path%</code>. This should show the path to MSYS and MinGW. Also, make sure that you restarted Eclipse (or cmd if you are testing) after setting your path.</p>
+		<p>If you are on Windows, and you have installed MinGW, but not MSYS, you may have an executable called <code>mingw-make</code>. In this case you have to go to 
+			<a href="Setting-up-Eclipse.html#Configuring_the_CDT">Configuring the CDT</a> and configure appropriately. It is possible to just use mingw-make and no MSYS at all, however, mingw-make has some limitations. Eclipse CDT managed makefiles may or may not work with it. Please see the 
+			<a href="http://www.mingw.org/mingwfaq.shtml#faq-mingw32-make.exe">MinGW FAQ</a> for more information.
+		</p>
+		<h2 id=".2Fbin.2Fsh:_line_1:_g.2B.2B:_command_not_found.2C_Error_launching_external_scanner_info_generator">/bin/sh: line 1: g++: command not found, Error launching external scanner info generator</h2>
+		<p>This error message means that g++ is either not installed or not in your path. Check your path settings as described in 
+			<a href="#Build_error_.28Exec_error:Launching_failed.29.2C_CreateProcess:_make_-k_all_error.3D2.2C">Build error (Exec error:Launching failed), CreateProcess: make -k all error=2,</a>, but this time try the commands: <pre>gcc --version</pre> and <pre>g++ --version</pre>. If gcc works, but g++ doesn't, it means you have only installed the C and not the C++ version of the gcc compiler, which happens quite frequently on Linux distributions. Check if you have all needed packages installed, and check 
+			<a href="Setting-up-a-compiler.html#Setting_up_a_compiler">Setting up a compiler</a>.
+		</p>
+		<p>If you are on windows, and neither of them worked, install MinGW and set your path environment variable. If only gcc one worked, reinstall MinGW and don't forget to select the C++ compiler!</p>
+		<h2 id="Undefined_symbols_for_architecture_x86_64_.28OS_X_10.7.29">Undefined symbols for architecture x86_64 (OS X 10.7)</h2>
+		<p>Make sure you have done the steps in 
+			<a href="#How_to_fix_most_of_the_common_errors_on_Lion_.28Mac_OS_X_10.7.29">How to fix most of the common errors on Lion (Mac OS X 10.7)</a>.
+		</p>
+		<p>If the problem still persist, and you are trying to compile C++ code, make sure your source files actually have an extension of &quot;.cc&quot; or &quot;.cpp&quot;.</p>
+		<h2 id="No_output_or_only_sometimes_output">No output or only sometimes output</h2>
+		<p>If you are on windows and use Eclipse 3.1 with CDT 3.0.0 there is a bug. See 
+			<a href="Setting-up-Eclipse.html#Configuring_the_CDT">Configuring the CDT</a>.
+		</p>
+		<p>Please note that debug sessions in Windows have their own console window (a black console window) and do not appear in the regular Eclipse console. If you're running a debug session, please watch which windows appear in your task bar.</p>
+		<h2 id="Error_launching_.27cygpath.27_command">Error launching 'cygpath' command</h2>
+		<p>If you followed these instructions you have installed MSYS instead of cygwin. You may safely ignore this error message.</p>
+		<h2 id="I_do_not_have_the_option_to_start_a_C.2B.2B_project">I do not have the option to start a C++ project</h2>
+		<p>You have not installed the CDT. See 
+			<a href="Setting-up-Eclipse.html#Installing_the_CDT">Installing the CDT</a>.
+		</p>
+		<h2 id="Error_1.2C_open_output_file_blabla.exe:_Permission_denied">Error 1, open output file blabla.exe: Permission denied</h2>
+		<p>Every time I start Eclipse on my laptop, I can only compile and run a program once. After that it asks if I want to run it with errors every time. The compiler says this:</p>
+		<pre>Building target: Project01Test.exe
+Invoking: GCC C++ Linker
+g++ -oProject01Test.exe ./test.o
+C:\MinGW\bin\..\lib\gcc\mingw32\3.4.2\..\..\..\..\mingw32\bin\ld.exe: cannot         
+open output file Project01Test.exe: Permission denied
+collect2: ld returned 1 exit status
+make: *** [Project01Test.exe] Error 1
+make: Target `all' not remade because of errors.
+Build complete for project Project01Test
+</pre>
+		<p>Answer: Your program may still be running. Try stopping it by using the small red square on the console window (the one for your program). Another way is switching to the &quot;Debug&quot; perspective, selecting your running program, and stopping it there (also the small red square).</p>
+		<h2 id="The_debugger_doesn.27t_work_.28on_windows.2C_with_MinGW.29">The debugger doesn't work (on windows, with MinGW)</h2>
+		<p>Unfortunately gdb is not included in the current (4.1.1 or 5.0.2) version of MinGW. See 
+			<a href="Older-Instructions.html#GDB_.28optional.21.29">GDB (optional!)</a>.
+		</p>
+		<h2 id="Incorrect_command_line_argument:_-k.27">Incorrect command line argument: -k'</h2>
+		<p>Make sure you are using the make programs provided by MinGW. If your output in the console shows something like:</p>
+		<pre>make -k clean all
+MAKE Version 5.2  Copyright (c) 1987, 2000 Borland
+Incorrect command line argument: -k
+</pre>
+		<p>Then you have make installed from a previous installation of Borland C++. You have several choices:</p>
+		<ul>
+			<li>Adjust your PATH environment variable to have the MinGW / MSYS installation come before Borlands tools. Please be warned that this may break your Borland tools!</li>
+			<li>Remove the path to the Borland tools from your PATH. This will definitely break your Borland tools.</li>
+			<li>Download &quot;mingw32-make&quot;. This is an option when installing MinGW. Make sure you set your make setting to be &quot;mingw32-make&quot;. If you still get an error, try setting it for the build settings in your project. In this case you may even skip the installation of MSYS, but you will get limited functionality.</li>
+		</ul>
+		<h2 id="A_Java_Runtime_Envrionment_.28JRE.29_or_Java_Development_Kit_.28JDK.29_must_be_available...">A Java Runtime Envrionment (JRE) or Java Development Kit (JDK) must be available...</h2>
+		<p>There are several possible reasons for that:</p>
+		<ul>
+			<li>You have not installed Java. Please see 
+				<a href="Setting-up-Eclipse.html#Java">Java</a>.
+			</li>
+			<li>Your &quot;path&quot; environment is messed up (Windows). Please see 
+				<a href="Setting-up-a-compiler.html#Environment_Variables">Environment Variables</a>. Make sure <code>C:\windows\system32</code> is in your path (should be there by default).
+			</li>
+			<li>
+				<a href="http://www.java.com">java.com</a> has a button called <code>verify installation</code>.
+			</li>
+		</ul>
+		<h2 id="I_have_no_binaries">I have no binaries</h2>
+		<p>If you have no binaries folder, then one of several things may have happened:</p>
+		<ul>
+			<li>You are not looking at the C/C++ Project view. Make sure you are in the C++ perspective and &quot;C/C++ Projects&quot; is active. An example of this situation is shown in 
+				<a href="#figure_title">figure_title</a>: Click on &quot;C/C++ Projects&quot; to fix.
+			</li>
+			<li>Your program didn't compile. Check the output of the &quot;Console&quot; Window. It is either an error in your program or a configuration error. For configuration errors, check the other problems.</li>
+			<li>AutoBuild is turned off. Turn it on as described in 
+				<a href="#figure_title">figure_title</a>.
+			</li>
+			<li>If you do have a binaries folder, then make sure you run you program by right-clicking (on the mac: hold down ctrl and click) on the binary, and then selecting Run / Run as C/C++ Application. Just hitting the run button will only work after you have done that at least once!</li>
+		</ul>
+		<p>
+			<img alt="The Navigator view instead of the C/C++ Projects view" title="The Navigator view instead of the C/C++ Projects view" border="0" src="images/Setting_Up_Eclipse_CDT_navigator.png"/>
+		</p>
+		<h2 id="Unable_to_access_jarfile_startup.jar">Unable to access jarfile startup.jar</h2>
+		<p>This problem happens on Windows when you moved Eclipse out of its directory instead of creating a shortcut. Please move it back into the Eclipse directory, then drag'n'drop it using the right mouse button, where you can select &quot;Create Shurtcut&quot;</p>
+		<h2 id="Problems_when_CYGWIN_is_installed_on_Windows">Problems when CYGWIN is installed on Windows</h2>
+		<p>I personally do not recommend the installation of cygwin, but rather the installation of MinGW and MSYS as described in 
+			<a href="Setting-up-a-compiler.html#Windows_compiler">Windows compiler</a>. However, the following problems have been reported by users:
+		</p>
+		<h3 id="Binaries_require_cygwin.dll">Binaries require cygwin.dll</h3>
+		<p>Eclipse prefers to use cygwin if it is installed, and will do everything to manipulate the path to include cygwin if it is installed. Binaries will therefore by default be linked against the cygwin libraries. Possible workarounds:</p>
+		<ul>
+			<li>add <code>-mno-cygwin</code> to your compiler settings</li>
+			<li>Overwrite the path variable in eclipse: In the Project Properties: C/C++ Build -&gt; Environment -&gt; User Variables -&gt; New. Select PATH, remove the cygwin directory and select Replace as Operation.</li>
+		</ul>
+		<h2 id="Launch_failed_Reason:_Unable_to_set_working_directory">Launch failed Reason: Unable to set working directory</h2>
+		<p>Your workspace or your eclipse installation may use a path with includes spaces, such as <code>C:\Documents and Settings</code>. Eclipse sometimes fails in this case. Try creating your workspace in a different directory.</p>
+		<h2 id="Problems_not_covered_here">Problems not covered here</h2>
+		<p>If you read the online version of this document, check out 
+			<a href="Setting-Up-Eclipse-CDT.html#Introduction">Introduction</a>. You problem may be covered in a newer version of this document.
+		</p>
+		<p>If you are still having trouble, you may try and send me an email. Please be aware that I may not respond to every email, as I am doing this support mainly as a hobby. Make sure your email includes the following. Please send the complete output!</p>
+		<ul>
+			<li>The contents of your PATH environment variable (in Windows: <code>echo %PATH%</code>. In Linux / Mac OS X: <code>echo $PATH)</code>.</li>
+			<li>Version of GCC you're using (<code>gcc --version</code>)</li>
+			<li>Version of Make you're using (<code>make --version</code> or <code>gmake --version</code>)</li>
+			<li>Version of Eclipse you're using</li>
+			<li>Version of the CDT you're using</li>
+			<li>The complete output of your &quot;Console&quot; window (at the bottom of eclipse) when your error occurs.</li>
+			<li>The steps you did so before the problem occurred.</li>
+		</ul><hr class="navigation-separator"/>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Setting-up-Eclipse.html" title="Setting up Eclipse">
+						<img alt="Previous" border="0" src="../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center">
+					<a href="Setting-Up-Eclipse-CDT.html" title="Setting Up Eclipse CDT">
+						<img alt="Setting Up Eclipse CDT" border="0" src="../../images/home.gif"/>
+					</a>
+				</td>
+				<td style="width: 20%" align="right">
+					<a href="Older-Instructions.html" title="Older Instructions">
+						<img alt="Next" border="0" src="../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Setting up Eclipse</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Older Instructions</td>
+			</tr>
+		</table>
+	</body>
+</html>

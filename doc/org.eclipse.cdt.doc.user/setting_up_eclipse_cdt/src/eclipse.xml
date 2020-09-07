@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="US-ASCII"?>
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:id="eclipse" xml:lang="en-US">
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="eclipse">
   <title>Setting up Eclipse</title>
   <para>On Windows XP and later, this may be a good point in time to create a
   system restore point. This may safe you trouble in the long run if the
   installation fails.</para>
-  <section xml:id="java">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="java">
     <title>Java</title>
     <para>Eclipse was originally written for the Java platform. It still
     requires a Java Runtime Environment (JRE) or a Java Development Kit (JDK),
@@ -24,7 +24,7 @@
     can open a command prompt / shell and type in:</para>
     <programlisting>java -version</programlisting>
   </section>
-  <section xml:id="download_eclipse">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="download_eclipse">
     <title>Downloading Eclipse</title>
     <para>Eclipse is a modular software, but ever summer there are bundled
     released. The link is:</para>
@@ -55,7 +55,7 @@
       </screenshot>
     </figure>
   </section>
-  <section xml:id="first_run_eclipse">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="first_run_eclipse">
     <title>First Run of Eclipse</title>
     <para>However you installed eclipse, you should now be able to run it.
     Double-click the icon or start the appropriate script in UNIX and
@@ -107,7 +107,7 @@
     tools needed to start programming. We want to develop in C++, so we will
     continue with the next section.</para>
   </section>
-  <section xml:id="installingcdt">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="installingcdt">
     <title>Installing the CDT</title>
     <note>
       <para>This is only required if you did not download the CDT version as
@@ -207,7 +207,7 @@
     <para>Once Eclipse has restarted you may need to configure it for your
     computer.</para>
   </section>
-  <section xml:id="configuring">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="configuring">
     <title>Configuring the CDT</title>
     <para>Fortunately, this is very easy. If your path is set correctly, there
     should be absolutely nothing you need to configure. This is true if you
@@ -219,7 +219,7 @@
     "builder", de-select "use default build command" and for "Build command"
     enter "gmake".</para>
   </section>
-  <section xml:id="helloworld">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="helloworld">
     <title>Hello, World!</title>
     <para>Once you are in Eclipse, you are given an empty workspace. You now
     have to start a new project. To do so, select "File" / "New" /

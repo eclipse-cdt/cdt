@@ -1,0 +1,151 @@
+= Common Problems =
+
+If you have followed these instructions everything should work. However, you may have ran into trouble, and then decided to look for the manual (at least, that's the way I would have done it). So now you have a problem and need an answer:
+
+Please note if you are reading the online version: Some problems may covered in a newer version of this document, please refer to [[#introduction|???]].
+
+== How to fix most of the common errors on Windows ==
+
+Make sure you have done the following things:
+
+* Installed the CDT
+* Installed (not just downloaded) MinGW and MSYS with Administrator privileges
+* Set up your path environment variable
+
+Especially made sure you did the last step. You ''will'' need to restart eclipse (full restart with shutdown, File / Restart is not sufficient). This solves about 99% of all support mails I've got so far.
+
+== How to fix most of the common errors on Lion (Mac OS X 10.7) ==
+
+Make sure you have done the following this:
+
+* Downloaded XCode from App Store
+* Installed XCode using the &quot;Install XCode button&quot;
+
+Both of these steps are important, in particular when you upgraded from an earlier version of Mac OS X. Upgrading to Lion breaks your existing developer tools! Read also the full description in [[#macosx|???]]. It also covers problems during the XCode install.
+
+== Build error (Exec error:Launching failed), CreateProcess: make -k all error=2, ==
+
+You have just tried the build the hello world program, and you get this error message instead of an executable. This means that <code>make</code> is not in your path. Open up a command prompt (In OS X: Terminal in Applications/Utilities, in Windows: Start/Run, type in cmd) and type in <code>make</code>. If that doesn't work, try <code>gmake</code>.
+
+If <code>gmake</code> worked, see [[#configuring|???]].
+
+If neither worked, make sure you install make (See [[#compiler|???]]) and set your path (See [[#envwin|???]] in the case of Windows).
+
+To check your path (on windows), open up <code>cmd</code> and type in <code>echo %path%</code>. This should show the path to MSYS and MinGW. Also, make sure that you restarted Eclipse (or cmd if you are testing) after setting your path.
+
+If you are on Windows, and you have installed MinGW, but not MSYS, you may have an executable called <code>mingw-make</code>. In this case you have to go to [[#configuring|???]] and configure appropriately. It is possible to just use mingw-make and no MSYS at all, however, mingw-make has some limitations. Eclipse CDT managed makefiles may or may not work with it. Please see the [http://www.mingw.org/mingwfaq.shtml#faq-mingw32-make.exe MinGW FAQ] for more information.
+
+== /bin/sh: line 1: g++: command not found, Error launching external scanner info generator ==
+
+This error message means that g++ is either not installed or not in your path. Check your path settings as described in [[#nomake|Build error (Exec error:Launching failed), CreateProcess: make -k all error=2,]], but this time try the commands: <code>gcc
+    --version</code> and <code>g++ --version</code>. If gcc works, but g++ doesn't, it means you have only installed the C and not the C++ version of the gcc compiler, which happens quite frequently on Linux distributions. Check if you have all needed packages installed, and check [[#compiler|???]].
+
+If you are on windows, and neither of them worked, install MinGW and set your path environment variable. If only gcc one worked, reinstall MinGW and don't forget to select the C++ compiler!
+
+== Undefined symbols for architecture x86_64 (OS X 10.7) ==
+
+Make sure you have done the steps in [[#lion|How to fix most of the common errors on Lion (Mac OS X 10.7)]].
+
+If the problem still persist, and you are trying to compile C++ code, make sure your source files actually have an extension of &quot;.cc&quot; or &quot;.cpp&quot;.
+
+== No output or only sometimes output ==
+
+If you are on windows and use Eclipse 3.1 with CDT 3.0.0 there is a bug. See [[#configuring|???]].
+
+Please note that debug sessions in Windows have their own console window (a black console window) and do not appear in the regular Eclipse console. If you're running a debug session, please watch which windows appear in your task bar.
+
+== Error launching 'cygpath' command ==
+
+If you followed these instructions you have installed MSYS instead of cygwin. You may safely ignore this error message.
+
+== I do not have the option to start a C++ project ==
+
+You have not installed the CDT. See [[#installingcdt|???]].
+
+== Error 1, open output file blabla.exe: Permission denied ==
+
+Every time I start Eclipse on my laptop, I can only compile and run a program once. After that it asks if I want to run it with errors every time. The compiler says this:
+
+<pre>Building target: Project01Test.exe
+Invoking: GCC C++ Linker
+g++ -oProject01Test.exe ./test.o
+C:\MinGW\bin\..\lib\gcc\mingw32\3.4.2\..\..\..\..\mingw32\bin\ld.exe: cannot         
+open output file Project01Test.exe: Permission denied
+collect2: ld returned 1 exit status
+make: *** [Project01Test.exe] Error 1
+make: Target `all' not remade because of errors.
+Build complete for project Project01Test</pre>
+Answer: Your program may still be running. Try stopping it by using the small red square on the console window (the one for your program). Another way is switching to the &quot;Debug&quot; perspective, selecting your running program, and stopping it there (also the small red square).
+
+== The debugger doesn't work (on windows, with MinGW) ==
+
+Unfortunately gdb is not included in the current (4.1.1 or 5.0.2) version of MinGW. See [[#gdb|???]].
+
+== Incorrect command line argument: -k' ==
+
+Make sure you are using the make programs provided by MinGW. If your output in the console shows something like:
+
+<pre>make -k clean all
+MAKE Version 5.2  Copyright (c) 1987, 2000 Borland
+Incorrect command line argument: -k</pre>
+Then you have make installed from a previous installation of Borland C++. You have several choices:
+
+* Adjust your PATH environment variable to have the MinGW / MSYS installation come before Borlands tools. Please be warned that this may break your Borland tools!
+* Remove the path to the Borland tools from your PATH. This will definitely break your Borland tools.
+* Download &quot;mingw32-make&quot;. This is an option when installing MinGW. Make sure you set your make setting to be &quot;mingw32-make&quot;. If you still get an error, try setting it for the build settings in your project. In this case you may even skip the installation of MSYS, but you will get limited functionality.
+
+== A Java Runtime Envrionment (JRE) or Java Development Kit (JDK) must be available... ==
+
+There are several possible reasons for that:
+
+* You have not installed Java. Please see [[#java|???]].
+* Your &quot;path&quot; environment is messed up (Windows). Please see [[#envwin|???]]. Make sure <code>C:\windows\system32</code> is in your path (should be there by default).
+* [http://www.java.com java.com] has a button called <code>verify
+        installation</code>.
+
+== I have no binaries ==
+
+If you have no binaries folder, then one of several things may have happened:
+
+* You are not looking at the C/C++ Project view. Make sure you are in the C++ perspective and &quot;C/C++ Projects&quot; is active. An example of this situation is shown in [[#navigator|figure_title]]: Click on &quot;C/C++ Projects&quot; to fix.
+* Your program didn't compile. Check the output of the &quot;Console&quot; Window. It is either an error in your program or a configuration error. For configuration errors, check the other problems.
+* AutoBuild is turned off. Turn it on as described in [[#buildauto|???]].
+* If you do have a binaries folder, then make sure you run you program by right-clicking (on the mac: hold down ctrl and click) on the binary, and then selecting Run / Run as C/C++ Application. Just hitting the run button will only work after you have done that at least once!
+
+[[File:navigator.png|thumb|none|alt=The Navigator view instead of the C/C++ Projects view|The Navigator view instead of the C/C++ Projects view]]
+
+== Unable to access jarfile startup.jar ==
+
+This problem happens on Windows when you moved Eclipse out of its directory instead of creating a shortcut. Please move it back into the Eclipse directory, then drag'n'drop it using the right mouse button, where you can select &quot;Create Shurtcut&quot;
+
+== Problems when CYGWIN is installed on Windows ==
+
+I personally do not recommend the installation of cygwin, but rather the installation of MinGW and MSYS as described in [[#wincompiler|???]]. However, the following problems have been reported by users:
+
+=== Binaries require cygwin.dll ===
+
+Eclipse prefers to use cygwin if it is installed, and will do everything to manipulate the path to include cygwin if it is installed. Binaries will therefore by default be linked against the cygwin libraries. Possible workarounds:
+
+* add <code>-mno-cygwin</code> to your compiler settings
+* Overwrite the path variable in eclipse: In the Project Properties: C/C++ Build -&gt; Environment -&gt; User Variables -&gt; New. Select PATH, remove the cygwin directory and select Replace as Operation.
+
+== Launch failed Reason: Unable to set working directory ==
+
+Your workspace or your eclipse installation may use a path with includes spaces, such as <code>C:\Documents and
+    Settings</code>. Eclipse sometimes fails in this case. Try creating your workspace in a different directory.
+
+== Problems not covered here ==
+
+If you read the online version of this document, check out [[#introduction|???]]. You problem may be covered in a newer version of this document.
+
+If you are still having trouble, you may try and send me an email. Please be aware that I may not respond to every email, as I am doing this support mainly as a hobby. Make sure your email includes the following. Please send the complete output!
+
+* The contents of your PATH environment variable (in Windows: <code>echo %PATH%</code>. In Linux / Mac OS X: <code>echo
+        $PATH)</code>.
+* Version of GCC you're using (<code>gcc
+        --version</code>)
+* Version of Make you're using (<code>make --version</code> or <code>gmake --version</code>)
+* Version of Eclipse you're using
+* Version of the CDT you're using
+* The complete output of your &quot;Console&quot; window (at the bottom of eclipse) when your error occurs.
+* The steps you did so before the problem occurred.

@@ -1,0 +1,7 @@
+= Other Resources =
+
+When looking for Instructions, I found the following websites:
+
+* http://wiki.eclipse.org/CDT/User/FAQ
+* http://yongshin.blogspot.com/2005/11/how-to-use-cdt-and-mingw-for-eclipse.html
+* http://www.cs.umanitoba.ca/~eclipse/7-EclipseCDT.pdf

@@ -1,0 +1,32 @@
+= MSYS 1.0.11 =
+
+Unfortunately MinGW is not enough. We also need the MSYS tools from the same download page. Go there again, to the &quot;Current&quot; section and look for &quot;MSYS Base System&quot;. Again, look for the file ending in .exe, as this time: &quot;MSYS-1.0.11.exe&quot;. You may have to expand the &quot;Release Candidate&quot; section. Or you may use the link here to [http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe MSYS-1.0.11.exe]. Download it and start it. You should get a window like this:
+
+[[File:setup1.png|thumb|none|alt=MSYS install|MSYS install]]
+
+If you accept all the default options, after a while there should be a black and white window, similar to this:
+
+[[File:setup9.png|thumb|none|alt=MSYS asking for post-install|MSYS asking for post-install]]
+
+To continue the install type in y and then Enter. The next question reads like this:
+
+[[File:setupa.png|thumb|none|alt=MSYS asking for MinGW|MSYS asking for MinGW]]
+
+Which you can also answer with y Enter. The next question is a little bit more tricky:
+
+[[File:setupb.png|thumb|none|alt=MSYS asking for path to MinGW|MSYS asking for path to MinGW]]
+
+What they want to know is where you installed MinGW to and that you replace all backward slashes (\) by forward slashes (/). If you followed the instructions, the answer here will be:
+
+<pre>C:/MinGW</pre>
+Caveat: If you have not used the default paths, but instead have installed MinGW in a different location, such as <code>C:/Program Files/MinGW</code>, where the path contains spaces and / or is longer than 8 characters you may have to replace that particular path component with its DOS short pathname, such as <code>C:/PROGRA~1/mingw</code>.
+
+Caveat2: The installer may be case sensitive. Please make sure you have written MinGW in the same capitalization as during your first install, in some cases you will have to enter <code>c:/mingw</code> (note capitalization!).
+
+The very last question just asks you to press a key:
+
+[[File:setupc.png|thumb|none|alt=MSYS installing correctly|MSYS installing correctly]]
+
+Where you can press any key you like to continue. Setup will come back and ask you if you want to read a welcome note and the README file. You probably don't want either one, but it does not hurt to look. Anyways, once you hit &quot;Finish&quot; you are done with the setup. Now you have to set up your Path environment variable.
+
+[[File:setupd.png|thumb|none|alt=MSYS is done|MSYS is done]]

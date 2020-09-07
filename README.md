@@ -76,6 +76,10 @@ mvn generate-resources -DuseSimrelRepo -f build/org.eclipse.cdt.meson.docs -Preg
 mvn generate-resources -DuseSimrelRepo -f build/org.eclipse.cdt.autotools.docs -PregenHelp
 ```
 
+```
+mvn generate-resources -DuseSimrelRepo -f doc/org.eclipse.cdt.doc.user -PregenHelp
+```
+
 #### jniheaders
 
 The `jniheaders` profile can be used on the core/org.eclipse.cdt.core.native and

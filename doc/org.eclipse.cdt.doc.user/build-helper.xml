@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2018, 2020 Red Hat, Inc.
+    This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    https://www.eclipse.org/legal/epl-2.0/
+    
+    SPDX-License-Identifier: EPL-2.0
+   
+    Contributors:
+        Red Hat - initial API and implementation
+ -->
+<project name="org.eclipse.cdt.doc.user" default="all">
+    <description>
+            Generate Eclipse help content for Setting Up Eclipse CDT
+    </description>
+
+	<property name="settingup.help.doc.url.base" value="http://wiki.eclipse.org"/>
+	<property name="settingup.wiki.url.base" value="${settingup.help.doc.url.base}/CDT"/>
+	<property name="imageFolder" value="images"/>
+
+	<target name="all" description="Generate Eclipse help content for Setting Up Eclipse CDT">
+		<mediawiki-to-eclipse-help wikiBaseUrl="${settingup.help.doc.url.base}" title="Setting Up Eclipse CDT" formatoutput="true" dest="." templateExcludes="*eclipseproject*">
+
+			<path name="CDT/Setting_Up_Eclipse_CDT" title="Setting Up Eclipse CDT" generateToc="false"/>
+			<stylesheet url="book.css" />
+			<pageAppendum>
+= Updating This Document =
+				
+This document is maintained in a collaborative wiki.  If you wish to update or modify this document please visit 
+https://wiki.eclipse.org/CDT/Setting_Up_Eclipse_CDT
+            </pageAppendum>
+		</mediawiki-to-eclipse-help>
+	    <antcall target="test" />
+	</target>
+
+	<target name="test" description="verify that all of the HTML files are well-formed XML">
+		<echo level="info">
+Validating help content XML and HTML files: The Eclipse help system expects well-formed XML
+			
+If validation fails it is because either:
+			
+* the userguide source code is poorly formed, or
+* the WikiText MediaWiki parser has a bug
+			
+Problems with userguide source are usually caused by improper use of HTML markup in the MediaWiki source,
+or inadvertently starting a line with a space character (in MediaWiki this starts a preformatted block)
+		</echo>
+
+		<!-- 
+		Don't bother with DTD validation: we only care if the files are well-formed.
+		We therefore provide an empty DTD 
+		-->
+		<echo file="tmp/__empty.dtd" message="" />
+		<xmlvalidate lenient="true">
+			<fileset dir="CDT">
+				<include name="**/*.html" />
+			</fileset>
+			<dtd publicid="-//W3C//DTD XHTML 1.0 Transitional//EN" location="${basedir}/tmp/__empty.dtd" />
+		</xmlvalidate>
+		<delete dir="tmp"/>
+	</target>
+</project>

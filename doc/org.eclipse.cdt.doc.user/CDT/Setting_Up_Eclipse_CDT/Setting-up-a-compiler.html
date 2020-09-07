@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Setting Up Eclipse CDT - Setting up a compiler</title>
+		<link type="text/css" rel="stylesheet" href="../../book.css"/>
+	</head>
+	<body>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<th style="width: 100%" align="center" colspan="3">Setting up a compiler</th>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Other-Resources.html" title="Other Resources">
+						<img alt="Previous" border="0" src="../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Setting-up-Eclipse.html" title="Setting up Eclipse">
+						<img alt="Next" border="0" src="../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Other Resources</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Setting up Eclipse</td>
+			</tr>
+		</table><hr class="navigation-separator"/>
+		<h1 id="Setting_up_a_compiler">Setting up a compiler</h1>
+		<p>Unfortunately Eclipse only provides the Integrated Development Environment (IDE) but it is missing the actual compiler. To install a compiler, please follow the instructions for your operating system.</p>
+		<h2 id="Windows_compiler">Windows compiler</h2>
+		<p>Windows doesn't come with a build-in compiler. You could try to install Visual Studio, but it is tricky to get that working with Eclipse. Therefore we will install 
+			<a href="http://www.mingw.org/wiki/msys">MSYS</a>. MSYS is part of the 
+			<a href="http://www.mingw.org/">MinGW</a> suite, which provides free development tools for Windows.
+		</p>
+		<p>You will have to follow these 4 steps:</p>
+		<ul>
+			<li>Download and install MinGW</li>
+			<li>Download and install MSYS</li>
+			<li>Set your path environment variable</li>
+			<li>Restart Eclipse if it was started.</li>
+		</ul>
+		<h3 id="MinGW_.2B_MSYS">MinGW + MSYS</h3>
+		<p>First, you need to download MinGW. You can either click through the websites mentioned above or go directly to the 
+			<a href="https://sourceforge.net/projects/mingw/files/">MinGW download area</a>. Look for the Section &quot;Automated MinGW Installer&quot;, then &quot;mingw-get-inst&quot;. There, download the newest subdirectory. and in there download the file ending in .exe. The file name should be something like &quot;mingw-get-inst-20110802.exe&quot;. You can also download 
+			<a href="http://sourceforge.net/projects/mingw/files/Automated%20MinGW%20Installer/mingw-get-inst/mingw-get-inst-20110802/mingw-get-inst-20110802.exe/download">mingw-get-inst-200110802.exe</a> from the link given here.
+		</p>
+		<p>Make sure you install the program with Administrator Priviledges. Right-click on the downloaded file, and select &quot;Run as Administrator&quot;.</p>
+		<p>
+			<img alt="MinGW-Get-Inst Setup" title="MinGW-Get-Inst Setup" border="0" src="images/Setting_Up_Eclipse_CDT_mingwgetinst1.png"/>
+		</p>
+		<p>Make sure the second screen tells you that this is an Administrator install. If you don't get this screen, select &quot;Cancel&quot; and re-start as administrator.</p>
+		<p>
+			<img alt="Make sure you do an Administrator install" title="Make sure you do an Administrator install" border="0" src="images/Setting_Up_Eclipse_CDT_mingwgetinst2.png"/>
+		</p>
+		<p>The next screen asks you if you want up-to-date versions of the files. Tell the installer that you want do download the newest catalog data.</p>
+		<p>
+			<img alt="Select the latest version" title="Select the latest version" border="0" src="images/Setting_Up_Eclipse_CDT_mingwgetinst3.png"/>
+		</p>
+		<p>Next, you have to accept the License.</p>
+		<p>
+			<img alt="MinGW License" title="MinGW License" border="0" src="images/Setting_Up_Eclipse_CDT_mingwgetinst4.png"/>
+		</p>
+		<p>The following screen allows you to select a directory to install to. The default directory <code>C:\MinGW</code> is fine. You can select almost anything you like.</p>
+		<p><div class="note"></p>
+		<p>Do not select a path containing spaces! This will lead to trouble later on!</p>
+		<p></div>
+
+			<img alt="Select a path for MinGW and MSYS" title="Select a path for MinGW and MSYS" border="0" src="images/Setting_Up_Eclipse_CDT_mingwgetinst5.png"/>
+		</p>
+		<p>Next, you're asked if you want to create a start menu entry. This is a good idea for checking the install, so do it.</p>
+		<p>
+			<img alt="Create a start menu entry" title="Create a start menu entry" border="0" src="images/Setting_Up_Eclipse_CDT_mingwgetinst6.png"/>
+		</p>
+		<p>On the next screen, you again have to change things. You have to select &quot;C++Compiler&quot; and &quot;MSYS Basic System&quot;. These two are necessary to run the compiler and the build-system on Windows.</p>
+		<p>
+			<img alt="Select &amp;quot;C++ Compiler&amp;quot; and &amp;quot;MSYS Basic System&amp;quot;" title="Select &amp;quot;C++ Compiler&amp;quot; and &amp;quot;MSYS Basic System&amp;quot;" border="0" src="images/Setting_Up_Eclipse_CDT_mingwgetinst7.png"/>
+		</p>
+		<p>The next screen lets you check the installation. Make sure it looks like this screenshot.</p>
+		<p>
+			<img alt="Please check if the right options are selected" title="Please check if the right options are selected" border="0" src="images/Setting_Up_Eclipse_CDT_mingwgetinst8.png"/>
+		</p>
+		<p>After selecting &quot;Install&quot;, you have to wait for the installation process to complete.</p>
+		<p>
+			<img alt="Installer updating its catalogue files" title="Installer updating its catalogue files" border="0" src="images/Setting_Up_Eclipse_CDT_mingwgetinst9.png"/>
+		</p>
+		<p>
+			<img alt="Downloading and installing" title="Downloading and installing" border="0" src="images/Setting_Up_Eclipse_CDT_mingwgetinst10.png"/>
+		</p>
+		<p>
+			<img alt="Installation complete" title="Installation complete" border="0" src="images/Setting_Up_Eclipse_CDT_mingwgetinst11.png"/>
+		</p>
+		<p>Once the installation is complete, hit &quot;Finish&quot;.</p>
+		<p>Checkpoint: You should be able to start MSYS by going to Start / Programs / MinGW / MinGW Shell. A console window should open. There, the following commands should give you some output:</p>
+		<pre>gcc --version
+g++ --version
+make --version
+</pre>
+		<p>Close the MSYS shell again. We'll make sure that these tools are available for all Windows programs in the next section.</p>
+		<h3 id="Environment_Variables">Environment Variables</h3>
+		<p>The next thing you need to do is set up your Path environment variable.</p>
+		<p>On Windows 2000/XP, right-click on <code>My Computer</code> and select <code>Properties</code>. Then, select the <code>Advanced</code> tab. There should be a button called <code>Environment Variables</code>.</p>
+		<p>
+			<img alt="Finding Environment Variables (Windows 2000)" title="Finding Environment Variables (Windows 2000)" border="0" src="images/Setting_Up_Eclipse_CDT_systemproperties.png"/>
+		</p>
+		<p>
+			<img alt="Finding Environment Variables (Windows XP)" title="Finding Environment Variables (Windows XP)" border="0" src="images/Setting_Up_Eclipse_CDT_systempropertiesxp.png"/>
+		</p>
+		<p>In Windows Vista / Windows 7, Click on the Windows Logo, right click on Computer, select Properties</p>
+		<p>
+			<img alt="Computer properties in Windows Vista / Windows 7" title="Computer properties in Windows Vista / Windows 7" border="0" src="images/Setting_Up_Eclipse_CDT_systempropertiesw71.png"/>
+		</p>
+		<p>In the control panel, select &quot;Advances system settings&quot;</p>
+		<p>
+			<img alt="Finding the System Properties in Winows Vista / Winows 7" title="Finding the System Properties in Winows Vista / Winows 7" border="0" src="images/Setting_Up_Eclipse_CDT_systempropertiesw72.png"/>
+		</p>
+		<p>Finally, click on &quot;Environment Variables&quot;</p>
+		<p>
+			<img alt="Environment Variables in Windows Vista / Windows 7" title="Environment Variables in Windows Vista / Windows 7" border="0" src="images/Setting_Up_Eclipse_CDT_systempropertiesw73.png"/>
+		</p>
+		<p>In the environment variables, there are two sections, one for the local user (you) and one for the system. Depending on whether you want the paths to be set for everyone, or for you, do one of the following:</p>
+		<p>
+			<i>Warning: I had reports of people deleting their existing Path environment variable! Please be very careful when editing an existing value! By default, Windows has the whole line selected, resulting in overwriting what was in there!</i>
+		</p>
+		<p>If you want to set it for everyone, look for the variable <code>Path</code> in the section <code>System variables</code>. Click <code>Edit</code>. There should already be some text in there, append <code>;C:\MinGW\bin;C:\MinGW\msys\1.0\bin;</code> (or your appropriate paths, e.g. <code>;C:\msys\1.0\bin;C:\mingw\bin</code> if you installed MinGW 5 / MSys 1.0.11) to it, and select <code>OK</code> multiple times. Please make sure that you do not overwrite what was in there!</p>
+		<p>If you just want to set it for you, look for <code>Path</code> in the upper section. It is very likely not there yet. So select <code>New...</code> and enter <code>C:\MinGW\bin;C:\MinGW\msys\1.0\bin</code> (or your appropriate paths, see paragraph above). Then select <code>OK</code> multiple times. Again, if there was a setting before, do not delete it, but rather append your path!</p>
+		<p>
+			<img alt="Setting the Environment variables" title="Setting the Environment variables" border="0" src="images/Setting_Up_Eclipse_CDT_systempropertiesw74.png"/>
+		</p>
+		<p>There seems to be a problem with a very long PATH environment variable on some systems. According to reports, Eclipse will fail to compile and build, where as compiling and building from a command window may work fine. In this case, try to prepend the path to MinGW and MSYS rather than appending it.</p>
+		<p>Congratulations. Now you have a complier and make set up on your computer. Continue with 
+			<a href="Setting-up-Eclipse.html#Setting_up_Eclipse">Setting up Eclipse</a>.
+		</p>
+		<p>Checkpoint: Open up a command terminal (cmd) and type:</p>
+		<pre>make --version
+g++ --version
+gcc --version
+</pre>
+		<p>Each one of these should work now. If not, you have either not installed MSYS correctly or not set your path environment variable. Also, try logging out and back in.</p>
+		<h2 id="Linux_.2F_Unix_Compiler">Linux / Unix Compiler</h2>
+		<p>In most Linux and Unix distributions the compiler is already installed. Check if you can run</p>
+		<pre>g++ --version
+</pre>
+		<p>and either</p>
+		<pre>make --version
+</pre>
+		<p>or</p>
+		<pre>gmake --version
+</pre>
+		<p>If both of them (<code>g++</code> and either <code>make</code> or <code>gmake</code>) work then you are already done. If not, please install those. This may be very different depending on which Linux or Unix distribution you have. Install the tools and continue with 
+			<a href="Setting-up-Eclipse.html#Setting_up_Eclipse">Setting up Eclipse</a>.
+		</p>
+		<h2 id="Mac_OS_X_Compiler">Mac OS X Compiler</h2>
+		<p>On Mac OS X you can also try the commands explained in 
+			<a href="#Linux_.2F_Unix_Compiler">Linux / Unix Compiler</a> to check if you have the necessary tools installed. If not, you will need to install the developer tools
+		</p>
+		<h3 id="Mac_OS_X_up_to_Snow_Leopard_.2810.6.29">Mac OS X up to Snow Leopard (10.6)</h3>
+		<p>The developer tools are either on one of your Mac OS X CDs that came with your computer, or you can download them at: 
+			<a href="https://developer.apple.com/">Apple's developer connection</a>.
+		</p>
+		<h3 id="Mac_OS_X_Lion_.2810.7.29_and_Newer">Mac OS X Lion (10.7) and Newer</h3>
+		<p>To get the compiler, you have to install developer tools (Xcode) from the App Store. After downloading, you have to run the installer to actually install the developer tools.</p>
+		<p><div class="note"></p>
+		<p>If you have upgraded to Lion from an older version of OS X, you have to redo both of these steps (download + install). Upgrading to Lion breaks your existing developer tools. Again: You have to do this after an upgrade to Lion, even if you have previously installed the developer tools!</p>
+		<p></div>
+
+			<img alt="Find XCode in App Store" title="Find XCode in App Store" border="0" src="images/Setting_Up_Eclipse_CDT_xcode1.png"/>
+		</p>
+		<p>After you've downloaded developer tools (Xcode), you have to go to your Applications folder and run the installer.</p>
+		<p>
+			<img alt="Run the Xcode installer from Applications" title="Run the Xcode installer from Applications" border="0" src="images/Setting_Up_Eclipse_CDT_xcode2.png"/>
+		</p>
+		<p>During the install, you may encounter the following error messages:</p>
+		<dl>
+			<dt>In order to continue installation, please close the following application: iTunes</dt>
+			<dd>You may need to do two things:
+				<ol>
+					<li>Close iTunes, see if that helped.</li>
+					<li>In a Terminal window, type: <code>killall iTunesHelper</code></li>
+				</ol>
+			</dd>
+			<dt>No matching processes belonging to you were found</dt>
+			<dd>This can happen if your Unix username contains a space. The workaround is to create an admin user to be used during the installation.
+				<ol>
+					<li>Open system preferences, go to &quot;Users and groups&quot;</li>
+					<li>Unlock the user preferences, type in you password</li>
+					<li>Click on &quot;+&quot; to create a new user
+						<ul>
+							<li>For &quot;New account&quot; select &quot;Administrator&quot;</li>
+							<li>For fullname and account name enter something in all lower cases without spaces, e.g. &quot;admin&quot;.</li>
+							<li>In der Dropdownmenu for &quot;new account&quot; change &quot;Standard&quot; to &quot;Administrator&quot;.</li>
+							<li>Log out, and log back in as your new admin user.</li>
+							<li>Try installing again.</li>
+							<li>Log out, log back in as your normal user</li>
+							<li>Delete the admin user (System preferences, Users and Groups, unlock, select the admin user, click on &quot;-&quot;)</li>
+						</ul>
+					</li>
+				</ol>
+			</dd>
+		</dl>
+		<p>After Xcode has finished installing, you can open up a terminal (Applications / Utilities / Terminal) and check if g++, gcc and make are working:</p>
+		<pre>gcc --version
+g++ --version
+make --version
+</pre><hr class="navigation-separator"/>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Other-Resources.html" title="Other Resources">
+						<img alt="Previous" border="0" src="../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center">
+					<a href="Setting-Up-Eclipse-CDT.html" title="Setting Up Eclipse CDT">
+						<img alt="Setting Up Eclipse CDT" border="0" src="../../images/home.gif"/>
+					</a>
+				</td>
+				<td style="width: 20%" align="right">
+					<a href="Setting-up-Eclipse.html" title="Setting up Eclipse">
+						<img alt="Next" border="0" src="../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Other Resources</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Setting up Eclipse</td>
+			</tr>
+		</table>
+	</body>
+</html>

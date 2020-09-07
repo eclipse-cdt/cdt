@@ -1,0 +1,3 @@
+= Feedback =
+
+Do you have any comments how this document could be improved? Email the author. I'll be happy to make any changes that make the setup of the Eclipse CDT easier, or include information that is missing in this paper.

@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="US-ASCII"?>
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:lang="en-US" xml:id="compiler">
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="compiler">
   <title>Setting up a compiler</title>
   <para>Unfortunately Eclipse only provides the Integrated Development
     Environment (IDE) but it is missing the actual compiler. To install a
     compiler, please follow the instructions for your operating system.</para>
-  <section xml:id="wincompiler">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="wincompiler">
     <title>Windows compiler</title>
     <para>Windows doesn't come with a build-in compiler. You could try to
       install Visual Studio, but it is tricky to get that working with
@@ -29,7 +29,7 @@
     <xi:include href="mingwgetinst.xml"/>
     <xi:include href="envwin.xml"/>
   </section>
-  <section xml:id="linux">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="linux">
     <title>Linux / Unix Compiler</title>
     <para>In most Linux and Unix distributions the compiler is already
       installed. Check if you can run</para>
@@ -44,5 +44,123 @@
       depending on which Linux or Unix distribution you have. Install the
       tools and continue with <xref linkend="eclipse"/>.</para>
   </section>
-  <xi:include href="macosx.xml"/>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="macosx">
+  <title>Mac OS X Compiler</title>
+  <para>On Mac OS X you can also try the commands explained in <xref linkend="linux"/> to check if you have the necessary tools installed. If
+  not, you will need to install the developer tools</para>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="up_to_snow_leopard">
+    <title>Mac OS X up to Snow Leopard (10.6)</title>
+    <para>The developer tools are either on one of your Mac OS X CDs that came
+    with your computer, or you can download them at: <link xlink:href="https://developer.apple.com/">Apple's developer
+    connection</link>.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="lion_and_newer">
+    <title>Mac OS X Lion (10.7) and Newer</title>
+    <para>To get the compiler, you have to install developer tools (Xcode)
+    from the App Store. After downloading, you have to run the installer to
+    actually install the developer tools.</para>
+    <note>
+      <para>If you have upgraded to Lion from an older version of OS X, you
+      have to redo both of these steps (download + install). Upgrading to Lion
+      breaks your existing developer tools. Again: You have to do this after
+      an upgrade to Lion, even if you have previously installed the developer
+      tools!</para>
+    </note>
+    <figure xml:id="xcodeappstore">
+      <title>Find XCode in App Store</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="xcode1.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>After you've downloaded developer tools (Xcode), you have to go to
+    your Applications folder and run the installer.</para>
+    <figure xml:id="runxcode">
+      <title>Run the Xcode installer from Applications</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="xcode2.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>During the install, you may encounter the following error
+    messages:</para>
+    <variablelist>
+      <varlistentry>
+        <term>In order to continue installation, please close the following
+        application: iTunes</term>
+        <listitem>
+          <para>You may need to do two things:</para>
+          <orderedlist>
+            <listitem>
+              <para>Close iTunes, see if that helped.</para>
+            </listitem>
+            <listitem>
+              <para>In a Terminal window, type: <command>killall
+              iTunesHelper</command></para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>No matching processes belonging to you were found</term>
+        <listitem>
+          <para>This can happen if your Unix username contains a space. The
+          workaround is to create an admin user to be used during the
+          installation.</para>
+          <orderedlist>
+            <listitem>
+              <para>Open system preferences, go to "Users and groups"</para>
+            </listitem>
+            <listitem>
+              <para>Unlock the user preferences, type in you password</para>
+            </listitem>
+            <listitem>
+              <para>Click on "+" to create a new user</para>
+              <itemizedlist>
+                <listitem>
+                  <para>For "New account" select "Administrator"</para>
+                </listitem>
+                <listitem>
+                  <para>For fullname and account name enter something in all
+                  lower cases without spaces, e.g. "admin".</para>
+                </listitem>
+                <listitem>
+                  <para>In der Dropdownmenu for "new account" change
+                  "Standard" to "Administrator".</para>
+                </listitem>
+                <listitem>
+                  <para>Log out, and log back in as your new admin
+                  user.</para>
+                </listitem>
+                <listitem>
+                  <para>Try installing again.</para>
+                </listitem>
+                <listitem>
+                  <para>Log out, log back in as your normal user</para>
+                </listitem>
+                <listitem>
+                  <para>Delete the admin user (System preferences, Users and
+                  Groups, unlock, select the admin user, click on "-")</para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <para>After Xcode has finished installing, you can open up a terminal
+    (Applications / Utilities / Terminal) and check if g++, gcc and make are
+    working:</para>
+    <programlisting>gcc --version
+g++ --version
+make --version</programlisting>
+  </section>
+</section>
 </section>

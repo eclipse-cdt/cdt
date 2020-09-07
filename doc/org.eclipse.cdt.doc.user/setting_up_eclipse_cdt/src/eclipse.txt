@@ -1,0 +1,146 @@
+= Setting up Eclipse =
+
+On Windows XP and later, this may be a good point in time to create a system restore point. This may safe you trouble in the long run if the installation fails.
+
+== Java ==
+
+Eclipse was originally written for the Java platform. It still requires a Java Runtime Environment (JRE) or a Java Development Kit (JDK), version 1.5 or greater. You will most probably already have Java installed (it comes included in Mac OS X until 10.6 and will be auto-installed in Mac OS X 10.7 / Lion). However, if you don't have Java installed, and you are on Windows or Linux, you can download a JRE from [http://java.sun.com/javase/ Sun's Java website] or from [http://www.java.com java.com]. At the time of this writing the latest version was [http://java.sun.com/javase/downloads/index.jsp Java Runtime Environment (JRE) 7]. Look for the section called &quot;Java SE Runtime Environment (JRE)&quot; and select &quot;JRE 7&quot; (or similar). You will not need NetBeans, JDK, or EE, they are just larger downloads with more programs. You may need the JDK if you want to do Java development.
+
+Note: There may be an [http://blog.max.berger.name/2010/07/eclipse-helios-and-java-16u21-deadlocks.html incompatibility between Eclipse Helios and Java 1.6 update 21].
+
+To find out if you have Java installed, and which version it is, you can open a command prompt / shell and type in:
+
+<pre>java -version</pre>
+== Downloading Eclipse ==
+
+Eclipse is a modular software, but ever summer there are bundled released. The link is:
+
+* http://www.eclipse.org/downloads/
+
+I recommend the complete &quot;Eclipse IDE for C/C++ Developers&quot; bundle, which already contains the CDT. If you download a different bundle, you will probably have to install the CDT manually, as described in [[#installingcdt|Installing the CDT]].
+
+The file is about 86 MB in size, so it will take a while to download. You will end up with a .ZIP file. Use either [http://www.filzip.com/ FilZip] or your favorite ZIP Program (Windows XP/Vista/7 and Mac OS X have .ZIP support build in) to unpack the file. Move the unpacked folder to any location, for example <code>C:\Program Files\eclipse</code>. You can now start Eclipse by double-clicking it.
+
+[[File:eclipseDir.png|thumb|none|alt=Eclipse installed into C:\Program Files\eclipse|Eclipse installed into C:\Program Files\eclipse]]
+
+== First Run of Eclipse ==
+
+However you installed eclipse, you should now be able to run it. Double-click the icon or start the appropriate script in UNIX and Eclipse's splash-screen will appear:
+
+[[File:splash37.png|thumb|none|alt=Eclipse splash screen|Eclipse splash screen]]
+
+Immediately after that Eclipse will ask you for your workspace location. It defaults to a place within your personal settings. It is a good idea to use the default workspace, you may want to note where it is located.
+
+[[File:workspace.png|thumb|none|alt=Eclipse asking for workspace|Eclipse asking for workspace]]
+
+If you always want to use the same workspace, you may select the <code>Use this as the default...</code> and you'll never have to worry about workspaces again. This is usually a good idea once you've used Eclipse for a while. Finally Eclipse starts up with the welcome screen:
+
+[[File:welcome.png|thumb|none|alt=Eclipse welcome screen|Eclipse welcome screen]]
+
+And if you select the &quot;Go to the workbench&quot; (the backward arrow) on the right, then you are inside Eclipse.
+
+If you downloaded the &quot;Eclipse IDE for C/C++ Developers&quot; you can skip the next section and go straight to [[#configuring|Configuring the CDT]].
+
+If you have downloaded a different package, there are additional tools needed to start programming. We want to develop in C++, so we will continue with the next section.
+
+== Installing the CDT ==
+
+<div class="note">
+
+This is only required if you did not download the CDT version as described above. Please check if you are able to create a new C++ project (as described in [[#helloworld|Hello, World!]]) before going through this section!
+
+
+</div>
+<div class="note">
+
+This section described the current (3.5, 3.6, and 3.7) version of Eclipse. For the previous version (3.4) Please see [[#installingcdt|Installing the CDT]]).
+
+
+</div>
+In the &quot;Help&quot; menu select &quot;Install New Software...&quot;
+
+[[File:softwareupdatemenu35.png|thumb|none|alt=Select Install New Software... from the help menu|Select Install New Software... from the help menu]]
+
+This will show you the list of available software update sites. CDT is part of the standard release, so you can select an update site matching your eclipse version.
+
+Please note: It is important to install the right Version of CDT for your version of eclipse:
+
+* For Eclipse 3.7 (Indigo): Use <code>http://download.eclipse.org/tools/cdt/releases/indigo</code>
+* For Eclipse 3.6 (Helios): Use <code>http://download.eclipse.org/tools/cdt/releases/helios</code>
+* For Eclipse 3.5 (Galileo): Use <code>http://download.eclipse.org/tools/cdt/releases/galileo</code>
+
+[[File:softwareupdateadd35.png|thumb|none|alt=Available Software Update page with Add... opened|Available Software Update page with Add... opened]]
+
+When you have found the CDT site, it will give you two entries: CDT Main Features and CDT Optional Features. Expand both, and find the latest version of the CDT. Make sure you select at least the following:
+
+* C/C++ Development Tools
+* C/C++ GNU Toolchain Build Support
+* C/C++ GNU Toolchain Debug Support
+* C/C++ Development Platform
+
+Do not select all items! Some of these require dependencies from other projects, which may not be installed and thus fail to install. Select only the features you need!
+
+[[File:softwareupdatecdt35.png|thumb|none|alt=Select CDT from the Update Site|Select CDT from the Update Site]]
+
+The select &quot;Next...&quot;
+
+You will have to confirm the selection with &quot;Next&quot;.
+
+And accept the license agreement with &quot;Finish&quot;.
+
+Downloading and installing will take a while. Once its done it will ask you to restart Eclipse. This is a good idea, so select &quot;Yes&quot;.
+
+[[File:eclipsesu6.png|thumb|none|alt=Restarting the workbench|Restarting the workbench]]
+
+Once Eclipse has restarted you may need to configure it for your computer.
+
+== Configuring the CDT ==
+
+Fortunately, this is very easy. If your path is set correctly, there should be absolutely nothing you need to configure. This is true if you followed these instructions for Windows or Mac OS X.
+
+On some Unix systems you might have to change your &quot;make&quot; program to &quot;gmake&quot;. You will find the setting in Window / Preferences (Eclipse / Preferences on Mac OS X). Then expand &quot;C / C++&quot;, then &quot;New CDT Project Wizard&quot;, &quot;Makefile Project&quot; and select &quot;Builder Settings&quot;. In the section &quot;builder&quot;, de-select &quot;use default build command&quot; and for &quot;Build command&quot; enter &quot;gmake&quot;.
+
+== Hello, World! ==
+
+Once you are in Eclipse, you are given an empty workspace. You now have to start a new project. To do so, select &quot;File&quot; / &quot;New&quot; / &quot;Project...&quot;. Expand the section &quot;C++&quot; and select &quot;C++ Project&quot;, then click &quot;Next &gt;&quot;.
+
+[[File:newcppproject.png|thumb|none|alt=New Project screen|New Project screen]]
+
+On the next screen, you have to give your project a name. In this case, it will be &quot;HelloWorld&quot;, however, you may use any name you like. Also, you have to select a toolchain.
+
+* For Windows, select &quot;MinGW GCC&quot;
+* For Linux, select &quot;Linux GCC&quot;
+* For Mac OS X, select &quot;MacOSX GCC&quot;
+* Do not use &quot;Cross GCC&quot;! Unfortunately this option may be selected by default if you create an empty project!
+
+Click &quot;Next&quot;.
+
+[[File:newcppproject2.png|thumb|none|alt=New Project Name|New Project Name]]
+
+The next screen contains some Basic settings. Fill in what you like:
+
+[[File:newcppproject3.png|thumb|none|alt=Basic Settings|Basic Settings]]
+
+In the last setting you can chose output formats, it is always good to have a release and a debug configuration. Click &quot;Finish&quot;.
+
+[[File:newcppproject4.png|thumb|none|alt=New Project Platforms|New Project Platforms]]
+
+Eclipse will now generate a few things, and then ask you if you want to switch to the C/C++ Perspective. This is a good idea, so say yes.
+
+[[File:perspective.png|thumb|none|alt=Perspective Switch|Perspective Switch]]
+
+Great. You have a project now, and it does contain some sample code! You will immediately get an editor window for your project. Eclipse will also auto-build your project every time you save.
+
+If eclipse does not auto-build, you have to turn on &quot;build automatically&quot; in the Project Menu, or click the &quot;Build All&quot; button after every change.
+
+[[File:autobuild.png|thumb|none|alt=Make sure &quot;Build Automatically&quot; is enabled|Make sure &quot;Build Automatically&quot; is enabled]]
+
+[[File:build.png|thumb|none|alt=If you turn off autobuild, you have to click the &quot;build&quot; button on the toolbar|If you turn off autobuild, you have to click the &quot;build&quot; button on the toolbar]]
+
+[[File:helloworld.png|thumb|none|alt=Example Hello World application|Example Hello World application]]
+
+Now here comes the tricky part: On the left pane, select &quot;C/C++ Projects&quot;, expand &quot;Binaries&quot; and you should see and executable (HelloWorld.exe on Windows). Now right-click that executable, and select &quot;Run&quot; / &quot;Run Local C/C++ Application&quot;. If everything goes well your output will be in the bottom right window in the &quot;Console&quot; tab and it should say &quot;Hello, World&quot;.
+
+[[File:helloout.png|thumb|none|alt=Running the example Hello World application|Running the example Hello World application]]
+
+Congratulations! You have successfully installed a compiler, a build system and an IDE. You have successfully created, edited, compiled and run a project. You should now be able to start your own projects!

@@ -1,0 +1,58 @@
+= MinGW + MSYS =
+
+First, you need to download MinGW. You can either click through the websites mentioned above or go directly to the [https://sourceforge.net/projects/mingw/files/ MinGW download area]. Look for the Section &quot;Automated MinGW Installer&quot;, then &quot;mingw-get-inst&quot;. There, download the newest subdirectory. and in there download the file ending in .exe. The file name should be something like &quot;mingw-get-inst-20110802.exe&quot;. You can also download [http://sourceforge.net/projects/mingw/files/Automated%20MinGW%20Installer/mingw-get-inst/mingw-get-inst-20110802/mingw-get-inst-20110802.exe/download mingw-get-inst-200110802.exe] from the link given here.
+
+Make sure you install the program with Administrator Priviledges. Right-click on the downloaded file, and select &quot;Run as Administrator&quot;.
+
+[[File:mingwgetinst1.png|thumb|none|alt=MinGW-Get-Inst Setup|MinGW-Get-Inst Setup]]
+
+Make sure the second screen tells you that this is an Administrator install. If you don't get this screen, select &quot;Cancel&quot; and re-start as administrator.
+
+[[File:mingwgetinst2.png|thumb|none|alt=Make sure you do an Administrator install|Make sure you do an Administrator install]]
+
+The next screen asks you if you want up-to-date versions of the files. Tell the installer that you want do download the newest catalog data.
+
+[[File:mingwgetinst3.png|thumb|none|alt=Select the latest version|Select the latest version]]
+
+Next, you have to accept the License.
+
+[[File:mingwgetinst4.png|thumb|none|alt=MinGW License|MinGW License]]
+
+The following screen allows you to select a directory to install to. The default directory <code>C:\MinGW</code> is fine. You can select almost anything you like.
+
+<div class="note">
+
+Do not select a path containing spaces! This will lead to trouble later on!
+
+
+</div>
+[[File:mingwgetinst5.png|thumb|none|alt=Select a path for MinGW and MSYS|Select a path for MinGW and MSYS]]
+
+Next, you're asked if you want to create a start menu entry. This is a good idea for checking the install, so do it.
+
+[[File:mingwgetinst6.png|thumb|none|alt=Create a start menu entry|Create a start menu entry]]
+
+On the next screen, you again have to change things. You have to select &quot;C++Compiler&quot; and &quot;MSYS Basic System&quot;. These two are necessary to run the compiler and the build-system on Windows.
+
+[[File:mingwgetinst7.png|thumb|none|alt=Select &quot;C++ Compiler&quot; and &quot;MSYS Basic System&quot;|Select &quot;C++ Compiler&quot; and &quot;MSYS Basic System&quot;]]
+
+The next screen lets you check the installation. Make sure it looks like this screenshot.
+
+[[File:mingwgetinst8.png|thumb|none|alt=Please check if the right options are selected|Please check if the right options are selected]]
+
+After selecting &quot;Install&quot;, you have to wait for the installation process to complete.
+
+[[File:mingwgetinst9.png|thumb|none|alt=Installer updating its catalogue files|Installer updating its catalogue files]]
+
+[[File:mingwgetinst10.png|thumb|none|alt=Downloading and installing|Downloading and installing]]
+
+[[File:mingwgetinst11.png|thumb|none|alt=Installation complete|Installation complete]]
+
+Once the installation is complete, hit &quot;Finish&quot;.
+
+Checkpoint: You should be able to start MSYS by going to Start / Programs / MinGW / MinGW Shell. A console window should open. There, the following commands should give you some output:
+
+<pre>gcc --version
+g++ --version
+make --version</pre>
+Close the MSYS shell again. We'll make sure that these tools are available for all Windows programs in the next section.

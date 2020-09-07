@@ -11,7 +11,7 @@
    <extension
          point="org.eclipse.help.toc">
       <toc
-            file="toc.xml"
+            file="main.xml"
             primary="true">
       </toc>
       <index path="index"/>

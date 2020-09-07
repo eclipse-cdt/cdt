@@ -1,0 +1,44 @@
+= Environment Variables =
+
+The next thing you need to do is set up your Path environment variable.
+
+On Windows 2000/XP, right-click on <code>My
+  Computer</code> and select <code>Properties</code>. Then, select the <code>Advanced</code> tab. There should be a button called <code>Environment Variables</code>.
+
+[[File:systemproperties.png|thumb|none|alt=Finding Environment Variables (Windows 2000)|Finding Environment Variables (Windows 2000)]]
+
+[[File:systempropertiesxp.png|thumb|none|alt=Finding Environment Variables (Windows XP)|Finding Environment Variables (Windows XP)]]
+
+In Windows Vista / Windows 7, Click on the Windows Logo, right click on Computer, select Properties
+
+[[File:systempropertiesw71.png|thumb|none|alt=Computer properties in Windows Vista / Windows 7|Computer properties in Windows Vista / Windows 7]]
+
+In the control panel, select &quot;Advances system settings&quot;
+
+[[File:systempropertiesw72.png|thumb|none|alt=Finding the System Properties in Winows Vista / Winows 7|Finding the System Properties in Winows Vista / Winows 7]]
+
+Finally, click on &quot;Environment Variables&quot;
+
+[[File:systempropertiesw73.png|thumb|none|alt=Environment Variables in Windows Vista / Windows 7|Environment Variables in Windows Vista / Windows 7]]
+
+In the environment variables, there are two sections, one for the local user (you) and one for the system. Depending on whether you want the paths to be set for everyone, or for you, do one of the following:
+
+''Warning: I had reports of people deleting their existing Path environment variable! Please be very careful when editing an existing value! By default, Windows has the whole line selected, resulting in overwriting what was in there!''
+
+If you want to set it for everyone, look for the variable <code>Path</code> in the section <code>System
+  variables</code>. Click <code>Edit</code>. There should already be some text in there, append <code>;C:\MinGW\bin;C:\MinGW\msys\1.0\bin;</code> (or your appropriate paths, e.g. <code>;C:\msys\1.0\bin;C:\mingw\bin</code> if you installed MinGW 5 / MSys 1.0.11) to it, and select <code>OK</code> multiple times. Please make sure that you do not overwrite what was in there!
+
+If you just want to set it for you, look for <code>Path</code> in the upper section. It is very likely not there yet. So select <code>New...</code> and enter <code>C:\MinGW\bin;C:\MinGW\msys\1.0\bin</code> (or your appropriate paths, see paragraph above). Then select <code>OK</code> multiple times. Again, if there was a setting before, do not delete it, but rather append your path!
+
+[[File:systempropertiesw74.png|thumb|none|alt=Setting the Environment variables|Setting the Environment variables]]
+
+There seems to be a problem with a very long PATH environment variable on some systems. According to reports, Eclipse will fail to compile and build, where as compiling and building from a command window may work fine. In this case, try to prepend the path to MinGW and MSYS rather than appending it.
+
+Congratulations. Now you have a complier and make set up on your computer. Continue with [[#eclipse|???]].
+
+Checkpoint: Open up a command terminal (cmd) and type:
+
+<pre>make --version
+g++ --version
+gcc --version</pre>
+Each one of these should work now. If not, you have either not installed MSYS correctly or not set your path environment variable. Also, try logging out and back in.

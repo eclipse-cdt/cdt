@@ -1,11 +1,1947 @@
-<?xml version="1.0" encoding="US-ASCII"?>
-<article xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:lang="en-US" xml:id="cdt">
-  <xi:include href="info.xml"/>
-  <xi:include href="introduction.xml"/>
-  <xi:include href="other.xml"/>
-  <xi:include href="compiler.xml"/>
-  <xi:include href="eclipse.xml"/>
-  <xi:include href="problems.xml"/>
-  <xi:include href="older.xml"/>
-  <xi:include href="feedback.xml"/>
+
+<article xml:id="cdt">
+
+<info xml:id="info">
+  <title>Setting up Eclipse CDT</title>
+  <subtitle>On Windows, Linux/Unix, OS X</subtitle>
+  <author>
+    <personname>
+      <firstname>Max</firstname>
+      <surname>Berger</surname>
+    </personname>
+    <email>max@berger.name</email>
+  </author>
+  <copyright>
+    <year>2005</year>
+    <year>2006</year>
+    <year>2007</year>
+    <year>2008</year>
+    <year>2009</year>
+    <year>2010</year>
+    <year>2011</year>
+    <year>2012</year>
+    <year>2013</year>
+    <year>2014</year>
+    <holder>Max Berger</holder>
+  </copyright>
+  <legalnotice xml:id="legalnotice">
+    <para>This howto has been avaiable under different versions at different times.</para>
+    <para>This document is licensed under the Eclipse Public License - v2.0 (EPL v2.0), or any later version. 
+    Please see https://www.eclipse.org/legal/epl-2.0/ for details.
+    </para>
+    <para>Versions between August 2011 and December 2019 where proprietary. They are not be copied, distributed, published, or larger
+    parts being cited without the consent of the author. Small excerpts may be cited if proper attribution including a link to the authors website is given. All rights
+    reserved.</para>
+    <para>Previous versions of this document (prior to August 2011) where
+    published under the GNU Free Documentation License (GFDL), Version 1.2.
+    Please refer to the appropriate document version should you want to chose
+    that license. Please note that the GFDL does not apply to newer versions,
+    e.g. this version of the document!</para>
+  </legalnotice>
+</info>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="introduction">
+  <title>Introduction</title>
+  <para>There are several freely available C and C++ development environments.
+  Most of them have the disadvantage that they require one particular
+  operating system. The Eclipse IDE was written as a cross-platform
+  development environment. Initially just written for Java, it also has a very
+  good C/C++ development mode.</para>
+  <para>If you have already tried (and I assume failed, otherwise you wouldn't
+  be reading this document) to install Eclipse CDT, you may want to go
+  directly to <xref linkend="problems"/>.</para>
+  <para>This document describes how to install everything necessary to develop
+  with C or C++ using only free tools on the three major operating systems
+  Windows, Linux, and Mac OS X. It uses the Eclipse IDE, which is the same on
+  all operating systems, thus providing a consistent user experience once
+  installed.</para>
+  <para>There are two versions of this document:</para>
+  <variablelist>
+    <varlistentry>
+      <term>The free online version</term>
+      <listitem>
+        <para>The <link xlink:href="http://max.berger.name/howto/cdt">free
+        version of Setting up Eclipse CDT on Windows, Linux/Unix, Mac OS
+        X</link> can be found on <link xlink:href="http://max.berger.name/">Max Bergers website</link>. It
+        will always be the previous major revision of the document.</para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term>A paid eBook version</term>
+      <listitem>
+        <para>The eBook version of Setting up Eclipse CDT on Windows,
+        Linux/Unix, Mac OS X is distributed through Amazon.com, Amazon.co.uk,
+        and Amazon.de. It will always be the current major revision of the
+        document.</para>
+        <itemizedlist>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.com/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=maxbergername-20">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.com</link>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.co.uk/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=httpmaxberg02-21">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.co.uk</link>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.de/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=httpmaxberger-21">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.de</link>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.fr/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=httpmaxberg06-21">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.fr</link>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.it/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=httpmaxberg08-21">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.it</link>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.es/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=maxbergername-21">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.es</link>
+            </para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </varlistentry>
+  </variablelist>
+  <para>At this time, the eBook version contains updates for the following
+  items which are not yet in the free version:</para>
+  <itemizedlist>
+    <listitem>
+      <para>There are no updates in the ebook version at this time.</para>
+    </listitem>
+  </itemizedlist>
+  <para>Screenshots may still reflect older versions of the used software,
+  they are only updated if there is a significant change.</para>
+</section>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"   xml:id="other_resources">
+  <title>Other Resources</title>
+  <para>When looking for Instructions, I found the following
+    websites:</para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <link xlink:href="http://wiki.eclipse.org/CDT/User/FAQ"/>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link xlink:href="http://yongshin.blogspot.com/2005/11/how-to-use-cdt-and-mingw-for-eclipse.html"/>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link xlink:href="http://www.cs.umanitoba.ca/~eclipse/7-EclipseCDT.pdf"/>
+      </para>
+    </listitem>
+  </itemizedlist>
+</section>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="compiler">
+  <title>Setting up a compiler</title>
+  <para>Unfortunately Eclipse only provides the Integrated Development
+    Environment (IDE) but it is missing the actual compiler. To install a
+    compiler, please follow the instructions for your operating system.</para>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="wincompiler">
+    <title>Windows compiler</title>
+    <para>Windows doesn't come with a build-in compiler. You could try to
+      install Visual Studio, but it is tricky to get that working with
+      Eclipse. Therefore we will install <link xlink:href="http://www.mingw.org/wiki/msys">MSYS</link>. MSYS is part of
+      the <link xlink:href="http://www.mingw.org/">MinGW</link> suite, which
+      provides free development tools for Windows.</para>
+    <para>You will have to follow these 4 steps:</para>
+    <itemizedlist>
+      <listitem>
+        <para>Download and install MinGW</para>
+      </listitem>
+      <listitem>
+        <para>Download and install MSYS</para>
+      </listitem>
+      <listitem>
+        <para>Set your path environment variable</para>
+      </listitem>
+      <listitem>
+        <para>Restart Eclipse if it was started.</para>
+      </listitem>
+    </itemizedlist>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0" xml:id="mingw_plus_msys">
+  <title>MinGW + MSYS</title>
+  <para>First, you need to download MinGW. You can either click through the
+  websites mentioned above or go directly to the <link xlink:href="https://sourceforge.net/projects/mingw/files/">MinGW download
+  area</link>. Look for the Section "Automated MinGW Installer", then
+  "mingw-get-inst". There, download the newest subdirectory. and in there
+  download the file ending in .exe. The file name should be something like
+  "mingw-get-inst-20110802.exe". You can also download <link xlink:href="http://sourceforge.net/projects/mingw/files/Automated%20MinGW%20Installer/mingw-get-inst/mingw-get-inst-20110802/mingw-get-inst-20110802.exe/download">mingw-get-inst-200110802.exe</link>
+  from the link given here.</para>
+  <para>Make sure you install the program with Administrator Priviledges.
+  Right-click on the downloaded file, and select "Run as
+  Administrator".</para>
+  <figure xml:id="mingwgetinst1">
+    <title>MinGW-Get-Inst Setup</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_mingwgetinst1.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>Make sure the second screen tells you that this is an Administrator
+  install. If you don't get this screen, select "Cancel" and re-start as
+  administrator.</para>
+  <figure xml:id="mingwgetinst2">
+    <title>Make sure you do an Administrator install</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_mingwgetinst2.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>The next screen asks you if you want up-to-date versions of the files.
+  Tell the installer that you want do download the newest catalog data.</para>
+  <figure xml:id="mingwgetinst3">
+    <title>Select the latest version</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_mingwgetinst3.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+    <para>Next, you have to accept the License.</para>
+    <figure xml:id="mingwgetinstlicense">
+      <title>MinGW License</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_mingwgetinst4.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+      <para>The following screen allows you to select a directory to install
+      to. The default directory <computeroutput>C:\MinGW</computeroutput> is
+      fine. You can select almost anything you like.</para>
+      <note>
+        <para>Do not select a path containing spaces! This will lead to
+        trouble later on!</para>
+      </note>
+      <figure xml:id="mingwgetinstpath">
+        <title>Select a path for MinGW and MSYS</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_mingwgetinst5.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+    </figure>
+    <para>Next, you're asked if you want to create a start menu entry. This is
+    a good idea for checking the install, so do it.</para>
+    <figure xml:id="mingwgetinstmenu">
+      <title>Create a start menu entry</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_mingwgetinst6.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+      <para>On the next screen, you again have to change things. You have to
+      select "C++Compiler" and "MSYS Basic System". These two are necessary to
+      run the compiler and the build-system on Windows.</para>
+      <figure xml:id="mingwgetinstselect">
+        <title>Select "C++ Compiler" and "MSYS Basic System"</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_mingwgetinst7.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+    </figure>
+    <para>The next screen lets you check the installation. Make sure it looks
+    like this screenshot.</para>
+    <figure xml:id="mingwgetinstconfirm">
+      <title>Please check if the right options are selected</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_mingwgetinst8.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+  </figure>
+  <para>After selecting "Install", you have to wait for the installation
+  process to complete.</para>
+  <figure xml:id="mingwgetinstcatalogue">
+    <title>Installer updating its catalogue files</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_mingwgetinst9.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <figure xml:id="mingwgetinstdownload">
+    <title>Downloading and installing</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_mingwgetinst10.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <figure xml:id="mingwgetinstcomplete">
+    <title>Installation complete</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_mingwgetinst11.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+    <para>Once the installation is complete, hit "Finish".</para>
+  </figure>
+  <para>Checkpoint: You should be able to start MSYS by going to Start /
+  Programs / MinGW / MinGW Shell. A console window should open. There, the
+  following commands should give you some output:</para>
+  <programlisting>gcc --version
+g++ --version
+make --version</programlisting>
+  <para>Close the MSYS shell again. We'll make sure that these tools are
+  available for all Windows programs in the next section.</para>
+</section>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="envwin">
+  <title>Environment Variables</title>
+  <para>The next thing you need to do is set up your Path environment
+  variable. </para>
+  <para>On Windows 2000/XP, right-click on <computeroutput>My
+  Computer</computeroutput> and select
+  <computeroutput>Properties</computeroutput>. Then, select the
+  <computeroutput>Advanced</computeroutput> tab. There should be a button
+  called <computeroutput>Environment Variables</computeroutput>.</para>
+  <figure xml:id="systemproperties2k">
+    <title>Finding Environment Variables (Windows 2000)</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_systemproperties.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <figure xml:id="systempropertiesxp">
+    <title>Finding Environment Variables (Windows XP)</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_systempropertiesxp.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>In Windows Vista / Windows 7, Click on the Windows Logo, right click
+  on Computer, select Properties</para>
+  <figure xml:id="systempropertiesw7">
+    <title>Computer properties in Windows Vista / Windows 7</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_systempropertiesw71.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+    <para>In the control panel, select "Advances system settings"</para>
+  </figure>
+  <figure xml:id="systempropertiesw7_2">
+    <title>Finding the System Properties in Winows Vista / Winows 7</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_systempropertiesw72.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>Finally, click on "Environment Variables"</para>
+  <figure xml:id="environmentw7">
+    <title>Environment Variables in Windows Vista / Windows 7</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_systempropertiesw73.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>In the environment variables, there are two sections, one for the
+  local user (you) and one for the system. Depending on whether you want the
+  paths to be set for everyone, or for you, do one of the following:</para>
+  <para>
+    <emphasis>Warning: I had reports of people deleting their existing
+  Path environment variable! Please be very careful when editing an existing
+  value! By default, Windows has the whole line selected, resulting in
+  overwriting what was in there!</emphasis>
+  </para>
+  <para>If you want to set it for everyone, look for the variable
+  <computeroutput>Path</computeroutput> in the section <computeroutput>System
+  variables</computeroutput>. Click <computeroutput>Edit</computeroutput>.
+  There should already be some text in there, append
+  <command>;C:\MinGW\bin;C:\MinGW\msys\1.0\bin;</command> (or your appropriate
+  paths, e.g. <command>;C:\msys\1.0\bin;C:\mingw\bin</command> if you
+  installed MinGW 5 / MSys 1.0.11) to it, and select
+  <computeroutput>OK</computeroutput> multiple times. Please make sure that
+  you do not overwrite what was in there!</para>
+  <para>If you just want to set it for you, look for
+  <computeroutput>Path</computeroutput> in the upper section. It is very
+  likely not there yet. So select <computeroutput>New...</computeroutput> and
+  enter <command>C:\MinGW\bin;C:\MinGW\msys\1.0\bin</command> (or your
+  appropriate paths, see paragraph above). Then select
+  <computeroutput>OK</computeroutput> multiple times. Again, if there was a
+  setting before, do not delete it, but rather append your path!</para>
+  <figure xml:id="settingenvironment">
+    <title>Setting the Environment variables</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_systempropertiesw74.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>There seems to be a problem with a very long PATH environment variable
+  on some systems. According to reports, Eclipse will fail to compile and
+  build, where as compiling and building from a command window may work fine.
+  In this case, try to prepend the path to MinGW and MSYS rather than
+  appending it.</para>
+  <para>Congratulations. Now you have a complier and make set up on your
+  computer. Continue with <xref linkend="eclipse"/>.</para>
+  <para>Checkpoint: Open up a command terminal (cmd) and type:</para>
+  <programlisting>make --version
+g++ --version
+gcc --version</programlisting>
+  <para>Each one of these should work now. If not, you have either not
+  installed MSYS correctly or not set your path environment variable. Also,
+  try logging out and back in.</para>
+</section>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="linux">
+    <title>Linux / Unix Compiler</title>
+    <para>In most Linux and Unix distributions the compiler is already
+      installed. Check if you can run</para>
+    <programlisting>g++ --version</programlisting>
+    <para>and either</para>
+    <programlisting>make --version</programlisting>
+    <para>or</para>
+    <programlisting>gmake --version</programlisting>
+    <para>If both of them (<command>g++</command> and either
+      <command>make</command> or <command>gmake</command>) work then you are
+      already done. If not, please install those. This may be very different
+      depending on which Linux or Unix distribution you have. Install the
+      tools and continue with <xref linkend="eclipse"/>.</para>
+  </section>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="macosx">
+  <title>Mac OS X Compiler</title>
+  <para>On Mac OS X you can also try the commands explained in <xref linkend="linux"/> to check if you have the necessary tools installed. If
+  not, you will need to install the developer tools</para>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="up_to_snow_leopard">
+    <title>Mac OS X up to Snow Leopard (10.6)</title>
+    <para>The developer tools are either on one of your Mac OS X CDs that came
+    with your computer, or you can download them at: <link xlink:href="https://developer.apple.com/">Apple's developer
+    connection</link>.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="lion_and_newer">
+    <title>Mac OS X Lion (10.7) and Newer</title>
+    <para>To get the compiler, you have to install developer tools (Xcode)
+    from the App Store. After downloading, you have to run the installer to
+    actually install the developer tools.</para>
+    <note>
+      <para>If you have upgraded to Lion from an older version of OS X, you
+      have to redo both of these steps (download + install). Upgrading to Lion
+      breaks your existing developer tools. Again: You have to do this after
+      an upgrade to Lion, even if you have previously installed the developer
+      tools!</para>
+    </note>
+    <figure xml:id="xcodeappstore">
+      <title>Find XCode in App Store</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_xcode1.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>After you've downloaded developer tools (Xcode), you have to go to
+    your Applications folder and run the installer.</para>
+    <figure xml:id="runxcode">
+      <title>Run the Xcode installer from Applications</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_xcode2.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>During the install, you may encounter the following error
+    messages:</para>
+    <variablelist>
+      <varlistentry>
+        <term>In order to continue installation, please close the following
+        application: iTunes</term>
+        <listitem>
+          <para>You may need to do two things:</para>
+          <orderedlist>
+            <listitem>
+              <para>Close iTunes, see if that helped.</para>
+            </listitem>
+            <listitem>
+              <para>In a Terminal window, type: <command>killall
+              iTunesHelper</command></para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>No matching processes belonging to you were found</term>
+        <listitem>
+          <para>This can happen if your Unix username contains a space. The
+          workaround is to create an admin user to be used during the
+          installation.</para>
+          <orderedlist>
+            <listitem>
+              <para>Open system preferences, go to "Users and groups"</para>
+            </listitem>
+            <listitem>
+              <para>Unlock the user preferences, type in you password</para>
+            </listitem>
+            <listitem>
+              <para>Click on "+" to create a new user</para>
+              <itemizedlist>
+                <listitem>
+                  <para>For "New account" select "Administrator"</para>
+                </listitem>
+                <listitem>
+                  <para>For fullname and account name enter something in all
+                  lower cases without spaces, e.g. "admin".</para>
+                </listitem>
+                <listitem>
+                  <para>In der Dropdownmenu for "new account" change
+                  "Standard" to "Administrator".</para>
+                </listitem>
+                <listitem>
+                  <para>Log out, and log back in as your new admin
+                  user.</para>
+                </listitem>
+                <listitem>
+                  <para>Try installing again.</para>
+                </listitem>
+                <listitem>
+                  <para>Log out, log back in as your normal user</para>
+                </listitem>
+                <listitem>
+                  <para>Delete the admin user (System preferences, Users and
+                  Groups, unlock, select the admin user, click on "-")</para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <para>After Xcode has finished installing, you can open up a terminal
+    (Applications / Utilities / Terminal) and check if g++, gcc and make are
+    working:</para>
+    <programlisting>gcc --version
+g++ --version
+make --version</programlisting>
+  </section>
+</section>
+</section>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="eclipse">
+  <title>Setting up Eclipse</title>
+  <para>On Windows XP and later, this may be a good point in time to create a
+  system restore point. This may safe you trouble in the long run if the
+  installation fails.</para>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="java">
+    <title>Java</title>
+    <para>Eclipse was originally written for the Java platform. It still
+    requires a Java Runtime Environment (JRE) or a Java Development Kit (JDK),
+    version 1.5 or greater. You will most probably already have Java installed
+    (it comes included in Mac OS X until 10.6 and will be auto-installed in
+    Mac OS X 10.7 / Lion). However, if you don't have Java installed, and you
+    are on Windows or Linux, you can download a JRE from <link xlink:href="http://java.sun.com/javase/">Sun's Java website</link> or from
+    <link xlink:href="http://www.java.com">java.com</link>. At the time of
+    this writing the latest version was <link xlink:href="http://java.sun.com/javase/downloads/index.jsp">Java Runtime
+    Environment (JRE) 7</link>. Look for the section called "Java SE Runtime
+    Environment (JRE)" and select "JRE 7" (or similar). You will not need
+    NetBeans, JDK, or EE, they are just larger downloads with more programs.
+    You may need the JDK if you want to do Java development.</para>
+    <para>Note: There may be an <link xlink:href="http://blog.max.berger.name/2010/07/eclipse-helios-and-java-16u21-deadlocks.html">incompatibility
+    between Eclipse Helios and Java 1.6 update 21</link>.</para>
+    <para>To find out if you have Java installed, and which version it is, you
+    can open a command prompt / shell and type in:</para>
+    <programlisting>java -version</programlisting>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="download_eclipse">
+    <title>Downloading Eclipse</title>
+    <para>Eclipse is a modular software, but ever summer there are bundled
+    released. The link is:</para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <link xlink:href="http://www.eclipse.org/downloads/"/>
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>I recommend the complete "Eclipse IDE for C/C++ Developers" bundle,
+    which already contains the CDT. If you download a different bundle, you
+    will probably have to install the CDT manually, as described in <xref linkend="installingcdt"/>.</para>
+    <para>The file is about 86 MB in size, so it will take a while to
+    download. You will end up with a .ZIP file. Use either <link xlink:href="http://www.filzip.com/">FilZip</link> or your favorite ZIP
+    Program (Windows XP/Vista/7 and Mac OS X have .ZIP support build in) to
+    unpack the file. Move the unpacked folder to any location, for example
+    <filename>C:\Program Files\eclipse</filename>. You can now start Eclipse
+    by double-clicking it.</para>
+    <figure xml:id="eclipsedir">
+      <title>Eclipse installed into C:\Program Files\eclipse</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_eclipseDir.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="first_run_eclipse">
+    <title>First Run of Eclipse</title>
+    <para>However you installed eclipse, you should now be able to run it.
+    Double-click the icon or start the appropriate script in UNIX and
+    Eclipse's splash-screen will appear:</para>
+    <figure xml:id="splash">
+      <title>Eclipse splash screen</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_splash37.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Immediately after that Eclipse will ask you for your workspace
+    location. It defaults to a place within your personal settings. It is a
+    good idea to use the default workspace, you may want to note where it is
+    located.</para>
+    <figure xml:id="workspace">
+      <title>Eclipse asking for workspace</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_workspace.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>If you always want to use the same workspace, you may select the
+    <computeroutput>Use this as the default...</computeroutput> and you'll
+    never have to worry about workspaces again. This is usually a good idea
+    once you've used Eclipse for a while. Finally Eclipse starts up with the
+    welcome screen:</para>
+    <figure xml:id="welcome.png">
+      <title>Eclipse welcome screen</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_welcome.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>And if you select the "Go to the workbench" (the backward arrow) on
+    the right, then you are inside Eclipse.</para>
+    <para>If you downloaded the "Eclipse IDE for C/C++ Developers" you can
+    skip the next section and go straight to <xref linkend="configuring"/>.</para>
+    <para>If you have downloaded a different package, there are additional
+    tools needed to start programming. We want to develop in C++, so we will
+    continue with the next section.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="installingcdt">
+    <title>Installing the CDT</title>
+    <note>
+      <para>This is only required if you did not download the CDT version as
+      described above. Please check if you are able to create a new C++
+      project (as described in <xref linkend="helloworld"/>) before going
+      through this section!</para>
+    </note>
+    <note>
+      <para>This section described the current (3.5, 3.6, and 3.7) version of
+      Eclipse. For the previous version (3.4) Please see <xref linkend="installingcdt"/>).</para>
+    </note>
+    <para>In the "Help" menu select "Install New Software..."</para>
+    <figure xml:id="softwareupdatemenu35">
+      <title>Select Install New Software... from the help menu</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_softwareupdatemenu35.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>This will show you the list of available software update sites. CDT
+    is part of the standard release, so you can select an update site matching
+    your eclipse version.</para>
+    <para>Please note: It is important to install the right Version of CDT for
+    your version of eclipse:</para>
+    <itemizedlist>
+      <listitem>
+        <para>For Eclipse 3.7 (Indigo): Use
+        <computeroutput>http://download.eclipse.org/tools/cdt/releases/indigo</computeroutput></para>
+      </listitem>
+      <listitem>
+        <para>For Eclipse 3.6 (Helios): Use
+        <computeroutput>http://download.eclipse.org/tools/cdt/releases/helios</computeroutput></para>
+      </listitem>
+      <listitem>
+        <para>For Eclipse 3.5 (Galileo): Use
+        <computeroutput>http://download.eclipse.org/tools/cdt/releases/galileo</computeroutput></para>
+      </listitem>
+    </itemizedlist>
+    <figure xml:id="softwareupdateadd35">
+      <title>Available Software Update page with Add... opened</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_softwareupdateadd35.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>When you have found the CDT site, it will give you two entries: CDT
+    Main Features and CDT Optional Features. Expand both, and find the latest
+    version of the CDT. Make sure you select at least the following:</para>
+    <itemizedlist>
+      <listitem>
+        <para>C/C++ Development Tools</para>
+      </listitem>
+      <listitem>
+        <para>C/C++ GNU Toolchain Build Support</para>
+      </listitem>
+      <listitem>
+        <para>C/C++ GNU Toolchain Debug Support</para>
+      </listitem>
+      <listitem>
+        <para>C/C++ Development Platform</para>
+      </listitem>
+    </itemizedlist>
+    <para>Do not select all items! Some of these require dependencies from
+    other projects, which may not be installed and thus fail to install.
+    Select only the features you need!</para>
+    <figure xml:id="softwareupdatecdt35">
+      <title>Select CDT from the Update Site</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_softwareupdatecdt35.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>The select "Next..."</para>
+    <para>You will have to confirm the selection with "Next".</para>
+    <para>And accept the license agreement with "Finish".</para>
+    <para>Downloading and installing will take a while. Once its done it will
+    ask you to restart Eclipse. This is a good idea, so select "Yes".</para>
+    <figure xml:id="restartingworkbench">
+      <title>Restarting the workbench</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_eclipsesu6.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Once Eclipse has restarted you may need to configure it for your
+    computer.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="configuring">
+    <title>Configuring the CDT</title>
+    <para>Fortunately, this is very easy. If your path is set correctly, there
+    should be absolutely nothing you need to configure. This is true if you
+    followed these instructions for Windows or Mac OS X.</para>
+    <para>On some Unix systems you might have to change your "make" program to
+    "gmake". You will find the setting in Window / Preferences (Eclipse /
+    Preferences on Mac OS X). Then expand "C / C++", then "New CDT Project
+    Wizard", "Makefile Project" and select "Builder Settings". In the section
+    "builder", de-select "use default build command" and for "Build command"
+    enter "gmake".</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="helloworld">
+    <title>Hello, World!</title>
+    <para>Once you are in Eclipse, you are given an empty workspace. You now
+    have to start a new project. To do so, select "File" / "New" /
+    "Project...". Expand the section "C++" and select "C++ Project", then
+    click "Next &gt;".</para>
+    <figure xml:id="newcppproject">
+      <title>New Project screen</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_newcppproject.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>On the next screen, you have to give your project a name. In this
+    case, it will be "HelloWorld", however, you may use any name you like.
+    Also, you have to select a toolchain.</para>
+    <itemizedlist>
+      <listitem>
+        <para>For Windows, select "MinGW GCC"</para>
+      </listitem>
+      <listitem>
+        <para>For Linux, select "Linux GCC"</para>
+      </listitem>
+      <listitem>
+        <para>For Mac OS X, select "MacOSX GCC"</para>
+      </listitem>
+      <listitem>
+        <para>Do not use "Cross GCC"! Unfortunately this option may be
+        selected by default if you create an empty project!</para>
+      </listitem>
+    </itemizedlist>
+    <para>Click "Next".</para>
+    <figure xml:id="newprojectname">
+      <title>New Project Name</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_newcppproject2.png" format="PNG"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>The next screen contains some Basic settings. Fill in what you
+    like:</para>
+    <figure xml:id="newprojectsettings">
+      <title>Basic Settings</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_newcppproject3.png" format="PNG"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>In the last setting you can chose output formats, it is always good
+    to have a release and a debug configuration. Click "Finish".</para>
+    <figure xml:id="newprojectplatforms">
+      <title>New Project Platforms</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_newcppproject4.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Eclipse will now generate a few things, and then ask you if you want
+    to switch to the C/C++ Perspective. This is a good idea, so say
+    yes.</para>
+    <figure xml:id="perspective">
+      <title>Perspective Switch</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_perspective.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Great. You have a project now, and it does contain some sample code!
+    You will immediately get an editor window for your project. Eclipse will
+    also auto-build your project every time you save.</para>
+    <para>If eclipse does not auto-build, you have to turn on "build
+    automatically" in the Project Menu, or click the "Build All" button after
+    every change.</para>
+    <figure xml:id="buildauto">
+      <title>Make sure "Build Automatically" is enabled</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_autobuild.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <figure xml:id="buildintoolbar">
+      <title>If you turn off autobuild, you have to click the "build" button
+      on the toolbar</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_build.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <figure xml:id="helloworldapp">
+      <title>Example Hello World application</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_helloworld.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Now here comes the tricky part: On the left pane, select "C/C++
+    Projects", expand "Binaries" and you should see and executable
+    (HelloWorld.exe on Windows). Now right-click that executable, and select
+    "Run" / "Run Local C/C++ Application". If everything goes well your output
+    will be in the bottom right window in the "Console" tab and it should say
+    "Hello, World".</para>
+    <figure xml:id="helloout">
+      <title>Running the example Hello World application</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_helloout.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Congratulations! You have successfully installed a compiler, a build
+    system and an IDE. You have successfully created, edited, compiled and run
+    a project. You should now be able to start your own projects!</para>
+  </section>
+</section>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="problems">
+  <title>Common Problems</title>
+  <para>If you have followed these instructions everything should work.
+  However, you may have ran into trouble, and then decided to look for the
+  manual (at least, that's the way I would have done it). So now you have a
+  problem and need an answer:</para>
+  <para>Please note if you are reading the online version: Some problems may
+  covered in a newer version of this document, please refer to <xref linkend="introduction"/>.</para>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="common_errors">
+    <title>How to fix most of the common errors on Windows</title>
+    <para>Make sure you have done the following things:</para>
+    <para>
+      <itemizedlist>
+        <listitem>
+          <para>Installed the CDT</para>
+        </listitem>
+        <listitem>
+          <para>Installed (not just downloaded) MinGW and MSYS with
+          Administrator privileges</para>
+        </listitem>
+        <listitem>
+          <para>Set up your path environment variable</para>
+        </listitem>
+      </itemizedlist>
+    </para>
+    <para>Especially made sure you did the last step. You
+    <emphasis>will</emphasis> need to restart eclipse (full restart with
+    shutdown, File / Restart is not sufficient). This solves about 99% of all
+    support mails I've got so far.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="lion">
+    <title>How to fix most of the common errors on Lion (Mac OS X 10.7)</title>
+    <para>Make sure you have done the following this:</para>
+    <itemizedlist>
+      <listitem>
+        <para>Downloaded XCode from App Store</para>
+      </listitem>
+      <listitem>
+        <para>Installed XCode using the "Install XCode button"</para>
+      </listitem>
+    </itemizedlist>
+    <para>Both of these steps are important, in particular when you upgraded
+    from an earlier version of Mac OS X. Upgrading to Lion breaks your
+    existing developer tools! Read also the full description in <xref linkend="macosx"/>. It also covers problems during the XCode
+    install.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="nomake">
+    <title>Build error (Exec error:Launching failed), CreateProcess: make -k
+    all error=2,</title>
+    <para>You have just tried the build the hello world program, and you get
+    this error message instead of an executable. This means that
+    <command>make</command> is not in your path. Open up a command prompt (In
+    OS X: Terminal in Applications/Utilities, in Windows: Start/Run, type in
+    cmd) and type in <command>make</command>. If that doesn't work, try
+    <command>gmake</command>.</para>
+    <para>If <command>gmake</command> worked, see <xref linkend="configuring"/>.</para>
+    <para>If neither worked, make sure you install make (See <xref linkend="compiler"/>) and set your path (See <xref linkend="envwin"/> in
+    the case of Windows).</para>
+    <para>To check your path (on windows), open up <command>cmd</command> and
+    type in <command>echo %path%</command>. This should show the path to MSYS
+    and MinGW. Also, make sure that you restarted Eclipse (or cmd if you are
+    testing) after setting your path.</para>
+    <para>If you are on Windows, and you have installed MinGW, but not MSYS,
+    you may have an executable called <command>mingw-make</command>. In this
+    case you have to go to <xref linkend="configuring"/> and configure
+    appropriately. It is possible to just use mingw-make and no MSYS at all,
+    however, mingw-make has some limitations. Eclipse CDT managed makefiles
+    may or may not work with it. Please see the <link xlink:href="http://www.mingw.org/mingwfaq.shtml#faq-mingw32-make.exe">MinGW
+    FAQ</link> for more information.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="external_scanner_info_generator">
+    <title>/bin/sh: line 1: g++: command not found, Error launching external
+    scanner info generator</title>
+    <para>This error message means that g++ is either not installed or not in
+    your path. Check your path settings as described in <xref linkend="nomake"/>, but this time try the commands: <command>gcc
+    --version</command> and <command>g++ --version</command>. If gcc works,
+    but g++ doesn't, it means you have only installed the C and not the C++
+    version of the gcc compiler, which happens quite frequently on Linux
+    distributions. Check if you have all needed packages installed, and check
+    <xref linkend="compiler"/>.</para>
+    <para>If you are on windows, and neither of them worked, install MinGW and
+    set your path environment variable. If only gcc one worked, reinstall
+    MinGW and don't forget to select the C++ compiler!</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="undefinded_symbols">
+    <title>Undefined symbols for architecture x86_64 (OS X 10.7)</title>
+    <para>Make sure you have done the steps in <xref linkend="lion"/>.</para>
+    <para>If the problem still persist, and you are trying to compile C++
+    code, make sure your source files actually have an extension of ".cc" or
+    ".cpp".</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="no_output">
+    <title>No output or only sometimes output</title>
+    <para>If you are on windows and use Eclipse 3.1 with CDT 3.0.0 there is a
+    bug. See <xref linkend="configuring"/>.</para>
+    <para>Please note that debug sessions in Windows have their own console
+    window (a black console window) and do not appear in the regular Eclipse
+    console. If you're running a debug session, please watch which windows
+    appear in your task bar.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="error_launching_cygpath">
+    <title>Error launching 'cygpath' command</title>
+    <para>If you followed these instructions you have installed MSYS instead
+    of cygwin. You may safely ignore this error message.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="nocppproject">
+    <title>I do not have the option to start a C++ project</title>
+    <para>You have not installed the CDT. See <xref linkend="installingcdt"/>.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="permission_denied">
+    <title>Error 1, open output file blabla.exe: Permission denied</title>
+    <para>Every time I start Eclipse on my laptop, I can only compile and run
+    a program once. After that it asks if I want to run it with errors every
+    time. The compiler says this:</para>
+    <programlisting>Building target: Project01Test.exe
+Invoking: GCC C++ Linker
+g++ -oProject01Test.exe ./test.o
+C:\MinGW\bin\..\lib\gcc\mingw32\3.4.2\..\..\..\..\mingw32\bin\ld.exe: cannot         
+open output file Project01Test.exe: Permission denied
+collect2: ld returned 1 exit status
+make: *** [Project01Test.exe] Error 1
+make: Target `all' not remade because of errors.
+Build complete for project Project01Test
+</programlisting>
+    <para>Answer: Your program may still be running. Try stopping it by using
+    the small red square on the console window (the one for your program).
+    Another way is switching to the "Debug" perspective, selecting your
+    running program, and stopping it there (also the small red square).</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="no_debugger">
+    <title>The debugger doesn't work (on windows, with MinGW)</title>
+    <para>Unfortunately gdb is not included in the current (4.1.1 or 5.0.2)
+    version of MinGW. See <xref linkend="gdb"/>.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="argument_minus_k">
+    <title>Incorrect command line argument: -k'</title>
+    <para>Make sure you are using the make programs provided by MinGW. If your
+    output in the console shows something like:</para>
+    <programlisting>make -k clean all
+MAKE Version 5.2  Copyright (c) 1987, 2000 Borland
+Incorrect command line argument: -k</programlisting>
+    <para>Then you have make installed from a previous installation of Borland
+    C++. You have several choices:</para>
+    <itemizedlist>
+      <listitem>
+        <para>Adjust your PATH environment variable to have the MinGW / MSYS
+        installation come before Borlands tools. Please be warned that this
+        may break your Borland tools!</para>
+      </listitem>
+      <listitem>
+        <para>Remove the path to the Borland tools from your PATH. This will
+        definitely break your Borland tools.</para>
+      </listitem>
+      <listitem>
+        <para>Download "mingw32-make". This is an option when installing
+        MinGW. Make sure you set your make setting to be "mingw32-make". If
+        you still get an error, try setting it for the build settings in your
+        project. In this case you may even skip the installation of MSYS, but
+        you will get limited functionality.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="a_jre_must_be_available">
+    <title>A Java Runtime Envrionment (JRE) or Java Development Kit (JDK) must
+    be available...</title>
+    <para>There are several possible reasons for that:</para>
+    <itemizedlist>
+      <listitem>
+        <para>You have not installed Java. Please see <xref linkend="java"/>.</para>
+      </listitem>
+      <listitem>
+        <para>Your "path" environment is messed up (Windows). Please see <xref linkend="envwin"/>. Make sure <command>C:\windows\system32</command>
+        is in your path (should be there by default).</para>
+      </listitem>
+      <listitem>
+        <para><link xlink:href="http://www.java.com">java.com</link> has a
+        button called <computeroutput>verify
+        installation</computeroutput>.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="no_binaries">
+    <title>I have no binaries</title>
+    <para>If you have no binaries folder, then one of several things may have
+    happened:</para>
+    <itemizedlist>
+      <listitem>
+        <para>You are not looking at the C/C++ Project view. Make sure you are
+        in the C++ perspective and "C/C++ Projects" is active. An example of
+        this situation is shown in <xref linkend="navigator"/>: Click on
+        "C/C++ Projects" to fix.</para>
+      </listitem>
+      <listitem>
+        <para>Your program didn't compile. Check the output of the "Console"
+        Window. It is either an error in your program or a configuration
+        error. For configuration errors, check the other problems.</para>
+      </listitem>
+      <listitem>
+        <para>AutoBuild is turned off. Turn it on as described in <xref linkend="buildauto"/>.</para>
+      </listitem>
+      <listitem>
+        <para>If you do have a binaries folder, then make sure you run you
+        program by right-clicking (on the mac: hold down ctrl and click) on
+        the binary, and then selecting Run / Run as C/C++ Application. Just
+        hitting the run button will only work after you have done that at
+        least once!</para>
+      </listitem>
+    </itemizedlist>
+    <figure xml:id="navigator">
+      <title>The Navigator view instead of the C/C++ Projects view</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_navigator.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="jarfile_startup">
+    <title>Unable to access jarfile startup.jar</title>
+    <para>This problem happens on Windows when you moved Eclipse out of its
+    directory instead of creating a shortcut. Please move it back into the
+    Eclipse directory, then drag'n'drop it using the right mouse button, where
+    you can select "Create Shurtcut"</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="cygwin_on_windows">
+    <title>Problems when CYGWIN is installed on Windows</title>
+    <para>I personally do not recommend the installation of cygwin, but rather
+    the installation of MinGW and MSYS as described in <xref linkend="wincompiler"/>. However, the following problems have been
+    reported by users:</para>
+    <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="cygwin_dll">
+      <title>Binaries require cygwin.dll</title>
+      <para>Eclipse prefers to use cygwin if it is installed, and will do
+      everything to manipulate the path to include cygwin if it is installed.
+      Binaries will therefore by default be linked against the cygwin
+      libraries. Possible workarounds:</para>
+      <itemizedlist>
+        <listitem>
+          <para>add <computeroutput>-mno-cygwin</computeroutput> to your
+          compiler settings</para>
+        </listitem>
+        <listitem>
+          <para>Overwrite the path variable in eclipse: In the Project
+          Properties: C/C++ Build -&gt; Environment -&gt; User Variables -&gt;
+          New. Select PATH, remove the cygwin directory and select Replace as
+          Operation.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="working_directory">
+    <title>Launch failed Reason: Unable to set working directory</title>
+    <para>Your workspace or your eclipse installation may use a path with
+    includes spaces, such as <computeroutput>C:\Documents and
+    Settings</computeroutput>. Eclipse sometimes fails in this case. Try
+    creating your workspace in a different directory.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="other_problems">
+    <title>Problems not covered here</title>
+    <para>If you read the online version of this document, check out <xref linkend="introduction"/>. You problem may be covered in a newer version
+    of this document.</para>
+    <para>If you are still having trouble, you may try and send me an email.
+    Please be aware that I may not respond to every email, as I am doing this
+    support mainly as a hobby. Make sure your email includes the following.
+    Please send the complete output!</para>
+    <itemizedlist>
+      <listitem>
+        <para>The contents of your PATH environment variable (in Windows:
+        <command>echo %PATH%</command>. In Linux / Mac OS X: <command>echo
+        $PATH)</command>.</para>
+      </listitem>
+      <listitem>
+        <para>Version of GCC you're using (<command>gcc
+        --version</command>)</para>
+      </listitem>
+      <listitem>
+        <para>Version of Make you're using (<command>make --version</command>
+        or <command>gmake --version</command>)</para>
+      </listitem>
+      <listitem>
+        <para>Version of Eclipse you're using</para>
+      </listitem>
+      <listitem>
+        <para>Version of the CDT you're using</para>
+      </listitem>
+      <listitem>
+        <para>The complete output of your "Console" window (at the bottom of
+        eclipse) when your error occurs.</para>
+      </listitem>
+      <listitem>
+        <para>The steps you did so before the problem occurred.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+</section>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="older">
+  <title>Older Instructions</title>
+  <para>Sometimes you may not be happy with the current version of a certain
+    program. I have left instructions for the older versions here in case you
+    need them:</para>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="mingw5msys1011">
+    <title>MinGW 5, MSYS 1.0.11</title>
+    <para>This is the old MSYS/MinGW installation used before the new mingw-get-inst was available.</para>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="mingw5">
+  <title>MinGW 5.x</title>
+  <para>First, you need to download MinGW. You can either click through
+        the websites mentioned above or go directly to the <link xlink:href="https://sourceforge.net/projects/mingw/files/">MinGW
+        download area</link>. Look for the Package "Automated MinGW
+        Installer". There, download the file ending in .exe. The file name
+        should be something like "MinGW-5.1.4.exe". You can also download
+        <link xlink:href="http://downloads.sourceforge.net/mingw/MinGW-5.1.4.exe?modtime=1209244789&amp;big_mirror=1">MinGW
+        Version 5.1.4</link> from the link given here.</para>
+  <para>You may also download an older version, and follow the
+        instructions given in <xref linkend="older"/>:</para>
+  <itemizedlist>
+    <listitem>
+      <para>You may download <link xlink:href="http://prdownloads.sourceforge.net/mingw/MinGW-4.1.0.exe?download">MinGW
+            4</link> and follow the instructions in <xref linkend="mingw4"/>.</para>
+    </listitem>
+    <listitem>
+      <para>You may download <link xlink:href="http://prdownloads.sourceforge.net/mingw/MinGW-3.1.0-1.exe?download">MinGW
+            3</link> and follow the instructions in <xref linkend="mingw3"/>.</para>
+    </listitem>
+  </itemizedlist>
+  <para>Most of the options in the MinGW 5 installer are pretty
+        straightforward. I will point out some of the more tricky
+        options.</para>
+  <para>The first one of such options is which "MinGW" package to
+        install. Any of those should work just fine, but I would recommend
+        <computeroutput>Current</computeroutput>.</para>
+  <figure xml:id="mingw5install">
+    <title>MinGW 5 install</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_Mingw5_1.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>MinGW will ask which components to install. Either select
+        <computeroutput>All</computeroutput> or at least make sure that you
+        have the <computeroutput>g++ compiler</computeroutput> checked. This
+        is needed for C++ support.</para>
+  <figure xml:id="mingw5install2">
+    <title>MinGW 5 install (2)</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_Mingw5_2.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>When asked for the install folder, please do not change it. You
+        will have a lot of trouble later on, especially if you chose a path
+        that contains spaces.</para>
+  <figure xml:id="mingw5install3">
+    <title>MinGW 5 install (3)</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_Mingw5_3.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>That's already it for MinGW. There are two more steps: MSYS and
+        the Environment Variables.</para>
+  <para>Checkpoint: To test if everything worked, please reboot. Then
+        open up a terminal. (Start/Run, type CMD). Try these commands:</para>
+  <programlisting>gcc --version
+</programlisting>
+  <para>should print the version of gcc. If you get a "File not found",
+        try logging out and logging back in, or even rebooting your computer.
+        If it still does not work, you have not installed MinGW correctly. You
+        may also need to set your environment variables manually (see
+        below).</para>
+  <programlisting>g++ --version</programlisting>
+  <para>should print the version for g++. You did select the "g++
+        compiler" I hope. If not, install again!</para>
+</section>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="gdb">
+  <title>GDB (optional!)</title>
+  <para>This section is completely optional. You may skip it and go
+        directly to <xref linkend="msys"/>.</para>
+  <para>If you want to use the debugger, you may have to install it
+        separately. This is the case with MinGW 5.0.2, it may be different in
+        other versions. Download it from the same page, look for a package
+        starting with gdb and ending with .exe. At the time of this writing
+        (Apr 29) the current version was "gdb-5.2.1-1.exe". Install
+        (double-click) that .exe, select all the default options (make sure
+        you select the same MinGW directory as you did during the MinGW
+        install).</para>
+  <para>I have received a report that gdb-6.3-2 does not work. So I
+        would advise using the older version or waiting for a newer
+        one.</para>
+  <para>Checkpoint:</para>
+  <programlisting>gdb --version</programlisting>
+  <para>should print the gdb version. This is optional.</para>
+</section>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="msys">
+  <title>MSYS 1.0.11</title>
+  <para>Unfortunately MinGW is not enough. We also need the MSYS tools
+        from the same download page. Go there again, to the "Current" section
+        and look for "MSYS Base System". Again, look for the file ending in
+        .exe, as this time: "MSYS-1.0.11.exe". You may have to expand the
+        "Release Candidate" section. Or you may use the link here to <link xlink:href="http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe">MSYS-1.0.11.exe</link>.
+        Download it and start it. You should get a window like this:</para>
+  <figure xml:id="msys1011install">
+    <title>MSYS install</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_setup1.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>If you accept all the default options, after a while there
+        should be a black and white window, similar to this:</para>
+  <figure xml:id="msys1011postinstall">
+    <title>MSYS asking for post-install</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_setup9.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>To continue the install type in y and then Enter. The next
+        question reads like this:</para>
+  <figure xml:id="msys1011mingw">
+    <title>MSYS asking for MinGW</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_setupa.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>Which you can also answer with y Enter. The next question is a
+        little bit more tricky:</para>
+  <figure xml:id="msys1011mingwpath">
+    <title>MSYS asking for path to MinGW</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_setupb.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>What they want to know is where you installed MinGW to and that
+        you replace all backward slashes (\) by forward slashes (/). If you
+        followed the instructions, the answer here will be:</para>
+  <programlisting>C:/MinGW</programlisting>
+  <para>Caveat: If you have not used the default paths, but instead have
+        installed MinGW in a different location, such as
+        <computeroutput>C:/Program Files/MinGW</computeroutput>, where the
+        path contains spaces and / or is longer than 8 characters you may have
+        to replace that particular path component with its DOS short pathname,
+        such as <computeroutput>C:/PROGRA~1/mingw</computeroutput>.</para>
+  <para>Caveat2: The installer may be case sensitive. Please make sure
+        you have written MinGW in the same capitalization as during your first
+        install, in some cases you will have to enter
+        <computeroutput>c:/mingw</computeroutput> (note
+        capitalization!).</para>
+  <para>The very last question just asks you to press a key:</para>
+  <figure xml:id="msys1011correctly">
+    <title>MSYS installing correctly</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_setupc.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>Where you can press any key you like to continue. Setup will
+        come back and ask you if you want to read a welcome note and the
+        README file. You probably don't want either one, but it does not hurt
+        to look. Anyways, once you hit "Finish" you are done with the setup.
+        Now you have to set up your Path environment variable.</para>
+  <figure xml:id="msys1011done">
+    <title>MSYS is done</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_setupd.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+</section>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="installingcdt34">
+    <title>Installing the CDT on Eclipse 3.4</title>
+    <note>
+      <para>This is only required if you did not download the CDT version as
+        described above. Please check if you are able to create a new C++
+        project (as described in <xref linkend="helloworld"/>) before going
+        through this section!</para>
+    </note>
+    <para>In the "Help" menu select "Software Updates..."</para>
+    <figure xml:id="cdt34updates">
+      <title>Select Software Updates... from the menu</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_softwareupdatemenu.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>This will show you the list of available software update sites. If
+      you are luck you already have the CDT update site configured. Search for
+      an entry which contains the String "cdt", for example
+      <computeroutput>http://download.eclipse.org/tools/cdt/releases/ganymede</computeroutput>.</para>
+    <figure xml:id="cdt34updatepage">
+      <title>Main Software Update page</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_softwareupdatemain.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>If there is no site for cdt available, go to "Manage Sites", and
+      you will get a list of sites.</para>
+    <figure xml:id="cdt34updatesites">
+      <title>Manage Software Update sites</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_softwareupdatesites.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Again, search for a site containing "CDT". If there is no site
+      available, add it (using the "Add..." button), adding
+      <computeroutput>http://download.eclipse.org/tools/cdt/releases/ganymede</computeroutput>
+      (the address may be different in future versions of Eclipse, this is for
+      3.4!)</para>
+    <para>Also, make sure the checkbox next to the Address is checked.
+      Otherwise the site is configured, but ignored by Eclipse. Leave this
+      page and go back to the main Software update page.</para>
+    <para>Expand the CDT site, and find the latest version of the CDT. Make
+      sure you select at least the following:</para>
+    <itemizedlist>
+      <listitem>
+        <para>Eclipse C/C++ Development Tools</para>
+      </listitem>
+      <listitem>
+        <para>CDT GNU Toolchain Build Support</para>
+      </listitem>
+      <listitem>
+        <para>CDT GNU Toolchain Debug Support</para>
+      </listitem>
+      <listitem>
+        <para>Eclipse C/C++ Development Platform</para>
+      </listitem>
+    </itemizedlist>
+    <figure xml:id="cdt34selectcdt">
+      <title>Select CDT from the Update Site</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_softwareupdatecdt.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>The select "Install..."</para>
+    <para>You will have to confirm the selection with "Finish"</para>
+    <para>Downloading and installing will take a while. Once its done it
+      will ask you to restart Eclipse. This is a good idea, so select
+      "Yes".</para>
+    <figure xml:id="cdt34restart">
+      <title>Restarting the workbench</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_eclipsesu6.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Once Eclipse has restarted you now need to configure it for your
+      computer.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="helloworldold">
+    <title>Hello, World! in older versions of CDT</title>
+    <para>Once you are in Eclipse, you are given an empty workspace. You now
+      have to start a new project. To do so, select "File" / "New" /
+      "Project...". Expand the section "C++" and select "Managed Make C++
+      Project", then click "Next &gt;".</para>
+    <figure xml:id="cdt34newproject">
+      <title>New Project screen</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_newproject.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>On the next screen, you have to give your project a name. In this
+      case, it will be "HelloWorld", however, you may use any name you like.
+      Leave the "Use default" in "Project Contents" checked.</para>
+    <figure xml:id="cdt34newprojectname">
+      <title>New Project Name</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_projectname.png" format="PNG"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>The next two settings about "Project Type" and additional settings
+      are usually OK, so we'll just leave them:</para>
+    <figure xml:id="cdt34newprojectplatforms">
+      <title>New Project Platforms</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_projecttype.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <figure xml:id="cdt34newprojectsettings">
+      <title>New Project Settings</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_projectadd.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Eclipse will now generate a few things, and then ask you if you
+      want to switch to the C/C++ Perspective. This is a good idea, so say
+      yes.</para>
+    <figure xml:id="cdt34perspective">
+      <title>Perspective Switch</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_perspective.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Great. You have a project now. However, it currently does not have
+      any files. So select "File" / "New" / "C Source File". It will then ask
+      you for the name of the file, type in something like "main.cpp".</para>
+    <figure xml:id="cdt34newsourcefile">
+      <title>Create a new Source File</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_newsource.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>You will immediately get an editor window for your file. Eclipse
+      will also auto-build your project every time you save. So type in
+      something like this and hit save, and it should compile
+      automatically:</para>
+    <figure xml:id="cdt34helloworld">
+      <title>Example Hello World application</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_helloworld.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Now here comes the tricky part: On the left pane, select "C/C++
+      Projects", expand "Binaries" and you should see and executable
+      (HelloWorld.exe). Now right-click that executable, and select "Run" /
+      "Run Local C/C++ Application". If everything goes well your output will
+      be in the bottom right window in the "Console" tab and it should say
+      "Hello, World".</para>
+    <figure xml:id="cdt34runninghelloworld">
+      <title>Running the example Hello World application</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_helloout.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Congratulations! You have successfully installed a compiler, a
+      build system and an IDE. You have successfully created, edited, compiled
+      and run a project. You should now be able to start your own
+      projects!</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="eclipse31">
+    <title>Eclipse 3.1 with CDT 3.0</title>
+    <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="download_eclipse31">
+      <title>Downloading Eclipse 3.1</title>
+      <para>Now we are finally ready to install Eclipse. Go to the <link xlink:href="http://www.eclipse.org/downloads/">Eclipse website</link>
+        and look for "Downloads". It will automatically try to figure out your
+        OS and give you an option like "Download now: Eclipse Platform SDK
+        3.1, Windows.". Do it. You will receive a .ZIP file. Use either <link xlink:href="http://www.filzip.com/">FilZip</link> or your favorite ZIP
+        Program (Windows XP and Mac OS X have .ZIP support build in) to unpack
+        the file. Move the unpacked folder to any location, for example
+        <filename>C:\Program Files\eclipse</filename>. You can now start
+        Eclipse by double-clicking it.</para>
+      <figure xml:id="cdt30installed">
+        <title>Eclipse installed into C:\Program Files\eclipse</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_eclipseDir.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+    </section>
+    <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="first_run_eclipse31">
+      <title>First Run of Eclipse</title>
+      <para>However you installed eclipse, you should now be able to run it.
+        Double-click the icon or start the appropriate script in UNIX and
+        Eclipse's splash-screen will appear:</para>
+      <figure xml:id="cdt30splash">
+        <title>Eclipse splash screen</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_splash.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+      <para>Immediately after that Eclipse will ask you for your workspace
+        location. It defaults to: <computeroutput>C:\Program
+        Files\eclipse\workspace</computeroutput> which is actually very bad.
+        Depending on where you want to use Eclipse, please set your workspace
+        to the appropriate folder. If you are in a computer lab, check their
+        policy on personal home folders. If you are on your own computer, a
+        place within your personal settings is usually best:</para>
+      <figure xml:id="cdt30workspace">
+        <title>Eclipse asking for workspace</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_workspace.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+      <para>If you always want to use the same workspace, you may select the
+        <computeroutput>Use this as the default...</computeroutput> and you'll
+        never have to worry about workspaces again. This is usually a good
+        idea once you've used Eclipse for a while. Finally Eclipse starts up
+        with the welcome screen:</para>
+      <figure xml:id="cdt30welcome">
+        <title>Eclipse welcome screen</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_welcome.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+      <para>And if you select the "Go to the workbench" in the top right
+        corner, then you are right in Eclipse and you can start developing in
+        Java. However, since we want to develop in C++ just continue with the
+        next section.</para>
+    </section>
+    <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="installingcdt30">
+      <title>Installing the CDT</title>
+      <para>Eclipse by default comes with support for programming Java, the
+        support for C/C++ (the C Development Toolkit) has to be installed as
+        an update.</para>
+      <para>In the "Help" menu select "Software Updates" and the "Find and
+        Install...". You should get something like:</para>
+      <figure xml:id="cdt30updates">
+        <title>Find and Install software updates</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_eclipsesu1.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+      <para>Select "Search for new features to install", and then "Next
+        &gt;". You should get:</para>
+      <figure xml:id="cdt30updatesite">
+        <title>Select update sites</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_eclipsesu2.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+      <para>Leave "Ignore features not applicable to this environment"
+        checked and de-select all update sites (you will probably have less in
+        there than I do). Select "New Remote Site" and then enter the
+        following information:</para>
+      <para>Note: What name you enter does not matter. Here is the URL for
+        cut-n-paste:
+        <computeroutput>http://download.eclipse.org/tools/cdt/releases/eclipse3.1</computeroutput></para>
+      <figure xml:id="cdt30addupdatesite">
+        <title>Add new update site</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_eclipsesu3.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+      <para>Hit "OK". Now select "Eclipse CDT" and then "Next &gt;". It
+        should connect to the Eclipse CDT update site and look for the newest
+        version. Then it displays a window like this one:</para>
+      <figure xml:id="cdt30selectcdt">
+        <title>Select CDT to install</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_eclipsesu4.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+      <para>Select the latest version of the "Eclipse C/C++ Development
+        Tools". (3.0.1 at the time of this writing) Do not select any other
+        features. Hit "Next &gt;".</para>
+      <para>In the next window, you will have to "accept" the license, and
+        then select "Next &gt;".</para>
+      <para>It will again show you an overview, which you can just accept
+        and select "Finish".</para>
+      <para>It will warn you that the Eclipse CDT is an "unsigned feature".
+        But you can just ignore that and select "Install All".</para>
+      <figure xml:id="cdt30unsignedjar">
+        <title>Unsigned JAR</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_eclipsesu5.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+      <para>Downloading and installing will take a while. Once its done it
+        will ask you to restart Eclipse. This is a good idea, so select
+        "Yes".</para>
+      <figure xml:id="cdt30restart">
+        <title>Restarting the workbench</title>
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Setting_Up_Eclipse_CDT_eclipsesu6.png"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>
+      <para>Once Eclipse has restarted you now need to configure it for your
+        computer.</para>
+      <para>Eclipse 3.1 with CDT 3.0.0 (and 3.0.1) has a bug on windows! If
+        you are on windows, please close eclipse, and delete the file
+        spawner.dll in
+        eclise\plugins\org.eclipse.cdt.core.win32_3.0.0\os\win32\x86. This bug
+        appears every time you try and run short programs (they will not show
+        any output). More information is available in <link xlink:href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=102043">Eclipse
+        Bug 102043</link>. This bug is fixed in CDT 3.0.2.</para>
+    </section>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="mingw4">
+    <title>MinGW 4.x</title>
+    <para>MinGW 4.x comes with a new installer that asks much more questions
+      than the old one. The current (Aug 05) version is MinGW 4.1.1.</para>
+    <para>Please note: The MinGW 4.x installer downloads parts of the MinGW
+      suite during the install! You must have an internet connection during
+      the install. If this is not an option for you, download the last version
+      (3.1)</para>
+    <figure xml:id="mingw41install">
+      <title>MinGW 4.1 install</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_mingw41_1.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Most installation options are pretty straight forward. You will
+      have to accept the license agreement:</para>
+    <figure xml:id="mingw41license">
+      <title>MinGW license</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_mingw41_1_1.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>It will ask you for a download mirror. Of course, you should pick
+      one close to your country. If you are installing from home in the us,
+      use a commercial mirror, if you are installing from a university
+      connection, chose a university mirror.</para>
+    <figure xml:id="mingw41mirror">
+      <title>Mirror Selection</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_mingw41_1_2.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>When installing MinGW, it is advisable to use the default
+      directory <computeroutput>C:\MinGW</computeroutput>. Do not use a path
+      that contains spaces, this will give you problems later on.</para>
+    <figure xml:id="mingw41directory">
+      <title>MinGW installation directory</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_mingw41_2.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>If all you need MinGW for is compiling your programs from within
+      Eclipse, the Compact install should be enough:</para>
+    <figure xml:id="ming41components">
+      <title>MinGW installation components</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_mingw41_3a.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Next, it will ask you for additional tasks to perform. Select all
+      of them:</para>
+    <figure xml:id="mingw41tasks">
+      <title>Additional Tasks</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="Setting_Up_Eclipse_CDT_mingw41_4.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>MinGW will download and install your selected components. After a
+      little while your installation is done. You will now need to install
+      MSYS.</para>
+  </section>
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="mingw3">
+    <title>MinGW 3.1</title>
+    <para>At the time of this writing this was "Download MinGW-3.1.0-1.exe",
+      but the version number may be higher now. Once downloaded, start the
+      program. It should look similar to this:</para>
+    <figure xml:id="mingw3install">
+      <title>MinGW 3.1 install</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="Setting_Up_Eclipse_CDT_mingw1.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>If you accept all the default options MinGW should install just
+      fine.</para>
+  </section>
+</section>
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="feedback">
+  <title>Feedback</title>
+  <para>Do you have any comments how this document could be improved? Email
+    the author. I'll be happy to make any changes that make the setup of the
+    Eclipse CDT easier, or include information that is missing in this
+    paper.</para>
+</section>
+
 </article>

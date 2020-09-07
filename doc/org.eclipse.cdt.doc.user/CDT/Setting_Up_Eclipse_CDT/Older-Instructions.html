@@ -1,0 +1,308 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Setting Up Eclipse CDT - Older Instructions</title>
+		<link type="text/css" rel="stylesheet" href="../../book.css"/>
+	</head>
+	<body>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<th style="width: 100%" align="center" colspan="3">Older Instructions</th>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Common-Problems.html" title="Common Problems">
+						<img alt="Previous" border="0" src="../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Feedback.html" title="Feedback">
+						<img alt="Next" border="0" src="../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Common Problems</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Feedback</td>
+			</tr>
+		</table><hr class="navigation-separator"/>
+		<h1 id="Older_Instructions">Older Instructions</h1>
+		<p>Sometimes you may not be happy with the current version of a certain program. I have left instructions for the older versions here in case you need them:</p>
+		<h2 id="MinGW_5.2C_MSYS_1.0.11">MinGW 5, MSYS 1.0.11</h2>
+		<p>This is the old MSYS/MinGW installation used before the new mingw-get-inst was available.</p>
+		<h3 id="MinGW_5.x">MinGW 5.x</h3>
+		<p>First, you need to download MinGW. You can either click through the websites mentioned above or go directly to the 
+			<a href="https://sourceforge.net/projects/mingw/files/">MinGW download area</a>. Look for the Package &quot;Automated MinGW Installer&quot;. There, download the file ending in .exe. The file name should be something like &quot;MinGW-5.1.4.exe&quot;. You can also download 
+			<a href="http://downloads.sourceforge.net/mingw/MinGW-5.1.4.exe?modtime=1209244789&amp;big_mirror=1">MinGW Version 5.1.4</a> from the link given here.
+		</p>
+		<p>You may also download an older version, and follow the instructions given in 
+			<a href="#Older_Instructions">Older Instructions</a>:
+		</p>
+		<ul>
+			<li>You may download 
+				<a href="http://prdownloads.sourceforge.net/mingw/MinGW-4.1.0.exe?download">MinGW 4</a> and follow the instructions in 
+				<a href="#MinGW_4.x">MinGW 4.x</a>.
+			</li>
+			<li>You may download 
+				<a href="http://prdownloads.sourceforge.net/mingw/MinGW-3.1.0-1.exe?download">MinGW 3</a> and follow the instructions in 
+				<a href="#MinGW_3.1">MinGW 3.1</a>.
+			</li>
+		</ul>
+		<p>Most of the options in the MinGW 5 installer are pretty straightforward. I will point out some of the more tricky options.</p>
+		<p>The first one of such options is which &quot;MinGW&quot; package to install. Any of those should work just fine, but I would recommend <code>Current</code>.</p>
+		<p>
+			<img alt="MinGW 5 install" title="MinGW 5 install" border="0" src="images/Setting_Up_Eclipse_CDT_Mingw5_1.png"/>
+		</p>
+		<p>MinGW will ask which components to install. Either select <code>All</code> or at least make sure that you have the <code>g++ compiler</code> checked. This is needed for C++ support.</p>
+		<p>
+			<img alt="MinGW 5 install (2)" title="MinGW 5 install (2)" border="0" src="images/Setting_Up_Eclipse_CDT_Mingw5_2.png"/>
+		</p>
+		<p>When asked for the install folder, please do not change it. You will have a lot of trouble later on, especially if you chose a path that contains spaces.</p>
+		<p>
+			<img alt="MinGW 5 install (3)" title="MinGW 5 install (3)" border="0" src="images/Setting_Up_Eclipse_CDT_Mingw5_3.png"/>
+		</p>
+		<p>That's already it for MinGW. There are two more steps: MSYS and the Environment Variables.</p>
+		<p>Checkpoint: To test if everything worked, please reboot. Then open up a terminal. (Start/Run, type CMD). Try these commands:</p>
+		<pre>gcc --version
+</pre>
+		<p>should print the version of gcc. If you get a &quot;File not found&quot;, try logging out and logging back in, or even rebooting your computer. If it still does not work, you have not installed MinGW correctly. You may also need to set your environment variables manually (see below).</p>
+		<pre>g++ --version
+</pre>
+		<p>should print the version for g++. You did select the &quot;g++ compiler&quot; I hope. If not, install again!</p>
+		<h3 id="GDB_.28optional.21.29">GDB (optional!)</h3>
+		<p>This section is completely optional. You may skip it and go directly to 
+			<a href="#MSYS_1.0.11">MSYS 1.0.11</a>.
+		</p>
+		<p>If you want to use the debugger, you may have to install it separately. This is the case with MinGW 5.0.2, it may be different in other versions. Download it from the same page, look for a package starting with gdb and ending with .exe. At the time of this writing (Apr 29) the current version was &quot;gdb-5.2.1-1.exe&quot;. Install (double-click) that .exe, select all the default options (make sure you select the same MinGW directory as you did during the MinGW install).</p>
+		<p>I have received a report that gdb-6.3-2 does not work. So I would advise using the older version or waiting for a newer one.</p>
+		<p>Checkpoint:</p>
+		<pre>gdb --version
+</pre>
+		<p>should print the gdb version. This is optional.</p>
+		<h3 id="MSYS_1.0.11">MSYS 1.0.11</h3>
+		<p>Unfortunately MinGW is not enough. We also need the MSYS tools from the same download page. Go there again, to the &quot;Current&quot; section and look for &quot;MSYS Base System&quot;. Again, look for the file ending in .exe, as this time: &quot;MSYS-1.0.11.exe&quot;. You may have to expand the &quot;Release Candidate&quot; section. Or you may use the link here to 
+			<a href="http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe">MSYS-1.0.11.exe</a>. Download it and start it. You should get a window like this:
+		</p>
+		<p>
+			<img alt="MSYS install" title="MSYS install" border="0" src="images/Setting_Up_Eclipse_CDT_setup1.png"/>
+		</p>
+		<p>If you accept all the default options, after a while there should be a black and white window, similar to this:</p>
+		<p>
+			<img alt="MSYS asking for post-install" title="MSYS asking for post-install" border="0" src="images/Setting_Up_Eclipse_CDT_setup9.png"/>
+		</p>
+		<p>To continue the install type in y and then Enter. The next question reads like this:</p>
+		<p>
+			<img alt="MSYS asking for MinGW" title="MSYS asking for MinGW" border="0" src="images/Setting_Up_Eclipse_CDT_setupa.png"/>
+		</p>
+		<p>Which you can also answer with y Enter. The next question is a little bit more tricky:</p>
+		<p>
+			<img alt="MSYS asking for path to MinGW" title="MSYS asking for path to MinGW" border="0" src="images/Setting_Up_Eclipse_CDT_setupb.png"/>
+		</p>
+		<p>What they want to know is where you installed MinGW to and that you replace all backward slashes (\) by forward slashes (/). If you followed the instructions, the answer here will be:</p>
+		<pre>C:/MinGW
+</pre>
+		<p>Caveat: If you have not used the default paths, but instead have installed MinGW in a different location, such as <code>C:/Program Files/MinGW</code>, where the path contains spaces and / or is longer than 8 characters you may have to replace that particular path component with its DOS short pathname, such as <code>C:/PROGRA~1/mingw</code>.</p>
+		<p>Caveat2: The installer may be case sensitive. Please make sure you have written MinGW in the same capitalization as during your first install, in some cases you will have to enter <code>c:/mingw</code> (note capitalization!).</p>
+		<p>The very last question just asks you to press a key:</p>
+		<p>
+			<img alt="MSYS installing correctly" title="MSYS installing correctly" border="0" src="images/Setting_Up_Eclipse_CDT_setupc.png"/>
+		</p>
+		<p>Where you can press any key you like to continue. Setup will come back and ask you if you want to read a welcome note and the README file. You probably don't want either one, but it does not hurt to look. Anyways, once you hit &quot;Finish&quot; you are done with the setup. Now you have to set up your Path environment variable.</p>
+		<p>
+			<img alt="MSYS is done" title="MSYS is done" border="0" src="images/Setting_Up_Eclipse_CDT_setupd.png"/>
+		</p>
+		<h2 id="Installing_the_CDT_on_Eclipse_3.4">Installing the CDT on Eclipse 3.4</h2>
+		<p><div class="note"></p>
+		<p>This is only required if you did not download the CDT version as described above. Please check if you are able to create a new C++ project (as described in 
+			<a href="Setting-up-Eclipse.html#Hello.2C_World.21">Hello, World!</a>) before going through this section!
+		</p>
+		<p></div>
+			In the &quot;Help&quot; menu select &quot;Software Updates...&quot;</p>
+		<p>
+			<img alt="Select Software Updates... from the menu" title="Select Software Updates... from the menu" border="0" src="images/Setting_Up_Eclipse_CDT_softwareupdatemenu.png"/>
+		</p>
+		<p>This will show you the list of available software update sites. If you are luck you already have the CDT update site configured. Search for an entry which contains the String &quot;cdt&quot;, for example <code>
+			<a href="http://download.eclipse.org/tools/cdt/releases/ganymede">http://download.eclipse.org/tools/cdt/releases/ganymede</a></code>.
+		</p>
+		<p>
+			<img alt="Main Software Update page" title="Main Software Update page" border="0" src="images/Setting_Up_Eclipse_CDT_softwareupdatemain.png"/>
+		</p>
+		<p>If there is no site for cdt available, go to &quot;Manage Sites&quot;, and you will get a list of sites.</p>
+		<p>
+			<img alt="Manage Software Update sites" title="Manage Software Update sites" border="0" src="images/Setting_Up_Eclipse_CDT_softwareupdatesites.png"/>
+		</p>
+		<p>Again, search for a site containing &quot;CDT&quot;. If there is no site available, add it (using the &quot;Add...&quot; button), adding <code>
+			<a href="http://download.eclipse.org/tools/cdt/releases/ganymede">http://download.eclipse.org/tools/cdt/releases/ganymede</a></code> (the address may be different in future versions of Eclipse, this is for 3.4!)
+		</p>
+		<p>Also, make sure the checkbox next to the Address is checked. Otherwise the site is configured, but ignored by Eclipse. Leave this page and go back to the main Software update page.</p>
+		<p>Expand the CDT site, and find the latest version of the CDT. Make sure you select at least the following:</p>
+		<ul>
+			<li>Eclipse C/C++ Development Tools</li>
+			<li>CDT GNU Toolchain Build Support</li>
+			<li>CDT GNU Toolchain Debug Support</li>
+			<li>Eclipse C/C++ Development Platform</li>
+		</ul>
+		<p>
+			<img alt="Select CDT from the Update Site" title="Select CDT from the Update Site" border="0" src="images/Setting_Up_Eclipse_CDT_softwareupdatecdt.png"/>
+		</p>
+		<p>The select &quot;Install...&quot;</p>
+		<p>You will have to confirm the selection with &quot;Finish&quot;</p>
+		<p>Downloading and installing will take a while. Once its done it will ask you to restart Eclipse. This is a good idea, so select &quot;Yes&quot;.</p>
+		<p>
+			<img alt="Restarting the workbench" title="Restarting the workbench" border="0" src="images/Setting_Up_Eclipse_CDT_eclipsesu6.png"/>
+		</p>
+		<p>Once Eclipse has restarted you now need to configure it for your computer.</p>
+		<h2 id="Hello.2C_World.21_in_older_versions_of_CDT">Hello, World! in older versions of CDT</h2>
+		<p>Once you are in Eclipse, you are given an empty workspace. You now have to start a new project. To do so, select &quot;File&quot; / &quot;New&quot; / &quot;Project...&quot;. Expand the section &quot;C++&quot; and select &quot;Managed Make C++ Project&quot;, then click &quot;Next &gt;&quot;.</p>
+		<p>
+			<img alt="New Project screen" title="New Project screen" border="0" src="images/Setting_Up_Eclipse_CDT_newproject.png"/>
+		</p>
+		<p>On the next screen, you have to give your project a name. In this case, it will be &quot;HelloWorld&quot;, however, you may use any name you like. Leave the &quot;Use default&quot; in &quot;Project Contents&quot; checked.</p>
+		<p>
+			<img alt="New Project Name" title="New Project Name" border="0" src="images/Setting_Up_Eclipse_CDT_projectname.png"/>
+		</p>
+		<p>The next two settings about &quot;Project Type&quot; and additional settings are usually OK, so we'll just leave them:</p>
+		<p>
+			<img alt="New Project Platforms" title="New Project Platforms" border="0" src="images/Setting_Up_Eclipse_CDT_projecttype.png"/>
+		</p>
+		<p>
+			<img alt="New Project Settings" title="New Project Settings" border="0" src="images/Setting_Up_Eclipse_CDT_projectadd.png"/>
+		</p>
+		<p>Eclipse will now generate a few things, and then ask you if you want to switch to the C/C++ Perspective. This is a good idea, so say yes.</p>
+		<p>
+			<img alt="Perspective Switch" title="Perspective Switch" border="0" src="images/Setting_Up_Eclipse_CDT_perspective.png"/>
+		</p>
+		<p>Great. You have a project now. However, it currently does not have any files. So select &quot;File&quot; / &quot;New&quot; / &quot;C Source File&quot;. It will then ask you for the name of the file, type in something like &quot;main.cpp&quot;.</p>
+		<p>
+			<img alt="Create a new Source File" title="Create a new Source File" border="0" src="images/Setting_Up_Eclipse_CDT_newsource.png"/>
+		</p>
+		<p>You will immediately get an editor window for your file. Eclipse will also auto-build your project every time you save. So type in something like this and hit save, and it should compile automatically:</p>
+		<p>
+			<img alt="Example Hello World application" title="Example Hello World application" border="0" src="images/Setting_Up_Eclipse_CDT_helloworld.png"/>
+		</p>
+		<p>Now here comes the tricky part: On the left pane, select &quot;C/C++ Projects&quot;, expand &quot;Binaries&quot; and you should see and executable (HelloWorld.exe). Now right-click that executable, and select &quot;Run&quot; / &quot;Run Local C/C++ Application&quot;. If everything goes well your output will be in the bottom right window in the &quot;Console&quot; tab and it should say &quot;Hello, World&quot;.</p>
+		<p>
+			<img alt="Running the example Hello World application" title="Running the example Hello World application" border="0" src="images/Setting_Up_Eclipse_CDT_helloout.png"/>
+		</p>
+		<p>Congratulations! You have successfully installed a compiler, a build system and an IDE. You have successfully created, edited, compiled and run a project. You should now be able to start your own projects!</p>
+		<h2 id="Eclipse_3.1_with_CDT_3.0">Eclipse 3.1 with CDT 3.0</h2>
+		<h3 id="Downloading_Eclipse_3.1">Downloading Eclipse 3.1</h3>
+		<p>Now we are finally ready to install Eclipse. Go to the 
+			<a href="http://www.eclipse.org/downloads/">Eclipse website</a> and look for &quot;Downloads&quot;. It will automatically try to figure out your OS and give you an option like &quot;Download now: Eclipse Platform SDK 3.1, Windows.&quot;. Do it. You will receive a .ZIP file. Use either 
+			<a href="http://www.filzip.com/">FilZip</a> or your favorite ZIP Program (Windows XP and Mac OS X have .ZIP support build in) to unpack the file. Move the unpacked folder to any location, for example <code>C:\Program Files\eclipse</code>. You can now start Eclipse by double-clicking it.
+		</p>
+		<p>
+			<img alt="Eclipse installed into C:\Program Files\eclipse" title="Eclipse installed into C:\Program Files\eclipse" border="0" src="images/Setting_Up_Eclipse_CDT_eclipseDir.png"/>
+		</p>
+		<h3 id="First_Run_of_Eclipse_2">First Run of Eclipse</h3>
+		<p>However you installed eclipse, you should now be able to run it. Double-click the icon or start the appropriate script in UNIX and Eclipse's splash-screen will appear:</p>
+		<p>
+			<img alt="Eclipse splash screen" title="Eclipse splash screen" border="0" src="images/Setting_Up_Eclipse_CDT_splash.png"/>
+		</p>
+		<p>Immediately after that Eclipse will ask you for your workspace location. It defaults to: <code>C:\Program Files\eclipse\workspace</code> which is actually very bad. Depending on where you want to use Eclipse, please set your workspace to the appropriate folder. If you are in a computer lab, check their policy on personal home folders. If you are on your own computer, a place within your personal settings is usually best:</p>
+		<p>
+			<img alt="Eclipse asking for workspace" title="Eclipse asking for workspace" border="0" src="images/Setting_Up_Eclipse_CDT_workspace.png"/>
+		</p>
+		<p>If you always want to use the same workspace, you may select the <code>Use this as the default...</code> and you'll never have to worry about workspaces again. This is usually a good idea once you've used Eclipse for a while. Finally Eclipse starts up with the welcome screen:</p>
+		<p>
+			<img alt="Eclipse welcome screen" title="Eclipse welcome screen" border="0" src="images/Setting_Up_Eclipse_CDT_welcome.png"/>
+		</p>
+		<p>And if you select the &quot;Go to the workbench&quot; in the top right corner, then you are right in Eclipse and you can start developing in Java. However, since we want to develop in C++ just continue with the next section.</p>
+		<h3 id="Installing_the_CDT_2">Installing the CDT</h3>
+		<p>Eclipse by default comes with support for programming Java, the support for C/C++ (the C Development Toolkit) has to be installed as an update.</p>
+		<p>In the &quot;Help&quot; menu select &quot;Software Updates&quot; and the &quot;Find and Install...&quot;. You should get something like:</p>
+		<p>
+			<img alt="Find and Install software updates" title="Find and Install software updates" border="0" src="images/Setting_Up_Eclipse_CDT_eclipsesu1.png"/>
+		</p>
+		<p>Select &quot;Search for new features to install&quot;, and then &quot;Next &gt;&quot;. You should get:</p>
+		<p>
+			<img alt="Select update sites" title="Select update sites" border="0" src="images/Setting_Up_Eclipse_CDT_eclipsesu2.png"/>
+		</p>
+		<p>Leave &quot;Ignore features not applicable to this environment&quot; checked and de-select all update sites (you will probably have less in there than I do). Select &quot;New Remote Site&quot; and then enter the following information:</p>
+		<p>Note: What name you enter does not matter. Here is the URL for cut-n-paste: <code>
+			<a href="http://download.eclipse.org/tools/cdt/releases/eclipse3.1">http://download.eclipse.org/tools/cdt/releases/eclipse3.1</a></code>
+		</p>
+		<p>
+			<img alt="Add new update site" title="Add new update site" border="0" src="images/Setting_Up_Eclipse_CDT_eclipsesu3.png"/>
+		</p>
+		<p>Hit &quot;OK&quot;. Now select &quot;Eclipse CDT&quot; and then &quot;Next &gt;&quot;. It should connect to the Eclipse CDT update site and look for the newest version. Then it displays a window like this one:</p>
+		<p>
+			<img alt="Select CDT to install" title="Select CDT to install" border="0" src="images/Setting_Up_Eclipse_CDT_eclipsesu4.png"/>
+		</p>
+		<p>Select the latest version of the &quot;Eclipse C/C++ Development Tools&quot;. (3.0.1 at the time of this writing) Do not select any other features. Hit &quot;Next &gt;&quot;.</p>
+		<p>In the next window, you will have to &quot;accept&quot; the license, and then select &quot;Next &gt;&quot;.</p>
+		<p>It will again show you an overview, which you can just accept and select &quot;Finish&quot;.</p>
+		<p>It will warn you that the Eclipse CDT is an &quot;unsigned feature&quot;. But you can just ignore that and select &quot;Install All&quot;.</p>
+		<p>
+			<img alt="Unsigned JAR" title="Unsigned JAR" border="0" src="images/Setting_Up_Eclipse_CDT_eclipsesu5.png"/>
+		</p>
+		<p>Downloading and installing will take a while. Once its done it will ask you to restart Eclipse. This is a good idea, so select &quot;Yes&quot;.</p>
+		<p>
+			<img alt="Restarting the workbench" title="Restarting the workbench" border="0" src="images/Setting_Up_Eclipse_CDT_eclipsesu6.png"/>
+		</p>
+		<p>Once Eclipse has restarted you now need to configure it for your computer.</p>
+		<p>Eclipse 3.1 with CDT 3.0.0 (and 3.0.1) has a bug on windows! If you are on windows, please close eclipse, and delete the file spawner.dll in eclise\plugins\org.eclipse.cdt.core.win32_3.0.0\os\win32\x86. This bug appears every time you try and run short programs (they will not show any output). More information is available in 
+			<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=102043">Eclipse Bug 102043</a>. This bug is fixed in CDT 3.0.2.
+		</p>
+		<h2 id="MinGW_4.x">MinGW 4.x</h2>
+		<p>MinGW 4.x comes with a new installer that asks much more questions than the old one. The current (Aug 05) version is MinGW 4.1.1.</p>
+		<p>Please note: The MinGW 4.x installer downloads parts of the MinGW suite during the install! You must have an internet connection during the install. If this is not an option for you, download the last version (3.1)</p>
+		<p>
+			<img alt="MinGW 4.1 install" title="MinGW 4.1 install" border="0" src="images/Setting_Up_Eclipse_CDT_mingw41_1.png"/>
+		</p>
+		<p>Most installation options are pretty straight forward. You will have to accept the license agreement:</p>
+		<p>
+			<img alt="MinGW license" title="MinGW license" border="0" src="images/Setting_Up_Eclipse_CDT_mingw41_1_1.png"/>
+		</p>
+		<p>It will ask you for a download mirror. Of course, you should pick one close to your country. If you are installing from home in the us, use a commercial mirror, if you are installing from a university connection, chose a university mirror.</p>
+		<p>
+			<img alt="Mirror Selection" title="Mirror Selection" border="0" src="images/Setting_Up_Eclipse_CDT_mingw41_1_2.png"/>
+		</p>
+		<p>When installing MinGW, it is advisable to use the default directory <code>C:\MinGW</code>. Do not use a path that contains spaces, this will give you problems later on.</p>
+		<p>
+			<img alt="MinGW installation directory" title="MinGW installation directory" border="0" src="images/Setting_Up_Eclipse_CDT_mingw41_2.png"/>
+		</p>
+		<p>If all you need MinGW for is compiling your programs from within Eclipse, the Compact install should be enough:</p>
+		<p>
+			<img alt="MinGW installation components" title="MinGW installation components" border="0" src="images/Setting_Up_Eclipse_CDT_mingw41_3a.png"/>
+		</p>
+		<p>Next, it will ask you for additional tasks to perform. Select all of them:</p>
+		<p>
+			<img alt="Additional Tasks" title="Additional Tasks" border="0" src="images/Setting_Up_Eclipse_CDT_mingw41_4.png"/>
+		</p>
+		<p>MinGW will download and install your selected components. After a little while your installation is done. You will now need to install MSYS.</p>
+		<h2 id="MinGW_3.1">MinGW 3.1</h2>
+		<p>At the time of this writing this was &quot;Download MinGW-3.1.0-1.exe&quot;, but the version number may be higher now. Once downloaded, start the program. It should look similar to this:</p>
+		<p>
+			<img alt="MinGW 3.1 install" title="MinGW 3.1 install" border="0" src="images/Setting_Up_Eclipse_CDT_mingw1.png"/>
+		</p>
+		<p>If you accept all the default options MinGW should install just fine.</p><hr class="navigation-separator"/>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Common-Problems.html" title="Common Problems">
+						<img alt="Previous" border="0" src="../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center">
+					<a href="Setting-Up-Eclipse-CDT.html" title="Setting Up Eclipse CDT">
+						<img alt="Setting Up Eclipse CDT" border="0" src="../../images/home.gif"/>
+					</a>
+				</td>
+				<td style="width: 20%" align="right">
+					<a href="Feedback.html" title="Feedback">
+						<img alt="Next" border="0" src="../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Common Problems</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Feedback</td>
+			</tr>
+		</table>
+	</body>
+</html>

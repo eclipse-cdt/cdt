@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<toc topic="CDT/Setting_Up_Eclipse_CDT/Setting-Up-Eclipse-CDT.html" label="Setting Up Eclipse CDT User Guide">
+	<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-Up-Eclipse-CDT.html" label="Introduction"></topic>
+	<topic href="CDT/Setting_Up_Eclipse_CDT/Other-Resources.html" label="Other Resources"></topic>
+	<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-a-compiler.html" label="Setting up a compiler">
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-a-compiler.html#Windows_compiler" label="Windows compiler">
+			<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-a-compiler.html#MinGW_.2B_MSYS" label="MinGW + MSYS"></topic>
+			<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-a-compiler.html#Environment_Variables" label="Environment Variables"></topic>
+		</topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-a-compiler.html#Linux_.2F_Unix_Compiler" label="Linux / Unix Compiler"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-a-compiler.html#Mac_OS_X_Compiler" label="Mac OS X Compiler">
+			<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-a-compiler.html#Mac_OS_X_up_to_Snow_Leopard_.2810.6.29" label="Mac OS X up to Snow Leopard (10.6)"></topic>
+			<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-a-compiler.html#Mac_OS_X_Lion_.2810.7.29_and_Newer" label="Mac OS X Lion (10.7) and Newer"></topic>
+		</topic>
+	</topic>
+	<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-Eclipse.html" label="Setting up Eclipse">
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-Eclipse.html#Java" label="Java"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-Eclipse.html#Downloading_Eclipse" label="Downloading Eclipse"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-Eclipse.html#First_Run_of_Eclipse" label="First Run of Eclipse"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-Eclipse.html#Installing_the_CDT" label="Installing the CDT"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-Eclipse.html#Configuring_the_CDT" label="Configuring the CDT"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Setting-up-Eclipse.html#Hello.2C_World.21" label="Hello, World!"></topic>
+	</topic>
+	<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html" label="Common Problems">
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#How_to_fix_most_of_the_common_errors_on_Windows" label="How to fix most of the common errors on Windows"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#How_to_fix_most_of_the_common_errors_on_Lion_.28Mac_OS_X_10.7.29" label="How to fix most of the common errors on Lion (Mac OS X 10.7)"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#Build_error_.28Exec_error:Launching_failed.29.2C_CreateProcess:_make_-k_all_error.3D2.2C" label="Build error (Exec error:Launching failed), CreateProcess: make -k all error=2,"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#.2Fbin.2Fsh:_line_1:_g.2B.2B:_command_not_found.2C_Error_launching_external_scanner_info_generator" label="/bin/sh: line 1: g++: command not found, Error launching external scanner info generator"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#Undefined_symbols_for_architecture_x86_64_.28OS_X_10.7.29" label="Undefined symbols for architecture x86_64 (OS X 10.7)"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#No_output_or_only_sometimes_output" label="No output or only sometimes output"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#Error_launching_.27cygpath.27_command" label="Error launching &apos;cygpath&apos; command"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#I_do_not_have_the_option_to_start_a_C.2B.2B_project" label="I do not have the option to start a C++ project"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#Error_1.2C_open_output_file_blabla.exe:_Permission_denied" label="Error 1, open output file blabla.exe: Permission denied"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#The_debugger_doesn.27t_work_.28on_windows.2C_with_MinGW.29" label="The debugger doesn&apos;t work (on windows, with MinGW)"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#Incorrect_command_line_argument:_-k.27" label="Incorrect command line argument: -k&apos;"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#A_Java_Runtime_Envrionment_.28JRE.29_or_Java_Development_Kit_.28JDK.29_must_be_available..." label="A Java Runtime Envrionment (JRE) or Java Development Kit (JDK) must be available..."></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#I_have_no_binaries" label="I have no binaries"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#Unable_to_access_jarfile_startup.jar" label="Unable to access jarfile startup.jar"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#Problems_when_CYGWIN_is_installed_on_Windows" label="Problems when CYGWIN is installed on Windows">
+			<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#Binaries_require_cygwin.dll" label="Binaries require cygwin.dll"></topic>
+		</topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#Launch_failed_Reason:_Unable_to_set_working_directory" label="Launch failed Reason: Unable to set working directory"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Common-Problems.html#Problems_not_covered_here" label="Problems not covered here"></topic>
+	</topic>
+	<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html" label="Older Instructions">
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#MinGW_5.2C_MSYS_1.0.11" label="MinGW 5, MSYS 1.0.11">
+			<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#MinGW_5.x" label="MinGW 5.x"></topic>
+			<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#GDB_.28optional.21.29" label="GDB (optional!)"></topic>
+			<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#MSYS_1.0.11" label="MSYS 1.0.11"></topic>
+		</topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#Installing_the_CDT_on_Eclipse_3.4" label="Installing the CDT on Eclipse 3.4"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#Hello.2C_World.21_in_older_versions_of_CDT" label="Hello, World! in older versions of CDT"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#Eclipse_3.1_with_CDT_3.0" label="Eclipse 3.1 with CDT 3.0">
+			<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#Downloading_Eclipse_3.1" label="Downloading Eclipse 3.1"></topic>
+			<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#First_Run_of_Eclipse_2" label="First Run of Eclipse"></topic>
+			<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#Installing_the_CDT_2" label="Installing the CDT"></topic>
+		</topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#MinGW_4.x" label="MinGW 4.x"></topic>
+		<topic href="CDT/Setting_Up_Eclipse_CDT/Older-Instructions.html#MinGW_3.1" label="MinGW 3.1"></topic>
+	</topic>
+	<topic href="CDT/Setting_Up_Eclipse_CDT/Feedback.html" label="Feedback"></topic>
+	<topic href="CDT/Setting_Up_Eclipse_CDT/Updating-This-Document.html" label="Updating This Document"></topic>
+</toc>

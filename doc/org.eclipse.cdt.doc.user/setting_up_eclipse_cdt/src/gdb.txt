@@ -1,0 +1,12 @@
+= GDB (optional!) =
+
+This section is completely optional. You may skip it and go directly to [[#msys|???]].
+
+If you want to use the debugger, you may have to install it separately. This is the case with MinGW 5.0.2, it may be different in other versions. Download it from the same page, look for a package starting with gdb and ending with .exe. At the time of this writing (Apr 29) the current version was &quot;gdb-5.2.1-1.exe&quot;. Install (double-click) that .exe, select all the default options (make sure you select the same MinGW directory as you did during the MinGW install).
+
+I have received a report that gdb-6.3-2 does not work. So I would advise using the older version or waiting for a newer one.
+
+Checkpoint:
+
+<pre>gdb --version</pre>
+should print the gdb version. This is optional.

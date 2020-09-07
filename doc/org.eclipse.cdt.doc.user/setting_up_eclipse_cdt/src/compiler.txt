@@ -1,0 +1,77 @@
+= Setting up a compiler =
+
+Unfortunately Eclipse only provides the Integrated Development Environment (IDE) but it is missing the actual compiler. To install a compiler, please follow the instructions for your operating system.
+
+== Windows compiler ==
+
+Windows doesn't come with a build-in compiler. You could try to install Visual Studio, but it is tricky to get that working with Eclipse. Therefore we will install [http://www.mingw.org/wiki/msys MSYS]. MSYS is part of the [http://www.mingw.org/ MinGW] suite, which provides free development tools for Windows.
+
+You will have to follow these 4 steps:
+
+* Download and install MinGW
+* Download and install MSYS
+* Set your path environment variable
+* Restart Eclipse if it was started.
+
+== Linux / Unix Compiler ==
+
+In most Linux and Unix distributions the compiler is already installed. Check if you can run
+
+<pre>g++ --version</pre>
+and either
+
+<pre>make --version</pre>
+or
+
+<pre>gmake --version</pre>
+If both of them (<code>g++</code> and either <code>make</code> or <code>gmake</code>) work then you are already done. If not, please install those. This may be very different depending on which Linux or Unix distribution you have. Install the tools and continue with [[#eclipse|???]].
+
+== Mac OS X Compiler ==
+
+On Mac OS X you can also try the commands explained in [[#linux|Linux / Unix Compiler]] to check if you have the necessary tools installed. If not, you will need to install the developer tools
+
+=== Mac OS X up to Snow Leopard (10.6) ===
+
+The developer tools are either on one of your Mac OS X CDs that came with your computer, or you can download them at: [https://developer.apple.com/ Apple's developer connection].
+
+=== Mac OS X Lion (10.7) and Newer ===
+
+To get the compiler, you have to install developer tools (Xcode) from the App Store. After downloading, you have to run the installer to actually install the developer tools.
+
+<div class="note">
+
+If you have upgraded to Lion from an older version of OS X, you have to redo both of these steps (download + install). Upgrading to Lion breaks your existing developer tools. Again: You have to do this after an upgrade to Lion, even if you have previously installed the developer tools!
+
+
+</div>
+[[File:xcode1.png|thumb|none|alt=Find XCode in App Store|Find XCode in App Store]]
+
+After you've downloaded developer tools (Xcode), you have to go to your Applications folder and run the installer.
+
+[[File:xcode2.png|thumb|none|alt=Run the Xcode installer from Applications|Run the Xcode installer from Applications]]
+
+During the install, you may encounter the following error messages:
+
+; In order to continue installation, please close the following application: iTunes
+: You may need to do two things:
+;# Close iTunes, see if that helped.
+;# In a Terminal window, type: <code>killall
+              iTunesHelper</code>
+; No matching processes belonging to you were found
+: This can happen if your Unix username contains a space. The workaround is to create an admin user to be used during the installation.
+;# Open system preferences, go to &quot;Users and groups&quot;
+;# Unlock the user preferences, type in you password
+;# Click on &quot;+&quot; to create a new user
+;#* For &quot;New account&quot; select &quot;Administrator&quot;
+;#* For fullname and account name enter something in all lower cases without spaces, e.g. &quot;admin&quot;.
+;#* In der Dropdownmenu for &quot;new account&quot; change &quot;Standard&quot; to &quot;Administrator&quot;.
+;#* Log out, and log back in as your new admin user.
+;#* Try installing again.
+;#* Log out, log back in as your normal user
+;#* Delete the admin user (System preferences, Users and Groups, unlock, select the admin user, click on &quot;-&quot;)
+
+After Xcode has finished installing, you can open up a terminal (Applications / Utilities / Terminal) and check if g++, gcc and make are working:
+
+<pre>gcc --version
+g++ --version
+make --version</pre>

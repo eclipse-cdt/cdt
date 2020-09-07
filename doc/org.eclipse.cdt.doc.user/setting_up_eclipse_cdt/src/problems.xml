@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="US-ASCII"?>
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:id="problems" xml:lang="en-US">
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="problems">
   <title>Common Problems</title>
   <para>If you have followed these instructions everything should work.
   However, you may have ran into trouble, and then decided to look for the
@@ -7,7 +7,7 @@
   problem and need an answer:</para>
   <para>Please note if you are reading the online version: Some problems may
   covered in a newer version of this document, please refer to <xref linkend="introduction"/>.</para>
-  <section xml:id="common_errors">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="common_errors">
     <title>How to fix most of the common errors on Windows</title>
     <para>Make sure you have done the following things:</para>
     <para>
@@ -29,7 +29,7 @@
     shutdown, File / Restart is not sufficient). This solves about 99% of all
     support mails I've got so far.</para>
   </section>
-  <section xml:id="lion">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="lion">
     <title>How to fix most of the common errors on Lion (Mac OS X 10.7)</title>
     <para>Make sure you have done the following this:</para>
     <itemizedlist>
@@ -45,7 +45,7 @@
     existing developer tools! Read also the full description in <xref linkend="macosx"/>. It also covers problems during the XCode
     install.</para>
   </section>
-  <section xml:id="nomake">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="nomake">
     <title>Build error (Exec error:Launching failed), CreateProcess: make -k
     all error=2,</title>
     <para>You have just tried the build the hello world program, and you get
@@ -69,7 +69,7 @@
     may or may not work with it. Please see the <link xlink:href="http://www.mingw.org/mingwfaq.shtml#faq-mingw32-make.exe">MinGW
     FAQ</link> for more information.</para>
   </section>
-  <section xml:id="external_scanner_info_generator">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="external_scanner_info_generator">
     <title>/bin/sh: line 1: g++: command not found, Error launching external
     scanner info generator</title>
     <para>This error message means that g++ is either not installed or not in
@@ -83,14 +83,14 @@
     set your path environment variable. If only gcc one worked, reinstall
     MinGW and don't forget to select the C++ compiler!</para>
   </section>
-  <section xml:id="undefinded_symbols">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="undefinded_symbols">
     <title>Undefined symbols for architecture x86_64 (OS X 10.7)</title>
     <para>Make sure you have done the steps in <xref linkend="lion"/>.</para>
     <para>If the problem still persist, and you are trying to compile C++
     code, make sure your source files actually have an extension of ".cc" or
     ".cpp".</para>
   </section>
-  <section xml:id="no_output">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="no_output">
     <title>No output or only sometimes output</title>
     <para>If you are on windows and use Eclipse 3.1 with CDT 3.0.0 there is a
     bug. See <xref linkend="configuring"/>.</para>
@@ -99,16 +99,16 @@
     console. If you're running a debug session, please watch which windows
     appear in your task bar.</para>
   </section>
-  <section xml:id="error_launching_cygpath">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="error_launching_cygpath">
     <title>Error launching 'cygpath' command</title>
     <para>If you followed these instructions you have installed MSYS instead
     of cygwin. You may safely ignore this error message.</para>
   </section>
-  <section xml:id="nocppproject">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="nocppproject">
     <title>I do not have the option to start a C++ project</title>
     <para>You have not installed the CDT. See <xref linkend="installingcdt"/>.</para>
   </section>
-  <section xml:id="permission_denied">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="permission_denied">
     <title>Error 1, open output file blabla.exe: Permission denied</title>
     <para>Every time I start Eclipse on my laptop, I can only compile and run
     a program once. After that it asks if I want to run it with errors every
@@ -128,12 +128,12 @@ Build complete for project Project01Test
     Another way is switching to the "Debug" perspective, selecting your
     running program, and stopping it there (also the small red square).</para>
   </section>
-  <section xml:id="no_debugger">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="no_debugger">
     <title>The debugger doesn't work (on windows, with MinGW)</title>
     <para>Unfortunately gdb is not included in the current (4.1.1 or 5.0.2)
     version of MinGW. See <xref linkend="gdb"/>.</para>
   </section>
-  <section xml:id="argument_minus_k">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="argument_minus_k">
     <title>Incorrect command line argument: -k'</title>
     <para>Make sure you are using the make programs provided by MinGW. If your
     output in the console shows something like:</para>
@@ -161,7 +161,7 @@ Incorrect command line argument: -k</programlisting>
       </listitem>
     </itemizedlist>
   </section>
-  <section xml:id="a_jre_must_be_available">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="a_jre_must_be_available">
     <title>A Java Runtime Envrionment (JRE) or Java Development Kit (JDK) must
     be available...</title>
     <para>There are several possible reasons for that:</para>
@@ -180,7 +180,7 @@ Incorrect command line argument: -k</programlisting>
       </listitem>
     </itemizedlist>
   </section>
-  <section xml:id="no_binaries">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="no_binaries">
     <title>I have no binaries</title>
     <para>If you have no binaries folder, then one of several things may have
     happened:</para>
@@ -218,19 +218,19 @@ Incorrect command line argument: -k</programlisting>
       </screenshot>
     </figure>
   </section>
-  <section xml:id="jarfile_startup">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="jarfile_startup">
     <title>Unable to access jarfile startup.jar</title>
     <para>This problem happens on Windows when you moved Eclipse out of its
     directory instead of creating a shortcut. Please move it back into the
     Eclipse directory, then drag'n'drop it using the right mouse button, where
     you can select "Create Shurtcut"</para>
   </section>
-  <section xml:id="cygwin_on_windows">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="cygwin_on_windows">
     <title>Problems when CYGWIN is installed on Windows</title>
     <para>I personally do not recommend the installation of cygwin, but rather
     the installation of MinGW and MSYS as described in <xref linkend="wincompiler"/>. However, the following problems have been
     reported by users:</para>
-    <section xml:id="cygwin_dll">
+    <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="cygwin_dll">
       <title>Binaries require cygwin.dll</title>
       <para>Eclipse prefers to use cygwin if it is installed, and will do
       everything to manipulate the path to include cygwin if it is installed.
@@ -250,14 +250,14 @@ Incorrect command line argument: -k</programlisting>
       </itemizedlist>
     </section>
   </section>
-  <section xml:id="working_directory">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="working_directory">
     <title>Launch failed Reason: Unable to set working directory</title>
     <para>Your workspace or your eclipse installation may use a path with
     includes spaces, such as <computeroutput>C:\Documents and
     Settings</computeroutput>. Eclipse sometimes fails in this case. Try
     creating your workspace in a different directory.</para>
   </section>
-  <section xml:id="other_problems">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="other_problems">
     <title>Problems not covered here</title>
     <para>If you read the online version of this document, check out <xref linkend="introduction"/>. You problem may be covered in a newer version
     of this document.</para>

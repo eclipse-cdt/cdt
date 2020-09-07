@@ -1,0 +1,776 @@
+= Introduction =
+
+There are several freely available C and C++ development environments. Most of them have the disadvantage that they require one particular operating system. The Eclipse IDE was written as a cross-platform development environment. Initially just written for Java, it also has a very good C/C++ development mode.
+
+If you have already tried (and I assume failed, otherwise you wouldn't be reading this document) to install Eclipse CDT, you may want to go directly to [[#Common Problems|Common Problems]].
+
+This document describes how to install everything necessary to develop with C or C++ using only free tools on the three major operating systems Windows, Linux, and Mac OS X. It uses the Eclipse IDE, which is the same on all operating systems, thus providing a consistent user experience once installed.
+
+There are two versions of this document:
+
+; The free online version
+: The [http://max.berger.name/howto/cdt free version of Setting up Eclipse CDT on Windows, Linux/Unix, Mac OS X] can be found on [http://max.berger.name/ Max Bergers website]. It will always be the previous major revision of the document.
+; A paid eBook version
+: The eBook version of Setting up Eclipse CDT on Windows, Linux/Unix, Mac OS X is distributed through Amazon.com, Amazon.co.uk, and Amazon.de. It will always be the current major revision of the document.
+;* [http://www.amazon.com/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=maxbergername-20 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.com]
+;* [http://www.amazon.co.uk/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=httpmaxberg02-21 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.co.uk]
+;* [http://www.amazon.de/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=httpmaxberger-21 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.de]
+;* [http://www.amazon.fr/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=httpmaxberg06-21 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.fr]
+;* [http://www.amazon.it/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=httpmaxberg08-21 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.it]
+;* [http://www.amazon.es/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&tag=maxbergername-21 Setting up Eclipse CDT on Window, Linux/Unix, Mac OS X on Amazon.es]
+
+At this time, the eBook version contains updates for the following items which are not yet in the free version:
+
+* There are no updates in the ebook version at this time.
+
+Screenshots may still reflect older versions of the used software, they are only updated if there is a significant change.
+
+= Other Resources =
+
+When looking for Instructions, I found the following websites:
+
+* http://wiki.eclipse.org/CDT/User/FAQ
+* http://yongshin.blogspot.com/2005/11/how-to-use-cdt-and-mingw-for-eclipse.html
+* http://www.cs.umanitoba.ca/~eclipse/7-EclipseCDT.pdf
+
+= Setting up a compiler =
+
+Unfortunately Eclipse only provides the Integrated Development Environment (IDE) but it is missing the actual compiler. To install a compiler, please follow the instructions for your operating system.
+
+== Windows compiler ==
+
+Windows doesn't come with a build-in compiler. You could try to install Visual Studio, but it is tricky to get that working with Eclipse. Therefore we will install [http://www.mingw.org/wiki/msys MSYS]. MSYS is part of the [http://www.mingw.org/ MinGW] suite, which provides free development tools for Windows.
+
+You will have to follow these 4 steps:
+
+* Download and install MinGW
+* Download and install MSYS
+* Set your path environment variable
+* Restart Eclipse if it was started.
+
+=== MinGW + MSYS ===
+
+First, you need to download MinGW. You can either click through the websites mentioned above or go directly to the [https://sourceforge.net/projects/mingw/files/ MinGW download area]. Look for the Section &quot;Automated MinGW Installer&quot;, then &quot;mingw-get-inst&quot;. There, download the newest subdirectory. and in there download the file ending in .exe. The file name should be something like &quot;mingw-get-inst-20110802.exe&quot;. You can also download [http://sourceforge.net/projects/mingw/files/Automated%20MinGW%20Installer/mingw-get-inst/mingw-get-inst-20110802/mingw-get-inst-20110802.exe/download mingw-get-inst-200110802.exe] from the link given here.
+
+Make sure you install the program with Administrator Priviledges. Right-click on the downloaded file, and select &quot;Run as Administrator&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_mingwgetinst1.png|alt=MinGW-Get-Inst Setup|MinGW-Get-Inst Setup]]
+
+Make sure the second screen tells you that this is an Administrator install. If you don't get this screen, select &quot;Cancel&quot; and re-start as administrator.
+
+[[File:Setting_Up_Eclipse_CDT_mingwgetinst2.png|alt=Make sure you do an Administrator install|Make sure you do an Administrator install]]
+
+The next screen asks you if you want up-to-date versions of the files. Tell the installer that you want do download the newest catalog data.
+
+[[File:Setting_Up_Eclipse_CDT_mingwgetinst3.png|alt=Select the latest version|Select the latest version]]
+
+Next, you have to accept the License.
+
+[[File:Setting_Up_Eclipse_CDT_mingwgetinst4.png|alt=MinGW License|MinGW License]]
+
+The following screen allows you to select a directory to install to. The default directory <code>C:\MinGW</code> is fine. You can select almost anything you like.
+
+
+
+Do not select a path containing spaces! This will lead to trouble later on!
+
+
+
+[[File:Setting_Up_Eclipse_CDT_mingwgetinst5.png|alt=Select a path for MinGW and MSYS|Select a path for MinGW and MSYS]]
+
+Next, you're asked if you want to create a start menu entry. This is a good idea for checking the install, so do it.
+
+[[File:Setting_Up_Eclipse_CDT_mingwgetinst6.png|alt=Create a start menu entry|Create a start menu entry]]
+
+On the next screen, you again have to change things. You have to select &quot;C++Compiler&quot; and &quot;MSYS Basic System&quot;. These two are necessary to run the compiler and the build-system on Windows.
+
+[[File:Setting_Up_Eclipse_CDT_mingwgetinst7.png|alt=Select &quot;C++ Compiler&quot; and &quot;MSYS Basic System&quot;|Select &quot;C++ Compiler&quot; and &quot;MSYS Basic System&quot;]]
+
+The next screen lets you check the installation. Make sure it looks like this screenshot.
+
+[[File:Setting_Up_Eclipse_CDT_mingwgetinst8.png|alt=Please check if the right options are selected|Please check if the right options are selected]]
+
+After selecting &quot;Install&quot;, you have to wait for the installation process to complete.
+
+[[File:Setting_Up_Eclipse_CDT_mingwgetinst9.png|alt=Installer updating its catalogue files|Installer updating its catalogue files]]
+
+[[File:Setting_Up_Eclipse_CDT_mingwgetinst10.png|alt=Downloading and installing|Downloading and installing]]
+
+[[File:Setting_Up_Eclipse_CDT_mingwgetinst11.png|alt=Installation complete|Installation complete]]
+
+Once the installation is complete, hit &quot;Finish&quot;.
+
+Checkpoint: You should be able to start MSYS by going to Start / Programs / MinGW / MinGW Shell. A console window should open. There, the following commands should give you some output:
+
+<pre>gcc --version
+g++ --version
+make --version</pre>
+Close the MSYS shell again. We'll make sure that these tools are available for all Windows programs in the next section.
+
+=== Environment Variables ===
+
+The next thing you need to do is set up your Path environment variable.
+
+On Windows 2000/XP, right-click on <code>My Computer</code> and select <code>Properties</code>. Then, select the <code>Advanced</code> tab. There should be a button called <code>Environment Variables</code>.
+
+[[File:Setting_Up_Eclipse_CDT_systemproperties.png|alt=Finding Environment Variables (Windows 2000)|Finding Environment Variables (Windows 2000)]]
+
+[[File:Setting_Up_Eclipse_CDT_systempropertiesxp.png|alt=Finding Environment Variables (Windows XP)|Finding Environment Variables (Windows XP)]]
+
+In Windows Vista / Windows 7, Click on the Windows Logo, right click on Computer, select Properties
+
+[[File:Setting_Up_Eclipse_CDT_systempropertiesw71.png|alt=Computer properties in Windows Vista / Windows 7|Computer properties in Windows Vista / Windows 7]]
+
+In the control panel, select &quot;Advances system settings&quot;
+
+[[File:Setting_Up_Eclipse_CDT_systempropertiesw72.png|alt=Finding the System Properties in Winows Vista / Winows 7|Finding the System Properties in Winows Vista / Winows 7]]
+
+Finally, click on &quot;Environment Variables&quot;
+
+[[File:Setting_Up_Eclipse_CDT_systempropertiesw73.png|alt=Environment Variables in Windows Vista / Windows 7|Environment Variables in Windows Vista / Windows 7]]
+
+In the environment variables, there are two sections, one for the local user (you) and one for the system. Depending on whether you want the paths to be set for everyone, or for you, do one of the following:
+
+''Warning: I had reports of people deleting their existing Path environment variable! Please be very careful when editing an existing value! By default, Windows has the whole line selected, resulting in overwriting what was in there!''
+
+If you want to set it for everyone, look for the variable <code>Path</code> in the section <code>System variables</code>. Click <code>Edit</code>. There should already be some text in there, append <code>;C:\MinGW\bin;C:\MinGW\msys\1.0\bin;</code> (or your appropriate paths, e.g. <code>;C:\msys\1.0\bin;C:\mingw\bin</code> if you installed MinGW 5 / MSys 1.0.11) to it, and select <code>OK</code> multiple times. Please make sure that you do not overwrite what was in there!
+
+If you just want to set it for you, look for <code>Path</code> in the upper section. It is very likely not there yet. So select <code>New...</code> and enter <code>C:\MinGW\bin;C:\MinGW\msys\1.0\bin</code> (or your appropriate paths, see paragraph above). Then select <code>OK</code> multiple times. Again, if there was a setting before, do not delete it, but rather append your path!
+
+[[File:Setting_Up_Eclipse_CDT_systempropertiesw74.png|alt=Setting the Environment variables|Setting the Environment variables]]
+
+There seems to be a problem with a very long PATH environment variable on some systems. According to reports, Eclipse will fail to compile and build, where as compiling and building from a command window may work fine. In this case, try to prepend the path to MinGW and MSYS rather than appending it.
+
+Congratulations. Now you have a complier and make set up on your computer. Continue with [[#Setting up Eclipse|Setting up Eclipse]].
+
+Checkpoint: Open up a command terminal (cmd) and type:
+
+<pre>make --version
+g++ --version
+gcc --version</pre>
+Each one of these should work now. If not, you have either not installed MSYS correctly or not set your path environment variable. Also, try logging out and back in.
+
+== Linux / Unix Compiler ==
+
+In most Linux and Unix distributions the compiler is already installed. Check if you can run
+
+<pre>g++ --version</pre>
+and either
+
+<pre>make --version</pre>
+or
+
+<pre>gmake --version</pre>
+If both of them (<code>g++</code> and either <code>make</code> or <code>gmake</code>) work then you are already done. If not, please install those. This may be very different depending on which Linux or Unix distribution you have. Install the tools and continue with [[#Setting up Eclipse|Setting up Eclipse]].
+
+== Mac OS X Compiler ==
+
+On Mac OS X you can also try the commands explained in [[#Linux / Unix Compiler|Linux / Unix Compiler]] to check if you have the necessary tools installed. If not, you will need to install the developer tools
+
+=== Mac OS X up to Snow Leopard (10.6) ===
+
+The developer tools are either on one of your Mac OS X CDs that came with your computer, or you can download them at: [https://developer.apple.com/ Apple's developer connection].
+
+=== Mac OS X Lion (10.7) and Newer ===
+
+To get the compiler, you have to install developer tools (Xcode) from the App Store. After downloading, you have to run the installer to actually install the developer tools.
+
+
+
+If you have upgraded to Lion from an older version of OS X, you have to redo both of these steps (download + install). Upgrading to Lion breaks your existing developer tools. Again: You have to do this after an upgrade to Lion, even if you have previously installed the developer tools!
+
+
+
+[[File:Setting_Up_Eclipse_CDT_xcode1.png|alt=Find XCode in App Store|Find XCode in App Store]]
+
+After you've downloaded developer tools (Xcode), you have to go to your Applications folder and run the installer.
+
+[[File:Setting_Up_Eclipse_CDT_xcode2.png|alt=Run the Xcode installer from Applications|Run the Xcode installer from Applications]]
+
+During the install, you may encounter the following error messages:
+
+; In order to continue installation, please close the following application: iTunes
+: You may need to do two things:
+;# Close iTunes, see if that helped.
+;# In a Terminal window, type: <code>killall iTunesHelper</code>
+; No matching processes belonging to you were found
+: This can happen if your Unix username contains a space. The workaround is to create an admin user to be used during the installation.
+;# Open system preferences, go to &quot;Users and groups&quot;
+;# Unlock the user preferences, type in you password
+;# Click on &quot;+&quot; to create a new user
+;#* For &quot;New account&quot; select &quot;Administrator&quot;
+;#* For fullname and account name enter something in all lower cases without spaces, e.g. &quot;admin&quot;.
+;#* In der Dropdownmenu for &quot;new account&quot; change &quot;Standard&quot; to &quot;Administrator&quot;.
+;#* Log out, and log back in as your new admin user.
+;#* Try installing again.
+;#* Log out, log back in as your normal user
+;#* Delete the admin user (System preferences, Users and Groups, unlock, select the admin user, click on &quot;-&quot;)
+
+After Xcode has finished installing, you can open up a terminal (Applications / Utilities / Terminal) and check if g++, gcc and make are working:
+
+<pre>gcc --version
+g++ --version
+make --version</pre>
+= Setting up Eclipse =
+
+On Windows XP and later, this may be a good point in time to create a system restore point. This may safe you trouble in the long run if the installation fails.
+
+== Java ==
+
+Eclipse was originally written for the Java platform. It still requires a Java Runtime Environment (JRE) or a Java Development Kit (JDK), version 1.5 or greater. You will most probably already have Java installed (it comes included in Mac OS X until 10.6 and will be auto-installed in Mac OS X 10.7 / Lion). However, if you don't have Java installed, and you are on Windows or Linux, you can download a JRE from [http://java.sun.com/javase/ Sun's Java website] or from [http://www.java.com java.com]. At the time of this writing the latest version was [http://java.sun.com/javase/downloads/index.jsp Java Runtime Environment (JRE) 7]. Look for the section called &quot;Java SE Runtime Environment (JRE)&quot; and select &quot;JRE 7&quot; (or similar). You will not need NetBeans, JDK, or EE, they are just larger downloads with more programs. You may need the JDK if you want to do Java development.
+
+Note: There may be an [http://blog.max.berger.name/2010/07/eclipse-helios-and-java-16u21-deadlocks.html incompatibility between Eclipse Helios and Java 1.6 update 21].
+
+To find out if you have Java installed, and which version it is, you can open a command prompt / shell and type in:
+
+<pre>java -version</pre>
+== Downloading Eclipse ==
+
+Eclipse is a modular software, but ever summer there are bundled released. The link is:
+
+* http://www.eclipse.org/downloads/
+
+I recommend the complete &quot;Eclipse IDE for C/C++ Developers&quot; bundle, which already contains the CDT. If you download a different bundle, you will probably have to install the CDT manually, as described in [[#Installing the CDT|Installing the CDT]].
+
+The file is about 86 MB in size, so it will take a while to download. You will end up with a .ZIP file. Use either [http://www.filzip.com/ FilZip] or your favorite ZIP Program (Windows XP/Vista/7 and Mac OS X have .ZIP support build in) to unpack the file. Move the unpacked folder to any location, for example <code>C:\Program Files\eclipse</code>. You can now start Eclipse by double-clicking it.
+
+[[File:Setting_Up_Eclipse_CDT_eclipseDir.png|alt=Eclipse installed into C:\Program Files\eclipse|Eclipse installed into C:\Program Files\eclipse]]
+
+== First Run of Eclipse ==
+
+However you installed eclipse, you should now be able to run it. Double-click the icon or start the appropriate script in UNIX and Eclipse's splash-screen will appear:
+
+[[File:Setting_Up_Eclipse_CDT_splash37.png|alt=Eclipse splash screen|Eclipse splash screen]]
+
+Immediately after that Eclipse will ask you for your workspace location. It defaults to a place within your personal settings. It is a good idea to use the default workspace, you may want to note where it is located.
+
+[[File:Setting_Up_Eclipse_CDT_workspace.png|alt=Eclipse asking for workspace|Eclipse asking for workspace]]
+
+If you always want to use the same workspace, you may select the <code>Use this as the default...</code> and you'll never have to worry about workspaces again. This is usually a good idea once you've used Eclipse for a while. Finally Eclipse starts up with the welcome screen:
+
+[[File:Setting_Up_Eclipse_CDT_welcome.png|alt=Eclipse welcome screen|Eclipse welcome screen]]
+
+And if you select the &quot;Go to the workbench&quot; (the backward arrow) on the right, then you are inside Eclipse.
+
+If you downloaded the &quot;Eclipse IDE for C/C++ Developers&quot; you can skip the next section and go straight to [[#Configuring the CDT|Configuring the CDT]].
+
+If you have downloaded a different package, there are additional tools needed to start programming. We want to develop in C++, so we will continue with the next section.
+
+== Installing the CDT ==
+
+
+
+This is only required if you did not download the CDT version as described above. Please check if you are able to create a new C++ project (as described in [[#Hello, World!|Hello, World!]]) before going through this section!
+
+
+
+
+
+This section described the current (3.5, 3.6, and 3.7) version of Eclipse. For the previous version (3.4) Please see [[#Installing the CDT|Installing the CDT]]).
+
+
+
+In the &quot;Help&quot; menu select &quot;Install New Software...&quot;
+
+[[File:Setting_Up_Eclipse_CDT_softwareupdatemenu35.png|alt=Select Install New Software... from the help menu|Select Install New Software... from the help menu]]
+
+This will show you the list of available software update sites. CDT is part of the standard release, so you can select an update site matching your eclipse version.
+
+Please note: It is important to install the right Version of CDT for your version of eclipse:
+
+* For Eclipse 3.7 (Indigo): Use <code>http://download.eclipse.org/tools/cdt/releases/indigo</code>
+* For Eclipse 3.6 (Helios): Use <code>http://download.eclipse.org/tools/cdt/releases/helios</code>
+* For Eclipse 3.5 (Galileo): Use <code>http://download.eclipse.org/tools/cdt/releases/galileo</code>
+
+[[File:Setting_Up_Eclipse_CDT_softwareupdateadd35.png|alt=Available Software Update page with Add... opened|Available Software Update page with Add... opened]]
+
+When you have found the CDT site, it will give you two entries: CDT Main Features and CDT Optional Features. Expand both, and find the latest version of the CDT. Make sure you select at least the following:
+
+* C/C++ Development Tools
+* C/C++ GNU Toolchain Build Support
+* C/C++ GNU Toolchain Debug Support
+* C/C++ Development Platform
+
+Do not select all items! Some of these require dependencies from other projects, which may not be installed and thus fail to install. Select only the features you need!
+
+[[File:Setting_Up_Eclipse_CDT_softwareupdatecdt35.png|alt=Select CDT from the Update Site|Select CDT from the Update Site]]
+
+The select &quot;Next...&quot;
+
+You will have to confirm the selection with &quot;Next&quot;.
+
+And accept the license agreement with &quot;Finish&quot;.
+
+Downloading and installing will take a while. Once its done it will ask you to restart Eclipse. This is a good idea, so select &quot;Yes&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_eclipsesu6.png|alt=Restarting the workbench|Restarting the workbench]]
+
+Once Eclipse has restarted you may need to configure it for your computer.
+
+== Configuring the CDT ==
+
+Fortunately, this is very easy. If your path is set correctly, there should be absolutely nothing you need to configure. This is true if you followed these instructions for Windows or Mac OS X.
+
+On some Unix systems you might have to change your &quot;make&quot; program to &quot;gmake&quot;. You will find the setting in Window / Preferences (Eclipse / Preferences on Mac OS X). Then expand &quot;C / C++&quot;, then &quot;New CDT Project Wizard&quot;, &quot;Makefile Project&quot; and select &quot;Builder Settings&quot;. In the section &quot;builder&quot;, de-select &quot;use default build command&quot; and for &quot;Build command&quot; enter &quot;gmake&quot;.
+
+== Hello, World! ==
+
+Once you are in Eclipse, you are given an empty workspace. You now have to start a new project. To do so, select &quot;File&quot; / &quot;New&quot; / &quot;Project...&quot;. Expand the section &quot;C++&quot; and select &quot;C++ Project&quot;, then click &quot;Next &gt;&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_newcppproject.png|alt=New Project screen|New Project screen]]
+
+On the next screen, you have to give your project a name. In this case, it will be &quot;HelloWorld&quot;, however, you may use any name you like. Also, you have to select a toolchain.
+
+* For Windows, select &quot;MinGW GCC&quot;
+* For Linux, select &quot;Linux GCC&quot;
+* For Mac OS X, select &quot;MacOSX GCC&quot;
+* Do not use &quot;Cross GCC&quot;! Unfortunately this option may be selected by default if you create an empty project!
+
+Click &quot;Next&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_newcppproject2.png|alt=New Project Name|New Project Name]]
+
+The next screen contains some Basic settings. Fill in what you like:
+
+[[File:Setting_Up_Eclipse_CDT_newcppproject3.png|alt=Basic Settings|Basic Settings]]
+
+In the last setting you can chose output formats, it is always good to have a release and a debug configuration. Click &quot;Finish&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_newcppproject4.png|alt=New Project Platforms|New Project Platforms]]
+
+Eclipse will now generate a few things, and then ask you if you want to switch to the C/C++ Perspective. This is a good idea, so say yes.
+
+[[File:Setting_Up_Eclipse_CDT_perspective.png|alt=Perspective Switch|Perspective Switch]]
+
+Great. You have a project now, and it does contain some sample code! You will immediately get an editor window for your project. Eclipse will also auto-build your project every time you save.
+
+If eclipse does not auto-build, you have to turn on &quot;build automatically&quot; in the Project Menu, or click the &quot;Build All&quot; button after every change.
+
+[[File:Setting_Up_Eclipse_CDT_autobuild.png|alt=Make sure &quot;Build Automatically&quot; is enabled|Make sure &quot;Build Automatically&quot; is enabled]]
+
+[[File:Setting_Up_Eclipse_CDT_build.png|alt=If you turn off autobuild, you have to click the &quot;build&quot; button on the toolbar|If you turn off autobuild, you have to click the &quot;build&quot; button on the toolbar]]
+
+[[File:Setting_Up_Eclipse_CDT_helloworld.png|alt=Example Hello World application|Example Hello World application]]
+
+Now here comes the tricky part: On the left pane, select &quot;C/C++ Projects&quot;, expand &quot;Binaries&quot; and you should see and executable (HelloWorld.exe on Windows). Now right-click that executable, and select &quot;Run&quot; / &quot;Run Local C/C++ Application&quot;. If everything goes well your output will be in the bottom right window in the &quot;Console&quot; tab and it should say &quot;Hello, World&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_helloout.png|alt=Running the example Hello World application|Running the example Hello World application]]
+
+Congratulations! You have successfully installed a compiler, a build system and an IDE. You have successfully created, edited, compiled and run a project. You should now be able to start your own projects!
+
+= Common Problems =
+
+If you have followed these instructions everything should work. However, you may have ran into trouble, and then decided to look for the manual (at least, that's the way I would have done it). So now you have a problem and need an answer:
+
+Please note if you are reading the online version: Some problems may covered in a newer version of this document, please refer to [[#Introduction|Introduction]].
+
+== How to fix most of the common errors on Windows ==
+
+Make sure you have done the following things:
+
+* Installed the CDT
+* Installed (not just downloaded) MinGW and MSYS with Administrator privileges
+* Set up your path environment variable
+
+Especially made sure you did the last step. You ''will'' need to restart eclipse (full restart with shutdown, File / Restart is not sufficient). This solves about 99% of all support mails I've got so far.
+
+== How to fix most of the common errors on Lion (Mac OS X 10.7) ==
+
+Make sure you have done the following this:
+
+* Downloaded XCode from App Store
+* Installed XCode using the &quot;Install XCode button&quot;
+
+Both of these steps are important, in particular when you upgraded from an earlier version of Mac OS X. Upgrading to Lion breaks your existing developer tools! Read also the full description in [[#Mac OS X Compiler|Mac OS X Compiler]]. It also covers problems during the XCode install.
+
+== Build error (Exec error:Launching failed), CreateProcess: make -k all error=2, ==
+
+You have just tried the build the hello world program, and you get this error message instead of an executable. This means that <code>make</code> is not in your path. Open up a command prompt (In OS X: Terminal in Applications/Utilities, in Windows: Start/Run, type in cmd) and type in <code>make</code>. If that doesn't work, try <code>gmake</code>.
+
+If <code>gmake</code> worked, see [[#Configuring the CDT|Configuring the CDT]].
+
+If neither worked, make sure you install make (See [[#Setting up a compiler|Setting up a compiler]]) and set your path (See [[#Environment Variables|Environment Variables]] in the case of Windows).
+
+To check your path (on windows), open up <code>cmd</code> and type in <code>echo %path%</code>. This should show the path to MSYS and MinGW. Also, make sure that you restarted Eclipse (or cmd if you are testing) after setting your path.
+
+If you are on Windows, and you have installed MinGW, but not MSYS, you may have an executable called <code>mingw-make</code>. In this case you have to go to [[#Configuring the CDT|Configuring the CDT]] and configure appropriately. It is possible to just use mingw-make and no MSYS at all, however, mingw-make has some limitations. Eclipse CDT managed makefiles may or may not work with it. Please see the [http://www.mingw.org/mingwfaq.shtml#faq-mingw32-make.exe MinGW FAQ] for more information.
+
+== /bin/sh: line 1: g++: command not found, Error launching external scanner info generator ==
+
+This error message means that g++ is either not installed or not in your path. Check your path settings as described in [[#Build error (Exec error:Launching failed), CreateProcess: make -k all error=2,|Build error (Exec error:Launching failed), CreateProcess: make -k all error=2,]], but this time try the commands: <pre>gcc --version</pre> and <pre>g++ --version</pre>. If gcc works, but g++ doesn't, it means you have only installed the C and not the C++ version of the gcc compiler, which happens quite frequently on Linux distributions. Check if you have all needed packages installed, and check [[#Setting up a compiler|Setting up a compiler]].
+
+If you are on windows, and neither of them worked, install MinGW and set your path environment variable. If only gcc one worked, reinstall MinGW and don't forget to select the C++ compiler!
+
+== Undefined symbols for architecture x86_64 (OS X 10.7) ==
+
+Make sure you have done the steps in [[#How to fix most of the common errors on Lion (Mac OS X 10.7)|How to fix most of the common errors on Lion (Mac OS X 10.7)]].
+
+If the problem still persist, and you are trying to compile C++ code, make sure your source files actually have an extension of &quot;.cc&quot; or &quot;.cpp&quot;.
+
+== No output or only sometimes output ==
+
+If you are on windows and use Eclipse 3.1 with CDT 3.0.0 there is a bug. See [[#Configuring the CDT|Configuring the CDT]].
+
+Please note that debug sessions in Windows have their own console window (a black console window) and do not appear in the regular Eclipse console. If you're running a debug session, please watch which windows appear in your task bar.
+
+== Error launching 'cygpath' command ==
+
+If you followed these instructions you have installed MSYS instead of cygwin. You may safely ignore this error message.
+
+== I do not have the option to start a C++ project ==
+
+You have not installed the CDT. See [[#Installing the CDT|Installing the CDT]].
+
+== Error 1, open output file blabla.exe: Permission denied ==
+
+Every time I start Eclipse on my laptop, I can only compile and run a program once. After that it asks if I want to run it with errors every time. The compiler says this:
+
+<pre>Building target: Project01Test.exe
+Invoking: GCC C++ Linker
+g++ -oProject01Test.exe ./test.o
+C:\MinGW\bin\..\lib\gcc\mingw32\3.4.2\..\..\..\..\mingw32\bin\ld.exe: cannot         
+open output file Project01Test.exe: Permission denied
+collect2: ld returned 1 exit status
+make: *** [Project01Test.exe] Error 1
+make: Target `all' not remade because of errors.
+Build complete for project Project01Test</pre>
+Answer: Your program may still be running. Try stopping it by using the small red square on the console window (the one for your program). Another way is switching to the &quot;Debug&quot; perspective, selecting your running program, and stopping it there (also the small red square).
+
+== The debugger doesn't work (on windows, with MinGW) ==
+
+Unfortunately gdb is not included in the current (4.1.1 or 5.0.2) version of MinGW. See [[#GDB (optional!)|GDB (optional!)]].
+
+== Incorrect command line argument: -k' ==
+
+Make sure you are using the make programs provided by MinGW. If your output in the console shows something like:
+
+<pre>make -k clean all
+MAKE Version 5.2  Copyright (c) 1987, 2000 Borland
+Incorrect command line argument: -k</pre>
+Then you have make installed from a previous installation of Borland C++. You have several choices:
+
+* Adjust your PATH environment variable to have the MinGW / MSYS installation come before Borlands tools. Please be warned that this may break your Borland tools!
+* Remove the path to the Borland tools from your PATH. This will definitely break your Borland tools.
+* Download &quot;mingw32-make&quot;. This is an option when installing MinGW. Make sure you set your make setting to be &quot;mingw32-make&quot;. If you still get an error, try setting it for the build settings in your project. In this case you may even skip the installation of MSYS, but you will get limited functionality.
+
+== A Java Runtime Envrionment (JRE) or Java Development Kit (JDK) must be available... ==
+
+There are several possible reasons for that:
+
+* You have not installed Java. Please see [[#Java|Java]].
+* Your &quot;path&quot; environment is messed up (Windows). Please see [[#Environment Variables|Environment Variables]]. Make sure <code>C:\windows\system32</code> is in your path (should be there by default).
+* [http://www.java.com java.com] has a button called <code>verify installation</code>.
+
+== I have no binaries ==
+
+If you have no binaries folder, then one of several things may have happened:
+
+* You are not looking at the C/C++ Project view. Make sure you are in the C++ perspective and &quot;C/C++ Projects&quot; is active. An example of this situation is shown in [[#figure_title|figure_title]]: Click on &quot;C/C++ Projects&quot; to fix.
+* Your program didn't compile. Check the output of the &quot;Console&quot; Window. It is either an error in your program or a configuration error. For configuration errors, check the other problems.
+* AutoBuild is turned off. Turn it on as described in [[#figure_title|figure_title]].
+* If you do have a binaries folder, then make sure you run you program by right-clicking (on the mac: hold down ctrl and click) on the binary, and then selecting Run / Run as C/C++ Application. Just hitting the run button will only work after you have done that at least once!
+
+[[File:Setting_Up_Eclipse_CDT_navigator.png|alt=The Navigator view instead of the C/C++ Projects view|The Navigator view instead of the C/C++ Projects view]]
+
+== Unable to access jarfile startup.jar ==
+
+This problem happens on Windows when you moved Eclipse out of its directory instead of creating a shortcut. Please move it back into the Eclipse directory, then drag'n'drop it using the right mouse button, where you can select &quot;Create Shurtcut&quot;
+
+== Problems when CYGWIN is installed on Windows ==
+
+I personally do not recommend the installation of cygwin, but rather the installation of MinGW and MSYS as described in [[#Windows compiler|Windows compiler]]. However, the following problems have been reported by users:
+
+=== Binaries require cygwin.dll ===
+
+Eclipse prefers to use cygwin if it is installed, and will do everything to manipulate the path to include cygwin if it is installed. Binaries will therefore by default be linked against the cygwin libraries. Possible workarounds:
+
+* add <code>-mno-cygwin</code> to your compiler settings
+* Overwrite the path variable in eclipse: In the Project Properties: C/C++ Build -&gt; Environment -&gt; User Variables -&gt; New. Select PATH, remove the cygwin directory and select Replace as Operation.
+
+== Launch failed Reason: Unable to set working directory ==
+
+Your workspace or your eclipse installation may use a path with includes spaces, such as <code>C:\Documents and Settings</code>. Eclipse sometimes fails in this case. Try creating your workspace in a different directory.
+
+== Problems not covered here ==
+
+If you read the online version of this document, check out [[#Introduction|Introduction]]. You problem may be covered in a newer version of this document.
+
+If you are still having trouble, you may try and send me an email. Please be aware that I may not respond to every email, as I am doing this support mainly as a hobby. Make sure your email includes the following. Please send the complete output!
+
+* The contents of your PATH environment variable (in Windows: <code>echo %PATH%</code>. In Linux / Mac OS X: <code>echo $PATH)</code>.
+* Version of GCC you're using (<code>gcc --version</code>)
+* Version of Make you're using (<code>make --version</code> or <code>gmake --version</code>)
+* Version of Eclipse you're using
+* Version of the CDT you're using
+* The complete output of your &quot;Console&quot; window (at the bottom of eclipse) when your error occurs.
+* The steps you did so before the problem occurred.
+
+= Older Instructions =
+
+Sometimes you may not be happy with the current version of a certain program. I have left instructions for the older versions here in case you need them:
+
+== MinGW 5, MSYS 1.0.11 ==
+
+This is the old MSYS/MinGW installation used before the new mingw-get-inst was available.
+
+=== MinGW 5.x ===
+
+First, you need to download MinGW. You can either click through the websites mentioned above or go directly to the [https://sourceforge.net/projects/mingw/files/ MinGW download area]. Look for the Package &quot;Automated MinGW Installer&quot;. There, download the file ending in .exe. The file name should be something like &quot;MinGW-5.1.4.exe&quot;. You can also download [http://downloads.sourceforge.net/mingw/MinGW-5.1.4.exe?modtime=1209244789&big_mirror=1 MinGW Version 5.1.4] from the link given here.
+
+You may also download an older version, and follow the instructions given in [[#Older Instructions|Older Instructions]]:
+
+* You may download [http://prdownloads.sourceforge.net/mingw/MinGW-4.1.0.exe?download MinGW 4] and follow the instructions in [[#MinGW 4.x|MinGW 4.x]].
+* You may download [http://prdownloads.sourceforge.net/mingw/MinGW-3.1.0-1.exe?download MinGW 3] and follow the instructions in [[#MinGW 3.1|MinGW 3.1]].
+
+Most of the options in the MinGW 5 installer are pretty straightforward. I will point out some of the more tricky options.
+
+The first one of such options is which &quot;MinGW&quot; package to install. Any of those should work just fine, but I would recommend <code>Current</code>.
+
+[[File:Setting_Up_Eclipse_CDT_Mingw5_1.png|alt=MinGW 5 install|MinGW 5 install]]
+
+MinGW will ask which components to install. Either select <code>All</code> or at least make sure that you have the <code>g++ compiler</code> checked. This is needed for C++ support.
+
+[[File:Setting_Up_Eclipse_CDT_Mingw5_2.png|alt=MinGW 5 install (2)|MinGW 5 install (2)]]
+
+When asked for the install folder, please do not change it. You will have a lot of trouble later on, especially if you chose a path that contains spaces.
+
+[[File:Setting_Up_Eclipse_CDT_Mingw5_3.png|alt=MinGW 5 install (3)|MinGW 5 install (3)]]
+
+That's already it for MinGW. There are two more steps: MSYS and the Environment Variables.
+
+Checkpoint: To test if everything worked, please reboot. Then open up a terminal. (Start/Run, type CMD). Try these commands:
+
+<pre>gcc --version</pre>
+should print the version of gcc. If you get a &quot;File not found&quot;, try logging out and logging back in, or even rebooting your computer. If it still does not work, you have not installed MinGW correctly. You may also need to set your environment variables manually (see below).
+
+<pre>g++ --version</pre>
+should print the version for g++. You did select the &quot;g++ compiler&quot; I hope. If not, install again!
+
+=== GDB (optional!) ===
+
+This section is completely optional. You may skip it and go directly to [[#MSYS 1.0.11|MSYS 1.0.11]].
+
+If you want to use the debugger, you may have to install it separately. This is the case with MinGW 5.0.2, it may be different in other versions. Download it from the same page, look for a package starting with gdb and ending with .exe. At the time of this writing (Apr 29) the current version was &quot;gdb-5.2.1-1.exe&quot;. Install (double-click) that .exe, select all the default options (make sure you select the same MinGW directory as you did during the MinGW install).
+
+I have received a report that gdb-6.3-2 does not work. So I would advise using the older version or waiting for a newer one.
+
+Checkpoint:
+
+<pre>gdb --version</pre>
+should print the gdb version. This is optional.
+
+=== MSYS 1.0.11 ===
+
+Unfortunately MinGW is not enough. We also need the MSYS tools from the same download page. Go there again, to the &quot;Current&quot; section and look for &quot;MSYS Base System&quot;. Again, look for the file ending in .exe, as this time: &quot;MSYS-1.0.11.exe&quot;. You may have to expand the &quot;Release Candidate&quot; section. Or you may use the link here to [http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe MSYS-1.0.11.exe]. Download it and start it. You should get a window like this:
+
+[[File:Setting_Up_Eclipse_CDT_setup1.png|alt=MSYS install|MSYS install]]
+
+If you accept all the default options, after a while there should be a black and white window, similar to this:
+
+[[File:Setting_Up_Eclipse_CDT_setup9.png|alt=MSYS asking for post-install|MSYS asking for post-install]]
+
+To continue the install type in y and then Enter. The next question reads like this:
+
+[[File:Setting_Up_Eclipse_CDT_setupa.png|alt=MSYS asking for MinGW|MSYS asking for MinGW]]
+
+Which you can also answer with y Enter. The next question is a little bit more tricky:
+
+[[File:Setting_Up_Eclipse_CDT_setupb.png|alt=MSYS asking for path to MinGW|MSYS asking for path to MinGW]]
+
+What they want to know is where you installed MinGW to and that you replace all backward slashes (\) by forward slashes (/). If you followed the instructions, the answer here will be:
+
+<pre>C:/MinGW</pre>
+Caveat: If you have not used the default paths, but instead have installed MinGW in a different location, such as <code>C:/Program Files/MinGW</code>, where the path contains spaces and / or is longer than 8 characters you may have to replace that particular path component with its DOS short pathname, such as <code>C:/PROGRA~1/mingw</code>.
+
+Caveat2: The installer may be case sensitive. Please make sure you have written MinGW in the same capitalization as during your first install, in some cases you will have to enter <code>c:/mingw</code> (note capitalization!).
+
+The very last question just asks you to press a key:
+
+[[File:Setting_Up_Eclipse_CDT_setupc.png|alt=MSYS installing correctly|MSYS installing correctly]]
+
+Where you can press any key you like to continue. Setup will come back and ask you if you want to read a welcome note and the README file. You probably don't want either one, but it does not hurt to look. Anyways, once you hit &quot;Finish&quot; you are done with the setup. Now you have to set up your Path environment variable.
+
+[[File:Setting_Up_Eclipse_CDT_setupd.png|alt=MSYS is done|MSYS is done]]
+
+== Installing the CDT on Eclipse 3.4 ==
+
+
+
+This is only required if you did not download the CDT version as described above. Please check if you are able to create a new C++ project (as described in [[#Hello, World!|Hello, World!]]) before going through this section!
+
+
+
+In the &quot;Help&quot; menu select &quot;Software Updates...&quot;
+
+[[File:Setting_Up_Eclipse_CDT_softwareupdatemenu.png|alt=Select Software Updates... from the menu|Select Software Updates... from the menu]]
+
+This will show you the list of available software update sites. If you are luck you already have the CDT update site configured. Search for an entry which contains the String &quot;cdt&quot;, for example <code>http://download.eclipse.org/tools/cdt/releases/ganymede</code>.
+
+[[File:Setting_Up_Eclipse_CDT_softwareupdatemain.png|alt=Main Software Update page|Main Software Update page]]
+
+If there is no site for cdt available, go to &quot;Manage Sites&quot;, and you will get a list of sites.
+
+[[File:Setting_Up_Eclipse_CDT_softwareupdatesites.png|alt=Manage Software Update sites|Manage Software Update sites]]
+
+Again, search for a site containing &quot;CDT&quot;. If there is no site available, add it (using the &quot;Add...&quot; button), adding <code>http://download.eclipse.org/tools/cdt/releases/ganymede</code> (the address may be different in future versions of Eclipse, this is for 3.4!)
+
+Also, make sure the checkbox next to the Address is checked. Otherwise the site is configured, but ignored by Eclipse. Leave this page and go back to the main Software update page.
+
+Expand the CDT site, and find the latest version of the CDT. Make sure you select at least the following:
+
+* Eclipse C/C++ Development Tools
+* CDT GNU Toolchain Build Support
+* CDT GNU Toolchain Debug Support
+* Eclipse C/C++ Development Platform
+
+[[File:Setting_Up_Eclipse_CDT_softwareupdatecdt.png|alt=Select CDT from the Update Site|Select CDT from the Update Site]]
+
+The select &quot;Install...&quot;
+
+You will have to confirm the selection with &quot;Finish&quot;
+
+Downloading and installing will take a while. Once its done it will ask you to restart Eclipse. This is a good idea, so select &quot;Yes&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_eclipsesu6.png|alt=Restarting the workbench|Restarting the workbench]]
+
+Once Eclipse has restarted you now need to configure it for your computer.
+
+== Hello, World! in older versions of CDT ==
+
+Once you are in Eclipse, you are given an empty workspace. You now have to start a new project. To do so, select &quot;File&quot; / &quot;New&quot; / &quot;Project...&quot;. Expand the section &quot;C++&quot; and select &quot;Managed Make C++ Project&quot;, then click &quot;Next &gt;&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_newproject.png|alt=New Project screen|New Project screen]]
+
+On the next screen, you have to give your project a name. In this case, it will be &quot;HelloWorld&quot;, however, you may use any name you like. Leave the &quot;Use default&quot; in &quot;Project Contents&quot; checked.
+
+[[File:Setting_Up_Eclipse_CDT_projectname.png|alt=New Project Name|New Project Name]]
+
+The next two settings about &quot;Project Type&quot; and additional settings are usually OK, so we'll just leave them:
+
+[[File:Setting_Up_Eclipse_CDT_projecttype.png|alt=New Project Platforms|New Project Platforms]]
+
+[[File:Setting_Up_Eclipse_CDT_projectadd.png|alt=New Project Settings|New Project Settings]]
+
+Eclipse will now generate a few things, and then ask you if you want to switch to the C/C++ Perspective. This is a good idea, so say yes.
+
+[[File:Setting_Up_Eclipse_CDT_perspective.png|alt=Perspective Switch|Perspective Switch]]
+
+Great. You have a project now. However, it currently does not have any files. So select &quot;File&quot; / &quot;New&quot; / &quot;C Source File&quot;. It will then ask you for the name of the file, type in something like &quot;main.cpp&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_newsource.png|alt=Create a new Source File|Create a new Source File]]
+
+You will immediately get an editor window for your file. Eclipse will also auto-build your project every time you save. So type in something like this and hit save, and it should compile automatically:
+
+[[File:Setting_Up_Eclipse_CDT_helloworld.png|alt=Example Hello World application|Example Hello World application]]
+
+Now here comes the tricky part: On the left pane, select &quot;C/C++ Projects&quot;, expand &quot;Binaries&quot; and you should see and executable (HelloWorld.exe). Now right-click that executable, and select &quot;Run&quot; / &quot;Run Local C/C++ Application&quot;. If everything goes well your output will be in the bottom right window in the &quot;Console&quot; tab and it should say &quot;Hello, World&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_helloout.png|alt=Running the example Hello World application|Running the example Hello World application]]
+
+Congratulations! You have successfully installed a compiler, a build system and an IDE. You have successfully created, edited, compiled and run a project. You should now be able to start your own projects!
+
+== Eclipse 3.1 with CDT 3.0 ==
+
+=== Downloading Eclipse 3.1 ===
+
+Now we are finally ready to install Eclipse. Go to the [http://www.eclipse.org/downloads/ Eclipse website] and look for &quot;Downloads&quot;. It will automatically try to figure out your OS and give you an option like &quot;Download now: Eclipse Platform SDK 3.1, Windows.&quot;. Do it. You will receive a .ZIP file. Use either [http://www.filzip.com/ FilZip] or your favorite ZIP Program (Windows XP and Mac OS X have .ZIP support build in) to unpack the file. Move the unpacked folder to any location, for example <code>C:\Program Files\eclipse</code>. You can now start Eclipse by double-clicking it.
+
+[[File:Setting_Up_Eclipse_CDT_eclipseDir.png|alt=Eclipse installed into C:\Program Files\eclipse|Eclipse installed into C:\Program Files\eclipse]]
+
+=== First Run of Eclipse ===
+
+However you installed eclipse, you should now be able to run it. Double-click the icon or start the appropriate script in UNIX and Eclipse's splash-screen will appear:
+
+[[File:Setting_Up_Eclipse_CDT_splash.png|alt=Eclipse splash screen|Eclipse splash screen]]
+
+Immediately after that Eclipse will ask you for your workspace location. It defaults to: <code>C:\Program Files\eclipse\workspace</code> which is actually very bad. Depending on where you want to use Eclipse, please set your workspace to the appropriate folder. If you are in a computer lab, check their policy on personal home folders. If you are on your own computer, a place within your personal settings is usually best:
+
+[[File:Setting_Up_Eclipse_CDT_workspace.png|alt=Eclipse asking for workspace|Eclipse asking for workspace]]
+
+If you always want to use the same workspace, you may select the <code>Use this as the default...</code> and you'll never have to worry about workspaces again. This is usually a good idea once you've used Eclipse for a while. Finally Eclipse starts up with the welcome screen:
+
+[[File:Setting_Up_Eclipse_CDT_welcome.png|alt=Eclipse welcome screen|Eclipse welcome screen]]
+
+And if you select the &quot;Go to the workbench&quot; in the top right corner, then you are right in Eclipse and you can start developing in Java. However, since we want to develop in C++ just continue with the next section.
+
+=== Installing the CDT ===
+
+Eclipse by default comes with support for programming Java, the support for C/C++ (the C Development Toolkit) has to be installed as an update.
+
+In the &quot;Help&quot; menu select &quot;Software Updates&quot; and the &quot;Find and Install...&quot;. You should get something like:
+
+[[File:Setting_Up_Eclipse_CDT_eclipsesu1.png|alt=Find and Install software updates|Find and Install software updates]]
+
+Select &quot;Search for new features to install&quot;, and then &quot;Next &gt;&quot;. You should get:
+
+[[File:Setting_Up_Eclipse_CDT_eclipsesu2.png|alt=Select update sites|Select update sites]]
+
+Leave &quot;Ignore features not applicable to this environment&quot; checked and de-select all update sites (you will probably have less in there than I do). Select &quot;New Remote Site&quot; and then enter the following information:
+
+Note: What name you enter does not matter. Here is the URL for cut-n-paste: <code>http://download.eclipse.org/tools/cdt/releases/eclipse3.1</code>
+
+[[File:Setting_Up_Eclipse_CDT_eclipsesu3.png|alt=Add new update site|Add new update site]]
+
+Hit &quot;OK&quot;. Now select &quot;Eclipse CDT&quot; and then &quot;Next &gt;&quot;. It should connect to the Eclipse CDT update site and look for the newest version. Then it displays a window like this one:
+
+[[File:Setting_Up_Eclipse_CDT_eclipsesu4.png|alt=Select CDT to install|Select CDT to install]]
+
+Select the latest version of the &quot;Eclipse C/C++ Development Tools&quot;. (3.0.1 at the time of this writing) Do not select any other features. Hit &quot;Next &gt;&quot;.
+
+In the next window, you will have to &quot;accept&quot; the license, and then select &quot;Next &gt;&quot;.
+
+It will again show you an overview, which you can just accept and select &quot;Finish&quot;.
+
+It will warn you that the Eclipse CDT is an &quot;unsigned feature&quot;. But you can just ignore that and select &quot;Install All&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_eclipsesu5.png|alt=Unsigned JAR|Unsigned JAR]]
+
+Downloading and installing will take a while. Once its done it will ask you to restart Eclipse. This is a good idea, so select &quot;Yes&quot;.
+
+[[File:Setting_Up_Eclipse_CDT_eclipsesu6.png|alt=Restarting the workbench|Restarting the workbench]]
+
+Once Eclipse has restarted you now need to configure it for your computer.
+
+Eclipse 3.1 with CDT 3.0.0 (and 3.0.1) has a bug on windows! If you are on windows, please close eclipse, and delete the file spawner.dll in eclise\plugins\org.eclipse.cdt.core.win32_3.0.0\os\win32\x86. This bug appears every time you try and run short programs (they will not show any output). More information is available in [https://bugs.eclipse.org/bugs/show_bug.cgi?id=102043 Eclipse Bug 102043]. This bug is fixed in CDT 3.0.2.
+
+== MinGW 4.x ==
+
+MinGW 4.x comes with a new installer that asks much more questions than the old one. The current (Aug 05) version is MinGW 4.1.1.
+
+Please note: The MinGW 4.x installer downloads parts of the MinGW suite during the install! You must have an internet connection during the install. If this is not an option for you, download the last version (3.1)
+
+[[File:Setting_Up_Eclipse_CDT_mingw41_1.png|alt=MinGW 4.1 install|MinGW 4.1 install]]
+
+Most installation options are pretty straight forward. You will have to accept the license agreement:
+
+[[File:Setting_Up_Eclipse_CDT_mingw41_1_1.png|alt=MinGW license|MinGW license]]
+
+It will ask you for a download mirror. Of course, you should pick one close to your country. If you are installing from home in the us, use a commercial mirror, if you are installing from a university connection, chose a university mirror.
+
+[[File:Setting_Up_Eclipse_CDT_mingw41_1_2.png|alt=Mirror Selection|Mirror Selection]]
+
+When installing MinGW, it is advisable to use the default directory <code>C:\MinGW</code>. Do not use a path that contains spaces, this will give you problems later on.
+
+[[File:Setting_Up_Eclipse_CDT_mingw41_2.png|alt=MinGW installation directory|MinGW installation directory]]
+
+If all you need MinGW for is compiling your programs from within Eclipse, the Compact install should be enough:
+
+[[File:Setting_Up_Eclipse_CDT_mingw41_3a.png|alt=MinGW installation components|MinGW installation components]]
+
+Next, it will ask you for additional tasks to perform. Select all of them:
+
+[[File:Setting_Up_Eclipse_CDT_mingw41_4.png|alt=Additional Tasks|Additional Tasks]]
+
+MinGW will download and install your selected components. After a little while your installation is done. You will now need to install MSYS.
+
+== MinGW 3.1 ==
+
+At the time of this writing this was &quot;Download MinGW-3.1.0-1.exe&quot;, but the version number may be higher now. Once downloaded, start the program. It should look similar to this:
+
+[[File:Setting_Up_Eclipse_CDT_mingw1.png|alt=MinGW 3.1 install|MinGW 3.1 install]]
+
+If you accept all the default options MinGW should install just fine.
+
+= Feedback =
+
+Do you have any comments how this document could be improved? Email the author. I'll be happy to make any changes that make the setup of the Eclipse CDT easier, or include information that is missing in this paper.

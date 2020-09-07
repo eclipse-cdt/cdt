@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="US-ASCII"?>
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:lang="en-US" xml:id="older">
+
+<section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="older">
   <title>Older Instructions</title>
   <para>Sometimes you may not be happy with the current version of a certain
     program. I have left instructions for the older versions here in case you
     need them:</para>
-  <section xml:id="mingw5msys1011">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="mingw5msys1011">
     <title>MinGW 5, MSYS 1.0.11</title>
     <para>This is the old MSYS/MinGW installation used before the new mingw-get-inst was available.</para>
     <xi:include href="mingw5.xml"/>
     <xi:include href="gdb.xml"/>
     <xi:include href="msys1011.xml"/>
   </section>
-  <section xml:id="installingcdt34">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="installingcdt34">
     <title>Installing the CDT on Eclipse 3.4</title>
     <note>
       <para>This is only required if you did not download the CDT version as
@@ -108,7 +108,7 @@
     <para>Once Eclipse has restarted you now need to configure it for your
       computer.</para>
   </section>
-  <section xml:id="helloworldold">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="helloworldold">
     <title>Hello, World! in older versions of CDT</title>
     <para>Once you are in Eclipse, you are given an empty workspace. You now
       have to start a new project. To do so, select "File" / "New" /
@@ -220,9 +220,9 @@
       and run a project. You should now be able to start your own
       projects!</para>
   </section>
-  <section xml:id="eclipse31">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="eclipse31">
     <title>Eclipse 3.1 with CDT 3.0</title>
-    <section xml:id="download_eclipse31">
+    <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="download_eclipse31">
       <title>Downloading Eclipse 3.1</title>
       <para>Now we are finally ready to install Eclipse. Go to the <link xlink:href="http://www.eclipse.org/downloads/">Eclipse website</link>
         and look for "Downloads". It will automatically try to figure out your
@@ -243,7 +243,7 @@
         </screenshot>
       </figure>
     </section>
-    <section xml:id="first_run_eclipse31">
+    <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="first_run_eclipse31">
       <title>First Run of Eclipse</title>
       <para>However you installed eclipse, you should now be able to run it.
         Double-click the icon or start the appropriate script in UNIX and
@@ -295,7 +295,7 @@
         Java. However, since we want to develop in C++ just continue with the
         next section.</para>
     </section>
-    <section xml:id="installingcdt30">
+    <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="installingcdt30">
       <title>Installing the CDT</title>
       <para>Eclipse by default comes with support for programming Java, the
         support for C/C++ (the C Development Toolkit) has to be installed as
@@ -397,7 +397,7 @@
         Bug 102043</link>. This bug is fixed in CDT 3.0.2.</para>
     </section>
   </section>
-  <section xml:id="mingw4">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="mingw4">
     <title>MinGW 4.x</title>
     <para>MinGW 4.x comes with a new installer that asks much more questions
       than the old one. The current (Aug 05) version is MinGW 4.1.1.</para>
@@ -476,7 +476,7 @@
       little while your installation is done. You will now need to install
       MSYS.</para>
   </section>
-  <section xml:id="mingw3">
+  <section  xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook" version="5.0"  xml:id="mingw3">
     <title>MinGW 3.1</title>
     <para>At the time of this writing this was "Download MinGW-3.1.0-1.exe",
       but the version number may be higher now. Once downloaded, start the

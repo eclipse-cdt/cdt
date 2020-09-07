@@ -390,7 +390,9 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			@Override
 			public void treeExpanded(TreeEvent e) {
 				treeEntries.getDisplay().asyncExec(() -> {
-					treeCol.pack();
+					if (!treeCol.isDisposed()) {
+						treeCol.pack();
+					}
 				});
 			}
 		});

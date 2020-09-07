@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="93">
+<target name="cdt" sequenceNumber="94">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
@@ -11,7 +11,7 @@
 <unit id="org.eclipse.jdt.annotation" version="0.0.0"/>
 <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.test.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/eclipse/updates/4.17milestones/S-4.17RC1-202008261800/"/>
+<repository location="https://download.eclipse.org/eclipse/updates/4.17milestones/S-4.17RC2-202009021800/"/>
 </location>
 	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<repository location="https://download.eclipse.org/egit/updates"/>
@@ -46,7 +46,7 @@
 <repository location="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<repository location="https://download.eclipse.org/tools/cdt/builds/10.0/cdt-10.0.0-m3a/"/>
+<repository location="https://download.eclipse.org/tools/cdt/builds/10.0/cdt-10.0.0-rc1/"/>
 <!-- We explicitly have CDT in target platform so that developers can develop org.eclipse.cdt.core/ui without requiring all the projects from CDT in their workspace. -->
 	<unit id="org.eclipse.cdt.feature.group" version="0.0.0"/>
 </location>

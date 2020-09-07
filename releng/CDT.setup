@@ -268,7 +268,7 @@
           <repository
               url="https://download.eclipse.org/cbi/updates/license/"/>
           <repository
-              url="https://download.eclipse.org/eclipse/updates/4.17milestones/S-4.17RC1-202008261800/"/>
+              url="https://download.eclipse.org/eclipse/updates/4.17milestones/S-4.17RC2-202009021800/"/>
           <repository
               url="https://download.eclipse.org/egit/updates/"/>
           <repository
@@ -288,7 +288,7 @@
           <repository
               url="https://download.eclipse.org/tm4e/releases/0.3.4/"/>
           <repository
-              url="https://download.eclipse.org/tools/cdt/builds/10.0/cdt-10.0.0-m3a/">
+              url="https://download.eclipse.org/tools/cdt/builds/10.0/cdt-10.0.0-rc1/">
             <annotation>
               <detail
                   key="description">

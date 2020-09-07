@@ -17,12 +17,12 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>10.0.0-SNAPSHOT</version>
+		<version>10.1.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.eclipse.cdt</groupId>
 	<artifactId>terminal-parent</artifactId>
-	<version>10.0.0-SNAPSHOT</version>
+	<version>10.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>TM Terminal, Maven Master</name>
 

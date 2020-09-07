@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>10.0.0-SNAPSHOT</version>
+		<version>10.1.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
@@ -113,7 +113,7 @@
 											<additionalArgument>-linkoffline ../../org.eclipse.platform.doc.isv/reference/api
 											</additionalArgument>
 											<additionalArgument>-public</additionalArgument>
-											<additionalArgument>-header "Eclipse CDT 10.0.0"
+											<additionalArgument>-header "Eclipse CDT 10.1.0"
 											</additionalArgument>
 											<additionalArgument>-bottom "Copyright (c) IBM Corp. and others 2004, 2020. All Rights Reserved."</additionalArgument>
 											<additionalArgument>-tag 'noimplement:a:Restriction:'</additionalArgument>

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.core.autotools"
       label="%featureName"
-      version="10.0.0.qualifier"
+      version="10.1.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.core.autotools.ui"
       license-feature="org.eclipse.license"

@@ -376,6 +376,12 @@ public class MacroExpander {
 					t.setType(CPreprocessor.t__HAS_FEATURE);
 					result.append(t);
 					protect = true;
+				} else if (protectIntrinsics && Arrays.equals(image, Keywords.c__HAS_INCLUDE)) {
+					t.setType(CPreprocessor.t__HAS_INCLUDE);
+					result.append(t);
+				} else if (protectIntrinsics && Arrays.equals(image, Keywords.c__HAS_INCLUDE_NEXT)) {
+					t.setType(CPreprocessor.t__HAS_INCLUDE_NEXT);
+					result.append(t);
 				} else if (macro == null || (macro.isFunctionStyle() && !input.findLParenthesis())) {
 					// Tricky: Don't mark function-style macros if you don't find the left parenthesis
 					if (fReportMacros != null) {

@@ -16,10 +16,13 @@
 package org.eclipse.cdt.core.parser.tests.scanner;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -259,6 +262,136 @@ public class InclusionTests extends PreprocessorTestsBase {
 		initializeScanner(reader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, new ScannerInfo());
 		validateIdentifier("ok");
 		validateEOF();
+	}
+
+	// #if __has_include("does_not_exist.h")
+	// inactive
+	// #endif
+	// #if !__has_include("does_not_exist.h")
+	// identifier
+	// #endif
+	//
+	// #if __has_include("test.h")
+	// identifier2
+	// #endif
+	// #if !__has_include("test.h")
+	// inactive
+	// #endif
+	//
+	// #if __has_include(<test.h>)
+	// identifier3
+	// #endif
+	//
+	// #define MACRO __has_include("test.h")
+	// #if MACRO
+	// identifier4
+	// #endif
+	//
+	// #define MACRO2 __has_include(<test.h>)
+	// #if MACRO2
+	// identifier5
+	// #endif
+	//
+	// #define HEADER_NAME "test.h"
+	// #define MACRO3 __has_include(HEADER_NAME)
+	// #if MACRO3
+	// identifier6
+	// #endif
+	//
+	// //Note: This one works with Clang and MSVC but not GCC.
+	// #define HEADER_NAME2 ("test.h")
+	// #define MACRO4 __has_include HEADER_NAME2
+	// #if MACRO4
+	// identifier7
+	// #endif
+	//
+	// #ifdef __has_include
+	// identifier8
+	// #endif
+	//
+	// #if defined(__has_include)
+	// identifier9
+	// #endif
+	public void testHasInclude() throws Exception {
+		importFile("test.h", "");
+		IFile base = importFile("test.cpp", getAboveComment());
+		IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP,
+				new String[] { fProject.getProject().getLocation().toOSString() }, new String[] {}, null);
+		FileContent reader = FileContent.create(base);
+		initializeScanner(reader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, scannerInfo);
+		validateIdentifier("identifier");
+		validateIdentifier("identifier2");
+		validateIdentifier("identifier3");
+		validateIdentifier("identifier4");
+		validateIdentifier("identifier5");
+		validateIdentifier("identifier6");
+		validateIdentifier("identifier7");
+		validateIdentifier("identifier8");
+		validateIdentifier("identifier9");
+		validateEOF();
+	}
+
+	// #include "foo.h"
+	//
+	// #ifdef __has_include_next
+	// identifier4
+	// #endif
+	//
+	// #if defined(__has_include_next)
+	// identifier5
+	// #endif
+
+	// identifier
+	// #include "intermed.h"
+
+	// identifier2
+	// #if __has_include_next(<foo.h>)
+	// #include_next <foo.h>
+	// #endif
+
+	// identifier3
+	public void testHasIncludeNext() throws Exception {
+		StringBuilder[] sections = getTestContent(4);
+		String baseFile = sections[0].toString(); //$NON-NLS-1$
+		String foo1 = sections[1].toString(); //$NON-NLS-1$
+		String intermed = sections[2].toString(); //$NON-NLS-1$
+		String foo2 = sections[3].toString(); //$NON-NLS-1$
+
+		IFolder one = importFolder("one"); //$NON-NLS-1$
+		IFolder two = importFolder("two"); //$NON-NLS-1$
+		IFile base = importFile("base.cpp", baseFile); //$NON-NLS-1$
+		importFile("one/foo.h", foo1); //$NON-NLS-1$
+		importFile("one/intermed.h", intermed); //$NON-NLS-1$
+		importFile("two/foo.h", foo2); //$NON-NLS-1$
+
+		String[] path = new String[2];
+		path[0] = one.getLocation().toOSString();
+		path[1] = two.getLocation().toOSString();
+
+		Map<String, String> definedSymbols = new HashMap<>();
+		definedSymbols.put("__GNUC__", "5");
+		definedSymbols.put("__GNUC_MINOR__", "0");
+
+		IScannerInfo scannerInfo = new ExtendedScannerInfo(definedSymbols, path, new String[] {}, null);
+		FileContent reader = FileContent.create(base);
+		initializeScanner(reader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, scannerInfo);
+		validateIdentifier("identifier");
+		validateIdentifier("identifier2");
+		validateIdentifier("identifier3");
+		validateIdentifier("identifier4");
+		validateIdentifier("identifier5");
+	}
+
+	// void foo() {
+	//   __has_include;
+	// }
+	public void testHasIncludeProblem() throws Exception {
+		IFile base = importFile("test.cpp", getAboveComment());
+		IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, null, new String[] {}, null);
+		FileContent reader = FileContent.create(base);
+		initializeScanner(reader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, scannerInfo);
+		fullyTokenize();
+		validateProblem(0, IProblem.PREPROCESSOR_INVALID_USE_OUTSIDE_PREPROCESSOR_DIRECTIVE, "__has_include");
 	}
 
 	// #include <inc/test.h>

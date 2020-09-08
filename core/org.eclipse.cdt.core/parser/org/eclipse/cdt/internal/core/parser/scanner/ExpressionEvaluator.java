@@ -265,6 +265,10 @@ public class ExpressionEvaluator {
 			return handleDefined();
 		case CPreprocessor.t__HAS_FEATURE:
 			return handleHasFeature();
+		case CPreprocessor.t__HAS_INCLUDE:
+			return handleHasInclude(false);
+		case CPreprocessor.t__HAS_INCLUDE_NEXT:
+			return handleHasInclude(true);
 		case IToken.tLPAREN:
 			consume();
 			long r1 = expression();
@@ -348,6 +352,51 @@ public class ExpressionEvaluator {
 		}
 		consume(); // closing parenthesis
 		return supported ? 1 : 0;
+	}
+
+	private long handleHasInclude(boolean isIncludeNext) throws EvalException {
+		consume(); // '__has_include'
+		if (LA() != IToken.tLPAREN) {
+			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+		}
+		consume(); // opening parenthesis
+
+		// We don't have a tSYSTEM_HEADER_NAME or tQUOTED_HEADER_NAME token type here, these only get created when
+		// executing an include directive. In the case of a tSTRING, we only have to extract the header name from the
+		// quotes (extractHeaderName) but for system header, we have to reassemble the string by concatenating the
+		// tokens.
+		// A possibly more elegant solution could be to generate tSYSTEM_HEADER_NAME or tQUOTED_HEADER_NAME during
+		// internalFetchToken but this is more ambitious and intrusive (more refactoring), especially considering
+		// various cases like macro expansion.
+		String headerName;
+		boolean quoteInclude = false;
+		if (LA() == IToken.tLT) {
+			headerName = ""; //$NON-NLS-1$
+			while (fTokens.getType() != IToken.tGT) {
+				if (fTokens.getType() == IToken.tEND_OF_INPUT) {
+					throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+				}
+				headerName += fTokens.getImage();
+				consume();
+			}
+			consume();
+			headerName += ">"; //$NON-NLS-1$
+			headerName = new String(fPreprocessor.extractHeaderName(headerName.toCharArray(), '<', '>', new int[2]));
+		} else if (LA() == IToken.tSTRING) {
+			quoteInclude = true;
+			headerName = new String(fPreprocessor.extractHeaderName(fTokens.getCharImage(), '"', '"', new int[2]));
+			consume();
+		} else {
+			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+		}
+
+		if (LA() != IToken.tRPAREN) {
+			throw new EvalException(IProblem.SCANNER_MISSING_R_PAREN, null);
+		}
+		consume(); // closing parenthesis
+
+		boolean includePathExists = fPreprocessor.findInclusion(headerName, quoteInclude, isIncludeNext) != null;
+		return includePathExists ? 1 : 0;
 	}
 
 	private int LA() {

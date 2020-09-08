@@ -51,6 +51,8 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 		addMacro("__builtin_va_arg(ap,type)", "*(typeof(type) *)ap");
 		addMacro("__builtin_types_compatible_p(x,y)", "__builtin_types_compatible_p(sizeof(x),sizeof(y))");
 		addMacro("__offsetof__(x)", "(x)");
+		addMacro("__has_include", "");
+		addMacro("__has_include_next", "");
 
 		addPreprocessorKeyword(Keywords.cINCLUDE_NEXT, IPreprocessorDirective.ppInclude_next);
 		addPreprocessorKeyword(Keywords.cIMPORT, IPreprocessorDirective.ppImport);

@@ -343,8 +343,8 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		final String[] expected = { "AMacro(x)", "DEBUG", "XMacro(x, y)", "__CDT_PARSER__", "__COUNTER__", "__DATE__",
 				"__FILE__", "__LINE__", "__STDC_HOSTED__", "__STDC_VERSION__", "__STDC__", "__TIME__",
 				"__builtin_va_arg(ap, type)", "__builtin_offsetof(T, m)", "__builtin_types_compatible_p(x, y)",
-				"__complex__", "__extension__", "__imag__", "__null", "__offsetof__(x)", "__real__", "__stdcall",
-				"__thread", };
+				"__complex__", "__extension__", "__has_include", "__has_include_next", "__imag__", "__null",
+				"__offsetof__(x)", "__real__", "__stdcall", "__thread", };
 		assertCompletionResults(expected);
 	}
 

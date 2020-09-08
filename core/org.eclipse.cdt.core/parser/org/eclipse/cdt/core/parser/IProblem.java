@@ -346,6 +346,11 @@ public interface IProblem {
 	 */
 	public final static int PREPROCESSOR_MULTIPLE_USER_DEFINED_SUFFIXES_IN_CONCATENATION = PREPROCESSOR_RELATED | 0x010;
 
+	/**
+	 * @since 7.1
+	 */
+	public final static int PREPROCESSOR_INVALID_USE_OUTSIDE_PREPROCESSOR_DIRECTIVE = PREPROCESSOR_RELATED | 0x011;
+
 	/*
 	 * Syntax error, detected by the parser.
 	 */

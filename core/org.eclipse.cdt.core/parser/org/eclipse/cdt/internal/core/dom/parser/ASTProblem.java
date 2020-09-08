@@ -97,6 +97,8 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 				ParserMessages.getString("ScannerProblemFactory.error.scanner.floatWithBadPrefix")); //$NON-NLS-1$
 		errorMessages.put(Integer.valueOf(PREPROCESSOR_MULTIPLE_USER_DEFINED_SUFFIXES_IN_CONCATENATION), ParserMessages
 				.getString("ScannerProblemFactory.error.preproc.multipleUserDefinedLiteralSuffixesOnStringLiteral")); //$NON-NLS-1$
+		errorMessages.put(Integer.valueOf(PREPROCESSOR_INVALID_USE_OUTSIDE_PREPROCESSOR_DIRECTIVE),
+				ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidUsageOutsidePreprocDirective")); //$NON-NLS-1$
 		errorMessages.put(Integer.valueOf(SYNTAX_ERROR),
 				ParserMessages.getString("ParserProblemFactory.error.syntax.syntaxError")); //$NON-NLS-1$
 		errorMessages.put(Integer.valueOf(MISSING_SEMICOLON),

@@ -92,6 +92,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	public static final int tNOSPACE = IToken.FIRST_RESERVED_PREPROCESSOR + 4;
 	public static final int tMACRO_PARAMETER = IToken.FIRST_RESERVED_PREPROCESSOR + 5;
 	public static final int t__HAS_FEATURE = IToken.FIRST_RESERVED_PREPROCESSOR + 6;
+	public static final int t__HAS_INCLUDE = IToken.FIRST_RESERVED_PREPROCESSOR + 7;
+	public static final int t__HAS_INCLUDE_NEXT = IToken.FIRST_RESERVED_PREPROCESSOR + 8;
 
 	private static final int ORIGIN_PREPROCESSOR_DIRECTIVE = OffsetLimitReachedException.ORIGIN_PREPROCESSOR_DIRECTIVE;
 	private static final int ORIGIN_INACTIVE_CODE = OffsetLimitReachedException.ORIGIN_INACTIVE_CODE;
@@ -1323,6 +1325,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 	}
 
+	InternalFileContent findInclusion(final String includeDirective, final boolean quoteInclude,
+			final boolean includeNext) {
+		return findInclusion(includeDirective, quoteInclude, includeNext, getCurrentFilename(), createCodeReaderTester);
+	}
+
 	private <T> T findInclusion(final String includeDirective, final boolean quoteInclude, final boolean includeNext,
 			final String currentFile, final IIncludeFileTester<T> tester) {
 		T reader = null;
@@ -1808,7 +1815,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		fLocationMap.skippedFile(fLocationMap.getSequenceNumberForOffset(offset), fi);
 	}
 
-	private char[] extractHeaderName(final char[] image, final char startDelim, final char endDelim, int[] offsets) {
+	char[] extractHeaderName(final char[] image, final char startDelim, final char endDelim, int[] offsets) {
 		char[] headerName;
 		int start = 0;
 		int length = image.length;
@@ -2124,9 +2131,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	 * If applicable the macro is expanded and the resulting tokens are put onto a new context.
 	 * @param identifier the token where macro expansion may occur.
 	 * @param lexer the input for the expansion.
-	 * @param stopAtNewline whether or not tokens to be read are limited to the current line.
-	 * @param isPPCondition whether the expansion is inside of a preprocessor condition. This
-	 * implies a specific handling for the defined token.
 	 */
 	private boolean expandMacro(final Token identifier, Lexer lexer, int options, boolean withinExpansion)
 			throws OffsetLimitReachedException {
@@ -2141,7 +2145,24 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				identifier.setType(t__HAS_FEATURE);
 				return false;
 			}
+			if (CharArrayUtils.equals(name, Keywords.c__HAS_INCLUDE)) {
+				identifier.setType(t__HAS_INCLUDE);
+				return false;
+			}
+			if (CharArrayUtils.equals(name, Keywords.c__HAS_INCLUDE_NEXT)) {
+				identifier.setType(t__HAS_INCLUDE_NEXT);
+				return false;
+			}
 		}
+
+		// These should not expand as macros and are not allowed outside #if, #ifdef
+		if (CharArrayUtils.equals(name, Keywords.c__HAS_INCLUDE)
+				|| CharArrayUtils.equals(name, Keywords.c__HAS_INCLUDE_NEXT)) {
+			handleProblem(IProblem.PREPROCESSOR_INVALID_USE_OUTSIDE_PREPROCESSOR_DIRECTIVE, name,
+					identifier.getOffset(), identifier.getEndOffset());
+			return false;
+		}
+
 		PreprocessorMacro macro = fMacroDictionary.get(name);
 		if (macro == null) {
 			if (reportSignificant && (options & IGNORE_UNDEFINED_SIGNIFICANT_MACROS) == 0)

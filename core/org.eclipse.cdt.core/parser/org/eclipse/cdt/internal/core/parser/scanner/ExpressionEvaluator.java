@@ -265,6 +265,10 @@ public class ExpressionEvaluator {
 			return handleDefined();
 		case CPreprocessor.t__HAS_FEATURE:
 			return handleHasFeature();
+		case CPreprocessor.t__HAS_INCLUDE:
+			return handleHasInclude(false);
+		case CPreprocessor.t__HAS_INCLUDE_NEXT:
+			return handleHasInclude(true);
 		case IToken.tLPAREN:
 			consume();
 			long r1 = expression();
@@ -348,6 +352,47 @@ public class ExpressionEvaluator {
 		}
 		consume(); // closing parenthesis
 		return supported ? 1 : 0;
+	}
+
+	private long handleHasInclude(boolean isIncludeNext) throws EvalException {
+		consume(); // '__has_include'
+		if (LA() != IToken.tLPAREN) {
+			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+		}
+		consume(); // opening parenthesis
+
+		// We re-lex this token because from a macro expansion it will be a plain tString instead of a tSYSTEM_HEADER_NAME or tQUOTED_HEADER_NAME
+		String headerName;
+		boolean quoteInclude = false;
+		int offsets[] = new int[2];
+		if (LA() == IToken.tLT) {
+			headerName = ""; //$NON-NLS-1$
+			while (fTokens.getType() != IToken.tGT) {
+				if (fTokens.getType() == IToken.tEND_OF_INPUT) {
+					throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+				}
+
+				headerName += fTokens.getImage();
+				consume();
+			}
+			consume();
+			headerName += ">"; //$NON-NLS-1$
+			headerName = new String(fPreprocessor.extractHeaderName(headerName.toCharArray(), '<', '>', offsets));
+		} else if (LA() == IToken.tSTRING) {
+			quoteInclude = true;
+			headerName = new String(fPreprocessor.extractHeaderName(fTokens.getCharImage(), '"', '"', offsets));
+			consume();
+		} else {
+			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+		}
+
+		if (LA() != IToken.tRPAREN) {
+			throw new EvalException(IProblem.SCANNER_MISSING_R_PAREN, null);
+		}
+		consume(); // closing parenthesis
+
+		boolean includePathExists = fPreprocessor.findInclusion(headerName, quoteInclude, isIncludeNext) != null;
+		return includePathExists ? 1 : 0;
 	}
 
 	private int LA() {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.editor;
 
+import org.eclipse.cdt.internal.qt.core.Activator;
+import org.eclipse.cdt.qt.core.IQMLAnalyzer;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
@@ -20,6 +22,11 @@ public class QMLHyperlinkDetector extends AbstractHyperlinkDetector {
 
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
+		IQMLAnalyzer analyzer = Activator.getService(IQMLAnalyzer.class);
+		if (analyzer == null || !analyzer.isSupported()) {
+			return null;
+		}
+
 		// TODO is length of region ever > 0?
 		IRegion wordRegion = QMLEditor.findWord(textViewer.getDocument(), region.getOffset());
 		if (wordRegion != null) {

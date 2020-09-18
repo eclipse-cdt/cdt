@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.qt.core" version="2">
+    <resource path="src/org/eclipse/cdt/qt/core/IQMLAnalyzer.java" type="org.eclipse.cdt.qt.core.IQMLAnalyzer">
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.qt.core.IQMLAnalyzer"/>
+                <message_argument value="isSupported()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -41,6 +41,9 @@ public class QMLContentAssistProcessor implements IContentAssistProcessor {
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+		if (analyzer == null || !analyzer.isSupported()) {
+			return NO_COMPLETIONS;
+		}
 		IDocument document = viewer.getDocument();
 		String prefix = lastWord(document, offset);
 		// Save the file

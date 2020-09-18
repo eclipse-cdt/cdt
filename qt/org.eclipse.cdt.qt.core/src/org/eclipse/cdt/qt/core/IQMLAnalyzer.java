@@ -24,6 +24,14 @@ import org.eclipse.cdt.qt.core.qmljs.IQmlASTNode;
 
 public interface IQMLAnalyzer {
 
+	/**
+	 * Added in CDT 10.0.1 with no version bump. See Bug 567124.
+	 * @since 2.3
+	 */
+	default boolean isSupported() {
+		return true;
+	}
+
 	void addFile(String fileName, String code) throws NoSuchMethodException, ScriptException;
 
 	void deleteFile(String fileName) throws NoSuchMethodException, ScriptException;

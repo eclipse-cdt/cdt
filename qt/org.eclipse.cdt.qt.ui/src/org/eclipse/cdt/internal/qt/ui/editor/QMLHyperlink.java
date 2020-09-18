@@ -61,6 +61,10 @@ public class QMLHyperlink implements IHyperlink {
 	@Override
 	public void open() {
 		IQMLAnalyzer analyzer = Activator.getService(IQMLAnalyzer.class);
+		if (analyzer == null || !analyzer.isSupported()) {
+			return;
+		}
+
 		try {
 			IDocument document = viewer.getDocument();
 			String selected = document.get(region.getOffset(), region.getLength());

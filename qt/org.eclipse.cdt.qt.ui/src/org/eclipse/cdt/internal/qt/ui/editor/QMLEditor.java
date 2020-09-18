@@ -81,13 +81,15 @@ public class QMLEditor extends TextEditor {
 		String fileName = new File(fileInput.getFile().getLocationURI()).getAbsolutePath();
 		IDocument document = getSourceViewer().getDocument();
 
-		try {
-			analyzer.deleteFile(fileName);
-			analyzer.addFile(fileName, document.get());
-		} catch (NoSuchMethodException e) {
-			Activator.log(e);
-		} catch (ScriptException e) {
-			Activator.log(e);
+		if (analyzer != null && analyzer.isSupported()) {
+			try {
+				analyzer.deleteFile(fileName);
+				analyzer.addFile(fileName, document.get());
+			} catch (NoSuchMethodException e) {
+				Activator.log(e);
+			} catch (ScriptException e) {
+				Activator.log(e);
+			}
 		}
 		super.doSave(progressMonitor);
 	}

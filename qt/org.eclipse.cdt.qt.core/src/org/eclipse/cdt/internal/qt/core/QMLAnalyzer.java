@@ -39,6 +39,7 @@ public class QMLAnalyzer implements IQMLAnalyzer {
 
 	private QMLModuleResolver moduleResolver;
 	private ScriptEngine engine;
+	private Boolean supported;
 	private Invocable invoke;
 	private Object tern;
 
@@ -46,6 +47,14 @@ public class QMLAnalyzer implements IQMLAnalyzer {
 	public void load() throws ScriptException, IOException, NoSuchMethodException {
 		moduleResolver = new QMLModuleResolver(this);
 		engine = new ScriptEngineManager().getEngineByName("nashorn");
+		if (engine == null) {
+			synchronized (this) {
+				supported = false;
+				notifyAll();
+			}
+			throw new ScriptException(
+					"Nashorn script engine is not available in Java 15 and above. The QML Analyzer is not supported.");
+		}
 		invoke = (Invocable) engine;
 
 		loadDep("/tern-qml/node_modules/acorn/dist/acorn.js");
@@ -100,6 +109,7 @@ public class QMLAnalyzer implements IQMLAnalyzer {
 
 		synchronized (this) {
 			tern = invoke.invokeFunction("newTernServer", options);
+			supported = tern != null;
 			notifyAll();
 		}
 	}
@@ -126,16 +136,25 @@ public class QMLAnalyzer implements IQMLAnalyzer {
 		}
 	}
 
-	private void waitUntilLoaded() {
+	@Override
+	public boolean isSupported() {
 		synchronized (this) {
-			while (tern == null) {
+			while (supported == null) {
 				try {
 					wait();
 				} catch (InterruptedException e) {
 					Activator.log(e);
-					return;
+					return false;
 				}
 			}
+			return supported;
+		}
+	}
+
+	private void waitUntilLoaded() throws ScriptException {
+		if (!isSupported()) {
+			throw new ScriptException(
+					"Nashorn script engine is not available in Java 15 and above. The QML Analyzer is not supported.");
 		}
 	}
 

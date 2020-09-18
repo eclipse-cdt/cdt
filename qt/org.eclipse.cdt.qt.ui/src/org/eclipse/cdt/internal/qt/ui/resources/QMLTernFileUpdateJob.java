@@ -42,6 +42,9 @@ public class QMLTernFileUpdateJob extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
+		if (analyzer == null || !analyzer.isSupported()) {
+			return Status.OK_STATUS;
+		}
 		for (IResourceDelta delta : deltaList) {
 			IResource resource = delta.getResource();
 			String fileName = resource.getFullPath().toString().substring(1);

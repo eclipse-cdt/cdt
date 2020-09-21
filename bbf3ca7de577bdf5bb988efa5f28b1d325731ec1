@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9c2748c_7714f858",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-09-21T19:27:00Z",
+      "side": 1,
+      "message": "missing \u003e on \u003cp\u003e",
+      "range": {
+        "startLine": 25,
+        "startChar": 96,
+        "endLine": 25,
+        "endChar": 97
+      },
+      "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4561170f_5dec7a73",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-09-21T19:27:00Z",
+      "side": 1,
+      "message": "I like the code here - but I would extend it a little further and make the handlers for LOG and STATUS also handlers. It would make currentHandler never null and significantly simplify the processBuffer code below by changing from 4 if blocks and a ?: to a single if.\n\nI did the below because I was having a bit of trouble understanding the code. If you find my version less understandable that is ok, this exercise has still been useful as a way for me to understand your original code:\n\nIf the patch below is unreadable, you can see the file here https://github.com/jonahgraham/cdt/blob/4521815e3ad2c0330eb0118bb0fb4a8c01e176f1/build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java#L1\n\n    diff --git a/build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java b/build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java\n    index a32a5a6..f12c147 100644\n    --- a/build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java\n    +++ b/build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java\n    @@ -38,16 +38,13 @@\n    */\n    /* package */ class CMakeErrorParser implements AutoCloseable {\n    \n    -\tprivate static final String START_LOG \u003d \"CMake Debug Log\"; //$NON-NLS-1$\n    -\tprivate static final String START_STATUS \u003d \"-- \"; //$NON-NLS-1$\n    -\n        /** matches the Start of a message, also ending the previous message */\n        private static final Pattern PTN_MSG_START;\n    \n        private static Map\u003cString, MessageHandler\u003e handlersByMessageStart \u003d new HashMap\u003c\u003e();\n    \n    -\t/** the handler for the message we are currently gathering output for or \u003ccode\u003enull\u003c/code\u003e */\n    -\tprivate MessageHandler currentHandler;\n    +\t/** the handler for the message we are currently gathering output for */\n    +\tprivate MessageHandler currentHandler \u003d new MhNull();\n        private final ICMakeExecutionMarkerFactory markerFactory;\n        private final StringBuilder buffer;\n    \n    @@ -55,12 +52,9 @@\n            // setup regex to match the start of a message...\n            StringBuilder ptnbuf \u003d new StringBuilder(\"^\"); //$NON-NLS-1$\n    \n    -\t\tString ignoredMessages \u003d String.join(\"|\", START_LOG, START_STATUS); //$NON-NLS-1$\n    -\t\tptnbuf.append(ignoredMessages);\n    -\n    -\t\tList\u003cMessageHandler\u003e markerHandlers \u003d Arrays.asList(new MhDeprError(), new MhDeprWarning(), new MhErrorDev(),\n    -\t\t\t\tnew MhError(), new MhInternalError(), new MhWarningDev(), new MhWarning());\n    -\t\tptnbuf.append(\u0027|\u0027);\n    +\t\tList\u003cMessageHandler\u003e markerHandlers \u003d Arrays.asList(new MhStartLog(), new MhStatus(), new MhDeprError(),\n    +\t\t\t\tnew MhDeprWarning(), new MhErrorDev(), new MhError(), new MhInternalError(), new MhWarningDev(),\n    +\t\t\t\tnew MhWarning());\n            for (Iterator\u003cMessageHandler\u003e it \u003d markerHandlers.iterator(); it.hasNext();) {\n                MessageHandler h \u003d it.next();\n                handlersByMessageStart.put(h.getMessageStart(), h);\n    @@ -90,7 +84,7 @@\n        */\n        public void addInput(CharSequence input) {\n            buffer.append(input);\n    -\t\tprocessBuffer(false);\n    +\t\tprocessBuffer();\n        }\n    \n        /** Closes this parser. Any remaining buffered input will be parsed.\n    @@ -98,51 +92,25 @@\n        @Override\n        public void close() {\n            // process remaining bytes\n    -\t\tprocessBuffer(true);\n    +\t\tprocessMessage(currentHandler, buffer.toString().trim());\n            buffer.delete(0, buffer.length());\n        }\n    \n    -\tprivate void processBuffer(boolean isEOF) {\n    +\tprivate void processBuffer() {\n            Matcher matcher \u003d PTN_MSG_START.matcher(\"\"); //$NON-NLS-1$\n            while (true) {\n    -\t\t\tmatcher.reset(currentHandler \u003d\u003d null ? buffer\n    -\t\t\t\t\t: buffer.subSequence(currentHandler.getMessageStart().length(), buffer.length()));\n    -\t\t\t//\t\t\tSystem.err.println(\"-###\\nr\" + buffer.toString() + \"\\n###-\");\n    +\t\t\tmatcher.reset(buffer.subSequence(currentHandler.getMessageStart().length(), buffer.length()));\n                if (matcher.find()) {\n    -\t\t\t\t// first or second message arrived in buffer\n                    String handlerId \u003d matcher.group();\n                    MessageHandler newHandler \u003d handlersByMessageStart.get(handlerId);\n    -\t\t\t\tif (currentHandler \u003d\u003d null) {\n    -\t\t\t\t\t// first message arrived in buffer\n    -\t\t\t\t\tif (newHandler !\u003d null) {\n    -\t\t\t\t\t\t// got handler for first message:\n    -\t\t\t\t\t\t// discard leading junk\n    -\t\t\t\t\t\tbuffer.delete(0, matcher.start());\n    -\t\t\t\t\t\tcurrentHandler \u003d newHandler;\n    -\t\t\t\t\t} else {\n    -\t\t\t\t\t\t// no handler for first message:\n    -\t\t\t\t\t\t// message is to be ignored, remove msg start to advance\n    -\t\t\t\t\t\tbuffer.delete(0, matcher.end());\n    -\t\t\t\t\t}\n    -\t\t\t\t\tcontinue; // proceed with follow-up messages\n    -\t\t\t\t\t//\t\t\t\t\treturn; // wait for more input\n    -\t\t\t\t} else {\n    -\t\t\t\t\t// second message arrived in buffer\n    -\t\t\t\t\t// extract first message from buffer and process it...\n    -\t\t\t\t\tint end \u003d matcher.start() + currentHandler.getMessageStart().length();\n    -\t\t\t\t\tString message \u003d buffer.substring(0, end);\n    -\t\t\t\t\tprocessMessage(currentHandler, message.trim());\n    -\t\t\t\t\tcurrentHandler \u003d newHandler;\n    -\t\t\t\t\tbuffer.delete(0, end); // delete processed message\n    -\t\t\t\t\tcontinue; // proceed with follow-up messages\n    -\t\t\t\t}\n    +\t\t\t\tint end \u003d matcher.start() + currentHandler.getMessageStart().length();\n    +\t\t\t\tString message \u003d buffer.substring(0, end);\n    +\t\t\t\tprocessMessage(currentHandler, message.trim());\n    +\t\t\t\tcurrentHandler \u003d newHandler;\n    +\t\t\t\tbuffer.delete(0, end); // delete processed message\n    +\t\t\t\tcontinue; // proceed with follow-up messages\n                } else {\n                    // NO message arrived in buffer\n    -\t\t\t\tif (currentHandler !\u003d null \u0026\u0026 isEOF) {\n    -\t\t\t\t\t// first message is in buffer:\n    -\t\t\t\t\t// take buffer content as first message and process it...\n    -\t\t\t\t\tprocessMessage(currentHandler, buffer.toString().trim());\n    -\t\t\t\t}\n                    return; // wait for more input\n                }\n            }\n    @@ -269,6 +237,70 @@\n        } // MessageHandler\n    \n        ////////////////////////////////////////////////////////////////////\n    +\tprivate static class MhNull extends MessageHandler {\n    +\n    +\t\t@Override\n    +\t\tpublic void processMessage(ICMakeExecutionMarkerFactory markerFactory, String fullMessage)\n    +\t\t\t\tthrows CoreException {\n    +\t\t}\n    +\n    +\t\t@Override\n    +\t\tString getMessageStart() {\n    +\t\t\treturn \"\"; //$NON-NLS-1$\n    +\t\t}\n    +\n    +\t\t@Override\n    +\t\tint getSeverity() {\n    +\t\t\tthrow new UnsupportedOperationException();\n    +\t\t}\n    +\n    +\t\t@Override\n    +\t\tpublic String toString() {\n    +\t\t\treturn super.toString() + \": \" + getMessageStart(); //$NON-NLS-1$\n    +\t\t}\n    +\t}\n    +\n    +\t////////////////////////////////////////////////////////////////////\n    +\tprivate static class MhStartLog extends MhNull {\n    +\t\tprivate static final String START_LOG \u003d \"CMake Debug Log\"; //$NON-NLS-1$\n    +\n    +\t\t@Override\n    +\t\tString getMessageStart() {\n    +\t\t\treturn START_LOG;\n    +\t\t}\n    +\n    +\t\t@Override\n    +\t\tint getSeverity() {\n    +\t\t\tthrow new UnsupportedOperationException();\n    +\t\t}\n    +\n    +\t\t@Override\n    +\t\tpublic String toString() {\n    +\t\t\treturn super.toString() + \": \" + getMessageStart(); //$NON-NLS-1$\n    +\t\t}\n    +\t}\n    +\n    +\t////////////////////////////////////////////////////////////////////\n    +\tprivate static class MhStatus extends MhNull {\n    +\t\tprivate static final String START_STATUS \u003d \"-- \"; //$NON-NLS-1$\n    +\n    +\t\t@Override\n    +\t\tString getMessageStart() {\n    +\t\t\treturn START_STATUS;\n    +\t\t}\n    +\n    +\t\t@Override\n    +\t\tint getSeverity() {\n    +\t\t\tthrow new UnsupportedOperationException();\n    +\t\t}\n    +\n    +\t\t@Override\n    +\t\tpublic String toString() {\n    +\t\t\treturn super.toString() + \": \" + getMessageStart(); //$NON-NLS-1$\n    +\t\t}\n    +\t}\n    +\n    +\t////////////////////////////////////////////////////////////////////\n        private static class MhDeprError extends MessageHandler {\n            private static final String START_DERROR \u003d \"CMake Deprecation Error\"; //$NON-NLS-1$",
+      "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b5f831e_029c5a5a",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-09-21T19:27:00Z",
+      "side": 1,
+      "message": "commented out return",
+      "range": {
+        "startLine": 128,
+        "startChar": 13,
+        "endLine": 128,
+        "endChar": 26
+      },
+      "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec292c05_d2977cac",
+        "filename": "cmake/org.eclipse.cdt.cmake.core.tests/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParserTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-09-21T19:27:00Z",
+      "side": 1,
+      "message": ":-) For JUnit5!",
+      "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

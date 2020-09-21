@@ -146,6 +146,7 @@ public class CompileCommandsJsonParser {
 		final IProject project = configuration.getBuildConfiguration().getProject();
 		java.nio.file.Path buildRoot = Paths.get(configuration.getBuildDirectoryURI());
 
+		project.deleteMarkers(MARKER_ID, false, IResource.DEPTH_INFINITE);
 		final java.nio.file.Path jsonFile = buildRoot.resolve("compile_commands.json"); //$NON-NLS-1$
 		if (!Files.exists(jsonFile)) {
 			// no json file was produced in the build
@@ -159,7 +160,7 @@ public class CompileCommandsJsonParser {
 		try {
 			tsJsonModified = Files.getLastModifiedTime(jsonFile).toMillis();
 		} catch (IOException e) {
-			// tread as 'file does nor exist'
+			// treat as 'file is not modified'
 			return false;
 		}
 		IContainer buildContainer = configuration.getBuildContainer();
@@ -169,7 +170,6 @@ public class CompileCommandsJsonParser {
 		if (sessionLastModified == null || sessionLastModified.longValue() < tsJsonModified) {
 			// must parse json file...
 			monitor.setTaskName(Messages.CompileCommandsJsonParser_msg_processing);
-			project.deleteMarkers(MARKER_ID, false, IResource.DEPTH_INFINITE);
 
 			try (Reader in = new FileReader(jsonFile.toFile())) {
 				// parse file...

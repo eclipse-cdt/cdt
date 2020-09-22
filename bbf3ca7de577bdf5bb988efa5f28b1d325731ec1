@@ -42,6 +42,24 @@
     },
     {
       "key": {
+        "uuid": "39c627db_36902a4f",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-09-22T20:19:01Z",
+      "side": 1,
+      "message": "I was playing with the idea to make the handlers for LOG and STATUS also handlers but could not see any benefit.\nIts much clearer now! Thank you.",
+      "parentUuid": "4561170f_5dec7a73",
+      "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8b5f831e_029c5a5a",
         "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
         "patchSetId": 6
@@ -79,6 +97,24 @@
       "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d09f5a95_dbe291c5",
+        "filename": "cmake/org.eclipse.cdt.cmake.core.tests/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParserTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-09-22T20:19:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec292c05_d2977cac",
+      "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

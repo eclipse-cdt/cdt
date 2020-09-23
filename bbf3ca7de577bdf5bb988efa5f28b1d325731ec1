@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fb39907b_33e7f69a",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-09-23T18:56:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e9c2748c_7714f858",
+      "range": {
+        "startLine": 25,
+        "startChar": 96,
+        "endLine": 25,
+        "endChar": 97
+      },
+      "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4561170f_5dec7a73",
         "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
         "patchSetId": 6
@@ -60,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "85fa2714_9ced4921",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-09-23T18:56:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "39c627db_36902a4f",
+      "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8b5f831e_029c5a5a",
         "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
         "patchSetId": 6
@@ -80,6 +122,30 @@
       "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22356c0d_68dc9e44",
+        "filename": "build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-09-23T18:56:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8b5f831e_029c5a5a",
+      "range": {
+        "startLine": 128,
+        "startChar": 13,
+        "endLine": 128,
+        "endChar": 26
+      },
+      "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {

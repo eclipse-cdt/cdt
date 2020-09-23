@@ -33,7 +33,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeSelection;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.DeferredUDC;
@@ -195,6 +198,10 @@ class FunctionCost {
 			if (cmp != 0)
 				return cmp;
 
+			cmp = compareRValueRValueTemplateFunctions(f1, f2);
+			if (cmp != 0)
+				return cmp;
+
 			// At this point prefer non-index bindings
 			return -CPPSemantics.compareByRelevance(tu, f1, f2);
 		}
@@ -203,6 +210,59 @@ class FunctionCost {
 			return -1;
 
 		return 1;
+	}
+
+	private int compareRValueRValueTemplateFunctions(final ICPPFunction f1, final ICPPFunction f2) {
+		if (!isTemplate(f1) || !isTemplate(f2)) {
+			return 0;
+		}
+
+		if (f1.getParameters().length == f2.getParameters().length) {
+			for (int i = 0; i < f1.getParameters().length; i++) {
+				ICPPParameter fstPara = f1.getParameters()[i];
+				ICPPParameter sndPara = f2.getParameters()[i];
+
+				if (isTemplateSpecialization(fstPara) && isTemplateSpecialization(sndPara)) {
+					ICPPSpecialization fstSpec = (ICPPSpecialization) fstPara;
+					ICPPSpecialization sndSpec = (ICPPSpecialization) sndPara;
+
+					if (isSpecializedCppParam(fstSpec) && isSpecializedCppParam(sndSpec)) {
+						ICPPParameter fstSpecP = (ICPPParameter) fstSpec.getSpecializedBinding();
+						ICPPParameter sndSpecP = (ICPPParameter) sndSpec.getSpecializedBinding();
+
+						if (isReferenceType(fstSpecP) && isReferenceType(sndSpecP)) {
+							ICPPReferenceType fstTp = (ICPPReferenceType) fstSpecP.getType();
+							ICPPReferenceType sndTp = (ICPPReferenceType) sndSpecP.getType();
+
+							boolean fstRv = fstTp.isRValueReference();
+							boolean sndRv = sndTp.isRValueReference();
+
+							if (fstRv != sndRv) {
+								return fstRv ? 1 : -1;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	private boolean isReferenceType(ICPPParameter fstSpecP) {
+		return ICPPReferenceType.class.isAssignableFrom(fstSpecP.getType().getClass());
+	}
+
+	private boolean isSpecializedCppParam(ICPPSpecialization fstSpec) {
+		return ICPPParameter.class.isAssignableFrom(fstSpec.getSpecializedBinding().getClass());
+	}
+
+	private boolean isTemplateSpecialization(ICPPParameter fstPara) {
+		return ICPPSpecialization.class.isAssignableFrom(fstPara.getClass());
+	}
+
+	private boolean isTemplate(final ICPPFunction f1) {
+		return ICPPTemplateInstance.class.isAssignableFrom(f1.getClass());
 	}
 
 	private int overridesUsingDeclaration(ICPPFunction f1, ICPPFunction f2) {

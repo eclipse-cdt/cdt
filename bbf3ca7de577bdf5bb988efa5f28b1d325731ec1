@@ -133,6 +133,24 @@
       "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3883a5fe_02452474",
+        "filename": "cmake/org.eclipse.cdt.cmake.core.tests/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParserTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-09-23T18:17:42Z",
+      "side": 1,
+      "message": "I don\u0027t have experience using JUnit5, either. That slipped in by accident.\nAt least we now know, that our maven poms do handle JUnit5 test without any further configuration:-)",
+      "parentUuid": "779593f2_ce8995f5",
+      "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -115,6 +115,24 @@
       "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "779593f2_ce8995f5",
+        "filename": "cmake/org.eclipse.cdt.cmake.core.tests/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParserTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-09-23T01:44:42Z",
+      "side": 1,
+      "message": "Sorry for lack of clarity before. I was saying smiley face, meaning I thought it was good you were moving us forward. I didn\u0027t intend to get you to back track to JUnit4 style. I don\u0027t have experience using JUnit5, so please lead the way!",
+      "parentUuid": "d09f5a95_dbe291c5",
+      "revId": "bbf3ca7de577bdf5bb988efa5f28b1d325731ec1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3bf6c20_3cc8d791",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompilationDatabaseParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 403,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-09-25T06:28:28Z",
+      "side": 1,
+      "message": "What will be visible for user in this case? Should we provide a status with message to explain the situation?",
+      "revId": "5cc5a60b70e00b032368d8b348b42ceaca3d051f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

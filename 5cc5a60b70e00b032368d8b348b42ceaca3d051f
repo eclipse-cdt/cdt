@@ -16,6 +16,24 @@
       "revId": "5cc5a60b70e00b032368d8b348b42ceaca3d051f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67cff8f1_9b5c5275",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompilationDatabaseParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 403,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-09-25T16:21:40Z",
+      "side": 1,
+      "message": "I don\u0027t think anything should be made visible because normally users trigger the closing of a project and even if they didn\u0027t there is no visible effect to not running this since the job will start again when the project is reopened. Does that make sense?",
+      "parentUuid": "a3bf6c20_3cc8d791",
+      "revId": "5cc5a60b70e00b032368d8b348b42ceaca3d051f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

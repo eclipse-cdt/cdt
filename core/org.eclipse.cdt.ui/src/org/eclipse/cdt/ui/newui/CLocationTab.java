@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.cdt.core.model.ICProject;
@@ -45,6 +46,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -144,6 +147,15 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 				updateButtons();
 			}
 		});
+		tree.getTree().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				TreeItem[] sel = tree.getTree().getSelection();
+				Optional<_Entry> entry = getSelectedEntry(sel);
+				if (entry.isPresent())
+					handleEditEntry(entry.get());
+			}
+		});
 
 		initButtons(new String[] { Messages.CLocationTab_4, Messages.CLocationTab_5, Messages.CLocationTab_6,
 				Messages.CLocationTab_7 }, 150);
@@ -237,25 +249,9 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			break;
 		// edit filter
 		case 2:
-			if (sel.length == 0)
-				return;
-			Object data = sel[0].getData();
-			_Entry entry = null;
-			if (data instanceof _Entry)
-				entry = (_Entry) data;
-			else if (data instanceof _Filter)
-				entry = ((_Filter) data).entry;
-			else
-				return;
-			ExPatternDialog dialog = new ExPatternDialog(usercomp.getShell(), entry.ent.getExclusionPatterns(),
-					entry.getPath(), page.getProject());
-			if (dialog.open() == Window.OK) {
-				IPath[] ps = dialog.getExclusionPattern();
-				IPath path = entry.getPath();
-				boolean isWsp = entry.ent.isValueWorkspacePath();
-				entry.ent = newEntry(path, ps, isWsp);
-				saveData();
-			}
+			Optional<_Entry> entry = getSelectedEntry(sel);
+			if (entry.isPresent())
+				handleEditEntry(entry.get());
 			break;
 		case 3:
 			if (sel.length == 0)
@@ -269,6 +265,31 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		default:
 			break;
 		}
+	}
+
+	private void handleEditEntry(_Entry entry) {
+		ExPatternDialog dialog = new ExPatternDialog(usercomp.getShell(), entry.ent.getExclusionPatterns(),
+				entry.getPath(), page.getProject());
+		if (dialog.open() == Window.OK) {
+			IPath[] ps = dialog.getExclusionPattern();
+			IPath path = entry.getPath();
+			boolean isWsp = entry.ent.isValueWorkspacePath();
+			entry.ent = newEntry(path, ps, isWsp);
+			saveData();
+		}
+	}
+
+	private Optional<_Entry> getSelectedEntry(TreeItem[] sel) {
+		if (sel.length == 0)
+			return Optional.empty();
+		Object data = sel[0].getData();
+		_Entry entry = null;
+		if (data instanceof _Entry)
+			entry = (_Entry) data;
+		else if (data instanceof _Filter)
+			entry = ((_Filter) data).entry;
+
+		return Optional.ofNullable(entry);
 	}
 
 	private void saveData() {

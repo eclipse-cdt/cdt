@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "952ea511_ac36f6cc",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.arm.tests/src/arm/ToolDetectionParticipantTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-09-25T20:20:19Z",
+      "side": 1,
+      "message": "This file seems to be in an unexpected location - src/arm instead of src/org/eclipse...",
+      "revId": "ce3b664508c748ec095d256c3c3e919eee08ab4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

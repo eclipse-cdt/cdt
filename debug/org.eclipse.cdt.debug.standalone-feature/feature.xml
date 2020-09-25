@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.debug.standalone"
       label="%featureName"
-      version="10.0.0.qualifier"
+      version="10.0.1.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.debug.application"
       license-feature="org.eclipse.license"

@@ -398,6 +398,11 @@ public class CompilationDatabaseParser extends LanguageSettingsSerializableProvi
 				// saved that is not stored in the project description (i.e. calls to setProperties) will be saved to the wrong instance so when we call setProjectDescription, our changes will be ignored.
 				// So instead, restart the whole thing with the corresponding CompilationDatabaseParser instance in the writable config.
 				IProject project = cfgDescription.getProjectDescription().getProject();
+				if (!project.isAccessible()) {
+					// Project was probably closed while the job was waiting to start.
+					return Status.CANCEL_STATUS;
+				}
+
 				ICProjectDescription projectDescription = CCorePlugin.getDefault().getCoreModel()
 						.getProjectDescription(project.getProject(), true);
 				ICConfigurationDescription writableCfg = projectDescription

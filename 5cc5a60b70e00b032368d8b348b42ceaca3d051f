@@ -52,6 +52,24 @@
       "revId": "5cc5a60b70e00b032368d8b348b42ceaca3d051f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "907b4323_60ebe141",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/CompilationDatabaseParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 403,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-09-26T16:40:09Z",
+      "side": 1,
+      "message": "Gotcha. No, there is no error image and the canceled job is removed from the Progress view.",
+      "parentUuid": "228b4ed5_259650a2",
+      "revId": "5cc5a60b70e00b032368d8b348b42ceaca3d051f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

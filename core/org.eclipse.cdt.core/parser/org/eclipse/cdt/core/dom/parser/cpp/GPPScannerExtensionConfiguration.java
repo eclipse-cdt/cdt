@@ -181,28 +181,76 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			// As documented at
 			// http://clang.llvm.org/docs/LanguageExtensions.html#checks-for-type-trait-primitives.
 			// For now we don't make it dependent on the version.
+			// Missing ones are in comments
 			addKeyword(GCCKeywords.cp__has_nothrow_assign, IGCCToken.tTT_has_nothrow_assign);
-			addKeyword(GCCKeywords.cp__has_nothrow_constructor, IGCCToken.tTT_has_nothrow_constructor);
+			// __has_nothrow_move_assign
 			addKeyword(GCCKeywords.cp__has_nothrow_copy, IGCCToken.tTT_has_nothrow_copy);
+			addKeyword(GCCKeywords.cp__has_nothrow_constructor, IGCCToken.tTT_has_nothrow_constructor);
 			addKeyword(GCCKeywords.cp__has_trivial_assign, IGCCToken.tTT_has_trivial_assign);
-			addKeyword(GCCKeywords.cp__has_trivial_constructor, IGCCToken.tTT_has_trivial_constructor);
+			// __has_trivial_move_assign
 			addKeyword(GCCKeywords.cp__has_trivial_copy, IGCCToken.tTT_has_trivial_copy);
+			addKeyword(GCCKeywords.cp__has_trivial_constructor, IGCCToken.tTT_has_trivial_constructor);
 			addKeyword(GCCKeywords.cp__has_trivial_destructor, IGCCToken.tTT_has_trivial_destructor);
+			// __has_unique_object_representations
 			addKeyword(GCCKeywords.cp__has_virtual_destructor, IGCCToken.tTT_has_virtual_destructor);
 			addKeyword(GCCKeywords.cp__is_abstract, IGCCToken.tTT_is_abstract);
+			// __is_aggregate
+			// __is_arithmetic
+			// __is_array
+			// __is_assignable
 			addKeyword(GCCKeywords.cp__is_base_of, IGCCToken.tTT_is_base_of);
 			addKeyword(GCCKeywords.cp__is_class, IGCCToken.tTT_is_class);
+			// __is_complete_type
+			// __is_compound
+			// __is_const
+			addKeyword(GCCKeywords.cp__is_constructible, IGCCToken.tTT_is_constructible);
+			// __is_convertible
+			// __is_convertible_to
+			// __is_destructible
 			addKeyword(GCCKeywords.cp__is_empty, IGCCToken.tTT_is_empty);
 			addKeyword(GCCKeywords.cp__is_enum, IGCCToken.tTT_is_enum);
-			addKeyword(GCCKeywords.cp__is_pod, IGCCToken.tTT_is_pod);
-			addKeyword(GCCKeywords.cp__is_polymorphic, IGCCToken.tTT_is_polymorphic);
-			addKeyword(GCCKeywords.cp__is_union, IGCCToken.tTT_is_union);
 			addKeyword(GCCKeywords.cp__is_final, IGCCToken.tTT_is_final);
-			addKeyword(GCCKeywords.cp__underlying_type, IGCCToken.tTT_underlying_type);
-			addKeyword(GCCKeywords.cp__is_trivially_constructible, IGCCToken.tTT_is_trivially_constructible);
+			// __is_floating_point
+			// __is_function
+			// __is_fundamental
+			// __is_integral
+			// __is_interface_class
+			addKeyword(GCCKeywords.cp__is_literal, IGCCToken.tTT_is_literal_type);
+			addKeyword(GCCKeywords.cp__is_literal_type, IGCCToken.tTT_is_literal_type);
+			// __is_lvalue_reference
+			// __is_member_object_pointer
+			// __is_member_function_pointer
+			// __is_member_pointer
+			// __is_nothrow_assignable
+			// __is_nothrow_constructible
+			// __is_nothrow_destructible
+			// __is_object
+			addKeyword(GCCKeywords.cp__is_pod, IGCCToken.tTT_is_pod);
+			// __is_pointer
+			addKeyword(GCCKeywords.cp__is_polymorphic, IGCCToken.tTT_is_polymorphic);
+			// __is_reference
+			// __is_rvalue_reference
+			// __is_same
+			// __is_same_as
+			// __is_scalar
+			// __is_sealed
+			// __is_signed
+			addKeyword(GCCKeywords.cp__is_standard_layout, IGCCToken.tTT_is_standard_layout);
+			addKeyword(GCCKeywords.cp__is_trivial, IGCCToken.tTT_is_trivial);
 			addKeyword(GCCKeywords.cp__is_trivially_assignable, IGCCToken.tTT_is_trivially_assignable);
-			addKeyword(GCCKeywords.cp__is_constructible, IGCCToken.tTT_is_constructible);
+			addKeyword(GCCKeywords.cp__is_trivially_constructible, IGCCToken.tTT_is_trivially_constructible);
+			addKeyword(GCCKeywords.cp__is_trivially_copyable, IGCCToken.tTT_is_trivially_copyable);
+			// __is_trivially_destructible
+			addKeyword(GCCKeywords.cp__is_union, IGCCToken.tTT_is_union);
+			// __is_unsigned
+			// __is_void
+			// __reference_binds_to_temporary
+			addKeyword(GCCKeywords.cp__underlying_type, IGCCToken.tTT_underlying_type);
 			addKeyword(GCCKeywords.cp__integer_pack, IGCCToken.tTT_integer_pack);
+
+			addKeyword(GCCKeywords.cp__float128, IGCCToken.t__float128);
+			addKeyword(GCCKeywords.cp__int128, IGCCToken.t__int128);
+			//TODO verify other gcc ones
 		} else if (compiler == CompilerType.MSVC) {
 			// As documented at
 			// https://docs.microsoft.com/en-us/cpp/extensions/compiler-support-for-type-traits-cpp-component-extensions?view=vs-2017

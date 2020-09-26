@@ -93,4 +93,9 @@ public class GCCKeywords {
 
 	/** @since 6.11*/
 	public static final char[] cp__integer_pack = "__integer_pack".toCharArray();
+
+	/**
+	 * @since 7.0
+	 */
+	public static final char[] cp__is_literal = "__is_literal".toCharArray();
 }

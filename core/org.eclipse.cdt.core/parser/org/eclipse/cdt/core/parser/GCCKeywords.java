@@ -93,4 +93,10 @@ public class GCCKeywords {
 
 	/** @since 6.11*/
 	public static final char[] cp__integer_pack = "__integer_pack".toCharArray();
+
+	/**
+	 * This is actually for Clang but we don't maintain separate keywords right now.
+	 * @since 7.1
+	 */
+	public static final char[] cp__is_literal = "__is_literal".toCharArray();
 }

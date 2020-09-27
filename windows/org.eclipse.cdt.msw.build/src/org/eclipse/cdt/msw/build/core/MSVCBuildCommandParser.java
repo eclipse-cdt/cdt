@@ -11,6 +11,8 @@
 package org.eclipse.cdt.msw.build.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -93,12 +95,22 @@ public class MSVCBuildCommandParser extends AbstractBuildCommandParser implement
 	}
 
 	@SuppressWarnings("nls")
-	static final AbstractOptionParser[] optionParsers = { new MSVCIncludePathOptionParser("(-|/)I\\s*\"(.*)\"", "$2"),
-			new MSVCIncludePathOptionParser("(-|/)I\\s*([^\\s\"]*)", "$2"),
+	static final AbstractOptionParser[] includeOptionParsers = {
+			new MSVCIncludePathOptionParser("(-|/)I\\s*\"(.*)\"", "$2"),
+			new MSVCIncludePathOptionParser("(-|/)I\\s*([^\\s\"]*)", "$2"), };
+
+	@SuppressWarnings("nls")
+	static final AbstractOptionParser[] forceIncludeOptionParsers = {
 			new MSVCForceIncludePathOptionParser("(-|/)FI\\s*\"(.*)\"", "$2"),
-			new MSVCForceIncludePathOptionParser("(-|/)FI\\s*([^\\s\"]*)", "$2"),
+			new MSVCForceIncludePathOptionParser("(-|/)FI\\s*([^\\s\"]*)", "$2"), };
+
+	@SuppressWarnings("nls")
+	static final AbstractOptionParser[] msvcIncludeOptionParsers = {
 			new ClangCLMSVCSystemPathOptionParser("(-|/)imsvc\\s*\"(.*)\"", "$2"),
-			new ClangCLMSVCSystemPathOptionParser("(-|/)imsvc\\s*([^\\s\"]*)", "$2"),
+			new ClangCLMSVCSystemPathOptionParser("(-|/)imsvc\\s*([^\\s\"]*)", "$2"), };
+
+	@SuppressWarnings("nls")
+	static final AbstractOptionParser[] defineOptionParsers = {
 			// /D "FOO=bar"
 			new MSVCMacroOptionParser("(-|/)D\\s*\"([^=]+)=(.*)\"", "$2", "$3"),
 			// /D FOO="bar"
@@ -108,11 +120,27 @@ public class MSVCBuildCommandParser extends AbstractBuildCommandParser implement
 			// /D FOO
 			new MSVCMacroOptionParser("(-|/)D\\s*([^\\s=\"]+)", "$2", "1"),
 			// /D"FOO"
-			new MSVCMacroOptionParser("(-|/)D\\s*\"([^\\s=\"]+)\"", "$2", "1"),
+			new MSVCMacroOptionParser("(-|/)D\\s*\"([^\\s=\"]+)\"", "$2", "1"), };
+
+	@SuppressWarnings("nls")
+	static final AbstractOptionParser[] undefineOptionParsers = {
 			// /U FOO
 			new MacroOptionParser("(-|/)U\\s*([^\\s=\"]+)", "$2", ICSettingEntry.UNDEFINED),
 			// /U "FOO"
 			new MacroOptionParser("(-|/)U\\s*\"(.*?)\"", "$2", ICSettingEntry.UNDEFINED) };
+
+	static final AbstractOptionParser[] emptyParsers = new AbstractOptionParser[0];
+
+	static final AbstractOptionParser[] optionParsers;
+	static {
+		List<AbstractOptionParser> parsers = new ArrayList<>(Arrays.asList(includeOptionParsers));
+		Collections.addAll(parsers, defineOptionParsers);
+		Collections.addAll(parsers, msvcIncludeOptionParsers);
+		Collections.addAll(parsers, forceIncludeOptionParsers);
+		Collections.addAll(parsers, undefineOptionParsers);
+
+		optionParsers = parsers.toArray(new AbstractOptionParser[0]);
+	}
 
 	/**
 	 * "foo" or "C:\foo\\"
@@ -145,6 +173,39 @@ public class MSVCBuildCommandParser extends AbstractBuildCommandParser implement
 	@Override
 	protected AbstractOptionParser[] getOptionParsers() {
 		return optionParsers;
+	}
+
+	@SuppressWarnings("nls")
+	@Override
+	protected AbstractOptionParser[] getOptionParsers(String optionToParse) {
+		if (optionToParse.length() <= 1) {
+			return emptyParsers;
+		}
+
+		// Skip - or /, we know it's there with the OPTIONS_PATTERN
+		String optionName = optionToParse.substring(1);
+
+		if (optionName.startsWith("I")) {
+			return includeOptionParsers;
+		}
+
+		if (optionName.startsWith("D")) {
+			return defineOptionParsers;
+		}
+
+		if (optionName.startsWith("imsvc")) {
+			return msvcIncludeOptionParsers;
+		}
+
+		if (optionName.startsWith("FI")) {
+			return forceIncludeOptionParsers;
+		}
+
+		if (optionName.startsWith("U")) {
+			return undefineOptionParsers;
+		}
+
+		return emptyParsers;
 	}
 
 	@Override

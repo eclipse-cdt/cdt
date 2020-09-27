@@ -419,6 +419,20 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	protected abstract AbstractOptionParser[] getOptionParsers();
 
 	/**
+	 * @return array of option parsers defining how to parse a string to
+	 * {@link ICLanguageSettingEntry}.
+	 * See {@link AbstractOptionParser} and its specific extenders.
+	 *
+	 * @param optionToParse the option string to be parsed.
+	 * This can be used as a hint in order to return a subset of parsers, for better performance.
+	 *
+	 * @since 9.1
+	 */
+	protected AbstractOptionParser[] getOptionParsers(String optionToParse) {
+		return getOptionParsers();
+	}
+
+	/**
 	 * @return {@code true} when the provider tries to resolve relative or remote paths
 	 * to the existing paths in the workspace or local file-system using certain heuristics.
 	 */
@@ -499,8 +513,8 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 		List<String> options = parseOptions(line);
 		if (options != null) {
-			AbstractOptionParser[] optionParsers = getOptionParsers();
 			for (String option : options) {
+				AbstractOptionParser[] optionParsers = getOptionParsers(option);
 				for (AbstractOptionParser optionParser : optionParsers) {
 					try {
 						if (optionParser.parseOption(option)) {

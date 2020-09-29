@@ -100,7 +100,9 @@ public class WinEnvironmentVariableSupplier
 	}
 
 	public static IPath[] getIncludePath() {
-		// Include paths
+		if (envvars == null)
+			return new IPath[0];
+
 		IBuildEnvironmentVariable var = envvars.get("INCLUDE"); //$NON-NLS-1$
 		if (var == null)
 			return new IPath[0];

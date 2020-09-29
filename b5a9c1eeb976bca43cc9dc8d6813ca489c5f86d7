@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fe0b302d_8291e560",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/view/TerminalsView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-09-29T16:58:33Z",
+      "side": 0,
+      "message": "Should it not already show the non-traditional tabs if SHOW_TRADITIONAL_STYLE_TABS is set to false?",
+      "revId": "b5a9c1eeb976bca43cc9dc8d6813ca489c5f86d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

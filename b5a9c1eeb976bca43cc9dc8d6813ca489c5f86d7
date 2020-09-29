@@ -16,6 +16,24 @@
       "revId": "b5a9c1eeb976bca43cc9dc8d6813ca489c5f86d7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e69ffcd_bbb2ac9e",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/view/TerminalsView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 726
+      },
+      "writtenOn": "2020-09-29T17:20:20Z",
+      "side": 0,
+      "message": "I thought so too but looks like it was kept active so Classic theme keeps same look",
+      "parentUuid": "fe0b302d_8291e560",
+      "revId": "b5a9c1eeb976bca43cc9dc8d6813ca489c5f86d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

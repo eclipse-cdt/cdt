@@ -899,6 +899,7 @@ public class TemplateArgumentDeduction {
 			throws DOMException {
 		IType originalArgType = a;
 		a = SemanticUtil.getSimplifiedType(a);
+		p.isSameType(p);
 		while (p != null) {
 			while (a instanceof ITypedef)
 				a = ((ITypedef) a).getType();

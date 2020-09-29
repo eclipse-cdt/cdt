@@ -5,14 +5,17 @@ import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-public class AST2TemplateRValueRValueTests extends AST2CPPTestBase {
+public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 
-	public AST2TemplateRValueRValueTests() {
+	public AST2TemplateLValueRValueTests() {
 	}
 
-	public AST2TemplateRValueRValueTests(String name) {
+	public AST2TemplateLValueRValueTests(String name) {
 		super(name);
 	}
 
@@ -45,6 +48,41 @@ public class AST2TemplateRValueRValueTests extends AST2CPPTestBase {
 	//	}
 	public void test_lvalue_rvalue_caller_templateLvalue_templateRvalue_function() throws Exception {
 		parseAndCheckBindings();
+
+		BindingAssertionHelper helper = getAssertionHelper();
+		CPPFunctionTemplate intendedTarget = helper.assertNonProblem("demo(C &cont)", "demo");
+		CPPFunctionInstance actualTarget = helper.assertNonProblem("demo(c)", "demo");
+		assertEquals(intendedTarget, actualTarget.getTemplateDefinition());
+	}
+
+	//	template<class C> void demo(C &&cont)
+	//	{
+	//	}
+	//
+	//	template<class C> void demo(C &cont)
+	//	{
+	//	}
+	//
+	//	void demo(int &&cont)
+	//	{
+	//	}
+	//
+	//	void demo(int &cont)
+	//	{
+	//	}
+	//
+	//	int main()
+	//	{
+	//	  int c;
+	//	  demo(c);
+	//	}
+	public void test_lvalue_rvalue_caller_templateLvalue_templateRvalue_lvalue_function() throws Exception {
+		parseAndCheckBindings();
+
+		BindingAssertionHelper helper = getAssertionHelper();
+		CPPFunction intendedTarget = helper.assertNonProblem("demo(int &cont)", "demo");
+		CPPFunction actualTarget = helper.assertNonProblem("demo(c)", "demo");
+		assertEquals(intendedTarget, actualTarget);
 	}
 
 	//	class clazz {

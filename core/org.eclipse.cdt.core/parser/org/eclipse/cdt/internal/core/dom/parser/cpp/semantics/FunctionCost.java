@@ -198,10 +198,11 @@ class FunctionCost {
 			if (cmp != 0)
 				return cmp;
 
+			/*
 			cmp = compareRValueRValueTemplateFunctions(f1, f2);
 			if (cmp != 0)
 				return cmp;
-
+			*/
 			// At this point prefer non-index bindings
 			return -CPPSemantics.compareByRelevance(tu, f1, f2);
 		}
@@ -238,7 +239,7 @@ class FunctionCost {
 							boolean sndRv = sndTp.isRValueReference();
 
 							if (fstRv != sndRv) {
-								return fstRv ? -1 : 1;
+								return fstRv ? 1 : -1;
 							}
 						}
 					}

@@ -238,7 +238,7 @@ class FunctionCost {
 							boolean sndRv = sndTp.isRValueReference();
 
 							if (fstRv != sndRv) {
-								return fstRv ? -1 : 1;
+								return fstRv ? 1 : -1;
 							}
 						}
 					}

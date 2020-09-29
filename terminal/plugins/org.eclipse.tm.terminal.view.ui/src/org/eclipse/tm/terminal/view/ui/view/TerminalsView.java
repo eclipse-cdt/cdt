@@ -64,7 +64,6 @@ import org.eclipse.tm.terminal.view.ui.view.showin.GitShowInContextHandler;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -477,10 +476,6 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 		// Apply the tab folder selection foreground color
 		tabFolder.setSelectionForeground(
 				JFaceResources.getColorRegistry().get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
-
-		// Set the tab style from the global preferences
-		tabFolder.setSimple(
-				PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 
 		// Attach the mouse listener
 		tabFolder.addMouseListener(new MouseAdapter() {

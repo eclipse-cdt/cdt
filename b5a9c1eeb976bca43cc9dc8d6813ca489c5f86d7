@@ -52,6 +52,24 @@
       "revId": "b5a9c1eeb976bca43cc9dc8d6813ca489c5f86d7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a86c942d_21874c79",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/view/TerminalsView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 726
+      },
+      "writtenOn": "2020-09-30T05:04:09Z",
+      "side": 0,
+      "message": "Thanks, Marc-Andre! I\u0027ll make sure to cleanup platform from usages at least for now.",
+      "parentUuid": "be4e77d3_12b2b575",
+      "revId": "b5a9c1eeb976bca43cc9dc8d6813ca489c5f86d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

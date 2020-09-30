@@ -34,6 +34,24 @@
       "revId": "b5a9c1eeb976bca43cc9dc8d6813ca489c5f86d7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be4e77d3_12b2b575",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/view/TerminalsView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-09-30T01:46:32Z",
+      "side": 0,
+      "message": "\"@deprecated not supported since the 4.x migration\"\nThe preference always returns false for me with nowhere in the UI to turn it on. \"Simple\" is by default true in the CTabFolder so we are effectively always asking for \"not-simple\" which is the non-traditional, err, previous modern look. This preference is also queried in 2 places in org.eclipse.debug.ui and are probably affected by the same problem (I see it in the launch configuration UI). Maybe it\u0027s time for eclipse.ui to remove this...",
+      "parentUuid": "8e69ffcd_bbb2ac9e",
+      "revId": "b5a9c1eeb976bca43cc9dc8d6813ca489c5f86d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

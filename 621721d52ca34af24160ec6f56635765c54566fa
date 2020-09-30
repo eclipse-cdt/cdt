@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea30fc31_d5a835ff",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateRValueRValueTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-09-30T02:48:49Z",
+      "side": 1,
+      "message": "Thank you for writing these tests.\n\nThe tests could be further improved by checking not only that there are no errors, but also that overload resolution selects the desired target function.\n\nHere\u0027s how that might look:\n\n  BindingAssertionHelper helper \u003d getAssertionHelper();\n  CPPFunctionTemplate intendedTarget \u003d helper.assertNonProblem(\"demo(C \u0026cont)\", \"demo\");\n  CPPFunctionInstance actualTarget \u003d helper.assertNonProblem(\"demo(c), \"demo\");\n  assertEquals(intendedTarget, actualTarget.getTemplateDefinition());\n\n(I\u0027m writing this off the top of my head so it may need some minor modifications, but this is the general idea.)",
+      "revId": "621721d52ca34af24160ec6f56635765c54566fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

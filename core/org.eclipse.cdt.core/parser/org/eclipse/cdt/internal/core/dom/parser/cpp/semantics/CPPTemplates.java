@@ -109,6 +109,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartiallySpecializable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -239,13 +240,13 @@ public class CPPTemplates {
 
 	// Infrastructure to protect against rogue template metaprograms that don't terminate.
 	private static final int TEMPLATE_INSTANTIATION_DEPTH_LIMIT = 128;
-	private static final ThreadLocal<Integer> fTemplateInstantiationDepth = new ThreadLocal<Integer>() {
+	private static final ThreadLocal<Integer> fTemplateInstantiationDepth = new ThreadLocal<>() {
 		@Override
 		protected Integer initialValue() {
 			return 0;
 		}
 	};
-	private static final ThreadLocal<Set<TypeInstantiationRequest>> instantiationsInProgress = new ThreadLocal<Set<TypeInstantiationRequest>>() {
+	private static final ThreadLocal<Set<TypeInstantiationRequest>> instantiationsInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<TypeInstantiationRequest> initialValue() {
 			return new HashSet<>();
@@ -2552,13 +2553,17 @@ public class CPPTemplates {
 		int s1 = compareSpecialization(f1, f2, mode, nExplicitArgs);
 		int s2 = compareSpecialization(f2, f1, mode, nExplicitArgs);
 
-		if (s1 == s2) {
+		if (s1 == s2)
 			return disambiguateTrailingParameterPack(f1, f2, nExplicitArgs);
-		}
+
 		if (s1 < 0 || s2 > 0)
 			return -1;
 		assert s2 < 0 || s1 > 0;
 		return 1;
+	}
+
+	private static boolean isReferenceType(ICPPParameter fstSpecP) {
+		return ICPPReferenceType.class.isAssignableFrom(fstSpecP.getType().getClass());
 	}
 
 	static int orderFunctionTemplates(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode)

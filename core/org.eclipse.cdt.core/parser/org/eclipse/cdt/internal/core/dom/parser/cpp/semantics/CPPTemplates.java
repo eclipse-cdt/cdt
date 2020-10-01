@@ -109,6 +109,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartiallySpecializable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -239,13 +240,13 @@ public class CPPTemplates {
 
 	// Infrastructure to protect against rogue template metaprograms that don't terminate.
 	private static final int TEMPLATE_INSTANTIATION_DEPTH_LIMIT = 128;
-	private static final ThreadLocal<Integer> fTemplateInstantiationDepth = new ThreadLocal<Integer>() {
+	private static final ThreadLocal<Integer> fTemplateInstantiationDepth = new ThreadLocal<>() {
 		@Override
 		protected Integer initialValue() {
 			return 0;
 		}
 	};
-	private static final ThreadLocal<Set<TypeInstantiationRequest>> instantiationsInProgress = new ThreadLocal<Set<TypeInstantiationRequest>>() {
+	private static final ThreadLocal<Set<TypeInstantiationRequest>> instantiationsInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<TypeInstantiationRequest> initialValue() {
 			return new HashSet<>();
@@ -2553,12 +2554,46 @@ public class CPPTemplates {
 		int s2 = compareSpecialization(f2, f1, mode, nExplicitArgs);
 
 		if (s1 == s2) {
-			return disambiguateTrailingParameterPack(f1, f2, nExplicitArgs);
+			int result = disambiguateTrailingParameterPack(f1, f2, nExplicitArgs);
+
+			if (result == 0) {
+				result = compareRValueRValueTemplateFunctions(f1, f2);
+			}
+			return result;
 		}
+
 		if (s1 < 0 || s2 > 0)
 			return -1;
 		assert s2 < 0 || s1 > 0;
 		return 1;
+	}
+
+	private static int compareRValueRValueTemplateFunctions(final ICPPFunctionTemplate f1,
+			final ICPPFunctionTemplate f2) {
+		if (f1.getParameters().length == f2.getParameters().length) {
+			for (int i = 0; i < f1.getParameters().length; i++) {
+				ICPPParameter fstPara = f1.getParameters()[i];
+				ICPPParameter sndPara = f2.getParameters()[i];
+
+				if (isReferenceType(fstPara) && isReferenceType(sndPara)) {
+					ICPPReferenceType fstTp = (ICPPReferenceType) fstPara.getType();
+					ICPPReferenceType sndTp = (ICPPReferenceType) sndPara.getType();
+
+					boolean fstRv = fstTp.isRValueReference();
+					boolean sndRv = sndTp.isRValueReference();
+
+					if (fstRv != sndRv) {
+						return fstRv ? -1 : 1;
+					}
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	private static boolean isReferenceType(ICPPParameter fstSpecP) {
+		return ICPPReferenceType.class.isAssignableFrom(fstSpecP.getType().getClass());
 	}
 
 	static int orderFunctionTemplates(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode)

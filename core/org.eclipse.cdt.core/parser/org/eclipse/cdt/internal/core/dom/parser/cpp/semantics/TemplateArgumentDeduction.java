@@ -572,25 +572,49 @@ public class TemplateArgumentDeduction {
 		return true;
 	}
 
-	private static int deduceForPartialOrdering(IType par, IType arg, TemplateArgumentDeduction deduct)
+	private static int deduceForPartialOrdering(IType parOrig, IType argOrig, TemplateArgumentDeduction deduct)
 			throws DOMException {
-		par = getNestedType(par, TDEF);
-		arg = getNestedType(arg, TDEF);
+		IType parNested = getNestedType(parOrig, TDEF);
+		IType argNested = getNestedType(argOrig, TDEF);
 		boolean isMoreCVQualified = false;
-		if (par instanceof ICPPReferenceType && arg instanceof ICPPReferenceType) {
-			par = getNestedType(par, REF | TDEF);
-			arg = getNestedType(arg, REF | TDEF);
-			CVQualifier cvp = getCVQualifier(par);
-			CVQualifier cva = getCVQualifier(arg);
+		if (parNested instanceof ICPPReferenceType && argNested instanceof ICPPReferenceType) {
+			parNested = getNestedType(parNested, REF | TDEF);
+			argNested = getNestedType(argNested, REF | TDEF);
+			CVQualifier cvp = getCVQualifier(parNested);
+			CVQualifier cva = getCVQualifier(argNested);
 			isMoreCVQualified = cva.isMoreQualifiedThan(cvp);
 		}
-		par = getNestedType(par, TDEF | REF | ALLCVQ);
-		arg = getNestedType(arg, TDEF | REF | ALLCVQ);
+		parNested = getNestedType(parNested, TDEF | REF | ALLCVQ);
+		argNested = getNestedType(argNested, TDEF | REF | ALLCVQ);
 
-		if (!deduct.fromType(par, arg, false, false))
+		if (!deduct.fromType(parNested, argNested, false, false))
 			return -1;
 
+		if (!isMoreCVQualified) {
+			isMoreCVQualified = compareRValueRValueTemplateFunctions(parOrig, argOrig);
+		}
+
 		return isMoreCVQualified ? 1 : 0;
+	}
+
+	private static boolean compareRValueRValueTemplateFunctions(final IType f1, final IType f2) {
+		if (isReferenceType(f1) && isReferenceType(f1)) {
+			ICPPReferenceType fstTp = (ICPPReferenceType) f1;
+			ICPPReferenceType sndTp = (ICPPReferenceType) f2;
+
+			boolean fstRv = fstTp.isRValueReference();
+			boolean sndRv = sndTp.isRValueReference();
+
+			if (fstRv != sndRv) {
+				return fstRv;
+			}
+		}
+
+		return false;
+	}
+
+	private static boolean isReferenceType(IType fstSpecP) {
+		return ICPPReferenceType.class.isAssignableFrom(fstSpecP.getClass());
 	}
 
 	/**

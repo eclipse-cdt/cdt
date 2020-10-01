@@ -50,9 +50,12 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 		parseAndCheckBindings();
 
 		BindingAssertionHelper helper = getAssertionHelper();
-		CPPFunctionTemplate intendedTarget = helper.assertNonProblem("demo(C &cont)", "demo");
-		CPPFunctionInstance actualTarget = helper.assertNonProblem("demo(c)", "demo");
-		assertEquals(intendedTarget, actualTarget.getTemplateDefinition());
+		CPPFunctionTemplate targetLvalue = helper.assertNonProblem("demo(C &cont)", "demo");
+		CPPFunctionTemplate targetRvalue = helper.assertNonProblem("demo(C &&cont)", "demo");
+		CPPFunctionInstance actualTargetLvalue = helper.assertNonProblem("demo(c)", "demo");
+		CPPFunctionInstance actualTargetRvalue = helper.assertNonProblem("demo(getClazz())", "demo");
+		assertEquals(targetLvalue, actualTargetLvalue.getTemplateDefinition());
+		assertEquals(targetRvalue, actualTargetRvalue.getTemplateDefinition());
 	}
 
 	//	template<class C> void demo(C &&cont)

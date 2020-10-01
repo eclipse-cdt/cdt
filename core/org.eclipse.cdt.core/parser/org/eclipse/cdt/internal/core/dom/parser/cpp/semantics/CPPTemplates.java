@@ -2553,43 +2553,13 @@ public class CPPTemplates {
 		int s1 = compareSpecialization(f1, f2, mode, nExplicitArgs);
 		int s2 = compareSpecialization(f2, f1, mode, nExplicitArgs);
 
-		if (s1 == s2) {
-			int result = disambiguateTrailingParameterPack(f1, f2, nExplicitArgs);
-
-			if (result == 0) {
-				result = compareRValueRValueTemplateFunctions(f1, f2);
-			}
-			return result;
-		}
+		if (s1 == s2)
+			return disambiguateTrailingParameterPack(f1, f2, nExplicitArgs);
 
 		if (s1 < 0 || s2 > 0)
 			return -1;
 		assert s2 < 0 || s1 > 0;
 		return 1;
-	}
-
-	private static int compareRValueRValueTemplateFunctions(final ICPPFunctionTemplate f1,
-			final ICPPFunctionTemplate f2) {
-		if (f1.getParameters().length == f2.getParameters().length) {
-			for (int i = 0; i < f1.getParameters().length; i++) {
-				ICPPParameter fstPara = f1.getParameters()[i];
-				ICPPParameter sndPara = f2.getParameters()[i];
-
-				if (isReferenceType(fstPara) && isReferenceType(sndPara)) {
-					ICPPReferenceType fstTp = (ICPPReferenceType) fstPara.getType();
-					ICPPReferenceType sndTp = (ICPPReferenceType) sndPara.getType();
-
-					boolean fstRv = fstTp.isRValueReference();
-					boolean sndRv = sndTp.isRValueReference();
-
-					if (fstRv != sndRv) {
-						return fstRv ? -1 : 1;
-					}
-				}
-			}
-		}
-
-		return 0;
 	}
 
 	private static boolean isReferenceType(ICPPParameter fstSpecP) {

@@ -352,6 +352,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		super(resolver);
 		fIsFastIndexer = fastIndexer;
 		fFilesToUpdate = filesToUpdate;
+		// ArrayUtil.reverse(fFilesToUpdate);
 		Collections.addAll(fFilesToRemove, filesToRemove);
 		incrementRequestedFilesCount(fFilesToUpdate.length + fFilesToRemove.size());
 		fUrgentTasks = new ArrayDeque<>();
@@ -665,7 +666,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			final boolean isSourceUnit = fResolver.isSourceUnit(tu);
 			linkages.clear();
 			final boolean regularContent = isRequiredInIndex(tu, ifl, isSourceUnit);
-			final boolean indexedUnconditionally = fResolver.isIndexedUnconditionally(ifl);
+			final boolean indexedUnconditionally = fResolver.isIndexedUnconditionally(ifl); //FFF
 			if (regularContent || indexedUnconditionally) {
 				// Headers or sources required with a specific linkage.
 				final UpdateKind updateKind = isSourceUnit ? UpdateKind.REQUIRED_SOURCE

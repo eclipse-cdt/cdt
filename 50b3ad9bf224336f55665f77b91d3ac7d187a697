@@ -34,6 +34,24 @@
       "revId": "50b3ad9bf224336f55665f77b91d3ac7d187a697",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "352d10d4_52e062be",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-02T18:23:54Z",
+      "side": 1,
+      "message": "We should not imply that the master branch of CDT works with anything other than the corresponding platform and other dependants. I don\u0027t know more about it than that.",
+      "parentUuid": "c10765af_8d1ff61c",
+      "revId": "50b3ad9bf224336f55665f77b91d3ac7d187a697",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

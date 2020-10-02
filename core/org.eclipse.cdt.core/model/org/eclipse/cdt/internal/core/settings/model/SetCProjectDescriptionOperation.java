@@ -133,6 +133,13 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 				fSetDescription, delta);
 
 		cProject.close(); // Why?
+		// M-A.L: Here is an explanation I came up with from an investigation I did a long time ago (https://bugs.eclipse.org/bugs/show_bug.cgi?id=349564#c10) :
+		// "Some information in the CModel cache depends on the CProjectDescription. For example,
+		// CContainerInfo caches the non-C resources (like excluded files). By closing the CProject,
+		// that cache is deleted and rebuilt from CProjectDescription when needed. As a test,
+		// I removed this line and excluded some files then I could see the cache not
+		// being rebuilt and the icons for exclusion became out of sync."
+		// If you are tempted to remove this line please consider this.
 
 		//		ExternalSettingsManager.getInstance().updateDepentents(delta);
 

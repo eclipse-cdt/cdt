@@ -75,7 +75,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="2020-09"
+      defaultValue="2020-12"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
@@ -159,7 +159,7 @@
           name="org.eclipse.tm.terminal.connector.telnet.feature.feature.group"/>
       <requirement
           name="org.eclipse.tm.terminal.control.feature.feature.group"/>
-      <requiremane
+      <requirement
           name="org.eclipse.tm.terminal.feature.feature.group"/>
       <requirement
           name="org.eclipse.tm.terminal.view.feature.feature.group"/>
@@ -295,6 +295,44 @@
         <sourceLocator
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
+        <repositoryList
+            name="2020-12">
+          <repository
+              url="https://download.eclipse.org/cbi/updates/license/"/>
+          <repository
+              url="https://download.eclipse.org/eclipse/updates/4.17/R-4.17-202009021800/"/>
+          <repository
+              url="https://download.eclipse.org/egit/updates/"/>
+          <repository
+              url="https://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
+          <repository
+              url="https://download.eclipse.org/wildwebdeveloper/snapshots/"/>
+          <repository
+              url="https://download.eclipse.org/lsp4e/releases/0.16.0/"/>
+          <repository
+              url="https://download.eclipse.org/modeling/emf/emf/builds/release/latest/"/>
+          <repository
+              url="https://download.eclipse.org/mylyn/docs/releases/3.0.38/"/>
+          <repository
+              url="http://download.eclipse.org/mylyn/drops/3.25.2/v20200831-1956"/>
+          <repository
+              url="https://download.eclipse.org/technology/swtbot/releases/3.0.0/"/>
+          <repository
+              url="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
+          <repository
+              url="https://download.eclipse.org/tools/cdt/releases/10.0/cdt-10.0.0/">
+            <annotation>
+              <detail
+                  key="description">
+                <value>We explicitly have CDT in target platform so that developers can develop org.eclipse.cdt.core/ui without requiring all the projects from CDT in their workspace.</value>
+              </detail>
+            </annotation>
+          </repository>
+          <repository
+              url="https://download.eclipse.org/tools/orbit/downloads/2020-09/"/>
+          <repository
+              url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
+        </repositoryList>
         <repositoryList
             name="2020-09">
           <repository

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9162dfd9_b9276026",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-02T18:12:02Z",
+      "side": 1,
+      "message": "Why is this not removed?",
+      "revId": "50b3ad9bf224336f55665f77b91d3ac7d187a697",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

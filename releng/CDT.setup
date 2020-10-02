@@ -75,7 +75,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="2020-09"
+      defaultValue="2020-12"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
@@ -159,7 +159,7 @@
           name="org.eclipse.tm.terminal.connector.telnet.feature.feature.group"/>
       <requirement
           name="org.eclipse.tm.terminal.control.feature.feature.group"/>
-      <requiremane
+      <requirement
           name="org.eclipse.tm.terminal.feature.feature.group"/>
       <requirement
           name="org.eclipse.tm.terminal.view.feature.feature.group"/>
@@ -296,11 +296,11 @@
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
         <repositoryList
-            name="2020-09">
+            name="2020-12">
           <repository
               url="https://download.eclipse.org/cbi/updates/license/"/>
           <repository
-              url="https://download.eclipse.org/eclipse/updates/4.17/R-4.17-202009021800/"/>
+              url="https://download.eclipse.org/eclipse/updates/4.18-I-builds/"/>
           <repository
               url="https://download.eclipse.org/egit/updates/"/>
           <repository
@@ -329,7 +329,7 @@
             </annotation>
           </repository>
           <repository
-              url="https://download.eclipse.org/tools/orbit/downloads/2020-09/"/>
+              url="https://download.eclipse.org/tools/orbit/downloads/2020-12/"/>
           <repository
               url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
         </repositoryList>

@@ -897,7 +897,13 @@ public class LanguageSettingsProvidersSerializer {
 						fileStorePrj.delete(true, null);
 					}
 				} else {
-					project.getWorkspace().validateEdit(new IFile[] { fileStorePrj }, IWorkspace.VALIDATE_PROMPT);
+					if (fileStorePrj.isReadOnly()) {
+						IStatus editStatus = project.getWorkspace().validateEdit(new IFile[] { fileStorePrj },
+								IWorkspace.VALIDATE_PROMPT);
+						if (!editStatus.isOK()) {
+							throw new CoreException(editStatus);
+						}
+					}
 					IContainer folder = fileStorePrj.getParent();
 					if (folder instanceof IFolder && !folder.exists()) {
 						((IFolder) folder).create(true, true, null);

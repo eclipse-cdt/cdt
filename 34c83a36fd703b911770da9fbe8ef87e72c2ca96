@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f8a5f90f_8dd247ee",
+        "filename": "core/org.eclipse.cdt.core.tests/regression/org/eclipse/cdt/core/tests/EventTriggers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-04T16:11:43Z",
+      "side": 1,
+      "message": "Copyright header needed please.",
+      "revId": "34c83a36fd703b911770da9fbe8ef87e72c2ca96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02ca37e4_ee96bac9",
+        "filename": "core/org.eclipse.cdt.core.tests/regression/org/eclipse/cdt/core/tests/EventTriggers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-04T16:11:43Z",
+      "side": 1,
+      "message": "Please add an @AfterClass that unregisters listener.\n\nHowever if you replace this with a @Before/@After then you can also remove the code for removeHit as that should make the tests simpler to read.",
+      "revId": "34c83a36fd703b911770da9fbe8ef87e72c2ca96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e329690_7c40c48f",
+        "filename": "core/org.eclipse.cdt.core.tests/regression/org/eclipse/cdt/core/tests/EventTriggers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-04T16:11:43Z",
+      "side": 1,
+      "message": "typo (extra A)",
+      "range": {
+        "startLine": 53,
+        "startChar": 27,
+        "endLine": 53,
+        "endChar": 28
+      },
+      "revId": "34c83a36fd703b911770da9fbe8ef87e72c2ca96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45664c0a_7558691b",
+        "filename": "core/org.eclipse.cdt.core.tests/regression/org/eclipse/cdt/core/tests/EventTriggers.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-04T16:11:43Z",
+      "side": 1,
+      "message": "Please don\u0027t catch exceptions, have the test \"throws Exception\" that means that the stack trace and details of the exception are preserved in test log and makes your test shorter.\n\n(Sadly this rule is not followed by many tests in CDT, when I work on them I fix that up)",
+      "revId": "34c83a36fd703b911770da9fbe8ef87e72c2ca96",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

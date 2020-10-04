@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d4fed944_a64b76c3",
+        "filename": "core/org.eclipse.cdt.core.tests/regression/org/eclipse/cdt/core/tests/EventTriggers.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-04T16:11:43Z",
+      "side": 1,
+      "message": "BTW This isn\u0027t being run because it doesn\u0027t match the pattern for tests. For it to be picked up it should start or end with Test - e.g. rename to EventTriggersTest",
+      "revId": "d3e564483d10eab080fc9f6ec5371e2e409de970",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -52,6 +52,24 @@
       "revId": "50b3ad9bf224336f55665f77b91d3ac7d187a697",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f83fcdfa_efa66fb0",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-04T06:28:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "352d10d4_52e062be",
+      "revId": "50b3ad9bf224336f55665f77b91d3ac7d187a697",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

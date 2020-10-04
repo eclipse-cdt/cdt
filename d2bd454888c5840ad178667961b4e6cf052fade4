@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4cb53dc6_8ed81f1f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2560,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-10-04T05:41:52Z",
+      "side": 1,
+      "message": "Thank you, this is a step in the right direction. However, we can make this match the spec more closely still.\n\nObserve that http://eel.is/c++draft/temp.deduct.partial#2 describes performing deduction in two directions; the rest of the section then describes the steps for each deduction.\n\nIn CDT\u0027s implementation, the two calls to compareSpecialization() in orderFunctionTemplates() perform the two deductions; so, if we\u0027re implementing a step in http://eel.is/c++draft/temp.deduct.partial, it makes sense for it to go inside compareSpecialization().\n\nMoreover, http://eel.is/c++draft/temp.deduct.partial#3 describes a selection of types to perform deduction on, and clauses 4 through 9 describe how to perform the deduction on each type. This corresponds to the for loop in CPPTemplates.deduceForPartialOrdering(ICPPTemplateParameter[], IType[], IType[]) which is called by compareSpecialization().\n\nSince we\u0027re implementing clause 9.1, it makes sense for our check to go inside that loop. (Then, there is no need to write a separate loop over the function parameters.)\n\nIf we look inside the loop, there is a call to a helper CPPTemplates.deduceForPartialOrdering(IType, IType, TemplateArgumentDeduction) which already does part of the work we need, such as checking for and unwrapping reference types.\n\nI think the best place for the implementation of clause 9.1 is inside this helper, right after the call to \"deduct.fromType()\". Note that the references are already unwrapped by then, so we\u0027ll need to save the original types earlier in the function, so we can check isRValueReference() and such here.\n\n(Note also that the \"return isMoreCVQualified ? 1 : 0;\" check at the end of this function is basically our implementation of clause 9.2.)",
+      "revId": "d2bd454888c5840ad178667961b4e6cf052fade4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

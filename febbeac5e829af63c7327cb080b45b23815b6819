@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c46a3c89_36c71d99",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateLValueRValueTests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-10-04T05:47:50Z",
+      "side": 1,
+      "message": "Let\u0027s check the \"demo(getClazz())\" call as well.",
+      "revId": "febbeac5e829af63c7327cb080b45b23815b6819",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 public class CProjectDescriptionPreferences implements ICProjectDescriptionPreferences {
 	private static final String ATTR_CONFIG_RELATIONS = "configRelations"; //$NON-NLS-1$
 
-	private static final int DEFAULT_RELATIONS = CONFIGS_INDEPENDENT;
+	private static final int DEFAULT_RELATIONS = CONFIGS_LINK_SETTINGS_AND_ACTIVE;
 	private boolean fIsReadOnly;
 	private boolean fIsModified;
 

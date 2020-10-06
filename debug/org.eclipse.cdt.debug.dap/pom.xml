@@ -38,6 +38,21 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<configuration>
+					<ignoredPatterns>
+						<pattern>META-INF/ECLIPSE_.RSA</pattern>
+						<pattern>META-INF/ECLIPSE_.SF</pattern>
+						<pattern>about.mappings</pattern>
+						<pattern>debug-servers/node_modules/cdt-gdb-adapter/build/Makefile</pattern>
+						<pattern>debug-servers/node_modules/cdt-gdb-adapter/build/pty.target.mk</pattern>
+						<pattern>debug-servers/node_modules/cdt-gdb-adapter/build/Release/.deps/Release/obj.target/pty/src/native/pty.o.d</pattern>
+					</ignoredPatterns>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>

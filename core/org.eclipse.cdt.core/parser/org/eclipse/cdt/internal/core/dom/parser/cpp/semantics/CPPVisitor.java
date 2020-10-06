@@ -117,7 +117,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
@@ -860,9 +859,6 @@ public class CPPVisitor extends ASTQueries {
 				return null;
 			} else if (parent instanceof ICPPASTTemplateDeclaration) {
 				return CPPTemplates.createBinding(param);
-			} else if (parent instanceof ICPPASTDeductionGuide) {
-				ICPPASTDeductionGuide guide = (ICPPASTDeductionGuide) parent;
-				return new CPPParameter(name, findParameterIndex(param, guide.getParameters()));
 			}
 			return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_TYPE);
 		}

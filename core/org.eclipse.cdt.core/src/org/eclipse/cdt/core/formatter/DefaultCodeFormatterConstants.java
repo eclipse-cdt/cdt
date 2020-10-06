@@ -1624,32 +1624,6 @@ public class DefaultCodeFormatterConstants {
 			+ ".formatter.insert_space_before_lambda_return"; //$NON-NLS-1$
 	/**
 	 * <pre>
-	 * FORMATTER / Option to insert a space after deduction guide arrow
-	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_deduction_guide_arrow"
-	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-	 *     - default:           INSERT
-	 * </pre>
-	 * @see CCorePlugin#INSERT
-	 * @see CCorePlugin#DO_NOT_INSERT
-	 * @since 7.0
-	 */
-	public static final String FORMATTER_INSERT_SPACE_AFTER_DEDUCTION_GUIDE_ARROW = CCorePlugin.PLUGIN_ID
-			+ ".formatter.insert_space_after_deduction_guide_arrow"; //$NON-NLS-1$
-	/**
-	 * <pre>
-	 * FORMATTER / Option to insert a space before deduction guide arrow
-	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_deduction_guide_arrow"
-	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-	 *     - default:           INSERT
-	 * </pre>
-	 * @see CCorePlugin#INSERT
-	 * @see CCorePlugin#DO_NOT_INSERT
-	 * @since 7.0
-	 */
-	public static final String FORMATTER_INSERT_SPACE_BEFORE_DEDUCTION_GUIDE_ARROW = CCorePlugin.PLUGIN_ID
-			+ ".formatter.insert_space_before_deduction_guide_arrow"; //$NON-NLS-1$
-	/**
-	 * <pre>
 	 * FORMATTER / Option to insert a space before an assignment operator
 	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_assignment_operator"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }

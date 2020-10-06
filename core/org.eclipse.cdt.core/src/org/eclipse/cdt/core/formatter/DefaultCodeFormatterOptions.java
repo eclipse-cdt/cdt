@@ -224,14 +224,6 @@ public class DefaultCodeFormatterOptions {
 	 * @since 6.8
 	 */
 	public boolean insert_space_before_lambda_return;
-	/**
-	 * @since 7.0
-	 */
-	public boolean insert_space_after_deduction_guide_arrow;
-	/**
-	 * @since 7.0
-	 */
-	public boolean insert_space_before_deduction_guide_arrow;
 	public boolean insert_space_before_assignment_operator;
 	public boolean insert_space_before_binary_operator;
 	public boolean insert_space_before_closing_angle_bracket_in_template_arguments;
@@ -638,10 +630,6 @@ public class DefaultCodeFormatterOptions {
 				this.insert_space_after_lambda_return ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_LAMBDA_RETURN,
 				this.insert_space_before_lambda_return ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
-		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_DEDUCTION_GUIDE_ARROW,
-				this.insert_space_after_deduction_guide_arrow ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
-		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_DEDUCTION_GUIDE_ARROW,
-				this.insert_space_before_deduction_guide_arrow ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_ASSIGNMENT_OPERATOR,
 				this.insert_space_before_assignment_operator ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_BINARY_OPERATOR,
@@ -1768,18 +1756,6 @@ public class DefaultCodeFormatterOptions {
 		if (insertSpaceBeforeLambdaReturnOption != null) {
 			this.insert_space_before_lambda_return = CCorePlugin.INSERT.equals(insertSpaceBeforeLambdaReturnOption);
 		}
-		final Object insertSpaceAfterDeductionGuideOption = settings
-				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_DEDUCTION_GUIDE_ARROW);
-		if (insertSpaceAfterDeductionGuideOption != null) {
-			this.insert_space_after_deduction_guide_arrow = CCorePlugin.INSERT
-					.equals(insertSpaceAfterDeductionGuideOption);
-		}
-		final Object insertSpaceBeforeDeductionGuideOption = settings
-				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_DEDUCTION_GUIDE_ARROW);
-		if (insertSpaceBeforeDeductionGuideOption != null) {
-			this.insert_space_before_deduction_guide_arrow = CCorePlugin.INSERT
-					.equals(insertSpaceBeforeDeductionGuideOption);
-		}
 		final Object insertSpaceBeforeAssignmentOperatorOption = settings
 				.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_ASSIGNMENT_OPERATOR);
 		if (insertSpaceBeforeAssignmentOperatorOption != null) {
@@ -2462,8 +2438,6 @@ public class DefaultCodeFormatterOptions {
 		this.insert_space_after_unary_operator = false;
 		this.insert_space_after_lambda_return = true;
 		this.insert_space_before_lambda_return = true;
-		this.insert_space_after_deduction_guide_arrow = true;
-		this.insert_space_before_deduction_guide_arrow = true;
 		this.insert_space_before_assignment_operator = true;
 		this.insert_space_before_binary_operator = true;
 		this.insert_space_before_closing_angle_bracket_in_template_arguments = false;

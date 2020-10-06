@@ -29,8 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface ICPPASTFunctionDeclarator
-		extends IASTStandardFunctionDeclarator, ICPPASTDeclarator, ICPPASTParameterListOwner {
+public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarator, ICPPASTDeclarator {
 	/**
 	 * @since 5.9
 	 */

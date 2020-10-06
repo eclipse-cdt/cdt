@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.parser.tests.ast2.cxx14.GenericLambdaTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx14.InitCaptureTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx14.ReturnTypeDeductionTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx14.VariableTemplateTests;
-import org.eclipse.cdt.core.parser.tests.ast2.cxx17.DeductionGuideTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx17.LambdaExpressionTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx17.StructuredBindingTests;
 import org.eclipse.cdt.core.parser.tests.ast2.cxx17.TemplateAutoTests;
@@ -77,7 +76,6 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest(TemplateAutoTests.suite());
 		suite.addTestSuite(LambdaExpressionTests.class);
 		suite.addTestSuite(StructuredBindingTests.class);
-		suite.addTestSuite(DeductionGuideTests.class);
 		return suite;
 	}
 }

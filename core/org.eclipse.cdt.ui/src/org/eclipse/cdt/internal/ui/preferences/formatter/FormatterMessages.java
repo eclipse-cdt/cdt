@@ -212,10 +212,6 @@ final class FormatterMessages extends NLS {
 	public static String WhiteSpaceOptions_structured_binding_before_comma_in_name_list;
 	public static String WhiteSpaceOptions_structured_binding_after_comma_in_name_list;
 	public static String WhiteSpaceOptions_structured_binding_before_name_list_closing_bracket;
-	public static String WhiteSpaceTabPage_deduction_guide_declarations;
-	public static String WhiteSpaceTabPage_deduction_guide_before_arrow;
-	public static String WhiteSpaceTabPage_deduction_guide_after_arrow;
-	public static String WhiteSpaceOptions_deduction_guide_arrow_operator;
 	//	public static String WhiteSpaceOptions_before_ellipsis;
 	//	public static String WhiteSpaceOptions_after_ellipsis;
 	//	public static String WhiteSpaceOptions_return_with_parenthesized_expression;

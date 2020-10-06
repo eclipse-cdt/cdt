@@ -4735,43 +4735,6 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
-	//template<class T>
-	//struct U;
-	//U()->U<int>;
-
-	//template<class T>
-	//struct U;
-	//U() -> U<int>;
-	public void testDeductionGuide() throws Exception {
-		assertFormatterResult();
-	}
-
-	//template<class T>
-	//struct U;
-	//template<class C>
-	//U(C)->U<C>;
-
-	//template<class T>
-	//struct U;
-	//template<class C>
-	//U(C) -> U<C>;
-	public void testDeductionGuideTemplate() throws Exception {
-		assertFormatterResult();
-	}
-
-	//template<class T>
-	//struct U;
-	//template<class C>
-	//explicit U(C)->U<C>;
-
-	//template<class T>
-	//struct U;
-	//template<class C>
-	//explicit U(C) -> U<C>;
-	public void testDeductionGuideExplicit() throws Exception {
-		assertFormatterResult();
-	}
-
 	//int main() {
 	//	auto f = [&](){
 	//	};

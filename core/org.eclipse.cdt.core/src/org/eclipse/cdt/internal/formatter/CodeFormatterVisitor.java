@@ -122,7 +122,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
@@ -730,8 +729,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				return visit((IASTFunctionDefinition) node);
 			} else if (node instanceof IASTSimpleDeclaration) {
 				return visit((IASTSimpleDeclaration) node);
-			} else if (node instanceof ICPPASTDeductionGuide) {
-				return visit((ICPPASTDeductionGuide) node);
 			} else if (node instanceof IASTASMDeclaration) {
 				return visit((IASTASMDeclaration) node);
 			} else if (node instanceof ICPPASTVisibilityLabel) {
@@ -2028,26 +2025,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (fExpectSemicolonAfterDeclaration && peekNextToken() == Token.tSEMI) {
 			scribe.printNextToken(Token.tSEMI);
 		}
-		return PROCESS_SKIP;
-	}
-
-	private int visit(ICPPASTDeductionGuide node) {
-		node.getTemplateName().accept(this);
-		final List<IASTParameterDeclaration> parameters = Arrays.asList(node.getParameters());
-		Runnable tailFormatter = new TrailingSemicolonFormatter(node);
-		final ListOptions options = new ListOptions(preferences.alignment_for_declarator_list);
-		options.fSpaceAfterSeparator = preferences.insert_space_after_comma_in_declarator_list;
-		options.fSpaceBeforeSeparator = preferences.insert_space_before_comma_in_declarator_list;
-		formatList(parameters, options, true, false, null);
-
-		if (peekNextToken() == Token.tARROW) {
-			scribe.printNextToken(Token.tARROW, preferences.insert_space_before_deduction_guide_arrow);
-			if (preferences.insert_space_after_deduction_guide_arrow) {
-				scribe.space();
-			}
-		}
-		node.getSimpleTemplateId().accept(this);
-		tailFormatter.run();
 		return PROCESS_SKIP;
 	}
 

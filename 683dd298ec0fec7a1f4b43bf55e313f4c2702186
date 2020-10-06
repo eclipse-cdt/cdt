@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "60e4cdb5_8b4c982b",
+        "filename": "doc/org.eclipse.cdt.doc.user/tmp/__empty.dtd",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-06T19:03:16Z",
+      "side": 1,
+      "message": "File accidentally included.",
+      "revId": "683dd298ec0fec7a1f4b43bf55e313f4c2702186",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

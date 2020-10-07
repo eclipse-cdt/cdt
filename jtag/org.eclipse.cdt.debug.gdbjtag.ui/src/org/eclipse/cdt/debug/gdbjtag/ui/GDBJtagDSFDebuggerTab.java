@@ -22,6 +22,7 @@
  *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
  *     John Dallaway - Sort JTAG device list, bug 560186
  *     John Dallaway - Eliminate deprecated API, bug 566462
+ *     John Dallaway - Eliminate pixel-level sizing, bug 567662
 *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
@@ -50,6 +51,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StackLayout;
@@ -239,7 +241,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		});
 		remoteTimeoutValue = new Text(group, SWT.BORDER);
 		gd = new GridData();
-		gd.widthHint = 125;
+		gd.widthHint = new PixelConverter(remoteTimeoutValue).convertWidthInCharsToPixels(10);
 		remoteTimeoutValue.setLayoutData(gd);
 		remoteTimeoutValue.setToolTipText(Messages.getString("GDBJtagDebuggerTab.remoteTimeoutTooltip")); //$NON-NLS-1$
 
@@ -247,7 +249,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		layout = new GridLayout();
 		layout.numColumns = 2;
 		comp.setLayout(layout);
-		comp.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
+		comp.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).grab(true, false).create());
 
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(Messages.getString("GDBJtagDebuggerTab.jtagDeviceLabel")); //$NON-NLS-1$
@@ -270,7 +272,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		remoteConnectionParameters = new Composite(group, SWT.NO_TRIM | SWT.NO_FOCUS);
 		remoteConnectParmsLayout = new StackLayout();
 		remoteConnectionParameters.setLayout(remoteConnectParmsLayout);
-		remoteConnectionParameters.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
+		remoteConnectionParameters.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).create());
 
 		//
 		//  Create entry fields for other types of connections
@@ -286,8 +288,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 			label = new Label(remoteConnectionBox, SWT.NONE);
 			label.setText(Messages.getString("GDBJtagDebuggerTab.connectionLabel")); //$NON-NLS-1$
 			connection = new Text(remoteConnectionBox, SWT.BORDER);
-			gd = new GridData();
-			gd.widthHint = 125;
+			gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 			connection.setLayoutData(gd);
 		}
 

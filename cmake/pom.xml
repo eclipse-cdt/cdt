@@ -16,7 +16,10 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>org.eclipse.cdt.cmake.core</module>
         <module>org.eclipse.cdt.cmake.core.tests</module>
+		<module>org.eclipse.cdt.cmake.ui</module>
+		<module>org.eclipse.cdt.cmake-feature</module>
 		<module>org.eclipse.cdt.cmake.is.core.doc</module>
 		<module>org.eclipse.cdt.cmake.is.core</module>
 		<module>org.eclipse.cdt.cmake.is.core.tests</module>

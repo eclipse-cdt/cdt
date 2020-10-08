@@ -12,12 +12,12 @@
 
 	<artifactId>cmake-aggregator</artifactId>
 	<packaging>pom</packaging>
-    <!-- aggregates just the cmake bundles -->
+    <!-- aggregates just the cmake bundles
+        Convenient if you focus on working on the cmake bundles only.
+     -->
 
 	<modules>
 		<module>../../releng/org.eclipse.cdt.target</module>
         <module>..</module>
-        <!-- remove once org.eclipse.cdt.cmake bundles moved from /build below /cmake -->
-        <module>../../build/org.eclipse.cdt.cmake.core</module>
 	</modules>
 </project>

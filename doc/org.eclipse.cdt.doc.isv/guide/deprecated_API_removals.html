@@ -47,6 +47,7 @@
     <li><a href="#casesensitive">Environment Variables are always case sensitive in CDT.</a></li>
     <li><a href="#escaping">Environment variables no longer support \${ to avoid expanding.</a></li>
     <li><a href="#autocloseable">The binary parsers are now implement Autocloseable</a></li>
+    <li><a href="#deductionremovedin10.0.0">ICPPASTDeductionGuide and ICPPASTParameterListOwner removed in CDT 10.0.1</a></li>
   </ol>
   <p>
     Planned Removals after June 2022
@@ -324,6 +325,15 @@
     <li>org.eclipse.cdt.utils.xcoff.AR</li>
     <li>org.eclipse.cdt.utils.macho.AR</li>
   </ul>
+
+
+  <h3>16. <a name="deductionremovedin10.0.0">ICPPASTDeductionGuide and ICPPASTParameterListOwner removed in CDT 10.0.1</a></h3>
+  <p>
+    Classes org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide and org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterListOwner
+    which were added for CDT 10.0.0 have been removed in CDT 10.0.1.  See <a
+    href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=567261" target="_blank">Bug 567261</a>.
+  </p>
+
 
   <hr>
 

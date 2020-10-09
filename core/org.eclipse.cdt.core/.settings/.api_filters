@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.core" version="2">
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide">
+        <filter comment="Bug 567261: This API was backed out and is believed to not be in use so the API breakage is unlikely" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide"/>
+                <message_argument value="org.eclipse.cdt.core_7.0.1"/>
+            </message_arguments>
+        </filter>
         <filter comment="deduction guides have been reverted post release" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide"/>
@@ -9,6 +15,12 @@
         </filter>
     </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterListOwner">
+        <filter comment="Bug 567261: This API was backed out and is believed to not be in use so the API breakage is unlikely" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterListOwner"/>
+                <message_argument value="org.eclipse.cdt.core_7.0.1"/>
+            </message_arguments>
+        </filter>
         <filter comment="deduction guides have been reverted post release" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterListOwner"/>

@@ -16,6 +16,24 @@
       "revId": "036eb63fb06fe949db3181327be8d5f7244c3fac",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0763e5b5_1c5d19a9",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CProjectDescriptionPreferences.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-10-10T16:37:50Z",
+      "side": 1,
+      "message": "Sorry, this still a work in progress. I did want to move the getNode call to a method out of start order concerns. I need to test product customization too. This change also has a lot of impact so I need to do more testing and examine the delta events and make sure the tests didn\u0027t make assumptions.\n\nI\u0027m not sure about making a new class to retrieve the single default value. This class already has the responsibility of managing this relation value.",
+      "parentUuid": "db7e0040_1f988d29",
+      "revId": "036eb63fb06fe949db3181327be8d5f7244c3fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

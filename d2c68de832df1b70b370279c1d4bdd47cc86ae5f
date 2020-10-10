@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "70168907_db49505f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBConversions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-10T18:41:42Z",
+      "side": 1,
+      "message": "My goal is to have UI part as thin as possible, it simplifies the testing and opens other scenarios. I\u0027m not saying \"please publish it as an API\", we can have \"org.eclipse.cdt.internal.core.includebrowser\". Who is saying that \"include browser\" should be UI-only? 😊 May be we will want to provide CLI for it, who knows.\n\nAll this may be postponed.",
+      "parentUuid": "1ee52e4c_5444ae3a",
+      "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f9f77dec_958ddf3d",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBConversions.java",
         "patchSetId": 1
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Done (Hopefully this is what you meant)",
       "parentUuid": "f9f77dec_958ddf3d",
+      "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "83d863b0_c0a364d5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBConversions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-10T18:41:42Z",
+      "side": 1,
+      "message": "Well, no, not exactly. Now the code looks less readble. You can always decline a comment if you see that code is getting worse. This code may need more restructuring to have benefits from Optional.\n\nOK, it can be improved in another Gerrit later.",
+      "parentUuid": "cbc13ca3_fd535fd4",
       "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -104,6 +140,24 @@
       "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f4a283b_f82a499d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBDropTargetListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-10T18:41:42Z",
+      "side": 1,
+      "message": "OK, then it can be named like \"extractFirstTranslationUnit\". \nCan wait, looks like out of scope for this Gerrit.",
+      "parentUuid": "eb1eed0e_d175bd86",
+      "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

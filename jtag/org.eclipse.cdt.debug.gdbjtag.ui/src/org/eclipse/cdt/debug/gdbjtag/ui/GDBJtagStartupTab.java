@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2017 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Andy Jin - Added DSF debugging, bug 248593
  *     John Dallaway - Execute run commands before resume, bug 525692
  *     John Dallaway - Eliminate deprecated API, bug 566462
+ *     John Dallaway - Eliminate pixel-level sizing, bug 567662
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
@@ -32,6 +33,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
@@ -59,6 +61,10 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 
 	private static final String TAB_NAME = Messages.getString("GDBJtagStartupTab.tabName"); //$NON-NLS-1$
 	private static final String TAB_ID = "org.eclipse.cdt.debug.gdbjtag.ui.startuptab"; //$NON-NLS-1$
+
+	private static final int TEXT_COMMAND_BOX_HEIGHT = 4; // 4 lines
+	private static final int TEXT_HEX_ADDRESS_WIDTH = 22; // 22 chars
+	private static final int TEXT_SHORT_INTEGER_WIDTH = 10; // 10 chars
 
 	Text initCommands;
 	Text delay;
@@ -157,6 +163,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	}
 
 	public void createInitGroup(Composite parent) {
+		PixelConverter pc = new PixelConverter(parent);
 		Group group = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		group.setLayout(layout);
@@ -182,7 +189,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		delay = new Text(comp, SWT.BORDER);
 		gd = new GridData();
 		gd.horizontalSpan = 1;
-		gd.widthHint = 60;
+		gd.widthHint = pc.convertWidthInCharsToPixels(TEXT_SHORT_INTEGER_WIDTH);
 		delay.setLayoutData(gd);
 		delay.addVerifyListener(new VerifyListener() {
 			@Override
@@ -217,7 +224,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 
 		initCommands = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 60;
+		gd.heightHint = pc.convertHeightInCharsToPixels(TEXT_COMMAND_BOX_HEIGHT);
 		initCommands.setLayoutData(gd);
 		initCommands.addModifyListener(new ModifyListener() {
 			@Override
@@ -229,6 +236,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	}
 
 	private void createLoadGroup(Composite parent) {
+		PixelConverter pc = new PixelConverter(parent);
 		Group group = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		group.setLayout(layout);
@@ -321,7 +329,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		imageOffset = new Text(comp, SWT.BORDER);
 		gd = new GridData();
 		gd.horizontalSpan = 1;
-		gd.widthHint = 100;
+		gd.widthHint = pc.convertWidthInCharsToPixels(TEXT_HEX_ADDRESS_WIDTH);
 		imageOffset.setLayoutData(gd);
 		imageOffset.addVerifyListener(new VerifyListener() {
 			@Override
@@ -409,7 +417,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		symbolsOffset = new Text(comp, SWT.BORDER);
 		gd = new GridData();
 		gd.horizontalSpan = 1;
-		gd.widthHint = 100;
+		gd.widthHint = pc.convertWidthInCharsToPixels(TEXT_HEX_ADDRESS_WIDTH);
 		symbolsOffset.setLayoutData(gd);
 		symbolsOffset.addVerifyListener(new VerifyListener() {
 			@Override
@@ -440,6 +448,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	}
 
 	public void createRunGroup(Composite parent) {
+		PixelConverter pc = new PixelConverter(parent);
 		Group group = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		group.setLayout(layout);
@@ -465,7 +474,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		pcRegister = new Text(group, SWT.BORDER);
 		gd = new GridData();
 		gd.horizontalSpan = 1;
-		gd.widthHint = 100;
+		gd.widthHint = pc.convertWidthInCharsToPixels(TEXT_HEX_ADDRESS_WIDTH);
 		pcRegister.setLayoutData(gd);
 		pcRegister.addVerifyListener(new VerifyListener() {
 			@Override
@@ -495,9 +504,8 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		});
 
 		stopAt = new Text(group, SWT.BORDER);
-		gd = new GridData();
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
-		gd.widthHint = 100;
 		stopAt.setLayoutData(gd);
 		stopAt.addModifyListener(new ModifyListener() {
 			@Override
@@ -509,7 +517,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		runCommands = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
-		gd.heightHint = 60;
+		gd.heightHint = pc.convertHeightInCharsToPixels(TEXT_COMMAND_BOX_HEIGHT);
 		runCommands.setLayoutData(gd);
 		runCommands.addModifyListener(new ModifyListener() {
 			@Override

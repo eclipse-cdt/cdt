@@ -13,14 +13,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionPreferences;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 
 public class CProjectDescriptionPreferences implements ICProjectDescriptionPreferences {
+
 	private static final String ATTR_CONFIG_RELATIONS = "configRelations"; //$NON-NLS-1$
 
-	private static final int DEFAULT_RELATIONS = CONFIGS_INDEPENDENT;
+	// This preference is only used at Default Scope to allow product preference customization (plugin_customization.ini)
+	private static final String PREF_CPROJECTDESCRIPTION_CONFIG_RELATIONS_KEY = "cprojectdescription.configRelations"; //$NON-NLS-1$
+
 	private boolean fIsReadOnly;
 	private boolean fIsModified;
 
@@ -43,7 +48,8 @@ public class CProjectDescriptionPreferences implements ICProjectDescriptionPrefe
 		fIsReadOnly = isReadOnly;
 		if (el != null) {
 			if (el.getAttribute(ATTR_CONFIG_RELATIONS) != null)
-				fConfigRelations = Integer.valueOf(CDataUtil.getInteger(el, ATTR_CONFIG_RELATIONS, DEFAULT_RELATIONS));
+				fConfigRelations = Integer
+						.valueOf(CDataUtil.getInteger(el, ATTR_CONFIG_RELATIONS, getDefaultRelations()));
 		}
 
 		this.fSuperPreference = superPreference;
@@ -61,6 +67,11 @@ public class CProjectDescriptionPreferences implements ICProjectDescriptionPrefe
 			CDataUtil.setInteger(el, ATTR_CONFIG_RELATIONS, fConfigRelations.intValue());
 	}
 
+	public static int getDefaultRelations() {
+		return DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
+				.getInt(PREF_CPROJECTDESCRIPTION_CONFIG_RELATIONS_KEY, CONFIGS_LINK_SETTINGS_AND_ACTIVE);
+	}
+
 	@Override
 	public int getConfigurationRelations() {
 		if (fConfigRelations != null)
@@ -68,7 +79,7 @@ public class CProjectDescriptionPreferences implements ICProjectDescriptionPrefe
 		CProjectDescriptionPreferences superPrefs = getSuperPreferences();
 		if (superPrefs != null)
 			return superPrefs.getConfigurationRelations();
-		return DEFAULT_RELATIONS;
+		return getDefaultRelations();
 	}
 
 	@Override

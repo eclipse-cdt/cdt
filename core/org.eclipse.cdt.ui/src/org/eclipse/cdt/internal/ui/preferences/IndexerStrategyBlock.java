@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionPreferences;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionWorkspacePreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionPreferences;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -143,8 +144,10 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
 	public void performDefaults() {
 		initUpdatePolicy(IndexerPreferences.getDefaultUpdatePolicy());
 		if (fUseActiveBuildButton != null) {
-			fUseActiveBuildButton.setSelection(false);
-			fUseFixedBuildConfig.setSelection(true);
+			boolean defaultUseActive = CProjectDescriptionPreferences
+					.getDefaultRelations() == ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE;
+			fUseActiveBuildButton.setSelection(defaultUseActive);
+			fUseFixedBuildConfig.setSelection(!defaultUseActive);
 		}
 		updateEnablement();
 	}

@@ -13,13 +13,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.includebrowser;
 
+import java.util.Optional;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.ui.includebrowser.IBConversions;
 import org.eclipse.cdt.internal.ui.includebrowser.IBViewPart;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
@@ -77,13 +79,13 @@ public abstract class IncludeBrowserBaseTest extends BaseUITestCase {
 	}
 
 	private IBViewPart doOpenIncludeBrowser(IFile file) throws PartInitException {
-		ITranslationUnit tu = CoreModelUtil.findTranslationUnit(file);
-		if (tu == null) {
+		Optional<ITranslationUnit> tu = IBConversions.fileToTU(file);
+		if (tu.isEmpty()) {
 			fail(file.getFullPath().toString() + " is no translation unit!");
 		}
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IBViewPart result = (IBViewPart) page.showView(CUIPlugin.ID_INCLUDE_BROWSER);
-		result.setInput(tu);
+		result.setInput(tu.get());
 		return result;
 	}
 

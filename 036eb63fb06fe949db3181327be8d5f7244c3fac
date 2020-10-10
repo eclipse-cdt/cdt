@@ -34,6 +34,24 @@
       "revId": "036eb63fb06fe949db3181327be8d5f7244c3fac",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4593188_63c88240",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CProjectDescriptionPreferences.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-10T16:43:16Z",
+      "side": 1,
+      "message": "Sorry for misplaced review, I just tried to provide a kind of early warning for you.\n\n\u003e  This class already has the responsibility of managing this relation value.\n\nGood. It means others should not tell this calss _how_ to manage and public constants are not needed, there should be methods instead.",
+      "parentUuid": "0763e5b5_1c5d19a9",
+      "revId": "036eb63fb06fe949db3181327be8d5f7244c3fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

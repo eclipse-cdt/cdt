@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "90e67b06_0dcf495e",
+        "filename": "core/org.eclipse.cdt.core/META-INF/MANIFEST.MF",
+        "patchSetId": 16
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-10-10T04:21:45Z",
+      "side": 1,
+      "message": "The version was already bumped as part of commit cb0797481faaace81a46ce2989fc319d160ba1ef. Should we lower it back? It might break someone on the nightly though. Otherwise, if it\u0027s kept like this, the api filters don\u0027t match the version anymore.",
+      "revId": "fa270ed30a1af58ef4a6a54823b4fb8e20e62dce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

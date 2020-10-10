@@ -172,6 +172,7 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 			// Create model project and accompanied descriptions
 			IProject project = BuildSystemTestHelper.createProject(projectName);
 			ICProjectDescription des = coreModel.createProjectDescription(project, false);
+			des.setConfigurationRelations(ICProjectDescription.CONFIGS_INDEPENDENT);
 			Assert.assertNotNull("createDescription returned null!", des);
 
 			{

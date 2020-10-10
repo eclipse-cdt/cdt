@@ -16,7 +16,10 @@ package org.eclipse.cdt.ui.tests.includebrowser;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.core.resources.IFile;
@@ -102,6 +105,41 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 			checkTreeNode(tree, 0, 0, "source.cpp");
 		} finally {
 			CProjectHelper.delete(op);
+		}
+	}
+
+	// // source
+	// #include "user.h"
+	public void testInclusionOutsideSourceFolder() throws Exception {
+		ICProject cproject = CProjectHelper.createCCProject("__ibTest_outside_src__", "bin",
+				IPDOMManager.ID_FAST_INDEXER);
+		try {
+			ICContainer srcFolder = CProjectHelper.addCContainer(cproject, "src");
+			IPathEntry newEntry = CoreModel.newSourceEntry(srcFolder.getPath());
+
+			IPathEntry[] entries = new IPathEntry[] { CoreModel.newSourceEntry(srcFolder.getPath()) };
+			cproject.setRawPathEntries(entries, null);
+
+			StringBuilder[] contents = getContentsForTest(1);
+			IProject project = cproject.getProject();
+			IFile user = createFile(project, "user.h", "");
+			IFile source = createFile(srcFolder.getResource(), "source.cpp", contents[0].toString());
+			CCorePlugin.getIndexManager().reindex(cproject);
+			waitForIndexer(cproject);
+
+			openIncludeBrowser(source);
+			Tree tree = getIBTree();
+			TreeItem node = checkTreeNode(tree, 0, "source.cpp");
+			checkTreeNode(tree, 0, 0, "user.h");
+			assertEquals(1, node.getItemCount());
+
+			// The tree has to be reversed
+			openIncludeBrowser(user, true);
+			checkTreeNode(tree, 0, "user.h");
+			checkTreeNode(tree, 0, 0, "source.cpp");
+
+		} finally {
+			CProjectHelper.delete(cproject);
 		}
 	}
 }

@@ -15,10 +15,14 @@ package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
@@ -75,12 +79,31 @@ public class IBConversions {
 		return StructuredSelection.EMPTY;
 	}
 
+	/**
+	 * Returns an optional ITranslationUnit for the given IFile.
+	 * The ITranslationUnit can be outside a source folder.
+	 */
+	public static Optional<ITranslationUnit> fileToTU(IFile file) {
+		ITranslationUnit tu = CoreModelUtil.findTranslationUnit(file);
+		if (tu == null) {
+			// Handle header not under a source folder
+			ICProject cproject = CoreModel.getDefault().create(file.getProject());
+			if (cproject != null) {
+				String contentTypeId = CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
+				if (contentTypeId != null) {
+					tu = new TranslationUnit(cproject, file, contentTypeId);
+				}
+			}
+		}
+		return Optional.ofNullable(tu);
+	}
+
 	public static ITranslationUnit objectToTU(Object object) {
 		if (object instanceof ITranslationUnit) {
 			return (ITranslationUnit) object;
 		}
 		if (object instanceof IFile) {
-			return CoreModelUtil.findTranslationUnit((IFile) object);
+			return fileToTU((IFile) object).orElse(null);
 		}
 		if (object instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) object;
@@ -90,7 +113,7 @@ public class IBConversions {
 			}
 			IFile file = adaptable.getAdapter(IFile.class);
 			if (file != null) {
-				return CoreModelUtil.findTranslationUnit(file);
+				return fileToTU(file).orElse(null);
 			}
 
 			ILocationProvider locProvider = adaptable.getAdapter(ILocationProvider.class);

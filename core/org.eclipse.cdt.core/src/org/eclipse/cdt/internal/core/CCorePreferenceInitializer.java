@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.parser.CodeReaderCache;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionPreferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -98,5 +99,9 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 				CCorePreferenceConstants.DEFAULT_ADD_OVERRIDE_KEYWORD);
 		defaultPreferences.putBoolean(CCorePreferenceConstants.PRESERVE_VIRTUAL_KEYWORD,
 				CCorePreferenceConstants.DEFAULT_PRESERVE_VIRTUAL_KEYWORD);
+
+		// CProjectDescription defaults.
+		defaultPreferences.putInt(CProjectDescriptionPreferences.PREF_CPROJECTDESCRIPTION_CONFIG_RELATIONS_KEY,
+				CProjectDescriptionPreferences.PREF_CPROJECTDESCRIPTION_CONFIG_RELATIONS_DEFAULT);
 	}
 }

@@ -13,14 +13,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionPreferences;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 
 public class CProjectDescriptionPreferences implements ICProjectDescriptionPreferences {
+
 	private static final String ATTR_CONFIG_RELATIONS = "configRelations"; //$NON-NLS-1$
 
-	private static final int DEFAULT_RELATIONS = CONFIGS_INDEPENDENT;
+	// This preference is only used at Default Scope to allow product preference customization (plugin_customization.ini)
+	public static final String PREF_CPROJECTDESCRIPTION_CONFIG_RELATIONS_KEY = "cprojectdescription.configRelations"; //$NON-NLS-1$
+	public static final int PREF_CPROJECTDESCRIPTION_CONFIG_RELATIONS_DEFAULT = CONFIGS_LINK_SETTINGS_AND_ACTIVE;
+
+	private static final int DEFAULT_RELATIONS = DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
+			.getInt(PREF_CPROJECTDESCRIPTION_CONFIG_RELATIONS_KEY, PREF_CPROJECTDESCRIPTION_CONFIG_RELATIONS_DEFAULT);
+
 	private boolean fIsReadOnly;
 	private boolean fIsModified;
 

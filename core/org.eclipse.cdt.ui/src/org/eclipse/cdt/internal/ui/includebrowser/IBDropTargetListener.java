@@ -15,8 +15,8 @@
 package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.Iterator;
+import java.util.Optional;
 
-import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
@@ -143,9 +143,9 @@ public class IBDropTargetListener implements DropTargetListener {
 		for (int i = 0; i < files.length; i++) {
 			IResource resource = files[i];
 			if (resource.getType() == IResource.FILE) {
-				ITranslationUnit tu = CoreModelUtil.findTranslationUnit((IFile) resource);
-				if (tu != null) {
-					return tu;
+				Optional<ITranslationUnit> tu = IBConversions.fileToTU((IFile) resource);
+				if (tu.isPresent()) {
+					return tu.get();
 				}
 			}
 		}

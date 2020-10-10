@@ -15,8 +15,8 @@
 package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.Iterator;
+import java.util.Optional;
 
-import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
@@ -125,7 +125,7 @@ public class IBDropTargetListener implements DropTargetListener {
 			String[] filePaths = (String[]) o;
 			for (int i = 0; i < filePaths.length; i++) {
 				String filePath = filePaths[i];
-				ITranslationUnit tu = findTranslationUnit(
+				ITranslationUnit tu = extractFirstTranslationUnit(
 						ResourceLookup.findFilesForLocation(Path.fromOSString(filePath)));
 				if (tu != null) {
 					return tu;
@@ -134,18 +134,18 @@ public class IBDropTargetListener implements DropTargetListener {
 			return null;
 		}
 		if (o instanceof IResource[]) {
-			return findTranslationUnit((IResource[]) o);
+			return extractFirstTranslationUnit((IResource[]) o);
 		}
 		return null;
 	}
 
-	private ITranslationUnit findTranslationUnit(IResource[] files) {
+	private ITranslationUnit extractFirstTranslationUnit(IResource[] files) {
 		for (int i = 0; i < files.length; i++) {
 			IResource resource = files[i];
 			if (resource.getType() == IResource.FILE) {
-				ITranslationUnit tu = CoreModelUtil.findTranslationUnit((IFile) resource);
-				if (tu != null) {
-					return tu;
+				Optional<ITranslationUnit> tu = IBConversions.fileToTU((IFile) resource);
+				if (tu.isPresent()) {
+					return tu.get();
 				}
 			}
 		}

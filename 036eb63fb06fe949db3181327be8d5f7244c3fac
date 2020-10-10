@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db7e0040_1f988d29",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/settings/model/CProjectDescriptionPreferences.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-10T12:10:57Z",
+      "side": 1,
+      "message": "I\u0027m not sure that it is good idea to cache the preference value in the constant, even for default scope. This way we will start to rely on things like bundle start order and class loading order.\n\nMoreover, the concept of constant itself is not OOP-friendly, I would prefer to see a class that is responsible to retrieve a \"relation\" value, without publishing a detailed way how to do that.",
+      "revId": "036eb63fb06fe949db3181327be8d5f7244c3fac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1ee52e4c_5444ae3a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBConversions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-10-10T18:03:32Z",
+      "side": 1,
+      "message": "I\u0027m not confident enough in the semantic of this method to move it to Cove. It seems different clients need different types to TUs depending on the situation. Let me know if you have an idea though.",
+      "parentUuid": "8cbc3b3d_81da963f",
+      "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f9f77dec_958ddf3d",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBConversions.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "cbc13ca3_fd535fd4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBConversions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-10-10T18:03:32Z",
+      "side": 1,
+      "message": "Done (Hopefully this is what you meant)",
+      "parentUuid": "f9f77dec_958ddf3d",
+      "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "62f7cc42_0876c098",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBDropTargetListener.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2020-10-10T06:09:11Z",
       "side": 1,
       "message": "This is interesting: we have an array of resources to be reduced to the first translation unit that we can find. Can we have more resolved translation units if we continue the cycle? Perhaps for the separate Gerrit/Bugzilla.",
+      "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb1eed0e_d175bd86",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBDropTargetListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-10-10T18:03:32Z",
+      "side": 1,
+      "message": "The Include Browser only accepts one translation unit as input. I think accepting the first one out of all the dropped ones makes sense.",
+      "parentUuid": "62f7cc42_0876c098",
       "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

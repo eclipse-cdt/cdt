@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "149e66e0_51bafe79",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBConversions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-11T09:49:40Z",
+      "side": 1,
+      "message": "I\u0027m happy to meet like minded. You are right, the CDT Core and CDT UI needs to be reworked and we have a bugzilla for it https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d559213\nThe problem is that we need to act very careful to not loose our community. I have a kind of plan in mind how to do that, just need to acquire resources and of cause support of other committers.",
+      "parentUuid": "1e8d0d21_ec68fbe4",
+      "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f9f77dec_958ddf3d",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBConversions.java",
         "patchSetId": 1

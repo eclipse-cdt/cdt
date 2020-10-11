@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "1e8d0d21_ec68fbe4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBConversions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-10-11T02:03:47Z",
+      "side": 1,
+      "message": "I agree with that goal. There is a lot of work involved into making this happen. It also leads to the question whether cdt.core should be the recipient of all of this as it is very large already. For Include Browser, most of the valuable logic is in cdt.core in the form of IIndexFile, IIndexInclude, etc which are the ones feeding all the information. There is however a small layer between the index and the UI that could also be in non-UI. I believe many features in cdt.ui are in this state unfortunately!",
+      "parentUuid": "70168907_db49505f",
+      "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f9f77dec_958ddf3d",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBConversions.java",
         "patchSetId": 1
@@ -108,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "6be16a3d_4099890b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBConversions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-10-11T02:03:47Z",
+      "side": 1,
+      "message": "OK I can revert it for now. I do think it\u0027s less readable in this form (wasn\u0027t sure, opinions on functional syntax seem to vary a lot).",
+      "parentUuid": "83d863b0_c0a364d5",
+      "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "62f7cc42_0876c098",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBDropTargetListener.java",
         "patchSetId": 1
@@ -155,6 +191,24 @@
       "side": 1,
       "message": "OK, then it can be named like \"extractFirstTranslationUnit\". \nCan wait, looks like out of scope for this Gerrit.",
       "parentUuid": "eb1eed0e_d175bd86",
+      "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c4d19d6_2aeda32c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/includebrowser/IBDropTargetListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-10-11T02:03:47Z",
+      "side": 1,
+      "message": "I like extractFirstTranslationUnit better, it\u0027s an easy change so I\u0027ll add it to this Gerrit.",
+      "parentUuid": "3f4a283b_f82a499d",
       "revId": "d2c68de832df1b70b370279c1d4bdd47cc86ae5f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

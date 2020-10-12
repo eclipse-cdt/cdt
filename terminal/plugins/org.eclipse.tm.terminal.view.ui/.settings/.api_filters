@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.tm.terminal.view.ui" version="2">
+    <resource path="src/org/eclipse/tm/terminal/view/ui/controls/ConfigurationPanelControl.java" type="org.eclipse.tm.terminal.view.ui.controls.ConfigurationPanelControl">
+        <filter id="576725006">
+            <message_arguments>
+                <message_argument value="IConfigurationPanelContainer"/>
+                <message_argument value="ConfigurationPanelControl"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/tm/terminal/view/ui/launcher/AbstractLauncherDelegate.java" type="org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ILauncherDelegate"/>
+                <message_argument value="AbstractLauncherDelegate"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/tm/terminal/view/ui/panels/AbstractConfigurationPanel.java" type="org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IConfigurationPanel"/>
+                <message_argument value="AbstractConfigurationPanel"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/tm/terminal/view/ui/view/TerminalsView.java" type="org.eclipse.tm.terminal.view.ui.view.TerminalsView">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITerminalsView"/>
+                <message_argument value="TerminalsView"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

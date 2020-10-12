@@ -24,6 +24,92 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="browser/org/eclipse/cdt/core/browser/IndexTypeInfo.java" type="org.eclipse.cdt.core.browser.IndexTypeInfo">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IFunctionInfo"/>
+                <message_argument value="IndexTypeInfo"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITypeInfo"/>
+                <message_argument value="IndexTypeInfo"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="browser/org/eclipse/cdt/core/browser/QualifiedTypeName.java" type="org.eclipse.cdt.core.browser.QualifiedTypeName">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IQualifiedTypeName"/>
+                <message_argument value="QualifiedTypeName"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="browser/org/eclipse/cdt/core/browser/TypeInfo.java" type="org.eclipse.cdt.core.browser.TypeInfo">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITypeInfo"/>
+                <message_argument value="TypeInfo"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="browser/org/eclipse/cdt/core/browser/TypeReference.java" type="org.eclipse.cdt.core.browser.TypeReference">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITypeReference"/>
+                <message_argument value="TypeReference"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="browser/org/eclipse/cdt/core/browser/TypeSearchScope.java" type="org.eclipse.cdt.core.browser.TypeSearchScope">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITypeSearchScope"/>
+                <message_argument value="TypeSearchScope"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="model/org/eclipse/cdt/core/model/AbstractLanguage.java" type="org.eclipse.cdt.core.model.AbstractLanguage">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ILanguage"/>
+                <message_argument value="AbstractLanguage"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="model/org/eclipse/cdt/core/model/LanguageMappingChangeEvent.java" type="org.eclipse.cdt.core.model.LanguageMappingChangeEvent">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ILanguageMappingChangeEvent"/>
+                <message_argument value="LanguageMappingChangeEvent"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="model/org/eclipse/cdt/core/settings/model/ACSettingEntry.java" type="org.eclipse.cdt.core.settings.model.ACSettingEntry">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ICSettingEntry"/>
+                <message_argument value="ACSettingEntry"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="model/org/eclipse/cdt/core/settings/model/util/XmlStorageElement.java" type="org.eclipse.cdt.core.settings.model.util.XmlStorageElement">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ICStorageElement"/>
+                <message_argument value="XmlStorageElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/ASTCompletionNode.java" type="org.eclipse.cdt.core.dom.ast.ASTCompletionNode">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IASTCompletionNode"/>
+                <message_argument value="ASTCompletionNode"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTFunctionDeclarator.java" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator">
         <filter comment="asdf" id="404791350">
             <message_arguments>
@@ -37,6 +123,102 @@
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator"/>
                 <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterListOwner"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/parser/AbstractScannerExtensionConfiguration.java" type="org.eclipse.cdt.core.dom.parser.AbstractScannerExtensionConfiguration">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IScannerExtensionConfiguration"/>
+                <message_argument value="AbstractScannerExtensionConfiguration"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/parser/c/AbstractCParserExtensionConfiguration.java" type="org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ICParserExtensionConfiguration"/>
+                <message_argument value="AbstractCParserExtensionConfiguration"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/parser/cpp/AbstractCPPParserExtensionConfiguration.java" type="org.eclipse.cdt.core.dom.parser.cpp.AbstractCPPParserExtensionConfiguration">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ICPPParserExtensionConfiguration"/>
+                <message_argument value="AbstractCPPParserExtensionConfiguration"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/index/IPDOMASTProcessor.java" type="org.eclipse.cdt.core.index.IPDOMASTProcessor$Abstract">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IPDOMASTProcessor"/>
+                <message_argument value="Abstract"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/index/ResourceContainerRelativeLocationConverter.java" type="org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IIndexLocationConverter"/>
+                <message_argument value="ResourceContainerRelativeLocationConverter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/index/URIRelativeLocationConverter.java" type="org.eclipse.cdt.core.index.URIRelativeLocationConverter">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IIndexLocationConverter"/>
+                <message_argument value="URIRelativeLocationConverter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/index/export/AbstractExportProjectProvider.java" type="org.eclipse.cdt.core.index.export.AbstractExportProjectProvider">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IExportProjectProvider"/>
+                <message_argument value="AbstractExportProjectProvider"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/parser/AbstractPersistableProblem.java" type="org.eclipse.cdt.core.parser.AbstractPersistableProblem">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IPersistableProblem"/>
+                <message_argument value="AbstractPersistableProblem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/parser/IParserSettings2.java" type="org.eclipse.cdt.core.parser.IParserSettings2$Default">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IParserSettings2"/>
+                <message_argument value="Default"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/core/AbstractCExtension.java" type="org.eclipse.cdt.core.AbstractCExtension">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ICExtension"/>
+                <message_argument value="AbstractCExtension"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/core/cdtvariables/CdtVariableStatus.java" type="org.eclipse.cdt.core.cdtvariables.CdtVariableStatus">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ICdtVariableStatus"/>
+                <message_argument value="CdtVariableStatus"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/core/envvar/EnvironmentVariable.java" type="org.eclipse.cdt.core.envvar.EnvironmentVariable">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IEnvironmentVariable"/>
+                <message_argument value="EnvironmentVariable"/>
             </message_arguments>
         </filter>
     </resource>
@@ -65,6 +247,60 @@
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions"/>
                 <message_argument value="insert_space_before_deduction_guide_arrow"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="utils/org/eclipse/cdt/utils/DefaultCygwinToolFactory.java" type="org.eclipse.cdt.utils.DefaultCygwinToolFactory">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ICygwinToolsFactroy"/>
+                <message_argument value="DefaultCygwinToolFactory"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="utils/org/eclipse/cdt/utils/DefaultGnuToolFactory.java" type="org.eclipse.cdt.utils.DefaultGnuToolFactory">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IGnuToolFactory"/>
+                <message_argument value="DefaultGnuToolFactory"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="utils/org/eclipse/cdt/utils/cdtvariables/SupplierBasedCdtVariableSubstitutor.java" type="org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IVariableSubstitutor"/>
+                <message_argument value="SupplierBasedCdtVariableSubstitutor"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="utils/org/eclipse/cdt/utils/coff/CodeViewReader.java" type="org.eclipse.cdt.utils.coff.CodeViewReader">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ISymbolReader"/>
+                <message_argument value="CodeViewReader"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="utils/org/eclipse/cdt/utils/debug/dwarf/DwarfReader.java" type="org.eclipse.cdt.utils.debug.dwarf.DwarfReader">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ICompileOptionsFinder"/>
+                <message_argument value="DwarfReader"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ISymbolReader"/>
+                <message_argument value="DwarfReader"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="utils/org/eclipse/cdt/utils/debug/stabs/StabsReader.java" type="org.eclipse.cdt.utils.debug.stabs.StabsReader">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ISymbolReader"/>
+                <message_argument value="StabsReader"/>
             </message_arguments>
         </filter>
     </resource>

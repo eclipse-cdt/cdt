@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.testsrunner" version="2">
+    <resource path="src/org/eclipse/cdt/testsrunner/internal/launcher/TestsRunnerProviderInfo.java" type="org.eclipse.cdt.testsrunner.internal.launcher.TestsRunnerProviderInfo">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITestsRunnerProviderInfo"/>
+                <message_argument value="TestsRunnerProviderInfo"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/testsrunner/internal/model/TestCase.java" type="org.eclipse.cdt.testsrunner.internal.model.TestCase">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITestCase"/>
+                <message_argument value="TestCase"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/testsrunner/internal/model/TestItem.java" type="org.eclipse.cdt.testsrunner.internal.model.TestItem">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITestItem"/>
+                <message_argument value="TestItem"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/testsrunner/internal/model/TestLocation.java" type="org.eclipse.cdt.testsrunner.internal.model.TestLocation">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITestLocation"/>
+                <message_argument value="TestLocation"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/testsrunner/internal/model/TestMessage.java" type="org.eclipse.cdt.testsrunner.internal.model.TestMessage">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITestMessage"/>
+                <message_argument value="TestMessage"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/testsrunner/internal/model/TestModelManager.java" type="org.eclipse.cdt.testsrunner.internal.model.TestModelManager">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITestModelAccessor"/>
+                <message_argument value="TestModelManager"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITestModelUpdater"/>
+                <message_argument value="TestModelManager"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/testsrunner/internal/model/TestSuite.java" type="org.eclipse.cdt.testsrunner.internal.model.TestSuite">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITestSuite"/>
+                <message_argument value="TestSuite"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/testsrunner/internal/model/TestingSession.java" type="org.eclipse.cdt.testsrunner.internal.model.TestingSession">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITestingSession"/>
+                <message_argument value="TestingSession"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/testsrunner/internal/ui/view/DummyUISession.java" type="org.eclipse.cdt.testsrunner.internal.ui.view.DummyUISession">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITestingSession"/>
+                <message_argument value="DummyUISession"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

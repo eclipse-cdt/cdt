@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.dsf" version="2">
+    <resource path="src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java" type="org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IMemoryBlockUpdatePolicyProvider"/>
+                <message_argument value="DsfMemoryBlock"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/dsf/debug/service/AbstractInstruction.java" type="org.eclipse.cdt.dsf.debug.service.AbstractInstruction">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IInstructionWithRawOpcodes"/>
+                <message_argument value="AbstractInstruction"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IInstructionWithSize"/>
+                <message_argument value="AbstractInstruction"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

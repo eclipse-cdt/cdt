@@ -3,7 +3,7 @@ Automatic-Module-Name: org.eclipse.tools.templates.ui
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tools.templates.ui;singleton:=true
-Bundle-Version: 1.2.0.qualifier
+Bundle-Version: 1.2.100.qualifier
 Bundle-Activator: org.eclipse.tools.templates.ui.internal.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

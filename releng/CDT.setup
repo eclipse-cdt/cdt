@@ -300,7 +300,7 @@
           <repository
               url="https://download.eclipse.org/cbi/updates/license/"/>
           <repository
-              url="https://download.eclipse.org/eclipse/updates/4.17/R-4.17-202009021800/"/>
+              url="https://download.eclipse.org/eclipse/updates/4.18milestones/S-4.18M1a-202010120320/"/>
           <repository
               url="https://download.eclipse.org/egit/updates/"/>
           <repository

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67f9547c_8708c7aa",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/IndexerStrategyBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-13T05:47:10Z",
+      "side": 1,
+      "message": "This looks like OOP anti-pattern: we use global function to access the current value, but this is unsufficient for us and we use global variable to compare the received value with. \nThis API is not new and already exposed, but it would be great to have an object that can answer \"do we use active configuration\" without details how this knowledge was received.\n\nNot a blocker for this Gerrit.",
+      "revId": "8287b378dd550bdcdefcc2e8bbdf3bd9542c7ba4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -277,7 +277,6 @@ public class ControlFactory {
 		button.setText(label);
 		GridData data = new GridData();
 		button.setLayoutData(data);
-		button.setBackground(group.getBackground());
 		button.setForeground(group.getForeground());
 		return button;
 	}
@@ -296,7 +295,6 @@ public class ControlFactory {
 		button.setText(label);
 		GridData data = new GridData();
 		button.setLayoutData(data);
-		button.setBackground(group.getBackground());
 		button.setForeground(group.getForeground());
 		return button;
 	}

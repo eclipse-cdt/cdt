@@ -34,6 +34,24 @@
       "revId": "fa270ed30a1af58ef4a6a54823b4fb8e20e62dce",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab58f2cd_d056bf59",
+        "filename": "core/org.eclipse.cdt.core/META-INF/MANIFEST.MF",
+        "patchSetId": 16
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-13T15:09:18Z",
+      "side": 1,
+      "message": "Thanks - I initially missed this comment by I have fixed the API filters and added a filter about the unneeded version bump. See https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/170639/2/core/org.eclipse.cdt.core/.settings/.api_filters",
+      "parentUuid": "afb827fa_94402e0f",
+      "revId": "fa270ed30a1af58ef4a6a54823b4fb8e20e62dce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

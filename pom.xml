@@ -112,10 +112,6 @@
 		<module>build/org.eclipse.cdt.autotools.ui</module>
 		<module>build/org.eclipse.cdt.autotools-feature</module>
 
-		<module>build/org.eclipse.cdt.cmake.core</module>
-		<module>build/org.eclipse.cdt.cmake.ui</module>
-		<module>build/org.eclipse.cdt.cmake-feature</module>
-
 		<module>build/org.eclipse.cdt.meson.core</module>
 		<module>build/org.eclipse.cdt.meson.docs</module>
 		<module>build/org.eclipse.cdt.meson.ui</module>
@@ -278,7 +274,6 @@
 		<module>build/org.eclipse.cdt.make.ui.tests</module>
 		<module>build/org.eclipse.cdt.autotools.tests</module>
 		<module>build/org.eclipse.cdt.autotools.ui.tests</module>
-		<module>build/org.eclipse.cdt.cmake.ui.tests</module>
 		<module>build/org.eclipse.cdt.meson.ui.tests</module>
 		<module>codan/org.eclipse.cdt.codan.core.tests</module>
 		<module>codan/org.eclipse.cdt.codan.checkers.ui.tests</module>

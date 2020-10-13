@@ -56,14 +56,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
- * Property page for CMake projects. The only thing we have here at the moment is a button
- * to launch the CMake GUI configurator (cmake-qt-gui).
+ * Property page for CMake projects.
  *
  * We assume that the build directory is in project/build/configname, which is where
  * the CMake project wizard puts it. We also assume that "cmake-gui" is in the user's
  * PATH.
  */
 public class CMakePropertyPage extends PropertyPage {
+	public CMakePropertyPage() {
+	}
 
 	private List<ICMakePropertyPageControl> componentList = new ArrayList<>();
 

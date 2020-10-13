@@ -43,6 +43,9 @@ public class CMakeBuildTab extends CommonBuildTab {
 		return CMakeBuildConfigurationProvider.ID;
 	}
 
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);

@@ -25,8 +25,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
-import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
+import org.eclipse.cdt.cmake.core.internal.properties.AbstractOsOverrides;
+import org.eclipse.cdt.cmake.core.internal.properties.CMakeProperties;
+import org.eclipse.cdt.cmake.core.internal.properties.CmakeGenerator;
+import org.eclipse.cdt.cmake.core.internal.properties.ICMakePropertiesController;
+import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 import org.eclipse.cdt.cmake.is.core.CompileCommandsJsonParser;
 import org.eclipse.cdt.cmake.is.core.IIndexerInfoConsumer;
 import org.eclipse.cdt.cmake.is.core.ParseRequest;
@@ -57,7 +60,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 
-public class CMakeBuildConfiguration extends CBuildConfiguration {
+public class CMakeBuildConfiguration extends //TODO extend from PlatformObject {
+		CBuildConfiguration {
 
 	public static final String CMAKE_GENERATOR = "cmake.generator"; //$NON-NLS-1$
 	public static final String CMAKE_ARGUMENTS = "cmake.arguments"; //$NON-NLS-1$
@@ -65,8 +69,12 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public static final String BUILD_COMMAND = "cmake.command.build"; //$NON-NLS-1$
 	public static final String CLEAN_COMMAND = "cmake.command.clean"; //$NON-NLS-1$
 
-	private ICMakeToolChainFile toolChainFile;
+	private final IBuildConfiguration config;
+	private final String name;
+	private final CMakePropertiesController pc = new CMakePropertiesController();
+
 	private Map<IResource, IScannerInfo> infoPerResource;
+
 	/** whether one of the CMakeLists.txt files in the project has been
 	 * modified and saved by the user since the last build.<br>
 	 * Cmake-generated build scripts re-run cmake if one of the CMakeLists.txt files was modified,
@@ -78,24 +86,14 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	private boolean cmakeListsModified;
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
-		super(config, name);
-
-		ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
-		toolChainFile = manager.getToolChainFileFor(getToolChain());
+		this(config, name, null);
 	}
 
-	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		this(config, name, toolChain, null, "run"); //$NON-NLS-1$
-	}
-
-	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
-			ICMakeToolChainFile toolChainFile, String launchMode) {
-		super(config, name, toolChain, launchMode);
-		this.toolChainFile = toolChainFile;
-	}
-
-	public ICMakeToolChainFile getToolChainFile() {
-		return toolChainFile;
+	public CMakeBuildConfiguration(IBuildConfiguration config, String name, String launchMode) {
+		super(config, name, null, "run");
+		this.config = Objects.requireNonNull(config, "config");
+		this.name = Objects.requireNonNull(name, "name");
+		//TODO  launchMode??;
 	}
 
 	private boolean isLocal() throws CoreException {
@@ -110,48 +108,27 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			throws CoreException {
 		IProject project = getProject();
 
-		try {
-			String generator = getProperty(CMAKE_GENERATOR);
-			if (generator == null) {
-				generator = "Ninja"; //$NON-NLS-1$
-			}
+		project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+		infoPerResource = new HashMap<>();
 
-			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-			infoPerResource = new HashMap<>();
+		try {
 
 			ConsoleOutputStream infoStream = console.getInfoStream();
-
 			Path buildDir = getBuildDirectory();
 
 			infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
 
-			// Make sure we have a toolchain file if cross
-			if (toolChainFile == null && !isLocal()) {
-				ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
-				toolChainFile = manager.getToolChainFileFor(getToolChain());
-
-				if (toolChainFile == null) {
-					// error
-					console.getErrorStream().write(Messages.CMakeBuildConfiguration_NoToolchainFile);
-					return null;
-				}
-			}
-
+			ICMakeProperties cmakeProperties = pc.load();
 			boolean runCMake = cmakeListsModified;
-			if (!runCMake) {
-				switch (generator) {
-				case "Ninja": //$NON-NLS-1$
-					runCMake = !Files.exists(buildDir.resolve("build.ninja")); //$NON-NLS-1$
-					break;
-				case "Unix Makefiles": //$NON-NLS-1$
-					runCMake = !Files.exists(buildDir.resolve("Makefile")); //$NON-NLS-1$
-					break;
-				default:
-					runCMake = !Files.exists(buildDir.resolve("CMakeFiles")); //$NON-NLS-1$
-				}
-			}
+			runCMake |= !Files.exists(buildDir.resolve("CMakeCache.txt")); //$NON-NLS-1$
+			// TODO which overrides?
+			AbstractOsOverrides overrides = cmakeProperties.getLinuxOverrides();
+			CmakeGenerator generator = overrides.getGenerator();
+			runCMake |= !Files.exists(buildDir.resolve(generator.getMakefileName()));
 
 			if (runCMake) {
+				List<String> command = new ArrayList<>();
+
 				CMakeBuildConfiguration.deleteCMakeErrorMarkers(project);
 
 				infoStream.write(String.format(Messages.CMakeBuildConfiguration_Configuring, buildDir));
@@ -159,18 +136,12 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				// incompatible with current settings (cmake config would fail)
 				cleanBuildDirectory(buildDir);
 
-				List<String> command = new ArrayList<>();
-
 				command.add("cmake"); //$NON-NLS-1$
 				command.add("-G"); //$NON-NLS-1$
-				command.add(generator);
-
-				if (toolChainFile != null) {
-					command.add("-DCMAKE_TOOLCHAIN_FILE=" + toolChainFile.getPath().toString()); //$NON-NLS-1$
-				}
+				command.add(generator.getCMakeName());
 
 				switch (getLaunchMode()) {
-				// TODO what to do with other modes
+				// TODO 15kts: get from project properties, delete builddir if buildtype was changed
 				case "debug": //$NON-NLS-1$
 					command.add("-DCMAKE_BUILD_TYPE=Debug"); //$NON-NLS-1$
 					break;
@@ -197,6 +168,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					ParsingConsoleOutputStream errStream = new ParsingConsoleOutputStream(console.getErrorStream(),
 							errorParser);
 					IConsole errConsole = new CMakeConsoleWrapper(console, errStream);
+					// TODO startBuildProcess() calls java.lang.ProcessBuilder. Use org.eclipse.cdt.core.ICommandLauncher
+					// in order to run builds in a container.
 					Process p = startBuildProcess(command, new IEnvironmentVariable[0], workingDir, errConsole,
 							monitor);
 					if (p == null) {
@@ -246,6 +219,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 						getBuildDirectory().toString());
+				// TODO startBuildProcess() calls java.lang.ProcessBuilder. Use org.eclipse.cdt.core.ICommandLauncher
+				// in order to run builds in a container.
 				Process p = startBuildProcess(command, envVars.toArray(new IEnvironmentVariable[0]), workingDir,
 						console, monitor);
 				if (p == null) {
@@ -310,6 +285,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 					getBuildDirectory().toString());
+			// TODO startBuildProcess() calls java.lang.ProcessBuilder. Use org.eclipse.cdt.core.ICommandLauncher
+			// in order to run builds in a container.
 			Process p = startBuildProcess(command, env, workingDir, console, monitor);
 			if (p == null) {
 				console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
@@ -540,5 +517,20 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				haveUpdates = false;
 			}
 		}
+	}
+
+	private static class CMakePropertiesController implements ICMakePropertiesController {
+
+		@Override
+		public ICMakeProperties load() {
+			// TODO Auto-generated method stub
+			return new CMakeProperties();
+		}
+
+		@Override
+		public void save(ICMakeProperties settings) {
+			// TODO Auto-generated method stub
+		}
+
 	}
 }

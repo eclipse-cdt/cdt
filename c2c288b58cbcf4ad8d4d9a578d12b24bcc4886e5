@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "09e1e45d_46e65736",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-14T00:44:24Z",
+      "side": 1,
+      "message": "Looks like a bunch of unrelated changes snuck in when you rebased your change. I have recreated the move.",
+      "revId": "c2c288b58cbcf4ad8d4d9a578d12b24bcc4886e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

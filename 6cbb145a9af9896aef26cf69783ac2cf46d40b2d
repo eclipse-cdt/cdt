@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8344bc2f_be672fe1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/TemplateArgumentDeduction.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 594,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-10-14T05:32:08Z",
+      "side": 1,
+      "message": "For this check, we want to use the types that have the typedefs unwrapped, but not references. (If `parOrig` is a typedef, isReferenceType() will not return true for it even if the underlying type is a reference type.)\n\nSuggestion: introduce a bool `preferForLValueRef` next to `isMoreVCQualified`. This bool can be populated in the existing `if (parNested instanceof ICPPReferenceType \u0026\u0026 argNested instanceof ICPPReferenceType)` block (prior to unwrapping the references).\n\nThen the logic at the end of the function can be:\n\nreturn (isMoreCVQualified || preferForLValueRef) ? 1: 0;",
+      "revId": "6cbb145a9af9896aef26cf69783ac2cf46d40b2d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

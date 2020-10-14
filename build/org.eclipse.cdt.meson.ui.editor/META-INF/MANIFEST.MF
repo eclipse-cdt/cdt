@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.meson.ui.editor;singleton:=true
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.1.100.qualifier
 Bundle-Vendor: %vendorName
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.ui.genericeditor;bundle-version="1.0.0",

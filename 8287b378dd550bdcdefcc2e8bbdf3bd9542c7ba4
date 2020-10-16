@@ -16,6 +16,24 @@
       "revId": "8287b378dd550bdcdefcc2e8bbdf3bd9542c7ba4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7818c6ac_466d4005",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/IndexerStrategyBlock.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-16T12:43:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67f9547c_8708c7aa",
+      "revId": "8287b378dd550bdcdefcc2e8bbdf3bd9542c7ba4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

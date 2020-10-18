@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 QNX Software Systems and others.
+ * Copyright (c) 2005, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
  *     Alex Collins (Broadcom Corp.) - choose build config automatically
  *     James Blackburn (Broadcom Corp.)
  *     Philip Langer (EclipseSource Services GmbH) - bug 506843
+ *     Alexander Fedorov (ArSysOp) - bug 567966
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -870,11 +871,13 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	protected String[] getEnvironment(ILaunchConfiguration config) throws CoreException {
 		try {
 			// Migrate old env settings to new.
-			Map map = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
+			Map<String, String> map = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP,
+					(Map<String, String>) null);
 			ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
 			if (map != null) {
 				wc.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
-				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP,
+						(Map<String, String>) null);
 				config = wc.doSave();
 			}
 			boolean append = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_INHERIT,
@@ -897,20 +900,21 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 */
 	@Deprecated
 	protected String[] getEnvironmentArray(ILaunchConfiguration config) {
-		Map env = null;
+		Map<String, String> env = null;
 		try {
-			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
+			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP,
+					(Map<String, String>) null);
 		} catch (CoreException e) {
 		}
 		if (env == null) {
 			return new String[0];
 		}
 		String[] array = new String[env.size()];
-		Iterator entries = env.entrySet().iterator();
-		Entry entry;
+		Iterator<Entry<String, String>> entries = env.entrySet().iterator();
+		Entry<String, String> entry;
 		for (int i = 0; entries.hasNext() && i < array.length; i++) {
-			entry = (Entry) entries.next();
-			array[i] = ((String) entry.getKey()) + "=" + ((String) entry.getValue()); //$NON-NLS-1$
+			entry = entries.next();
+			array[i] = (entry.getKey()) + "=" + (entry.getValue()); //$NON-NLS-1$
 		}
 		return array;
 	}
@@ -923,18 +927,19 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	@Deprecated
 	protected Properties getEnvironmentProperty(ILaunchConfiguration config) {
 		Properties prop = new Properties();
-		Map env = null;
+		Map<String, String> env = null;
 		try {
-			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
+			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP,
+					(Map<String, String>) null);
 		} catch (CoreException e) {
 		}
 		if (env == null)
 			return prop;
-		Iterator entries = env.entrySet().iterator();
-		Entry entry;
+		Iterator<Entry<String, String>> entries = env.entrySet().iterator();
+		Entry<String, String> entry;
 		while (entries.hasNext()) {
-			entry = (Entry) entries.next();
-			prop.setProperty((String) entry.getKey(), (String) entry.getValue());
+			entry = entries.next();
+			prop.setProperty(entry.getKey(), entry.getValue());
 		}
 		return prop;
 	}
@@ -945,7 +950,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @return default process attribute map for C/C++ processes
 	 */
 	protected Map getDefaultProcessMap() {
-		Map map = new HashMap();
+		Map<String, String> map = new HashMap<>();
 		map.put(IProcess.ATTR_PROCESS_TYPE, ICDTLaunchConfigurationConstants.ID_PROGRAM_PROCESS_TYPE);
 		return map;
 	}

@@ -155,7 +155,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * A list of prequisite projects ordered by their build order.
 	 */
-	private List orderedProjects;
+	private List<IProject> orderedProjects;
 	private String preLaunchBuildConfiguration;
 
 	/**
@@ -481,7 +481,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *             if an error occurs while getting referenced projects from the
 	 *             current project
 	 */
-	private void getReferencedProjectSet(IProject proj, HashSet referencedProjSet) throws CoreException {
+	private void getReferencedProjectSet(IProject proj, HashSet<IProject> referencedProjSet) throws CoreException {
 		IProject[] projects = proj.getReferencedProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject refProject = projects[i];
@@ -585,8 +585,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			monitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_building_projects, totalWork);
 
 			try {
-				for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
-					IProject proj = (IProject) i.next();
+				for (Iterator<IProject> i = orderedProjects.iterator(); i.hasNext();) {
+					IProject proj = i.next();
 					monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_building + proj.getName());
 					proj.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,
 							new LaunchUtils.BuildProgressMonitor(monitor, scale));
@@ -708,8 +708,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 			//check prerequisite projects for compile errors.
 			if (!compileErrorsInProjs) {
-				for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
-					IProject proj = (IProject) i.next();
+				for (Iterator<IProject> i = orderedProjects.iterator(); i.hasNext();) {
+					IProject proj = i.next();
 					monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_searching_for_errors_in + proj.getName());
 					monitor.worked(scale);
 					compileErrorsInProjs = existsErrors(proj);

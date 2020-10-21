@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "723ac8fe_d05e9499",
+        "filename": "releng/scripts/do_rebuild_natives.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-21T19:30:42Z",
+      "side": 1,
+      "message": "We\u0027ll need a Eclipse for this in https://github.com/eclipse-cdt/cdt-infra/blob/dbcacfdc4a8337686a467649d56b581ed436b6ab/docker/cdt-infra-platform-sdk/sdk4.13-ubuntu-18.04/Dockerfile#L8\n\nWill you provide a PR for that? Or can I/should I just update to 2020-09 CPP package which has CDT (and a bunch of other stuff).",
+      "revId": "c6486c458899d12c70f4e4a015a503ca0ad5735c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

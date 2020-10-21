@@ -16,6 +16,24 @@
       "revId": "c6486c458899d12c70f4e4a015a503ca0ad5735c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4efe5c3f_7d2f0064",
+        "filename": "releng/scripts/do_rebuild_natives.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-10-21T19:48:02Z",
+      "side": 1,
+      "message": "I\u0027d be happy if you would tackle the update of the infra.",
+      "parentUuid": "723ac8fe_d05e9499",
+      "revId": "c6486c458899d12c70f4e4a015a503ca0ad5735c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

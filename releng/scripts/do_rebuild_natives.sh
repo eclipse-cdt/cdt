@@ -23,6 +23,14 @@ for p in native/org.eclipse.cdt.native.serial core/org.eclipse.cdt.core.native; 
         exit 1
     fi
 
+    # Need to apply format after header files are generated
+    tmpws=$(mktemp -d)
+    ${ECLIPSE:-~/buildtools/eclipse-cpp-2020-09/eclipse} \
+        -consolelog -nosplash -application org.eclipse.cdt.core.CodeFormatter \
+        -config $p/.settings/org.eclipse.cdt.core.prefs \
+        $p/native_src -data $tmpws
+    rm -rf $tmpws
+
     echo "Rebuilding $p natives to make sure they match source"
     logfile=make-natives-${p//\//-}.log
     if ! make -C $p/native_src rebuild >${logfile} 2>&1; then

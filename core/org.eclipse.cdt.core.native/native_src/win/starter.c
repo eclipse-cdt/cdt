@@ -30,32 +30,30 @@
 #define MAX_CMD_LINE_LENGTH (2049)
 #define PIPE_NAME_LENGTH 100
 
-int copyTo(wchar_t * target, const wchar_t * source, int cpyLength,
-		int availSpace);
+int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace);
 void DisplayErrorMessage();
 
 //BOOL KillProcessEx(DWORD dwProcessId);  // Handle of the process 
 
 ///////////////////////////////////////////////////////////////////////////////
-BOOL WINAPI HandlerRoutine( DWORD dwCtrlType) //  control signal type
+BOOL WINAPI HandlerRoutine(DWORD dwCtrlType) //  control signal type
 {
 	BOOL ret = TRUE;
-	switch(dwCtrlType)
-	{
-		case CTRL_C_EVENT:
+	switch (dwCtrlType) {
+	case CTRL_C_EVENT:
 		break;
-		case CTRL_BREAK_EVENT:
+	case CTRL_BREAK_EVENT:
 		break;
-		case CTRL_CLOSE_EVENT:
+	case CTRL_CLOSE_EVENT:
 		ret = FALSE;
 		break;
-		case CTRL_LOGOFF_EVENT:
+	case CTRL_LOGOFF_EVENT:
 		ret = FALSE;
 		break;
-		case CTRL_SHUTDOWN_EVENT:
+	case CTRL_SHUTDOWN_EVENT:
 		ret = FALSE;
 		break;
-		default:
+	default:
 		break;
 	}
 	return ret;
@@ -63,24 +61,24 @@ BOOL WINAPI HandlerRoutine( DWORD dwCtrlType) //  control signal type
 
 // The default here means we haven't checked yet
 // i.e. cygwin is true but the bin dir hasn't been captured
-wchar_t * cygwinBin = NULL;
+wchar_t *cygwinBin = NULL;
 bool _isCygwin = true;
 
 bool isCygwin(HANDLE process) {
 	// Have we checked before?
 	if (cygwinBin != NULL || !_isCygwin)
 		return _isCygwin;
-	
+
 	// See if this process loaded cygwin, need a different SIGINT for them
 	HMODULE mods[1024];
 	DWORD needed;
 	if (EnumProcessModules(process, mods, sizeof(mods), &needed)) {
 		int i;
 		needed /= sizeof(HMODULE);
-		for (i = 0; i < needed; ++i ) {
+		for (i = 0; i < needed; ++i) {
 			wchar_t modName[MAX_PATH];
 			if (GetModuleFileNameEx(process, mods[i], modName, MAX_PATH)) {
-				wchar_t * p = wcsrchr(modName, L'\\');
+				wchar_t *p = wcsrchr(modName, L'\\');
 				if (p) {
 					*p = 0; // Null terminate there for future reference
 					if (!wcscmp(++p, L"cygwin1.dll")) {
@@ -93,15 +91,15 @@ bool isCygwin(HANDLE process) {
 			}
 		}
 	}
-	
+
 	_isCygwin = false;
 	return _isCygwin;
 }
 
-bool runCygwinCommand(wchar_t * command) {
+bool runCygwinCommand(wchar_t *command) {
 	wchar_t cygcmd[1024];
-	swprintf(cygcmd, sizeof(cygcmd)/sizeof(cygcmd[0]), L"%s\\%s", cygwinBin, command);
-	
+	swprintf(cygcmd, sizeof(cygcmd) / sizeof(cygcmd[0]), L"%s\\%s", cygwinBin, command);
+
 	STARTUPINFO si;
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
@@ -121,18 +119,18 @@ bool runCygwinCommand(wchar_t * command) {
 	return false;
 }
 
-void ensureSize(wchar_t** ptr, int* psize, int requiredLength) {
-	int size= *psize;
+void ensureSize(wchar_t **ptr, int *psize, int requiredLength) {
+	int size = *psize;
 	if (requiredLength > size) {
-		size= 2*size;
+		size = 2 * size;
 		if (size < requiredLength) {
-			size= requiredLength;
+			size = requiredLength;
 		}
-		*ptr= (wchar_t *)realloc(*ptr, size * sizeof(wchar_t));
+		*ptr = (wchar_t*) realloc(*ptr, size * sizeof(wchar_t));
 		if (NULL == *ptr) {
-			*psize= 0;
+			*psize = 0;
 		} else {
-			*psize= size;
+			*psize = size;
 		}
 	}
 }
@@ -140,27 +138,25 @@ void ensureSize(wchar_t** ptr, int* psize, int requiredLength) {
 int main() {
 
 	int argc;
-	wchar_t ** argv = CommandLineToArgvW(GetCommandLine(), &argc);
+	wchar_t **argv = CommandLineToArgvW(GetCommandLine(), &argc);
 
 	// Make sure that we've been passed the right number of arguments
 	if (argc < 8) {
-		_tprintf(_T("Usage: %s (four inheritable event handles) (CommandLineToSpawn)\n"),
-				argv[0]);
-		return(0);
+		_tprintf(_T("Usage: %s (four inheritable event handles) (CommandLineToSpawn)\n"), argv[0]);
+		return (0);
 	}
 
 	// Construct the full command line
-	int nCmdLineLength= MAX_CMD_LINE_LENGTH;
-	wchar_t * szCmdLine= (wchar_t *)malloc(nCmdLineLength * sizeof(wchar_t));
-	szCmdLine[0]= 0;
+	int nCmdLineLength = MAX_CMD_LINE_LENGTH;
+	wchar_t *szCmdLine = (wchar_t*) malloc(nCmdLineLength * sizeof(wchar_t));
+	szCmdLine[0] = 0;
 	int nPos = 0;
 
-	for(int i = 8; i < argc; ++i)
-	{
+	for (int i = 8; i < argc; ++i) {
 		int nCpyLen;
-		int len= wcslen(argv[i]);
-		int requiredSize= nPos+len+2;
-		if (requiredSize > 32*1024) {
+		int len = wcslen(argv[i]);
+		int requiredSize = nPos + len + 2;
+		if (requiredSize > 32 * 1024) {
 #ifdef DEBUG_MONITOR
 			OutputDebugStringW(_T("Command line too long!\n"));
 #endif
@@ -173,8 +169,7 @@ int main() {
 #endif
 			return 0;
 		}
-		if(0 > (nCpyLen = copyTo(szCmdLine + nPos, argv[i], len, nCmdLineLength - nPos)))
-		{
+		if (0 > (nCpyLen = copyTo(szCmdLine + nPos, argv[i], len, nCmdLineLength - nPos))) {
 #ifdef DEBUG_MONITOR
 			OutputDebugStringW(_T("Not enough space to build command line\n"));
 #endif
@@ -186,8 +181,8 @@ int main() {
 	}
 	szCmdLine[nPos] = _T('\0');
 
-	STARTUPINFOW si = {sizeof(si)};
-	PROCESS_INFORMATION pi = {0};
+	STARTUPINFOW si = { sizeof(si) };
+	PROCESS_INFORMATION pi = { 0 };
 	DWORD dwExitCode = 0;
 #ifdef DEBUG_MONITOR
 	int currentPID = GetCurrentProcessId();
@@ -202,7 +197,7 @@ int main() {
 	h[2] = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[5]); // simulated SIGTERM
 	h[3] = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[6]); // simulated SIGKILL
 	h[4] = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[7]); // CTRL-C, in all cases
-	
+
 	SetConsoleCtrlHandler(HandlerRoutine, TRUE);
 
 	int parentPid = wcstol(argv[1], NULL, 10);
@@ -211,9 +206,12 @@ int main() {
 	wchar_t outPipeName[PIPE_NAME_LENGTH];
 	wchar_t errPipeName[PIPE_NAME_LENGTH];
 
-	swprintf(inPipeName,  sizeof(inPipeName)/sizeof(inPipeName[0]),   L"\\\\.\\pipe\\stdin%08i%010i", parentPid, nCounter);
-	swprintf(outPipeName, sizeof(outPipeName)/sizeof(outPipeName[0]), L"\\\\.\\pipe\\stdout%08i%010i", parentPid, nCounter);
-	swprintf(errPipeName, sizeof(errPipeName)/sizeof(errPipeName[0]), L"\\\\.\\pipe\\stderr%08i%010i", parentPid, nCounter);
+	swprintf(inPipeName, sizeof(inPipeName) / sizeof(inPipeName[0]), L"\\\\.\\pipe\\stdin%08i%010i", parentPid,
+			nCounter);
+	swprintf(outPipeName, sizeof(outPipeName) / sizeof(outPipeName[0]), L"\\\\.\\pipe\\stdout%08i%010i", parentPid,
+			nCounter);
+	swprintf(errPipeName, sizeof(errPipeName) / sizeof(errPipeName[0]), L"\\\\.\\pipe\\stderr%08i%010i", parentPid,
+			nCounter);
 #ifdef DEBUG_MONITOR
 	swprintf(buffer, _T("Pipes: %s, %s, %s\n"), inPipeName, outPipeName, errPipeName);
 	OutputDebugStringW(buffer);
@@ -226,10 +224,14 @@ int main() {
 	sa.bInheritHandle = TRUE;
 	sa.lpSecurityDescriptor = NULL;
 
-	if((INVALID_HANDLE_VALUE == (stdHandles[0] = CreateFileW(inPipeName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, &sa))) ||
-			(INVALID_HANDLE_VALUE == (stdHandles[1] = CreateFileW(outPipeName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, &sa))) ||
-			(INVALID_HANDLE_VALUE == (stdHandles[2] = CreateFileW(errPipeName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, &sa))))
-	{
+	if ((INVALID_HANDLE_VALUE
+			== (stdHandles[0] = CreateFileW(inPipeName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, &sa)))
+			|| (INVALID_HANDLE_VALUE
+					== (stdHandles[1] = CreateFileW(outPipeName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
+							0, &sa)))
+			|| (INVALID_HANDLE_VALUE
+					== (stdHandles[2] = CreateFileW(errPipeName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
+							0, &sa)))) {
 #ifdef DEBUG_MONITOR
 		swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Failed to open pipe %i, %i, %i: %i\n"), stdHandles[0], stdHandles[1], stdHandles[2], GetLastError());
 		OutputDebugStringW(buffer);
@@ -243,9 +245,8 @@ int main() {
 	SetHandleInformation(stdHandles[1], HANDLE_FLAG_INHERIT, TRUE);
 	SetHandleInformation(stdHandles[2], HANDLE_FLAG_INHERIT, TRUE);
 
-	if(!SetStdHandle(STD_INPUT_HANDLE, stdHandles[0]) ||
-			!SetStdHandle(STD_OUTPUT_HANDLE, stdHandles[1]) ||
-			!SetStdHandle(STD_ERROR_HANDLE, stdHandles[2])) {
+	if (!SetStdHandle(STD_INPUT_HANDLE, stdHandles[0]) || !SetStdHandle(STD_OUTPUT_HANDLE, stdHandles[1])
+			|| !SetStdHandle(STD_ERROR_HANDLE, stdHandles[2])) {
 #ifdef DEBUG_MONITOR
 		swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Failed to reassign standard streams: %i\n"), GetLastError());
 		OutputDebugStringW(buffer);
@@ -282,18 +283,18 @@ int main() {
 	// Create job object
 	HANDLE hJob = CreateJobObject(NULL, NULL);
 	if (hJob != NULL) {
-	    // Configure job to 
-	    // - terminate all associated processes when the last handle to it is closed
-	    // - allow child processes to break away from the job.
-	    JOBOBJECT_EXTENDED_LIMIT_INFORMATION  jobInfo;
-	    ZeroMemory(&jobInfo, sizeof(jobInfo));
-	    jobInfo.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_BREAKAWAY_OK;
-	    if (!SetInformationJobObject(hJob, JobObjectExtendedLimitInformation, &jobInfo, sizeof(jobInfo))) {
+		// Configure job to
+		// - terminate all associated processes when the last handle to it is closed
+		// - allow child processes to break away from the job.
+		JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobInfo;
+		ZeroMemory(&jobInfo, sizeof(jobInfo));
+		jobInfo.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_BREAKAWAY_OK;
+		if (!SetInformationJobObject(hJob, JobObjectExtendedLimitInformation, &jobInfo, sizeof(jobInfo))) {
 #ifdef DEBUG_MONITOR
 	        OutputDebugStringW(_T("Cannot set job information\n"));
 	        DisplayErrorMessage();
 #endif
-	    }
+		}
 	} else {
 #ifdef DEBUG_MONITOR
 	    OutputDebugStringW(_T("Cannot create job object\n"));
@@ -304,18 +305,16 @@ int main() {
 	// If this process is already part of a job, the flag CREATE_BREAKAWAY_FROM_JOB
 	// makes the child process detach from the job, such that we can assign it
 	// to our own job object.
-	BOOL f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE,
-	        CREATE_BREAKAWAY_FROM_JOB, NULL, NULL, &si, &pi);
+	BOOL f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE, CREATE_BREAKAWAY_FROM_JOB, NULL, NULL, &si, &pi);
 	// If breaking away from job is not permitted, retry without breakaway flag
-    if (!f)
-        f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE,
-            0, NULL, NULL, &si, &pi);
+	if (!f)
+		f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 
 	// We don't need them any more
 	CloseHandle(stdHandles[0]);
 	CloseHandle(stdHandles[1]);
 	CloseHandle(stdHandles[2]);
-	
+
 	if (f) {
 #ifdef DEBUG_MONITOR
 		swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Process %i started\n"), pi.dwProcessId);
@@ -325,8 +324,8 @@ int main() {
 		CloseHandle(pi.hThread);
 		h[1] = pi.hProcess;
 
-		if(NULL != hJob) {
-			if(!AssignProcessToJobObject(hJob, pi.hProcess)) {
+		if (NULL != hJob) {
+			if (!AssignProcessToJobObject(hJob, pi.hProcess)) {
 #ifdef DEBUG_MONITOR
 				swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Cannot assign process %i to a job\n"), pi.dwProcessId);
 				OutputDebugStringW(buffer);
@@ -335,13 +334,11 @@ int main() {
 			}
 		}
 
-		while(!exitProc)
-		{
+		while (!exitProc) {
 			// Wait for the spawned-process to die or for the event
 			// indicating that the processes should be forcibly killed.
 			DWORD event = WaitForMultipleObjects(5, h, FALSE, INFINITE);
-			switch (event)
-			{
+			switch (event) {
 			case WAIT_OBJECT_0 + 0: // SIGINT
 			case WAIT_OBJECT_0 + 4: // CTRL-C
 #ifdef DEBUG_MONITOR
@@ -351,7 +348,7 @@ int main() {
 				if ((event == (WAIT_OBJECT_0 + 0)) && isCygwin(h[1])) {
 					// Need to issue a kill command
 					wchar_t kill[1024];
-					swprintf(kill, sizeof(kill)/sizeof(kill[0]), L"kill -SIGINT %d", pi.dwProcessId);
+					swprintf(kill, sizeof(kill) / sizeof(kill[0]), L"kill -SIGINT %d", pi.dwProcessId);
 					if (!runCygwinCommand(kill)) {
 						// fall back to console event
 						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
@@ -374,14 +371,14 @@ int main() {
 				exitProc = TRUE;
 				break;
 
-			// Terminate and Kill behavior differ only for cygwin processes, where
-			// we use the cygwin 'kill' command. We send a SIGKILL in one case,
-			// SIGTERM in the other. For non-cygwin processes, both requests
-			// are treated exactly the same
+				// Terminate and Kill behavior differ only for cygwin processes, where
+				// we use the cygwin 'kill' command. We send a SIGKILL in one case,
+				// SIGTERM in the other. For non-cygwin processes, both requests
+				// are treated exactly the same
 			case WAIT_OBJECT_0 + 2:	// TERM
 			case WAIT_OBJECT_0 + 3:	// KILL
 			{
-				const wchar_t* signal = (event == WAIT_OBJECT_0 + 2) ? L"TERM" : L"KILL";
+				const wchar_t *signal = (event == WAIT_OBJECT_0 + 2) ? L"TERM" : L"KILL";
 #ifdef DEBUG_MONITOR
 				swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("starter received %s event (PID %i)\n"), signal, currentPID);
 				OutputDebugStringW(buffer);
@@ -389,19 +386,19 @@ int main() {
 				if (isCygwin(h[1])) {
 					// Need to issue a kill command
 					wchar_t kill[1024];
-					swprintf(kill, sizeof(kill)/sizeof(kill[0]), L"kill -%s %d", signal, pi.dwProcessId);
+					swprintf(kill, sizeof(kill) / sizeof(kill[0]), L"kill -%s %d", signal, pi.dwProcessId);
 					if (!runCygwinCommand(kill)) {
 						// fall back to console event
 						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
 					}
-				} else {				
+				} else {
 					GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
 				}
-				
+
 				SetEvent(waitEvent);
-				
-				if(NULL != hJob) {
-					if(!TerminateJobObject(hJob, (DWORD)-1)) {
+
+				if (NULL != hJob) {
+					if (!TerminateJobObject(hJob, (DWORD) - 1)) {
 #ifdef DEBUG_MONITOR
 						OutputDebugStringW(_T("Cannot terminate job\n"));
 						DisplayErrorMessage();
@@ -432,8 +429,7 @@ int main() {
 #endif
 	}
 
-	if (NULL != szCmdLine)
-	{
+	if (NULL != szCmdLine) {
 		free(szCmdLine);
 	}
 
@@ -444,7 +440,7 @@ int main() {
 	CloseHandle(h[3]);
 	CloseHandle(h[4]);
 
-	return(dwExitCode);
+	return (dwExitCode);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -456,8 +452,7 @@ int main() {
 //			availSpace - size of the target buffer
 // Return :number of bytes used in target, or -1 in case of error
 /////////////////////////////////////////////////////////////////////////////////////
-int copyTo(wchar_t * target, const wchar_t * source, int cpyLength,
-		int availSpace) {
+int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace) {
 	BOOL bSlash = FALSE;
 	int i = 0, j = 0;
 	int totCpyLength = cpyLength;
@@ -473,7 +468,7 @@ int copyTo(wchar_t * target, const wchar_t * source, int cpyLength,
 	if ((_T('\"') == *source) && (_T('\"') == *(source + cpyLength - 1))) {
 		// Already done
 		nQuotationMode = QUOTATION_DONE;
-	} else if (wcschr(source, _T(' '))== NULL) {
+	} else if (wcschr(source, _T(' ')) == NULL) {
 		// No reason to quotate term becase it doesn't have embedded spaces
 		nQuotationMode = QUOTATION_NONE;
 	} else {
@@ -488,7 +483,7 @@ int copyTo(wchar_t * target, const wchar_t * source, int cpyLength,
 			bSlash = TRUE;
 		else
 		// Don't escape embracing quotation marks
-		if ((source[i] == _T('\"')) && !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))) )) {
+		if ((source[i] == _T('\"')) && !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))))) {
 			if (!bSlash) {
 				if (j == availSpace)
 					return -1;
@@ -514,11 +509,10 @@ int copyTo(wchar_t * target, const wchar_t * source, int cpyLength,
 }
 
 void DisplayErrorMessage() {
-	wchar_t * lpMsgBuf;
-	FormatMessageW(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER |FORMAT_MESSAGE_FROM_SYSTEM |FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-			(wchar_t *) &lpMsgBuf, 0, NULL);
+	wchar_t *lpMsgBuf;
+	FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
+			GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+			(wchar_t*) &lpMsgBuf, 0, NULL);
 	OutputDebugStringW(lpMsgBuf);
 	// Free the buffer.
 	LocalFree(lpMsgBuf);

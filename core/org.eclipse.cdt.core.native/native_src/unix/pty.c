@@ -22,11 +22,11 @@
  * Signature: ()I
  */
 JNIEXPORT jstring JNICALL
-Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj, jboolean console) {
+Java_org_eclipse_cdt_utils_pty_PTY_openMaster(JNIEnv *env, jobject jobj, jboolean console) {
 	jfieldID fid; /* Store the field ID */
 	jstring jstr = NULL;
 	int master = -1;
-	char line[1024];	/* FIXME: Should be enough */
+	char line[1024]; /* FIXME: Should be enough */
 	jclass cls;
 
 	line[0] = '\0';
@@ -46,7 +46,7 @@ Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj, jboole
 		if (fid == NULL) {
 			return NULL;
 		}
-		(*env)->SetIntField(env, jobj, fid, (jint)master);
+		(*env)->SetIntField(env, jobj, fid, (jint) master);
 
 		/* Create a new String for the slave.  */
 		jstr = (*env)->NewStringUTF(env, line);
@@ -54,9 +54,8 @@ Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj, jboole
 	return jstr;
 }
 
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size
-  (JNIEnv *env, jobject jobj, jint fdm, jint width, jint height)
-{
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size(JNIEnv *env, jobject jobj, jint fdm,
+		jint width, jint height) {
 #ifdef TIOCSWINSZ
 	struct winsize win;
 

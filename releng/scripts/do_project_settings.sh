@@ -88,6 +88,22 @@ git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
     else
         rm -f $d/.settings/org.eclipse.pde*.prefs
     fi
+
+    # CDT (native code)
+    if [[ $natures == *"org.eclipse.cdt.core.cnature"* ]]; then
+        cp $COREPROJECT/.settings/org.eclipse.cdt.core.prefs $d/.settings
+        cp $COREPROJECT/.settings/org.eclipse.cdt.ui.prefs $d/.settings
+        if echo $i | grep -E '\.tests?[/\.]' > /dev/null; then
+            (
+                echo "indexer/indexerId=org.eclipse.cdt.core.nullindexer"
+                echo "indexerId=org.eclipse.cdt.core.nullindexer"
+                echo "instance/org.eclipse.core.net/org.eclipse.core.net.hasMigrated=true"
+                cat $COREPROJECT/.settings/org.eclipse.cdt.core.prefs
+            ) | sort > $d/.settings/org.eclipse.cdt.core.prefs
+        fi
+    else
+        rm -f $d/.settings/org.eclipse.cdt.*.prefs
+    fi
 done
 
 ##

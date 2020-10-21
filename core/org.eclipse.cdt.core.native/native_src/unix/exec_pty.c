@@ -26,12 +26,10 @@
 #include <termios.h>
 
 /* from pfind.c */
-extern char *pfind(const char *name, char * const envp[]);
+extern char* pfind(const char *name, char *const envp[]);
 
-pid_t
-exec_pty(const char *path, char *const argv[], char *const envp[],
-      const char *dirpath, int channels[3], const char *pts_name, int fdm, int console)
-{
+pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const char *dirpath, int channels[3],
+		const char *pts_name, int fdm, int console) {
 	int pipe2[2];
 	pid_t childpid;
 	char *full_path;
@@ -39,7 +37,7 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 	/*
 	 * We use pfind() to check that the program exists and is an executable.
 	 * If not pass the error up.  Also execve() wants a full path.
-	 */ 
+	 */
 	full_path = pfind(path, envp);
 	if (full_path == NULL) {
 		fprintf(stderr, "Unable to find full path for \"%s\"\n", (path) ? path : "");
@@ -48,9 +46,9 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 
 	/*
 	 *  Make sure we can create our pipes before forking.
-	 */ 
+	 */
 	if (channels != NULL && console) {
-		if (pipe(pipe2) < 0) { 
+		if (pipe(pipe2) < 0) {
 			fprintf(stderr, "%s(%d): returning due to error: %s\n", __FUNCTION__, __LINE__, strerror(errno));
 			free(full_path);
 			return -1;
@@ -60,7 +58,8 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 	childpid = fork();
 
 	if (childpid < 0) {
-		fprintf(stderr, "%s(%d): returning due to error: %s\n", __FUNCTION__, __LINE__, strerror(errno));
+		fprintf(stderr, "%s(%d): returning due to error: %s\n", __FUNCTION__,
+		__LINE__, strerror(errno));
 		free(full_path);
 		return -1;
 	} else if (childpid == 0) { /* child */
@@ -98,14 +97,14 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 			}
 
 			/* redirections */
-			dup2(fds, STDIN_FILENO);   /* dup stdin */
-			dup2(fds, STDOUT_FILENO);  /* dup stdout */
+			dup2(fds, STDIN_FILENO); /* dup stdin */
+			dup2(fds, STDOUT_FILENO); /* dup stdout */
 			if (console) {
-				dup2(pipe2[1], STDERR_FILENO);  /* dup stderr */
+				dup2(pipe2[1], STDERR_FILENO); /* dup stderr */
 			} else {
-				dup2(fds, STDERR_FILENO);  /* dup stderr */
+				dup2(fds, STDERR_FILENO); /* dup stderr */
 			}
-			close(fds);  /* done with fds. */
+			close(fds); /* done with fds. */
 		}
 
 		/* Close all the fd's in the child */
@@ -147,7 +146,7 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 	}
 
 	free(full_path);
-	return -1;                  /*NOT REACHED */
+	return -1; /*NOT REACHED */
 }
 #ifdef __STAND_ALONE__
 int main(int argc, char **argv, char **envp) {

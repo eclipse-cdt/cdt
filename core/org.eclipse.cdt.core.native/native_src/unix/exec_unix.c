@@ -23,12 +23,9 @@
 #include <stdlib.h>
 
 /* from pfind.c */
-extern char *pfind(const char *name, char * const envp[]);
+extern char* pfind(const char *name, char *const envp[]);
 
-pid_t
-exec0(const char *path, char *const argv[], char *const envp[],
-      const char *dirpath, int channels[3])
-{
+pid_t exec0(const char *path, char *const argv[], char *const envp[], const char *dirpath, int channels[3]) {
 	int pipe0[2], pipe1[2], pipe2[2];
 	pid_t childpid;
 	char *full_path;
@@ -36,7 +33,7 @@ exec0(const char *path, char *const argv[], char *const envp[],
 	/*
 	 * We use pfind() to check that the program exists and is an executable.
 	 * If not pass the error up.  Also execve() wants a full path.
-	 */ 
+	 */
 	full_path = pfind(path, envp);
 	if (full_path == NULL) {
 		fprintf(stderr, "Unable to find full path for \"%s\"\n", (path) ? path : "");
@@ -45,11 +42,11 @@ exec0(const char *path, char *const argv[], char *const envp[],
 
 	/*
 	 *  Make sure we can create our pipes before forking.
-	 */ 
+	 */
 	if (channels != NULL) {
 		if (pipe(pipe0) < 0 || pipe(pipe1) < 0 || pipe(pipe2) < 0) {
-			fprintf(stderr, "%s(%d): returning due to error.\n",
-				__FUNCTION__, __LINE__);
+			fprintf(stderr, "%s(%d): returning due to error.\n", __FUNCTION__,
+			__LINE__);
 			free(full_path);
 			return -1;
 		}
@@ -58,8 +55,8 @@ exec0(const char *path, char *const argv[], char *const envp[],
 	childpid = fork();
 
 	if (childpid < 0) {
-		fprintf(stderr, "%s(%d): returning due to error: %s\n",
-			__FUNCTION__, __LINE__, strerror(errno));
+		fprintf(stderr, "%s(%d): returning due to error: %s\n", __FUNCTION__,
+		__LINE__, strerror(errno));
 		free(full_path);
 		return -1;
 	} else if (childpid == 0) { /* child */
@@ -81,9 +78,9 @@ exec0(const char *path, char *const argv[], char *const envp[],
 				perror("close(pipe2[0]))");
 
 			/* redirections */
-			dup2(pipe0[0], STDIN_FILENO);   /* dup stdin */
-			dup2(pipe1[1], STDOUT_FILENO);  /* dup stdout */
-			dup2(pipe2[1], STDERR_FILENO);  /* dup stderr */
+			dup2(pipe0[0], STDIN_FILENO); /* dup stdin */
+			dup2(pipe1[1], STDOUT_FILENO); /* dup stdout */
+			dup2(pipe2[1], STDERR_FILENO); /* dup stderr */
 		}
 
 		/* Close all the fd's in the child */
@@ -113,13 +110,13 @@ exec0(const char *path, char *const argv[], char *const envp[],
 			/* close the read end of pipe1 */
 			if (close(pipe0[0]) == -1)
 				perror("close(pipe0[0])");
- 
+
 			/* close the write end of pipe2 */
-			if (close(pipe1[1]) == -1) 
+			if (close(pipe1[1]) == -1)
 				perror("close(pipe1[1])");
 
 			/* close the write end of pipe2 */
-			if (close(pipe2[1]) == -1) 
+			if (close(pipe2[1]) == -1)
 				perror("close(pipe2[1])");
 
 			channels[0] = pipe0[1]; /* Output Stream. */
@@ -132,18 +129,16 @@ exec0(const char *path, char *const argv[], char *const envp[],
 	}
 
 	free(full_path);
-	return -1;                  /*NOT REACHED */
+	return -1; /*NOT REACHED */
 }
 
-
-int wait0(pid_t pid)
-{
+int wait0(pid_t pid) {
 	int status;
 	int val = -1;
 
 	if (pid < 0)
 		return -1;
-	
+
 	for (;;) {
 		if (waitpid(pid, &status, 0) < 0) {
 			if (errno == EINTR) {

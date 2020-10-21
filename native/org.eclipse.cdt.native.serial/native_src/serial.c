@@ -63,8 +63,7 @@ static void closeAndthrowIOException(HANDLE handle, JNIEnv *env, const char *msg
 	(*env)->ThrowNew(env, cls, buff);
 }
 
-static void throwIOException(JNIEnv *env, const char *msg)
-{
+static void throwIOException(JNIEnv *env, const char *msg) {
 	char buff[256];
 #ifndef __MINGW32__
 	sprintf(buff, "%s: %s", msg, strerror(errno));
@@ -75,10 +74,10 @@ static void throwIOException(JNIEnv *env, const char *msg)
 	(*env)->ThrowNew(env, cls, buff);
 }
 
-JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName, jint baudRate, jint byteSize, jint parity, jint stopBits)
-{
+JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName, jint baudRate, jint byteSize,
+		jint parity, jint stopBits) {
 #ifndef __MINGW32__
-	const char * cportName = (*env)->GetStringUTFChars(env, portName, NULL);
+	const char *cportName = (*env)->GetStringUTFChars(env, portName, NULL);
 	int fd = open(cportName, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (fd < 0) {
 		char msg[256];
@@ -255,12 +254,12 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 
 	// ignore parity
 	options.c_iflag |= IGNPAR;
-	
+
 	// turn off those bits in the input flag that fiddle with CR and NL
 	options.c_iflag &= ~(ICRNL | INLCR | IGNCR);
 
-	options.c_cc[VMIN]     = 0;   // min chars to read
-	options.c_cc[VTIME]    = 2;   // 10ths second timeout
+	options.c_cc[VMIN] = 0;   // min chars to read
+	options.c_cc[VTIME] = 2;   // 10ths second timeout
 
 	tcflush(fd, TCIFLUSH);
 	tcsetattr(fd, TCSANOW, &options);
@@ -342,7 +341,8 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 #endif // __MINGW32__
 }
 
-JNIEXPORT void JNICALL FUNC(close0)(JNIEnv *env, jobject jobj, jlong handle)
+JNIEXPORT void JNICALL FUNC(close0)
+(JNIEnv *env, jobject jobj, jlong handle)
 {
 #ifndef __MINGW32__
 	close(handle);
@@ -355,11 +355,10 @@ JNIEXPORT void JNICALL FUNC(close0)(JNIEnv *env, jobject jobj, jlong handle)
 #endif
 }
 
-JNIEXPORT jint JNICALL FUNC(available0)(JNIEnv * env, jobject jobj, jlong jhandle)
-{
+JNIEXPORT jint JNICALL FUNC(available0)(JNIEnv *env, jobject jobj, jlong jhandle) {
 #ifndef __MINGW32__
 	int result = 0;
-	if (ioctl(jhandle, FIONREAD, &result ) < 0) {
+	if (ioctl(jhandle, FIONREAD, &result) < 0) {
 		throwIOException(env, "Error calling ioctl");
 		return 0;
 	}
@@ -381,8 +380,7 @@ JNIEXPORT jint JNICALL FUNC(available0)(JNIEnv * env, jobject jobj, jlong jhandl
 #endif
 }
 
-JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong jhandle, jbyteArray bytes, jint offset, jint size)
-{
+JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv *env, jobject jobj, jlong jhandle, jbyteArray bytes, jint offset, jint size) {
 #ifndef __MINGW32__
 	jbyte buff[256];
 	int n = size < sizeof(buff) ? size : sizeof(buff);
@@ -436,7 +434,8 @@ JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong jhandle, jb
 #endif
 }
 
-JNIEXPORT void JNICALL FUNC(write0)(JNIEnv *env, jobject jobj, jlong jhandle, jint b)
+JNIEXPORT void JNICALL FUNC(write0)
+(JNIEnv *env, jobject jobj, jlong jhandle, jint b)
 {
 #ifndef __MINGW32__
 	char buff = b;

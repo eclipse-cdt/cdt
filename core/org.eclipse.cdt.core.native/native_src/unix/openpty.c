@@ -35,15 +35,13 @@
  * Alain Magloire.
  */
 
-int ptym_open (char *pts_name);
-int ptys_open (int fdm, const char * pts_name);
+int ptym_open(char *pts_name);
+int ptys_open(int fdm, const char *pts_name);
 void set_noecho(int fd);
 
-int
-openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct winsize *winp)
-{
+int openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct winsize *winp) {
 	char line[20];
-	line[0]=0;
+	line[0] = 0;
 	*amaster = ptym_open(line);
 	if (*amaster < 0)
 		return -1;
@@ -67,12 +65,10 @@ openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct win
 	return 0;
 }
 
-void
-set_noecho(int fd)
-{
+void set_noecho(int fd) {
 	struct termios stermios;
 	if (tcgetattr(fd, &stermios) < 0) {
-		return ;
+		return;
 	}
 
 	/* turn off echo */
@@ -85,9 +81,7 @@ set_noecho(int fd)
 	tcsetattr(fd, TCSANOW, &stermios);
 }
 
-int
-ptym_open(char * pts_name)
-{
+int ptym_open(char *pts_name) {
 	int fdm;
 	char *ptr;
 
@@ -109,16 +103,14 @@ ptym_open(char * pts_name)
 	}
 	ptr = ptsname(fdm);
 	if (ptr == NULL) { /* get slave's name */
-		close (fdm);
+		close(fdm);
 		return -4;
 	}
 	strcpy(pts_name, ptr); /* return name of slave */
-	return fdm;            /* return fd of master */
+	return fdm; /* return fd of master */
 }
 
-int
-ptys_open(int fdm, const char * pts_name)
-{
+int ptys_open(int fdm, const char *pts_name) {
 	int fds;
 	/* following should allocate controlling terminal */
 	fds = open(pts_name, O_RDWR);

@@ -1,7 +1,4 @@
 eclipse.preferences.version=1
-indexer/indexerId=org.eclipse.cdt.core.nullindexer
-indexerId=org.eclipse.cdt.core.nullindexer
-instance/org.eclipse.core.net/org.eclipse.core.net.hasMigrated=true
 org.eclipse.cdt.core.formatter.alignment_for_arguments_in_method_invocation=16
 org.eclipse.cdt.core.formatter.alignment_for_assignment=16
 org.eclipse.cdt.core.formatter.alignment_for_base_clause_in_type_declaration=80

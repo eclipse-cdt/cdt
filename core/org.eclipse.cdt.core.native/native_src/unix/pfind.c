@@ -32,28 +32,26 @@
 #define PATH_DEF "PATH="
 const int path_def_len = 5; /* strlen(PATH_DEF); */
 
-char * path_val(char * const envp[])
-{
+char* path_val(char *const envp[]) {
 	int i;
 	if (envp == NULL || envp[0] == NULL)
-		return getenv("PATH" );
-	
-	for(i = 0; envp[i] != NULL; i++){
-		char* p = envp[i];
-		if(!strncmp(PATH_DEF, p, path_def_len)){
+		return getenv("PATH");
+
+	for (i = 0; envp[i] != NULL; i++) {
+		char *p = envp[i];
+		if (!strncmp(PATH_DEF, p, path_def_len)) {
 			return p + path_def_len;
 		}
 	}
-	
+
 	return NULL;
 }
 
-char * pfind(const char *name, char * const envp[])
-{
+char* pfind(const char *name, char *const envp[]) {
 	char *tok;
 	char *sp;
 	char *path;
-	char fullpath[PATH_MAX+1];
+	char fullpath[PATH_MAX + 1];
 	struct stat sb;
 
 	/* Sanity check.  */
@@ -71,7 +69,7 @@ char * pfind(const char *name, char * const envp[])
 	}
 
 	/* Search in the PATH environment.  */
-	path = path_val( envp );
+	path = path_val(envp);
 
 	if (path == NULL || strlen(path) <= 0) {
 		fprintf(stderr, "Unable to get $PATH.\n");
@@ -92,7 +90,7 @@ char * pfind(const char *name, char * const envp[])
 			}
 		}
 
-		tok = strtok_r( NULL, ":", &sp );
+		tok = strtok_r(NULL, ":", &sp);
 	}
 
 	free(path);

@@ -23,38 +23,31 @@
 
 CRITICAL_SECTION cs;
 
-
-wchar_t path[MAX_PATH + 1] = {_T('\0') };  // Directory where spawner.dll is located
+wchar_t path[MAX_PATH + 1] = { _T('\0') };  // Directory where spawner.dll is located
 
 #if __cplusplus
 extern "C"
 #endif
-BOOL APIENTRY DllMain( HINSTANCE hModule, 
-                       DWORD  ul_reason_for_call, 
-                       LPVOID lpReserved
-					 )
-{
-    switch (ul_reason_for_call)
-	{
-		case DLL_PROCESS_ATTACH:
-			{
-			wchar_t * p;
-			InitializeCriticalSection(&cs);
-			GetModuleFileNameW(hModule, path, MAX_PATH);
-			p = wcsrchr(path, _T('\\'));
-			if(NULL != p)
-				*(p + 1) = _T('\0');
-			else
-				wcscat(path, L"\\"); 
-			}
-			break;
-		case DLL_THREAD_ATTACH:
-		case DLL_THREAD_DETACH:
-			break;
-		case DLL_PROCESS_DETACH:
-			DeleteCriticalSection(&cs);
-			break;
-    }
-    return TRUE;
+BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
+	switch (ul_reason_for_call) {
+	case DLL_PROCESS_ATTACH: {
+		wchar_t *p;
+		InitializeCriticalSection(&cs);
+		GetModuleFileNameW(hModule, path, MAX_PATH);
+		p = wcsrchr(path, _T('\\'));
+		if (NULL != p)
+			*(p + 1) = _T('\0');
+		else
+			wcscat(path, L"\\");
+	}
+		break;
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+		break;
+	case DLL_PROCESS_DETACH:
+		DeleteCriticalSection(&cs);
+		break;
+	}
+	return TRUE;
 }
 

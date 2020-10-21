@@ -88,6 +88,14 @@ git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
     else
         rm -f $d/.settings/org.eclipse.pde*.prefs
     fi
+
+    # CDT (native code)
+    if [[ $natures == *"org.eclipse.cdt.core.cnature"* ]]; then
+        cp $COREPROJECT/.settings/org.eclipse.cdt.core.pref $d/.settings
+        cp $COREPROJECT/.settings/org.eclipse.cdt.ui.prefs $d/.settings
+    else
+        rm -f $d/.settings/org.eclipse.cdt.*.prefs
+    fi
 done
 
 ##

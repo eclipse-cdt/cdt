@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4d5c5d4a_656ed712",
+        "filename": "core/org.eclipse.cdt.core/.project",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-10-21T18:52:35Z",
+      "side": 1,
+      "message": "I\u0027ve added the o.e.c.core.cnature here so that the formatting rules can be edited in an easy way.\nThere is no real need for the nature on this project, but as it\u0027s the base for the other settings, I think it makes sense to use the same project for the C/C++ formatting rules too.",
+      "range": {
+        "startLine": 38,
+        "startChar": 2,
+        "endLine": 38,
+        "endChar": 47
+      },
+      "revId": "684aa9c5fd00bc765cfb018ae3196f9aea0a6b8b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65b4202f_764ba34e",
+        "filename": "releng/scripts/do_rebuild_natives.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-10-21T18:52:35Z",
+      "side": 1,
+      "message": "I\u0027m not super happy about this block, but I\u0027ve not found any alternative that is workable.\nIf the code is not formatted at this point, then the header files might/will have a different style than the rest of the code.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 17
+      },
+      "revId": "684aa9c5fd00bc765cfb018ae3196f9aea0a6b8b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

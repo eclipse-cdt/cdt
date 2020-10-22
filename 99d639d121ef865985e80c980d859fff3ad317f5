@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e2137f5_65c1c01c",
+        "filename": "native/org.eclipse.cdt.native.serial/native_src/serial.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-22T02:38:53Z",
+      "side": 1,
+      "message": "The CDT formatter added this extra indentation. Perhaps a bug in the formatter based on the signature of the method being in ifdefs?",
+      "revId": "99d639d121ef865985e80c980d859fff3ad317f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -34,6 +34,24 @@
       "revId": "c6486c458899d12c70f4e4a015a503ca0ad5735c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e625180c_645c6fd9",
+        "filename": "releng/scripts/do_rebuild_natives.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-22T02:38:53Z",
+      "side": 1,
+      "message": "I added cpp-2020-09. But that means we have multiple eclipses in buildtools for different purposes. Perhaps one day we could install Eclipse Runtime, add just JDT and CDT core at the command line, but for now that effort was not worth it to me.",
+      "parentUuid": "4efe5c3f_7d2f0064",
+      "revId": "c6486c458899d12c70f4e4a015a503ca0ad5735c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

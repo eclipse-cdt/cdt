@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -147,13 +148,15 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	protected static abstract class AbstractOptionParser {
 		private final int kind;
 		private final Pattern pattern;
-		private final String nameExpression;
-		private final String valueExpression;
 		private final int extraFlag;
 
 		private String parsedName;
 		private String parsedValue;
 		private final Pattern removeExtraFileNamePattern;
+
+		private static final Pattern numGroupPattern = Pattern.compile("\\$(\\d+)"); //$NON-NLS-1$
+		private final Function<Matcher, String> parseName;
+		private final Function<Matcher, String> parseValue;
 
 		/**
 		 * Constructor.
@@ -169,12 +172,28 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		public AbstractOptionParser(int kind, String pattern, String nameExpression, String valueExpression,
 				int extraFlag) {
 			this.kind = kind;
-			this.nameExpression = nameExpression;
-			this.valueExpression = valueExpression;
 			this.extraFlag = extraFlag;
 
 			this.pattern = Pattern.compile(pattern);
 			this.removeExtraFileNamePattern = Pattern.compile("(" + pattern + ").*"); //$NON-NLS-1$ //$NON-NLS-2$
+
+			parseName = getParseFunction(nameExpression);
+			parseValue = getParseFunction(valueExpression);
+		}
+
+		// Return a function that will return a value represented by the capturing group expression.
+		private static Function<Matcher, String> getParseFunction(String replacementExpression) {
+			if (replacementExpression == null)
+				return (matcher) -> null;
+
+			// If the expression is just a single numbered group reference (the common case), we can predetermine
+			// which group we will need to retrieve on the matcher when we will parse the option string.
+			Matcher numGroupMatcher = numGroupPattern.matcher(replacementExpression);
+			if (numGroupMatcher.matches())
+				return (matcher) -> matcher.group(Integer.parseInt(numGroupMatcher.group(1)));
+
+			// The expression is not a simple numbered group, fall-back to normal replacement (slow).
+			return (matcher) -> matcher.replaceAll(replacementExpression);
 		}
 
 		/**
@@ -208,15 +227,6 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		}
 
 		/**
-		 * Return value represented by the capturing group expression.
-		 */
-		private String parseStr(Matcher matcher, String str) {
-			if (str != null)
-				return matcher.replaceAll(str);
-			return null;
-		}
-
-		/**
 		 * Test for a match and parse a portion of input string representing a single option
 		 * to retrieve name and value.
 		 *
@@ -236,8 +246,8 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			Matcher matcher = pattern.matcher(option);
 			boolean isMatch = matcher.matches();
 			if (isMatch) {
-				parsedName = parseStr(matcher, nameExpression);
-				parsedValue = parseStr(matcher, valueExpression);
+				parsedName = parseName.apply(matcher);
+				parsedValue = parseValue.apply(matcher);
 			}
 			return isMatch;
 		}

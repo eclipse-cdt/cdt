@@ -61,21 +61,30 @@ echo "Running 'mvn verify -P baseline-compare-and-replace' to make sure all vers
 echo "have been appropriately incremented. The check output is very verbose, so it is"
 echo "redirected to ${logfile} which is archived as part of the build artifacts."
 if ${MVN:-mvn} \
-        clean verify -B -V \
+        clean verify -B -V --fail-at-end \
         -DskipDoc=true \
         -DskipTests=true \
         -P baseline-compare-and-replace >${logfile} 2>&1; then
     echo "Maven check all versions have been bumped appropriately appears to have completed successfully"
 else
-    if grep "Only qualifier changed" ${logfile} > /dev/null; then
-        bundle=$(grep "Only qualifier changed" ${logfile} | sed -e 's/^.*Only qualifier changed for .//' -e 's@/.*@@')
-        echo "Bundle '${bundle}' is missing a service segment version bump"
+    bundles_only_qualifier_changed=$(grep "Only qualifier changed" ${logfile} | sed -e 's/^.*Only qualifier changed for .//' -e 's@/.*@@')
+    if [ -n "$bundles_only_qualifier_changed" ]; then
+        echo "The following bundles are missing a service segment version bump:"
+        for bundle in $bundles_only_qualifier_changed; do
+            echo "  - $bundle"
+        done
         echo "Please bump service segment by 100 if on master branch"
         echo "The log of this build is part of the artifacts"
         echo "See: https://wiki.eclipse.org/Version_Numbering#When_to_change_the_service_segment"
-    elif grep "baseline and build artifacts have same version but different contents" ${logfile} > /dev/null; then
-        bundle=$(grep "baseline and build artifacts have same version but different contents" ${logfile} | sed -e 's/^.* on project //' -e 's@: baseline@@')
-        echo "Bundle '${bundle}' has same version as baseline, but different contents"
+        echo
+    fi
+
+    bundles_same_version_different_content=$(grep "baseline and build artifacts have same version but different contents" ${logfile} | sed -e 's/^.* on project //' -e 's@: baseline.*@@')
+    if [ -n "$bundles_same_version_different_content" ]; then
+        echo "The following bundles have same version as baseline, but different contents:"
+        for bundle in $bundles_same_version_different_content; do
+            echo "  - $bundle"
+        done
         echo "This can happen for a variety of reasons:"
         echo "  - The comparison filters in the root pom.xml are not working"
         echo "  - Different versions of Java are being used to compile compared to the baseline"
@@ -83,7 +92,10 @@ else
         echo "The log of this build is part of the artifacts"
         echo "Please bump service segment by 100 if on master branch"
         echo "See: https://wiki.eclipse.org/Version_Numbering#When_to_change_the_service_segment"
-    else
+        echo
+    fi
+
+    if [ -z "$bundles_only_qualifier_changed" ] && [ -z "$bundles_same_version_different_content" ]; then
         echo "Maven 'check all versions have been bumped appropriately' failed! Please see the"
         echo "log of the failed maven run which is available as part of the artifacts in a"
         echo "file called baseline-compare-and-replace.log"

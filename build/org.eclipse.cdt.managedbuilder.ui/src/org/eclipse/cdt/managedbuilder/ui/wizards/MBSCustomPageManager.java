@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 Texas Instruments Incorporated and others.
+ * Copyright (c) 2005, 2020 Texas Instruments Incorporated and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     Texas Instruments - initial API and implementation
  *     Intel Corporation - adaptation to new project model
  *     IBM Corporation
+ *     ArSysOp - rework to typed collections to fix type safety warnings
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
@@ -105,21 +106,21 @@ public final class MBSCustomPageManager {
 	/**
 	 * Maps String IDs to IWizardPages
 	 */
-	private static Map idToPageDataMap = null;
+	private static Map<String, MBSCustomPageData> idToPageDataMap = null;
 
 	/**
 	 *   The set of pages that this manager knows about.
 	 */
-	private static Set pageSet = null;
+	private static Set<MBSCustomPageData> pageSet = null;
 
 	/**
 	 * Maps page IDs to the properties that page has set.
 	 */
-	private static java.util.Map pageIDtoPagePropertiesMap = null;
+	private static Map<String, Map<String, Object>> pageIDtoPagePropertiesMap = null;
 
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.managedbuilder.ui.newWizardPages"; //$NON-NLS-1$
 
-	private static List hiddenList;
+	private static List<String> hiddenList;
 
 	/**
 	 *
@@ -293,7 +294,7 @@ public final class MBSCustomPageManager {
 	 * @since 3.0
 	 */
 	public static MBSCustomPageData getPageData(String pageID) {
-		return (MBSCustomPageData) idToPageDataMap.get(pageID);
+		return idToPageDataMap.get(pageID);
 	}
 
 	/**
@@ -311,10 +312,10 @@ public final class MBSCustomPageManager {
 			return false;
 
 		//	first, find out what project type, toolchain, and nature have been set
-		Map pagePropertiesMap = (Map) pageIDtoPagePropertiesMap.get(PAGE_ID);
+		Map<String, Object> pagePropertiesMap = pageIDtoPagePropertiesMap.get(PAGE_ID);
 
 		Object projectType = pagePropertiesMap.get(PROJECT_TYPE);
-		List toolchainList = (List) pagePropertiesMap.get(TOOLCHAIN);
+		List<IToolChain> toolchainList = (List<IToolChain>) pagePropertiesMap.get(TOOLCHAIN);
 		Object nature = pagePropertiesMap.get(NATURE);
 
 		//		 does the page follow nature and project type constraints?
@@ -327,9 +328,9 @@ public final class MBSCustomPageManager {
 			// otherwise, iterate through the toolchains to see if one matches
 			for (int k = 0; k < toolchainData.length; k++) {
 				// check all toolchains, see if there is one for which we should be present
-				Iterator toolchainIterator = toolchainList.iterator();
+				Iterator<IToolChain> toolchainIterator = toolchainList.iterator();
 				while (toolchainIterator.hasNext()) {
-					IToolChain toolchain = (IToolChain) toolchainIterator.next();
+					IToolChain toolchain = toolchainIterator.next();
 					if (toolchain != null) {
 						String id = ManagedBuildManager.getIdFromIdAndVersion(toolchain.getId());
 						String version = ManagedBuildManager.getVersionFromIdAndVersion(toolchain.getId());
@@ -360,10 +361,10 @@ public final class MBSCustomPageManager {
 	 * @see org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager#getPageProperty(String, String)
 	 */
 	public static void addPageProperty(String pageID, String key, Object data) {
-		Map propertiesMap = (Map) pageIDtoPagePropertiesMap.get(pageID);
+		Map<String, Object> propertiesMap = pageIDtoPagePropertiesMap.get(pageID);
 
 		if (propertiesMap == null) {
-			propertiesMap = new TreeMap();
+			propertiesMap = new TreeMap<>();
 			pageIDtoPagePropertiesMap.put(pageID, propertiesMap);
 		}
 
@@ -391,7 +392,7 @@ public final class MBSCustomPageManager {
 	 * @since 3.0
 	 */
 	public static Object getPageProperty(String pageID, String key) {
-		Map propertiesMap = (Map) pageIDtoPagePropertiesMap.get(pageID);
+		Map<String, Object> propertiesMap = pageIDtoPagePropertiesMap.get(pageID);
 
 		if (propertiesMap != null) {
 			return propertiesMap.get(key);
@@ -412,12 +413,12 @@ public final class MBSCustomPageManager {
 	public static IWizardPage getNextPage(String currentPageID) {
 		// find the current page in the set of pages
 		MBSCustomPageData pageData = getPageData(currentPageID);
-		Iterator iterator = pageSet.iterator();
+		Iterator<MBSCustomPageData> iterator = pageSet.iterator();
 		while (iterator.hasNext()) {
 			if (pageData.equals(iterator.next())) {
 				IWizardPage nextPage = null;
 				while (iterator.hasNext() && nextPage == null) {
-					MBSCustomPageData potentialPage = (MBSCustomPageData) iterator.next();
+					MBSCustomPageData potentialPage = iterator.next();
 					if (isPageVisible(potentialPage.getID()))
 						nextPage = potentialPage.getWizardPage();
 				}
@@ -455,14 +456,14 @@ public final class MBSCustomPageManager {
 		MBSCustomPageData pageData = getPageData(currentPageID);
 		MBSCustomPageData currentData = null;
 
-		Iterator iterator = pageSet.iterator();
+		Iterator<MBSCustomPageData> iterator = pageSet.iterator();
 
 		// since Java has no concept of a reverse-iterator yet, we must keep a stack of the
 		// pages we have visited, so that we can get them in reverse chronological order
-		Stack pageDataStack = new Stack();
+		Stack<MBSCustomPageData> pageDataStack = new Stack<>();
 
 		while (iterator.hasNext()) {
-			currentData = (MBSCustomPageData) iterator.next();
+			currentData = iterator.next();
 
 			if (currentData == pageData) {
 
@@ -494,7 +495,7 @@ public final class MBSCustomPageManager {
 
 			// use the stack to visit the previous pages
 			while (pageDataStack.size() != 0 && !pageFound) {
-				MBSCustomPageData potentialPage = (MBSCustomPageData) pageDataStack.pop();
+				MBSCustomPageData potentialPage = pageDataStack.pop();
 
 				if (isPageVisible(potentialPage.getID())) {
 					pageFound = true;
@@ -524,12 +525,12 @@ public final class MBSCustomPageManager {
 	public static IWizardPage[] getPages() {
 		IWizardPage[] pages = new IWizardPage[pageSet.size()];
 
-		Iterator iterator = pageSet.iterator();
+		Iterator<MBSCustomPageData> iterator = pageSet.iterator();
 
 		int k = 0;
 
 		while (iterator.hasNext()) {
-			MBSCustomPageData page = (MBSCustomPageData) iterator.next();
+			MBSCustomPageData page = iterator.next();
 
 			pages[k++] = page.getWizardPage();
 		}
@@ -548,12 +549,12 @@ public final class MBSCustomPageManager {
 	 * @see getPages()
 	 */
 	public static IWizardPage[] getCustomPages() {
-		Set customPageSet = new LinkedHashSet();
+		Set<IWizardPage> customPageSet = new LinkedHashSet<>();
 
-		Iterator pageIterator = pageSet.iterator();
+		Iterator<MBSCustomPageData> pageIterator = pageSet.iterator();
 
 		while (pageIterator.hasNext()) {
-			MBSCustomPageData page = (MBSCustomPageData) pageIterator.next();
+			MBSCustomPageData page = pageIterator.next();
 
 			if (!page.isStockPage()) {
 				customPageSet.add(page.getWizardPage());
@@ -561,13 +562,13 @@ public final class MBSCustomPageManager {
 
 		}
 
-		Iterator iterator = customPageSet.iterator();
+		Iterator<IWizardPage> iterator = customPageSet.iterator();
 
 		IWizardPage[] pages = new IWizardPage[customPageSet.size()];
 
 		int k = 0;
 		while (iterator.hasNext()) {
-			pages[k++] = (IWizardPage) iterator.next();
+			pages[k++] = iterator.next();
 		}
 
 		return pages;
@@ -581,12 +582,12 @@ public final class MBSCustomPageManager {
 	 * @since 3.0
 	 */
 	public static IRunnableWithProgress[] getOperations() {
-		Set operationSet = new LinkedHashSet();
+		Set<IRunnableWithProgress> operationSet = new LinkedHashSet<>();
 
-		Iterator pageIterator = pageSet.iterator();
+		Iterator<MBSCustomPageData> pageIterator = pageSet.iterator();
 
 		while (pageIterator.hasNext()) {
-			MBSCustomPageData page = (MBSCustomPageData) pageIterator.next();
+			MBSCustomPageData page = pageIterator.next();
 
 			if (!page.isStockPage() && isPageVisible(page.getID())) {
 				if (page.getOperation() != null) {
@@ -599,13 +600,13 @@ public final class MBSCustomPageManager {
 		if (operationSet.size() == 0)
 			return null;
 
-		Iterator iterator = operationSet.iterator();
+		Iterator<IRunnableWithProgress> iterator = operationSet.iterator();
 
 		IRunnableWithProgress[] operations = new IRunnableWithProgress[operationSet.size()];
 
 		int k = 0;
 		while (iterator.hasNext()) {
-			operations[k++] = (IRunnableWithProgress) iterator.next();
+			operations[k++] = iterator.next();
 		}
 
 		return operations;
@@ -621,10 +622,10 @@ public final class MBSCustomPageManager {
 	 *  @since 3.0
 	 */
 	public static void init() {
-		idToPageDataMap = new TreeMap();
-		pageIDtoPagePropertiesMap = new TreeMap();
-		pageSet = new LinkedHashSet();
-		hiddenList = new ArrayList();
+		idToPageDataMap = new TreeMap<>();
+		pageIDtoPagePropertiesMap = new TreeMap<>();
+		pageSet = new LinkedHashSet<>();
+		hiddenList = new ArrayList<>();
 	}
 
 	// singleton class - do not use

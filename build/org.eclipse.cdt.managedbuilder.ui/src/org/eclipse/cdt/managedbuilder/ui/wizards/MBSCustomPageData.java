@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Texas Instruments Incorporated and others.
+ * Copyright (c) 2005, 2020 Texas Instruments Incorporated and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Texas Instruments - initial API and implementation
  *     IBM Corporation
+ *     ArSysOp - rework to typed collections to fix type safety warnings
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.ui.wizards;
@@ -29,11 +30,11 @@ import org.eclipse.jface.wizard.IWizardPage;
  */
 public final class MBSCustomPageData {
 
-	private Set natureSet = null;
+	private Set<String> natureSet = null;
 
-	private Set toolchainSet = null;
+	private Set<ToolchainData> toolchainSet = null;
 
-	private Set projectTypeSet = null;
+	private Set<String> projectTypeSet = null;
 
 	private IWizardPage wizardPage = null;
 
@@ -185,7 +186,7 @@ public final class MBSCustomPageData {
 		if (nature instanceof String) // old style
 			return hasNature((String) nature);
 		else if (nature instanceof Set) {
-			Iterator it = ((Set) nature).iterator();
+			Iterator<?> it = ((Set<?>) nature).iterator();
 			while (it.hasNext()) {
 				String s = it.next().toString();
 				if (hasNature(s))
@@ -229,9 +230,9 @@ public final class MBSCustomPageData {
 		if (toolchainSet.size() == 0)
 			return true;
 
-		Iterator iterator = toolchainSet.iterator();
+		Iterator<ToolchainData> iterator = toolchainSet.iterator();
 		while (iterator.hasNext()) {
-			ToolchainData tcd = (ToolchainData) iterator.next();
+			ToolchainData tcd = iterator.next();
 			// look for toolchain with same id.  The id in the tool-chain data should never
 			// contain a version suffix.
 			if (tcd.getId().equals(id)) {
@@ -259,12 +260,12 @@ public final class MBSCustomPageData {
 
 		ToolchainData[] tcd = new ToolchainData[toolchainSet.size()];
 
-		Iterator iterator = toolchainSet.iterator();
+		Iterator<ToolchainData> iterator = toolchainSet.iterator();
 
 		int k = 0;
 
 		while (iterator.hasNext()) {
-			tcd[k++] = (ToolchainData) iterator.next();
+			tcd[k++] = iterator.next();
 		}
 		if (tcd.length > 0)
 			return tcd;
@@ -303,7 +304,7 @@ public final class MBSCustomPageData {
 			return;
 
 		if (natureSet == null)
-			natureSet = new TreeSet();
+			natureSet = new TreeSet<>();
 
 		natureSet.add(nature);
 	}
@@ -322,7 +323,7 @@ public final class MBSCustomPageData {
 			return;
 
 		if (toolchainSet == null)
-			toolchainSet = new TreeSet();
+			toolchainSet = new TreeSet<>();
 
 		ToolchainData toolchainData = new ToolchainData();
 		toolchainData.setId(toolchainID);
@@ -350,7 +351,7 @@ public final class MBSCustomPageData {
 		if (projectType instanceof String)
 			return projectTypeSet.contains(projectType);
 		else if (projectType instanceof Set) {
-			Iterator it = ((Set) projectType).iterator();
+			Iterator<?> it = ((Set<?>) projectType).iterator();
 			while (it.hasNext()) {
 				String s = it.next().toString();
 				if (projectTypeSet.contains(s))
@@ -372,7 +373,7 @@ public final class MBSCustomPageData {
 			return;
 
 		if (projectTypeSet == null)
-			projectTypeSet = new TreeSet();
+			projectTypeSet = new TreeSet<>();
 
 		projectTypeSet.add(projectType);
 	}

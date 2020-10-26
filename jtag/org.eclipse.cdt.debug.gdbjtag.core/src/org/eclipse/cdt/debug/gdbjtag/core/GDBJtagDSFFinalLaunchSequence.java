@@ -582,7 +582,9 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 					@Override
 					protected void handleCompleted() {
 						fCommandControl.removeEventListener(downloadStatusListener);
-						rm.done();
+						getExecutor().execute(() -> {
+							fCommandControl.flushAllCachesAndRefresh(rm);
+						});
 					}
 				});
 			} else {

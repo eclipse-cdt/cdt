@@ -81,19 +81,6 @@ public class MSVCBuildCommandParser extends AbstractBuildCommandParser implement
 		}
 	}
 
-	// TODO: Should these be considered "built-in" entries (ICSettingEntry.BUILTIN)?
-	private static class ClangCLMSVCSystemPathOptionParser extends IncludePathOptionParser {
-
-		public ClangCLMSVCSystemPathOptionParser(String pattern, String nameExpression) {
-			super(pattern, nameExpression);
-		}
-
-		@Override
-		public ICLanguageSettingEntry createEntry(String name, String value, int flag) {
-			return super.createEntry(name, unescapeString(value), flag);
-		}
-	}
-
 	@SuppressWarnings("nls")
 	static final AbstractOptionParser[] includeOptionParsers = {
 			new MSVCIncludePathOptionParser("(-|/)I\\s*\"(.*)\"", "$2"),
@@ -106,8 +93,13 @@ public class MSVCBuildCommandParser extends AbstractBuildCommandParser implement
 
 	@SuppressWarnings("nls")
 	static final AbstractOptionParser[] msvcIncludeOptionParsers = {
-			new ClangCLMSVCSystemPathOptionParser("(-|/)imsvc\\s*\"(.*)\"", "$2"),
-			new ClangCLMSVCSystemPathOptionParser("(-|/)imsvc\\s*([^\\s\"]*)", "$2"), };
+			new MSVCIncludePathOptionParser("(-|/)imsvc\\s*\"(.*)\"", "$2"),
+			new MSVCIncludePathOptionParser("(-|/)imsvc\\s*([^\\s\"]*)", "$2"), };
+
+	@SuppressWarnings("nls")
+	static final AbstractOptionParser[] clangISystemIncludeOptionParsers = {
+			new MSVCIncludePathOptionParser("(-|/)clang:-isystem\"(.*)\"", "$2"),
+			new MSVCIncludePathOptionParser("(-|/)clang:-isystem([^\\s\"]*)", "$2"), };
 
 	@SuppressWarnings("nls")
 	static final AbstractOptionParser[] defineOptionParsers = {
@@ -136,6 +128,7 @@ public class MSVCBuildCommandParser extends AbstractBuildCommandParser implement
 		List<AbstractOptionParser> parsers = new ArrayList<>(Arrays.asList(includeOptionParsers));
 		Collections.addAll(parsers, defineOptionParsers);
 		Collections.addAll(parsers, msvcIncludeOptionParsers);
+		Collections.addAll(parsers, clangISystemIncludeOptionParsers);
 		Collections.addAll(parsers, forceIncludeOptionParsers);
 		Collections.addAll(parsers, undefineOptionParsers);
 
@@ -195,6 +188,10 @@ public class MSVCBuildCommandParser extends AbstractBuildCommandParser implement
 
 		if (optionName.startsWith("imsvc")) {
 			return msvcIncludeOptionParsers;
+		}
+
+		if (optionName.startsWith("clang")) {
+			return clangISystemIncludeOptionParsers;
 		}
 
 		if (optionName.startsWith("FI")) {

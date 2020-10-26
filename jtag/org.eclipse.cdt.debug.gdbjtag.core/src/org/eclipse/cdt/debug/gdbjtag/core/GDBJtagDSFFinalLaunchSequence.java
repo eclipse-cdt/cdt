@@ -715,7 +715,10 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			fGdbJtagDevice.doContinue(commands);
 			queueCommands(commands, rm);
 		} else {
-			rm.done();
+			// Force UI to refresh collected data from target as it might have changed with complex GDB commands like 'load'.
+			getExecutor().execute(() -> {
+				fCommandControl.flushAllCachesAndRefresh(rm);
+			});
 		}
 	}
 

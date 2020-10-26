@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.service.command;
 
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.service.IDsfService;
@@ -52,6 +53,13 @@ public interface ICommandControlService extends ICommandControl, IDsfService {
 	}
 
 	/**
+	 * Event indicating that the back end has had some change that means everything should be invalidated.
+	 * @since 2.10
+	 */
+	public interface IRefreshAllDMEvent extends IDMEvent<ICommandControlDMContext> {
+	}
+
+	/**
 	 * Returns the identifier of this command control service.  It can be used
 	 * to distinguish between multiple instances of command control services.
 	 */
@@ -69,4 +77,14 @@ public interface ICommandControlService extends ICommandControl, IDsfService {
 	 * @return
 	 */
 	public boolean isActive();
+
+	/**
+	 * This method should be called when a service knows that something has changed in the
+	 * backend, but cannot update the state in an effective way, so the decision instead
+	 * is to flush all caches and refresh by issuing an IRefreshAllDMEvent.
+	 * @since 2.10
+	 */
+	default public void flushAllCachesAndRefresh(RequestMonitor rm) {
+	}
+
 }

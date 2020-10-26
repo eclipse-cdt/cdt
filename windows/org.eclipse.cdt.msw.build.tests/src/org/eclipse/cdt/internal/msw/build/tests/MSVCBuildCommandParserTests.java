@@ -231,7 +231,7 @@ public class MSVCBuildCommandParserTests {
 	}
 
 	/**
-	 * Parse /imsvc (clang-cl)
+	 * Parse /imsvc, /clang:isystem (clang-cl)
 	 */
 	@Test
 	public void testCIncludePathEntry_ClangCLSystemIncludePaths() throws Exception {
@@ -252,7 +252,8 @@ public class MSVCBuildCommandParserTests {
 		parser.startup(cfgDescription, null);
 		parser.processLine("cl" + " /imsvcC:\\path0 " + " /imsvc C:\\path1 " + " /imsvc\"C:\\path with spaces\""
 				+ " /imsvc\"C:\\backslash at end\\\\\"" + " /imsvc\"..\\..\\relative\""
-				+ " /imsvc\"..\\..\\relative with spaces\"" + " file.cpp");
+				+ " /imsvc\"..\\..\\relative with spaces\"" + " /clang:-isystemC:\\path1 "
+				+ " /clang:-isystem\"C:\\path with spaces\"" + " file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -273,6 +274,8 @@ public class MSVCBuildCommandParserTests {
 		assertEquals(
 				new CIncludePathEntry(project.getLocation().removeLastSegments(2).append("relative with spaces"), 0),
 				entries.get(5));
+		assertEquals(new CIncludePathEntry("C:/path1", 0), entries.get(6));
+		assertEquals(new CIncludePathEntry("C:/path with spaces", 0), entries.get(7));
 	}
 
 	/**

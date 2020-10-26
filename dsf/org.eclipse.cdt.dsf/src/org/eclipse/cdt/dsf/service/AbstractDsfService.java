@@ -23,6 +23,7 @@ import java.util.Set;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
@@ -191,6 +192,13 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 		 */
 		classSet.add(IDsfService.class.getName());
 		classSet.add(getClass().getName());
+
+		/*
+		 * Ensure that the list of classes contains the ICachingService if implemented
+		 */
+		if (this instanceof ICachingService) {
+			classSet.add(ICachingService.class.getName());
+		}
 
 		/*
 		 * Make sure that the session ID is set in the service properties.

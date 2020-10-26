@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "afb1192d_ba5ae8f5",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/AbstractDebugVMAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-26T06:44:04Z",
+      "side": 1,
+      "message": "Perhaps just returninh in the case of null can reduce complexity",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2949770_43714510",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/AbstractDebugVMAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-26T06:44:04Z",
+      "side": 1,
+      "message": "This is potential ClassCastException as the assumption is too strong",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "375f2409_788f22e1",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/AbstractDebugVMAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-26T06:44:04Z",
+      "side": 1,
+      "message": "We are loosing a lot of info here from the initial CoreException, we can just log `e.getStatus()` or construct another one using fields of the `e.getStatus()`",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea02118c_16b87d90",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-26T06:44:04Z",
+      "side": 1,
+      "message": "Shoundn\u0027t we call it `ICommandControlRefreshAllDMEvent`? The name is not perfect but looks similar to sibling names.",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66bce16e_9f00c94d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-26T06:44:04Z",
+      "side": 1,
+      "message": "Does it mean that we have another entity that is smart enough to control the control service?\nI\u0027m not sure that this method belongs to this interface, do you think we can extract it to a separate one?",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d1fa122_9547fd52",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-26T06:44:04Z",
+      "side": 1,
+      "message": "Why not to return just an empty array?",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08d0068c_0df4fb26",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-26T06:44:04Z",
+      "side": 1,
+      "message": "Why not to return just an empty array?",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30ce579a_b6123ffe",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-26T06:44:04Z",
+      "side": 1,
+      "message": "We have `fServiceFilter` for default case, let\u0027s use it",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a992a2e_70d9d049",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-26T06:44:04Z",
+      "side": 1,
+      "message": "Why not to return just an empty array?",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

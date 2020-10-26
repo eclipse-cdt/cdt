@@ -22,6 +22,30 @@
       "revId": "a8d52be5630b469a555fd63dc821a6912e06a589",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "958d2655_4c16186f",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2020-10-26T08:19:43Z",
+      "side": 1,
+      "message": "It may be that such a boolean and final step could be held in more generic code since this issue is not necessarily limited to GDB JTAG launches.",
+      "parentUuid": "0690a4ff_cf9a42fa",
+      "range": {
+        "startLine": 586,
+        "startChar": 23,
+        "endLine": 586,
+        "endChar": 47
+      },
+      "revId": "a8d52be5630b469a555fd63dc821a6912e06a589",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

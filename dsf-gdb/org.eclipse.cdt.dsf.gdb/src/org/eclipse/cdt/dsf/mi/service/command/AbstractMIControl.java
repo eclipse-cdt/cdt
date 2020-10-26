@@ -29,18 +29,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.stream.Collectors;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
@@ -68,6 +74,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -144,6 +151,16 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	private OutputStream fTracingStream = null;
 
 	private CommandFactory fCommandFactory;
+
+	/**
+	 * Event indicating that the back end process has started.
+	 */
+	private static class RefreshAllDMEvent extends AbstractDMEvent<ICommandControlDMContext>
+			implements IRefreshAllDMEvent {
+		public RefreshAllDMEvent(ICommandControlDMContext context) {
+			super(context);
+		}
+	}
 
 	public AbstractMIControl(DsfSession session) {
 		this(session, false, false, new CommandFactory());
@@ -1225,5 +1242,23 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 			 */
 			processCommandDone(commandHandle, info);
 		}
+	}
+
+	/**
+	 * @since 6.1
+	 */
+	@Override
+	public void flushAllCachesAndRefresh(RequestMonitor rm) {
+		DsfServicesTracker servicesTracker = getServicesTracker();
+		Set<Object> allservices = new HashSet<>(Arrays.asList(servicesTracker.getServices()));
+
+		List<ICachingService> list = allservices.stream().filter(ICachingService.class::isInstance)
+				.map(ICachingService.class::cast).collect(Collectors.toList());
+		// collect as a list to make it easier to examine state when debugging this code.
+		list.forEach(s -> s.flushCache(null));
+
+		// Issue a refresh event for any services or UI that is not an ICachingService
+		getSession().dispatchEvent(new RefreshAllDMEvent(getContext()), getProperties());
+		rm.done();
 	}
 }

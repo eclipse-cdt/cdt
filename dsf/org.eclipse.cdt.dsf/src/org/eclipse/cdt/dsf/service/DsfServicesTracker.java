@@ -207,12 +207,56 @@ public class DsfServicesTracker {
 	}
 
 	/**
-	 * Convenience class to retrieve a service based on class name only.
+	 * Retrieves all service references for given optional filter.
+	 * Filter should be used if there are multiple instances of the desired service
+	 * running within the same session.
+	 * @param custom filter to use when searching for the service, this filter will
+	 * be used instead of the standard filter so it should also specify the desired
+	 * session-ID
+	 * @return OSGI service references to the desired service, null if not found
+	 * @since 2.10
+	 */
+	public ServiceReference<?>[] getServiceReferences(String filter) {
+		if (fDisposed) {
+			return null;
+		}
+
+		// If the session is not active, all of its services are gone.
+		DsfSession session = DsfSession.getSession(fSessionId);
+		if (session == null) {
+			return null;
+		}
+		assert session.getExecutor().isInExecutorThread();
+
+		if (filter == null) {
+			filter = fServiceFilter;
+		}
+		try {
+			return fBundleContext.getServiceReferences((String) null, filter);
+		} catch (InvalidSyntaxException e) {
+			assert false : "Invalid session ID syntax"; //$NON-NLS-1$
+		} catch (IllegalStateException e) {
+			// Can occur when plugin is shutting down.
+		}
+		return null;
+	}
+
+	/**
+	 * Convenience method to retrieve a service based on class name only.
 	 * @param serviceClass class of the desired service
 	 * @return instance of the desired service, null if not found
 	 */
 	public <V> V getService(Class<V> serviceClass) {
 		return getService(serviceClass, null);
+	}
+
+	/**
+	 * Convenience method to retrieve all services for the current session.
+	 * @return instances of the desired services, null if not found
+	 * @since 2.10
+	 */
+	public Object[] getServices() {
+		return getServices(null);
 	}
 
 	/**
@@ -231,6 +275,33 @@ public class DsfServicesTracker {
 			return null;
 		}
 
+		V service = getServiceHelper(serviceRef);
+		return service;
+	}
+
+	/**
+	 * Retrieves all services for given optional filter.
+	 * Filter should be used if there are multiple instances of the desired service
+	 * running within the same session.
+	 * @param custom filter to use when searching for the service, this filter will
+	 * be used instead of the standard filter so it should also specify the desired
+	 * session-ID
+	 * @return instances of the desired services, null if not found
+	 * @since 2.10
+	 */
+	public Object[] getServices(String filter) {
+		ServiceReference<?>[] serviceRefs = getServiceReferences(filter);
+		if (serviceRefs == null) {
+			return null;
+		}
+		Object[] services = new Object[serviceRefs.length];
+		for (int i = 0; i < services.length; i++) {
+			services[i] = getServiceHelper(serviceRefs[i]);
+		}
+		return services;
+	}
+
+	private <V> V getServiceHelper(ServiceReference<V> serviceRef) {
 		@SuppressWarnings("unchecked")
 		V service = (V) fServices.get(serviceRef);
 		if (service == null) {

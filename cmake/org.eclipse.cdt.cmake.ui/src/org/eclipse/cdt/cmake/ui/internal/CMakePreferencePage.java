@@ -43,6 +43,9 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+/**
+ * GUI page to configure workbench preferences for cmake.
+ */
 public class CMakePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private ICMakeToolChainManager manager;

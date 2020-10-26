@@ -650,7 +650,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	public void stepDataModelInitializationComplete(final RequestMonitor requestMonitor) {
 		fSession.dispatchEvent(new DataModelInitializedEvent(fCommandControl.getContext()),
 				fCommandControl.getProperties());
-		requestMonitor.done();
+
+		// Force UI to refresh collected data from target as it might have changed with complex GDB commands like 'load'.
+		getExecutor().execute(() -> {
+			fCommandControl.flushAllCachesAndRefresh(requestMonitor);
+		});
 	}
 
 	/**

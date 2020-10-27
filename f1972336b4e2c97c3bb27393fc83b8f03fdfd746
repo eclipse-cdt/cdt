@@ -161,6 +161,24 @@
     },
     {
       "key": {
+        "uuid": "6b0880af_1e40a9cf",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/AbstractDebugVMAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-27T18:14:26Z",
+      "side": 1,
+      "message": "\u003e the \"cause\" Status should be wrapped with `new MultiStatus(...).add\u0027 or `new MultiStatus(...).merge`\n\nPlease provide an example of when unwrapping and discarding the CoreException is best when logging. The CoreException has the useful stack trace in it. The Status\u0027s stack trace is still a different stack trace than the CoreException\u0027s one.\n\nThis is different than the case where you are presenting the user with a Status or collection of Status (MultiStatus). However even then the UX for user\u0027s being presented Status is generally pretty subpar so I have rarely seen the effort worth it except in the GUIs where the designer has spent anytime on error handling (such as refactoring wizards).",
+      "parentUuid": "c7cd9337_f1207402",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ea02118c_16b87d90",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
         "patchSetId": 1

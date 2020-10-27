@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "69cf881c_17d2ceea",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/AbstractDebugVMAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-27T09:16:38Z",
+      "side": 1,
+      "message": "Yes, I do, the most important info to loose is:\n* the stacktrace of initial exception (e.getStatus().getException())\n* the code of initial status (e.getStatus().getCode())\n\nIt is relatively easy to compare the result of two log entries:\n* DsfUIPlugin.log(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, \"Failed to refresh following receipt of a Refresh All Event.\", e)); \n* DsfUIPlugin.log(e.getStatus());",
+      "parentUuid": "7865d5be_baf591c1",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ea02118c_16b87d90",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
         "patchSetId": 1
@@ -173,6 +191,24 @@
       "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e8f4d4d3_df8fbb5d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-27T09:16:38Z",
+      "side": 1,
+      "message": "\u003e The existing API in this class and in BundleContext matches this pattern.\n\nBundleContext returns empty collection or throws an Exception while new DsfServiceTracker methods hide the Exception and return `null` instead of empty array. IMO it is not matching. And also returning `null` instead of array/collection is not friendly for callers.",
+      "parentUuid": "43ad72d7_3ae0cc09",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     },
     {
       "key": {

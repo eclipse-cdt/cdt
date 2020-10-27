@@ -179,6 +179,24 @@
     },
     {
       "key": {
+        "uuid": "c8c4e51c_248737aa",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/AbstractDebugVMAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-27T19:20:26Z",
+      "side": 1,
+      "message": "I\u0027ve already admitted that discarding the CoreException was a weak proposal :) BTW, using MultiStatus does not mean \"discard CoreException trace\", we can pass CoreException to the constructor of MultiStatus to not loose any info.\n\nNormally we wrap the target exception with DebugException (which extends CoreException) at the bottom layer and then our methods has \"throws DebugException\" until the top layer (like IAction or something similar). At the top layer we can use `StatusManager.getManager().handle(IStatus, style)`, and this could make the error handling even more configurable for downstream products.",
+      "parentUuid": "6b0880af_1e40a9cf",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ea02118c_16b87d90",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
         "patchSetId": 1

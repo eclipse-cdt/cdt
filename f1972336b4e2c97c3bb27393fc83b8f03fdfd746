@@ -143,6 +143,24 @@
     },
     {
       "key": {
+        "uuid": "c7cd9337_f1207402",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/AbstractDebugVMAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-27T18:03:49Z",
+      "side": 1,
+      "message": "Thank you for so detailed answer, Jonah. You are right, if Status used like this - your approach is better.\nWhen I started this discussion, I tried to say that Status and CoreException was misused in the added code. Now I see that I failed to explain my position and provided weak suggestion to improve.\nGenerally CoreException does not work perfect in the chain with \"normal\" exceptions.\nIt is better to use either \"normal\" exceptions or status hierarchies, i.e. the \"cause\" Status should be wrapped with `new MultiStatus(...).add\u0027 or `new MultiStatus(...).merge`",
+      "parentUuid": "9d90dcb5_2d0e268f",
+      "revId": "f1972336b4e2c97c3bb27393fc83b8f03fdfd746",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ea02118c_16b87d90",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
         "patchSetId": 1

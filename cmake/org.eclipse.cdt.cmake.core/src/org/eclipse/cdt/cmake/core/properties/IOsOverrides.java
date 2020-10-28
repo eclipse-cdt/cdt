@@ -14,7 +14,7 @@ package org.eclipse.cdt.cmake.core.properties;
 import java.util.List;
 
 /**
- * Properties that override/augment the generic properties when running under a
+ * Properties that override/augment the generic properties when running under/building for a
  * specific OS.
  *
  * @author Martin Weber

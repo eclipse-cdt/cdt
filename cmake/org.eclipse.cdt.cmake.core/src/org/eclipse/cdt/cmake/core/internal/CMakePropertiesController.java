@@ -83,16 +83,8 @@ class CMakePropertiesController implements ICMakePropertiesController {
 	@Override
 	public void save(ICMakeProperties properties) throws IOException {
 		// detect whether changes force us to delete file CMakeCache.txt to avoid complaints by cmake
-		if (!Objects.equals(buildType, properties.getBuildType())
-				|| !Objects.equals(cacheFile, properties.getCacheFile())
-				|| !Objects.equals(generatorLinux, properties.getLinuxOverrides().getGenerator())
-				|| !Objects.equals(generatorWindows, properties.getWindowsOverrides().getGenerator())) {
-			cmakeCacheDirtyMarker.run(); // must remove cmake cachefile
-		} else if (hasExtraArgumentChanged(extraArguments, properties.getExtraArguments())
-				|| hasExtraArgumentChanged(extraArgumentsLinux, properties.getLinuxOverrides().getExtraArguments())
-				|| hasExtraArgumentChanged(extraArgumentsWindows,
-						properties.getWindowsOverrides().getExtraArguments())) {
-			cmakeCacheDirtyMarker.run(); // must remove cmake cachefile
+		if (isPropertyModified(properties) || isExtraArgumentsPropertyModified(properties)) {
+			cmakeCacheDirtyMarker.run(); // mark cmake cache file for removal
 		}
 		if (!Files.exists(storageFile)) {
 			try {
@@ -105,6 +97,25 @@ class CMakePropertiesController implements ICMakePropertiesController {
 		}
 
 		setupModifyDetection(properties);
+	}
+
+	/** Gets whether changes in one of the basic properties force us to delete file CMakeCache.txt
+	 * to avoid complaints by cmake.
+	 */
+	private boolean isPropertyModified(ICMakeProperties properties) {
+		return !Objects.equals(buildType, properties.getBuildType())
+				|| !Objects.equals(cacheFile, properties.getCacheFile())
+				|| !Objects.equals(generatorLinux, properties.getLinuxOverrides().getGenerator())
+				|| !Objects.equals(generatorWindows, properties.getWindowsOverrides().getGenerator());
+	}
+
+	/** Gets whether changes in one of the extra arguments properties force us to delete file CMakeCache.txt
+	 * to avoid complaints by cmake.
+	 */
+	private boolean isExtraArgumentsPropertyModified(ICMakeProperties properties) {
+		return hasExtraArgumentChanged(extraArguments, properties.getExtraArguments())
+				|| hasExtraArgumentChanged(extraArgumentsLinux, properties.getLinuxOverrides().getExtraArguments())
+				|| hasExtraArgumentChanged(extraArgumentsWindows, properties.getWindowsOverrides().getExtraArguments());
 	}
 
 	/** Sets up detection of modifications that force us to delete file CMakeCache.txt to avoid complaints by cmake

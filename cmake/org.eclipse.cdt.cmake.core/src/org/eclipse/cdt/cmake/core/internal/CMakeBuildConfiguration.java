@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +26,11 @@ import java.util.function.Consumer;
 
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
+import org.eclipse.cdt.cmake.core.internal.CommandDescriptorBuilder.CommandDescriptor;
+import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
+import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
+import org.eclipse.cdt.cmake.core.properties.ICMakePropertiesController;
+import org.eclipse.cdt.cmake.core.properties.IOsOverrides;
 import org.eclipse.cdt.cmake.is.core.CompileCommandsJsonParser;
 import org.eclipse.cdt.cmake.is.core.IIndexerInfoConsumer;
 import org.eclipse.cdt.cmake.is.core.ParseRequest;
@@ -66,9 +70,15 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public static final String CLEAN_COMMAND = "cmake.command.clean"; //$NON-NLS-1$
 
 	private ICMakeToolChainFile toolChainFile;
+
+	private final CMakePropertiesController pc = new CMakePropertiesController(() -> {
+		deleteCMakeCache = true;
+	});
+
 	private Map<IResource, IScannerInfo> infoPerResource;
-	/** whether one of the CMakeLists.txt files in the project has been
-	 * modified and saved by the user since the last build.<br>
+	/**
+	 * whether one of the CMakeLists.txt files in the project has been modified and saved by the
+	 * user since the last build.<br>
 	 * Cmake-generated build scripts re-run cmake if one of the CMakeLists.txt files was modified,
 	 * but that output goes through ErrorParserManager and is impossible to parse because cmake
 	 * outputs to both stderr and stdout and ErrorParserManager intermixes these streams making it
@@ -76,6 +86,10 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	 * To work around that, we run cmake in advance with its dedicated working error parser.
 	 */
 	private boolean cmakeListsModified;
+	/**
+	 * whether we have to delete file CMakeCache.txt to avoid complaints by cmake
+	 */
+	private boolean deleteCMakeCache;
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
@@ -94,10 +108,17 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		this.toolChainFile = toolChainFile;
 	}
 
+	/**
+	 * Gets the tool-chain description file to pass to the cmake command-line.
+	 *
+	 * @return the tool-chain file or <code>null</code> if cmake should take the native (i.e. the
+	 *         tools first found on the executable search path aka $path)
+	 */
 	public ICMakeToolChainFile getToolChainFile() {
 		return toolChainFile;
 	}
 
+	@SuppressWarnings("unused") // kept for reference of the property names
 	private boolean isLocal() throws CoreException {
 		IToolChain toolchain = getToolChain();
 		return (Platform.getOS().equals(toolchain.getProperty(IToolChain.ATTR_OS))
@@ -110,85 +131,42 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			throws CoreException {
 		IProject project = getProject();
 
-		try {
-			String generator = getProperty(CMAKE_GENERATOR);
-			if (generator == null) {
-				generator = "Ninja"; //$NON-NLS-1$
-			}
+		project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+		infoPerResource = new HashMap<>();
 
-			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-			infoPerResource = new HashMap<>();
+		try {
 
 			ConsoleOutputStream infoStream = console.getInfoStream();
 
 			Path buildDir = getBuildDirectory();
 
-			infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
-
-			// Make sure we have a toolchain file if cross
-			if (toolChainFile == null && !isLocal()) {
-				ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
-				toolChainFile = manager.getToolChainFileFor(getToolChain());
-
-				if (toolChainFile == null) {
-					// error
-					console.getErrorStream().write(Messages.CMakeBuildConfiguration_NoToolchainFile);
-					return null;
-				}
-			}
-
 			boolean runCMake = cmakeListsModified;
-			if (!runCMake) {
-				switch (generator) {
-				case "Ninja": //$NON-NLS-1$
-					runCMake = !Files.exists(buildDir.resolve("build.ninja")); //$NON-NLS-1$
-					break;
-				case "Unix Makefiles": //$NON-NLS-1$
-					runCMake = !Files.exists(buildDir.resolve("Makefile")); //$NON-NLS-1$
-					break;
-				default:
-					runCMake = !Files.exists(buildDir.resolve("CMakeFiles")); //$NON-NLS-1$
-				}
+			if (deleteCMakeCache) {
+				Files.deleteIfExists(buildDir.resolve("CMakeCache.txt")); //$NON-NLS-1$
+				deleteCMakeCache = false;
+				runCMake = true;
 			}
 
+			ICMakeProperties cmakeProperties = pc.load();
+			runCMake |= !Files.exists(buildDir.resolve("CMakeCache.txt")); //$NON-NLS-1$
+
+			final SimpleOsOverridesSelector overridesSelector = new SimpleOsOverridesSelector();
+			if (!runCMake) {
+				CMakeGenerator generator = overridesSelector.getOsOverrides(cmakeProperties).getGenerator();
+				runCMake |= !Files.exists(buildDir.resolve(generator.getMakefileName()));
+			}
+			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties, overridesSelector);
 			if (runCMake) {
 				CMakeBuildConfiguration.deleteCMakeErrorMarkers(project);
 
 				infoStream.write(String.format(Messages.CMakeBuildConfiguration_Configuring, buildDir));
-				// clean output to make sure there is no content
-				// incompatible with current settings (cmake config would fail)
-				cleanBuildDirectory(buildDir);
-
-				List<String> command = new ArrayList<>();
-
-				command.add("cmake"); //$NON-NLS-1$
-				command.add("-G"); //$NON-NLS-1$
-				command.add(generator);
-
-				if (toolChainFile != null) {
-					command.add("-DCMAKE_TOOLCHAIN_FILE=" + toolChainFile.getPath().toString()); //$NON-NLS-1$
-				}
-
-				switch (getLaunchMode()) {
-				// TODO what to do with other modes
-				case "debug": //$NON-NLS-1$
-					command.add("-DCMAKE_BUILD_TYPE=Debug"); //$NON-NLS-1$
-					break;
-				case "run": //$NON-NLS-1$
-					command.add("-DCMAKE_BUILD_TYPE=Release"); //$NON-NLS-1$
-					break;
-				}
-				command.add("-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"); //$NON-NLS-1$
-
-				String userArgs = getProperty(CMAKE_ARGUMENTS);
-				if (userArgs != null) {
-					command.addAll(Arrays.asList(userArgs.trim().split("\\s+"))); //$NON-NLS-1$
-				}
-
+				CommandDescriptor command = cmdBuilder
+						.makeCMakeCommandline(toolChainFile != null ? toolChainFile.getPath() : null);
+				// tell cmake where its script is located..
 				IContainer srcFolder = project;
-				command.add(new File(srcFolder.getLocationURI()).getAbsolutePath());
+				command.getArguments().add(new File(srcFolder.getLocationURI()).getAbsolutePath());
 
-				infoStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
+				infoStream.write(String.join(" ", command.getArguments()) + '\n'); //$NON-NLS-1$
 
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 						getBuildDirectory().toString());
@@ -197,8 +175,11 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					ParsingConsoleOutputStream errStream = new ParsingConsoleOutputStream(console.getErrorStream(),
 							errorParser);
 					IConsole errConsole = new CMakeConsoleWrapper(console, errStream);
-					Process p = startBuildProcess(command, new IEnvironmentVariable[0], workingDir, errConsole,
-							monitor);
+					// TODO startBuildProcess() calls java.lang.ProcessBuilder.
+					// Use org.eclipse.cdt.core.ICommandLauncher
+					// in order to run builds in a container.
+					Process p = startBuildProcess(command.getArguments(), new IEnvironmentVariable[0], workingDir,
+							errConsole, monitor);
 					if (p == null) {
 						console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
 						return null;
@@ -209,11 +190,14 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				cmakeListsModified = false;
 			}
 
+			// parse compile_commands.json file
+			processCompileCommandsFile(console, monitor);
+
+			infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
+			// run the build tool...
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
 				epm.setOutputStream(console.getOutputStream());
-
-				List<String> command = new ArrayList<>();
 
 				String envStr = getProperty(CMAKE_ENV);
 				List<IEnvironmentVariable> envVars = new ArrayList<>();
@@ -229,23 +213,16 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					}
 				}
 
-				String buildCommand = getProperty(BUILD_COMMAND);
-				if (buildCommand == null) {
-					command.add("cmake"); //$NON-NLS-1$
-					command.add("--build"); //$NON-NLS-1$
-					command.add("."); //$NON-NLS-1$
-					if ("Ninja".equals(generator)) { //$NON-NLS-1$
-						command.add("--"); //$NON-NLS-1$
-						command.add("-v"); //$NON-NLS-1$
-					}
-				} else {
-					command.addAll(Arrays.asList(buildCommand.split(" "))); //$NON-NLS-1$
-				}
+				CommandDescriptor commandDescr = cmdBuilder.makeCMakeBuildCommandline("all"); //$NON-NLS-1$
+				List<String> command = commandDescr.getArguments();
 
 				infoStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 						getBuildDirectory().toString());
+				// TODO startBuildProcess() calls java.lang.ProcessBuilder. Use org.eclipse.cdt.core.ICommandLauncher
+				// in order to run builds in a container.
+				// TODO pass envvars from CommandDescriptor once we use ICommandLauncher
 				Process p = startBuildProcess(command, envVars.toArray(new IEnvironmentVariable[0]), workingDir,
 						console, monitor);
 				if (p == null) {
@@ -256,11 +233,6 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				watchProcess(p, new IConsoleParser[] { epm });
 
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-
-				// parse compile_commands.json file
-				// built-ins detection output goes to the build console, if the user requested
-				// output
-				processCompileCommandsFile(console, monitor);
 
 				infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingComplete, epm.getErrorCount(),
 						epm.getWarningCount(), buildDir.toString()));
@@ -277,10 +249,13 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public void clean(IConsole console, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
 		try {
-			String generator = getProperty(CMAKE_GENERATOR);
 
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
+			ICMakeProperties cmakeProperties = pc.load();
+			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties,
+					new SimpleOsOverridesSelector());
+			CommandDescriptor command = cmdBuilder.makeCMakeBuildCommandline("clean"); //$NON-NLS-1$
 			ConsoleOutputStream outStream = console.getOutputStream();
 
 			Path buildDir = getBuildDirectory();
@@ -290,27 +265,14 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				return;
 			}
 
-			List<String> command = new ArrayList<>();
-			String cleanCommand = getProperty(CLEAN_COMMAND);
-			if (cleanCommand == null) {
-				if (generator == null || generator.equals("Ninja")) { //$NON-NLS-1$
-					command.add("ninja"); //$NON-NLS-1$
-					command.add("clean"); //$NON-NLS-1$
-				} else {
-					command.add("make"); //$NON-NLS-1$
-					command.add("clean"); //$NON-NLS-1$
-				}
-			} else {
-				command.addAll(Arrays.asList(cleanCommand.split(" "))); //$NON-NLS-1$
-			}
-
-			IEnvironmentVariable[] env = new IEnvironmentVariable[0];
-
-			outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
+			outStream.write(String.join(" ", command.getArguments()) + '\n'); //$NON-NLS-1$
 
 			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 					getBuildDirectory().toString());
-			Process p = startBuildProcess(command, env, workingDir, console, monitor);
+			// TODO startBuildProcess() calls java.lang.ProcessBuilder. Use org.eclipse.cdt.core.ICommandLauncher
+			// in order to run builds in a container.
+			Process p = startBuildProcess(command.getArguments(), new IEnvironmentVariable[0], workingDir, console,
+					monitor);
 			if (p == null) {
 				console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
 				return;
@@ -328,10 +290,9 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	}
 
 	/**
-	 * @param console the console to print the compiler output during built-ins
-	 *                detection to or <code>null</code> if no separate console is to
-	 *                be allocated. Ignored if workspace preferences indicate that
-	 *                no console output is wanted.
+	 * @param console the console to print the compiler output during built-ins detection to or
+	 *                <code>null</code> if no separate console is to be allocated. Ignored if
+	 *                workspace preferences indicate that no console output is wanted.
 	 * @param monitor the job's progress monitor
 	 */
 	private void processCompileCommandsFile(IConsole console, IProgressMonitor monitor) throws CoreException {
@@ -365,12 +326,14 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
-	private void cleanBuildDirectory(Path buildDir) throws IOException {
-		if (!Files.exists(buildDir))
-			return;
-		if (Files.isDirectory(buildDir))
-			cleanDirectory(buildDir);
-		// TODO: not a directory should we do something?
+	// interface IAdaptable
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
+		if (ICMakePropertiesController.class.equals(adapter)) {
+			return (T) pc;
+		}
+		return super.getAdapter(adapter);
 	}
 
 	/**
@@ -395,7 +358,9 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		this.infoPerResource = infoPerResource;
 	}
 
-	/** Overwritten to detect whether one of the CMakeLists.txt files in the project was modified since the last build.
+	/**
+	 * Overwritten to detect whether one of the CMakeLists.txt files in the project was modified
+	 * since the last build.
 	 */
 	@Override
 	public void elementChanged(ElementChangedEvent event) {
@@ -408,8 +373,10 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
-	/** Processes the delta in order to detect whether one of the CMakeLists.txt files in the project has been
-	 * modified and saved by the user since the last build.
+	/**
+	 * Processes the delta in order to detect whether one of the CMakeLists.txt files in the project
+	 * has been modified and saved by the user since the last build.
+	 *
 	 * @return <code>true</code> to continue with delta processing, otherwise <code>false</code>
 	 */
 	private boolean processElementDelta(ICElementDelta delta) {
@@ -426,7 +393,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 						IResource resource = resourceDelta.getResource();
 						if (resource.getType() == IResource.FILE) {
 							String name = resource.getName();
-							if (name.equals("CMakeLists.txt") || name.endsWith(".cmake")) { //$NON-NLS-1$ //$NON-NLS-2$
+							if (!resource.isDerived(IResource.CHECK_ANCESTORS)
+									&& (name.equals("CMakeLists.txt") || name.endsWith(".cmake"))) { //$NON-NLS-1$ //$NON-NLS-2$
 								cmakeListsModified = true;
 								return false; // stop processing
 							}
@@ -445,7 +413,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		return true;
 	}
 
-	/** Overwritten since we do not parse console output to get scanner information.
+	/**
+	 * Overwritten since we do not parse console output to get scanner information.
 	 */
 	// interface IConsoleParser2
 	@Override
@@ -453,7 +422,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		return true;
 	}
 
-	/** Overwritten since we do not parse console output to get scanner information.
+	/**
+	 * Overwritten since we do not parse console output to get scanner information.
 	 */
 	// interface IConsoleParser2
 	@Override
@@ -461,7 +431,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		return true;
 	}
 
-	/** Overwritten since we do not parse console output to get scanner information.
+	/**
+	 * Overwritten since we do not parse console output to get scanner information.
 	 */
 	// interface IConsoleParser2
 	@Override
@@ -471,8 +442,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	/**
 	 * Deletes all CMake error markers on the specified project.
 	 *
-	 * @param project
-	 *          the project where to remove the error markers.
+	 * @param project the project where to remove the error markers.
 	 * @throws CoreException
 	 */
 	private static void deleteCMakeErrorMarkers(IProject project) throws CoreException {
@@ -481,16 +451,14 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 	private static class CMakeIndexerInfoConsumer implements IIndexerInfoConsumer {
 		/**
-		 * gathered IScannerInfo objects or <code>null</code> if no new IScannerInfo was
-		 * received
+		 * gathered IScannerInfo objects or <code>null</code> if no new IScannerInfo was received
 		 */
 		private Map<IResource, IScannerInfo> infoPerResource = new HashMap<>();
 		private boolean haveUpdates;
 		private final Consumer<Map<IResource, IScannerInfo>> resultSetter;
 
 		/**
-		 * @param resultSetter receives the all scanner information when processing is
-		 *                     finished
+		 * @param resultSetter receives the all scanner information when processing is finished
 		 */
 		public CMakeIndexerInfoConsumer(Consumer<Map<IResource, IScannerInfo>> resultSetter) {
 			this.resultSetter = Objects.requireNonNull(resultSetter);
@@ -511,12 +479,11 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 
 		/**
-		 * Gets an IFile object that corresponds to the source file name given in CMake
-		 * notation.
+		 * Gets an IFile object that corresponds to the source file name given in CMake notation.
 		 *
-		 * @param sourceFileName the name of the source file, in CMake notation. Note
-		 *                       that on windows, CMake writes filenames with forward
-		 *                       slashes (/) such as {@code H://path//to//source.c}.
+		 * @param sourceFileName the name of the source file, in CMake notation. Note that on
+		 *                       windows, CMake writes filenames with forward slashes (/) such as
+		 *                       {@code H://path//to//source.c}.
 		 * @return a IFile object or <code>null</code>
 		 */
 		private IFile getFileForCMakePath(String sourceFileName) {
@@ -540,5 +507,23 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				haveUpdates = false;
 			}
 		}
-	}
+	} // CMakeIndexerInfoConsumer
+
+	private static class SimpleOsOverridesSelector implements IOsOverridesSelector {
+
+		@Override
+		public IOsOverrides getOsOverrides(ICMakeProperties cmakeProperties) {
+			IOsOverrides overrides;
+			// get overrides. Simplistic approach ATM, probably a strategy might fit better.
+			// see comment in CMakeIndexerInfoConsumer#getFileForCMakePath()
+			final String os = Platform.getOS();
+			if (Platform.OS_WIN32.equals(os)) {
+				overrides = cmakeProperties.getWindowsOverrides();
+			} else {
+				// fall back to linux, if OS is unknown
+				overrides = cmakeProperties.getLinuxOverrides();
+			}
+			return overrides;
+		}
+	} // SimpleOsOverridesSelector
 }

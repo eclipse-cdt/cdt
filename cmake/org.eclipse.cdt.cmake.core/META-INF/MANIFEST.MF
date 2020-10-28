@@ -20,3 +20,4 @@ Export-Package: org.eclipse.cdt.cmake.core,
  org.eclipse.cdt.cmake.core.properties
 Automatic-Module-Name: org.eclipse.cdt.cmake.core
 Bundle-Localization: plugin
+Import-Package: org.eclipse.core.variables

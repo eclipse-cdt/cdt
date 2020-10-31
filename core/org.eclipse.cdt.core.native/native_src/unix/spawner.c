@@ -30,11 +30,9 @@
  */
 
 #if DEBUGIT
-static void print_array(char **c_array)
-{
+static void print_array(char **c_array) {
     if (c_array) {
-        char **p = c_array;
-        for (; *p; p++) {
+        for (char **p = c_array; *p; p++) {
             if (*p) {
                 fprintf(stderr, " %s", *p);
             }
@@ -51,8 +49,9 @@ static char** alloc_c_array(JNIEnv *env, jobjectArray j_array) {
 	jint c_array_size = (*env)->GetArrayLength(env, j_array);
 	char **c_array = calloc(c_array_size + 1, sizeof(*c_array));
 
-	if (c_array == NULL)
+	if (c_array == NULL) {
 		return NULL;
+	}
 
 	for (i = 0; i < c_array_size; i++) {
 		jstring j_str = (jstring)(*env)->GetObjectArrayElement(env, j_array, i);
@@ -67,8 +66,7 @@ static char** alloc_c_array(JNIEnv *env, jobjectArray j_array) {
 
 static void free_c_array(char **c_array) {
 	if (c_array) {
-		char **p = c_array;
-		for (; *p; p++) {
+		for (char **p = c_array; *p; p++) {
 			if (*p) {
 				free(*p);
 			}
@@ -86,16 +84,19 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2(JNIEnv *
 	int fd[3];
 	pid_t pid = -1;
 
-	if (jchannels == NULL)
+	if (jchannels == NULL) {
 		goto bail_out;
+	}
 
 	cmd = alloc_c_array(env, jcmd);
-	if (cmd == NULL)
+	if (cmd == NULL) {
 		goto bail_out;
+	}
 
 	envp = alloc_c_array(env, jenv);
-	if (envp == NULL)
+	if (envp == NULL) {
 		goto bail_out;
+	}
 
 #if DEBUGIT
     fprintf(stderr, "command:");
@@ -107,8 +108,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2(JNIEnv *
 #endif
 
 	pid = exec_pty(cmd[0], cmd, envp, dirpath, fd, pts_name, masterFD, console);
-	if (pid < 0)
+	if (pid < 0) {
 		goto bail_out;
+	}
 
 	jobject cls = (*env)->FindClass(env, "org/eclipse/cdt/utils/spawner/Spawner$UnixChannel");
 	jmethodID constructor = (*env)->GetMethodID(env, cls, "<init>", "(I)V");
@@ -119,10 +121,12 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2(JNIEnv *
 
 	bail_out: (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
 	(*env)->ReleaseStringUTFChars(env, jslaveName, pts_name);
-	if (cmd)
+	if (cmd) {
 		free_c_array(cmd);
-	if (envp)
+	}
+	if (envp) {
 		free_c_array(envp);
+	}
 	return pid;
 }
 
@@ -135,12 +139,14 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *env, jobject jobj, jobj
 	pid_t pid = -1;
 
 	cmd = alloc_c_array(env, jcmd);
-	if (cmd == NULL)
+	if (cmd == NULL) {
 		goto bail_out;
+	}
 
 	envp = alloc_c_array(env, jenv);
-	if (envp == NULL)
+	if (envp == NULL) {
 		goto bail_out;
+	}
 
 #if DEBUGIT
     fprintf(stderr, "command:");
@@ -151,14 +157,17 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *env, jobject jobj, jobj
 #endif
 
 	pid = exec0(cmd[0], cmd, envp, dirpath, NULL);
-	if (pid < 0)
+	if (pid < 0) {
 		goto bail_out;
+	}
 
 	bail_out: (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
-	if (cmd)
+	if (cmd) {
 		free_c_array(cmd);
-	if (envp)
+	}
+	if (envp) {
 		free_c_array(envp);
+	}
 	return pid;
 }
 
@@ -173,24 +182,29 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *env, jobject jobj, jobj
 	jclass channelClass = NULL;
 	jmethodID channelConstructor = NULL;
 
-	if (jchannels == NULL)
+	if (jchannels == NULL) {
 		goto bail_out;
+	}
 
 	channelClass = (*env)->FindClass(env, "org/eclipse/cdt/utils/spawner/Spawner$UnixChannel");
-	if (channelClass == 0)
+	if (channelClass == 0) {
 		goto bail_out;
+	}
 
 	channelConstructor = (*env)->GetMethodID(env, channelClass, "<init>", "(I)V");
-	if (channelConstructor == 0)
+	if (channelConstructor == 0) {
 		goto bail_out;
+	}
 
 	cmd = alloc_c_array(env, jcmd);
-	if (cmd == NULL)
+	if (cmd == NULL) {
 		goto bail_out;
+	}
 
 	envp = alloc_c_array(env, jenv);
-	if (envp == NULL)
+	if (envp == NULL) {
 		goto bail_out;
+	}
 
 #if DEBUGIT
     fprintf(stderr, "command:");
@@ -200,8 +214,9 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *env, jobject jobj, jobj
     fprintf(stderr, "dirpath: %s\n", dirpath);
 #endif
 	pid = exec0(cmd[0], cmd, envp, dirpath, fd);
-	if (pid < 0)
+	if (pid < 0) {
 		goto bail_out;
+	}
 
 	for (jsize i = 0; i < 3; i++) {
 		jobject chan = (*env)->NewObject(env, channelClass, channelConstructor, fd[i]);
@@ -209,10 +224,12 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *env, jobject jobj, jobj
 	}
 
 	bail_out: (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
-	if (cmd)
+	if (cmd) {
 		free_c_array(cmd);
-	if (envp)
+	}
+	if (envp) {
 		free_c_array(envp);
+	}
 	return pid;
 }
 

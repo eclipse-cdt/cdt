@@ -91,8 +91,9 @@ int interruptProcess(int pid) {
 		FreeLibrary(hmod);
 		hmod = NULL;
 
-		if (success)
+		if (success) {
 			return 0;	// 0 == OK; if not, try old-school way
+		}
 	}
 
 #ifdef DEBUG_MONITOR
@@ -102,14 +103,13 @@ int interruptProcess(int pid) {
 	consoleHWND = NULL;
 
 #ifdef DEBUG_MONITOR
-		_stprintf(buffer, _T("Try to interrupt process %i\n"), pid);
-		OutputDebugStringW(buffer);
+	_stprintf(buffer, _T("Try to interrupt process %i\n"), pid);
+	OutputDebugStringW(buffer);
 #endif
 	// Find console
 	EnumWindows(find_child_console, (LPARAM) pid);
 
-	if (NULL != consoleHWND) // Yes, we found out it
-			{
+	if (NULL != consoleHWND) { // Yes, we found out it
 		// We are going to switch focus to console,
 		// send Ctrl-C and then restore focus
 		BYTE control_scan_code = (BYTE) MapVirtualKey(VK_CONTROL, 0);
@@ -123,20 +123,23 @@ int interruptProcess(int pid) {
 		foreground_window = GetForegroundWindow();
 		if (foreground_window) {
 			/* NT 5.0, and apparently also Windows 98, will not allow
-			 a Window to be set to foreground directly without the
-			 user's involvement. The workaround is to attach
-			 ourselves to the thread that owns the foreground
-			 window, since that is the only thread that can set the
-			 foreground window.  */
+			 * a Window to be set to foreground directly without the
+			 * user's involvement. The workaround is to attach
+			 * ourselves to the thread that owns the foreground
+			 * window, since that is the only thread that can set the
+			 * foreground window.
+			 */
 			DWORD foreground_thread, child_thread;
 			foreground_thread = GetWindowThreadProcessId(foreground_window, NULL);
 			if (foreground_thread == GetCurrentThreadId()
-					|| !AttachThreadInput(GetCurrentThreadId(), foreground_thread, TRUE))
+					|| !AttachThreadInput(GetCurrentThreadId(), foreground_thread, TRUE)) {
 				foreground_thread = 0;
+			}
 
 			child_thread = GetWindowThreadProcessId(consoleHWND, NULL);
-			if (child_thread == GetCurrentThreadId() || !AttachThreadInput(GetCurrentThreadId(), child_thread, TRUE))
+			if (child_thread == GetCurrentThreadId() || !AttachThreadInput(GetCurrentThreadId(), child_thread, TRUE)) {
 				child_thread = 0;
+			}
 
 			/* Set the foreground window to the child.  */
 			if (SetForegroundWindow(consoleHWND)) {
@@ -153,24 +156,24 @@ int interruptProcess(int pid) {
 
 				SetForegroundWindow(foreground_window);
 			}
-			/* Detach from the foreground and child threads now that
-			 the foreground switching is over.  */
-			if (foreground_thread)
+			/* Detach from the foreground and child threads now that the foreground switching is over.  */
+			if (foreground_thread) {
 				AttachThreadInput(GetCurrentThreadId(), foreground_thread, FALSE);
-			if (child_thread)
+			}
+			if (child_thread) {
 				AttachThreadInput(GetCurrentThreadId(), child_thread, FALSE);
+			}
 #ifdef DEBUG_MONITOR
-		_stprintf(buffer, _T("Sent Ctrl-C & Ctrl-Break to process %i\n"), pid);
-		OutputDebugStringW(buffer);
+			_stprintf(buffer, _T("Sent Ctrl-C & Ctrl-Break to process %i\n"), pid);
+			OutputDebugStringW(buffer);
 #endif
 		}
-	}
 #ifdef DEBUG_MONITOR
-	else {
+	} else {
 		_stprintf(buffer, _T("Cannot find console for process %i\n"), pid);
 		OutputDebugStringW(buffer);
-	}
 #endif
+	}
 
 	return rc;
 }

@@ -98,22 +98,22 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 			if (err == ERROR_IO_PENDING) {
 				// asynchronous i/o is still in progress 
 				// check on the results of the asynchronous read 
-				if (GetOverlappedResult(handle, &overlapped, &nNumberOfBytesRead, TRUE))
+				if (GetOverlappedResult(handle, &overlapped, &nNumberOfBytesRead, TRUE)) {
 					err = 0;
-				// if there was a problem ... 
-				else
+				} else { // if there was a problem ...
 					err = GetLastError();
+				}
 			}
-			if (err == ERROR_BROKEN_PIPE) // Pipe was closed
+			if (err == ERROR_BROKEN_PIPE) { // Pipe was closed
 				break;
+			}
 			if (err != 0) {
 				char *lpMsgBuf;
 #ifdef DEBUG_MONITOR
 				_stprintf(buffer, _T("Read failed - %i, error %i\n"), fd, err);
 				OutputDebugStringW(buffer);
 #endif
-				if (err != ERROR_MORE_DATA) // Otherwise error means just that there are more data
-						{                      // than buffer can accept
+				if (err != ERROR_MORE_DATA) { // Otherwise error means just that there are more data than buffer can accept
 					FormatMessage(
 							FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 							NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
@@ -135,19 +135,21 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 				}
 			}
 		}
-		if (nNumberOfBytesRead > 0)
+		if (nNumberOfBytesRead > 0) {
 			(*env)->SetByteArrayRegion(env, buf, nBuffOffset, nNumberOfBytesRead, tmpBuf);
-		else
+		} else {
 			break;
+		}
 		nBuffOffset += nNumberOfBytesRead;
-		if (nNumberOfBytesRead != nNumberOfBytesToRead)
+		if (nNumberOfBytesRead != nNumberOfBytesToRead) {
 			break;
-		else {
+		} else {
 			// Is there data left in the pipe?
 			DWORD bytesAvailable = 0;
-			if (!PeekNamedPipe(handle, NULL, 0, NULL, &bytesAvailable, NULL) || bytesAvailable == 0)
+			if (!PeekNamedPipe(handle, NULL, 0, NULL, &bytesAvailable, NULL) || bytesAvailable == 0) {
 				// No bytes left
 				break;
+			}
 		}
 	}
 	CloseHandle(overlapped.hEvent);
@@ -169,14 +171,14 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_clo
 	int rc;
 	HANDLE handle = channelToHandle(env, channel);
 #ifdef DEBUG_MONITOR
-		_TCHAR buffer[1000];
-		_stprintf(buffer, _T("Close %i\n"), fd);
-		OutputDebugStringW(buffer);
+	_TCHAR buffer[1000];
+	_stprintf(buffer, _T("Close %i\n"), fd);
+	OutputDebugStringW(buffer);
 #endif
 	rc = (CloseHandle(handle) ? 0 : -1);
 #ifdef DEBUG_MONITOR
-		_stprintf(buffer, _T("Closed %i\n"), fd);
-		OutputDebugStringW(buffer);
+	_stprintf(buffer, _T("Closed %i\n"), fd);
+	OutputDebugStringW(buffer);
 #endif
 	return (rc ? GetLastError() : 0);
 }
@@ -232,15 +234,15 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_cl
 	int rc;
 	HANDLE handle = channelToHandle(env, channel);
 #ifdef DEBUG_MONITOR
-		_TCHAR buffer[1000];
-		_stprintf(buffer, _T("Close %i\n"), fd);
-		OutputDebugStringW(buffer);
+	_TCHAR buffer[1000];
+	_stprintf(buffer, _T("Close %i\n"), fd);
+	OutputDebugStringW(buffer);
 #endif
 	FlushFileBuffers(handle);
 	rc = (CloseHandle(handle) ? 0 : -1);
 #ifdef DEBUG_MONITOR
-		_stprintf(buffer, _T("Closed %i\n"), fd);
-		OutputDebugStringW(buffer);
+	_stprintf(buffer, _T("Closed %i\n"), fd);
+	OutputDebugStringW(buffer);
 #endif
 	return (rc ? GetLastError() : 0);
 }

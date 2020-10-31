@@ -45,7 +45,7 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 	}
 
 	/*
-	 *  Make sure we can create our pipes before forking.
+	 * Make sure we can create our pipes before forking.
 	 */
 	if (channels != NULL && console) {
 		if (pipe(pipe2) < 0) {
@@ -112,8 +112,9 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 			int fdlimit = sysconf(_SC_OPEN_MAX);
 			int fd = 3;
 
-			while (fd < fdlimit)
+			while (fd < fdlimit) {
 				close(fd++);
+			}
 		}
 
 		if (envp[0] == NULL) {
@@ -133,8 +134,9 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 			channels[1] = fdm; /* Output Stream.  */
 			if (console) {
 				/* close the write end of pipe1 */
-				if (close(pipe2[1]) == -1)
+				if (close(pipe2[1]) == -1) {
 					perror("close(pipe2[1])");
+				}
 				channels[2] = pipe2[0]; /* stderr Stream.  */
 			} else {
 				channels[2] = fdm; /* Error Stream.  */
@@ -148,6 +150,7 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 	free(full_path);
 	return -1; /*NOT REACHED */
 }
+
 #ifdef __STAND_ALONE__
 int main(int argc, char **argv, char **envp) {
 	const char *path = "./bufferring_test";

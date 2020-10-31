@@ -53,8 +53,9 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster(JNIEnv *
 	master = rand();
 
 	/* Make sure masterFD does not exist */
-	while (fd2pty.find(master) != fd2pty.end())
+	while (fd2pty.find(master) != fd2pty.end()) {
 		master++;
+	}
 
 	sprintf(line, "winpty_%i", master);
 
@@ -86,8 +87,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size(J
 	fd2pty_Iter = fd2pty.find(fd);
 	if (fd2pty_Iter != fd2pty.end()) {
 		winpty_t *winpty = fd2pty_Iter->second;
-		if (winpty != NULL)
+		if (winpty != NULL) {
 			return winpty_set_size(winpty, width, height);
+		}
 	}
 
 	return 0;
@@ -121,15 +123,18 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYInputStream_read0(JNIEn
 			BOOL ret = ReadFile(handle, buffer, buf_len, &amount, &over);
 			if (!ret) {
 				DWORD error = GetLastError();
-				if (error == ERROR_IO_PENDING)
+				if (error == ERROR_IO_PENDING) {
 					ret = GetOverlappedResult(handle, &over, &amount, TRUE);
+				}
 			}
 
-			if (ret && amount > 0)
+			if (ret && amount > 0) {
 				memcpy(data, buffer, amount);
+			}
 
-			if (!ret || amount == 0)
+			if (!ret || amount == 0) {
 				amount = -1;
+			}
 
 			if (!ret && fd2pty.find(fd) != fd2pty.end()) {
 				int rc = winpty_get_exit_code(winpty);
@@ -190,10 +195,12 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_write0(JNI
 			BOOL ret = WriteFile(handle, buffer, buf_len, &written, &over);
 			env->ReleaseByteArrayElements(buf, data, 0);
 
-			if (!ret && GetLastError() == ERROR_IO_PENDING)
+			if (!ret && GetLastError() == ERROR_IO_PENDING) {
 				ret = GetOverlappedResult(handle, &over, &written, TRUE);
-			if (!ret || (int) written != buf_len)
+			}
+			if (!ret || (int) written != buf_len) {
 				written = -1;
+			}
 
 			delete[] buffer;
 		}
@@ -227,10 +234,11 @@ static std::wstring convertSlashes(const wchar_t *path) {
 	std::wstring ret;
 
 	for (int i = 0; path[i] != L'\0'; ++i) {
-		if (path[i] == L'/')
+		if (path[i] == L'/') {
 			ret.push_back(L'\\');
-		else
+		} else {
 			ret.push_back(path[i]);
+		}
 	}
 
 	return ret;
@@ -241,12 +249,14 @@ static std::wstring convertSlashes(const wchar_t *path) {
 static std::wstring argvToCommandLine(const std::vector<std::wstring> &argv) {
 	std::wstring result;
 	for (size_t argIndex = 0; argIndex < argv.size(); ++argIndex) {
-		if (argIndex > 0)
+		if (argIndex > 0) {
 			result.push_back(L' ');
+		}
 		const wchar_t *arg = argv[argIndex].c_str();
 		const bool quote = wcschr(arg, L' ') != NULL || wcschr(arg, L'\t') != NULL || *arg == L'\0';
-		if (quote)
+		if (quote) {
 			result.push_back(L'\"');
+		}
 		int bsCount = 0;
 		for (const wchar_t *p = arg; *p != L'\0'; ++p) {
 			if (*p == L'\\') {
@@ -285,8 +295,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_exec2(JNIEnv *env, job
 	jint argc = env->GetArrayLength(jcmd);
 	jint envc = env->GetArrayLength(jenv);
 
-	if (jchannels == NULL || env->GetArrayLength(jchannels) != 3)
+	if (jchannels == NULL || env->GetArrayLength(jchannels) != 3) {
 		goto bail_out;
+	}
 
 	fd = masterFD;
 	fd2pty_Iter = fd2pty.find(fd);
@@ -298,10 +309,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_exec2(JNIEnv *env, job
 			for (i = 0; i < argc; i++) {
 				jstring j_str = (jstring) env->GetObjectArrayElement(jcmd, i);
 				const wchar_t *w_str = (const wchar_t*) env->GetStringChars(j_str, NULL);
-				if (i == 0)
+				if (i == 0) {
 					argVector.push_back(convertSlashes(w_str));
-				else
+				} else {
 					argVector.push_back(w_str);
+				}
 				env->ReleaseStringChars(j_str, (const jchar*) w_str);
 				env->DeleteLocalRef(j_str);
 			}
@@ -352,8 +364,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_waitFor(JNIEnv *env, j
 			BOOL success;
 			do {
 				success = GetHandleInformation(handle, &flags);
-				if (success)
+				if (success) {
 					Sleep(500);
+				}
 			} while (success);
 
 			fd2rc_Iter = fd2rc.find(fd);

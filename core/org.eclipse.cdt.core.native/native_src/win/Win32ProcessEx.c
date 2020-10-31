@@ -308,8 +308,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *
 			jsize len = (*env)->GetStringLength(env, item);
 			const wchar_t *str = (const wchar_t*) (*env)->GetStringChars(env, item, 0);
 			if (NULL != str) {
-				while ((nBlkSize - nPos) <= (len + 2)) // +2 for two '\0'
-				{
+				while ((nBlkSize - nPos) <= (len + 2)) { // +2 for two '\0'
 					nBlkSize += MAX_ENV_SIZE;
 					szEnvBlock = (wchar_t*) realloc(szEnvBlock, nBlkSize * sizeof(wchar_t));
 					if (NULL == szEnvBlock) {
@@ -373,17 +372,19 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *
 	&si, /* (in)  startup information */
 	&pi); /* (out) process information */
 
-	if (NULL != cwd)
+	if (NULL != cwd) {
 		free((void*) cwd);
+	}
 
-	if (NULL != szEnvBlock)
+	if (NULL != szEnvBlock) {
 		free(szEnvBlock);
+	}
 
-	if (NULL != szCmdLine)
+	if (NULL != szCmdLine) {
 		free(szCmdLine);
+	}
 
-	if (!ret) // Launching error
-	{
+	if (!ret) { // Launching error
 		char *lpMsgBuf;
 		CloseHandle(stdHandles[0]);
 		CloseHandle(stdHandles[1]);
@@ -407,8 +408,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *
 		h[1] = pi.hProcess;
 
 		what = WaitForMultipleObjects(2, h, FALSE, INFINITE);
-		if (what != WAIT_OBJECT_0) // CreateProcess failed
-				{
+		if (what != WAIT_OBJECT_0) { // CreateProcess failed
 #ifdef DEBUG_MONITOR
 			swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Process %i failed\n"), pi.dwProcessId);
 			OutputDebugStringW(buffer);
@@ -529,8 +529,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *
 			jsize len = (*env)->GetStringLength(env, item);
 			const wchar_t *str = (const wchar_t*) (*env)->GetStringChars(env, item, 0);
 			if (NULL != str) {
-				while ((nBlkSize - nPos) <= (len + 2)) // +2 for two '\0'
-				{
+				while ((nBlkSize - nPos) <= (len + 2)) { // +2 for two '\0'
 					nBlkSize += MAX_ENV_SIZE;
 					szEnvBlock = (wchar_t*) realloc(szEnvBlock, nBlkSize * sizeof(wchar_t));
 					if (NULL == szEnvBlock) {
@@ -573,15 +572,17 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *
 	&si, /* (in)  startup information */
 	&pi); /* (out) process information */
 
-	if (NULL != cwd)
+	if (NULL != cwd) {
 		free(cwd);
-	if (NULL != szEnvBlock)
+	}
+	if (NULL != szEnvBlock) {
 		free(szEnvBlock);
-	if (NULL != szCmdLine)
+	}
+	if (NULL != szCmdLine) {
 		free(szCmdLine);
+	}
 
-	if (!ret)  // error
-	{
+	if (!ret) { // error
 		char *lpMsgBuf;
 
 		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
@@ -635,8 +636,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *
 
 	hProc = OpenProcess(SYNCHRONIZE, 0, pCurProcInfo->pid);
 
-	if (NULL == hProc)
+	if (NULL == hProc) {
 		return -1;
+	}
 
 	switch (signal) {
 	case SIG_NOOP:
@@ -649,26 +651,26 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *
 		break;
 	case SIG_TERM:
 #ifdef DEBUG_MONITOR
-			swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Spawner received TERM signal for process %i\n"),
-				pCurProcInfo -> pid);
-			OutputDebugStringW(buffer);
+		swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Spawner received TERM signal for process %i\n"),
+			pCurProcInfo -> pid);
+		OutputDebugStringW(buffer);
 #endif
 		SetEvent(pCurProcInfo->eventTerminate);
 #ifdef DEBUG_MONITOR
-			OutputDebugStringW(_T("Spawner signaled TERM event\n"));
+		OutputDebugStringW(_T("Spawner signaled TERM event\n"));
 #endif
 		ret = 0;
 		break;
 
 	case SIG_KILL:
 #ifdef DEBUG_MONITOR
-			swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Spawner received KILL signal for process %i\n"),
-				pCurProcInfo -> pid);
-			OutputDebugStringW(buffer);
+		swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("Spawner received KILL signal for process %i\n"),
+			pCurProcInfo -> pid);
+		OutputDebugStringW(buffer);
 #endif
 		SetEvent(pCurProcInfo->eventKill);
 #ifdef DEBUG_MONITOR
-			OutputDebugStringW(_T("Spawner signaled KILL event\n"));
+		OutputDebugStringW(_T("Spawner signaled KILL event\n"));
 #endif
 		ret = 0;
 		break;
@@ -705,13 +707,15 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor(JNIEnv
 	HANDLE hProc;
 	pProcInfo_t pCurProcInfo = findProcInfo(uid);
 
-	if (NULL == pCurProcInfo)
+	if (NULL == pCurProcInfo) {
 		return -1;
+	}
 
 	hProc = OpenProcess(SYNCHRONIZE | PROCESS_QUERY_INFORMATION, 0, pCurProcInfo->pid);
 
-	if (NULL == hProc)
+	if (NULL == hProc) {
 		return -1;
+	}
 
 	what = WaitForSingleObject(hProc, INFINITE);
 
@@ -719,8 +723,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor(JNIEnv
 		GetExitCodeProcess(hProc, &exit_code);
 	}
 
-	if (hProc)
+	if (hProc) {
 		CloseHandle(hProc);
+	}
 
 	return exit_code;
 }
@@ -736,8 +741,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor(JNIEnv
 void ThrowByName(JNIEnv *env, const char *name, const char *msg) {
 	jclass cls = (*env)->FindClass(env, name);
 
-	if (cls != 0) /* Otherwise an exception has already been thrown */
+	if (cls != 0) { /* Otherwise an exception has already been thrown */
 		(*env)->ThrowNew(env, cls, msg);
+	}
 
 	/* It's a good practice to clean up the local references. */
 	(*env)->DeleteLocalRef(env, cls);
@@ -781,8 +787,9 @@ pProcInfo_t createProcInfo() {
 pProcInfo_t findProcInfo(int uid) {
 	int i;
 	pProcInfo_t p = NULL;
-	if (NULL == pInfo)
+	if (NULL == pInfo) {
 		return NULL;
+	}
 
 	for (i = 0; i < MAX_PROCS; ++i) {
 		if (pInfo[i].uid == uid) {
@@ -832,8 +839,7 @@ void cleanUpProcBlock(pProcInfo_t pCurProcInfo) {
 //			pv - pointer to PROCESS_INFORMATION struct
 // Return : no
 /////////////////////////////////////////////////////////////////////////////////////
-void _cdecl waitProcTermination(void* pv)
-{
+void _cdecl waitProcTermination(void* pv) {
 	PROCESS_INFORMATION *pi = (PROCESS_INFORMATION *)pv;
 	int i;
 #ifdef DEBUG_MONITOR
@@ -843,10 +849,8 @@ void _cdecl waitProcTermination(void* pv)
 	// wait for process termination
 	WaitForSingleObject(pi->hProcess, INFINITE);
 
-	for(i = 0; i < MAX_PROCS; ++i)
-	{
-		if(pInfo[i].pid == pi->dwProcessId)
-		{
+	for (i = 0; i < MAX_PROCS; ++i) {
+		if (pInfo[i].pid == pi->dwProcessId) {
 			cleanUpProcBlock(pInfo + i);
 #ifdef DEBUG_MONITOR
 			swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("waitProcTermination: set PID %i to 0\n"),
@@ -880,8 +884,9 @@ int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace
 
 	int nQuotationMode = 0;
 
-	if (availSpace <= cpyLength) // = to reserve space for final '\0'
+	if (availSpace <= cpyLength) { // = to reserve space for final '\0'
 		return -1;
+	}
 
 	if ((_T('\"') == *source) && (_T('\"') == *(source + cpyLength - 1))) {
 		nQuotationMode = QUOTATION_DONE;
@@ -896,16 +901,16 @@ int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace
 	}
 
 	for (; i < cpyLength; ++i, ++j) {
-		if (source[i] == _T('\\'))
+		if (source[i] == _T('\\')) {
 			bSlash = TRUE;
-		else {
+		} else {
 			// Don't escape embracing quotation marks
 			if ((source[i] == _T('\"'))
 					&& !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))))) {
-				if (!bSlash) // If still not escaped
-				{
-					if (j == availSpace)
+				if (!bSlash) { // If still not escaped
+					if (j == availSpace) {
 						return -1;
+					}
 					target[j] = _T('\\');
 					++j;
 				}
@@ -913,14 +918,16 @@ int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace
 			bSlash = FALSE;
 		}
 
-		if (j == availSpace)
+		if (j == availSpace) {
 			return -1;
+		}
 		target[j] = source[i];
 	}
 
 	if (nQuotationMode == QUOTATION_DO) {
-		if (j == availSpace)
+		if (j == availSpace) {
 			return -1;
+		}
 		target[j] = _T('\"');
 		++j;
 	}

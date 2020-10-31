@@ -49,8 +49,9 @@ HMODULE PTYExplicitLoadLibrary(LPCSTR pszModuleName) {
 }
 
 FARPROC WINAPI PTYDliNotifyHook(unsigned dliNotify, PDelayLoadInfo pdli) {
-	if (dliNotify == dliNotePreLoadLibrary)
+	if (dliNotify == dliNotePreLoadLibrary) {
 		return (FARPROC) PTYExplicitLoadLibrary(pdli->szDll);
+	}
 	return NULL;
 }
 

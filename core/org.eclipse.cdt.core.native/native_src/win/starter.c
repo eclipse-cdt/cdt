@@ -36,8 +36,7 @@ void DisplayErrorMessage();
 //BOOL KillProcessEx(DWORD dwProcessId);  // Handle of the process 
 
 ///////////////////////////////////////////////////////////////////////////////
-BOOL WINAPI HandlerRoutine(DWORD dwCtrlType) //  control signal type
-{
+BOOL WINAPI HandlerRoutine(DWORD dwCtrlType) { //  control signal type
 	BOOL ret = TRUE;
 	switch (dwCtrlType) {
 	case CTRL_C_EVENT:
@@ -66,8 +65,9 @@ bool _isCygwin = true;
 
 bool isCygwin(HANDLE process) {
 	// Have we checked before?
-	if (cygwinBin != NULL || !_isCygwin)
+	if (cygwinBin != NULL || !_isCygwin) {
 		return _isCygwin;
+	}
 
 	// See if this process loaded cygwin, need a different SIGINT for them
 	HMODULE mods[1024];
@@ -239,7 +239,7 @@ int main() {
 		CloseHandle(stdHandles[0]);
 		CloseHandle(stdHandles[1]);
 		CloseHandle(stdHandles[2]);
-		return -1;;
+		return -1;
 	}
 	SetHandleInformation(stdHandles[0], HANDLE_FLAG_INHERIT, TRUE);
 	SetHandleInformation(stdHandles[1], HANDLE_FLAG_INHERIT, TRUE);
@@ -254,21 +254,21 @@ int main() {
 		CloseHandle(stdHandles[0]);
 		CloseHandle(stdHandles[1]);
 		CloseHandle(stdHandles[2]);
-		return -1;;
+		return -1;
 	}
 
 #ifdef DEBUG_MONITOR_DETAILS
 	wchar_t * lpvEnv = GetEnvironmentStringsW();
 
 	// If the returned pointer is NULL, exit.
-	if (lpvEnv == NULL)
-	OutputDebugStringW(_T("Cannot Read Environment\n"));
-	else {
+	if (lpvEnv == NULL) {
+		OutputDebugStringW(_T("Cannot Read Environment\n"));
+	} else {
 		// Variable strings are separated by NULL byte, and the block is 
 		// terminated by a NULL byte. 
 
 		OutputDebugStringW(_T("Starter: Environment\n"));
-		for (wchar_t * lpszVariable = (wchar_t *) lpvEnv; *lpszVariable; lpszVariable+=wcslen(lpszVariable) + 1) {
+		for (wchar_t * lpszVariable = (wchar_t *) lpvEnv; *lpszVariable; lpszVariable += wcslen(lpszVariable) + 1) {
 			swprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), _T("%s\n"), lpszVariable);
 			OutputDebugStringW(buffer);
 		}
@@ -307,8 +307,9 @@ int main() {
 	// to our own job object.
 	BOOL f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE, CREATE_BREAKAWAY_FROM_JOB, NULL, NULL, &si, &pi);
 	// If breaking away from job is not permitted, retry without breakaway flag
-	if (!f)
+	if (!f) {
 		f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	}
 
 	// We don't need them any more
 	CloseHandle(stdHandles[0]);
@@ -462,8 +463,9 @@ int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace
 #define QUOTATION_NONE 2
 
 	int nQuotationMode = 0;
-	if (availSpace <= cpyLength) // = to reserve space for '\0'
+	if (availSpace <= cpyLength) { // = to reserve space for '\0'
 		return -1;
+	}
 
 	if ((_T('\"') == *source) && (_T('\"') == *(source + cpyLength - 1))) {
 		// Already done
@@ -479,29 +481,35 @@ int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace
 	}
 
 	for (; i < cpyLength; ++i, ++j) {
-		if (source[i] == _T('\\'))
+		if (source[i] == _T('\\')) {
 			bSlash = TRUE;
-		else
-		// Don't escape embracing quotation marks
-		if ((source[i] == _T('\"')) && !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))))) {
-			if (!bSlash) {
-				if (j == availSpace)
-					return -1;
-				target[j] = _T('\\');
-				++j;
+		} else {
+			// Don't escape embracing quotation marks
+			if ((source[i] == _T('\"'))
+					&& !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))))) {
+				if (!bSlash) {
+					if (j == availSpace) {
+						return -1;
+					}
+					target[j] = _T('\\');
+					++j;
+				}
+				bSlash = FALSE;
+			} else {
+				bSlash = FALSE;
 			}
-			bSlash = FALSE;
-		} else
-			bSlash = FALSE;
+		}
 
-		if (j == availSpace)
+		if (j == availSpace) {
 			return -1;
+		}
 		target[j] = source[i];
 	}
 
 	if (nQuotationMode == QUOTATION_DO) {
-		if (j == availSpace)
+		if (j == availSpace) {
 			return -1;
+		}
 		target[j] = _T('\"');
 		++j;
 	}

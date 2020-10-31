@@ -41,7 +41,7 @@ pid_t exec0(const char *path, char *const argv[], char *const envp[], const char
 	}
 
 	/*
-	 *  Make sure we can create our pipes before forking.
+	 * Make sure we can create our pipes before forking.
 	 */
 	if (channels != NULL) {
 		if (pipe(pipe0) < 0 || pipe(pipe1) < 0 || pipe(pipe2) < 0) {
@@ -66,16 +66,19 @@ pid_t exec0(const char *path, char *const argv[], char *const envp[], const char
 
 		if (channels != NULL) {
 			/* Close the write end of pipe0 */
-			if (close(pipe0[1]) == -1)
+			if (close(pipe0[1]) == -1) {
 				perror("close(pipe0[1])");
+			}
 
 			/* Close the read end of pipe1 */
-			if (close(pipe1[0]) == -1)
+			if (close(pipe1[0]) == -1) {
 				perror("close(pipe1[0])");
+			}
 
 			/* Close the read end of pipe2 */
-			if (close(pipe2[0]) == -1)
+			if (close(pipe2[0]) == -1) {
 				perror("close(pipe2[0]))");
+			}
 
 			/* redirections */
 			dup2(pipe0[0], STDIN_FILENO); /* dup stdin */
@@ -88,8 +91,9 @@ pid_t exec0(const char *path, char *const argv[], char *const envp[], const char
 			int fdlimit = sysconf(_SC_OPEN_MAX);
 			int fd = 3;
 
-			while (fd < fdlimit)
+			while (fd < fdlimit) {
 				close(fd++);
+			}
 		}
 
 		setpgid(getpid(), getpid());
@@ -108,16 +112,19 @@ pid_t exec0(const char *path, char *const argv[], char *const envp[], const char
 
 		if (channels != NULL) {
 			/* close the read end of pipe1 */
-			if (close(pipe0[0]) == -1)
+			if (close(pipe0[0]) == -1) {
 				perror("close(pipe0[0])");
+			}
 
 			/* close the write end of pipe2 */
-			if (close(pipe1[1]) == -1)
+			if (close(pipe1[1]) == -1) {
 				perror("close(pipe1[1])");
+			}
 
 			/* close the write end of pipe2 */
-			if (close(pipe2[1]) == -1)
+			if (close(pipe2[1]) == -1) {
 				perror("close(pipe2[1])");
+			}
 
 			channels[0] = pipe0[1]; /* Output Stream. */
 			channels[1] = pipe1[0]; /* Input Stream.  */
@@ -136,8 +143,9 @@ int wait0(pid_t pid) {
 	int status;
 	int val = -1;
 
-	if (pid < 0)
+	if (pid < 0) {
 		return -1;
+	}
 
 	for (;;) {
 		if (waitpid(pid, &status, 0) < 0) {

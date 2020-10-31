@@ -35,10 +35,11 @@ BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpRese
 		InitializeCriticalSection(&cs);
 		GetModuleFileNameW(hModule, path, MAX_PATH);
 		p = wcsrchr(path, _T('\\'));
-		if (NULL != p)
+		if (NULL != p) {
 			*(p + 1) = _T('\0');
-		else
+		} else {
 			wcscat(path, L"\\");
+		}
 	}
 		break;
 	case DLL_THREAD_ATTACH:

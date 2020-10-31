@@ -34,8 +34,9 @@ const int path_def_len = 5; /* strlen(PATH_DEF); */
 
 char* path_val(char *const envp[]) {
 	int i;
-	if (envp == NULL || envp[0] == NULL)
+	if (envp == NULL || envp[0] == NULL) {
 		return getenv("PATH");
+	}
 
 	for (i = 0; envp[i] != NULL; i++) {
 		char *p = envp[i];
@@ -60,7 +61,7 @@ char* pfind(const char *name, char *const envp[]) {
 		return NULL;
 	}
 
-	/* For absolute name or name with a path, check if it is an executable.  */
+	/* For absolute name or name with a path, check if it is an executable. */
 	if (name[0] == '/' || name[0] == '.') {
 		if (access(name, X_OK) == 0) {
 			return strdup(name);
@@ -68,7 +69,7 @@ char* pfind(const char *name, char *const envp[]) {
 		return NULL;
 	}
 
-	/* Search in the PATH environment.  */
+	/* Search in the PATH environment. */
 	path = path_val(envp);
 
 	if (path == NULL || strlen(path) <= 0) {
@@ -76,7 +77,7 @@ char* pfind(const char *name, char *const envp[]) {
 		return NULL;
 	}
 
-	/* The value return by getenv() is readonly */
+	/* The value return by getenv() is read-only */
 	path = strdup(path);
 
 	tok = strtok_r(path, ":", &sp);
@@ -103,12 +104,13 @@ int main(int argc, char **argv)
    int i;
    char *fullpath;
 
-   for (i=1; i<argc; i++) {
+   for (i = 1; i < argc; i++) {
       fullpath = pfind(argv[i], NULL);
-      if (fullpath == NULL)
+      if (fullpath == NULL) {
         printf("Unable to find %s in $PATH.\n", argv[i]);
-      else 
+      } else {
         printf("Found %s @ %s.\n", argv[i], fullpath);
+      }
    }
 }
 #endif

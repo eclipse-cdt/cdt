@@ -46,11 +46,10 @@
  * IOException
  */
 #ifndef __MINGW32__
-static void closeAndthrowIOException(int fd, JNIEnv *env, const char *msg)
+static void closeAndthrowIOException(int fd, JNIEnv *env, const char *msg) {
 #else
-static void closeAndthrowIOException(HANDLE handle, JNIEnv *env, const char *msg)
+static void closeAndthrowIOException(HANDLE handle, JNIEnv *env, const char *msg) {
 #endif
-		{
 	char buff[256];
 #ifndef __MINGW32__
 	sprintf(buff, "%s: %s", msg, strerror(errno));
@@ -342,8 +341,7 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 }
 
 JNIEXPORT void JNICALL FUNC(close0)
-(JNIEnv *env, jobject jobj, jlong handle)
-{
+(JNIEnv *env, jobject jobj, jlong handle) {
 #ifndef __MINGW32__
 	close(handle);
 #else
@@ -435,8 +433,7 @@ JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv *env, jobject jobj, jlong jhandle, jby
 }
 
 JNIEXPORT void JNICALL FUNC(write0)
-(JNIEnv *env, jobject jobj, jlong jhandle, jint b)
-{
+(JNIEnv *env, jobject jobj, jlong jhandle, jint b) {
 #ifndef __MINGW32__
 	char buff = b;
 	write(jhandle, &buff, 1);
@@ -475,8 +472,7 @@ JNIEXPORT void JNICALL FUNC(write0)
 #endif
 }
 
-JNIEXPORT void JNICALL FUNC(write1)(JNIEnv *env, jobject jobj, jlong jhandle, jbyteArray bytes, jint offset, jint size)
-{
+JNIEXPORT void JNICALL FUNC(write1)(JNIEnv *env, jobject jobj, jlong jhandle, jbyteArray bytes, jint offset, jint size) {
 #ifndef __MINGW32__
 	while (size > 0) {
 		jbyte buff[256];
@@ -512,8 +508,7 @@ JNIEXPORT void JNICALL FUNC(write1)(JNIEnv *env, jobject jobj, jlong jhandle, jb
 			if (GetLastError() != ERROR_IO_PENDING) {
 				throwIOException(env, "Error writing to port");
 				return;
-			}
-			else {
+			} else {
 				switch (WaitForSingleObject(olp.hEvent, INFINITE)) {
 				case WAIT_OBJECT_0:
 					if (!GetOverlappedResult(handle, &olp, &nwritten, FALSE)) {

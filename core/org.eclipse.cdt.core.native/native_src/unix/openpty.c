@@ -43,24 +43,28 @@ int openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct
 	char line[20];
 	line[0] = 0;
 	*amaster = ptym_open(line);
-	if (*amaster < 0)
+	if (*amaster < 0) {
 		return -1;
+	}
 	*aslave = ptys_open(*amaster, line);
 	if (*aslave < 0) {
 		close(*amaster);
 		return -1;
 	}
 
-	if (name)
+	if (name) {
 		strcpy(name, line);
+	}
 #ifndef TCSAFLUSH
 #define TCSAFLUSH TCSETAF
 #endif
-	if (termp)
+	if (termp) {
 		(void) tcsetattr(*aslave, TCSAFLUSH, termp);
+	}
 #ifdef TIOCSWINSZ
-	if (winp)
+	if (winp) {
 		(void) ioctl(*aslave, TIOCSWINSZ, (char *)winp);
+	}
 #endif
 	return 0;
 }
@@ -91,8 +95,9 @@ int ptym_open(char *pts_name) {
 #else
 	fdm = getpt();
 #endif
-	if (fdm < 0)
+	if (fdm < 0) {
 		return -1;
+	}
 	if (grantpt(fdm) < 0) { /* grant access to slave */
 		close(fdm);
 		return -2;

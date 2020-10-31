@@ -32,85 +32,84 @@
 #define PATH_DEF "PATH="
 const int path_def_len = 5; /* strlen(PATH_DEF); */
 
-char* path_val(char *const envp[]) {
-	int i;
-	if (envp == NULL || envp[0] == NULL) {
-		return getenv("PATH");
-	}
+char *path_val(char *const envp[]) {
+    int i;
+    if (envp == NULL || envp[0] == NULL) {
+        return getenv("PATH");
+    }
 
-	for (i = 0; envp[i] != NULL; i++) {
-		char *p = envp[i];
-		if (!strncmp(PATH_DEF, p, path_def_len)) {
-			return p + path_def_len;
-		}
-	}
+    for (i = 0; envp[i] != NULL; i++) {
+        char *p = envp[i];
+        if (!strncmp(PATH_DEF, p, path_def_len)) {
+            return p + path_def_len;
+        }
+    }
 
-	return NULL;
+    return NULL;
 }
 
-char* pfind(const char *name, char *const envp[]) {
-	char *tok;
-	char *sp;
-	char *path;
-	char fullpath[PATH_MAX + 1];
-	struct stat sb;
+char *pfind(const char *name, char *const envp[]) {
+    char *tok;
+    char *sp;
+    char *path;
+    char fullpath[PATH_MAX + 1];
+    struct stat sb;
 
-	/* Sanity check.  */
-	if (name == NULL) {
-		fprintf(stderr, "pfind(): Null argument.\n");
-		return NULL;
-	}
+    /* Sanity check.  */
+    if (name == NULL) {
+        fprintf(stderr, "pfind(): Null argument.\n");
+        return NULL;
+    }
 
-	/* For absolute name or name with a path, check if it is an executable. */
-	if (name[0] == '/' || name[0] == '.') {
-		if (access(name, X_OK) == 0) {
-			return strdup(name);
-		}
-		return NULL;
-	}
+    /* For absolute name or name with a path, check if it is an executable. */
+    if (name[0] == '/' || name[0] == '.') {
+        if (access(name, X_OK) == 0) {
+            return strdup(name);
+        }
+        return NULL;
+    }
 
-	/* Search in the PATH environment. */
-	path = path_val(envp);
+    /* Search in the PATH environment. */
+    path = path_val(envp);
 
-	if (path == NULL || strlen(path) <= 0) {
-		fprintf(stderr, "Unable to get $PATH.\n");
-		return NULL;
-	}
+    if (path == NULL || strlen(path) <= 0) {
+        fprintf(stderr, "Unable to get $PATH.\n");
+        return NULL;
+    }
 
-	/* The value return by getenv() is read-only */
-	path = strdup(path);
+    /* The value return by getenv() is read-only */
+    path = strdup(path);
 
-	tok = strtok_r(path, ":", &sp);
-	while (tok != NULL) {
-		snprintf(fullpath, sizeof(fullpath) - 1, "%s/%s", tok, name);
+    tok = strtok_r(path, ":", &sp);
+    while (tok != NULL) {
+        snprintf(fullpath, sizeof(fullpath) - 1, "%s/%s", tok, name);
 
-		if (stat(fullpath, &sb) == 0 && S_ISREG(sb.st_mode)) { /* fullpath is a file */
-			if (access(fullpath, X_OK) == 0) { /* fullpath is executable */
-				free(path);
-				return strdup(fullpath);
-			}
-		}
+        if (stat(fullpath, &sb) == 0 && S_ISREG(sb.st_mode)) { /* fullpath is a file */
+            if (access(fullpath, X_OK) == 0) {                 /* fullpath is executable */
+                free(path);
+                return strdup(fullpath);
+            }
+        }
 
-		tok = strtok_r(NULL, ":", &sp);
-	}
+        tok = strtok_r(NULL, ":", &sp);
+    }
 
-	free(path);
-	return NULL;
+    free(path);
+    return NULL;
 }
 
 #ifdef BUILD_WITH_MAIN
-int main(int argc, char **argv)
-{
-   int i;
-   char *fullpath;
+int main(int argc, char **argv) {
+    int i;
+    char *fullpath;
 
-   for (i = 1; i < argc; i++) {
-      fullpath = pfind(argv[i], NULL);
-      if (fullpath == NULL) {
-        printf("Unable to find %s in $PATH.\n", argv[i]);
-      } else {
-        printf("Found %s @ %s.\n", argv[i], fullpath);
-      }
-   }
+    for (i = 1; i < argc; i++) {
+        fullpath = pfind(argv[i], NULL);
+        if (fullpath == NULL) {
+            printf("Unable to find %s in $PATH.\n", argv[i]);
+        } else {
+            printf("Found %s @ %s.\n", argv[i], fullpath);
+        }
+    }
 }
 #endif

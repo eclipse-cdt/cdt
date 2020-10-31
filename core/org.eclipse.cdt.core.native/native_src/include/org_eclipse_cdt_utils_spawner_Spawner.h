@@ -10,42 +10,42 @@ extern "C" {
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
  * Method:    exec0
- * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[Lorg/eclipse/cdt/utils/spawner/Spawner/IChannel;)I
+ * Signature:
+ * ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[Lorg/eclipse/cdt/utils/spawner/Spawner/IChannel;)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
-  (JNIEnv *, jobject, jobjectArray, jobjectArray, jstring, jobjectArray);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *, jobject, jobjectArray, jobjectArray,
+                                                                        jstring, jobjectArray);
 
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
  * Method:    exec1
  * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
-  (JNIEnv *, jobject, jobjectArray, jobjectArray, jstring);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *, jobject, jobjectArray, jobjectArray,
+                                                                        jstring);
 
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
  * Method:    exec2
- * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[Lorg/eclipse/cdt/utils/spawner/Spawner/IChannel;Ljava/lang/String;IZ)I
+ * Signature:
+ * ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[Lorg/eclipse/cdt/utils/spawner/Spawner/IChannel;Ljava/lang/String;IZ)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
-  (JNIEnv *, jobject, jobjectArray, jobjectArray, jstring, jobjectArray, jstring, jint, jboolean);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2(JNIEnv *, jobject, jobjectArray, jobjectArray,
+                                                                        jstring, jobjectArray, jstring, jint, jboolean);
 
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
  * Method:    raise
  * Signature: (II)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
-  (JNIEnv *, jobject, jint, jint);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
  * Method:    waitFor
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor
-  (JNIEnv *, jobject, jint);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor(JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
 }

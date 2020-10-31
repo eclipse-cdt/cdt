@@ -1,0 +1,12 @@
+BasedOnStyle: LLVM
+
+# Set column width to 120
+ColumnLimit: 120
+
+# Sorting include statements will put "windows.h" last and result in build error.
+# To avoid unpredictable build errors, disable sorting.
+SortIncludes: false
+
+# Use 4 spaces as indentation
+IndentWidth: 4
+UseTab: Never

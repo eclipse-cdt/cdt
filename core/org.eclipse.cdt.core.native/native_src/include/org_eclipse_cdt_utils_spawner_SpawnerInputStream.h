@@ -18,24 +18,22 @@ extern "C" {
  * Method:    read0
  * Signature: (Lorg/eclipse/cdt/utils/spawner/Spawner/IChannel;[BI)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_read0
-  (JNIEnv *, jobject, jobject, jbyteArray, jint);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_read0(JNIEnv *, jobject, jobject,
+                                                                                   jbyteArray, jint);
 
 /*
  * Class:     org_eclipse_cdt_utils_spawner_SpawnerInputStream
  * Method:    close0
  * Signature: (Lorg/eclipse/cdt/utils/spawner/Spawner/IChannel;)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_close0
-  (JNIEnv *, jobject, jobject);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_close0(JNIEnv *, jobject, jobject);
 
 /*
  * Class:     org_eclipse_cdt_utils_spawner_SpawnerInputStream
  * Method:    available0
  * Signature: (Lorg/eclipse/cdt/utils/spawner/Spawner/IChannel;)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_available0
-  (JNIEnv *, jobject, jobject);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_available0(JNIEnv *, jobject, jobject);
 
 #ifdef __cplusplus
 }

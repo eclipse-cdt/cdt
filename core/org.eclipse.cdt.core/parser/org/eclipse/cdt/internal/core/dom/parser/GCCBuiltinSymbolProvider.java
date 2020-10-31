@@ -224,6 +224,10 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("double", "__builtin_cimag", "complex double");
 		function("float", "__builtin_cimagf", "complex float");
 		function("long double", "__builtin_cimagl", "complex long double");
+		function("void", "__builtin___clear_cache", "void*", "void*");
+		function("int", "__builtin_clrsb", "int");
+		function("int", "__builtin_clrsbl", "long");
+		function("int", "__builtin_clrsbll", "long long");
 		function("int", "__builtin_clz", "unsigned int");
 		function("int", "__builtin_clzl", "unsigned long");
 		function("int", "__builtin_clzll", "unsigned long long");
@@ -265,6 +269,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("float", "__builtin_expm1f", "float");
 		function("long double", "__builtin_expm1l", "long double");
 		function("long", "__builtin_expect", "long", "long");
+		function("long", "__builtin_expect_with_probability", "long", "long", "double");
+		function("unsigned long long int", "__builtin_extend_pointer", "void*");
 		function("double", "__builtin_fabs", "double");
 		function("float", "__builtin_fabsf", "float");
 		function("long double", "__builtin_fabsl", "long double");
@@ -295,6 +301,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("double", "__builtin_frexp", "double", "int*");
 		function("float", "__builtin_frexpf", "float", "int*");
 		function("long double", "__builtin_frexpl", "long double", "int*");
+		function("int", "__builtin_goacc_parlevel_id", "int");
+		function("int", "__builtin_goacc_parlevel_size", "int");
 		function("double", "__builtin_huge_val");
 		function("float", "__builtin_huge_valf");
 		function("long double", "__builtin_huge_vall");
@@ -306,8 +314,12 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("int", "__builtin_ilogbl", "long double");
 		function("long long", "__builtin_imaxabs", "long long");
 		function("double", "__builtin_inf");
+		function("_Decimal32", "__builtin_infd32");
+		function("_Decimal64", "__builtin_infd64");
+		function("_Decimal128", "__builtin_infd128");
 		function("float", "__builtin_inff");
 		function("long double", "__builtin_infl");
+		function("int", "__builtin_isinf_sign", "...");
 		function("bool", "__builtin_isfinite", "double");
 		function("bool", "__builtin_isgreater", "float", "float");
 		function("bool", "__builtin_isgreaterequal", "float", "float");
@@ -325,6 +337,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("double", "__builtin_lgamma", "double");
 		function("float", "__builtin_lgammaf", "float");
 		function("long double", "__builtin_lgammal", "long double");
+		function("int", "__builtin_LINE"); //TODO: This should technically be a constant integer expression
+		function("const char *", "__builtin_FUNCTION");
+		function("const char *", "__builtin_FILE");
 		function("long long", "__builtin_llabs", "long long");
 		function("long long", "__builtin_llrint", "double");
 		function("long long", "__builtin_llrintf", "float");
@@ -361,6 +376,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("void*", "__builtin_memmove", "void*", "const void*", "size_t"); // not in the manual
 		function("void*", "__builtin_memset", "void*", "int", "size_t");
 		function("double", "__builtin_nan", "const char*");
+		function("_Decimal32", "__builtin_nand32");
+		function("_Decimal64", "__builtin_nand64");
+		function("_Decimal128", "__builtin_nand128");
 		function("float", "__builtin_nanf", "const char*");
 		function("long double", "__builtin_nanl", "const char*");
 		function("double", "__builtin_nans", "const char*");
@@ -445,10 +463,12 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("double", "__builtin_tgamma", "double");
 		function("float", "__builtin_tgammaf", "float");
 		function("long double", "__builtin_tgammal", "long double");
+		function("void", "__builtin_trap");
 		function("double", "__builtin_trunc", "double");
 		function("float", "__builtin_truncf", "float");
 		function("long double", "__builtin_truncl", "long double");
 		function("int", "__builtin_types_compatible_p", "", "");
+		function("void", "__builtin_unreachable");
 		function("int", "__builtin_vprintf", "const char*", "va_list");
 		function("int", "__builtin_vscanf", "const char*", "va_list");
 		function("int", "__builtin_vsnprintf", "char*", "size_t", "const char*", "va_list");
@@ -590,6 +610,15 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			t = fCpp ? new CPPBasicType(kind, q) : new CBasicType(kind, q);
 		} else if (tstr.equals("char")) {
 			Kind kind = Kind.eChar;
+			t = fCpp ? new CPPBasicType(kind, q) : new CBasicType(kind, q);
+		} else if (tstr.equals("_Decimal32")) {
+			Kind kind = Kind.eDecimal32;
+			t = fCpp ? new CPPBasicType(kind, q) : new CBasicType(kind, q);
+		} else if (tstr.equals("_Decimal64")) {
+			Kind kind = Kind.eDecimal64;
+			t = fCpp ? new CPPBasicType(kind, q) : new CBasicType(kind, q);
+		} else if (tstr.equals("_Decimal128")) {
+			Kind kind = Kind.eDecimal128;
 			t = fCpp ? new CPPBasicType(kind, q) : new CBasicType(kind, q);
 		} else if (tstr.equals("int")) {
 			Kind kind = Kind.eInt;

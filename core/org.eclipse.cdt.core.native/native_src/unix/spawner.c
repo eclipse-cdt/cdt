@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
- *     Wind River Systems, Inc.  
+ *     Wind River Systems, Inc.
  *     Mikhail Zabaluev (Nokia) - bug 82744
  *******************************************************************************/
 #include <unistd.h>
@@ -26,7 +26,7 @@
 #define DEBUGIT 0
 
 /*
- * Header for class org_eclipse_cdt_utils_spawner_Spawner 
+ * Header for class org_eclipse_cdt_utils_spawner_Spawner
  */
 
 #if DEBUGIT
@@ -44,57 +44,59 @@ static void print_array(char **c_array) {
 }
 #endif
 
-static char** alloc_c_array(JNIEnv *env, jobjectArray j_array) {
-	int i;
-	jint c_array_size = (*env)->GetArrayLength(env, j_array);
-	char **c_array = calloc(c_array_size + 1, sizeof(char*));
+static char **alloc_c_array(JNIEnv *env, jobjectArray j_array) {
+    int i;
+    jint c_array_size = (*env)->GetArrayLength(env, j_array);
+    char **c_array = calloc(c_array_size + 1, sizeof(char *));
 
-	if (c_array == NULL) {
-		return NULL;
-	}
+    if (c_array == NULL) {
+        return NULL;
+    }
 
-	for (i = 0; i < c_array_size; i++) {
-		jstring j_str = (jstring)(*env)->GetObjectArrayElement(env, j_array, i);
-		const char *c_str = (*env)->GetStringUTFChars(env, j_str, NULL);
-		c_array[i] = (char*) strdup(c_str);
-		(*env)->ReleaseStringUTFChars(env, j_str, c_str);
-		(*env)->DeleteLocalRef(env, j_str);
-	}
+    for (i = 0; i < c_array_size; i++) {
+        jstring j_str = (jstring)(*env)->GetObjectArrayElement(env, j_array, i);
+        const char *c_str = (*env)->GetStringUTFChars(env, j_str, NULL);
+        c_array[i] = (char *)strdup(c_str);
+        (*env)->ReleaseStringUTFChars(env, j_str, c_str);
+        (*env)->DeleteLocalRef(env, j_str);
+    }
 
-	return c_array;
+    return c_array;
 }
 
 static void free_c_array(char **c_array) {
-	if (c_array) {
-		for (char **p = c_array; *p; p++) {
-			free(*p);
-		}
-		free(c_array);
-	}
+    if (c_array) {
+        for (char **p = c_array; *p; p++) {
+            free(*p);
+        }
+        free(c_array);
+    }
 }
 
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2(JNIEnv *env, jobject jobj, jobjectArray jcmd,
-		jobjectArray jenv, jstring jdir, jobjectArray jchannels, jstring jslaveName, jint masterFD, jboolean console) {
-	const char *dirpath = (*env)->GetStringUTFChars(env, jdir, NULL);
-	const char *pts_name = (*env)->GetStringUTFChars(env, jslaveName, NULL);
-	char **cmd = NULL;
-	char **envp = NULL;
-	int fd[3];
-	pid_t pid = -1;
+                                                                        jobjectArray jenv, jstring jdir,
+                                                                        jobjectArray jchannels, jstring jslaveName,
+                                                                        jint masterFD, jboolean console) {
+    const char *dirpath = (*env)->GetStringUTFChars(env, jdir, NULL);
+    const char *pts_name = (*env)->GetStringUTFChars(env, jslaveName, NULL);
+    char **cmd = NULL;
+    char **envp = NULL;
+    int fd[3];
+    pid_t pid = -1;
 
-	if (jchannels == NULL) {
-		goto bail_out;
-	}
+    if (jchannels == NULL) {
+        goto bail_out;
+    }
 
-	cmd = alloc_c_array(env, jcmd);
-	if (cmd == NULL) {
-		goto bail_out;
-	}
+    cmd = alloc_c_array(env, jcmd);
+    if (cmd == NULL) {
+        goto bail_out;
+    }
 
-	envp = alloc_c_array(env, jenv);
-	if (envp == NULL) {
-		goto bail_out;
-	}
+    envp = alloc_c_array(env, jenv);
+    if (envp == NULL) {
+        goto bail_out;
+    }
 
 #if DEBUGIT
     fprintf(stderr, "command:");
@@ -105,42 +107,42 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2(JNIEnv *
     fprintf(stderr, "pts_name: %s\n", pts_name);
 #endif
 
-	pid = exec_pty(cmd[0], cmd, envp, dirpath, fd, pts_name, masterFD, console);
-	if (pid < 0) {
-		goto bail_out;
-	}
+    pid = exec_pty(cmd[0], cmd, envp, dirpath, fd, pts_name, masterFD, console);
+    if (pid < 0) {
+        goto bail_out;
+    }
 
-	jobject cls = (*env)->FindClass(env, "org/eclipse/cdt/utils/spawner/Spawner$UnixChannel");
-	jmethodID constructor = (*env)->GetMethodID(env, cls, "<init>", "(I)V");
-	for (jsize i = 0; i < 3; i++) {
-		jobject chan = (*env)->NewObject(env, cls, constructor, fd[i]);
-		(*env)->SetObjectArrayElement(env, jchannels, i, chan);
-	}
+    jobject cls = (*env)->FindClass(env, "org/eclipse/cdt/utils/spawner/Spawner$UnixChannel");
+    jmethodID constructor = (*env)->GetMethodID(env, cls, "<init>", "(I)V");
+    for (jsize i = 0; i < 3; i++) {
+        jobject chan = (*env)->NewObject(env, cls, constructor, fd[i]);
+        (*env)->SetObjectArrayElement(env, jchannels, i, chan);
+    }
 
-	bail_out: (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
-	(*env)->ReleaseStringUTFChars(env, jslaveName, pts_name);
-	free_c_array(cmd);
-	free_c_array(envp);
-	return pid;
+bail_out:
+    (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
+    (*env)->ReleaseStringUTFChars(env, jslaveName, pts_name);
+    free_c_array(cmd);
+    free_c_array(envp);
+    return pid;
 }
 
-JNIEXPORT jint JNICALL
-Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *env, jobject jobj, jobjectArray jcmd, jobjectArray jenv,
-		jstring jdir) {
-	const char *dirpath = (*env)->GetStringUTFChars(env, jdir, NULL);
-	char **cmd = NULL;
-	char **envp = NULL;
-	pid_t pid = -1;
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *env, jobject jobj, jobjectArray jcmd,
+                                                                        jobjectArray jenv, jstring jdir) {
+    const char *dirpath = (*env)->GetStringUTFChars(env, jdir, NULL);
+    char **cmd = NULL;
+    char **envp = NULL;
+    pid_t pid = -1;
 
-	cmd = alloc_c_array(env, jcmd);
-	if (cmd == NULL) {
-		goto bail_out;
-	}
+    cmd = alloc_c_array(env, jcmd);
+    if (cmd == NULL) {
+        goto bail_out;
+    }
 
-	envp = alloc_c_array(env, jenv);
-	if (envp == NULL) {
-		goto bail_out;
-	}
+    envp = alloc_c_array(env, jenv);
+    if (envp == NULL) {
+        goto bail_out;
+    }
 
 #if DEBUGIT
     fprintf(stderr, "command:");
@@ -150,51 +152,52 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *env, jobject jobj, jobj
     fprintf(stderr, "dirpath: %s\n", dirpath);
 #endif
 
-	pid = exec0(cmd[0], cmd, envp, dirpath, NULL);
-	if (pid < 0) {
-		goto bail_out;
-	}
+    pid = exec0(cmd[0], cmd, envp, dirpath, NULL);
+    if (pid < 0) {
+        goto bail_out;
+    }
 
-	bail_out: (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
-	free_c_array(cmd);
-	free_c_array(envp);
-	return pid;
+bail_out:
+    (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
+    free_c_array(cmd);
+    free_c_array(envp);
+    return pid;
 }
 
-JNIEXPORT jint JNICALL
-Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *env, jobject jobj, jobjectArray jcmd, jobjectArray jenv,
-		jstring jdir, jobjectArray jchannels) {
-	const char *dirpath = (*env)->GetStringUTFChars(env, jdir, NULL);
-	char **cmd = NULL;
-	char **envp = NULL;
-	int fd[3];
-	pid_t pid = -1;
-	jclass channelClass = NULL;
-	jmethodID channelConstructor = NULL;
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *env, jobject jobj, jobjectArray jcmd,
+                                                                        jobjectArray jenv, jstring jdir,
+                                                                        jobjectArray jchannels) {
+    const char *dirpath = (*env)->GetStringUTFChars(env, jdir, NULL);
+    char **cmd = NULL;
+    char **envp = NULL;
+    int fd[3];
+    pid_t pid = -1;
+    jclass channelClass = NULL;
+    jmethodID channelConstructor = NULL;
 
-	if (jchannels == NULL) {
-		goto bail_out;
-	}
+    if (jchannels == NULL) {
+        goto bail_out;
+    }
 
-	channelClass = (*env)->FindClass(env, "org/eclipse/cdt/utils/spawner/Spawner$UnixChannel");
-	if (channelClass == 0) {
-		goto bail_out;
-	}
+    channelClass = (*env)->FindClass(env, "org/eclipse/cdt/utils/spawner/Spawner$UnixChannel");
+    if (channelClass == 0) {
+        goto bail_out;
+    }
 
-	channelConstructor = (*env)->GetMethodID(env, channelClass, "<init>", "(I)V");
-	if (channelConstructor == 0) {
-		goto bail_out;
-	}
+    channelConstructor = (*env)->GetMethodID(env, channelClass, "<init>", "(I)V");
+    if (channelConstructor == 0) {
+        goto bail_out;
+    }
 
-	cmd = alloc_c_array(env, jcmd);
-	if (cmd == NULL) {
-		goto bail_out;
-	}
+    cmd = alloc_c_array(env, jcmd);
+    if (cmd == NULL) {
+        goto bail_out;
+    }
 
-	envp = alloc_c_array(env, jenv);
-	if (envp == NULL) {
-		goto bail_out;
-	}
+    envp = alloc_c_array(env, jenv);
+    if (envp == NULL) {
+        goto bail_out;
+    }
 
 #if DEBUGIT
     fprintf(stderr, "command:");
@@ -203,20 +206,21 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *env, jobject jobj, jobj
     print_array(envp);
     fprintf(stderr, "dirpath: %s\n", dirpath);
 #endif
-	pid = exec0(cmd[0], cmd, envp, dirpath, fd);
-	if (pid < 0) {
-		goto bail_out;
-	}
+    pid = exec0(cmd[0], cmd, envp, dirpath, fd);
+    if (pid < 0) {
+        goto bail_out;
+    }
 
-	for (jsize i = 0; i < 3; i++) {
-		jobject chan = (*env)->NewObject(env, channelClass, channelConstructor, fd[i]);
-		(*env)->SetObjectArrayElement(env, jchannels, i, chan);
-	}
+    for (jsize i = 0; i < 3; i++) {
+        jobject chan = (*env)->NewObject(env, channelClass, channelConstructor, fd[i]);
+        (*env)->SetObjectArrayElement(env, jchannels, i, chan);
+    }
 
-	bail_out: (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
-	free_c_array(cmd);
-	free_c_array(envp);
-	return pid;
+bail_out:
+    (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
+    free_c_array(cmd);
+    free_c_array(envp);
+    return pid;
 }
 
 /*
@@ -224,48 +228,47 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *env, jobject jobj, jobj
  * Method:    raise
  * Signature: (II)I
  */
-JNIEXPORT jint JNICALL
-Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *env, jobject jobj, jint pid, jint sig) {
-	int status = -1;
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *env, jobject jobj, jint pid, jint sig) {
+    int status = -1;
 
-	switch (sig) {
-	case 0: /* NOOP */
-		status = killpg(pid, 0);
-		if (status == -1) {
-			status = kill(pid, 0);
-		}
-		break;
+    switch (sig) {
+    case 0: /* NOOP */
+        status = killpg(pid, 0);
+        if (status == -1) {
+            status = kill(pid, 0);
+        }
+        break;
 
-	case 2: /* INTERRUPT */
-		status = killpg(pid, SIGINT);
-		if (status == -1) {
-			status = kill(pid, SIGINT);
-		}
-		break;
+    case 2: /* INTERRUPT */
+        status = killpg(pid, SIGINT);
+        if (status == -1) {
+            status = kill(pid, SIGINT);
+        }
+        break;
 
-	case 9: /* KILL */
-		status = killpg(pid, SIGKILL);
-		if (status == -1) {
-			status = kill(pid, SIGKILL);
-		}
-		break;
+    case 9: /* KILL */
+        status = killpg(pid, SIGKILL);
+        if (status == -1) {
+            status = kill(pid, SIGKILL);
+        }
+        break;
 
-	case 15: /* TERM */
-		status = killpg(pid, SIGTERM);
-		if (status == -1) {
-			status = kill(pid, SIGTERM);
-		}
-		break;
+    case 15: /* TERM */
+        status = killpg(pid, SIGTERM);
+        if (status == -1) {
+            status = kill(pid, SIGTERM);
+        }
+        break;
 
-	default:
-		status = killpg(pid, sig); /* WHAT ?? */
-		if (status == -1) {
-			status = kill(pid, sig); /* WHAT ?? */
-		}
-		break;
-	}
+    default:
+        status = killpg(pid, sig); /* WHAT ?? */
+        if (status == -1) {
+            status = kill(pid, sig); /* WHAT ?? */
+        }
+        break;
+    }
 
-	return status;
+    return status;
 }
 
 /*
@@ -273,7 +276,6 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *env, jobject jobj, jint
  * Method:    waitFor
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL
-Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor(JNIEnv *env, jobject jobj, jint pid) {
-	return wait0(pid);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor(JNIEnv *env, jobject jobj, jint pid) {
+    return wait0(pid);
 }

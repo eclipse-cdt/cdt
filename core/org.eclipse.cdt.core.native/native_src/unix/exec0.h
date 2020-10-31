@@ -22,6 +22,6 @@
 extern pid_t exec0(const char *path, char *const argv[], char *const envp[], const char *dirpath, int channels[3]);
 
 extern pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const char *dirpath, int channels[3],
-		const char *pts_name, int fdm, int console);
+                      const char *pts_name, int fdm, int console);
 
 extern int wait0(pid_t pid);

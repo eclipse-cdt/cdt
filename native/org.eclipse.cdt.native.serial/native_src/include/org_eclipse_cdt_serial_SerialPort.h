@@ -12,56 +12,50 @@ extern "C" {
  * Method:    open0
  * Signature: (Ljava/lang/String;IIII)J
  */
-JNIEXPORT jlong JNICALL Java_org_eclipse_cdt_serial_SerialPort_open0
-  (JNIEnv *, jobject, jstring, jint, jint, jint, jint);
+JNIEXPORT jlong JNICALL Java_org_eclipse_cdt_serial_SerialPort_open0(JNIEnv *, jobject, jstring, jint, jint, jint,
+                                                                     jint);
 
 /*
  * Class:     org_eclipse_cdt_serial_SerialPort
  * Method:    close0
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_eclipse_cdt_serial_SerialPort_close0
-  (JNIEnv *, jobject, jlong);
+JNIEXPORT void JNICALL Java_org_eclipse_cdt_serial_SerialPort_close0(JNIEnv *, jobject, jlong);
 
 /*
  * Class:     org_eclipse_cdt_serial_SerialPort
  * Method:    read1
  * Signature: (J[BII)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_serial_SerialPort_read1
-  (JNIEnv *, jobject, jlong, jbyteArray, jint, jint);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_serial_SerialPort_read1(JNIEnv *, jobject, jlong, jbyteArray, jint, jint);
 
 /*
  * Class:     org_eclipse_cdt_serial_SerialPort
  * Method:    available0
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_serial_SerialPort_available0
-  (JNIEnv *, jobject, jlong);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_serial_SerialPort_available0(JNIEnv *, jobject, jlong);
 
 /*
  * Class:     org_eclipse_cdt_serial_SerialPort
  * Method:    write0
  * Signature: (JI)V
  */
-JNIEXPORT void JNICALL Java_org_eclipse_cdt_serial_SerialPort_write0
-  (JNIEnv *, jobject, jlong, jint);
+JNIEXPORT void JNICALL Java_org_eclipse_cdt_serial_SerialPort_write0(JNIEnv *, jobject, jlong, jint);
 
 /*
  * Class:     org_eclipse_cdt_serial_SerialPort
  * Method:    write1
  * Signature: (J[BII)V
  */
-JNIEXPORT void JNICALL Java_org_eclipse_cdt_serial_SerialPort_write1
-  (JNIEnv *, jobject, jlong, jbyteArray, jint, jint);
+JNIEXPORT void JNICALL Java_org_eclipse_cdt_serial_SerialPort_write1(JNIEnv *, jobject, jlong, jbyteArray, jint, jint);
 
 /*
  * Class:     org_eclipse_cdt_serial_SerialPort
  * Method:    getPortName
  * Signature: (I)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_serial_SerialPort_getPortName
-  (JNIEnv *, jclass, jint);
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_serial_SerialPort_getPortName(JNIEnv *, jclass, jint);
 
 #ifdef __cplusplus
 }

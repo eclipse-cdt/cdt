@@ -14,16 +14,14 @@ extern "C" {
  * Method:    write0
  * Signature: (I[BI)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_write0
-  (JNIEnv *, jobject, jint, jbyteArray, jint);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_write0(JNIEnv *, jobject, jint, jbyteArray, jint);
 
 /*
  * Class:     org_eclipse_cdt_utils_pty_PTYOutputStream
  * Method:    close0
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_close0
-  (JNIEnv *, jobject, jint);
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_close0(JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
 }

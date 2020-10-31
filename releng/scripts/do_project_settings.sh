@@ -88,24 +88,6 @@ git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
     else
         rm -f $d/.settings/org.eclipse.pde*.prefs
     fi
-
-    # CDT (native code)
-    if [[ $natures == *"org.eclipse.cdt.core.cnature"* ]]; then
-        cp $COREPROJECT/.settings/org.eclipse.cdt.*.prefs $d/.settings
-        if echo $i | grep -E '\.tests?[/\.]' > /dev/null; then
-            # Disable indexer for test plugins
-            sed -i '
-                /^eclipse.preferences.version/ {
-                    p # Print line
-                    i indexer/indexerId=org.eclipse.cdt.core.nullindexer
-                    i indexerId=org.eclipse.cdt.core.nullindexer
-                    i instance/org.eclipse.core.net/org.eclipse.core.net.hasMigrated=true
-                    d # Already printed
-                }' $d/.settings/org.eclipse.cdt.core.prefs
-        fi
-    else
-        rm -f $d/.settings/org.eclipse.cdt.*.prefs
-    fi
 done
 
 ##

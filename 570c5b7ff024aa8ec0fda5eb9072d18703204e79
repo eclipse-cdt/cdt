@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "970d42a3_e5d4a019",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/pty_dllmain.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-31T20:47:39Z",
+      "side": 0,
+      "message": "Since we are using GCC I assume this wasn\u0027t having any effect anyway.",
+      "revId": "570c5b7ff024aa8ec0fda5eb9072d18703204e79",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

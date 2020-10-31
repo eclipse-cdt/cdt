@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7b58581d_ae799375",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-10-31T20:47:39Z",
+      "side": 1,
+      "message": ":-)\n\nShould -Werror be added here too? I will accept as is - you can add it if appropriate in a future commit.",
+      "revId": "908aa33b914ae16cfc13903f75a1cb50e6a91017",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

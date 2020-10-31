@@ -133,7 +133,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *
 	PROCESS_INFORMATION pi = { 0 }, *piCopy;
 	STARTUPINFOW si;
 	DWORD flags = 0;
-	const wchar_t *cwd = NULL;
+	wchar_t *cwd = NULL;
 	LPVOID envBlk = NULL;
 	int ret = 0;
 	int nCmdLineLength = 0;
@@ -372,17 +372,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *
 	&si, /* (in)  startup information */
 	&pi); /* (out) process information */
 
-	if (NULL != cwd) {
-		free((void*) cwd);
-	}
-
-	if (NULL != szEnvBlock) {
-		free(szEnvBlock);
-	}
-
-	if (NULL != szCmdLine) {
-		free(szCmdLine);
-	}
+	free(cwd);
+	free(szEnvBlock);
+	free(szCmdLine);
 
 	if (!ret) { // Launching error
 		char *lpMsgBuf;
@@ -572,15 +564,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *
 	&si, /* (in)  startup information */
 	&pi); /* (out) process information */
 
-	if (NULL != cwd) {
-		free(cwd);
-	}
-	if (NULL != szEnvBlock) {
-		free(szEnvBlock);
-	}
-	if (NULL != szCmdLine) {
-		free(szCmdLine);
-	}
+	free(cwd);
+	free(szEnvBlock);
+	free(szCmdLine);
 
 	if (!ret) { // error
 		char *lpMsgBuf;

@@ -47,7 +47,7 @@ static void print_array(char **c_array) {
 static char** alloc_c_array(JNIEnv *env, jobjectArray j_array) {
 	int i;
 	jint c_array_size = (*env)->GetArrayLength(env, j_array);
-	char **c_array = calloc(c_array_size + 1, sizeof(*c_array));
+	char **c_array = calloc(c_array_size + 1, sizeof(char*));
 
 	if (c_array == NULL) {
 		return NULL;
@@ -67,9 +67,7 @@ static char** alloc_c_array(JNIEnv *env, jobjectArray j_array) {
 static void free_c_array(char **c_array) {
 	if (c_array) {
 		for (char **p = c_array; *p; p++) {
-			if (*p) {
-				free(*p);
-			}
+			free(*p);
 		}
 		free(c_array);
 	}
@@ -121,12 +119,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2(JNIEnv *
 
 	bail_out: (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
 	(*env)->ReleaseStringUTFChars(env, jslaveName, pts_name);
-	if (cmd) {
-		free_c_array(cmd);
-	}
-	if (envp) {
-		free_c_array(envp);
-	}
+	free_c_array(cmd);
+	free_c_array(envp);
 	return pid;
 }
 
@@ -162,12 +156,8 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *env, jobject jobj, jobj
 	}
 
 	bail_out: (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
-	if (cmd) {
-		free_c_array(cmd);
-	}
-	if (envp) {
-		free_c_array(envp);
-	}
+	free_c_array(cmd);
+	free_c_array(envp);
 	return pid;
 }
 
@@ -224,12 +214,8 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *env, jobject jobj, jobj
 	}
 
 	bail_out: (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
-	if (cmd) {
-		free_c_array(cmd);
-	}
-	if (envp) {
-		free_c_array(envp);
-	}
+	free_c_array(cmd);
+	free_c_array(envp);
 	return pid;
 }
 

@@ -430,9 +430,7 @@ int main() {
 #endif
 	}
 
-	if (NULL != szCmdLine) {
-		free(szCmdLine);
-	}
+	free(szCmdLine);
 
 	CloseHandle(waitEvent);
 	CloseHandle(h[0]);
@@ -441,7 +439,7 @@ int main() {
 	CloseHandle(h[3]);
 	CloseHandle(h[4]);
 
-	return (dwExitCode);
+	return dwExitCode;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

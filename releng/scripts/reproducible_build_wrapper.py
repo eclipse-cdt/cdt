@@ -54,7 +54,11 @@ except ValueError:
 
 # Preprocess the source file(s)
 debug("Preprocess cmd: {}".format(preprocess_command))
-data = subprocess.check_output(preprocess_command)
+try:
+    data = subprocess.check_output(preprocess_command)
+except subprocess.CalledProcessError as e:
+    print("Failed to hash source code, exit code {}".format(e.returncode))
+    sys.exit(e.returncode)
 
 # Hash the content
 sha1.update(data)
@@ -65,4 +69,4 @@ os.environ["SOURCE_DATE_EPOCH"] = str(int(sha1.hexdigest(), base=16) % LONG_MAX)
 debug("SOURCE_DATE_EPOCH: {}".format(os.environ["SOURCE_DATE_EPOCH"]))
 
 # Run the compiler with the environement variable set
-subprocess.run(compiler_command)
+sys.exit(subprocess.run(compiler_command).returncode)

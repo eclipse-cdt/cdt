@@ -27,11 +27,6 @@
 static std::map<int, winpty_t*> fd2pty;
 static std::map<int, int> fd2rc;
 
-/*
- * Class:     org_eclipse_cdt_utils_pty_PTY
- * Method:    openMaster
- * Signature: (Z)Ljava/lang/String;
- */
 JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster(JNIEnv *env, jobject jobj, jboolean console) {
 	jfieldID fid; /* Store the field ID */
 	jstring jstr = NULL;
@@ -82,11 +77,6 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster(JNIEnv *
 	return jstr;
 }
 
-/*
- * Class:     org_eclipse_cdt_utils_pty_PTY
- * Method:    change_window_size
- * Signature: (III)I
- */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size(JNIEnv *env, jobject jobj, jint fdm,
 		jint width, jint height) {
 	int fd;
@@ -103,11 +93,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size(J
 	return 0;
 }
 
-/*
- * Class:     org_eclipse_cdt_utils_pty_PTYInputStream
- * Method:    read0
- * Signature: (I[BI)I
- */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYInputStream_read0(JNIEnv *env, jobject jobj, jint jfd,
 		jbyteArray buf, jint buf_len) {
 	DWORD amount = -1;
@@ -160,11 +145,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYInputStream_read0(JNIEn
 	return amount;
 }
 
-/*
- * Class:     org_eclipse_cdt_utils_pty_PTYInputStream
- * Method:    close0
- * Signature: (I)I
- */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYInputStream_close0(JNIEnv *env, jobject jobj, jint jfd) {
 	int fd;
 	std::map<int, winpty_t*>::iterator fd2pty_Iter;
@@ -183,11 +163,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYInputStream_close0(JNIE
 	return 0;
 }
 
-/*
- * Class:     org_eclipse_cdt_utils_pty_PTYOutputStream
- * Method:    write0
- * Signature: (I[BI)I
- */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_write0(JNIEnv *env, jobject jobj, jint jfd,
 		jbyteArray buf, jint buf_len) {
 	DWORD written = -1;
@@ -227,11 +202,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_write0(JNI
 	return written;
 }
 
-/*
- * Class:     org_eclipse_cdt_utils_pty_PTYOutputStream
- * Method:    close0
- * Signature: (I)I
- */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_close0(JNIEnv *env, jobject jobj, jint jfd) {
 	int fd;
 	std::map<int, winpty_t*>::iterator fd2pty_Iter;
@@ -301,11 +271,6 @@ static std::wstring argvToCommandLine(const std::vector<std::wstring> &argv) {
 	return result;
 }
 
-/*
- * Class:     org_eclipse_cdt_utils_pty_PTY
- * Method:    exec2
- * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[ILjava/lang/String;IZ)I
- */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_exec2(JNIEnv *env, jobject jobj, jobjectArray jcmd,
 		jobjectArray jenv, jstring jdir, jobjectArray jchannels, jstring jslaveName, jint masterFD, jboolean console) {
 	int fd;
@@ -370,11 +335,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_exec2(JNIEnv *env, job
 	return pid;
 }
 
-/*
- * Class:     org_eclipse_cdt_utils_pty_PTY
- * Method:    waitFor
- * Signature: (II)I
- */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_waitFor(JNIEnv *env, jobject jobj, jint masterFD, jint pid) {
 	int status = -1;
 	DWORD flags;

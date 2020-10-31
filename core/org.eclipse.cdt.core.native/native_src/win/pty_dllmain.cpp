@@ -3,17 +3,6 @@
 #include <delayimp.h>
 #include <assert.h>
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
-	switch (ul_reason_for_call) {
-	case DLL_PROCESS_ATTACH:
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-	return TRUE;
-}
-
 static HMODULE getCurrentModule() {
 	HMODULE module;
 	if (!GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,

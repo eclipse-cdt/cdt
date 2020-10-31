@@ -16,6 +16,24 @@
       "revId": "570c5b7ff024aa8ec0fda5eb9072d18703204e79",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2fddc8bc_1396b358",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/pty_dllmain.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-10-31T20:55:10Z",
+      "side": 0,
+      "message": "No, GCC just print this warning:\n\nwin/pty_dllmain.cpp:6:0: warning: ignoring #pragma comment  [-Wunknown-pragmas]\n\nI assumed that it did not matter for GCC...",
+      "parentUuid": "970d42a3_e5d4a019",
+      "revId": "570c5b7ff024aa8ec0fda5eb9072d18703204e79",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

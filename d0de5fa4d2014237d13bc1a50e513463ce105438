@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ef7e2028_e19c46c2",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-10-31T10:19:19Z",
+      "side": 1,
+      "message": "This new logic is deeply hidden from the explicit testing. Do you think we can promote it to a dedicated type?",
+      "revId": "d0de5fa4d2014237d13bc1a50e513463ce105438",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

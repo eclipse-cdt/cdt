@@ -33,11 +33,10 @@ static HWND consoleHWND;
 /////////////////////////////////////////////////////////////////////////////////////
 static BOOL CALLBACK
 find_child_console(HWND hwnd, LPARAM arg) {
-	DWORD thread_id;
 	DWORD process_id;
 	DWORD pid = arg;
 
-	thread_id = GetWindowThreadProcessId(hwnd, &process_id);
+	GetWindowThreadProcessId(hwnd, &process_id);
 	if (process_id == pid) {
 		wchar_t window_class[32];
 
@@ -114,9 +113,7 @@ int interruptProcess(int pid) {
 		// send Ctrl-C and then restore focus
 		BYTE control_scan_code = (BYTE) MapVirtualKey(VK_CONTROL, 0);
 		/* Fake Ctrl-C for SIGINT, and Ctrl-Break for SIGQUIT.  */
-		BYTE vk_c_code = 'C';
 		BYTE vk_break_code = VK_CANCEL;
-		BYTE c_scan_code = (BYTE) MapVirtualKey(vk_c_code, 0);
 		BYTE break_scan_code = (BYTE) MapVirtualKey(vk_break_code, 0);
 		HWND foreground_window;
 

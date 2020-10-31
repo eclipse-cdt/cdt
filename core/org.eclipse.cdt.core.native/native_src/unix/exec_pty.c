@@ -49,7 +49,7 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 	 */
 	if (channels != NULL && console) {
 		if (pipe(pipe2) < 0) {
-			fprintf(stderr, "%s(%d): returning due to error: %s\n", __FUNCTION__, __LINE__, strerror(errno));
+			fprintf(stderr, "%s(%d): returning due to error: %s\n", __func__, __LINE__, strerror(errno));
 			free(full_path);
 			return -1;
 		}
@@ -58,7 +58,7 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 	childpid = fork();
 
 	if (childpid < 0) {
-		fprintf(stderr, "%s(%d): returning due to error: %s\n", __FUNCTION__,
+		fprintf(stderr, "%s(%d): returning due to error: %s\n", __func__,
 		__LINE__, strerror(errno));
 		free(full_path);
 		return -1;
@@ -76,7 +76,7 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 
 			fds = ptys_open(fdm, pts_name);
 			if (fds < 0) {
-				fprintf(stderr, "%s(%d): returning due to error: %s\n", __FUNCTION__, __LINE__, strerror(errno));
+				fprintf(stderr, "%s(%d): returning due to error: %s\n", __func__, __LINE__, strerror(errno));
 				return -1;
 			}
 

@@ -45,7 +45,7 @@ pid_t exec0(const char *path, char *const argv[], char *const envp[], const char
 	 */
 	if (channels != NULL) {
 		if (pipe(pipe0) < 0 || pipe(pipe1) < 0 || pipe(pipe2) < 0) {
-			fprintf(stderr, "%s(%d): returning due to error.\n", __FUNCTION__,
+			fprintf(stderr, "%s(%d): returning due to error.\n", __func__,
 			__LINE__);
 			free(full_path);
 			return -1;
@@ -55,13 +55,10 @@ pid_t exec0(const char *path, char *const argv[], char *const envp[], const char
 	childpid = fork();
 
 	if (childpid < 0) {
-		fprintf(stderr, "%s(%d): returning due to error: %s\n", __FUNCTION__,
-		__LINE__, strerror(errno));
+		fprintf(stderr, "%s(%d): returning due to error: %s\n", __func__, __LINE__, strerror(errno));
 		free(full_path);
 		return -1;
 	} else if (childpid == 0) { /* child */
-		char *ptr;
-
 		chdir(dirpath);
 
 		if (channels != NULL) {
@@ -107,9 +104,6 @@ pid_t exec0(const char *path, char *const argv[], char *const envp[], const char
 		_exit(127);
 
 	} else if (childpid != 0) { /* parent */
-
-		char b;
-
 		if (channels != NULL) {
 			/* close the read end of pipe1 */
 			if (close(pipe0[0]) == -1) {

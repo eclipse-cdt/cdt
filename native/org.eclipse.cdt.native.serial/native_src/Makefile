@@ -22,6 +22,7 @@ REPRODUCIBLE_BUILD_WRAPPER := $(shell git rev-parse --show-toplevel)/releng/scri
 OS_DIR = ../os
 
 CFLAGS += -fPIC -D_REENTRANT
+COMMON_CFLAGS := -Wall -pedantic
 
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
@@ -55,20 +56,20 @@ rebuild: clean all
 $(OS_DIR)/win32/x86_64/serial.dll:	serial.c
 	mkdir -p $(dir $@) && \
 	$(REPRODUCIBLE_BUILD_WRAPPER) \
-	x86_64-w64-mingw32-gcc -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ $^
+	x86_64-w64-mingw32-gcc $(COMMON_CFLAGS) -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ $^
 
 $(OS_DIR)/linux/x86_64/libserial.so:	serial.c
 	mkdir -p $(dir $@) && \
-	gcc -m64 $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ $^
+	x86_64-linux-gnu-gcc -m64 $(COMMON_CFLAGS) $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ $^
 
 $(OS_DIR)/linux/aarch64/libserial.so:	serial.c
 	mkdir -p $(dir $@) && \
-	aarch64-linux-gnu-gcc $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ $^
+	aarch64-linux-gnu-gcc $(COMMON_CFLAGS) $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ $^
 
 $(OS_DIR)/linux/ppc64le/libserial.so:	serial.c
 	mkdir -p $(dir $@)
-	powerpc64le-linux-gnu-gcc -m64 -mcpu=power8 $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
+	powerpc64le-linux-gnu-gcc $(COMMON_CFLAGS) -m64 -mcpu=power8 $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
 
 $(OS_DIR)/macosx/x86_64/libserial.jnilib:	serial.c
 	mkdir -p $(dir $@) && \
-	x86_64-apple-darwin17-clang $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin $(LDFLAGS) -dynamiclib -o $@ $^
+	x86_64-apple-darwin17-clang $(COMMON_CFLAGS) $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin $(LDFLAGS) -dynamiclib -o $@ $^

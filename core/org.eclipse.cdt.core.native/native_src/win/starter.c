@@ -142,8 +142,8 @@ int main() {
 
 	// Make sure that we've been passed the right number of arguments
 	if (argc < 8) {
-		_tprintf(_T("Usage: %s (four inheritable event handles) (CommandLineToSpawn)\n"), argv[0]);
-		return (0);
+		wprintf(L"Usage: %s (four inheritable event handles) (CommandLineToSpawn)\n", argv[0]);
+		return 0;
 	}
 
 	// Construct the full command line
@@ -454,7 +454,6 @@ int main() {
 int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace) {
 	BOOL bSlash = FALSE;
 	int i = 0, j = 0;
-	int totCpyLength = cpyLength;
 
 #define QUOTATION_DO   0
 #define QUOTATION_DONE 1

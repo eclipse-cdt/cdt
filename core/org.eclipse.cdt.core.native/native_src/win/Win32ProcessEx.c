@@ -84,8 +84,6 @@ extern CRITICAL_SECTION cs;
 
 extern wchar_t path[MAX_PATH]; // Directory where spawner.dll is located
 
-static HMODULE hVM = NULL;   // VM handler
-
 static pProcInfo_t pInfo = NULL;
 
 static int nCounter = 0; // We use it to build unique synchronization object names
@@ -134,7 +132,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *
 	STARTUPINFOW si;
 	DWORD flags = 0;
 	wchar_t *cwd = NULL;
-	LPVOID envBlk = NULL;
 	int ret = 0;
 	int nCmdLineLength = 0;
 	wchar_t *szCmdLine = 0;
@@ -862,7 +859,6 @@ void _cdecl waitProcTermination(void* pv) {
 int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace) {
 	BOOL bSlash = FALSE;
 	int i = 0, j = 0;
-	int totCpyLength = cpyLength;
 
 #define QUOTATION_DO   0
 #define QUOTATION_DONE 1

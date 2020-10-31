@@ -45,6 +45,7 @@
  * stage. This method obtains the last error from OS to include in the
  * IOException
  */
+#ifndef __APPLE__
 #ifndef __MINGW32__
 static void closeAndthrowIOException(int fd, JNIEnv *env, const char *msg) {
 #else
@@ -61,6 +62,7 @@ static void closeAndthrowIOException(HANDLE handle, JNIEnv *env, const char *msg
 	jclass cls = (*env)->FindClass(env, "java/io/IOException");
 	(*env)->ThrowNew(env, cls, buff);
 }
+#endif
 
 static void throwIOException(JNIEnv *env, const char *msg) {
 	char buff[256];

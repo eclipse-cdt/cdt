@@ -57,8 +57,8 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 
     childpid = fork();
 
-    if (childpid < 0) {
-        fprintf(stderr, "%s(%d): returning due to error: %s\n", __func__, __LINE__, strerror(errno));
+              if (childpid < 0) {
+        fprintf(stderr,       "%s(%d): returning due to error: %s\n", __func__, __LINE__, strerror(errno));
         free(full_path);
         return -1;
     } else if (childpid == 0) { /* child */

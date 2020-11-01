@@ -33,12 +33,11 @@
 const int path_def_len = 5; /* strlen(PATH_DEF); */
 
 char *path_val(char *const envp[]) {
-    int i;
-    if (envp == NULL || envp[0] == NULL) {
+    if (!envp || !envp[0]) {
         return getenv("PATH");
     }
 
-    for (i = 0; envp[i] != NULL; i++) {
+    for (int i = 0; envp[i]; i++) {
         char *p = envp[i];
         if (!strncmp(PATH_DEF, p, path_def_len)) {
             return p + path_def_len;
@@ -56,7 +55,7 @@ char *pfind(const char *name, char *const envp[]) {
     struct stat sb;
 
     /* Sanity check.  */
-    if (name == NULL) {
+    if (!name) {
         fprintf(stderr, "pfind(): Null argument.\n");
         return NULL;
     }
@@ -72,7 +71,7 @@ char *pfind(const char *name, char *const envp[]) {
     /* Search in the PATH environment. */
     path = path_val(envp);
 
-    if (path == NULL || strlen(path) <= 0) {
+    if (!path || strlen(path) <= 0) {
         fprintf(stderr, "Unable to get $PATH.\n");
         return NULL;
     }
@@ -81,7 +80,7 @@ char *pfind(const char *name, char *const envp[]) {
     path = strdup(path);
 
     tok = strtok_r(path, ":", &sp);
-    while (tok != NULL) {
+    while (tok) {
         snprintf(fullpath, sizeof(fullpath) - 1, "%s/%s", tok, name);
 
         if (stat(fullpath, &sb) == 0 && S_ISREG(sb.st_mode)) { /* fullpath is a file */
@@ -100,15 +99,12 @@ char *pfind(const char *name, char *const envp[]) {
 
 #ifdef BUILD_WITH_MAIN
 int main(int argc, char **argv) {
-    int i;
-    char *fullpath;
-
-    for (i = 1; i < argc; i++) {
-        fullpath = pfind(argv[i], NULL);
-        if (fullpath == NULL) {
-            printf("Unable to find %s in $PATH.\n", argv[i]);
-        } else {
+    for (int i = 1; i < argc; i++) {
+        char *fullpath = pfind(argv[i], NULL);
+        if (fullpath) {
             printf("Found %s @ %s.\n", argv[i], fullpath);
+        } else {
+            printf("Unable to find %s in $PATH.\n", argv[i]);
         }
     }
 }

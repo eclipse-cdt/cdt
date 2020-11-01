@@ -30,19 +30,19 @@ void ThrowByName(JNIEnv *env, const char *name, const char *msg);
 #define BUFF_SIZE (1024)
 
 static HANDLE channelToHandle(JNIEnv *env, jobject channel) {
-    if (channel == 0) {
+    if (!channel) {
         ThrowByName(env, "java/io/IOException", "Invalid channel object");
         return NULL;
     }
 
     jclass cls = (*env)->GetObjectClass(env, channel);
-    if (cls == NULL) {
+    if (!cls) {
         ThrowByName(env, "java/io/IOException", "Unable to get channel class");
         return NULL;
     }
 
     jfieldID fid = (*env)->GetFieldID(env, cls, "handle", "J");
-    if (fid == NULL) {
+    if (!fid) {
         ThrowByName(env, "java/io/IOException", "Unable to find handle");
         return NULL;
     }
@@ -69,7 +69,7 @@ extern "C"
                                     TRUE,  // initial state = signaled
                                     NULL); // unnamed event object
 
-    if (NULL == overlapped.hEvent) {
+    if (!overlapped.hEvent) {
         char *lpMsgBuf;
         FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
                       GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language

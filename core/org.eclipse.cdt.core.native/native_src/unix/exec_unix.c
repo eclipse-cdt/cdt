@@ -43,7 +43,7 @@ pid_t exec0(const char *path, char *const argv[], char *const envp[], const char
     /*
      * Make sure we can create our pipes before forking.
      */
-    if (channels != NULL) {
+    if (channels) {
         if (pipe(pipe0) < 0 || pipe(pipe1) < 0 || pipe(pipe2) < 0) {
             fprintf(stderr, "%s(%d): returning due to error.\n", __func__, __LINE__);
             free(full_path);
@@ -60,7 +60,7 @@ pid_t exec0(const char *path, char *const argv[], char *const envp[], const char
     } else if (childpid == 0) { /* child */
         chdir(dirpath);
 
-        if (channels != NULL) {
+        if (channels) {
             /* Close the write end of pipe0 */
             if (close(pipe0[1]) == -1) {
                 perror("close(pipe0[1])");
@@ -94,16 +94,16 @@ pid_t exec0(const char *path, char *const argv[], char *const envp[], const char
 
         setpgid(getpid(), getpid());
 
-        if (envp[0] == NULL) {
-            execv(full_path, argv);
-        } else {
+        if (envp && envp[0]) {
             execve(full_path, argv, envp);
+        } else {
+            execv(full_path, argv);
         }
 
         _exit(127);
 
     } else if (childpid != 0) { /* parent */
-        if (channels != NULL) {
+        if (channels) {
             /* close the read end of pipe1 */
             if (close(pipe0[0]) == -1) {
                 perror("close(pipe0[0])");

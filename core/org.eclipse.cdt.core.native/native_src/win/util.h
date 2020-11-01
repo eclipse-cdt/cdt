@@ -23,4 +23,21 @@ typedef enum { CDT_TRACE_MONITOR, CDT_TRACE_MONITOR_DETAILS, CDT_TRACE_READ_REPO
 bool isTraceEnabled(const TraceKind_t traceKind);
 void cdtTrace(const wchar_t *fmt, ...);
 
+#define BUILD_PIPE_NAME(pipe, name, pid, counter)                                                                      \
+    do {                                                                                                               \
+        swprintf(pipe, sizeof(pipe) / sizeof(pipe[0]), L"\\\\.\\pipe\\%s%08i%010i", name, pid, counter);               \
+    } while (0)
+
+#define CLOSE_HANDLES(handles)                                                                                         \
+    do {                                                                                                               \
+        for (int i = 0; i < sizeof(handles) / sizeof(handles[0]); i++) {                                               \
+            if (INVALID_HANDLE_VALUE != handles[i]) {                                                                  \
+                CloseHandle(handles[i]);                                                                               \
+                handles[i] = INVALID_HANDLE_VALUE;                                                                     \
+            }                                                                                                          \
+        }                                                                                                              \
+    } while (0)
+
+int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace);
+
 #endif /* UTIL_H */

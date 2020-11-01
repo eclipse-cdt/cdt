@@ -120,20 +120,130 @@ bool runCygwinCommand(wchar_t *command) {
     return false;
 }
 
-void ensureSize(wchar_t **ptr, int *psize, int requiredLength) {
-    int size = *psize;
-    if (requiredLength > size) {
-        size = 2 * size;
-        if (size < requiredLength) {
-            size = requiredLength;
+static bool openNamedPipeAsStdHandle(HANDLE *handle, DWORD stdHandle, int parentPid, int counter,
+                                     SECURITY_ATTRIBUTES *sa) {
+    wchar_t pipeName[PIPE_NAME_LENGTH];
+    DWORD dwDesiredAccess;
+    DWORD dwShareMode;
+
+    switch (stdHandle) {
+    case STD_INPUT_HANDLE:
+        BUILD_PIPE_NAME(pipeName, L"stdin", parentPid, counter);
+        dwDesiredAccess = GENERIC_READ;
+        dwShareMode = FILE_SHARE_READ;
+        break;
+    case STD_OUTPUT_HANDLE:
+        BUILD_PIPE_NAME(pipeName, L"stdout", parentPid, counter);
+        dwDesiredAccess = GENERIC_WRITE;
+        dwShareMode = FILE_SHARE_WRITE;
+        break;
+    case STD_ERROR_HANDLE:
+        BUILD_PIPE_NAME(pipeName, L"stderr", parentPid, counter);
+        dwDesiredAccess = GENERIC_WRITE;
+        dwShareMode = FILE_SHARE_WRITE;
+        break;
+    default:
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Invalid STD handle given %i", stdHandle);
         }
-        *ptr = (wchar_t *)realloc(*ptr, size * sizeof(wchar_t));
-        if (*ptr) {
-            *psize = size;
+        return false;
+    }
+
+    *handle = CreateFileW(pipeName, dwDesiredAccess, dwShareMode, NULL, OPEN_EXISTING, 0, sa);
+    if (INVALID_HANDLE_VALUE == *handle) {
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Failed to open pipe: %s -> %p\n", pipeName, handle);
+        }
+        return false;
+    }
+
+    SetHandleInformation(*handle, HANDLE_FLAG_INHERIT, TRUE);
+
+    if (!SetStdHandle(stdHandle, *handle)) {
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Failed to reassign standard stream to pipe %s: %i\n", pipeName, GetLastError());
+        }
+        return false;
+    }
+
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Successfully assigned pipe %s -> %p\n", pipeName, *handle);
+    }
+
+    return true;
+}
+
+bool createCommandLine(int argc, wchar_t **argv, wchar_t **cmdLine) {
+    int size = MAX_CMD_LINE_LENGTH;
+    wchar_t *buffer = (wchar_t *)malloc(size * sizeof(wchar_t));
+
+    if (!buffer) {
+        // malloc failed
+        cdtTrace(L"Not enough memory to build cmd line!\n");
+        return false;
+    }
+
+    int nPos = 0;
+    for (int i = 0; i < argc; ++i) {
+        wchar_t *str = *(argv + i);
+        int len = wcslen(str);
+        if (str) {
+            int required = nPos + len + 2; // 2 => space + \0
+            if (required > 32 * 1024) {
+                free(buffer);
+                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                    cdtTrace(L"Command line too long!\n");
+                }
+                return false;
+            }
+
+            while (1) {
+                // Ensure enough space in buffer
+                if (required > size) {
+                    size *= 2;
+                    if (size < required) {
+                        size = required;
+                    }
+
+                    wchar_t *tmp = (wchar_t *)realloc(buffer, size * sizeof(wchar_t));
+                    if (tmp) {
+                        // realloc successful
+                        buffer = tmp;
+                    } else {
+                        // Failed to realloc memory
+                        free(buffer);
+                        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                            cdtTrace(L"Not enough memory to build cmd line!\n");
+                        }
+                        return false;
+                    }
+                }
+
+                int nCpyLen = copyTo(buffer + nPos, (const wchar_t *)str, len, size - nPos);
+                if (nCpyLen < 0) { // Buffer too small
+                    // Do a real count of number of chars required
+                    required = nPos + copyTo(NULL, (const wchar_t *)str, len, INT_MAX) + 2; // 2 => space + \0
+                    continue;
+                }
+
+                // Buffer was big enough.
+                nPos += nCpyLen;
+                break;
+            }
+
+            buffer[nPos++] = _T(' ');
+            buffer[nPos] = _T('\0');
         } else {
-            *psize = 0;
+            free(buffer);
+            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                cdtTrace(L"Invalid argument!\n");
+            }
+            return false;
         }
     }
+
+    *cmdLine = buffer;
+    return true;
 }
 
 int main() {
@@ -143,44 +253,9 @@ int main() {
 
     // Make sure that we've been passed the right number of arguments
     if (argc < 8) {
-        wprintf(L"Usage: %s (four inheritable event handles) (CommandLineToSpawn)\n", argv[0]);
+        wprintf(L"Usage: %s (parent pid) (counter) (four inheritable event handles) (CommandLineToSpawn)\n", argv[0]);
         return 0;
     }
-
-    // Construct the full command line
-    int nCmdLineLength = MAX_CMD_LINE_LENGTH;
-    wchar_t *szCmdLine = (wchar_t *)malloc(nCmdLineLength * sizeof(wchar_t));
-    szCmdLine[0] = 0;
-    int nPos = 0;
-
-    for (int i = 8; i < argc; ++i) {
-        int nCpyLen;
-        int len = wcslen(argv[i]);
-        int requiredSize = nPos + len + 2;
-        if (requiredSize > 32 * 1024) {
-            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-                cdtTrace(L"Command line too long!\n");
-            }
-            return 0;
-        }
-        ensureSize(&szCmdLine, &nCmdLineLength, requiredSize);
-        if (!szCmdLine) {
-            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-                cdtTrace(L"Not enough memory to build cmd line!\n");
-            }
-            return 0;
-        }
-        if (0 > (nCpyLen = copyTo(szCmdLine + nPos, argv[i], len, nCmdLineLength - nPos))) {
-            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-                cdtTrace(L"Not enough space to build command line\n");
-            }
-            return 0;
-        }
-        nPos += nCpyLen;
-        szCmdLine[nPos] = _T(' ');
-        ++nPos;
-    }
-    szCmdLine[nPos] = _T('\0');
 
     STARTUPINFOW si = {sizeof(si)};
     PROCESS_INFORMATION pi = {0};
@@ -199,56 +274,22 @@ int main() {
 
     int parentPid = wcstol(argv[1], NULL, 10);
     int nCounter = wcstol(argv[2], NULL, 10);
-    wchar_t inPipeName[PIPE_NAME_LENGTH];
-    wchar_t outPipeName[PIPE_NAME_LENGTH];
-    wchar_t errPipeName[PIPE_NAME_LENGTH];
 
-    swprintf(inPipeName, sizeof(inPipeName) / sizeof(inPipeName[0]), L"\\\\.\\pipe\\stdin%08i%010i", parentPid,
-             nCounter);
-    swprintf(outPipeName, sizeof(outPipeName) / sizeof(outPipeName[0]), L"\\\\.\\pipe\\stdout%08i%010i", parentPid,
-             nCounter);
-    swprintf(errPipeName, sizeof(errPipeName) / sizeof(errPipeName[0]), L"\\\\.\\pipe\\stderr%08i%010i", parentPid,
-             nCounter);
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-        cdtTrace(L"Pipes: %s, %s, %s\n", inPipeName, outPipeName, errPipeName);
-    }
-
-    HANDLE stdHandles[3];
+    HANDLE stdHandles[] = {
+        INVALID_HANDLE_VALUE, // STDIN
+        INVALID_HANDLE_VALUE, // STDOUT
+        INVALID_HANDLE_VALUE  // STDERR
+    };
 
     SECURITY_ATTRIBUTES sa;
     sa.nLength = sizeof(SECURITY_ATTRIBUTES);
     sa.bInheritHandle = TRUE;
     sa.lpSecurityDescriptor = NULL;
 
-    if ((INVALID_HANDLE_VALUE ==
-         (stdHandles[0] = CreateFileW(inPipeName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, &sa))) ||
-        (INVALID_HANDLE_VALUE ==
-         (stdHandles[1] = CreateFileW(outPipeName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, &sa))) ||
-        (INVALID_HANDLE_VALUE ==
-         (stdHandles[2] = CreateFileW(errPipeName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, &sa)))) {
-
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-            cdtTrace(L"Failed to open pipe %i, %i, %i: %i\n", stdHandles[0], stdHandles[1], stdHandles[2],
-                     GetLastError());
-        }
-        CloseHandle(stdHandles[0]);
-        CloseHandle(stdHandles[1]);
-        CloseHandle(stdHandles[2]);
-        return -1;
-    }
-    SetHandleInformation(stdHandles[0], HANDLE_FLAG_INHERIT, TRUE);
-    SetHandleInformation(stdHandles[1], HANDLE_FLAG_INHERIT, TRUE);
-    SetHandleInformation(stdHandles[2], HANDLE_FLAG_INHERIT, TRUE);
-
-    if (!SetStdHandle(STD_INPUT_HANDLE, stdHandles[0]) || !SetStdHandle(STD_OUTPUT_HANDLE, stdHandles[1]) ||
-        !SetStdHandle(STD_ERROR_HANDLE, stdHandles[2])) {
-
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-            cdtTrace(L"Failed to reassign standard streams: %i\n", GetLastError());
-        }
-        CloseHandle(stdHandles[0]);
-        CloseHandle(stdHandles[1]);
-        CloseHandle(stdHandles[2]);
+    if (!openNamedPipeAsStdHandle(&stdHandles[0], STD_INPUT_HANDLE, parentPid, nCounter, &sa) ||
+        !openNamedPipeAsStdHandle(&stdHandles[1], STD_OUTPUT_HANDLE, parentPid, nCounter, &sa) ||
+        !openNamedPipeAsStdHandle(&stdHandles[2], STD_ERROR_HANDLE, parentPid, nCounter, &sa)) {
+        CLOSE_HANDLES(stdHandles);
         return -1;
     }
 
@@ -270,9 +311,7 @@ int main() {
             cdtTrace(L"Cannot Read Environment\n");
         }
     }
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-        cdtTrace(L"Starting: %s\n", szCmdLine);
-    }
+
     // Create job object
     HANDLE hJob = CreateJobObject(NULL, NULL);
     if (hJob) {
@@ -292,22 +331,34 @@ int main() {
         cdtTrace(L"Cannot create job object\n");
         DisplayErrorMessage();
     }
+
+    // Construct the full command line
+    wchar_t *cmdLine = NULL;
+    if (!createCommandLine(argc - 8, &argv[8], &cmdLine)) {
+        return 0;
+    }
+
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Starting: %s\n", cmdLine);
+    }
+
     // Spawn the other processes as part of this Process Group
     // If this process is already part of a job, the flag CREATE_BREAKAWAY_FROM_JOB
     // makes the child process detach from the job, such that we can assign it
     // to our own job object.
-    BOOL f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE, CREATE_BREAKAWAY_FROM_JOB, NULL, NULL, &si, &pi);
+    BOOL f = CreateProcessW(NULL, cmdLine, NULL, NULL, TRUE, CREATE_BREAKAWAY_FROM_JOB, NULL, NULL, &si, &pi);
     // If breaking away from job is not permitted, retry without breakaway flag
     if (!f) {
-        f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+        f = CreateProcessW(NULL, cmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
     }
 
     // We don't need them any more
-    CloseHandle(stdHandles[0]);
-    CloseHandle(stdHandles[1]);
-    CloseHandle(stdHandles[2]);
+    CLOSE_HANDLES(stdHandles);
 
     if (f) {
+        free(cmdLine);
+        cmdLine = NULL;
+
         if (isTraceEnabled(CDT_TRACE_MONITOR)) {
             cdtTrace(L"Process %i started\n", pi.dwProcessId);
         }
@@ -406,89 +457,16 @@ int main() {
             }
         }
     } else if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-        cdtTrace(L"Cannot start: %s\n", szCmdLine);
+        cdtTrace(L"Cannot start: %s\n", cmdLine);
+        free(cmdLine);
 
         DisplayErrorMessage();
     }
 
-    free(szCmdLine);
-
     CloseHandle(waitEvent);
-    CloseHandle(h[0]);
-    CloseHandle(h[1]);
-    CloseHandle(h[2]);
-    CloseHandle(h[3]);
-    CloseHandle(h[4]);
+    CLOSE_HANDLES(h);
 
     return dwExitCode;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
-// Use this utility program to process correctly quotation marks in the command line
-// Arguments:
-//			target - string to copy to
-//			source - string to copy from
-//			cpyLength - copy length
-//			availSpace - size of the target buffer
-// Return :number of bytes used in target, or -1 in case of error
-/////////////////////////////////////////////////////////////////////////////////////
-int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace) {
-    bool bSlash = false;
-    int i = 0, j = 0;
-
-    enum { QUOTATION_DO, QUOTATION_DONE, QUOTATION_NONE } nQuotationMode = QUOTATION_DO;
-
-    if (availSpace <= cpyLength) { // = to reserve space for '\0'
-        return -1;
-    }
-
-    if ((_T('\"') == *source) && (_T('\"') == *(source + cpyLength - 1))) {
-        // Already done
-        nQuotationMode = QUOTATION_DONE;
-    } else if (wcschr(source, _T(' '))) {
-        // Needs to be quotated
-        nQuotationMode = QUOTATION_DO;
-        *target = _T('\"');
-        ++j;
-    } else {
-        // No reason to quotate term because it doesn't have embedded spaces
-        nQuotationMode = QUOTATION_NONE;
-    }
-
-    for (; i < cpyLength; ++i, ++j) {
-        if (source[i] == _T('\\')) {
-            bSlash = true;
-        } else {
-            // Don't escape embracing quotation marks
-            if ((source[i] == _T('\"')) &&
-                !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))))) {
-                if (!bSlash) {
-                    if (j == availSpace) {
-                        return -1;
-                    }
-                    target[j] = _T('\\');
-                    ++j;
-                }
-                bSlash = false;
-            } else {
-                bSlash = false;
-            }
-        }
-
-        if (j == availSpace) {
-            return -1;
-        }
-        target[j] = source[i];
-    }
-
-    if (nQuotationMode == QUOTATION_DO) {
-        if (j == availSpace) {
-            return -1;
-        }
-        target[j] = _T('\"');
-        ++j;
-    }
-    return j;
 }
 
 void DisplayErrorMessage() {

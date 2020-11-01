@@ -21,9 +21,9 @@
 #include <jni.h>
 #include <windows.h>
 
-#include "org_eclipse_cdt_utils_spawner_Spawner.h"
+#include "util.h"
 
-//#define READ_REPORT
+#include "org_eclipse_cdt_utils_spawner_Spawner.h"
 
 void ThrowByName(JNIEnv *env, const char *name, const char *msg);
 
@@ -61,9 +61,6 @@ extern "C"
     jbyte tmpBuf[BUFF_SIZE];
     int nBuffOffset = 0;
     HANDLE handle = channelToHandle(env, channel);
-#ifdef DEBUG_MONITOR
-    _TCHAR buffer[1000];
-#endif
     OVERLAPPED overlapped;
     overlapped.Offset = 0;
     overlapped.OffsetHigh = 0;
@@ -83,12 +80,9 @@ extern "C"
         LocalFree(lpMsgBuf);
     }
 
-#ifdef DEBUG_MONITOR
-#ifdef READ_REPORT
-    _stprintf(buffer, _T("Start read %i\n"), fd);
-    OutputDebugStringW(buffer);
-#endif
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR) && isTraceEnabled(CDT_TRACE_READ_REPORT)) {
+        cdtTrace(L"Start read %p\n", handle);
+    }
 
     while (len > nBuffOffset) {
         DWORD nNumberOfBytesToRead = min(len - nBuffOffset, BUFF_SIZE);
@@ -110,10 +104,9 @@ extern "C"
             }
             if (err != 0) {
                 char *lpMsgBuf;
-#ifdef DEBUG_MONITOR
-                _stprintf(buffer, _T("Read failed - %i, error %i\n"), fd, err);
-                OutputDebugStringW(buffer);
-#endif
+                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                    cdtTrace(L"Read failed - %p, error %i\n", handle, err);
+                }
                 if (err !=
                     ERROR_MORE_DATA) { // Otherwise error means just that there are more data than buffer can accept
                     FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
@@ -128,10 +121,9 @@ extern "C"
                 } else {
                     // buffer overflow?
                     // according to msdn this happens in message read mode only
-#ifdef DEBUG_MONITOR
-                    _stprintf(buffer, _T("Buffer full - %i, bytes read: %i\n"), fd, nNumberOfBytesRead);
-                    OutputDebugStringW(buffer);
-#endif
+                    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                        cdtTrace(L"Buffer full - %p, bytes read: %i\n", handle, nNumberOfBytesRead);
+                    }
                     // nNumberOfBytesRead can be 0 here for unknown reason (bug 269223)
                     nNumberOfBytesRead = nNumberOfBytesToRead;
                 }
@@ -155,12 +147,9 @@ extern "C"
         }
     }
     CloseHandle(overlapped.hEvent);
-#ifdef DEBUG_MONITOR
-#ifdef READ_REPORT
-    _stprintf(buffer, _T("End read %i - bytes read: %d\n"), fd, nBuffOffset);
-    OutputDebugStringW(buffer);
-#endif
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR) && isTraceEnabled(CDT_TRACE_READ_REPORT)) {
+        cdtTrace(L"End read %p - bytes read: %d\n", handle, nBuffOffset);
+    }
     return nBuffOffset; // This is a real full readed length
 }
 
@@ -171,16 +160,13 @@ extern "C"
     Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_close0(JNIEnv *env, jobject proc, jobject channel) {
     int rc;
     HANDLE handle = channelToHandle(env, channel);
-#ifdef DEBUG_MONITOR
-    _TCHAR buffer[1000];
-    _stprintf(buffer, _T("Close %i\n"), fd);
-    OutputDebugStringW(buffer);
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Close %p\n", handle);
+    }
     rc = (CloseHandle(handle) ? 0 : -1);
-#ifdef DEBUG_MONITOR
-    _stprintf(buffer, _T("Closed %i\n"), fd);
-    OutputDebugStringW(buffer);
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Closed %p\n", handle);
+    }
     return (rc ? GetLastError() : 0);
 }
 
@@ -235,16 +221,13 @@ extern "C"
     Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_close0(JNIEnv *env, jobject proc, jobject channel) {
     int rc;
     HANDLE handle = channelToHandle(env, channel);
-#ifdef DEBUG_MONITOR
-    _TCHAR buffer[1000];
-    _stprintf(buffer, _T("Close %i\n"), fd);
-    OutputDebugStringW(buffer);
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Close %p\n", handle);
+    }
     FlushFileBuffers(handle);
     rc = (CloseHandle(handle) ? 0 : -1);
-#ifdef DEBUG_MONITOR
-    _stprintf(buffer, _T("Closed %i\n"), fd);
-    OutputDebugStringW(buffer);
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Closed %p\n", handle);
+    }
     return (rc ? GetLastError() : 0);
 }

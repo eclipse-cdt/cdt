@@ -74,7 +74,7 @@ typedef BOOL(WINAPI *DebugBreakProcessFunc)(HANDLE);
 int interruptProcess(int pid) {
     // See if DebugBreakProcess is available (XP and beyond)
     HMODULE hmod = LoadLibrary(L"Kernel32.dll");
-    if (hmod != NULL) {
+    if (hmod) {
         BOOL success = FALSE;
         FARPROC procaddr = GetProcAddress(hmod, "DebugBreakProcess");
         if (procaddr != NULL) {
@@ -103,7 +103,7 @@ int interruptProcess(int pid) {
     // Find console
     EnumWindows(find_child_console, (LPARAM)pid);
 
-    if (NULL != consoleHWND) { // Yes, we found out it
+    if (consoleHWND) { // Yes, we found out it
         // We are going to switch focus to console,
         // send Ctrl-C and then restore focus
         BYTE control_scan_code = (BYTE)MapVirtualKey(VK_CONTROL, 0);

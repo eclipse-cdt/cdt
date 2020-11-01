@@ -121,10 +121,10 @@ void ensureSize(wchar_t **ptr, int *psize, int requiredLength) {
             size = requiredLength;
         }
         *ptr = (wchar_t *)realloc(*ptr, size * sizeof(wchar_t));
-        if (NULL == *ptr) {
-            *psize = 0;
-        } else {
+        if (*ptr) {
             *psize = size;
+        } else {
+            *psize = 0;
         }
     }
 }
@@ -147,7 +147,6 @@ extern "C"
     wchar_t *szEnvBlock = NULL;
     jsize nCmdTokens = 0;
     jsize nEnvVars = 0;
-    int i;
     DWORD pid = GetCurrentProcessId();
     int nPos;
     pProcInfo_t pCurProcInfo;
@@ -168,19 +167,19 @@ extern "C"
     jclass channelClass = NULL;
     jmethodID channelConstructor = NULL;
 
-    if (channels == NULL) {
+    if (!channels) {
         ThrowByName(env, "java/io/IOException", "Channels can't be null");
         return 0;
     }
 
     channelClass = (*env)->FindClass(env, "org/eclipse/cdt/utils/spawner/Spawner$WinChannel");
-    if (channelClass == 0) {
+    if (!channelClass) {
         ThrowByName(env, "java/io/IOException", "Unable to find channel class");
         return 0;
     }
 
     channelConstructor = (*env)->GetMethodID(env, channelClass, "<init>", "(J)V");
-    if (channelConstructor == 0) {
+    if (!channelConstructor) {
         ThrowByName(env, "java/io/IOException", "Unable to find channel constructor");
         return 0;
     }
@@ -236,7 +235,7 @@ extern "C"
 
     pCurProcInfo = createProcInfo();
 
-    if (NULL == pCurProcInfo) {
+    if (!pCurProcInfo) {
         ThrowByName(env, "java/io/IOException", "Too many processes");
         return 0;
     }
@@ -252,7 +251,7 @@ extern "C"
              nLocalCounter);
 
     pCurProcInfo->eventBreak = CreateEventW(NULL, FALSE, FALSE, eventBreakName);
-    if (NULL == pCurProcInfo->eventBreak || GetLastError() == ERROR_ALREADY_EXISTS) {
+    if (!pCurProcInfo->eventBreak || GetLastError() == ERROR_ALREADY_EXISTS) {
         ThrowByName(env, "java/io/IOException", "Cannot create event");
         return 0;
     }
@@ -266,19 +265,19 @@ extern "C"
     nPos = wcslen(szCmdLine);
 
     // Prepare command line
-    for (i = 0; i < nCmdTokens; ++i) {
+    for (int i = 0; i < nCmdTokens; ++i) {
         jstring item = (jstring)(*env)->GetObjectArrayElement(env, cmdarray, i);
         jsize len = (*env)->GetStringLength(env, item);
         int nCpyLen;
         const wchar_t *str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
-        if (NULL != str) {
+        if (str) {
             int requiredSize = nPos + len + 2;
             if (requiredSize > 32 * 1024) {
                 ThrowByName(env, "java/io/IOException", "Command line too long");
                 return 0;
             }
             ensureSize(&szCmdLine, &nCmdLineLength, requiredSize);
-            if (NULL == szCmdLine) {
+            if (!szCmdLine) {
                 ThrowByName(env, "java/io/IOException", "Not enough memory");
                 return 0;
             }
@@ -303,15 +302,15 @@ extern "C"
     if (nEnvVars > 0) {
         nPos = 0;
         szEnvBlock = (wchar_t *)malloc(nBlkSize * sizeof(wchar_t));
-        for (i = 0; i < nEnvVars; ++i) {
+        for (int i = 0; i < nEnvVars; ++i) {
             jstring item = (jstring)(*env)->GetObjectArrayElement(env, envp, i);
             jsize len = (*env)->GetStringLength(env, item);
             const wchar_t *str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
-            if (NULL != str) {
+            if (str) {
                 while ((nBlkSize - nPos) <= (len + 2)) { // +2 for two '\0'
                     nBlkSize += MAX_ENV_SIZE;
                     szEnvBlock = (wchar_t *)realloc(szEnvBlock, nBlkSize * sizeof(wchar_t));
-                    if (NULL == szEnvBlock) {
+                    if (!szEnvBlock) {
                         ThrowByName(env, "java/io/IOException", "Not enough memory");
                         return 0;
                     }
@@ -332,11 +331,11 @@ extern "C"
         szEnvBlock[nPos] = _T('\0');
     }
 
-    if (dir != 0) {
-        const wchar_t *str = (const wchar_t *)(*env)->GetStringChars(env, dir, 0);
-        if (NULL != str) {
-            cwd = wcsdup(str);
-            (*env)->ReleaseStringChars(env, dir, (const jchar *)str);
+    if (dir) {
+        const jchar *str = (*env)->GetStringChars(env, dir, NULL);
+        if (str) {
+            cwd = wcsdup((const wchar_t *)str);
+            (*env)->ReleaseStringChars(env, dir, str);
         }
     }
 
@@ -482,14 +481,14 @@ extern "C"
         jsize len = (*env)->GetStringLength(env, item);
         int nCpyLen;
         const wchar_t *str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
-        if (NULL != str) {
+        if (str) {
             int requiredSize = nPos + len + 2;
             if (requiredSize > 32 * 1024) {
                 ThrowByName(env, "java/io/IOException", "Command line too long");
                 return 0;
             }
             ensureSize(&szCmdLine, &nCmdLineLength, requiredSize);
-            if (NULL == szCmdLine) {
+            if (!szCmdLine) {
                 ThrowByName(env, "java/io/IOException", "Not enough memory");
                 return 0;
             }
@@ -515,11 +514,11 @@ extern "C"
             jstring item = (jstring)(*env)->GetObjectArrayElement(env, envp, i);
             jsize len = (*env)->GetStringLength(env, item);
             const wchar_t *str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
-            if (NULL != str) {
+            if (str) {
                 while ((nBlkSize - nPos) <= (len + 2)) { // +2 for two '\0'
                     nBlkSize += MAX_ENV_SIZE;
                     szEnvBlock = (wchar_t *)realloc(szEnvBlock, nBlkSize * sizeof(wchar_t));
-                    if (NULL == szEnvBlock) {
+                    if (!szEnvBlock) {
                         ThrowByName(env, "java/io/Exception", "Not enough memory");
                         return 0;
                     }
@@ -535,11 +534,11 @@ extern "C"
         envBlk = szEnvBlock;
     }
 
-    if (dir != 0) {
-        const wchar_t *str = (const wchar_t *)(*env)->GetStringChars(env, dir, 0);
-        if (NULL != str) {
-            cwd = wcsdup(str);
-            (*env)->ReleaseStringChars(env, dir, (const jchar *)str);
+    if (dir) {
+        const jchar *str = (*env)->GetStringChars(env, dir, NULL);
+        if (str) {
+            cwd = wcsdup((const wchar_t *)str);
+            (*env)->ReleaseStringChars(env, dir, str);
         }
     }
 
@@ -599,7 +598,7 @@ extern "C"
     HANDLE hProc;
     pProcInfo_t pCurProcInfo = findProcInfo(uid);
 
-    if (NULL == pCurProcInfo) {
+    if (!pCurProcInfo) {
         if (SIG_INT == signal) { // Try another way
             return interruptProcess(uid);
         }
@@ -612,7 +611,7 @@ extern "C"
 
     hProc = OpenProcess(SYNCHRONIZE, 0, pCurProcInfo->pid);
 
-    if (NULL == hProc) {
+    if (!hProc) {
         return -1;
     }
 
@@ -679,13 +678,13 @@ extern "C"
     HANDLE hProc;
     pProcInfo_t pCurProcInfo = findProcInfo(uid);
 
-    if (NULL == pCurProcInfo) {
+    if (!pCurProcInfo) {
         return -1;
     }
 
     hProc = OpenProcess(SYNCHRONIZE | PROCESS_QUERY_INFORMATION, 0, pCurProcInfo->pid);
 
-    if (NULL == hProc) {
+    if (!hProc) {
         return -1;
     }
 
@@ -713,7 +712,7 @@ extern "C"
 void ThrowByName(JNIEnv *env, const char *name, const char *msg) {
     jclass cls = (*env)->FindClass(env, name);
 
-    if (cls != 0) { /* Otherwise an exception has already been thrown */
+    if (cls) { /* Otherwise an exception has already been thrown */
         (*env)->ThrowNew(env, cls, msg);
     }
 
@@ -727,17 +726,16 @@ void ThrowByName(JNIEnv *env, const char *name, const char *msg) {
 // Return : pointer to the process descriptor
 /////////////////////////////////////////////////////////////////////////////////////
 pProcInfo_t createProcInfo() {
-    int i;
     pProcInfo_t p = NULL;
 
     EnterCriticalSection(&cs);
 
-    if (NULL == pInfo) {
+    if (!pInfo) {
         pInfo = (pProcInfo_t)malloc(sizeof(procInfo_t) * MAX_PROCS);
         ZeroMemory(pInfo, sizeof(procInfo_t) * MAX_PROCS);
     }
 
-    for (i = 0; i < MAX_PROCS; ++i) {
+    for (int i = 0; i < MAX_PROCS; ++i) {
         if (pInfo[i].pid == 0) {
             pInfo[i].pid = -1;
             pInfo[i].uid = ++procCounter;
@@ -757,20 +755,15 @@ pProcInfo_t createProcInfo() {
 // Return : pointer to the process descriptor
 /////////////////////////////////////////////////////////////////////////////////////
 pProcInfo_t findProcInfo(int uid) {
-    int i;
-    pProcInfo_t p = NULL;
-    if (NULL == pInfo) {
-        return NULL;
-    }
-
-    for (i = 0; i < MAX_PROCS; ++i) {
-        if (pInfo[i].uid == uid) {
-            p = pInfo + i;
-            break;
+    if (pInfo) {
+        for (int i = 0; i < MAX_PROCS; ++i) {
+            if (pInfo[i].uid == uid) {
+                return pInfo + i;
+            }
         }
     }
 
-    return p;
+    return NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -813,12 +806,11 @@ void cleanUpProcBlock(pProcInfo_t pCurProcInfo) {
 /////////////////////////////////////////////////////////////////////////////////////
 void _cdecl waitProcTermination(void *pv) {
     PROCESS_INFORMATION *pi = (PROCESS_INFORMATION *)pv;
-    int i;
 
     // wait for process termination
     WaitForSingleObject(pi->hProcess, INFINITE);
 
-    for (i = 0; i < MAX_PROCS; ++i) {
+    for (int i = 0; i < MAX_PROCS; i++) {
         if (pInfo[i].pid == pi->dwProcessId) {
             cleanUpProcBlock(pInfo + i);
             if (isTraceEnabled(CDT_TRACE_MONITOR)) {
@@ -841,14 +833,10 @@ void _cdecl waitProcTermination(void *pv) {
 // Return :number of bytes used in target, or -1 in case of error
 /////////////////////////////////////////////////////////////////////////////////////
 int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace) {
-    BOOL bSlash = FALSE;
+    bool bSlash = false;
     int i = 0, j = 0;
 
-#define QUOTATION_DO 0
-#define QUOTATION_DONE 1
-#define QUOTATION_NONE 2
-
-    int nQuotationMode = 0;
+    enum { QUOTATION_DO, QUOTATION_DONE, QUOTATION_NONE } nQuotationMode = QUOTATION_DO;
 
     if (availSpace <= cpyLength) { // = to reserve space for final '\0'
         return -1;
@@ -856,19 +844,19 @@ int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace
 
     if ((_T('\"') == *source) && (_T('\"') == *(source + cpyLength - 1))) {
         nQuotationMode = QUOTATION_DONE;
-    } else if (wcschr(source, _T(' ')) == NULL) {
-        // No reason to quote term because it doesn't have embedded spaces
-        nQuotationMode = QUOTATION_NONE;
-    } else {
+    } else if (wcschr(source, _T(' '))) {
         // Needs to be quoted
         nQuotationMode = QUOTATION_DO;
         *target = _T('\"');
         ++j;
+    } else {
+        // No reason to quote term because it doesn't have embedded spaces
+        nQuotationMode = QUOTATION_NONE;
     }
 
     for (; i < cpyLength; ++i, ++j) {
         if (source[i] == _T('\\')) {
-            bSlash = TRUE;
+            bSlash = true;
         } else {
             // Don't escape embracing quotation marks
             if ((source[i] == _T('\"')) &&
@@ -881,7 +869,7 @@ int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace
                     ++j;
                 }
             }
-            bSlash = FALSE;
+            bSlash = false;
         }
 
         if (j == availSpace) {

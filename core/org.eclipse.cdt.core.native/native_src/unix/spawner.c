@@ -19,33 +19,51 @@
 #include <signal.h>
 #include <string.h>
 #include <jni.h>
+#include <stdbool.h>
 
 #include "exec0.h"
 #include <org_eclipse_cdt_utils_spawner_Spawner.h>
 
-#define DEBUGIT 0
+static bool isTraceEnabled(void) {
+    static bool initialized = false;
+    static bool enabled = false;
 
-/*
- * Header for class org_eclipse_cdt_utils_spawner_Spawner
- */
+    if (!initialized) {
+        enabled = getenv("TRACE_ORG_ECLIPSE_CDT_SPAWNER") != NULL;
 
-#if DEBUGIT
-static void print_array(char **c_array) {
+        initialized = true;
+    }
+
+    return enabled;
+}
+
+static void print_array(FILE *stream, const char *str, char **c_array) {
     if (c_array) {
+        bool hasElement = false;
+
+        fprintf(stream, "%s [", str);
+
         for (char **p = c_array; *p; p++) {
             if (*p) {
-                fprintf(stderr, " %s", *p);
+                if (hasElement) {
+                    fprintf(stream, ",");
+                }
+                hasElement = true;
+                fprintf(stream, "\n    \"%s\"", *p);
             }
         }
+
+        if (hasElement) {
+            fprintf(stream, "\n");
+        }
+
+        fprintf(stream, "]\n");
     } else {
-        fprintf(stderr, "null");
+        fprintf(stream, "%s null\n", str);
     }
-    fprintf(stderr, "\n");
 }
-#endif
 
 static char **alloc_c_array(JNIEnv *env, jobjectArray j_array) {
-    int i;
     jint c_array_size = (*env)->GetArrayLength(env, j_array);
     char **c_array = calloc(c_array_size + 1, sizeof(char *));
 
@@ -53,7 +71,7 @@ static char **alloc_c_array(JNIEnv *env, jobjectArray j_array) {
         return NULL;
     }
 
-    for (i = 0; i < c_array_size; i++) {
+    for (int i = 0; i < c_array_size; i++) {
         jstring j_str = (jstring)(*env)->GetObjectArrayElement(env, j_array, i);
         const char *c_str = (*env)->GetStringUTFChars(env, j_str, NULL);
         c_array[i] = (char *)strdup(c_str);
@@ -98,14 +116,12 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2(JNIEnv *
         goto bail_out;
     }
 
-#if DEBUGIT
-    fprintf(stderr, "command:");
-    print_array(cmd);
-    fprintf(stderr, "Envp:");
-    print_array(envp);
-    fprintf(stderr, "dirpath: %s\n", dirpath);
-    fprintf(stderr, "pts_name: %s\n", pts_name);
-#endif
+    if (isTraceEnabled()) {
+        print_array(stderr, "command:", cmd);
+        print_array(stderr, "Envp:", envp);
+        fprintf(stderr, "dirpath: %s\n", dirpath);
+        fprintf(stderr, "pts_name: %s\n", pts_name);
+    }
 
     pid = exec_pty(cmd[0], cmd, envp, dirpath, fd, pts_name, masterFD, console);
     if (pid < 0) {
@@ -144,13 +160,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *
         goto bail_out;
     }
 
-#if DEBUGIT
-    fprintf(stderr, "command:");
-    print_array(cmd);
-    fprintf(stderr, "Envp:");
-    print_array(envp);
-    fprintf(stderr, "dirpath: %s\n", dirpath);
-#endif
+    if (isTraceEnabled()) {
+        print_array(stderr, "command:", cmd);
+        print_array(stderr, "Envp:", envp);
+        fprintf(stderr, "dirpath: %s\n", dirpath);
+    }
 
     pid = exec0(cmd[0], cmd, envp, dirpath, NULL);
     if (pid < 0) {
@@ -199,13 +213,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *
         goto bail_out;
     }
 
-#if DEBUGIT
-    fprintf(stderr, "command:");
-    print_array(cmd);
-    fprintf(stderr, "Envp:");
-    print_array(envp);
-    fprintf(stderr, "dirpath: %s\n", dirpath);
-#endif
+    if (isTraceEnabled()) {
+        print_array(stderr, "command:", cmd);
+        print_array(stderr, "Envp:", envp);
+        fprintf(stderr, "dirpath: %s\n", dirpath);
+    }
     pid = exec0(cmd[0], cmd, envp, dirpath, fd);
     if (pid < 0) {
         goto bail_out;

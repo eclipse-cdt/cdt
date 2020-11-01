@@ -18,6 +18,8 @@
 #include <jni.h>
 #include <windows.h>
 
+#include "util.h"
+
 #include "org_eclipse_cdt_utils_spawner_Spawner.h"
 
 extern void JNICALL ThrowByName(JNIEnv *env, const char *name, const char *msg);
@@ -92,16 +94,12 @@ int interruptProcess(int pid) {
         }
     }
 
-#ifdef DEBUG_MONITOR
-    _TCHAR buffer[1000];
-#endif
     int rc = 0;
     consoleHWND = NULL;
 
-#ifdef DEBUG_MONITOR
-    _stprintf(buffer, _T("Try to interrupt process %i\n"), pid);
-    OutputDebugStringW(buffer);
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Try to interrupt process %i\n", pid);
+    }
     // Find console
     EnumWindows(find_child_console, (LPARAM)pid);
 
@@ -157,16 +155,12 @@ int interruptProcess(int pid) {
             if (child_thread) {
                 AttachThreadInput(GetCurrentThreadId(), child_thread, FALSE);
             }
-#ifdef DEBUG_MONITOR
-            _stprintf(buffer, _T("Sent Ctrl-C & Ctrl-Break to process %i\n"), pid);
-            OutputDebugStringW(buffer);
-#endif
+            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                cdtTrace(L"Sent Ctrl-C & Ctrl-Break to process %i\n", pid);
+            }
         }
-#ifdef DEBUG_MONITOR
-    } else {
-        _stprintf(buffer, _T("Cannot find console for process %i\n"), pid);
-        OutputDebugStringW(buffer);
-#endif
+    } else if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Cannot find console for process %i\n", pid);
     }
 
     return rc;

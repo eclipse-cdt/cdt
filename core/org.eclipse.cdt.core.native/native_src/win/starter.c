@@ -26,7 +26,8 @@
 #include <psapi.h>
 #include <stdbool.h>
 
-//#define DEBUG_MONITOR
+#include "util.h"
+
 #define MAX_CMD_LINE_LENGTH (2049)
 #define PIPE_NAME_LENGTH 100
 
@@ -157,22 +158,22 @@ int main() {
         int len = wcslen(argv[i]);
         int requiredSize = nPos + len + 2;
         if (requiredSize > 32 * 1024) {
-#ifdef DEBUG_MONITOR
-            OutputDebugStringW(_T("Command line too long!\n"));
-#endif
+            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                cdtTrace(L"Command line too long!\n");
+            }
             return 0;
         }
         ensureSize(&szCmdLine, &nCmdLineLength, requiredSize);
         if (NULL == szCmdLine) {
-#ifdef DEBUG_MONITOR
-            OutputDebugStringW(_T("Not enough memory to build cmd line!\n"));
-#endif
+            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                cdtTrace(L"Not enough memory to build cmd line!\n");
+            }
             return 0;
         }
         if (0 > (nCpyLen = copyTo(szCmdLine + nPos, argv[i], len, nCmdLineLength - nPos))) {
-#ifdef DEBUG_MONITOR
-            OutputDebugStringW(_T("Not enough space to build command line\n"));
-#endif
+            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                cdtTrace(L"Not enough space to build command line\n");
+            }
             return 0;
         }
         nPos += nCpyLen;
@@ -184,10 +185,6 @@ int main() {
     STARTUPINFOW si = {sizeof(si)};
     PROCESS_INFORMATION pi = {0};
     DWORD dwExitCode = 0;
-#ifdef DEBUG_MONITOR
-    int currentPID = GetCurrentProcessId();
-    wchar_t buffer[MAX_CMD_LINE_LENGTH];
-#endif
 
     BOOL exitProc = FALSE;
     HANDLE waitEvent = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[4]);
@@ -212,10 +209,9 @@ int main() {
              nCounter);
     swprintf(errPipeName, sizeof(errPipeName) / sizeof(errPipeName[0]), L"\\\\.\\pipe\\stderr%08i%010i", parentPid,
              nCounter);
-#ifdef DEBUG_MONITOR
-    swprintf(buffer, _T("Pipes: %s, %s, %s\n"), inPipeName, outPipeName, errPipeName);
-    OutputDebugStringW(buffer);
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Pipes: %s, %s, %s\n", inPipeName, outPipeName, errPipeName);
+    }
 
     HANDLE stdHandles[3];
 
@@ -230,11 +226,11 @@ int main() {
          (stdHandles[1] = CreateFileW(outPipeName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, &sa))) ||
         (INVALID_HANDLE_VALUE ==
          (stdHandles[2] = CreateFileW(errPipeName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, &sa)))) {
-#ifdef DEBUG_MONITOR
-        swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("Failed to open pipe %i, %i, %i: %i\n"), stdHandles[0],
-                 stdHandles[1], stdHandles[2], GetLastError());
-        OutputDebugStringW(buffer);
-#endif
+
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Failed to open pipe %i, %i, %i: %i\n", stdHandles[0], stdHandles[1], stdHandles[2],
+                     GetLastError());
+        }
         CloseHandle(stdHandles[0]);
         CloseHandle(stdHandles[1]);
         CloseHandle(stdHandles[2]);
@@ -246,40 +242,37 @@ int main() {
 
     if (!SetStdHandle(STD_INPUT_HANDLE, stdHandles[0]) || !SetStdHandle(STD_OUTPUT_HANDLE, stdHandles[1]) ||
         !SetStdHandle(STD_ERROR_HANDLE, stdHandles[2])) {
-#ifdef DEBUG_MONITOR
-        swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("Failed to reassign standard streams: %i\n"),
-                 GetLastError());
-        OutputDebugStringW(buffer);
-#endif
+
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Failed to reassign standard streams: %i\n", GetLastError());
+        }
         CloseHandle(stdHandles[0]);
         CloseHandle(stdHandles[1]);
         CloseHandle(stdHandles[2]);
         return -1;
     }
 
-#ifdef DEBUG_MONITOR_DETAILS
-    wchar_t *lpvEnv = GetEnvironmentStringsW();
+    if (isTraceEnabled(CDT_TRACE_MONITOR_DETAILS)) {
+        wchar_t *lpvEnv = GetEnvironmentStringsW();
 
-    // If the returned pointer is NULL, exit.
-    if (lpvEnv == NULL) {
-        OutputDebugStringW(_T("Cannot Read Environment\n"));
-    } else {
-        // Variable strings are separated by NULL byte, and the block is
-        // terminated by a NULL byte.
+        // If the returned pointer is NULL, exit.
+        if (lpvEnv == NULL) {
+            cdtTrace(L"Cannot Read Environment\n");
+        } else {
+            // Variable strings are separated by NULL byte, and the block is
+            // terminated by a NULL byte.
 
-        OutputDebugStringW(_T("Starter: Environment\n"));
-        for (wchar_t *lpszVariable = (wchar_t *)lpvEnv; *lpszVariable; lpszVariable += wcslen(lpszVariable) + 1) {
-            swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("%s\n"), lpszVariable);
-            OutputDebugStringW(buffer);
+            cdtTrace(L"Starter: Environment\n");
+            for (wchar_t *lpszVariable = lpvEnv; *lpszVariable; lpszVariable += wcslen(lpszVariable) + 1) {
+                cdtTrace(L"%s\n", lpszVariable);
+            }
+
+            FreeEnvironmentStringsW(lpvEnv);
         }
-
-        FreeEnvironmentStringsW(lpvEnv);
     }
-#endif
-#ifdef DEBUG_MONITOR
-    swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("Starting: %s\n"), szCmdLine);
-    OutputDebugStringW(buffer);
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Starting: %s\n", szCmdLine);
+    }
     // Create job object
     HANDLE hJob = CreateJobObject(NULL, NULL);
     if (hJob != NULL) {
@@ -290,16 +283,14 @@ int main() {
         ZeroMemory(&jobInfo, sizeof(jobInfo));
         jobInfo.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_BREAKAWAY_OK;
         if (!SetInformationJobObject(hJob, JobObjectExtendedLimitInformation, &jobInfo, sizeof(jobInfo))) {
-#ifdef DEBUG_MONITOR
-            OutputDebugStringW(_T("Cannot set job information\n"));
-            DisplayErrorMessage();
-#endif
+            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                cdtTrace(L"Cannot set job information\n");
+                DisplayErrorMessage();
+            }
         }
-    } else {
-#ifdef DEBUG_MONITOR
-        OutputDebugStringW(_T("Cannot create job object\n"));
+    } else if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Cannot create job object\n");
         DisplayErrorMessage();
-#endif
     }
     // Spawn the other processes as part of this Process Group
     // If this process is already part of a job, the flag CREATE_BREAKAWAY_FROM_JOB
@@ -317,22 +308,19 @@ int main() {
     CloseHandle(stdHandles[2]);
 
     if (f) {
-#ifdef DEBUG_MONITOR
-        swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("Process %i started\n"), pi.dwProcessId);
-        OutputDebugStringW(buffer);
-#endif
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Process %i started\n", pi.dwProcessId);
+        }
         SetEvent(waitEvent); // Means that process has been spawned
         CloseHandle(pi.hThread);
         h[1] = pi.hProcess;
 
         if (NULL != hJob) {
             if (!AssignProcessToJobObject(hJob, pi.hProcess)) {
-#ifdef DEBUG_MONITOR
-                swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("Cannot assign process %i to a job\n"),
-                         pi.dwProcessId);
-                OutputDebugStringW(buffer);
-                DisplayErrorMessage();
-#endif
+                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                    cdtTrace(L"Cannot assign process %i to a job\n", pi.dwProcessId);
+                    DisplayErrorMessage();
+                }
             }
         }
 
@@ -343,11 +331,9 @@ int main() {
             switch (event) {
             case WAIT_OBJECT_0 + 0: // SIGINT
             case WAIT_OBJECT_0 + 4: // CTRL-C
-#ifdef DEBUG_MONITOR
-                swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("starter (PID %i) received CTRL-C event\n"),
-                         currentPID);
-                OutputDebugStringW(buffer);
-#endif
+                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                    cdtTrace(L"starter (PID %i) received CTRL-C event\n", GetCurrentProcessId());
+                }
                 if ((event == (WAIT_OBJECT_0 + 0)) && isCygwin(h[1])) {
                     // Need to issue a kill command
                     wchar_t kill[1024];
@@ -365,11 +351,9 @@ int main() {
 
             case WAIT_OBJECT_0 + 1: // App terminated normally
                                     // Make it's exit code our exit code
-#ifdef DEBUG_MONITOR
-                swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]),
-                         _T("starter: launched process has been terminated(PID %i)\n"), pi.dwProcessId);
-                OutputDebugStringW(buffer);
-#endif
+                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                    cdtTrace(L"starter: launched process has been terminated(PID %i)\n", pi.dwProcessId);
+                }
                 GetExitCodeProcess(pi.hProcess, &dwExitCode);
                 exitProc = TRUE;
                 break;
@@ -382,11 +366,9 @@ int main() {
             case WAIT_OBJECT_0 + 3: // KILL
             {
                 const wchar_t *signal = (event == WAIT_OBJECT_0 + 2) ? L"TERM" : L"KILL";
-#ifdef DEBUG_MONITOR
-                swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("starter received %s event (PID %i)\n"), signal,
-                         currentPID);
-                OutputDebugStringW(buffer);
-#endif
+                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                    cdtTrace(L"starter received %s event (PID %i)\n", signal, GetCurrentProcessId());
+                }
                 if (isCygwin(h[1])) {
                     // Need to issue a kill command
                     wchar_t kill[1024];
@@ -403,10 +385,10 @@ int main() {
 
                 if (NULL != hJob) {
                     if (!TerminateJobObject(hJob, (DWORD)-1)) {
-#ifdef DEBUG_MONITOR
-                        OutputDebugStringW(_T("Cannot terminate job\n"));
-                        DisplayErrorMessage();
-#endif
+                        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                            cdtTrace(L"Cannot terminate job\n");
+                            DisplayErrorMessage();
+                        }
                     }
                 }
 
@@ -416,20 +398,17 @@ int main() {
 
             default:
                 // Unexpected code
-#ifdef DEBUG_MONITOR
-                DisplayErrorMessage();
-#endif
+                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                    DisplayErrorMessage();
+                }
                 exitProc = TRUE;
                 break;
             }
         }
-    } else {
-#ifdef DEBUG_MONITOR
-        swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("Cannot start: %s\n"), szCmdLine);
-        OutputDebugStringW(buffer);
+    } else if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Cannot start: %s\n", szCmdLine);
 
         DisplayErrorMessage();
-#endif
     }
 
     free(szCmdLine);

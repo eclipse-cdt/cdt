@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8470f62a_089d561c",
+        "filename": ".gitattributes",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-01T00:39:44Z",
+      "side": 1,
+      "message": "I just decided to add it here. Feel free to submit follow-on commits if you want more doing with this.",
+      "revId": "6431307e7085a5154561c6b1a85f970d62f3cac2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -36,6 +36,11 @@
 
 #define MAX_PROCS (100) // Maximum number of simultaneously running processes
 
+typedef struct _eventInfo {
+    HANDLE handle;
+    wchar_t *name;
+} EventInfo_t;
+
 // Process description block. Should be created for each launched process
 typedef struct _procInfo {
     int pid; // Process ID
@@ -43,15 +48,15 @@ typedef struct _procInfo {
              // (actually this impossible from OS point of view but it is still possible
              // a clash of new created and already finished process with one and the same PID.
     // 4 events connected to this process (see starter)
-    HANDLE eventBreak; // signaled when Spawner.interrupt() is called; mildest of the terminate requests (SIGINT signal
-                       // in UNIX world)
-    HANDLE eventWait;
-    HANDLE eventTerminate; // signaled when Spawner.terminate() is called; more forceful terminate request (SIGTERM
-                           // signal in UNIX world)
-    HANDLE eventKill; // signaled when Spawner.kill() is called; most forceful terminate request (SIGKILL signal in UNIX
-                      // world)
-    HANDLE eventCtrlc; // signaled when Spawner.interruptCTRLC() is called; like interrupt() but sends CTRL-C in all
-                       // cases, even when inferior is a Cygwin program
+    EventInfo_t eventBreak; // signaled when Spawner.interrupt() is called; mildest of the terminate requests (SIGINT
+                            // signal in UNIX world)
+    EventInfo_t eventWait;
+    EventInfo_t eventTerminate; // signaled when Spawner.terminate() is called; more forceful terminate request (SIGTERM
+                                // signal in UNIX world)
+    EventInfo_t eventKill; // signaled when Spawner.kill() is called; most forceful terminate request (SIGKILL signal in
+                           // UNIX world)
+    EventInfo_t eventCtrlc; // signaled when Spawner.interruptCTRLC() is called; like interrupt() but sends CTRL-C in
+                            // all cases, even when inferior is a Cygwin program
 } procInfo_t, *pProcInfo_t;
 
 static int procCounter = 0; // Number of running processes
@@ -67,9 +72,6 @@ pProcInfo_t findProcInfo(int pid);
 
 // We launch separate thread for each project to trap it termination
 void _cdecl waitProcTermination(void *pv);
-
-// This is a helper function to prevent losing of quotation marks
-static int copyTo(wchar_t *target, const wchar_t *source, int cpyLenght, int availSpace);
 
 // Use this function to clean project descriptor and return it to the pool of available blocks.
 static void cleanUpProcBlock(pProcInfo_t pCurProcInfo);
@@ -113,20 +115,217 @@ extern "C"
     return -1;
 }
 
-void ensureSize(wchar_t **ptr, int *psize, int requiredLength) {
-    int size = *psize;
-    if (requiredLength > size) {
-        size = 2 * size;
-        if (size < requiredLength) {
-            size = requiredLength;
+static bool createStandardNamedPipe(HANDLE *handle, DWORD stdHandle, int pid, int counter) {
+    wchar_t pipeName[PIPE_NAME_LENGTH];
+    DWORD dwOpenMode;
+
+    switch (stdHandle) {
+    case STD_INPUT_HANDLE:
+        BUILD_PIPE_NAME(pipeName, L"stdin", pid, counter);
+        dwOpenMode = PIPE_ACCESS_OUTBOUND;
+        break;
+    case STD_OUTPUT_HANDLE:
+        BUILD_PIPE_NAME(pipeName, L"stdout", pid, counter);
+        dwOpenMode = PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED;
+        break;
+    case STD_ERROR_HANDLE:
+        BUILD_PIPE_NAME(pipeName, L"stderr", pid, counter);
+        dwOpenMode = PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED;
+        break;
+    default:
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Invalid STD handle given %i", stdHandle);
         }
-        *ptr = (wchar_t *)realloc(*ptr, size * sizeof(wchar_t));
-        if (*ptr) {
-            *psize = size;
+        return false;
+    }
+
+    HANDLE pipe = CreateNamedPipeW(pipeName, dwOpenMode, PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
+                                   PIPE_UNLIMITED_INSTANCES, PIPE_SIZE, PIPE_SIZE, PIPE_TIMEOUT, NULL);
+    if (INVALID_HANDLE_VALUE == pipe) {
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Failed to create named pipe: %s\n", pipeName);
+        }
+        return false;
+    }
+
+    SetHandleInformation(pipe, HANDLE_FLAG_INHERIT, TRUE);
+
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Successfully created pipe %s -> %p\n", pipeName, pipe);
+    }
+
+    *handle = pipe;
+    return true;
+}
+
+static bool createNamedEvent(EventInfo_t *eventInfo, BOOL manualReset, const wchar_t *prefix, int pid, int counter) {
+    wchar_t eventName[50];
+    swprintf(eventName, sizeof(eventName) / sizeof(eventName[0]), L"%s%04x%08x", prefix, pid, counter);
+
+    HANDLE event = CreateEventW(NULL, manualReset, FALSE, eventName);
+    if (!event) {
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Failed to create event %s -> %i\n", eventName, GetLastError());
+        }
+        return false;
+    } else if (GetLastError() == ERROR_ALREADY_EXISTS) {
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Event %s already exist -> %p\n", eventName, event);
+        }
+        return false;
+    }
+
+    eventInfo->handle = event;
+    eventInfo->name = wcsdup(eventName);
+
+    if (!eventInfo->name) {
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Failed to allocate memory for event %s -> %p\n", eventName, event);
+        }
+        return false;
+    }
+
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Successfully created event %s -> %p\n", eventName, event);
+    }
+
+    return true;
+}
+
+static bool createCommandLine(JNIEnv *env, jobjectArray cmdarray, wchar_t **cmdLine, const wchar_t *fmt, ...) {
+    va_list ap;
+
+    va_start(ap, fmt);
+
+    wchar_t *buffer = NULL;
+    int size = MAX_CMD_SIZE;
+    int required = 0;
+    do {
+        // Free previous buffer
+        free(buffer);
+
+        size *= 2;
+        buffer = (wchar_t *)malloc(size * sizeof(wchar_t));
+
+        if (buffer) {
+            // Try to format the string
+            required = vswprintf(buffer, size, fmt, ap);
         } else {
-            *psize = 0;
+            // malloc failed, clean up and return
+            va_end(ap);
+            ThrowByName(env, "java/io/IOException", "Not enough memory");
+            return false;
+        }
+    } while (size <= required);
+    va_end(ap);
+
+    int nPos = wcslen(buffer);
+    int nCmdTokens = (*env)->GetArrayLength(env, cmdarray);
+    for (int i = 0; i < nCmdTokens; ++i) {
+        jstring item = (jstring)(*env)->GetObjectArrayElement(env, cmdarray, i);
+        jsize len = (*env)->GetStringLength(env, item);
+        const jchar *str = (*env)->GetStringChars(env, item, NULL);
+        if (str) {
+            required = nPos + len + 2; // 2 => space + \0
+            if (required > 32 * 1024) {
+                free(buffer);
+                ThrowByName(env, "java/io/IOException", "Command line too long");
+                return false;
+            }
+
+            while (1) {
+                // Ensure enough space in buffer
+                if (required > size) {
+                    size *= 2;
+                    if (size < required) {
+                        size = required;
+                    }
+
+                    wchar_t *tmp = (wchar_t *)realloc(buffer, size * sizeof(wchar_t));
+                    if (tmp) {
+                        // Allocation successful
+                        buffer = tmp;
+                    } else {
+                        // Failed to realloc memory
+                        free(buffer);
+                        ThrowByName(env, "java/io/IOException", "Not enough memory");
+                        return false;
+                    }
+                }
+
+                int nCpyLen = copyTo(buffer + nPos, (const wchar_t *)str, len, size - nPos);
+                if (nCpyLen < 0) { // Buffer too small
+                    // Do a real count of number of chars required
+                    required = nPos + copyTo(NULL, (const wchar_t *)str, len, INT_MAX) + 2; // 2 => space + \0
+                    continue;
+                }
+
+                // Buffer was big enough.
+                nPos += nCpyLen;
+                break;
+            }
+
+            buffer[nPos++] = _T(' ');
+            buffer[nPos] = _T('\0');
+            (*env)->ReleaseStringChars(env, item, str);
+        } else {
+            free(buffer);
+            ThrowByName(env, "java/io/IOException", "Command line contained null string");
+            return false;
         }
     }
+
+    *cmdLine = buffer;
+    return true;
+}
+
+static bool createEnvironmentBlock(JNIEnv *env, jobjectArray envp, wchar_t **block) {
+    int nEnvVars = (*env)->GetArrayLength(env, envp);
+
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"There are %i environment variables \n", nEnvVars);
+    }
+
+    if (nEnvVars == 0) {
+        *block = NULL;
+        return true;
+    }
+
+    int nPos = 0;
+    int nBlkSize = MAX_ENV_SIZE;
+    wchar_t *buffer = (wchar_t *)malloc(nBlkSize * sizeof(wchar_t));
+    for (int i = 0; i < nEnvVars; ++i) {
+        jstring item = (jstring)(*env)->GetObjectArrayElement(env, envp, i);
+        jsize len = (*env)->GetStringLength(env, item);
+        const jchar *str = (*env)->GetStringChars(env, item, 0);
+        if (str) {
+            while (nBlkSize - nPos <= len + 2) { // +2 for two '\0'
+                nBlkSize += MAX_ENV_SIZE;
+                wchar_t *tmp = (wchar_t *)realloc(buffer, nBlkSize * sizeof(wchar_t));
+                if (tmp) {
+                    buffer = tmp;
+                } else {
+                    free(buffer);
+                    ThrowByName(env, "java/io/IOException", "Not enough memory");
+                    return false;
+                }
+                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                    cdtTrace(L"Realloc environment block; new length is  %i \n", nBlkSize);
+                }
+            }
+            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                cdtTrace(L"%s\n", (const wchar_t *)str);
+            }
+            wcsncpy(buffer + nPos, (const wchar_t *)str, len);
+            nPos += len;
+            buffer[nPos++] = _T('\0');
+            (*env)->ReleaseStringChars(env, item, str);
+        }
+    }
+    buffer[nPos] = _T('\0');
+    *block = buffer;
+
+    return true;
 }
 
 #ifdef __cplusplus
@@ -135,202 +334,95 @@ extern "C"
     JNIEXPORT jint JNICALL
     Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *env, jobject process, jobjectArray cmdarray,
                                                      jobjectArray envp, jstring dir, jobjectArray channels) {
-    HANDLE stdHandles[3];
-    PROCESS_INFORMATION pi = {0}, *piCopy;
-    STARTUPINFOW si;
-    DWORD flags = 0;
-    wchar_t *cwd = NULL;
-    int ret = 0;
-    int nCmdLineLength = 0;
-    wchar_t *szCmdLine = 0;
-    int nBlkSize = MAX_ENV_SIZE;
-    wchar_t *szEnvBlock = NULL;
-    jsize nCmdTokens = 0;
-    jsize nEnvVars = 0;
-    DWORD pid = GetCurrentProcessId();
-    int nPos;
-    pProcInfo_t pCurProcInfo;
-
-    // This needs to be big enough to contain the name of the event used when calling CreateEventW bellow.
-    // It is made of a prefix (7 characters max) plus the value of a pointer that gets output in characters.
-    // This will be bigger in the case of 64 bit.
-    static const int MAX_EVENT_NAME_LENGTH = 50;
-    wchar_t eventBreakName[MAX_EVENT_NAME_LENGTH];
-    wchar_t eventWaitName[MAX_EVENT_NAME_LENGTH];
-    wchar_t eventTerminateName[MAX_EVENT_NAME_LENGTH];
-    wchar_t eventKillName[MAX_EVENT_NAME_LENGTH];
-    wchar_t eventCtrlcName[MAX_EVENT_NAME_LENGTH];
-    int nLocalCounter;
-    wchar_t inPipeName[PIPE_NAME_LENGTH];
-    wchar_t outPipeName[PIPE_NAME_LENGTH];
-    wchar_t errPipeName[PIPE_NAME_LENGTH];
-    jclass channelClass = NULL;
-    jmethodID channelConstructor = NULL;
-
     if (!channels) {
         ThrowByName(env, "java/io/IOException", "Channels can't be null");
         return 0;
     }
 
-    channelClass = (*env)->FindClass(env, "org/eclipse/cdt/utils/spawner/Spawner$WinChannel");
+    jclass channelClass = (*env)->FindClass(env, "org/eclipse/cdt/utils/spawner/Spawner$WinChannel");
     if (!channelClass) {
         ThrowByName(env, "java/io/IOException", "Unable to find channel class");
         return 0;
     }
 
-    channelConstructor = (*env)->GetMethodID(env, channelClass, "<init>", "(J)V");
+    jmethodID channelConstructor = (*env)->GetMethodID(env, channelClass, "<init>", "(J)V");
     if (!channelConstructor) {
         ThrowByName(env, "java/io/IOException", "Unable to find channel constructor");
         return 0;
     }
 
-    nCmdLineLength = MAX_CMD_SIZE;
-    szCmdLine = (wchar_t *)malloc(nCmdLineLength * sizeof(wchar_t));
-    szCmdLine[0] = _T('\0');
     if ((HIBYTE(LOWORD(GetVersion()))) & 0x80) {
         ThrowByName(env, "java/io/IOException", "Does not support Windows 3.1/95/98/Me");
         return 0;
     }
 
-    if (cmdarray == 0) {
+    if (!cmdarray) {
         ThrowByName(env, "java/lang/NullPointerException", "No command line specified");
         return 0;
     }
 
-    ZeroMemory(stdHandles, sizeof(stdHandles));
+    DWORD pid = GetCurrentProcessId();
 
     // Create pipe names
     EnterCriticalSection(&cs);
-    swprintf(inPipeName, sizeof(inPipeName) / sizeof(inPipeName[0]), L"\\\\.\\pipe\\stdin%08i%010i", pid, nCounter);
-    swprintf(outPipeName, sizeof(outPipeName) / sizeof(outPipeName[0]), L"\\\\.\\pipe\\stdout%08i%010i", pid, nCounter);
-    swprintf(errPipeName, sizeof(errPipeName) / sizeof(errPipeName[0]), L"\\\\.\\pipe\\stderr%08i%010i", pid, nCounter);
-    nLocalCounter = nCounter;
-    ++nCounter;
+    int nLocalCounter = nCounter++;
     LeaveCriticalSection(&cs);
 
-    if ((INVALID_HANDLE_VALUE == (stdHandles[0] = CreateNamedPipeW(
-                                      inPipeName, PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
-                                      PIPE_UNLIMITED_INSTANCES, PIPE_SIZE, PIPE_SIZE, PIPE_TIMEOUT, NULL))) ||
-        (INVALID_HANDLE_VALUE ==
-         (stdHandles[1] = CreateNamedPipeW(outPipeName, PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED,
-                                           PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT, PIPE_UNLIMITED_INSTANCES,
-                                           PIPE_SIZE, PIPE_SIZE, PIPE_TIMEOUT, NULL))) ||
-        (INVALID_HANDLE_VALUE ==
-         (stdHandles[2] = CreateNamedPipeW(errPipeName, PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED,
-                                           PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT, PIPE_UNLIMITED_INSTANCES,
-                                           PIPE_SIZE, PIPE_SIZE, PIPE_TIMEOUT, NULL)))) {
-        CloseHandle(stdHandles[0]);
-        CloseHandle(stdHandles[1]);
-        CloseHandle(stdHandles[2]);
+    HANDLE stdHandles[] = {INVALID_HANDLE_VALUE, INVALID_HANDLE_VALUE, INVALID_HANDLE_VALUE};
+    if (!createStandardNamedPipe(&stdHandles[0], STD_INPUT_HANDLE, pid, nLocalCounter) ||
+        !createStandardNamedPipe(&stdHandles[1], STD_OUTPUT_HANDLE, pid, nLocalCounter) ||
+        !createStandardNamedPipe(&stdHandles[2], STD_ERROR_HANDLE, pid, nLocalCounter)) {
+        CLOSE_HANDLES(stdHandles);
         ThrowByName(env, "java/io/IOException", "CreatePipe");
         return 0;
     }
 
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-        cdtTrace(L"Opened pipes: %s, %s, %s\n", inPipeName, outPipeName, errPipeName);
-    }
-
-    nCmdTokens = (*env)->GetArrayLength(env, cmdarray);
-    nEnvVars = (*env)->GetArrayLength(env, envp);
-
-    pCurProcInfo = createProcInfo();
-
+    pProcInfo_t pCurProcInfo = createProcInfo();
     if (!pCurProcInfo) {
+        CLOSE_HANDLES(stdHandles);
         ThrowByName(env, "java/io/IOException", "Too many processes");
         return 0;
     }
 
-    // Construct starter's command line
-    swprintf(eventBreakName, sizeof(eventBreakName) / sizeof(eventBreakName[0]), L"SABreak%04x%08x", pid,
-             nLocalCounter);
-    swprintf(eventWaitName, sizeof(eventWaitName) / sizeof(eventWaitName[0]), L"SAWait%04x%08x", pid, nLocalCounter);
-    swprintf(eventTerminateName, sizeof(eventTerminateName) / sizeof(eventTerminateName[0]), L"SATerm%04x%08x", pid,
-             nLocalCounter);
-    swprintf(eventKillName, sizeof(eventKillName) / sizeof(eventKillName[0]), L"SAKill%04x%08x", pid, nLocalCounter);
-    swprintf(eventCtrlcName, sizeof(eventCtrlcName) / sizeof(eventCtrlcName[0]), L"SACtrlc%04x%08x", pid,
-             nLocalCounter);
-
-    pCurProcInfo->eventBreak = CreateEventW(NULL, FALSE, FALSE, eventBreakName);
-    if (!pCurProcInfo->eventBreak || GetLastError() == ERROR_ALREADY_EXISTS) {
+    // Create events
+    if (!createNamedEvent(&pCurProcInfo->eventBreak, FALSE, L"SABreak", pid, nLocalCounter) ||
+        !createNamedEvent(&pCurProcInfo->eventWait, TRUE, L"SAWait", pid, nLocalCounter) ||
+        !createNamedEvent(&pCurProcInfo->eventTerminate, FALSE, L"SATerm", pid, nLocalCounter) ||
+        !createNamedEvent(&pCurProcInfo->eventKill, FALSE, L"SAKill", pid, nLocalCounter) ||
+        !createNamedEvent(&pCurProcInfo->eventCtrlc, FALSE, L"SACtrlc", pid, nLocalCounter)) {
+        cleanUpProcBlock(pCurProcInfo);
+        CLOSE_HANDLES(stdHandles);
         ThrowByName(env, "java/io/IOException", "Cannot create event");
         return 0;
     }
-    pCurProcInfo->eventWait = CreateEventW(NULL, TRUE, FALSE, eventWaitName);
-    pCurProcInfo->eventTerminate = CreateEventW(NULL, FALSE, FALSE, eventTerminateName);
-    pCurProcInfo->eventKill = CreateEventW(NULL, FALSE, FALSE, eventKillName);
-    pCurProcInfo->eventCtrlc = CreateEventW(NULL, FALSE, FALSE, eventCtrlcName);
-
-    swprintf(szCmdLine, nCmdLineLength, L"\"%sstarter.exe\" %i %i %s %s %s %s %s ", path, pid, nLocalCounter,
-             eventBreakName, eventWaitName, eventTerminateName, eventKillName, eventCtrlcName);
-    nPos = wcslen(szCmdLine);
 
     // Prepare command line
-    for (int i = 0; i < nCmdTokens; ++i) {
-        jstring item = (jstring)(*env)->GetObjectArrayElement(env, cmdarray, i);
-        jsize len = (*env)->GetStringLength(env, item);
-        int nCpyLen;
-        const wchar_t *str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
-        if (str) {
-            int requiredSize = nPos + len + 2;
-            if (requiredSize > 32 * 1024) {
-                ThrowByName(env, "java/io/IOException", "Command line too long");
-                return 0;
-            }
-            ensureSize(&szCmdLine, &nCmdLineLength, requiredSize);
-            if (!szCmdLine) {
-                ThrowByName(env, "java/io/IOException", "Not enough memory");
-                return 0;
-            }
-
-            if (0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, nCmdLineLength - nPos))) {
-                ThrowByName(env, "java/io/IOException", "Command line too long");
-                return 0;
-            }
-            nPos += nCpyLen;
-            szCmdLine[nPos] = _T(' ');
-            ++nPos;
-            (*env)->ReleaseStringChars(env, item, (const jchar *)str);
-        }
-    }
-    szCmdLine[nPos] = _T('\0');
-
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-        cdtTrace(L"There are %i environment variables \n", nEnvVars);
+    wchar_t *cmdLine = NULL;
+    if (!createCommandLine(env, cmdarray, &cmdLine, L"\"%sstarter.exe\" %i %i %s %s %s %s %s ", path, //
+                           pid,                                                                       //
+                           nLocalCounter,                                                             //
+                           pCurProcInfo->eventBreak.name,                                             //
+                           pCurProcInfo->eventWait.name,                                              //
+                           pCurProcInfo->eventTerminate.name,                                         //
+                           pCurProcInfo->eventKill.name,                                              //
+                           pCurProcInfo->eventCtrlc.name)) {
+        // Exception already thrown, just clean up
+        cleanUpProcBlock(pCurProcInfo);
+        CLOSE_HANDLES(stdHandles);
+        return 0;
     }
 
     // Prepare environment block
-    if (nEnvVars > 0) {
-        nPos = 0;
-        szEnvBlock = (wchar_t *)malloc(nBlkSize * sizeof(wchar_t));
-        for (int i = 0; i < nEnvVars; ++i) {
-            jstring item = (jstring)(*env)->GetObjectArrayElement(env, envp, i);
-            jsize len = (*env)->GetStringLength(env, item);
-            const wchar_t *str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
-            if (str) {
-                while ((nBlkSize - nPos) <= (len + 2)) { // +2 for two '\0'
-                    nBlkSize += MAX_ENV_SIZE;
-                    szEnvBlock = (wchar_t *)realloc(szEnvBlock, nBlkSize * sizeof(wchar_t));
-                    if (!szEnvBlock) {
-                        ThrowByName(env, "java/io/IOException", "Not enough memory");
-                        return 0;
-                    }
-                    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-                        cdtTrace(L"Realloc environment block; new length is  %i \n", nBlkSize);
-                    }
-                }
-                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-                    cdtTrace(L"%s\n", str);
-                }
-                wcsncpy(szEnvBlock + nPos, str, len);
-                nPos += len;
-                szEnvBlock[nPos] = _T('\0');
-                ++nPos;
-                (*env)->ReleaseStringChars(env, item, (const jchar *)str);
-            }
-        }
-        szEnvBlock[nPos] = _T('\0');
+    wchar_t *envBlock = NULL;
+    if (!createEnvironmentBlock(env, envp, &envBlock)) {
+        // Exception already thrown, just clean up
+        free(cmdLine);
+        cleanUpProcBlock(pCurProcInfo);
+        CLOSE_HANDLES(stdHandles);
+        return 0;
     }
 
+    wchar_t *cwd = NULL;
     if (dir) {
         const jchar *str = (*env)->GetStringChars(env, dir, NULL);
         if (str) {
@@ -339,68 +431,54 @@ extern "C"
         }
     }
 
+    STARTUPINFOW si;
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
     si.dwFlags |= STARTF_USESHOWWINDOW;
     si.wShowWindow = SW_HIDE; // Processes in the Process Group are hidden
 
-    SetHandleInformation(stdHandles[0], HANDLE_FLAG_INHERIT, FALSE);
-    SetHandleInformation(stdHandles[1], HANDLE_FLAG_INHERIT, FALSE);
-    SetHandleInformation(stdHandles[2], HANDLE_FLAG_INHERIT, FALSE);
-
-    flags = CREATE_NEW_CONSOLE;
+    DWORD flags = CREATE_NEW_CONSOLE;
     flags |= CREATE_NO_WINDOW;
     flags |= CREATE_UNICODE_ENVIRONMENT;
 
     if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-        cdtTrace(szCmdLine);
+        cdtTrace(cmdLine);
     }
+
     // launches starter; we need it to create another console group to correctly process
     // emulation of SYSint signal (Ctrl-C)
-    ret = CreateProcessW(0,          /* executable name */
-                         szCmdLine,  /* command line */
-                         0,          /* process security attribute */
-                         0,          /* thread security attribute */
-                         FALSE,      /* inherits system handles */
-                         flags,      /* normal attached process */
-                         szEnvBlock, /* environment block */
-                         cwd,        /* change to the new current directory */
-                         &si,        /* (in)  startup information */
-                         &pi);       /* (out) process information */
+    PROCESS_INFORMATION pi = {0};
+    int ret = CreateProcessW(NULL,     /* executable name */
+                             cmdLine,  /* command line */
+                             0,        /* process security attribute */
+                             0,        /* thread security attribute */
+                             FALSE,    /* inherits system handles */
+                             flags,    /* normal attached process */
+                             envBlock, /* environment block */
+                             cwd,      /* change to the new current directory */
+                             &si,      /* (in)  startup information */
+                             &pi);     /* (out) process information */
 
     free(cwd);
-    free(szEnvBlock);
-    free(szCmdLine);
+    free(envBlock);
+    free(cmdLine);
 
-    if (!ret) { // Launching error
-        char *lpMsgBuf;
-        CloseHandle(stdHandles[0]);
-        CloseHandle(stdHandles[1]);
-        CloseHandle(stdHandles[2]);
-        FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                       NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                       (char *)&lpMsgBuf, 0, NULL);
-        ThrowByName(env, "java/io/IOException", lpMsgBuf);
-        // Free the buffer.
-        LocalFree(lpMsgBuf);
-        cleanUpProcBlock(pCurProcInfo);
-        ret = -1;
-    } else {
+    if (ret) {
         HANDLE h[2];
-        int what;
 
         EnterCriticalSection(&cs);
 
         pCurProcInfo->pid = pi.dwProcessId;
-        h[0] = pCurProcInfo->eventWait;
+        h[0] = pCurProcInfo->eventWait.handle;
         h[1] = pi.hProcess;
 
-        what = WaitForMultipleObjects(2, h, FALSE, INFINITE);
+        int what = WaitForMultipleObjects(2, h, FALSE, INFINITE);
         if (what != WAIT_OBJECT_0) { // CreateProcess failed
             if (isTraceEnabled(CDT_TRACE_MONITOR)) {
                 cdtTrace(L"Process %i failed\n", pi.dwProcessId);
             }
             cleanUpProcBlock(pCurProcInfo);
+            CLOSE_HANDLES(stdHandles);
             ThrowByName(env, "java/io/IOException", "Launching failed");
             if (isTraceEnabled(CDT_TRACE_MONITOR)) {
                 cdtTrace(L"Process failed\n");
@@ -416,7 +494,7 @@ extern "C"
 
             // do the cleanup so launch the according thread
             // create a copy of the PROCESS_INFORMATION as this might get destroyed
-            piCopy = (PROCESS_INFORMATION *)malloc(sizeof(PROCESS_INFORMATION));
+            PROCESS_INFORMATION *piCopy = (PROCESS_INFORMATION *)malloc(sizeof(PROCESS_INFORMATION));
             memcpy(piCopy, &pi, sizeof(PROCESS_INFORMATION));
             _beginthread(waitProcTermination, 0, (void *)piCopy);
 
@@ -425,6 +503,17 @@ extern "C"
             }
         }
         LeaveCriticalSection(&cs);
+    } else { // Launching error
+        char *lpMsgBuf;
+        CLOSE_HANDLES(stdHandles);
+        FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                       NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+                       (char *)&lpMsgBuf, 0, NULL);
+        ThrowByName(env, "java/io/IOException", lpMsgBuf);
+        // Free the buffer.
+        LocalFree(lpMsgBuf);
+        cleanUpProcBlock(pCurProcInfo);
+        ret = -1;
     }
 
     CloseHandle(pi.hThread);
@@ -446,94 +535,21 @@ extern "C"
     Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *env, jobject process, jobjectArray cmdarray,
                                                      jobjectArray envp, jstring dir) {
 
-    SECURITY_ATTRIBUTES sa;
-    PROCESS_INFORMATION pi = {0};
-    STARTUPINFOW si;
-    DWORD flags = 0;
-    wchar_t *cwd = NULL;
-    wchar_t *envBlk = NULL;
-    int ret = 0;
-    jsize nCmdTokens = 0;
-    jsize nEnvVars = 0;
-    int i;
-    int nPos;
-    int nCmdLineLength = 0;
-    wchar_t *szCmdLine = 0;
-    int nBlkSize = MAX_ENV_SIZE;
-    wchar_t *szEnvBlock = NULL;
-
-    nCmdLineLength = MAX_CMD_SIZE;
-    szCmdLine = (wchar_t *)malloc(nCmdLineLength * sizeof(wchar_t));
-    szCmdLine[0] = 0;
-
-    sa.nLength = sizeof(sa);
-    sa.lpSecurityDescriptor = 0;
-    sa.bInheritHandle = TRUE;
-
-    nCmdTokens = (*env)->GetArrayLength(env, cmdarray);
-    nEnvVars = (*env)->GetArrayLength(env, envp);
-
-    nPos = 0;
-
     // Prepare command line
-    for (i = 0; i < nCmdTokens; ++i) {
-        jstring item = (jstring)(*env)->GetObjectArrayElement(env, cmdarray, i);
-        jsize len = (*env)->GetStringLength(env, item);
-        int nCpyLen;
-        const wchar_t *str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
-        if (str) {
-            int requiredSize = nPos + len + 2;
-            if (requiredSize > 32 * 1024) {
-                ThrowByName(env, "java/io/IOException", "Command line too long");
-                return 0;
-            }
-            ensureSize(&szCmdLine, &nCmdLineLength, requiredSize);
-            if (!szCmdLine) {
-                ThrowByName(env, "java/io/IOException", "Not enough memory");
-                return 0;
-            }
-
-            if (0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, nCmdLineLength - nPos))) {
-                ThrowByName(env, "java/io/Exception", "Command line too long");
-                return 0;
-            }
-            nPos += nCpyLen;
-            szCmdLine[nPos] = _T(' ');
-            ++nPos;
-            (*env)->ReleaseStringChars(env, item, (const jchar *)str);
-        }
+    wchar_t *cmdLine = NULL;
+    if (!createCommandLine(env, cmdarray, &cmdLine, L"")) {
+        // Exception already thrown
+        return 0;
     }
-
-    szCmdLine[nPos] = _T('\0');
 
     // Prepare environment block
-    if (nEnvVars > 0) {
-        szEnvBlock = (wchar_t *)malloc(nBlkSize * sizeof(wchar_t));
-        nPos = 0;
-        for (i = 0; i < nEnvVars; ++i) {
-            jstring item = (jstring)(*env)->GetObjectArrayElement(env, envp, i);
-            jsize len = (*env)->GetStringLength(env, item);
-            const wchar_t *str = (const wchar_t *)(*env)->GetStringChars(env, item, 0);
-            if (str) {
-                while ((nBlkSize - nPos) <= (len + 2)) { // +2 for two '\0'
-                    nBlkSize += MAX_ENV_SIZE;
-                    szEnvBlock = (wchar_t *)realloc(szEnvBlock, nBlkSize * sizeof(wchar_t));
-                    if (!szEnvBlock) {
-                        ThrowByName(env, "java/io/Exception", "Not enough memory");
-                        return 0;
-                    }
-                }
-                wcsncpy(szEnvBlock + nPos, str, len);
-                nPos += len;
-                szEnvBlock[nPos] = _T('\0');
-                ++nPos;
-                (*env)->ReleaseStringChars(env, item, (const jchar *)str);
-            }
-        }
-        szEnvBlock[nPos] = _T('\0');
-        envBlk = szEnvBlock;
+    wchar_t *envBlock = NULL;
+    if (!createEnvironmentBlock(env, envp, &envBlock)) {
+        free(cmdLine);
+        return 0;
     }
 
+    wchar_t *cwd = NULL;
     if (dir) {
         const jchar *str = (*env)->GetStringChars(env, dir, NULL);
         if (str) {
@@ -542,27 +558,35 @@ extern "C"
         }
     }
 
+    STARTUPINFOW si;
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
 
-    flags = CREATE_NEW_CONSOLE;
+    DWORD flags = CREATE_NEW_CONSOLE;
     flags |= CREATE_UNICODE_ENVIRONMENT;
-    ret = CreateProcessW(0,         /* executable name */
-                         szCmdLine, /* command line */
-                         0,         /* process security attribute */
-                         0,         /* thread security attribute */
-                         TRUE,      /* inherits system handles */
-                         flags,     /* normal attached process */
-                         envBlk,    /* environment block */
-                         cwd,       /* change to the new current directory */
-                         &si,       /* (in)  startup information */
-                         &pi);      /* (out) process information */
+
+    PROCESS_INFORMATION pi = {0};
+    int ret = CreateProcessW(NULL,     /* executable name */
+                             cmdLine,  /* command line */
+                             0,        /* process security attribute */
+                             0,        /* thread security attribute */
+                             TRUE,     /* inherits system handles */
+                             flags,    /* normal attached process */
+                             envBlock, /* environment block */
+                             cwd,      /* change to the new current directory */
+                             &si,      /* (in)  startup information */
+                             &pi);     /* (out) process information */
 
     free(cwd);
-    free(szEnvBlock);
-    free(szCmdLine);
+    free(cmdLine);
+    free(envBlock);
 
-    if (!ret) { // error
+    if (ret) {
+        // Clean-up
+        CloseHandle(pi.hThread);
+        CloseHandle(pi.hProcess);
+        ret = (long)pi.dwProcessId; // hProcess;
+    } else {                        // error
         char *lpMsgBuf;
 
         FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
@@ -572,11 +596,6 @@ extern "C"
         // Free the buffer.
         LocalFree(lpMsgBuf);
         ret = -1;
-    } else {
-        // Clean-up
-        CloseHandle(pi.hThread);
-        CloseHandle(pi.hProcess);
-        ret = (long)pi.dwProcessId; // hProcess;
     }
 
     return ret;
@@ -628,7 +647,7 @@ extern "C"
         if (isTraceEnabled(CDT_TRACE_MONITOR)) {
             cdtTrace(L"Spawner received TERM signal for process %i\n", pCurProcInfo->pid);
         }
-        SetEvent(pCurProcInfo->eventTerminate);
+        SetEvent(pCurProcInfo->eventTerminate.handle);
         if (isTraceEnabled(CDT_TRACE_MONITOR)) {
             cdtTrace(L"Spawner signaled TERM event\n");
         }
@@ -639,21 +658,21 @@ extern "C"
         if (isTraceEnabled(CDT_TRACE_MONITOR)) {
             cdtTrace(L"Spawner received KILL signal for process %i\n", pCurProcInfo->pid);
         }
-        SetEvent(pCurProcInfo->eventKill);
+        SetEvent(pCurProcInfo->eventKill.handle);
         if (isTraceEnabled(CDT_TRACE_MONITOR)) {
             cdtTrace(L"Spawner signaled KILL event\n");
         }
         ret = 0;
         break;
     case SIG_INT:
-        ResetEvent(pCurProcInfo->eventWait);
-        SetEvent(pCurProcInfo->eventBreak);
-        ret = (WaitForSingleObject(pCurProcInfo->eventWait, 100) == WAIT_OBJECT_0);
+        ResetEvent(pCurProcInfo->eventWait.handle);
+        SetEvent(pCurProcInfo->eventBreak.handle);
+        ret = (WaitForSingleObject(pCurProcInfo->eventWait.handle, 100) == WAIT_OBJECT_0);
         break;
     case CTRLC:
-        ResetEvent(pCurProcInfo->eventWait);
-        SetEvent(pCurProcInfo->eventCtrlc);
-        ret = (WaitForSingleObject(pCurProcInfo->eventWait, 100) == WAIT_OBJECT_0);
+        ResetEvent(pCurProcInfo->eventWait.handle);
+        SetEvent(pCurProcInfo->eventCtrlc.handle);
+        ret = (WaitForSingleObject(pCurProcInfo->eventWait.handle, 100) == WAIT_OBJECT_0);
         break;
     default:
         break;
@@ -772,27 +791,20 @@ pProcInfo_t findProcInfo(int uid) {
 //				pCurProcInfo - pointer to descriptor to clean up
 // Return : no
 void cleanUpProcBlock(pProcInfo_t pCurProcInfo) {
-    if (0 != pCurProcInfo->eventBreak) {
-        CloseHandle(pCurProcInfo->eventBreak);
-        pCurProcInfo->eventBreak = 0;
-    }
-    if (0 != pCurProcInfo->eventWait) {
-        CloseHandle(pCurProcInfo->eventWait);
-        pCurProcInfo->eventWait = 0;
-    }
-    if (0 != pCurProcInfo->eventTerminate) {
-        CloseHandle(pCurProcInfo->eventTerminate);
-        pCurProcInfo->eventTerminate = 0;
-    }
+    EventInfo_t *eventInfos[] = {
+        &pCurProcInfo->eventBreak, &pCurProcInfo->eventWait,  &pCurProcInfo->eventTerminate,
+        &pCurProcInfo->eventKill,  &pCurProcInfo->eventCtrlc,
+    };
 
-    if (0 != pCurProcInfo->eventKill) {
-        CloseHandle(pCurProcInfo->eventKill);
-        pCurProcInfo->eventKill = 0;
-    }
+    for (int i = 0; i < sizeof(eventInfos) / sizeof(eventInfos[0]); i++) {
+        EventInfo_t *p = eventInfos[i];
+        if (p->handle) {
+            CloseHandle(p->handle);
+            p->handle = NULL;
+        }
 
-    if (0 != pCurProcInfo->eventCtrlc) {
-        CloseHandle(pCurProcInfo->eventCtrlc);
-        pCurProcInfo->eventCtrlc = 0;
+        free(p->name);
+        p->name = NULL;
     }
 
     pCurProcInfo->pid = 0;
@@ -821,70 +833,4 @@ void _cdecl waitProcTermination(void *pv) {
     CloseHandle(pi->hProcess);
 
     free(pi);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
-// Use this utility program to process correctly quotation marks in the command line
-// Arguments:
-//			target - string to copy to
-//			source - string to copy from
-//			cpyLength - copy length
-//			availSpace - size of the target buffer
-// Return :number of bytes used in target, or -1 in case of error
-/////////////////////////////////////////////////////////////////////////////////////
-int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace) {
-    bool bSlash = false;
-    int i = 0, j = 0;
-
-    enum { QUOTATION_DO, QUOTATION_DONE, QUOTATION_NONE } nQuotationMode = QUOTATION_DO;
-
-    if (availSpace <= cpyLength) { // = to reserve space for final '\0'
-        return -1;
-    }
-
-    if ((_T('\"') == *source) && (_T('\"') == *(source + cpyLength - 1))) {
-        nQuotationMode = QUOTATION_DONE;
-    } else if (wcschr(source, _T(' '))) {
-        // Needs to be quoted
-        nQuotationMode = QUOTATION_DO;
-        *target = _T('\"');
-        ++j;
-    } else {
-        // No reason to quote term because it doesn't have embedded spaces
-        nQuotationMode = QUOTATION_NONE;
-    }
-
-    for (; i < cpyLength; ++i, ++j) {
-        if (source[i] == _T('\\')) {
-            bSlash = true;
-        } else {
-            // Don't escape embracing quotation marks
-            if ((source[i] == _T('\"')) &&
-                !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))))) {
-                if (!bSlash) { // If still not escaped
-                    if (j == availSpace) {
-                        return -1;
-                    }
-                    target[j] = _T('\\');
-                    ++j;
-                }
-            }
-            bSlash = false;
-        }
-
-        if (j == availSpace) {
-            return -1;
-        }
-        target[j] = source[i];
-    }
-
-    if (nQuotationMode == QUOTATION_DO) {
-        if (j == availSpace) {
-            return -1;
-        }
-        target[j] = _T('\"');
-        ++j;
-    }
-
-    return j;
 }

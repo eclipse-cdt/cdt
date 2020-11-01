@@ -15,6 +15,7 @@
 #include "util.h"
 
 #include <stdio.h>
+#include <tchar.h>
 
 bool isTraceEnabled(const TraceKind_t traceKind) {
     static bool initialized = false;
@@ -72,4 +73,67 @@ void cdtTrace(const wchar_t *fmt, ...) {
 
     // Clean up
     free(buffer);
+}
+
+int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace) {
+    bool bSlash = false;
+    int i = 0, j = 0;
+
+    enum { QUOTATION_DO, QUOTATION_DONE, QUOTATION_NONE } nQuotationMode = QUOTATION_DO;
+
+    if (availSpace <= cpyLength) { // = to reserve space for final '\0'
+        return -1;
+    }
+
+    if ((_T('\"') == *source) && (_T('\"') == *(source + cpyLength - 1))) {
+        nQuotationMode = QUOTATION_DONE;
+    } else if (wcschr(source, _T(' '))) {
+        // Needs to be quoted
+        nQuotationMode = QUOTATION_DO;
+        if (target) {
+            *target = _T('\"');
+        }
+        ++j;
+    } else {
+        // No reason to quote term because it doesn't have embedded spaces
+        nQuotationMode = QUOTATION_NONE;
+    }
+
+    for (; i < cpyLength; ++i, ++j) {
+        if (source[i] == _T('\\')) {
+            bSlash = true;
+        } else {
+            // Don't escape embracing quotation marks
+            if ((source[i] == _T('\"')) &&
+                !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))))) {
+                if (!bSlash) { // If still not escaped
+                    if (j == availSpace) {
+                        return -1;
+                    }
+                    target[j] = _T('\\');
+                    ++j;
+                }
+            }
+            bSlash = false;
+        }
+
+        if (j == availSpace) {
+            return -1;
+        }
+        if (target) {
+            target[j] = source[i];
+        }
+    }
+
+    if (nQuotationMode == QUOTATION_DO) {
+        if (j == availSpace) {
+            return -1;
+        }
+        if (target) {
+            target[j] = _T('\"');
+        }
+        ++j;
+    }
+
+    return j;
 }

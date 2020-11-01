@@ -36,7 +36,7 @@ extern "C"
         InitializeCriticalSection(&cs);
         GetModuleFileNameW(hModule, path, MAX_PATH);
         p = wcsrchr(path, _T('\\'));
-        if (NULL != p) {
+        if (p) {
             *(p + 1) = _T('\0');
         } else {
             wcscat(path, L"\\");

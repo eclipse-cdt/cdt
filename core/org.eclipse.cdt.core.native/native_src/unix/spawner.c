@@ -102,17 +102,17 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2(JNIEnv *
     int fd[3];
     pid_t pid = -1;
 
-    if (jchannels == NULL) {
+    if (!jchannels) {
         goto bail_out;
     }
 
     cmd = alloc_c_array(env, jcmd);
-    if (cmd == NULL) {
+    if (!cmd) {
         goto bail_out;
     }
 
     envp = alloc_c_array(env, jenv);
-    if (envp == NULL) {
+    if (!envp) {
         goto bail_out;
     }
 
@@ -151,12 +151,12 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *
     pid_t pid = -1;
 
     cmd = alloc_c_array(env, jcmd);
-    if (cmd == NULL) {
+    if (!cmd) {
         goto bail_out;
     }
 
     envp = alloc_c_array(env, jenv);
-    if (envp == NULL) {
+    if (!envp) {
         goto bail_out;
     }
 
@@ -189,7 +189,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *
     jclass channelClass = NULL;
     jmethodID channelConstructor = NULL;
 
-    if (jchannels == NULL) {
+    if (!jchannels) {
         goto bail_out;
     }
 
@@ -199,17 +199,17 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *
     }
 
     channelConstructor = (*env)->GetMethodID(env, channelClass, "<init>", "(I)V");
-    if (channelConstructor == 0) {
+    if (!channelConstructor) {
         goto bail_out;
     }
 
     cmd = alloc_c_array(env, jcmd);
-    if (cmd == NULL) {
+    if (!cmd) {
         goto bail_out;
     }
 
     envp = alloc_c_array(env, jenv);
-    if (envp == NULL) {
+    if (!envp) {
         goto bail_out;
     }
 

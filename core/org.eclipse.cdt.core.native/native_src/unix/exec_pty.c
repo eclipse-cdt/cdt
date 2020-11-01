@@ -65,7 +65,7 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
 
         chdir(dirpath);
 
-        if (channels != NULL) {
+        if (channels) {
             int fds;
 
             if (!console && setsid() < 0) {
@@ -116,10 +116,10 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
             }
         }
 
-        if (envp[0] == NULL) {
-            execv(full_path, argv);
-        } else {
+        if (envp && envp[0]) {
             execve(full_path, argv, envp);
+        } else {
+            execv(full_path, argv);
         }
 
         _exit(127);
@@ -128,7 +128,7 @@ pid_t exec_pty(const char *path, char *const argv[], char *const envp[], const c
         if (console) {
             set_noecho(fdm);
         }
-        if (channels != NULL) {
+        if (channels) {
             channels[0] = fdm; /* Input Stream. */
             channels[1] = fdm; /* Output Stream.  */
             if (console) {
@@ -173,10 +173,10 @@ int main(int argc, char **argv, char **envp) {
         } else {
             fputs("foo\n", app_stdin);
             fputs("bar\n", app_stdin);
-            while (fgets(buffer, sizeof buffer, app_stdout) != NULL) {
+            while (fgets(buffer, sizeof buffer, app_stdout)) {
                 fprintf(stdout, "STDOUT: %s\n", buffer);
             }
-            while (fgets(buffer, sizeof buffer, app_stderr) != NULL) {
+            while (fgets(buffer, sizeof buffer, app_stderr)) {
                 fprintf(stdout, "STDERR: %s\n", buffer);
             }
         }

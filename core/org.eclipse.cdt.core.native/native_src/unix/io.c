@@ -24,7 +24,7 @@
 static void ThrowByName(JNIEnv *env, const char *name, const char *msg) {
     jclass cls = (*env)->FindClass(env, name);
 
-    if (cls != 0) { /* Otherwise an exception has already been thrown */
+    if (cls) { /* Otherwise an exception has already been thrown */
         (*env)->ThrowNew(env, cls, msg);
     }
 

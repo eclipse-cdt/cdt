@@ -42,7 +42,7 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster(JNIEnv *
 
         /* Set the master fd.  */
         fid = (*env)->GetFieldID(env, cls, "master", "I");
-        if (fid == NULL) {
+        if (!fid) {
             return NULL;
         }
         (*env)->SetIntField(env, jobj, fid, (jint)master);

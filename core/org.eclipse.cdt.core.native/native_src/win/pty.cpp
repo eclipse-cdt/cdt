@@ -39,7 +39,7 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster(JNIEnv *
 
     /* Open new winpty handle */
     winpty_t *winpty = winpty_open(80, 40);
-    if (winpty == NULL) {
+    if (!winpty) {
         return NULL;
     }
 
@@ -67,7 +67,7 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster(JNIEnv *
 
     /* Set the master fd.  */
     fid = env->GetFieldID(cls, "master", "I");
-    if (fid == NULL) {
+    if (!fid) {
         return NULL;
     }
     env->SetIntField(jobj, fid, (jint)master);
@@ -87,7 +87,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size(J
     fd2pty_Iter = fd2pty.find(fd);
     if (fd2pty_Iter != fd2pty.end()) {
         winpty_t *winpty = fd2pty_Iter->second;
-        if (winpty != NULL) {
+        if (winpty) {
             return winpty_set_size(winpty, width, height);
         }
     }
@@ -106,7 +106,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYInputStream_read0(JNIEn
     fd2pty_Iter = fd2pty.find(fd);
     if (fd2pty_Iter != fd2pty.end()) {
         winpty_t *winpty = fd2pty_Iter->second;
-        if (winpty != NULL) {
+        if (winpty) {
             /* Get the pipe handle */
             HANDLE handle = winpty_get_data_pipe(winpty);
 
@@ -159,7 +159,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYInputStream_close0(JNIE
     if (fd2pty_Iter != fd2pty.end()) {
         winpty_t *winpty = fd2pty_Iter->second;
         fd2pty.erase(fd2pty_Iter);
-        if (winpty != NULL) {
+        if (winpty) {
             winpty_close(winpty);
             winpty = NULL;
         }
@@ -179,7 +179,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_write0(JNI
     fd2pty_Iter = fd2pty.find(fd);
     if (fd2pty_Iter != fd2pty.end()) {
         winpty_t *winpty = fd2pty_Iter->second;
-        if (winpty != NULL) {
+        if (winpty) {
             /* Get the pipe handle */
             HANDLE handle = winpty_get_data_pipe(winpty);
 
@@ -218,7 +218,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTYOutputStream_close0(JNI
     if (fd2pty_Iter != fd2pty.end()) {
         winpty_t *winpty = fd2pty_Iter->second;
         fd2pty.erase(fd2pty_Iter);
-        if (winpty != NULL) {
+        if (winpty) {
             winpty_close(winpty);
             winpty = NULL;
         }
@@ -253,7 +253,7 @@ static std::wstring argvToCommandLine(const std::vector<std::wstring> &argv) {
             result.push_back(L' ');
         }
         const wchar_t *arg = argv[argIndex].c_str();
-        const bool quote = wcschr(arg, L' ') != NULL || wcschr(arg, L'\t') != NULL || *arg == L'\0';
+        const bool quote = wcschr(arg, L' ') || wcschr(arg, L'\t') || *arg == L'\0';
         if (quote) {
             result.push_back(L'\"');
         }
@@ -292,11 +292,10 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_exec2(JNIEnv *env, job
 
     int pid = -1;
 
-    int i;
     jint argc = env->GetArrayLength(jcmd);
     jint envc = env->GetArrayLength(jenv);
 
-    if (jchannels == NULL || env->GetArrayLength(jchannels) != 3) {
+    if (!jchannels || env->GetArrayLength(jchannels) != 3) {
         goto bail_out;
     }
 
@@ -304,10 +303,10 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_exec2(JNIEnv *env, job
     fd2pty_Iter = fd2pty.find(fd);
     if (fd2pty_Iter != fd2pty.end()) {
         winpty_t *winpty = fd2pty_Iter->second;
-        if (winpty != NULL) {
+        if (winpty) {
             std::vector<std::wstring> argVector;
 
-            for (i = 0; i < argc; i++) {
+            for (int i = 0; i < argc; i++) {
                 jstring j_str = (jstring)env->GetObjectArrayElement(jcmd, i);
                 const wchar_t *w_str = (const wchar_t *)env->GetStringChars(j_str, NULL);
                 if (i == 0) {
@@ -321,7 +320,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_exec2(JNIEnv *env, job
 
             std::wstring envp;
 
-            for (i = 0; i < envc; i++) {
+            for (int i = 0; i < envc; i++) {
                 jstring j_str = (jstring)env->GetObjectArrayElement(jenv, i);
                 const wchar_t *w_str = (const wchar_t *)env->GetStringChars(j_str, NULL);
                 envp.append(w_str);
@@ -361,7 +360,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_waitFor(JNIEnv *env, j
     fd2pty_Iter = fd2pty.find(fd);
     if (fd2pty_Iter != fd2pty.end()) {
         winpty_t *winpty = fd2pty_Iter->second;
-        if (winpty != NULL) {
+        if (winpty) {
             HANDLE handle = winpty_get_data_pipe(winpty);
             BOOL success;
             do {

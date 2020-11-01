@@ -66,7 +66,7 @@ bool _isCygwin = true;
 
 bool isCygwin(HANDLE process) {
     // Have we checked before?
-    if (cygwinBin != NULL || !_isCygwin) {
+    if (cygwinBin || !_isCygwin) {
         return _isCygwin;
     }
 
@@ -128,10 +128,10 @@ void ensureSize(wchar_t **ptr, int *psize, int requiredLength) {
             size = requiredLength;
         }
         *ptr = (wchar_t *)realloc(*ptr, size * sizeof(wchar_t));
-        if (NULL == *ptr) {
-            *psize = 0;
-        } else {
+        if (*ptr) {
             *psize = size;
+        } else {
+            *psize = 0;
         }
     }
 }
@@ -164,7 +164,7 @@ int main() {
             return 0;
         }
         ensureSize(&szCmdLine, &nCmdLineLength, requiredSize);
-        if (NULL == szCmdLine) {
+        if (!szCmdLine) {
             if (isTraceEnabled(CDT_TRACE_MONITOR)) {
                 cdtTrace(L"Not enough memory to build cmd line!\n");
             }
@@ -255,10 +255,7 @@ int main() {
     if (isTraceEnabled(CDT_TRACE_MONITOR_DETAILS)) {
         wchar_t *lpvEnv = GetEnvironmentStringsW();
 
-        // If the returned pointer is NULL, exit.
-        if (lpvEnv == NULL) {
-            cdtTrace(L"Cannot Read Environment\n");
-        } else {
+        if (lpvEnv) {
             // Variable strings are separated by NULL byte, and the block is
             // terminated by a NULL byte.
 
@@ -268,6 +265,9 @@ int main() {
             }
 
             FreeEnvironmentStringsW(lpvEnv);
+        } else {
+            // If the returned pointer is NULL, exit.
+            cdtTrace(L"Cannot Read Environment\n");
         }
     }
     if (isTraceEnabled(CDT_TRACE_MONITOR)) {
@@ -275,7 +275,7 @@ int main() {
     }
     // Create job object
     HANDLE hJob = CreateJobObject(NULL, NULL);
-    if (hJob != NULL) {
+    if (hJob) {
         // Configure job to
         // - terminate all associated processes when the last handle to it is closed
         // - allow child processes to break away from the job.
@@ -315,7 +315,7 @@ int main() {
         CloseHandle(pi.hThread);
         h[1] = pi.hProcess;
 
-        if (NULL != hJob) {
+        if (hJob) {
             if (!AssignProcessToJobObject(hJob, pi.hProcess)) {
                 if (isTraceEnabled(CDT_TRACE_MONITOR)) {
                     cdtTrace(L"Cannot assign process %i to a job\n", pi.dwProcessId);
@@ -383,7 +383,7 @@ int main() {
 
                 SetEvent(waitEvent);
 
-                if (NULL != hJob) {
+                if (hJob) {
                     if (!TerminateJobObject(hJob, (DWORD)-1)) {
                         if (isTraceEnabled(CDT_TRACE_MONITOR)) {
                             cdtTrace(L"Cannot terminate job\n");
@@ -433,14 +433,11 @@ int main() {
 // Return :number of bytes used in target, or -1 in case of error
 /////////////////////////////////////////////////////////////////////////////////////
 int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace) {
-    BOOL bSlash = FALSE;
+    bool bSlash = false;
     int i = 0, j = 0;
 
-#define QUOTATION_DO 0
-#define QUOTATION_DONE 1
-#define QUOTATION_NONE 2
+    enum { QUOTATION_DO, QUOTATION_DONE, QUOTATION_NONE } nQuotationMode = QUOTATION_DO;
 
-    int nQuotationMode = 0;
     if (availSpace <= cpyLength) { // = to reserve space for '\0'
         return -1;
     }
@@ -448,19 +445,19 @@ int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace
     if ((_T('\"') == *source) && (_T('\"') == *(source + cpyLength - 1))) {
         // Already done
         nQuotationMode = QUOTATION_DONE;
-    } else if (wcschr(source, _T(' ')) == NULL) {
-        // No reason to quotate term becase it doesn't have embedded spaces
-        nQuotationMode = QUOTATION_NONE;
-    } else {
+    } else if (wcschr(source, _T(' '))) {
         // Needs to be quotated
         nQuotationMode = QUOTATION_DO;
         *target = _T('\"');
         ++j;
+    } else {
+        // No reason to quotate term because it doesn't have embedded spaces
+        nQuotationMode = QUOTATION_NONE;
     }
 
     for (; i < cpyLength; ++i, ++j) {
         if (source[i] == _T('\\')) {
-            bSlash = TRUE;
+            bSlash = true;
         } else {
             // Don't escape embracing quotation marks
             if ((source[i] == _T('\"')) &&
@@ -472,9 +469,9 @@ int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace
                     target[j] = _T('\\');
                     ++j;
                 }
-                bSlash = FALSE;
+                bSlash = false;
             } else {
-                bSlash = FALSE;
+                bSlash = false;
             }
         }
 

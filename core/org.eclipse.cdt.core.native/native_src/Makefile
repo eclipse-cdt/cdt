@@ -72,7 +72,7 @@ rebuild: clean all
 # However, x86_64-w64-mingw32-ld on Debian/Ubuntu has a patch that overrides the current date
 # using the SOURCE_DATE_EPOCH environment variable. Call REPRODUCIBLE_BUILD_WRAPPER to make sure the
 # same binary is produced for the same source each time.
-$(OS_DIR_WIN32_X86_64)/starter.exe: win/starter.c
+$(OS_DIR_WIN32_X86_64)/starter.exe: win/starter.c win/util.c
 	mkdir -p $(dir $@) && \
 	$(REPRODUCIBLE_BUILD_WRAPPER) \
 	x86_64-w64-mingw32-gcc $(COMMON_CFLAGS) -o $@ -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
@@ -80,7 +80,7 @@ $(OS_DIR_WIN32_X86_64)/starter.exe: win/starter.c
 		$^ \
 		-lpsapi
 
-$(OS_DIR_WIN32_X86_64)/spawner.dll: win/iostream.c win/raise.c win/spawner.c win/Win32ProcessEx.c
+$(OS_DIR_WIN32_X86_64)/spawner.dll: win/iostream.c win/raise.c win/spawner.c win/Win32ProcessEx.c win/util.c
 	mkdir -p $(dir $@) && \
 	$(REPRODUCIBLE_BUILD_WRAPPER) \
 	x86_64-w64-mingw32-gcc $(COMMON_CFLAGS) -o $@ -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
@@ -88,7 +88,7 @@ $(OS_DIR_WIN32_X86_64)/spawner.dll: win/iostream.c win/raise.c win/spawner.c win
 		$^ \
 		-Wl,--kill-at --shared
 
-$(OS_DIR_WIN32_X86_64)/pty.dll: win/pty.cpp win/pty_dllmain.cpp
+$(OS_DIR_WIN32_X86_64)/pty.dll: win/pty.cpp win/pty_dllmain.cpp  win/util.c
 	mkdir -p $(dir $@) && \
 	$(REPRODUCIBLE_BUILD_WRAPPER) \
 	x86_64-w64-mingw32-g++ $(COMMON_CFLAGS) -o $@ -Iinclude -Iwin/include -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \

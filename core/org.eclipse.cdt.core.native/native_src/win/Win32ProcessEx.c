@@ -24,6 +24,8 @@
 #include <windows.h>
 #include <jni.h>
 
+#include "util.h"
+
 #include "org_eclipse_cdt_utils_spawner_Spawner.h"
 
 #define PIPE_SIZE 512        // Size of pipe buffer
@@ -159,9 +161,6 @@ extern "C"
     wchar_t eventTerminateName[MAX_EVENT_NAME_LENGTH];
     wchar_t eventKillName[MAX_EVENT_NAME_LENGTH];
     wchar_t eventCtrlcName[MAX_EVENT_NAME_LENGTH];
-#ifdef DEBUG_MONITOR
-    wchar_t buffer[4000];
-#endif
     int nLocalCounter;
     wchar_t inPipeName[PIPE_NAME_LENGTH];
     wchar_t outPipeName[PIPE_NAME_LENGTH];
@@ -228,11 +227,9 @@ extern "C"
         return 0;
     }
 
-#ifdef DEBUG_MONITOR
-    swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("Opened pipes: %s, %s, %s\n"), inPipeName, outPipeName,
-             errPipeName);
-    OutputDebugStringW(buffer);
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Opened pipes: %s, %s, %s\n", inPipeName, outPipeName, errPipeName);
+    }
 
     nCmdTokens = (*env)->GetArrayLength(env, cmdarray);
     nEnvVars = (*env)->GetArrayLength(env, envp);
@@ -298,10 +295,10 @@ extern "C"
     }
     szCmdLine[nPos] = _T('\0');
 
-#ifdef DEBUG_MONITOR
-    swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("There are %i environment variables \n"), nEnvVars);
-    OutputDebugStringW(buffer);
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"There are %i environment variables \n", nEnvVars);
+    }
+
     // Prepare environment block
     if (nEnvVars > 0) {
         nPos = 0;
@@ -318,16 +315,13 @@ extern "C"
                         ThrowByName(env, "java/io/IOException", "Not enough memory");
                         return 0;
                     }
-#ifdef DEBUG_MONITOR
-                    swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]),
-                             _T("Realloc environment block; new length is  %i \n"), nBlkSize);
-                    OutputDebugStringW(buffer);
-#endif
+                    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                        cdtTrace(L"Realloc environment block; new length is  %i \n", nBlkSize);
+                    }
                 }
-#ifdef DEBUG_MONITOR
-                swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("%s\n"), str);
-                OutputDebugStringW(buffer);
-#endif
+                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                    cdtTrace(L"%s\n", str);
+                }
                 wcsncpy(szEnvBlock + nPos, str, len);
                 nPos += len;
                 szEnvBlock[nPos] = _T('\0');
@@ -359,9 +353,9 @@ extern "C"
     flags |= CREATE_NO_WINDOW;
     flags |= CREATE_UNICODE_ENVIRONMENT;
 
-#ifdef DEBUG_MONITOR
-    OutputDebugStringW(szCmdLine);
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(szCmdLine);
+    }
     // launches starter; we need it to create another console group to correctly process
     // emulation of SYSint signal (Ctrl-C)
     ret = CreateProcessW(0,          /* executable name */
@@ -404,15 +398,14 @@ extern "C"
 
         what = WaitForMultipleObjects(2, h, FALSE, INFINITE);
         if (what != WAIT_OBJECT_0) { // CreateProcess failed
-#ifdef DEBUG_MONITOR
-            swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("Process %i failed\n"), pi.dwProcessId);
-            OutputDebugStringW(buffer);
-#endif
+            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                cdtTrace(L"Process %i failed\n", pi.dwProcessId);
+            }
             cleanUpProcBlock(pCurProcInfo);
             ThrowByName(env, "java/io/IOException", "Launching failed");
-#ifdef DEBUG_MONITOR
-            OutputDebugStringW(_T("Process failed\n"));
-#endif
+            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                cdtTrace(L"Process failed\n");
+            }
         } else {
             ret = (long)(pCurProcInfo->uid);
 
@@ -428,9 +421,9 @@ extern "C"
             memcpy(piCopy, &pi, sizeof(PROCESS_INFORMATION));
             _beginthread(waitProcTermination, 0, (void *)piCopy);
 
-#ifdef DEBUG_MONITOR
-            OutputDebugStringW(_T("Process started\n"));
-#endif
+            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                cdtTrace(L"Process started\n");
+            }
         }
         LeaveCriticalSection(&cs);
     }
@@ -605,9 +598,6 @@ extern "C"
 
     HANDLE hProc;
     pProcInfo_t pCurProcInfo = findProcInfo(uid);
-#ifdef DEBUG_MONITOR
-    wchar_t buffer[100];
-#endif
 
     if (NULL == pCurProcInfo) {
         if (SIG_INT == signal) { // Try another way
@@ -616,11 +606,9 @@ extern "C"
         return -1;
     }
 
-#ifdef DEBUG_MONITOR
-    swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("Spawner received signal %i for process %i\n"), signal,
-             pCurProcInfo->pid);
-    OutputDebugStringW(buffer);
-#endif
+    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        cdtTrace(L"Spawner received signal %i for process %i\n", signal, pCurProcInfo->pid);
+    }
 
     hProc = OpenProcess(SYNCHRONIZE, 0, pCurProcInfo->pid);
 
@@ -638,28 +626,24 @@ extern "C"
         ret = 0;
         break;
     case SIG_TERM:
-#ifdef DEBUG_MONITOR
-        swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("Spawner received TERM signal for process %i\n"),
-                 pCurProcInfo->pid);
-        OutputDebugStringW(buffer);
-#endif
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Spawner received TERM signal for process %i\n", pCurProcInfo->pid);
+        }
         SetEvent(pCurProcInfo->eventTerminate);
-#ifdef DEBUG_MONITOR
-        OutputDebugStringW(_T("Spawner signaled TERM event\n"));
-#endif
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Spawner signaled TERM event\n");
+        }
         ret = 0;
         break;
 
     case SIG_KILL:
-#ifdef DEBUG_MONITOR
-        swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("Spawner received KILL signal for process %i\n"),
-                 pCurProcInfo->pid);
-        OutputDebugStringW(buffer);
-#endif
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Spawner received KILL signal for process %i\n", pCurProcInfo->pid);
+        }
         SetEvent(pCurProcInfo->eventKill);
-#ifdef DEBUG_MONITOR
-        OutputDebugStringW(_T("Spawner signaled KILL event\n"));
-#endif
+        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            cdtTrace(L"Spawner signaled KILL event\n");
+        }
         ret = 0;
         break;
     case SIG_INT:
@@ -830,9 +814,6 @@ void cleanUpProcBlock(pProcInfo_t pCurProcInfo) {
 void _cdecl waitProcTermination(void *pv) {
     PROCESS_INFORMATION *pi = (PROCESS_INFORMATION *)pv;
     int i;
-#ifdef DEBUG_MONITOR
-    wchar_t buffer[1000];
-#endif
 
     // wait for process termination
     WaitForSingleObject(pi->hProcess, INFINITE);
@@ -840,11 +821,9 @@ void _cdecl waitProcTermination(void *pv) {
     for (i = 0; i < MAX_PROCS; ++i) {
         if (pInfo[i].pid == pi->dwProcessId) {
             cleanUpProcBlock(pInfo + i);
-#ifdef DEBUG_MONITOR
-            swprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), _T("waitProcTermination: set PID %i to 0\n"),
-                     pi->dwProcessId);
-            OutputDebugStringW(buffer);
-#endif
+            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                cdtTrace(L"waitProcTermination: set PID %i to 0\n", pi->dwProcessId);
+            }
         }
     }
     CloseHandle(pi->hProcess);

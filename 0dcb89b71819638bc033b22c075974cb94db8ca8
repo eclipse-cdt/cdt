@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aec390e8_3a99bb87",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/util.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-01T20:14:37Z",
+      "side": 1,
+      "message": "Is this a good name?\ntrace() would be better, but I fear that it might clash with something on Win32",
+      "range": {
+        "startLine": 24,
+        "startChar": 5,
+        "endLine": 24,
+        "endChar": 13
+      },
+      "revId": "0dcb89b71819638bc033b22c075974cb94db8ca8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

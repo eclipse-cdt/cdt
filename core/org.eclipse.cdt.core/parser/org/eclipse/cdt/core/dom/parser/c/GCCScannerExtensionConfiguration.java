@@ -56,6 +56,7 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 
 				String mscVer = definedSymbols.get("_MSC_VER"); //$NON-NLS-1$
 				if (mscVer != null && Integer.valueOf(mscVer) > 0) {
+					// Note: this is also used for clang-cl.
 					return CONFIG_MSVC;
 				}
 

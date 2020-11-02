@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.parser.Keywords;
  */
 public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfiguration {
 	private static enum CompilerType {
-		GCC, Clang, MSVC
+		GCC, Clang, ClangCl, MSVC
 	}
 
 	private static final int VERSION_4_2 = version(4, 2);
@@ -50,6 +50,8 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	private static GPPScannerExtensionConfiguration CONFIG_8_0 = new GPPScannerExtensionConfiguration(VERSION_8_0);
 	private static GPPScannerExtensionConfiguration CONFIG_CLANG = new GPPScannerExtensionConfiguration(
 			CompilerType.Clang, 0 /* version is ignored for now */);
+	private static GPPScannerExtensionConfiguration CONFIG_CLANG_CL = new GPPScannerExtensionConfiguration(
+			CompilerType.ClangCl, 0 /* version is ignored for now */);
 	private static GPPScannerExtensionConfiguration CONFIG_MSVC = new GPPScannerExtensionConfiguration(
 			CompilerType.MSVC, 0 /* version is ignored for now */);
 
@@ -65,14 +67,17 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			try {
 				final Map<String, String> definedSymbols = info.getDefinedSymbols();
 
-				// Clang. Needs to be checked first since it pretends to be GCC too.
+				// Clang. Needs to be checked first since it pretends to be GCC and MSVC too.
 				String clang = definedSymbols.get("__clang__"); //$NON-NLS-1$
+				String mscVer = definedSymbols.get("_MSC_VER"); //$NON-NLS-1$
+				boolean hasMsc = mscVer != null && Integer.valueOf(mscVer) > 0;
 				if (clang != null && Integer.valueOf(clang) > 0) {
+					if (hasMsc)
+						return CONFIG_CLANG_CL;
 					return CONFIG_CLANG;
 				}
 
-				String mscVer = definedSymbols.get("_MSC_VER"); //$NON-NLS-1$
-				if (mscVer != null && Integer.valueOf(mscVer) > 0) {
+				if (hasMsc) {
 					return CONFIG_MSVC;
 				}
 
@@ -127,7 +132,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		addKeyword(Keywords.c_COMPLEX, IToken.t__Complex);
 		addKeyword(Keywords.c_IMAGINARY, IToken.t__Imaginary);
 
-		if (compiler != CompilerType.MSVC) {
+		if (!(compiler == CompilerType.MSVC || compiler == CompilerType.ClangCl)) {
 			// MSVC only defines this when compiling in C mode and /Za is used.
 			addMacro("__STDC__", "1");
 		}
@@ -177,7 +182,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 				addKeyword(GCCKeywords.cp__is_constructible, IGCCToken.tTT_is_constructible);
 				addKeyword(GCCKeywords.cp__integer_pack, IGCCToken.tTT_integer_pack);
 			}
-		} else if (compiler == CompilerType.Clang) {
+		} else if (compiler == CompilerType.Clang || compiler == CompilerType.ClangCl) {
 			// As documented at
 			// http://clang.llvm.org/docs/LanguageExtensions.html#checks-for-type-trait-primitives.
 			// For now we don't make it dependent on the version.

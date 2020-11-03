@@ -18,8 +18,16 @@
 #include <stdbool.h>
 #include <windows.h>
 
-typedef enum { CDT_TRACE_MONITOR, CDT_TRACE_MONITOR_DETAILS, CDT_TRACE_READ_REPORT } TraceKind_t;
+typedef enum {
+    CDT_TRACE_SPAWNER,
+    CDT_TRACE_SPAWNER_DETAILS,
+    CDT_TRACE_SPAWNER_STARTER,
+    CDT_TRACE_SPAWNER_READ_REPORT
+} TraceKind_t;
+static const TraceKind_t ALL_TRACE_KINDS[] = {CDT_TRACE_SPAWNER, CDT_TRACE_SPAWNER_DETAILS, CDT_TRACE_SPAWNER_STARTER,
+                                              CDT_TRACE_SPAWNER_READ_REPORT};
 
+void enableTraceFor(const TraceKind_t traceKind);
 bool isTraceEnabled(const TraceKind_t traceKind);
 void cdtTrace(const wchar_t *fmt, ...);
 

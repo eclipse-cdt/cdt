@@ -17,29 +17,43 @@
 #include <stdio.h>
 #include <tchar.h>
 
-bool isTraceEnabled(const TraceKind_t traceKind) {
-    static bool initialized = false;
-    static bool monitor = false;
-    static bool monitorDetails = false;
-    static bool readReport = false;
+static bool spawner = false;
+static bool spawnerDetails = false;
+static bool spawnerStarter = false;
+static bool readReport = false;
 
-    if (!initialized) {
-        monitor = _wgetenv(L"TRACE_ORG_ECLIPSE_CDT_MONITOR") != NULL;
-        monitorDetails = _wgetenv(L"TRACE_ORG_ECLIPSE_CDT_MONITORDETAILS") != NULL;
-        readReport = _wgetenv(L"TRACE_ORG_ECLIPSE_CDT_READREPORT") != NULL;
-
-        initialized = true;
-    }
-
+void enableTraceFor(const TraceKind_t traceKind) {
     switch (traceKind) {
-    case CDT_TRACE_MONITOR:
-        return monitor;
-    case CDT_TRACE_MONITOR_DETAILS:
-        return monitorDetails;
-    case CDT_TRACE_READ_REPORT:
+    case CDT_TRACE_SPAWNER:
+        spawner = true;
+        break;
+    case CDT_TRACE_SPAWNER_DETAILS:
+        spawnerDetails = true;
+        break;
+    case CDT_TRACE_SPAWNER_STARTER:
+        spawnerStarter = true;
+        break;
+    case CDT_TRACE_SPAWNER_READ_REPORT:
+        readReport = true;
+        break;
+    default:
+        cdtTrace(L"%S: Invalid trace kind supplied: %d\n", __func__, traceKind);
+        break;
+    }
+}
+
+bool isTraceEnabled(const TraceKind_t traceKind) {
+    switch (traceKind) {
+    case CDT_TRACE_SPAWNER:
+        return spawner;
+    case CDT_TRACE_SPAWNER_DETAILS:
+        return spawnerDetails;
+    case CDT_TRACE_SPAWNER_STARTER:
+        return spawnerStarter;
+    case CDT_TRACE_SPAWNER_READ_REPORT:
         return readReport;
     default:
-        cdtTrace(L"Invalid trace kind supplied: %d\n", traceKind);
+        cdtTrace(L"%S: Invalid trace kind supplied: %d\n", __func__, traceKind);
         return false;
     }
 }

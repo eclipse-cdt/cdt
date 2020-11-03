@@ -47,6 +47,14 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *
  */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor(JNIEnv *, jobject, jint);
 
+/*
+ * Class:     org_eclipse_cdt_utils_spawner_Spawner
+ * Method:    configureNativeTrace
+ * Signature: (ZZZZ)V
+ */
+JNIEXPORT void JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_configureNativeTrace(JNIEnv *, jclass, jboolean,
+                                                                                       jboolean, jboolean, jboolean);
+
 #ifdef __cplusplus
 }
 #endif

@@ -22,6 +22,30 @@
       "revId": "6183cc573770b3c63d1849a752363c41ea87fba0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9788bf73_9843a1d2",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/Win32ProcessEx.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 570,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-03T15:45:44Z",
+      "side": 0,
+      "message": "No idea.",
+      "parentUuid": "2776b754_0a1396d2",
+      "range": {
+        "startLine": 570,
+        "startChar": 22,
+        "endLine": 570,
+        "endChar": 33
+      },
+      "revId": "6183cc573770b3c63d1849a752363c41ea87fba0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

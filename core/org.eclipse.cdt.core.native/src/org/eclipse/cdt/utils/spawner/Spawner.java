@@ -457,12 +457,22 @@ public class Spawner extends Process {
 	static {
 		try {
 			System.loadLibrary("spawner"); //$NON-NLS-1$
+			configureNativeTrace(Platform.getDebugBoolean(CNativePlugin.PLUGIN_ID + "/debug/spawner"), //$NON-NLS-1$
+					Platform.getDebugBoolean(CNativePlugin.PLUGIN_ID + "/debug/spawner/details"), //$NON-NLS-1$
+					Platform.getDebugBoolean(CNativePlugin.PLUGIN_ID + "/debug/spawner/starter"), //$NON-NLS-1$
+					Platform.getDebugBoolean(CNativePlugin.PLUGIN_ID + "/debug/spawner/read_report")); //$NON-NLS-1$
 		} catch (SecurityException e) {
 			CNativePlugin.log(e);
 		} catch (UnsatisfiedLinkError e) {
 			CNativePlugin.log(e);
 		}
 	}
+
+	/**
+	 * @since 6.0
+	 */
+	private static native void configureNativeTrace(boolean spawner, boolean spawnerDetails, boolean starter,
+			boolean readReport);
 
 	/**
 	 * @since 6.0

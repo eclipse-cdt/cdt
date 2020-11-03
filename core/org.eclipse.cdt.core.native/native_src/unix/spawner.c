@@ -24,18 +24,7 @@
 #include "exec0.h"
 #include <org_eclipse_cdt_utils_spawner_Spawner.h>
 
-static bool isTraceEnabled(void) {
-    static bool initialized = false;
-    static bool enabled = false;
-
-    if (!initialized) {
-        enabled = getenv("TRACE_ORG_ECLIPSE_CDT_SPAWNER") != NULL;
-
-        initialized = true;
-    }
-
-    return enabled;
-}
+static bool trace_enabled = false;
 
 static void print_array(FILE *stream, const char *str, char **c_array) {
     if (c_array) {
@@ -116,7 +105,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2(JNIEnv *
         goto bail_out;
     }
 
-    if (isTraceEnabled()) {
+    if (trace_enabled) {
         print_array(stderr, "command:", cmd);
         print_array(stderr, "Envp:", envp);
         fprintf(stderr, "dirpath: %s\n", dirpath);
@@ -160,7 +149,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *
         goto bail_out;
     }
 
-    if (isTraceEnabled()) {
+    if (trace_enabled) {
         print_array(stderr, "command:", cmd);
         print_array(stderr, "Envp:", envp);
         fprintf(stderr, "dirpath: %s\n", dirpath);
@@ -213,7 +202,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *
         goto bail_out;
     }
 
-    if (isTraceEnabled()) {
+    if (trace_enabled) {
         print_array(stderr, "command:", cmd);
         print_array(stderr, "Envp:", envp);
         fprintf(stderr, "dirpath: %s\n", dirpath);
@@ -235,11 +224,6 @@ bail_out:
     return pid;
 }
 
-/*
- * Class:     org_eclipse_cdt_utils_spawner_Spawner
- * Method:    raise
- * Signature: (II)I
- */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *env, jobject jobj, jint pid, jint sig) {
     int status = -1;
 
@@ -283,11 +267,13 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *
     return status;
 }
 
-/*
- * Class:     org_eclipse_cdt_utils_spawner_Spawner
- * Method:    waitFor
- * Signature: (I)I
- */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor(JNIEnv *env, jobject jobj, jint pid) {
     return wait0(pid);
+}
+
+JNIEXPORT void JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_configureNativeTrace(
+    JNIEnv *env, jclass cls, jboolean spawner, jboolean spawnerDetails, jboolean starter, jboolean readReport) {
+    if (spawner) {
+        trace_enabled = true;
+    }
 }

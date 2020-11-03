@@ -298,7 +298,11 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		ByteBuffer data = dwarfSections.get(DWARF_DEBUG_LINE);
 		if (data != null) {
 			try {
-				data.position(cuStmtList);
+				try {
+					data.position(cuStmtList);
+				} catch (IllegalArgumentException e) {
+					throw new IOException(CCorePlugin.getResourceString("Util.exception.noData")); //$NON-NLS-1$
+				}
 
 				/* Read line table header:
 				 *
@@ -384,7 +388,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					leb128 = read_unsigned_leb128(data);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				CCorePlugin.log("Failed to parse part of dwarf header", e); //$NON-NLS-1$
 			}
 		}
 	}

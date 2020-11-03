@@ -78,6 +78,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="model/org/eclipse/cdt/core/model/IContributedCElement.java" type="org.eclipse.cdt.core.model.IContributedCElement">
+        <filter comment="Although ICElement is not intended to be extended, IContributedCElement is specifically designed to be extended. See Bug 133386" id="576782386">
+            <message_arguments>
+                <message_argument value="ICElement"/>
+                <message_argument value="IContributedCElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="model/org/eclipse/cdt/core/model/LanguageMappingChangeEvent.java" type="org.eclipse.cdt.core.model.LanguageMappingChangeEvent">
         <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
             <message_arguments>

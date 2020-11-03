@@ -11,6 +11,13 @@
 
 package org.eclipse.cdt.cmake.core.internal;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BinaryOperator;
@@ -20,6 +27,8 @@ import org.eclipse.cdt.cmake.core.internal.properties.CMakePropertiesBean;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 import org.eclipse.cdt.cmake.core.properties.ICMakePropertiesController;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
 /**
  * A {@code ICMakePropertiesController} that monitors modifications to the project properties that force
@@ -28,6 +37,7 @@ import org.eclipse.cdt.cmake.core.properties.ICMakePropertiesController;
  */
 class CMakePropertiesController implements ICMakePropertiesController {
 
+	private final Path storageFile;
 	private final Runnable cmakeCacheDirtyMarker;
 
 	private String cacheFile;
@@ -40,37 +50,60 @@ class CMakePropertiesController implements ICMakePropertiesController {
 
 	/** Creates a new CMakePropertiesController object.
 	 *
+	 * @param storageFile
+	 * 		the file where to persist the properties. The file may not exist, but its parent directory is supposed to exist.
 	 * @param cmakeCacheDirtyMarker
 	 * 		the object to notify when modifications to the project properties force
 	 * us to delete file CMakeCache.txt to avoid complaints by cmake
 	 */
-	CMakePropertiesController(Runnable cmakeCacheDirtyMarker) {
+	CMakePropertiesController(Path storageFile, Runnable cmakeCacheDirtyMarker) {
+		this.storageFile = Objects.requireNonNull(storageFile);
 		this.cmakeCacheDirtyMarker = Objects.requireNonNull(cmakeCacheDirtyMarker);
 	}
 
 	@Override
-	public ICMakeProperties load() {
-		// TODO implement load()
-		CMakePropertiesBean props = new CMakePropertiesBean();
+	public ICMakeProperties load() throws IOException {
+		CMakePropertiesBean props = null;
+		if (Files.exists(storageFile)) {
+			try (InputStream is = Files.newInputStream(storageFile)) {
+				props = new Yaml(new CustomClassLoaderConstructor(this.getClass().getClassLoader())).loadAs(is,
+						CMakePropertiesBean.class);
+				// props is null here if if no document was available in the file
+			}
+		}
+		if (props == null) {
+			// nothing was persisted, return default properties
+			props = new CMakePropertiesBean();
+		}
 
 		setupModifyDetection(props);
 		return props;
 	}
 
 	@Override
-	public void save(ICMakeProperties properties) {
+	public void save(ICMakeProperties properties) throws IOException {
 		// detect whether changes force us to delete file CMakeCache.txt to avoid complaints by cmake
 		if (!Objects.equals(buildType, properties.getBuildType())
 				|| !Objects.equals(cacheFile, properties.getCacheFile())
 				|| !Objects.equals(generatorLinux, properties.getLinuxOverrides().getGenerator())
 				|| !Objects.equals(generatorWindows, properties.getWindowsOverrides().getGenerator())) {
 			cmakeCacheDirtyMarker.run(); // must remove cmake cachefile
-		} else if (extraArgumentsChange(extraArguments, properties.getExtraArguments())
-				|| extraArgumentsChange(extraArgumentsLinux, properties.getLinuxOverrides().getExtraArguments())
-				|| extraArgumentsChange(extraArgumentsWindows, properties.getWindowsOverrides().getExtraArguments())) {
+		} else if (hasExtraArgumentChanged(extraArguments, properties.getExtraArguments())
+				|| hasExtraArgumentChanged(extraArgumentsLinux, properties.getLinuxOverrides().getExtraArguments())
+				|| hasExtraArgumentChanged(extraArgumentsWindows,
+						properties.getWindowsOverrides().getExtraArguments())) {
 			cmakeCacheDirtyMarker.run(); // must remove cmake cachefile
 		}
-		// TODO implement save()
+		if (!Files.exists(storageFile)) {
+			try {
+				Files.createFile(storageFile);
+			} catch (FileAlreadyExistsException ignore) {
+			}
+		}
+		try (Writer wr = new OutputStreamWriter(Files.newOutputStream(storageFile))) {
+			new Yaml().dump(properties, wr);
+		}
+
 		setupModifyDetection(properties);
 	}
 
@@ -86,13 +119,13 @@ class CMakePropertiesController implements ICMakePropertiesController {
 		extraArgumentsWindows = properties.getWindowsOverrides().getExtraArguments();
 	}
 
-	private boolean extraArgumentsChange(List<String> args1, List<String> args2) {
+	private boolean hasExtraArgumentChanged(List<String> expected, List<String> actual) {
 		String wanted = "CMAKE_TOOLCHAIN_FILE"; //$NON-NLS-1$
 		// extract the last arguments that contain String wanted..
 		Predicate<? super String> predContains = a -> a.contains(wanted);
 		BinaryOperator<String> keepLast = (first, second) -> second;
-		String a1 = args1.stream().filter(predContains).reduce(keepLast).orElse(null);
-		String a2 = args2.stream().filter(predContains).reduce(keepLast).orElse(null);
+		String a1 = expected.stream().filter(predContains).reduce(keepLast).orElse(null);
+		String a2 = actual.stream().filter(predContains).reduce(keepLast).orElse(null);
 		if (!Objects.equals(a1, a2)) {
 			return true;
 		}

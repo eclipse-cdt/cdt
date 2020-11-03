@@ -2,3 +2,8 @@ org.eclipse.cdt.core.native/debug=false
 
 # Used by org.eclipse.cdt.core.win32 fragment
 org.eclipse.cdt.core.native/debug/win32/registry=false
+
+# Used by native code
+org.eclipse.cdt.core.native/debug/native/spawner=false
+org.eclipse.cdt.core.native/debug/native/spawner/details=false
+org.eclipse.cdt.core.native/debug/native/spawner/read_report=false

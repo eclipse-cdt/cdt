@@ -17,29 +17,50 @@
 #include <stdio.h>
 #include <tchar.h>
 
-bool isTraceEnabled(const TraceKind_t traceKind) {
-    static bool initialized = false;
-    static bool monitor = false;
-    static bool monitorDetails = false;
-    static bool readReport = false;
+static bool monitor = false;
+static bool monitorDetails = false;
+static bool readReport = false;
 
-    if (!initialized) {
-        monitor = _wgetenv(L"TRACE_ORG_ECLIPSE_CDT_MONITOR") != NULL;
-        monitorDetails = _wgetenv(L"TRACE_ORG_ECLIPSE_CDT_MONITORDETAILS") != NULL;
-        readReport = _wgetenv(L"TRACE_ORG_ECLIPSE_CDT_READREPORT") != NULL;
-
-        initialized = true;
-    }
-
+const wchar_t *getTraceEnvVarFor(const TraceKind_t traceKind) {
     switch (traceKind) {
-    case CDT_TRACE_MONITOR:
+    case CDT_TRACE_SPAWNER:
+        return L"TRACE_ORG_ECLIPSE_CDT_SPAWNER";
+    case CDT_TRACE_SPAWNER_DETAILS:
+        return L"TRACE_ORG_ECLIPSE_CDT_SPAWNER_DETAILS";
+    case CDT_TRACE_SPAWNER_READ_REPORT:
+        return L"TRACE_ORG_ECLIPSE_CDT_SPAWNER_READ_REPORT";
+    default:
+        return NULL;
+    }
+}
+
+void enableTraceFor(const TraceKind_t traceKind) {
+    switch (traceKind) {
+    case CDT_TRACE_SPAWNER:
+        monitor = true;
+        break;
+    case CDT_TRACE_SPAWNER_DETAILS:
+        monitorDetails = true;
+        break;
+    case CDT_TRACE_SPAWNER_READ_REPORT:
+        readReport = true;
+        break;
+    default:
+        cdtTrace(L"%S: Invalid trace kind supplied: %d\n", __func__, traceKind);
+        break;
+    }
+}
+
+bool isTraceEnabled(const TraceKind_t traceKind) {
+    switch (traceKind) {
+    case CDT_TRACE_SPAWNER:
         return monitor;
-    case CDT_TRACE_MONITOR_DETAILS:
+    case CDT_TRACE_SPAWNER_DETAILS:
         return monitorDetails;
-    case CDT_TRACE_READ_REPORT:
+    case CDT_TRACE_SPAWNER_READ_REPORT:
         return readReport;
     default:
-        cdtTrace(L"Invalid trace kind supplied: %d\n", traceKind);
+        cdtTrace(L"%S: Invalid trace kind supplied: %d\n", __func__, traceKind);
         return false;
     }
 }

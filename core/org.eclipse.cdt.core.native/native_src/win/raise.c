@@ -20,9 +20,7 @@
 
 #include "util.h"
 
-#include "org_eclipse_cdt_utils_spawner_Spawner.h"
-
-extern void JNICALL ThrowByName(JNIEnv *env, const char *name, const char *msg);
+#include <org_eclipse_cdt_utils_spawner_Spawner.h>
 
 static HWND consoleHWND;
 
@@ -97,7 +95,7 @@ int interruptProcess(int pid) {
     int rc = 0;
     consoleHWND = NULL;
 
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Try to interrupt process %i\n", pid);
     }
     // Find console
@@ -155,11 +153,11 @@ int interruptProcess(int pid) {
             if (child_thread) {
                 AttachThreadInput(GetCurrentThreadId(), child_thread, FALSE);
             }
-            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                 cdtTrace(L"Sent Ctrl-C & Ctrl-Break to process %i\n", pid);
             }
         }
-    } else if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    } else if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Cannot find console for process %i\n", pid);
     }
 

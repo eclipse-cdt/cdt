@@ -16,21 +16,8 @@
 #include <stdio.h>
 #include <org_eclipse_cdt_utils_spawner_SpawnerInputStream.h>
 #include <org_eclipse_cdt_utils_spawner_SpawnerOutputStream.h>
+#include <jni_util.h>
 #include <unistd.h>
-
-/* Header for class _org_eclipse_cdt_utils_spawner_SpawnerInputStream */
-/* Header for class _org_eclipse_cdt_utils_spawner_SpawnerOutputStream */
-
-static void ThrowByName(JNIEnv *env, const char *name, const char *msg) {
-    jclass cls = (*env)->FindClass(env, name);
-
-    if (cls) { /* Otherwise an exception has already been thrown */
-        (*env)->ThrowNew(env, cls, msg);
-    }
-
-    /* It's a good practice to clean up the local references. */
-    (*env)->DeleteLocalRef(env, cls);
-}
 
 static int channelToFileDesc(JNIEnv *env, jobject channel) {
     if (channel == 0) {

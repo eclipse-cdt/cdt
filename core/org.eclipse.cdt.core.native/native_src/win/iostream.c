@@ -23,9 +23,8 @@
 
 #include "util.h"
 
-#include "org_eclipse_cdt_utils_spawner_Spawner.h"
-
-void ThrowByName(JNIEnv *env, const char *name, const char *msg);
+#include <org_eclipse_cdt_utils_spawner_Spawner.h>
+#include <jni_util.h>
 
 #define BUFF_SIZE (1024)
 
@@ -80,7 +79,7 @@ extern "C"
         LocalFree(lpMsgBuf);
     }
 
-    if (isTraceEnabled(CDT_TRACE_MONITOR) && isTraceEnabled(CDT_TRACE_READ_REPORT)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER) && isTraceEnabled(CDT_TRACE_SPAWNER_READ_REPORT)) {
         cdtTrace(L"Start read %p\n", handle);
     }
 
@@ -104,7 +103,7 @@ extern "C"
             }
             if (err != 0) {
                 char *lpMsgBuf;
-                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                     cdtTrace(L"Read failed - %p, error %i\n", handle, err);
                 }
                 if (err !=
@@ -121,7 +120,7 @@ extern "C"
                 } else {
                     // buffer overflow?
                     // according to msdn this happens in message read mode only
-                    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                         cdtTrace(L"Buffer full - %p, bytes read: %i\n", handle, nNumberOfBytesRead);
                     }
                     // nNumberOfBytesRead can be 0 here for unknown reason (bug 269223)
@@ -147,7 +146,7 @@ extern "C"
         }
     }
     CloseHandle(overlapped.hEvent);
-    if (isTraceEnabled(CDT_TRACE_MONITOR) && isTraceEnabled(CDT_TRACE_READ_REPORT)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER) && isTraceEnabled(CDT_TRACE_SPAWNER_READ_REPORT)) {
         cdtTrace(L"End read %p - bytes read: %d\n", handle, nBuffOffset);
     }
     return nBuffOffset; // This is a real full readed length
@@ -160,11 +159,11 @@ extern "C"
     Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_close0(JNIEnv *env, jobject proc, jobject channel) {
     int rc;
     HANDLE handle = channelToHandle(env, channel);
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Close %p\n", handle);
     }
     rc = (CloseHandle(handle) ? 0 : -1);
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Closed %p\n", handle);
     }
     return (rc ? GetLastError() : 0);
@@ -221,12 +220,12 @@ extern "C"
     Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_close0(JNIEnv *env, jobject proc, jobject channel) {
     int rc;
     HANDLE handle = channelToHandle(env, channel);
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Close %p\n", handle);
     }
     FlushFileBuffers(handle);
     rc = (CloseHandle(handle) ? 0 : -1);
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Closed %p\n", handle);
     }
     return (rc ? GetLastError() : 0);

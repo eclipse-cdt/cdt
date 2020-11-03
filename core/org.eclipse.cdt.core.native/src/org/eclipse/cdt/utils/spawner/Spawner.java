@@ -457,12 +457,19 @@ public class Spawner extends Process {
 	static {
 		try {
 			System.loadLibrary("spawner"); //$NON-NLS-1$
+
+			configureNativeTrace();
 		} catch (SecurityException e) {
 			CNativePlugin.log(e);
 		} catch (UnsatisfiedLinkError e) {
 			CNativePlugin.log(e);
 		}
 	}
+
+	/**
+	 * @since 6.0
+	 */
+	private static native void configureNativeTrace();
 
 	/**
 	 * @since 6.0

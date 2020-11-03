@@ -24,17 +24,17 @@
 #include "exec0.h"
 #include <org_eclipse_cdt_utils_spawner_Spawner.h>
 
-static bool isTraceEnabled(void) {
-    static bool initialized = false;
-    static bool enabled = false;
+static bool trace_enabled = false;
 
-    if (!initialized) {
-        enabled = getenv("TRACE_ORG_ECLIPSE_CDT_SPAWNER") != NULL;
+static void ThrowByName(JNIEnv *env, const char *name, const char *msg) {
+    jclass cls = (*env)->FindClass(env, name);
 
-        initialized = true;
+    if (cls) { /* Otherwise an exception has already been thrown */
+        (*env)->ThrowNew(env, cls, msg);
     }
 
-    return enabled;
+    /* It's a good practice to clean up the local references. */
+    (*env)->DeleteLocalRef(env, cls);
 }
 
 static void print_array(FILE *stream, const char *str, char **c_array) {
@@ -116,7 +116,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2(JNIEnv *
         goto bail_out;
     }
 
-    if (isTraceEnabled()) {
+    if (trace_enabled) {
         print_array(stderr, "command:", cmd);
         print_array(stderr, "Envp:", envp);
         fprintf(stderr, "dirpath: %s\n", dirpath);
@@ -160,7 +160,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv *
         goto bail_out;
     }
 
-    if (isTraceEnabled()) {
+    if (trace_enabled) {
         print_array(stderr, "command:", cmd);
         print_array(stderr, "Envp:", envp);
         fprintf(stderr, "dirpath: %s\n", dirpath);
@@ -213,7 +213,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *
         goto bail_out;
     }
 
-    if (isTraceEnabled()) {
+    if (trace_enabled) {
         print_array(stderr, "command:", cmd);
         print_array(stderr, "Envp:", envp);
         fprintf(stderr, "dirpath: %s\n", dirpath);
@@ -290,4 +290,74 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *
  */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor(JNIEnv *env, jobject jobj, jint pid) {
     return wait0(pid);
+}
+
+JNIEXPORT void JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_configureNativeTrace(JNIEnv *env, jclass cls) {
+    jclass clsPlatform = (*env)->FindClass(env, "org/eclipse/core/runtime/Platform");
+    if (!clsPlatform) {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to find org.eclipse.core.runtime.Platform");
+        return;
+    }
+
+    jmethodID funcGetDebugBoolean =
+        (*env)->GetStaticMethodID(env, clsPlatform, "getDebugBoolean", "(Ljava/lang/String;)Z");
+    if (!funcGetDebugBoolean) {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to find Platform#getDebugBoolean(String) method");
+        return;
+    }
+
+    jclass clsCNativePlugin = (*env)->FindClass(env, "org/eclipse/cdt/internal/core/natives/CNativePlugin");
+    if (!clsPlatform) {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError",
+                    "Unable to find org.eclipse.cdt.internal.core.natives.CNativePlugin");
+        return;
+    }
+
+    jfieldID fieldPLUGIN_ID = (*env)->GetStaticFieldID(env, clsCNativePlugin, "PLUGIN_ID", "Ljava/lang/String;");
+    if (!fieldPLUGIN_ID) {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to find CNativePlugin#PLUGIN_ID field");
+        return;
+    }
+
+    jstring PLUGIN_ID = (jstring)(*env)->GetStaticObjectField(env, clsCNativePlugin, fieldPLUGIN_ID);
+    if (!PLUGIN_ID) {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to get CNativePlugin#PLUGIN_ID field");
+        return;
+    }
+
+    const char *prefix = (*env)->GetStringUTFChars(env, PLUGIN_ID, NULL);
+    if (prefix) {
+        const char *suffix = "/debug/native/spawner";
+
+        int bufferLen = strlen(prefix) + strlen(suffix) + 1;
+        char *buffer = (char *)malloc(bufferLen * sizeof(char));
+        if (buffer) {
+            *buffer = '\0';
+            strncat(buffer, prefix, bufferLen);
+            strncat(buffer, suffix, bufferLen);
+
+            jstring option = (*env)->NewStringUTF(env, buffer);
+            if (option) {
+                jboolean isEnabled = (*env)->CallStaticBooleanMethod(env, clsPlatform, funcGetDebugBoolean, option);
+                if (isEnabled) {
+                    trace_enabled = true;
+                }
+            } else {
+                ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to create option string");
+                free(buffer);
+                (*env)->ReleaseStringUTFChars(env, PLUGIN_ID, prefix);
+                return;
+            }
+        } else {
+            ThrowByName(env, "java/lang/OutOfMemoryError", "Unable to malloc buffer");
+            (*env)->ReleaseStringUTFChars(env, PLUGIN_ID, prefix);
+            return;
+        }
+
+        free(buffer);
+        (*env)->ReleaseStringUTFChars(env, PLUGIN_ID, prefix);
+    } else {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to get CNativePlugin#PLUGIN_ID native string value");
+        return;
+    }
 }

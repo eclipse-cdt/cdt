@@ -26,7 +26,7 @@
 
 #include "util.h"
 
-#include "org_eclipse_cdt_utils_spawner_Spawner.h"
+#include <org_eclipse_cdt_utils_spawner_Spawner.h>
 
 #define PIPE_SIZE 512        // Size of pipe buffer
 #define MAX_CMD_SIZE 2049    // Initial size of command line
@@ -133,7 +133,7 @@ static bool createStandardNamedPipe(HANDLE *handle, DWORD stdHandle, int pid, in
         dwOpenMode = PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED;
         break;
     default:
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Invalid STD handle given %i", stdHandle);
         }
         return false;
@@ -142,7 +142,7 @@ static bool createStandardNamedPipe(HANDLE *handle, DWORD stdHandle, int pid, in
     HANDLE pipe = CreateNamedPipeW(pipeName, dwOpenMode, PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
                                    PIPE_UNLIMITED_INSTANCES, PIPE_SIZE, PIPE_SIZE, PIPE_TIMEOUT, NULL);
     if (INVALID_HANDLE_VALUE == pipe) {
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Failed to create named pipe: %s\n", pipeName);
         }
         return false;
@@ -150,7 +150,7 @@ static bool createStandardNamedPipe(HANDLE *handle, DWORD stdHandle, int pid, in
 
     SetHandleInformation(pipe, HANDLE_FLAG_INHERIT, TRUE);
 
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Successfully created pipe %s -> %p\n", pipeName, pipe);
     }
 
@@ -164,12 +164,12 @@ static bool createNamedEvent(EventInfo_t *eventInfo, BOOL manualReset, const wch
 
     HANDLE event = CreateEventW(NULL, manualReset, FALSE, eventName);
     if (!event) {
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Failed to create event %s -> %i\n", eventName, GetLastError());
         }
         return false;
     } else if (GetLastError() == ERROR_ALREADY_EXISTS) {
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Event %s already exist -> %p\n", eventName, event);
         }
         return false;
@@ -179,13 +179,13 @@ static bool createNamedEvent(EventInfo_t *eventInfo, BOOL manualReset, const wch
     eventInfo->name = wcsdup(eventName);
 
     if (!eventInfo->name) {
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Failed to allocate memory for event %s -> %p\n", eventName, event);
         }
         return false;
     }
 
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Successfully created event %s -> %p\n", eventName, event);
     }
 
@@ -282,7 +282,7 @@ static bool createCommandLine(JNIEnv *env, jobjectArray cmdarray, wchar_t **cmdL
 static bool createEnvironmentBlock(JNIEnv *env, jobjectArray envp, wchar_t **block) {
     int nEnvVars = (*env)->GetArrayLength(env, envp);
 
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"There are %i environment variables \n", nEnvVars);
     }
 
@@ -292,36 +292,39 @@ static bool createEnvironmentBlock(JNIEnv *env, jobjectArray envp, wchar_t **blo
     }
 
     int nPos = 0;
-    int nBlkSize = MAX_ENV_SIZE;
-    wchar_t *buffer = (wchar_t *)malloc(nBlkSize * sizeof(wchar_t));
+    int bufferSize = MAX_ENV_SIZE;
+    wchar_t *buffer = (wchar_t *)malloc(bufferSize * sizeof(wchar_t));
     for (int i = 0; i < nEnvVars; ++i) {
         jstring item = (jstring)(*env)->GetObjectArrayElement(env, envp, i);
-        jsize len = (*env)->GetStringLength(env, item);
         const jchar *str = (*env)->GetStringChars(env, item, 0);
         if (str) {
-            while (nBlkSize - nPos <= len + 2) { // +2 for two '\0'
-                nBlkSize += MAX_ENV_SIZE;
-                wchar_t *tmp = (wchar_t *)realloc(buffer, nBlkSize * sizeof(wchar_t));
+            int len = wcslen(str);
+            while (bufferSize - nPos <= len + 2) { // +2 for two '\0'
+                bufferSize += MAX_ENV_SIZE;
+                wchar_t *tmp = (wchar_t *)realloc(buffer, bufferSize * sizeof(wchar_t));
                 if (tmp) {
                     buffer = tmp;
                 } else {
                     free(buffer);
+                    (*env)->ReleaseStringChars(env, item, str);
                     ThrowByName(env, "java/io/IOException", "Not enough memory");
                     return false;
                 }
-                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
-                    cdtTrace(L"Realloc environment block; new length is  %i \n", nBlkSize);
+                if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
+                    cdtTrace(L"Realloc environment block; new length is  %i \n", bufferSize);
                 }
             }
-            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                 cdtTrace(L"%s\n", (const wchar_t *)str);
             }
-            wcsncpy(buffer + nPos, (const wchar_t *)str, len);
+            wcsncpy(buffer + nPos, str, len);
             nPos += len;
             buffer[nPos++] = _T('\0');
+
             (*env)->ReleaseStringChars(env, item, str);
         }
     }
+
     buffer[nPos] = _T('\0');
     *block = buffer;
 
@@ -398,14 +401,15 @@ extern "C"
 
     // Prepare command line
     wchar_t *cmdLine = NULL;
-    if (!createCommandLine(env, cmdarray, &cmdLine, L"\"%sstarter.exe\" %i %i %s %s %s %s %s ", path, //
-                           pid,                                                                       //
-                           nLocalCounter,                                                             //
-                           pCurProcInfo->eventBreak.name,                                             //
-                           pCurProcInfo->eventWait.name,                                              //
-                           pCurProcInfo->eventTerminate.name,                                         //
-                           pCurProcInfo->eventKill.name,                                              //
-                           pCurProcInfo->eventCtrlc.name)) {
+    if (!createCommandLine(env, cmdarray, &cmdLine, L"\"%sstarter.exe\" %i %i %s %s %s %s %s %i ", path, //
+                           pid,                                                                          //
+                           nLocalCounter,                                                                //
+                           pCurProcInfo->eventBreak.name,                                                //
+                           pCurProcInfo->eventWait.name,                                                 //
+                           pCurProcInfo->eventTerminate.name,                                            //
+                           pCurProcInfo->eventKill.name,                                                 //
+                           pCurProcInfo->eventCtrlc.name,                                                //
+                           isTraceEnabled(CDT_TRACE_SPAWNER_STARTER))) {
         // Exception already thrown, just clean up
         cleanUpProcBlock(pCurProcInfo);
         CLOSE_HANDLES(stdHandles);
@@ -441,7 +445,7 @@ extern "C"
     flags |= CREATE_NO_WINDOW;
     flags |= CREATE_UNICODE_ENVIRONMENT;
 
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(cmdLine);
     }
 
@@ -474,13 +478,13 @@ extern "C"
 
         int what = WaitForMultipleObjects(2, h, FALSE, INFINITE);
         if (what != WAIT_OBJECT_0) { // CreateProcess failed
-            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                 cdtTrace(L"Process %i failed\n", pi.dwProcessId);
             }
             cleanUpProcBlock(pCurProcInfo);
             CLOSE_HANDLES(stdHandles);
             ThrowByName(env, "java/io/IOException", "Launching failed");
-            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                 cdtTrace(L"Process failed\n");
             }
         } else {
@@ -498,7 +502,7 @@ extern "C"
             memcpy(piCopy, &pi, sizeof(PROCESS_INFORMATION));
             _beginthread(waitProcTermination, 0, (void *)piCopy);
 
-            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                 cdtTrace(L"Process started\n");
             }
         }
@@ -624,7 +628,7 @@ extern "C"
         return -1;
     }
 
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Spawner received signal %i for process %i\n", signal, pCurProcInfo->pid);
     }
 
@@ -644,22 +648,22 @@ extern "C"
         ret = 0;
         break;
     case SIG_TERM:
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Spawner received TERM signal for process %i\n", pCurProcInfo->pid);
         }
         SetEvent(pCurProcInfo->eventTerminate.handle);
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Spawner signaled TERM event\n");
         }
         ret = 0;
         break;
 
     case SIG_KILL:
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Spawner received KILL signal for process %i\n", pCurProcInfo->pid);
         }
         SetEvent(pCurProcInfo->eventKill.handle);
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Spawner signaled KILL event\n");
         }
         ret = 0;
@@ -825,7 +829,7 @@ void _cdecl waitProcTermination(void *pv) {
     for (int i = 0; i < MAX_PROCS; i++) {
         if (pInfo[i].pid == pi->dwProcessId) {
             cleanUpProcBlock(pInfo + i);
-            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                 cdtTrace(L"waitProcTermination: set PID %i to 0\n", pi->dwProcessId);
             }
         }
@@ -833,4 +837,91 @@ void _cdecl waitProcTermination(void *pv) {
     CloseHandle(pi->hProcess);
 
     free(pi);
+}
+
+#ifdef __cplusplus
+extern "C"
+#endif
+    JNIEXPORT void JNICALL
+    Java_org_eclipse_cdt_utils_spawner_Spawner_configureNativeTrace(JNIEnv *env, jclass cls) {
+
+    jclass clsPlatform = (*env)->FindClass(env, "org/eclipse/core/runtime/Platform");
+    if (!clsPlatform) {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to find org.eclipse.core.runtime.Platform");
+        return;
+    }
+
+    jmethodID funcGetDebugBoolean =
+        (*env)->GetStaticMethodID(env, clsPlatform, "getDebugBoolean", "(Ljava/lang/String;)Z");
+    if (!funcGetDebugBoolean) {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to find Platform#getDebugBoolean(String) method");
+        return;
+    }
+
+    jclass clsCNativePlugin = (*env)->FindClass(env, "org/eclipse/cdt/internal/core/natives/CNativePlugin");
+    if (!clsPlatform) {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError",
+                    "Unable to find org.eclipse.cdt.internal.core.natives.CNativePlugin");
+        return;
+    }
+
+    jfieldID fieldPLUGIN_ID = (*env)->GetStaticFieldID(env, clsCNativePlugin, "PLUGIN_ID", "Ljava/lang/String;");
+    if (!fieldPLUGIN_ID) {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to find CNativePlugin#PLUGIN_ID field");
+        return;
+    }
+
+    jstring PLUGIN_ID = (jstring)(*env)->GetStaticObjectField(env, clsCNativePlugin, fieldPLUGIN_ID);
+    if (!PLUGIN_ID) {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to get CNativePlugin#PLUGIN_ID field");
+        return;
+    }
+
+    struct {
+        const TraceKind_t trace;
+        const char *option;
+    } traceToOption[] = {{CDT_TRACE_SPAWNER, "/debug/native/spawner"},
+                         {CDT_TRACE_SPAWNER_DETAILS, "/debug/native/spawner/details"},
+                         {CDT_TRACE_SPAWNER_STARTER, "/debug/native/spawner/starter"},
+                         {CDT_TRACE_SPAWNER_READ_REPORT, "/debug/native/spawner/read_report"}};
+
+    const char *prefix = (*env)->GetStringUTFChars(env, PLUGIN_ID, NULL);
+    if (prefix) {
+        int prefix_len = strlen(prefix);
+        for (size_t i = 0; i < sizeof(traceToOption) / sizeof(traceToOption[0]); i++) {
+            const char *suffix = traceToOption[i].option;
+
+            int bufferLen = prefix_len + strlen(suffix) + 1;
+            char *buffer = (char *)malloc(bufferLen * sizeof(char));
+            if (buffer) {
+                *buffer = '\0';
+                strncat(buffer, prefix, bufferLen);
+                strncat(buffer, suffix, bufferLen);
+
+                jstring option = (*env)->NewStringUTF(env, buffer);
+                if (option) {
+                    jboolean isEnabled = (*env)->CallStaticBooleanMethod(env, clsPlatform, funcGetDebugBoolean, option);
+                    if (isEnabled) {
+                        enableTraceFor(traceToOption[i].trace);
+                    }
+                } else {
+                    ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to create option string");
+                    free(buffer);
+                    (*env)->ReleaseStringUTFChars(env, PLUGIN_ID, prefix);
+                    return;
+                }
+            } else {
+                ThrowByName(env, "java/lang/OutOfMemoryError", "Unable to malloc buffer");
+                (*env)->ReleaseStringUTFChars(env, PLUGIN_ID, prefix);
+                return;
+            }
+
+            free(buffer);
+        }
+
+        (*env)->ReleaseStringUTFChars(env, PLUGIN_ID, prefix);
+    } else {
+        ThrowByName(env, "java/lang/UnsatisfiedLinkError", "Unable to get CNativePlugin#PLUGIN_ID native string value");
+        return;
+    }
 }

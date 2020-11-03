@@ -13,7 +13,6 @@ package org.eclipse.cdt.cmake.core.internal.properties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 
@@ -144,7 +143,7 @@ public class CMakePropertiesBean implements ICMakeProperties {
 
 	@Override
 	public void setCacheFile(String cacheFile) {
-		this.cacheFile = Objects.requireNonNull(cacheFile);
+		this.cacheFile = cacheFile;
 	}
 
 	@Override

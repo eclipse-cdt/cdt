@@ -72,6 +72,7 @@
 <unit id="org.junit.jupiter.api" version="0.0.0"/>
 <unit id="org.mockito" version="0.0.0"/>
 <unit id="org.slf4j.impl.log4j12" version="0.0.0"/>
+<unit id="org.yaml.snakeyaml" version="0.0.0"/>
 <repository location="https://download.eclipse.org/tools/orbit/downloads/2020-12/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">

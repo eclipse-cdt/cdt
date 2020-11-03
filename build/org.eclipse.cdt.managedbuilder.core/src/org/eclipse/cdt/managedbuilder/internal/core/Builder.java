@@ -12,6 +12,7 @@
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
  * James Blackburn (Broadcom Corp.)
+ * cartu38 opendev (STMicroelectronics) - Bug 568397
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -1093,9 +1094,16 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		String reversedStopOnErrCmd = getStopOnErrCmd(!isStopOnError());
 		String reversedParallelBuildCmd = !isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
 
+		// Prevents cmd contribution(s) duplicates. All such are part of current builder setup.
 		args = removeCmd(args, reversedStopOnErrCmd);
 		args = removeCmd(args, reversedParallelBuildCmd);
 
+		// Get rid of end user cmd line setting(s) which may conflict with end user setting(s) supported already by dedicated option(s)
+		args = skipEndUserCmd(args, getParallelizationCmdPattern());
+		args = skipEndUserCmd(args, reversedStopOnErrCmd);
+		args = skipEndUserCmd(args, stopOnErrCmd);
+
+		// Apply cmd contribution(s) from current builder setup.
 		args = addCmd(args, stopOnErrCmd);
 		args = addCmd(args, parallelCmd);
 
@@ -1117,9 +1125,16 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return args;
 	}
 
+	private String skipEndUserCmd(String args, String pattern) {
+		if (pattern.matches("^\\s*$")) { //$NON-NLS-1$
+			return args;
+		}
+		return args.replaceAll("[^\\S]*" + pattern + "([^\\S]*)", "$1"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+	}
+
 	private String removeCmd(String args, String cmd) {
 		int index = getCmdIndex(args, cmd);
-		if (index != -1) {
+		while (index != -1) {
 			String prefix = args.substring(0, index).trim();
 			String suffix = args.substring(index + cmd.length(), args.length()).trim();
 			if (prefix.length() == 0) {
@@ -1131,6 +1146,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			}
 
 			args = args.trim();
+			index = getCmdIndex(args, cmd);
 		}
 		return args;
 	}
@@ -1170,6 +1186,28 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return processParallelPattern(pattern, num == UNLIMITED_JOBS, num);
 	}
 
+	private String getParallelizationCmdPattern() {
+		String pattern = getParrallelBuildCmd();
+		if (pattern.length() == 0) {
+			return EMPTY_STRING;
+		}
+		// "unlimited" number of jobs results in not adding the number to parallelization cmd
+		// that behavior corresponds that of "make" flag "-j".
+		return processParallelPattern(pattern, "\\d*"); //$NON-NLS-1$
+	}
+
+	/**
+	 * This method turns the supplied pattern to parallelization command
+	 *
+	 * It supports 2 kinds of pattern where "*" is replaced with number of jobs:
+	 * <li>Pattern 1 (supports "<b>-j*</b>"): "text*text" -> "text#text"</li>
+	 * <li>Pattern 2 (supports "<b>-[j*]</b>"): "text[text*text]text" -> "texttext#texttext</li>
+	 * <br>Where # is jobCountPattern
+	 */
+	private String processParallelPattern(String pattern, String jobCountPattern) {
+		return processParallelPattern(pattern, false, jobCountPattern);
+	}
+
 	/**
 	 * This method turns the supplied pattern to parallelization command
 	 *
@@ -1180,6 +1218,18 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 */
 	private String processParallelPattern(String pattern, boolean empty, int num) {
 		Assert.isTrue(num > 0);
+		return processParallelPattern(pattern, empty, new Integer(num).toString());
+	}
+
+	/**
+	 * This method turns the supplied pattern to parallelization command
+	 *
+	 * It supports 2 kinds of pattern where "*" is replaced with number of jobs:
+	 * <li>Pattern 1 (supports "<b>-j*</b>"): "text*text" -> "text#text"</li>
+	 * <li>Pattern 2 (supports "<b>-[j*]</b>"): "text[text*text]text" -> "texttext#texttext</li>
+	 * <br>Where # is var or empty if {@code empty} is {@code true})
+	 */
+	private String processParallelPattern(String pattern, boolean empty, String var) {
 
 		int start = pattern.indexOf(PARALLEL_PATTERN_NUM_START);
 		int end = -1;
@@ -1221,12 +1271,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 						int numEnd = numStart + PARALLEL_PATTERN_NUM.length();
 						numPrefix = numStr.substring(0, numStart);
 						numSuffix = numStr.substring(numEnd);
-						resolvedNum = numPrefix + Integer.toString(num) + numSuffix;
+						resolvedNum = numPrefix + var + numSuffix;
 					} else {
 						resolvedNum = EMPTY_STRING;
 					}
 				} else {
-					resolvedNum = Integer.toString(num);
+					resolvedNum = var;
 				}
 				result = prefix + resolvedNum + suffix;
 			}

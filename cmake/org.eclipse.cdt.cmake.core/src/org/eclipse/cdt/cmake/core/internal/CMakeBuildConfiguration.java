@@ -72,9 +72,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 	private ICMakeToolChainFile toolChainFile;
 
-	private final CMakePropertiesController pc = new CMakePropertiesController(() -> {
-		deleteCMakeCache = true;
-	});
+	// lazily instantiated..
+	private CMakePropertiesController pc;
 
 	private Map<IResource, IScannerInfo> infoPerResource;
 	/** whether one of the CMakeLists.txt files in the project has been
@@ -461,6 +460,20 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
+	/** Lazily creates the CMakePropertiesController for the project.
+	 */
+	private CMakePropertiesController getPropertiesController() {
+		if (pc == null) {
+			Path filePath = Path.of(getProject().getFile(".settings/CDT-cmake.yaml").getLocationURI()); //$NON-NLS-1$
+			pc = new CMakePropertiesController(filePath, () -> {
+				deleteCMakeCache = true;
+				// TODO delete cache file here for the case a user restarts the workbench
+				// prior to running a new build
+			});
+		}
+		return pc;
+	}
+
 	// interface IAdaptable
 	@Override
 	@SuppressWarnings("unchecked")
@@ -468,7 +481,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		T adapter0 = super.getAdapter(adapter);
 		if (adapter0 == null) {
 			if (ICMakePropertiesController.class.equals(adapter)) {
-				adapter0 = (T) pc;
+				adapter0 = (T) getPropertiesController();
 			}
 		}
 		return adapter0;

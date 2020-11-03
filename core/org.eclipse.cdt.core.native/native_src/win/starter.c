@@ -36,6 +36,19 @@ void DisplayErrorMessage();
 
 // BOOL KillProcessEx(DWORD dwProcessId);  // Handle of the process
 
+bool configureTrace() {
+    for (int i = 0; i < sizeof(ALL_TRACE_KINDS) / sizeof(ALL_TRACE_KINDS[0]); i++) {
+        const wchar_t *envVar = getTraceEnvVarFor(ALL_TRACE_KINDS[i]);
+        if (envVar) {
+            if (!_wgetenv(envVar)) {
+                enableTraceFor(ALL_TRACE_KINDS[i]);
+            }
+        }
+    }
+
+    return true;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 BOOL WINAPI HandlerRoutine(DWORD dwCtrlType) { //  control signal type
     BOOL ret = TRUE;
@@ -143,7 +156,7 @@ static bool openNamedPipeAsStdHandle(HANDLE *handle, DWORD stdHandle, int parent
         dwShareMode = FILE_SHARE_WRITE;
         break;
     default:
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Invalid STD handle given %i", stdHandle);
         }
         return false;
@@ -151,7 +164,7 @@ static bool openNamedPipeAsStdHandle(HANDLE *handle, DWORD stdHandle, int parent
 
     *handle = CreateFileW(pipeName, dwDesiredAccess, dwShareMode, NULL, OPEN_EXISTING, 0, sa);
     if (INVALID_HANDLE_VALUE == *handle) {
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Failed to open pipe: %s -> %p\n", pipeName, handle);
         }
         return false;
@@ -160,13 +173,13 @@ static bool openNamedPipeAsStdHandle(HANDLE *handle, DWORD stdHandle, int parent
     SetHandleInformation(*handle, HANDLE_FLAG_INHERIT, TRUE);
 
     if (!SetStdHandle(stdHandle, *handle)) {
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Failed to reassign standard stream to pipe %s: %i\n", pipeName, GetLastError());
         }
         return false;
     }
 
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Successfully assigned pipe %s -> %p\n", pipeName, *handle);
     }
 
@@ -191,7 +204,7 @@ bool createCommandLine(int argc, wchar_t **argv, wchar_t **cmdLine) {
             int required = nPos + len + 2; // 2 => space + \0
             if (required > 32 * 1024) {
                 free(buffer);
-                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                     cdtTrace(L"Command line too long!\n");
                 }
                 return false;
@@ -212,7 +225,7 @@ bool createCommandLine(int argc, wchar_t **argv, wchar_t **cmdLine) {
                     } else {
                         // Failed to realloc memory
                         free(buffer);
-                        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                             cdtTrace(L"Not enough memory to build cmd line!\n");
                         }
                         return false;
@@ -235,7 +248,7 @@ bool createCommandLine(int argc, wchar_t **argv, wchar_t **cmdLine) {
             buffer[nPos] = _T('\0');
         } else {
             free(buffer);
-            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                 cdtTrace(L"Invalid argument!\n");
             }
             return false;
@@ -256,6 +269,8 @@ int main() {
         wprintf(L"Usage: %s (parent pid) (counter) (four inheritable event handles) (CommandLineToSpawn)\n", argv[0]);
         return 0;
     }
+
+    configureTrace();
 
     STARTUPINFOW si = {sizeof(si)};
     PROCESS_INFORMATION pi = {0};
@@ -293,7 +308,7 @@ int main() {
         return -1;
     }
 
-    if (isTraceEnabled(CDT_TRACE_MONITOR_DETAILS)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER_DETAILS)) {
         wchar_t *lpvEnv = GetEnvironmentStringsW();
 
         if (lpvEnv) {
@@ -322,12 +337,12 @@ int main() {
         ZeroMemory(&jobInfo, sizeof(jobInfo));
         jobInfo.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_BREAKAWAY_OK;
         if (!SetInformationJobObject(hJob, JobObjectExtendedLimitInformation, &jobInfo, sizeof(jobInfo))) {
-            if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+            if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                 cdtTrace(L"Cannot set job information\n");
                 DisplayErrorMessage();
             }
         }
-    } else if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    } else if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Cannot create job object\n");
         DisplayErrorMessage();
     }
@@ -338,7 +353,7 @@ int main() {
         return 0;
     }
 
-    if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Starting: %s\n", cmdLine);
     }
 
@@ -359,7 +374,7 @@ int main() {
         free(cmdLine);
         cmdLine = NULL;
 
-        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Process %i started\n", pi.dwProcessId);
         }
         SetEvent(waitEvent); // Means that process has been spawned
@@ -368,7 +383,7 @@ int main() {
 
         if (hJob) {
             if (!AssignProcessToJobObject(hJob, pi.hProcess)) {
-                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                     cdtTrace(L"Cannot assign process %i to a job\n", pi.dwProcessId);
                     DisplayErrorMessage();
                 }
@@ -382,7 +397,7 @@ int main() {
             switch (event) {
             case WAIT_OBJECT_0 + 0: // SIGINT
             case WAIT_OBJECT_0 + 4: // CTRL-C
-                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                     cdtTrace(L"starter (PID %i) received CTRL-C event\n", GetCurrentProcessId());
                 }
                 if ((event == (WAIT_OBJECT_0 + 0)) && isCygwin(h[1])) {
@@ -402,7 +417,7 @@ int main() {
 
             case WAIT_OBJECT_0 + 1: // App terminated normally
                                     // Make it's exit code our exit code
-                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                     cdtTrace(L"starter: launched process has been terminated(PID %i)\n", pi.dwProcessId);
                 }
                 GetExitCodeProcess(pi.hProcess, &dwExitCode);
@@ -417,7 +432,7 @@ int main() {
             case WAIT_OBJECT_0 + 3: // KILL
             {
                 const wchar_t *signal = (event == WAIT_OBJECT_0 + 2) ? L"TERM" : L"KILL";
-                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                     cdtTrace(L"starter received %s event (PID %i)\n", signal, GetCurrentProcessId());
                 }
                 if (isCygwin(h[1])) {
@@ -436,7 +451,7 @@ int main() {
 
                 if (hJob) {
                     if (!TerminateJobObject(hJob, (DWORD)-1)) {
-                        if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                             cdtTrace(L"Cannot terminate job\n");
                             DisplayErrorMessage();
                         }
@@ -449,14 +464,14 @@ int main() {
 
             default:
                 // Unexpected code
-                if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+                if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                     DisplayErrorMessage();
                 }
                 exitProc = TRUE;
                 break;
             }
         }
-    } else if (isTraceEnabled(CDT_TRACE_MONITOR)) {
+    } else if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
         cdtTrace(L"Cannot start: %s\n", cmdLine);
         free(cmdLine);
 
@@ -478,5 +493,4 @@ void DisplayErrorMessage() {
     // Free the buffer.
     LocalFree(lpMsgBuf);
 }
-
 //////////////////////////////// End of File //////////////////////////////////

@@ -151,10 +151,6 @@ public class TypeSearchScope implements ITypeSearchScope {
 		}
 
 		// check projects that were explicity added to scope
-		if (fProjectSet.contains(path))
-			return true;
-
-		// check projects that were explicity added to scope
 		if (fProjects == null) {
 			fProjects = fProjectSet.toArray(new ICProject[fProjectSet.size()]);
 		}

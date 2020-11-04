@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.serial.internal.Messages;
+import org.eclipse.cdt.utils.WindowsRegistry;
 
 /**
  * @since 5.8
@@ -257,6 +258,9 @@ public class SerialPort {
 		} else if (osName.equals("Linux")) { //$NON-NLS-1$
 			return listDevs(Pattern.compile("(ttyUSB|ttyACM|ttyS).*")); //$NON-NLS-1$
 		} else if (osName.startsWith("Windows")) { //$NON-NLS-1$
+			final WindowsRegistry registry = WindowsRegistry.getRegistry();
+			final String subKey = "HARDWARE\\DEVICEMAP\\SERIALCOMM"; //$NON-NLS-1$
+
 			List<String> ports = new ArrayList<>();
 			int i = 0;
 			String name = null;
@@ -266,6 +270,13 @@ public class SerialPort {
 					if (name != null) {
 						ports.add(name);
 					}
+
+					String javaValue = null;
+					String valueName = registry.getLocalMachineValueName(subKey, i);
+					if (valueName != null) {
+						javaValue = registry.getLocalMachineValue(subKey, valueName);
+					}
+					System.out.format("Native: %s; java: %s\n", name, javaValue);
 				} catch (IOException e) {
 					// TODO log the exception
 					e.printStackTrace();

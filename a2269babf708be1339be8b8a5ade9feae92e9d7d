@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "01729d9f_6ac5099e",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/unix/spawner.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-04T17:38:51Z",
+      "side": 1,
+      "message": "Okay, so what you suggest is to have 4 boolean values as input to configureNativeTrace()?\n\nThat would indeed be a lot simpler than this part, but I\u0027m not sure how to properly handle the situation that we would like to have one more thing to turn off or on. Would that require a version bump as the function would change or does that not affect private methods?",
+      "parentUuid": "f8b1addc_d774d239",
+      "revId": "a2269babf708be1339be8b8a5ade9feae92e9d7d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ffb3670a_9b078895",
         "filename": "core/org.eclipse.cdt.core.native/native_src/win/Win32ProcessEx.c",
         "patchSetId": 2

@@ -520,38 +520,3 @@ JNIEXPORT void JNICALL FUNC(write1)(JNIEnv *env, jobject jobj, jlong jhandle, jb
     CloseHandle(olp.hEvent);
 #endif
 }
-
-#ifdef __MINGW32__
-JNIEXPORT jstring FUNC(getPortName)(JNIEnv *env, jclass cls, jint i) {
-    HKEY key;
-
-    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"HARDWARE\\DEVICEMAP\\SERIALCOMM", 0, KEY_READ, &key) != ERROR_SUCCESS) {
-        // There are none
-        return NULL;
-    }
-
-    wchar_t name[256];
-    DWORD len = sizeof(name);
-    LONG rc = RegEnumValue(key, (DWORD)i, name, &len, NULL, NULL, NULL, NULL);
-    if (rc != ERROR_SUCCESS) {
-        if (rc != ERROR_NO_MORE_ITEMS) {
-            throwIOException(env, "Can not enum value");
-        }
-        RegCloseKey(key);
-        return NULL;
-    }
-
-    wchar_t value[256];
-    DWORD type;
-    len = sizeof(value);
-    if (RegQueryValueEx(key, name, NULL, &type, (BYTE *)value, &len) != ERROR_SUCCESS) {
-        throwIOException(env, "Can not query value");
-        RegCloseKey(key);
-        return NULL;
-    }
-
-    jstring result = (*env)->NewString(env, (jchar *)value, (jsize)wcslen(value));
-    RegCloseKey(key);
-    return result;
-}
-#endif

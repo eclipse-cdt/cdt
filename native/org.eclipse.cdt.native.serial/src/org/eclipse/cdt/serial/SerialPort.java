@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.serial.internal.Messages;
+import org.eclipse.cdt.utils.WindowsRegistry;
 
 /**
  * @since 5.8
@@ -223,8 +224,6 @@ public class SerialPort {
 
 	private native void write1(long handle, byte[] b, int off, int len) throws IOException;
 
-	private static native String getPortName(int i) throws IOException;
-
 	private static String[] listDevs(final Pattern pattern) {
 		File dev = new File("/dev"); //$NON-NLS-1$
 		File[] files = dev.listFiles(new FilenameFilter() {
@@ -257,24 +256,27 @@ public class SerialPort {
 		} else if (osName.equals("Linux")) { //$NON-NLS-1$
 			return listDevs(Pattern.compile("(ttyUSB|ttyACM|ttyS).*")); //$NON-NLS-1$
 		} else if (osName.startsWith("Windows")) { //$NON-NLS-1$
-			List<String> ports = new ArrayList<>();
-			int i = 0;
-			String name = null;
-			do {
-				try {
-					name = getPortName(i++);
-					if (name != null) {
-						ports.add(name);
+			final WindowsRegistry registry = WindowsRegistry.getRegistry();
+			if (registry != null) {
+				final String subKey = "HARDWARE\\DEVICEMAP\\SERIALCOMM"; //$NON-NLS-1$
+
+				List<String> ports = new ArrayList<>();
+				int i = 0;
+				String valueName = null;
+				String value = null;
+				do {
+					valueName = registry.getLocalMachineValueName(subKey, i++);
+					if (valueName != null) {
+						value = registry.getLocalMachineValue(subKey, valueName);
+						if (value != null) {
+							ports.add(value);
+						}
 					}
-				} catch (IOException e) {
-					// TODO log the exception
-					e.printStackTrace();
-				}
-			} while (name != null);
-			return ports.toArray(new String[ports.size()]);
-		} else {
-			return new String[0];
+				} while (valueName != null && value != null);
+				return ports.toArray(new String[ports.size()]);
+			}
 		}
+		return new String[0];
 	}
 
 	/**

@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.errorparsers.ErrorPattern;
 public class VCErrorParser extends AbstractErrorParser {
 
 	private static final ErrorPattern[] patterns = {
-			new ErrorPattern("(.+?)(\\(([0-9]+)\\))? : (fatal error|error|warning) (.*)", 1, 3, 5, 0, 0) { //$NON-NLS-1$
+			new ErrorPattern("(.+?)(\\(([0-9]+)\\))?\\s*:\\s*(fatal error|error|warning) (.*)", 1, 3, 5, 0, 0) { //$NON-NLS-1$
 				@Override
 				public int getSeverity(Matcher matcher) {
 					return "warning".equals(matcher.group(4)) //$NON-NLS-1$

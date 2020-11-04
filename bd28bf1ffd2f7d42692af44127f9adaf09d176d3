@@ -34,6 +34,24 @@
       "revId": "bd28bf1ffd2f7d42692af44127f9adaf09d176d3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba7ca0e8_0269e946",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-11-04T20:16:39Z",
+      "side": 1,
+      "message": "Great! But I will be fine if we postpone the repo URL update until orbit publishes the next release.",
+      "parentUuid": "ea1ce2fc_7612fd1a",
+      "revId": "bd28bf1ffd2f7d42692af44127f9adaf09d176d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -53,7 +53,7 @@ static void closeAndthrowIOException(HANDLE handle, JNIEnv *env, const char *msg
 #endif
     char buff[256];
 #ifndef __MINGW32__
-    sprintf(buff, "%s: %s", msg, strerror(errno));
+    snprintf(buff, sizeof(buff), "%s: %s", msg, strerror(errno));
     close(fd);
 #else
     sprintf_s(buff, sizeof(buff), "%s (%d)", msg, GetLastError());
@@ -67,7 +67,7 @@ static void closeAndthrowIOException(HANDLE handle, JNIEnv *env, const char *msg
 static void throwIOException(JNIEnv *env, const char *msg) {
     char buff[256];
 #ifndef __MINGW32__
-    sprintf(buff, "%s: %s", msg, strerror(errno));
+    snprintf(buff, sizeof(buff), "%s: %s", msg, strerror(errno));
 #else
     sprintf_s(buff, sizeof(buff), "%s (%d)", msg, GetLastError());
 #endif
@@ -82,7 +82,7 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
     int fd = open(cportName, O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd < 0) {
         char msg[256];
-        sprintf(msg, "Error opening %s", cportName);
+        snprintf(msg, sizeof(msg), "Error opening %s", cportName);
         (*env)->ReleaseStringUTFChars(env, portName, cportName);
         throwIOException(env, msg);
         return fd;

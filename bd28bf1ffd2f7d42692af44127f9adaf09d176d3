@@ -16,6 +16,24 @@
       "revId": "bd28bf1ffd2f7d42692af44127f9adaf09d176d3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea1ce2fc_7612fd1a",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-04T19:47:30Z",
+      "side": 1,
+      "message": "It is there now:\n\nhttps://download.eclipse.org/tools/orbit/downloads/drops/I20201104175714/",
+      "parentUuid": "b361a4aa_b5e0c924",
+      "revId": "bd28bf1ffd2f7d42692af44127f9adaf09d176d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

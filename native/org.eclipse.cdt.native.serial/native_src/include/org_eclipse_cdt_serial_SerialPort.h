@@ -50,13 +50,6 @@ JNIEXPORT void JNICALL Java_org_eclipse_cdt_serial_SerialPort_write0(JNIEnv *, j
  */
 JNIEXPORT void JNICALL Java_org_eclipse_cdt_serial_SerialPort_write1(JNIEnv *, jobject, jlong, jbyteArray, jint, jint);
 
-/*
- * Class:     org_eclipse_cdt_serial_SerialPort
- * Method:    getPortName
- * Signature: (I)Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_serial_SerialPort_getPortName(JNIEnv *, jclass, jint);
-
 #ifdef __cplusplus
 }
 #endif

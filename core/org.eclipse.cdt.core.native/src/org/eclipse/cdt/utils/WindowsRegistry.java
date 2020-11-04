@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
+import java.util.Map;
+
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.core.runtime.CoreException;
 
@@ -52,6 +54,15 @@ public abstract class WindowsRegistry {
 	public abstract String getLocalMachineValue(String subkey, String name);
 
 	/**
+	 * Given a subkey of HKEY_LOCAL_MACHINE, return the map of valueName => value.
+	 * The return value is an empty map on error or when the subkey does not exist.
+	 * @param subkey subkey of HKEY_LOCAL_MACHINE
+	 * @return valueName => value map of the entries in subkey
+	 * @since 6.0
+	 */
+	public abstract Map<String, Object> getLocalMachineValues(String subkey);
+
+	/**
 	 * Given a subkey of HKEY_LOCAL_MACHINE, and an index (starting from 0)
 	 * to the key's array of values, return the name of the indexed value.
 	 * The return value is null on any error or when the index is invalid.
@@ -69,7 +80,7 @@ public abstract class WindowsRegistry {
 	 * The return value is null on any error or when the index is invalid.
 	 * The key name can be used in the above getLocalMachineValueName()
 	 * to retrieve value names.
-	 * @param subkey   subkey of HKEY_CURRENT_USER
+	 * @param subkey   subkey of HKEY_LOCAL_MACHINE
 	 * @param index    index to the subkey's array of values, starting from 0.
 	 * @return name of registry value or null if not found
 	 */
@@ -84,6 +95,15 @@ public abstract class WindowsRegistry {
 	 * @return registry value or null if not found
 	 */
 	public abstract String getCurrentUserValue(String subkey, String name);
+
+	/**
+	 * Given a subkey of HKEY_CURRENT_USER, return the map of valueName => value.
+	 * The return value is an empty map on error or when the subkey does not exist.
+	 * @param subkey subkey of HKEY_CURRENT_USER
+	 * @return valueName => value map of the entries in subkey
+	 * @since 6.0
+	 */
+	public abstract Map<String, Object> getCurrentUserValues(String subkey);
 
 	/**
 	 * Given a subkey of HKEY_CURRENT_USER, and an index (starting from 0)

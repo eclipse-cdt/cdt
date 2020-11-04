@@ -19,15 +19,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.serial.internal.Messages;
+import org.eclipse.cdt.utils.WindowsRegistry;
 
 /**
  * @since 5.8
@@ -223,8 +222,6 @@ public class SerialPort {
 
 	private native void write1(long handle, byte[] b, int off, int len) throws IOException;
 
-	private static native String getPortName(int i) throws IOException;
-
 	private static String[] listDevs(final Pattern pattern) {
 		File dev = new File("/dev"); //$NON-NLS-1$
 		File[] files = dev.listFiles(new FilenameFilter() {
@@ -257,24 +254,15 @@ public class SerialPort {
 		} else if (osName.equals("Linux")) { //$NON-NLS-1$
 			return listDevs(Pattern.compile("(ttyUSB|ttyACM|ttyS).*")); //$NON-NLS-1$
 		} else if (osName.startsWith("Windows")) { //$NON-NLS-1$
-			List<String> ports = new ArrayList<>();
-			int i = 0;
-			String name = null;
-			do {
-				try {
-					name = getPortName(i++);
-					if (name != null) {
-						ports.add(name);
-					}
-				} catch (IOException e) {
-					// TODO log the exception
-					e.printStackTrace();
-				}
-			} while (name != null);
-			return ports.toArray(new String[ports.size()]);
-		} else {
-			return new String[0];
+			final WindowsRegistry registry = WindowsRegistry.getRegistry();
+			if (registry != null) {
+				return registry.getLocalMachineValues("HARDWARE\\DEVICEMAP\\SERIALCOMM").values().stream() //$NON-NLS-1$
+						.filter(String.class::isInstance) // Should only be strings here, but lets be safe
+						.map(String.class::cast) //
+						.toArray(String[]::new);
+			}
 		}
+		return new String[0];
 	}
 
 	/**

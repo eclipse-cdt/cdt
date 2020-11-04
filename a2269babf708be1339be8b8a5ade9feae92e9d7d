@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "5c799040_ba9949e4",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/unix/spawner.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-04T17:42:58Z",
+      "side": 1,
+      "message": "No version bump required as configureNativeTrace isn\u0027t API, because, as you said, it is private.",
+      "parentUuid": "01729d9f_6ac5099e",
+      "revId": "a2269babf708be1339be8b8a5ade9feae92e9d7d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ffb3670a_9b078895",
         "filename": "core/org.eclipse.cdt.core.native/native_src/win/Win32ProcessEx.c",
         "patchSetId": 2

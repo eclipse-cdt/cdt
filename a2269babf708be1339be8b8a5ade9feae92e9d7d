@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f8b1addc_d774d239",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/unix/spawner.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-04T17:24:42Z",
+      "side": 1,
+      "message": "Rather than this JNI code, can this instead be moved to Java side and the configureNativeTrace just take a boolean that is assigned to trace_enabled? That would replace this large C function with (approx) this on Java side:\n\n    configureNativeTrace(Platform.getDebugBoolean(CNativePlugin.PLUGIN_ID + \"/debug/native/spawner\"))\n\n?",
+      "revId": "a2269babf708be1339be8b8a5ade9feae92e9d7d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ffb3670a_9b078895",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/Win32ProcessEx.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 860,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-04T17:24:42Z",
+      "side": 1,
+      "message": "Same thing here. If there is a different set of trace variables, the non-API method configureNativeTrace can have all of them and Linux just won\u0027t use some?",
+      "revId": "a2269babf708be1339be8b8a5ade9feae92e9d7d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

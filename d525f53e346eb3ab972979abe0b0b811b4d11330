@@ -22,6 +22,30 @@
       "revId": "d525f53e346eb3ab972979abe0b0b811b4d11330",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dd5aa4e4_8676dacb",
+        "filename": "native/org.eclipse.cdt.native.serial/native_src/serial.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-05T20:20:54Z",
+      "side": 1,
+      "message": "You are correct! In reality, there is no difference since sizeof(buff[0])\u003d\u003d1, but I removed the division to be more clear on this. Thanks for pointing that out!\n\nFor the sprintf_s part, sure, it is supposed to be characters, and again, sizeof(char)\u003d\u003d1, so no problem here. Could be a problem if buff is changed to wchar_t, but is that likely to happen? What other parts of the code would break then?\nWhat would you like me to do here? Add the division to make sure it\u0027s /elements/ in the array?",
+      "parentUuid": "e837f89c_d11769c4",
+      "range": {
+        "startLine": 70,
+        "startChar": 19,
+        "endLine": 70,
+        "endChar": 49
+      },
+      "revId": "d525f53e346eb3ab972979abe0b0b811b4d11330",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

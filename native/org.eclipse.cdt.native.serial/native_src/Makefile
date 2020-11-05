@@ -22,7 +22,7 @@ REPRODUCIBLE_BUILD_WRAPPER := $(shell git rev-parse --show-toplevel)/releng/scri
 OS_DIR = ../os
 
 CFLAGS += -fPIC -D_REENTRANT
-COMMON_CFLAGS := -Wall -pedantic
+COMMON_CFLAGS := -Wall -pedantic -Werror
 
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)

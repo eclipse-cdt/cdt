@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "50e49a2b_b22a398d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1105,
+      "author": {
+        "id": 111118
+      },
+      "writtenOn": "2020-11-05T08:29:50Z",
+      "side": 1,
+      "message": "Right. Can be factorized. My purpose here was to preserve as much as possible original code proposal. Has been my own guidance doing such contribution. If not I may have rewritten more ...",
+      "parentUuid": "4f22d509_aa775ac8",
+      "revId": "fd2cdcb70ace94d8f3d0ea2f07e88a1988c7e8c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "196a7635_2a11f5c2",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2020-11-05T07:43:32Z",
       "side": 1,
       "message": "Can we use a non-null value here?",
+      "revId": "fd2cdcb70ace94d8f3d0ea2f07e88a1988c7e8c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73ce7a07_754cf01b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1192,
+      "author": {
+        "id": 111118
+      },
+      "writtenOn": "2020-11-05T08:29:50Z",
+      "side": 1,
+      "message": "Yes definitively I can rely on EMPTY_STRING instead null.\nSame my own policy is to prevent String usage but to rely on Object instead ...",
+      "parentUuid": "196a7635_2a11f5c2",
       "revId": "fd2cdcb70ace94d8f3d0ea2f07e88a1988c7e8c2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

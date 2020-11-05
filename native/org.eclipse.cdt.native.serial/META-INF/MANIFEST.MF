@@ -8,4 +8,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.cdt.serial
 Automatic-Module-Name: org.eclipse.cdt.native.serial
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.cdt.core.native;bundle-version="6.0.100"
+Require-Bundle: org.eclipse.cdt.core.native;bundle-version="[6.1.0,7.0.0)"

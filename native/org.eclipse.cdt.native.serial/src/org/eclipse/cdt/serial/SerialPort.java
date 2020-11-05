@@ -19,11 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -258,22 +256,10 @@ public class SerialPort {
 		} else if (osName.startsWith("Windows")) { //$NON-NLS-1$
 			final WindowsRegistry registry = WindowsRegistry.getRegistry();
 			if (registry != null) {
-				final String subKey = "HARDWARE\\DEVICEMAP\\SERIALCOMM"; //$NON-NLS-1$
-
-				List<String> ports = new ArrayList<>();
-				int i = 0;
-				String valueName = null;
-				String value = null;
-				do {
-					valueName = registry.getLocalMachineValueName(subKey, i++);
-					if (valueName != null) {
-						value = registry.getLocalMachineValue(subKey, valueName);
-						if (value != null) {
-							ports.add(value);
-						}
-					}
-				} while (valueName != null && value != null);
-				return ports.toArray(new String[ports.size()]);
+				return registry.getLocalMachineValues("HARDWARE\\DEVICEMAP\\SERIALCOMM").values().stream() //$NON-NLS-1$
+						.filter(String.class::isInstance) // Should only be strings here, but lets be safe
+						.map(String.class::cast) //
+						.toArray(String[]::new);
 			}
 		}
 		return new String[0];

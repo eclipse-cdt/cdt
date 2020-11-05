@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
  */
 public final class InstantiationContext {
 	private CPPTemplateParameterMap parameterMap;
+	private boolean forDeduction = false;
 	private int packOffset;
 	private final ICPPSpecialization contextSpecialization;
 	private boolean expandPack;
@@ -79,11 +80,32 @@ public final class InstantiationContext {
 	}
 
 	/**
+	 * Create an InstantiationContext for a template parameter map, for use template argument deduction.
+	 * During template argument deduction, 'parameterMap' needs to be cloned, because the original map
+	 * can be modified later in the deduction process. The map in the instantiation context, on the other
+	 * hand, can become part of a TypeInstantiationRequest, which is used as a key in various caches.
+	 * Having the value of a key change after it has been associated with a cached value, can result in
+	 * incorrect cache hits.
+	 */
+	public static InstantiationContext forDeduction(ICPPTemplateParameterMap parameterMap) {
+		InstantiationContext result = new InstantiationContext(parameterMap);
+		result.forDeduction = true;
+		return result;
+	}
+
+	/**
 	 * Returns the mapping of template parameters to arguments, possibly {@code null} if the context doesn't
 	 * contain it.
 	 */
 	public ICPPTemplateParameterMap getParameterMap() {
 		return parameterMap;
+	}
+
+	/**
+	 * Returns whether the InstantiationContext was created during template argument deduction.
+	 */
+	public boolean isForDeduction() {
+		return forDeduction;
 	}
 
 	/**

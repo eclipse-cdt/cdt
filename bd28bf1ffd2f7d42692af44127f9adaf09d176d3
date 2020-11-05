@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "23acca70_62df8ae1",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-05T01:45:04Z",
+      "side": 1,
+      "message": "There is one other step in adding a new runtime dependency. It should be added to our update site. Do so by adding an entry to the category.xml - see https://git.eclipse.org/r/plugins/gitiles/cdt/org.eclipse.cdt/+/refs/changes/18/171718/2/releng/org.eclipse.cdt.repo/category.xml#205",
+      "revId": "bd28bf1ffd2f7d42692af44127f9adaf09d176d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b361a4aa_b5e0c924",
         "filename": "releng/org.eclipse.cdt.target/cdt.target",
         "patchSetId": 2

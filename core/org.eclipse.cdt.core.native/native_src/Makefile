@@ -26,7 +26,7 @@ OS_DIR_LINUX_PPC64LE := ../../org.eclipse.cdt.core.linux.ppc64le/os/linux/ppc64l
 OS_DIR_MACOS_X86_64 := ../../org.eclipse.cdt.core.macosx/os/macosx/x86_64
 OS_DIR_MACOS_X86 := ../../org.eclipse.cdt.core.macosx/os/macosx/x86
 
-COMMON_CFLAGS :=  -Wall -pedantic
+COMMON_CFLAGS :=  -Wall -pedantic -Werror
 
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)

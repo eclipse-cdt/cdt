@@ -79,6 +79,19 @@ public final class InstantiationContext {
 	}
 
 	/**
+	 * Create an InstantiationContext for a template parameter map, for use template argument deduction.
+	 * During template argument deduction, 'parameterMap' needs to be cloned, because the original map
+	 * can be modified later in the deduction process. The map in the instantiation context, on the other
+	 * hand, can become part of a TypeInstantiationRequest, which is used as a key in various caches.
+	 * Having the value of a key change after it has been associated with a cached value, can result in
+	 * incorrect cache hits.
+	 */
+	public static InstantiationContext forDeduction(ICPPTemplateParameterMap parameterMap) {
+		CPPTemplateParameterMap cloned = new CPPTemplateParameterMap((CPPTemplateParameterMap) parameterMap);
+		return new InstantiationContext(cloned);
+	}
+
+	/**
 	 * Returns the mapping of template parameters to arguments, possibly {@code null} if the context doesn't
 	 * contain it.
 	 */

@@ -385,7 +385,20 @@ public class CDebugUtils {
 		appendExtensionMessage(breakpoint, label);
 		appendIgnoreCount(breakpoint, label);
 		appendCondition(breakpoint, label);
+		appendModule(breakpoint, label);
 		return label.toString();
+	}
+
+	/**
+	 * @since 8.6
+	 */
+	protected static void appendModule(ICAddressBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
+		String module = breakpoint.getModule();
+		if (module != null && module.length() > 0) {
+			buffer.append(' ');
+			buffer.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.9"), //$NON-NLS-1$
+					(Object[]) new String[] { module }));
+		}
 	}
 
 	protected static String getFunctionBreakpointText(ICFunctionBreakpoint breakpoint, boolean qualified)

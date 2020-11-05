@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4f22d509_aa775ac8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1105,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-11-05T07:43:32Z",
+      "side": 1,
+      "message": "This value is already calculated above, should we reuse it here?",
+      "revId": "fd2cdcb70ace94d8f3d0ea2f07e88a1988c7e8c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "196a7635_2a11f5c2",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1192,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-11-05T07:43:32Z",
+      "side": 1,
+      "message": "Can we use a non-null value here?",
+      "revId": "fd2cdcb70ace94d8f3d0ea2f07e88a1988c7e8c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

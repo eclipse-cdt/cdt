@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.win32;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.core.runtime.Platform;
@@ -42,6 +45,11 @@ public class WindowsRegistryImpl extends WindowsRegistry {
 	}
 
 	@Override
+	public Map<String, Object> getLocalMachineValues(String subkey) {
+		return getValues(WinReg.HKEY_LOCAL_MACHINE, subkey);
+	}
+
+	@Override
 	public String getLocalMachineValueName(String subkey, int index) {
 		return getValueName(WinReg.HKEY_LOCAL_MACHINE, subkey, index);
 	}
@@ -54,6 +62,11 @@ public class WindowsRegistryImpl extends WindowsRegistry {
 	@Override
 	public String getCurrentUserValue(String subkey, String name) {
 		return getValue(WinReg.HKEY_CURRENT_USER, subkey, name);
+	}
+
+	@Override
+	public Map<String, Object> getCurrentUserValues(String subkey) {
+		return getValues(WinReg.HKEY_CURRENT_USER, subkey);
 	}
 
 	@Override
@@ -116,6 +129,17 @@ public class WindowsRegistryImpl extends WindowsRegistry {
 				CNativePlugin.log(String.format("Unable to get valuename for %s at index %d", subkey, index), e); //$NON-NLS-1$
 			}
 			return null;
+		}
+	}
+
+	private Map<String, Object> getValues(HKEY key, String subkey) {
+		try {
+			return Advapi32Util.registryGetValues(key, subkey);
+		} catch (Win32Exception e) {
+			if (DEBUG) {
+				CNativePlugin.log(String.format("Unable to get values for %s", subkey), e); //$NON-NLS-1$
+			}
+			return Collections.emptyMap();
 		}
 	}
 }

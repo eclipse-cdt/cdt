@@ -532,11 +532,23 @@ public class AST2TestBase extends SemanticTestBase {
 	final protected void assertProblemBindings(NameCollector col, int count) {
 		int sum = 0;
 		for (IASTName n : col.nameList) {
-			if (n.resolveBinding() instanceof IProblemBinding)
+			if (n.resolveBinding() instanceof IProblemBinding) {
 				++sum;
+			}
 		}
 		assertEquals(count, sum);
 	}
+
+	final protected void assertProblemBindings(NameCollector col) {
+		int sum = 0;
+		for (IASTName n : col.nameList) {
+			if (n.resolveBinding() instanceof IProblemBinding) {
+				++sum;
+			}
+		}
+		assertTrue(sum > 0);
+	}
+
 
 	final protected <T extends IASTDeclaration> T getDeclaration(IASTTranslationUnit tu, int i_decl) {
 		Class<T> tclass;

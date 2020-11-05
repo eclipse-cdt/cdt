@@ -62,6 +62,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.parser.EmptyFilesProvider;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
@@ -184,7 +185,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		public InternalFileContent checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
 			final InternalFileContent fc;
 			IFileNomination once = fFileContentProvider.isIncludedWithPragmaOnceSemantics(path);
-			if (once != null) {
+			if (once != null && once instanceof IIndexFragmentFile) {
 				fc = new InternalFileContent(path, InclusionKind.SKIP_FILE);
 			} else {
 				fc = fFileContentProvider.getContentForInclusion(path, fMacroDictionaryFacade);

@@ -135,7 +135,7 @@ public class TemplateArgumentDeduction {
 					break;
 				}
 
-				par = CPPTemplates.instantiateType(par, new InstantiationContext(map));
+				par = CPPTemplates.instantiateType(par, InstantiationContext.forDeduction(map));
 				if (!SemanticUtil.isValidType(par))
 					return false;
 
@@ -352,7 +352,7 @@ public class TemplateArgumentDeduction {
 			return null;
 
 		IType par = template.getType();
-		InstantiationContext context = new InstantiationContext(map);
+		InstantiationContext context = InstantiationContext.forDeduction(map);
 		par = CPPTemplates.instantiateType(par, context);
 		if (!SemanticUtil.isValidType(par))
 			return null;
@@ -399,7 +399,7 @@ public class TemplateArgumentDeduction {
 			return null;
 		}
 
-		InstantiationContext context = new InstantiationContext(map);
+		InstantiationContext context = InstantiationContext.forDeduction(map);
 		for (int i = 0; i < length; i++) {
 			if (result[i] == null) {
 				final ICPPTemplateParameter tpar = tmplParams[i];
@@ -427,7 +427,7 @@ public class TemplateArgumentDeduction {
 			return null;
 
 		IType a = SemanticUtil.getSimplifiedType(ftype);
-		InstantiationContext context = new InstantiationContext(map);
+		InstantiationContext context = InstantiationContext.forDeduction(map);
 		IType p = CPPTemplates.instantiateType(template.getType(), context);
 		if (!SemanticUtil.isValidType(p))
 			return null;
@@ -572,25 +572,45 @@ public class TemplateArgumentDeduction {
 		return true;
 	}
 
-	private static int deduceForPartialOrdering(IType par, IType arg, TemplateArgumentDeduction deduct)
+	private static int deduceForPartialOrdering(IType parOrig, IType argOrig, TemplateArgumentDeduction deduct)
 			throws DOMException {
-		par = getNestedType(par, TDEF);
-		arg = getNestedType(arg, TDEF);
+		IType parNested = getNestedType(parOrig, TDEF);
+		IType argNested = getNestedType(argOrig, TDEF);
 		boolean isMoreCVQualified = false;
-		if (par instanceof ICPPReferenceType && arg instanceof ICPPReferenceType) {
-			par = getNestedType(par, REF | TDEF);
-			arg = getNestedType(arg, REF | TDEF);
-			CVQualifier cvp = getCVQualifier(par);
-			CVQualifier cva = getCVQualifier(arg);
+		boolean preferForLValueRef = false;
+		if (parNested instanceof ICPPReferenceType && argNested instanceof ICPPReferenceType) {
+			preferForLValueRef = compareRValueRValueTemplateFunctions(parNested, argNested);
+			parNested = getNestedType(parNested, REF | TDEF);
+			argNested = getNestedType(argNested, REF | TDEF);
+			CVQualifier cvp = getCVQualifier(parNested);
+			CVQualifier cva = getCVQualifier(argNested);
 			isMoreCVQualified = cva.isMoreQualifiedThan(cvp);
 		}
-		par = getNestedType(par, TDEF | REF | ALLCVQ);
-		arg = getNestedType(arg, TDEF | REF | ALLCVQ);
+		parNested = getNestedType(parNested, TDEF | REF | ALLCVQ);
+		argNested = getNestedType(argNested, TDEF | REF | ALLCVQ);
 
-		if (!deduct.fromType(par, arg, false, false))
+		if (!deduct.fromType(parNested, argNested, false, false))
 			return -1;
 
-		return isMoreCVQualified ? 1 : 0;
+		return (isMoreCVQualified || preferForLValueRef) ? 1 : 0;
+	}
+
+	private static boolean compareRValueRValueTemplateFunctions(final IType f1, final IType f2) {
+		ICPPReferenceType fstTp = (ICPPReferenceType) f1;
+		ICPPReferenceType sndTp = (ICPPReferenceType) f2;
+
+		boolean fstRv = fstTp.isRValueReference();
+		boolean sndRv = sndTp.isRValueReference();
+
+		if (fstRv != sndRv) {
+			return fstRv;
+		}
+
+		return false;
+	}
+
+	private static boolean isReferenceType(IType fstSpecP) {
+		return ICPPReferenceType.class.isAssignableFrom(fstSpecP.getClass());
 	}
 
 	/**
@@ -759,7 +779,7 @@ public class TemplateArgumentDeduction {
 
 	private static boolean verifyDeduction(ICPPTemplateParameter[] pars, CPPTemplateParameterMap tpMap,
 			boolean useDefaults) {
-		InstantiationContext context = new InstantiationContext(tpMap);
+		InstantiationContext context = InstantiationContext.forDeduction(tpMap);
 		for (ICPPTemplateParameter tpar : pars) {
 			if (tpar.isParameterPack()) {
 				ICPPTemplateArgument[] deducedArgs = tpMap.getPackExpansion(tpar);
@@ -1022,7 +1042,7 @@ public class TemplateArgumentDeduction {
 					return true; // An unknown type may match anything.
 
 				// Verify that the resolved binding matches the argument type.
-				InstantiationContext context = new InstantiationContext(fDeducedArgs);
+				InstantiationContext context = InstantiationContext.forDeduction(fDeducedArgs);
 				IBinding binding = CPPTemplates.resolveUnknown((ICPPUnknownBinding) p, context);
 				if (binding instanceof ICPPUnknownBinding)
 					return true; // An unknown type may match anything.

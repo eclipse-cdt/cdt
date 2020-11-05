@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
 
@@ -36,7 +37,17 @@ public class TypeInstantiationRequest {
 
 	public TypeInstantiationRequest(IType type, InstantiationContext context) {
 		this.type = type;
-		this.parameterMap = context.getParameterMap();
+
+		/*
+		 * If the InstantiationContext was created during template argument deduction, its parameter map
+		 * can be modified later in the deduction process. Since the TypeInstantiationRequest is used
+		 * as a key in various caches, we don't want the map changing after constructing this object,
+		 * so clone the map is such cases.
+		 */
+		this.parameterMap = context.isForDeduction()
+				? new CPPTemplateParameterMap((CPPTemplateParameterMap) context.getParameterMap())
+				: context.getParameterMap();
+
 		this.packOffset = context.getPackOffset();
 		this.contextTypeSpecialization = context.getContextTypeSpecialization();
 	}

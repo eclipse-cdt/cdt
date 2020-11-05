@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e837f89c_d11769c4",
+        "filename": "native/org.eclipse.cdt.native.serial/native_src/serial.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-05T01:23:10Z",
+      "side": 1,
+      "message": "The size parameter is different from the line below. I think the difference isn\u0027t relevant in this case - but I think that snprintf actually takes number of bytes, which sprintf_s takes number of characters.",
+      "range": {
+        "startLine": 70,
+        "startChar": 19,
+        "endLine": 70,
+        "endChar": 49
+      },
+      "revId": "d525f53e346eb3ab972979abe0b0b811b4d11330",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

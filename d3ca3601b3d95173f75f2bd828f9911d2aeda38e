@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "9aa50d76_3c041d3f",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/WindowsRegistry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-06T15:43:07Z",
+      "side": 1,
+      "message": "Sounds like something is wrong - CDT 10.0 had the 6.0 version of this library, so as there is new API now it has to be at least 6.1.\n\nLet me know if API tooling is still not giving you an error and I will look into it. I fear there may be other issues related to the circular nature of this.\n\nI keep going on about the circular thing because we have been burned by it in the past. It used to be that in the cdt.target the reference to CDT was to the master branch\u0027s last successful artifacts.",
+      "parentUuid": "8b6e7d32_6ea69cb7",
+      "revId": "d3ca3601b3d95173f75f2bd828f9911d2aeda38e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "88f9684f_8452d07f",
         "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/WindowsRegistry.java",
         "patchSetId": 1

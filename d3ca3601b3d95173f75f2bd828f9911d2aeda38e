@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4f34dd26_bbaf0d27",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/WindowsRegistry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-06T01:21:53Z",
+      "side": 1,
+      "message": "I haven\u0027t pulled this up in the IDE, but I would expect that the @since be bigger. If you are having issues with API tooling let me know.",
+      "revId": "d3ca3601b3d95173f75f2bd828f9911d2aeda38e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3206f0f6_4c1ad8c5",
+        "filename": "native/org.eclipse.cdt.native.serial/src/org/eclipse/cdt/serial/SerialPort.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-06T01:21:53Z",
+      "side": 1,
+      "message": "This code makes me happy (and I think will make Alexander happy too when he sees it)\nYou could try this though for filtering and mapping to Strings:\n\n    .filter(String.class::isInstance)\n    .map(String.class::cast)",
+      "revId": "d3ca3601b3d95173f75f2bd828f9911d2aeda38e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

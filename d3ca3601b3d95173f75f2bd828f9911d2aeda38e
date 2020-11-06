@@ -92,6 +92,24 @@
       "revId": "d3ca3601b3d95173f75f2bd828f9911d2aeda38e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62a201d6_c4667405",
+        "filename": "native/org.eclipse.cdt.native.serial/src/org/eclipse/cdt/serial/SerialPort.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-06T08:52:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e6e7c1a_262b7b37",
+      "revId": "d3ca3601b3d95173f75f2bd828f9911d2aeda38e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

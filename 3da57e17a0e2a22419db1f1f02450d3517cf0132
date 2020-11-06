@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a567c73_859e5c51",
+        "filename": "native/org.eclipse.cdt.native.serial/src/org/eclipse/cdt/serial/SerialPort.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-06T01:11:04Z",
+      "side": 0,
+      "message": "Yay for getting rid of a e.printStackTrace!",
+      "revId": "3da57e17a0e2a22419db1f1f02450d3517cf0132",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

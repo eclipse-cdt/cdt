@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b9543cee_83e4696d",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 470,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-11-07T15:37:31Z",
+      "side": 1,
+      "message": "Since this IAdaptable stuff was new to me, I just looked for an example in the existing code base and C\u0026Ped it. Apparently I took the wrong.\nThanks for pointing me at this: I do NOT want to give super a chance to jam in a ICMakePropertiesController that does not notify on changes (see follow-up commits).\n\nBTW: This getAdapter() is only intended to have the project properties available for the CMakeProperty page. Should I use a getter method instead?",
+      "parentUuid": "a3836076_6ea0d8f9",
+      "revId": "3de5cedd73b3cd954bbdd8d259bcae4026831a82",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "455d96f7_f0134af5",
         "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakePropertiesController.java",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "3de5cedd73b3cd954bbdd8d259bcae4026831a82",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b2d1245_724ce160",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakePropertiesController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-11-07T15:37:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "455d96f7_f0134af5",
+      "revId": "3de5cedd73b3cd954bbdd8d259bcae4026831a82",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "b2bf6a03_1d77aaa6",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakePropertiesController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-11-07T15:37:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "596e931f_0cd8bdf6",
+      "revId": "3de5cedd73b3cd954bbdd8d259bcae4026831a82",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dbc7f520_a98a2371",
         "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakePropertiesController.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2020-11-04T06:01:43Z",
       "side": 1,
       "message": "can be combined:\n```\nreturn !Objects.equals\n```",
+      "revId": "3de5cedd73b3cd954bbdd8d259bcae4026831a82",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71ba5c96_86b551c7",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakePropertiesController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-11-07T15:37:31Z",
+      "side": 1,
+      "message": "Yes, of course.\nBut I have the strong feeling that we might need to inspect more cmake-args than \"CMAKE_TOOLCHAIN_FILE\" in the future and will turn this into a loop over String wanted [].. array.",
+      "parentUuid": "dbc7f520_a98a2371",
       "revId": "3de5cedd73b3cd954bbdd8d259bcae4026831a82",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

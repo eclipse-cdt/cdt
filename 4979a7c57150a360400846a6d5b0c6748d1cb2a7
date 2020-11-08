@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "debe4f9c_4de7f1c3",
+        "filename": "releng/org.eclipse.cdt.repo/category.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-08T20:14:41Z",
+      "side": 1,
+      "message": "This part of the change was gone again in PS4 - intentional?",
+      "revId": "4979a7c57150a360400846a6d5b0c6748d1cb2a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -96,4 +96,9 @@ public interface IGCCToken extends IToken {
 
 	/** @since 6.11*/
 	int tTT_integer_pack = FIRST_RESERVED_IGCCToken + 36;
+
+	/**
+	 * @since 7.1
+	 */
+	int tTT_is_same = FIRST_RESERVED_IGCCToken + 37;
 }

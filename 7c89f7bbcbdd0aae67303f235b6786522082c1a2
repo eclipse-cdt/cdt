@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a6b4665_b7b464cb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-08T22:09:30Z",
+      "side": 1,
+      "message": "I cannot find a way to query the target if it\u0027s in suspended state or running state here.\nAt the same time, I cannot see any harm in doing a flush here since it\u0027s done during the launch of the debug session and not now and then during the debug session.\nWould it be worth the extra complexity to check the target state?",
+      "range": {
+        "startLine": 654,
+        "startChar": 0,
+        "endLine": 657,
+        "endChar": 5
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b6cef89_b168b942",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-08T22:09:30Z",
+      "side": 1,
+      "message": "Is RefreshAllDMEvent okay here or should it be align with the interface and be called something like \u0027CommandControlRefreshAllDMEvent\u0027?",
+      "range": {
+        "startLine": 158,
+        "startChar": 22,
+        "endLine": 158,
+        "endChar": 39
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac9521a7_5b2ccad5",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-08T22:09:30Z",
+      "side": 1,
+      "message": "Alexander had some concerns regarding if this should be part of ICommandControlService in a previous gerrit. Should I leave it here or create some new interface where it\u0027s added?\nIf I should create a new one, what should it be named?\nDo we need a completlly different service for this function too? Overkill?",
+      "range": {
+        "startLine": 87,
+        "startChar": 21,
+        "endLine": 87,
+        "endChar": 45
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

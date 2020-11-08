@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e717532_3da266da",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2795,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-11-08T17:46:33Z",
+      "side": 1,
+      "message": "This change feels a bit strange as we\u0027re going from code that does not need to be updated if we add a new unary type transormation, to code that does.\n\nOn the other hand, this change has the side effect of evaluating the type transformation eagerly if its argument is not dependent, which is a good thing.",
+      "revId": "7b455d3f222d63579a52c71ae5cf85817042db7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

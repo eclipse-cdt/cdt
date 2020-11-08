@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d13830c9_0c5b2f81",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1101,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-08T02:36:48Z",
+      "side": 1,
+      "message": "I think the incompatible setting should also be removed at setArguments time? That would prevent the ArgumentsAttribute from ever having setting in it and would prevent the .cproject file from having the incompatible argument. (to reproduce, run the steps from the bug, the .cproject file will have the \"wrong\" -j in it)",
+      "revId": "d74092154d45a0f027de22ec0875f43c78defa77",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7e29135_3df74f21",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1354,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-08T02:36:48Z",
+      "side": 1,
+      "message": "Here in setArguments the parallelization and stop on error setting is removed before the call to setArgumentsAttribute",
+      "revId": "d74092154d45a0f027de22ec0875f43c78defa77",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

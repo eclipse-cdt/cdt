@@ -236,7 +236,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplate;
@@ -280,7 +279,7 @@ public class CPPVisitor extends ASTQueries {
 	// Thread-local set of declarators for which auto types are being created.
 	// Used to prevent infinite recursion while processing invalid self-referencing
 	// auto-type declarations.
-	private static final ThreadLocal<Set<IASTDeclarator>> autoTypeDeclarators = new ThreadLocal<Set<IASTDeclarator>>() {
+	private static final ThreadLocal<Set<IASTDeclarator>> autoTypeDeclarators = new ThreadLocal<>() {
 		@Override
 		protected Set<IASTDeclarator> initialValue() {
 			return new HashSet<>();
@@ -2793,7 +2792,7 @@ public class CPPVisitor extends ASTQueries {
 			name = ((IASTEnumerationSpecifier) declSpec).getName();
 		} else if (declSpec instanceof ICPPASTTypeTransformationSpecifier) {
 			ICPPASTTypeTransformationSpecifier spec = (ICPPASTTypeTransformationSpecifier) declSpec;
-			return new CPPUnaryTypeTransformation(spec.getOperator(), createType(spec.getOperand()));
+			return TypeTraits.underlyingType(createType(spec.getOperand()));
 		} else if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier spec = (ICPPASTSimpleDeclSpecifier) declSpec;
 			// Check for decltype(expr)

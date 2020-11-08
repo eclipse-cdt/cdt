@@ -16,6 +16,24 @@
       "revId": "7b455d3f222d63579a52c71ae5cf85817042db7c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c32cb5f0_1eea63fe",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2795,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-11-08T23:11:50Z",
+      "side": 1,
+      "message": "That\u0027s true, actually there is the same situation in CPPTemplates.instantiateType. But now I came up with a separate test case from is_same that was failing before due to the problem exposed here (not evaluating the type transformation early enough) so it makes more sense to me to split this part in another commit altogether.",
+      "parentUuid": "1e717532_3da266da",
+      "revId": "7b455d3f222d63579a52c71ae5cf85817042db7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

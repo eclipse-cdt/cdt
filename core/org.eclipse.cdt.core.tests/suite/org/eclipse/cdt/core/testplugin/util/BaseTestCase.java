@@ -73,7 +73,7 @@ public abstract class BaseTestCase extends TestCase {
 	 * The GCC version to emulate when running tests.
 	 * We emulate the latest version whose extensions we support.
 	 */
-	protected static final int GCC_MAJOR_VERSION_FOR_TESTS = 8;
+	protected static final int GCC_MAJOR_VERSION_FOR_TESTS = 10;
 	protected static final int GCC_MINOR_VERSION_FOR_TESTS = 1;
 
 	/**

@@ -603,6 +603,11 @@ public class ValueFactory {
 				return IntegralValue.create(1);
 			}
 			return IntegralValue.create(0);
+		case __is_same:
+			if (type1.isSameType(type2)) {
+				return IntegralValue.create(1);
+			}
+			return IntegralValue.create(0);
 		case __is_trivially_assignable:
 			return IntegralValue.UNKNOWN; // TODO: Implement.
 		}

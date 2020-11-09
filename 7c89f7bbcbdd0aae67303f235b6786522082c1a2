@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "01091537_85b73456",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-09T01:28:23Z",
+      "side": 1,
+      "message": "I think this should be gdbjtag aka hardware debug specific and not added to the general GDB case which does not need it. Unless there is an example of it failing. The reason the gdbjtag one has this problem is because of the types of commands issued in its launch sequence.\n\nIf it should remain here, it probably should go before the DataModelInitializedEvent.\n\nEither way, with the refresh here many tests are broken that rely on (too?) deep knowledge of the implementation and how many events are expected through the system.\n\n\u003cSomewhat OT\u003eWhen I first went to implement this I came to the conclusion that DataModelInitializedEvent itself should probably do what we are discussing here - i.e. until DataModelInitializedEvent is received nothing should start rendering as the data model was not initialized yet. While some places in DSF (such as GDBFocusSynchronizer) use it like that, most other (in particular UI places like LaunchRootVMNode) use it simply as an indicator that the Debug view tree should be expanded and selected.\u003c/\u003e",
+      "range": {
+        "startLine": 654,
+        "startChar": 0,
+        "endLine": 654,
+        "endChar": 2
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8a6b4665_b7b464cb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
         "patchSetId": 1

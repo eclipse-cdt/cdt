@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af5c49c4_905a2a36",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/SemanticUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 950,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-11-09T02:51:04Z",
+      "side": 1,
+      "message": "Not great but at least the logic is now centralized and less error-prone if another operator is added.",
+      "revId": "580d51bfc724a24e3968623afc98c30bc4ef9c9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

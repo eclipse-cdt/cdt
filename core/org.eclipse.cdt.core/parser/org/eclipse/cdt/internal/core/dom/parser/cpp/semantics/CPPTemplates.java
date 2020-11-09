@@ -1717,12 +1717,7 @@ public class CPPTemplates {
 			if (type instanceof ICPPUnaryTypeTransformation) {
 				ICPPUnaryTypeTransformation typeTransformation = (ICPPUnaryTypeTransformation) type;
 				IType operand = instantiateType(typeTransformation.getOperand(), context);
-				switch (typeTransformation.getOperator()) {
-				case underlying_type:
-					return TypeTraits.underlyingType(operand);
-				default:
-					return null; // shouldn't happen
-				}
+				return SemanticUtil.applyTypeTransformation(typeTransformation.getOperator(), operand);
 			}
 
 			if (type instanceof CPPClosureType) {

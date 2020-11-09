@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -944,5 +945,14 @@ public class SemanticUtil {
 			result = addImplicitParameterType(result, (ICPPMethod) function);
 		}
 		return result;
+	}
+
+	public static IType applyTypeTransformation(ICPPUnaryTypeTransformation.Operator operator, IType type) {
+		switch (operator) {
+		case underlying_type:
+			return TypeTraits.underlyingType(type);
+		default:
+			return null; // shouldn't happen
+		}
 	}
 }

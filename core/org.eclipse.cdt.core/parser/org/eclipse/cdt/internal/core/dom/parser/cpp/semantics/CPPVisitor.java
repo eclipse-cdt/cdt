@@ -236,7 +236,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplate;
@@ -2793,7 +2792,12 @@ public class CPPVisitor extends ASTQueries {
 			name = ((IASTEnumerationSpecifier) declSpec).getName();
 		} else if (declSpec instanceof ICPPASTTypeTransformationSpecifier) {
 			ICPPASTTypeTransformationSpecifier spec = (ICPPASTTypeTransformationSpecifier) declSpec;
-			return new CPPUnaryTypeTransformation(spec.getOperator(), createType(spec.getOperand()));
+			IType type = SemanticUtil.applyTypeTransformation(spec.getOperator(), createType(spec.getOperand()));
+			if (type != null)
+				return type;
+
+			return ProblemType.UNRESOLVED_NAME;
+
 		} else if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier spec = (ICPPASTSimpleDeclSpecifier) declSpec;
 			// Check for decltype(expr)

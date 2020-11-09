@@ -11382,6 +11382,19 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
 	}
 
+	//	enum class TestEnum : char {
+	//	};
+	//
+	//	void bar(__underlying_type(TestEnum) as) {
+	//	}
+	//
+	//	void foo() {
+	//	  bar('a'); // Invalid arguments 'Candidates are: void bar(@120932903)'
+	//	}
+	public void testUnderlyingType_568625() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
+	}
+
 	//	void ptrFunc(void*);
 	//	void intFunc(int);
 	//	void foo(int* pi, unsigned i) {
@@ -13636,6 +13649,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//		Test<__is_same(Enum, Enum)>::true_val;
 	//		Test<__is_same(Enum, int)>::false_val;
 	//		Test<__is_same(EnumChar, char)>::false_val;
+	//		Test<__is_same(__underlying_type(EnumChar), char)>::true_val;
 	//
 	//		Test<TemplateArgs<int, bool>::Value>::false_val;
 	//		Test<TemplateArgs<int, int>::Value>::true_val;

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7ec625bf_84835f96",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-09T01:14:10Z",
+      "side": 1,
+      "message": "Not worth the extra complexity.\n\nI think it is essentially a No-op to do the refresh when target is running. The flush and refresh set states that are set anyways when the target will eventually suspend.\n\nIn addition, it is non-trivial to find out if target is suspended/running as you need to first query all running containers and then ask each container.",
+      "parentUuid": "8a6b4665_b7b464cb",
+      "range": {
+        "startLine": 654,
+        "startChar": 0,
+        "endLine": 657,
+        "endChar": 5
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8b6cef89_b168b942",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "bd798333_75e2a9bd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-09T01:14:10Z",
+      "side": 1,
+      "message": "This private class name is fine.\n\nIf anything there can be a discussion about the name of the public interface. The interfaces under IDMEvent in DSF are about 50/50 in terms of including the enclosing class/interface name in the name of the interface. I am fine either way with the interface name, but in general including the enclosing class/interface name in the name of another class/interface seems a little redundant as someone can write ICommandControlService.IRefreshAllDMEvent in a bit of code that there is concern about differentiating.",
+      "parentUuid": "8b6cef89_b168b942",
+      "range": {
+        "startLine": 158,
+        "startChar": 22,
+        "endLine": 158,
+        "endChar": 39
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ac9521a7_5b2ccad5",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2020-11-08T22:09:30Z",
       "side": 1,
       "message": "Alexander had some concerns regarding if this should be part of ICommandControlService in a previous gerrit. Should I leave it here or create some new interface where it\u0027s added?\nIf I should create a new one, what should it be named?\nDo we need a completlly different service for this function too? Overkill?",
+      "range": {
+        "startLine": 87,
+        "startChar": 21,
+        "endLine": 87,
+        "endChar": 45
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c3d23ab1_6b7c00af",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-09T01:14:10Z",
+      "side": 1,
+      "message": "There \"where flushAllCachesAndRefresh and ICommandControlRefreshAllDMEvent should live\" question has this answer: the refresh functionality is useful to all kinds of backends, not just MI or GDB ones.\n\nSince the existing services in the DSF layer are all quite specific (e.g. breakpoints, memory, processes) the logical place to me is to have it in command control. \n\nA separate service is overkill.\n\nIf there is question about whether it should be in the DSF layer - the other reasonable possibilities are IMIBackend in the DSF-MI layer and IGDBBackend in the DSF-GDB layer.",
+      "parentUuid": "ac9521a7_5b2ccad5",
       "range": {
         "startLine": 87,
         "startChar": 21,

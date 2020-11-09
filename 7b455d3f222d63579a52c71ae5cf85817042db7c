@@ -34,6 +34,24 @@
       "revId": "7b455d3f222d63579a52c71ae5cf85817042db7c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb867aa3_01ee1435",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2795,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-11-09T02:51:48Z",
+      "side": 1,
+      "message": "Follow-up https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/171961",
+      "parentUuid": "c32cb5f0_1eea63fe",
+      "revId": "7b455d3f222d63579a52c71ae5cf85817042db7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

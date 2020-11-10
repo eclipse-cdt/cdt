@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "418ebda7_36b0bd8c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/TemplateArgumentDeduction.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 596,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2020-11-10T05:16:04Z",
+      "side": 1,
+      "message": "Why are we calling compareRValueRValueTemplateFunctions() a second time here?",
+      "revId": "09348dcc0600599f0e76135e928df540891d81c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

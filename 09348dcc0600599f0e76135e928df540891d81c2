@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "1c06165d_165cad87",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateLValueRValueTests.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-10T16:31:28Z",
+      "side": 1,
+      "message": "The code cleanliness tests are failing because of trailing whitespace like this. This type of error normally happens because the Save Actions in Eclipse have been turned off, or because of making edits outside of Eclipse without a similar \"delete trailing white space on save\" option. I won\u0027t mark all the cases, but they show up in Red on gerrit when you open the file (assuming you have the \"Show trailing whitespace\" option enabled, which I think is the default)",
+      "revId": "09348dcc0600599f0e76135e928df540891d81c2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "418ebda7_36b0bd8c",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/TemplateArgumentDeduction.java",
         "patchSetId": 13

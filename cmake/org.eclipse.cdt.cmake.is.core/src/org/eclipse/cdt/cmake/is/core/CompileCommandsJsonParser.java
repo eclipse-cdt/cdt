@@ -13,7 +13,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +38,6 @@ import org.eclipse.cdt.cmake.is.core.participant.IToolCommandlineParser;
 import org.eclipse.cdt.cmake.is.core.participant.IToolCommandlineParser.IResult;
 import org.eclipse.cdt.cmake.is.core.participant.IToolDetectionParticipant;
 import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsDetectionBehavior;
-import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -142,15 +140,14 @@ public class CompileCommandsJsonParser {
 	 * @throws CoreException
 	 */
 	private boolean processJsonFile(IProgressMonitor monitor) throws CoreException {
-		final CBuildConfiguration configuration = parseRequest.getBuildConfiguration();
-		final IProject project = configuration.getBuildConfiguration().getProject();
-		java.nio.file.Path buildRoot = Paths.get(configuration.getBuildDirectoryURI());
+		final IFile jsonFile = parseRequest.getFile();
+		final IProject project = jsonFile.getProject();
 
 		project.deleteMarkers(MARKER_ID, false, IResource.DEPTH_INFINITE);
-		final java.nio.file.Path jsonFile = buildRoot.resolve("compile_commands.json"); //$NON-NLS-1$
-		if (!Files.exists(jsonFile)) {
+		final java.nio.file.Path jsonDiskFile = java.nio.file.Path.of(jsonFile.getLocationURI());
+		if (!Files.exists(jsonDiskFile)) {
 			// no json file was produced in the build
-			final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_file_not_found, jsonFile,
+			final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_file_not_found, jsonDiskFile,
 					WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
 			createMarker(project, msg);
 			return false;
@@ -158,42 +155,41 @@ public class CompileCommandsJsonParser {
 		// file exists on disk...
 		long tsJsonModified = 0;
 		try {
-			tsJsonModified = Files.getLastModifiedTime(jsonFile).toMillis();
+			tsJsonModified = Files.getLastModifiedTime(jsonDiskFile).toMillis();
 		} catch (IOException e) {
 			// treat as 'file is not modified'
 			return false;
 		}
-		IContainer buildContainer = configuration.getBuildContainer();
-		final IFile jsonFileRc = buildContainer.getFile(new Path("compile_commands.json")); //$NON-NLS-1$
 
-		Long sessionLastModified = (Long) buildContainer.getSessionProperty(TIMESTAMP_COMPILE_COMMANDS_PROPERTY);
+		IContainer buildRootFolder = jsonFile.getParent();
+		Long sessionLastModified = (Long) buildRootFolder.getSessionProperty(TIMESTAMP_COMPILE_COMMANDS_PROPERTY);
 		if (sessionLastModified == null || sessionLastModified.longValue() < tsJsonModified) {
 			// must parse json file...
 			monitor.setTaskName(Messages.CompileCommandsJsonParser_msg_processing);
 
-			try (Reader in = new FileReader(jsonFile.toFile())) {
+			try (Reader in = new FileReader(jsonDiskFile.toFile())) {
 				// parse file...
 				Gson gson = new Gson();
 				CommandEntry[] sourceFileInfos = gson.fromJson(in, CommandEntry[].class);
 				for (CommandEntry sourceFileInfo : sourceFileInfos) {
-					processCommandEntry(sourceFileInfo, jsonFileRc);
+					processCommandEntry(sourceFileInfo, jsonFile);
 				}
 			} catch (JsonSyntaxException | JsonIOException ex) {
 				// file format error
-				final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_not_json, jsonFile,
+				final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_not_json, jsonDiskFile,
 						WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
-				createMarker(jsonFileRc, msg);
+				createMarker(jsonFile, msg);
 				return false;
 			} catch (IOException ex) {
-				final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_read_error, jsonFile,
+				final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_read_error, jsonDiskFile,
 						WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
-				createMarker(jsonFileRc, msg);
+				createMarker(jsonFile, msg);
 				return false;
 			}
 
 			detectBuiltins(monitor);
 			// store time-stamp
-			buildContainer.setSessionProperty(TIMESTAMP_COMPILE_COMMANDS_PROPERTY, tsJsonModified);
+			buildRootFolder.setSessionProperty(TIMESTAMP_COMPILE_COMMANDS_PROPERTY, tsJsonModified);
 			return true;
 		}
 		return false;
@@ -266,13 +262,15 @@ public class CompileCommandsJsonParser {
 			return;
 		monitor.setTaskName(Messages.CompileCommandsJsonParser_msg_detecting_builtins);
 
-		java.nio.file.Path buildDir = parseRequest.getBuildConfiguration().getBuildDirectory();
+		final IFile jsonFile = parseRequest.getFile();
+		final IContainer buildRootFolder = jsonFile.getParent();
+
+		java.nio.file.Path buildDir = java.nio.file.Path.of(buildRootFolder.getLocationURI());
 		// run each built-in detector and collect the results..
 		Map<String, IRawIndexerInfo> builtinDetectorsResults = new HashMap<>();
 		for (Entry<String, CompilerBuiltinsDetector> entry : builtinDetectorsToRun.entrySet()) {
-			IRawIndexerInfo result = entry.getValue().detectBuiltins(
-					parseRequest.getBuildConfiguration().getBuildConfiguration(), buildDir, parseRequest.getLauncher(),
-					parseRequest.getConsole(), monitor);
+			IRawIndexerInfo result = entry.getValue().detectBuiltins(jsonFile.getProject(), buildDir,
+					parseRequest.getLauncher(), parseRequest.getConsole(), monitor);
 			// store detector key with result
 			builtinDetectorsResults.put(entry.getKey(), result);
 		}
@@ -431,8 +429,8 @@ public class CompileCommandsJsonParser {
 
 		try {
 			if (DEBUG_TIME) {
-				System.out.printf("Project %s parsing compile_commands.json ...%n", //$NON-NLS-1$
-						parseRequest.getBuildConfiguration().getProject().getName());
+				System.out.printf("Parsing file '%s' ...%n", //$NON-NLS-1$
+						parseRequest.getFile().getLocationURI().getPath());
 				start = System.currentTimeMillis();
 			}
 			return processJsonFile(monitor);
@@ -440,8 +438,8 @@ public class CompileCommandsJsonParser {
 			parseRequest.getIndexerInfoConsumer().shutdown();
 			if (DEBUG_TIME) {
 				long end = System.currentTimeMillis();
-				System.out.printf("Project %s parsed compile_commands.json file in %dms%n", //$NON-NLS-1$
-						parseRequest.getBuildConfiguration().getProject().getName(), end - start);
+				System.out.printf("Parsed file '%s' in %dms%n", //$NON-NLS-1$
+						parseRequest.getFile().getLocationURI().getPath(), end - start);
 			}
 			// clean up
 			builtinDetectorsToRun = null;

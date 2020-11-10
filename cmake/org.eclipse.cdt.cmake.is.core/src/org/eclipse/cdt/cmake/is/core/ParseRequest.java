@@ -14,22 +14,22 @@ package org.eclipse.cdt.cmake.is.core;
 import java.util.Objects;
 
 import org.eclipse.cdt.core.ICommandLauncher;
-import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.core.resources.IFile;
 
 /** Holds the arguments used to create a {@link CompileCommandsJsonParser}.
  *
  * @author weber
  */
 public final class ParseRequest {
-	private final CBuildConfiguration buildConfiguration;
+	private final IFile compileCommandsJson;
 	private final IIndexerInfoConsumer indexerInfoConsumer;
 	private final ICommandLauncher launcher;
 	private final IConsole console;
 
 	/** Creates a new ParseRequest object.
 	 *
-	 * @param buildConfiguration  the build configuration of the project
+	 * @param compileCommandsJsonFile  the file to parse
 	 * @param indexerInfoConsumer the object that receives the indexer relevant
 	 *                            information for each source file
 	 * @param launcher the launcher to run the compiler for built-ins detection.
@@ -39,18 +39,18 @@ public final class ParseRequest {
 	 *                 detection to or <code>null</code> if no console output is requested.
 	 *                 Ignored if workspace preferences indicate that no console output is wanted.
 	 */
-	public ParseRequest(CBuildConfiguration buildConfiguration, IIndexerInfoConsumer indexerInfoConsumer,
+	public ParseRequest(IFile compileCommandsJsonFile, IIndexerInfoConsumer indexerInfoConsumer,
 			ICommandLauncher launcher, IConsole console) {
-		this.buildConfiguration = Objects.requireNonNull(buildConfiguration, "buildConfiguration"); //$NON-NLS-1$
+		this.compileCommandsJson = Objects.requireNonNull(compileCommandsJsonFile, "compileCommandsJsonFile"); //$NON-NLS-1$
 		this.indexerInfoConsumer = Objects.requireNonNull(indexerInfoConsumer, "indexerInfoConsumer"); //$NON-NLS-1$
 		this.launcher = Objects.requireNonNull(launcher, "launcher"); //$NON-NLS-1$
 		this.console = console;
 	}
 
-	/** Gets the build configuration of the project.
+	/** Gets the 'compile_commands.json' file to parse.
 	 */
-	public CBuildConfiguration getBuildConfiguration() {
-		return buildConfiguration;
+	public IFile getFile() {
+		return compileCommandsJson;
 	}
 
 	/** Gets the object that receives the indexer relevant

@@ -14,10 +14,8 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import org.eclipse.cdt.cmake.is.core.IParserPreferences;
 import org.eclipse.cdt.cmake.is.core.IParserPreferencesAccess;
@@ -26,13 +24,9 @@ import org.eclipse.cdt.cmake.is.core.participant.IRawIndexerInfo;
 import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsOutputProcessor;
 import org.eclipse.cdt.cmake.is.core.participant.builtins.OutputSniffer;
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ICommandLauncher;
-import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
-import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -59,7 +53,7 @@ public class CompilerBuiltinsDetector {
 	private final List<String> builtinsDetectionArgs;
 	private final IBuiltinsDetectionBehavior builtinsDetectionBehavior;
 
-	private IBuildConfiguration buildConfiguration;
+	private IProject project;
 	private java.nio.file.Path buildDirectory;
 
 	/**
@@ -84,18 +78,18 @@ public class CompilerBuiltinsDetector {
 	/**
 	 * Runs built-in detection.
 	 *
-	 * @param buildConfiguration the project build configuration to use
-	 * @param theBuildDirectory  the build directory of the build configuration
-	 * @param launcher           the launcher that can run in docker container, if
-	 *                           any
+	 * @param project            the project
+	 * @param buildDirectory	the build root directory. This is the working directory of the compiler process. Temporary,
+	 * 							but cacheable input files for the compiler are generated her also
+	 * @param launcher           the launcher for the compiler process
 	 * @param console            the console to print the compiler output to or
 	 *                           <code>null</code> if no console output is requested.
 	 * @throws CoreException
 	 */
-	public IRawIndexerInfo detectBuiltins(IBuildConfiguration buildConfiguration, java.nio.file.Path theBuildDirectory,
+	public IRawIndexerInfo detectBuiltins(IProject project, java.nio.file.Path buildDirectory,
 			ICommandLauncher launcher, IConsole console, IProgressMonitor monitor) throws CoreException {
-		this.buildConfiguration = Objects.requireNonNull(buildConfiguration, "buildConfiguration"); //$NON-NLS-1$
-		this.buildDirectory = Objects.requireNonNull(theBuildDirectory, "buildDirectory"); //$NON-NLS-1$
+		this.project = Objects.requireNonNull(project, "project"); //$NON-NLS-1$
+		this.buildDirectory = Objects.requireNonNull(buildDirectory, "buildDirectory"); //$NON-NLS-1$
 
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -108,7 +102,7 @@ public class CompilerBuiltinsDetector {
 
 		console = startOutputConsole(console);
 
-		launcher.setProject(buildConfiguration.getProject());
+		launcher.setProject(project);
 		launcher.showCommand(console != null);
 		final Process proc = launcher.execute(new Path(command), argList.toArray(new String[argList.size()]), getEnvp(),
 				new Path(this.buildDirectory.toString()), monitor);
@@ -166,33 +160,25 @@ public class CompilerBuiltinsDetector {
 	}
 
 	/**
-	 * Get environment variables from configuration as array of "var=value" suitable
-	 * for using as "envp" with Runtime.exec(String[] cmdarray, String[] envp, File
-	 * dir)
+	 * Get environment variables from configuration as array of "var=value".
 	 *
 	 * @return String array of environment variables in format "var=value". Does not
 	 *         return {@code null}.
 	 */
 	private String[] getEnvp() {
-		IEnvironmentVariableManager mngr = CCorePlugin.getDefault().getBuildEnvironmentManager();
-		IEnvironmentVariable[] vars = mngr.getVariables(buildConfiguration, true);
-		// Convert into envp strings
-		Set<String> strings = new HashSet<>(vars.length);
-		for (IEnvironmentVariable var : vars) {
-			if (var.getName().startsWith("LANGUAGE" + '=') || var.getName().startsWith("LC_ALL" + '=')) //$NON-NLS-1$ //$NON-NLS-2$
-				continue;
-			strings.add(var.getName() + '=' + var.getValue());
-		}
 		// On POSIX (Linux, UNIX) systems reset language variables to default (English)
 		// with UTF-8 encoding since GNU compilers can handle only UTF-8 characters.
 		// Include paths with locale characters will be handled properly regardless
 		// of the language as long as the encoding is set to UTF-8.
 		// English language is set for parser because it relies on English messages
-		// in the output of the 'gcc -v' builtinsDetectionArgs.
-		strings.add("LANGUAGE" + "=en"); // override for GNU gettext //$NON-NLS-1$ //$NON-NLS-2$
-		strings.add("LC_ALL" + "=C.UTF-8"); // for other parts of the system libraries //$NON-NLS-1$ //$NON-NLS-2$
+		// in the output of the 'gcc -v'.
+		String[] strings = {
+				// override for GNU gettext
+				"LANGUAGE" + "=en", //$NON-NLS-1$//$NON-NLS-2$
+				// for other parts of the system libraries
+				"LC_ALL" + "=C.UTF-8" }; //$NON-NLS-1$ //$NON-NLS-2$
 
-		return strings.toArray(new String[strings.size()]);
+		return strings;
 	}
 
 	/**
@@ -218,7 +204,7 @@ public class CompilerBuiltinsDetector {
 	}
 
 	private void createMarker(String message) throws CoreException {
-		IMarker marker = buildConfiguration.getProject().createMarker(MARKER_ID);
+		IMarker marker = project.createMarker(MARKER_ID);
 		marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
 		marker.setAttribute(IMarker.MESSAGE, message);
 	}
@@ -235,15 +221,12 @@ public class CompilerBuiltinsDetector {
 				.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
 				.get(IParserPreferencesAccess.class).getWorkspacePreferences();
 		if (console != null && prefs.getAllocateConsole()) {
-			IProject project = buildConfiguration.getProject();
 			console.start(project);
 			try {
 				final ConsoleOutputStream cis = console.getInfoStream();
 				String msg;
 				msg = String.format(Messages.CompilerBuiltinsDetector_msg_detection_start,
-						SimpleDateFormat.getTimeInstance().format(new Date()), project.getName(),
-						buildConfiguration.getName().isEmpty() ? "?" : buildConfiguration.getName(), //$NON-NLS-1$
-						String.join(" ", builtinsDetectionArgs)); //$NON-NLS-1$
+						SimpleDateFormat.getTimeInstance().format(new Date()), project.getName());
 				cis.write(msg.getBytes());
 				cis.write("\n".getBytes()); //$NON-NLS-1$
 			} catch (IOException ignore) {

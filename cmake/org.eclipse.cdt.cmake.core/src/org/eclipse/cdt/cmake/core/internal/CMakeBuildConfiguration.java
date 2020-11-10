@@ -144,7 +144,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				runCMake = true;
 			}
 
-			ICMakeProperties cmakeProperties = pc.load();
+			ICMakeProperties cmakeProperties = getPropertiesController().load();
 			runCMake |= !Files.exists(buildDir.resolve("CMakeCache.txt")); //$NON-NLS-1$
 
 			IOsOverrides overrides = extractCMakeOsOverrides(cmakeProperties);
@@ -263,7 +263,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
-			ICMakeProperties cmakeProperties = pc.load();
+			ICMakeProperties cmakeProperties = getPropertiesController().load();
 			IOsOverrides overrides = extractCMakeOsOverrides(cmakeProperties);
 			List<String> command = makeCMakeBuildCommandline(cmakeProperties, overrides, "clean"); //$NON-NLS-1$
 			ConsoleOutputStream outStream = console.getOutputStream();
@@ -430,8 +430,9 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	 * @param monitor the job's progress monitor
 	 */
 	private void processCompileCommandsFile(IConsole console, IProgressMonitor monitor) throws CoreException {
+		IFile file = getBuildContainer().getFile(new org.eclipse.core.runtime.Path("compile_commands.json")); //$NON-NLS-1$
 		CompileCommandsJsonParser parser = new CompileCommandsJsonParser(
-				new ParseRequest(this, new CMakeIndexerInfoConsumer(this::setScannerInformation),
+				new ParseRequest(file, new CMakeIndexerInfoConsumer(this::setScannerInformation),
 						CommandLauncherManager.getInstance().getCommandLauncher(this), console));
 		parser.parse(monitor);
 	}
@@ -464,7 +465,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	 */
 	private CMakePropertiesController getPropertiesController() {
 		if (pc == null) {
-			Path filePath = Path.of(getProject().getFile(".settings/CDT-cmake.yaml").getLocationURI()); //$NON-NLS-1$
+			final Path filePath = Path.of(getProject().getFile(".settings/CDT-cmake.yaml").getLocationURI()); //$NON-NLS-1$
 			pc = new CMakePropertiesController(filePath, () -> {
 				deleteCMakeCache = true;
 				// TODO delete cache file here for the case a user restarts the workbench

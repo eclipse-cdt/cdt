@@ -46,7 +46,7 @@ git rebase 35996a5c5ca5c254959ba48241eaada6dbf8628d
 git diff-tree --no-commit-id --name-only -r commit_to_rebase -- *.java | xargs $ECLIPSE
 # C. Run cleanup.py on them using Eclipse EASE
 # D. Remove trailing whitespace on all relevant files
-git show master:.gitattributes | awk '/# remove trailing whitespace/{getline; print $1}' |
+git show master:.gitattributes | awk '/# remove trailing whitespace/{do getline; while ($0 ~ /^#/); print $1}' |
     while read i ; do
         echo "Removing trailing whitespace on $i files"
         git diff-tree --no-commit-id --name-only -r commit_to_rebase -- "$i" | xargs --no-run-if-empty sed -i 's/[ \t]*$//'

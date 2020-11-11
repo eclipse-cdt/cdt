@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "a85a9d45_542e635c",
+        "filename": "releng/scripts/do_fix_file_permissions.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-11T19:58:53Z",
+      "side": 1,
+      "message": "I think enforce until there is a reason not to.",
+      "parentUuid": "685f84a2_7ae0f752",
+      "revId": "b46c6fe75de556e0379640b507ecb90449455189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2187d577_3464df69",
         "filename": "releng/scripts/do_fix_file_permissions.sh",
         "patchSetId": 1

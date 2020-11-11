@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3e131c14_03d71836",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/org/eclipse/cdt/cmake/is/core/CompileCommandsJsonParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-11-11T08:42:53Z",
+      "side": 1,
+      "message": "Do we really need to switch to Java NIO here? I\u0027m afraid it will not work properly for \"remote files systems\".",
+      "revId": "c071cd5420bcc2e50e2c8dbf1aae92e9cab64aea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

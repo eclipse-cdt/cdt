@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "685f84a2_7ae0f752",
+        "filename": "releng/scripts/do_fix_file_permissions.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-11T19:07:42Z",
+      "side": 1,
+      "message": "Might be better yes.\nIn your opinion, should this be an enforcement that all files should be forced to have executable permission or should it be more relaxed and just \"allow\", as you put it?\nI\u0027m good either way.",
+      "parentUuid": "e2ca6d6e_bcf95422",
+      "revId": "b46c6fe75de556e0379640b507ecb90449455189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2187d577_3464df69",
         "filename": "releng/scripts/do_fix_file_permissions.sh",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2020-11-11T19:00:14Z",
       "side": 1,
       "message": "... make this chmod +x and make it non-optional?",
+      "revId": "b46c6fe75de556e0379640b507ecb90449455189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fbeaccc2_23599181",
+        "filename": "releng/scripts/do_fix_file_permissions.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-11T19:07:42Z",
+      "side": 1,
+      "message": "I was using \u0027chmod +x\u0027 first, but then I though that there might be some reason to not mark files as executable and made it optional instead.",
+      "parentUuid": "2187d577_3464df69",
       "revId": "b46c6fe75de556e0379640b507ecb90449455189",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

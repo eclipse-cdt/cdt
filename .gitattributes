@@ -24,12 +24,14 @@ CONTRIBUTING text
 # C-like configuration/scripts
 *.ac text
 *.am text
+# file permission +x
 *.bat text
 *.build text
 *.incl text
 makefile text
 Makefile text
 *.mk text
+# file permission +x
 *.sh text
 
 # Qt
@@ -48,12 +50,16 @@ Makefile text
 # (These should not normally be checked in, exceptions for pre-compiled libraries and tests)
 *.o binary
 *.d text
+# file permission +x
 *.dll binary diff=dll
 *.a binary
+# file permission +x
 *.exe binary
 *.out binary
 *.app binary
+# file permission +x
 *.jnilib binary diff=hex
+# file permission +x
 *.so binary
 
 # Web/Javascript/Node
@@ -152,5 +158,6 @@ cdtOptions text
 *.ucd text
 .umlproject text
 # remove trailing whitespace
+# file permission +x
 *.py text
 *.xhtml text

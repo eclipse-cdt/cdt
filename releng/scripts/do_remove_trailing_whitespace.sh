@@ -14,10 +14,11 @@ set -e
 
 ##
 # Remove trailing whitespace.
-# The .gitattributes is used as a filter to identify files to check. Patters with
-# this "# check trailing whitespace" on the line before are checked
+# The .gitattributes is used as a filter to identify files to check. Patterns
+# with this "# check trailing whitespace" on the line before are checked
+# (lines in .gitattributes starting with '#' are ignored).
 ##
-awk '/# remove trailing whitespace/{getline; print $1}' .gitattributes |
+awk '/# remove trailing whitespace/{do getline; while ($0 ~ /^#/); print $1}' .gitattributes |
     while read i ; do
         echo "Removing trailing whitespace on $i files"
         git ls-files -- "$i" | xargs --no-run-if-empty sed -i 's/[ \t]*$//'

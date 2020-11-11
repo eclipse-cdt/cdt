@@ -16,6 +16,24 @@
       "revId": "c071cd5420bcc2e50e2c8dbf1aae92e9cab64aea",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3a7ac097_e4ae0d1a",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/org/eclipse/cdt/cmake/is/core/CompileCommandsJsonParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-11-11T18:43:36Z",
+      "side": 1,
+      "message": "That is: Use IResource#getModificationStamp() and other IResource methods instead?",
+      "parentUuid": "3e131c14_03d71836",
+      "revId": "c071cd5420bcc2e50e2c8dbf1aae92e9cab64aea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e2ca6d6e_bcf95422",
+        "filename": "releng/scripts/do_fix_file_permissions.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-11T19:00:14Z",
+      "side": 1,
+      "message": "Can the comment be called \"allow permission +x\" instead? Or ...",
+      "revId": "b46c6fe75de556e0379640b507ecb90449455189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2187d577_3464df69",
+        "filename": "releng/scripts/do_fix_file_permissions.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-11T19:00:14Z",
+      "side": 1,
+      "message": "... make this chmod +x and make it non-optional?",
+      "revId": "b46c6fe75de556e0379640b507ecb90449455189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -520,3 +520,10 @@ JNIEXPORT void JNICALL FUNC(write1)(JNIEnv *env, jobject jobj, jlong jhandle, jb
     CloseHandle(olp.hEvent);
 #endif
 }
+
+
+JNIEXPORT jobjectArray JNICALL Java_org_eclipse_cdt_serial_SerialPort_list0(JNIEnv *env, jclass cls) {
+    jclass exception = (*env)->FindClass(env, "java/io/IOException");
+    (*env)->ThrowNew(env, exception, "Not implemented for this OS");
+    return NULL;
+}

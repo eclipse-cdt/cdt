@@ -224,6 +224,8 @@ public class SerialPort {
 
 	private native void write1(long handle, byte[] b, int off, int len) throws IOException;
 
+	private static native String[] list0() throws IOException;
+
 	private static String[] listDevs(final Pattern pattern) {
 		File dev = new File("/dev"); //$NON-NLS-1$
 		File[] files = dev.listFiles(new FilenameFilter() {
@@ -274,6 +276,16 @@ public class SerialPort {
 					}
 				} while (valueName != null && value != null);
 				return ports.toArray(new String[ports.size()]);
+			}
+		} else {
+			try {
+				String[] ports = list0();
+				if (ports != null) {
+					return ports;
+				}
+			} catch (IllegalCallerException e) {
+				// Not implemented for this OS
+				e.printStackTrace();
 			}
 		}
 		return new String[0];

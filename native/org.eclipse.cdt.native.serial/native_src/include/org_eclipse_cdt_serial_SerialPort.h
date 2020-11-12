@@ -50,6 +50,13 @@ JNIEXPORT void JNICALL Java_org_eclipse_cdt_serial_SerialPort_write0(JNIEnv *, j
  */
 JNIEXPORT void JNICALL Java_org_eclipse_cdt_serial_SerialPort_write1(JNIEnv *, jobject, jlong, jbyteArray, jint, jint);
 
+/*
+ * Class:     org_eclipse_cdt_serial_SerialPort
+ * Method:    list0
+ * Signature: ()[Ljava/lang/String;
+ */
+JNIEXPORT jobjectArray JNICALL Java_org_eclipse_cdt_serial_SerialPort_list0(JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

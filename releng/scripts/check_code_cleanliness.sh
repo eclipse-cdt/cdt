@@ -67,7 +67,7 @@ if ${MVN:-mvn} \
         -P baseline-compare-and-replace >${logfile} 2>&1; then
     echo "Maven check all versions have been bumped appropriately appears to have completed successfully"
 else
-    bundles_only_qualifier_changed=$(grep "Only qualifier changed" ${logfile} | sed -e 's/^.*Only qualifier changed for .//' -e 's@/.*@@')
+    bundles_only_qualifier_changed=$(grep "Only qualifier changed" ${logfile} | sed -e 's/^.*Only qualifier changed for .//' -e 's@/.*@@' | sort)
     if [ -n "$bundles_only_qualifier_changed" ]; then
         echo "The following bundles are missing a service segment version bump:"
         for bundle in $bundles_only_qualifier_changed; do
@@ -79,7 +79,7 @@ else
         echo
     fi
 
-    bundles_same_version_different_content=$(grep "baseline and build artifacts have same version but different contents" ${logfile} | sed -e 's/^.* on project //' -e 's@: baseline.*@@')
+    bundles_same_version_different_content=$(grep "baseline and build artifacts have same version but different contents" ${logfile} | sed -e 's/^.* on project //' -e 's@: baseline.*@@' | sort)
     if [ -n "$bundles_same_version_different_content" ]; then
         echo "The following bundles have same version as baseline, but different contents:"
         for bundle in $bundles_same_version_different_content; do

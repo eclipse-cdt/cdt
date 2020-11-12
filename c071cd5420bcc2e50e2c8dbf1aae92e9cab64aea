@@ -34,6 +34,24 @@
       "revId": "c071cd5420bcc2e50e2c8dbf1aae92e9cab64aea",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58aee2c3_5fa103da",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/org/eclipse/cdt/cmake/is/core/CompileCommandsJsonParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-11-12T09:07:59Z",
+      "side": 1,
+      "message": "Yes, I would prefer o.e.core.resources usages, otherwise we will just duplicate the platform code woithout good reason to do so.",
+      "parentUuid": "3a7ac097_e4ae0d1a",
+      "revId": "c071cd5420bcc2e50e2c8dbf1aae92e9cab64aea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

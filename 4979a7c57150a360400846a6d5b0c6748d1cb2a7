@@ -16,6 +16,24 @@
       "revId": "4979a7c57150a360400846a6d5b0c6748d1cb2a7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "517c5c17_a260415a",
+        "filename": "releng/org.eclipse.cdt.repo/category.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-11-12T20:52:46Z",
+      "side": 1,
+      "message": "Weird.\nDiff of PS 5 -\u003e 6 shows the change in category.xml whereas diff of base -\u003e 6 does not.\nWhat am I doing wrong here?",
+      "parentUuid": "debe4f9c_4de7f1c3",
+      "revId": "4979a7c57150a360400846a6d5b0c6748d1cb2a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -52,6 +52,24 @@
       "revId": "c071cd5420bcc2e50e2c8dbf1aae92e9cab64aea",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ff1e1e6_bef42b1b",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.core/src/org/eclipse/cdt/cmake/is/core/CompileCommandsJsonParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-11-12T20:54:09Z",
+      "side": 1,
+      "message": "IIRC, you created a bug to collect the requiremtens for the parser API. I wanted to reference this gerrit in that bug but could not find it in bugzilla. Can you help?",
+      "parentUuid": "58aee2c3_5fa103da",
+      "revId": "c071cd5420bcc2e50e2c8dbf1aae92e9cab64aea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

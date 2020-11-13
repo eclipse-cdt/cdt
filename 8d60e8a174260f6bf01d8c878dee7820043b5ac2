@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fba9a85_47b9cd6d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-13T16:08:52Z",
+      "side": 1,
+      "message": "This import statement looks suspect. I think it is causing build to fail.",
+      "revId": "8d60e8a174260f6bf01d8c878dee7820043b5ac2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

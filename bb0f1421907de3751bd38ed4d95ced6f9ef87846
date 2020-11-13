@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "022605df_c493ac2e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TestBase.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-13T15:32:22Z",
+      "side": 1,
+      "message": "This extra newline is what is causing the cleanliness check to fail.",
+      "revId": "bb0f1421907de3751bd38ed4d95ced6f9ef87846",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

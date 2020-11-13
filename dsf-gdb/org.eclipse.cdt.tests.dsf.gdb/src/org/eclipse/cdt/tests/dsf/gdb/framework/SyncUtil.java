@@ -18,18 +18,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -85,12 +78,14 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil.DefaultTimeouts;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil.DefaultTimeouts.ETimeout;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.swt.widgets.List;
 
 /**
  * Timeout wait values are in milliseconds, or WAIT_FOREVER.
@@ -592,7 +587,7 @@ public class SyncUtil {
 			final String prop = System.getProperty(propname);
 			if (prop != null) {
 				try {
-					value = Integer.valueOf(value);
+					value = Integer.valueOf(prop);
 					if (value < 0) {
 						TestsPlugin.log(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(), "\"" + propname //$NON-NLS-1$
 								+ "\" property incorrectly specified. Should be an integer value or not specified at all."));

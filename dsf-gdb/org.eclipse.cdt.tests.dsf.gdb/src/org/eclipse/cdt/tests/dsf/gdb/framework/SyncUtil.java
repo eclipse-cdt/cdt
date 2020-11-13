@@ -592,7 +592,7 @@ public class SyncUtil {
 			final String prop = System.getProperty(propname);
 			if (prop != null) {
 				try {
-					value = Integer.valueOf(value);
+					value = Integer.valueOf(prop);
 					if (value < 0) {
 						TestsPlugin.log(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(), "\"" + propname //$NON-NLS-1$
 								+ "\" property incorrectly specified. Should be an integer value or not specified at all."));

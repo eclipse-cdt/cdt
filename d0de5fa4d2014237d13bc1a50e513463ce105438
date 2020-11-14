@@ -34,6 +34,24 @@
       "revId": "d0de5fa4d2014237d13bc1a50e513463ce105438",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd184524_677be7cd",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2020-11-14T04:07:57Z",
+      "side": 1,
+      "message": "If that\u0027s OK with you, I\u0027ll go with the more verbose but more clear version of the latest patchset.",
+      "parentUuid": "695fea39_c3c8f98b",
+      "revId": "d0de5fa4d2014237d13bc1a50e513463ce105438",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

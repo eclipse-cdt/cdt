@@ -251,45 +251,43 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		CommandDescriptor commandDescr = cmdBuilder
 				.makeCMakeCommandline(toolChainFile != null ? toolChainFile.getPath() : null);
 
-		// hook in cmake error parsing
-		CMakeExecutionMarkerFactory markerFactory = new CMakeExecutionMarkerFactory(srcFolder);
-		// NOTE: we need one parser for each stream, since the output streams are not synchronized
-		// when the process is started via o.e.c.core.CommandLauncher, causing loss of the internal parser state
-		// We parse stderr only, since cmake currently does not write anything of interest to stdout
-		try (OutputStream errStream = new ParsingOutputStream(console.getErrorStream(),
-				new CMakeErrorParser(markerFactory))) {
+		List<String> arguments = commandDescr.getArguments();
+		// tell cmake where its script is located..
+		arguments.add(new File(srcFolder.getLocationURI()).getAbsolutePath());
+		// extract name of executable
+		final String arg0 = arguments.remove(0);
+		final Process p = launcher.execute(new org.eclipse.core.runtime.Path(arg0),
+				arguments.toArray(new String[arguments.size()]), null, workingDir, monitor);
+		if (p == null) {
+			// process start failed
+			String msg = String.format(Messages.CMakeBuildConfiguration_Failure, launcher.getErrorMessage());
+			addMarker(null, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+			return false; // failure
+		} else {
+			try {
+				// Close the input of the process since we will never write to it
+				p.getOutputStream().close();
+			} catch (IOException e) {
+			}
 
-			List<String> arguments = commandDescr.getArguments();
-			// tell cmake where its script is located..
-			arguments.add(new File(srcFolder.getLocationURI()).getAbsolutePath());
-			// extract name of executable
-			final String arg0 = arguments.remove(0);
-			final Process p = launcher.execute(new org.eclipse.core.runtime.Path(arg0),
-					arguments.toArray(new String[arguments.size()]), null, workingDir, monitor);
-			if (p == null) {
-				// process start failed
-				String msg = String.format(Messages.CMakeBuildConfiguration_Failure, launcher.getErrorMessage());
+			// hook in cmake error parsing
+			CMakeExecutionMarkerFactory markerFactory = new CMakeExecutionMarkerFactory(srcFolder);
+			// NOTE: we need one parser for each stream, since the output streams are not synchronized
+			// when the process is started via o.e.c.core.CommandLauncher, causing loss of the internal parser state
+			// We parse stderr only, since cmake currently does not write anything of interest to stdout
+			OutputStream errStream = new ParsingOutputStream(console.getErrorStream(),
+					new CMakeErrorParser(markerFactory));
+			int state = launcher.waitAndRead(console.getOutputStream(), errStream, monitor);
+			if (state == ICommandLauncher.COMMAND_CANCELED) {
+				throw new OperationCanceledException(launcher.getErrorMessage());
+			}
+			// check cmake exit status
+			final int exitValue = p.exitValue();
+			if (exitValue != 0) {
+				// cmake had errors...
+				String msg = String.format(Messages.CMakeBuildConfiguration_ExitFailure, arg0, exitValue);
 				addMarker(null, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
 				return false; // failure
-			} else {
-				try {
-					// Close the input of the process since we will never write to it
-					p.getOutputStream().close();
-				} catch (IOException e) {
-				}
-
-				int state = launcher.waitAndRead(console.getOutputStream(), errStream, monitor);
-				if (state == ICommandLauncher.COMMAND_CANCELED) {
-					throw new OperationCanceledException(launcher.getErrorMessage());
-				}
-				// check cmake exit status
-				final int exitValue = p.exitValue();
-				if (exitValue != 0) {
-					// cmake had errors...
-					String msg = String.format(Messages.CMakeBuildConfiguration_ExitFailure, arg0, exitValue);
-					addMarker(null, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
-					return false; // failure
-				}
 			}
 		}
 		return true; // success

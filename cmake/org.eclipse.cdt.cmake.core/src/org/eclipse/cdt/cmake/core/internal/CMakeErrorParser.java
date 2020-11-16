@@ -48,6 +48,8 @@ import org.eclipse.core.runtime.Status;
 	private final ICMakeExecutionMarkerFactory markerFactory;
 	private final StringBuilder buffer;
 
+	private boolean closed;
+
 	static {
 		// setup regex to match the start of a message...
 		StringBuilder ptnbuf = new StringBuilder("^"); //$NON-NLS-1$
@@ -81,8 +83,13 @@ import org.eclipse.core.runtime.Status;
 	 *
 	 * @param input
 	 * text from the output stream to parse
+	 *
+	 * @throws IllegalStateException  if this object is closed
 	 */
 	public void addInput(CharSequence input) {
+		if (closed) {
+			throw new IllegalStateException("CMakeErrorParser is closed"); //$NON-NLS-1$
+		}
 		buffer.append(input);
 		processBuffer();
 	}
@@ -91,9 +98,12 @@ import org.eclipse.core.runtime.Status;
 	 */
 	@Override
 	public void close() {
-		// process remaining bytes
-		processMessage(currentHandler, buffer.toString().trim());
-		buffer.delete(0, buffer.length());
+		if (!closed) {
+			// process remaining bytes
+			processMessage(currentHandler, buffer.toString().trim());
+			buffer.delete(0, buffer.length());
+			closed = true;
+		}
 	}
 
 	private void processBuffer() {

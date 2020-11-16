@@ -9,10 +9,9 @@
 package org.eclipse.cdt.cmake.is.core;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -122,7 +121,6 @@ public class CompileCommandsJsonParser {
 	 *
 	 * @param parseRequest  the parser configuration
 	 */
-	// TODO interface ICBuildConfiguration should be sufficient here
 	public CompileCommandsJsonParser(ParseRequest parseRequest) {
 		this.parseRequest = Objects.requireNonNull(parseRequest, "parseRequest"); //$NON-NLS-1$
 		prefsAccess = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
@@ -144,30 +142,23 @@ public class CompileCommandsJsonParser {
 		final IProject project = jsonFile.getProject();
 
 		project.deleteMarkers(MARKER_ID, false, IResource.DEPTH_INFINITE);
-		final java.nio.file.Path jsonDiskFile = java.nio.file.Path.of(jsonFile.getLocationURI());
-		if (!Files.exists(jsonDiskFile)) {
+
+		long tsJsonModified = jsonFile.getModificationStamp();
+		if (tsJsonModified == IResource.NULL_STAMP) {
 			// no json file was produced in the build
-			final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_file_not_found, jsonDiskFile,
-					WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
+			final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_file_not_found,
+					jsonFile.getLocationURI(), WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
 			createMarker(project, msg);
 			return false;
 		}
 		// file exists on disk...
-		long tsJsonModified = 0;
-		try {
-			tsJsonModified = Files.getLastModifiedTime(jsonDiskFile).toMillis();
-		} catch (IOException e) {
-			// treat as 'file is not modified'
-			return false;
-		}
-
 		IContainer buildRootFolder = jsonFile.getParent();
 		Long sessionLastModified = (Long) buildRootFolder.getSessionProperty(TIMESTAMP_COMPILE_COMMANDS_PROPERTY);
 		if (sessionLastModified == null || sessionLastModified.longValue() < tsJsonModified) {
 			// must parse json file...
 			monitor.setTaskName(Messages.CompileCommandsJsonParser_msg_processing);
 
-			try (Reader in = new FileReader(jsonDiskFile.toFile())) {
+			try (Reader in = new InputStreamReader(jsonFile.getContents(true))) {
 				// parse file...
 				Gson gson = new Gson();
 				CommandEntry[] sourceFileInfos = gson.fromJson(in, CommandEntry[].class);
@@ -176,13 +167,13 @@ public class CompileCommandsJsonParser {
 				}
 			} catch (JsonSyntaxException | JsonIOException ex) {
 				// file format error
-				final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_not_json, jsonDiskFile,
-						WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
+				final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_not_json,
+						jsonFile.getLocationURI(), WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
 				createMarker(jsonFile, msg);
 				return false;
 			} catch (IOException ex) {
-				final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_read_error, jsonDiskFile,
-						WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
+				final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_read_error,
+						jsonFile.getLocationURI(), WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
 				createMarker(jsonFile, msg);
 				return false;
 			}
@@ -263,9 +254,9 @@ public class CompileCommandsJsonParser {
 		monitor.setTaskName(Messages.CompileCommandsJsonParser_msg_detecting_builtins);
 
 		final IFile jsonFile = parseRequest.getFile();
-		final IContainer buildRootFolder = jsonFile.getParent();
+		// cmake puts file 'compile_commands.json' directly below the build directory..
+		java.nio.file.Path buildDir = java.nio.file.Path.of(jsonFile.getParent().getLocationURI());
 
-		java.nio.file.Path buildDir = java.nio.file.Path.of(buildRootFolder.getLocationURI());
 		// run each built-in detector and collect the results..
 		Map<String, IRawIndexerInfo> builtinDetectorsResults = new HashMap<>();
 		for (Entry<String, CompilerBuiltinsDetector> entry : builtinDetectorsToRun.entrySet()) {

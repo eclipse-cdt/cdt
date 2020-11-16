@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4571a7f5_18e127f3",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-16T15:12:42Z",
+      "side": 1,
+      "message": "Version change is also needed here: https://git.eclipse.org/r/plugins/gitiles/cdt/org.eclipse.cdt/+/refs/changes/40/172240/2/.mvn/extensions.xml",
+      "revId": "6d224115609c142bda375912385f00e7c8f930ef",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

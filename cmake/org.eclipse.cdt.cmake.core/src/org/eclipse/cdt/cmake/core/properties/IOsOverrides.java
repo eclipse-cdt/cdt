@@ -18,6 +18,7 @@ import java.util.List;
  * specific OS.
  *
  * @author Martin Weber
+ * @since 1.4
  */
 public interface IOsOverrides {
 

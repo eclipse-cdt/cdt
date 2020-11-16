@@ -16,6 +16,7 @@ package org.eclipse.cdt.cmake.core.properties;
  * makefile (build-script) processor that builds from the generated script.
  *
  * @author Martin Weber
+ * @since 1.4
  */
 public enum CMakeGenerator {
 	/*

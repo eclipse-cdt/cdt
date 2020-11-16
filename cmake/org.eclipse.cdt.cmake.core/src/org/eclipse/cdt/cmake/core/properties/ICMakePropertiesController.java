@@ -17,6 +17,7 @@ import java.io.IOException;
  * Responsible for loading and persisting {@code ICMakeProperties} objects.
  *
  * @author Martin Weber
+ * @since 1.4
  */
 public interface ICMakePropertiesController {
 

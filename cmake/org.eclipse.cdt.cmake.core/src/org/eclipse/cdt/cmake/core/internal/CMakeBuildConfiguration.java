@@ -12,6 +12,7 @@ package org.eclipse.cdt.cmake.core.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,11 +38,10 @@ import org.eclipse.cdt.cmake.is.core.ParseRequest;
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
-import org.eclipse.cdt.core.envvar.EnvironmentVariable;
-import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModelMarker;
@@ -56,8 +56,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -128,15 +130,19 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	@Override
 	public IProject[] build(int kind, Map<String, String> args, IConsole console, IProgressMonitor monitor)
 			throws CoreException {
-		IProject project = getProject();
+		final IProject project = getProject();
 
 		project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
 		try {
-
 			ConsoleOutputStream infoStream = console.getInfoStream();
 
 			Path buildDir = getBuildDirectory();
+			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(buildDir.toString());
+
+			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
+			launcher.setProject(project);
+			launcher.showCommand(true);
 
 			boolean runCMake = cmakeListsModified;
 			if (deleteCMakeCache) {
@@ -154,92 +160,139 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				runCMake |= !Files.exists(buildDir.resolve(generator.getMakefileName()));
 			}
 			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties, overridesSelector);
+
+			boolean buildscriptsOK = true;
 			if (runCMake) {
 				CMakeBuildConfiguration.deleteCMakeErrorMarkers(project);
 
 				infoStream.write(String.format(Messages.CMakeBuildConfiguration_Configuring, buildDir));
-				CommandDescriptor command = cmdBuilder
-						.makeCMakeCommandline(toolChainFile != null ? toolChainFile.getPath() : null);
 				// tell cmake where its script is located..
 				IContainer srcFolder = project;
-				command.getArguments().add(new File(srcFolder.getLocationURI()).getAbsolutePath());
 
-				infoStream.write(String.join(" ", command.getArguments()) + '\n'); //$NON-NLS-1$
-
-				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
-						getBuildDirectory().toString());
-				// hook in cmake error parsing
-				try (CMakeErrorParser errorParser = new CMakeErrorParser(new CMakeExecutionMarkerFactory(srcFolder))) {
-					ParsingConsoleOutputStream errStream = new ParsingConsoleOutputStream(console.getErrorStream(),
-							errorParser);
-					IConsole errConsole = new CMakeConsoleWrapper(console, errStream);
-					// TODO startBuildProcess() calls java.lang.ProcessBuilder.
-					// Use org.eclipse.cdt.core.ICommandLauncher
-					// in order to run builds in a container.
-					Process p = startBuildProcess(command.getArguments(), new IEnvironmentVariable[0], workingDir,
-							errConsole, monitor);
-					if (p == null) {
-						console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
-						return null;
-					}
-
-					watchProcess(p, errConsole);
-				}
+				buildscriptsOK = generateBuildscripts(launcher, cmdBuilder, srcFolder, workingDir, console, monitor);
 				cmakeListsModified = false;
 			}
 
-			// parse compile_commands.json file
-			processCompileCommandsFile(console, monitor);
+			if (buildscriptsOK) {
+				// run the build tool...
+				infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
+				try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
+						getToolChain().getErrorParserIds())) {
+					epm.setOutputStream(console.getOutputStream());
 
-			infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
-			// run the build tool...
-			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
-					getToolChain().getErrorParserIds())) {
-				epm.setOutputStream(console.getOutputStream());
+					CommandDescriptor commandDescr = cmdBuilder.makeCMakeBuildCommandline("all"); //$NON-NLS-1$
+					List<String> command = commandDescr.getArguments();
+					// extract name of executable
+					final String arg0 = command.remove(0);
 
-				String envStr = getProperty(CMAKE_ENV);
-				List<IEnvironmentVariable> envVars = new ArrayList<>();
-				if (envStr != null) {
-					List<String> envList = CMakeUtils.stripEnvVars(envStr);
-					for (String s : envList) {
-						int index = s.indexOf("="); //$NON-NLS-1$
-						if (index == -1) {
-							envVars.add(new EnvironmentVariable(s));
-						} else {
-							envVars.add(new EnvironmentVariable(s.substring(0, index), s.substring(index + 1)));
+					List<String> envList = new ArrayList<>();
+					// pass envvars from CommandDescriptor
+					envList.addAll(commandDescr.getEnvironment());
+
+					String envStr = getProperty(CMAKE_ENV);
+					if (envStr != null) {
+						envList.addAll(CMakeUtils.stripEnvVars(envStr));
+					}
+
+					launcher.setErrorMessage(""); //$NON-NLS-1$
+					final Process p = launcher.execute(new org.eclipse.core.runtime.Path(arg0),
+							command.toArray(new String[command.size()]), envList.toArray(new String[envList.size()]),
+							new org.eclipse.core.runtime.Path(workingDir.toString()), monitor);
+					if (p == null) {
+						// process start failed
+						String msg = String.format(Messages.CMakeBuildConfiguration_Failure,
+								launcher.getErrorMessage());
+						addMarker(null, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+					} else {
+						try {
+							// Close the input of the process since we will never write to it
+							p.getOutputStream().close();
+						} catch (IOException e) {
+						}
+
+						int state = launcher.waitAndRead(console.getOutputStream(), console.getErrorStream(), monitor);
+						project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+						if (state == ICommandLauncher.COMMAND_CANCELED) {
+							throw new OperationCanceledException(launcher.getErrorMessage());
+						}
+						String msg = String.format(Messages.CMakeBuildConfiguration_BuildingComplete,
+								epm.getErrorCount(), epm.getWarningCount(), buildDir.toString());
+						infoStream.write(msg);
+						// check exit status
+						final int exitValue = p.exitValue();
+						if (exitValue != 0) {
+							// had errors...
+							String msg2 = String.format(Messages.CMakeBuildConfiguration_ExitFailure, arg0, exitValue);
+							addMarker(null, -1, msg2, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
 						}
 					}
 				}
 
-				CommandDescriptor commandDescr = cmdBuilder.makeCMakeBuildCommandline("all"); //$NON-NLS-1$
-				List<String> command = commandDescr.getArguments();
-				infoStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-
-				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
-						getBuildDirectory().toString());
-				// TODO startBuildProcess() calls java.lang.ProcessBuilder. Use org.eclipse.cdt.core.ICommandLauncher
-				// in order to run builds in a container.
-				// TODO pass envvars from CommandDescriptor once we use ICommandLauncher
-				Process p = startBuildProcess(command, envVars.toArray(new IEnvironmentVariable[0]), workingDir,
-						console, monitor);
-				if (p == null) {
-					console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
-					return null;
-				}
-
-				watchProcess(p, new IConsoleParser[] { epm });
-
-				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-
-				infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingComplete, epm.getErrorCount(),
-						epm.getWarningCount(), buildDir.toString()));
+				// parse compile_commands.json file
+				processCompileCommandsFile(console, monitor);
 			}
-
 			return new IProject[] { project };
 		} catch (IOException e) {
 			throw new CoreException(Activator
 					.errorStatus(String.format(Messages.CMakeBuildConfiguration_Building, project.getName()), e));
 		}
+	}
+
+	/** Runs cmake to generate the build-scripts.
+	 *
+	 * @return whether build-script generation was successful
+	 *
+	 * @throws CoreException
+	 * @throws IOException  if {@code console} failed to get an output stream
+	 */
+	private boolean generateBuildscripts(ICommandLauncher launcher, CommandDescriptorBuilder cmdBuilder,
+			IContainer srcFolder, IPath workingDir, IConsole console, IProgressMonitor monitor)
+			throws CoreException, IOException {
+		CommandDescriptor commandDescr = cmdBuilder
+				.makeCMakeCommandline(toolChainFile != null ? toolChainFile.getPath() : null);
+
+		// hook in cmake error parsing
+		CMakeExecutionMarkerFactory markerFactory = new CMakeExecutionMarkerFactory(srcFolder);
+		// NOTE: we need one parser for each stream, since the output streams are not synchronized
+		// when the process is started via o.e.c.core.CommandLauncher, causing loss of the internal parser state
+		// We parse stderr only, since cmake currently does not write anything of interest to stdout
+		try (OutputStream errStream = new ParsingOutputStream(console.getErrorStream(),
+				new CMakeErrorParser(markerFactory))) {
+
+			List<String> arguments = commandDescr.getArguments();
+			// tell cmake where its script is located..
+			arguments.add(new File(srcFolder.getLocationURI()).getAbsolutePath());
+			// extract name of executable
+			final String arg0 = arguments.remove(0);
+			final Process p = launcher.execute(new org.eclipse.core.runtime.Path(arg0),
+					arguments.toArray(new String[arguments.size()]), null, workingDir, monitor);
+			if (p == null) {
+				// process start failed
+				String msg = String.format(Messages.CMakeBuildConfiguration_Failure, launcher.getErrorMessage());
+				addMarker(null, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+				return false; // failure
+			} else {
+				try {
+					// Close the input of the process since we will never write to it
+					p.getOutputStream().close();
+				} catch (IOException e) {
+				}
+
+				int state = launcher.waitAndRead(console.getOutputStream(), errStream, monitor);
+				if (state == ICommandLauncher.COMMAND_CANCELED) {
+					throw new OperationCanceledException(launcher.getErrorMessage());
+				}
+				// check cmake exit status
+				final int exitValue = p.exitValue();
+				if (exitValue != 0) {
+					// cmake had errors...
+					String msg = String.format(Messages.CMakeBuildConfiguration_ExitFailure, arg0, exitValue);
+					addMarker(null, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+					return false; // failure
+				}
+			}
+		}
+		return true; // success
 	}
 
 	@Override
@@ -249,35 +302,55 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
+			console.getInfoStream()
+					.write(String.format(Messages.CMakeBuildConfiguration_Cleaning + "%n", project.getName())); //$NON-NLS-1$
+
+			Path buildDir = getBuildDirectory();
+			if (!Files.exists(buildDir.resolve("CMakeFiles"))) { //$NON-NLS-1$
+				console.getOutputStream().write(Messages.CMakeBuildConfiguration_NotFound);
+				return;
+			}
+
+			ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
+			launcher.setProject(project);
+			launcher.showCommand(true);
+
 			ICMakeProperties cmakeProperties = getPropertiesController().load();
 			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties,
 					new SimpleOsOverridesSelector());
-			CommandDescriptor command = cmdBuilder.makeCMakeBuildCommandline("clean"); //$NON-NLS-1$
-			ConsoleOutputStream outStream = console.getOutputStream();
+			CommandDescriptor commandDescr = cmdBuilder.makeCMakeBuildCommandline("clean"); //$NON-NLS-1$
+			List<String> command = commandDescr.getArguments();
+			// extract name of executable
+			final String arg0 = command.remove(0);
 
-			Path buildDir = getBuildDirectory();
-
-			if (!Files.exists(buildDir.resolve("CMakeFiles"))) { //$NON-NLS-1$
-				outStream.write(Messages.CMakeBuildConfiguration_NotFound);
-				return;
-			}
-
-			outStream.write(String.join(" ", command.getArguments()) + '\n'); //$NON-NLS-1$
-
-			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
-					getBuildDirectory().toString());
-			// TODO startBuildProcess() calls java.lang.ProcessBuilder. Use org.eclipse.cdt.core.ICommandLauncher
-			// in order to run builds in a container.
-			Process p = startBuildProcess(command.getArguments(), new IEnvironmentVariable[0], workingDir, console,
-					monitor);
+			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(buildDir.toString());
+			final Process p = launcher.execute(new org.eclipse.core.runtime.Path(arg0),
+					command.toArray(new String[command.size()]), null, workingDir, monitor);
 			if (p == null) {
-				console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
-				return;
+				// process start failed
+				String msg = String.format(Messages.CMakeBuildConfiguration_Failure, launcher.getErrorMessage());
+				addMarker(null, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+			} else {
+				try {
+					// Close the input of the process since we will never write to it
+					p.getOutputStream().close();
+				} catch (IOException e) {
+				}
+
+				int state = launcher.waitAndRead(console.getOutputStream(), console.getErrorStream(), monitor);
+				if (state == ICommandLauncher.COMMAND_CANCELED) {
+					throw new OperationCanceledException(launcher.getErrorMessage());
+				}
+				// check exit status
+				final int exitValue = p.exitValue();
+				if (exitValue != 0) {
+					// had errors...
+					String msg = String.format(Messages.CMakeBuildConfiguration_ExitFailure, arg0, exitValue);
+					addMarker(null, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+				}
 			}
 
-			watchProcess(p, console);
-
-			outStream.write(Messages.CMakeBuildConfiguration_BuildComplete);
+			console.getInfoStream().write(Messages.CMakeBuildConfiguration_BuildComplete);
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {
@@ -302,24 +375,25 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 	/**
 	 * Recursively removes any files and directories found below the specified Path.
+	 * Kept for refernece since it is proven to not run out of file handles.
 	 */
-	private static void cleanDirectory(Path dir) throws IOException {
-		SimpleFileVisitor<Path> deltor = new SimpleFileVisitor<>() {
+	private static void cleanDirectory(java.nio.file.Path dir) throws IOException {
+		SimpleFileVisitor<java.nio.file.Path> deltor = new SimpleFileVisitor<>() {
 			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+			public FileVisitResult visitFile(java.nio.file.Path file, BasicFileAttributes attrs) throws IOException {
 				Files.delete(file);
 				return FileVisitResult.CONTINUE;
 			}
 
 			@Override
-			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+			public FileVisitResult postVisitDirectory(java.nio.file.Path dir, IOException exc) throws IOException {
 				super.postVisitDirectory(dir, exc);
 				Files.delete(dir);
 				return FileVisitResult.CONTINUE;
 			}
 		};
-		Path[] files = Files.list(dir).toArray(Path[]::new);
-		for (Path file : files) {
+		java.nio.file.Path[] files = Files.list(dir).toArray(java.nio.file.Path[]::new);
+		for (java.nio.file.Path file : files) {
 			Files.walkFileTree(file, deltor);
 		}
 	}
@@ -453,7 +527,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	/**
 	 * Deletes all CMake error markers on the specified project.
 	 *
-	 * @param project the project where to remove the error markers.
+	 * @param project
+	 *          the project where to remove the error markers.
 	 * @throws CoreException
 	 */
 	private static void deleteCMakeErrorMarkers(IProject project) throws CoreException {
@@ -462,14 +537,16 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 	private static class CMakeIndexerInfoConsumer implements IIndexerInfoConsumer {
 		/**
-		 * gathered IScannerInfo objects or <code>null</code> if no new IScannerInfo was received
+		 * gathered IScannerInfo objects or <code>null</code> if no new IScannerInfo was
+		 * received
 		 */
 		private Map<IResource, IScannerInfo> infoPerResource = new HashMap<>();
 		private boolean haveUpdates;
 		private final Consumer<Map<IResource, IScannerInfo>> resultSetter;
 
 		/**
-		 * @param resultSetter receives the all scanner information when processing is finished
+		 * @param resultSetter receives the all scanner information when processing is
+		 *                     finished
 		 */
 		public CMakeIndexerInfoConsumer(Consumer<Map<IResource, IScannerInfo>> resultSetter) {
 			this.resultSetter = Objects.requireNonNull(resultSetter);
@@ -490,11 +567,12 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 
 		/**
-		 * Gets an IFile object that corresponds to the source file name given in CMake notation.
+		 * Gets an IFile object that corresponds to the source file name given in CMake
+		 * notation.
 		 *
-		 * @param sourceFileName the name of the source file, in CMake notation. Note that on
-		 *                       windows, CMake writes filenames with forward slashes (/) such as
-		 *                       {@code H://path//to//source.c}.
+		 * @param sourceFileName the name of the source file, in CMake notation. Note
+		 *                       that on windows, CMake writes filenames with forward
+		 *                       slashes (/) such as {@code H://path//to//source.c}.
 		 * @return a IFile object or <code>null</code>
 		 */
 		private IFile getFileForCMakePath(String sourceFileName) {

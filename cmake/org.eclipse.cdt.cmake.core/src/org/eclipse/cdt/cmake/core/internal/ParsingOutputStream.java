@@ -12,18 +12,17 @@
 package org.eclipse.cdt.cmake.core.internal;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Objects;
 
-import org.eclipse.cdt.core.ConsoleOutputStream;
-
 /**
- * Intercepts output to a console output stream and forwards it to a CMakeErrorParser for processing.
+ * Intercepts output to an output stream and forwards it to a CMakeErrorParser for processing.
  *
  * @author Martin Weber
  */
-class ParsingConsoleOutputStream extends ConsoleOutputStream {
+class ParsingOutputStream extends OutputStream {
 
-	private final ConsoleOutputStream os;
+	private final OutputStream os;
 	private final CMakeErrorParser parser;
 
 	/**
@@ -32,7 +31,7 @@ class ParsingConsoleOutputStream extends ConsoleOutputStream {
 	 * @param cmakeErrorParser
 	 * 			the CMakeErrorParser for processing the output
 	 */
-	public ParsingConsoleOutputStream(ConsoleOutputStream outputStream, CMakeErrorParser cmakeErrorParser) {
+	public ParsingOutputStream(OutputStream outputStream, CMakeErrorParser cmakeErrorParser) {
 		this.os = Objects.requireNonNull(outputStream);
 		this.parser = Objects.requireNonNull(cmakeErrorParser);
 	}
@@ -46,13 +45,6 @@ class ParsingConsoleOutputStream extends ConsoleOutputStream {
 	public void write(byte[] b, int off, int len) throws IOException {
 		os.write(b, off, len);
 		parser.addInput(new String(b, off, len));
-	}
-
-	// interface ConsoleOutputStream
-	@Override
-	public synchronized void write(String msg) throws IOException {
-		os.write(msg);
-		parser.addInput(msg);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Intel Corporation and others.
+ * Copyright (c) 2007, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import java.util.Objects;
+
 import org.eclipse.cdt.core.settings.model.ICLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.internal.core.Option;
 
@@ -163,16 +164,16 @@ public final class OptionStringValue {
 		if (isBuiltIn != other.isBuiltIn)
 			return false;
 
-		if (!CDataUtil.objectsEqual(value, other.value))
+		if (!Objects.equals(value, other.value))
 			return false;
 
-		if (!CDataUtil.objectsEqual(srcPath, other.srcPath))
+		if (!Objects.equals(srcPath, other.srcPath))
 			return false;
 
-		if (!CDataUtil.objectsEqual(srcRootPath, other.srcRootPath))
+		if (!Objects.equals(srcRootPath, other.srcRootPath))
 			return false;
 
-		if (!CDataUtil.objectsEqual(srcPrefixMapping, other.srcPrefixMapping))
+		if (!Objects.equals(srcPrefixMapping, other.srcPrefixMapping))
 			return false;
 
 		return true;

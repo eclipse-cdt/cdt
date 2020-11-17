@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Intel Corporation and others.
+ * Copyright (c) 2007, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
@@ -270,7 +271,7 @@ public class CDataDiscoveredInfoCalculator {
 			if (!fExtsSet.equals(other.fExtsSet))
 				return false;
 
-			if (!CDataUtil.objectsEqual(fMaxMatchInfo, other.fMaxMatchInfo))
+			if (!Objects.equals(fMaxMatchInfo, other.fMaxMatchInfo))
 				return false;
 
 			return true;

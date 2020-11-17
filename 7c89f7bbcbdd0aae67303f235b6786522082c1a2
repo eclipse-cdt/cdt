@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "42d49e19_f965b9b4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-17T21:27:37Z",
+      "side": 1,
+      "message": "Infra problems mean no builds are running: https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d568904\n\n\u003e Do you know any good way to fix all the failing test cases in a way that they are still reliable?\n\nIf you move the flush then the tests will all pass I think. I can\u0027t remember the exact failures, but they have to do with tests that count the number of events, and this change affects that.",
+      "parentUuid": "ba4682de_22528a7c",
+      "range": {
+        "startLine": 654,
+        "startChar": 0,
+        "endLine": 654,
+        "endChar": 2
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8a6b4665_b7b464cb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
         "patchSetId": 1

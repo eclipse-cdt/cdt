@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 Intel Corporation and others.
+ * Copyright (c) 2004, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
@@ -2646,7 +2647,7 @@ public class ToolChain extends HoldsOptions
 	}
 
 	void setUnusedChildren(String children) {
-		if (CDataUtil.objectsEqual(unusedChildren, children))
+		if (Objects.equals(unusedChildren, children))
 			return;
 
 		unusedChildrenSet = null;

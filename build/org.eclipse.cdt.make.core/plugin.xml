@@ -156,7 +156,7 @@
       <file-association 
           content-type="org.eclipse.cdt.make.core.makefile"
           file-names="Makefile,makefile,GNUMakefile"
-          file-extensions="mk"/>
+          file-extensions="mk,mak"/>
    </extension> 
 
    <extension

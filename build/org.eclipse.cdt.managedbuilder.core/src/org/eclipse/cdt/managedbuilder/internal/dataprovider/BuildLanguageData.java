@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Intel Corporation and others.
+ * Copyright (c) 2007, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
@@ -145,7 +146,6 @@ public class BuildLanguageData extends CLanguageData {
 				optValue = buf.toString();
 			}
 			return optValue;
-
 		}
 	*/
 	@Override
@@ -316,13 +316,12 @@ public class BuildLanguageData extends CLanguageData {
 	/*	private IOption[] getOptionsForType(int type){
 			Map map = getTypeToOptionArrayMap();
 			return (IOption[])map.get(Integer.valueOf(type));
-
 		}
 	*/
 
 	@Override
 	public void setLanguageId(String id) {
-		if (CDataUtil.objectsEqual(id, fInputType.getLanguageId(fTool))) {
+		if (Objects.equals(id, fInputType.getLanguageId(fTool))) {
 			//			fInputType = fTool.getEdtableInputType(fInputType);
 			obtainEditableInputType();
 			fInputType.setLanguageIdAttribute(id);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 Intel Corporation and others.
+ * Copyright (c) 2004, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
@@ -408,14 +409,13 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 				setCommand(builder.getCommand());
 			if (!getArgumentsAttribute().equals(builder.getArgumentsAttribute()))
 				setArgumentsAttribute(builder.getArgumentsAttribute());
-			if (!CDataUtil.objectsEqual(getAutoBuildTargetAttribute(), builder.getAutoBuildTargetAttribute())) {
+			if (!Objects.equals(getAutoBuildTargetAttribute(), builder.getAutoBuildTargetAttribute())) {
 				autoBuildTarget = builder.getAutoBuildTargetAttribute();
 			}
-			if (!CDataUtil.objectsEqual(getIncrementalBuildTargetAttribute(),
-					builder.getIncrementalBuildTargetAttribute())) {
+			if (!Objects.equals(getIncrementalBuildTargetAttribute(), builder.getIncrementalBuildTargetAttribute())) {
 				incrementalBuildTarget = builder.getIncrementalBuildTargetAttribute();
 			}
-			if (!CDataUtil.objectsEqual(getCleanBuildTargetAttribute(), builder.getCleanBuildTargetAttribute())) {
+			if (!Objects.equals(getCleanBuildTargetAttribute(), builder.getCleanBuildTargetAttribute())) {
 				cleanBuildTarget = builder.getCleanBuildTargetAttribute();
 			}
 		}
@@ -425,7 +425,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	/*	public Builder(IToolChain parent, String Id, String name, Builder builder, ICStorageElement el) {
 			this(parent, Id, name, builder);
-
 			loadFromProject(el);
 		}
 	*/
@@ -1850,7 +1849,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			String path = getBuildPathAttribute();
 			if(path == null)
 				return true;
-
 			if(isWorkspaceBuildPath == null){
 				if(superClass != null)
 					return superClass.isWorkspaceBuildPath();

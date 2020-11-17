@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.cdt.make.internal.core.scannerconfig;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
@@ -116,7 +117,7 @@ public abstract class CDataDiscoveredInfoProcessor {
 	}
 
 	protected boolean langDatasMatch(CLanguageData lData1, CLanguageData lData2) {
-		if (!CDataUtil.objectsEqual(lData1.getLanguageId(), lData2.getLanguageId()))
+		if (!Objects.equals(lData1.getLanguageId(), lData2.getLanguageId()))
 			return false;
 
 		String[] tmp = lData1.getSourceContentTypeIds();

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ba4682de_22528a7c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-17T20:36:11Z",
+      "side": 1,
+      "message": "Yes, I was actually trying to follow what the DataModelInitializedEvent was doing and if that could not be used, but then I thought of the use case where a 3rd party vendor will add some other UI elements that for example resets the target. In that case, it would be a bit weird to send another DataModelInitializedEvent, so I think both are needed.\n\nThe reason why I placed it here is that I though that it could be useful for non-gdbjtag sessions too, but I can move it, no problem!\n\nDo you know any good way to fix all the failing test cases in a way that they are still reliable?\nThe builds have been removed from Jenkins, so I need to push something new to have the report to look at.",
+      "parentUuid": "01091537_85b73456",
+      "range": {
+        "startLine": 654,
+        "startChar": 0,
+        "endLine": 654,
+        "endChar": 2
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8a6b4665_b7b464cb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
         "patchSetId": 1
@@ -69,6 +93,30 @@
       "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5707600a_05a631f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-17T20:36:11Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "7ec625bf_84835f96",
+      "range": {
+        "startLine": 654,
+        "startChar": 0,
+        "endLine": 657,
+        "endChar": 5
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,13 +52,6 @@ public class ColorManager implements ISharedTextColors {
 	}
 
 	protected Map<RGB, Color> fColorTable = new HashMap<>(10);
-
-	@Override
-	public void dispose() {
-		for (Color color : fColorTable.values()) {
-			color.dispose();
-		}
-	}
 
 	@Override
 	public Color getColor(RGB rgb) {

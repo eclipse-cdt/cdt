@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 QNX Software Systems and others.
+ * Copyright (c) 2002, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,8 +16,6 @@ package org.eclipse.cdt.make.internal.ui.preferences;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -68,17 +66,10 @@ public class ColorEditor {
 			}
 		});
 
-		fButton.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent event) {
-				if (fImage != null) {
-					fImage.dispose();
-					fImage = null;
-				}
-				if (fColor != null) {
-					fColor.dispose();
-					fColor = null;
-				}
+		fButton.addDisposeListener(event -> {
+			if (fImage != null) {
+				fImage.dispose();
+				fImage = null;
 			}
 		});
 	}
@@ -103,9 +94,6 @@ public class ColorEditor {
 		GC gc = new GC(fImage);
 		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
 		gc.drawRectangle(0, 2, fExtent.x - 1, fExtent.y - 4);
-
-		if (fColor != null)
-			fColor.dispose();
 
 		fColor = new Color(display, fColorValue);
 		gc.setBackground(fColor);

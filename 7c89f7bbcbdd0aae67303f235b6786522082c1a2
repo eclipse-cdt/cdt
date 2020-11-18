@@ -191,6 +191,40 @@
     },
     {
       "key": {
+        "uuid": "cc82eb2d_d575a948",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1253,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-11-18T07:11:46Z",
+      "side": 1,
+      "message": "The code could fail here because someone loves to return `null` instead of empty array.",
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0c3f4e3_6e4bdc1e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1255,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-11-18T07:11:46Z",
+      "side": 1,
+      "message": "I do not understand the value of this approach: we request _all_ _instantiated_ services from the OSGi to immediately drop the most part of them. What for? We do know the type of service that we need in advance.\n\nHonestly, I\u0027m not sure why we need to extend the DsfServiceTracker with new methods without `Class` argument, this use case is not convincing.",
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ac9521a7_5b2ccad5",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
         "patchSetId": 1
@@ -232,6 +266,23 @@
         "endLine": 87,
         "endChar": 45
       },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcc92c0f_8be42cf6",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-11-18T07:11:46Z",
+      "side": 1,
+      "message": "The implementation is different with what we have in `getServiceReference(Class\u003cV\u003e serviceClass, String filter)` - obtained ServiceReference(s) goes past the `fServiceReferences` map. Do we understand all the consequences?",
       "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

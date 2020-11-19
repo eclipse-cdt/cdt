@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f1091b43_423a6114",
+        "filename": "core/org.eclipse.cdt.ui/icons/elcl16/show_console_on_activity.png",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-11-19T12:08:07Z",
+      "side": 1,
+      "message": "This is copied from debug UI, see: org.eclipse.debug.internal.ui.IInternalDebugUIConstants.IMG_ELCL_STANDARD_OUT\n\nI\u0027m not sure if its possible to re-use the original somehow, to avoid the copy. Let me know if you have ideas.",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df9d7b02_9b659b06",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ConsoleMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-11-19T12:08:07Z",
+      "side": 1,
+      "message": "Probably we want this synced with the preference text? I added this before I realized there is a preference already.",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 47
+      },
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7b37b70_86cde28a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ShowOnActivityAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-11-19T12:08:07Z",
+      "side": 1,
+      "message": "Copy-pasted, I\u0027ll update with next patch set.",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

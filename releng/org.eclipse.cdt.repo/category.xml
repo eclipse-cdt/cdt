@@ -204,7 +204,7 @@
    <bundle id="org.eclipse.cdt.remote.core.source" version="0.0.0"/>
    <bundle id="javax.activation" version="0.0.0"/>
    <bundle id="javax.xml" version="0.0.0"/>
-   <bundle id="javax.xml.bind" version="0.0.0"/>
+   <bundle id="jakarta.xml.bind" version="0.0.0"/>
    <bundle id="javax.xml.stream" version="0.0.0"/>
    <bundle id="com.google.gson" version="0.0.0"/>
    <bundle id="org.freemarker" version="0.0.0"/>

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6e98b293_50a1ab6a",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/AbstractDsfService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-19T19:28:25Z",
+      "side": 1,
+      "message": "This part is needed since none of the services register the ICacheService interface today.\nAlso, it\u0027s likely that no 3rd party are registering the service, so in order to make it work seamlessly, always register that interface if it\u0027s implemented.",
+      "range": {
+        "startLine": 199,
+        "startChar": 2,
+        "endLine": 201,
+        "endChar": 3
+      },
+      "revId": "d099f6d8ef71e1c4e81fb5e8e1673a10486baf70",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

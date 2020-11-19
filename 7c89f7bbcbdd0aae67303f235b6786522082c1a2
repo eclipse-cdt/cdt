@@ -191,6 +191,30 @@
     },
     {
       "key": {
+        "uuid": "5aeb7f62_9e2da13d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-19T19:28:25Z",
+      "side": 1,
+      "message": "I\u0027d rather have the shorter name since it looks \"cleaner\".\n\n@Alexander: Any strong opinion for this part?",
+      "parentUuid": "bd798333_75e2a9bd",
+      "range": {
+        "startLine": 158,
+        "startChar": 22,
+        "endLine": 158,
+        "endChar": 39
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "cc82eb2d_d575a948",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 1
@@ -208,6 +232,24 @@
     },
     {
       "key": {
+        "uuid": "8278c968_220f9195",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1253,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-19T19:28:25Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "cc82eb2d_d575a948",
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d0c3f4e3_6e4bdc1e",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 1
@@ -219,6 +261,24 @@
       "writtenOn": "2020-11-18T07:11:46Z",
       "side": 1,
       "message": "I do not understand the value of this approach: we request _all_ _instantiated_ services from the OSGi to immediately drop the most part of them. What for? We do know the type of service that we need in advance.\n\nHonestly, I\u0027m not sure why we need to extend the DsfServiceTracker with new methods without `Class` argument, this use case is not convincing.",
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45bbbfef_0d528c9c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1255,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-19T19:28:25Z",
+      "side": 1,
+      "message": "I\u0027ve updated the implementation to only fetch instances of ICacheService. Please take a look at it and see what you think.",
+      "parentUuid": "d0c3f4e3_6e4bdc1e",
       "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
@@ -283,6 +343,24 @@
       "writtenOn": "2020-11-18T07:11:46Z",
       "side": 1,
       "message": "The implementation is different with what we have in `getServiceReference(Class\u003cV\u003e serviceClass, String filter)` - obtained ServiceReference(s) goes past the `fServiceReferences` map. Do we understand all the consequences?",
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "923bba57_b6a2652b",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-19T19:28:25Z",
+      "side": 1,
+      "message": "As I see it, there are 2 optional paths for this topic.\n\nPath 1: Go passed the fServiceReferences map and never cache the result (might be slower, but is there any other side effect?)\n\nPath 2: Update the fServiceReferences map to contain a collection of matching service references. Currently, it\u0027s a lookup from one service class + filter to a single service reference. For ICachingService, there are several instances, so a collection would be needed in that case.\nWith this path, I guess the getServiceReference() should simply call getServiceReferences() and then apply the conditions of L194 to L200.\n\n\nWhat path do you recommend?",
+      "parentUuid": "fcc92c0f_8be42cf6",
       "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

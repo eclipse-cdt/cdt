@@ -22,6 +22,29 @@
       "revId": "d099f6d8ef71e1c4e81fb5e8e1673a10486baf70",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3295652_362e61f4",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-19T19:34:40Z",
+      "side": 1,
+      "message": "@John: Do you think this is the proper place to call the flush of the caches?",
+      "range": {
+        "startLine": 718,
+        "startChar": 3,
+        "endLine": 721,
+        "endChar": 6
+      },
+      "revId": "d099f6d8ef71e1c4e81fb5e8e1673a10486baf70",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

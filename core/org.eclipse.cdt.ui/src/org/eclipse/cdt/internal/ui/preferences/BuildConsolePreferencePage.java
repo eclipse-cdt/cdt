@@ -35,7 +35,6 @@ import org.eclipse.ui.PlatformUI;
 public class BuildConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	private static final String PREF_CLEAR_CONSOLE = "clearConsole"; //$NON-NLS-1$
-	private static final String PREF_CONSOLE_ON_TOP = "consoleOnTop"; //$NON-NLS-1$
 	private static final String PREF_AUTO_OPEN_CONSOLE = "autoOpenConsole"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_WRAP_LINES = "buildConsoleWrapLines"; //$NON-NLS-1$
 	/**
@@ -46,6 +45,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	// In font registry
 	public static final String PREF_BUILDCONSOLE_FONT = "org.eclipse.cdt.ui.buildconsole.ConsoleFont"; //$NON-NLS-1$
 
+	public static final String PREF_CONSOLE_ON_TOP = "consoleOnTop"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_TAB_WIDTH = "buildConsoleTabWith"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_LINES = "buildConsoleLines"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_UPDATE_DELAY_MS = "buildConsoleUpdateDelayMs"; //$NON-NLS-1$

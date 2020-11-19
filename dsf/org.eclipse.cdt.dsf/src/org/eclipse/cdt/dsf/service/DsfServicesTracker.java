@@ -97,7 +97,7 @@ public class DsfServicesTracker {
 	private final Map<ServiceReference<?>, Object> fServices = new HashMap<>();
 	private final String fServiceFilter;
 
-	private final ServiceListener fListner = new ServiceListener() {
+	private final ServiceListener fListener = new ServiceListener() {
 		@Override
 		public void serviceChanged(final ServiceEvent event) {
 			// Only listen to unregister events.
@@ -153,7 +153,7 @@ public class DsfServicesTracker {
 		fBundleContext = bundleContext;
 		fServiceFilter = getServiceFilter(sessionId);
 		try {
-			fBundleContext.addServiceListener(fListner, fServiceFilter);
+			fBundleContext.addServiceListener(fListener, fServiceFilter);
 		} catch (InvalidSyntaxException e) {
 			assert false : "Invalid session ID syntax"; //$NON-NLS-1$
 		}
@@ -279,7 +279,7 @@ public class DsfServicesTracker {
 
 	private void doDispose() {
 		try {
-			fBundleContext.removeServiceListener(fListner);
+			fBundleContext.removeServiceListener(fListener);
 			for (Iterator<ServiceReference<?>> itr = fServices.keySet().iterator(); itr.hasNext();) {
 				fBundleContext.ungetService(itr.next());
 			}

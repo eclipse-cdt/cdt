@@ -878,9 +878,9 @@ public class PDOMFile implements IIndexFragmentFile {
 			int cmp = name.compare(rawKey, true);
 			if (cmp == 0 && linkageID >= 0) {
 				cmp = db.get3ByteUnsignedInt(record + PDOMFile.LINKAGE_ID) - linkageID;
-				if (cmp == 0 && rawSignificantMacros != null) {
+				if (cmp == 0 && rawSignificantMacros != null && rawSignificantMacros.length > 0) {
 					IString significantMacrosStr = getString(record + SIGNIFICANT_MACROS);
-					if (significantMacrosStr != null) {
+					if (significantMacrosStr != null && significantMacrosStr.getChars().length > 0) {
 						cmp = significantMacrosStr.compare(rawSignificantMacros, true);
 					} else {
 						cmp = rawSignificantMacros.length > 0 ? -1 : 0;

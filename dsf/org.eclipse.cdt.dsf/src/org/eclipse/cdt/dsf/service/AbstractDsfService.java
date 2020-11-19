@@ -158,6 +158,8 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected void register(String[] classes, Dictionary properties) {
+		// Use a HashSet to avoid duplicates
+		Set<String> classSet = new HashSet<>(Arrays.asList(classes));
 
 		/*
 		 * If this service has already been registered, make sure we
@@ -167,12 +169,7 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 		 */
 		if (fRegistration != null) {
 			String[] previousClasses = (String[]) fRegistration.getReference().getProperty(Constants.OBJECTCLASS);
-
-			// Use a HashSet to avoid duplicates
-			Set<String> newClasses = new HashSet<>();
-			newClasses.addAll(Arrays.asList(previousClasses));
-			newClasses.addAll(Arrays.asList(classes));
-			classes = newClasses.toArray(new String[0]);
+			classSet.addAll(Arrays.asList(previousClasses));
 
 			/*
 			 * Also keep all previous properties.
@@ -192,18 +189,9 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 		 * Ensure that the list of classes contains the base DSF service
 		 * interface, as well as the actual class type of this object.
 		 */
-		if (!Arrays.asList(classes).contains(IDsfService.class.getName())) {
-			String[] newClasses = new String[classes.length + 1];
-			System.arraycopy(classes, 0, newClasses, 1, classes.length);
-			newClasses[0] = IDsfService.class.getName();
-			classes = newClasses;
-		}
-		if (!Arrays.asList(classes).contains(getClass().getName())) {
-			String[] newClasses = new String[classes.length + 1];
-			System.arraycopy(classes, 0, newClasses, 1, classes.length);
-			newClasses[0] = getClass().getName();
-			classes = newClasses;
-		}
+		classSet.add(IDsfService.class.getName());
+		classSet.add(getClass().getName());
+
 		/*
 		 * Make sure that the session ID is set in the service properties.
 		 * The session ID distinguishes this service instance from instances
@@ -211,7 +199,7 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 		 */
 		properties.put(PROP_SESSION_ID, getSession().getId());
 		fProperties = properties;
-		fRegistration = getBundleContext().registerService(classes, this, properties);
+		fRegistration = getBundleContext().registerService(classSet.toArray(String[]::new), this, properties);
 
 		/*
 		 * Retrieve the OBJECTCLASS property directly from the service

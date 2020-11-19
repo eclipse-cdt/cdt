@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "364cc9a5_eddb183c",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 6
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-19T19:44:10Z",
+      "side": 1,
+      "message": "The changes to Orbit were incomplete - so to get this to work we need a new orbit build. For now I am using the I-build which contains the same as 2020-12 M3 + javax.activation 1.2.2",
+      "revId": "409a830c390d5d22dd5a7481a6684b7f9d8feb02",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

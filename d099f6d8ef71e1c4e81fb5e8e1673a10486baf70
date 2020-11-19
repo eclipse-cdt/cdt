@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "86427731_12bf385e",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-19T19:42:06Z",
+      "side": 1,
+      "message": "Can you just call flush..., i.e. do you need to wrap in an execute? (BTW I was focused on higher level things in PS1 so I didn\u0027t pay attention to details of how the flush was called). There are places in DSF* where you do indeed want to artificially delay by a number of executor \"ticks\", but I don\u0027t imagine that applies here?\n\n* see comment on org.eclipse.cdt.dsf.debug.service.command.CommandCache.fCommandControl",
+      "range": {
+        "startLine": 719,
+        "startChar": 3,
+        "endLine": 719,
+        "endChar": 32
+      },
+      "revId": "d099f6d8ef71e1c4e81fb5e8e1673a10486baf70",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f3295652_362e61f4",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
         "patchSetId": 2

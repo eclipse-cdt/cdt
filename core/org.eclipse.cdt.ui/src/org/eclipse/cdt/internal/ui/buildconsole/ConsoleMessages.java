@@ -49,6 +49,7 @@ public final class ConsoleMessages extends NLS {
 	public static String CopyLog_UnableToAccess;
 	public static String CopyLog_UnavailableLog;
 	public static String WrapLinesAction_WrapLines;
+	public static String BringToTopOnBuild;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);

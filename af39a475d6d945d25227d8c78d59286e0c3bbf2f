@@ -94,6 +94,24 @@
     },
     {
       "key": {
+        "uuid": "89b68e61_0f4d14c1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ShowOnActivityAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-11-19T14:01:41Z",
+      "side": 1,
+      "message": "There is an equivalent: org.eclipse.cdt.internal.ui.CPluginImages.createImageDescriptor(Bundle, IPath, boolean)\n\nJonah? That will bring a new dependency to debug UI (to refer to the bundle). What do you prefer, the copy or a new dependency? Using the icon from debug UI might result in not noticing if its gone (e.g. someone decides to replace all pngs with gifs).",
+      "parentUuid": "789fd7a4_e9980736",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c384b87f_9484fe68",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CDTSharedImages.java",
         "patchSetId": 1

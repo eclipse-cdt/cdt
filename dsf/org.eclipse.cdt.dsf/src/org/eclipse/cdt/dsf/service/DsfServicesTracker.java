@@ -258,12 +258,7 @@ public class DsfServicesTracker {
 		if (session != null) {
 			try {
 				if (!session.getExecutor().isInExecutorThread()) {
-					session.getExecutor().execute(new DsfRunnable() {
-						@Override
-						public void run() {
-							doDispose();
-						}
-					});
+					session.getExecutor().execute(this::doDispose);
 					return;
 				}
 			} catch (RejectedExecutionException e) {
@@ -280,8 +275,8 @@ public class DsfServicesTracker {
 	private void doDispose() {
 		try {
 			fBundleContext.removeServiceListener(fListener);
-			for (Iterator<ServiceReference<?>> itr = fServices.keySet().iterator(); itr.hasNext();) {
-				fBundleContext.ungetService(itr.next());
+			for (ServiceReference<?> serviceRef : fServices.keySet()) {
+				fBundleContext.ungetService(serviceRef);
 			}
 		} catch (IllegalStateException e) {
 			// May be thrown during shutdown (bug 293049).

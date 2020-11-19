@@ -120,6 +120,8 @@ public class CDTSharedImages {
 	public static final String IMG_OBJS_USER = "icons/obj16/person-me.gif"; //$NON-NLS-1$
 	/** @since 5.6 */
 	public static final String IMG_OBJS_WRAP_LINE = "icons/elcl16/wrap_lines.png"; //$NON-NLS-1$
+	/** @since 7.0 */
+	public static final String IMG_OBJS_SHOW_CONSOLE_ON_ACTIVITY = "icons/elcl16/show_console_on_activity.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CDT_TESTING = "icons/obj16/flask.png"; //$NON-NLS-1$
 
 	public static final String IMG_OBJS_NLS_NEVER_TRANSLATE = "icons/obj16/never_translate.gif"; //$NON-NLS-1$

@@ -113,6 +113,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	static public final String DEFAULT_CONTEXT_MENU_ID = CUIPlugin.PLUGIN_ID + ".CDTBuildConsole"; //$NON-NLS-1$
 
 	private IProject fLastProject;
+	private boolean fActivateConsoleOnActivity;
 
 	/**
 	 * Default constructor.
@@ -142,6 +143,10 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	 * that is shown is the console that was last on top.
 	 */
 	protected void showConsole(boolean bringToTop) {
+		// bug 568926: ensure we don't show the build console if the respective preference is disabled
+		if (!fActivateConsoleOnActivity) {
+			return;
+		}
 		IWorkbenchWindow window = CUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage page = window.getActivePage();
@@ -306,6 +311,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			problemInfoBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(),
 					BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR);
 		});
+		fActivateConsoleOnActivity = getActivateConsoleOnActivityPreference();
 		CUIPlugin.getWorkspace().addResourceChangeListener(this);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
@@ -362,6 +368,9 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			problemInfoBackgroundColor.dispose();
 			problemInfoBackgroundColor = newColor;
 			redrawTextViewer();
+			// console activation
+		} else if (property.equals(BuildConsolePreferencePage.PREF_CONSOLE_ON_TOP)) {
+			fActivateConsoleOnActivity = getActivateConsoleOnActivityPreference();
 		}
 	}
 
@@ -519,4 +528,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		return logURI;
 	}
 
+	private static boolean getActivateConsoleOnActivityPreference() {
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(BuildConsolePreferencePage.PREF_CONSOLE_ON_TOP);
+	}
 }

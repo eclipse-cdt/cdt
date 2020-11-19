@@ -123,6 +123,7 @@ public class BuildConsolePage extends Page
 	private PreviousErrorAction fPreviousErrorAction;
 	private ShowErrorAction fShowErrorAction;
 	private WrapLinesAction fWrapAction;
+	private ShowOnActivityAction fShowOnActivityAction;
 
 	/**
 	 * @param view
@@ -261,6 +262,8 @@ public class BuildConsolePage extends Page
 				|| property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_LINES)
 				|| property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_WRAP_LINES_MAX)) {
 			fWrapAction.propertyChange();
+		} else if (property.equals(BuildConsolePreferencePage.PREF_CONSOLE_ON_TOP)) {
+			fShowOnActivityAction.propertyChange();
 		}
 	}
 
@@ -272,6 +275,7 @@ public class BuildConsolePage extends Page
 		fNextErrorAction = new NextErrorAction(this);
 		fPreviousErrorAction = new PreviousErrorAction(this);
 		fShowErrorAction = new ShowErrorAction(this);
+		fShowOnActivityAction = new ShowOnActivityAction();
 		fSaveLogAction = new CopyBuildLogAction(this);
 
 		getViewer().setAutoScroll(!fIsLocked);
@@ -332,6 +336,7 @@ public class BuildConsolePage extends Page
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fScrollLockAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fWrapAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fClearOutputAction);
+		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fShowOnActivityAction);
 	}
 
 	protected BuildConsoleViewer getViewer() {

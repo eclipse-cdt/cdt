@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "493968bd_2960af0f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-19T20:37:51Z",
+      "side": 1,
+      "message": "You should be in the author or also by field.",
+      "revId": "701041aa3593e4b19bd56c5cb2b9c5dd7da68cb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

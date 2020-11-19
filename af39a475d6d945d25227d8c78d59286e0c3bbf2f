@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3d2c8619_22e78b6b",
+        "filename": "core/org.eclipse.cdt.ui/icons/elcl16/show_console_on_activity.png",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1179
+      },
+      "writtenOn": "2020-11-19T13:29:09Z",
+      "side": 1,
+      "message": "See org.eclipse.jdt.internal.ui.JavaPluginImages.createImageDescriptor(Bundle, IPath, boolean)\n\nYou can reference an icon from another bundle.",
+      "parentUuid": "f1091b43_423a6114",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "df9d7b02_9b659b06",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ConsoleMessages.properties",
         "patchSetId": 1
@@ -53,6 +71,40 @@
       "writtenOn": "2020-11-19T12:08:07Z",
       "side": 1,
       "message": "Copy-pasted, I\u0027ll update with next patch set.",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "789fd7a4_e9980736",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ShowOnActivityAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1179
+      },
+      "writtenOn": "2020-11-19T13:29:09Z",
+      "side": 1,
+      "message": "See org.eclipse.jdt.internal.ui.JavaPluginImages.createImageDescriptor(Bundle, IPath, boolean)\n\nYou can reference an icon from another bundle.",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c384b87f_9484fe68",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CDTSharedImages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1179
+      },
+      "writtenOn": "2020-11-19T13:29:09Z",
+      "side": 1,
+      "message": "do we need to expose this as API at all?",
       "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

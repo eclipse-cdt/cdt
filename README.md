@@ -2,11 +2,11 @@
 
 ## Contributing
 
-Please see [CONTRIBUTING.md] for contributing information
+Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for contributing information
 
 ## Developing CDT
 
-Most developers, developing CDT in the Eclipse IDE, should use https://wiki.eclipse.org/Getting_started_with_CDT_development.
+Most developers, developing CDT in the Eclipse IDE, should use [Getting_started_with_CDT_development](https://wiki.eclipse.org/Getting_started_with_CDT_development).
 
 ## Command-line Build instructions with Maven
 
@@ -19,10 +19,10 @@ mvn package
 and the resulting p2 repository will be in `releng/org.eclipse.cdt.repo/target/repository`
 
 The current set of options to Maven used for building on the CI can be seen in the Jenkinsfiles
-on cdt-infra: https://github.com/eclipse-cdt/cdt-infra/tree/master/jenkins/pipelines/cdt
+on [cdt-infra](https://github.com/eclipse-cdt/cdt-infra/tree/master/jenkins/pipelines/cdt)
 
 To build CDT plug-ins you need a standard Maven & Java developement environment. The Dockerfiles used for CDT's images are
-published in cdt-infra https://github.com/eclipse-cdt/cdt-infra/tree/master/docker. The requirements for running all tests
+published in [cdt-infra](https://github.com/eclipse-cdt/cdt-infra/tree/master/docker). The requirements for running all tests
 successfully and for rebuilding non-Java parts of CDT are much more extensive than standard Maven & Java and include
 items such as GCC, GDB, yarn, Node, etc. Refer to the Dockerfiles for the current versions of those dependencies.
 
@@ -78,8 +78,8 @@ mvn generate-resources -DuseSimrelRepo -f build/org.eclipse.cdt.autotools.docs -
 
 #### jniheaders
 
-The `jniheaders` profile can be used on the core/org.eclipse.cdt.core.native and
-native/org.eclipse.cdt.native.serial to rebuild the header files for JNI natives.
+The `jniheaders` profile can be used on the `core/org.eclipse.cdt.core.native` and
+`native/org.eclipse.cdt.native.serial` to rebuild the header files for JNI natives.
 See also `native` property below.
 
 ### Properties
@@ -143,7 +143,7 @@ An additional tip is to set the following in `.gitconfig` to allow you to diff `
 
 When the host is Windows, getting docker to behave as encoded in the pom.xml may be challenging, instead a command like this will probably work (replace your path to git root). Note that running this in git bash causes problems because of the /work in the command line arguments. (TODO integrate this command line way of running into the pom.xml so the original instructions work.)
 
-docker 'run' '--rm' '-t' '-v' 'D:\cdt\git\org.eclipse.cdt:/work' '-w' '/work/core/org.eclipse.cdt.core.native' 'quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest' 'make' '-C' 'native_src' 'rebuild'
+`docker 'run' '--rm' '-t' '-v' 'D:\cdt\git\org.eclipse.cdt:/work' '-w' '/work/core/org.eclipse.cdt.core.native' 'quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest' 'make' '-C' 'native_src' 'rebuild'`
 
 See also `jniheaders` profile above.
 

@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
@@ -55,6 +56,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleView;
 import org.osgi.service.prefs.Preferences;
 
@@ -114,10 +116,15 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 	private IProject fLastProject;
 
+	private IConsoleListener fConsoleListener;
+	private URL fIconUrl;
+	private final AtomicBoolean fWasClosed;
+
 	/**
 	 * Default constructor.
 	 */
 	public BuildConsoleManager() {
+		fWasClosed = new AtomicBoolean(false);
 	}
 
 	/**
@@ -275,12 +282,26 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		errorStream = new BuildConsoleStreamDecorator();
 		fName = name;
 		fContextMenuId = contextId;
+		fConsoleListener = new IConsoleListener() {
+			@Override
+			public void consolesAdded(org.eclipse.ui.console.IConsole[] consoles) {
+				// don't care
+			}
+
+			@Override
+			public void consolesRemoved(org.eclipse.ui.console.IConsole[] consoles) {
+				for (org.eclipse.ui.console.IConsole console : consoles) {
+					if (console == fConsole) {
+						fWasClosed.set(true);
+					}
+				}
+			}
+		};
+		ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(fConsoleListener);
+		fIconUrl = iconUrl;
 
 		runUI(() -> {
-			// add console to the Console view
-			fConsole = createBuildConsole(fName, fContextMenuId, iconUrl);
-			ConsolePlugin.getDefault().getConsoleManager()
-					.addConsoles(new org.eclipse.ui.console.IConsole[] { fConsole });
+			addConsole();
 
 			infoStream.setConsole(fConsole);
 			infoColor = createColor(CUIPlugin.getStandardDisplay(),
@@ -308,6 +329,20 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		});
 		CUIPlugin.getWorkspace().addResourceChangeListener(this);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+	}
+
+	public void reinitaliazeIfNecessary() {
+		if (!(this instanceof GlobalBuildConsoleManager))
+			GlobalBuildConsoleManager.staticReinitaliazeIfNecessary();
+		if (fWasClosed.getAndSet(false)) {
+			addConsole();
+		}
+	}
+
+	private void addConsole() {
+		// add console to the Console view
+		fConsole = createBuildConsole(fName, fContextMenuId, fIconUrl);
+		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new org.eclipse.ui.console.IConsole[] { fConsole });
 	}
 
 	@Override

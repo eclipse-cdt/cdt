@@ -158,13 +158,14 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 					// console
 					page.activate(activePart);
 				}
-				if (bringToTop && shouldBringToTop(consoleView)) {
+				boolean shouldBringToTop = shouldBringToTop(consoleView);
+				if (bringToTop && shouldBringToTop) {
 					page.bringToTop(consoleView);
 				}
 				if (consoleView instanceof IConsoleView) {
 					if (BuildConsole.getCurrentPage() == null)
 						((IConsoleView) consoleView).display(fConsole);
-					else
+					else if (shouldBringToTop)
 						((IConsoleView) consoleView).display(BuildConsole.getCurrentPage().getConsole());
 				}
 			}

@@ -34,8 +34,8 @@ import org.eclipse.ui.PlatformUI;
 
 public class BuildConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
+	public static final String PREF_CONSOLE_ON_TOP = "consoleOnTop"; //$NON-NLS-1$
 	private static final String PREF_CLEAR_CONSOLE = "clearConsole"; //$NON-NLS-1$
-	private static final String PREF_CONSOLE_ON_TOP = "consoleOnTop"; //$NON-NLS-1$
 	private static final String PREF_AUTO_OPEN_CONSOLE = "autoOpenConsole"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_WRAP_LINES = "buildConsoleWrapLines"; //$NON-NLS-1$
 	/**

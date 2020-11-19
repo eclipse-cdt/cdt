@@ -82,6 +82,10 @@ public class GlobalBuildConsoleManager extends BuildConsoleManager {
 		getInstance();
 	}
 
+	static void staticReinitaliazeIfNecessary() {
+		getInstance().reinitaliazeIfNecessary();
+	}
+
 	/**
 	 * Stop the console and deallocate resources allocated during {@link #startup()}
 	 */

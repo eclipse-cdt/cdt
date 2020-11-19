@@ -560,6 +560,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fBuildConsoleManagers.put(contextId, manager);
 			manager.startup(name, contextId, iconUrl);
 		}
+		manager.reinitaliazeIfNecessary();
 		return manager;
 	}
 

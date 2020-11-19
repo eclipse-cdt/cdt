@@ -83,6 +83,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.actions.ClearOutputAction;
+import org.eclipse.ui.console.actions.CloseConsoleAction;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.console.actions.TextViewerGotoLineAction;
 import org.eclipse.ui.ide.IDE;
@@ -122,6 +123,7 @@ public class BuildConsolePage extends Page
 	private NextErrorAction fNextErrorAction;
 	private PreviousErrorAction fPreviousErrorAction;
 	private ShowErrorAction fShowErrorAction;
+	private CloseConsoleAction fCloseConsoleAction;
 	private WrapLinesAction fWrapAction;
 	private BringToTopOnBuild fBringToTopOnBuild;
 
@@ -276,6 +278,7 @@ public class BuildConsolePage extends Page
 		fPreviousErrorAction = new PreviousErrorAction(this);
 		fShowErrorAction = new ShowErrorAction(this);
 		fBringToTopOnBuild = new BringToTopOnBuild();
+		fCloseConsoleAction = new CloseConsoleAction(this.fConsole);
 		fSaveLogAction = new CopyBuildLogAction(this);
 
 		getViewer().setAutoScroll(!fIsLocked);
@@ -337,6 +340,8 @@ public class BuildConsolePage extends Page
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fWrapAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fClearOutputAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fBringToTopOnBuild);
+		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fCloseConsoleAction);
+		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, new Separator());
 	}
 
 	protected BuildConsoleViewer getViewer() {

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4cd87202_4721359d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_12.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-20T23:13:04Z",
+      "side": 1,
+      "message": "This sends the SIGINT to the wrong place. Not clear it is possible to send it to the correct place.",
+      "revId": "6fd4784b0e07694432bd73e9d3d0b6d4504f8c37",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

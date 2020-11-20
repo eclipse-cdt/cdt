@@ -16,6 +16,29 @@
       "revId": "163ac385abefee447a1ace4f24722bef2c17dd43",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5a60a2e_75eaaa12",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CDTSharedImages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-20T15:42:45Z",
+      "side": 1,
+      "message": "this shuold be @since 7.1 and manifest version bumped. I don\u0027t know why this whole class is considered API.",
+      "range": {
+        "startLine": 123,
+        "startChar": 0,
+        "endLine": 123,
+        "endChar": 18
+      },
+      "revId": "163ac385abefee447a1ace4f24722bef2c17dd43",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

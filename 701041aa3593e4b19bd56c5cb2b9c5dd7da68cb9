@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "f4e419fa_1c7b8644",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-20T08:07:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c5f12dd_45672ec1",
+      "revId": "701041aa3593e4b19bd56c5cb2b9c5dd7da68cb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bd01d85d_d6fcf18b",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
         "patchSetId": 3
@@ -147,6 +165,30 @@
       "revId": "701041aa3593e4b19bd56c5cb2b9c5dd7da68cb9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf41fcd8_4feb09c0",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-20T08:07:18Z",
+      "side": 1,
+      "message": "Issue extracted to https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d568978",
+      "parentUuid": "a403bfdf_f3596b12",
+      "range": {
+        "startLine": 719,
+        "startChar": 3,
+        "endLine": 719,
+        "endChar": 47
+      },
+      "revId": "701041aa3593e4b19bd56c5cb2b9c5dd7da68cb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

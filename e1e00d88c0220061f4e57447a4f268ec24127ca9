@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "7ffcd373_d9c67865",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-11-20T18:07:34Z",
+      "side": 1,
+      "message": "We use Atomic for UI class. What kind of scenario do we expect?",
+      "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0c02fa69_0d6d6241",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
         "patchSetId": 3
@@ -19,6 +36,23 @@
     },
     {
       "key": {
+        "uuid": "df55bb11_06f7c104",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-11-20T18:07:34Z",
+      "side": 1,
+      "message": "let\u0027s add braces",
+      "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "aa30f72f_06e00bb8",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsolePage.java",
         "patchSetId": 3
@@ -30,6 +64,23 @@
       "writtenOn": "2020-11-20T16:19:49Z",
       "side": 1,
       "message": "Can a separator be added here?\n\nThe reason for the separator is that the close button is now very close to the up/down buttons, so a little slip of the mouse causes the console to be closed as you are quickly trawling error messages.",
+      "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7509928c_84451d1d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/GlobalBuildConsoleManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2020-11-20T18:07:34Z",
+      "side": 1,
+      "message": "The singleton in OSGi environment is questionable decision, but adding another static accessor is even more questionable. What we are trying to achieve here?",
       "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

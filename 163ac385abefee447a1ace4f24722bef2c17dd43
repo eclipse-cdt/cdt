@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9c11e1b7_e88d593d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/BuildConsolePreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-20T15:37:30Z",
+      "side": 1,
+      "message": "Why did you move this line? Its not very important, but confused me a little.",
+      "revId": "163ac385abefee447a1ace4f24722bef2c17dd43",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

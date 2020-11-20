@@ -37,6 +37,41 @@
     },
     {
       "key": {
+        "uuid": "de679630_ca9a7e8f",
+        "filename": "core/org.eclipse.cdt.ui/icons/elcl16/show_console_on_activity.png",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-20T15:37:30Z",
+      "side": 1,
+      "message": "Please make a note in the commit message where you copied the file from please.",
+      "parentUuid": "3d2c8619_22e78b6b",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "17d673fd_649a5bfc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-20T15:37:30Z",
+      "side": 1,
+      "message": "If this change is made, then I think that isAutoOpenConsole preference needs to be greyed out when fActivateConsoleOnActivity is true. Or the isAutoOpenConsole needs to take preference. Note that the case where isAutoOpenConsole is actually relevant is the call just above on line 137.",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "df9d7b02_9b659b06",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ConsoleMessages.properties",
         "patchSetId": 1
@@ -106,6 +141,24 @@
       "side": 1,
       "message": "There is an equivalent: org.eclipse.cdt.internal.ui.CPluginImages.createImageDescriptor(Bundle, IPath, boolean)\n\nJonah? That will bring a new dependency to debug UI (to refer to the bundle). What do you prefer, the copy or a new dependency? Using the icon from debug UI might result in not noticing if its gone (e.g. someone decides to replace all pngs with gifs).",
       "parentUuid": "789fd7a4_e9980736",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "718b1133_1b1a93f5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ShowOnActivityAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-20T15:37:30Z",
+      "side": 1,
+      "message": "My initial reaction was just to copy it and not introduce new dependencies for the off chance that someone was using CDT UI and didn\u0027t want debug at all.\n\nHowever after looking at how Ant integration works, its build console is a debug UI based on that does have standard show on stderr/stdout, so I am no longer convinced. Gradle plug-ins AFAICT does not use the debug UI one.\n\nSee my comments in the bug.",
+      "parentUuid": "89b68e61_0f4d14c1",
       "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

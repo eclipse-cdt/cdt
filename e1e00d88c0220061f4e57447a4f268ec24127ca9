@@ -84,6 +84,24 @@
       "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "012e27b5_55de4cf4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/GlobalBuildConsoleManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-11-20T20:40:07Z",
+      "side": 1,
+      "message": "Re-opening the \"global build console\" without exposing the instance. If you see a better option for the code, please suggest it.\n\nWe are not re-working the singleton though; this is far outside the scope of adding a close button (what should in essence be trivial, but is not due to the CDT console backing code).",
+      "parentUuid": "7509928c_84451d1d",
+      "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

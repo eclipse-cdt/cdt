@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0c02fa69_0d6d6241",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-20T16:19:49Z",
+      "side": 1,
+      "message": "Missing cooresponding removeConsoleListener in shutdown.",
+      "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa30f72f_06e00bb8",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsolePage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-20T16:19:49Z",
+      "side": 1,
+      "message": "Can a separator be added here?\n\nThe reason for the separator is that the close button is now very close to the up/down buttons, so a little slip of the mouse causes the console to be closed as you are quickly trawling error messages.",
+      "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

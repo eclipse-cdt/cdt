@@ -15,10 +15,12 @@
 package org.eclipse.cdt.dsf.service;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.stream.Collectors;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -207,12 +209,54 @@ public class DsfServicesTracker {
 	}
 
 	/**
-	 * Convenience class to retrieve a service based on class name only.
+	 * Retrieves all service references for given optional filter.
+	 * Filter should be used if there are multiple instances of the desired service
+	 * running within the same session.
+	 * @param custom filter to use when searching for the service, this filter will
+	 * be used instead of the standard filter so it should also specify the desired
+	 * session-ID
+	 * @return List of OSGI service references to the desired service
+	 * @since 2.10
+	 */
+	public <V> Collection<ServiceReference<V>> getServiceReferences(Class<V> serviceClass, String filter) {
+		if (fDisposed) {
+			return Collections.emptyList();
+		}
+
+		// If the session is not active, all of its services are gone.
+		DsfSession session = DsfSession.getSession(fSessionId);
+		if (session == null) {
+			return Collections.emptyList();
+		}
+		assert session.getExecutor().isInExecutorThread();
+
+		try {
+			return fBundleContext.getServiceReferences(serviceClass, filter != null ? filter : fServiceFilter);
+		} catch (InvalidSyntaxException e) {
+			assert false : "Invalid session ID syntax"; //$NON-NLS-1$
+		} catch (IllegalStateException e) {
+			// Can occur when plugin is shutting down.
+		}
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Convenience method to retrieve a service based on class name only.
 	 * @param serviceClass class of the desired service
 	 * @return instance of the desired service, null if not found
 	 */
 	public <V> V getService(Class<V> serviceClass) {
 		return getService(serviceClass, null);
+	}
+
+	/**
+	 * Convenience method to retrieve all services based on class name only.
+	 * @param serviceClass class of the desired service
+	 * @return List of instances of the desired service
+	 * @since 2.10
+	 */
+	public <V> Collection<V> getServices(Class<V> serviceClass) {
+		return getServices(serviceClass, null);
 	}
 
 	/**
@@ -231,6 +275,26 @@ public class DsfServicesTracker {
 			return null;
 		}
 
+		V service = getServiceHelper(serviceRef);
+		return service;
+	}
+
+	/**
+	 * Retrieves all services for given optional filter.
+	 * Filter should be used if there are multiple instances of the desired service
+	 * running within the same session.
+	 * @param custom filter to use when searching for the service, this filter will
+	 * be used instead of the standard filter so it should also specify the desired
+	 * session-ID
+	 * @return List of instances of the desired services
+	 * @since 2.10
+	 */
+	public <V> Collection<V> getServices(Class<V> serviceClass, String filter) {
+		return getServiceReferences(serviceClass, filter).stream().map(this::getServiceHelper)
+				.collect(Collectors.toList());
+	}
+
+	private <V> V getServiceHelper(ServiceReference<V> serviceRef) {
 		@SuppressWarnings("unchecked")
 		V service = (V) fServices.get(serviceRef);
 		if (service == null) {

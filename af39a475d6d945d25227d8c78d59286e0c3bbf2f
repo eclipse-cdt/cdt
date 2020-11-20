@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "2c045f32_9aba2c0b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-11-20T15:48:45Z",
+      "side": 1,
+      "message": "I\u0027ll debug next week to see why the use of BuildConsoleManager.shouldBringToTop() in this method doesn\u0027t work; I\u0027ve only now noticed the code.\n\nProbably that needs to be fixed instead of adding the extra member \u0027fActivateConsoleOnActivity\u0027 and the check here.",
+      "parentUuid": "17d673fd_649a5bfc",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "df9d7b02_9b659b06",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ConsoleMessages.properties",
         "patchSetId": 1

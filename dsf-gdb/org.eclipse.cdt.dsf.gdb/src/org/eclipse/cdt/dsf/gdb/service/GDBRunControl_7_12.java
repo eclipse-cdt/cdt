@@ -98,7 +98,7 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 		if (fGDBBackEnd.isFullGdbConsoleSupported()) {
 			// Start the job before sending the interrupt command
 			// to make sure we don't miss the *stopped event
-			final MonitorSuspendJob monitorJob = new MonitorSuspendJob(0, rm);
+			final MonitorSuspendJob monitorJob = new MonitorSuspendJob(0, rm, context);
 			fCommandControl.queueCommand(fCommandFactory.createMIExecInterrupt(context),
 					new ImmediateDataRequestMonitor<MIInfo>() {
 						@Override
@@ -314,8 +314,20 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 
 		private final RequestMonitor fRequestMonitor;
 
+		// if non-null, send a signal to GDB on this context if the
+		// -exec-interrupt fails.
+		private IExecutionDMContext context;
+
 		public MonitorSuspendJob(int timeout, RequestMonitor rm) {
+			this(timeout, rm, null);
+		}
+
+		/**
+		 * @since 6.1
+		 */
+		public MonitorSuspendJob(int timeout, RequestMonitor rm, IExecutionDMContext context) {
 			super("Suspend monitor job."); //$NON-NLS-1$
+			this.context = context;
 			setSystem(true);
 			fRequestMonitor = rm;
 
@@ -365,8 +377,15 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 				@Override
 				public void run() {
 					getSession().removeServiceEventListener(MonitorSuspendJob.this);
-					fRequestMonitor.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-							IDsfStatusConstants.REQUEST_FAILED, "Suspend operation timeout.", null)); //$NON-NLS-1$
+					// Fall back on sending a signal as the reason the suspend failed may
+					// be down to a synchronous continue or similar having been sent
+					// to the target
+					if (context == null) {
+						fRequestMonitor.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+								IDsfStatusConstants.REQUEST_FAILED, "Suspend operation timeout.", null)); //$NON-NLS-1$
+					} else {
+						GDBRunControl_7_12.super.suspend(context, fRequestMonitor);
+					}
 				}
 			});
 			return Status.OK_STATUS;

@@ -457,11 +457,7 @@
       </activityPatternBinding>
       <activityPatternBinding
             activityId="org.eclipse.tm.terminal.view.ui.activity.views"
-            pattern="org\.eclipse\.tm\.terminal\.view\.ui/org\.eclipse\.tm\.terminal\.view\.ui\.toolbar">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="org.eclipse.tm.terminal.view.ui.activity.views"
-            pattern="org\.eclipse\.tm\.terminal\.view\.ui/org\.eclipse\.tm\.terminal\.view\.ui\.commands\..*">
+            pattern="org\.eclipse\.tm\.terminal\.view\.ui/org\.eclipse\.tm\.terminal\.view\.ui\.commands\.^(?!org\.eclipse\.tm\.terminal\.view\.ui\.commands\.launchToolbar).*">
       </activityPatternBinding>
       
       <categoryActivityBinding
@@ -491,6 +487,37 @@
             categoryId="org.eclipse.tm.terminal.view.ui.category">
       </categoryActivityBinding>
       -->
+   </extension>
+   <extension point="org.eclipse.ui.activities">
+      <category
+            description="%activities.category.terminals.description"
+            id="org.eclipse.tm.terminal.view.ui.category"
+            name="%activities.category.terminals.name">
+      </category>
+
+      <activity
+            description="%activities.activity.terminals.maintoolbar.description"
+            id="org.eclipse.tm.terminal.view.ui.activity.maintoolbar"
+            name="%activities.activity.terminals.maintoolbar.name">
+      </activity>
+
+      <activityPatternBinding
+            activityId="org.eclipse.tm.terminal.view.ui.activity.maintoolbar"
+            pattern="org\.eclipse\.tm\.terminal\.view\.ui/org\.eclipse\.tm\.terminal\.view\.ui\.toolbar">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="org.eclipse.tm.terminal.view.ui.activity.maintoolbar"
+            pattern="org\.eclipse\.tm\.terminal\.view\.ui/org\.eclipse\.tm\.terminal\.view\.ui\.commands\.launchToolbar">
+      </activityPatternBinding>
+
+      <categoryActivityBinding
+            activityId="org.eclipse.tm.terminal.view.ui.activity.maintoolbar"
+            categoryId="org.eclipse.tm.terminal.view.ui.category">
+      </categoryActivityBinding>
+
+      <defaultEnablement
+            id="org.eclipse.tm.terminal.view.ui.activity.maintoolbar">
+      </defaultEnablement>
    </extension>
 
    <extension point="org.eclipse.ui.contexts">

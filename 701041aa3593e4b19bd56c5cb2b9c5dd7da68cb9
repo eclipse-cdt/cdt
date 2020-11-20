@@ -123,6 +123,30 @@
       "revId": "701041aa3593e4b19bd56c5cb2b9c5dd7da68cb9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a403bfdf_f3596b12",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2020-11-20T07:27:47Z",
+      "side": 1,
+      "message": "I agree that this issue should have a separate ticket.",
+      "parentUuid": "e73a2aa9_8e2eee81",
+      "range": {
+        "startLine": 719,
+        "startChar": 3,
+        "endLine": 719,
+        "endChar": 47
+      },
+      "revId": "701041aa3593e4b19bd56c5cb2b9c5dd7da68cb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

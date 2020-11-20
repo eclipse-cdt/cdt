@@ -22,4 +22,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java" type="org.eclipse.cdt.dsf.debug.service.command.ICommandControlService">
+        <filter comment="CDT allows new default methods that are unlikely to conflict" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.dsf.debug.service.command.ICommandControlService"/>
+                <message_argument value="flushAllCachesAndRefresh(RequestMonitor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

@@ -292,6 +292,8 @@
             name="org.mockito"/>
         <requirement
             name="org.slf4j.impl.log4j12"/>
+        <requirement
+            name="org.yaml.snakeyaml"/>
         <sourceLocator
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
@@ -329,7 +331,7 @@
             </annotation>
           </repository>
           <repository
-              url="https://download.eclipse.org/tools/orbit/downloads/2020-12/"/>
+              url="https://download.eclipse.org/tools/orbit/I-builds/I20201119185738/repository"/>
           <repository
               url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
         </repositoryList>

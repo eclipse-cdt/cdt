@@ -100,6 +100,56 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			FIND_RESOURCES_CACHE_SIZE);
 	private HashMap<IProject, LRUCache<IPath, List<IResource>>> findPathInProjectCache = new HashMap<>();
 
+	//String pathStr, URI baseURI -> URI
+	private static class MappedURIKey {
+		URI baseURI;
+		String pathStr;
+
+		public MappedURIKey(URI baseURI, String pathStr) {
+			super();
+			this.baseURI = baseURI;
+			this.pathStr = pathStr;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((baseURI == null) ? 0 : baseURI.hashCode());
+			result = prime * result + ((pathStr == null) ? 0 : pathStr.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			MappedURIKey other = (MappedURIKey) obj;
+			if (baseURI == null) {
+				if (other.baseURI != null)
+					return false;
+			} else if (!baseURI.equals(other.baseURI))
+				return false;
+			if (pathStr == null) {
+				if (other.pathStr != null)
+					return false;
+			} else if (!pathStr.equals(other.pathStr))
+				return false;
+			return true;
+		}
+	}
+
+	// Caches the result of determineMappedURI
+	private LRUCache<MappedURIKey, URI> mappedURICache = new LRUCache<>(FIND_RESOURCES_CACHE_SIZE);
+	// Caches the result of getFilesystemLocation
+	private LRUCache<URI, IPath> fileSystemLocationCache = new LRUCache<>(FIND_RESOURCES_CACHE_SIZE);
+	// Caches the result of new File(pathname).exists()
+	private LRUCache<IPath, Boolean> pathExistsCache = new LRUCache<>(FIND_RESOURCES_CACHE_SIZE);
+
 	/** @since 8.2 */
 	protected EFSExtensionProvider efsProvider = null;
 
@@ -498,6 +548,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		workspaceRootFindContainersForLocationURICache.clear();
 		workspaceRootFindFilesForLocationURICache.clear();
 		findPathInProjectCache.clear();
+		mappedURICache.clear();
+		fileSystemLocationCache.clear();
+		pathExistsCache.clear();
 	}
 
 	@Override
@@ -958,34 +1011,36 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * @return {@link URI} of the resource
 	 */
 	private URI determineMappedURI(String pathStr, URI baseURI) {
-		URI uri = null;
+		return mappedURICache.computeIfAbsent(new MappedURIKey(baseURI, pathStr), key -> {
+			URI uri = null;
 
-		if (baseURI == null) {
-			if (new Path(pathStr).isAbsolute()) {
-				uri = resolvePathFromBaseLocation(pathStr, Path.ROOT);
-			}
-		} else if (baseURI.getScheme().equals(EFS.SCHEME_FILE)) {
-			// location on the local file-system
-			IPath baseLocation = org.eclipse.core.filesystem.URIUtil.toPath(baseURI);
-			// careful not to use Path here but 'pathStr' as String as we want to properly navigate symlinks
-			uri = resolvePathFromBaseLocation(pathStr, baseLocation);
-		} else {
-			// location on a remote file-system
-			IPath path = new Path(pathStr); // use canonicalized path here, in particular replace all '\' with '/' for Windows paths
-			URI remoteUri = efsProvider.append(baseURI, path.toString());
-			if (remoteUri != null) {
-				String localPath = efsProvider.getMappedPath(remoteUri);
-				if (localPath != null) {
-					uri = org.eclipse.core.filesystem.URIUtil.toURI(localPath);
+			if (baseURI == null) {
+				if (new Path(pathStr).isAbsolute()) {
+					uri = resolvePathFromBaseLocation(pathStr, Path.ROOT);
+				}
+			} else if (baseURI.getScheme().equals(EFS.SCHEME_FILE)) {
+				// location on the local file-system
+				IPath baseLocation = org.eclipse.core.filesystem.URIUtil.toPath(baseURI);
+				// careful not to use Path here but 'pathStr' as String as we want to properly navigate symlinks
+				uri = resolvePathFromBaseLocation(pathStr, baseLocation);
+			} else {
+				// location on a remote file-system
+				IPath path = new Path(pathStr); // use canonicalized path here, in particular replace all '\' with '/' for Windows paths
+				URI remoteUri = efsProvider.append(baseURI, path.toString());
+				if (remoteUri != null) {
+					String localPath = efsProvider.getMappedPath(remoteUri);
+					if (localPath != null) {
+						uri = org.eclipse.core.filesystem.URIUtil.toURI(localPath);
+					}
 				}
 			}
-		}
 
-		if (uri == null) {
-			// if everything fails just wrap string to URI
-			uri = org.eclipse.core.filesystem.URIUtil.toURI(pathStr);
-		}
-		return uri;
+			if (uri == null) {
+				// if everything fails just wrap string to URI
+				uri = org.eclipse.core.filesystem.URIUtil.toURI(pathStr);
+			}
+			return uri;
+		});
 	}
 
 	/**
@@ -1103,22 +1158,24 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		if (uri == null)
 			return null;
 
-		String pathStr = efsProvider.getMappedPath(uri);
-		uri = org.eclipse.core.filesystem.URIUtil.toURI(pathStr);
+		return fileSystemLocationCache.computeIfAbsent(uri, (k) -> {
+			String pathStr = efsProvider.getMappedPath(uri);
+			URI resUri = org.eclipse.core.filesystem.URIUtil.toURI(pathStr);
 
-		if (uri != null && uri.isAbsolute()) {
-			try {
-				File file = new java.io.File(uri);
-				String canonicalPathStr = file.getCanonicalPath();
-				if (new Path(pathStr).getDevice() == null) {
-					return new Path(canonicalPathStr).setDevice(null);
+			if (resUri != null && resUri.isAbsolute()) {
+				try {
+					File file = new java.io.File(resUri);
+					String canonicalPathStr = file.getCanonicalPath();
+					if (new Path(pathStr).getDevice() == null) {
+						return new Path(canonicalPathStr).setDevice(null);
+					}
+					return new Path(canonicalPathStr);
+				} catch (Exception e) {
+					ManagedBuilderCorePlugin.log(e);
 				}
-				return new Path(canonicalPathStr);
-			} catch (Exception e) {
-				ManagedBuilderCorePlugin.log(e);
 			}
-		}
-		return null;
+			return null;
+		});
 	}
 
 	/**
@@ -1199,7 +1256,10 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		IPath location = getFilesystemLocation(uri);
 		if (location != null) {
 			String loc = location.toString();
-			if (new File(loc).exists()) {
+			boolean exists = pathExistsCache.computeIfAbsent(location, (s) -> {
+				return new File(loc).exists();
+			});
+			if (exists) {
 				return optionParser.createEntry(loc, loc, flag);
 			}
 		}

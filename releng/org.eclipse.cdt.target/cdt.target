@@ -11,6 +11,7 @@
 <unit id="org.eclipse.jdt.annotation" version="0.0.0"/>
 <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.test.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.unittest.ui" version="0.0.0"/>
 <repository location="https://download.eclipse.org/eclipse/updates/4.18milestones/S-4.18RC1-202011251800/"/>
 </location>
 	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "bda7c12f_5feefd96",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-11-23T08:18:11Z",
+      "side": 1,
+      "message": "I don\u0027t know which thread will call the console listener, or which thread will access the CDT build console (which can now lead to accessing this member).",
+      "parentUuid": "7ffcd373_d9c67865",
+      "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0c02fa69_0d6d6241",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "4d44da6b_24f55b61",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-11-23T08:18:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0c02fa69_0d6d6241",
+      "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "df55bb11_06f7c104",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
         "patchSetId": 3
@@ -50,6 +86,24 @@
       "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5cf92742_96e0c2d1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-11-23T08:18:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "df55bb11_06f7c104",
+      "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -99,6 +153,24 @@
       "side": 1,
       "message": "Re-opening the \"global build console\" without exposing the instance. If you see a better option for the code, please suggest it.\n\nWe are not re-working the singleton though; this is far outside the scope of adding a close button (what should in essence be trivial, but is not due to the CDT console backing code).",
       "parentUuid": "7509928c_84451d1d",
+      "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e2a55ed_ffdda8e8",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/GlobalBuildConsoleManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-11-23T08:18:11Z",
+      "side": 1,
+      "message": "I can make the getter package private?\n\norg.eclipse.cdt.internal.ui.buildconsole.GlobalBuildConsoleManager.getInstance()",
+      "parentUuid": "012e27b5_55de4cf4",
       "revId": "e1e00d88c0220061f4e57447a4f268ec24127ca9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

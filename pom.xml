@@ -228,6 +228,8 @@
 		<module>testsrunner/org.eclipse.cdt.testsrunner.tap</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.feature</module>
 
+		<module>unittest/org.eclipse.cdt.unittest</module>
+		<module>unittest/org.eclipse.cdt.unittest.feature</module>
 
 		<module>util/org.eclipse.cdt.util</module>
 

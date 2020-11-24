@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7684c02a_2b619dd3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-11-24T16:05:22Z",
+      "side": 1,
+      "message": "Ah sorry, I couldn\u0027t find where the method definition / synchronized was added (gitk gave up at some point). I\u0027ve removed synchronized in patch set 2.",
+      "parentUuid": "2df49453_e96b0ec3",
+      "range": {
+        "startLine": 315,
+        "startChar": 9,
+        "endLine": 315,
+        "endChar": 21
+      },
+      "revId": "066d684be8f95c07e68185d4834f429cbd47c131",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eb1f2ae6_1c1b47e9",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 1

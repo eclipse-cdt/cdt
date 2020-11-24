@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2df49453_e96b0ec3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-24T15:58:25Z",
+      "side": 1,
+      "message": "I think this (misplaced) synchronized can be ditched now. This code error is a result of a previous bad refactor.  Let me know if you agree.\n\nSee https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/6035/5/dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+      "range": {
+        "startLine": 315,
+        "startChar": 9,
+        "endLine": 315,
+        "endChar": 21
+      },
+      "revId": "066d684be8f95c07e68185d4834f429cbd47c131",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb1f2ae6_1c1b47e9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-24T15:58:25Z",
+      "side": 1,
+      "message": "I think simply adding the synchronized around the whole loop would have been ok too (restored to what bad refactor above led to).\n\nHowever that could potentially lead to a deadlock as calling .done() can do all sorts of stuff so I am happy with the copy.",
+      "revId": "066d684be8f95c07e68185d4834f429cbd47c131",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

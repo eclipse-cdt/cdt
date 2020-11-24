@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 QNX Software Systems and others.
+ * Copyright (c) 2014, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -226,11 +226,9 @@ public class ModeSelector extends CSelector {
 			String id = group.getIdentifier();
 			Image image = modeButtonImages.get(id);
 			if (image == null) {
-				Image bgImage = Activator.getDefault().getImageRegistry().get(Activator.IMG_BUTTON_BACKGROUND);
 				Image modeImage = getLabelProvider().getImage(mode);
-				ImageDescriptor imageDesc = new LaunchBarButtonImageDescriptor(modeImage, bgImage);
-				image = imageDesc.createImage();
-				modeButtonImages.put(id, image);
+				modeButtonImages.put(id, modeImage);
+				image = modeImage;
 			}
 			toolItem.setImage(image);
 		}

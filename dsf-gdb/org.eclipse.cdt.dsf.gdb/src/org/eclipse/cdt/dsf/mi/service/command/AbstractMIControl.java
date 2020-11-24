@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -312,13 +313,17 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	}
 
 	private synchronized void cancelRxCommands() {
-		for (CommandHandle commandHandle : fRxCommands.values()) {
+		Map<Integer, CommandHandle> copy;
+		synchronized (fRxCommands) {
+			copy = new LinkedHashMap<>(fRxCommands);
+			fRxCommands.clear();
+		}
+		for (CommandHandle commandHandle : copy.values()) {
 			if (commandHandle.getRequestMonitor() == null)
 				continue;
 			commandHandle.getRequestMonitor().setStatus(genStatus("Connection is shut down")); //$NON-NLS-1$
 			commandHandle.getRequestMonitor().done();
 		}
-		fRxCommands.clear();
 	}
 
 	/**

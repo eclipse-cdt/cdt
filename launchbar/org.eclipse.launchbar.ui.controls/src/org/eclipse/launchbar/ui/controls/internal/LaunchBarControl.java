@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 QNX Software Systems and others.
+ * Copyright (c) 2014, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.launchbar.core.ILaunchBarListener;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
@@ -142,12 +141,9 @@ public class LaunchBarControl implements ILaunchBarListener {
 	private ToolItem createButton(Composite parent, String imageName, String toolTipText, final String commandId) {
 		ToolItem button = new ToolItem((ToolBar) parent, SWT.FLAT);
 
-		Image bgImage = Activator.getDefault().getImageRegistry().get(Activator.IMG_BUTTON_BACKGROUND);
 		Image fgImage = Activator.getDefault().getImageRegistry().get(imageName);
 
-		ImageDescriptor imageDesc = new LaunchBarButtonImageDescriptor(fgImage, bgImage);
-		Image image = imageDesc.createImage();
-		button.setImage(image);
+		button.setImage(fgImage);
 		button.setToolTipText(toolTipText);
 		button.setData("command", commandId); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
@@ -167,7 +163,6 @@ public class LaunchBarControl implements ILaunchBarListener {
 				}
 			}
 		});
-		button.addDisposeListener(e -> image.dispose());
 		return button;
 	}
 

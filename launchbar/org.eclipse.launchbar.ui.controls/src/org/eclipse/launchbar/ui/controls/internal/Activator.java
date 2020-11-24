@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 QNX Software Systems and others.
+ * Copyright (c) 2016, 2020 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@ package org.eclipse.launchbar.ui.controls.internal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -27,7 +28,6 @@ public class Activator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.launchbar.ui.controls"; //$NON-NLS-1$
 
 	// images
-	public static final String IMG_BUTTON_BACKGROUND = "bgButton"; //$NON-NLS-1$
 	public static final String IMG_BUTTON_BUILD = "build"; //$NON-NLS-1$
 	public static final String IMG_BUTTON_LAUNCH = "launch"; //$NON-NLS-1$
 	public static final String IMG_BUTTON_STOP = "stop"; //$NON-NLS-1$
@@ -47,14 +47,16 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+	}
 
-		ImageRegistry imageRegistry = getImageRegistry();
-		imageRegistry.put(IMG_BUTTON_BACKGROUND, imageDescriptorFromPlugin(PLUGIN_ID, "icons/bgButton.png")); //$NON-NLS-1$
-		imageRegistry.put(IMG_BUTTON_BUILD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/build_16.png")); //$NON-NLS-1$
-		imageRegistry.put(IMG_BUTTON_LAUNCH, imageDescriptorFromPlugin(PLUGIN_ID, "icons/launch_16.png")); //$NON-NLS-1$
-		imageRegistry.put(IMG_BUTTON_STOP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/stop_16.png")); //$NON-NLS-1$
-		imageRegistry.put(IMG_CONFIG_CONFIG, imageDescriptorFromPlugin(PLUGIN_ID, "icons/config_config.png")); //$NON-NLS-1$
-		imageRegistry.put(IMG_EDIT_COLD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/edit_cold.png")); //$NON-NLS-1$
+	@Override
+	protected void initializeImageRegistry(ImageRegistry reg) {
+		reg.put(IMG_BUTTON_BUILD, ImageDescriptor.createFromURL(plugin.getBundle().getEntry("/icons/build_16.png"))); //$NON-NLS-1$
+		reg.put(IMG_BUTTON_LAUNCH, ImageDescriptor.createFromURL(plugin.getBundle().getEntry("/icons/launch.png"))); //$NON-NLS-1$
+		reg.put(IMG_BUTTON_STOP, ImageDescriptor.createFromURL(plugin.getBundle().getEntry("/icons/stop.png"))); //$NON-NLS-1$
+		reg.put(IMG_CONFIG_CONFIG,
+				ImageDescriptor.createFromURL(plugin.getBundle().getEntry("/icons/config_config.png"))); //$NON-NLS-1$
+		reg.put(IMG_EDIT_COLD, ImageDescriptor.createFromURL(plugin.getBundle().getEntry("/icons/edit_cold.png"))); //$NON-NLS-1$
 	}
 
 	@Override

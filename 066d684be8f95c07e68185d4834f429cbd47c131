@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "ea2baaab_482b8eb0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-24T16:07:35Z",
+      "side": 1,
+      "message": "egit did it for me. I normally use command line for most git operations, but I find that egit\u0027s blame implementation is great.",
+      "parentUuid": "7684c02a_2b619dd3",
+      "range": {
+        "startLine": 315,
+        "startChar": 9,
+        "endLine": 315,
+        "endChar": 21
+      },
+      "revId": "066d684be8f95c07e68185d4834f429cbd47c131",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eb1f2ae6_1c1b47e9",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 1

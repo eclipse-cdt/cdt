@@ -27,7 +27,9 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 
 /**
+ * @deprecated Replaced with a command and handler {@link org.eclipse.cdt.internal.ui.actions.WorkingSetConfigHandler}.
  */
+@Deprecated(forRemoval = true)
 public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, IPropertyChangeListener {
 
 	private static final IWorkingSetManager wsm = PlatformUI.getWorkbench().getWorkingSetManager();

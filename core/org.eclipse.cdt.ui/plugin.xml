@@ -1751,6 +1751,47 @@
          </menu>
       </menuContribution>
       <menuContribution
+            locationURI="menu:org.eclipse.cdt.ui.prjmenu?before=manage">
+         <menu
+               id="org.eclipse.cdt.ui.workingSets.changeBuildConfigMenu"
+               label="%BuildConfigMenuAction.label"
+               tooltip="%BuildConfigAction.tooltip">
+            <visibleWhen>
+               <with
+                     variable="activeContexts">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <equals
+                           value="org.eclipse.cdt.ui.buildConfigActionSet">
+                     </equals>
+                  </iterate>
+               </with>
+            </visibleWhen>
+            <dynamic
+                  class="org.eclipse.cdt.internal.ui.workingsets.ChangeBuildConfigContribution"
+                  id="org.eclipse.cdt.ui.changeBuildConfig">
+            </dynamic>
+         </menu>
+         <command
+               commandId="org.eclipse.cdt.ui.menu.manage.configs.command"
+               label="%ManageConfigAction.label"
+               style="push">
+            <visibleWhen>
+               <with
+                     variable="activeContexts">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <equals
+                           value="org.eclipse.cdt.ui.buildConfigActionSet">
+                     </equals>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
             locationURI="menu:org.eclipse.cdt.ui.prjmenu?before=wrksets">
          <menu
                id="org.eclipse.cdt.ui.workingSets.buildMenu"
@@ -1792,6 +1833,23 @@
                   id="org.eclipse.cdt.ui.activateWorkingSetConfigs">
             </dynamic>
          </menu>
+         <command
+               commandId="org.eclipse.cdt.ui.menu.wsselection.command"
+               label="%wsselection"
+               style="push">
+            <visibleWhen>
+               <with
+                     variable="activeContexts">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <equals
+                           value="org.eclipse.cdt.ui.buildConfigActionSet">
+                     </equals>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -2163,28 +2221,6 @@
               style="pulldown"
               toolbarPath="org.eclipse.ui.workbench.file/build.group"
               tooltip="%BuildConfigAction.tooltip2"/>
-        <action
-              class="org.eclipse.cdt.ui.actions.ManageConfigsAction"
-              enablesFor="+"
-              id="org.eclipse.cdt.ui.manageConfigsAction2"
-              label="%ManageConfigAction.label"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/manage"
-              />
-        <action
-              class="org.eclipse.cdt.ui.actions.ChangeBuildConfigMenuAction"
-              enablesFor="+"
-              id="org.eclipse.cdt.ui.buildConfigMenuAction"
-              label="%BuildConfigMenuAction.label"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/manage"
-              style="pulldown"
-              tooltip="%BuildConfigAction.tooltip"/>
-        <action
-              class="org.eclipse.cdt.ui.actions.WorkingSetConfigAction"
-              id="org.eclipse.cdt.ui.wsselection"
-              label="%wsselection"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/wrksets"
-              style="push"
-              />
      </actionSet>
      <actionSet
             label="%CElementCreationActionSet.label"
@@ -4221,6 +4257,18 @@
             namespace="org.eclipse.cdt.ui"
             properties="hasCProjects"
             type="org.eclipse.ui.IWorkingSet"/>
+      <propertyTester
+            class="org.eclipse.cdt.internal.ui.workingsets.NonEmptyWorkingSetPropertyTester"
+            id="org.eclipse.cdt.ui.nonEmptyWorkingSetPropertyTester"
+            namespace="org.eclipse.cdt.ui"
+            properties="hasNonEmptyWorkingSet"
+            type="java.lang.Object"/>
+      <propertyTester
+            class="org.eclipse.cdt.internal.ui.workingsets.HasManagedCdtProjectSelection"
+            id="org.eclipse.cdt.ui.hasManagedCdtProjectSelection"
+            namespace="org.eclipse.cdt.ui"
+            properties="hasManagedCdtProjectSelection"
+            type="java.util.Collection"/>
   </extension>
    
   <extension
@@ -4693,6 +4741,16 @@
 		categoryId="org.eclipse.ui.category.project"
 		id="org.eclipse.cdt.ui.menu.createParserLog">
 	</command>
+    <command
+        name="%wsselection.command.name"
+        categoryId="org.eclipse.ui.category.project"
+        id="org.eclipse.cdt.ui.menu.wsselection.command">
+    </command>
+    <command
+        name="%ManageConfigs.command.name"
+        categoryId="org.eclipse.ui.category.project"
+        id="org.eclipse.cdt.ui.menu.manage.configs.command">
+    </command>
  </extension>
  <extension
        point="org.eclipse.ui.handlers">
@@ -4719,6 +4777,24 @@
 	<handler
 		class="org.eclipse.cdt.internal.ui.actions.CreateParserLogHandler"
 		commandId="org.eclipse.cdt.ui.menu.createParserLog">
+    </handler>
+	<handler
+		class="org.eclipse.cdt.internal.ui.actions.WorkingSetConfigHandler"
+		commandId="org.eclipse.cdt.ui.menu.wsselection.command">
+        <enabledWhen>
+            <test
+                 property="org.eclipse.cdt.ui.hasNonEmptyWorkingSet">
+            </test>
+        </enabledWhen>
+    </handler>
+	<handler
+		class="org.eclipse.cdt.internal.ui.actions.ManageConfigsHandler"
+		commandId="org.eclipse.cdt.ui.menu.manage.configs.command">
+        <enabledWhen>
+            <test
+                 property="org.eclipse.cdt.ui.hasManagedCdtProjectSelection">
+            </test>
+        </enabledWhen>
     </handler>
  </extension>
  <extension

@@ -30,7 +30,10 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 
 /**
  * Action which changes active build configuration of the current project
+ *
+ * @deprecated Replaced with menu contribution {@link org.eclipse.cdt.internal.ui.workingsets.ChangeBuildConfigContribution}.
  */
+@Deprecated(forRemoval = true)
 public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase
 		implements IWorkbenchWindowPulldownDelegate2 {
 

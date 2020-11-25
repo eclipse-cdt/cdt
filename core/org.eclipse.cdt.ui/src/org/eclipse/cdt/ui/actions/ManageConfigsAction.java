@@ -28,7 +28,10 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 
 /**
  * Action which lets to manage (add/remove etc.) build configurations of the project.
+ *
+ * @deprecated Replaced with a command and handler {@link org.eclipse.cdt.internal.ui.actions.ManageConfigsHandler}.
  */
+@Deprecated(forRemoval = true)
 public class ManageConfigsAction implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 	IProject[] obs = null;
 

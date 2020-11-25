@@ -2168,21 +2168,21 @@
               enablesFor="+"
               id="org.eclipse.cdt.ui.manageConfigsAction2"
               label="%ManageConfigAction.label"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/manage"
+              menubarPath="project/org.eclipse.cdt.ui.prjmenu?after=manage"
               />
         <action
               class="org.eclipse.cdt.ui.actions.ChangeBuildConfigMenuAction"
               enablesFor="+"
               id="org.eclipse.cdt.ui.buildConfigMenuAction"
               label="%BuildConfigMenuAction.label"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/manage"
+              menubarPath="project/org.eclipse.cdt.ui.prjmenu?after=manage"
               style="pulldown"
               tooltip="%BuildConfigAction.tooltip"/>
         <action
               class="org.eclipse.cdt.ui.actions.WorkingSetConfigAction"
               id="org.eclipse.cdt.ui.wsselection"
               label="%wsselection"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/wrksets"
+              menubarPath="project/org.eclipse.cdt.ui.prjmenu?after=wrksets"
               style="push"
               />
      </actionSet>

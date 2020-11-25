@@ -2185,6 +2185,11 @@
               menubarPath="project/org.eclipse.cdt.ui.prjmenu/wrksets"
               style="push"
               />
+        <menu
+              id="org.eclipse.cdt.ui.prjmenu"
+              label="%Configurations.menu"
+              path="project/">
+        </menu>
      </actionSet>
      <actionSet
             label="%CElementCreationActionSet.label"

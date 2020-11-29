@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "75498af8_41960a33",
+        "filename": "core/org.eclipse.cdt.ui/icons/elcl16/show_console_on_activity.png",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:49:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "de679630_ca9a7e8f",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "17d673fd_649a5bfc",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
         "patchSetId": 1
@@ -90,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "15d8027e_8ea373b7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:49:00Z",
+      "side": 1,
+      "message": "This thread is unresolved. I am reviewing the change as I think you have resolved this, just not marked as so.",
+      "parentUuid": "2c045f32_9aba2c0b",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "df9d7b02_9b659b06",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ConsoleMessages.properties",
         "patchSetId": 1
@@ -113,6 +149,30 @@
     },
     {
       "key": {
+        "uuid": "c6c52174_3a79957e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ConsoleMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:49:00Z",
+      "side": 1,
+      "message": "This thread is unresolved.",
+      "parentUuid": "df9d7b02_9b659b06",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 47
+      },
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c7b37b70_86cde28a",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ShowOnActivityAction.java",
         "patchSetId": 1
@@ -124,6 +184,24 @@
       "writtenOn": "2020-11-19T12:08:07Z",
       "side": 1,
       "message": "Copy-pasted, I\u0027ll update with next patch set.",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48a027ca_c5089b85",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ShowOnActivityAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:49:00Z",
+      "side": 1,
+      "message": "This thread is unresolved.",
+      "parentUuid": "c7b37b70_86cde28a",
       "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
@@ -183,6 +261,24 @@
     },
     {
       "key": {
+        "uuid": "41a074aa_15c39805",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ShowOnActivityAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:49:00Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "718b1133_1b1a93f5",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c384b87f_9484fe68",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CDTSharedImages.java",
         "patchSetId": 1
@@ -197,6 +293,24 @@
       "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7adc944e_0e6e8388",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CDTSharedImages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:49:00Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c384b87f_9484fe68",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

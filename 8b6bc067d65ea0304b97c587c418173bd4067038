@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "580515dc_0859e00c",
+        "filename": "core/org.eclipse.cdt.ui/icons/elcl16/bring_console_to_top_on_build.png",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:59:13Z",
+      "side": 1,
+      "message": "Since the @2x versions of these files are available, please add them too: https://git.eclipse.org/r/plugins/gitiles/platform/eclipse.platform.images/+/refs/heads/master/org.eclipse.images/eclipse-png/org.eclipse.debug.ui/icons/full/elcl16/writeout_co%402x.png\n\nPS I will just add the above file in if you don\u0027t have the opportunity to get around to it.",
+      "revId": "8b6bc067d65ea0304b97c587c418173bd4067038",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "caaea5db_634c1d25",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/BuildConsolePreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:59:13Z",
+      "side": 1,
+      "message": "These lines have still changed order meaning this file shows a change, but there isn\u0027t really one.",
+      "revId": "8b6bc067d65ea0304b97c587c418173bd4067038",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

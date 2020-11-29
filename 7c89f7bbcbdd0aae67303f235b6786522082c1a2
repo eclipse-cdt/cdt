@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "79234f43_e3d4fab8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:39:07Z",
+      "side": 1,
+      "message": "The flush was moved.",
+      "parentUuid": "42d49e19_f965b9b4",
+      "range": {
+        "startLine": 654,
+        "startChar": 0,
+        "endLine": 654,
+        "endChar": 2
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8a6b4665_b7b464cb",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
         "patchSetId": 1
@@ -215,6 +239,30 @@
     },
     {
       "key": {
+        "uuid": "0f31d74d_5f09015a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:39:07Z",
+      "side": 1,
+      "message": "Resolved. Alexander +1ed",
+      "parentUuid": "5aeb7f62_9e2da13d",
+      "range": {
+        "startLine": 158,
+        "startChar": 22,
+        "endLine": 158,
+        "endChar": 39
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cc82eb2d_d575a948",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 1
@@ -285,6 +333,24 @@
     },
     {
       "key": {
+        "uuid": "f28b9439_11aea91f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1255,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:39:07Z",
+      "side": 1,
+      "message": "This was done.",
+      "parentUuid": "45bbbfef_0d528c9c",
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ac9521a7_5b2ccad5",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
         "patchSetId": 1
@@ -332,6 +398,30 @@
     },
     {
       "key": {
+        "uuid": "74569e34_4d205163",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:39:07Z",
+      "side": 1,
+      "message": "Nothing left to do here. I think the decision is made and we are not creating a new service for this.",
+      "parentUuid": "c3d23ab1_6b7c00af",
+      "range": {
+        "startLine": 87,
+        "startChar": 21,
+        "endLine": 87,
+        "endChar": 45
+      },
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fcc92c0f_8be42cf6",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
         "patchSetId": 1
@@ -364,6 +454,24 @@
       "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0400e3d_5fa49610",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T19:39:07Z",
+      "side": 1,
+      "message": "Alexander +1ed this, so this is fine.",
+      "parentUuid": "923bba57_b6a2652b",
+      "revId": "7c89f7bbcbdd0aae67303f235b6786522082c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -126,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "91b72ae9_1c8dc955",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-29T20:07:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "15d8027e_8ea373b7",
+      "revId": "af39a475d6d945d25227d8c78d59286e0c3bbf2f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "df9d7b02_9b659b06",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/buildconsole/ConsoleMessages.properties",
         "patchSetId": 1

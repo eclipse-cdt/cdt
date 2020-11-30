@@ -69,6 +69,24 @@
       "revId": "eb9f518d39ce734588c7ffd46bc90601d5b32ff3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4f400f7_d48e7135",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ICustomBuildOptionEditor2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-30T20:27:00Z",
+      "side": 1,
+      "message": "Ok, I\u0027ll push an update for the documentation.",
+      "parentUuid": "17c7ddbd_80bf57af",
+      "revId": "eb9f518d39ce734588c7ffd46bc90601d5b32ff3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

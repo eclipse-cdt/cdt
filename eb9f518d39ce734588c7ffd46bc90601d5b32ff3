@@ -33,6 +33,24 @@
       "revId": "eb9f518d39ce734588c7ffd46bc90601d5b32ff3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "80ff416d_3b39c08c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ICustomBuildOptionEditor2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-30T20:12:06Z",
+      "side": 1,
+      "message": "Well, not a particular use-case other than those that are already sub-classing one of the \"default\" implementations. My hope is that in some future release of CDT, there will be only one interface that contains everything.\n\nNow that I think about it, maybe it\u0027s better to define this method in the ICustomBuildOptionEditor interface and have a default implementation that returns false. Then it\u0027s not intrusive and less clutter.\nIs that a better solution or is it better to have 2 distinct interfaces that hopefully will be merged in some API breaking release in the future?",
+      "parentUuid": "f5b03ada_df3ab451",
+      "revId": "eb9f518d39ce734588c7ffd46bc90601d5b32ff3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

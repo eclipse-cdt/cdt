@@ -131,7 +131,6 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		IProject project = getProject();
 
 		project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-		infoPerResource = new HashMap<>();
 
 		try {
 
@@ -357,14 +356,13 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public IScannerInfo getScannerInformation(IResource resource) {
 		if (infoPerResource == null) {
 			// no build was run yet, nothing detected
-			infoPerResource = new HashMap<>();
 			try {
 				processCompileCommandsFile(null, new NullProgressMonitor());
 			} catch (CoreException e) {
 				Activator.log(e);
 			}
 		}
-		return infoPerResource.get(resource);
+		return infoPerResource == null ? null : infoPerResource.get(resource);
 	}
 
 	private void setScannerInformation(Map<IResource, IScannerInfo> infoPerResource) {

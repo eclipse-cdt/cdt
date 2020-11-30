@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Control;
  * org.eclipse.cdt.managedbuilder.core.buildDefinitions extension-point.
  *
  * @since 8.0
+ * @see {@link ICustomBuildOptionEditor2}
  */
 public interface ICustomBuildOptionEditor {
 	/**
@@ -39,7 +40,7 @@ public interface ICustomBuildOptionEditor {
 	 * 			for the field-editor. May be {@code null}.
 	 * @param preferenceName the name of the preference this field editor binds to.
 	 * @param parent the parent of the field editor's control.
-	 * @return {@code true} iff the custom field-editor can be successfully displayed. Returning {@code false}
+	 * @return {@code true} if the custom field-editor can be successfully displayed. Returning {@code false}
 	 * 			would cause the built-in field-editor to be displayed based on the option's {@link IOption#getValueType() valueType}.
 	 */
 	boolean init(IOption option, String extraArgument, String preferenceName, Composite parent);

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d20423e3_ef7aedeb",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/schema/buildDefinitionsUI.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-30T20:43:42Z",
+      "side": 1,
+      "message": "I\u0027m not sure that we should change this line. Could a change here generate build errors for existing implemnetations?",
+      "parentUuid": "c5d029b0_d4966fa3",
+      "revId": "b9968502238be1b033ae2466ef06aa5cbbbe00b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bff59287_df906bfd",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/BuildOptionSettingsUI.java",
         "patchSetId": 2

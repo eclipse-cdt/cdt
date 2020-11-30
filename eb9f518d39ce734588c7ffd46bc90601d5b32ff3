@@ -51,6 +51,24 @@
       "revId": "eb9f518d39ce734588c7ffd46bc90601d5b32ff3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "17c7ddbd_80bf57af",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ICustomBuildOptionEditor2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-30T20:24:28Z",
+      "side": 1,
+      "message": "That makes sense as a migration path. Because of how widespread the class is used I would err on the side of a new interface still and then merge them in some future release.\n\nAdding default methods technically breaks API, but historically CDT has allowed it for places where it is very unlikely to have a name clash. While it is still unlikely, it is not /very/ unlikely in this case :-)\n\nSo, I say this is resolved and we\u0027ll go as is.",
+      "parentUuid": "80ff416d_3b39c08c",
+      "revId": "eb9f518d39ce734588c7ffd46bc90601d5b32ff3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

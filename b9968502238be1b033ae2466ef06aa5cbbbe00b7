@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c5d029b0_d4966fa3",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/schema/buildDefinitionsUI.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-30T20:36:09Z",
+      "side": 1,
+      "message": "here too?",
+      "revId": "b9968502238be1b033ae2466ef06aa5cbbbe00b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

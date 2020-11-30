@@ -808,59 +808,66 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				changedOption = (IOption) option[1];
 				changedHolder = (IHoldsOptions) option[0];
 				try {
-					switch (changedOption.getValueType()) {
-					case IOption.STRING:
-						if (fe instanceof StringFieldEditor) {
-							String val = ((StringFieldEditor) fe).getStringValue();
-							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);
-						}
-						break;
-					case IOption.BOOLEAN:
-						if (fe instanceof BooleanFieldEditor) {
-							boolean val = ((BooleanFieldEditor) fe).getBooleanValue();
-							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);
-						}
-						break;
-					case IOption.ENUMERATED:
-						if (fe instanceof BuildOptionComboFieldEditor) {
-							String name = ((BuildOptionComboFieldEditor) fe).getSelection();
-							String enumId = changedOption.getEnumeratedId(name);
-							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption,
-									(enumId != null && enumId.length() > 0) ? enumId : name);
+					boolean saved = false;
+					if (fe instanceof ICustomBuildOptionEditor2) {
+						saved = ((ICustomBuildOptionEditor2) fe).save(fInfo, changedHolder, changedOption);
+					}
 
-						}
-						break;
-					case IOption.TREE:
-						if (fe instanceof TreeBrowseFieldEditor) {
-							String name = ((TreeBrowseFieldEditor) fe).getStringValue();
-							String treeId = changedOption.getId(name);
-							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption,
-									(treeId != null && treeId.length() > 0) ? treeId : name);
+					if (!saved) {
+						switch (changedOption.getValueType()) {
+						case IOption.STRING:
+							if (fe instanceof StringFieldEditor) {
+								String val = ((StringFieldEditor) fe).getStringValue();
+								ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);
+							}
+							break;
+						case IOption.BOOLEAN:
+							if (fe instanceof BooleanFieldEditor) {
+								boolean val = ((BooleanFieldEditor) fe).getBooleanValue();
+								ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);
+							}
+							break;
+						case IOption.ENUMERATED:
+							if (fe instanceof BuildOptionComboFieldEditor) {
+								String name = ((BuildOptionComboFieldEditor) fe).getSelection();
+								String enumId = changedOption.getEnumeratedId(name);
+								ManagedBuildManager.setOption(fInfo, changedHolder, changedOption,
+										(enumId != null && enumId.length() > 0) ? enumId : name);
 
+							}
+							break;
+						case IOption.TREE:
+							if (fe instanceof TreeBrowseFieldEditor) {
+								String name = ((TreeBrowseFieldEditor) fe).getStringValue();
+								String treeId = changedOption.getId(name);
+								ManagedBuildManager.setOption(fInfo, changedHolder, changedOption,
+										(treeId != null && treeId.length() > 0) ? treeId : name);
+
+							}
+							break;
+						case IOption.INCLUDE_PATH:
+						case IOption.STRING_LIST:
+						case IOption.PREPROCESSOR_SYMBOLS:
+						case IOption.LIBRARIES:
+						case IOption.OBJECTS:
+						case IOption.INCLUDE_FILES:
+						case IOption.LIBRARY_PATHS:
+						case IOption.LIBRARY_FILES:
+						case IOption.MACRO_FILES:
+						case IOption.UNDEF_INCLUDE_PATH:
+						case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+						case IOption.UNDEF_INCLUDE_FILES:
+						case IOption.UNDEF_LIBRARY_PATHS:
+						case IOption.UNDEF_LIBRARY_FILES:
+						case IOption.UNDEF_MACRO_FILES:
+							if (fe instanceof FileListControlFieldEditor) {
+								String val[] = ((FileListControlFieldEditor) fe).getStringListValue();
+								ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);
+							}
+							break;
+						default:
+							break;
 						}
-						break;
-					case IOption.INCLUDE_PATH:
-					case IOption.STRING_LIST:
-					case IOption.PREPROCESSOR_SYMBOLS:
-					case IOption.LIBRARIES:
-					case IOption.OBJECTS:
-					case IOption.INCLUDE_FILES:
-					case IOption.LIBRARY_PATHS:
-					case IOption.LIBRARY_FILES:
-					case IOption.MACRO_FILES:
-					case IOption.UNDEF_INCLUDE_PATH:
-					case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
-					case IOption.UNDEF_INCLUDE_FILES:
-					case IOption.UNDEF_LIBRARY_PATHS:
-					case IOption.UNDEF_LIBRARY_FILES:
-					case IOption.UNDEF_MACRO_FILES:
-						if (fe instanceof FileListControlFieldEditor) {
-							String val[] = ((FileListControlFieldEditor) fe).getStringListValue();
-							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);
-						}
-						break;
-					default:
-						break;
 					}
 				} catch (BuildException e) {
 				}

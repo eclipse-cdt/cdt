@@ -64,7 +64,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Specifies the Java class which implements the custom field-editor.  This class must extend JFace&apos;s &lt;code&gt;FieldEditor&lt;/code&gt; abstract class, and implement the &lt;code&gt;ICustomBuildOptionEditor&lt;/code&gt; interface.
+                  Specifies the Java class which implements the custom field-editor.  This class must extend JFace&apos;s &lt;code&gt;FieldEditor&lt;/code&gt; abstract class, and implement the &lt;code&gt;ICustomBuildOptionEditor2&lt;/code&gt; interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.preference.FieldEditor:org.eclipse.cdt.managedbuilder.ui.properties.ICustomBuildOptionEditor"/>

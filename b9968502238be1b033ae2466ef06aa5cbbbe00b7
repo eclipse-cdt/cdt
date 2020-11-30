@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "f0cf2f68_203315c7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/schema/buildDefinitionsUI.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-30T21:08:29Z",
+      "side": 1,
+      "message": "I\u0027m not sure neither, that\u0027s why I vote to leave it as is 😊",
+      "parentUuid": "151741f6_721576f0",
+      "revId": "b9968502238be1b033ae2466ef06aa5cbbbe00b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bff59287_df906bfd",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/BuildOptionSettingsUI.java",
         "patchSetId": 2
@@ -87,6 +105,24 @@
       "revId": "b9968502238be1b033ae2466ef06aa5cbbbe00b7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62a7b11f_b02b90b2",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/BuildOptionSettingsUI.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-30T21:08:29Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1dec9e27_68fd4cdd",
+      "revId": "b9968502238be1b033ae2466ef06aa5cbbbe00b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

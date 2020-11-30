@@ -16,6 +16,23 @@
       "revId": "b9968502238be1b033ae2466ef06aa5cbbbe00b7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bff59287_df906bfd",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/BuildOptionSettingsUI.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-30T20:42:01Z",
+      "side": 1,
+      "message": "We could add a, per field, onetime log message here that would recommend that the code should implement ICustomBuildOptionEditor2 if we want to push harder for the new interface.",
+      "revId": "b9968502238be1b033ae2466ef06aa5cbbbe00b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

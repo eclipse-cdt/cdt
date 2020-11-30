@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "36356e4f_3ee05c82",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/schema/buildDefinitionsUI.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-11-30T20:42:01Z",
+      "side": 1,
+      "message": "I don\u0027t think we should update any other places as the documentation will be sort of out of sync with the implementation until the interfaces are merged into one.",
+      "parentUuid": "69bcd745_97381f01",
+      "revId": "eb9f518d39ce734588c7ffd46bc90601d5b32ff3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f5b03ada_df3ab451",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ICustomBuildOptionEditor2.java",
         "patchSetId": 1

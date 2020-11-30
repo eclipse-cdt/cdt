@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "151741f6_721576f0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/schema/buildDefinitionsUI.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-30T21:04:44Z",
+      "side": 1,
+      "message": "Not sure. I thought this was used for the class wizard in the PDE extension editor. Without testing I don\u0027t know if it is used elsewhere.",
+      "parentUuid": "d20423e3_ef7aedeb",
+      "revId": "b9968502238be1b033ae2466ef06aa5cbbbe00b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bff59287_df906bfd",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/BuildOptionSettingsUI.java",
         "patchSetId": 2
@@ -48,6 +66,24 @@
       "writtenOn": "2020-11-30T20:42:01Z",
       "side": 1,
       "message": "We could add a, per field, onetime log message here that would recommend that the code should implement ICustomBuildOptionEditor2 if we want to push harder for the new interface.",
+      "revId": "b9968502238be1b033ae2466ef06aa5cbbbe00b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1dec9e27_68fd4cdd",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/BuildOptionSettingsUI.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-11-30T21:04:44Z",
+      "side": 1,
+      "message": "Maybe when we are ready to deprecate the existing pair as a warning. But I am not very in favour of that as the log message is seen by end users, not ISVs.",
+      "parentUuid": "bff59287_df906bfd",
       "revId": "b9968502238be1b033ae2466ef06aa5cbbbe00b7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

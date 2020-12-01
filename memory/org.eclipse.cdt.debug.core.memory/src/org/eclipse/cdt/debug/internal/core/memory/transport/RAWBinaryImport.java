@@ -19,16 +19,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.function.Consumer;
 
 import org.eclipse.cdt.debug.core.memory.transport.FileImport;
+import org.eclipse.cdt.debug.core.memory.transport.IScrollMemory;
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 
 public final class RAWBinaryImport extends FileImport<FileInputStream> {
 
-	public RAWBinaryImport(File input, ImportRequest request, Consumer<BigInteger> scroll) {
+	public RAWBinaryImport(File input, ImportRequest request, IScrollMemory scroll) {
 		super(input, request, scroll);
 	}
 

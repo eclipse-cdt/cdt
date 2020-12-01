@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.StringTokenizer;
-import java.util.function.Consumer;
 
 import org.eclipse.cdt.debug.core.memory.transport.FileImport;
+import org.eclipse.cdt.debug.core.memory.transport.IScrollMemory;
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -34,7 +34,7 @@ import org.osgi.framework.FrameworkUtil;
 
 public final class PlainTextImport extends FileImport<BufferedReader> {
 
-	public PlainTextImport(File input, ImportRequest request, Consumer<BigInteger> scroll) {
+	public PlainTextImport(File input, ImportRequest request, IScrollMemory scroll) {
 		super(input, request, scroll);
 	}
 

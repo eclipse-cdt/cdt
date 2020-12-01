@@ -14,11 +14,11 @@
 package org.eclipse.cdt.debug.internal.ui.memory.transport;
 
 import java.math.BigInteger;
-import java.util.function.Consumer;
 
+import org.eclipse.cdt.debug.core.memory.transport.IScrollMemory;
 import org.eclipse.cdt.debug.ui.memory.transport.ImportMemoryDialog;
 
-public final class ScrollMemory implements Consumer<BigInteger> {
+public final class ScrollMemory implements IScrollMemory {
 
 	private final ImportMemoryDialog dialog;
 
@@ -29,14 +29,6 @@ public final class ScrollMemory implements Consumer<BigInteger> {
 	@Override
 	public void accept(BigInteger address) {
 		dialog.scrollRenderings(address);
-	}
-
-	public static class Ignore implements Consumer<BigInteger> {
-
-		@Override
-		public void accept(BigInteger t) {
-			//ignore
-		}
 	}
 
 }

@@ -21,9 +21,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.util.function.Consumer;
 
 import org.eclipse.cdt.debug.core.memory.transport.FileImport;
+import org.eclipse.cdt.debug.core.memory.transport.IScrollMemory;
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -35,7 +35,7 @@ public class SRecordImport extends FileImport<BufferedReader> {
 
 	private final boolean transfer;
 
-	public SRecordImport(File input, ImportRequest request, Consumer<BigInteger> scroll, boolean transfer) {
+	public SRecordImport(File input, ImportRequest request, IScrollMemory scroll, boolean transfer) {
 		super(input, request, scroll);
 		this.transfer = transfer;
 	}

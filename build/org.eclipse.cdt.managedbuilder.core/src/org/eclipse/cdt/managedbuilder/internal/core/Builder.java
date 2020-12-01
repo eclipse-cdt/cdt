@@ -1085,20 +1085,18 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	@Override
 	public String getArguments() {
 		String args = getArgumentsAttribute();
-		if (isDefaultBuildCmd()) {
-			String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
-			int parallelNum = getParallelizationNum();
-			String parallelCmd = isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
+		String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
+		int parallelNum = getParallelizationNum();
+		String parallelCmd = isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
 
-			String reversedStopOnErrCmd = getStopOnErrCmd(!isStopOnError());
-			String reversedParallelBuildCmd = !isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
+		String reversedStopOnErrCmd = getStopOnErrCmd(!isStopOnError());
+		String reversedParallelBuildCmd = !isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
 
-			args = removeCmd(args, reversedStopOnErrCmd);
-			args = removeCmd(args, reversedParallelBuildCmd);
+		args = removeCmd(args, reversedStopOnErrCmd);
+		args = removeCmd(args, reversedParallelBuildCmd);
 
-			args = addCmd(args, stopOnErrCmd);
-			args = addCmd(args, parallelCmd);
-		}
+		args = addCmd(args, stopOnErrCmd);
+		args = addCmd(args, parallelCmd);
 
 		return args != null ? args.trim() : null;
 	}

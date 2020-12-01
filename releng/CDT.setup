@@ -302,7 +302,7 @@
           <repository
               url="https://download.eclipse.org/cbi/updates/license/"/>
           <repository
-              url="https://download.eclipse.org/eclipse/updates/4.18milestones/S-4.18M3-202011190730/"/>
+              url="https://download.eclipse.org/eclipse/updates/4.18milestones/S-4.18RC1-202011251800/"/>
           <repository
               url="https://download.eclipse.org/egit/updates/"/>
           <repository
@@ -310,7 +310,7 @@
           <repository
               url="https://download.eclipse.org/wildwebdeveloper/snapshots/"/>
           <repository
-              url="https://download.eclipse.org/lsp4e/releases/0.16.0/"/>
+              url="https://download.eclipse.org/lsp4e/releases/0.17.0/"/>
           <repository
               url="https://download.eclipse.org/modeling/emf/emf/builds/release/latest/"/>
           <repository
@@ -331,7 +331,7 @@
             </annotation>
           </repository>
           <repository
-              url="https://download.eclipse.org/tools/orbit/I-builds/I20201119185738/repository"/>
+              url="https://download.eclipse.org/tools/orbit/downloads/drops/S20201124213957/repository/"/>
           <repository
               url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
         </repositoryList>

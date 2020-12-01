@@ -50,6 +50,7 @@ public class SRecordImport extends FileImport<BufferedReader> {
 			throws IOException, DebugException {
 		// FIXME 4 byte default
 		final int CHECKSUM_LENGTH = 1;
+		BigInteger scrollToAddress = null;
 		BigInteger offset = null;
 		if (!transfer) {
 			offset = BigInteger.ZERO;
@@ -135,7 +136,8 @@ public class SRecordImport extends FileImport<BufferedReader> {
 						new Status(IStatus.ERROR, FrameworkUtil.getBundle(getClass()).getSymbolicName(),
 								String.format(Messages.SRecordImport_e_checksum_failure, line)));
 			}
-			scroll.accept(recordAddress);
+			if (scrollToAddress == null)
+				scrollToAddress = recordAddress;
 			// FIXME error on incorrect checksum
 			write.to(recordAddress.subtract(base), data);
 			BigInteger jobCount = BigInteger.valueOf(bytesRead).divide(factor);
@@ -143,6 +145,7 @@ public class SRecordImport extends FileImport<BufferedReader> {
 			line = reader.readLine();
 			lineNo++;
 		}
+		scroll.accept(scrollToAddress);
 	}
 
 }

@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.function.Consumer;
+import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.memory.transport.ExportRequest;
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
@@ -59,7 +59,7 @@ public final class RAWBinaryTransportTest {
 
 	private void transport(String name, BigInteger end) throws CoreException, IOException {
 		EmulateMemory memory = new EmulateMemory(BigInteger.valueOf(1), base);
-		Consumer<BigInteger> scroll = new CollectScrolls();
+		CollectScrolls scroll = new CollectScrolls();
 		File input = new InputFile(name).get();
 		new RAWBinaryImport(input, new ImportRequest(base, start, memory), scroll)//
 				.run(new NullProgressMonitor());
@@ -67,6 +67,7 @@ public final class RAWBinaryTransportTest {
 		new RAWBinaryExport(output, new ExportRequest(start, end, BigInteger.ONE, memory))//
 				.run(new NullProgressMonitor());
 		Assert.assertArrayEquals(read(input), read(output));
+		Assert.assertEquals(Arrays.asList(start), scroll.collected());
 	}
 
 	private byte[] read(File file) throws IOException {

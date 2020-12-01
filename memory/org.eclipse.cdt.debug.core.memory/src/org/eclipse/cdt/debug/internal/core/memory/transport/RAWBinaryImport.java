@@ -40,6 +40,7 @@ public final class RAWBinaryImport extends FileImport<FileInputStream> {
 	@Override
 	protected void transfer(FileInputStream input, BigInteger factor, IProgressMonitor monitor)
 			throws IOException, DebugException {
+		BigInteger scrollToAddress = null;
 		byte[] byteValues = new byte[1024];
 		int actualByteCount = input.read(byteValues);
 		BigInteger recordAddress = start;
@@ -48,13 +49,16 @@ public final class RAWBinaryImport extends FileImport<FileInputStream> {
 			for (int i = 0; i < data.length; i++) {
 				data[i] = byteValues[i];
 			}
+			if (scrollToAddress == null) {
+				scrollToAddress = recordAddress;
+			}
 			write.to(recordAddress.subtract(base), data);
 			BigInteger jobCount = BigInteger.valueOf(actualByteCount).divide(factor);
 			monitor.worked(jobCount.intValue());
 			recordAddress = recordAddress.add(BigInteger.valueOf(actualByteCount));
-			scroll.accept(recordAddress);
 			actualByteCount = input.read(byteValues);
 		}
+		scroll.accept(scrollToAddress);
 	}
 
 }

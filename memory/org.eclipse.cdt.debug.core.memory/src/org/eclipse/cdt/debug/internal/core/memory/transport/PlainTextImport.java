@@ -46,6 +46,7 @@ public final class PlainTextImport extends FileImport<BufferedReader> {
 	@Override
 	protected void transfer(BufferedReader reader, BigInteger factor, IProgressMonitor monitor)
 			throws IOException, DebugException {
+		BigInteger scrollToAddress = null;
 		BigInteger recordAddress = start;
 		String line = reader.readLine();
 		int lineNo = 1; // line error reporting
@@ -65,16 +66,19 @@ public final class PlainTextImport extends FileImport<BufferedReader> {
 								String.format(Messages.PlainTextImport_e_invalid_format, lineNo), ex));
 					}
 				}
+				if (scrollToAddress == null) {
+					scrollToAddress = recordAddress;
+				}
 				BigInteger writeAddress = recordAddress.subtract(base).add(BigInteger.valueOf(bytesRead));
 				write.to(writeAddress, data);
 				bytesRead += data.length;
 			}
 			recordAddress = recordAddress.add(BigInteger.valueOf(bytesRead));
-			scroll.accept(recordAddress);
 			BigInteger jobCount = BigInteger.valueOf(bytesRead).divide(factor);
 			monitor.worked(jobCount.intValue());
 			line = reader.readLine();
 			lineNo++;
 		}
+		scroll.accept(scrollToAddress);
 	}
 }

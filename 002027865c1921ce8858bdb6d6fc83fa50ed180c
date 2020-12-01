@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2c477675_0bff8e9d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Builder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1968,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-01T17:12:29Z",
+      "side": 1,
+      "message": "The issue I have here is that the meaning of \"default\" changes a little. In the past the command and args were tied together, so the non-default case meant either command or args was non-null. In practice this normally meant that command was non-null but args was still null.",
+      "revId": "002027865c1921ce8858bdb6d6fc83fa50ed180c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e1a6337_d61ea31c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/newmake/core/IMakeCommonBuildInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-01T17:12:29Z",
+      "side": 1,
+      "message": "I am pretty confident about this patch on the UI side - but the remaining use of isDefaultBuildCmd in org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory.USE_DEFAULT_BUILD_CMD means it can now affect the builder itself in a way that I can\u0027t tell the effect of. So introducing this in 10.2 M1 instead of 10.1 RC1/2 is better.",
+      "revId": "002027865c1921ce8858bdb6d6fc83fa50ed180c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

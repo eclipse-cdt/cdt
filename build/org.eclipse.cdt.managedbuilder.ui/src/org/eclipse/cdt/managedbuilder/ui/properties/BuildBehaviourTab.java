@@ -58,7 +58,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	private static final int SPINNER_MAX_VALUE = 10000;
 	private static final int SPINNER_MIN_VALUE = 2;
 
-	private static final int TRI_STATES_SIZE = 4;
+	private static final int TRI_STATES_SIZE = 6;
 	// Widgets
 	//3
 	private Button b_stopOnError; // 3
@@ -242,19 +242,25 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	 * @return:
 	 * Mode 0:
 	 *    0: bld.isManagedBuildOn()
-	 *    1: bld.isDefaultBuildCmd()
+	 *    1: N/A
 	 *    2: bld.canKeepEnvironmentVariablesInBuildfile()
 	 *    3: bld.keepEnvironmentVariablesInBuildfile()
+	 *    4: bld.isDefaultBuildCmdOnly()
+	 *    5: bld.isDefaultBuildCmdOnly()
 	 * Mode 1:
 	 *    0: isStopOnError
 	 *    1: supportsStopOnError(true)
 	 *    2: bld.supportsStopOnError(false)
 	 *    3: N/A
+	 *    4: N/A
+	 *    5: N/A
 	 * Mode 2:
 	 *    0: b.isAutoBuildEnable()
 	 *    1: b.isIncrementalBuildEnabled()
 	 *    2: b.isCleanBuildEnabled()
 	 *    3: N/A
+	 *    4: N/A
+	 *    5: N/A
 	 */
 	static int[] calc3states(ICPropertyProvider p, IConfiguration mcfg, int mode) {
 		if (p.isMultiCfg() && mcfg instanceof ICMultiItemsHolder) {
@@ -266,23 +272,29 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 			int[] res = new int[TRI_STATES_SIZE];
 			boolean[] b = new boolean[TRI_STATES_SIZE];
 			b[0] = m0 ? bldr0.isManagedBuildOn() : (m1 ? bldr0.isStopOnError() : bldr0.isAutoBuildEnable());
-			b[1] = m0 ? bldr0.isDefaultBuildCmd()
-					: (m1 ? bldr0.supportsStopOnError(true) : bldr0.isIncrementalBuildEnabled());
+			b[1] = m0 ? true : (m1 ? bldr0.supportsStopOnError(true) : bldr0.isIncrementalBuildEnabled());
 			b[2] = m0 ? bldr0.canKeepEnvironmentVariablesInBuildfile()
 					: (m1 ? bldr0.supportsStopOnError(false) : bldr0.isCleanBuildEnabled());
 			b[3] = m0 ? bldr0.keepEnvironmentVariablesInBuildfile() : false;
+			b[4] = m0 ? bldr0.isDefaultBuildCmdOnly() : false;
+			b[5] = m0 ? bldr0.isDefaultBuildArgsOnly() : false;
 			for (int i = 1; i < cfgs.length; i++) {
 				IBuilder bldr = cfgs[i].getBuilder();
 				if (b[0] != (m0 ? bldr.isManagedBuildOn() : (m1 ? bldr.isStopOnError() : bldr.isAutoBuildEnable())))
 					res[0] = TRI_UNKNOWN;
-				if (b[1] != (m0 ? bldr.isDefaultBuildCmd()
-						: (m1 ? bldr.supportsStopOnError(true) : bldr.isIncrementalBuildEnabled())))
+				if (b[1] != (m0 ? true : (m1 ? bldr.supportsStopOnError(true) : bldr.isIncrementalBuildEnabled())))
 					res[1] = TRI_UNKNOWN;
 				if (b[2] != (m0 ? bldr.canKeepEnvironmentVariablesInBuildfile()
 						: (m1 ? bldr.supportsStopOnError(false) : bldr.isCleanBuildEnabled())))
 					res[2] = TRI_UNKNOWN;
 				if (b[3] != (m0 ? bldr.keepEnvironmentVariablesInBuildfile() : false)) {
 					res[3] = TRI_UNKNOWN;
+				}
+				if (b[4] != (m0 ? bldr.isDefaultBuildCmdOnly() : false)) {
+					res[4] = TRI_UNKNOWN;
+				}
+				if (b[4] != (m0 ? bldr.isDefaultBuildArgsOnly() : false)) {
+					res[4] = TRI_UNKNOWN;
 				}
 			}
 			for (int i = 0; i < TRI_STATES_SIZE; i++) {
@@ -339,9 +351,9 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 			t_cmdClean.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR));
 		}
 
-		boolean defaultBuildCommand = bldr.isDefaultBuildCmd();
-		grp_buildSettings.setVisible(defaultBuildCommand);
-		((GridData) grp_buildSettings.getLayoutData()).exclude = !defaultBuildCommand;
+		boolean defaultBuildArguments = bldr.isDefaultBuildArgsOnly();
+		grp_buildSettings.setVisible(defaultBuildArguments);
+		((GridData) grp_buildSettings.getLayoutData()).exclude = !defaultBuildArguments;
 		grp_buildSettings.getParent().layout();
 
 		boolean external = !isInternalBuilderEnabled();
@@ -534,12 +546,16 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 
 	static void copyBuilders(IBuilder b1, IBuilder b2) {
 		try {
-			b2.setUseDefaultBuildCmd(b1.isDefaultBuildCmd());
-			if (!b1.isDefaultBuildCmd()) {
+			b2.setUseDefaultBuildCmdOnly(b1.isDefaultBuildCmdOnly());
+			b2.setUseDefaultBuildArgsOnly(b1.isDefaultBuildArgsOnly());
+			if (!b1.isDefaultBuildCmdOnly()) {
 				b2.setCommand(b1.getCommand());
-				b2.setArguments(b1.getArguments());
 			} else {
 				b2.setCommand(null);
+			}
+			if (!b1.isDefaultBuildArgsOnly()) {
+				b2.setArguments(b1.getArguments());
+			} else {
 				b2.setArguments(null);
 			}
 			b2.setStopOnError(b1.isStopOnError());

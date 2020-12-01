@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.eclipse.cdt.debug.core.memory.transport.ExportRequest;
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
@@ -60,7 +60,7 @@ public final class PlainTextTransportTest {
 
 	private void transport(String name, BigInteger end) throws CoreException, IOException {
 		EmulateMemory memory = new EmulateMemory(BigInteger.valueOf(1), base);
-		Consumer<BigInteger> scroll = new CollectScrolls();
+		CollectScrolls scroll = new CollectScrolls();
 		File input = new InputFile(name).get();
 		new PlainTextImport(input, new ImportRequest(base, start, memory), scroll)//
 				.run(new NullProgressMonitor());
@@ -68,6 +68,7 @@ public final class PlainTextTransportTest {
 		new PlainTextExport(output, new ExportRequest(start, end, BigInteger.ONE, memory))//
 				.run(new NullProgressMonitor());
 		Assert.assertEquals(read(input), read(output));
+		Assert.assertEquals(Arrays.asList(start), scroll.collected());
 	}
 
 	private List<String> read(File file) throws IOException {

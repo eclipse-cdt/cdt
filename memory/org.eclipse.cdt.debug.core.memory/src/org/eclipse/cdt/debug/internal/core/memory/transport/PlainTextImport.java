@@ -70,11 +70,11 @@ public final class PlainTextImport extends FileImport<BufferedReader> {
 				bytesRead += data.length;
 			}
 			recordAddress = recordAddress.add(BigInteger.valueOf(bytesRead));
-			scroll.accept(recordAddress);
 			BigInteger jobCount = BigInteger.valueOf(bytesRead).divide(factor);
 			monitor.worked(jobCount.intValue());
 			line = reader.readLine();
 			lineNo++;
 		}
+		scroll.accept(start);
 	}
 }

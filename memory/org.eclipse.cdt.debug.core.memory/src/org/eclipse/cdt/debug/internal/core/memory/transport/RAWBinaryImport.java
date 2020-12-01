@@ -52,9 +52,9 @@ public final class RAWBinaryImport extends FileImport<FileInputStream> {
 			BigInteger jobCount = BigInteger.valueOf(actualByteCount).divide(factor);
 			monitor.worked(jobCount.intValue());
 			recordAddress = recordAddress.add(BigInteger.valueOf(actualByteCount));
-			scroll.accept(recordAddress);
 			actualByteCount = input.read(byteValues);
 		}
+		scroll.accept(start);
 	}
 
 }

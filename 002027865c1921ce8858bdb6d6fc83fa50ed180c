@@ -33,6 +33,29 @@
       "revId": "002027865c1921ce8858bdb6d6fc83fa50ed180c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee453a37_9e8b7af9",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/BuilderSettingsTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 5071
+      },
+      "writtenOn": "2020-12-01T17:13:37Z",
+      "side": 1,
+      "message": "Put in {} ?",
+      "range": {
+        "startLine": 113,
+        "startChar": 18,
+        "endLine": 114,
+        "endChar": 12
+      },
+      "revId": "002027865c1921ce8858bdb6d6fc83fa50ed180c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

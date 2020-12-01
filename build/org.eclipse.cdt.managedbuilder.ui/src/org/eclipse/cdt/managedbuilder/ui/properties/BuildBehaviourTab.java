@@ -69,8 +69,6 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	private Button b_parallelUnlimited;
 	private Spinner s_parallelNumber;
 
-	private Group grp_buildSettings;
-
 	private Label title2;
 	private Button b_autoBuild; //3
 	private Text t_autoBuild;
@@ -91,13 +89,13 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		usercomp.setLayout(new GridLayout(1, false));
 
 		// Build setting group
-		grp_buildSettings = setupGroup(usercomp, Messages.BuilderSettingsTab_9, 2, GridData.FILL_HORIZONTAL);
+		Group g3 = setupGroup(usercomp, Messages.BuilderSettingsTab_9, 2, GridData.FILL_HORIZONTAL);
 		GridLayout gl = new GridLayout(2, true);
 		gl.verticalSpacing = 0;
 		gl.marginWidth = 0;
-		grp_buildSettings.setLayout(gl);
+		g3.setLayout(gl);
 
-		Composite c1 = new Composite(grp_buildSettings, SWT.NONE);
+		Composite c1 = new Composite(g3, SWT.NONE);
 		setupControl(c1, 1, GridData.FILL_BOTH);
 		GridData gd = (GridData) c1.getLayoutData();
 		gd.verticalSpan = 2;
@@ -111,7 +109,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 
 		b_stopOnError = setupCheck(c1, Messages.BuilderSettingsTab_10, 1, GridData.BEGINNING);
 
-		Composite c2 = new Composite(grp_buildSettings, SWT.NONE);
+		Composite c2 = new Composite(g3, SWT.NONE);
 		setupControl(c2, 1, GridData.FILL_BOTH);
 		gl = new GridLayout(1, false);
 		gl.verticalSpacing = 0;
@@ -121,7 +119,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 
 		b_parallel = setupCheck(c2, Messages.BuilderSettingsTab_EnableParallelBuild, 1, GridData.BEGINNING);
 
-		Composite c3 = new Composite(grp_buildSettings, SWT.NONE);
+		Composite c3 = new Composite(g3, SWT.NONE);
 		setupControl(c3, 1, GridData.FILL_BOTH);
 		gl = new GridLayout(2, false);
 		gl.verticalSpacing = 0;
@@ -338,11 +336,6 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 			t_cmdBuild.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, EMPTY_STR));
 			t_cmdClean.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR));
 		}
-
-		boolean defaultBuildCommand = bldr.isDefaultBuildCmd();
-		grp_buildSettings.setVisible(defaultBuildCommand);
-		((GridData) grp_buildSettings.getLayoutData()).exclude = !defaultBuildCommand;
-		grp_buildSettings.getParent().layout();
 
 		boolean external = !isInternalBuilderEnabled();
 		title2.setVisible(external);

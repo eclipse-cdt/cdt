@@ -16,9 +16,10 @@ package org.eclipse.cdt.debug.core.memory.tests;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-final class CollectScrolls implements Consumer<BigInteger> {
+import org.eclipse.cdt.debug.core.memory.transport.IScrollMemory;
+
+final class CollectScrolls implements IScrollMemory {
 
 	private final List<BigInteger> collected;
 

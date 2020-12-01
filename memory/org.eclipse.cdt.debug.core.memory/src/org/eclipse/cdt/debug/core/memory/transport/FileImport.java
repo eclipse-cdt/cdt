@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.function.Consumer;
 
 import org.eclipse.cdt.debug.internal.core.memory.transport.Messages;
 import org.eclipse.core.runtime.CoreException;
@@ -39,11 +38,11 @@ public abstract class FileImport<I extends AutoCloseable> implements ICoreRunnab
 	protected final BigInteger base;
 	protected final BigInteger start;
 	protected final WriteMemory write;
-	protected final Consumer<BigInteger> scroll;
+	protected final IScrollMemory scroll;
 
 	private final File file;
 
-	protected FileImport(File input, ImportRequest request, Consumer<BigInteger> scroll) {
+	protected FileImport(File input, ImportRequest request, IScrollMemory scroll) {
 		this.file = input;
 		this.base = request.base();
 		this.start = request.start();

@@ -17,11 +17,11 @@ package org.eclipse.cdt.debug.ui.memory.transport;
 
 import java.io.File;
 import java.math.BigInteger;
-import java.util.function.Consumer;
 
+import org.eclipse.cdt.debug.core.memory.transport.IScrollMemory;
 import org.eclipse.cdt.debug.core.memory.transport.ImportRequest;
-import org.eclipse.cdt.debug.internal.core.memory.transport.TransportJob;
 import org.eclipse.cdt.debug.internal.core.memory.transport.SRecordImport;
+import org.eclipse.cdt.debug.internal.core.memory.transport.TransportJob;
 import org.eclipse.cdt.debug.internal.ui.memory.transport.ScrollMemory;
 import org.eclipse.cdt.debug.internal.ui.memory.transport.WriteMemoryBlock;
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryImporter;
@@ -336,7 +336,7 @@ public class SRecordImporter implements IMemoryImporter {
 	@Override
 	public void importMemory() {
 		try {
-			Consumer<BigInteger> scroll = fScrollToStart ? new ScrollMemory(fParentDialog) : new ScrollMemory.Ignore();
+			IScrollMemory scroll = fScrollToStart ? new ScrollMemory(fParentDialog) : IScrollMemory.ignore();
 			IMemoryBlockExtension block = (IMemoryBlockExtension) fMemoryBlock;
 			ImportRequest request = new ImportRequest(block.getBigBaseAddress(), fStartAddress,
 					new WriteMemoryBlock(block));

@@ -257,7 +257,7 @@
                eat-processed-line="true"
                file-expr=""
                line-expr=""
-               regex="%CDTGNULinkerErrorParser.regex.LdMode"
+               regex="%CDTGNULinkerErrorParser.regex.ldInfo"
                severity="Info"/>
          <pattern
                description-expr="$3"

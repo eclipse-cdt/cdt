@@ -93,7 +93,16 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.MemoryByte;
 
 /**
- * Timeout wait values are in milliseconds, or WAIT_FOREVER.
+ * Utility class for common testing APIs
+ *
+ * <p>
+ * Note: Most, if not all, methods in this class timeouts unless otherwise
+ * stated. If the method takes a timeout parameter then it would timeout after
+ * that much time elapses. However, even if the method does not take that
+ * parameter it would still timeout but with a default one as hardcoded in that
+ * method's implementation or, in most cases, as specified in {@code ETimeout}.
+ * Wherever a timeout is mentioned its wait values are or must be in
+ * milliseconds, or WAIT_FOREVER
  */
 public class SyncUtil {
 
@@ -117,7 +126,12 @@ public class SyncUtil {
 	// Each version of GDB can expose the set of register differently
 	private static Map<String, List<String>> fRegisterNames = new HashMap<>();
 
-	// Initialize some common things, once the session has been established
+	/**
+	 * Initialize some common things, once the session has been established
+	 *
+	 * @param session
+	 * @throws Exception
+	 */
 	public static void initialize(DsfSession session) throws Exception {
 		fSession = session;
 
@@ -138,10 +152,30 @@ public class SyncUtil {
 		fSession.getExecutor().submit(runnable).get();
 	}
 
+	/**
+	 * Steps forward with the given {@code stepType} and can also specify to step a
+	 * fixed number of time/s using {@code numSteps}. For possible step types see
+	 * {@link SyncUtil#step(StepType) step(StepType)}
+	 *
+	 * @param numSteps
+	 * @param stepType
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent step(int numSteps, StepType stepType) throws Throwable {
 		return step(numSteps, stepType, false);
 	}
 
+	/**
+	 * Steps forward or backward with the given {@code stepType} and can also
+	 * specify to step a fixed number of time/s using {@code numSteps}. For a list
+	 * of possible step types see {@link SyncUtil#step(StepType) step(StepType)}
+	 *
+	 * @param numSteps
+	 * @param stepType
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent step(int numSteps, StepType stepType, boolean reverse) throws Throwable {
 		MIStoppedEvent retVal = null;
 		for (int i = 0; i < numSteps; i++) {
@@ -150,24 +184,80 @@ public class SyncUtil {
 		return retVal;
 	}
 
+	/**
+	 * Steps forward with the given {@code stepType} A {@code stepType} can be one
+	 * of the following:
+	 * <ul>
+	 * <li>{@code StepType.STEP_OVER}
+	 * <li>{@code StepType.STEP_INTO}
+	 * <li>{@code StepType.STEP_RETURN}
+	 * <li>{@code StepType.INSTRUCTION_STEP_OVER}
+	 * <li>{@code StepType.INSTRUCTION_STEP_INTO}
+	 * <li>{@code StepType.INSTRUCTION_STEP_RETURN}
+	 * </ul>
+	 *
+	 * @param stepType
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent step(StepType stepType) throws Throwable {
 		return step(stepType, false, DefaultTimeouts.get(ETimeout.step));
 	}
 
+	/**
+	 * Steps forward or backward with the given {@code stepType}. For possible step
+	 * types see {@link SyncUtil#step(StepType) step(StepType)}
+	 *
+	 * @param stepType
+	 * @param reverse
+	 * @param massagedTimeout
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent step(StepType stepType, boolean reverse, int massagedTimeout) throws Throwable {
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		return step(containerDmc, stepType, reverse, massagedTimeout);
 	}
 
+	/**
+	 * Steps forward with the given {@code stepType} and can also specify to step a
+	 * given process or thread {@code dmc}. For possible step types see
+	 * {@link SyncUtil#step(StepType) step(StepType)}
+	 *
+	 * @param dmc
+	 * @param stepType
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent step(IExecutionDMContext dmc, StepType stepType) throws Throwable {
 		return step(dmc, stepType, DefaultTimeouts.get(ETimeout.step));
 	}
 
+	/**
+	 * Steps forward with the given {@code stepType} and can also specify to step a
+	 * given process or thread {@code dmc}. For possible step types see
+	 * {@link SyncUtil#step(StepType) step(StepType)}
+	 *
+	 * @param dmc
+	 * @param stepType
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, int massagedTimeout)
 			throws Throwable {
 		return step(dmc, stepType, false, massagedTimeout);
 	}
 
+	/**
+	 * Steps forward or backward with the given {@code stepType} and can also
+	 * specify to step a given process or thread {@code dmc}. For possible step
+	 * types see {@link SyncUtil#step(StepType) step(StepType)}
+	 *
+	 * @param dmc
+	 * @param stepType
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, boolean reverse,
 			int massagedTimeout) throws Throwable {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
@@ -216,18 +306,56 @@ public class SyncUtil {
 		return eventWaitor.waitForEvent(massagedTimeout);
 	}
 
+	/**
+	 * Adds a breakpoint at {@code location}. The {@code locaiton} is the one which
+	 * the underlying debugger understands. For example, in case of gdb
+	 * "<current-file>:<line#>" or "<line#>" or "<function-name>" are all valid
+	 * locaitons. Refer to the debugger documentation to see all valid locations
+	 *
+	 * @param location
+	 * @return
+	 * @throws Throwable
+	 */
 	public static String addBreakpoint(String location) throws Throwable {
 		return addBreakpoint(location, DefaultTimeouts.get(ETimeout.addBreakpoint));
 	}
 
+	/**
+	 * Adds a breakpoint at {@code location}. For an example of possible locaitons
+	 * see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 *
+	 * @param location
+	 * @param massagedTimeout
+	 * @return
+	 * @throws Throwable
+	 */
 	public static String addBreakpoint(String location, int massagedTimeout) throws Throwable {
 		return addBreakpoint(location, true, massagedTimeout);
 	}
 
+	/**
+	 * Adds a (possbile temporary) breakpoint at {@code location}. For possible
+	 * locaitons see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 *
+	 * @param location
+	 * @param massagedTimeout
+	 * @return
+	 * @throws Throwable
+	 */
 	public static String addBreakpoint(String location, boolean temporary) throws Throwable {
 		return addBreakpoint(location, temporary, DefaultTimeouts.get(ETimeout.addBreakpoint));
 	}
 
+	/**
+	 * Adds a (possbile temporary) breakpoint at {@code location}. For possible
+	 * locaitons see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 *
+	 * @param location
+	 * @param temporary
+	 * @param massagedTimeout
+	 * @return
+	 * @throws Throwable
+	 */
 	private static String addBreakpoint(final String location, final boolean temporary, int massagedTimeout)
 			throws Throwable {
 
@@ -248,6 +376,13 @@ public class SyncUtil {
 		return info.getMIBreakpoints()[0].getNumber();
 	}
 
+	/**
+	 * Gets the breakpoint list
+	 *
+	 * @param timeout
+	 * @return
+	 * @throws Throwable
+	 */
 	public static String[] getBreakpointList(int timeout) throws Throwable {
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc,
@@ -271,6 +406,15 @@ public class SyncUtil {
 		return result;
 	}
 
+	/**
+	 * Resumes the process or thread ({@code dmc}) until its stopped (via
+	 * breakpoint, termination or, any other means)
+	 *
+	 * @param dmc
+	 * @param timeout
+	 * @return
+	 * @throws Throwable
+	 */
 	private static MIStoppedEvent resumeUntilStopped(final IExecutionDMContext dmc, int massagedTimeout)
 			throws Throwable {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
@@ -283,17 +427,40 @@ public class SyncUtil {
 		return eventWaitor.waitForEvent(massagedTimeout);
 	}
 
+	/**
+	 * Resumes the process until its stopped (via breakpoint, termination or, any
+	 * other means)
+	 *
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent resumeUntilStopped() throws Throwable {
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		// Don't call resumeUtilStopped(int timeout) as this will duplicate the timeout massage
 		return resumeUntilStopped(containerDmc, DefaultTimeouts.get(ETimeout.resumeUntilStopped));
 	}
 
+	/**
+	 * Resumes the process until its stopped (via breakpoint, termination or, any
+	 * other means)
+	 *
+	 * @param timeout
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent resumeUntilStopped(int timeout) throws Throwable {
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		return resumeUntilStopped(containerDmc, TestsPlugin.massageTimeout(timeout));
 	}
 
+	/**
+	 * Resumes the process or thread ({@code dmc}
+	 *
+	 * @param dmc
+	 * @param massagedTimeout
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIRunningEvent resume(final IExecutionDMContext dmc, int massagedTimeout) throws Throwable {
 		final ServiceEventWaitor<MIRunningEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIRunningEvent.class);
 
@@ -305,6 +472,13 @@ public class SyncUtil {
 		return eventWaitor.waitForEvent(massagedTimeout);
 	}
 
+	/**
+	 * Checks whether the process or thread ({@code execDmc}) can resume or not
+	 *
+	 * @param execDmc
+	 * @return
+	 * @throws Throwable
+	 */
 	public static boolean canResume(final IExecutionDMContext execDmc) throws Throwable {
 		Query<Boolean> query = new Query<Boolean>() {
 			@Override
@@ -323,19 +497,43 @@ public class SyncUtil {
 		return canResume;
 	}
 
+	/**
+	 * Resumes the process timeout
+	 *
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIRunningEvent resume() throws Throwable {
 		return resume(DefaultTimeouts.get(ETimeout.resume));
 	}
 
+	/**
+	 * Resumes the process
+	 *
+	 * @param massagedTimeout
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIRunningEvent resume(int massagedTimeout) throws Throwable {
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		return resume(containerDmc, massagedTimeout);
 	}
 
+	/**
+	 * Resumes all the threads
+	 *
+	 * @throws Throwable
+	 */
 	public static void resumeAll() throws Throwable {
 		resumeAll(DefaultTimeouts.get(ETimeout.resume));
 	}
 
+	/**
+	 * Resumes all the threads
+	 *
+	 * @param massagedTimeout
+	 * @throws Throwable
+	 */
 	public static void resumeAll(int massagedTimeout) throws Throwable {
 		IMIExecutionDMContext[] threadDmcs = SyncUtil.getExecutionContexts();
 		for (IMIExecutionDMContext thread : threadDmcs) {
@@ -345,19 +543,33 @@ public class SyncUtil {
 		}
 	}
 
+	/**
+	 * Waits for and gets the stop event
+	 *
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent waitForStop() throws Throwable {
 		// Use a direct value to avoid double call to TestsPlugin.massageTimeout
 		return waitForStop(10000);
 	}
 
-	// This method is risky.  If the command to resume/step execution
-	// is sent and the stopped event is received before we call this method
-	// here, then we will miss the stopped event.
-	// Normally, one should initialize the ServiveEventWaitor before
-	// triggering the resume to make sure not to miss the stopped event.
-	// However, in some case this method will still work, for instance
-	// if there is a sleep in the code between the resume and the time
-	// it stops; this will give us plenty of time to call this method.
+	/**
+	 * Waits for and gets the stop event
+	 *
+	 * <p>
+	 * Note: This method is risky. If the command to resume/step execution is sent
+	 * and the stopped event is received before we call this method here, then we
+	 * will miss the stopped event. Normally, one should initialize the
+	 * ServiveEventWaitor before triggering the resume to make sure not to miss the
+	 * stopped event. However, in some case this method will still work, for
+	 * instance if there is a sleep in the code between the resume and the time it
+	 * stops; this will give us plenty of time to call this method.
+	 *
+	 * @param timeout
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent waitForStop(int timeout) throws Throwable {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
@@ -365,10 +577,27 @@ public class SyncUtil {
 		return eventWaitor.waitForEvent(TestsPlugin.massageTimeout(timeout));
 	}
 
+	/**
+	 * Runs the process' execution to {@code locaiton}. For an example of possible
+	 * locaitons see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 *
+	 * @param location
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent runToLocation(String location) throws Throwable {
 		return runToLocation(location, DefaultTimeouts.get(ETimeout.runToLocation));
 	}
 
+	/**
+	 * Runs the process' execution to {@code locaiton}. For an example of possible
+	 * locaitons see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 *
+	 * @param location
+	 * @param timeout
+	 * @return
+	 * @throws Throwable
+	 */
 	public static MIStoppedEvent runToLocation(String location, int timeout) throws Throwable {
 		// Set a temporary breakpoint and run to it.
 		// Note that if there were other breakpoints set ahead of this one,
@@ -379,6 +608,17 @@ public class SyncUtil {
 		return resumeUntilStopped();
 	}
 
+	/**
+	 * Gets the stack frame of the thread ({@code execCtx}). As each stack frame
+	 * consists of many levels therefore {@code level} is needed to signify the
+	 * level of the stack frame to get, like, 0 for the top-most level or 1 for the
+	 * one after that
+	 *
+	 * @param execCtx
+	 * @param level
+	 * @return
+	 * @throws Exception
+	 */
 	public static IFrameDMContext getStackFrame(final IExecutionDMContext execCtx, final int level) throws Exception {
 		Query<IFrameDMContext> query = new Query<IFrameDMContext>() {
 			@Override
@@ -401,17 +641,49 @@ public class SyncUtil {
 	}
 
 	/**
-	 * Utility method to return a specific frame DM context.
+	 * Gets the stack frame of the thread whose index corresponds with the specified
+	 * {@code threadIndex}. As each stack frame consists of many levels therefore
+	 * {@code level} is needed to signify the level of the stack frame to get, like,
+	 * 0 for the top-most level or 1 for the one after that
+	 *
+	 * @param threadIndex
+	 * @param level
+	 * @return
+	 * @throws Exception
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
 	public static IFrameDMContext getStackFrame(int threadIndex, final int level) throws Exception {
 		return getStackFrame(getExecutionContext(threadIndex), level);
 	}
 
+	/**
+	 * Gets the stack depth of the thread ({@code execCtx}). A stack depth is the
+	 * maximum level of that stack frame
+	 *
+	 * <p>
+	 * Note: The depth returned could, but is not required to, be limited to the
+	 * {@code maxDepth} parameter
+	 *
+	 * @param execCtx
+	 * @return
+	 * @throws Throwable
+	 */
 	public static Integer getStackDepth(final IExecutionDMContext execCtx) throws Throwable {
 		return getStackDepth(execCtx, 0);
 	}
 
+	/**
+	 * Gets the stack depth of the thread ({@code execCtx}). A stack depth is the
+	 * maximum level of that stack frame
+	 *
+	 * <p>
+	 * Note: The depth returned could, but is not required to, be limited to the
+	 * {@code maxDepth} parameter
+	 *
+	 * @param execCtx
+	 * @return
+	 * @throws Throwable
+	 */
 	public static Integer getStackDepth(final IExecutionDMContext execCtx, final int maxDepth) throws Throwable {
 		Query<Integer> query = new Query<Integer>() {
 			@Override
@@ -424,6 +696,15 @@ public class SyncUtil {
 		return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
+	/**
+	 * Gets the frame data of the stack frame belonging to the specified thread
+	 * ({@code execCtx}) and whose level is given by {@code level}
+	 *
+	 * @param execCtx
+	 * @param level
+	 * @return
+	 * @throws Throwable
+	 */
 	public static IFrameDMData getFrameData(final IExecutionDMContext execCtx, final int level) throws Throwable {
 		Query<IFrameDMData> query = new Query<IFrameDMData>() {
 			@Override
@@ -444,10 +725,27 @@ public class SyncUtil {
 		return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
-	public static IFrameDMData getFrameData(final int threadId, final int level) throws Throwable {
-		return getFrameData(getExecutionContext(threadId), level);
+	/**
+	 * Gets the frame data of the stack frame belonging to that thread whose index
+	 * is specifed by {@code threadIndex} and whose level is given by {@code level}
+	 *
+	 * @param threadIndex
+	 * @param level
+	 * @return
+	 * @throws Throwable
+	 */
+	public static IFrameDMData getFrameData(final int threadIndex, final int level) throws Throwable {
+		return getFrameData(getExecutionContext(threadIndex), level);
 	}
 
+	/**
+	 * Gets the thread data of the thread whose thread id is specifed by
+	 * {@code threadId}
+	 *
+	 * @param threadId
+	 * @return
+	 * @throws Throwable
+	 */
 	public static IThreadDMData getThreadData(final int threadId)
 			throws InterruptedException, ExecutionException, TimeoutException {
 		final IProcessDMContext processContext = DMContexts.getAncestorOfType(SyncUtil.getContainerContext(),
@@ -467,12 +765,32 @@ public class SyncUtil {
 		return query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 	}
 
+	/**
+	 * Creates and gets the expression ({@code expression}) in the context of the
+	 * given process, thread or, frame ({@code parentCtx}). For example, given 2
+	 * thread, thread1 and thread2, an expression may not be valid in the context of
+	 * thread1 but it may be valid in the context of thread2. Therefore, while
+	 * creating expression its important that the correct context is passed
+	 *
+	 * @param parentCtx
+	 * @param expression
+	 * @return the expression
+	 * @throws Throwable
+	 */
 	public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
 			throws Throwable {
 		Callable<IExpressionDMContext> callable = () -> fExpressions.createExpression(parentCtx, expression);
 		return fSession.getExecutor().submit(callable).get();
 	}
 
+	/**
+	 * Gets all the sub-expressions in the given expression ({@code dmc})
+	 *
+	 * @param dmc
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	public static IExpressionDMContext[] getSubExpressions(final IExpressionDMContext dmc)
 			throws InterruptedException, ExecutionException {
 		Query<IExpressionDMContext[]> query = new Query<IExpressionDMContext[]>() {
@@ -486,9 +804,13 @@ public class SyncUtil {
 		return query.get();
 	}
 
-	/*
-	 * Like getSubExpressions, but for cases where we know there will be only
-	 * one child.
+	/**
+	 * Gets the first sub-expression in the expression ({@code dmc})
+	 *
+	 * @param dmc
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
 	 */
 	public static IExpressionDMContext getSubExpression(final IExpressionDMContext dmc)
 			throws InterruptedException, ExecutionException {
@@ -499,6 +821,25 @@ public class SyncUtil {
 		return subExpressions[0];
 	}
 
+	/**
+	 * Gets the {@code String} representation of the specified expression
+	 * ({@code dmc}) in the given {@code format}. The {@code format} may be one of
+	 * the following:
+	 * <ul>
+	 * <li>@{code IFormattedValues.HEX_FORMAT}
+	 * <li>@{code IFormattedValues.OCTAL_FORMAT}
+	 * <li>@{code IFormattedValues.NATURAL_FORMAT}
+	 * <li>@{code IFormattedValues.BINARY_FORMAT}
+	 * <li>@{code IFormattedValues.DECIMAL_FORMAT}
+	 * <li>@{code IFormattedValues.STRING_FORMAT}
+	 * <li>@{code MIExpressions.DETAILS_FORMAT}
+	 * </ul>
+	 *
+	 * @param exprDmc
+	 * @param format
+	 * @return
+	 * @throws Throwable
+	 */
 	public static String getExpressionValue(final IExpressionDMContext exprDmc, final String format) throws Throwable {
 		Query<String> query = new Query<String>() {
 			@Override
@@ -518,12 +859,40 @@ public class SyncUtil {
 		return query.get();
 	}
 
+	/**
+	 * Gets the formatted value of the specified data ({@code dmc}) in the given
+	 * {@code formatId}. The {@code formatId} may be one of the following:
+	 * <ul>
+	 * <li>@{code IFormattedValues.HEX_FORMAT}
+	 * <li>@{code IFormattedValues.OCTAL_FORMAT}
+	 * <li>@{code IFormattedValues.NATURAL_FORMAT}
+	 * <li>@{code IFormattedValues.BINARY_FORMAT}
+	 * <li>@{code IFormattedValues.DECIMAL_FORMAT}
+	 * <li>@{code IFormattedValues.STRING_FORMAT}
+	 * <li>@{code MIExpressions.DETAILS_FORMAT}
+	 * </ul>
+	 *
+	 * @param service
+	 * @param dmc
+	 * @param formatId
+	 * @return
+	 * @throws Throwable
+	 */
 	public static FormattedValueDMContext getFormattedValue(final IFormattedValues service,
 			final IFormattedDataDMContext dmc, final String formatId) throws Throwable {
 		Callable<FormattedValueDMContext> callable = () -> service.getFormattedValueContext(dmc, formatId);
 		return fSession.getExecutor().submit(callable).get();
 	}
 
+	/**
+	 * Gets the thread belonging to the specified process ({@code parentCtx}) and
+	 * whose thread id is specified by {@code threadId}
+	 *
+	 * @param parentCtx
+	 * @param threadId
+	 * @return
+	 * @throws Throwable
+	 */
 	public static IMIExecutionDMContext createExecutionContext(final IContainerDMContext parentCtx, final int threadId)
 			throws Throwable {
 		Callable<IMIExecutionDMContext> callable = () -> {
@@ -535,7 +904,15 @@ public class SyncUtil {
 		return fSession.getExecutor().submit(callable).get();
 	}
 
-	static class DefaultTimeouts {
+	/**
+	 * Timeout manager for tests. Its reponsibilities include:
+	 * <ul>
+	 * <li>Specify default timeouts
+	 * <li>Make timeouts configurable
+	 * <li>Massage timeouts i.e. a common multiplier for all timeouts
+	 * <ul>
+	 */
+	public static class DefaultTimeouts {
 
 		/**
 		 * Overridable default timeout values. An override is specified using a
@@ -658,9 +1035,12 @@ public class SyncUtil {
 	}
 
 	/**
-	 * Utility method to return all thread execution contexts.
-	 * @throws TimeoutException
+	 * Utility method to return all threads
+	 *
+	 * @return
+	 * @throws InterruptedException
 	 * @throws ExecutionException
+	 * @throws TimeoutException
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
 	public static IMIExecutionDMContext[] getExecutionContexts()
@@ -694,9 +1074,13 @@ public class SyncUtil {
 	}
 
 	/**
-	 * Utility method to return a specific execution DM context.
-	 * @throws TimeoutException
+	 * Utility method to return a specific thread via {@code threadIndex}
+	 *
+	 * @param threadIndex
+	 * @return
+	 * @throws InterruptedException
 	 * @throws ExecutionException
+	 * @throws TimeoutException
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
 	public static IMIExecutionDMContext getExecutionContext(int threadIndex)
@@ -709,6 +1093,9 @@ public class SyncUtil {
 
 	/**
 	 * Check if the restart operation is supported
+	 *
+	 * @return
+	 * @throws Exception
 	 */
 	public static boolean canRestart() throws Exception {
 		final IContainerDMContext containerDmc = getContainerContext();
@@ -734,7 +1121,11 @@ public class SyncUtil {
 	}
 
 	/**
-	 * Restart the program.
+	 * Restarts the program ({@code launch})
+	 *
+	 * @param launch
+	 * @return
+	 * @throws Exception
 	 */
 	public static MIStoppedEvent restart(final GdbLaunch launch) throws Exception {
 		final IContainerDMContext containerDmc = getContainerContext();
@@ -772,6 +1163,13 @@ public class SyncUtil {
 		return event;
 	}
 
+	/**
+	 * Gets the local variables of the frame ({@code frameDmc})
+	 *
+	 * @param frameDmc
+	 * @return
+	 * @throws Throwable
+	 */
 	public static IVariableDMData[] getLocals(final IFrameDMContext frameDmc) throws Throwable {
 		Query<IVariableDMData[]> query = new Query<IVariableDMData[]>() {
 			@Override
@@ -815,6 +1213,7 @@ public class SyncUtil {
 
 	/**
 	 * Get the registers directly from GDB (without using the registers service)
+	 *
 	 * @param gdbVersion
 	 * @param context
 	 * @return

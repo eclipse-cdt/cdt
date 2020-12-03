@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e1116a54_d748b4bf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T17:30:17Z",
+      "side": 1,
+      "message": "Thanks Michael.",
+      "revId": "c3012cd3fab70b67752af8cc460ad375db6ef6ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

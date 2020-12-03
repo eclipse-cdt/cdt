@@ -215,6 +215,30 @@
     },
     {
       "key": {
+        "uuid": "6790e9dc_6d1a2c2c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 666,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T15:16:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "985024ec_54a21b15",
+      "range": {
+        "startLine": 663,
+        "startChar": 4,
+        "endLine": 666,
+        "endChar": 3
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "04ece5b2_e6494f36",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
         "patchSetId": 1
@@ -283,6 +307,30 @@
       "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ddc1cdeb_1bf4a08a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 684,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T15:16:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d9a4e75f_11e6989f",
+      "range": {
+        "startLine": 684,
+        "startChar": 4,
+        "endLine": 684,
+        "endChar": 11
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -380,6 +428,30 @@
     },
     {
       "key": {
+        "uuid": "c365f721_c30138a4",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T15:16:29Z",
+      "side": 1,
+      "message": "I am fine with the change. The difference caused me plenty of pain in the early days of learning DSF-GDB so I am very empathetic to trying to simplify this.\n\nI leave it up to you how to simplify the explanation for your target audience.",
+      "parentUuid": "88a1a272_6daa1494",
+      "range": {
+        "startLine": 1038,
+        "startChar": 37,
+        "endLine": 1038,
+        "endChar": 40
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "065471eb_5c0be025",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
         "patchSetId": 1
@@ -424,6 +496,30 @@
       "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6af24dc1_f4dc0e1e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1078,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T15:16:29Z",
+      "side": 1,
+      "message": "As above, nothing to be done.",
+      "parentUuid": "5f80c047_cba82d39",
+      "range": {
+        "startLine": 1077,
+        "startChar": 40,
+        "endLine": 1078,
+        "endChar": 3
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

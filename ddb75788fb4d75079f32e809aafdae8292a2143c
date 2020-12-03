@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "779ea790_20c37576",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T03:30:06Z",
+      "side": 1,
+      "message": "minor typo - in a few places location is misspelled",
+      "range": {
+        "startLine": 310,
+        "startChar": 54,
+        "endLine": 310,
+        "endChar": 62
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9eb291d_d08e1de9",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T03:30:06Z",
+      "side": 1,
+      "message": "missing bracket",
+      "range": {
+        "startLine": 457,
+        "startChar": 45,
+        "endLine": 457,
+        "endChar": 46
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71ae5c54_45fb7dd9",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 666,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T03:30:06Z",
+      "side": 1,
+      "message": "no maxDepth in this version",
+      "range": {
+        "startLine": 663,
+        "startChar": 4,
+        "endLine": 666,
+        "endChar": 3
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04ece5b2_e6494f36",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 684,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T03:30:06Z",
+      "side": 1,
+      "message": "missing @param maxDepth\n\nmaxdepth is an interesting case, I would recommend an @see to org.eclipse.cdt.dsf.debug.service.IStack.getStackDepth(IDMContext, int, DataRequestMonitor\u003cInteger\u003e) for further documentation of what maxDepth does.",
+      "range": {
+        "startLine": 684,
+        "startChar": 4,
+        "endLine": 684,
+        "endChar": 11
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f4c3893e_63c75235",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 737,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T03:30:06Z",
+      "side": 1,
+      "message": "good catch on fixing up this name",
+      "range": {
+        "startLine": 737,
+        "startChar": 51,
+        "endLine": 737,
+        "endChar": 62
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aed7ea8b_b734adf0",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T03:30:06Z",
+      "side": 1,
+      "message": "In a few places the \"execution context\" qualifier on thread has been removed or unused in this documentation. The purpose of it is to distinguish execution context threads from an OS thread and from container (aka process) execution contexts. While this method returns conceptually threads, it doesn\u0027t return IThreadDMContext, but IExecutionDMContext.\n\nFrankly this distinction has always annoyed me a little, but it is well ingrained in CDT.\n\nSee the comment near the top of org.eclipse.cdt.dsf.mi.service.MIProcesses (the diamond shaped diagram) for more info.\n\nNote the above does not necessarily apply to non-MI/GDB based DSF implementations.\n\nI don\u0027t want to reject this change - but rather I am curious to solicit your input on the matter.",
+      "range": {
+        "startLine": 1038,
+        "startChar": 37,
+        "endLine": 1038,
+        "endChar": 40
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "065471eb_5c0be025",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1078,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-03T03:30:06Z",
+      "side": 1,
+      "message": "similar comment as to the above about threads",
+      "range": {
+        "startLine": 1077,
+        "startChar": 40,
+        "endLine": 1078,
+        "endChar": 3
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

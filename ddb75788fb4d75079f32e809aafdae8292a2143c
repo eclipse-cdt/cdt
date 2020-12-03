@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "40931fa4_a5e596fa",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 256717
+      },
+      "writtenOn": "2020-12-03T14:03:18Z",
+      "side": 1,
+      "message": "ah nice catch 👍; going through it again i found a few typos i missed the first time around..fixing",
+      "parentUuid": "779ea790_20c37576",
+      "range": {
+        "startLine": 310,
+        "startChar": 54,
+        "endLine": 310,
+        "endChar": 62
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a9eb291d_d08e1de9",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2020-12-03T03:30:06Z",
       "side": 1,
       "message": "missing bracket",
+      "range": {
+        "startLine": 457,
+        "startChar": 45,
+        "endLine": 457,
+        "endChar": 46
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e5977a2_dc1b5322",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 256717
+      },
+      "writtenOn": "2020-12-03T14:03:18Z",
+      "side": 1,
+      "message": "ah my bad...thanks for picking it up",
+      "parentUuid": "a9eb291d_d08e1de9",
       "range": {
         "startLine": 457,
         "startChar": 45,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "985024ec_54a21b15",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 666,
+      "author": {
+        "id": 256717
+      },
+      "writtenOn": "2020-12-03T14:03:18Z",
+      "side": 1,
+      "message": "now removed",
+      "parentUuid": "71ae5c54_45fb7dd9",
+      "range": {
+        "startLine": 663,
+        "startChar": 4,
+        "endLine": 666,
+        "endChar": 3
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "04ece5b2_e6494f36",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
         "patchSetId": 1
@@ -82,6 +154,30 @@
       "writtenOn": "2020-12-03T03:30:06Z",
       "side": 1,
       "message": "missing @param maxDepth\n\nmaxdepth is an interesting case, I would recommend an @see to org.eclipse.cdt.dsf.debug.service.IStack.getStackDepth(IDMContext, int, DataRequestMonitor\u003cInteger\u003e) for further documentation of what maxDepth does.",
+      "range": {
+        "startLine": 684,
+        "startChar": 4,
+        "endLine": 684,
+        "endChar": 11
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9a4e75f_11e6989f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 684,
+      "author": {
+        "id": 256717
+      },
+      "writtenOn": "2020-12-03T14:03:18Z",
+      "side": 1,
+      "message": "yes, i took the note from IStack.getStackDepth 😊 but i guess its a bit confusing\nI\u0027ll try to frame it better",
+      "parentUuid": "04ece5b2_e6494f36",
       "range": {
         "startLine": 684,
         "startChar": 4,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "a52d2fd9_5537c2e8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 737,
+      "author": {
+        "id": 256717
+      },
+      "writtenOn": "2020-12-03T14:03:18Z",
+      "side": 1,
+      "message": "Thanks 😊",
+      "parentUuid": "f4c3893e_63c75235",
+      "range": {
+        "startLine": 737,
+        "startChar": 51,
+        "endLine": 737,
+        "endChar": 62
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aed7ea8b_b734adf0",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
         "patchSetId": 1
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "88a1a272_6daa1494",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 256717
+      },
+      "writtenOn": "2020-12-03T14:03:18Z",
+      "side": 1,
+      "message": "Yes, it was difficult on how best to write this. I was divided between a conceptual and a more literal route (which might raise questions about the dmcs and need some explaining on execution contexts). As I wasn\u0027t 100% clear on it myself so i decided to keep it simple i.e. go for the more conceptual route. This might even help test engineers who aren\u0027t that comfortable with dmcs yet\nHowever, this is quite difficult to justify if its indeed the right way. Because a user writing test cases should atleast be somewhat comfortable with dmcs to be able to write them in the first place\nI keep thinking maybe going a bit into detail regarding the dmcs wouldn\u0027t hurt but when i do it i find it confusing and then shift back to a more simpler approach. Not sure how best to keep it balanced",
+      "parentUuid": "aed7ea8b_b734adf0",
+      "range": {
+        "startLine": 1038,
+        "startChar": 37,
+        "endLine": 1038,
+        "endChar": 40
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "065471eb_5c0be025",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
         "patchSetId": 1
@@ -151,6 +295,30 @@
       "writtenOn": "2020-12-03T03:30:06Z",
       "side": 1,
       "message": "similar comment as to the above about threads",
+      "range": {
+        "startLine": 1077,
+        "startChar": 40,
+        "endLine": 1078,
+        "endChar": 3
+      },
+      "revId": "ddb75788fb4d75079f32e809aafdae8292a2143c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f80c047_cba82d39",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1078,
+      "author": {
+        "id": 256717
+      },
+      "writtenOn": "2020-12-03T14:03:18Z",
+      "side": 1,
+      "message": "yes its also a similar reason as to my above comment. A new user or test engineer might not not be that comfortable with execution DM contexts. So to keep things simple I tried to simplify it a bit. Not sure if this is the right way and would gladly take any input on how best to handle these",
+      "parentUuid": "065471eb_5c0be025",
       "range": {
         "startLine": 1077,
         "startChar": 40,

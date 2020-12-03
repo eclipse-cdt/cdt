@@ -307,10 +307,10 @@ public class SyncUtil {
 	}
 
 	/**
-	 * Adds a breakpoint at {@code location}. The {@code locaiton} is the one which
+	 * Adds a breakpoint at {@code location}. The {@code location} is the one which
 	 * the underlying debugger understands. For example, in case of gdb
 	 * "<current-file>:<line#>" or "<line#>" or "<function-name>" are all valid
-	 * locaitons. Refer to the debugger documentation to see all valid locations
+	 * locations. Refer to the debugger documentation to see all valid locations
 	 *
 	 * @param location
 	 * @return
@@ -321,7 +321,7 @@ public class SyncUtil {
 	}
 
 	/**
-	 * Adds a breakpoint at {@code location}. For an example of possible locaitons
+	 * Adds a breakpoint at {@code location}. For an example of possible locations
 	 * see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
 	 *
 	 * @param location
@@ -334,8 +334,8 @@ public class SyncUtil {
 	}
 
 	/**
-	 * Adds a (possbile temporary) breakpoint at {@code location}. For possible
-	 * locaitons see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 * Adds a (possible temporary) breakpoint at {@code location}. For possible
+	 * locations see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
 	 *
 	 * @param location
 	 * @param massagedTimeout
@@ -347,8 +347,8 @@ public class SyncUtil {
 	}
 
 	/**
-	 * Adds a (possbile temporary) breakpoint at {@code location}. For possible
-	 * locaitons see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 * Adds a (possible temporary) breakpoint at {@code location}. For possible
+	 * locations see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
 	 *
 	 * @param location
 	 * @param temporary
@@ -578,8 +578,8 @@ public class SyncUtil {
 	}
 
 	/**
-	 * Runs the process' execution to {@code locaiton}. For an example of possible
-	 * locaitons see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 * Runs the process' execution to {@code location}. For an example of possible
+	 * locations see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
 	 *
 	 * @param location
 	 * @return
@@ -590,8 +590,8 @@ public class SyncUtil {
 	}
 
 	/**
-	 * Runs the process' execution to {@code locaiton}. For an example of possible
-	 * locaitons see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 * Runs the process' execution to {@code location}. For an example of possible
+	 * locations see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
 	 *
 	 * @param location
 	 * @param timeout
@@ -660,10 +660,6 @@ public class SyncUtil {
 	 * Gets the stack depth of the thread ({@code execCtx}). A stack depth is the
 	 * maximum level of that stack frame
 	 *
-	 * <p>
-	 * Note: The depth returned could, but is not required to, be limited to the
-	 * {@code maxDepth} parameter
-	 *
 	 * @param execCtx
 	 * @return
 	 * @throws Throwable
@@ -674,14 +670,18 @@ public class SyncUtil {
 
 	/**
 	 * Gets the stack depth of the thread ({@code execCtx}). A stack depth is the
-	 * maximum level of that stack frame
+	 * maximum level of that stack frame. If {@code maxDepth} is specified then it
+	 * does not count beyond {@code maxDepth} frames
 	 *
 	 * <p>
-	 * Note: The depth returned could, but is not required to, be limited to the
-	 * {@code maxDepth} parameter
+	 * For example, given stack with frame levels 0 through 11 and a
+	 * {@code maxDepth} of 4 would return 4. However, with a {@code maxDepth} of 13
+	 * it would return 12 (i.e. the actual depth)
 	 *
 	 * @param execCtx
-	 * @return
+	 * @param maxDepth
+	 * @return If {@code maxDepth} is greater than the actual depth then actual
+	 *         depth is returned else {@code maxDepth} is returned
 	 * @throws Throwable
 	 */
 	public static Integer getStackDepth(final IExecutionDMContext execCtx, final int maxDepth) throws Throwable {
@@ -727,7 +727,7 @@ public class SyncUtil {
 
 	/**
 	 * Gets the frame data of the stack frame belonging to that thread whose index
-	 * is specifed by {@code threadIndex} and whose level is given by {@code level}
+	 * is specified by {@code threadIndex} and whose level is given by {@code level}
 	 *
 	 * @param threadIndex
 	 * @param level
@@ -912,7 +912,7 @@ public class SyncUtil {
 	 * <li>Massage timeouts i.e. a common multiplier for all timeouts
 	 * <ul>
 	 */
-	public static class DefaultTimeouts {
+	static class DefaultTimeouts {
 
 		/**
 		 * Overridable default timeout values. An override is specified using a

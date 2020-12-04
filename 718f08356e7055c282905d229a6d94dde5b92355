@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "98a75385_dad44ff4",
+        "filename": "launchbar/org.eclipse.launchbar.ui/src/org/eclipse/launchbar/ui/internal/target/NewLaunchTargetWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-04T17:18:18Z",
+      "side": 1,
+      "message": "Actually this should be INewWizard:\n\n\"API Information: The value of the class attribute must represent a class that implements org.eclipse.ui.INewWizard.\"\n\nQuote from  https://help.eclipse.org/2020-09/topic/org.eclipse.platform.doc.isv/reference/extension-points/org_eclipse_ui_newWizards.html",
+      "range": {
+        "startLine": 27,
+        "startChar": 61,
+        "endLine": 27,
+        "endChar": 77
+      },
+      "revId": "718f08356e7055c282905d229a6d94dde5b92355",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

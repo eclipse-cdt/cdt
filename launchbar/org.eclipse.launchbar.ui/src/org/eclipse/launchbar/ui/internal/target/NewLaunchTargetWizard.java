@@ -13,15 +13,18 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal.target;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.launchbar.ui.internal.Messages;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
 
 /**
  * The new wizard is responsible for allowing the user to choose which new
  * (nested) wizard to run. The set of available new wizards comes from the new
  * extension point.
  */
-public class NewLaunchTargetWizard extends Wizard {
+public class NewLaunchTargetWizard extends Wizard implements INewWizard {
 
 	public NewLaunchTargetWizard() {
 		setForcePreviousAndNextButtons(true);
@@ -40,6 +43,11 @@ public class NewLaunchTargetWizard extends Wizard {
 	public boolean performFinish() {
 		// Downstream wizards do finish
 		return false;
+	}
+
+	@Override
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		// Nothing to do
 	}
 
 }

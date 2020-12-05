@@ -152,7 +152,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				runCMake = true;
 			}
 
-			ICMakeProperties cmakeProperties = getPropertiesController().load();
+			ICMakeProperties cmakeProperties = getPropertiesController().get();
 			runCMake |= !Files.exists(buildDir.resolve("CMakeCache.txt")); //$NON-NLS-1$
 
 			final SimpleOsOverridesSelector overridesSelector = new SimpleOsOverridesSelector();
@@ -181,7 +181,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 						getToolChain().getErrorParserIds())) {
 					epm.setOutputStream(console.getOutputStream());
 
-					CommandDescriptor commandDescr = cmdBuilder.makeCMakeBuildCommandline("all"); //$NON-NLS-1$
+					CommandDescriptor commandDescr = cmdBuilder.makeBuildCommandline("all"); //$NON-NLS-1$
 					List<String> command = commandDescr.getArguments();
 					// extract name of executable
 					final String arg0 = command.remove(0);
@@ -252,7 +252,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			IContainer srcFolder, IPath workingDir, IConsole console, IProgressMonitor monitor)
 			throws CoreException, IOException {
 		CommandDescriptor commandDescr = cmdBuilder
-				.makeCMakeCommandline(toolChainFile != null ? toolChainFile.getPath() : null);
+				.makeGenerateCommandline(toolChainFile != null ? toolChainFile.getPath() : null);
 
 		List<String> arguments = commandDescr.getArguments();
 		// tell cmake where its script is located..
@@ -321,7 +321,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			ICMakeProperties cmakeProperties = getPropertiesController().load();
 			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties,
 					new SimpleOsOverridesSelector());
-			CommandDescriptor commandDescr = cmdBuilder.makeCMakeBuildCommandline("clean"); //$NON-NLS-1$
+			CommandDescriptor commandDescr = cmdBuilder.makeBuildCommandline("clean"); //$NON-NLS-1$
 			List<String> command = commandDescr.getArguments();
 			// extract name of executable
 			final String arg0 = command.remove(0);
@@ -422,7 +422,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
 		if (ICMakePropertiesController.class.equals(adapter)) {
-			return (T) pc;
+			return (T) getPropertiesController();
 		}
 		return super.getAdapter(adapter);
 	}

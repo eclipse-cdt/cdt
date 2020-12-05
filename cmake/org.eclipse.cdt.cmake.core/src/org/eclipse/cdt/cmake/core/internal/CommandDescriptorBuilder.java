@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 import org.eclipse.cdt.cmake.core.properties.IOsOverrides;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -51,7 +51,7 @@ class CommandDescriptorBuilder {
 	 * @return the command-line arguments and environment to invoke cmake.
 	 * @throws CoreException
 	 */
-	CommandDescriptor makeCMakeCommandline(Path toolChainFile) throws CoreException {
+	CommandDescriptor makeGenerateCommandline(Path toolChainFile) throws CoreException {
 		List<String> args = new ArrayList<>();
 		List<String> env = new ArrayList<>();
 
@@ -73,13 +73,14 @@ class CommandDescriptorBuilder {
 		{
 			String file = cmakeProperties.getCacheFile();
 			if (!(file == null || file.isBlank())) {
-				args.add("-C"); //$NON-NLS-1$
-				args.add(file);
+				appendArguments(args, "-C", file); //$NON-NLS-1$
 			}
 		}
-		CommandDescriptorBuilder.appendCMakeArguments(args, cmakeProperties.getExtraArguments());
-		/* add settings for the operating system we are running under */
-		CommandDescriptorBuilder.appendCMakeOsOverrideArgs(args, overridesSelector.getOsOverrides(cmakeProperties));
+
+		final String[] extraArgs = CommandLineUtil.argumentsToArrayWindowsStyle(cmakeProperties.getExtraArguments());
+		appendArguments(args, extraArgs);
+		/* add settings for the build platform */
+		appendCMakeOsOverrideArgs(args, overridesSelector.getOsOverrides(cmakeProperties));
 
 		/* at last, add our requirements that override extra args specified by the user... */
 		{
@@ -105,7 +106,7 @@ class CommandDescriptorBuilder {
 	 * @return the command-line arguments and environment to invoke cmake.
 	 * @throws CoreException
 	 */
-	CommandDescriptor makeCMakeBuildCommandline(String buildscriptTarget) throws CoreException {
+	CommandDescriptor makeBuildCommandline(String buildscriptTarget) throws CoreException {
 		List<String> args = new ArrayList<>();
 		List<String> env = new ArrayList<>();
 
@@ -117,10 +118,7 @@ class CommandDescriptorBuilder {
 			String cmd = varManager.performStringSubstitution(osOverrides.getCommand());
 			args.add(cmd);
 		}
-		args.add("--build"); //$NON-NLS-1$
-		args.add("."); //$NON-NLS-1$
-		args.add("--target"); //$NON-NLS-1$
-		args.add(buildscriptTarget);
+		appendArguments(args, "--build", ".", "--target", buildscriptTarget); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		// TODO parallel build: use CMAKE_BUILD_PARALLEL_LEVEL envvar (since cmake 3.12)
 		// TODO verbose build: use VERBOSE envvar (since cmake 3.14)
 		// TODO stop on first error: query CMakeGenerator object for argument
@@ -135,7 +133,7 @@ class CommandDescriptorBuilder {
 	 * @param moreArgs the arguments to substitute and append
 	 * @throws CoreException if unable to resolve the value of one or more variables
 	 */
-	private static void appendCMakeArguments(List<String> argList, final List<String> moreArgs) throws CoreException {
+	private static void appendArguments(List<String> argList, String... moreArgs) throws CoreException {
 		IStringVariableManager mgr = VariablesPlugin.getDefault().getStringVariableManager();
 		for (String arg : moreArgs) {
 			String expanded = mgr.performStringSubstitution(arg);
@@ -159,10 +157,9 @@ class CommandDescriptorBuilder {
 			String cmd = varManager.performStringSubstitution(prefs.getCommand());
 			args.set(0, cmd);
 		}
-		args.add("-G"); //$NON-NLS-1$
-		final CMakeGenerator generator = prefs.getGenerator();
-		args.add(generator.getCMakeName());
-		appendCMakeArguments(args, prefs.getExtraArguments());
+		appendArguments(args, "-G", prefs.getGenerator().getCMakeName()); //$NON-NLS-1$
+		final String[] extraArgs = CommandLineUtil.argumentsToArrayWindowsStyle(prefs.getExtraArguments());
+		appendArguments(args, extraArgs);
 	}
 
 	/**

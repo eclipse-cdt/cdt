@@ -16,8 +16,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.cmake.core.internal.properties.CMakePropertiesBean;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
@@ -51,9 +49,7 @@ public class CMakePropertiesEvolutionTest {
 		props.setWarnUnused(true);
 		props.getLinuxOverrides().setGenerator(CMakeGenerator.Ninja);
 
-		List<String> extraArgs = new ArrayList<>();
-		extraArgs.add("arg1");
-		extraArgs.add("arg2");
+		String extraArgs = "arg1 arg2";
 		props.setExtraArguments(extraArgs);
 
 		Yaml yaml = new Yaml(new CustomClassLoaderConstructor(this.getClass().getClassLoader()));

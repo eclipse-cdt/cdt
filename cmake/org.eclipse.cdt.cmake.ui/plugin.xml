@@ -4,9 +4,9 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            class="org.eclipse.cdt.cmake.internal.ui.properties.CMakePropertyPage"
+            class="org.eclipse.cdt.cmake.ui.internal.properties.CMakePropertyPage"
             id="org.eclipse.cdt.cmake.ui.properties.cmakePropertyPage"
-            name="CMake">
+            name="%pagename.properties">
          <enabledWhen>
             <and>
                <instanceof
@@ -18,6 +18,12 @@
                </test>
             </and>
          </enabledWhen>
+      </page>
+      <page
+            category="org.eclipse.cdt.cmake.ui.properties.cmakePropertyPage"
+            class="org.eclipse.cdt.cmake.ui.internal.properties.OverridesPropertyPage"
+            id="org.eclipse.cdt.cmake.ui.properties.overridesPropertyPage"
+            name="%pagename.build.platform">
       </page>
    </extension>
    <extension

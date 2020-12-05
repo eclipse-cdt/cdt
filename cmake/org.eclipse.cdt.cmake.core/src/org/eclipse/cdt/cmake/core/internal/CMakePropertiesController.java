@@ -18,15 +18,16 @@ import java.io.Writer;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.eclipse.cdt.cmake.core.internal.properties.CMakePropertiesBean;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 import org.eclipse.cdt.cmake.core.properties.ICMakePropertiesController;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
@@ -39,13 +40,13 @@ class CMakePropertiesController implements ICMakePropertiesController {
 
 	private final Path storageFile;
 	private final Runnable cmakeCacheDirtyMarker;
-
+	private CMakePropertiesBean props;
 	private String cacheFile;
-	private List<String> extraArguments;
+	private String[] extraArguments;
 	private CMakeGenerator generatorLinux;
-	private List<String> extraArgumentsLinux;
+	private String[] extraArgumentsLinux;
 	private CMakeGenerator generatorWindows;
-	private List<String> extraArgumentsWindows;
+	private String[] extraArgumentsWindows;
 	private String buildType;
 
 	/** Creates a new CMakePropertiesController object.
@@ -62,21 +63,22 @@ class CMakePropertiesController implements ICMakePropertiesController {
 	}
 
 	@Override
-	public ICMakeProperties load() throws IOException {
-		CMakePropertiesBean props = null;
-		if (Files.exists(storageFile)) {
-			try (InputStream is = Files.newInputStream(storageFile)) {
-				props = new Yaml(new CustomClassLoaderConstructor(this.getClass().getClassLoader())).loadAs(is,
-						CMakePropertiesBean.class);
-				// props is null here if if no document was available in the file
-			}
-		}
+	public ICMakeProperties get() throws IOException {
 		if (props == null) {
-			// nothing was persisted, return default properties
-			props = new CMakePropertiesBean();
-		}
+			if (Files.exists(storageFile)) {
+				try (InputStream is = Files.newInputStream(storageFile)) {
+					props = new Yaml(new CustomClassLoaderConstructor(this.getClass().getClassLoader())).loadAs(is,
+							CMakePropertiesBean.class);
+					// props is null here if no document was available in the file
+				}
+			}
+			if (props == null) {
+				// nothing was persisted, return default properties
+				props = new CMakePropertiesBean();
+			}
 
-		setupModifyDetection(props);
+			setupModifyDetection(props);
+		}
 		return props;
 	}
 
@@ -86,11 +88,9 @@ class CMakePropertiesController implements ICMakePropertiesController {
 		if (isPropertyModified(properties) || isExtraArgumentsPropertyModified(properties)) {
 			cmakeCacheDirtyMarker.run(); // mark cmake cache file for removal
 		}
-		if (!Files.exists(storageFile)) {
-			try {
-				Files.createFile(storageFile);
-			} catch (FileAlreadyExistsException ignore) {
-			}
+		try {
+			Files.createDirectories(storageFile.getParent());
+		} catch (FileAlreadyExistsException ignore) {
 		}
 		try (Writer wr = new OutputStreamWriter(Files.newOutputStream(storageFile))) {
 			new Yaml().dump(properties, wr);
@@ -105,8 +105,8 @@ class CMakePropertiesController implements ICMakePropertiesController {
 	private boolean isPropertyModified(ICMakeProperties properties) {
 		return !Objects.equals(buildType, properties.getBuildType())
 				|| !Objects.equals(cacheFile, properties.getCacheFile())
-				|| !Objects.equals(generatorLinux, properties.getLinuxOverrides().getGenerator())
-				|| !Objects.equals(generatorWindows, properties.getWindowsOverrides().getGenerator());
+				|| generatorLinux != properties.getLinuxOverrides().getGenerator()
+				|| generatorWindows != properties.getWindowsOverrides().getGenerator();
 	}
 
 	/** Gets whether changes in one of the extra arguments properties force us to delete file CMakeCache.txt
@@ -123,20 +123,23 @@ class CMakePropertiesController implements ICMakePropertiesController {
 	private void setupModifyDetection(ICMakeProperties properties) {
 		buildType = properties.getBuildType();
 		cacheFile = properties.getCacheFile();
-		extraArguments = properties.getExtraArguments();
+		extraArguments = CommandLineUtil.argumentsToArrayWindowsStyle(properties.getExtraArguments());
 		generatorLinux = properties.getLinuxOverrides().getGenerator();
-		extraArgumentsLinux = properties.getLinuxOverrides().getExtraArguments();
+		extraArgumentsLinux = CommandLineUtil
+				.argumentsToArrayWindowsStyle(properties.getLinuxOverrides().getExtraArguments());
 		generatorWindows = properties.getWindowsOverrides().getGenerator();
-		extraArgumentsWindows = properties.getWindowsOverrides().getExtraArguments();
+		extraArgumentsWindows = CommandLineUtil
+				.argumentsToArrayWindowsStyle(properties.getWindowsOverrides().getExtraArguments());
 	}
 
-	private boolean hasExtraArgumentChanged(List<String> expected, List<String> actual) {
+	private boolean hasExtraArgumentChanged(String[] expected, String actual) {
 		String wanted = "CMAKE_TOOLCHAIN_FILE"; //$NON-NLS-1$
 		// extract the last arguments that contain String wanted..
 		Predicate<? super String> predContains = a -> a.contains(wanted);
 		BinaryOperator<String> keepLast = (first, second) -> second;
-		String a1 = expected.stream().filter(predContains).reduce(keepLast).orElse(null);
-		String a2 = actual.stream().filter(predContains).reduce(keepLast).orElse(null);
+		String a1 = Stream.of(expected).filter(predContains).reduce(keepLast).orElse(null);
+		String a2 = Stream.of(CommandLineUtil.argumentsToArrayWindowsStyle(actual)).filter(predContains)
+				.reduce(keepLast).orElse(null);
 		if (!Objects.equals(a1, a2)) {
 			return true;
 		}

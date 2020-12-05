@@ -17,8 +17,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
@@ -42,7 +40,7 @@ public class CMakePropertiesControllerTest {
 		Path file = Path.of(new File("does-not-exist" + UUID.randomUUID().toString()).toURI());
 		testee = new CMakePropertiesController(file, () -> {
 		});
-		assertNotNull(testee.load());
+		assertNotNull(testee.get());
 
 		// test with empty file
 		File f = File.createTempFile("CMakePropertiesControllerTest", null);
@@ -50,7 +48,7 @@ public class CMakePropertiesControllerTest {
 		file = Path.of(f.toURI());
 		testee = new CMakePropertiesController(file, () -> {
 		});
-		assertNotNull(testee.load());
+		assertNotNull(testee.get());
 	}
 
 	/**
@@ -62,7 +60,7 @@ public class CMakePropertiesControllerTest {
 		Path file = Path.of(File.createTempFile("CMakePropertiesControllerTest", null).toURI());
 		CMakePropertiesController testee = new CMakePropertiesController(file, () -> {
 		});
-		ICMakeProperties props = testee.load();
+		ICMakeProperties props = testee.get();
 		assertNotNull(props);
 
 		props.setCacheFile("cacheFile");
@@ -76,28 +74,22 @@ public class CMakePropertiesControllerTest {
 		{
 			IOsOverrides overrides = props.getLinuxOverrides();
 			overrides.setGenerator(CMakeGenerator.Ninja);
-			List<String> extraArgs = new ArrayList<>();
-			extraArgs.add("arg1l=1");
-			extraArgs.add("arg2l=2");
+			String extraArgs = "arg1l=1 arg2l=2";
 			overrides.setExtraArguments(extraArgs);
 		}
 		{
 			IOsOverrides overrides = props.getWindowsOverrides();
 			overrides.setGenerator(CMakeGenerator.BorlandMakefiles);
-			List<String> extraArgs = new ArrayList<>();
-			extraArgs.add("arg1w=1");
-			extraArgs.add("arg2w=2");
+			String extraArgs = "arg1w=1 arg2w=2";
 			overrides.setExtraArguments(extraArgs);
 		}
 
-		List<String> extraArgs = new ArrayList<>();
-		extraArgs.add("arg1");
-		extraArgs.add("arg2");
+		String extraArgs = "arg1 arg2";
 		props.setExtraArguments(extraArgs);
 
 		testee.save(props);
 
-		ICMakeProperties in = testee.load();
+		ICMakeProperties in = testee.get();
 		assertThat(in).usingRecursiveComparison().isEqualTo(props);
 	}
 }

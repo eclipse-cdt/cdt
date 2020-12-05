@@ -29,7 +29,6 @@ import org.eclipse.cdt.cmake.is.core.internal.ParserDetection;
 import org.eclipse.cdt.cmake.is.core.internal.ParserDetection.DetectorWithMethod;
 import org.eclipse.cdt.cmake.is.core.internal.ParserDetection.ParserDetectionResult;
 import org.eclipse.cdt.cmake.is.core.internal.Plugin;
-import org.eclipse.cdt.cmake.is.core.internal.StringUtil;
 import org.eclipse.cdt.cmake.is.core.internal.builtins.CompilerBuiltinsDetector;
 import org.eclipse.cdt.cmake.is.core.participant.DefaultToolDetectionParticipant;
 import org.eclipse.cdt.cmake.is.core.participant.IRawIndexerInfo;
@@ -210,7 +209,7 @@ public class CompileCommandsJsonParser {
 				// CMake-notation (fileSep are forward slashes)
 				final String cwdStr = sourceFileInfo.getDirectory();
 				IPath cwd = cwdStr != null ? Path.fromOSString(cwdStr) : new Path(""); //$NON-NLS-1$
-				IResult result = parser.processArgs(cwd, StringUtil.trimLeadingWS(pdr.getReducedCommandLine()));
+				IResult result = parser.processArgs(cwd, pdr.getReducedCommandLine().stripLeading());
 				// remember result together with file name
 				rememberFileResult(file, result);
 

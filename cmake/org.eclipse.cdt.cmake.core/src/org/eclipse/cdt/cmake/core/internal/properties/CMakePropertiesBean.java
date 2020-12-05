@@ -11,8 +11,7 @@
 
 package org.eclipse.cdt.cmake.core.internal.properties;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 
@@ -26,7 +25,7 @@ public class CMakePropertiesBean implements ICMakeProperties {
 	private boolean warnNoDev, debugTryCompile, debugOutput, trace, warnUnitialized, warnUnused;
 	private String cacheFile;
 	private boolean clearCache;
-	private List<String> extraArguments = new ArrayList<>(0);
+	private String extraArguments = ""; //$NON-NLS-1$
 	private LinuxOverrides linuxOverrides = new LinuxOverrides();
 	private WindowsOverrides windowsOverrides = new WindowsOverrides();
 	private String buildType;
@@ -109,13 +108,13 @@ public class CMakePropertiesBean implements ICMakeProperties {
 	}
 
 	@Override
-	public List<String> getExtraArguments() {
-		return List.copyOf(extraArguments);
+	public String getExtraArguments() {
+		return extraArguments;
 	}
 
 	@Override
-	public void setExtraArguments(List<String> extraArguments) {
-		this.extraArguments = extraArguments;
+	public void setExtraArguments(String extraArguments) {
+		this.extraArguments = Objects.requireNonNull(extraArguments);
 	}
 
 	@Override
@@ -158,14 +157,16 @@ public class CMakePropertiesBean implements ICMakeProperties {
 
 	@Override
 	public void reset(boolean resetOsOverrides) {
-		warnNoDev = false;
-		debugTryCompile = false;
+		buildType = null;
+		clearCache = false;
 		debugOutput = false;
+		debugTryCompile = false;
 		trace = false;
+		warnNoDev = false;
 		warnUnitialized = false;
 		warnUnused = false;
-		extraArguments.clear();
-		cacheFile = ""; //$NON-NLS-1$
+		extraArguments = ""; //$NON-NLS-1$
+		cacheFile = null;
 
 		if (resetOsOverrides) {
 			linuxOverrides.reset();

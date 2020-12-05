@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.cmake.core.properties;
 
-import java.util.List;
-
 /**
  * Holds project Properties for cmake.
  *
@@ -100,17 +98,17 @@ public interface ICMakeProperties {
 	void setBuildType(String buildType);
 
 	/**
-	 * Gets the list of extra arguments to pass on the cmake command-line.
+	 * Gets the extra arguments to pass on the cmake command-line.
 	 *
-	 * @return a unmodifiable list, never {@code null}
+	 * @return the extra arguments, never {@code null}
 	 *
 	 */
-	List<String> getExtraArguments();
+	String getExtraArguments();
 
 	/**
-	 * Sets the list of extra arguments to pass on the cmake command-line.
+	 * Sets the extra arguments to pass on the cmake command-line.
 	 */
-	void setExtraArguments(List<String> extraArguments);
+	void setExtraArguments(String string);
 
 	/**
 	 * Gets the name of the file that is used to pre-populate the cmake cache.

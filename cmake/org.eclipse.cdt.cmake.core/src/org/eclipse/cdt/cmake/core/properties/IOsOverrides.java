@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.cmake.core.properties;
 
-import java.util.List;
-
 /**
  * Properties that override/augment the generic properties when running under/building for a
  * specific OS.
@@ -53,14 +51,19 @@ public interface IOsOverrides {
 	void setGenerator(CMakeGenerator generator);
 
 	/**
-	 * Gets the list of extra arguments to pass on the cmake command-line.
+	 * Gets the extra arguments to pass on the cmake command-line.
 	 *
-	 * @return an unmodifiable list, never {@code null}
+	 * @return the extra arguments, never {@code null}
 	 */
-	List<String> getExtraArguments();
+	String getExtraArguments();
 
 	/**
-	 * Sets the list of extra arguments to pass on the cmake command-line.
+	 * Sets the extra arguments to pass on the cmake command-line.
 	 */
-	void setExtraArguments(List<String> extraArguments);
+	void setExtraArguments(String string);
+
+	/**
+	 * Sets each property to its default value. This is intended for UIs that wish to implement a restore-defaults feature.
+	 */
+	void reset();
 }

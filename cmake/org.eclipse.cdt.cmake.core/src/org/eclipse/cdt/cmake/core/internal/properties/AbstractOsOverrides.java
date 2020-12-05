@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.cmake.core.internal.properties;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
@@ -29,7 +27,7 @@ public abstract class AbstractOsOverrides implements IOsOverrides {
 	private String command;
 	private boolean useDefaultCommand;
 	private CMakeGenerator generator;
-	private List<String> extraArguments = new ArrayList<>(0);
+	private String extraArguments = ""; //$NON-NLS-1$
 
 	/**
 	 * Creates a new object, initialized with all default values.
@@ -41,11 +39,12 @@ public abstract class AbstractOsOverrides implements IOsOverrides {
 	/**
 	 * Sets each value to its default.
 	 */
+	@Override
 	public void reset() {
 		setCommand("cmake"); //$NON-NLS-1$
 		useDefaultCommand = true;
 		setGenerator(CMakeGenerator.UnixMakefiles);
-		extraArguments.clear();
+		extraArguments = ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -79,13 +78,13 @@ public abstract class AbstractOsOverrides implements IOsOverrides {
 	}
 
 	@Override
-	public final List<String> getExtraArguments() {
-		return List.copyOf(extraArguments);
+	public final String getExtraArguments() {
+		return extraArguments;
 	}
 
 	@Override
-	public void setExtraArguments(List<String> extraArguments) {
-		this.extraArguments = extraArguments;
+	public void setExtraArguments(String extraArguments) {
+		this.extraArguments = Objects.requireNonNull(extraArguments);
 	}
 
 }

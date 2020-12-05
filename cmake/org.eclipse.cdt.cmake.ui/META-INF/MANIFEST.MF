@@ -21,5 +21,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Automatic-Module-Name: org.eclipse.cdt.cmake.ui
-Export-Package: org.eclipse.cdt.cmake.internal.ui.properties;x-internal:=true,
- org.eclipse.cdt.cmake.ui.internal;x-internal:=true
+Export-Package: org.eclipse.cdt.cmake.ui.internal;x-internal:=true

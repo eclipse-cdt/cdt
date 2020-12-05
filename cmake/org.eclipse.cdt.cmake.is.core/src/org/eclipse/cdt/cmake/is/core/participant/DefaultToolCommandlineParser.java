@@ -14,7 +14,6 @@ import java.util.Optional;
 
 import org.eclipse.cdt.cmake.is.core.internal.ParseContext;
 import org.eclipse.cdt.cmake.is.core.internal.Plugin;
-import org.eclipse.cdt.cmake.is.core.internal.StringUtil;
 import org.eclipse.cdt.cmake.is.core.participant.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
@@ -124,7 +123,7 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 		@SuppressWarnings("nls")
 		private IResult parseArguments(IResponseFileArglet responseFileArglet, String args) {
 			// eat buildOutput string argument by argument..
-			while (!(args = StringUtil.trimLeadingWS(args)).isEmpty()) {
+			while (!(args = args.stripLeading()).isEmpty()) {
 				boolean argParsed = false;
 				int consumed;
 				// parse with first parser that can handle the first argument on the

@@ -22,6 +22,30 @@
       "revId": "718f08356e7055c282905d229a6d94dde5b92355",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a9cade5_abff0f86",
+        "filename": "launchbar/org.eclipse.launchbar.ui/src/org/eclipse/launchbar/ui/internal/target/NewLaunchTargetWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-05T02:18:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "98a75385_dad44ff4",
+      "range": {
+        "startLine": 27,
+        "startChar": 61,
+        "endLine": 27,
+        "endChar": 77
+      },
+      "revId": "718f08356e7055c282905d229a6d94dde5b92355",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3fdfcae1_5d8cec82",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-06T21:35:10Z",
+      "side": 1,
+      "message": "16:05:53  [ERROR] Failed to execute goal org.eclipse.tycho:tycho-compiler-plugin:2.1.0:compile (default-compile) on project org.eclipse.cdt.cmake.core: Compilation failure: Compilation failure: \n16:05:53  [ERROR] /home/jenkins/agent/workspace/cdt-verify-test-cdt-ui-only-pipeline/cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java:[321] \n16:05:53  [ERROR] \tICMakeProperties cmakeProperties \u003d getPropertiesController().load();\n16:05:53  [ERROR] \t                                                             ^^^^\n16:05:53  [ERROR] The method load() is undefined for the type CMakePropertiesController\n16:05:53  [ERROR] 1 problem (1 error)",
+      "range": {
+        "startLine": 321,
+        "startChar": 64,
+        "endLine": 321,
+        "endChar": 69
+      },
+      "revId": "07fbb82878f303c20a0f0d46c1af92a10872b51c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

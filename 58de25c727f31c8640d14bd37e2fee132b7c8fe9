@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "faa8ac93_f5cf68cc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2020-12-07T10:30:18Z",
+      "side": 1,
+      "message": "to remove word",
+      "range": {
+        "startLine": 9,
+        "startChar": 12,
+        "endLine": 9,
+        "endChar": 20
+      },
+      "revId": "58de25c727f31c8640d14bd37e2fee132b7c8fe9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

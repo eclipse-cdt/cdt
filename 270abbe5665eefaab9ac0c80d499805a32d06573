@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f0ab3739_74755552",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakePropertiesController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-07T20:03:49Z",
+      "side": 1,
+      "message": "this strikes me as unexpected that on linux the windows argument parser is being used.",
+      "range": {
+        "startLine": 129,
+        "startChar": 5,
+        "endLine": 129,
+        "endChar": 62
+      },
+      "revId": "270abbe5665eefaab9ac0c80d499805a32d06573",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29e329ad_2a8ae05f",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/properties/IOsOverrides.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-07T20:03:49Z",
+      "side": 1,
+      "message": "This reset is called from within a constructor. Calling a non-final method from a constructor is a bad idea in API. It can lead to very unexpected results as the subclass reset will be called before the class is fully constructed, allowing the subclass to do things like access read final fields before they are initialized. \n\nSee https://www.informit.com/articles/article.aspx?p\u003d20521 for another example of where things can go wrong.\n\nI think in this case as the concrete classes are internal, the problem can be ignored by marking IOsOverrides as @noimplement This interface is not intended to be implemented by clients and a comment added somewhere. \n\nBTW I am particularly sensitive to this kind of bug as I have twice lost too much time tracking down a bug that was due to such constructions.\n\nPS Sorry for not catching it earlier when Ie62549cf2c0ddbdb0c9934d3cdb928874b8362aa was done.",
+      "revId": "270abbe5665eefaab9ac0c80d499805a32d06573",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbcb8da2_52899480",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-07T20:03:49Z",
+      "side": 1,
+      "message": "Thanks for resolving this place of having two different names for essentially the same idea. A lot of Eclipse has the \"internal\" part too early in its name so I certainly prefer where you have added it, i.e. after the name of the bundle.",
+      "revId": "270abbe5665eefaab9ac0c80d499805a32d06573",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a525c597_99defe06",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui/src/org/eclipse/cdt/cmake/ui/internal/properties/messages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-07T20:03:49Z",
+      "side": 1,
+      "message": "the idea of these tabs is nice to make everything line up, but in practice it doesn\u0027t work across platforms and themes well. A gridlayout can ensure alignment if important.\n\nThis is what it looks like on my Xubuntu machine https://i.imgur.com/I8zsB2Z.png",
+      "range": {
+        "startLine": 24,
+        "startChar": 49,
+        "endLine": 24,
+        "endChar": 55
+      },
+      "revId": "270abbe5665eefaab9ac0c80d499805a32d06573",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

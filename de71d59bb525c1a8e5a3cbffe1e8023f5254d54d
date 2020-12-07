@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f796222_84ca7cc2",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/properties/ICMakePropertiesController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-07T20:03:49Z",
+      "side": 0,
+      "message": "Why remove this @since? It causes an API error in my workspace.",
+      "revId": "de71d59bb525c1a8e5a3cbffe1e8023f5254d54d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4c0dc00d_ac9bb10e",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2020-12-07T19:39:31Z",
+      "side": 0,
+      "message": "This will run the build in a Container via the tool chain for the target.  There is ContainerGCCToolChain which is a type of IToolChain2.  When you select a Container target, it gets this form of a toolchain.  The startBuildProcess() method checks for this type of tool chain and defers to the tool chain startBuildProcess() method which in this case uses an ICommandLauncher.  This is the current system that CBuildConfiguration projects build in a Container.  The same logic is used for Make projects and Meson projects. Note that the startBuildProcess() method in the ContainerGCCToolChain also handles the include file copying which is needed by the indexer to work properly (need the header files from the Container target copied over locally). Is there some reason this system is not working for you?  How do you propose getting header files from the target and keeping the indexer working properly?",
+      "revId": "7d64391baffa435f6db634e716da26d5d395a083",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

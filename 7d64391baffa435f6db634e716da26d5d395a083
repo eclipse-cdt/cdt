@@ -16,6 +16,24 @@
       "revId": "7d64391baffa435f6db634e716da26d5d395a083",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0025ce21_72d28017",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-12-08T20:45:48Z",
+      "side": 0,
+      "message": "\u003e This will run the build in a Container via the tool chain for the target.  There is ContainerGCCToolChain which is a type of IToolChain2.  When you select a Container target, it gets this form of a toolchain.  The startBuildProcess() method checks for \n\nIs there a way to select a container to build in? The current project property page does not allow to set a container, it has just a \u0027Launch CMake GUI\u0027 button (which does not work).\nMy assumption is that CommandLauncherManager.getInstance().getCommandLauncher() returns a ICommandLauncher that either runs the commands locally or in a container.\n\n\u003e this type of tool chain and defers to the tool chain startBuildProcess() method which in this case uses an ICommandLauncher.  This is the current system that \n\nThe problem with startBuildProcess() is that it uses an ICommandLauncher only if an IToolChain2 is given. This forces users who want to build in a container to not only specify the container, but also to specify a CDT toolchain (IToolChain2) plus a cmake tool-chain file. \nSince CMake detects the build-tool perfectly on its own, the is no need for users to the the toolchains. (In practice, you need to specify a cmake toolchain-file only if you want to cross-compile; e.g. use gnu-eabihf-gcc instead of gcc).\nFrom my experience with managed build + cmake4eclipse, the command-launcher itself handles the header-file and build-dir copying seamlessly. See this [1] commit I had to make my plugin work with in-container build when they were introduced in CDT 9.4.\n\n[1] https://github.com/15knots/cmake4eclipse/commit/9e73ea5dcf33a89e559805a0992246852563b5ad",
+      "parentUuid": "4c0dc00d_ac9bb10e",
+      "revId": "7d64391baffa435f6db634e716da26d5d395a083",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

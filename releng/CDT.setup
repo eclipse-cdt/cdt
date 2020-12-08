@@ -166,13 +166,13 @@
       <repositoryList
           name="CDT Latest Released">
         <repository
-            url="https://download.eclipse.org/eclipse/updates/4.17/"/>
+            url="https://download.eclipse.org/eclipse/updates/4.18/R-4.18-202012021800/"/>
         <repository
             url="https://download.eclipse.org/egit/updates-5.9/"/>
         <repository
-            url="https://download.eclipse.org/linuxtools/update-2020-09-docker/"/>
+            url="https://download.eclipse.org/linuxtools/update-2020-12-docker/"/>
         <repository
-            url="https://download.eclipse.org/lsp4e/releases/0.16.0/"/>
+            url="https://download.eclipse.org/lsp4e/releases/0.17.0/"/>
         <repository
             url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.23/"/>
         <repository
@@ -182,7 +182,7 @@
         <repository
             url="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
         <repository
-            url="https://download.eclipse.org/tools/cdt/releases/10.0/cdt-10.0.0">
+            url="https://download.eclipse.org/tools/cdt/releases/10.1/cdt-10.1.0">
           <annotation>
             <detail
                 key="description">
@@ -194,7 +194,7 @@
           </annotation>
         </repository>
         <repository
-            url="https://download.eclipse.org/tools/orbit/downloads/2020-09/"/>
+            url="https://download.eclipse.org/tools/orbit/downloads/2020-12/"/>
         <repository
             url="https://download.eclipse.org/tools/ptp/updates/remote/3.0.1/"/>
       </repositoryList>
@@ -302,7 +302,7 @@
           <repository
               url="https://download.eclipse.org/cbi/updates/license/"/>
           <repository
-              url="https://download.eclipse.org/eclipse/updates/4.18milestones/S-4.18RC1-202011251800/"/>
+              url="https://download.eclipse.org/eclipse/updates/4.18/R-4.18-202012021800/"/>
           <repository
               url="https://download.eclipse.org/egit/updates/"/>
           <repository
@@ -322,7 +322,7 @@
           <repository
               url="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
           <repository
-              url="https://download.eclipse.org/tools/cdt/releases/10.0/cdt-10.0.0/">
+              url="https://download.eclipse.org/tools/cdt/releases/10.1/cdt-10.1.0/">
             <annotation>
               <detail
                   key="description">
@@ -331,7 +331,7 @@
             </annotation>
           </repository>
           <repository
-              url="https://download.eclipse.org/tools/orbit/downloads/drops/S20201124213957/repository/"/>
+              url="https://download.eclipse.org/tools/orbit/downloads/drops/R20201130205003/repository"/>
           <repository
               url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
         </repositoryList>

@@ -16,6 +16,24 @@
       "revId": "de71d59bb525c1a8e5a3cbffe1e8023f5254d54d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6bdd5e6c_73400e5d",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/properties/ICMakePropertiesController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2020-12-08T19:15:35Z",
+      "side": 0,
+      "message": "Gnaah! Happend by accident, I though I copied that over from cmake4eclipse inadvertently.",
+      "parentUuid": "1f796222_84ca7cc2",
+      "revId": "de71d59bb525c1a8e5a3cbffe1e8023f5254d54d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -34,6 +34,24 @@
       "revId": "7d64391baffa435f6db634e716da26d5d395a083",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eeae4d46_5a034777",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2020-12-08T22:37:47Z",
+      "side": 0,
+      "message": "| Is there a way to select a container to build in? The current project property page does not | allow to set a container, it has just a \u0027Launch CMake GUI\u0027 button (which does not work).\n| My assumption is that CommandLauncherManager.getInstance().getCommandLauncher() returns a    | ICommandLauncher that either runs the commands locally or in a container.\n\nThe container is part of the target\u0027s toolchain which is selected via the LaunchBar target selector.  For every image, ContainerTargetTypeProvider creates a launch target which has properties that specify the connection URI and the image id.  The class ContainerGCCToolChainProvider creates a toolchain for each connection URI/image id.\n\nWhen a user chooses a launch target for any of the images, the matching toolchain will be \nused to build a Core Build project.  This differs from managed build where the container info is specified as part of the Managed Build configuration.  In that case, the user chooses the container in the Container tab in the build settings.  Part of the new Core build \ninfrastructure is to simplify and use the launch bar.\n\n| The problem with startBuildProcess() is that it uses an ICommandLauncher only if an \n| IToolChain2 is given. This forces users who want to build in a container to not only specify | the container, but also to specify a CDT toolchain (IToolChain2) plus a cmake tool-chain \n| file. \n| Since CMake detects the build-tool perfectly on its own, the is no need for users to the the | toolchains. (In practice, you need to specify a cmake toolchain-file only if you want to \n| cross-compile; e.g. use gnu-eabihf-gcc instead of gcc).\n| From my experience with managed build + cmake4eclipse, the command-launcher itself handles \n| the header-file and build-dir copying seamlessly. See this [1] commit I had to make my plugin | work with in-container build when they were introduced in CDT 9.4.\n\nSo, I get that you want CMake to determine the toolset, however, how do you determine headers to copy back from the container to the host for the use of the indexer?  Some header file dependencies are calculated by calling the compile command with special options to list the header file directories.  You cannot use the host\u0027s headers to do the indexing as the container may be ahead or behind in tools or may not have additional system headers installed.  See ContainerGCCToolChain for details on calculating scannerInfo.  Is there a generic way in CMake to get this information?  FWIW: the ContainerGCCToolChain supports gcc and clang.\n\nFor Managed Build, the copying of header files occurs due to calls made via LanguageSettingsSerializableProvider.  These calls don\u0027t occur in Core Build which is why the additional processIncludePaths() method was added in CommandLauncherManager.  This new method gets called via the startBuildProcess() method and getScannerInfo() which are both in ContainerGCCToolChain.",
+      "parentUuid": "0025ce21_72d28017",
+      "revId": "7d64391baffa435f6db634e716da26d5d395a083",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

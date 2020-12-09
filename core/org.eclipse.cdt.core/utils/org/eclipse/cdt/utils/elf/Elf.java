@@ -1029,6 +1029,9 @@ public class Elf implements AutoCloseable {
 		return slist.toArray(new Section[0]);
 	}
 
+	/**
+	 * @throws ElfClassNoneException if {@link ELFhdr#ELFCLASSNONE} header is read
+	 */
 	public Section[] getSections() throws IOException {
 		if (sections == null) {
 			if (ehdr.e_shoff == 0) {
@@ -1063,7 +1066,7 @@ public class Elf implements AutoCloseable {
 					break;
 				case ELFhdr.ELFCLASSNONE:
 				default:
-					throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
+					throw new ElfClassNoneException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
 				}
 
 				sections[i].sh_link = efile.readIntE();
@@ -1081,7 +1084,7 @@ public class Elf implements AutoCloseable {
 					break;
 				case ELFhdr.ELFCLASSNONE:
 				default:
-					throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
+					throw new ElfClassNoneException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]); //$NON-NLS-1$
 				}
 			}
 		}
@@ -1315,5 +1318,17 @@ public class Elf implements AutoCloseable {
 					" given offset is " + Long.toHexString(result)); //$NON-NLS-1$
 		}
 		return result;
+	}
+
+	/**
+	 * Exception indicating that {@link ELFhdr#ELFCLASSNONE} header is read.
+	 *
+	 * @since 7.1
+	 */
+	public static class ElfClassNoneException extends IOException {
+
+		ElfClassNoneException(String message) {
+			super(message);
+		}
 	}
 }

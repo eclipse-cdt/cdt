@@ -29,6 +29,7 @@ import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
 import org.eclipse.cdt.utils.elf.Elf.ELFhdr;
+import org.eclipse.cdt.utils.elf.Elf.ElfClassNoneException;
 import org.eclipse.cdt.utils.elf.Elf.PHdr;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -177,7 +178,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 		try {
 			/* No PHdr.PT_INTERP found in the hints meaning we need to read the file itself */
 			return Arrays.stream(getPHdrs(path)).anyMatch(phdr -> phdr.p_type == PHdr.PT_INTERP);
-		} catch (IOException e) {
+		} catch (ElfClassNoneException e) {
 			CCorePlugin.log(e);
 		}
 		return false;

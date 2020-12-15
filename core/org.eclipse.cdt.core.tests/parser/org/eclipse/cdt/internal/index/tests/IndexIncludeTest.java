@@ -719,13 +719,13 @@ public class IndexIncludeTest extends IndexTestBase {
 	//	#include "a1.hpp"
 	//	#include "a2.hpp"
 
-	//	#include "a1.hpp"
-	//	#include "a2.hpp"
+	//	#include "a3.hpp"
+	//	#include "a4.hpp"
 	public void testSignificantMacrosWithPragmeOnceFromIdxSemantic() throws Exception {
 		waitForIndexer();
 		IProject prj = fProject.getProject();
 		TestScannerProvider.sIncludes = new String[] { prj.getLocation().toOSString() };
-		CharSequence[] contents = getContentsForTest(5);
+		CharSequence[] contents = getContentsForTest(7);
 
 		IFile b = createFile(prj, "b.hpp", contents[0].toString());
 		IFile a1 = createFile(prj, "a1.hpp", contents[1].toString());
@@ -750,12 +750,12 @@ public class IndexIncludeTest extends IndexTestBase {
 					IndexLocationFactory.getWorkspaceIFL(s1));
 
 			IIndexFile ultimateTestCppIdx = indexFiles[0];
-			IIndexFile includes[] = new IIndexFile[3];
+			IIndexFile includes[] = new IIndexFile[5];
 			includes[0] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(b))[0];
 			includes[1] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a1))[0];
 			includes[2] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a2))[0];
-			includes[2] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a3))[0];
-			includes[2] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a4))[0];
+			includes[3] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a3))[0];
+			includes[4] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a4))[0];
 
 			for (int i = 0; i < includes.length; i++) {
 				IIndexFile include = includes[i];

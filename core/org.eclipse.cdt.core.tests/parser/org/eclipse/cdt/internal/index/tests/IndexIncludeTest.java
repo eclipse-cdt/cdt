@@ -14,7 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.eclipse.cdt.core.testplugin.util.TestSourceReader.createFile;
+
 import java.io.ByteArrayInputStream;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -25,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -36,11 +41,13 @@ import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.junit.Assert;
 
 import junit.framework.TestSuite;
 
@@ -639,6 +646,143 @@ public class IndexIncludeTest extends IndexTestBase {
 			}
 		} finally {
 			fIndex.releaseReadLock();
+		}
+	}
+
+	//	#pragma once
+	//	#ifdef ABC
+	//	  int x = 5;
+	//	#endif
+
+	//	#pragma once
+	//	#include "b.hpp"
+
+	//	#pragma once
+	//	#include "b.hpp"
+
+	//	#include "a1.hpp"
+	//	#include "a2.hpp"
+	public void testSignificantMacrosWithPragmeOnceSemantic() throws Exception {
+		waitForIndexer();
+		IProject prj = fProject.getProject();
+		TestScannerProvider.sIncludes = new String[] { prj.getLocation().toOSString() };
+		CharSequence[] contents = getContentsForTest(5);
+
+		IFile b = createFile(prj, "b.hpp", contents[0].toString());
+		IFile a1 = createFile(prj, "a1.hpp", contents[1].toString());
+		IFile a2 = createFile(prj, "a2.hpp", contents[2].toString());
+
+		final IFile main = createFile(prj, "UltimateTest.cpp", contents[3].toString());
+
+		waitUntilFileIsIndexed(fIndex, b);
+		waitUntilFileIsIndexed(fIndex, a1);
+		waitUntilFileIsIndexed(fIndex, a2);
+		waitUntilFileIsIndexed(fIndex, main);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID,
+					IndexLocationFactory.getWorkspaceIFL(main));
+
+			IIndexFile ultimateTestCppIdx = indexFiles[0];
+			IIndexFile includes[] = new IIndexFile[3];
+			includes[0] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(b))[0];
+			includes[1] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a1))[0];
+			includes[2] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a2))[0];
+
+			for (int i = 0; i < includes.length; i++) {
+				IIndexFile include = includes[i];
+				outputUnresolvedIncludes(fIndex, include.getLocation(), ultimateTestCppIdx, new HashSet<IIndexFile>());
+			}
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	//	#pragma once
+	//	#ifdef ABC
+	//	  int x = 5;
+	//	#endif
+
+	//	#pragma once
+	//	#include "b.hpp"
+
+	//	#pragma once
+	//	#include "b.hpp"
+
+	//	#pragma once
+	//	#include "b.hpp"
+
+	//	#pragma once
+	//	#include "b.hpp"
+
+	//	#include "a1.hpp"
+	//	#include "a2.hpp"
+
+	//	#include "a1.hpp"
+	//	#include "a2.hpp"
+	public void testSignificantMacrosWithPragmeOnceFromIdxSemantic() throws Exception {
+		waitForIndexer();
+		IProject prj = fProject.getProject();
+		TestScannerProvider.sIncludes = new String[] { prj.getLocation().toOSString() };
+		CharSequence[] contents = getContentsForTest(5);
+
+		IFile b = createFile(prj, "b.hpp", contents[0].toString());
+		IFile a1 = createFile(prj, "a1.hpp", contents[1].toString());
+		IFile a2 = createFile(prj, "a2.hpp", contents[2].toString());
+		IFile a3 = createFile(prj, "a3.hpp", contents[3].toString());
+		IFile a4 = createFile(prj, "a4.hpp", contents[4].toString());
+
+		final IFile s1 = createFile(prj, "s1.cpp", contents[5].toString());
+		final IFile s2 = createFile(prj, "s2.cpp", contents[6].toString());
+
+		waitUntilFileIsIndexed(fIndex, b);
+		waitUntilFileIsIndexed(fIndex, a1);
+		waitUntilFileIsIndexed(fIndex, a2);
+		waitUntilFileIsIndexed(fIndex, a3);
+		waitUntilFileIsIndexed(fIndex, a4);
+		waitUntilFileIsIndexed(fIndex, s1);
+		waitUntilFileIsIndexed(fIndex, s2);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID,
+					IndexLocationFactory.getWorkspaceIFL(s1));
+
+			IIndexFile ultimateTestCppIdx = indexFiles[0];
+			IIndexFile includes[] = new IIndexFile[3];
+			includes[0] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(b))[0];
+			includes[1] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a1))[0];
+			includes[2] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a2))[0];
+			includes[2] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a3))[0];
+			includes[2] = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(a4))[0];
+
+			for (int i = 0; i < includes.length; i++) {
+				IIndexFile include = includes[i];
+				outputUnresolvedIncludes(fIndex, include.getLocation(), ultimateTestCppIdx, new HashSet<IIndexFile>());
+			}
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	private void outputUnresolvedIncludes(IIndex index, IIndexFileLocation ifl, IIndexFile ifile,
+			Set<IIndexFile> handled) throws CoreException {
+		if (ifile == null) {
+			Assert.fail(ifl.getURI() + " is not indexed");
+		} else if (handled.add(ifile)) {
+			IIndexInclude[] includes = ifile.getIncludes();
+			for (IIndexInclude inc : includes) {
+				if (inc.isActive()) {
+					if (inc.isResolved()) {
+						IIndexFile next = index.resolveInclude(inc);
+						outputUnresolvedIncludes(index, inc.getIncludesLocation(), next, handled);
+					} else {
+						Assert.fail("Unresolved inclusion: " + inc.getFullName() + " in file "
+								+ inc.getIncludedByLocation().getURI());
+					}
+				}
+			}
 		}
 	}
 

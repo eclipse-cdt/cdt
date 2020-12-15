@@ -1094,6 +1094,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (fShowActivity) {
 				trace("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
 			}
+
+			if (path.toOSString().endsWith("ZSOfflineAccess.cpp")) {
+				System.out.print("");
+			}
+
 			progress.subTask(
 					getMessage(MessageKind.parsingFileTask, path.lastSegment(), path.removeLastSegments(1).toString()));
 			FileContent codeReader = fResolver.getCodeReader(tu);

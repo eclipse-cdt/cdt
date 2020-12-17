@@ -64,17 +64,15 @@ public class GDBJtagDSFFinalLaunchSequence_7_12 extends GDBJtagDSFFinalLaunchSeq
 		if (commandControl != null && gdbBackEnd != null) {
 			// Use target async when interfacing with the full GDB console (i.e. minimum GDB version 7.12)
 			// otherwise explicitly set it to off.
-			commandControl
-					.queueCommand(
-							commandControl.getCommandFactory().createMIGDBSetTargetAsync(commandControl.getContext(),
-									gdbBackEnd.isFullGdbConsoleSupported()),
-							new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-								@Override
-								protected void handleError() {
-									// Accept errors for older GDBs
-									rm.done();
-								}
-							});
+			commandControl.queueCommand(commandControl.getCommandFactory()
+					.createMIGDBSetTargetAsync(commandControl.getContext(), gdbBackEnd.useTargetAsync()),
+					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+						@Override
+						protected void handleError() {
+							// Accept errors for older GDBs
+							rm.done();
+						}
+					});
 		} else {
 			// Should not happen
 			rm.done();

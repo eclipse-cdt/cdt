@@ -171,6 +171,14 @@ public interface IGDBBackend extends IMIBackend {
 	}
 
 	/**
+	 * @return True if CDT should use target async in all-stop mode.
+	 * @since 6.2
+	 */
+	default boolean useTargetAsync() {
+		return false;
+	}
+
+	/**
 	 * @return The real GDB process that was started for the debug session
 	 * @since 5.2
 	 */

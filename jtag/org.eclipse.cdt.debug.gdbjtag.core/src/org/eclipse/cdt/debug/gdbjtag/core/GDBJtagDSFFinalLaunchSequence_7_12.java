@@ -67,7 +67,7 @@ public class GDBJtagDSFFinalLaunchSequence_7_12 extends GDBJtagDSFFinalLaunchSeq
 			commandControl
 					.queueCommand(
 							commandControl.getCommandFactory().createMIGDBSetTargetAsync(commandControl.getContext(),
-									gdbBackEnd.isFullGdbConsoleSupported()),
+									gdbBackEnd.useTargetAsync()),
 							new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 								@Override
 								protected void handleError() {

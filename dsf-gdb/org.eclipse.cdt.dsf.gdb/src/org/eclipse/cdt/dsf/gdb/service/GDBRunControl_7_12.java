@@ -92,10 +92,7 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 
 	private void doSuspend(IExecutionDMContext context, final RequestMonitor rm) {
 		// We use the MI interrupt command when working in async mode.
-		// Since this run control service is specifically for all-stop mode,
-		// the only possibility to be running asynchronously is if the Full GDB console
-		// is being used.
-		if (fGDBBackEnd.isFullGdbConsoleSupported()) {
+		if (fGDBBackEnd.useTargetAsync()) {
 			// Start the job before sending the interrupt command
 			// to make sure we don't miss the *stopped event
 			final MonitorSuspendJob monitorJob = new MonitorSuspendJob(0, rm);
@@ -124,11 +121,8 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 
 	@Override
 	public boolean isTargetAcceptingCommands() {
-		// We shall directly return true if the async mode is ON,
-		// Since this run control service is specifically for all-stop mode,
-		//   The only possibility to be running asynchronously is if the Full GDB console
-		// is being used.
-		if (fGDBBackEnd.isFullGdbConsoleSupported()) {
+		// We shall directly return true if the async mode is ON.
+		if (fGDBBackEnd.useTargetAsync()) {
 			return true;
 		}
 

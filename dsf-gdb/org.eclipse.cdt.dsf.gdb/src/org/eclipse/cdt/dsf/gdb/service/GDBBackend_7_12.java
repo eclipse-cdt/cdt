@@ -63,6 +63,17 @@ public class GDBBackend_7_12 extends GDBBackend {
 				&& !fPtyFailure;
 	}
 
+	/**
+	 * @since 6.2
+	 */
+	@Override
+	public boolean useTargetAsync() {
+		// Enable target asynchronously if there is Full GDB console as Full GDB Console requires async target or
+		// If Windows remote debugging as remote debugging in GDB has lots of issues with handling Ctrl-C (See Bug 516371)
+		return isFullGdbConsoleSupported()
+				|| (Platform.getOS().equals(Platform.OS_WIN32) && getSessionType() == SessionType.REMOTE);
+	}
+
 	protected void createPty() {
 		if (!isFullGdbConsoleSupported()) {
 			return;

@@ -171,6 +171,13 @@ public interface IGDBBackend extends IMIBackend {
 	}
 
 	/**
+	 * @return True if GDB supports target async
+	 */
+	default boolean isTargetAsyncSupported() {
+		return false;
+	}
+
+	/**
 	 * @return The real GDB process that was started for the debug session
 	 * @since 5.2
 	 */

@@ -63,6 +63,14 @@ public class GDBBackend_7_12 extends GDBBackend {
 				&& !fPtyFailure;
 	}
 
+	@Override
+	public boolean isTargetAsyncSupported() {
+		// Enable target asynchronously if there is Full GDB console or
+		// If Windows remote debugging
+		return isFullGdbConsoleSupported()
+				|| (Platform.getOS().equals(Platform.OS_WIN32) && getSessionType() == SessionType.REMOTE);
+	}
+
 	protected void createPty() {
 		if (!isFullGdbConsoleSupported()) {
 			return;

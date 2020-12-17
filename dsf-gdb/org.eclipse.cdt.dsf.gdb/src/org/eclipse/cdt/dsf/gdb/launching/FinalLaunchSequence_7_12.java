@@ -107,11 +107,11 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 			return;
 		}
 
-		// Use target async for non-stop mode or when the
-		// Full GDB CLI console is being used.
+		// Use target async for non-stop mode or when
+		// it is specifically enabled by backend in all-stop mode
 		// Otherwise Explicitly set target-async to off
 		boolean asyncOn = false;
-		if (isNonStop() || fGdbBackEnd.isFullGdbConsoleSupported()) {
+		if (isNonStop() || fGdbBackEnd.useTargetAsync()) {
 			asyncOn = true;
 		}
 

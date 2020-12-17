@@ -47,12 +47,12 @@ public class GDBProcesses_7_12 extends GDBProcesses_7_11 {
 	@Override
 	public void terminate(IThreadDMContext thread, RequestMonitor rm) {
 		IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-		if (!backend.isFullGdbConsoleSupported()) {
+		if (!backend.isTargetAsyncSupported()) {
 			super.terminate(thread, rm);
 			return;
 		}
 
-		// If we are running the full GDB console, there is a bug with GDB 7.12
+		// If we are running the target-async support, there is a bug with GDB 7.12
 		// where after we terminate the process, the GDB prompt does not come
 		// back in the console.  As a workaround, we first interrupt the process
 		// to get the prompt back, and only then kill the process.
@@ -93,12 +93,12 @@ public class GDBProcesses_7_12 extends GDBProcesses_7_11 {
 		}
 
 		IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-		if (!backend.isFullGdbConsoleSupported()) {
+		if (!backend.isTargetAsyncSupported()) {
 			super.detachDebuggerFromProcess(dmc, rm);
 			return;
 		}
 
-		// If we are running the full GDB console, there is a bug with GDB 7.12
+		// If we are running the target-async support, there is a bug with GDB 7.12
 		// where after we detach the process, the GDB prompt does not come
 		// back in the console.  As a workaround, we first interrupt the process
 		// to get the prompt back, and only then detach the process.

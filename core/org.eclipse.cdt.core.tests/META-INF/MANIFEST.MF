@@ -48,3 +48,4 @@ Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.eclipse.cdt.core.tests
 Bundle-Localization: plugin
+Import-Package: org.junit.jupiter.api;version="5.7.0"

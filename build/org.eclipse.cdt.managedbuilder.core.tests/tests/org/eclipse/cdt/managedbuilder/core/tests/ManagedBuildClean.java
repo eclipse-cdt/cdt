@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 
 import org.eclipse.cdt.managedbuilder.testplugin.AbstractBuilderTest;
@@ -24,6 +28,7 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.Test;
 
 public class ManagedBuildClean extends AbstractBuilderTest {
 	private static final String PROJ_PATH = "testCleanProjects";
@@ -31,7 +36,7 @@ public class ManagedBuildClean extends AbstractBuilderTest {
 	private IProject fExternalBuilderProject;
 
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 		IWorkspaceDescription wsDescription = ResourcesPlugin.getWorkspace().getDescription();
 		wsDescription.setAutoBuilding(false);
@@ -43,15 +48,17 @@ public class ManagedBuildClean extends AbstractBuilderTest {
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		super.tearDown();
 		ManagedBuildTestHelper.removeProject(fInternalBuilderProject.getName());
 	}
 
+	@Test
 	public void testCleanInternal() throws Exception {
 		helperTestClean(fInternalBuilderProject, false);
 	}
 
+	@Test
 	public void testCleanExternal() throws Exception {
 		helperTestClean(fExternalBuilderProject, true);
 	}

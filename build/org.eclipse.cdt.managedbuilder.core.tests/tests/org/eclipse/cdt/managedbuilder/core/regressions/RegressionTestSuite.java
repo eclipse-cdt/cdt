@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.regressions;
 
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -26,7 +27,7 @@ public class RegressionTestSuite extends TestCase {
 		TestSuite suite = new TestSuite(RegressionTestSuite.class.getName());
 
 		// Test that common builder does the correct amount of work.
-		suite.addTestSuite(Bug_303953Test.class);
+		suite.addTest(new JUnit4TestAdapter(Bug_303953Test.class));
 
 		return suite;
 	}

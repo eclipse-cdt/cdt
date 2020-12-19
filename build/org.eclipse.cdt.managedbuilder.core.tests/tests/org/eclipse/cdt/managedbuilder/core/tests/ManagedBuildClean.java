@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collection;
 
 import org.eclipse.cdt.managedbuilder.testplugin.AbstractBuilderTest;
@@ -24,34 +28,37 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ManagedBuildClean extends AbstractBuilderTest {
 	private static final String PROJ_PATH = "testCleanProjects";
 	private IProject fInternalBuilderProject;
 	private IProject fExternalBuilderProject;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	public void setUpLocal() throws Exception {
 		IWorkspaceDescription wsDescription = ResourcesPlugin.getWorkspace().getDescription();
 		wsDescription.setAutoBuilding(false);
 		ResourcesPlugin.getWorkspace().setDescription(wsDescription);
-		assertNotNull("Cannot create testCleanInternal project",
-				fInternalBuilderProject = ManagedBuildTestHelper.loadProject("testCleanInternal", PROJ_PATH));
-		assertNotNull("Cannot create testCleanExternal project",
-				fExternalBuilderProject = ManagedBuildTestHelper.loadProject("testCleanExternal", PROJ_PATH));
+		assertNotNull(fInternalBuilderProject = ManagedBuildTestHelper.loadProject("testCleanInternal", PROJ_PATH),
+				"Cannot create testCleanInternal project");
+		assertNotNull(fExternalBuilderProject = ManagedBuildTestHelper.loadProject("testCleanExternal", PROJ_PATH),
+				"Cannot create testCleanExternal project");
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@AfterEach
+	public void tearDownLocal() throws Exception {
 		ManagedBuildTestHelper.removeProject(fInternalBuilderProject.getName());
 	}
 
+	@Test
 	public void testCleanInternal() throws Exception {
 		helperTestClean(fInternalBuilderProject, false);
 	}
 
+	@Test
 	public void testCleanExternal() throws Exception {
 		helperTestClean(fExternalBuilderProject, true);
 	}
@@ -63,7 +70,7 @@ public class ManagedBuildClean extends AbstractBuilderTest {
 		Collection<IResource> resources = getProjectBuildExeResources(project.getName(), "Debug",
 				"src/" + project.getName(), externalBuilder);
 		for (IResource resource : resources) {
-			assertTrue("Resource not found: " + resource, resource.exists());
+			assertTrue(resource.exists(), "Resource not found: " + resource);
 		}
 
 		// do a clean and make sure files are gone
@@ -77,7 +84,7 @@ public class ManagedBuildClean extends AbstractBuilderTest {
 				// makefiles are not removed when cleaning
 				continue;
 			}
-			assertFalse("Resource not deleted: " + resource, resource.exists());
+			assertFalse(resource.exists(), "Resource not deleted: " + resource);
 		}
 	}
 

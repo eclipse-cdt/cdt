@@ -20,36 +20,21 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.pdom.CModelListener;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILogListener;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -58,29 +43,33 @@ import junit.framework.TestFailure;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
+/**
+ * @deprecated Please migrate tests away from JUnit3 style to JUnit5 style by using {@link BaseTestCase5}
+ * as base class.
+ */
+@Deprecated
 public abstract class BaseTestCase extends TestCase {
-	private static final String DEFAULT_INDEXER_TIMEOUT_SEC = "10";
-	private static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
+	private static final String DEFAULT_INDEXER_TIMEOUT_SEC = BaseTestCase5.DEFAULT_INDEXER_TIMEOUT_SEC;
+	private static final String INDEXER_TIMEOUT_PROPERTY = BaseTestCase5.INDEXER_TIMEOUT_PROPERTY;
 	/**
 	 * Indexer timeout used by tests. To avoid this timeout expiring during debugging add
 	 * -Dindexer.timeout=some_large_number to VM arguments of the test launch configuration.
 	 */
-	protected static final int INDEXER_TIMEOUT_SEC = Integer
-			.parseInt(System.getProperty(INDEXER_TIMEOUT_PROPERTY, DEFAULT_INDEXER_TIMEOUT_SEC));
-	protected static final int INDEXER_TIMEOUT_MILLISEC = INDEXER_TIMEOUT_SEC * 1000;
+	protected static final int INDEXER_TIMEOUT_SEC = BaseTestCase5.INDEXER_TIMEOUT_SEC;
+	protected static final int INDEXER_TIMEOUT_MILLISEC = BaseTestCase5.INDEXER_TIMEOUT_MILLISEC;
 
 	/**
 	 * The GCC version to emulate when running tests.
 	 * We emulate the latest version whose extensions we support.
 	 */
-	protected static final int GCC_MAJOR_VERSION_FOR_TESTS = 10;
-	protected static final int GCC_MINOR_VERSION_FOR_TESTS = 1;
+	protected static final int GCC_MAJOR_VERSION_FOR_TESTS = BaseTestCase5.GCC_MAJOR_VERSION_FOR_TESTS;
+	protected static final int GCC_MINOR_VERSION_FOR_TESTS = BaseTestCase5.GCC_MINOR_VERSION_FOR_TESTS;
 
 	/**
 	 * This provides the systems new line separator. Use this if you do String comparisons in tests
 	 * instead of hard coding '\n' or '\r\n' respectively.
 	 */
-	protected static final String NL = System.getProperty("line.separator");
+	protected static final String NL = BaseTestCase5.NL;
 
 	private boolean fExpectFailure;
 	private int fBugNumber;
@@ -187,74 +176,13 @@ public abstract class BaseTestCase extends TestCase {
 
 	@Override
 	public void runBare() throws Throwable {
-		final List<IStatus> statusLog = Collections.synchronizedList(new ArrayList());
-		ILogListener logListener = new ILogListener() {
-			@Override
-			public void logging(IStatus status, String plugin) {
-				if (!status.isOK() && status.getSeverity() != IStatus.INFO) {
-					switch (status.getCode()) {
-					case IResourceStatus.NOT_FOUND_LOCAL:
-					case IResourceStatus.NO_LOCATION_LOCAL:
-					case IResourceStatus.FAILED_READ_LOCAL:
-					case IResourceStatus.RESOURCE_NOT_LOCAL:
-						// Logged by the resources plugin.
-						return;
-					}
-					statusLog.add(status);
-				}
-			}
-		};
-		final CCorePlugin corePlugin = CCorePlugin.getDefault();
-		if (corePlugin != null) { // Iff we don't run as a JUnit Plugin Test.
-			corePlugin.getLog().addLogListener(logListener);
-		}
-
-		Throwable testThrowable = null;
+		LogMonitoring monitoring = new LogMonitoring();
+		monitoring.start();
 		try {
-			try {
-				super.runBare();
-			} catch (Throwable e) {
-				testThrowable = e;
-			}
-
-			if (statusLog.size() != fExpectedLoggedNonOK) {
-				StringBuilder msg = new StringBuilder("Expected number (").append(fExpectedLoggedNonOK).append(") of ");
-				msg.append("Non-OK status objects in log differs from actual (").append(statusLog.size())
-						.append(").\n");
-				Throwable cause = null;
-				if (!statusLog.isEmpty()) {
-					synchronized (statusLog) {
-						for (IStatus status : statusLog) {
-							IStatus[] ss = { status };
-							ss = status instanceof MultiStatus ? ((MultiStatus) status).getChildren() : ss;
-							for (IStatus s : ss) {
-								msg.append('\t').append(s.getMessage()).append(' ');
-
-								Throwable t = s.getException();
-								cause = cause != null ? cause : t;
-								if (t != null) {
-									msg.append(
-											t.getMessage() != null ? t.getMessage() : t.getClass().getCanonicalName());
-								}
-
-								msg.append("\n");
-							}
-						}
-					}
-				}
-				cause = cause != null ? cause : testThrowable;
-				AssertionFailedError afe = new AssertionFailedError(msg.toString());
-				afe.initCause(cause);
-				throw afe;
-			}
+			super.runBare();
 		} finally {
-			if (corePlugin != null) {
-				corePlugin.getLog().removeLogListener(logListener);
-			}
+			monitoring.stop(fExpectedLoggedNonOK);
 		}
-
-		if (testThrowable != null)
-			throw testThrowable;
 	}
 
 	@Override
@@ -302,97 +230,29 @@ public abstract class BaseTestCase extends TestCase {
 		fExpectedLoggedNonOK = count;
 	}
 
-	/**
-	 * Some test steps need synchronizing against a CModel event. This class
-	 * is a very basic means of doing that.
-	 */
-	static protected class ModelJoiner implements IElementChangedListener {
-		private final boolean[] changed = new boolean[1];
-
-		public ModelJoiner() {
-			CoreModel.getDefault().addElementChangedListener(this);
-		}
-
-		public void clear() {
-			synchronized (changed) {
-				changed[0] = false;
-				changed.notifyAll();
-			}
-		}
-
-		public void join() throws CoreException {
-			try {
-				synchronized (changed) {
-					while (!changed[0]) {
-						changed.wait();
-					}
-				}
-			} catch (InterruptedException e) {
-				throw new CoreException(CCorePlugin.createStatus("Interrupted", e));
-			}
-		}
-
-		public void dispose() {
-			CoreModel.getDefault().removeElementChangedListener(this);
-		}
-
-		@Override
-		public void elementChanged(ElementChangedEvent event) {
-			// Only respond to post change events
-			if (event.getType() != ElementChangedEvent.POST_CHANGE)
-				return;
-
-			synchronized (changed) {
-				changed[0] = true;
-				changed.notifyAll();
-			}
-		}
-	}
-
 	public static void waitForIndexer(ICProject project) throws InterruptedException {
-		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
-		assertTrue(CCoreInternals.getPDOMManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
+		BaseTestCase5.waitForIndexer(project);
 	}
 
 	public static void waitUntilFileIsIndexed(IIndex index, IFile file) throws Exception {
-		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEXER_TIMEOUT_SEC * 1000);
+		BaseTestCase5.waitUntilFileIsIndexed(index, file);
 	}
 
-	// Assertion helpers
+	// Assertion helpers (redirected to the common implementation)
 
 	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {
-		assertNotNull("Expected object of " + clazz.getName() + " but got a null value", o);
-		assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), clazz.isInstance(o));
-		for (Class c : cs) {
-			assertNotNull("Expected object of " + c.getName() + " but got a null value", o);
-			assertTrue("Expected " + c.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
-		}
-		return clazz.cast(o);
+		return BaseTestCase5.assertInstance(o, clazz, cs);
 	}
 
 	protected static void assertValue(IValue value, long expectedValue) {
-		assertNotNull(value);
-		assertTrue(value.numberValue() instanceof Long);
-		assertEquals(expectedValue, value.numberValue().longValue());
+		BaseTestCase5.assertValue(value, expectedValue);
 	}
 
 	protected static void assertVariableValue(IVariable var, long expectedValue) {
-		assertValue(var.getInitialValue(), expectedValue);
+		BaseTestCase5.assertVariableValue(var, expectedValue);
 	}
 
 	protected static String formatForPrinting(IASTName name) {
-		String signature = name.getRawSignature();
-		boolean saved = CPPASTNameBase.sAllowNameComputation;
-		CPPASTNameBase.sAllowNameComputation = true;
-		try {
-			String nameStr = name.toString();
-			if (signature.replace(" ", "").equals(nameStr.replace(" ", "")))
-				return signature;
-			return nameStr + " in " + signature;
-		} catch (Throwable e) {
-			return signature;
-		} finally {
-			CPPASTNameBase.sAllowNameComputation = saved;
-		}
+		return BaseTestCase5.formatForPrinting(name);
 	}
 }

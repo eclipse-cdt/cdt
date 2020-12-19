@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.parser.tests.VisibilityAsserts;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.ModelJoiner;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;

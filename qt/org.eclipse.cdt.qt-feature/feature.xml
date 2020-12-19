@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.qt"
       label="%featureName"
-      version="10.1.0.qualifier"
+      version="10.2.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.qt.ui"
       license-feature="org.eclipse.license"
@@ -21,7 +21,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.launchbar" version="10.1.0" match="compatible"/>
+      <import feature="org.eclipse.launchbar" version="10.2.0" match="compatible"/>
    </requires>
 
    <plugin

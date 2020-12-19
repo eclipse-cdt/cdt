@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.util.ModelJoiner;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

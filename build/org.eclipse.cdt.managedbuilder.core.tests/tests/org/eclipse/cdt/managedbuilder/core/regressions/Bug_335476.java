@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.regressions;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
@@ -27,6 +29,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.Path;
+import org.junit.Test;
 
 /**
  * This tests that an environment variable, which is part of the build
@@ -41,7 +44,7 @@ public class Bug_335476 extends AbstractBuilderTest {
 	ICdtVariableManager buildMacroManager = CCorePlugin.getDefault().getCdtVariableManager();
 
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 		setWorkspace("regressions");
 		app = loadProject("bug_335476");
@@ -115,10 +118,12 @@ public class Bug_335476 extends AbstractBuilderTest {
 		}
 	}
 
+	@Test
 	public void testChangingEnvironmentBuildSystem_FULL_BUILD() throws Exception {
 		runTest(IncrementalProjectBuilder.FULL_BUILD);
 	}
 
+	@Test
 	public void testChangingEnvironmentBuildSystem_INC_BUILD() throws Exception {
 		runTest(IncrementalProjectBuilder.INCREMENTAL_BUILD);
 	}

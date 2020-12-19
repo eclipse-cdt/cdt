@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.regressions;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +28,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.Assume;
+import org.junit.Test;
 
 /**
  * Tests that removing the last source file from a directory
@@ -34,6 +38,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class Bug_303953Test extends AbstractBuilderTest {
 
+	@Test
 	public void testBuildAfterSourcefileDelete() throws CoreException {
 		setWorkspace("regressions");
 		final IProject app = loadProject("helloworldC");

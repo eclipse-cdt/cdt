@@ -14,6 +14,9 @@
 
 package org.eclipse.cdt.managedbuilder.testplugin;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,8 +45,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 
 /**
  * Abstract builder test which provides utility methods for:
@@ -55,7 +60,9 @@ import junit.framework.TestCase;
  * <li>Cleaning up the workspace at the end</li>
  * </ul>
  */
-public abstract class AbstractBuilderTest extends TestCase {
+public abstract class AbstractBuilderTest {
+	@Rule
+	public TestName name = new TestName();
 	private static final boolean WINDOWS = java.io.File.separatorChar == '\\';
 
 	static final String PATH = "builderTests";
@@ -63,15 +70,13 @@ public abstract class AbstractBuilderTest extends TestCase {
 	private String workspace;
 	private List<IProject> projects;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		setAutoBuilding(false);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		ResourceHelper.cleanUp(getName());
 		// Bug 327126 Stop the indexer before tearing down so we don't deadlock
 		Job.getJobManager().cancel(CCorePlugin.getPDOMManager());
@@ -84,6 +89,10 @@ public abstract class AbstractBuilderTest extends TestCase {
 			}
 			projects.clear();
 		}
+	}
+
+	protected String getName() {
+		return name.getMethodName();
 	}
 
 	/**
@@ -238,14 +247,6 @@ public abstract class AbstractBuilderTest extends TestCase {
 			}
 		}
 		return resources;
-	}
-
-	public AbstractBuilderTest() {
-		super();
-	}
-
-	public AbstractBuilderTest(String name) {
-		super(name);
 	}
 
 	protected void setWorkspace(String name) {

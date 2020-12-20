@@ -20,24 +20,24 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
 
 import junit.framework.TestSuite;
 
-public class FunctionTests extends TestBase {
-	public static class NonIndexing extends FunctionTests {
-		public NonIndexing() {
+public abstract class FunctionTests extends TestBase {
+	public static class NonIndexingTests extends FunctionTests {
+		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
 
 		public static TestSuite suite() {
-			return suite(NonIndexing.class);
+			return suite(NonIndexingTests.class);
 		}
 	}
 
-	public static class SingleProject extends FunctionTests {
-		public SingleProject() {
+	public static class SingleProjectTests extends FunctionTests {
+		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTests.class);
 		}
 	}
 

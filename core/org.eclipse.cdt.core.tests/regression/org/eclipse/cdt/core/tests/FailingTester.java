@@ -27,11 +27,11 @@ import junit.framework.TestResult;
  * Wraps a test case to check for its failure.
  * @author aniefer
  */
-public class FailingTest extends TestCase {
+public class FailingTester extends TestCase {
 	private TestCase test = null;
 	private int bugNum = -1;
 
-	public FailingTest(TestCase test, int bugNumber) {
+	public FailingTester(TestCase test, int bugNumber) {
 		this.test = test;
 		this.bugNum = bugNumber;
 		String name = "Failing " + test.getName();
@@ -41,7 +41,7 @@ public class FailingTest extends TestCase {
 		setName(name);
 	}
 
-	public FailingTest(TestCase test) {
+	public FailingTester(TestCase test) {
 		this(test, -1);
 	}
 

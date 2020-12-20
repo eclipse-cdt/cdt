@@ -15,24 +15,24 @@ import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 
 import junit.framework.TestSuite;
 
-public class ForStatementTests extends TestBase {
-	public static class NonIndexing extends ForStatementTests {
-		public NonIndexing() {
+public abstract class ForStatementTests extends TestBase {
+	public static class NonIndexingTests extends ForStatementTests {
+		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
 
 		public static TestSuite suite() {
-			return suite(NonIndexing.class);
+			return suite(NonIndexingTests.class);
 		}
 	}
 
-	public static class SingleProject extends ForStatementTests {
-		public SingleProject() {
+	public static class SingleProjectTests extends ForStatementTests {
+		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTests.class);
 		}
 	}
 

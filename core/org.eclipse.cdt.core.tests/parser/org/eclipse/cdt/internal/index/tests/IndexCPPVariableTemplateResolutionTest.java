@@ -24,31 +24,31 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 
 import junit.framework.TestSuite;
 
-public class IndexCPPVariableTemplateResolutionTest extends IndexBindingResolutionTestBase {
+public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindingResolutionTestBase {
 
-	public static class SingleProject extends IndexCPPVariableTemplateResolutionTest {
-		public SingleProject() {
+	public static class SingleProjectTest extends IndexCPPVariableTemplateResolutionTest {
+		public SingleProjectTest() {
 			setStrategy(new SinglePDOMTestStrategy(true));
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTest.class);
 		}
 	}
 
-	public static class ProjectWithDepProj extends IndexCPPVariableTemplateResolutionTest {
-		public ProjectWithDepProj() {
+	public static class ProjectWithDepProjTest extends IndexCPPVariableTemplateResolutionTest {
+		public ProjectWithDepProjTest() {
 			setStrategy(new ReferencedProject(true));
 		}
 
 		public static TestSuite suite() {
-			return suite(ProjectWithDepProj.class);
+			return suite(ProjectWithDepProjTest.class);
 		}
 	}
 
 	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProject.suite());
-		suite.addTest(ProjectWithDepProj.suite());
+		suite.addTest(SingleProjectTest.suite());
+		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	public IndexCPPVariableTemplateResolutionTest() {

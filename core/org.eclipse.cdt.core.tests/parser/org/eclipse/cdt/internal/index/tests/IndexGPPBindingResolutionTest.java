@@ -70,29 +70,29 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 		}
 	}
 
-	public static class SingleProject extends IndexGPPBindingResolutionTest {
-		public SingleProject() {
+	public static class SingleProjectTest extends IndexGPPBindingResolutionTest {
+		public SingleProjectTest() {
 			setStrategy(new GPPSinglePDOMTestStrategy());
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTest.class);
 		}
 	}
 
-	public static class ProjectWithDepProj extends IndexGPPBindingResolutionTest {
-		public ProjectWithDepProj() {
+	public static class ProjectWithDepProjTest extends IndexGPPBindingResolutionTest {
+		public ProjectWithDepProjTest() {
 			setStrategy(new GPPReferencedProject());
 		}
 
 		public static TestSuite suite() {
-			return suite(ProjectWithDepProj.class);
+			return suite(ProjectWithDepProjTest.class);
 		}
 	}
 
 	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProject.suite());
-		suite.addTest(ProjectWithDepProj.suite());
+		suite.addTest(SingleProjectTest.suite());
+		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	//	struct B {

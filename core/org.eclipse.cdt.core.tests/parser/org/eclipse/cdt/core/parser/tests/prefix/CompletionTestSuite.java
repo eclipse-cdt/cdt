@@ -17,6 +17,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+/**
+ * @deprecated In preparation for moving to JUnit5 test suites are deprecated. See Bug 569839
+ */
+@Deprecated
 public class CompletionTestSuite extends TestCase {
 
 	public static Test suite() {

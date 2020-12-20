@@ -13,24 +13,24 @@ package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
 import junit.framework.TestSuite;
 
-public class UnaryOperatorOverloadingTests extends TestBase {
-	public static class NonIndexing extends UnaryOperatorOverloadingTests {
-		public NonIndexing() {
+public abstract class UnaryOperatorOverloadingTests extends TestBase {
+	public static class NonIndexingTests extends UnaryOperatorOverloadingTests {
+		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
 
 		public static TestSuite suite() {
-			return suite(NonIndexing.class);
+			return suite(NonIndexingTests.class);
 		}
 	}
 
-	public static class SingleProject extends UnaryOperatorOverloadingTests {
-		public SingleProject() {
+	public static class SingleProjectTests extends UnaryOperatorOverloadingTests {
+		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTests.class);
 		}
 	}
 

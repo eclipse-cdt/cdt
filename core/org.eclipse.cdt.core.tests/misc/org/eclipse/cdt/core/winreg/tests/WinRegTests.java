@@ -30,7 +30,7 @@ public class WinRegTests extends TestCase {
 			assertEquals("C:\\Program Files", value);
 		} else {
 			// Should be null on non-Windows platforms
-			assertNotNull(registry);
+			assertNull(registry);
 		}
 	}
 
@@ -43,7 +43,7 @@ public class WinRegTests extends TestCase {
 			assertNull(value);
 		} else {
 			// Should be null on non-Windows platforms
-			assertNotNull(registry);
+			assertNull(registry);
 		}
 	}
 }

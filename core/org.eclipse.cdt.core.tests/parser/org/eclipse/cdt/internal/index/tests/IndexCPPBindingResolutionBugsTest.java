@@ -70,39 +70,39 @@ import junit.framework.TestSuite;
 /**
  * For testing PDOM binding resolution
  */
-public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBase {
+public abstract class IndexCPPBindingResolutionBugsTest extends IndexBindingResolutionTestBase {
 
-	public static class SingleProject extends IndexCPPBindingResolutionBugs {
-		public SingleProject() {
+	public static class SingleProjectTest extends IndexCPPBindingResolutionBugsTest {
+		public SingleProjectTest() {
 			setStrategy(new SinglePDOMTestStrategy(true));
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTest.class);
 		}
 	}
 
-	public static class ProjectWithDepProj extends IndexCPPBindingResolutionBugs {
-		public ProjectWithDepProj() {
+	public static class ProjectWithDepProjTest extends IndexCPPBindingResolutionBugsTest {
+		public ProjectWithDepProjTest() {
 			setStrategy(new ReferencedProject(true));
 		}
 
 		public static TestSuite suite() {
-			return suite(ProjectWithDepProj.class);
+			return suite(ProjectWithDepProjTest.class);
 		}
 	}
 
 	public static void addTests(TestSuite suite) {
-		suite.addTest(IndexCPPBindingResolutionBugsSingleProjectFirstAST.suite());
-		suite.addTest(SingleProject.suite());
-		suite.addTest(ProjectWithDepProj.suite());
+		suite.addTest(IndexCPPBindingResolutionBugsSingleProjectFirstASTTest.suite());
+		suite.addTest(SingleProjectTest.suite());
+		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	public static TestSuite suite() {
-		return suite(IndexCPPBindingResolutionBugs.class);
+		return suite(IndexCPPBindingResolutionBugsTest.class);
 	}
 
-	public IndexCPPBindingResolutionBugs() {
+	public IndexCPPBindingResolutionBugsTest() {
 		setStrategy(new SinglePDOMTestStrategy(true));
 	}
 

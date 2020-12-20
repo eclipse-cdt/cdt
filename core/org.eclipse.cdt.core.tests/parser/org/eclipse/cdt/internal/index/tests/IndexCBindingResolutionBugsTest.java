@@ -36,31 +36,31 @@ import junit.framework.TestSuite;
 /**
  * For testing PDOM binding resolution
  */
-public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase {
+public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolutionTestBase {
 
-	public static class SingleProject extends IndexCBindingResolutionBugs {
-		public SingleProject() {
+	public static class SingleProjectTest extends IndexCBindingResolutionBugsTest {
+		public SingleProjectTest() {
 			setStrategy(new SinglePDOMTestStrategy(false));
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTest.class);
 		}
 	}
 
-	public static class ProjectWithDepProj extends IndexCBindingResolutionBugs {
-		public ProjectWithDepProj() {
+	public static class ProjectWithDepProjTest extends IndexCBindingResolutionBugsTest {
+		public ProjectWithDepProjTest() {
 			setStrategy(new ReferencedProject(false));
 		}
 
 		public static TestSuite suite() {
-			return suite(ProjectWithDepProj.class);
+			return suite(ProjectWithDepProjTest.class);
 		}
 	}
 
 	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProject.suite());
-		suite.addTest(ProjectWithDepProj.suite());
+		suite.addTest(SingleProjectTest.suite());
+		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	// #include <stdio.h>

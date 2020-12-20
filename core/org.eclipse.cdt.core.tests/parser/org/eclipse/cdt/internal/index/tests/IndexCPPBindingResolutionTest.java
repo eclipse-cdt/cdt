@@ -65,31 +65,31 @@ import junit.framework.TestSuite;
  * additionally check that the binding obtained has characteristics as
  * expected (type,name,etc..)
  */
-public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBase {
+public abstract class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBase {
 
-	public static class SingleProject extends IndexCPPBindingResolutionTest {
-		public SingleProject() {
+	public static class SingleProjectTest extends IndexCPPBindingResolutionTest {
+		public SingleProjectTest() {
 			setStrategy(new SinglePDOMTestStrategy(true));
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTest.class);
 		}
 	}
 
-	public static class ProjectWithDepProj extends IndexCPPBindingResolutionTest {
-		public ProjectWithDepProj() {
+	public static class ProjectWithDepProjTest extends IndexCPPBindingResolutionTest {
+		public ProjectWithDepProjTest() {
 			setStrategy(new ReferencedProject(true));
 		}
 
 		public static TestSuite suite() {
-			return suite(ProjectWithDepProj.class);
+			return suite(ProjectWithDepProjTest.class);
 		}
 	}
 
 	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProject.suite());
-		suite.addTest(ProjectWithDepProj.suite());
+		suite.addTest(SingleProjectTest.suite());
+		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	public IndexCPPBindingResolutionTest() {
@@ -97,7 +97,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	}
 
 	public static TestSuite suite() {
-		return suite(SingleProject.class);
+		return suite(SingleProjectTest.class);
 	}
 
 	/* Assertion helpers */

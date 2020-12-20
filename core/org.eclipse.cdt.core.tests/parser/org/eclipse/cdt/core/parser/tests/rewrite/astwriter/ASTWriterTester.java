@@ -46,12 +46,12 @@ import org.eclipse.core.resources.IFile;
 /**
  * @author Guido Zgraggen
  */
-public class ASTWriterTest extends RewriteBaseTest {
+public class ASTWriterTester extends RewriteBaseTest {
 	private static final IParserLogService NULL_LOG = new NullLogService();
 
 	private IFile file;
 
-	public ASTWriterTest(String name, ASTWriterTestSourceFile file) {
+	public ASTWriterTester(String name, ASTWriterTestSourceFile file) {
 		super(name);
 		fileMap.put(file.getName(), file);
 	}

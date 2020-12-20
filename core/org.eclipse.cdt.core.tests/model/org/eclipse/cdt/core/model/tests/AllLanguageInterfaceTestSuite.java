@@ -26,14 +26,16 @@ import junit.framework.TestSuite;
  * to be tested.
  * @author bnicolle
  *
+ * @deprecated In preparation for moving to JUnit5 test suites are deprecated. See Bug 569839
  */
-public class AllLanguageInterfaceTests {
+@Deprecated
+public class AllLanguageInterfaceTestSuite {
 
 	/**
 	 *
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllLanguageInterfaceTests.class.getName());
+		TestSuite suite = new TestSuite(AllLanguageInterfaceTestSuite.class.getName());
 
 		// Just add more test cases here as you create them for
 		// each class being tested

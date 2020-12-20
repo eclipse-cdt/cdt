@@ -24,10 +24,12 @@ import junit.framework.TestSuite;
 
 /**
  * Test suite for the indexer tests
+ * @deprecated In preparation for moving to JUnit5 test suites are deprecated. See Bug 569839
  */
-public class IndexTests extends TestSuite {
+@Deprecated
+public class IndexTestSuite extends TestSuite {
 	public static Test suite() {
-		TestSuite suite = new IndexTests();
+		TestSuite suite = new IndexTestSuite();
 
 		suite.addTest(IndexCompositeTests.suite());
 		suite.addTest(IndexListenerTest.suite());
@@ -51,11 +53,11 @@ public class IndexTests extends TestSuite {
 		suite.addTestSuite(TemplateAutoIndexTests.class);
 		suite.addTestSuite(StructuredBindingIndexTests.class);
 
-		IndexCPPBindingResolutionBugs.addTests(suite);
+		IndexCPPBindingResolutionBugsTest.addTests(suite);
 		IndexCPPBindingResolutionTest.addTests(suite);
 		IndexGPPBindingResolutionTest.addTests(suite);
 		IndexCPPTemplateResolutionTest.addTests(suite);
-		IndexCBindingResolutionBugs.addTests(suite);
+		IndexCBindingResolutionBugsTest.addTests(suite);
 		IndexCBindingResolutionTest.addTests(suite);
 		IndexCPPVariableTemplateResolutionTest.addTests(suite);
 

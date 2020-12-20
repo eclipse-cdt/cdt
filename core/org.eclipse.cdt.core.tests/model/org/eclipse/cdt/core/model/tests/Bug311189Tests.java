@@ -39,10 +39,10 @@ import junit.framework.Test;
  * we must ensure that we don't corrupt the set of includes in the incoming
  * project's metadata
  */
-public class Bug311189 extends BaseTestCase {
+public class Bug311189Tests extends BaseTestCase {
 
 	public static Test suite() {
-		return suite(Bug311189.class, "_");
+		return suite(Bug311189Tests.class, "_");
 	}
 
 	private IProject project;

@@ -40,12 +40,12 @@ import junit.framework.TestSuite;
  * This functionality is provided by the CfgExportSettingContainerFactory which plugins
  * into the CExternalSettingsManager
  */
-public class CConfigurationDescriptionExportSettings extends BaseTestCase {
+public class CConfigurationDescriptionExportSettingsTests extends BaseTestCase {
 
 	CoreModel coreModel = CoreModel.getDefault();
 
 	public static TestSuite suite() {
-		return suite(CConfigurationDescriptionExportSettings.class, "_");
+		return suite(CConfigurationDescriptionExportSettingsTests.class, "_");
 	}
 
 	// Setting entries 1

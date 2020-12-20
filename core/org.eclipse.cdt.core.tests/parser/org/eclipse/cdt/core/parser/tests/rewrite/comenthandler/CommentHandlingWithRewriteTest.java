@@ -20,15 +20,26 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTester;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestSourceFile;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.text.edits.TextEditGroup;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class CommentHandlingWithRewriteTest extends CommentHandlingTest {
 	private ASTRewrite newRewrite;
 
 	public CommentHandlingWithRewriteTest(String name, List<TestSourceFile> files) {
 		super(name, files);
+	}
+
+	public static Test suite() throws Exception {
+		TestSuite suite = new TestSuite(CommentHandlingTestSuite.class.getName());
+		suite.addTest(
+				RewriteTester.suite("CommentMultiFileTests", "resources/rewrite/CommentHandlingWithRewriteTest.rts")); //$NON-NLS-1$
+		return suite;
 	}
 
 	@Override

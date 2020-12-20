@@ -14,8 +14,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.comenthandler;
 
-import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTester;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -26,9 +24,8 @@ public class CommentHandlingTestSuite extends TestSuite {
 
 	public static Test suite() throws Exception {
 		TestSuite suite = new TestSuite(CommentHandlingTestSuite.class.getName());
-		suite.addTest(RewriteTester.suite("CommentTests", "resources/rewrite/CommentHandlingTestSource.rts")); //$NON-NLS-1$
-		suite.addTest(
-				RewriteTester.suite("CommentMultiFileTests", "resources/rewrite/CommentHandlingWithRewriteTest.rts")); //$NON-NLS-1$
+		suite.addTest(CommentHandlingTest.suite());
+		suite.addTest(CommentHandlingWithRewriteTest.suite());
 		suite.addTestSuite(NodeCommentMapTest.class);
 		return suite;
 	}

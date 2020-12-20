@@ -25,9 +25,9 @@ import junit.framework.TestSuite;
 /**
  * Test suite for the indexer tests
  */
-public class IndexTests extends TestSuite {
+public class IndexTestSuite extends TestSuite {
 	public static Test suite() {
-		TestSuite suite = new IndexTests();
+		TestSuite suite = new IndexTestSuite();
 
 		suite.addTest(IndexCompositeTests.suite());
 		suite.addTest(IndexListenerTest.suite());

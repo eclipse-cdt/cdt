@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllConstexprEvalTests {
+public class AllConstexprEvalTestSuite {
 	public static Test suite() throws Exception {
 		final TestSuite suite = new TestSuite();
 		suite.addTest(ConstructorTests.NonIndexing.suite());
@@ -45,8 +45,8 @@ public class AllConstexprEvalTests {
 		suite.addTest(BinaryOperatorOverloadingTests.SingleProject.suite());
 		suite.addTest(UnaryOperatorOverloadingTests.NonIndexing.suite());
 		suite.addTest(UnaryOperatorOverloadingTests.SingleProject.suite());
-		suite.addTest(ArrayTests.NonIndexing.suite());
-		suite.addTest(ArrayTests.SingleProject.suite());
+		suite.addTest(ArrayTests.NonIndexingTests.suite());
+		suite.addTest(ArrayTests.SingleProjectTests.suite());
 		suite.addTest(BinaryExpressionTests.NonIndexing.suite());
 		suite.addTest(BinaryExpressionTests.SingleProject.suite());
 		suite.addTest(UnaryExpressionTests.NonIndexing.suite());

@@ -18,14 +18,16 @@ import junit.framework.TestSuite;
 
 /**
  * Test suite to cover core Language Settings Providers functionality.
+ * @deprecated In preparation for moving to JUnit5 test suites are deprecated. See Bug 569839
  */
-public class AllLanguageSettingsProvidersCoreTests {
+@Deprecated
+public class AllLanguageSettingsProvidersCoreTestSuite {
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(suite());
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllLanguageSettingsProvidersCoreTests.class.getName());
+		TestSuite suite = new TestSuite(AllLanguageSettingsProvidersCoreTestSuite.class.getName());
 
 		suite.addTest(LanguageSettingsExtensionsTests.suite());
 		suite.addTest(LanguageSettingsManagerTests.suite());

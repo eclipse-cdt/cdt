@@ -32,7 +32,7 @@ import org.osgi.framework.Bundle;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class SourceRewriteTester extends TestSuite {
+public class SourceRewriteTest extends TestSuite {
 	private static final String testRegexp = "//!(.*)\\s*(\\w*)*$"; //$NON-NLS-1$
 	private static final String codeTypeRegexp = "//%(C|CPP)( GNU)?$"; //$NON-NLS-1$
 	private static final String resultRegexp = "//=.*$"; //$NON-NLS-1$
@@ -46,6 +46,48 @@ public class SourceRewriteTester extends TestSuite {
 		Path path = new Path(file);
 		file = FileLocator.toFileURL(FileLocator.find(bundle, path, null)).getFile();
 		return new BufferedReader(new FileReader(file));
+	}
+
+	public static Test suite() throws Exception {
+		TestSuite suite = new TestSuite("AstWriterTests");
+		suite.addTest(
+				SourceRewriteTest.suite("ExpressionTests", "resources/rewrite/ASTWriterExpressionTestSource.awts"));
+
+		suite.addTest(
+				SourceRewriteTest.suite("DelcSpecifierTests", "resources/rewrite/ASTWriterDeclSpecTestSource.awts"));
+		suite.addTest(SourceRewriteTest.suite("Commented DelcSpecifierTests",
+				"resources/rewrite/ASTWriterCommentedDeclSpecTestSource.awts"));
+
+		suite.addTest(
+				SourceRewriteTest.suite("DeclaratorTests", "resources/rewrite/ASTWriterDeclaratorTestSource.awts"));
+		suite.addTest(SourceRewriteTest.suite("Commented DeclaratorTests",
+				"resources/rewrite/ASTWriterCommentedDeclaratorTestSource.awts"));
+
+		suite.addTest(
+				SourceRewriteTest.suite("StatementsTests", "resources/rewrite/ASTWriterStatementTestSource.awts"));
+		suite.addTest(SourceRewriteTest.suite("Commented StatementsTests",
+				"resources/rewrite/ASTWriterCommentedStatementTestSource.awts"));
+
+		suite.addTest(SourceRewriteTest.suite("NameTests", "resources/rewrite/ASTWriterNameTestSource.awts"));
+		suite.addTest(SourceRewriteTest.suite("Commented NameTests",
+				"resources/rewrite/ASTWriterCommentedNameTestSource.awts"));
+
+		suite.addTest(
+				SourceRewriteTest.suite("InitializerTests", "resources/rewrite/ASTWriterInitializerTestSource.awts"));
+
+		suite.addTest(
+				SourceRewriteTest.suite("DeclarationTests", "resources/rewrite/ASTWriterDeclarationTestSource.awts"));
+		suite.addTest(SourceRewriteTest.suite("Commented DeclarationTests",
+				"resources/rewrite/ASTWriterCommentedDeclarationTestSource.awts"));
+
+		suite.addTest(SourceRewriteTest.suite("TemplatesTests", "resources/rewrite/ASTWriterTemplateTestSource.awts"));
+
+		suite.addTest(SourceRewriteTest.suite("CommentTests", "resources/rewrite/ASTWriterCommentedTestSource.awts"));
+		suite.addTest(
+				SourceRewriteTest.suite("NewCommentTests", "resources/rewrite/ASTWriterCommentedTestSource2.awts"));
+		suite.addTest(SourceRewriteTest.suite("AttributeTests", "resources/rewrite/ASTWriterAttributeTestSource.awts"));
+		suite.addTestSuite(ExpressionWriterTest.class);
+		return suite;
 	}
 
 	public static Test suite(String name, String file) throws Exception {
@@ -157,7 +199,7 @@ public class SourceRewriteTester extends TestSuite {
 	}
 
 	private static RewriteBaseTest createTestClass(String testName, ASTWriterTestSourceFile file) throws Exception {
-		ASTWriterTest test = new ASTWriterTest(testName, file);
+		ASTWriterTester test = new ASTWriterTester(testName, file);
 		TextSelection sel = file.getSelection();
 		if (sel != null) {
 			test.setFileWithSelection(file.getName());

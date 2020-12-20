@@ -21,10 +21,14 @@ import org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTe
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class RewriteTests extends TestSuite {
+/**
+ * @deprecated In preparation for moving to JUnit5 test suites are deprecated. See Bug 569839
+ */
+@Deprecated
+public class RewriteTestSuite extends TestSuite {
 
 	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite(RewriteTests.class.getName());
+		TestSuite suite = new TestSuite(RewriteTestSuite.class.getName());
 		suite.addTest(AstWriterTestSuite.suite());
 		suite.addTest(CommentHandlingTestSuite.suite());
 		suite.addTest(ChangeGeneratorTestSuite.suite());

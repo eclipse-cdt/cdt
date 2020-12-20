@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.managedbuilder.testplugin.AbstractBuilderTest;
 import org.eclipse.cdt.managedbuilder.testplugin.ResourceDeltaVerifier;
 import org.eclipse.core.resources.IFile;
@@ -28,6 +29,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -37,6 +39,7 @@ import org.junit.jupiter.api.Test;
  */
 public class Bug_303953Test extends AbstractBuilderTest {
 
+	@Tag(BaseTestCase5.FLAKY_TEST_TAG)
 	@Test
 	public void testBuildAfterSourcefileDelete() throws CoreException {
 		setWorkspace("regressions");

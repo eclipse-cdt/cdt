@@ -21,11 +21,13 @@ import junit.framework.TestSuite;
 
 /**
  * @author Doug Schaefer
+ * @deprecated In preparation for moving to JUnit5 test suites are deprecated. See Bug 569839
  */
-public class PDOMTests extends TestSuite {
+@Deprecated
+public class PDOMTestSuite extends TestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new PDOMTests();
+		TestSuite suite = new PDOMTestSuite();
 
 		suite.addTest(DatabaseTest.suite());
 		suite.addTest(DBPropertiesTests.suite());

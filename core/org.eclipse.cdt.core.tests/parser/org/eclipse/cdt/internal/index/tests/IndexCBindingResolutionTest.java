@@ -38,31 +38,31 @@ import junit.framework.TestSuite;
  * additionally check that the binding obtained has characteristics as
  * expected (type,name,etc..)
  */
-public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase {
+public abstract class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase {
 
-	public static class SingleProject extends IndexCBindingResolutionTest {
-		public SingleProject() {
+	public static class SingleProjectTest extends IndexCBindingResolutionTest {
+		public SingleProjectTest() {
 			setStrategy(new SinglePDOMTestStrategy(false));
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTest.class);
 		}
 	}
 
-	public static class ProjectWithDepProj extends IndexCBindingResolutionTest {
-		public ProjectWithDepProj() {
+	public static class ProjectWithDepProjTest extends IndexCBindingResolutionTest {
+		public ProjectWithDepProjTest() {
 			setStrategy(new ReferencedProject(false));
 		}
 
 		public static TestSuite suite() {
-			return suite(ProjectWithDepProj.class);
+			return suite(ProjectWithDepProjTest.class);
 		}
 	}
 
 	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProject.suite());
-		suite.addTest(ProjectWithDepProj.suite());
+		suite.addTest(SingleProjectTest.suite());
+		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	public IndexCBindingResolutionTest() {

@@ -29,7 +29,7 @@ import junit.framework.TestSuite;
  *
  * @author Simeon Andreev
  */
-public class TestScopeOfBuildConfigResourceChangesPreference extends TestCase {
+public class ScopeOfBuildConfigResourceChangesPreferenceTests extends TestCase {
 
 	private static final String PREFERENCE_NAME = CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES;
 
@@ -37,7 +37,7 @@ public class TestScopeOfBuildConfigResourceChangesPreference extends TestCase {
 	private boolean oldDefaultScopeValue;
 
 	public static Test suite() {
-		return new TestSuite(TestScopeOfBuildConfigResourceChangesPreference.class);
+		return new TestSuite(ScopeOfBuildConfigResourceChangesPreferenceTests.class);
 	}
 
 	@Override

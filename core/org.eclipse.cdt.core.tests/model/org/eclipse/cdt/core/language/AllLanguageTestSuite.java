@@ -18,11 +18,12 @@ import junit.framework.TestSuite;
 
 /**
  * @author crecoskie
- *
+ * @deprecated In preparation for moving to JUnit5 test suites are deprecated. See Bug 569839
  */
-public class AllLanguageTests extends TestSuite {
+@Deprecated
+public class AllLanguageTestSuite extends TestSuite {
 	public static Test suite() {
-		TestSuite suite = new AllLanguageTests();
+		TestSuite suite = new AllLanguageTestSuite();
 
 		suite.addTest(LanguageInheritanceTests.suite());
 

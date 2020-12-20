@@ -13,24 +13,24 @@ package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
 import junit.framework.TestSuite;
 
-public class ReferenceTests extends TestBase {
-	public static class NonIndexing extends ReferenceTests {
-		public NonIndexing() {
+public abstract class ReferenceTests extends TestBase {
+	public static class NonIndexingTests extends ReferenceTests {
+		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
 
 		public static TestSuite suite() {
-			return suite(NonIndexing.class);
+			return suite(NonIndexingTests.class);
 		}
 	}
 
-	public static class SingleProject extends ReferenceTests {
-		public SingleProject() {
+	public static class SingleProjectTests extends ReferenceTests {
+		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTests.class);
 		}
 	}
 

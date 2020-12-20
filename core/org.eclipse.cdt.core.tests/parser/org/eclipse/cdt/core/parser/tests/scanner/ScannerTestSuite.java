@@ -16,6 +16,10 @@ package org.eclipse.cdt.core.parser.tests.scanner;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+/**
+ * @deprecated In preparation for moving to JUnit5 test suites are deprecated. See Bug 569839
+ */
+@Deprecated
 public class ScannerTestSuite extends TestSuite {
 
 	public static Test suite() {

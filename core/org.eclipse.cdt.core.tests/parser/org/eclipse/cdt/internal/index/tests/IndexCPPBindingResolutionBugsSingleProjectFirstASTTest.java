@@ -15,13 +15,13 @@ package org.eclipse.cdt.internal.index.tests;
 
 import junit.framework.TestSuite;
 
-public class IndexCPPBindingResolutionBugsSingleProjectFirstAST extends IndexCPPBindingResolutionBugs {
-	public IndexCPPBindingResolutionBugsSingleProjectFirstAST() {
+public class IndexCPPBindingResolutionBugsSingleProjectFirstASTTest extends IndexCPPBindingResolutionBugsTest {
+	public IndexCPPBindingResolutionBugsSingleProjectFirstASTTest() {
 		setStrategy(new SinglePDOMTestFirstASTStrategy(true));
 	}
 
 	public static TestSuite suite() {
-		return suite(IndexCPPBindingResolutionBugsSingleProjectFirstAST.class);
+		return suite(IndexCPPBindingResolutionBugsSingleProjectFirstASTTest.class);
 	}
 
 	/* Invalid tests for this strategy, they assume that the second file is already indexed. */

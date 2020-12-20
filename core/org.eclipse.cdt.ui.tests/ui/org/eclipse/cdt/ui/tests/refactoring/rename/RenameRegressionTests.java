@@ -17,7 +17,7 @@ package org.eclipse.cdt.ui.tests.refactoring.rename;
 import java.io.StringWriter;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.tests.FailingTest;
+import org.eclipse.cdt.core.tests.FailingTester;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -42,15 +42,10 @@ public class RenameRegressionTests extends RenameTestBase {
 
 	public static Test suite(boolean cleanup) {
 		TestSuite innerSuite = new TestSuite(RenameRegressionTests.class);
-		innerSuite.addTest(new FailingTest(new RenameRegressionTests("_testMethod_35_72726"), 72726));
+		innerSuite.addTest(new FailingTester(new RenameRegressionTests("_testMethod_35_72726"), 72726));
 
 		TestSuite suite = new TestSuite("RenameRegressionTests");
 		suite.addTest(innerSuite);
-		suite.addTest(RenameVariableTests.suite(false));
-		suite.addTest(RenameFunctionTests.suite(false));
-		suite.addTest(RenameTypeTests.suite(false));
-		suite.addTest(RenameMacroTests.suite(false));
-		suite.addTest(RenameTemplatesTests.suite(false));
 
 		if (cleanup)
 			suite.addTest(new RenameRegressionTests("cleanupProject"));

@@ -40,8 +40,6 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 
 	public static Test suite() {
 		TestSuite suite = suite(ToggleRefactoringTest.class);
-		suite.addTestSuite(ToggleRefactoringCTest.class);
-		suite.addTestSuite(ToggleNodeHelperTest.class);
 		return suite;
 	}
 

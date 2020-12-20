@@ -77,25 +77,25 @@ import junit.framework.TestSuite;
 /**
  * Tests for exercising resolution of template bindings against IIndex
  */
-public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBase {
+public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBase {
 
-	public static class SingleProject extends IndexCPPTemplateResolutionTest {
-		public SingleProject() {
+	public static class SingleProjectTest extends IndexCPPTemplateResolutionTest {
+		public SingleProjectTest() {
 			setStrategy(new SinglePDOMTestStrategy(true));
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTest.class);
 		}
 	}
 
-	public static class ProjectWithDepProj extends IndexCPPTemplateResolutionTest {
-		public ProjectWithDepProj() {
+	public static class ProjectWithDepProjTest extends IndexCPPTemplateResolutionTest {
+		public ProjectWithDepProjTest() {
 			setStrategy(new ReferencedProject(true));
 		}
 
 		public static TestSuite suite() {
-			return suite(ProjectWithDepProj.class);
+			return suite(ProjectWithDepProjTest.class);
 		}
 
 		@Override
@@ -106,8 +106,8 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	}
 
 	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProject.suite());
-		suite.addTest(ProjectWithDepProj.suite());
+		suite.addTest(SingleProjectTest.suite());
+		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	public IndexCPPTemplateResolutionTest() {

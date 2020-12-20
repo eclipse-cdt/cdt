@@ -61,6 +61,11 @@ import org.junit.runners.Suite;
 		AddBlockCommentTest.class, RemoveBlockCommentTest.class, SortLinesTest.class,
 
 		// add include
-		AddIncludeTest.class, })
+		AddIncludeTest.class,
+
+		// other tests
+		OverrideIndicatorTest.class,
+
+})
 public class TextTestSuite {
 }

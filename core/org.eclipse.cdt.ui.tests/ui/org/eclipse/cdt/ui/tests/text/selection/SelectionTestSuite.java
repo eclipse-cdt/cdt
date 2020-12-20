@@ -22,8 +22,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 
 		// selection tests
-		ResolveBindingTests.class, CPPSelectionTestsNoIndexer.class, CSelectionTestsNoIndexer.class,
-		CPPSelectionTestsIndexer.class, CSelectionTestsIndexer.class,
+		ResolveBindingTests.class, CPPSelectionNoIndexerTests.class, CSelectionNoIndexerTests.class,
+		CPPSelectionIndexerTests.class, CSelectionIndexerTests.class,
 
 })
 public class SelectionTestSuite {

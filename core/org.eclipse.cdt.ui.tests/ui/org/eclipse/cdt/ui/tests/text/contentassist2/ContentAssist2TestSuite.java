@@ -26,33 +26,77 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-		CompletionTest_AnonymousTypes.class, CompletionTest_ArgumentType_Prefix.class,
-		CompletionTest_ArgumentType_Prefix2.class, CompletionTest_ClassReference_NoPrefix.class,
-		CompletionTest_ClassReference_Prefix.class, CompletionTest_ConstructorReference.class,
-		CompletionTest_ExceptionReference_NoPrefix.class, CompletionTest_ExceptionReference_Prefix.class,
-		CompletionTest_FieldType_NoPrefix.class, CompletionTest_FieldType_NoPrefix2.class,
-		CompletionTest_FieldType_Prefix.class, CompletionTest_FunctionReference_Prefix.class,
-		CompletionTest_MacroRef_NoPrefix.class, CompletionTest_MacroRef_Prefix.class,
-		CompletionTest_MemberReference_Arrow_NoPrefix.class, CompletionTest_MemberReference_Arrow_NoPrefix2.class,
-		CompletionTest_MemberReference_Arrow_NoPrefix3.class, CompletionTest_MemberReference_Arrow_Prefix.class,
-		CompletionTest_MemberReference_Arrow_Prefix2.class, CompletionTest_MemberReference_Dot_NoPrefix.class,
-		CompletionTest_MemberReference_Dot_Prefix.class, CompletionTest_NamespaceRef_NoPrefix.class,
-		CompletionTest_NamespaceRef_Prefix.class, CompletionTest_NewTypeReference_NoPrefix.class,
-		CompletionTest_NewTypeReference_Prefix.class, CompletionTest_ScopedReference_NonCodeScope.class,
-		CompletionTest_ScopedReference_NoPrefix.class, CompletionTest_ScopedReference_Prefix.class,
-		CompletionTest_SingleName_Method_NoPrefix.class, CompletionTest_SingleName_Method_Prefix.class,
-		CompletionTest_SingleName_NoPrefix.class, CompletionTest_SingleName_Prefix.class,
-		CompletionTest_SingleName_Prefix2.class, CompletionTest_TypeDef_NoPrefix.class,
-		CompletionTest_TypeDef_Prefix.class, CompletionTest_TypeRef_NoPrefix.class, CompletionTest_TypeRef_Prefix.class,
-		CompletionTest_VariableType_NestedPrefix.class, CompletionTest_VariableType_NoPrefix.class,
-		CompletionTest_VariableType_Prefix.class,
+		AnonymousTypes_CompletionTest.class, //
+		ArgumentType_Prefix_CompletionTest.class, //
 
-		CompletionTests.class, HelpProposalTests.class, CompletionTests_PlainC.class, ParameterHintTests.class,
-		CPPParameterGuessingTests.class, CParameterGuessingTests.class,
+		ArgumentType_Prefix2_CompletionTest.class, //
+		ClassReference_NoPrefix_CompletionTest.class, //
 
-		ShowCamelCasePreferenceTest.class,
+		ClassReference_Prefix_CompletionTest.class, //
+		ConstructorReference_CompletionTest.class, //
 
-		TemplateProposalTest.class,
+		ExceptionReference_NoPrefix_CompletionTest.class, //
+		ExceptionReference_Prefix_CompletionTest.class, //
+
+		FieldType_NoPrefix_CompletionTest.class, //
+		FieldType_NoPrefix2_CompletionTest.class, //
+
+		FieldType_Prefix_CompletionTest.class, //
+		FunctionReference_Prefix_CompletionTest.class, //
+
+		MacroRef_NoPrefix_CompletionTest.class, //
+		MacroRef_Prefix_CompletionTest.class, //
+
+		MemberReference_Arrow_NoPrefix_CompletionTest.class, //
+		MemberReference_Arrow_NoPrefix2_CompletionTest.class, //
+
+		MemberReference_Arrow_NoPrefix3_CompletionTest.class, //
+		MemberReference_Arrow_Prefix_CompletionTest.class, //
+
+		MemberReference_Arrow_Prefix2_CompletionTest.class, //
+		MemberReference_Dot_NoPrefix_CompletionTest.class, //
+
+		MemberReference_Dot_Prefix_CompletionTest.class, //
+		NamespaceRef_NoPrefix_CompletionTest.class, //
+
+		NamespaceRef_Prefix_CompletionTest.class, //
+		NewTypeReference_NoPrefix_CompletionTest.class, //
+
+		NewTypeReference_Prefix_CompletionTest.class, //
+		ScopedReference_NonCodeScope_CompletionTest.class, //
+
+		ScopedReference_NoPrefix_CompletionTest.class, //
+		ScopedReference_Prefix_CompletionTest.class, //
+
+		SingleName_Method_NoPrefix_CompletionTest.class, //
+		SingleName_Method_Prefix_CompletionTest.class, //
+
+		SingleName_NoPrefix_CompletionTest.class, //
+		SingleName_Prefix_CompletionTest.class, //
+
+		SingleName_Prefix2_CompletionTest.class, //
+		TypeDef_NoPrefix_CompletionTest.class, //
+
+		TypeDef_Prefix_CompletionTest.class, //
+		TypeRef_NoPrefix_CompletionTest.class, //
+		TypeRef_Prefix_CompletionTest.class, //
+
+		VariableType_NestedPrefix_CompletionTest.class, //
+		VariableType_NoPrefix_CompletionTest.class, //
+
+		VariableType_Prefix_CompletionTest.class, //
+
+		CompletionTests.class, //
+		HelpProposalTests.class, //
+		PlainC_CompletionTests.class, //
+		ParameterHintTests.class, //
+
+		CPPParameterGuessingTests.class, //
+		CParameterGuessingTests.class, //
+
+		ShowCamelCasePreferenceTest.class, //
+
+		TemplateProposalTest.class, //
 
 })
 public class ContentAssist2TestSuite {

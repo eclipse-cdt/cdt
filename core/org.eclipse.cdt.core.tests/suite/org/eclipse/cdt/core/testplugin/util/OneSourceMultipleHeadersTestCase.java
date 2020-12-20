@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.Path;
  * header1.h, header2.h, etc. The AST is created for the source file only and can be obtained
  * by calling getAst().
  */
-public class OneSourceMultipleHeadersTestCase extends BaseTestCase {
+public abstract class OneSourceMultipleHeadersTestCase extends BaseTestCase {
 	private static final boolean DEBUG = false;
 
 	private final TestSourceReader testSourceReader;

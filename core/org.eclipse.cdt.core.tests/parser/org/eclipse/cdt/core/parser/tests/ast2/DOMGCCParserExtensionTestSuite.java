@@ -19,8 +19,9 @@ import junit.framework.TestSuite;
 
 /**
  * @author jcamelon
- *
+ * @deprecated In preparation for moving to JUnit5 test suites are deprecated. See Bug 569839
  */
+@Deprecated
 public class DOMGCCParserExtensionTestSuite extends TestCase {
 
 	public static Test suite() {

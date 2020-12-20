@@ -66,10 +66,14 @@
 					<useUIThread>true</useUIThread>
 					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} ${extra.vmargs.indexer.timeout} ${extra.vmargs.displayhelper.timeoutmultipler}</argLine>
 					<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
-					<includes>
-<!-- Workatound for Bug 565063: test execution outcome is order dependent -->
-						<include>**/AutomatedSuite.*</include>
-					</includes>
+					<excludes>
+						<!-- The default Excludes omits nested static classes, this reenables them.
+							See org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr.ArrayTests.NonIndexingTests
+							for an example of a test that would not be run otherwise.
+							For reference, the default exclude is "**/*$*"
+						-->
+						<exclude></exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>

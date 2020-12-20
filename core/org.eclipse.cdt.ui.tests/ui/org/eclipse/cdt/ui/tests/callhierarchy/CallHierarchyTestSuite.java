@@ -21,7 +21,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ BasicCallHierarchyTest.class, BasicCppCallHierarchyTest.class,
 		InitializersInCallHierarchyTest.class, CppCallHierarchyTest.class, CallHierarchyAcrossProjectsTest.class,
-		CallHierarchyBugs.class, })
+		CallHierarchyBugsTest.class, })
 public class CallHierarchyTestSuite {
 
 }

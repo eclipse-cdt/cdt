@@ -15,24 +15,24 @@ import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 
 import junit.framework.TestSuite;
 
-public class UserDefinedLiteralTests extends TestBase {
-	public static class NonIndexing extends UserDefinedLiteralTests {
-		public NonIndexing() {
+public abstract class UserDefinedLiteralTests extends TestBase {
+	public static class NonIndexingTests extends UserDefinedLiteralTests {
+		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
 
 		public static TestSuite suite() {
-			return suite(NonIndexing.class);
+			return suite(NonIndexingTests.class);
 		}
 	}
 
-	public static class SingleProject extends UserDefinedLiteralTests {
-		public SingleProject() {
+	public static class SingleProjectTests extends UserDefinedLiteralTests {
+		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
 		}
 
 		public static TestSuite suite() {
-			return suite(SingleProject.class);
+			return suite(SingleProjectTests.class);
 		}
 	}
 

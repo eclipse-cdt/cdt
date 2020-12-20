@@ -19,7 +19,9 @@ import junit.framework.TestSuite;
 
 /**
  * @author Thomas Corbat
+ * @deprecated In preparation for moving to JUnit5 test suites are deprecated. See Bug 569839
  */
+@Deprecated
 public class ChangeGeneratorTestSuite {
 
 	public static Test suite() throws Exception {

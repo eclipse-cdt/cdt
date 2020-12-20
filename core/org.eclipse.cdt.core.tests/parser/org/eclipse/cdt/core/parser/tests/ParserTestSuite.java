@@ -27,7 +27,9 @@ import junit.framework.TestSuite;
 
 /**
  * Combines all tests for the parsers.
+ * @deprecated In preparation for moving to JUnit5 test suites are deprecated. See Bug 569839
  */
+@Deprecated
 public class ParserTestSuite extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ParserTestSuite.class.getName());

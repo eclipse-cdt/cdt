@@ -27,13 +27,13 @@ import junit.framework.TestSuite;
  * @author bnicolle
  *
  */
-public class AllLanguageInterfaceTests {
+public class AllLanguageInterfaceTestSuite {
 
 	/**
 	 *
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllLanguageInterfaceTests.class.getName());
+		TestSuite suite = new TestSuite(AllLanguageInterfaceTestSuite.class.getName());
 
 		// Just add more test cases here as you create them for
 		// each class being tested

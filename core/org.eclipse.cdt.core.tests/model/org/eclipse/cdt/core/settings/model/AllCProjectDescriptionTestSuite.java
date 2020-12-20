@@ -16,13 +16,13 @@ package org.eclipse.cdt.core.settings.model;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllCProjectDescriptionTests {
+public class AllCProjectDescriptionTestSuite {
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(suite());
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllCProjectDescriptionTests.class.getName());
+		TestSuite suite = new TestSuite(AllCProjectDescriptionTestSuite.class.getName());
 
 		// Just add more test cases here as you create them for
 		// each class being tested

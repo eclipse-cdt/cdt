@@ -19,13 +19,13 @@ import junit.framework.TestSuite;
 /**
  * Test suite to cover core Language Settings Providers functionality.
  */
-public class AllLanguageSettingsProvidersCoreTests {
+public class AllLanguageSettingsProvidersCoreTestSuite {
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(suite());
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllLanguageSettingsProvidersCoreTests.class.getName());
+		TestSuite suite = new TestSuite(AllLanguageSettingsProvidersCoreTestSuite.class.getName());
 
 		suite.addTest(LanguageSettingsExtensionsTests.suite());
 		suite.addTest(LanguageSettingsManagerTests.suite());

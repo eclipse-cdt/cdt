@@ -157,7 +157,7 @@ public class SourceRewriteTester extends TestSuite {
 	}
 
 	private static RewriteBaseTest createTestClass(String testName, ASTWriterTestSourceFile file) throws Exception {
-		ASTWriterTest test = new ASTWriterTest(testName, file);
+		ASTWriterTester test = new ASTWriterTester(testName, file);
 		TextSelection sel = file.getSelection();
 		if (sel != null) {
 			test.setFileWithSelection(file.getName());

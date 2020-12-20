@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllConstexprEvalTests {
+public class AllConstexprEvalTestSuite {
 	public static Test suite() throws Exception {
 		final TestSuite suite = new TestSuite();
 		suite.addTest(ConstructorTests.NonIndexing.suite());

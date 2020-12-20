@@ -38,7 +38,7 @@ import junit.framework.TestCase;
 /**
  * @author dsteffle
  */
-public class AST2FileBasePluginTestCase extends TestCase {
+public abstract class AST2FileBasePluginTestCase extends TestCase {
 	static NullProgressMonitor monitor;
 	static IWorkspace workspace;
 	static IProject project;

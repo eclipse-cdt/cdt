@@ -20,9 +20,9 @@ import junit.framework.TestSuite;
  * @author crecoskie
  *
  */
-public class AllLanguageTests extends TestSuite {
+public class AllLanguageTestSuite extends TestSuite {
 	public static Test suite() {
-		TestSuite suite = new AllLanguageTests();
+		TestSuite suite = new AllLanguageTestSuite();
 
 		suite.addTest(LanguageInheritanceTests.suite());
 

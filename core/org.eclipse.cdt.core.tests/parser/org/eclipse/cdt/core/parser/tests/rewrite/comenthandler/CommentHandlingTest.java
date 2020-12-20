@@ -29,11 +29,15 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.tests.rewrite.RewriteBaseTest;
+import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTester;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestSourceFile;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * This test tests the behavior of the class ASTCommenter. It checks if the ASTCommenter assigns
@@ -90,6 +94,12 @@ public class CommentHandlingTest extends RewriteBaseTest {
 
 	public CommentHandlingTest(String name, List<TestSourceFile> files) {
 		super(name, files);
+	}
+
+	public static Test suite() throws Exception {
+		TestSuite suite = new TestSuite(CommentHandlingTestSuite.class.getName());
+		suite.addTest(RewriteTester.suite("CommentTests", "resources/rewrite/CommentHandlingTestSource.rts")); //$NON-NLS-1$
+		return suite;
 	}
 
 	@Override

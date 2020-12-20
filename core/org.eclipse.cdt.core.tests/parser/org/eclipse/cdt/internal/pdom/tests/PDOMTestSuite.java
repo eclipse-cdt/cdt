@@ -22,10 +22,10 @@ import junit.framework.TestSuite;
 /**
  * @author Doug Schaefer
  */
-public class PDOMTests extends TestSuite {
+public class PDOMTestSuite extends TestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new PDOMTests();
+		TestSuite suite = new PDOMTestSuite();
 
 		suite.addTest(DatabaseTest.suite());
 		suite.addTest(DBPropertiesTests.suite());

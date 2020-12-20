@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
-import org.eclipse.cdt.core.language.settings.providers.AllLanguageSettingsProvidersCoreTests;
-import org.eclipse.cdt.core.settings.model.AllCProjectDescriptionTests;
+import org.eclipse.cdt.core.language.settings.providers.AllLanguageSettingsProvidersCoreTestSuite;
+import org.eclipse.cdt.core.settings.model.AllCProjectDescriptionTestSuite;
 import org.eclipse.cdt.core.settings.model.PathSettingsContainerTests;
 
 import junit.framework.Test;
@@ -30,18 +30,18 @@ import junit.framework.TestSuite;
  * @author Judy N. Green
  * @since Jul 19, 2002
  */
-public class AllCoreTests {
+public class AllCoreTestSuite {
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(suite());
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllCoreTests.class.getName());
+		TestSuite suite = new TestSuite(AllCoreTestSuite.class.getName());
 
 		// Just add more test cases here as you create them for
 		// each class being tested
-		suite.addTest(AllLanguageInterfaceTests.suite());
+		suite.addTest(AllLanguageInterfaceTestSuite.suite());
 		suite.addTest(CModelTests.suite());
 		suite.addTest(CModelElementsTests.suite());
 		suite.addTest(CModelIdentifierTests.suite());
@@ -57,14 +57,14 @@ public class AllCoreTests {
 		suite.addTest(CPathEntryTest.suite());
 		//the CProjectDescriptionTests now groups all New Project Model related tests
 		//which includes the CConfigurationDescriptionReferenceTests
-		suite.addTest(AllCProjectDescriptionTests.suite());
+		suite.addTest(AllCProjectDescriptionTestSuite.suite());
 		suite.addTest(PathSettingsContainerTests.suite());
 		suite.addTest(ASTCacheTests.suite());
 		suite.addTest(AsmModelBuilderTest.suite());
 		suite.addTest(CModelBuilderBugsTest.suite());
 		suite.addTest(Bug311189.suite());
 
-		suite.addTest(AllLanguageSettingsProvidersCoreTests.suite());
+		suite.addTest(AllLanguageSettingsProvidersCoreTestSuite.suite());
 		return suite;
 
 	}

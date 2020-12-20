@@ -44,9 +44,14 @@
 					<!-- Core tests actually use eclipse.ui classes, see CProjectHelper -->
 					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} ${extra.vmargs}</argLine>
 					<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
-					<includes>
-						<include>**/AutomatedIntegrationSuite.*</include>
-					</includes>
+					<excludes>
+						<!-- The default Excludes omits nested static classes, this reenables them.
+							See org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr.ArrayTests.NonIndexingTests for an example
+							of a test that would not be run otherwise.
+							For reference, the default exclude is "**/*$*"
+						-->
+						<exclude></exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>

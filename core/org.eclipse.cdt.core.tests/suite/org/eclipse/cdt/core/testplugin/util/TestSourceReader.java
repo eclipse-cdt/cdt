@@ -102,6 +102,10 @@ public class TestSourceReader {
 	 * Returns an array of StringBuilder objects for each comment section found preceding the named
 	 * test in the source code.
 	 *
+	 * Trailing whitespace can be removed by editor/clean-up actions. To enforce whitespace
+	 * at end of line, use ${whitspace_eol}, which will be removed, but cause the
+	 * whitespace to the left of it to be preserved.
+	 *
 	 * @param bundle the bundle containing the source, if {@code null} can try to load using
 	 *      classpath (source folder has to be in the classpath for this to work)
 	 * @param srcRoot the directory inside the bundle containing the packages

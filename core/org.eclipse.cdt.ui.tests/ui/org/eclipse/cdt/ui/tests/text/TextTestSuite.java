@@ -33,7 +33,7 @@ import org.junit.runners.Suite;
 		// smart edit tests
 		AlignConstActionTest.class, CAutoIndentTest.class, CHeuristicScannerTest.class, BracketInserterTest.class,
 		IndentActionTest.class, FormatActionTest.class, ShiftActionTest.class, CodeFormatterTest.class,
-		CIndenterTest.class, TemplateFormatterTest.class,
+		CIndenterTest.class, TemplateFormatterTest.class, DefaultCCommentAutoEditStrategyTest.class,
 
 		// Break iterator tests.
 		CBreakIteratorTest.class, CWordIteratorTest.class,

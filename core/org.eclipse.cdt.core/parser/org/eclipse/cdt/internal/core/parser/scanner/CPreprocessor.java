@@ -103,7 +103,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			Integer.toString(getCDTVersion()).toCharArray());
 	private static final ObjectStyleMacro __cplusplus = new ObjectStyleMacro("__cplusplus".toCharArray(), //$NON-NLS-1$
 			"201103L".toCharArray()); //$NON-NLS-1$
-	private static final ObjectStyleMacro __STDC__ = new ObjectStyleMacro("__STDC__".toCharArray(), ONE); //$NON-NLS-1$
 	private static final ObjectStyleMacro __STDC_HOSTED__ = new ObjectStyleMacro("__STDC_HOSTED__".toCharArray(), ONE); //$NON-NLS-1$
 	private static final ObjectStyleMacro __STDC_VERSION__ = new ObjectStyleMacro("__STDC_VERSION__".toCharArray(), //$NON-NLS-1$
 			"199901L".toCharArray()); //$NON-NLS-1$
@@ -184,7 +183,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			final InternalFileContent fc;
 			IFileNomination once = fFileContentProvider.isIncludedWithPragmaOnceSemantics(path);
 			if (once != null) {
-				fc = new InternalFileContent(path, InclusionKind.SKIP_FILE);
+				ISignificantMacros significantMacros = ISignificantMacros.NONE;
+				try {
+					significantMacros = once.getSignificantMacros();
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+				fc = new InternalFileContent(path, InclusionKind.SKIP_PRAGMA_ONCE_FILE, significantMacros);
 			} else {
 				fc = fFileContentProvider.getContentForInclusion(path, fMacroDictionaryFacade);
 			}
@@ -507,7 +512,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private void setupMacroDictionary(IScannerExtensionConfiguration config, IScannerInfo info, ParserLanguage lang) {
 		// Built-in macros
 		fMacroDictionary.put(__CDT_PARSER__.getNameCharArray(), __CDT_PARSER__);
-		fMacroDictionary.put(__STDC__.getNameCharArray(), __STDC__);
 		fMacroDictionary.put(__FILE__.getNameCharArray(), __FILE__);
 		fMacroDictionary.put(__DATE__.getNameCharArray(), __DATE__);
 		fMacroDictionary.put(__TIME__.getNameCharArray(), __TIME__);
@@ -1785,11 +1789,19 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		case SKIP_FILE:
 			// Already included or fast parsing mode.
 			break;
+
+		case SKIP_PRAGMA_ONCE_FILE:
+			fCurrentContext.addSignificantMacros(fi.getSignificantMacros());
+			break;
 		}
 		if (stmt == null) {
 			// Found in index or skipped.
 			stmt = fLocationMap.encounterPoundInclude(poundOffset, nameOffsets[0], nameOffsets[1], condEndOffset,
 					headerName, path, userInclude, active, isHeuristic, nominationDelegate);
+			if (fi.getKind() == InclusionKind.SKIP_PRAGMA_ONCE_FILE) {
+				stmt.setSignificantMacros(fi.getSignificantMacros());
+				stmt.setPragamOnceSemantics(true);
+			}
 		}
 		// In a pragma once context store loaded versions of this non-pragma-once include
 		if (pragmaOnceContext && loadedVerisons != null && !loadedVerisons.isEmpty()) {
@@ -1807,6 +1819,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		for (FileVersion version : fi.getNonPragmaOnceVersions()) {
 			fFileContentProvider.addLoadedVersions(version.fPath, Integer.MAX_VALUE, version.fSigMacros);
 		}
+
 		fLocationMap.skippedFile(fLocationMap.getSequenceNumberForOffset(offset), fi);
 	}
 
@@ -2324,6 +2337,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			addTypeTraitPrimitive("is_trivially_copyable", GCCKeywords.cp__is_trivially_copyable);
 			addTypeTraitPrimitive("is_union", GCCKeywords.cp__is_union);
 			addTypeTraitPrimitive("underlying_type", GCCKeywords.cp__underlying_type);
+
+			// TODO: If at some point we add support for __has_builtin, "__integer_pack"
+			//       should be added to the list of supported builtins.
 		}
 		return sSupportedFeatures;
 	}

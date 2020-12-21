@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,32 +25,27 @@ import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test insertion/deletion of records of a mock record type in a B-tree.
  *
  * @author aferguso
  */
-public class BTreeTests extends BaseTestCase {
+public class BTreeTests extends BaseTestCase5 {
 	private static int DEBUG = 0;
 	protected File dbFile;
 	protected Database db;
 	protected BTree btree;
 	protected int rootRecord;
 	protected IBTreeComparator comparator;
-
-	public static Test suite() {
-		return suite(BTreeTests.class);
-	}
 
 	// setUp is not used since we need to parameterize this method,
 	// and invoke it multiple times per Junit test
@@ -66,6 +64,7 @@ public class BTreeTests extends BaseTestCase {
 		dbFile.deleteOnExit();
 	}
 
+	@Test
 	public void testBySortedSetMirrorLite() throws Exception {
 		sortedMirrorTest(8);
 	}
@@ -91,6 +90,7 @@ public class BTreeTests extends BaseTestCase {
 	 * and use TreeSet as a reference implementation to check behaviour against.
 	 * @throws Exception
 	 */
+	@Test
 	public void testInsertion() throws Exception {
 		Random seeder = new Random();
 
@@ -105,6 +105,7 @@ public class BTreeTests extends BaseTestCase {
 	/**
 	 * Bug 402177: BTree.insert should return the matching record if the new record was not inserted.
 	 */
+	@Test
 	public void testEquivalentRecordInsert_Bug402177() throws Exception {
 		init(8);
 		try {
@@ -208,7 +209,7 @@ public class BTreeTests extends BaseTestCase {
 					BTMockRecord btValue = new BTMockRecord(record, db);
 					if (i.hasNext()) {
 						Integer exp = ((Integer) i.next());
-						assertEquals(msg + " Differ at index: " + k, btValue.intValue(), exp.intValue());
+						assertEquals(btValue.intValue(), exp.intValue(), msg + " Differ at index: " + k);
 						k++;
 					} else {
 						fail("Sizes different");

@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.regressions;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
@@ -27,22 +30,25 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * This tests that an environment variable, which is part of the build
  * (in this case referenced by a -I), makes it through to makefile
  * correctly when it changes.
  */
-public class Bug_335476 extends AbstractBuilderTest {
+@Disabled("This is a test for a known failure - see Bug 335476")
+public class Bug_335476Test extends AbstractBuilderTest {
 
 	private final String VAR_NAME = "INC";
 	IProject app;
 	IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
 	ICdtVariableManager buildMacroManager = CCorePlugin.getDefault().getCdtVariableManager();
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	public void setUpLocal() throws Exception {
 		setWorkspace("regressions");
 		app = loadProject("bug_335476");
 		// Ensure Debug is the active configuration
@@ -94,11 +100,9 @@ public class Bug_335476 extends AbstractBuilderTest {
 					String value2 = buildMacroManager.resolveValue("${" + VAR_NAME + "}", "", ";",
 							CCorePlugin.getDefault().getProjectDescription(app, false).getActiveConfiguration());
 
-					assertTrue(i + " EnvManager " + expected + " exepected, but was: " + value, expected.equals(value));
-					assertTrue(i + " CdtVarManager " + expected + " exepected, but was: " + value2,
-							expected.equals(value2));
-					assertTrue(i + " Makefile: " + expected + " exepected, but was: " + buildVar,
-							expected.equals(buildVar));
+					assertEquals(expected, value, i + " EnvManager " + expected + " exepected, but was: " + value);
+					assertEquals(expected, value2, i + " CdtVarManager " + expected + " exepected, but was: " + value2);
+					assertEquals(expected, buildVar, i + " Makefile: " + expected + " exepected, but was: " + buildVar);
 					found = true;
 				}
 				// Check that we at least matched
@@ -115,10 +119,12 @@ public class Bug_335476 extends AbstractBuilderTest {
 		}
 	}
 
+	@Test
 	public void testChangingEnvironmentBuildSystem_FULL_BUILD() throws Exception {
 		runTest(IncrementalProjectBuilder.FULL_BUILD);
 	}
 
+	@Test
 	public void testChangingEnvironmentBuildSystem_INC_BUILD() throws Exception {
 		runTest(IncrementalProjectBuilder.INCREMENTAL_BUILD);
 	}

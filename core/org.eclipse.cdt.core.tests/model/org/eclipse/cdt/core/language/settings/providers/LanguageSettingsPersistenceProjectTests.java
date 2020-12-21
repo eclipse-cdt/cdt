@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2020 Andrew Gvozdev and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,13 @@
 
 package org.eclipse.cdt.core.language.settings.providers;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +33,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.testplugin.CModelMock;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
@@ -34,15 +41,16 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import junit.framework.TestSuite;
 
 /**
  * Test cases testing LanguageSettingsProvider functionality related to persistence.
  */
-public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
+public class LanguageSettingsPersistenceProjectTests extends BaseTestCase5 {
 	// These should match extension points defined in plugin.xml
 	private static final String EXTENSION_BASE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_ID;
 	private static final String EXTENSION_BASE_PROVIDER_NAME = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_NAME;
@@ -130,39 +138,9 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		}
 	}
 
-	/**
-	 * Constructor.
-	 * @param name - name of the test.
-	 */
-	public LanguageSettingsPersistenceProjectTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void tearDownLocal() throws Exception {
 		LanguageSettingsManager.setWorkspaceProviders(null);
-		super.tearDown(); // includes ResourceHelper cleanup
-	}
-
-	/**
-	 * @return - new TestSuite.
-	 */
-	public static TestSuite suite() {
-		return new TestSuite(LanguageSettingsPersistenceProjectTests.class);
-	}
-
-	/**
-	 * main function of the class.
-	 *
-	 * @param args - arguments
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
 	}
 
 	/**
@@ -195,6 +173,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Persist and reload when no customized providers are defined in the workspace.
 	 */
+	@Test
 	public void testWorkspacePersistence_NoProviders() throws Exception {
 		// serialize language settings of user defined providers (on workspace level)
 		LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
@@ -206,6 +185,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Make sure providers in configuration cannot be modified accidentally outside of API.
 	 */
+	@Test
 	public void testProjectDescription_PreventBackDoorAccess() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -239,6 +219,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test assigning providers to read-only vs. writable configuration descriptions.
 	 */
+	@Test
 	public void testProjectDescription_ReadWriteDescription() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -367,6 +348,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Persist and reload a customized provider defined in the workspace.
 	 */
+	@Test
 	public void testWorkspacePersistence_ModifiedExtensionProvider() throws Exception {
 		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		entries.add(new CIncludePathEntry("path0", 0));
@@ -416,6 +398,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Check persistence of unmodified extension provider in the workspace.
 	 */
+	@Test
 	public void testWorkspacePersistence_UnmodifiedExtensionProvider() throws Exception {
 		List<ICLanguageSettingEntry> extensionEntries = new ArrayList<>();
 		extensionEntries.add(EXTENSION_SERIALIZABLE_PROVIDER_ENTRY);
@@ -463,6 +446,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test persistence of global providers in the workspace.
 	 */
+	@Test
 	public void testWorkspacePersistence_GlobalProvider() throws Exception {
 		{
 			// get the raw extension provider
@@ -498,6 +482,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test persistence of global providers with ID matching an extension provider in the workspace.
 	 */
+	@Test
 	public void testWorkspacePersistence_ShadowedExtensionProvider() throws Exception {
 		{
 			// get the raw extension provider
@@ -569,6 +554,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test serialization of providers to project storage.
 	 */
+	@Test
 	public void testProjectPersistence_SerializableProviderDOM() throws Exception {
 		Element rootElement = null;
 
@@ -631,6 +617,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test User language settings provider defined as extension in cdt.ui.
 	 */
+	@Test
 	public void testProjectPersistence_UserProviderDOM() throws Exception {
 		Element rootElement = null;
 
@@ -695,6 +682,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test serialization of providers to project storage where the project has multiple configurations.
 	 */
+	@Test
 	public void testProjectPersistence_TwoConfigurationsDOM() throws Exception {
 		Element rootElement = null;
 
@@ -837,6 +825,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test serialization of providers subclassing {@link LanguageSettingsSerializableProvider}.
 	 */
+	@Test
 	public void testProjectPersistence_SubclassedSerializableProviderDOM() throws Exception {
 		Element rootElement = null;
 
@@ -898,6 +887,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Serialization of providers exactly equal extension providers.
 	 */
+	@Test
 	public void testProjectPersistence_ReferenceExtensionProviderDOM() throws Exception {
 		Element rootElement = null;
 
@@ -953,6 +943,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test serialization of providers overriding/shadowing extension providers.
 	 */
+	@Test
 	public void testProjectPersistence_OverrideExtensionProviderDOM() throws Exception {
 		Element rootElement = null;
 
@@ -1013,6 +1004,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test serialization flavors in one storage.
 	 */
+	@Test
 	public void testProjectPersistence_MixedProvidersDOM() throws Exception {
 		Element rootElement = null;
 
@@ -1107,6 +1099,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test serialization of real project.
 	 */
+	@Test
 	public void testProjectPersistence_RealProject() throws Exception {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
 		IFile xmlStorageFilePrj = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
@@ -1224,17 +1217,17 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			String xmlStorageFileLocation = xmlStorageFilePrj.getLocation().toOSString();
 			java.io.File xmlFile = new java.io.File(xmlStorageFileLocation);
 			xmlFile.delete();
-			assertFalse("File " + xmlFile + " still exist", xmlFile.exists());
+			assertNotExists(xmlFile);
 			java.io.File xmlFileOut = new java.io.File(xmlPrjOutOfTheWay);
 			xmlFileOut.renameTo(xmlFile);
-			assertTrue("File " + xmlFile + " does not exist", xmlFile.exists());
-			assertFalse("File " + xmlFileOut + " still exist", xmlFileOut.exists());
+			assertExists(xmlFile);
+			assertNotExists(xmlFileOut);
 
 			// Wait out in case indexer thread hijacks refreshLocal(), see bug 415970
 			waitForIndexer(CCorePlugin.getDefault().getCoreModel().create(project));
 			// Refresh storage in workspace
 			xmlStorageFilePrj.refreshLocal(IResource.DEPTH_ZERO, null);
-			assertTrue("File " + xmlStorageFilePrj + " does not exist", xmlStorageFilePrj.exists());
+			assertExists(xmlStorageFilePrj);
 
 			// and close
 			project.close(null);
@@ -1266,6 +1259,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test case when the storage is split between project and workspace area.
 	 */
+	@Test
 	public void testProjectPersistence_SplitStorageDOM() throws Exception {
 		Element prjStorageElement = null;
 		Element wspStorageElement = null;
@@ -1343,6 +1337,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test split storage in a real project.
 	 */
+	@Test
 	public void testProjectPersistence_RealProjectSplitStorage() throws Exception {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
 		IFile xmlStorageFilePrj;
@@ -1472,17 +1467,17 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			String xmlStorageFilePrjLocation = xmlStorageFilePrj.getLocation().toOSString();
 			java.io.File xmlFile = new java.io.File(xmlStorageFilePrjLocation);
 			xmlFile.delete();
-			assertFalse("File " + xmlFile + " still exist", xmlFile.exists());
+			assertNotExists(xmlFile);
 			java.io.File xmlFileOut = new java.io.File(xmlPrjOutOfTheWay);
 			xmlFileOut.renameTo(xmlFile);
-			assertTrue("File " + xmlFile + " does not exist", xmlFile.exists());
-			assertFalse("File " + xmlFileOut + " still exist", xmlFileOut.exists());
+			assertExists(xmlFile);
+			assertNotExists(xmlFileOut);
 
 			// Wait out in case indexer thread hijacks refreshLocal(), see bug 415970
 			waitForIndexer(CCorePlugin.getDefault().getCoreModel().create(project));
 			// Refresh storage in workspace
 			xmlStorageFilePrj.refreshLocal(IResource.DEPTH_ZERO, null);
-			assertTrue("File " + xmlStorageFilePrj + " does not exist", xmlStorageFilePrj.exists());
+			assertExists(xmlStorageFilePrj);
 
 			// and close
 			project.close(null);
@@ -1492,11 +1487,11 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			// Move workspace storage back
 			java.io.File xmlWspFile = new java.io.File(xmlStorageFileWspLocation);
 			xmlWspFile.delete();
-			assertFalse("File " + xmlWspFile + " still exist", xmlWspFile.exists());
+			assertNotExists(xmlWspFile);
 			java.io.File xmlWspFileOut = new java.io.File(xmlWspOutOfTheWay);
 			xmlWspFileOut.renameTo(xmlWspFile);
-			assertTrue("File " + xmlWspFile + " does not exist", xmlWspFile.exists());
-			assertFalse("File " + xmlWspFileOut + " still exist", xmlWspFileOut.exists());
+			assertExists(xmlWspFile);
+			assertNotExists(xmlWspFileOut);
 		}
 
 		{
@@ -1525,6 +1520,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test serialization of providers referring to global shared instance.
 	 */
+	@Test
 	public void testProjectPersistence_ProviderExtensionReferenceDOM() throws Exception {
 		Document doc = XmlUtil.newDocument();
 		Element storageElement = XmlUtil.appendElement(doc, ELEM_TEST);
@@ -1582,6 +1578,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Walk the scenario when a provider is cloned to a configuration from extension.
 	 */
+	@Test
 	public void testProjectPersistence_ProviderExtensionCopyDOM() throws Exception {
 		Document doc = XmlUtil.newDocument();
 		Element storageElement = XmlUtil.appendElement(doc, ELEM_TEST);
@@ -1639,6 +1636,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test that default settings do not cause the files to appear in the project or file-system.
 	 */
+	@Test
 	public void testProjectPersistence_Defaults() throws Exception {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
 		IFile xmlStorageFilePrj = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
@@ -1653,6 +1651,8 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test serialization of global providers exactly equal extension in workspace area.
 	 */
+	@Test
+	@Tag(FLAKY_TEST_TAG)
 	public void testWorkspacePersistence_ProviderExtensionCopy() throws Exception {
 		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		List<ILanguageSettingsProvider> providers = new ArrayList<>();
@@ -1698,6 +1698,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	/**
 	 * Test that default settings do not cause the file to appear on the file-system.
 	 */
+	@Test
 	public void testWorkspacePersistence_Defaults() throws Exception {
 		// reset and serialize workspace providers
 		LanguageSettingsManager.setWorkspaceProviders(null);

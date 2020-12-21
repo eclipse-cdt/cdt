@@ -32,7 +32,7 @@ public class AllLanguageSettingsProvidersCoreTestSuite {
 		suite.addTest(LanguageSettingsExtensionsTests.suite());
 		suite.addTest(LanguageSettingsManagerTests.suite());
 		suite.addTest(LanguageSettingsSerializableProviderTests.suite());
-		suite.addTest(LanguageSettingsPersistenceProjectTests.suite());
+		// Test converted to JUnit5: suite.addTest(LanguageSettingsPersistenceProjectTests.suite());
 		suite.addTest(LanguageSettingsListenersTests.suite());
 		suite.addTest(LanguageSettingsScannerInfoProviderTests.suite());
 		suite.addTest(LanguageSettingsProviderReferencedProjectsTests.suite());

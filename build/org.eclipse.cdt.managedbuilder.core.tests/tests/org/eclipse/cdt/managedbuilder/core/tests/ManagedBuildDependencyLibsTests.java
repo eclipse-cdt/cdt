@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,9 +44,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 	private static final String PROJ_PATH = "depLibsProjects";
@@ -51,19 +55,6 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 	private IProject fTapp, fTlib, fTobjs;
 
 	private IToolChain[] allToolChains;
-
-	public ManagedBuildDependencyLibsTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ManagedBuildDependencyLibsTests.class.getName());
-
-		suite.addTest(new ManagedBuildDependencyLibsTests("testDepLibs"));
-		suite.addTest(new ManagedBuildDependencyLibsTests("testDepUObjs"));
-		suite.addTest(new ManagedBuildDependencyLibsTests("testGetArtifactTimeStampEscapeURI_bug377295"));
-		return suite;
-	}
 
 	private void buildProject(IProject curProject) {
 
@@ -84,27 +75,30 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	public void setUp() {
+		// Don't run super class setUp
+	}
+
+	@BeforeEach
+	public void setUpLocal() throws Exception {
 		allToolChains = ManagedBuildManager.getRealToolChains();
 		IWorkspaceDescription wsDescription = ResourcesPlugin.getWorkspace().getDescription();
 		wsDescription.setAutoBuilding(false);
 		ResourcesPlugin.getWorkspace().setDescription(wsDescription);
-		assertNotNull("Cannot create tapp project", fTapp = ManagedBuildTestHelper.loadProject("tapp", PROJ_PATH));
-		assertNotNull("Cannot create tlib project", fTlib = ManagedBuildTestHelper.loadProject("tlib", PROJ_PATH));
-		assertNotNull("Cannot create tobjs project", fTobjs = ManagedBuildTestHelper.loadProject("tobjs", PROJ_PATH));
+		assertNotNull(fTapp = ManagedBuildTestHelper.loadProject("tapp", PROJ_PATH), "Cannot create tapp project");
+		assertNotNull(fTlib = ManagedBuildTestHelper.loadProject("tlib", PROJ_PATH), "Cannot create tlib project");
+		assertNotNull(fTobjs = ManagedBuildTestHelper.loadProject("tobjs", PROJ_PATH), "Cannot create tobjs project");
 		IProjectDescription projDescription = fTapp.getDescription();
 		projDescription.setReferencedProjects(new IProject[] { fTlib, fTobjs });
 		fTapp.setDescription(projDescription, new NullProgressMonitor());
 		IToolChain toolChain = setToolChain(fTapp, null);
-		assertNotNull("No compatible tool chain.", toolChain);
+		assertNotNull(toolChain, "No compatible tool chain.");
 		setToolChain(fTlib, toolChain);
 		setToolChain(fTobjs, toolChain);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@AfterEach
+	public void tearDownLocal() throws Exception {
 		ManagedBuildTestHelper.removeProject(fTapp.getName());
 		ManagedBuildTestHelper.removeProject(fTlib.getName());
 		ManagedBuildTestHelper.removeProject(fTobjs.getName());
@@ -215,6 +209,7 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 		return name;
 	}
 
+	@Test
 	public void testDepLibs() {
 		buildProject(fTapp);
 		long timeStamp = getArtifactTimeStamp(fTapp);
@@ -238,6 +233,7 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 		}
 	}
 
+	@Test
 	public void testDepUObjs() {
 		buildProject(fTapp);
 		long timeStamp = getArtifactTimeStamp(fTapp);
@@ -264,6 +260,7 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 
 	// Tests that the URI used to get the time stamp of the artifact is escaped correctly
 	// See AdditionalInput.getArtifactTimeStamp(IToolChain toolChain)
+	@Test
 	public void testGetArtifactTimeStampEscapeURI_bug377295() throws CoreException {
 		setWorkspace("regressions");
 		final IProject project = loadProject("helloworldC");

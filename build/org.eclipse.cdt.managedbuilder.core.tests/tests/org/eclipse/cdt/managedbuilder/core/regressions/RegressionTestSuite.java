@@ -26,7 +26,7 @@ public class RegressionTestSuite extends TestCase {
 		TestSuite suite = new TestSuite(RegressionTestSuite.class.getName());
 
 		// Test that common builder does the correct amount of work.
-		suite.addTestSuite(Bug_303953Test.class);
+		// Test converted to JUnit5: suite.addTest(new JUnit4TestAdapter(Bug_303953Test.class));
 
 		return suite;
 	}

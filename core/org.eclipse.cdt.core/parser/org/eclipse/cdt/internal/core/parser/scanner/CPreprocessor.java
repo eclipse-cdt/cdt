@@ -185,7 +185,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			final InternalFileContent fc;
 			IFileNomination once = fFileContentProvider.isIncludedWithPragmaOnceSemantics(path);
 			if (once != null) {
-				fc = new InternalFileContent(path, InclusionKind.SKIP_FILE);
+				ISignificantMacros significantMacros = ISignificantMacros.NONE;
+				try {
+					significantMacros = once.getSignificantMacros();
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+				fc = new InternalFileContent(path, InclusionKind.SKIP_PRAGMA_ONCE_FILE, significantMacros);
 			} else {
 				fc = fFileContentProvider.getContentForInclusion(path, fMacroDictionaryFacade);
 			}
@@ -1790,11 +1796,19 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		case SKIP_FILE:
 			// Already included or fast parsing mode.
 			break;
+
+		case SKIP_PRAGMA_ONCE_FILE:
+			fCurrentContext.addSignificantMacros(fi.getSignificantMacros());
+			break;
 		}
 		if (stmt == null) {
 			// Found in index or skipped.
 			stmt = fLocationMap.encounterPoundInclude(poundOffset, nameOffsets[0], nameOffsets[1], condEndOffset,
 					headerName, path, userInclude, active, isHeuristic, nominationDelegate);
+			if (fi.getKind() == InclusionKind.SKIP_PRAGMA_ONCE_FILE) {
+				stmt.setSignificantMacros(fi.getSignificantMacros());
+				stmt.setPragamOnceSemantics(true);
+			}
 		}
 		// In a pragma once context store loaded versions of this non-pragma-once include
 		if (pragmaOnceContext && loadedVerisons != null && !loadedVerisons.isEmpty()) {
@@ -1812,6 +1826,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		for (FileVersion version : fi.getNonPragmaOnceVersions()) {
 			fFileContentProvider.addLoadedVersions(version.fPath, Integer.MAX_VALUE, version.fSigMacros);
 		}
+
 		fLocationMap.skippedFile(fLocationMap.getSequenceNumberForOffset(offset), fi);
 	}
 

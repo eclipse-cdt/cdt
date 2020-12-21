@@ -22,11 +22,10 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.managedbuilder.core.regressions.RegressionTestSuite;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildDescriptionModelTests;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildSystem40Tests;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCore20Tests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCore_SharedToolOptionsTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyCalculatorTests;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyLibsTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildEnvironmentTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildMacrosTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildTCSupportedTest;
@@ -74,7 +73,7 @@ public class AutomatedIntegrationSuite {
 		suite.addTest(AllLanguageSettingsProvidersMBSTestSuite.suite());
 
 		// managedbuilder.core.tests
-		suite.addTest(ManagedBuildDependencyLibsTests.suite());
+		// Test converted to JUnit5: suite.addTest(ManagedBuildDependencyLibsTests.suite());
 		suite.addTest(ManagedBuildCore20Tests.suite());
 		suite.addTest(ManagedBuildCoreTests.suite());
 		suite.addTest(ManagedProjectUpdateTests.suite());

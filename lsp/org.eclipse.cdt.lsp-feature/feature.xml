@@ -11,7 +11,7 @@
 <feature
       id="org.eclipse.cdt.lsp"
       label="%featureName"
-      version="10.1.0.qualifier"
+      version="10.2.0.qualifier"
       provider-name="%featureProvider"
       plugin="org.eclipse.cdt.lsp.ui"
       license-feature="org.eclipse.license"

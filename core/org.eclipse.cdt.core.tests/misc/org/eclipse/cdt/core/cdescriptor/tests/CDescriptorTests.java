@@ -16,6 +16,12 @@
  ***********************************************************************/
 package org.eclipse.cdt.core.cdescriptor.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,7 +38,7 @@ import org.eclipse.cdt.core.ICOwnerInfo;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -42,33 +48,20 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-public class CDescriptorTests extends BaseTestCase {
+@Tag(BaseTestCase5.FLAKY_TEST_TAG)
+public class CDescriptorTests extends BaseTestCase5 {
 	static String projectId = CTestPlugin.PLUGIN_ID + ".TestProject";
 	static IProject fProject;
 	static CDescriptorListener listener = new CDescriptorListener();
 	static volatile CDescriptorEvent fLastEvent;
 
-	/**
-	 * Constructor for CDescriptorTest.
-	 *
-	 * @param name
-	 */
-	public CDescriptorTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(CDescriptorTests.class);
-		return suite;
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void setUpLocal() throws Exception {
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -97,8 +90,8 @@ public class CDescriptorTests extends BaseTestCase {
 		}, null);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void tearDownLocal() throws Exception {
 		fProject.delete(true, true, null);
 	}
 
@@ -120,29 +113,32 @@ public class CDescriptorTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testDescriptorCreation() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_ADDED);
-		Assert.assertEquals(fLastEvent.getFlags(), 0);
+		assertNotNull(fLastEvent);
+		assertEquals(fLastEvent.getDescriptor(), desc);
+		assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_ADDED);
+		assertEquals(fLastEvent.getFlags(), 0);
 		fLastEvent = null;
 
-		Assert.assertEquals(fProject, desc.getProject());
-		Assert.assertEquals("*", desc.getPlatform());
+		assertEquals(fProject, desc.getProject());
+		assertEquals("*", desc.getPlatform());
 	}
 
+	@Test
 	public void testDescriptorOwner() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICOwnerInfo owner = desc.getProjectOwner();
-		Assert.assertEquals(projectId, owner.getID());
-		Assert.assertEquals("*", owner.getPlatform());
-		Assert.assertEquals("C/C++ Test Project", owner.getName());
+		assertEquals(projectId, owner.getID());
+		assertEquals("*", owner.getPlatform());
+		assertEquals("C/C++ Test Project", owner.getName());
 	}
 
 	// Disabled this test because it fails every now and then and it tests deprecated API
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=340123
+	//	@Test
 	public void _testConcurrentDescriptorCreation() throws Exception {
 		for (int i = 0; i < 100; i++) {
 			fProject.close(null);
@@ -179,6 +175,7 @@ public class CDescriptorTests extends BaseTestCase {
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=185930
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=193503
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=196118
+	@Test
 	public void testConcurrentDescriptorModification() throws Exception {
 		int lastLength = 0;
 		for (int i = 0; i < 100; ++i) {
@@ -230,12 +227,12 @@ public class CDescriptorTests extends BaseTestCase {
 					} catch (InterruptedException e) {
 					}
 				}
-				assertNull("Exception occurred: " + exception[j], exception[j]);
+				assertNull(exception[j], "Exception occurred: " + exception[j]);
 			}
 			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 			int lengthAfter = desc.getProjectStorageElement("testElement").getChildren().length;
 			lastLength += threads.length; // Update last lengths to what we expect
-			assertEquals("Iteration count: " + i, lastLength, lengthAfter);
+			assertEquals(lastLength, lengthAfter, "Iteration count: " + i);
 
 			fLastEvent = null;
 		}
@@ -245,6 +242,7 @@ public class CDescriptorTests extends BaseTestCase {
 	 * This test should pass as two threads, operating on the different storage elements
 	 * (outside of an operation) should be safe.
 	 */
+	@Test
 	public void testConcurrentDifferentStorageElementModification() throws Exception {
 		for (int i = 0; i < 100; ++i) {
 			Thread t = new Thread() {
@@ -273,15 +271,16 @@ public class CDescriptorTests extends BaseTestCase {
 
 			fLastEvent = null;
 		}
-		Assert.assertEquals(100, CCorePlugin.getDefault().getCProjectDescription(fProject, false)
+		assertEquals(100, CCorePlugin.getDefault().getCProjectDescription(fProject, false)
 				.getProjectStorageElement("testElement4").getChildren().length);
-		Assert.assertEquals(100, CCorePlugin.getDefault().getCProjectDescription(fProject, false)
+		assertEquals(100, CCorePlugin.getDefault().getCProjectDescription(fProject, false)
 				.getProjectStorageElement("testElement5").getChildren().length);
 	}
 
 	/*
 	 * Tests that (non-structural) changes to the storage element tree work as expected.
 	 */
+	@Test
 	public void testConcurrentSameStorageElementModification() throws Exception {
 		for (int i = 0; i < 100; ++i) {
 			Thread t = new Thread() {
@@ -310,17 +309,18 @@ public class CDescriptorTests extends BaseTestCase {
 
 			fLastEvent = null;
 		}
-		Assert.assertEquals(200, CCorePlugin.getDefault().getCProjectDescription(fProject, false)
+		assertEquals(200, CCorePlugin.getDefault().getCProjectDescription(fProject, false)
 				.getProjectStorageElement("testElement6").getChildren().length);
 	}
 
 	/*
 	 * Tests deadlock when accessing c project description concurrently from two threads
 	 */
+	@Test
 	public void testDeadlockDuringProjectCreation() throws Exception {
 		for (int i = 0; i < 10; ++i) {
-			tearDown();
-			setUp();
+			tearDownLocal();
+			setUpLocal();
 			Thread t = new Thread() {
 				@Override
 				public void run() {
@@ -348,33 +348,37 @@ public class CDescriptorTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testDescriptorConversion() {
 	}
 
+	@Test
 	public void testExtensionCreation() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICExtensionReference extRef = desc.create("org.eclipse.cdt.testextension", "org.eclipse.cdt.testextensionID");
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
-		Assert.assertEquals(fLastEvent.getFlags(), CDescriptorEvent.EXTENSION_CHANGED);
+		assertNotNull(fLastEvent);
+		assertEquals(fLastEvent.getDescriptor(), desc);
+		assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
+		assertEquals(fLastEvent.getFlags(), CDescriptorEvent.EXTENSION_CHANGED);
 		fLastEvent = null;
 
-		Assert.assertEquals("org.eclipse.cdt.testextension", extRef.getExtension());
-		Assert.assertEquals("org.eclipse.cdt.testextensionID", extRef.getID());
+		assertEquals("org.eclipse.cdt.testextension", extRef.getExtension());
+		assertEquals("org.eclipse.cdt.testextensionID", extRef.getID());
 	}
 
+	@Test
 	public void testExtensionGet() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		desc.create("org.eclipse.cdt.testextension", "org.eclipse.cdt.testextensionID");
 
 		ICExtensionReference extRef[] = desc.get("org.eclipse.cdt.testextension");
 
-		Assert.assertEquals("org.eclipse.cdt.testextension", extRef[0].getExtension());
-		Assert.assertEquals("org.eclipse.cdt.testextensionID", extRef[0].getID());
+		assertEquals("org.eclipse.cdt.testextension", extRef[0].getExtension());
+		assertEquals("org.eclipse.cdt.testextensionID", extRef[0].getID());
 	}
 
+	@Test
 	public void testExtensionData() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		desc.create("org.eclipse.cdt.testextension", "org.eclipse.cdt.testextensionID");
@@ -382,17 +386,18 @@ public class CDescriptorTests extends BaseTestCase {
 		ICExtensionReference extRef[] = desc.get("org.eclipse.cdt.testextension");
 		extRef[0].setExtensionData("testKey", "testValue");
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
-		Assert.assertEquals(fLastEvent.getFlags(), 0);
+		assertNotNull(fLastEvent);
+		assertEquals(fLastEvent.getDescriptor(), desc);
+		assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
+		assertEquals(fLastEvent.getFlags(), 0);
 		fLastEvent = null;
 
-		Assert.assertEquals("testValue", extRef[0].getExtensionData("testKey"));
+		assertEquals("testValue", extRef[0].getExtensionData("testKey"));
 		extRef[0].setExtensionData("testKey", null);
-		Assert.assertEquals(null, extRef[0].getExtensionData("testKey"));
+		assertEquals(null, extRef[0].getExtensionData("testKey"));
 	}
 
+	@Test
 	public void testExtensionRemove() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		desc.create("org.eclipse.cdt.testextension", "org.eclipse.cdt.testextensionID");
@@ -400,43 +405,46 @@ public class CDescriptorTests extends BaseTestCase {
 		ICExtensionReference extRef[] = desc.get("org.eclipse.cdt.testextension");
 		desc.remove(extRef[0]);
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
-		Assert.assertEquals(fLastEvent.getFlags(), CDescriptorEvent.EXTENSION_CHANGED);
+		assertNotNull(fLastEvent);
+		assertEquals(fLastEvent.getDescriptor(), desc);
+		assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
+		assertEquals(fLastEvent.getFlags(), CDescriptorEvent.EXTENSION_CHANGED);
 		fLastEvent = null;
 	}
 
+	@Test
 	public void testProjectDataCreate() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICStorageElement data = desc.getProjectStorageElement("testElement");
 		data.createChild("test");
 		desc.saveProjectData();
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
-		Assert.assertEquals(fLastEvent.getFlags(), 0);
+		assertNotNull(fLastEvent);
+		assertEquals(fLastEvent.getDescriptor(), desc);
+		assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
+		assertEquals(fLastEvent.getFlags(), 0);
 		fLastEvent = null;
 	}
 
+	@Test
 	public void testProjectDataDelete() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICStorageElement data = desc.getProjectStorageElement("testElement");
 		data.createChild("test");
 
 		ICStorageElement[] list = data.getChildrenByName("test");
-		Assert.assertEquals(1, list.length);
+		assertEquals(1, list.length);
 		data.removeChild(list[0]);
 		desc.saveProjectData();
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
-		Assert.assertEquals(fLastEvent.getFlags(), 0);
+		assertNotNull(fLastEvent);
+		assertEquals(fLastEvent.getDescriptor(), desc);
+		assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
+		assertEquals(fLastEvent.getFlags(), 0);
 		fLastEvent = null;
 	}
 
+	@Test
 	public void testCProjectDescriptionDescriptorInteraction() throws Exception {
 		for (int i = 1; i < 100; i++) {
 			// Create a descriptor with some test data
@@ -469,6 +477,7 @@ public class CDescriptorTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testAccumulatingBlankLinesInProjectData() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICStorageElement data = desc.getProjectStorageElement("testElement");
@@ -491,8 +500,8 @@ public class CDescriptorTests extends BaseTestCase {
 
 		String dotCProject2 = readDotCProjectFile(fProject);
 		long mtime2 = fProject.getFile(".cproject").getLocalTimeStamp();
-		assertEquals("Difference in .cproject file", dotCProject1, dotCProject2);
-		assertTrue(".cproject file has been written", mtime1 == mtime2);
+		assertEquals(dotCProject1, dotCProject2, "Difference in .cproject file");
+		assertTrue(mtime1 == mtime2, ".cproject file has been written");
 
 		// do it a second time - just to be sure
 		fProject.close(null);
@@ -508,8 +517,8 @@ public class CDescriptorTests extends BaseTestCase {
 
 		String dotCProject3 = readDotCProjectFile(fProject);
 		long mtime3 = fProject.getFile(".cproject").getLocalTimeStamp();
-		assertEquals("Difference in .cproject file", dotCProject2, dotCProject3);
-		assertTrue(".cproject file has been written", mtime2 == mtime3);
+		assertEquals(dotCProject2, dotCProject3, "Difference in .cproject file");
+		assertTrue(mtime2 == mtime3, ".cproject file has been written");
 	}
 
 	/**

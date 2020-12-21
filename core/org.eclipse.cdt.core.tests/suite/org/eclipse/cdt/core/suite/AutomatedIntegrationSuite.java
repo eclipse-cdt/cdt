@@ -17,7 +17,6 @@
 package org.eclipse.cdt.core.suite;
 
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorOldTests;
-import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManagerTests;
 import org.eclipse.cdt.core.internal.efsextension.tests.EFSExtensionTests;
 import org.eclipse.cdt.core.internal.errorparsers.tests.ErrorParserTestSuite;
@@ -77,7 +76,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 
 		// Has intermittent failures
 		if (System.getProperty("cdt.skip.known.test.failures") == null) {
-			suite.addTest(CDescriptorTests.suite());
+			// Test converted to JUnit5: suite.addTest(CDescriptorTests.suite());
 		}
 		suite.addTest(AllConstexprEvalTestSuite.suite());
 		suite.addTest(ParserTestSuite.suite());

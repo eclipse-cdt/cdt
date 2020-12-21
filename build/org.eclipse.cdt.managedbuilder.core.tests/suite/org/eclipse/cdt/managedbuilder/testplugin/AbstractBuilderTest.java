@@ -14,6 +14,9 @@
 
 package org.eclipse.cdt.managedbuilder.testplugin;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,8 +45,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 
 /**
  * Abstract builder test which provides utility methods for:
@@ -55,7 +59,7 @@ import junit.framework.TestCase;
  * <li>Cleaning up the workspace at the end</li>
  * </ul>
  */
-public abstract class AbstractBuilderTest extends TestCase {
+public abstract class AbstractBuilderTest {
 	private static final boolean WINDOWS = java.io.File.separatorChar == '\\';
 
 	static final String PATH = "builderTests";
@@ -63,16 +67,14 @@ public abstract class AbstractBuilderTest extends TestCase {
 	private String workspace;
 	private List<IProject> projects;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	public void setUp() throws Exception {
 		setAutoBuilding(false);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		ResourceHelper.cleanUp(getName());
+	@AfterEach
+	public void tearDown(TestInfo testInfo) throws Exception {
+		ResourceHelper.cleanUp(testInfo.getDisplayName());
 		// Bug 327126 Stop the indexer before tearing down so we don't deadlock
 		Job.getJobManager().cancel(CCorePlugin.getPDOMManager());
 		Job.getJobManager().join(CCorePlugin.getPDOMManager(), null);
@@ -113,7 +115,7 @@ public abstract class AbstractBuilderTest extends TestCase {
 			};
 			getWorkspace().run(body, null);
 		} finally {
-			assertTrue(verifier.getMessage(), verifier.isDeltaValid());
+			assertTrue(verifier.isDeltaValid(), verifier.getMessage());
 			getWorkspace().removeResourceChangeListener(verifier);
 			printAllMarkers();
 		}
@@ -238,14 +240,6 @@ public abstract class AbstractBuilderTest extends TestCase {
 			}
 		}
 		return resources;
-	}
-
-	public AbstractBuilderTest() {
-		super();
-	}
-
-	public AbstractBuilderTest(String name) {
-		super(name);
 	}
 
 	protected void setWorkspace(String name) {

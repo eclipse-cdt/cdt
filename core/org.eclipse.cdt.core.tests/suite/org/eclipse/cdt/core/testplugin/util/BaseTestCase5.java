@@ -43,14 +43,30 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
 
+import junit.framework.Test;
 import junit.framework.TestResult;
 
 /**
  * BaseTestCase for JUnit5.
  */
 public abstract class BaseTestCase5 {
+	/**
+	 * Bug 499777: Numerous tests are flaky and of little value on gerrit verification builds. This
+	 * tag can be applied to JUnit5 tests with the {@link Tag} annotation to skip flaky tests in
+	 * such circumstances.
+	 */
+	public static final String FLAKY_TEST_TAG = "flakyTest";
+
+	/**
+	 * Bug 499777: Numerous tests are very slow and of little value on gerrit verification builds. This
+	 * tag can be applied to JUnit5 tests with the {@link Tag} annotation to skip slow tests in
+	 * such circumstances.
+	 */
+	public static final String SLOW_TEST_TAG = "slowTest";
+
 	protected static final String DEFAULT_INDEXER_TIMEOUT_SEC = "10";
 	protected static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
 	/**
@@ -239,6 +255,15 @@ public abstract class BaseTestCase5 {
 	 */
 	final protected void setUp() {
 		fail("Test not migrated properly to JUnit5 yet.");
+	}
+
+	/**
+	 * This method is declared as final to help transition to JUnit5 to ensure that
+	 * accidental override of the method is not left in subclasses when migrating.
+	 */
+	final protected static Test suite() {
+		fail("Test not migrated properly to JUnit5 yet.");
+		return null; // unreachable
 	}
 
 	/**

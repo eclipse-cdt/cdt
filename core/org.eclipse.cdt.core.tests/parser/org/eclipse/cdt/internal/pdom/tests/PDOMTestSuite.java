@@ -43,7 +43,7 @@ public class PDOMTestSuite extends TestSuite {
 		suite.addTest(IncludesTests.suite());
 		suite.addTest(OverloadsWithinSingleTUTests.suite());
 		suite.addTest(OverloadsWithinCommonHeaderTests.suite());
-		suite.addTest(BTreeTests.suite());
+		// Test converted to JUnit5: suite.addTest(BTreeTests.suite());
 		suite.addTest(PDOMStringSetTests.suite());
 		suite.addTest(PDOMTagIndexTests.suite());
 		suite.addTest(FilesOnReindexTests.suite());

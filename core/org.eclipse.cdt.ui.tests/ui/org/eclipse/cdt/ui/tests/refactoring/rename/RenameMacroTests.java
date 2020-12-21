@@ -34,7 +34,7 @@ public class RenameMacroTests extends RenameTestBase {
 	public static Test suite(boolean cleanup) {
 		TestSuite suite = new TestSuite(RenameMacroTests.class);
 		if (cleanup) {
-			//			suite.addTest(new RefactoringTests("cleanupProject"));
+			suite.addTest(new RenameMacroTests("cleanupProject"));
 		}
 		return suite;
 	}

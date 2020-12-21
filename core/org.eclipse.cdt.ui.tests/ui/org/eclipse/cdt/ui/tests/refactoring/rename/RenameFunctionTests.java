@@ -36,7 +36,7 @@ public class RenameFunctionTests extends RenameTestBase {
 		TestSuite suite = new TestSuite(RenameFunctionTests.class);
 
 		if (cleanup) {
-			//			suite.addTest(new RefactoringTests("cleanupProject"));
+			suite.addTest(new RenameFunctionTests("cleanupProject"));
 		}
 		return suite;
 	}

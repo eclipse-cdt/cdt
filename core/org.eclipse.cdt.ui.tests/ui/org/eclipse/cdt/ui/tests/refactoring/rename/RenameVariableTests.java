@@ -39,7 +39,7 @@ public class RenameVariableTests extends RenameTestBase {
 		TestSuite suite = new TestSuite(RenameVariableTests.class);
 
 		if (cleanup) {
-			//			suite.addTest(new RefactoringTests("cleanupProject"));
+			suite.addTest(new RenameVariableTests("cleanupProject"));
 		}
 		return suite;
 	}

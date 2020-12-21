@@ -39,7 +39,7 @@ public class RenameTypeTests extends RenameTestBase {
 	public static Test suite(boolean cleanup) {
 		TestSuite suite = new TestSuite(RenameTypeTests.class);
 		if (cleanup) {
-			//			suite.addTest(new RefactoringTests("cleanupProject"));
+			suite.addTest(new RenameTypeTests("cleanupProject"));
 		}
 		return suite;
 	}

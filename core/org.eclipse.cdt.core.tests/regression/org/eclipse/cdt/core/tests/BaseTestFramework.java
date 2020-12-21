@@ -90,13 +90,7 @@ abstract public class BaseTestFramework extends BaseTestCase {
 	}
 
 	public void cleanupProject() throws Exception {
-		try {
-			project.delete(true, false, monitor);
-		} catch (Throwable e) {
-			/*boo*/
-		} finally {
-			project = null;
-		}
+		project.delete(true, false, monitor);
 	}
 
 	@Override
@@ -116,11 +110,7 @@ abstract public class BaseTestFramework extends BaseTestCase {
 				continue;
 			if (member.getName().equals(".settings"))
 				continue;
-			try {
-				member.delete(false, monitor);
-			} catch (Throwable e) {
-				/*boo*/
-			}
+			member.delete(false, monitor);
 		}
 	}
 

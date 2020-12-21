@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "37c6fc2c_ca5cde43",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/rename/RenameTypeTests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-21T15:40:22Z",
+      "side": 0,
+      "message": "As it turns out - this caused at least one of the order of test issues. I am restoring the cleanup in https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/174031.\n\nThe lack of doing the cleanup (which was a JUnit3 workaround for no @AfterClass functionality) causes tests like org.eclipse.cdt.ui.tests.callhierarchy.BasicCallHierarchyTest to fail if run after.",
+      "revId": "a025f75771f06c23cec07612def5c19acad9b204",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Stand-alone C/C++ GDB Debugger" uid="org.eclipse.cdt.debug.application.product" id="org.eclipse.cdt.debug.application.product" application="org.eclipse.cdt.debug.application.app" version="10.1.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="Stand-alone C/C++ GDB Debugger" uid="org.eclipse.cdt.debug.application.product" id="org.eclipse.cdt.debug.application.product" application="org.eclipse.cdt.debug.application.app" version="10.2.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/org.eclipse.cdt.debug.application/icons/about.png"/>
@@ -340,6 +340,7 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.jetty.server"/>
       <plugin id="org.eclipse.jetty.servlet"/>
       <plugin id="org.eclipse.jetty.util"/>
+      <plugin id="org.eclipse.jetty.util.ajax"/>
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.jface.databinding"/>
       <plugin id="org.eclipse.jface.notifications"/>

@@ -20,7 +20,7 @@
 
 	<groupId>org.eclipse.cdt</groupId>
 	<artifactId>cdt-parent</artifactId>
-	<version>10.1.0-SNAPSHOT</version>
+	<version>10.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>CDT Parent</name>
 
@@ -34,7 +34,7 @@
 		<cbi-plugins.version>1.1.7</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
-		<simrel-site>https://download.eclipse.org/staging/2020-12/</simrel-site>
+		<simrel-site>https://download.eclipse.org/staging/2021-03/</simrel-site>
 		<repo-path>tools/cdt/builds/master/nightly</repo-path>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -43,12 +43,12 @@
 
 		<!-- When changing this value, consider also bumping the version numbers of all the docs plug-ins so that compare&replace does not
 		     replace the the newly built docs because the only change is in the filtered out index/* resources. -->
-		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.17/</help-docs-eclipserun-repo>
+		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.18/</help-docs-eclipserun-repo>
 
 
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
-		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/10.0/cdt-10.0.0</comparator.repo>
+		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/10.1/cdt-10.1.0</comparator.repo>
 		<!-- these parameters are to control baseline replace and compare. On a local build you want
 		     to avoid baseline replace and compare, especially if you have different versions of Java than
 			 the baseline was built with. This is the default.

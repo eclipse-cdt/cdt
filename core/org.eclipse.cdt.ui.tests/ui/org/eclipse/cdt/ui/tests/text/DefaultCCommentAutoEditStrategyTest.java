@@ -33,14 +33,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.junit.Ignore;
 
 import junit.framework.Test;
 
 /**
  * Testing the auto indent strategies.
  */
-@Ignore("Some tests fail and this class was not included through AutomatedIntegrationSuite. See bug 564002")
 public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	private HashMap<String, String> fOptions;
 
@@ -168,13 +166,13 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 
 	// class A {
 	// /* X
-	// };
+	// };  ${whitespace_eol}
 
 	// class A {
-	// /*
+	// /* ${whitespace_eol}
 	//  * X
 	//  */
-	// };
+	// };  ${whitespace_eol}
 	public void testInsertNewLine5() {
 		assertNewLineBehaviour();
 	}
@@ -338,7 +336,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//   X
 
 	// /*
-	//
+	//   ${whitespace_eol}
 	//   X
 	public void testInsertNewLine17() {
 		assertNewLineBehaviour();
@@ -349,7 +347,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//  */
 
 	// /*
-	//
+	//   ${whitespace_eol}
 	//   X
 	//  */
 	public void testInsertNewLine18() {
@@ -462,7 +460,10 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//          };
 	//		}
 	//  }
-	public void _testFollowingDeclaration5() {
+	//XXX: This test was unexpectedly succeeding - with no previous commentary about
+	// what this test was or why it failed I have no idea why it is now passing
+	// Therefore I changed visibility to private so it would be ignored.
+	private void IGNORE_testFollowingDeclaration5() {
 		assertDeclarationFollowingX(
 				"namespace n2 {\n  		void foo() {}\n  		void bar(int x) {}\n          class C {\n              int y;\n              void baz(int x) {}\n          };\n		}");
 	}
@@ -529,7 +530,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//	public:
 	//		X
 	//		STATIC void D::foo(int x) {
-	//
+	//			${whitespace_eol}
 	//		}
 	//	};
 	public void testFollowingDeclaration13() throws CoreException {

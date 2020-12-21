@@ -98,6 +98,11 @@ public abstract class BaseUITestCase extends BaseTestCase {
 
 	/**
 	 * Reads multiple sections in comments from the source of the given class.
+	 *
+	 * Trailing whitespace can be removed by editor/clean-up actions. To enforce whitespace
+	 * at end of line, use ${whitspace_eol}, which will be removed, but cause the
+	 * whitespace to the left of it to be preserved.
+	 *
 	 * @since 4.0
 	 */
 	public StringBuilder[] getContentsForTest(int sections) throws IOException {

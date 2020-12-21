@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f334448b_9344caf4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2020-12-21T14:04:37Z",
+      "side": 1,
+      "message": "Drop one of these. A changeset in gerrit should only have 1 change-id.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 52
+      },
+      "revId": "8e7776f9e985a788cd2273d5579efb42ce4df524",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

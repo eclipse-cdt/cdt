@@ -33,6 +33,11 @@ public class InternalFileContent extends FileContent {
 		 */
 		SKIP_FILE,
 		/**
+		 * Instruct the preprocessor to skip this inclusion because it has pragma
+		 * once semantic and has already been include for current translation unit.
+		 */
+		SKIP_PRAGMA_ONCE_FILE,
+		/**
 		 * The file and its dependents are indexed, required information is read
 		 * from there.
 		 */
@@ -67,6 +72,7 @@ public class InternalFileContent extends FileContent {
 	private final long fTimestamp;
 	private final long fFileSize;
 	private final long fReadTime;
+	private final ISignificantMacros fSignificantMacros;
 
 	/**
 	 * For skipping include files.
@@ -88,6 +94,33 @@ public class InternalFileContent extends FileContent {
 		fTimestamp = NULL_TIMESTAMP;
 		fFileSize = NULL_FILE_SIZE;
 		fReadTime = 0;
+		fSignificantMacros = null;
+	}
+
+	/**
+	 * For skipping include files that have pragma once semantic and have already been include
+	 * in the translation unit. Only the significant macros need to be forwarded to includer.
+	 * @param fileLocation the location of the file.
+	 * @param kind must be {@link InclusionKind#SKIP_FILE}.
+	 * @param significantMacros The significant macros this file.
+	 * @throws IllegalArgumentException if fileLocation is <code>null</code> or the kind value is illegal for
+	 * this constructor.
+	 */
+	public InternalFileContent(String fileLocation, InclusionKind kind, ISignificantMacros significantMacros)
+			throws IllegalArgumentException {
+		if (fileLocation == null || kind != InclusionKind.SKIP_PRAGMA_ONCE_FILE) {
+			throw new IllegalArgumentException();
+		}
+		fKind = kind;
+		fFileLocation = fileLocation;
+		fMacroDefinitions = null;
+		fUsingDirectives = null;
+		fSource = null;
+		fNonPragmaOnceFiles = null;
+		fTimestamp = NULL_TIMESTAMP;
+		fFileSize = NULL_FILE_SIZE;
+		fReadTime = 0;
+		fSignificantMacros = significantMacros;
 	}
 
 	/**
@@ -111,6 +144,7 @@ public class InternalFileContent extends FileContent {
 		fTimestamp = timestamp;
 		fFileSize = fileSize;
 		fReadTime = fileReadTime;
+		fSignificantMacros = null;
 	}
 
 	/**
@@ -133,6 +167,7 @@ public class InternalFileContent extends FileContent {
 		fTimestamp = NULL_TIMESTAMP;
 		fFileSize = NULL_FILE_SIZE;
 		fReadTime = 0;
+		fSignificantMacros = null;
 	}
 
 	/**
@@ -154,6 +189,7 @@ public class InternalFileContent extends FileContent {
 		fTimestamp = NULL_TIMESTAMP;
 		fFileSize = NULL_FILE_SIZE;
 		fReadTime = 0;
+		fSignificantMacros = null;
 	}
 
 	/**
@@ -273,5 +309,12 @@ public class InternalFileContent extends FileContent {
 	@Override
 	public String toString() {
 		return getSource().toString();
+	}
+
+	public ISignificantMacros getSignificantMacros() {
+		if (fKind != InclusionKind.SKIP_PRAGMA_ONCE_FILE) {
+			throw new IllegalArgumentException();
+		}
+		return fSignificantMacros;
 	}
 }

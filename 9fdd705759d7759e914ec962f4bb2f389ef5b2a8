@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a5c5eb6_488a3280",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBBackend.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2020-12-23T20:22:35Z",
+      "side": 1,
+      "message": "As GDB 7.0+ \"supports\" async, I think this should be \"should use\" rather than \"is supported\".\n\nNormally adding new methods to public API is a problem, but default methods with names not likely to conflict with existing implementations are sometimes allowed instead of adding a new interface and the complications of that.\n\nI am going to provide an updated patch for this.",
+      "range": {
+        "startLine": 176,
+        "startChar": 17,
+        "endLine": 176,
+        "endChar": 39
+      },
+      "revId": "9fdd705759d7759e914ec962f4bb2f389ef5b2a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

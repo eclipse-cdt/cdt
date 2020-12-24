@@ -1088,8 +1088,9 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 
 				fAccumulatedOOBRecords.add(oob);
 				// limit growth, but only if these are not responses to CLI commands
-				// Bug 302927 & 330608
-				if (fRxCommands.isEmpty() && fAccumulatedOOBRecords.size() > 20) {
+				// Bug 302927 & 330608 & 569911
+				if (fRxCommands.isEmpty() && fAccumulatedOOBRecords.size() > 20
+						|| fAccumulatedOOBRecords.size() > 100000) {
 					fAccumulatedOOBRecords.remove(0);
 				}
 

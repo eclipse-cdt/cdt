@@ -101,7 +101,7 @@ public class InternalFileContent extends FileContent {
 	 * For skipping include files that have pragma once semantic and have already been include
 	 * in the translation unit. Only the significant macros need to be forwarded to includer.
 	 * @param fileLocation the location of the file.
-	 * @param kind must be {@link InclusionKind#SKIP_FILE}.
+	 * @param kind must always be {@link InclusionKind#SKIP_FILE}.
 	 * @param significantMacros The significant macros this file.
 	 * @throws IllegalArgumentException if fileLocation is <code>null</code> or the kind value is illegal for
 	 * this constructor.

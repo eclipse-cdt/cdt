@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.gdbjtag.core.tests;singleton:=true
-Bundle-Version: 1.0.200.qualifier
+Bundle-Version: 1.0.300.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.gdbjtag.core.tests.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.tests.dsf.gdb;bundle-version="2.3.0",

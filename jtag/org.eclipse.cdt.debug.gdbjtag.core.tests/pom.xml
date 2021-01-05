@@ -76,6 +76,12 @@
 								<id>org.eclipse.cdt</id>
 								<versionRange>0.0.0</versionRange>
 							</requirement>
+							<requirement>
+								<!-- Include the DAP bundle to test for any conflicts with it as both may be present in a user install. -->
+								<type>p2-installable-unit</type>
+								<id>org.eclipse.cdt.debug.dap.gdbjtag</id>
+								<versionRange>0.0.0</versionRange>
+							</requirement>
 						</extraRequirements>
 					</dependency-resolution>
 				</configuration>

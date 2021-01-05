@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08763d84_b6116e93",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-01-05T21:28:27Z",
+      "side": 1,
+      "message": "remote debugging",
+      "range": {
+        "startLine": 7,
+        "startChar": 56,
+        "endLine": 7,
+        "endChar": 72
+      },
+      "revId": "3b22bc3828d8feef09054a2a74bfba08fca32b83",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

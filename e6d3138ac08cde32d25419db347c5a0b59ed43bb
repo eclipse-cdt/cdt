@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eeafc7d0_96e015ac",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-01-06T01:28:16Z",
+      "side": 1,
+      "message": "Major version bump not required anymore - CDT now follows basic deletion rules that platform does. See https://wiki.eclipse.org/CDT/policy#Deprecating_and_Deleting_API",
+      "range": {
+        "startLine": 25,
+        "startChar": 34,
+        "endLine": 25,
+        "endChar": 71
+      },
+      "revId": "e6d3138ac08cde32d25419db347c5a0b59ed43bb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21ae0672_fea8edf1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/actions/ChangeBuildConfigMenuAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-01-06T01:28:16Z",
+      "side": 1,
+      "message": "+1 on using forRemoval :-)",
+      "range": {
+        "startLine": 36,
+        "startChar": 12,
+        "endLine": 36,
+        "endChar": 29
+      },
+      "revId": "e6d3138ac08cde32d25419db347c5a0b59ed43bb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

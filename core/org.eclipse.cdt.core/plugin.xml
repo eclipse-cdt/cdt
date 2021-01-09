@@ -194,6 +194,14 @@
          <pattern description-expr="$5" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNULinkerErrorParser.regex.WarningDangerousFunction" severity="Warning" variable-expr="$6"/>
          <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.InstantiatedFromHere" severity="Info"/>
          <pattern
+               description-expr="$4"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr="$2"
+               regex="%CDTGNUCErrorParser.regex.SkippingInstantiationContexts"
+               severity="Info">
+         </pattern>
+         <pattern
                description-expr="$7"
                eat-processed-line="true"
                file-expr="$1"

@@ -206,4 +206,16 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 				new String[] { GCC_ERROR_PARSER_ID });
 	}
 
+	public void testGccErrorMessages_TemplateInstantiation_bug500798() throws IOException {
+		runParserTest(new String[] {
+				"test.hpp:309:18:   [ skipping 2 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]",
+				"test2.hpp:83:60:   required from here",
+				"test3.hpp:78:38: warning: conversion from 'long int' to 'float' may change value [-Wconversion]" }, 0, // errors
+				1, //warnings
+				2, //infos
+				new String[] { "test.hpp", "test2.hpp", "test3.hpp" },
+				new String[] { "[ skipping 2 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]",
+						"required from here", "conversion from 'long int' to 'float' may change value [-Wconversion]" },
+				new String[] { GCC_ERROR_PARSER_ID });
+	}
 }

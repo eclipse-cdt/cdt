@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41eef553_a63b9bf2",
+        "filename": "unittest/org.eclipse.cdt.unittest.feature/about.properties",
+        "patchSetId": 13
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2021-01-11T20:42:54Z",
+      "side": 1,
+      "message": "Shouldn\u0027t have same copyright date repeated.  Either 2020 or 2020,2021 would be acceptable.",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f587d28b_a21ddb9a",
+        "filename": "unittest/org.eclipse.cdt.unittest.feature/feature.properties",
+        "patchSetId": 13
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2021-01-11T20:42:54Z",
+      "side": 1,
+      "message": "perhaps say \"Support for running C/C++ unit tests using UnitTest View\"",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d82287c9_6c131aad",
+        "filename": "unittest/org.eclipse.cdt.unittest/build.properties",
+        "patchSetId": 13
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2021-01-11T20:42:54Z",
+      "side": 1,
+      "message": "Fix copyright date",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f01d0ea4_35e492aa",
+        "filename": "unittest/org.eclipse.cdt.unittest/plugin.properties",
+        "patchSetId": 13
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2021-01-11T20:42:54Z",
+      "side": 1,
+      "message": "I would suggest C/C++ Unit Test (generic Test view)\n\nto match what has been done for JUnit",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd08d6c1_38ef7b87",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/CDTUnitTestPlugin.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2021-01-11T20:42:54Z",
+      "side": 1,
+      "message": "This should match what is done for the JDT Unittest plug-in which is to only do the activation part (i.e. the getBundle() call).  The UI stuff should not be here.",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "920f82d9_571622b8",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/internal/launcher/DsfGdbRunTestsLaunchDelegate.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2021-01-11T20:42:54Z",
+      "side": 1,
+      "message": "Can this be extracted from another required class instead of hard-coded?  If not, hard-coding is acceptable.",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4225c9d2_88eb9a16",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/internal/launcher/RunTestsLaunchDelegate.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2021-01-11T20:42:54Z",
+      "side": 1,
+      "message": "Again, can this string be found in another required class to avoid hard-coding?  If not, hard-coding is acceptable.",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "317df6ed_c9d89b1a",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/launcher/BaseTestsLaunchDelegate.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2021-01-11T20:42:54Z",
+      "side": 1,
+      "message": "Back to my original comment, I believe the UI stuff should be done here and not in the plugin.  This code should be reinstated and not commented out and can use the plug-in to getBundle().",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f16e9bbd_e7f75c24",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/launcher/CDTTestRunnerClient.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2021-01-11T20:42:54Z",
+      "side": 1,
+      "message": "The \\r\\n sequence should be gotten from system settings and not hard-coded as \\r is Windows-centric.",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f1211e7_1bb8f599",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/launcher/CDTTestViewSupport.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2021-01-11T20:42:54Z",
+      "side": 1,
+      "message": "Should this be C/C++ Unit Tests?",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

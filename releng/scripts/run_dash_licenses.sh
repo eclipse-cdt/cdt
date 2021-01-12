@@ -34,7 +34,7 @@ ${MVN:-mvn} -B -V -f dash-licenses clean package >dash-build.log  2>&1
 
 echo Run the license check
 exit_code=0
-if ! java -jar dash-licenses/target/org.eclipse.dash.licenses-*-SNAPSHOT.jar deps.log >dash-licenses.log  2>&1; then
+if ! java -jar dash-licenses/core/target/org.eclipse.dash.licenses-*-SNAPSHOT.jar deps.log >dash-licenses.log  2>&1; then
     echo Some licenses appear to have failed a check, review output below.
     exit_code=1
 fi

@@ -64,6 +64,12 @@ import org.eclipse.osgi.util.NLS;
 public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	/**
+	 * true if groups have been read on initialization.
+	 * Will prevent save of blank register groups if eclipse shuts down on startup
+	 */
+	private boolean groupsRead = false;
+
+	/**
 	 * Unique temporary id for a group. 0 is reserved for the root group
 	 */
 	private static int fGroupBookingCount = 1;
@@ -723,7 +729,12 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	@Override
 	public void shutdown(RequestMonitor rm) {
-		save();
+
+		//If register groups have not been read before shutdown is invoked
+		//then do not attempt a save as existing register groups will be overwritten with an empty list.
+		if (groupsRead) {
+			save();
+		}
 		super.shutdown(rm);
 	}
 
@@ -917,6 +928,8 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 			fGroupBookingCount++;
 		}
 
+		//Set to true so shutdown will have register groups to save.
+		groupsRead = true;
 		return groups.toArray(new MIRegisterGroupDMC[groups.size()]);
 	}
 

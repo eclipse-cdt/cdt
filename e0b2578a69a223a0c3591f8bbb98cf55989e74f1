@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "62879958_6dfc0ffd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-01-14T01:53:02Z",
+      "side": 1,
+      "message": "The summary of a commit message should be fairly brief, followed by a blank line, followed by additional details. The commit message should be manually word wrapped.\n\ne.g.:\n\n  Bug 562407: Avoid save of register groups before init done\n\n  Added a boolean which is set to true when groups are\n  successfully read on startup so that shutdown doesn\u0027t\n  attempt to save an empty register group list\n  \n  Change-Id: Idfff94afbd6b9eb73d01dadbeb8a8fd24c83a19a\n  Signed-off-by: Santiago Gil \u003csantipoborina@hotmail.com\u003e",
+      "revId": "e0b2578a69a223a0c3591f8bbb98cf55989e74f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc7c9fc1_d8a15a30",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-01-14T01:53:02Z",
+      "side": 1,
+      "message": "Please update to read:\n\n    Copyright (c) 2014, 2021 Ericsson AB and others.",
+      "range": {
+        "startLine": 2,
+        "startChar": 21,
+        "endLine": 2,
+        "endChar": 22
+      },
+      "revId": "e0b2578a69a223a0c3591f8bbb98cf55989e74f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9638115_b3fecead",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 932,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-01-14T01:53:02Z",
+      "side": 1,
+      "message": "This needs to be higher up. If the deserializer fails (line 919), the save won\u0027t ever happen. I would guess that this should be the first thing done in this method.",
+      "revId": "e0b2578a69a223a0c3591f8bbb98cf55989e74f1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

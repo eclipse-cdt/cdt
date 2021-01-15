@@ -11,6 +11,7 @@
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson) - First Implementation and API (Bug 235747)
  *     Bruno Medeiros (Renesas) - Persistence of register groups per process (449104)
+ *     Santiago Gil-Sanchez (Microchip) - Avoid save of register groups before init done (Bug 562407) 
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -911,6 +912,10 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	}
 
 	MIRegisterGroupDMC[] readGroupsFromMemento(final IContainerDMContext contDmc) {
+		
+		//Set to true so shutdown will have register groups to save.
+		groupsRead = true;
+		
 		String containerId = getPersistenceIdForRegisterGroupContainer(contDmc);
 
 		RegisterGroupsPersistance deserializer = new RegisterGroupsPersistance(getLaunchConfig());
@@ -928,8 +933,6 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 			fGroupBookingCount++;
 		}
 
-		//Set to true so shutdown will have register groups to save.
-		groupsRead = true;
 		return groups.toArray(new MIRegisterGroupDMC[groups.size()]);
 	}
 

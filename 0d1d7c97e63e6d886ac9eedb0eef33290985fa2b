@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3592ffb7_000beee5",
+        "filename": "unittest/org.eclipse.cdt.unittest.feature/about.properties",
+        "patchSetId": 13
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1671
+      },
+      "writtenOn": "2021-01-15T18:13:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "41eef553_a63b9bf2",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f587d28b_a21ddb9a",
         "filename": "unittest/org.eclipse.cdt.unittest.feature/feature.properties",
         "patchSetId": 13
@@ -33,6 +51,24 @@
       "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71e25cde_ccf06326",
+        "filename": "unittest/org.eclipse.cdt.unittest.feature/feature.properties",
+        "patchSetId": 13
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1671
+      },
+      "writtenOn": "2021-01-15T18:13:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f587d28b_a21ddb9a",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "c16f944d_ba8fc27a",
+        "filename": "unittest/org.eclipse.cdt.unittest/build.properties",
+        "patchSetId": 13
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1671
+      },
+      "writtenOn": "2021-01-15T18:13:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "d82287c9_6c131aad",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f01d0ea4_35e492aa",
         "filename": "unittest/org.eclipse.cdt.unittest/plugin.properties",
         "patchSetId": 13
@@ -67,6 +121,24 @@
       "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab120de5_6aacf0d4",
+        "filename": "unittest/org.eclipse.cdt.unittest/plugin.properties",
+        "patchSetId": 13
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1671
+      },
+      "writtenOn": "2021-01-15T18:13:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f01d0ea4_35e492aa",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "7d9518d5_2afce926",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/CDTUnitTestPlugin.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1671
+      },
+      "writtenOn": "2021-01-15T18:13:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "bd08d6c1_38ef7b87",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "920f82d9_571622b8",
         "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/internal/launcher/DsfGdbRunTestsLaunchDelegate.java",
         "patchSetId": 13
@@ -101,6 +191,24 @@
       "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d2114ee_eaa41fc6",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/internal/launcher/DsfGdbRunTestsLaunchDelegate.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1671
+      },
+      "writtenOn": "2021-01-15T18:13:08Z",
+      "side": 1,
+      "message": "This can be changed to ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE",
+      "parentUuid": "920f82d9_571622b8",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "30ac9ecf_cd5d634a",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/internal/launcher/RunTestsLaunchDelegate.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1671
+      },
+      "writtenOn": "2021-01-15T18:13:08Z",
+      "side": 1,
+      "message": "This can be changed to ICDTLaunchConfigurationConstants.PREFERRED_RUN_LAUNCH_DELEGATE",
+      "parentUuid": "4225c9d2_88eb9a16",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "317df6ed_c9d89b1a",
         "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/launcher/BaseTestsLaunchDelegate.java",
         "patchSetId": 13
@@ -135,6 +261,24 @@
       "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e72a2fc_456bd114",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/launcher/BaseTestsLaunchDelegate.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1671
+      },
+      "writtenOn": "2021-01-15T18:13:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "317df6ed_c9d89b1a",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "d2e0609e_36951b53",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/launcher/CDTTestRunnerClient.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1671
+      },
+      "writtenOn": "2021-01-15T18:13:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f16e9bbd_e7f75c24",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5f1211e7_1bb8f599",
         "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/launcher/CDTTestViewSupport.java",
         "patchSetId": 13
@@ -169,6 +331,24 @@
       "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "755dfea6_3e4f2fce",
+        "filename": "unittest/org.eclipse.cdt.unittest/src/org/eclipse/cdt/unittest/launcher/CDTTestViewSupport.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1671
+      },
+      "writtenOn": "2021-01-15T18:13:08Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5f1211e7_1bb8f599",
+      "revId": "0d1d7c97e63e6d886ac9eedb0eef33290985fa2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

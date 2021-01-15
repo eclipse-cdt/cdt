@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a52ac66_702d6bc6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 16
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-01-15T20:27:46Z",
+      "side": 1,
+      "message": "Please fix the format of the commit message. The summary should be short, separated by blank line with details.",
+      "revId": "574608dbee54c888c336c602701a7f23fc700982",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

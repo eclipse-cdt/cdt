@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5baf5bc8_b02e45e5",
+        "filename": "launch/org.eclipse.cdt.flatpak.launcher/about.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-01-16T02:12:40Z",
+      "side": 1,
+      "message": "@Jeff - Turns out the problem identified here https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/172779 applies here too - but because I have modified the file to fix it, the file is now authored in 2021, so the next PS is 2020, 2021",
+      "revId": "ceec8f0c42b3820697bf9ce29da5811101d333db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -61,9 +61,13 @@ git ls-files -- \*/feature.xml | while read feature_xml; do
     esac
     feature_end_year=$(git log --format='%ad' --date="format:%Y" -- $feature_xml $plugin_dir | head -1)
     feature_name=$(grep featureName= $feature_dir/feature.properties | sed '-es,featureName=,,')
-    export feature_start_year feature_end_year feature_name
-
-    envsubst '$feature_start_year $feature_end_year $feature_name'  < \
+    if [ "$feature_start_year" = "$feature_end_year" ]; then
+        feature_years="${feature_start_year}"
+    else
+        feature_years="${feature_start_year}, ${feature_end_year}"
+    fi
+    export feature_years feature_name
+    envsubst '$feature_years $feature_name'  < \
         releng/templates/feature/about.properties > \
         ${plugin_dir}/about.properties
 

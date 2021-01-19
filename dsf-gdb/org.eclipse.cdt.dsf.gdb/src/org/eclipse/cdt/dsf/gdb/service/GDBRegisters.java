@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Ericsson AB and others.
+ * Copyright (c) 2014, 2021 Ericsson AB and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson) - First Implementation and API (Bug 235747)
  *     Bruno Medeiros (Renesas) - Persistence of register groups per process (449104)
+ *     Santiago Gil-Sanchez (Microchip) - Avoid save of register groups before init done (Bug 562407)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -62,6 +63,12 @@ import org.eclipse.osgi.util.NLS;
  * @since 4.6
  */
 public class GDBRegisters extends MIRegisters implements IRegisters2 {
+
+	/**
+	 * true if groups have been read on initialization.
+	 * Will prevent save of blank register groups if eclipse shuts down on startup
+	 */
+	private boolean groupsRead = false;
 
 	/**
 	 * Unique temporary id for a group. 0 is reserved for the root group
@@ -723,7 +730,11 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	@Override
 	public void shutdown(RequestMonitor rm) {
-		save();
+		//If register groups have not been read before shutdown is invoked
+		//then do not attempt a save as existing register groups will be overwritten with an empty list.
+		if (groupsRead) {
+			save();
+		}
 		super.shutdown(rm);
 	}
 
@@ -900,6 +911,9 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	}
 
 	MIRegisterGroupDMC[] readGroupsFromMemento(final IContainerDMContext contDmc) {
+		//Set to true so shutdown will have register groups to save.
+		groupsRead = true;
+
 		String containerId = getPersistenceIdForRegisterGroupContainer(contDmc);
 
 		RegisterGroupsPersistance deserializer = new RegisterGroupsPersistance(getLaunchConfig());
@@ -916,7 +930,6 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 			groups.add(new MIRegisterGroupDMC(this, contDmc, fGroupBookingCount, group.getName()));
 			fGroupBookingCount++;
 		}
-
 		return groups.toArray(new MIRegisterGroupDMC[groups.size()]);
 	}
 
@@ -1174,5 +1187,4 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		rm.setData(true);
 		rm.done();
 	}
-
 }

@@ -403,7 +403,7 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			case ANSISTATE_EXPECTING_PARAMETER_OR_COMMAND:
-				if (character == '?') {
+				if ("<=>?".indexOf(character) >= 0) { //$NON-NLS-1$
 					ansiState = ANSISTATE_EXPECTING_DEC_PRIVATE_COMMAND;
 					break;
 				}

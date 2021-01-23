@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2018 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2021 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -403,7 +403,8 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			case ANSISTATE_EXPECTING_PARAMETER_OR_COMMAND:
-				if (character == '?') {
+				// characters `<=>?` mark private commands
+				if (character >= '\u003c' && character <= '\u003f') {
 					ansiState = ANSISTATE_EXPECTING_DEC_PRIVATE_COMMAND;
 					break;
 				}
@@ -411,8 +412,7 @@ public class VT100Emulator implements ControlListener {
 				// Parameters can appear after the '[' in an escape sequence, but they
 				// are optional.
 
-				if (character == '@' || (character >= 'A' && character <= 'Z')
-						|| (character >= 'a' && character <= 'z')) {
+				if (character >= '\u0040' && character < '\u007f') {
 					ansiState = ANSISTATE_INITIAL;
 					processAnsiCommandCharacter(character);
 				} else {
@@ -435,8 +435,7 @@ public class VT100Emulator implements ControlListener {
 				// Parameters can appear after the '[?' in an escape sequence, but they
 				// are optional.
 
-				if (character == '@' || (character >= 'A' && character <= 'Z')
-						|| (character >= 'a' && character <= 'z')) {
+				if (character >= '\u0040' && character < '\u007f') {
 					ansiState = ANSISTATE_INITIAL;
 					processDecPrivateCommandCharacter(character);
 				} else {

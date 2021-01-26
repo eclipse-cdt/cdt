@@ -16,6 +16,7 @@
  *     Thomas Corbat (IFS)
  *     Nathan Ridge
  *     Marc-Andre Laperle
+ *     Michael Uhl
  *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
@@ -180,6 +181,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
@@ -194,16 +196,17 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
+import org.eclipse.cdt.internal.core.dom.parser.IAutoRangeIntitClause;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.AutoRangeInitClause;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -236,6 +239,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplate;
@@ -2270,7 +2274,7 @@ public class CPPVisitor extends ASTQueries {
 		if (initClause == null) {
 			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 		}
-		return createAutoType(initClause.getEvaluation(), null, declarator);
+		return createAutoType(initClause.getEvaluation(), null, declarator, null);
 	}
 
 	public static IType createType(IASTDeclarator declarator) {
@@ -2443,9 +2447,20 @@ public class CPPVisitor extends ASTQueries {
 		// See 6.5.4 The range-based for statement [stmt.ranged]
 		IASTInitializerClause forInit = forStmt.getInitializerClause();
 		IASTExpression beginExpr = null;
+		IType falback = null;
 		if (forInit instanceof IASTExpression) {
 			final IASTExpression expr = (IASTExpression) forInit;
 			IType type = SemanticUtil.getNestedType(expr.getExpressionType(), TDEF | CVTYPE);
+
+			if (type instanceof ICPPTemplateInstance) {
+				ICPPTemplateInstance typeTemplate = (ICPPTemplateInstance) type;
+				if (typeTemplate.getTemplateArguments().length > 0) {
+					ICPPTemplateArgument typeTemplateArg = typeTemplate.getTemplateArguments()[0];
+
+					falback = typeTemplateArg.getOriginalTypeValue();
+				}
+			}
+
 			if (type instanceof IArrayType) {
 				beginExpr = expr.copy();
 			}
@@ -2467,8 +2482,9 @@ public class CPPVisitor extends ASTQueries {
 				return null;
 			}
 		}
-		ICPPASTInitializerClause autoInitClause = new CPPASTUnaryExpression(IASTUnaryExpression.op_star, beginExpr);
+		IAutoRangeIntitClause autoInitClause = new AutoRangeInitClause(IASTUnaryExpression.op_star, beginExpr);
 		autoInitClause.setParent(forStmt);
+		autoInitClause.setFallbackType(falback);
 		autoInitClause.setPropertyInParent(ICPPASTRangeBasedForStatement.INITIALIZER);
 		return autoInitClause;
 	}
@@ -2533,7 +2549,12 @@ public class CPPVisitor extends ASTQueries {
 				return cannotDeduce;
 			}
 			if (placeholderKind == PlaceholderKind.Auto) {
-				return createAutoType(autoInitClause.getEvaluation(), declSpec, declarator);
+				IType fallback = null;
+
+				if (autoInitClause instanceof IAutoRangeIntitClause) {
+					fallback = ((IAutoRangeIntitClause) autoInitClause).getFallbackType();
+				}
+				return createAutoType(autoInitClause.getEvaluation(), declSpec, declarator, fallback);
 			} else /* decltype(auto) */ {
 				if (declarator.getPointerOperators().length > 0) {
 					// 'decltype(auto)' cannot be combined with * or & the way 'auto' can.
@@ -2555,7 +2576,7 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static IType createAutoType(final ICPPEvaluation evaluation, IASTDeclSpecifier declSpec,
-			IASTDeclarator declarator) {
+			IASTDeclarator declarator, IType fallback) {
 		//  C++0x: 7.1.6.4
 		IType type = AutoTypeResolver.AUTO_TYPE;
 		IType initType = null;
@@ -2563,7 +2584,11 @@ public class CPPVisitor extends ASTQueries {
 		initType = evaluation.getType();
 		valueCat = evaluation.getValueCategory();
 		if (initType == null || initType instanceof ISemanticProblem) {
-			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+			if (fallback != null) {
+				return fallback;
+			} else {
+				return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
+			}
 		}
 		ICPPClassTemplate initializer_list_template = null;
 		if (evaluation instanceof EvalInitList) {
@@ -2671,7 +2696,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 			return CPPSemantics.getDeclTypeForEvaluation(returnEval);
 		} else /* auto */ {
-			return createAutoType(returnEval, autoDeclSpec, autoDeclarator);
+			return createAutoType(returnEval, autoDeclSpec, autoDeclarator, null);
 		}
 	}
 
@@ -2792,12 +2817,7 @@ public class CPPVisitor extends ASTQueries {
 			name = ((IASTEnumerationSpecifier) declSpec).getName();
 		} else if (declSpec instanceof ICPPASTTypeTransformationSpecifier) {
 			ICPPASTTypeTransformationSpecifier spec = (ICPPASTTypeTransformationSpecifier) declSpec;
-			IType type = SemanticUtil.applyTypeTransformation(spec.getOperator(), createType(spec.getOperand()));
-			if (type != null)
-				return type;
-
-			return ProblemType.UNRESOLVED_NAME;
-
+			return new CPPUnaryTypeTransformation(spec.getOperator(), createType(spec.getOperand()));
 		} else if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier spec = (ICPPASTSimpleDeclSpecifier) declSpec;
 			// Check for decltype(expr)

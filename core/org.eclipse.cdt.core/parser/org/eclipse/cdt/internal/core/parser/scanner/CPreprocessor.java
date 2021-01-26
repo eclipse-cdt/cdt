@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFileNomination;
@@ -63,6 +64,7 @@ import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.parser.EmptyFilesProvider;
+import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.FileVersion;
@@ -189,7 +191,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				try {
 					significantMacros = once.getSignificantMacros();
 				} catch (CoreException e) {
-					e.printStackTrace();
+					Util.log(e, e.getMessage(), ICLogConstants.CDT);
 				}
 				fc = new InternalFileContent(path, InclusionKind.SKIP_PRAGMA_ONCE_FILE, significantMacros);
 			} else {

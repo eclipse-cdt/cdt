@@ -294,6 +294,8 @@
             name="org.slf4j.impl.log4j12"/>
         <requirement
             name="org.yaml.snakeyaml"/>
+        <requirement
+            name="org.eclipse.unittest.ui"/>
         <sourceLocator
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>

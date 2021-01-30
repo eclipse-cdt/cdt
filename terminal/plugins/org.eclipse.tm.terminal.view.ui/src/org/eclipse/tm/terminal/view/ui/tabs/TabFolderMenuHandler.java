@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2018 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2011, 2021 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License 2.0 which accompanies this distribution, and is
  * available at https://www.eclipse.org/legal/epl-2.0/
@@ -36,6 +36,7 @@ import org.eclipse.tm.internal.terminal.control.actions.TerminalActionPaste;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionSelectAll;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
+import org.eclipse.tm.terminal.view.ui.actions.InvertColorsAction;
 import org.eclipse.tm.terminal.view.ui.actions.SelectEncodingAction;
 import org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -289,6 +290,14 @@ public class TabFolderMenuHandler extends PlatformObject {
 
 		// Create and add the select encoding action
 		add(new SelectEncodingAction(getParentView().getAdapter(TabFolderManager.class)) {
+			@Override
+			protected ITerminalViewControl getTarget() {
+				return getActiveTerminalViewControl();
+			}
+		});
+
+		// Create and add the invert colors action
+		add(new InvertColorsAction(getParentView().getAdapter(TabFolderManager.class)) {
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();

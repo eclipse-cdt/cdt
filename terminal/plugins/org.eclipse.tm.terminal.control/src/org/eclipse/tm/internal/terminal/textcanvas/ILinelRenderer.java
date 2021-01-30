@@ -50,6 +50,8 @@ public interface ILinelRenderer {
 
 	void setInvertedColors(boolean invert);
 
+	boolean isInvertedColors();
+
 	/**
 	 * @deprecated use {@link #getDefaultBackgroundColor(Device)}
 	 */

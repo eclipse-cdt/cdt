@@ -136,6 +136,10 @@ public class StyleMap {
 		fInvertColors = invert;
 	}
 
+	public boolean isInvertedColors() {
+		return fInvertColors;
+	}
+
 	public Font getFont(TerminalStyle style) {
 		style = defaultIfNull(style);
 		if (style.isBold()) {

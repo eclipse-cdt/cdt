@@ -510,6 +510,10 @@ public class TextCanvas extends GridCanvas {
 		redraw();
 	}
 
+	public boolean isInvertedColors() {
+		return fCellRenderer.isInvertedColors();
+	}
+
 	/**
 	 * @return true if the cursor is enabled (blinking). By default the cursor is not enabled.
 	 */

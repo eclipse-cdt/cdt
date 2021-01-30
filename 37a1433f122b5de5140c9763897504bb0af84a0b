@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91e8c6b6_bced9887",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/control/ITerminalViewControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-01-30T16:34:19Z",
+      "side": 1,
+      "message": "Missing @since on new public API.",
+      "revId": "37a1433f122b5de5140c9763897504bb0af84a0b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ac45da83_ffb5885b",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/emulator/VT100TerminalControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1373,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-01-30T16:34:19Z",
+      "side": 1,
+      "message": "Rather than adding the same state stored in two places - delegate to the fCtlText as the set method does.",
+      "revId": "37a1433f122b5de5140c9763897504bb0af84a0b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

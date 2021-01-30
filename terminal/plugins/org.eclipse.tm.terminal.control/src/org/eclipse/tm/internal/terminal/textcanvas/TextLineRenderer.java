@@ -208,4 +208,9 @@ public class TextLineRenderer implements ILinelRenderer {
 		fStyleMap.setInvertedColors(invert);
 
 	}
+
+	@Override
+	public boolean isInvertedColors() {
+		return fStyleMap.isInvertedColors();
+	}
 }

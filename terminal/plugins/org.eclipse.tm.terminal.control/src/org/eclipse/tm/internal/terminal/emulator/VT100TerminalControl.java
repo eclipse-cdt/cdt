@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2018 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2021 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -182,6 +182,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	volatile private Job fJob;
 
 	private PollingTextCanvasModel fPollingTextCanvasModel;
+
+	private boolean invert;
 
 	/**
 	 * Instantiate a Terminal widget.
@@ -1362,7 +1364,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	@Override
 	public void setInvertedColors(boolean invert) {
+		this.invert = invert;
 		fCtlText.setInvertedColors(invert);
+	}
+
+	@Override
+	public boolean isInvertedColors() {
+		return invert;
 	}
 
 	@Override

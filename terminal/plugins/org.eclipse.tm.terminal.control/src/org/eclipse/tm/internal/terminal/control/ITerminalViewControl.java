@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2021 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -69,6 +69,8 @@ public interface ITerminalViewControl {
 	void setFont(String fontName);
 
 	void setInvertedColors(boolean invert);
+
+	boolean isInvertedColors();
 
 	Font getFont();
 

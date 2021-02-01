@@ -179,7 +179,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		T checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath);
 	}
 
-	final private IIncludeFileTester<InternalFileContent> createCodeReaderTester = new IIncludeFileTester<InternalFileContent>() {
+	final private IIncludeFileTester<InternalFileContent> createCodeReaderTester = new IIncludeFileTester<>() {
 		@Override
 		public InternalFileContent checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
 			final InternalFileContent fc;
@@ -189,7 +189,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				try {
 					significantMacros = once.getSignificantMacros();
 				} catch (CoreException e) {
-					e.printStackTrace();
+					CCorePlugin.log(e);
 				}
 				fc = new InternalFileContent(path, InclusionKind.SKIP_PRAGMA_ONCE_FILE, significantMacros);
 			} else {
@@ -213,7 +213,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
 	}
 
-	final private IIncludeFileTester<IncludeResolution> createPathTester = new IIncludeFileTester<IncludeResolution>() {
+	final private IIncludeFileTester<IncludeResolution> createPathTester = new IIncludeFileTester<>() {
 		@Override
 		public IncludeResolution checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
 			if (fFileContentProvider.getInclusionExists(path)) {

@@ -286,6 +286,11 @@ public class Spawner extends Process {
 		}
 	}
 
+	@Override
+	public long pid() {
+		return pid;
+	}
+
 	/**
 	 * On Windows, interrupt the spawned program by using Cygwin's utility 'kill -SIGINT' if it's a Cgywin
 	 * program, otherwise send it a CTRL-C. If Cygwin's 'kill' command is not available, send a CTRL-C. On

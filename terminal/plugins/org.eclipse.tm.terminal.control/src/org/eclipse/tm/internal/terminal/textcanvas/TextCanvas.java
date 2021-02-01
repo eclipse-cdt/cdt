@@ -154,7 +154,7 @@ public class TextCanvas extends GridCanvas {
 
 			@Override
 			public void mouseDown(MouseEvent e) {
-				if (e.button == 1) { // left button
+				if (e.button == 1 && (e.stateMask & SWT.MODIFIER_MASK) == 0) { // left button
 					fDraggingStart = screenPointToCell(e.x, e.y);
 					fHasSelection = false;
 					if ((e.stateMask & SWT.SHIFT) != 0) {
@@ -166,7 +166,7 @@ public class TextCanvas extends GridCanvas {
 					}
 					fDraggingEnd = null;
 				}
-				if (fMouseListeners.size() > 0) {
+				if (fMouseListeners.size() > 0 && (e.stateMask & SWT.MODIFIER_MASK) == SWT.MOD1) {
 					Point pt = screenPointToCell(e.x, e.y);
 					if (pt != null) {
 						for (ITerminalMouseListener l : fMouseListeners) {
@@ -200,7 +200,15 @@ public class TextCanvas extends GridCanvas {
 			if (fDraggingStart != null) {
 				updateHasSelection(e);
 				setSelection(screenPointToCell(e.x, e.y));
+				fCellCanvasModel.expandHoverSelectionAt(-1, -1);
+			} else if ((e.stateMask & SWT.MODIFIER_MASK) == SWT.MOD1) {
+				// highlight (underline) word that would be used by MOD1 + mouse click
+				Point pt = screenPointToCell(e.x, e.y);
+				fCellCanvasModel.expandHoverSelectionAt(pt.y, pt.x);
+			} else {
+				fCellCanvasModel.expandHoverSelectionAt(-1, -1);
 			}
+			redraw();
 		});
 		serVerticalBarVisible(true);
 		setHorizontalBarVisible(false);
@@ -538,6 +546,10 @@ public class TextCanvas extends GridCanvas {
 
 	public void removeTerminalMouseListener(ITerminalMouseListener listener) {
 		fMouseListeners.remove(listener);
+	}
+
+	public String getHoverSelection() {
+		return fCellCanvasModel.getHoverSelectionText();
 	}
 
 }

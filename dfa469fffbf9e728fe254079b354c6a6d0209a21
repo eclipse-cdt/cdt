@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6f763ac0_a0e2d676",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-01T18:55:59Z",
+      "side": 1,
+      "message": "Other places in this code use the AbstractParserLogService stored in fLog. I don\u0027t know the code well enough to know if in this case it should be that too?",
+      "revId": "dfa469fffbf9e728fe254079b354c6a6d0209a21",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

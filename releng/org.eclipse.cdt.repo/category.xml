@@ -78,6 +78,12 @@
    <feature id="org.eclipse.cdt.testsrunner.feature.source">
       <category name="extra"/>
    </feature>
+   <feature id="org.eclipse.cdt.unittest.feature">
+      <category name="extra"/>
+   </feature>
+   <feature id="org.eclipse.cdt.unittest.feature.source">
+      <category name="extra"/>
+   </feature>
    <feature id="org.eclipse.cdt.managedbuilder.llvm">
       <category name="extra"/>
    </feature>

@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "29040e05_b95e9328",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexIncludeTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 768,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-03T14:48:17Z",
+      "side": 1,
+      "message": "This whitespace error is what failed the cleanliness check.",
+      "revId": "77a4c3c27ba15385832ccaffa11f5d2c23dea792",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3670e451_6feedd7f",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexIncludeTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-03T14:48:17Z",
+      "side": 1,
+      "message": "along with this one.",
+      "range": {
+        "startLine": 791,
+        "startChar": 2,
+        "endLine": 791,
+        "endChar": 3
+      },
+      "revId": "77a4c3c27ba15385832ccaffa11f5d2c23dea792",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

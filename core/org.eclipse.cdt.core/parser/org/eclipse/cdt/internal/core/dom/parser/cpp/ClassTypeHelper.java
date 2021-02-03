@@ -26,6 +26,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -1130,8 +1131,24 @@ public class ClassTypeHelper {
 				}
 			} else if (hostMember instanceof ICPPASTAliasDeclaration) {
 				IBinding aliasBinding = ((ICPPASTAliasDeclaration) hostMember).getAlias().resolveBinding();
+
 				if (member.equals(aliasBinding)) {
 					return visibility;
+				}
+
+				if (aliasBinding instanceof ITypedef) {
+					if (member instanceof ITypedef) {
+						ITypedef aliasTypedef = (ITypedef) aliasBinding;
+						ITypedef memberTypedef = (ITypedef) member;
+						ICPPInternalBinding aliasIntBinding = (ICPPInternalBinding) aliasBinding;
+						ICPPInternalBinding memberIntBinding = (ICPPInternalBinding) member;
+
+						if (memberTypedef.getType().isSameType(aliasTypedef.getType()) && //
+								Arrays.deepEquals(memberIntBinding.getDeclarations(),
+										aliasIntBinding.getDeclarations())) {
+							return visibility;
+						}
+					}
 				}
 			} else if (hostMember instanceof ICPPASTUsingDeclaration) {
 				IBinding usingBinding = ((ICPPASTUsingDeclaration) hostMember).getName().resolveBinding();

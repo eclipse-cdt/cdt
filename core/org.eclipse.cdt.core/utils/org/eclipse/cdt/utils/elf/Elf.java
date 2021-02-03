@@ -1323,7 +1323,7 @@ public class Elf implements AutoCloseable {
 	/**
 	 * Exception indicating that {@link ELFhdr#ELFCLASSNONE} header is read.
 	 *
-	 * @since 7.1
+	 * @since 7.2
 	 */
 	public static class ElfClassNoneException extends IOException {
 

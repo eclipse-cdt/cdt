@@ -16,6 +16,24 @@
       "revId": "f7a3b1b066ebb9bb84d3ddb4de95e4ea50134a71",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40cccaaf_d0cbe108",
+        "filename": "unittest/org.eclipse.cdt.unittest.feature/feature.xml",
+        "patchSetId": 21
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1671
+      },
+      "writtenOn": "2021-02-04T12:41:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "73d20a0a_2b53aa10",
+      "revId": "f7a3b1b066ebb9bb84d3ddb4de95e4ea50134a71",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

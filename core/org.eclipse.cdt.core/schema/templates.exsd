@@ -102,7 +102,7 @@ It&apos;s no longer manditory since templates are no longer organized by project
          <attribute name="filterPattern" type="string">
             <annotation>
                <documentation>
-                  filterPattern is a java.util.regex.Pattern format string which is used to match against build configuration ids. This is an optional attribute, if absent will all configurations will match.
+                  filterPattern is a java.util.regex.Pattern format string which is used to match against language identifiers. This is an optional attribute, if absent all languages will match.
                </documentation>
             </annotation>
          </attribute>

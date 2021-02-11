@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d0a16f8c_9de58bb9",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/META-INF/MANIFEST.MF",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-11T18:33:24Z",
+      "side": 1,
+      "message": "3.14 comes from Platform 4.19, however 4.19 does not actually have the necessary new API yet. The builds will fail until we have the Platform fix in, and we change to start consuming that build.",
+      "range": {
+        "startLine": 36,
+        "startChar": 45,
+        "endLine": 36,
+        "endChar": 51
+      },
+      "revId": "182eff5299ac806d00957fa4740a690ae2cd342b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

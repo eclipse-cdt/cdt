@@ -15,6 +15,7 @@
  *      Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400628)
  *      Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
  *      Jonah Graham (Kichwa Coders) - Bug 530377 - Corruption of state due to fast events from GDB
+ *      Umair Sair (Siemens) - Bug 571161 - MIBreakpointsSynchronizer is broken in certain scenarios
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -24,6 +25,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -384,33 +386,39 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 				.getBPToPlatformMaps();
 		Stream<IBreakpointDMContext> breakpointsKnownToManager = bpToPlatformMaps.entrySet().stream()
 				.flatMap(m -> m.getValue().keySet().stream());
-		Collector<MIBreakpointDMContext, ?, Map<IBreakpointsTargetDMContext, String>> collector = Collectors.toMap(
+		Collector<MIBreakpointDMContext, ?, Map<IBreakpointsTargetDMContext, Set<String>>> collector = Collectors.toMap(
 				(MIBreakpointDMContext dmc) -> DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class),
-				(MIBreakpointDMContext dmc) -> dmc.getReference());
-		Map<IBreakpointsTargetDMContext, String> numbersKnownToManager = breakpointsKnownToManager
+				(MIBreakpointDMContext dmc) -> new HashSet<>(Collections.singleton(dmc.getReference())),
+				(a, b) -> Stream.concat(a.stream(), b.stream()).collect(Collectors.toCollection(HashSet::new)));
+		Map<IBreakpointsTargetDMContext, Set<String>> numbersKnownToManager = breakpointsKnownToManager
 				.filter(MIBreakpointDMContext.class::isInstance).map(MIBreakpointDMContext.class::cast)
 				.collect(collector);
 
 		for (MIBreakpoint miBpt : data.getMIBreakpoints()) {
 			String number = miBpt.getNumber();
-			if (numbersKnownToManager.values().remove(number)) {
-				BreakpointEvent event = new BreakpointEvent();
+
+			boolean found = false;
+			for (Set<String> s : numbersKnownToManager.values())
+				if (s.remove(number))
+					found = true;
+
+			BreakpointEvent event = new BreakpointEvent();
+			if (found)
 				event.modified = miBpt;
-				fBreakpointEvents.addFirst(event);
-			} else {
-				BreakpointEvent event = new BreakpointEvent();
+			else
 				event.created = miBpt;
-				fBreakpointEvents.addFirst(event);
-			}
+			fBreakpointEvents.addFirst(event);
 		}
-		for (Entry<IBreakpointsTargetDMContext, String> entry : numbersKnownToManager.entrySet()) {
+
+		for (Entry<IBreakpointsTargetDMContext, Set<String>> entry : numbersKnownToManager.entrySet()) {
 			IBreakpointsTargetDMContext dmc = entry.getKey();
-			String number = entry.getValue();
-			if (number != null && !number.isEmpty() && (breakpointsContext == null || breakpointsContext.equals(dmc))) {
-				BreakpointEvent event = new BreakpointEvent();
-				event.deleted = number;
-				fBreakpointEvents.addFirst(event);
-			}
+			for (String number : entry.getValue())
+				if (number != null && !number.isEmpty()
+						&& (breakpointsContext == null || breakpointsContext.equals(dmc))) {
+					BreakpointEvent event = new BreakpointEvent();
+					event.deleted = number;
+					fBreakpointEvents.addFirst(event);
+				}
 		}
 
 		rm.done();
@@ -750,7 +758,9 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 			if (!plBpt.getCondition().equals(miBpt.getCondition())) {
 				plBpt.setCondition(miBpt.getCondition());
 			}
-			if (oldData.isPending() != miBpt.isPending()) {
+			// oldData can be null for notifications of breakpoints that are inserted using DSF but
+			// not with breakpoint service
+			if (oldData != null && oldData.isPending() != miBpt.isPending()) {
 				if (miBpt.isPending()) {
 					plBpt.decrementInstallCount();
 				} else {
@@ -801,7 +811,10 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 				// }
 			}
 		} catch (CoreException e) {
-			contextBreakpoints.put(miBpt.getNumber(), oldData);
+			if (oldData != null)
+				contextBreakpoints.put(miBpt.getNumber(), oldData);
+			else
+				contextBreakpoints.remove(miBpt.getNumber());
 			GdbPlugin.log(e.getStatus());
 		}
 	}
@@ -1559,7 +1572,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 			return;
 		}
 
-		sourceLookup.getSource(srcDmc, debuggerPath, new DataRequestMonitor<Object>(getExecutor(), rm) {
+		sourceLookup.getSource(srcDmc, debuggerPath, new DataRequestMonitor<>(getExecutor(), rm) {
 			@Override
 			@ConfinedToDsfExecutor("fExecutor")
 			protected void handleCompleted() {

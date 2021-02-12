@@ -230,6 +230,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPlaceholderType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPlaceholderType.PlaceholderKind;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
@@ -279,7 +280,7 @@ public class CPPVisitor extends ASTQueries {
 	// Thread-local set of declarators for which auto types are being created.
 	// Used to prevent infinite recursion while processing invalid self-referencing
 	// auto-type declarations.
-	private static final ThreadLocal<Set<IASTDeclarator>> autoTypeDeclarators = new ThreadLocal<Set<IASTDeclarator>>() {
+	private static final ThreadLocal<Set<IASTDeclarator>> autoTypeDeclarators = new ThreadLocal<>() {
 		@Override
 		protected Set<IASTDeclarator> initialValue() {
 			return new HashSet<>();
@@ -2324,8 +2325,13 @@ public class CPPVisitor extends ASTQueries {
 					// The check here avoids performing the computation in getValueOfInitialize()
 					// in cases where we wouldn't use it anyways because we don't have a CPPBasicType.
 					if (SemanticUtil.getNestedType(type, TDEF | ALLCVQ) instanceof CPPBasicType) {
-						type = associateTypeWithValue(type,
-								SemanticUtil.getValueOfInitializer(declarator.getInitializer(), type));
+						if (type instanceof CPPQualifierType) {
+							CPPQualifierType tp = (CPPQualifierType) type;
+							if (!(tp.getType() instanceof CPPTypedef)) {
+								type = associateTypeWithValue(type,
+										SemanticUtil.getValueOfInitializer(declarator.getInitializer(), type));
+							}
+						}
 					}
 				}
 			}

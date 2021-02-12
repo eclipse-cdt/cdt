@@ -765,6 +765,54 @@ public class IndexIncludeTest extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
+	
+	// #include "header.hpp"
+
+	//	class Propp {
+	//	public:
+	//	  bool isDoomed() const
+	//	  {
+	//	    return FLAG_VALUE_IS_SET != 0;
+	//	  }
+	//	private:
+	//	  typedef signed char GoodType;
+	//	  static const GoodType FLAG_VALUE_IS_SET = 0x4;
+	//	};
+	public void testIndexingTypedefAliasUsedBeforeDefined() throws Exception {
+		CharSequence[] sources = getContentsForTest(2);
+		IFile source = TestSourceReader.createFile(fProject.getProject(), "source.cpp", sources[0].toString());
+		IFile header = TestSourceReader.createFile(fProject.getProject(), "header.hpp", sources[1].toString());
+		waitUntilFileIsIndexed(fIndex, source);
+
+		// make sure it is parsed in context
+		waitForIndexer();
+		CCorePlugin.getIndexManager().reindex(fProject);
+		waitForIndexer();
+	}
+
+	// #include "header.hpp"
+
+	//	class Propp {
+	//	public:
+	//	  bool isDoomed() const
+	//	  {
+	//	    return FLAG_VALUE_IS_SET != 0;
+	//	  }
+	//	private:
+	//	  using GoodType = signed char;
+	//	  static const GoodType FLAG_VALUE_IS_SET = 0x4;
+	//	};
+	public void testIndexingUsingAliasUsedBeforeDefined() throws Exception {
+		CharSequence[] sources = getContentsForTest(2);
+		IFile source = TestSourceReader.createFile(fProject.getProject(), "source.cpp", sources[0].toString());
+		IFile header = TestSourceReader.createFile(fProject.getProject(), "header.hpp", sources[1].toString());
+		waitUntilFileIsIndexed(fIndex, source);
+
+		// make sure it is parsed in context
+		waitForIndexer();
+		CCorePlugin.getIndexManager().reindex(fProject);
+		waitForIndexer();
+	}	
 
 	private void outputUnresolvedIncludes(IIndex index, IIndexFileLocation ifl, IIndexFile ifile,
 			Set<IIndexFile> handled) throws CoreException {

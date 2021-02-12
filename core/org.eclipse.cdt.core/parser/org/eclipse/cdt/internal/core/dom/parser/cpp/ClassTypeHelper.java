@@ -1133,6 +1133,10 @@ public class ClassTypeHelper {
 				if (member.equals(aliasBinding)) {
 					return visibility;
 				}
+
+				if (isTypedefEncapsulatedMatching(member, aliasBinding)) {
+					return visibility;
+				}
 			} else if (hostMember instanceof ICPPASTUsingDeclaration) {
 				IBinding usingBinding = ((ICPPASTUsingDeclaration) hostMember).getName().resolveBinding();
 				if (member.equals(usingBinding)) {
@@ -1146,6 +1150,18 @@ public class ClassTypeHelper {
 			}
 		}
 		return -1;
+	}
+
+	@SuppressWarnings("unlikely-arg-type")
+	private static boolean isTypedefEncapsulatedMatching(IBinding member, IBinding aliasBinding) {
+		if (aliasBinding instanceof CPPTypedef) {
+			CPPTypedef ab = (CPPTypedef) aliasBinding;
+			if (ab.getType().equals(member)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static IllegalArgumentException invalidMember(IBinding classType, IBinding member) {

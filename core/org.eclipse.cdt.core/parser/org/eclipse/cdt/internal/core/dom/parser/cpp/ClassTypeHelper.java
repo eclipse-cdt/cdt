@@ -26,6 +26,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -1098,7 +1099,11 @@ public class ClassTypeHelper {
 				for (IASTDeclarator memberDeclarator : memberDeclaration.getDeclarators()) {
 					IBinding memberBinding = ASTQueries.findInnermostDeclarator(memberDeclarator).getName()
 							.resolveBinding();
-					if (member.equals(memberBinding)) {
+					if (member.equals(memberBinding)) { //hier
+						return visibility;
+					}
+
+					if (isTypedefMatching(member, memberBinding)) {
 						return visibility;
 					}
 				}
@@ -1133,6 +1138,11 @@ public class ClassTypeHelper {
 				if (member.equals(aliasBinding)) {
 					return visibility;
 				}
+
+				if (isTypedefMatching(member, aliasBinding)) {
+					return visibility;
+				}
+
 			} else if (hostMember instanceof ICPPASTUsingDeclaration) {
 				IBinding usingBinding = ((ICPPASTUsingDeclaration) hostMember).getName().resolveBinding();
 				if (member.equals(usingBinding)) {
@@ -1146,6 +1156,24 @@ public class ClassTypeHelper {
 			}
 		}
 		return -1;
+	}
+
+	private static boolean isTypedefMatching(IBinding member, IBinding memberBinding) {
+		if (memberBinding instanceof ITypedef) {
+			if (member instanceof ITypedef) {
+				ITypedef aliasTypedef = (ITypedef) memberBinding;
+				ITypedef memberTypedef = (ITypedef) member;
+				ICPPInternalBinding aliasIntBinding = (ICPPInternalBinding) memberBinding;
+				ICPPInternalBinding memberIntBinding = (ICPPInternalBinding) member;
+
+				if (memberTypedef.getType().isSameType(aliasTypedef.getType()) && //
+						Arrays.deepEquals(memberIntBinding.getDeclarations(), aliasIntBinding.getDeclarations())) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private static IllegalArgumentException invalidMember(IBinding classType, IBinding member) {

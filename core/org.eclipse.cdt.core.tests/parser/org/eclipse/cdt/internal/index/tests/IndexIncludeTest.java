@@ -766,6 +766,27 @@ public class IndexIncludeTest extends IndexTestBase {
 		}
 	}
 
+	// #include "header.hpp"
+
+	//class Propp {
+	//public:
+	//  using Zapp = enum
+	//  {
+	//      GOOD_VALUE = 0,
+	//  };
+	//};
+	public void testIndexingAliasEnum() throws Exception {
+		CharSequence[] sources = getContentsForTest(2);
+		IFile source = TestSourceReader.createFile(fProject.getProject(), "source.cpp", sources[0].toString());
+		IFile header = TestSourceReader.createFile(fProject.getProject(), "header.hpp", sources[1].toString());
+		waitUntilFileIsIndexed(fIndex, source);
+
+		// make sure it is parsed in context
+		waitForIndexer();
+		CCorePlugin.getIndexManager().reindex(fProject);
+		waitForIndexer();
+	}
+
 	private void outputUnresolvedIncludes(IIndex index, IIndexFileLocation ifl, IIndexFile ifile,
 			Set<IIndexFile> handled) throws CoreException {
 		if (ifile == null) {

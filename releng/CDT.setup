@@ -221,11 +221,20 @@
         <requirement
             name="com.google.gson"/>
         <requirement
-            name="com.sun.xml.bind"/>
+            name="com.sun.jna"
+            versionRange="5.6.0"/>
         <requirement
-            name="javax.activation"/>
+            name="com.sun.jna.platform"
+            versionRange="5.6.0"/>
         <requirement
-            name="javax.xml.bind"/>
+            name="com.sun.xml.bind"
+            versionRange="2.3.3"/>
+        <requirement
+            name="jakarta.xml.bind"
+            versionRange="2.3.3"/>
+        <requirement
+            name="javax.activation"
+            versionRange="1.2.2"/>
         <requirement
             name="javax.xml.stream"/>
         <requirement

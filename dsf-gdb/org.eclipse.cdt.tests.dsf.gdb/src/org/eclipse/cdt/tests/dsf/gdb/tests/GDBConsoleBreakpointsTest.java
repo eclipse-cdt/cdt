@@ -45,7 +45,6 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsRemovedEvent;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsUpdatedEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
-import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsSynchronizer;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
@@ -497,11 +496,11 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 		 * stop listening to those async messages to do that we temporarily remove the
 		 * breakpoint service from the event listeners
 		 */
-		fCommandControl.removeEventListener((IEventListener) fBreakpointService);
+		//		fCommandControl.removeEventListener((IEventListener) fBreakpointService);
 		try {
 			testConsoleBreakpointStandard(type, attributes, () -> fBreakpointsSynchronizer.flushCache(null));
 		} finally {
-			fCommandControl.addEventListener((IEventListener) fBreakpointService);
+			//			fCommandControl.addEventListener((IEventListener) fBreakpointService);
 		}
 	}
 
@@ -679,7 +678,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	}
 
 	private MIBreakpoint[] getTargetBreakpoints(int timeout, TimeUnit unit) throws Throwable {
-		Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
+		Query<MIBreakListInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIBreakListInfo> rm) {
 				fCommandControl.queueCommand(fCommandControl.getCommandFactory().createMIBreakList(fBreakpointsDmc),
@@ -715,7 +714,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	}
 
 	private void queueConsoleCommand(final String command, int timeout, TimeUnit unit) throws Throwable {
-		Query<MIInfo> query = new Query<MIInfo>() {
+		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fCommandControl.queueCommand(fCommandControl.getCommandFactory()

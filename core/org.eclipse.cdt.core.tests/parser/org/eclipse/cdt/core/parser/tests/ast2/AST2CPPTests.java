@@ -13622,37 +13622,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	};
 	//
 	//	int main() {
-	//		Test<__is_same(bool, bool)>::true_val;
-	//		Test<__is_same_as(bool, bool)>::true_val;
-	//		Test<__is_same(bool, bool&)>::false_val;
-	//		Test<__is_same(bool, bool*)>::false_val;
-	//		Test<__is_same(bool*, bool*)>::true_val;
-	//		Test<__is_same(bool&, bool&)>::true_val;
-	//		Test<__is_same(bool[], bool[])>::true_val;
-	//		Test<__is_same(bool[], bool*)>::false_val;
-	//		Test<__is_same(bool, const volatile MyBool)>::false_val;
-	//		Test<__is_same(bool, MyBool)>::true_val;
-	//		Test<__is_same(bool, Foo)>::false_val;
-	//		Test<__is_same(Templated<bool>, Templated<Foo>)>::false_val;
-	//		Test<__is_same(Templated<>, Templated<void>)>::true_val;
-	//
-	//		auto func = []() {
-	//		};
-	//		auto func2 = []() {
-	//		};
-	//		Test<__is_same(decltype(func), decltype(func))>::true_val;
-	//		Test<__is_same(decltype(func), decltype(func2))>::false_val;
-	//
-	//		Test<__is_same(void (*)(int), void (*)(int))>::true_val;
-	//		Test<__is_same(void (*)(bool), void (*)(MyBool))>::true_val;
-	//
-	//		Test<__is_same(Enum, Enum)>::true_val;
-	//		Test<__is_same(Enum, int)>::false_val;
-	//		Test<__is_same(EnumChar, char)>::false_val;
 	//		Test<__is_same(__underlying_type(EnumChar), char)>::true_val;
-	//
-	//		Test<TemplateArgs<int, bool>::Value>::false_val;
-	//		Test<TemplateArgs<int, int>::Value>::true_val;
 	//	}
 	public void testIsSame() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);

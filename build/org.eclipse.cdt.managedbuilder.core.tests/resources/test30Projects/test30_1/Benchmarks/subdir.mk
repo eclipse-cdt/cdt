@@ -28,7 +28,7 @@ TEST30_1_GNU_SO_TAR_OUTPUTC_OUTPUTS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-f1.c: ../test.tar
+f1.c: ../test.tar subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: Un-tar'
 	tar -xf "$<"
@@ -39,7 +39,7 @@ f2.c: f1.c
 test_ar.h: f1.c
 CDT.bmp: f1.c
 
-%.oprestripped: ./%.c
+%.oprestripped: ./%.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: MBS30.compiler.gnu.c'
 	gcc -O2 -g -Wall -c -fmessage-length=0 -v -o "$@" "$<" && \
@@ -48,14 +48,14 @@ CDT.bmp: f1.c
 	@echo 'Finished building: $<'
 	@echo ' '
 
-%.o: ./%.oprestripped
+%.o: ./%.oprestripped subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: Strip object file'
 	strip --preserve-dates -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-%.jpeg: ./%.bmp
+%.jpeg: ./%.bmp subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: Convert to jpeg'
 	cjpeg  -outfile "$@" "$<"

@@ -18,7 +18,7 @@ OBJS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-%.obj: ../%.c
+%.obj: ../%.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: AssignToOption Compiler'
 	ATOC -opt../TestATO.cop  "$@" "$<"

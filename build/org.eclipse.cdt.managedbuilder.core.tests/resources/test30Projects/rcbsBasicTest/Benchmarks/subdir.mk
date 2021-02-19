@@ -11,7 +11,7 @@ OBJS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-rcbsBasicTest.o: ../rcbsBasicTest.c
+rcbsBasicTest.o: ../rcbsBasicTest.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Now executing custom build step for rcbsBasicTest debug config'
 	gcc -g -c ../rcbsBasicTest.c -o ./rcbsBasicTest.o

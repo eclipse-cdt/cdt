@@ -17,14 +17,14 @@ CS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-%.c: ../%.x
+%.c: ../%.x subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: Copy tool'
 	cp "$<" "$@"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-%.o: ./%.c
+%.o: ./%.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: MBS30.compiler.gnu.c'
 	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o "$@" "$<" && \

@@ -17,7 +17,7 @@ C_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-%.o: ../%.c
+%.o: ../%.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: compiler.gnu.cpp'
 	g++ -DXXX -O0 -g3 -Wall -c -o "$@" "$<" && \

@@ -23,7 +23,7 @@ C_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-f1.o: C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f1.c
+f1.o: C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f1.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: MBS30.compiler.gnu.c'
 	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o "$@" "$<" && \
@@ -32,7 +32,7 @@ f1.o: C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f1.c
 	@echo 'Finished building: $<'
 	@echo ' '
 
-f1_30.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f1_30.c
+f1_30.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f1_30.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: MBS30.compiler.gnu.c'
 	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o "$@" "$<" && \
@@ -41,7 +41,7 @@ f1_30.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f1_30.c
 	@echo 'Finished building: $<'
 	@echo ' '
 
-f2.o: C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f2.c
+f2.o: C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f2.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: MBS30.compiler.gnu.c'
 	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o "$@" "$<" && \
@@ -50,7 +50,7 @@ f2.o: C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f2.c
 	@echo 'Finished building: $<'
 	@echo ' '
 
-f2_30.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f2_30.c
+f2_30.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f2_30.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: MBS30.compiler.gnu.c'
 	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o "$@" "$<" && \

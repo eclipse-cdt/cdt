@@ -31,6 +31,12 @@ endif
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := testDoubleSO
 BUILD_ARTIFACT_EXTENSION := so
 BUILD_ARTIFACT_PREFIX := lib
@@ -42,7 +48,7 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: libtestDoubleSO.so
 
 # Tool invocations
-libtestDoubleSO.so: $(OBJS) $(USER_OBJS)
+libtestDoubleSO.so: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: linker.gnu.cpp'
 	g++ -shared -o "libtestDoubleSO.so" $(OBJS) $(USER_OBJS) $(LIBS)

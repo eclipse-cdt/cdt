@@ -19,6 +19,12 @@ endif
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := inputTypeOption
 BUILD_ARTIFACT_EXTENSION :=
 BUILD_ARTIFACT_PREFIX :=
@@ -30,7 +36,7 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: inputTypeOption
 
 # Tool invocations
-inputTypeOption: $(OBJS) C:\An\ Absolute\ Path\ With\ Spaces\foo.linker $(USER_OBJS)
+inputTypeOption: $(OBJS) C:\An\ Absolute\ Path\ With\ Spaces\foo.linker $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.linker'
 	gcc --linkerInputTypeOption="C:\An Absolute Path With Spaces\foo.linker" -o "inputTypeOption" $(OBJS) $(USER_OBJS) $(LIBS)

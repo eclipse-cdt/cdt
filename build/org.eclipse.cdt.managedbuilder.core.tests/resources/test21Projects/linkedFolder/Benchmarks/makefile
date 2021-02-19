@@ -19,6 +19,12 @@ endif
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := linkedFolder
 BUILD_ARTIFACT_EXTENSION := a
 BUILD_ARTIFACT_PREFIX := lib
@@ -30,7 +36,7 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: liblinkedFolder.a
 
 # Tool invocations
-liblinkedFolder.a: $(OBJS) $(USER_OBJS)
+liblinkedFolder.a: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: archiver.gnu'
 	ar -r  "liblinkedFolder.a" $(OBJS) $(USER_OBJS) $(LIBS)

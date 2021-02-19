@@ -826,10 +826,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			bytes = buffer.toString().getBytes();
 		}
 
-		ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-		// use a platform operation to update the resource contents
-		boolean force = true;
-		file.setContents(stream, force, false, null); // Don't record history
+		byte[] oldBytes = null;
+		try (InputStream is = file.getContents(true)) {
+			oldBytes = new byte[is.available()];
+			is.read(oldBytes);
+		} catch (IOException e) {
+		}
+
+		// Only write file if content differs
+		if (!Arrays.equals(oldBytes, bytes)) {
+			ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+			// use a platform operation to update the resource contents
+			boolean force = true;
+			file.setContents(stream, force, false, null); // Don't record history
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1265,6 +1275,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		// Include makefile.defs supplemental makefile
 		buffer.append("-include ").append(reachProjectRoot()).append(SEPARATOR).append(MAKEFILE_DEFS).append(NEWLINE); //$NON-NLS-1$
+
+		final String wildcardFileFmt = "$(wildcard %s)" + WHITESPACE + LINEBREAK; //$NON-NLS-1$
+		buffer.append(NEWLINE).append("OPTIONAL_TOOL_DEPS :=").append(WHITESPACE).append(LINEBREAK); //$NON-NLS-1$
+		buffer.append(String.format(wildcardFileFmt, reachProjectRoot() + SEPARATOR + MAKEFILE_DEFS));
+		buffer.append(String.format(wildcardFileFmt, reachProjectRoot() + SEPARATOR + MAKEFILE_INIT));
+		buffer.append(String.format(wildcardFileFmt, reachProjectRoot() + SEPARATOR + MAKEFILE_TARGETS));
+		buffer.append(NEWLINE);
 
 		String ext = config.getArtifactExtension();
 		// try to resolve the build macros in the artifact extension
@@ -1703,6 +1720,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			calculatedDependencies += input;
 		}
 		buildRule += calculatedDependencies;
+		buildRule += WHITESPACE + MAKEFILE_NAME; // makefile itself
+		buildRule += WHITESPACE + "$(OPTIONAL_TOOL_DEPS)"; //$NON-NLS-1$ // Optional dep to generated makefile extension files
 
 		// We can't have duplicates in a makefile
 		if (getRuleList().contains(buildRule)) {
@@ -2563,7 +2582,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			buildRule += primaryOutputName;
 		}
 
-		String buildRuleDependencies = primaryDependencyName;
+		String buildRuleDependencies = primaryDependencyName + WHITESPACE
+				+ escapeWhitespaces(relativePath + MODFILE_NAME);
 		String patternBuildRuleDependencies = patternPrimaryDependencyName;
 
 		// Other additional inputs

@@ -97,12 +97,21 @@ public class DefaultGCCDependencyCalculator3 implements IManagedDependencyGenera
 			makefile = root.getFile(makefilePath);
 			IResourceInfo rcInfo = tool.getParentResourceInfo();
 			if (rcInfo != null)
-				return GnuMakefileGenerator.populateDummyTargets(rcInfo, makefile, false);
-			return GnuMakefileGenerator.populateDummyTargets(buildContext, makefile, false);
+				return createMakefileGenerator().generateDummyTargets(rcInfo, makefile, false);
+			return createMakefileGenerator().generateDummyTargets(buildContext, makefile, false);
 		} catch (CoreException e) {
 		} catch (IOException e) {
 		}
 		return false;
+	}
+
+	/**
+	 * Return a GnuMakefileGenerator instance to use during post processing of dependency files
+	 * @return an GnuMakefileGenerator instance
+	 * @since 9.3
+	 */
+	protected GnuMakefileGenerator createMakefileGenerator() {
+		return new GnuMakefileGenerator();
 	}
 
 }

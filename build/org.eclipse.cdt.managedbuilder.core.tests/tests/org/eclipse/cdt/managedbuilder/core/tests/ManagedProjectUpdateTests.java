@@ -210,7 +210,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 	 */
 	public void testProjectUpdate12_Update() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
 		doTestProjectUpdate("1.2", true, true, makefiles);
 	}
 
@@ -220,7 +220,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 	 */
 	public void testProjectUpdate20_Update() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
 		doTestProjectUpdate("2.0", true, true, makefiles);
 	}
 
@@ -230,7 +230,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 	 */
 	public void testProjectUpdate21_Update() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
 				Path.fromOSString("Functions/subdir.mk") };
 		doTestProjectUpdate("2.1", true, true, makefiles);
 	}
@@ -240,7 +240,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 	 */
 	public void testProjectUpdate21CPP_Update() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
 				Path.fromOSString("Functions/subdir.mk") };
 		doTestProjectUpdate("2.1CPP", true, true, makefiles);
 	}

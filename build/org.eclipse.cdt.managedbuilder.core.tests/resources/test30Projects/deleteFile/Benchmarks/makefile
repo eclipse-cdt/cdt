@@ -48,10 +48,10 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: DeleteFile
 
 # Tool invocations
-DeleteFile: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+DeleteFile: $(OBJS) $(USER_OBJS) makefile objects.mk objects.cla $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.linker.gnu.cpp'
-	g++  -o "DeleteFile" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++  -o "DeleteFile" @"objects.cla" $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

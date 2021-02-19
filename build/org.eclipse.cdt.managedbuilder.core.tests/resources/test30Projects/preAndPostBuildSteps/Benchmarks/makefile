@@ -53,10 +53,10 @@ all:
 main-build: preAndPostBuildSteps
 
 # Tool invocations
-preAndPostBuildSteps: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+preAndPostBuildSteps: $(OBJS) $(USER_OBJS) makefile objects.mk objects.cla $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.linker.gnu.cpp'
-	g++  -o "preAndPostBuildSteps" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++  -o "preAndPostBuildSteps" @"objects.cla" $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build

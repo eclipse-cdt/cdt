@@ -1,0 +1,4 @@
+"./main.o"
+"./source1/Class1.o"
+"./source2/Class2.o"
+"./source2/source21/Class21.o"

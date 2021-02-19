@@ -288,7 +288,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30SingleFileExe() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
 		IProject[] projects = createProjects("singleFileExe", null, null, true);
 		buildProjects(projects, makefiles);
 	}
@@ -298,7 +298,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30TwoFileSO() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
 		IProject[] projects = createProjects("twoFileSO", null, null, true);
 		buildProjects(projects, makefiles);
 	}
@@ -308,10 +308,11 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30MultiResConfig() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"), Path.fromOSString("main.d"),
-				Path.fromOSString("source1/subdir.mk"), Path.fromOSString("source1/Class1.d"),
-				Path.fromOSString("source2/subdir.mk"), Path.fromOSString("source2/Class2.d"),
-				Path.fromOSString("source2/source21/Class21.d"), Path.fromOSString("source2/source21/subdir.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+				Path.fromOSString("main.d"), Path.fromOSString("source1/subdir.mk"),
+				Path.fromOSString("source1/Class1.d"), Path.fromOSString("source2/subdir.mk"),
+				Path.fromOSString("source2/Class2.d"), Path.fromOSString("source2/source21/Class21.d"),
+				Path.fromOSString("source2/source21/subdir.mk") };
 		IProject[] projects = createProjects("multiResConfig", null, null, true);
 		buildProjects(projects, makefiles);
 	}
@@ -321,6 +322,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30LinkedLib() throws IOException {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
+				Path.fromOSString("objects.cla"),
 				//Path.fromOSString("subdir.mk")   // Can't compare this yet since it contains absolute paths!
 				Path.fromOSString("sources.mk") };
 		IPath[] linkedFiles = { Path.fromOSString("f1_30.c"), Path.fromOSString("f2_30.c"),
@@ -349,7 +351,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30LinkedFolder() throws IOException {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("subdir.mk"), Path.fromOSString("sources.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("subdir.mk"), Path.fromOSString("sources.mk") };
 		IPath[] linkedFiles = { Path.fromOSString("f1.c"), Path.fromOSString("f2.c"), Path.fromOSString("test_ar.h"),
 				Path.fromOSString("Benchmarks/makefile"), Path.fromOSString("Benchmarks/objects.mk"),
 				Path.fromOSString("Benchmarks/subdir.mk"), Path.fromOSString("Benchmarks/sources.mk") };
@@ -378,8 +380,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30CopyandDeploy() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"), Path.fromOSString("main.d"),
-				Path.fromOSString("Functions/subdir.mk"), Path.fromOSString("Functions/Func1.d") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+				Path.fromOSString("main.d"), Path.fromOSString("Functions/subdir.mk"),
+				Path.fromOSString("Functions/Func1.d") };
 		IProject[] projects = createProjects("copyandDeploy", null, null, true);
 		buildProjects(projects, makefiles);
 	}
@@ -390,7 +393,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30DeleteFile() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("subdir.mk"), Path.fromOSString("sources.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("subdir.mk"), Path.fromOSString("sources.mk") };
 
 		IProject[] projects = createProjects("deleteFile", null, null, true);
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -420,7 +423,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30NoFilesToBuild() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("subdir.mk"), Path.fromOSString("sources.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("subdir.mk"), Path.fromOSString("sources.mk") };
 
 		IProject[] projects = createProjects("noFilesToBuild", null, null, true);
 		IProject project = projects[0];
@@ -438,7 +441,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void testFileWithNoExtension() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
 		IProject[] projects = createProjects("testFileWithNoExtension", null, null, true);
 		buildProjects(projects, makefiles);
 	}
@@ -449,7 +452,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void testPreAndPostProcessBuildSteps() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("subdir.mk"), Path.fromOSString("sources.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("subdir.mk"), Path.fromOSString("sources.mk") };
 
 		IProject[] projects = createProjects("preAndPostBuildSteps", null, null, true);
 		IProject project = projects[0];
@@ -468,7 +471,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void testResourceCustomBuildStep() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("subdir.mk"), Path.fromOSString("sources.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("subdir.mk"), Path.fromOSString("sources.mk") };
 		ITool rcbsTool;
 		IInputType rcbsToolInputType;
 		IAdditionalInput rcbsToolInputTypeAdditionalInput;
@@ -498,7 +501,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30_1() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
 		IProject[] projects = createProjects("test30_1", null, null, true);
 		buildProjects(projects, makefiles);
 	}
@@ -508,7 +511,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30_2() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
 		IProject[] projects = createProjects("test30_2", null, null, true);
 		buildProjects(projects, makefiles);
 	}
@@ -572,7 +575,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 
 	public void testMacroSupportInBuildDefinitions() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
 		IProject[] projects = createProjects("testMacroSupportInBuildDefinitions", null, null, true);
 		buildProjects(projects, makefiles);
 	}
@@ -583,7 +586,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void testSpaces() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
 				Path.fromOSString("main with spaces.d"), Path.fromOSString("sub folder with spaces/subdir.mk"),
 				Path.fromOSString("sub folder with spaces/foo with spaces.d") };
 		IProject[] projects = createProjects("test with spaces", null, null, true);

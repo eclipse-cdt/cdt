@@ -185,7 +185,7 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 	 */
 	public void test1DepCalc2() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
 				//  This file is different using Cygwin vs GCC
 				//Path.fromOSString("main.d"),
 				Path.fromOSString("Sources/subdir.mk"), Path.fromOSString("Sources/func1.d"),
@@ -200,7 +200,7 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 	 */
 	public void test1DepCalc3() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
 				//  This file is different using Cygwin vs GCC
 				//Path.fromOSString("main.d"),
 				Path.fromOSString("Sources/subdir.mk"), Path.fromOSString("Sources/func1.d"),
@@ -215,7 +215,7 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 	 */
 	public void test1DepCalcPreBuild() {
 		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+				Path.fromOSString("objects.cla"), Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
 				//  This file is different using Cygwin vs GCC
 				//Path.fromOSString("main.d"),
 				Path.fromOSString("Sources/subdir.mk"), Path.fromOSString("Sources/func1.d"),

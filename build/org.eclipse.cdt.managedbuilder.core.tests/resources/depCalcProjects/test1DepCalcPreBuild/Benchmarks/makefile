@@ -38,10 +38,10 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: test1DepCalcPreBuild
 
 # Tool invocations
-test1DepCalcPreBuild: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+test1DepCalcPreBuild: $(OBJS) $(USER_OBJS) makefile objects.mk objects.cla $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc  -o "test1DepCalcPreBuild" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc  -o "test1DepCalcPreBuild" @"objects.cla" $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

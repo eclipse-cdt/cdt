@@ -36,10 +36,10 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: libtwoFileSO.SOS
 
 # Tool invocations
-libtwoFileSO.SOS: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+libtwoFileSO.SOS: $(OBJS) $(USER_OBJS) makefile objects.mk objects.cla $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.linker.gnu.c'
-	gcc -shared -o "libtwoFileSO.SOS" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -shared -o "libtwoFileSO.SOS" @"objects.cla" $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

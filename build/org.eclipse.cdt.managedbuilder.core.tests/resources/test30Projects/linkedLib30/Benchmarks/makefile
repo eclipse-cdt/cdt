@@ -36,10 +36,10 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: liblinkedLib.a
 
 # Tool invocations
-liblinkedLib.a: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+liblinkedLib.a: $(OBJS) $(USER_OBJS) makefile objects.mk objects.cla $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.archiver.gnu'
-	ar -r  "liblinkedLib.a" $(OBJS) $(USER_OBJS) $(LIBS)
+	ar -r  "liblinkedLib.a" @"objects.cla" $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

@@ -338,6 +338,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private static final String MAINBUILD = "main-build"; //$NON-NLS-1$
 	private static final String POSTBUILD = "post-build"; //$NON-NLS-1$
 	private static final String SECONDARY_OUTPUTS = "secondary-outputs"; //$NON-NLS-1$
+	private static final String OBJECTS_CLA = "objects.cla"; //$NON-NLS-1$
+	private static final String DOUBLE_QUOTE = "\""; //$NON-NLS-1$
 
 	// Enumerations
 	public static final int PROJECT_RELATIVE = 1, PROJECT_SUBDIR_RELATIVE = 2, ABSOLUTE = 3;
@@ -388,6 +390,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	//	private Vector dependencyMakefiles;		//  IPath's - relative to the top build directory or absolute
 
 	private ICSourceEntry srcEntries[];
+
+	private Vector<String> objectsList;
 
 	public GnuMakefileGenerator() {
 		super();
@@ -742,6 +746,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		populateTopMakefile(makefileHandle, false);
 		checkCancel();
 
+		// Create the objects.list file
+		populateObjectsList();
+		checkCancel();
+
 		// Remove deleted folders from generated build directory
 		for (IResource res : getDeletedDirList()) {
 			IContainer subDir = (IContainer) res;
@@ -956,6 +964,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		IPath objFilePath = topBuildDir.append(OBJECTS_MAKFILE);
 		IFile objsFileHandle = createFile(objFilePath);
 		populateObjectsMakefile(objsFileHandle);
+		checkCancel();
+
+		// Create the objects.list file
+		populateObjectsList();
 		checkCancel();
 
 		// How did we do
@@ -1729,6 +1741,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		buildRule += calculatedDependencies;
 		buildRule += WHITESPACE + MAKEFILE_NAME; // makefile itself
 		buildRule += WHITESPACE + OBJECTS_MAKFILE; // objects.mk
+		buildRule += WHITESPACE + OBJECTS_CLA; // the objects file used by the linkers
 		buildRule += WHITESPACE + "$(OPTIONAL_TOOL_DEPS)"; //$NON-NLS-1$ // Optional dep to generated makefile extension files
 
 		// We can't have duplicates in a makefile
@@ -1779,6 +1792,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 						+ primaryOutputs + WHITESPACE + IN_MACRO;
 			} else
 				buildCmd = cmdLInfo.getCommandLine();
+
+			// Replace $(OBJS) with @"objects.list" to avoid too long commands
+			buildCmd = buildCmd.replace("$(" + OBJS_MACRO + ")", //$NON-NLS-1$//$NON-NLS-2$
+					AT + DOUBLE_QUOTE + OBJECTS_CLA + DOUBLE_QUOTE);
 
 			// resolve any remaining macros in the command after it has been
 			// generated
@@ -3785,6 +3802,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(map.get(macroName));
 
+		if (OBJS_MACRO.equals(macroName)) {
+			getObjectList().add(filename);
+		}
+
 		// escape whitespace in the filename
 		filename = escapeWhitespaces(filename);
 
@@ -4705,6 +4726,36 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			}
 		}
 		return h;
+	}
+
+	private Vector<String> getObjectList() {
+		if (objectsList == null) {
+			objectsList = new Vector<>();
+		}
+		return objectsList;
+	}
+
+	/**
+	 * Populate the objects list into objects.list file
+	 *
+	 * @throws CoreException
+	 */
+	private void populateObjectsList() throws CoreException {
+		IPath buildRoot = getBuildWorkingDir();
+
+		// Now create the directory
+		IPath moduleOutputDir = createDirectory(buildRoot.toString());
+
+		// Create a module makefile
+		IFile objectsListFile = createFile(moduleOutputDir.append(OBJECTS_CLA));
+		StringBuffer makeBuf = new StringBuffer();
+		// Add object files (double quote to fix path with spaces)
+		for (String str : getObjectList()) {
+			makeBuf.append(DOUBLE_QUOTE).append(str.trim()).append(DOUBLE_QUOTE).append(NEWLINE);
+		}
+
+		// Save the files
+		save(makeBuf, objectsListFile);
 	}
 
 	private void ensureTopBuildDir() throws CoreException {

@@ -37,20 +37,20 @@ new.log \
 all: test30_2.tmp
 
 # Tool invocations
-test30_2.tmp: $(LOGFILE) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+test30_2.tmp: $(LOGFILE) makefile objects.mk objects.cla $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: cat'
 	cat $(LOGFILE)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-new.tar: $(CPP_SRCS) $(ASM_SRCS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+new.tar: $(CPP_SRCS) $(ASM_SRCS) makefile objects.mk objects.cla $(OPTIONAL_TOOL_DEPS)
 	@echo 'Invoking: tar-create'
 	tar -cf new.tar $(CPP_SRCS) $(ASM_SRCS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-new.log: $(TAROUT) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+new.log: $(TAROUT) makefile objects.mk objects.cla $(OPTIONAL_TOOL_DEPS)
 	@echo 'Invoking: tar-list'
 	tar -tf $(TAROUT) > new.log
 	@echo 'Finished building: $@'

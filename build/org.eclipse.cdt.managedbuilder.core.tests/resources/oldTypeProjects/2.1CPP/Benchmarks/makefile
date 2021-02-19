@@ -35,6 +35,11 @@ endif
 
 -include ../makefile.defs
 
+BUILD_ARTIFACT_NAME :=Test21CXX
+BUILD_ARTIFACT_EXTENSION :=
+BUILD_ARTIFACT_PREFIX :=
+BUILD_ARTIFACT :=$(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
+
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target

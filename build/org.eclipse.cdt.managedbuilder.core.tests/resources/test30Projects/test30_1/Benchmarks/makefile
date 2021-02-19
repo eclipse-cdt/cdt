@@ -19,6 +19,11 @@ endif
 
 -include ../makefile.defs
 
+BUILD_ARTIFACT_NAME :=Test30_1
+BUILD_ARTIFACT_EXTENSION :=so
+BUILD_ARTIFACT_PREFIX :=
+BUILD_ARTIFACT :=$(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
+
 # Add inputs and outputs from these tool invocations to the build variables 
 TEST30_1_GNU_SO_DEPLOY_OUTPUT_OUTPUTS += \
 default.so.4.5.6 \

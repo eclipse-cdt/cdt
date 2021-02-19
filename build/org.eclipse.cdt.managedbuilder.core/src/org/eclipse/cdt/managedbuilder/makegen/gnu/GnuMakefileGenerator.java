@@ -106,6 +106,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 /**
  * This is a specialized makefile generator that takes advantage of the
  * extensions present in Gnu Make.
+ * <p>
+ * If sub-classing and using {@link DefaultGCCDependencyCalculator3}, make sure to also override
+ * {@link DefaultGCCDependencyCalculator3#createMakefileGenerator()} to return the appropriate result.
  *
  * @since 1.2
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -3482,6 +3485,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return h.outputExtensionsSet;
 	}
 
+	@Deprecated
+	static public boolean populateDummyTargets(IConfiguration cfg, IFile makefile, boolean force)
+			throws CoreException, IOException {
+		return new GnuMakefileGenerator().generateDummyTargets(cfg, makefile, force);
+	}
+
 	/**
 	 *  This method postprocesses a .d file created by a build.
 	 *  It's main job is to add dummy targets for the header files dependencies.
@@ -3495,13 +3504,23 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *  checks for to determine if this dependency file has already been updated.
 	 *
 	 * @return a <code>true</code> if the dependency file is modified
+	 * @since 9.3
 	 */
-	static public boolean populateDummyTargets(IConfiguration cfg, IFile makefile, boolean force)
+	public boolean generateDummyTargets(IConfiguration cfg, IFile makefile, boolean force)
 			throws CoreException, IOException {
-		return populateDummyTargets(cfg.getRootFolderInfo(), makefile, force);
+		return generateDummyTargets(cfg.getRootFolderInfo(), makefile, force);
 	}
 
+	@Deprecated
 	static public boolean populateDummyTargets(IResourceInfo rcInfo, IFile makefile, boolean force)
+			throws CoreException, IOException {
+		return new GnuMakefileGenerator().generateDummyTargets(rcInfo, makefile, force);
+	}
+
+	/**
+	 * @since 9.3
+	 */
+	public boolean generateDummyTargets(IResourceInfo rcInfo, IFile makefile, boolean force)
 			throws CoreException, IOException {
 
 		if (makefile == null || !makefile.exists())
@@ -3695,20 +3714,33 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 	static public String ECHO_BLANK_LINE = ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE;
 
+	@Deprecated
+	static protected StringBuffer addDefaultHeader() {
+		return new GnuMakefileGenerator().addHeader();
+	}
+
 	/**
 	 * Outputs a comment formatted as follows:
 	 * ##### ....... #####
 	 * # <Comment message>
 	 * ##### ....... #####
+	 * @since 9.3
 	 */
-	static protected StringBuffer addDefaultHeader() {
+	protected StringBuffer addHeader() {
 		StringBuffer buffer = new StringBuffer();
 		outputCommentLine(buffer);
 		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(HEADER))
 				.append(NEWLINE);
+		addCustomHeader(buffer);
 		outputCommentLine(buffer);
 		buffer.append(NEWLINE);
 		return buffer;
+	}
+
+	/**
+	 * @since 9.3
+	 */
+	protected void addCustomHeader(StringBuffer buffer) {
 	}
 
 	/**

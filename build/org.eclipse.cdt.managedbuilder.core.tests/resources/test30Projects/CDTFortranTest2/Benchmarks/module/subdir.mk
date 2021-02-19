@@ -69,7 +69,7 @@ OBJS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-module/%.obj: ../module/%.f90
+module/%.obj: ../module/%.f90 module/subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: Test Fortran Compiler'
 	myfort  -c -object:"$@" "$<"

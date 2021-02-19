@@ -17,7 +17,7 @@ C_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-f1.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f1.c
+f1.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f1.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: compiler.gnu.c'
 	gcc -O0 -g3 -Wall -c -fmessage-length=0 -o "$@" "$<" && \
@@ -26,7 +26,7 @@ f1.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f1.c
 	@echo 'Finished building: $<'
 	@echo ' '
 
-f2.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f2.c
+f2.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f2.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: compiler.gnu.c'
 	gcc -O0 -g3 -Wall -c -fmessage-length=0 -o "$@" "$<" && \

@@ -14,7 +14,7 @@ C_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-main\ with\ spaces.o: ../main\ with\ spaces.c
+main\ with\ spaces.o: ../main\ with\ spaces.c subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
 	gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"main with spaces.d" -MT"$@" -o "$@" "$<"

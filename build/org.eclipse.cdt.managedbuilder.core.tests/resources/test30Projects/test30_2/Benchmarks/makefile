@@ -14,6 +14,12 @@ RM := rm -rf
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := test30_2
 BUILD_ARTIFACT_EXTENSION := tmp
 BUILD_ARTIFACT_PREFIX :=
@@ -31,20 +37,20 @@ new.log \
 all: test30_2.tmp
 
 # Tool invocations
-test30_2.tmp: $(LOGFILE)
+test30_2.tmp: $(LOGFILE) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: cat'
 	cat $(LOGFILE)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-new.tar: $(CPP_SRCS) $(ASM_SRCS)
+new.tar: $(CPP_SRCS) $(ASM_SRCS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 	@echo 'Invoking: tar-create'
 	tar -cf new.tar $(CPP_SRCS) $(ASM_SRCS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-new.log: $(TAROUT)
+new.log: $(TAROUT) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 	@echo 'Invoking: tar-list'
 	tar -tf $(TAROUT) > new.log
 	@echo 'Finished building: $@'

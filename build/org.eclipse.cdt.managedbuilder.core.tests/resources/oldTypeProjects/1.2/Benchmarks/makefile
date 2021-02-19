@@ -34,6 +34,12 @@ endif
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := test12
 BUILD_ARTIFACT_EXTENSION := exe
 BUILD_ARTIFACT_PREFIX :=
@@ -45,7 +51,7 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: test12.exe
 
 # Tool invocations
-test12.exe: $(OBJS) $(USER_OBJS)
+test12.exe: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cygwin C++ Linker'
 	g++  -o "test12.exe" $(OBJS) $(USER_OBJS) $(LIBS)

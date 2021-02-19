@@ -14,7 +14,7 @@ CPP_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-dir1/dd/excluded_c/%.o: ../dir1/dd/excluded_c/%.cpp
+dir1/dd/excluded_c/%.o: ../dir1/dd/excluded_c/%.cpp dir1/dd/excluded_c/subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: Test 4.0 ToolName.compiler.gnu.cpp'
 	g++ -O2 -g -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"

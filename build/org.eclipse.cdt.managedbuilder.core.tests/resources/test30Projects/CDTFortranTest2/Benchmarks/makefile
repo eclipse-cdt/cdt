@@ -15,6 +15,12 @@ RM := rm -rf
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := CDTFortranTest2
 BUILD_ARTIFACT_EXTENSION :=
 BUILD_ARTIFACT_PREFIX :=
@@ -26,7 +32,7 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: CDTFortranTest2
 
 # Tool invocations
-CDTFortranTest2: $(OBJS) $(USER_OBJS)
+CDTFortranTest2: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Linker'
 	mylink  -o "CDTFortranTest2" $(OBJS) $(USER_OBJS) $(LIBS)

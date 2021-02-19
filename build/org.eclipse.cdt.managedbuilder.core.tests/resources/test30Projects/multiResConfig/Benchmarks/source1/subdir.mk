@@ -14,7 +14,7 @@ CPP_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-source1/%.o: ../source1/%.cpp
+source1/%.o: ../source1/%.cpp source1/subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: MBS30.compiler.gnu.cpp'
 	g++ -I../headers -O0 -g3 -Wall -c -fmessage-length=0 -o "$@" "$<" && \

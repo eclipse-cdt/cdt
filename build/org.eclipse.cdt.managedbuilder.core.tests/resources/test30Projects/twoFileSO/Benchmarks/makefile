@@ -19,6 +19,12 @@ endif
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := twoFileSO
 BUILD_ARTIFACT_EXTENSION := SOS
 BUILD_ARTIFACT_PREFIX := lib
@@ -30,7 +36,7 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: libtwoFileSO.SOS
 
 # Tool invocations
-libtwoFileSO.SOS: $(OBJS) $(USER_OBJS)
+libtwoFileSO.SOS: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.linker.gnu.c'
 	gcc -shared -o "libtwoFileSO.SOS" $(OBJS) $(USER_OBJS) $(LIBS)

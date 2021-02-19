@@ -14,7 +14,7 @@ CPP_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-Functions/%.o: ../Functions/%.cpp
+Functions/%.o: ../Functions/%.cpp Functions/subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
 	g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"

@@ -19,6 +19,12 @@ endif
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := Test30_1
 BUILD_ARTIFACT_EXTENSION := so.4.5.6
 BUILD_ARTIFACT_PREFIX :=
@@ -36,7 +42,7 @@ test30_1.so.1.2.3 \
 all: Test30_1.so.4.5.6 secondary-outputs
 
 # Tool invocations
-Test30_1.so.4.5.6: $(EXECUTABLES)
+Test30_1.so.4.5.6: $(EXECUTABLES) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Deploy tool'
 	cp $(EXECUTABLES) "Test30_1.so.4.5.6"
@@ -45,7 +51,7 @@ Test30_1.so.4.5.6: $(EXECUTABLES)
 
 default.so.4.5.6: Test30_1.so.4.5.6 $(EXECUTABLES)
 
-test30_1.so.1.2.3: $(STRIPPEDOBJS)
+test30_1.so.1.2.3: $(STRIPPEDOBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Invoking: MBS30.linker.gnu.c'
 	gcc -shared -Wl,-soname=test30_1.so.1.2.3 -o "test30_1.so.1.2.3" $(STRIPPEDOBJS)
 	@echo 'Finished building: $@'

@@ -13,6 +13,12 @@ RM := rm
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := testMacroSupportInBuildDefinitions
 BUILD_ARTIFACT_EXTENSION := tar
 BUILD_ARTIFACT_PREFIX :=
@@ -24,7 +30,7 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: testMacroSupportInBuildDefinitions.tar
 
 # Tool invocations
-testMacroSupportInBuildDefinitions.tar: $(BAR_FILES)
+testMacroSupportInBuildDefinitions.tar: $(BAR_FILES) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Bar Tool'
 	tar cvf $@ $(BAR_FILES)

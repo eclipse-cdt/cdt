@@ -20,7 +20,7 @@ C_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-%.o: ../%.c C:/An\ Absolute\ Path\ With\ Spaces/foo.compiler C:/An\ Absolute\ Path\ With\ Spaces/foo.noquotes.compiler
+%.o: ../%.c C:/An\ Absolute\ Path\ With\ Spaces/foo.compiler C:/An\ Absolute\ Path\ With\ Spaces/foo.noquotes.compiler subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.compiler'
 	gcc -O3 -Wall -c -fmessage-length=0 -v --compilerInputTypeOption="C:\An Absolute Path With Spaces\foo.compiler" --compilerInputTypeOption=C:\An Absolute Path With Spaces\foo.noquotes.compiler -o "$@" "$<" && \
@@ -29,7 +29,7 @@ C_DEPS += \
 	@echo 'Finished building: $<'
 	@echo ' '
 
-resourceSettingAbsoluteCompiler.o: ../resourceSettingAbsoluteCompiler.c D:/An\ Absolute\ Path\ With\ Spaces/resource.foo.compiler D:/An\ Absolute\ Path\ With\ Spaces/resource.foo.noquotes.compiler
+resourceSettingAbsoluteCompiler.o: ../resourceSettingAbsoluteCompiler.c D:/An\ Absolute\ Path\ With\ Spaces/resource.foo.compiler D:/An\ Absolute\ Path\ With\ Spaces/resource.foo.noquotes.compiler subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.compiler'
 	gcc -O3 -Wall -c -fmessage-length=0 -v --compilerInputTypeOption="D:\An Absolute Path With Spaces\resource.foo.compiler" --compilerInputTypeOption=D:\An Absolute Path With Spaces\resource.foo.noquotes.compiler -o "$@" "$<" && \
@@ -38,7 +38,7 @@ resourceSettingAbsoluteCompiler.o: ../resourceSettingAbsoluteCompiler.c D:/An\ A
 	@echo 'Finished building: $<'
 	@echo ' '
 
-resourceSettingRelativeCompiler.o: ../resourceSettingRelativeCompiler.c ../A\ Folder\ With\ Spaces/foo.compiler ../A\ Folder\ With\ Spaces/foo.noquotes.compiler
+resourceSettingRelativeCompiler.o: ../resourceSettingRelativeCompiler.c ../A\ Folder\ With\ Spaces/foo.compiler ../A\ Folder\ With\ Spaces/foo.noquotes.compiler subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.compiler'
 	gcc -O3 -Wall -c -fmessage-length=0 -v --compilerInputTypeOption="A Folder With Spaces/foo.compiler" --compilerInputTypeOption=A Folder With Spaces/foo.noquotes.compiler -o "$@" "$<" && \

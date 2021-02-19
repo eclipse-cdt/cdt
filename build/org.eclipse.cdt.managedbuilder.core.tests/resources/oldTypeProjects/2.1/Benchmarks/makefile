@@ -20,6 +20,12 @@ endif
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := MBS2dot1
 BUILD_ARTIFACT_EXTENSION := exe
 BUILD_ARTIFACT_PREFIX :=
@@ -31,7 +37,7 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: MBS2dot1.exe
 
 # Tool invocations
-MBS2dot1.exe: $(OBJS) $(USER_OBJS)
+MBS2dot1.exe: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
 	gcc  -o "MBS2dot1.exe" $(OBJS) $(USER_OBJS) $(LIBS)

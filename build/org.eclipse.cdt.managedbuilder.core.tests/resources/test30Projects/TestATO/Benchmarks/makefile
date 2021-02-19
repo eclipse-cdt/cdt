@@ -13,6 +13,12 @@ RM := rm -rf
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := TestATO
 BUILD_ARTIFACT_EXTENSION := out
 BUILD_ARTIFACT_PREFIX :=
@@ -24,7 +30,7 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 all: TestATO.out
 
 # Tool invocations
-TestATO.out: $(OBJS) $(OPT_SRCS)
+TestATO.out: $(OBJS) $(OPT_SRCS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: AssignToOption Executable Linker'
 	ATOL -opt../TestATO1.opt -opt../TestATO2.opt -o "TestATO.out" $(OBJS)

@@ -20,6 +20,12 @@ endif
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := TestCopyandDeploy
 BUILD_ARTIFACT_EXTENSION :=
 BUILD_ARTIFACT_PREFIX :=
@@ -34,14 +40,14 @@ USER_OBJS.foo \
 all: TestCopyandDeploy
 
 # Tool invocations
-TestCopyandDeploy: $(EXECUTABLES)
+TestCopyandDeploy: $(EXECUTABLES) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Deploy tool'
 	cp $(EXECUTABLES) "TestCopyandDeploy"
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-USER_OBJS.foo: $(OBJS) $(USER_OBJS)
+USER_OBJS.foo: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Invoking: MBS30.linker.gnu.c'
 	gcc  -o "USER_OBJS.foo" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building: $@'

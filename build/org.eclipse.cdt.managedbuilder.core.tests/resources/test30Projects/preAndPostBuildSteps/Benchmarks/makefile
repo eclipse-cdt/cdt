@@ -31,6 +31,12 @@ endif
 
 -include ../makefile.defs
 
+OPTIONAL_TOOL_DEPS := \
+$(wildcard ../makefile.defs) \
+$(wildcard ../makefile.init) \
+$(wildcard ../makefile.targets) \
+
+
 BUILD_ARTIFACT_NAME := preAndPostBuildSteps
 BUILD_ARTIFACT_EXTENSION :=
 BUILD_ARTIFACT_PREFIX :=
@@ -47,7 +53,7 @@ all:
 main-build: preAndPostBuildSteps
 
 # Tool invocations
-preAndPostBuildSteps: $(OBJS) $(USER_OBJS)
+preAndPostBuildSteps: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.linker.gnu.cpp'
 	g++  -o "preAndPostBuildSteps" $(OBJS) $(USER_OBJS) $(LIBS)

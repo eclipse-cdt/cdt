@@ -1263,6 +1263,61 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// Include makefile.defs supplemental makefile
 		buffer.append("-include ").append(reachProjectRoot()).append(SEPARATOR).append(MAKEFILE_DEFS).append(NEWLINE); //$NON-NLS-1$
 
+		String ext = config.getArtifactExtension();
+		// try to resolve the build macros in the artifact extension
+		try {
+			ext = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(ext, EMPTY_STRING,
+					WHITESPACE, IBuildMacroProvider.CONTEXT_CONFIGURATION, config);
+		} catch (BuildMacroException e) {
+		}
+
+		String name = config.getArtifactName();
+		// try to resolve the build macros in the artifact name
+		try {
+			String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(name,
+					EMPTY_STRING, WHITESPACE, IBuildMacroProvider.CONTEXT_CONFIGURATION, config);
+			if ((resolved = resolved.trim()).length() > 0) {
+				name = resolved;
+			}
+		} catch (BuildMacroException e) {
+		}
+
+		String prefix = EMPTY_STRING;
+		ITool targetTool = config.calculateTargetTool();
+		if (targetTool != null) {
+			prefix = targetTool.getOutputPrefix();
+			if (prefix == null) {
+				prefix = EMPTY_STRING;
+			}
+		}
+		// try to resolve the build macros in the artifact prefix
+		try {
+			String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(prefix,
+					EMPTY_STRING, WHITESPACE, IBuildMacroProvider.CONTEXT_CONFIGURATION, config);
+			if ((resolved = resolved.trim()).length() > 0) {
+				prefix = resolved;
+			}
+		} catch (BuildMacroException e) {
+		}
+
+		@SuppressWarnings("nls")
+		String[][] buildArtifactVars = new String[][] { //
+				{ "BUILD_ARTIFACT_NAME", name }, //
+				{ "BUILD_ARTIFACT_EXTENSION", ext }, //
+				{ "BUILD_ARTIFACT_PREFIX", prefix }, //
+				{ "BUILD_ARTIFACT",
+						"$(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)" }, //
+		};
+
+		buffer.append(NEWLINE);
+		for (String[] var : buildArtifactVars) {
+			buffer.append(var[0]).append(" :="); //$NON-NLS-1$
+			if (!var[1].isEmpty()) {
+				buffer.append(WHITESPACE).append(var[1]);
+			}
+			buffer.append(NEWLINE);
+		}
+
 		return (buffer.append(NEWLINE));
 	}
 

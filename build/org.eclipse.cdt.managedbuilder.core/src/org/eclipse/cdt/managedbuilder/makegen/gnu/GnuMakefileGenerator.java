@@ -1263,6 +1263,50 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// Include makefile.defs supplemental makefile
 		buffer.append("-include ").append(reachProjectRoot()).append(SEPARATOR).append(MAKEFILE_DEFS).append(NEWLINE); //$NON-NLS-1$
 
+		String ext = config.getArtifactExtension();
+		// try to resolve the build macros in the artifact extension
+		try {
+			ext = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(ext, EMPTY_STRING,
+					WHITESPACE, IBuildMacroProvider.CONTEXT_CONFIGURATION, config);
+		} catch (BuildMacroException e) {
+		}
+
+		String name = config.getArtifactName();
+		// try to resolve the build macros in the artifact name
+		try {
+			String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(name,
+					EMPTY_STRING, WHITESPACE, IBuildMacroProvider.CONTEXT_CONFIGURATION, config);
+			if ((resolved = resolved.trim()).length() > 0) {
+				name = resolved;
+			}
+		} catch (BuildMacroException e) {
+		}
+
+		String prefix = EMPTY_STRING;
+		ITool targetTool = config.calculateTargetTool();
+		if (targetTool != null) {
+			prefix = targetTool.getOutputPrefix();
+			if (prefix == null) {
+				prefix = EMPTY_STRING;
+			}
+		}
+		// try to resolve the build macros in the artifact prefix
+		try {
+			String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(prefix,
+					EMPTY_STRING, WHITESPACE, IBuildMacroProvider.CONTEXT_CONFIGURATION, config);
+			if ((resolved = resolved.trim()).length() > 0) {
+				prefix = resolved;
+			}
+		} catch (BuildMacroException e) {
+		}
+
+		buffer.append(NEWLINE);
+		buffer.append("BUILD_ARTIFACT_NAME := ").append(name).append(NEWLINE); //$NON-NLS-1$
+		buffer.append("BUILD_ARTIFACT_EXTENSION := ").append(ext).append(NEWLINE); //$NON-NLS-1$
+		buffer.append("BUILD_ARTIFACT_PREFIX := ").append(prefix).append(NEWLINE); //$NON-NLS-1$
+		buffer.append("BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME).$(BUILD_ARTIFACT_EXTENSION)") //$NON-NLS-1$
+				.append(NEWLINE);
+
 		return (buffer.append(NEWLINE));
 	}
 

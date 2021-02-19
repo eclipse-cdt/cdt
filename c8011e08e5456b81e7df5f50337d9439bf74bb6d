@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b2943a72_4024c43a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3480,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-19T19:30:53Z",
+      "side": 1,
+      "message": "Does this change give you an API error? I think it should. See \"Change static to non-static\" in https://wiki.eclipse.org/Evolving_Java-based_APIs_2#Evolving_API_classes_-_API_methods_and_constructors",
+      "revId": "c8011e08e5456b81e7df5f50337d9439bf74bb6d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

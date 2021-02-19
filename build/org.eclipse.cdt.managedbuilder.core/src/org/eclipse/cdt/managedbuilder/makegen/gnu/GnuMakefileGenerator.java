@@ -106,6 +106,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 /**
  * This is a specialized makefile generator that takes advantage of the
  * extensions present in Gnu Make.
+ * <p>
+ * If sub-classing and using {@link DefaultGCCDependencyCalculator3}, make sure to also override
+ * {@link DefaultGCCDependencyCalculator3#createMakefileGenerator()} to return the appropriate result.
  *
  * @since 1.2
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -3474,12 +3477,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *
 	 * @return a <code>true</code> if the dependency file is modified
 	 */
-	static public boolean populateDummyTargets(IConfiguration cfg, IFile makefile, boolean force)
+	public boolean populateDummyTargets(IConfiguration cfg, IFile makefile, boolean force)
 			throws CoreException, IOException {
 		return populateDummyTargets(cfg.getRootFolderInfo(), makefile, force);
 	}
 
-	static public boolean populateDummyTargets(IResourceInfo rcInfo, IFile makefile, boolean force)
+	public boolean populateDummyTargets(IResourceInfo rcInfo, IFile makefile, boolean force)
 			throws CoreException, IOException {
 
 		if (makefile == null || !makefile.exists())
@@ -3679,7 +3682,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * # <Comment message>
 	 * ##### ....... #####
 	 */
-	static protected StringBuffer addDefaultHeader() {
+	protected StringBuffer addDefaultHeader() {
 		StringBuffer buffer = new StringBuffer();
 		outputCommentLine(buffer);
 		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(HEADER))

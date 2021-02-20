@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f3144f0_8ce08fab",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-02-20T09:24:17Z",
+      "side": 1,
+      "message": "Can we use a less generic file suffix? The GCC documentation refers to reading \"command line options\" from file.",
+      "range": {
+        "startLine": 344,
+        "startChar": 62,
+        "endLine": 344,
+        "endChar": 66
+      },
+      "revId": "c69d59c61821f807d88c8261419b35da5930a460",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b75d8a72_c53e0174",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4745,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-02-20T09:24:17Z",
+      "side": 1,
+      "message": "Are there cases where the object may already be double quoted?",
+      "range": {
+        "startLine": 4745,
+        "startChar": 3,
+        "endLine": 4745,
+        "endChar": 87
+      },
+      "revId": "c69d59c61821f807d88c8261419b35da5930a460",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "5a6d654f_34cea69a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-02-22T20:48:26Z",
+      "side": 1,
+      "message": "I did not have any specific suffix in mind. Perhaps .clo (command line options) or .cla (command line arguments)?",
+      "parentUuid": "7908871e_b3df4de9",
+      "range": {
+        "startLine": 344,
+        "startChar": 62,
+        "endLine": 344,
+        "endChar": 66
+      },
+      "revId": "c69d59c61821f807d88c8261419b35da5930a460",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b75d8a72_c53e0174",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 1

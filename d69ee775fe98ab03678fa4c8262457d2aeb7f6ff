@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2d0ff3fb_2ab960b7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/DefaultGCCDependencyCalculator2Commands.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-22T15:37:01Z",
+      "side": 1,
+      "message": "This option does not appear to be needed in recent versions of GCC, but in order to not jeopardize behavior in old versions, lets keep it.",
+      "range": {
+        "startLine": 178,
+        "startChar": 2,
+        "endLine": 178,
+        "endChar": 41
+      },
+      "revId": "d69ee775fe98ab03678fa4c8262457d2aeb7f6ff",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

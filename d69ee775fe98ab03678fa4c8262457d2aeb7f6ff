@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "c4913b17_c01e0ac0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalcPreBuild/Benchmarks/subdir.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-22T16:47:19Z",
+      "side": 1,
+      "message": "According to the GCC documentation, it\u0027s fine to supply -MT more than once to generate several build targets with the same dep. list.\nThis particular test does not use the DefaultGCCDependencyCalculator2Commands and should thus be left as-is. PS2 has removed the changes to this project.",
+      "parentUuid": "a92b732b_727c10c8",
+      "revId": "d69ee775fe98ab03678fa4c8262457d2aeb7f6ff",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2d0ff3fb_2ab960b7",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/DefaultGCCDependencyCalculator2Commands.java",
         "patchSetId": 1

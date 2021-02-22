@@ -23,7 +23,7 @@ main.o: ../main.c
 
 main.d: ../main.c
 	@echo 'Regenerating dependency file: $@'
-	gcc -w -MM -MP -MT"main.d" -MT"main.o" -I../Headers -I../Sources/sub\ sources -MF "$@" "$<"
+	gcc -w -MM -MP -MT"$@" -MT"$@" -I../Headers -I../Sources/sub\ sources -MF "$@" "$<"
 	@echo ' '
 
 

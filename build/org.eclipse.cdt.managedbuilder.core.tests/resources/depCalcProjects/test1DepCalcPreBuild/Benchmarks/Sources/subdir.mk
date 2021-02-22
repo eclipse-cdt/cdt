@@ -29,7 +29,7 @@ Sources/%.o: ../Sources/%.c
 
 Sources/%.d: ../Sources/%.c
 	@echo 'Regenerating dependency file: $@'
-	gcc -w -MM -MP -MT"$@" -MT"$(@:%.d=%.o)" -I../Headers -I../Sources/sub\ sources -MF "$@" "$<"
+	gcc -w -MM -MP -MT"$@" -MT"$@" -I../Headers -I../Sources/sub\ sources -MF "$@" "$<"
 	@echo ' '
 
 

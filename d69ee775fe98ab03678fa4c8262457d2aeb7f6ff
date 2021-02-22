@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "93e5cc28_bf145f19",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalcPreBuild/Benchmarks/subdir.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-22T16:55:45Z",
+      "side": 1,
+      "message": "To make it easier in the future; This test case uses DefaultGCCDependencyCalculatorPreBuildCommands that contains the following snippet:\n\n\t\tif (buildContext instanceof IResourceConfiguration || needExplicitRuleForFile) {\n\t\t\tIPath outPath \u003d getDependencyFiles()[0];\n\t\t\t// -MT\"dependecy-file-name\"\n\t\t\toptTxt \u003d \"-MT\\\"\"; //$NON-NLS-1$\n\t\t\toptTxt +\u003d GnuMakefileGenerator.escapeWhitespaces(outPath.toString()) + \"\\\"\"; //$NON-NLS-1$\n\t\t\toptions.add(optTxt);\n\t\t\t// -MT\"object-file-filename\"\n\t\t\toptTxt \u003d \"-MT\\\"\"; //$NON-NLS-1$\n\t\t\toptTxt +\u003d GnuMakefileGenerator.escapeWhitespaces((outPath.removeFileExtension()).toString());\n\t\t\tString outExt \u003d tool.getOutputExtension(source.getFileExtension());\n\t\t\tif (outExt !\u003d null)\n\t\t\t\toptTxt +\u003d \".\" + outExt; //$NON-NLS-1$\n\t\t\toptTxt +\u003d \"\\\"\"; //$NON-NLS-1$\n\t\t\toptions.add(optTxt);\n\t\t} else {\n\t\t\t// -MT\"$@\"\n\t\t\toptions.add(\"-MT\\\"$@\\\"\"); //$NON-NLS-1$\n\t\t\t// -MT\u0027$(@:%.d\u003d%.o)\u0027\n\t\t\toptTxt \u003d \"-MT\\\"$(@:%.d\u003d%.o)\\\"\"; //$NON-NLS-1$\n\t\t\t//optTxt \u003d \"-MT\\\"${OutputDirRelPath}${OutputFileBaseName}\";\n\t\t\t//if (outExt !\u003d null) optTxt +\u003d \".\" + outExt;\n\t\t\t//optTxt +\u003d \"\\\"\"; \t\t\t\t\t\t//$NON-NLS-1$\n\t\t\toptions.add(optTxt);\n\t\t}\n\nI don\u0027t know why they are hard coding the target file instead of using $@. $@ seams so much easier to achieve the same result.\nIf the .d file should be there or not is a different story...\nMaybe it makes sense to have both, but if that\u0027s the case, why doesn\u0027t GCC generate that by default?",
+      "parentUuid": "c4913b17_c01e0ac0",
+      "revId": "d69ee775fe98ab03678fa4c8262457d2aeb7f6ff",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2d0ff3fb_2ab960b7",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/DefaultGCCDependencyCalculator2Commands.java",
         "patchSetId": 1

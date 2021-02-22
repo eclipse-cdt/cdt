@@ -126,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "d12f6d92_88340502",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalc2/Benchmarks/makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-22T18:56:44Z",
+      "side": 1,
+      "message": "I think so.",
+      "parentUuid": "4e693e2f_e8a6a679",
+      "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1bd18501_81c4fb45",
         "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalc2/Benchmarks/makefile",
         "patchSetId": 3
@@ -146,6 +164,30 @@
       "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b31779a7_82cb1979",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalc2/Benchmarks/makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-22T18:56:44Z",
+      "side": 1,
+      "message": "I think that adding/removing these optional makefiles can require user to do clean build. If there was better docs for this I would say adding something to the docs to say this would be worthwhile.\n\nOff the top of my head (i.e I thought about this for about a minute), the way I would resolve this is to, when generating the Makefile, check if the optional files exist and make OPTIONAL_TOOL_DEPS :\u003d to the found files only. That would mean adding/removing the files would cause the Makefile to be modified and that would force the build.\n\nHowever those corner cases are not terribly important I think, so I will mark this as resolved.",
+      "parentUuid": "1bd18501_81c4fb45",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 33
+      },
+      "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {

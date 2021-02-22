@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "f2a5f25b_f45943d9",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalc2/Benchmarks/makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-22T16:11:49Z",
+      "side": 1,
+      "message": "This one is probably fine to omit. I looked deeper and org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator.populateSourcesMakefile(IFile) which creates the file never assigns any values to the variables defined in it, except SUBDIRS, but SUBDIRS is not read anywhere in  the other makefiles (its probably a bit of legacy left over)",
+      "parentUuid": "68a4f295_9849d2ad",
+      "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fe6fbeb7_6269b4cc",
         "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalc2/Benchmarks/makefile",
         "patchSetId": 3
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Same as sources.mk above.",
       "parentUuid": "fe6fbeb7_6269b4cc",
+      "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83b3f7d5_d62ce0dc",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalc2/Benchmarks/makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-22T16:11:49Z",
+      "side": 1,
+      "message": "objects.mk has the contents of C/C++ Linker -\u003e Libraries and Misc settings. Changes to these settings in CDT are handled by other \"magic\"*\n\nSo it is probably ok to leave this one out now, but what it actually affects is just the final executable.\n\n* The magic is org.eclipse.cdt.managedbuilder.internal.core.CommonBuilder.performCleanning(int, CfgBuildInfo, BuildStatus, IProgressMonitor) -- which is a whole complicated mess that tries to delete files that CDT \"knows\"* is out of date, but that the Makefile won\u0027t retrigger on. However because of the overlap with the internal builder in some of these cases, it may very well be that this code is needed for the internal builder case. \n\n* The way CDT knows is tied to the UI which sets org.eclipse.cdt.managedbuilder.internal.core.Option.rebuildState to true in the various org.eclipse.cdt.managedbuilder.internal.core.Option.setValue methods.\n\nThe problem with \"knows\" is that CDT won\u0027t try to rewrite makefiles that it does not think have changed.",
+      "parentUuid": "ed59ff8c_b2894802",
       "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

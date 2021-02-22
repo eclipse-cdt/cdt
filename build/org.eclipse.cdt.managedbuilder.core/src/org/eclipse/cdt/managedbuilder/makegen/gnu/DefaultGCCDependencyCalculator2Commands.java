@@ -16,7 +16,6 @@ package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
@@ -175,15 +174,8 @@ public class DefaultGCCDependencyCalculator2Commands implements IManagedDependen
 		} else {
 			options[2] = "-MF\"$(@:%.o=%.d)\""; //$NON-NLS-1$
 		}
-		if (buildContext instanceof IResourceConfiguration || needExplicitRuleForFile) {
-			IPath outPath = getDependencyFiles()[0];
-			// -MT"dependency-file-name"
-			String optTxt = "-MT\"" + GnuMakefileGenerator.escapeWhitespaces(outPath.toString()) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-			options[3] = optTxt;
-		} else {
-			// -MT"$(@:%.o=%.d) %.o"
-			options[3] = "-MT\"$(@)\""; //$NON-NLS-1$
-		}
+		// -MT"$@"
+		options[3] = "-MT\"$@\""; //$NON-NLS-1$
 
 		return options;
 	}

@@ -2446,7 +2446,7 @@ public class CPPVisitor extends ASTQueries {
 		// See 6.5.4 The range-based for statement [stmt.ranged]
 		IASTInitializerClause forInit = forStmt.getInitializerClause();
 		IASTExpression beginExpr = null;
-		IType falback = null;
+		IType fallback = null;
 		if (forInit instanceof IASTExpression) {
 			final IASTExpression expr = (IASTExpression) forInit;
 			IType type = SemanticUtil.getNestedType(expr.getExpressionType(), TDEF | CVTYPE);
@@ -2456,7 +2456,7 @@ public class CPPVisitor extends ASTQueries {
 				if (typeTemplate.getTemplateArguments().length > 0) {
 					ICPPTemplateArgument typeTemplateArg = typeTemplate.getTemplateArguments()[0];
 
-					falback = typeTemplateArg.getOriginalTypeValue();
+					fallback = typeTemplateArg.getOriginalTypeValue();
 				}
 			}
 
@@ -2483,7 +2483,7 @@ public class CPPVisitor extends ASTQueries {
 		}
 		IAutoRangeIntitClause autoInitClause = new AutoRangeInitClause(IASTUnaryExpression.op_star, beginExpr);
 		autoInitClause.setParent(forStmt);
-		autoInitClause.setFallbackType(falback);
+		autoInitClause.setFallbackType(fallback);
 		autoInitClause.setPropertyInParent(ICPPASTRangeBasedForStatement.INITIALIZER);
 		return autoInitClause;
 	}

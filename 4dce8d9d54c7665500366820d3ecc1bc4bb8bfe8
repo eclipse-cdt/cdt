@@ -108,6 +108,47 @@
     },
     {
       "key": {
+        "uuid": "4e693e2f_e8a6a679",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalc2/Benchmarks/makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-22T17:10:51Z",
+      "side": 1,
+      "message": "So, then it would make sense to treat it as \"makefile\" and add it to all the tool-nodes?",
+      "parentUuid": "83b3f7d5_d62ce0dc",
+      "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1bd18501_81c4fb45",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalc2/Benchmarks/makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-22T17:10:51Z",
+      "side": 1,
+      "message": "There is also another small hole in this that I do not know how to close.\nWhat if the user adds something to makefile.defs and then build the project. Later on, the user removes the makefile.defs and tries to build again. Since the file is no longer there, the build will ignore the change and will consider the build up to date as the dep. is optional due to the wildcard macro.\nIn order to fully support this, the state (if the file exist or not) need to be preserved cross make invocations. If the ../makefile.defs is always added to the test1DepCalc2 rule, then make will bail on that it does not know how to create ../makefile.defs and we do not want make to even attempt that. If the ../makefile.defs rule is phony, the commands for test1DepCalc2 will always be executed.\nObviously, the same applies to makefile.init, makefile.defs and makefile.targets\n\nI think there might be other similar issues with the makefile.{init,defs,targets} handling, so I did not consider it as important enough to spend more time on, but if you have an idea, please share!",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 33
+      },
+      "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b5d86650_4ab6ccba",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 3

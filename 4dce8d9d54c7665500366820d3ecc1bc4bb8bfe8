@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "066c89b2_920067fd",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalc2/Benchmarks/makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-22T15:05:16Z",
+      "side": 1,
+      "message": "This file does not appear to be in the dependency list of any target.",
+      "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe6fbeb7_6269b4cc",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalc2/Benchmarks/makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-22T15:05:16Z",
+      "side": 1,
+      "message": "This file does not appear to be in the dependency list of any target.",
+      "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5d86650_4ab6ccba",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 829,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-22T15:05:16Z",
+      "side": 1,
+      "message": "This does not reliably read all bytes - use is.readAllBytes(). e.g.:\n\n\t\tbyte[] oldBytes \u003d null;\n\t\ttry (InputStream is \u003d file.getContents(true)) {\n\t\t\toldBytes \u003d is.readAllBytes();\n\t\t} catch (IOException e) {\n\t\t}",
+      "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e056f2bb_e1f75c7d",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 3
@@ -22,6 +73,30 @@
       "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5bf5774f_bbf59546",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-22T15:05:16Z",
+      "side": 1,
+      "message": "Seems fine enough to me",
+      "parentUuid": "e056f2bb_e1f75c7d",
+      "range": {
+        "startLine": 1277,
+        "startChar": 33,
+        "endLine": 1277,
+        "endChar": 51
+      },
+      "revId": "4dce8d9d54c7665500366820d3ecc1bc4bb8bfe8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

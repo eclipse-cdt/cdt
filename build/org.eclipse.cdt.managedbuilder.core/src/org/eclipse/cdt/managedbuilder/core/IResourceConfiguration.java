@@ -228,4 +228,9 @@ public interface IResourceConfiguration extends IResourceInfo {
 	void setRebuildState(boolean rebuild);
 
 	void setTools(ITool[] tools);
+
+	/**
+	 * @since 9.2
+	 */
+	IToolChain getBaseToolChain();
 }

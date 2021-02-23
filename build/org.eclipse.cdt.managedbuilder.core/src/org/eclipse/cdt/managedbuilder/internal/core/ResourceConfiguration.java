@@ -918,6 +918,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		return list.toArray(new BuildLanguageData[list.size()]);
 	}
 
+	@Override
 	public IToolChain getBaseToolChain() {
 		ITool tools[] = getToolsToInvoke();
 		ITool baseTool = null;

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "316406b4_201625b7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/MultiFileInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-23T17:31:49Z",
+      "side": 1,
+      "message": "I\u0027m not sure if this is the appropriate variant to do here, but looking at the other methods in this class, it looks like the way to go.",
+      "range": {
+        "startLine": 166,
+        "startChar": 9,
+        "endLine": 166,
+        "endChar": 33
+      },
+      "revId": "33f89515da889a2ab8a6cc5df66d017992208b15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91a00cc3_62c03192",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-23T17:19:35Z",
+      "side": 1,
+      "message": "Maybe this entire block should be replaced with String.join(WHITESPACE, array);?",
+      "range": {
+        "startLine": 122,
+        "startChar": 2,
+        "endLine": 129,
+        "endChar": 30
+      },
+      "revId": "9eab2b6aec06b520b8b168fdf5d0cc5b5822dd31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34a312bf_816c08f0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-23T17:19:35Z",
+      "side": 1,
+      "message": "This is marked with a warning in my environment:\nManagedCommandLineInfo implements non-API interface IManagedCommandLineInfo\n\nShould I remove \"@noimplement\" from IManagedCommandLineInfo too?",
+      "range": {
+        "startLine": 19,
+        "startChar": 13,
+        "endLine": 19,
+        "endChar": 35
+      },
+      "revId": "9eab2b6aec06b520b8b168fdf5d0cc5b5822dd31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6a907b17_b0f5e961",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-23T17:37:12Z",
+      "side": 1,
+      "message": "+1",
+      "parentUuid": "91a00cc3_62c03192",
+      "range": {
+        "startLine": 122,
+        "startChar": 2,
+        "endLine": 129,
+        "endChar": 30
+      },
+      "revId": "9eab2b6aec06b520b8b168fdf5d0cc5b5822dd31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "34a312bf_816c08f0",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineInfo.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "9eab2b6aec06b520b8b168fdf5d0cc5b5822dd31",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c80dc81e_f29bb8d7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-23T17:37:12Z",
+      "side": 1,
+      "message": "I suspect this is PDE tools being overly warning -\u003e see https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d558477\n\n\u003e Should I remove \"@noimplement\" from IManagedCommandLineInfo too?\n\nNo.",
+      "parentUuid": "34a312bf_816c08f0",
+      "range": {
+        "startLine": 19,
+        "startChar": 13,
+        "endLine": 19,
+        "endChar": 35
+      },
+      "revId": "9eab2b6aec06b520b8b168fdf5d0cc5b5822dd31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -88,7 +88,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.IMatchKeyProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.InputType;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.MatchKey;
@@ -787,7 +786,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		if (tool != null) {
 			return tool.getCommandLineGenerator();
 		}
-		return ManagedCommandLineGenerator.getCommandLineGenerator();
+		return new ManagedCommandLineGenerator();
 	}
 
 	/**

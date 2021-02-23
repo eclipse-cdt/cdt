@@ -18,6 +18,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.core.resources.IResource;
 
 /**
@@ -158,6 +159,11 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 				fi.setTools(tools);
 			}
 		}
+	}
+
+	@Override
+	public IToolChain getBaseToolChain() {
+		return ((IFileInfo) fRis[curr]).getBaseToolChain();
 	}
 
 }

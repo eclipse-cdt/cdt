@@ -11,16 +11,13 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.internal.core;
+package org.eclipse.cdt.managedbuilder.core;
 
-import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
-import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
-import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 
 /**
- * @deprecated Use {@link org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator}
+ * @since 9.2
  */
-@Deprecated
 public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator {
 
 	public final String AT = "@"; //$NON-NLS-1$
@@ -59,8 +56,9 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 	}
 
 	public static ManagedCommandLineGenerator getCommandLineGenerator() {
-		if (cmdLineGen == null)
+		if (cmdLineGen == null) {
 			cmdLineGen = new ManagedCommandLineGenerator();
+		}
 		return cmdLineGen;
 	}
 
@@ -68,19 +66,18 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 		return "${" + variableName + "}"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator#getCommandLineInfo(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String[], java.lang.String)
-	 */
 	@Override
 	public IManagedCommandLineInfo generateCommandLineInfo(ITool tool, String commandName, String[] flags,
 			String outputFlag, String outputPrefix, String outputName, String[] inputResources,
 			String commandLinePattern) {
-		if (commandLinePattern == null || commandLinePattern.length() <= 0)
+		if (commandLinePattern == null || commandLinePattern.length() <= 0) {
 			commandLinePattern = Tool.DEFAULT_PATTERN;
+		}
 
 		// if the output name isn't a variable then quote it
-		if (outputName.length() > 0 && outputName.indexOf("$(") != 0) //$NON-NLS-1$
+		if (outputName.length() > 0 && outputName.indexOf("$(") != 0) { //$NON-NLS-1$
 			outputName = DOUBLE_QUOTE + outputName + DOUBLE_QUOTE;
+		}
 
 		String inputsStr = ""; //$NON-NLS-1$
 		if (inputResources != null) {
@@ -119,12 +116,14 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 	}
 
 	private String stringArrayToString(String[] array) {
-		if (array == null || array.length <= 0)
+		if (array == null || array.length <= 0) {
 			return ""; //$NON-NLS-1$
+		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
-			if (i > 0) // we add whitespace after each but not first so .trim() is a no-op
+			if (i > 0) { // we add whitespace after each but not first so .trim() is a no-op
 				sb.append(WHITESPACE);
+			}
 			sb.append(array[i]);
 		}
 		return sb.toString().trim();

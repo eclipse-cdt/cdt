@@ -25,7 +25,7 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedCommandLineGenerator;
+import org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
@@ -71,13 +71,8 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 		return new TestSuite(ManagedCommandLineGeneratorTest.class);
 	}
 
-	public final void testGetCommandLineGenerator() {
-		IManagedCommandLineGenerator gen = ManagedCommandLineGenerator.getCommandLineGenerator();
-		assertNotNull(gen);
-	}
-
 	public final void testGenerateCommandLineInfoPatterns() {
-		IManagedCommandLineGenerator gen = ManagedCommandLineGenerator.getCommandLineGenerator();
+		IManagedCommandLineGenerator gen = new ManagedCommandLineGenerator();
 		IManagedCommandLineInfo info = null;
 		for (int i = 0; i < testCommandLinePatterns.length; i++) {
 			info = gen.generateCommandLineInfo(null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL,
@@ -90,7 +85,7 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 	}
 
 	public final void testGenerateCommandLineInfoDoublePattern() {
-		IManagedCommandLineGenerator gen = ManagedCommandLineGenerator.getCommandLineGenerator();
+		IManagedCommandLineGenerator gen = new ManagedCommandLineGenerator();
 
 		IManagedCommandLineInfo info = gen.generateCommandLineInfo(null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL,
 				OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, "${OUTPUT_FLAG} ${OUTPUT_FLAG}");
@@ -99,7 +94,7 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 	}
 
 	public final void testGenerateCommandLineInfoParameters() {
-		IManagedCommandLineGenerator gen = ManagedCommandLineGenerator.getCommandLineGenerator();
+		IManagedCommandLineGenerator gen = new ManagedCommandLineGenerator();
 
 		IManagedCommandLineInfo info = gen.generateCommandLineInfo(null, "", FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL,
 				OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, null);

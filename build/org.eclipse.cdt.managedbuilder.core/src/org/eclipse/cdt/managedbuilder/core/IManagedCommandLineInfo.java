@@ -41,7 +41,9 @@ public interface IManagedCommandLineInfo {
 
 	/**
 	 * provide list of resources used by tool for transformation
+	 * @deprecated Useless method that does not handle whitespace properly.
 	 */
+	@Deprecated
 	public String getInputs();
 
 	/**

@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.managedbuilder.core" version="2">
+    <resource path="src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java" type="org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator">
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="ManagedCommandLineGenerator"/>
+                <message_argument value="ManagedCommandLineGenerator"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/cdt/managedbuilder/makegen/gnu/ManagedBuildGnuToolInfo.java" type="org.eclipse.cdt.managedbuilder.makegen.gnu.ManagedBuildGnuToolInfo">
         <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
             <message_arguments>

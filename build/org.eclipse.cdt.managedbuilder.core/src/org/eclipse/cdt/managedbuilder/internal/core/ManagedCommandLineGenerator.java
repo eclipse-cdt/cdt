@@ -17,6 +17,10 @@ import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 
+/**
+ * @deprecated Use {@link org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator}
+ */
+@Deprecated
 public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator {
 
 	public final String AT = "@"; //$NON-NLS-1$

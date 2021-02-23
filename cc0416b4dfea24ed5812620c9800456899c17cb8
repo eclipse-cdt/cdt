@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0f54fdfb_f41af347",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1798,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-23T13:07:50Z",
+      "side": 1,
+      "message": "Can we do this?\nI came half way though all the failed tests with this change when it hit me that the @\"file\" is a GCC syntax and likely not supported by other toolchains. Would this require a new attribute on the Tool instance that tells if it\u0027s able to use the at notation for arguments?",
+      "range": {
+        "startLine": 1797,
+        "startChar": 3,
+        "endLine": 1798,
+        "endChar": 53
+      },
+      "revId": "cc0416b4dfea24ed5812620c9800456899c17cb8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -65,6 +65,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildEntryStorage;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildLanguageData;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
@@ -2190,7 +2191,7 @@ public class Tool extends HoldsOptions
 			} catch (CoreException e) {
 			}
 		}
-		return ManagedCommandLineGenerator.getCommandLineGenerator();
+		return new ManagedCommandLineGenerator();
 	}
 
 	/* (non-Javadoc)

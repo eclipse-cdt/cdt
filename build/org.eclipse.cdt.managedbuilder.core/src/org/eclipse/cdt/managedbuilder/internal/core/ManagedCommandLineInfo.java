@@ -15,6 +15,10 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 
+/**
+ * @deprecated Use {@link org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator}
+ */
+@Deprecated
 public class ManagedCommandLineInfo implements IManagedCommandLineInfo {
 
 	private String commandLine;

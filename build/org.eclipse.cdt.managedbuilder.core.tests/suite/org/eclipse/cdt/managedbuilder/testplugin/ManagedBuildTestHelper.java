@@ -471,7 +471,7 @@ public class ManagedBuildTestHelper {
 						: getFileLocation(project, benchmarkFileLocation);
 				String location2 = testFileLocation.isAbsolute() ? testFileLocation.toString()
 						: getFileLocation(project, testFileLocation);
-				String diff = DiffUtil.getInstance().diff(location1, location2);
+				String diff = DiffUtil.diff(location1, location2);
 				if (diff == null)
 					diff = "!diff failed!";
 				buffer.append(diff);
@@ -796,7 +796,7 @@ public class ManagedBuildTestHelper {
 			buffer.append(">>>>>>>>>>>>>>>start diff: \n");
 			String location1 = getFileLocation(bmFile.getProject(), bmFile.getProjectRelativePath());
 			String location2 = getFileLocation(tFile.getProject(), tFile.getProjectRelativePath());
-			String diff = DiffUtil.getInstance().diff(location1, location2);
+			String diff = DiffUtil.diff(location1, location2);
 			if (diff == null)
 				diff = "!diff failed!";
 			buffer.append(diff);

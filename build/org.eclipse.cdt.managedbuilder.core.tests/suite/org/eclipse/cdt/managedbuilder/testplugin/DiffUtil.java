@@ -18,39 +18,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class DiffUtil {
-	private static final String DIFF_CMD = "diff -ub";
-	private static DiffUtil fInstance;
-
-	private DiffUtil() {
-
-	}
-
-	public static DiffUtil getInstance() {
-		if (fInstance == null)
-			fInstance = new DiffUtil();
-		return fInstance;
-	}
-
-	private static String createCommand(String location1, String location2) {
-		StringBuilder buf = new StringBuilder();
-		buf.append(DIFF_CMD).append(" '").append(location1).append("' '").append(location2).append("'");
-		return buf.toString();
-	}
-
-	public String diff(String location1, String location2) {
-		InputStream in = invokeDiff(location1, location2);
-		if (in == null)
-			return null;
-
-		BufferedReader br;
-		br = new BufferedReader(new InputStreamReader(in));
-		String line;
+public abstract class DiffUtil {
+	public static String diff(String location1, String location2) {
 		StringBuilder buf = new StringBuilder();
 		try {
-			while ((line = br.readLine()) != null) {
-				buf.append("\n");
-				buf.append(line);
+			String[] command = new String[] { "diff", "-ub", location1, location2 };
+			Process p = Runtime.getRuntime().exec(command);
+			InputStream in = p.getInputStream();
+			if (in == null) {
+				return null;
+			}
+
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					buf.append("\n");
+					buf.append(line);
+				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -58,16 +42,5 @@ public class DiffUtil {
 			return null;
 		}
 		return buf.toString();
-	}
-
-	private InputStream invokeDiff(String location1, String location2) {
-		try {
-			Process p = Runtime.getRuntime().exec(createCommand(location1, location2));
-			return p.getInputStream();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
 	}
 }

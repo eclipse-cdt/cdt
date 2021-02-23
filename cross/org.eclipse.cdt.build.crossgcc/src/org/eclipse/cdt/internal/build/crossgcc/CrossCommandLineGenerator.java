@@ -16,10 +16,10 @@ package org.eclipse.cdt.internal.build.crossgcc;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedCommandLineGenerator;
-import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator;
 
 public class CrossCommandLineGenerator extends ManagedCommandLineGenerator {
 
@@ -29,10 +29,11 @@ public class CrossCommandLineGenerator extends ManagedCommandLineGenerator {
 			String commandLinePattern) {
 		IBuildObject parent = tool.getParent();
 		IToolChain toolchain;
-		if (parent instanceof ResourceConfiguration)
-			toolchain = ((ResourceConfiguration) parent).getBaseToolChain();
-		else
+		if (parent instanceof IResourceConfiguration) {
+			toolchain = ((IResourceConfiguration) parent).getBaseToolChain();
+		} else {
 			toolchain = (IToolChain) parent;
+		}
 
 		IOption option = toolchain.getOptionBySuperClassId("cdt.managedbuild.option.gnu.cross.prefix"); //$NON-NLS-1$
 		String prefix = (String) option.getValue();

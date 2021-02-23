@@ -17,6 +17,10 @@ import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 
+/**
+ * @deprecated Use {@link org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator}
+ */
+@Deprecated
 public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator {
 
 	public final String AT = "@"; //$NON-NLS-1$
@@ -48,10 +52,9 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 	public final String OUTPUT_PRM_NAME = "OUTPUT"; //$NON-NLS-1$
 	public final String INPUTS_PRM_NAME = "INPUTS"; //$NON-NLS-1$
 
-	private static ManagedCommandLineGenerator cmdLineGen;
+	private static ManagedCommandLineGenerator cmdLineGen = null;
 
 	protected ManagedCommandLineGenerator() {
-		cmdLineGen = null;
 	}
 
 	public static ManagedCommandLineGenerator getCommandLineGenerator() {

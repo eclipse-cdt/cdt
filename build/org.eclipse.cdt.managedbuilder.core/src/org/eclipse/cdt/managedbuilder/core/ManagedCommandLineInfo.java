@@ -11,14 +11,11 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.internal.core;
-
-import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
+package org.eclipse.cdt.managedbuilder.core;
 
 /**
- * @deprecated Use {@link org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator}
+ * @since 9.2
  */
-@Deprecated
 public class ManagedCommandLineInfo implements IManagedCommandLineInfo {
 
 	private String commandLine;
@@ -42,65 +39,41 @@ public class ManagedCommandLineInfo implements IManagedCommandLineInfo {
 		this.inputResources = inputResources;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getCommandLine()
-	 */
 	@Override
 	public String getCommandLine() {
 		return this.commandLine;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getCommandLinePattern()
-	 */
 	@Override
 	public String getCommandLinePattern() {
 		return this.commandLinePattern;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getCommandName()
-	 */
 	@Override
 	public String getCommandName() {
 		return this.commandName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getFlags()
-	 */
 	@Override
 	public String getFlags() {
 		return this.flags;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getOutputFlag()
-	 */
 	@Override
 	public String getOutputFlag() {
 		return this.outputFlag;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getOutputPrefix()
-	 */
 	@Override
 	public String getOutputPrefix() {
 		return this.outputPrefix;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getOutputName()
-	 */
 	@Override
 	public String getOutput() {
 		return this.outputName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getInputResources()
-	 */
 	@Override
 	public String getInputs() {
 		return this.inputResources;

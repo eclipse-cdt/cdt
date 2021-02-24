@@ -106,6 +106,13 @@ public class CdtVariableResolver {
 		if (string == null) {
 			return EMPTY_STRING;
 		}
+		// Bug 571472 to match historical behaviour, don't substitute multi-line strings
+		// See Pattern javadoc for Line terminators
+		for (char ch : string.toCharArray()) {
+			if (ch == '\n' || ch == '\r' || (ch | 1) == '\u2029' || ch == '\u0085') {
+				return string;
+			}
+		}
 
 		final Pattern pattern = Pattern.compile("(\\$\\{([^${}]*)\\})"); //$NON-NLS-1$
 		final String VARIABLE_PREFIX_MASKED = "$\1"; //$NON-NLS-1$

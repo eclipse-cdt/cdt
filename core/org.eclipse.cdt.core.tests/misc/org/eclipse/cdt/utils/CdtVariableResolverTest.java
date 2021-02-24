@@ -50,6 +50,15 @@ public class CdtVariableResolverTest extends TestCase {
 			if (macroName.equals("LOOP")) {
 				return "${loop}";
 			}
+			if (macroName.equals("VAR1")) {
+				return "var1";
+			}
+			if (macroName.equals("VAR2")) {
+				return "var\n2";
+			}
+			if (macroName.equals("VAR3")) {
+				return "var3";
+			}
 			if (macroName.equals(acceptedChars)) {
 				return "OK";
 			}
@@ -110,6 +119,8 @@ public class CdtVariableResolverTest extends TestCase {
 		assertEquals("#workspace_loc:#Macro1#/#Macro2##", resolveToString("${workspace_loc:${Macro1}/${Macro2}}"));
 		assertEquals("#workspace_loc:#project_loc:/#Macro###",
 				resolveToString("${workspace_loc:${project_loc:/${Macro}}}"));
+		assertEquals("${ignored}\n${multiline}", resolveToString("${ignored}\n${multiline}"));
+		assertEquals("var1 var\n2 var3", resolveToString("${VAR1} ${VAR2} ${VAR3}"));
 
 	}
 

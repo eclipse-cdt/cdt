@@ -95,6 +95,8 @@ public class CdtVariableResolver {
 	 * ${workspace_loc:/${ProjName}/} but resolved just once. No recursive
 	 * macro names are allowed.
 	 * It is not possible to prevent macros from expanding.
+	 * For historical reasons (See Bug 571472), macros that are multi-line according to
+	 * {@link Pattern}'s Line Terminators are not expanded.
 	 *
 	 * @param string - macro expression.
 	 * @param substitutor - macro resolution provider to retrieve macro values.
@@ -105,6 +107,12 @@ public class CdtVariableResolver {
 	static public String resolveToString(String string, IVariableSubstitutor substitutor) throws CdtVariableException {
 		if (string == null) {
 			return EMPTY_STRING;
+		}
+		// Bug 571472 to match historical behaviour, don't substitute multi-line strings
+		for (char ch : string.toCharArray()) {
+			if (ch == '\n' || ch == '\r' || (ch | 1) == '\u2029' || ch == '\u0085') {
+				return string;
+			}
 		}
 
 		final Pattern pattern = Pattern.compile("(\\$\\{([^${}]*)\\})"); //$NON-NLS-1$

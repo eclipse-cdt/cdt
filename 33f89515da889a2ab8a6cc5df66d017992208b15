@@ -22,6 +22,30 @@
       "revId": "33f89515da889a2ab8a6cc5df66d017992208b15",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d9d1801_e591326f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/MultiFileInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-24T18:41:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "316406b4_201625b7",
+      "range": {
+        "startLine": 166,
+        "startChar": 9,
+        "endLine": 166,
+        "endChar": 33
+      },
+      "revId": "33f89515da889a2ab8a6cc5df66d017992208b15",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

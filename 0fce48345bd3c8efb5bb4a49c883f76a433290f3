@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "60e913b7_221b0bd0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-24T18:41:31Z",
+      "side": 1,
+      "message": "Don\u0027t worry about slowing me down. Hopefully, I will learn what needs what in the long run so the number of questions will be lower over time.\nI\u0027m still a bit unused to the API model and need some time to get used to it. During this time, I\u0027d like to avoid causing trouble and therefore there are so many questions right now.\n\nIMO, the cleanest thing to do is to do what I did initially, a copy of the content. Then in that copy, we can fix these kinds of issues to have a nice and clean API going forward.\nMaybe this class could even be reduced a bit by removing the private methods since they are not API anyway and let the internal generateCommandLineInfo method call the public instance instead? If someone overrides the method, they can still use the non-static strings anyway. Would that work or is it still too intrusive?\n\nSomething like:\n\npublic IManagedCommandLineInfo generateCommandLineInfo(ITool tool, String commandName, String[] flags, String outputFlag, String outputPrefix, String outputName, String[] inputResources, String commandLinePattern) {\n\treturn org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator.getCommandLineGenerator().generateCommandLineInfo(tool, commandName, flags, outputFlag, outputPrefix, outputName, inputResources, commandLinePattern);\n}\n\nIt\u0027s sort-of inheriting the function while not extending...\n\nI guess we have diverged a bit form just \"static\" here to and started to talk about if they should be \"public\", \"protected\" or perhaps even \"private\"?",
+      "parentUuid": "05e006b8_5ea361d0",
+      "revId": "0fce48345bd3c8efb5bb4a49c883f76a433290f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cd1557e2_871b059e",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/MultiFileInfo.java",
         "patchSetId": 4
@@ -99,6 +117,30 @@
       "revId": "0fce48345bd3c8efb5bb4a49c883f76a433290f3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54e4fabb_bc710bc7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/MultiFileInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-24T18:41:31Z",
+      "side": 1,
+      "message": "Ok, was unsure if the comment was missed.\n\nAs the others are doing it like this, I assume it\u0027s fine.",
+      "parentUuid": "c406954c_b2b42f57",
+      "range": {
+        "startLine": 166,
+        "startChar": 9,
+        "endLine": 166,
+        "endChar": 33
+      },
+      "revId": "0fce48345bd3c8efb5bb4a49c883f76a433290f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

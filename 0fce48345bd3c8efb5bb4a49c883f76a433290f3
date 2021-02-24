@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "29925c22_db7b6250",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-24T21:08:23Z",
+      "side": 1,
+      "message": "I did it, take a look and see what you think.\nI also decided to not move the ManagedCommandLineInfo class. I was going back and forth between leaving it as is or having it as an inline class. I decided to push it using an inline class to get your opinion on it.",
+      "parentUuid": "a7ab2eed_f904d2f6",
+      "revId": "0fce48345bd3c8efb5bb4a49c883f76a433290f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cd1557e2_871b059e",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/MultiFileInfo.java",
         "patchSetId": 4

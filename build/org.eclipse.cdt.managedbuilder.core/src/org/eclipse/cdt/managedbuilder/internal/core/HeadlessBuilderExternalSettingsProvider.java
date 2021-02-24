@@ -58,16 +58,15 @@ public class HeadlessBuilderExternalSettingsProvider extends CExternalSettingPro
 	static void hookExternalSettingsProvider() {
 		if (additionalSettings.isEmpty())
 			return;
-		// Remove the external settings providers from all the hooked projects
+		// hook the external settings providers to all projects
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			ICProjectDescription desc = CCorePlugin.getDefault().getProjectDescription(project);
 			if (desc == null)
 				continue;
 			for (ICConfigurationDescription cfg : desc.getConfigurations()) {
-				String[] extSettingIds = cfg.getExternalSettingsProviderIds();
-				String[] newSettingIds = new String[extSettingIds.length + 1];
-				System.arraycopy(extSettingIds, 0, newSettingIds, 0, extSettingIds.length);
-				newSettingIds[extSettingIds.length] = ID;
+				List<String> settingIds = new ArrayList<>(Arrays.asList(cfg.getExternalSettingsProviderIds()));
+				settingIds.add(ID);
+				String[] newSettingIds = settingIds.toArray(String[]::new);
 				cfg.setExternalSettingsProviderIds(newSettingIds);
 			}
 			try {

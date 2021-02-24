@@ -22,6 +22,30 @@
       "revId": "933d631d3b943f8b9bfecda3ea1af4db8c5c5bf7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c997316_7410e242",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/HeadlessBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-24T14:18:54Z",
+      "side": 1,
+      "message": "On API rules you can make any change you want without consultation or warning to internal packages. i.e. officially we follow API rules https://wiki.eclipse.org/CDT/policy#API\n\nThere are some internal parts of CDT that are widely used, if you believe this is the case here we can try to take extra care to not break extenders. There are only two places in CDT that the internals of CDT are widely used that I worry about - 1 is the managed make area and 2 the DSF-GDB code that has a lot of code marked internal, in part because it depends on platform debug packages that are also internal because they are provisional.",
+      "parentUuid": "392710e4_99f0b056",
+      "range": {
+        "startLine": 273,
+        "startChar": 1,
+        "endLine": 277,
+        "endChar": 2
+      },
+      "revId": "933d631d3b943f8b9bfecda3ea1af4db8c5c5bf7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

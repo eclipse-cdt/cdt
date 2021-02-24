@@ -732,8 +732,7 @@ public class HeadlessBuilder implements IApplication {
 			}
 		} catch (Exception e) {
 			// Print usage
-			System.err.println(
-					HeadlessBuildMessages.HeadlessBuilder_invalid_argument + args != null ? Arrays.toString(args) : ""); //$NON-NLS-1$
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_invalid_argument + Arrays.toString(args));
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_Error + e.getMessage());
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_import);

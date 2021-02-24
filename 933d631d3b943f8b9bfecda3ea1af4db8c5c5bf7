@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "392710e4_99f0b056",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/HeadlessBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-24T10:54:19Z",
+      "side": 1,
+      "message": "Another of those API questions...\nAs the return type needs to be changed and the list of arguments needs to be extended, it will be a break.\nAs this class is internal and the method is protected, I\u0027m not sure if it\u0027s the right thing to do to keep the old signature for a while and mark it as deprecated or if I should just remove the old signature.",
+      "range": {
+        "startLine": 273,
+        "startChar": 1,
+        "endLine": 277,
+        "endChar": 2
+      },
+      "revId": "933d631d3b943f8b9bfecda3ea1af4db8c5c5bf7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

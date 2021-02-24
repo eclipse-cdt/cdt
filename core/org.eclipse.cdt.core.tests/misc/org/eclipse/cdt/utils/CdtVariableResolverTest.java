@@ -110,6 +110,7 @@ public class CdtVariableResolverTest extends TestCase {
 		assertEquals("#workspace_loc:#Macro1#/#Macro2##", resolveToString("${workspace_loc:${Macro1}/${Macro2}}"));
 		assertEquals("#workspace_loc:#project_loc:/#Macro###",
 				resolveToString("${workspace_loc:${project_loc:/${Macro}}}"));
+		assertEquals("${ignored}\n${multiline}", resolveToString("${ignored}\n${multiline}"));
 
 	}
 

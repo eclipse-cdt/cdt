@@ -269,18 +269,28 @@ public class HeadlessBuilder implements IApplication {
 	/*
 	 *  Build the given configurations using the specified build type (FULL, CLEAN, INCREMENTAL)
 	 */
-	protected void buildConfigurations(Map<IProject, Set<ICConfigurationDescription>> projConfigs,
-			final IProgressMonitor monitor, final int buildType) throws CoreException {
+	protected boolean buildConfigurations(Map<IProject, Set<ICConfigurationDescription>> projConfigs,
+			final IProgressMonitor monitor, final int buildType, List<String> allBuildErrors) throws CoreException {
+		boolean buildSuccessful = false;
 		for (Map.Entry<IProject, Set<ICConfigurationDescription>> entry : projConfigs.entrySet()) {
 			Set<ICConfigurationDescription> cfgDescs = entry.getValue();
 
-			IConfiguration[] configs = new IConfiguration[cfgDescs.size()];
-			int i = 0;
-			for (ICConfigurationDescription cfgDesc : cfgDescs)
-				configs[i++] = ManagedBuildManager.getConfigurationForDescription(cfgDesc);
+			for (ICConfigurationDescription cfgDesc : cfgDescs) {
+				IConfiguration[] configs = new IConfiguration[] {
+						ManagedBuildManager.getConfigurationForDescription(cfgDesc) };
 
-			ManagedBuildManager.buildConfigurations(configs, null, new SubProgressMonitor(monitor, 1), true, buildType);
+				ManagedBuildManager.buildConfigurations(configs, null, new SubProgressMonitor(monitor, 1), true,
+						buildType);
+
+				buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(entry.getKey());
+				if (printErrorMarkers) {
+					accumulateErrorMarkers(entry.getKey(), allBuildErrors);
+				}
+			}
+
 		}
+
+		return buildSuccessful;
 	}
 
 	/**
@@ -545,26 +555,18 @@ public class HeadlessBuilder implements IApplication {
 					ACBuilder.setAllConfigBuild(true);
 
 					System.out.println(HeadlessBuildMessages.HeadlessBuilder_building_all);
-					root.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
-					for (IProject p : root.getProjects()) {
-						buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(p);
-						if (printErrorMarkers) {
-							accumulateErrorMarkers(p, allBuildErrors);
-						}
-					}
+
+					// Collect build configurations for all projects in workspace
+					matchConfigurations(".*", allProjects, configsToBuild); //$NON-NLS-1$
 				} else {
 					// Resolve the regular expression project names to build configurations
 					for (String regEx : projectRegExToBuild)
 						matchConfigurations(regEx, allProjects, configsToBuild);
-					// Build the list of configurations
-					buildConfigurations(configsToBuild, monitor, IncrementalProjectBuilder.FULL_BUILD);
-					for (IProject p : configsToBuild.keySet()) {
-						buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(p);
-						if (printErrorMarkers) {
-							accumulateErrorMarkers(p, allBuildErrors);
-						}
-					}
 				}
+
+				// Build the list of configurations
+				buildSuccessful = buildConfigurations(configsToBuild, monitor, IncrementalProjectBuilder.FULL_BUILD,
+						allBuildErrors);
 			} finally {
 				// Reset the tool options
 				if (!savedToolOptions.isEmpty())

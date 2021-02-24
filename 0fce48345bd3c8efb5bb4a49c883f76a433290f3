@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "05e006b8_5ea361d0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-24T18:15:25Z",
+      "side": 1,
+      "message": "It would break compatibility. My original idea of the new class extending this one was that all the static members be re declared, but that isn\u0027t relevant now.\n\nThe thing about the coding style here is that adding new constants in the future is not API breaking, but changing value or removing them is. So by making all these API we are promising these trivial constants are now part of the API going forward.\n\nPS. I don\u0027t know how much time you want to spend on this. I can support you as needed, but it turns out moving this internal class to public API raises lots of questions on a process that I am not familiar with. None of my comments or questions are meant to slow down your velocity, but I fear by asking them they may have that effect.",
+      "parentUuid": "245d8deb_4384befe",
+      "revId": "0fce48345bd3c8efb5bb4a49c883f76a433290f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cd1557e2_871b059e",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/MultiFileInfo.java",
         "patchSetId": 4
@@ -48,6 +66,30 @@
       "writtenOn": "2021-02-24T16:38:55Z",
       "side": 1,
       "message": "From PS2: I\u0027m not sure if this is the appropriate variant to do here, but looking at the other methods in this class, it looks like the way to go.",
+      "range": {
+        "startLine": 166,
+        "startChar": 9,
+        "endLine": 166,
+        "endChar": 33
+      },
+      "revId": "0fce48345bd3c8efb5bb4a49c883f76a433290f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c406954c_b2b42f57",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/MultiFileInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-24T18:15:25Z",
+      "side": 1,
+      "message": "I don\u0027t know either. I didn\u0027t know what else to say, so I said nothing. I do wonder why some places do an instanceof check on fRis and some just cast it.",
+      "parentUuid": "cd1557e2_871b059e",
       "range": {
         "startLine": 166,
         "startChar": 9,

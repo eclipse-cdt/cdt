@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5d316fab_d3e0988c",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/cdtvariables/CdtVariableResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2021-02-25T01:15:53Z",
+      "side": 1,
+      "message": "Please add\nIf there is one or more newlines in the first macro value the value will not be expanded.",
+      "range": {
+        "startLine": 97,
+        "startChar": 7,
+        "endLine": 97,
+        "endChar": 10
+      },
+      "revId": "833c54a879a4da6bd22eb1aae90d127e3beae789",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "623ae852_e068e838",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/cdtvariables/CdtVariableResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2021-02-25T01:15:53Z",
+      "side": 1,
+      "message": "I would feel more comfortable with\n\n\t\tif (string.lines().count() \u003e 1) {\n\t\t\treturn string;\n\t\t}",
+      "range": {
+        "startLine": 111,
+        "startChar": 2,
+        "endLine": 111,
+        "endChar": 6
+      },
+      "revId": "833c54a879a4da6bd22eb1aae90d127e3beae789",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

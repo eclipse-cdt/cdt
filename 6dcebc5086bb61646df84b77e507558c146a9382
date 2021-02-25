@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "78958bb6_842cd55b",
+        "filename": "cross/org.eclipse.cdt.build.crossgcc/META-INF/MANIFEST.MF",
+        "patchSetId": 9
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T18:39:39Z",
+      "side": 1,
+      "message": "I suppose I should bump this here as I am now using it in the CrossCommandLineGenerator. Should I use a version range or is it fine to just use 9.2.0?",
+      "range": {
+        "startLine": 8,
+        "startChar": 52,
+        "endLine": 8,
+        "endChar": 59
+      },
+      "revId": "6dcebc5086bb61646df84b77e507558c146a9382",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

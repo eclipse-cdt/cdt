@@ -22,6 +22,30 @@
       "revId": "c02116443dc5f67d7397455f1e9b1c322c3f3608",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48bf2652_20ba8d2a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T15:31:04Z",
+      "side": 1,
+      "message": "Leave it as it is now.",
+      "parentUuid": "3c28a7bf_c014a7da",
+      "range": {
+        "startLine": 71,
+        "startChar": 9,
+        "endLine": 71,
+        "endChar": 78
+      },
+      "revId": "c02116443dc5f67d7397455f1e9b1c322c3f3608",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

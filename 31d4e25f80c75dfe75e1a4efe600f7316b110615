@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "46a1b9f8_fbdc9e74",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-02-25T17:16:11Z",
+      "side": 1,
+      "message": "OK, this may be dissonant with the rest of the code around. \n\nI agree, people will try to extend it anyway if it is technically possible. If it is not - people will be unhappy and say that this is \"bad API\" :)",
+      "parentUuid": "55116f95_54339724",
+      "revId": "31d4e25f80c75dfe75e1a4efe600f7316b110615",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ab0600e9_fe0bd4b6",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 6
@@ -105,6 +123,24 @@
       "revId": "31d4e25f80c75dfe75e1a4efe600f7316b110615",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4818b38_2dde668f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-02-25T17:16:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc56b4c3_cf24add6",
+      "revId": "31d4e25f80c75dfe75e1a4efe600f7316b110615",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

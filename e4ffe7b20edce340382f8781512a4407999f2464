@@ -124,6 +124,30 @@
     },
     {
       "key": {
+        "uuid": "050fdd97_396ac0b6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T12:21:32Z",
+      "side": 1,
+      "message": "\u003e 1. mark it as deprecated and unless\n\nAssuming that was a typo and meant to say \"useless\" then this is my preferred option.\n\nA few notes:\n\nIManagedCommandLineInfo has @noextend/@noimplement rule, so you can add new methods to it trivially as it won\u0027t break API contract. Of course if you have reason to believe this change may affect adopters who we are trying not to break, then it could cause problems if someone has implemented the interface outside of CDT.\n\nIn addition CDT has historically made an exception to no new methods to API interfaces. I have finally just quickly  documented this in https://wiki.eclipse.org/CDT/policy#New_default_methods_in_interfaces",
+      "parentUuid": "9ab4d4ba_63a4b5ba",
+      "range": {
+        "startLine": 138,
+        "startChar": 17,
+        "endLine": 138,
+        "endChar": 28
+      },
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e8fb1e83_73c90c8b",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 5

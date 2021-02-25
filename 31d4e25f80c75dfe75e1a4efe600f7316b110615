@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "55116f95_54339724",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T12:21:32Z",
+      "side": 1,
+      "message": "just the public constructor and then we don\u0027t need this.",
+      "parentUuid": "c280e3f9_fb3c20d8",
+      "revId": "31d4e25f80c75dfe75e1a4efe600f7316b110615",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ab0600e9_fe0bd4b6",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 6
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "I think we could. AFAICT, there are only 2 places in the CDT code where the getCommandLineGenerator() is called (except the test classes). Both these can easily call new instead and it should not have too much of a penalty.",
       "parentUuid": "ab0600e9_fe0bd4b6",
+      "revId": "31d4e25f80c75dfe75e1a4efe600f7316b110615",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc56b4c3_cf24add6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T12:21:32Z",
+      "side": 1,
+      "message": "+1 - assuming that it is worth it to you to review and update the weird logic in Tool that calls it. If you do decide to leave it, perhaps add @noreference so that it isn\u0027t part of the public API.",
+      "parentUuid": "abe98437_70531929",
       "revId": "31d4e25f80c75dfe75e1a4efe600f7316b110615",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

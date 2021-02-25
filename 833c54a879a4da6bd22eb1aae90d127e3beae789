@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d8ef98e3_9ee79ded",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/cdtvariables/CdtVariableResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T02:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5d316fab_d3e0988c",
+      "range": {
+        "startLine": 97,
+        "startChar": 7,
+        "endLine": 97,
+        "endChar": 10
+      },
+      "revId": "833c54a879a4da6bd22eb1aae90d127e3beae789",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "623ae852_e068e838",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/cdtvariables/CdtVariableResolver.java",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2021-02-25T01:15:53Z",
       "side": 1,
       "message": "I would feel more comfortable with\n\n\t\tif (string.lines().count() \u003e 1) {\n\t\t\treturn string;\n\t\t}",
+      "range": {
+        "startLine": 111,
+        "startChar": 2,
+        "endLine": 111,
+        "endChar": 6
+      },
+      "revId": "833c54a879a4da6bd22eb1aae90d127e3beae789",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1df4e7e2_eb711559",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/cdtvariables/CdtVariableResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T02:24:56Z",
+      "side": 1,
+      "message": "String.lines has different semantics than Pattern\u0027s Line terminators, hence why it is done this way to match the preexisting behaviour.\n\nAny other objections I have probably all are related to early optimization on my part :-)",
+      "parentUuid": "623ae852_e068e838",
       "range": {
         "startLine": 111,
         "startChar": 2,

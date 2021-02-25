@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c280e3f9_fb3c20d8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T12:14:22Z",
+      "side": 1,
+      "message": "I suppose that could be done, but my fear is that people would expect to extend the DefaultManagedCommandLineGenerator anyway.\nFor an example of why someone would extend the class, take a look at CrossCommandLineGenerator.\nIn our ST product, we do override the command, similar to what is done in CrossCommandLineGenerator, but we also add a few more GCC flags that are configured at the toolchain level rather than the tool level in the toolchain integration.\n\n@Jonah: What do you think about this approach?",
+      "parentUuid": "2221c3e6_2984bc24",
+      "revId": "31d4e25f80c75dfe75e1a4efe600f7316b110615",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ab0600e9_fe0bd4b6",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 6
@@ -30,6 +48,24 @@
       "writtenOn": "2021-02-25T11:26:41Z",
       "side": 1,
       "message": "Do you think we can have just a public constructor instead? I do not think that we can have any notable savings from declaring this type a singleton.",
+      "revId": "31d4e25f80c75dfe75e1a4efe600f7316b110615",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abe98437_70531929",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T12:14:22Z",
+      "side": 1,
+      "message": "I think we could. AFAICT, there are only 2 places in the CDT code where the getCommandLineGenerator() is called (except the test classes). Both these can easily call new instead and it should not have too much of a penalty.",
+      "parentUuid": "ab0600e9_fe0bd4b6",
       "revId": "31d4e25f80c75dfe75e1a4efe600f7316b110615",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

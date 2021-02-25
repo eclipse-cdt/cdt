@@ -22,6 +22,30 @@
       "revId": "6dcebc5086bb61646df84b77e507558c146a9382",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3705d18e_73b09049",
+        "filename": "cross/org.eclipse.cdt.build.crossgcc/META-INF/MANIFEST.MF",
+        "patchSetId": 9
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T18:48:00Z",
+      "side": 1,
+      "message": "It should be a version range - but leave that for another commit as that statement is true across the board in CDT.\n\nI also recently raised https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d570692 to make it a warning/error when the lower bound of a bundle version is too low.",
+      "parentUuid": "78958bb6_842cd55b",
+      "range": {
+        "startLine": 8,
+        "startChar": 52,
+        "endLine": 8,
+        "endChar": 59
+      },
+      "revId": "6dcebc5086bb61646df84b77e507558c146a9382",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

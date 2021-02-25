@@ -93,6 +93,30 @@
       "revId": "833c54a879a4da6bd22eb1aae90d127e3beae789",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f3a578d_26684547",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/cdtvariables/CdtVariableResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T12:39:01Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1df4e7e2_eb711559",
+      "range": {
+        "startLine": 111,
+        "startChar": 2,
+        "endLine": 111,
+        "endChar": 6
+      },
+      "revId": "833c54a879a4da6bd22eb1aae90d127e3beae789",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

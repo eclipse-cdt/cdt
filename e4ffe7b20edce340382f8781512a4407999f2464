@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f96c63d3_4c5de849",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T02:17:12Z",
+      "side": 1,
+      "message": "+1 ah - so now that you have made it private it is easy to see most of the constants were not even in use!",
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4f6c3819_a5fc7b0d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T02:17:12Z",
+      "side": 1,
+      "message": "+1 - this looks like a good solution to IManagedCommandLineInfo\u0027s @noextend/@noimplement.\n\nBut why not just return new ManagedCommandLineInfo(...) and not deprecate it? That said - I do like the readability of this anonymous class - so probably disregard this whole paragraph.",
+      "range": {
+        "startLine": 98,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 106
+      },
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0b0077a_f86e8f0a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T02:17:12Z",
+      "side": 1,
+      "message": "the stringArrayToString should be called when toManagedCommadnLineInfo is called and not deferred to, or else you have to document the transfer of ownership of the array, lest someone could modify the array after calling toManagedCommandLineInfo",
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "626e22a8_a3754245",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T02:17:12Z",
+      "side": 1,
+      "message": "This is a strange case - AFAICT this method is not called in CDT, and even if it were it would be pretty useless as it does not return a string that can be used for anything as white space is not quoted like it is on line 62-74.\n\nAdding to the strangeness is that outputName is quoted.\n\nMaybe now is the time to deprecate getInputs() and add new method, getInputResources that does something useful. Or just deprecate it as useless and unused.",
+      "range": {
+        "startLine": 138,
+        "startChar": 17,
+        "endLine": 138,
+        "endChar": 28
+      },
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8fb1e83_73c90c8b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T02:17:12Z",
+      "side": 1,
+      "message": "ditto about calculating early",
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92a9edf5_dced8f2a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-25T02:17:12Z",
+      "side": 1,
+      "message": "0 length array can be passed to String.join.",
+      "range": {
+        "startLine": 145,
+        "startChar": 23,
+        "endLine": 145,
+        "endChar": 40
+      },
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

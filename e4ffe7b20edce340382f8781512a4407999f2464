@@ -59,6 +59,24 @@
     },
     {
       "key": {
+        "uuid": "2e2b2cbc_4e18f703",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T07:54:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d0b0077a_f86e8f0a",
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "626e22a8_a3754245",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 5
@@ -70,6 +88,30 @@
       "writtenOn": "2021-02-25T02:17:12Z",
       "side": 1,
       "message": "This is a strange case - AFAICT this method is not called in CDT, and even if it were it would be pretty useless as it does not return a string that can be used for anything as white space is not quoted like it is on line 62-74.\n\nAdding to the strangeness is that outputName is quoted.\n\nMaybe now is the time to deprecate getInputs() and add new method, getInputResources that does something useful. Or just deprecate it as useless and unused.",
+      "range": {
+        "startLine": 138,
+        "startChar": 17,
+        "endLine": 138,
+        "endChar": 28
+      },
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ab4d4ba_63a4b5ba",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T07:54:47Z",
+      "side": 1,
+      "message": "Adding a new method means that a new interfaces is needed and that we need to handle 2 interfaces in a lot of different locations that also would affect a few other interfaces(?).\nMaybe it\u0027s okay to add quotes, but the documentation does not mention it, but it does on the other hand not not mention it, so... ;-)\nThe only place it\u0027s used in CDT appears to be in a test case, so in CDT, it would be easy to handle with quotation.\n\nWould you rather \n1. mark it as deprecated and unless\n2. add quotation\n3. leave it as-is",
+      "parentUuid": "626e22a8_a3754245",
       "range": {
         "startLine": 138,
         "startChar": 17,
@@ -99,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "ae33f68b_3e7aa431",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T07:54:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e8fb1e83_73c90c8b",
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "92a9edf5_dced8f2a",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 5
@@ -119,6 +179,30 @@
       "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88d6c35b_ebaaa359",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T07:54:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "92a9edf5_dced8f2a",
+      "range": {
+        "startLine": 145,
+        "startChar": 23,
+        "endLine": 145,
+        "endChar": 40
+      },
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

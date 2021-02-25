@@ -148,6 +148,30 @@
     },
     {
       "key": {
+        "uuid": "cbfbe82a_c44314ed",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T13:40:41Z",
+      "side": 1,
+      "message": "Yes, it was a typo.\nI decided to not add a new method now as I do not see much need for it except for the test case, but I did mark the existing method as useless.",
+      "parentUuid": "050fdd97_396ac0b6",
+      "range": {
+        "startLine": 138,
+        "startChar": 17,
+        "endLine": 138,
+        "endChar": 28
+      },
+      "revId": "e4ffe7b20edce340382f8781512a4407999f2464",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e8fb1e83_73c90c8b",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 5

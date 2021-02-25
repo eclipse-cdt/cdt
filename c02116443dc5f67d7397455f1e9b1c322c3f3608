@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c28a7bf_c014a7da",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T13:40:41Z",
+      "side": 1,
+      "message": "Not sure it\u0027s worth it, but I suppose the instance here could be created once for the internal class rather than doing it on every call.\nShould I add a new field for it and risk having some kind of breakage or leave it as it is now?",
+      "range": {
+        "startLine": 71,
+        "startChar": 9,
+        "endLine": 71,
+        "endChar": 78
+      },
+      "revId": "c02116443dc5f67d7397455f1e9b1c322c3f3608",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

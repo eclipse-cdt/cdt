@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2d6e3f2c_b3691d32",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/core/tests/ManagedCommandLineGeneratorTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T13:40:41Z",
+      "side": 0,
+      "message": "I ended up removing this test as I see no point in testing that the object could be created.",
+      "range": {
+        "startLine": 74,
+        "startChar": 1,
+        "endLine": 77,
+        "endChar": 2
+      },
+      "revId": "321100a2a7d72234d65774fe6f2500ab0700a0b6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

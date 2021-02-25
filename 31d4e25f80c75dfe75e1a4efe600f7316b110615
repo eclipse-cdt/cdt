@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2221c3e6_2984bc24",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-02-25T11:26:41Z",
+      "side": 1,
+      "message": "Do we want others to extend this type? In other words: is it abstract or final? \nActually we can have this one as abstract and declare another as final.\nI would suggest `BaseManagedCommandLineGenerator` for abstract and \u0027DefaultManagedCommandLineGenerator\u0027 for final, like this:\n\n\n\n```\npublic abstract class BaseManagedCommandLineGenerator implements IManagedCommandLineGenerator {\n\n   protected BaseManagedCommandLineGenerator() {\n   }\n/*\nall the suggested code except static singleton access\n*/\n}\n```\n\nand then:\n\n```\npublic final class DefaultManagedCommandLineGenerator extends BaseManagedCommandLineGenerator {\n\n   public DefaultManagedCommandLineGenerator() {\n   }\n}\n```\n\nIMO it could make the API more clear.",
+      "revId": "31d4e25f80c75dfe75e1a4efe600f7316b110615",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab0600e9_fe0bd4b6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-02-25T11:26:41Z",
+      "side": 1,
+      "message": "Do you think we can have just a public constructor instead? I do not think that we can have any notable savings from declaring this type a singleton.",
+      "revId": "31d4e25f80c75dfe75e1a4efe600f7316b110615",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

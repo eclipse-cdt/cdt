@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4b5c4644_bf3ceb64",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ClassTypeHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1161,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T10:08:21Z",
+      "side": 1,
+      "message": "These 2 lines can be merged to one to reduce the depth.",
+      "range": {
+        "startLine": 1160,
+        "startChar": 2,
+        "endLine": 1161,
+        "endChar": 36
+      },
+      "revId": "e85f812a70badf8c7937cebea6bbce96682e05f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5fbc2019_0921d454",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ClassTypeHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1165,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-25T10:08:21Z",
+      "side": 1,
+      "message": "You are checking that the instances are of type ITypedef, but I see no check for ICPPInternalBinding. Should a test for that also exist?",
+      "range": {
+        "startLine": 1164,
+        "startChar": 4,
+        "endLine": 1165,
+        "endChar": 72
+      },
+      "revId": "e85f812a70badf8c7937cebea6bbce96682e05f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

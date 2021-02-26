@@ -735,6 +735,7 @@ public class HeadlessBuilder implements IApplication {
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_invalid_argument + Arrays.toString(args));
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_Error + e.getMessage());
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_workspace);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_import);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_importAll);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_build);

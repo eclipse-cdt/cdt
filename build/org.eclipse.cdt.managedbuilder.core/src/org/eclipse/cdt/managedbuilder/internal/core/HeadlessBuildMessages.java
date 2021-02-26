@@ -66,6 +66,7 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_usage_marker_type;
 	public static String HeadlessBuilder_usage_no_indexer;
 	public static String HeadlessBuilder_usage_print_all_error_markers;
+	public static String HeadlessBuilder_usage_workspace;
 	public static String HeadlessBuilder_Workspace;
 	public static String HeadlessBuilder_WorkspaceInUse;
 	static {

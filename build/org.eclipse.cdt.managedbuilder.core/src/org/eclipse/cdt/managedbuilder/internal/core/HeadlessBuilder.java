@@ -424,6 +424,10 @@ public class HeadlessBuilder implements IApplication {
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
+		// Handle user provided arguments
+		if (!getArguments((String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS)))
+			return ERROR;
+
 		// Build result: whether projects were built successfully
 		boolean buildSuccessful = true;
 		List<String> allBuildErrors = new ArrayList<>();
@@ -449,10 +453,6 @@ public class HeadlessBuilder implements IApplication {
 						+ HeadlessBuildMessages.HeadlessBuilder_is_not_accessible);
 				return ERROR;
 			}
-
-			// Handle user provided arguments
-			if (!getArguments((String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS)))
-				return ERROR;
 
 			if (markerTypesDefault || markerTypesAll) {
 				markerTypes.clear();
@@ -735,6 +735,7 @@ public class HeadlessBuilder implements IApplication {
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_invalid_argument + Arrays.toString(args));
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_Error + e.getMessage());
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_workspace);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_import);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_importAll);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_build);

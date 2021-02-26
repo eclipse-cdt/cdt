@@ -28,15 +28,8 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_CouldntLockWorkspace;
 	public static String HeadlessBuilder_Directory;
 	public static String HeadlessBuilder_encountered_errors;
-	public static String HeadlessBuilder_EnvVar_Append;
-	public static String HeadlessBuilder_EnvVar_Prepend;
-	public static String HeadlessBuilder_EnvVar_Remove;
-	public static String HeadlessBuilder_EnvVar_Replace;
 	public static String HeadlessBuilder_Error;
 	public static String HeadlessBuilder_help_requested;
-	public static String HeadlessBuilder_importAll;
-	public static String HeadlessBuilder_IncludeFile;
-	public static String HeadlessBuilder_InlucdePath;
 	public static String HeadlessBuilder_invalid_argument;
 	public static String HeadlessBuilder_is_not_accessible;
 	public static String HeadlessBuilder_is_not_valid_in_workspace;
@@ -50,22 +43,9 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_RegExSyntaxError;
 	public static String HeadlessBuilder_Skipping;
 	public static String HeadlessBuilder_Skipping2;
-	public static String HeadlessBuilder_ToolOption_Replace;
-	public static String HeadlessBuilder_ToolOption_Append;
-	public static String HeadlessBuilder_ToolOption_Prepend;
-	public static String HeadlessBuilder_ToolOption_Remove;
-	public static String HeadlessBuilder_ToolOption_Types;
 	public static String HeadlessBuilder_unknown_argument;
 	public static String HeadlessBuilder_URI;
-	public static String HeadlessBuilder_usage;
-	public static String HeadlessBuilder_usage_build;
-	public static String HeadlessBuilder_usage_clean_build;
 	public static String HeadlessBuilder_invalid_uri;
-	public static String HeadlessBuilder_PreprocessorDefine;
-	public static String HeadlessBuilder_usage_import;
-	public static String HeadlessBuilder_usage_marker_type;
-	public static String HeadlessBuilder_usage_no_indexer;
-	public static String HeadlessBuilder_usage_print_all_error_markers;
 	public static String HeadlessBuilder_Workspace;
 	public static String HeadlessBuilder_WorkspaceInUse;
 	static {

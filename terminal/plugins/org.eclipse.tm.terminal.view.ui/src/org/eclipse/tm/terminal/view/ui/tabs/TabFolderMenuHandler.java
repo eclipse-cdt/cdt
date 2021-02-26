@@ -36,6 +36,7 @@ import org.eclipse.tm.internal.terminal.control.actions.TerminalActionPaste;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionSelectAll;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
+import org.eclipse.tm.terminal.view.ui.actions.RenameTerminalAction;
 import org.eclipse.tm.terminal.view.ui.actions.InvertColorsAction;
 import org.eclipse.tm.terminal.view.ui.actions.SelectEncodingAction;
 import org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView;
@@ -298,6 +299,14 @@ public class TabFolderMenuHandler extends PlatformObject {
 
 		// Create and add the invert colors action
 		add(new InvertColorsAction(getParentView().getAdapter(TabFolderManager.class)) {
+			@Override
+			protected ITerminalViewControl getTarget() {
+				return getActiveTerminalViewControl();
+			}
+		});
+
+		// change the name of the terminal
+		add(new RenameTerminalAction(getParentView().getAdapter(TabFolderManager.class)) {
 			@Override
 			protected ITerminalViewControl getTarget() {
 				return getActiveTerminalViewControl();

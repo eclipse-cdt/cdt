@@ -158,4 +158,9 @@ public class Messages extends NLS {
 	public static String ExternalExecutablesDialog_field_icon;
 	public static String ExternalExecutablesDialog_field_translate;
 
+	public static String RenameTerminalAction_inputdialog_defaulttext;
+	public static String RenameTerminalAction_inputdialog_prompt;
+	public static String RenameTerminalAction_inputdialog_title;
+	public static String RenameTerminalAction_tooltip;
+	public static String RenameTerminalAction_menu;
 }

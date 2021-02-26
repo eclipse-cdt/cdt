@@ -166,4 +166,9 @@ public interface ITerminalViewControl {
 	 * @since 4.1
 	 */
 	void removeMouseListener(ITerminalMouseListener listener);
+
+	/**
+	 * @since 5.1
+	 */
+	void setTerminalTitle(String newTitle);
 }

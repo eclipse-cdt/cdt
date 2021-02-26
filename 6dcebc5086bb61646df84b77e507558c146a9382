@@ -46,6 +46,30 @@
       "revId": "6dcebc5086bb61646df84b77e507558c146a9382",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8e06ad4_82ddc697",
+        "filename": "cross/org.eclipse.cdt.build.crossgcc/META-INF/MANIFEST.MF",
+        "patchSetId": 9
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-26T19:06:25Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "3705d18e_73b09049",
+      "range": {
+        "startLine": 8,
+        "startChar": 52,
+        "endLine": 8,
+        "endChar": 59
+      },
+      "revId": "6dcebc5086bb61646df84b77e507558c146a9382",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

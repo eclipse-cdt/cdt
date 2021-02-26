@@ -174,6 +174,8 @@ public class HeadlessBuilder implements IApplication {
 	public static final Integer ERROR = 1;
 	/** OK return status */
 	public static final Integer OK = IApplication.EXIT_OK;
+	/** Show usage return status */
+	public static final Integer SHOW_USAGE = 2;
 
 	/** Set of project URIs / paths to import */
 	protected final Set<String> projectsToImport = new HashSet<>();
@@ -452,7 +454,7 @@ public class HeadlessBuilder implements IApplication {
 
 			// Handle user provided arguments
 			if (!getArguments((String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS)))
-				return ERROR;
+				return SHOW_USAGE;
 
 			if (markerTypesDefault || markerTypesAll) {
 				markerTypes.clear();
@@ -731,29 +733,8 @@ public class HeadlessBuilder implements IApplication {
 				}
 			}
 		} catch (Exception e) {
-			// Print usage
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_invalid_argument + Arrays.toString(args));
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_Error + e.getMessage());
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_import);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_importAll);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_build);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_clean_build);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_no_indexer);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_marker_type);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_print_all_error_markers);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_InlucdePath);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_IncludeFile);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_PreprocessorDefine);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_EnvVar_Replace);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_EnvVar_Append);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_EnvVar_Prepend);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_EnvVar_Remove);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_ToolOption_Replace);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_ToolOption_Append);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_ToolOption_Prepend);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_ToolOption_Remove);
-			System.err.println(HeadlessBuildMessages.HeadlessBuilder_ToolOption_Types);
 			return false;
 		}
 

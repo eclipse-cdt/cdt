@@ -105,6 +105,7 @@
 		<module>build/org.eclipse.cdt.managedbuilder.core</module>
 		<module>build/org.eclipse.cdt.managedbuilder.ui</module>
 		<module>build/org.eclipse.cdt.managedbuilder.gnu.ui</module>
+		<module>build/org.eclipse.cdt.managedbuilder.headlessbuilderapp</module>
 		<module>build/org.eclipse.cdt.gnu.build-feature</module>
 
 		<module>build/org.eclipse.cdt.autotools.core</module>

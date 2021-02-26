@@ -277,7 +277,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			try {
 				terminal.setEncoding(encoding);
 			} catch (UnsupportedEncodingException e) {
-				/* ignored on purpose */ }
+				/* ignored on purpose */
+			}
 			// Associated the terminal with the tab item
 			item.setData(terminal);
 			// Associated the custom data node with the tab item (if any)

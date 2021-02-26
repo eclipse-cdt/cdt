@@ -27,7 +27,8 @@ public class TabTerminalListener implements ITerminalListener2 {
 	private static final String TAB_TERMINAL_LISTENER = "TabTerminalListener"; //$NON-NLS-1$
 	/* default */ final TabFolderManager tabFolderManager;
 	private CTabItem tabItem;
-	private final String tabItemTitle;
+	private String tabItemTitle;
+	private TerminalState state;
 
 	/**
 	 * Move a TabTerminalListener instance to another item (for DnD).
@@ -53,7 +54,7 @@ public class TabTerminalListener implements ITerminalListener2 {
 		Assert.isNotNull(tabFolderManager);
 		Assert.isNotNull(tabItem);
 		this.tabFolderManager = tabFolderManager;
-		// Remember the original tab item title
+		// Remember the tab item title
 		tabItemTitle = tabItem.getText();
 
 		attachTo(tabItem);
@@ -77,6 +78,9 @@ public class TabTerminalListener implements ITerminalListener2 {
 
 	@Override
 	public void setState(final TerminalState state) {
+		this.state = state;
+		updateTitle();
+
 		// The tab item must have been not yet disposed
 		final CTabItem item = getTabItem();
 		if (item == null || item.isDisposed())
@@ -84,11 +88,6 @@ public class TabTerminalListener implements ITerminalListener2 {
 
 		// Run asynchronously in the display thread
 		item.getDisplay().asyncExec(() -> {
-			// Update the tab item title
-			String newTitle = getTerminalConsoleTabTitle(state);
-			if (newTitle != null)
-				item.setText(newTitle);
-
 			// Turn off the command field (if necessary)
 			TabCommandFieldHandler handler = tabFolderManager.getTabCommandFieldHandler(item);
 			if (TerminalState.CLOSED.equals(state) && handler != null && handler.hasCommandInputField()) {
@@ -102,6 +101,26 @@ public class TabTerminalListener implements ITerminalListener2 {
 				// Update the status line
 				tabFolderManager.updateStatusLine();
 			}
+		});
+	}
+
+	private void updateTitle() {
+		if (state == null) {
+			// first setState hasn't happened yet, it will
+			// soon and the title will be update then.
+			return;
+		}
+		final CTabItem item = getTabItem();
+		if (item == null || item.isDisposed()) {
+			return;
+		}
+
+		// Run asynchronously in the display thread
+		item.getDisplay().asyncExec(() -> {
+			// Update the tab item title
+			String newTitle = getTerminalConsoleTabTitle(state);
+			if (newTitle != null)
+				item.setText(newTitle);
 		});
 	}
 
@@ -144,6 +163,8 @@ public class TabTerminalListener implements ITerminalListener2 {
 
 	@Override
 	public void setTerminalTitle(String title) {
+		tabItemTitle = title;
+		updateTitle();
 	}
 
 	/**

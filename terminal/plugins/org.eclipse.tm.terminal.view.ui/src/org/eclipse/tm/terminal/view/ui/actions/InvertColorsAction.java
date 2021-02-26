@@ -31,7 +31,7 @@ public class InvertColorsAction extends AbstractTerminalAction {
 	 * @param tabFolderManager The parent tab folder manager. Must not be <code>null</code>.
 	 */
 	public InvertColorsAction(TabFolderManager tabFolderManager) {
-		super(null, SelectEncodingAction.class.getName(), IAction.AS_CHECK_BOX);
+		super(null, InvertColorsAction.class.getName(), IAction.AS_CHECK_BOX);
 
 		Assert.isNotNull(tabFolderManager);
 		setupAction(Messages.InvertColorsAction_menu, Messages.InvertColorsAction_tooltip, (ImageDescriptor) null,

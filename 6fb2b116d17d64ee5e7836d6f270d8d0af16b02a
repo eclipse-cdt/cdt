@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99c71a01_697434a5",
+        "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/src/org/eclipse/cdt/managedbuilder/internal/headlessbuilderapp/HeadlessBuilderWrapper.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-27T22:24:16Z",
+      "side": 1,
+      "message": "How can the binary name be extracted? It\u0027s not necessary that the binary is named eclipse (or eclipse.exe), it could be called foobar too and then some users will be confused if the name is written as \"eclipse\".",
+      "range": {
+        "startLine": 140,
+        "startChar": 2,
+        "endLine": 140,
+        "endChar": 119
+      },
+      "revId": "6fb2b116d17d64ee5e7836d6f270d8d0af16b02a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "d20f629e_88dc4e03",
+        "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-28T12:40:22Z",
+      "side": 1,
+      "message": "I am personally of the opinion that all packages should be exported. However the general feeling of that has shifted over the years.\n\nThe current Eclipse Platform policy is https://wiki.eclipse.org/Export-Package - however the old policy (changed only last year) was https://wiki.eclipse.org/index.php?title\u003dExport-Package\u0026oldid\u003d237317\n\nIf you are interested you you can read the history of the change in policy here https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d553709\n\nSo, either way is fine.",
+      "parentUuid": "5915d624_843ec137",
+      "revId": "6fb2b116d17d64ee5e7836d6f270d8d0af16b02a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "17d2f23d_ff3ad33b",
         "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/META-INF/MANIFEST.MF",
         "patchSetId": 4
@@ -152,6 +170,30 @@
       "revId": "6fb2b116d17d64ee5e7836d6f270d8d0af16b02a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bda57447_b3b8b7d1",
+        "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/src/org/eclipse/cdt/managedbuilder/internal/headlessbuilderapp/HeadlessBuilderWrapper.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-02-28T12:40:22Z",
+      "side": 1,
+      "message": "+1",
+      "parentUuid": "e4883a27_83da0286",
+      "range": {
+        "startLine": 140,
+        "startChar": 2,
+        "endLine": 140,
+        "endChar": 119
+      },
+      "revId": "6fb2b116d17d64ee5e7836d6f270d8d0af16b02a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {

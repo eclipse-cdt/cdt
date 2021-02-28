@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5915d624_843ec137",
+        "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-28T09:58:15Z",
+      "side": 1,
+      "message": "Would it make sense to not export any packages at all?\nIn this case, there is no consumers of the provided classes, so I don\u0027t know if there is any point in having the package listed in the exports at all.",
+      "parentUuid": "e84e3da1_bfaf9b51",
+      "revId": "6fb2b116d17d64ee5e7836d6f270d8d0af16b02a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "17d2f23d_ff3ad33b",
         "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/META-INF/MANIFEST.MF",
         "patchSetId": 4
@@ -39,6 +57,30 @@
       "revId": "6fb2b116d17d64ee5e7836d6f270d8d0af16b02a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2c12d6c_22155d7b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-28T09:58:15Z",
+      "side": 1,
+      "message": "I guess they will be upgraded together as the same feature provides both plugins. If someone creates some other feature that only contains one of them, it\u0027s their problem. I think we can ignore this part for now.",
+      "parentUuid": "17d2f23d_ff3ad33b",
+      "range": {
+        "startLine": 10,
+        "startChar": 68,
+        "endLine": 10,
+        "endChar": 83
+      },
+      "revId": "6fb2b116d17d64ee5e7836d6f270d8d0af16b02a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -89,6 +131,30 @@
     },
     {
       "key": {
+        "uuid": "e4883a27_83da0286",
+        "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/src/org/eclipse/cdt/managedbuilder/internal/headlessbuilderapp/HeadlessBuilderWrapper.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-28T09:58:15Z",
+      "side": 1,
+      "message": "No, it does not look like there is any way to retrieve the launcher name in any way.\nI will change to \"PROGRAM\". The 2nd line feels overkill.",
+      "parentUuid": "6e05c6d7_98d95a2b",
+      "range": {
+        "startLine": 140,
+        "startChar": 2,
+        "endLine": 140,
+        "endChar": 119
+      },
+      "revId": "6fb2b116d17d64ee5e7836d6f270d8d0af16b02a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "714f281d_a7418ece",
         "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/src/org/eclipse/cdt/managedbuilder/internal/headlessbuilderapp/messages.properties",
         "patchSetId": 4
@@ -126,6 +192,30 @@
       "revId": "6fb2b116d17d64ee5e7836d6f270d8d0af16b02a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22e453b4_aa05d63d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/src/org/eclipse/cdt/managedbuilder/internal/headlessbuilderapp/messages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-28T09:58:15Z",
+      "side": 1,
+      "message": "Yes, the single-qoute is used to have the a literal string within the NLS strings. Without it, the {/path/to/workspace} would raise an error that \"/path/to/workspace\" is not a valid integer.\nThat\u0027s also what it\u0027s written \"option\u0027\u0027s\" rather than \"option\u0027s\" that the UI will show.\nThe start of the literal string is on line 13.",
+      "parentUuid": "2f06a58f_de17befc",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 1
+      },
+      "revId": "6fb2b116d17d64ee5e7836d6f270d8d0af16b02a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

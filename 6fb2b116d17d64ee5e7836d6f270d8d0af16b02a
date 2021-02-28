@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "98334187_03b25bdd",
+        "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-02-28T17:43:49Z",
+      "side": 1,
+      "message": "Done - removed the export as is see absolutely no use for it in this particular case.",
+      "parentUuid": "d20f629e_88dc4e03",
+      "revId": "6fb2b116d17d64ee5e7836d6f270d8d0af16b02a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "17d2f23d_ff3ad33b",
         "filename": "build/org.eclipse.cdt.managedbuilder.headlessbuilderapp/META-INF/MANIFEST.MF",
         "patchSetId": 4

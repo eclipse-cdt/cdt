@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.launch.LaunchUtils;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -475,8 +476,14 @@ public class CMainTab2 extends CAbstractMainTab {
 					setErrorMessage(LaunchMessages.CMainTab_Project_must_be_opened);
 					return false;
 				}
-				if (!project.getFile(programName).exists()) {
+				exePath = LaunchUtils.toAbsoluteProgramPath(project, exePath);
+				File executable = exePath.toFile();
+				if (!executable.exists()) {
 					setErrorMessage(LaunchMessages.CMainTab_Program_does_not_exist);
+					return false;
+				}
+				if (!executable.isFile()) {
+					setErrorMessage(LaunchMessages.CMainTab_Selection_must_be_file);
 					return false;
 				}
 			}

@@ -19,6 +19,7 @@
 package org.eclipse.cdt.dsf.gdb.launching;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +53,6 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -120,13 +120,12 @@ public class LaunchUtils {
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 
-		if (!programPath.isAbsolute() && cproject != null) {
-			// Find the specified program within the specified project
-			IFile wsProgramPath = cproject.getProject().getFile(programPath);
-			programPath = wsProgramPath.getLocation();
+		if (cproject != null) {
+			programPath = org.eclipse.cdt.launch.LaunchUtils.toAbsoluteProgramPath(cproject.getProject(), programPath);
 		}
 
-		if (!programPath.toFile().exists()) {
+		File executable = programPath.toFile();
+		if (!executable.exists() || !executable.isFile()) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
 					new FileNotFoundException(
 							LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found", //$NON-NLS-1$

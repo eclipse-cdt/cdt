@@ -39,7 +39,6 @@ import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -692,13 +691,12 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 
-		if (!programPath.isAbsolute() && cproject != null) {
-			// Find the specified program within the specified project
-			IFile wsProgramPath = cproject.getProject().getFile(programPath);
-			programPath = wsProgramPath.getLocation();
+		if (cproject != null) {
+			programPath = LaunchUtils.toAbsoluteProgramPath(cproject.getProject(), programPath);
 		}
 
-		if (!programPath.toFile().exists()) {
+		File executable = programPath.toFile();
+		if (!executable.exists() || !executable.isFile()) {
 			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_does_not_exist, new FileNotFoundException(
 					NLS.bind(LaunchMessages.AbstractCLaunchDelegate_PROGRAM_PATH_not_found, programPath.toOSString())),
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);

@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
@@ -152,12 +153,13 @@ public class LaunchUtils {
 			IProject project = getProject(configuration);
 			ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
 			if (cproject != null) {
-				// Find the specified program within the specified project
-				IFile wsProgramPath = cproject.getProject().getFile(programPath);
-				programPath = wsProgramPath.getLocation();
+				// Find the specified program relative to the specified project
+				IPath projectPath = cproject.getProject().getLocation();
+				programPath = projectPath.append(programPath).makeAbsolute();
 			}
 		}
-		if (!programPath.toFile().exists()) {
+		File executable = programPath.toFile();
+		if (!executable.exists() || !executable.isFile()) {
 			throwException(Messages.LaunchUtils_program_file_does_not_exist,
 					new FileNotFoundException(
 							MessageFormat.format(Messages.LaunchUtils__0_not_found, programPath.toOSString())),

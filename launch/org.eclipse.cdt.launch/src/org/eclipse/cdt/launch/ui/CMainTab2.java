@@ -475,8 +475,13 @@ public class CMainTab2 extends CAbstractMainTab {
 					setErrorMessage(LaunchMessages.CMainTab_Project_must_be_opened);
 					return false;
 				}
-				if (!project.getFile(programName).exists()) {
+				File executable = project.getLocation().append(programName).toFile();
+				if (!executable.exists()) {
 					setErrorMessage(LaunchMessages.CMainTab_Program_does_not_exist);
+					return false;
+				}
+				if (!executable.isFile()) {
+					setErrorMessage(LaunchMessages.CMainTab_Selection_must_be_file);
 					return false;
 				}
 			}

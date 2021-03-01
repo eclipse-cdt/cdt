@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
@@ -152,12 +153,11 @@ public class LaunchUtils {
 			IProject project = getProject(configuration);
 			ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
 			if (cproject != null) {
-				// Find the specified program within the specified project
-				IFile wsProgramPath = cproject.getProject().getFile(programPath);
-				programPath = wsProgramPath.getLocation();
+				programPath = toAbsoluteProgramPath(cproject.getProject(), programPath);
 			}
 		}
-		if (!programPath.toFile().exists()) {
+		File executable = programPath.toFile();
+		if (!executable.exists() || !executable.isFile()) {
 			throwException(Messages.LaunchUtils_program_file_does_not_exist,
 					new FileNotFoundException(
 							MessageFormat.format(Messages.LaunchUtils__0_not_found, programPath.toOSString())),
@@ -165,6 +165,33 @@ public class LaunchUtils {
 		}
 
 		return programPath.toOSString();
+	}
+
+	/**
+	 * Return the program path, resolved as an absolute IPath.
+	 *
+	 * @param project Project to resolve relative paths to
+	 * @param programPath The program path to resolve
+	 * @return the program path
+	 * @since 10.3
+	 */
+	public static IPath toAbsoluteProgramPath(IProject project, IPath programPath) {
+		if (project == null || programPath.isAbsolute()) {
+			return programPath;
+		}
+
+		// Find the specified program within the specified project
+		try {
+			IPath resolvedPath = project.getFile(programPath).getLocation();
+			if (resolvedPath.isAbsolute() && resolvedPath.toFile().exists()) {
+				return resolvedPath;
+			}
+		} catch (IllegalArgumentException e) {
+		}
+
+		// Find the specified program relative to the specified project
+		IPath projectPath = project.getLocation();
+		return projectPath.append(programPath).makeAbsolute();
 	}
 
 	/**

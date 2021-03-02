@@ -57,6 +57,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public static final CPPBasicType UNSIGNED_INT128 = new CPPBasicType(Kind.eInt128, IBasicType.IS_UNSIGNED);
 	public static final CPPBasicType CHAR = new CPPBasicType(Kind.eChar, 0);
 	public static final CPPBasicType VOID = new CPPBasicType(Kind.eVoid, 0);
+	public static final CPPBasicType DOUBLE = new CPPBasicType(Kind.eDouble, 0);
 
 	private static final int FROM_STRING_LITERAL = 1 << 31;
 

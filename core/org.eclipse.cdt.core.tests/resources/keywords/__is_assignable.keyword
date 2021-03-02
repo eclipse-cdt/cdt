@@ -1,0 +1,167 @@
+/*
+ * Resource needed for org.eclipse.cdt.core.parser.tests.ast2.IsAssignableTest
+ * Some meta template programming is done to bring the __is_assignable keyword
+ * into effect.
+ */ 
+ 
+ // Definitions to call __is_assignable in a way that when it evaluates to
+ // true, the function testIsAssignable is valid code and if it evaluates to false, this
+ // method gives a parser error.
+template<typename _Tp, _Tp __v>
+struct integral_constant {
+	static constexpr _Tp value = __v;
+	typedef _Tp value_type;
+	typedef integral_constant<_Tp, __v> type;
+	constexpr operator value_type() const noexcept {
+		return value;
+	}
+
+	constexpr value_type operator()() const noexcept {
+		return value;
+	}
+};
+
+template<typename _Tp, _Tp __v>
+constexpr _Tp integral_constant<_Tp, __v>::value;
+
+template<bool __v>
+using __bool_constant = integral_constant<bool, __v>;
+
+template<typename _Tp, typename _Up>
+struct is_assignable: public __bool_constant<__is_assignable(_Tp, _Up)> {
+};
+
+template<bool, typename _Tp = void>
+  struct enable_if
+  { };
+
+template<typename _Tp>
+  struct enable_if<true, _Tp>
+  { typedef _Tp type; };
+
+// Definitions needed for the tests.
+struct Empty {};
+struct B { int i; B(){} };
+struct D : B {};
+struct F : D {};
+typedef decltype(nullptr) nullptr_t;
+enum E { ee1 };
+enum E2 { ee2 };
+enum class SE { e1 };
+enum class SE2 { e2 };
+union U { int i; Empty b; };
+
+struct Abstract
+{
+  virtual ~Abstract() = 0;
+};
+
+struct AnyAssign
+{
+  template<class T>
+  void operator=(T&&);
+};
+
+struct DelAnyAssign
+{
+  template<class T>
+    void operator=(T&&) = delete;
+};
+
+struct DelCopyAssign
+{
+  DelCopyAssign& operator=(const DelCopyAssign&) = delete;
+  DelCopyAssign& operator=(DelCopyAssign&&) = default;
+};
+
+template<class To>
+struct ImplicitTo {
+  operator To();
+};
+
+template<class To>
+struct DelImplicitTo
+{
+  operator To() = delete;
+};
+
+template<class To>
+struct ExplicitTo {
+  explicit operator To();
+};
+
+template<class To>
+struct DelExplicitTo
+{
+  explicit operator To() = delete;
+};
+
+struct MO
+{
+  MO(MO&&) = default;
+  MO& operator=(MO&&) = default;
+};
+
+struct Nontrivial
+{
+  Nontrivial();
+  Nontrivial(const Nontrivial&);
+  Nontrivial& operator=(const Nontrivial&);
+  ~Nontrivial();
+};
+
+union NontrivialUnion
+{
+  int i;
+  Nontrivial n;
+};
+
+struct AbstractDelDtor
+{
+  ~AbstractDelDtor() = delete;
+  virtual void foo() = 0;
+};
+
+struct DelDef
+{
+  DelDef() = delete;
+};
+
+struct Ellipsis
+{
+  Ellipsis(...){}
+};
+
+struct DelEllipsis
+{
+  DelEllipsis(...) = delete;
+};
+
+template<class... Args>
+struct FromArgs
+{
+  FromArgs(Args...);
+};
+
+template<class... Args>
+struct DelFromArgs
+{
+  DelFromArgs(Args...) = delete;
+};
+
+union UAssignAll
+{
+  bool b;
+  char c;
+  template<class T>
+  void operator=(T&&);
+};
+    
+// The inserted expression calls is_assignable in a way that either
+// aValue is defined as an int variable or that the code gives a parser
+// error.
+int testIsAssignable() {
+  enable_if<is_assignable<param_1, param_2>::value, int>::type aValue = 0;
+
+  return aValue;
+}

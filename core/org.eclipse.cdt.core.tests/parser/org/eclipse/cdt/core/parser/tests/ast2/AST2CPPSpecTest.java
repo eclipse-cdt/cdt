@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -61,6 +62,11 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 
 	public static TestSuite suite() {
 		return suite(AST2CPPSpecTest.class);
+	}
+
+	@Override
+	public void setUp() {
+		CPPASTNameBase.sAllowNameComputation = true;
 	}
 
 	// int x=x+++++y;
@@ -5668,6 +5674,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// char c = convert<char,double>(d); // char convert(double)
 	// }
 	public void test14_8_1s1() throws Exception {
+		CPPASTNameBase.sAllowNameComputation = true;
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
@@ -5838,6 +5845,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		h<D>(0); // The TT member of D is not a template
 	//	}
 	public void test14_8_2s8d() throws Exception {
+		CPPASTNameBase.sAllowNameComputation = true;
 		final String content = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
 		bh.assertProblem("f<A>", 0);

@@ -38,6 +38,9 @@ public class CPPImplicitFunction extends CPPFunction {
 	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type, ICPPParameter[] params,
 			boolean isConstexpr, boolean takesVarArgs) {
 		super(null);
+		if (new String(name).equals("DelAnyAssign")) {
+			System.out.println();
+		}
 		this.name = name;
 		this.scope = scope;
 		this.functionType = type;

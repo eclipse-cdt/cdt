@@ -44,7 +44,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 public class ASTPrinter {
 
 	private static boolean PRINT_PARENT_PROPERTIES = false;
-	private static boolean RESOLVE_BINDINGS = false;
+	private static boolean RESOLVE_BINDINGS = true;
 
 	/**
 	 * Prints the AST to the given PrintStream.

@@ -80,6 +80,11 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	 */
 	public ProblemBinding(IASTName name, IASTNode point, int id, IBinding[] candidateBindings) {
 		this.id = id;
+
+		if (name != null && name.toString().equals("__is_assignable")) {
+			System.out.print("");
+		}
+
 		if (name != null && name.getTranslationUnit() != null) {
 			this.node = name;
 		} else {

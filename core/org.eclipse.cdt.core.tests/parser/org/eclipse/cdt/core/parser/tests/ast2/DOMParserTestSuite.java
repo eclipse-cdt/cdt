@@ -42,6 +42,7 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest(AST2CPPTests.suite());
 		suite.addTest(ASTCPPSpecDefectTests.suite());
 		suite.addTest(AST2CPPImplicitNameTests.suite());
+		suite.addTestSuite(IsAssignableTest.class);
 		suite.addTest(AST2TemplateTests.suite());
 		suite.addTest(TypeTraitsTests.suite());
 		suite.addTestSuite(QuickParser2Tests.class);

@@ -124,6 +124,11 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		return suite(AST2TemplateTests.class);
 	}
 
+	@Override
+	public void setUp() {
+		CPPASTNameBase.sAllowNameComputation = true;
+	}
+
 	private NameCollector getNameCollector(IASTTranslationUnit ast) {
 		NameCollector collector = new NameCollector();
 		ast.accept(collector);

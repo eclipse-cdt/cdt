@@ -80,6 +80,7 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 		switch (fOperator) {
 		case __is_base_of:
 		case __is_trivially_assignable:
+		case __is_assignable:
 		case __is_same:
 			return CPPBasicType.BOOLEAN;
 		}

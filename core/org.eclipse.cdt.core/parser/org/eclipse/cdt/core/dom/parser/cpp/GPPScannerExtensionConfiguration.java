@@ -187,6 +187,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 				addKeyword(GCCKeywords.cp__is_trivially_copyable, IGCCToken.tTT_is_trivially_copyable);
 				addKeyword(GCCKeywords.cp__is_trivially_constructible, IGCCToken.tTT_is_trivially_constructible);
 				addKeyword(GCCKeywords.cp__is_trivially_assignable, IGCCToken.tTT_is_trivially_assignable);
+				addKeyword(GCCKeywords.cp__is_assignable, IGCCToken.tTT_is_assignable);
 			}
 			if (version >= VERSION_6_0) {
 				addKeyword(GCCKeywords.cp__is_same_as, IGCCToken.tTT_is_same);

@@ -67,7 +67,7 @@ public abstract class BaseTestCase5 {
 	 */
 	public static final String SLOW_TEST_TAG = "slowTest";
 
-	protected static final String DEFAULT_INDEXER_TIMEOUT_SEC = "10";
+	protected static final String DEFAULT_INDEXER_TIMEOUT_SEC = "3600";
 	protected static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
 	/**
 	 * Indexer timeout used by tests. To avoid this timeout expiring during debugging add

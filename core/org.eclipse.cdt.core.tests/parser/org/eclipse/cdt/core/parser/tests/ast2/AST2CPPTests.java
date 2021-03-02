@@ -182,6 +182,11 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		return suite(AST2CPPTests.class);
 	}
 
+	@Override
+	public void setUp() {
+		CPPASTNameBase.sAllowNameComputation = true;
+	}
+
 	private void assertProblemBinding(int id, IBinding b) {
 		assertTrue(b instanceof IProblemBinding);
 		assertEquals(id, ((IProblemBinding) b).getID());

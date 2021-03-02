@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
@@ -50,6 +51,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		CPPASTNameBase.sAllowNameComputation = true;
 		fDefaultOptions = DefaultCodeFormatterOptions.getDefaultSettings().getMap();
 		fOptions = new HashMap<>(fDefaultOptions);
 	}

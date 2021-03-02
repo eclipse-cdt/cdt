@@ -610,6 +610,9 @@ public class ValueFactory {
 			return IntegralValue.create(0);
 		case __is_trivially_assignable:
 			return IntegralValue.UNKNOWN; // TODO: Implement.
+		case __is_assignable:
+			IsAssignableEvaluator ea = new IsAssignableEvaluator(type1, type2);
+			return ea.evaluate();
 		}
 		return IntegralValue.UNKNOWN;
 	}

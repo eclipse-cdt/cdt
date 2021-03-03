@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fb8804d2_1b4b21de",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2330,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-03-03T02:55:39Z",
+      "side": 1,
+      "message": "I\u0027m not sure what the right fix is but with this, a typedef\u0027ed type will never have it\u0027s value of initializer computed which sounds like it will break other situations like conversions (just looking at where getAssociatedNumericalValue() is used).",
+      "revId": "864715b933e97e461d888bb009f7833c1194f9e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -76,6 +76,13 @@ public class TextLineRenderer implements ILinelRenderer {
 				drawText(doubleBufferGC, 0, 0, colFirst, segment.getColumn(), text);
 				drawCursor(model, doubleBufferGC, line, 0, 0, colFirst);
 			}
+			Point hsStart = fModel.getHoverSelectionStart();
+			Point hsEnd = fModel.getHoverSelectionEnd();
+			if (hsStart != null && hsEnd != null && line == hsStart.y && (hsStart.x < hsEnd.x)) {
+				RGB defaultFg = fStyleMap.getForegrondRGB(null);
+				doubleBufferGC.setForeground(new Color(doubleBufferGC.getDevice(), defaultFg));
+				drawUnderline(doubleBufferGC, hsStart.x, hsEnd.x + 1);
+			}
 			if (fModel.hasLineSelection(line)) {
 				TerminalStyle style = TerminalStyle.getStyle(TerminalColor.SELECTION_FOREGROUND,
 						TerminalColor.SELECTION_BACKGROUND);
@@ -166,6 +173,13 @@ public class TextLineRenderer implements ILinelRenderer {
 			text = text.replace('\000', ' ');
 			gc.drawString(text, x + offset, y, false);
 		}
+	}
+
+	private void drawUnderline(GC gc, int colFirst, int col) {
+		int y = getCellHeight() - 1;
+		int x = getCellWidth() * colFirst;
+		int x2 = col * getCellWidth() - 1;
+		gc.drawLine(x, y, x2, y);
 	}
 
 	private void setupGC(GC gc, TerminalStyle style) {

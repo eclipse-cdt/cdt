@@ -16,6 +16,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.custom.CTabFolder;
@@ -253,4 +256,21 @@ public class UIPlugin extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return getDefault().getImageRegistry().getDescriptor(key);
 	}
+
+	public static void log(String msg, Throwable e) {
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, msg, e));
+	}
+
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+
+	public static boolean isOptionEnabled(String strOption) {
+		String strEnabled = Platform.getDebugOption(strOption);
+		if (strEnabled == null)
+			return false;
+
+		return Boolean.parseBoolean(strEnabled);
+	}
+
 }

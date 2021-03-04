@@ -19,10 +19,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
+import org.eclipse.tm.terminal.model.TextRange;
 
 abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
+	private static final boolean DEBUG_HOVER = TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_HOVER);
 	protected List<ITextCanvasModelListener> fListeners = new ArrayList<>();
 	private int fCursorLine;
 	private int fCursorColumn;
@@ -44,6 +48,8 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 	 */
 	boolean fInUpdate;
 	private int fCols;
+
+	private TextRange fHoverRange = TextRange.EMPTY;
 
 	public AbstractTextCanvasModel(ITerminalTextDataSnapshot snapshot) {
 		fSnapshot = snapshot;
@@ -307,6 +313,98 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 	@Override
 	public String getSelectedText() {
 		return fCurrentSelection;
+	}
+
+	@Override
+	public boolean hasHoverSelection(int line) {
+		if (fHoverRange.isEmpty()) {
+			return false;
+		}
+		return fHoverRange.contains(line);
+	}
+
+	@Override
+	public Point getHoverSelectionStart() {
+		if (!fHoverRange.isEmpty()) {
+			return fHoverRange.getStart();
+		}
+		return null;
+	}
+
+	@Override
+	public Point getHoverSelectionEnd() {
+		// Note - to match behaviour of getSelectionEnd this method
+		// returns the inclusive end. As the fHoverRange is exclusive
+		// we need to decrement the end positions before returning them.
+		if (!fHoverRange.isEmpty()) {
+			Point end = fHoverRange.getEnd();
+			end.x--;
+			end.y--;
+			return end;
+		}
+		return null;
+	}
+
+	@Override
+	public void expandHoverSelectionAt(final int line, final int col) {
+		if (fHoverRange.contains(col, line)) {
+			// position is inside current hover range -> no change
+			return;
+		}
+		fHoverRange = TextRange.EMPTY;
+		if (line < 0 || line > fSnapshot.getHeight() || col < 0) {
+			return;
+		}
+		int row1 = line;
+		int row2 = line;
+		while (row1 > 0 && fSnapshot.isWrappedLine(row1 - 1))
+			row1--;
+		while (row2 < fSnapshot.getHeight() && fSnapshot.isWrappedLine(row2))
+			row2++;
+		row2++;
+		String lineText = ""; //$NON-NLS-1$
+		for (int l = row1; l < row2; l++) {
+			char[] chars = fSnapshot.getChars(l);
+			if (chars == null)
+				return;
+			lineText += String.valueOf(chars);
+		}
+		int width = fSnapshot.getWidth();
+		int col1 = col + (line - row1) * width;
+		if (lineText.length() <= col1 || isBoundaryChar(lineText.charAt(col1))) {
+			return;
+		}
+		int wordStart = 0;
+		int wordEnd = lineText.length();
+		for (int c = col1; c >= 1; c--) {
+			if (isBoundaryChar(lineText.charAt(c - 1))) {
+				wordStart = c;
+				break;
+			}
+		}
+		for (int c = col1; c < lineText.length(); c++) {
+			if (isBoundaryChar(lineText.charAt(c))) {
+				wordEnd = c;
+				break;
+			}
+		}
+		if (wordStart < wordEnd) {
+			fHoverRange = new TextRange(row1 + wordStart / width, row1 + (wordEnd - 1) / width + 1, (wordStart % width),
+					(wordEnd - 1) % width + 1, lineText.substring(wordStart, wordEnd));
+			if (DEBUG_HOVER) {
+				System.out.format("hover: %s   <- [%s,%s][%s,%s]\n", //$NON-NLS-1$
+						fHoverRange, col, line, wordStart, wordEnd);
+			}
+		}
+	}
+
+	@Override
+	public String getHoverSelectionText() {
+		return fHoverRange.text;
+	}
+
+	private boolean isBoundaryChar(char c) {
+		return Character.isWhitespace(c) || (c < '\u0020') || c == '"' || c == '\'';
 	}
 
 	// helper to sanitize text copied out of a snapshot

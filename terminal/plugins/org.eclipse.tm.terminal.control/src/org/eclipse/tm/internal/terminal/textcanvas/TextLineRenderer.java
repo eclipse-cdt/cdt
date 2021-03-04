@@ -26,6 +26,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.LineSegment;
 import org.eclipse.tm.terminal.model.TerminalColor;
@@ -35,6 +37,7 @@ import org.eclipse.tm.terminal.model.TerminalStyle;
  *
  */
 public class TextLineRenderer implements ILinelRenderer {
+	private static final boolean DEBUG_HOVER = TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_HOVER);
 	private final ITextCanvasModel fModel;
 	private final StyleMap fStyleMap;
 
@@ -75,6 +78,20 @@ public class TextLineRenderer implements ILinelRenderer {
 				String text = segment.getText();
 				drawText(doubleBufferGC, 0, 0, colFirst, segment.getColumn(), text);
 				drawCursor(model, doubleBufferGC, line, 0, 0, colFirst);
+			}
+			if (fModel.hasHoverSelection(line)) {
+				if (DEBUG_HOVER) {
+					System.out.format("hover: %s  contains hover selection\n", line); //$NON-NLS-1$
+				}
+				Point hsStart = fModel.getHoverSelectionStart();
+				Point hsEnd = fModel.getHoverSelectionEnd();
+				int colStart = line == hsStart.y ? hsStart.x : 0;
+				int colEnd = line == hsEnd.y ? hsEnd.x : getTerminalText().getWidth();
+				if (colStart < colEnd) {
+					RGB defaultFg = fStyleMap.getForegrondRGB(null);
+					doubleBufferGC.setForeground(new Color(doubleBufferGC.getDevice(), defaultFg));
+					drawUnderline(doubleBufferGC, colStart, colEnd);
+				}
 			}
 			if (fModel.hasLineSelection(line)) {
 				TerminalStyle style = TerminalStyle.getStyle(TerminalColor.SELECTION_FOREGROUND,
@@ -166,6 +183,21 @@ public class TextLineRenderer implements ILinelRenderer {
 			text = text.replace('\000', ' ');
 			gc.drawString(text, x + offset, y, false);
 		}
+	}
+
+	/**
+	 *
+	 * @param gc
+	 * @param colStart Starting text column to underline (inclusive)
+	 * @param colEnd Ending text column to underline (inclusive)
+	 */
+	private void drawUnderline(GC gc, int colStart, int colEnd) {
+		int y = getCellHeight() - 1;
+		int x = getCellWidth() * colStart;
+
+		// x2 is the right side of last column being underlined.
+		int x2 = (colEnd + 1) * getCellWidth() - 1;
+		gc.drawLine(x, y, x2, y);
 	}
 
 	private void setupGC(GC gc, TerminalStyle style) {

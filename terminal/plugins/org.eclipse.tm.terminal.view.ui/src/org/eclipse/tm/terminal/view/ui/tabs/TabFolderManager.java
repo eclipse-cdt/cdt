@@ -271,6 +271,10 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 			// Add middle mouse button paste support
 			addMiddleMouseButtonPasteSupport(terminal);
+
+			// add support to open resource on ctrl/meta + mouse click
+			addOpenResourceSupport(terminal);
+
 			// Add the "selection" listener to the terminal control
 			new TerminalControlSelectionListener(terminal);
 			// Configure the terminal encoding
@@ -326,6 +330,10 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 		// Return the create tab item finally.
 		return item;
+	}
+
+	private void addOpenResourceSupport(ITerminalViewControl terminal) {
+		terminal.addMouseListener(new OpenFileMouseHandler(getParentView().getSite(), terminal));
 	}
 
 	/**

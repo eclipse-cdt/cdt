@@ -11,22 +11,38 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.ui.tabs;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -46,17 +62,29 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
+import org.eclipse.tm.internal.terminal.control.ITerminalMouseListener2;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
 import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 import org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView;
 import org.eclipse.tm.terminal.view.ui.interfaces.ImageConsts;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.dialogs.OpenResourceDialog;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Terminal tab folder manager.
@@ -271,6 +299,10 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 			// Add middle mouse button paste support
 			addMiddleMouseButtonPasteSupport(terminal);
+
+			// add support to open resource on ctrl/meta + mouse click
+			addOpenResourceSupport(terminal);
+
 			// Add the "selection" listener to the terminal control
 			new TerminalControlSelectionListener(terminal);
 			// Configure the terminal encoding
@@ -326,6 +358,188 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 		// Return the create tab item finally.
 		return item;
+	}
+
+	private void addOpenResourceSupport(ITerminalViewControl terminal) {
+		terminal.addMouseListener(new ITerminalMouseListener2() {
+
+			@Override
+			public void mouseUp(ITerminalTextDataReadOnly terminalText, int line, int column, int button,
+					int stateMask) {
+				if ((stateMask & SWT.MODIFIER_MASK) != SWT.MOD1) {
+					// Only handle Ctrl-click
+					return;
+				}
+				String textToOpen = terminal.getHoverSelection();
+				String lineAndCol = null;
+				if (textToOpen.length() > 0) {
+					try {
+						// if the selection looks like a web URL, open using the browser
+						if (textToOpen.startsWith("http://") || textToOpen.startsWith("https://")) { //$NON-NLS-1$//$NON-NLS-2$
+							try {
+								PlatformUI.getWorkbench().getBrowserSupport().createBrowser(null)
+										.openURL(new URL(textToOpen));
+								return;
+							} catch (MalformedURLException e) {
+								// not a valid URL, continue
+							}
+						}
+						// extract the path from file:// URLs
+						if (textToOpen.startsWith("file://")) { //$NON-NLS-1$
+							textToOpen = textToOpen.substring(7);
+						}
+						// remove optional position info name:[row[:col]]
+						{
+							int startOfRowCol = textToOpen.indexOf(':');
+							if (startOfRowCol == 1 && textToOpen.length() > 2) {
+								// assume this is the device separator on Windows
+								startOfRowCol = textToOpen.indexOf(':', startOfRowCol + 1);
+							}
+							if (startOfRowCol >= 0) {
+								lineAndCol = textToOpen.substring(startOfRowCol + 1);
+								textToOpen = textToOpen.substring(0, startOfRowCol);
+							}
+						}
+						Optional<String> fullPath = Optional.empty();
+						if (!textToOpen.startsWith("/")) { //$NON-NLS-1$
+							// relative path: try to append to the working directory
+							Optional<String> workingDirectory = terminal.getTerminalConnector().getWorkingDirectory();
+							if (workingDirectory.isPresent()) {
+								fullPath = Optional.of(workingDirectory.get() + "/" + textToOpen);
+							}
+						}
+						// if the selection is a file location that maps to a resource
+						// open the resource
+						IFile fileForLocation = ResourcesPlugin.getWorkspace().getRoot()
+								.getFileForLocation(new Path(fullPath.orElse(textToOpen)));
+						if (fileForLocation != null && fileForLocation.exists()) {
+							IEditorPart editor = IDE.openEditor(
+									PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
+									fileForLocation, true);
+							goToLine(lineAndCol, editor);
+							return;
+						}
+						// try an external file, if it exists
+						File file = new File(fullPath.orElse(textToOpen));
+						if (file.exists() && !file.isDirectory()) {
+							try {
+								IEditorPart editor = IDE.openEditor(getParentView().getViewSite().getPage(),
+										file.toURI(), IDE.getEditorDescriptor(file.getName(), true, true).getId(),
+										true);
+								goToLine(lineAndCol, editor);
+								return;
+							} catch (Exception e) {
+								// continue
+							}
+						}
+						IWorkbenchPartSite site = getParentView().getSite();
+						OpenResourceDialog openResourceDialog = new OpenResourceDialog(
+								getParentView().getViewSite().getShell(),
+								ResourcesPlugin.getPlugin().getWorkspace().getRoot(), IResource.FILE);
+						openResourceDialog.setInitialPattern(textToOpen);
+						if (openResourceDialog.open() != Window.OK)
+							return;
+						Object[] results = openResourceDialog.getResult();
+						List<IFile> files = new ArrayList<>();
+						for (Object result : results) {
+							if (result instanceof IFile) {
+								files.add((IFile) result);
+							}
+						}
+						if (files.size() > 0) {
+
+							final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+							if (window == null) {
+								throw new ExecutionException("no active workbench window"); //$NON-NLS-1$
+							}
+
+							final IWorkbenchPage page = window.getActivePage();
+							if (page == null) {
+								throw new ExecutionException("no active workbench page"); //$NON-NLS-1$
+							}
+
+							try {
+								for (IFile iFile : files) {
+									IEditorPart editor = IDE.openEditor(page, iFile, true);
+									goToLine(lineAndCol, editor);
+								}
+							} catch (final PartInitException e) {
+								throw new ExecutionException("error opening file in editor", e); //$NON-NLS-1$
+							}
+						}
+					} catch (IllegalArgumentException | NullPointerException | ExecutionException
+							| PartInitException e) {
+						UIPlugin.log("Failed to activate OpenResourceDialog", e); //$NON-NLS-1$
+					}
+
+				}
+			}
+
+			private void goToLine(String lineAndCol, IEditorPart editor) {
+				ITextEditor textEditor = Adapters.adapt(editor, ITextEditor.class);
+				if (textEditor != null) {
+					Optional<Integer> optionalOffset = getRegionFromLineAndCol(textEditor, lineAndCol);
+					optionalOffset.ifPresent(offset -> textEditor.selectAndReveal(offset, 0));
+				}
+			}
+
+			private Pattern regex = Pattern.compile("\\D*(\\d*)(:(\\d*))?"); //$NON-NLS-1$
+
+			/**
+			 * Returns the line information for the given line in the given editor
+			 */
+			private Optional<Integer> getRegionFromLineAndCol(ITextEditor editor, String lineAndCol) {
+				if (lineAndCol == null) {
+					return Optional.empty();
+				}
+				Matcher matcher = regex.matcher(lineAndCol);
+				Pattern regex2 = Pattern.compile("(\\d*)(:(\\d*))?.*"); //$NON-NLS-1$
+				matcher = regex2.matcher(lineAndCol);
+				if (!matcher.matches()) {
+					return Optional.empty();
+				}
+				String lineStr = matcher.group(1);
+				String colStr = matcher.group(3);
+				int line;
+				int col = 0;
+				try {
+					line = Integer.parseInt(lineStr);
+				} catch (NumberFormatException e1) {
+					return Optional.empty();
+				}
+				try {
+					col = Integer.parseInt(colStr);
+				} catch (NumberFormatException e1) {
+					// if we can't get a column, go to the line alone
+				}
+				IDocumentProvider provider = editor.getDocumentProvider();
+				IEditorInput input = editor.getEditorInput();
+				try {
+					provider.connect(input);
+				} catch (CoreException e) {
+					return null;
+				}
+				try {
+					IDocument document = provider.getDocument(input);
+					if (document != null && line > 0) {
+						// document's lines are 0-offset
+						line = line - 1;
+						int lineOffset = document.getLineOffset(line);
+						if (col > 0) {
+							int lineLength = document.getLineLength(line);
+							if (col < lineLength) {
+								lineOffset += col;
+							}
+						}
+						return Optional.of(lineOffset);
+					}
+				} catch (BadLocationException e) {
+				} finally {
+					provider.disconnect(input);
+				}
+				return Optional.empty();
+			}
+		});
 	}
 
 	/**

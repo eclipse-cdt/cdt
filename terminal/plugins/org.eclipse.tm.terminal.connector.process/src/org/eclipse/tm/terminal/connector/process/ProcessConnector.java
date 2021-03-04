@@ -16,8 +16,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
@@ -296,4 +300,17 @@ public class ProcessConnector extends AbstractStreamsConnector {
 		}
 	}
 
+	public Optional<String> getWorkingDirectory() {
+		try {
+			long pid = process.pid();
+			if (Platform.getOS().equals(Platform.OS_LINUX)) {
+				Path procCwd = Files.readSymbolicLink(FileSystems.getDefault().getPath("/proc/" + pid + "/cwd")); //$NON-NLS-1$//$NON-NLS-2$
+				return Optional.of(procCwd.toAbsolutePath().toString());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Optional.empty();
+	}
 }

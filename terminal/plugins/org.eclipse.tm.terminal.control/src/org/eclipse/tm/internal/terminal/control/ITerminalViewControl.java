@@ -171,4 +171,6 @@ public interface ITerminalViewControl {
 	 * @since 5.1
 	 */
 	void setTerminalTitle(String newTitle);
+
+	String getHoverSelection();
 }

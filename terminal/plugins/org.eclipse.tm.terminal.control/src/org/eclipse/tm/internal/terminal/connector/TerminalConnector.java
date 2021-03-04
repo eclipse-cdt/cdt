@@ -16,6 +16,7 @@
 package org.eclipse.tm.internal.terminal.connector;
 
 import java.io.OutputStream;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -259,5 +260,12 @@ public class TerminalConnector implements ITerminalConnector {
 		}
 		// maybe we have to be adapted....
 		return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
+
+	public Optional<String> getWorkingDirectory() {
+		if (fConnector != null) {
+			return fConnector.getWorkingDirectory();
+		}
+		return Optional.empty();
 	}
 }

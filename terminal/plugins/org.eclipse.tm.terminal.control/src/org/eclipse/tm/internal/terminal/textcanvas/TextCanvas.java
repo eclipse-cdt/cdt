@@ -43,6 +43,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm.internal.terminal.control.ITerminalMouseListener;
+import org.eclipse.tm.internal.terminal.control.ITerminalMouseListener2;
 import org.eclipse.tm.terminal.model.TerminalColor;
 
 /**
@@ -146,7 +147,13 @@ public class TextCanvas extends GridCanvas {
 					Point pt = screenPointToCell(e.x, e.y);
 					if (pt != null) {
 						for (ITerminalMouseListener l : fMouseListeners) {
-							l.mouseDoubleClick(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button);
+							if (l instanceof ITerminalMouseListener2) {
+								ITerminalMouseListener2 l2 = (ITerminalMouseListener2) l;
+								l2.mouseDoubleClick(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button,
+										e.stateMask);
+							} else {
+								l.mouseDoubleClick(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button);
+							}
 						}
 					}
 				}
@@ -170,7 +177,12 @@ public class TextCanvas extends GridCanvas {
 					Point pt = screenPointToCell(e.x, e.y);
 					if (pt != null) {
 						for (ITerminalMouseListener l : fMouseListeners) {
-							l.mouseDown(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button);
+							if (l instanceof ITerminalMouseListener2) {
+								ITerminalMouseListener2 l2 = (ITerminalMouseListener2) l;
+								l2.mouseDown(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button, e.stateMask);
+							} else {
+								l.mouseDown(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button);
+							}
 						}
 					}
 				}
@@ -190,7 +202,12 @@ public class TextCanvas extends GridCanvas {
 					Point pt = screenPointToCell(e.x, e.y);
 					if (pt != null) {
 						for (ITerminalMouseListener l : fMouseListeners) {
-							l.mouseUp(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button);
+							if (l instanceof ITerminalMouseListener2) {
+								ITerminalMouseListener2 l2 = (ITerminalMouseListener2) l;
+								l2.mouseUp(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button, e.stateMask);
+							} else {
+								l.mouseUp(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button);
+							}
 						}
 					}
 				}
@@ -200,7 +217,15 @@ public class TextCanvas extends GridCanvas {
 			if (fDraggingStart != null) {
 				updateHasSelection(e);
 				setSelection(screenPointToCell(e.x, e.y));
+				fCellCanvasModel.expandHoverSelectionAt(-1, -1);
+			} else if ((e.stateMask & SWT.MODIFIER_MASK) == SWT.MOD1) {
+				// highlight (underline) word that would be used by MOD1 + mouse click
+				Point pt = screenPointToCell(e.x, e.y);
+				fCellCanvasModel.expandHoverSelectionAt(pt.y, pt.x);
+			} else {
+				fCellCanvasModel.expandHoverSelectionAt(-1, -1);
 			}
+			redraw();
 		});
 		serVerticalBarVisible(true);
 		setHorizontalBarVisible(false);
@@ -538,6 +563,10 @@ public class TextCanvas extends GridCanvas {
 
 	public void removeTerminalMouseListener(ITerminalMouseListener listener) {
 		fMouseListeners.remove(listener);
+	}
+
+	public String getHoverSelection() {
+		return fCellCanvasModel.getHoverSelectionText();
 	}
 
 }

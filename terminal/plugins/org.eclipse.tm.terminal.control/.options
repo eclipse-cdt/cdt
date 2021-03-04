@@ -1,3 +1,4 @@
 org.eclipse.tm.terminal.control/debug/log = false
 org.eclipse.tm.terminal.control/debug/log/char = false
 org.eclipse.tm.terminal.control/debug/log/VT100Backend = false
+org.eclipse.tm.terminal.control/debug/log/hover = false

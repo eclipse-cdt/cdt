@@ -1,0 +1,256 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e355b7e_8b793345",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "+1 for taking advantage of the new Process API.",
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2aba5883_7dc7f1cb",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "This TODO matches my comment in TextLineRenderer that would need to be resolved if wrapped lines work here.",
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "81f46d73_2524e9f2",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "This is similar to the issues in TabFolderManager where I said \"We had a similar thing in LSP4E with URLs in Markdown editor https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d558573\" We should aim to have a consistent implementation of this where possible.",
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f54524ac_f7ec59a2",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/ITextCanvasModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "typo?",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 1
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c75dddad_6490b2d5",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextCanvas.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "this makes the line 160 if always false. I actually didn\u0027t understand the need for this extra check.",
+      "range": {
+        "startLine": 157,
+        "startChar": 22,
+        "endLine": 157,
+        "endChar": 65
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f2a9770_c0cf495e",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextCanvas.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "this code allows a selection to be expanded by pressing shift and clicking",
+      "range": {
+        "startLine": 161,
+        "startChar": 7,
+        "endLine": 163,
+        "endChar": 31
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d94d473_7048fbdb",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextCanvas.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "This is API, despite the name of the package containing internal :-( - so I think mouseDown needs to continue to be called regardless of the modifier.\n\nWhat may be needed is a ITerminalMouseListener2 that passes stateMask (or similar) to mouseDown. I will provide a possible option in the next PS.",
+      "range": {
+        "startLine": 172,
+        "startChar": 11,
+        "endLine": 172,
+        "endChar": 33
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6e6180bd_c9396e9e",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextLineRenderer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "this code does not handle hovers that extends across two lines correctly.",
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33540c8b_b3f7a381",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "hyperlink detection in general exists as a pluggable/extendable thing in Eclipse, we should hook into it if possible rather than reimplement. We had a similar thing in LSP4E with URLs in Markdown editor https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d558573",
+      "range": {
+        "startLine": 365,
+        "startChar": 6,
+        "endLine": 373,
+        "endChar": 7
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "10fd3c9a_ce316a08",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "below (line 426) you are checking window \u003d\u003d null, but here it is missed. Same for page.",
+      "range": {
+        "startLine": 396,
+        "startChar": 22,
+        "endLine": 396,
+        "endChar": 74
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7883de5_a07ec349",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "this whole block is similar to other places in Eclipse - such as the DsfSourceDisplayAdapter. I wonder if there is some common code to handle this more elegantly.",
+      "range": {
+        "startLine": 383,
+        "startChar": 6,
+        "endLine": 409,
+        "endChar": 8
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7168a474_f834bb7f",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-04T20:27:11Z",
+      "side": 1,
+      "message": "I wonder - but not 100% sure how to do - if this should be triggering the openresourcehandler and setting the workspace selection, or if this should use FilteredResourcesSelectionDialog. Andreas lays out a pointer in the correct direction here too https://stackoverflow.com/a/42506925/2796832 - that one isn\u0027t quite right, but in the right direction.\n\nUsing openresourcehandler would handle all the code from this line to the end of the method, and would also be useable to replace part of the above code when it does resolve to an IFile.",
+      "range": {
+        "startLine": 411,
+        "startChar": 50,
+        "endLine": 411,
+        "endChar": 68
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -1405,4 +1405,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		getCtlText().removeTerminalMouseListener(listener);
 	}
 
+	@Override
+	public String getHoverSelection() {
+		return fCtlText.getHoverSelection();
+	}
+
 }

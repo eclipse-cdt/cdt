@@ -91,6 +91,37 @@ public interface ITextCanvasModel {
 	String getSelectedText();
 
 	/**
+	 * Expand the hover selection to the word at the given position.
+	 *
+	 * @param line line
+	 * @param col column
+	 */
+	void expandHoverSelectionAt(int line, int col);
+
+	/**
+	 * Get the text of the current hover selection.
+	 *
+	 * @return the hover selection text, never null.
+	 */
+	String getHoverSelectionText();
+
+	/**
+	 * Get the start of the hover selection.
+	 *
+	 * @return the start of the hover selection or null if nothing is selected
+	 * {@link Point#x} is the column and {@link Point#y} is the line.
+	 */
+	Point getHoverSelectionStart();
+
+	/**
+	 * Get the end of the hover selection.
+	 *
+	 * @return the end of the hover selection or null if nothing is selected
+	 * {@link Point#x} is the column and {@link Point#y} is the line.
+	 */
+	Point getHoverSelectionEnd();
+
+	/**
 	 * Collect and return all text present in the model.
 	 *
 	 * <p>Individual lines of the returned text are separated by '\n'.

@@ -14,6 +14,7 @@
 package org.eclipse.tm.internal.terminal.provisional.api.provider;
 
 import java.io.OutputStream;
+import java.util.Optional;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
@@ -151,4 +152,12 @@ public abstract class TerminalConnectorImpl {
 	 */
 	public void setTerminalSize(int newWidth, int newHeight) {
 	}
+
+	/**
+	 * @since 5.1
+	 */
+	public Optional<String> getWorkingDirectory() {
+		return Optional.empty();
+	}
+
 }

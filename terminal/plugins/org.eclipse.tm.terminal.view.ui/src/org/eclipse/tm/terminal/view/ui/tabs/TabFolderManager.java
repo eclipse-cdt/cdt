@@ -11,14 +11,23 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.ui.tabs;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,6 +36,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -46,17 +56,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
+import org.eclipse.tm.internal.terminal.control.ITerminalMouseListener2;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
 import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 import org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView;
 import org.eclipse.tm.terminal.view.ui.interfaces.ImageConsts;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.dialogs.OpenResourceDialog;
 
 /**
  * Terminal tab folder manager.
@@ -271,6 +288,10 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 			// Add middle mouse button paste support
 			addMiddleMouseButtonPasteSupport(terminal);
+
+			// add support to open resource on ctrl/meta + mouse click
+			addOpenResourceSupport(terminal);
+
 			// Add the "selection" listener to the terminal control
 			new TerminalControlSelectionListener(terminal);
 			// Configure the terminal encoding
@@ -326,6 +347,110 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 		// Return the create tab item finally.
 		return item;
+	}
+
+	private void addOpenResourceSupport(ITerminalViewControl terminal) {
+		terminal.addMouseListener(new ITerminalMouseListener2() {
+
+			@Override
+			public void mouseDown(ITerminalTextDataReadOnly terminalText, int line, int column, int button,
+					int stateMask) {
+				if ((stateMask & SWT.MODIFIER_MASK) != SWT.MOD1) {
+					// Only handle Ctrl-click
+					return;
+				}
+				String textToOpen = terminal.getHoverSelection();
+				if (textToOpen.length() > 0) {
+					try {
+						// if the selection looks like a web URL, open using the browser
+						if (textToOpen.startsWith("http://") || textToOpen.startsWith("https://")) { //$NON-NLS-1$//$NON-NLS-2$
+							try {
+								PlatformUI.getWorkbench().getBrowserSupport().createBrowser(null)
+										.openURL(new URL(textToOpen));
+								return;
+							} catch (MalformedURLException e) {
+								// not a valid URL, continue
+							}
+						}
+						// extract the path from file:// URLs
+						if (textToOpen.startsWith("file://")) { //$NON-NLS-1$
+							textToOpen = textToOpen.substring(7);
+						}
+						// remove optional position info name:[row[:col]]
+						int startOfRowCol = textToOpen.indexOf(':');
+						if (startOfRowCol >= 0) {
+							textToOpen = textToOpen.substring(0, startOfRowCol);
+						}
+						Optional<String> fullPath = Optional.empty();
+						if (!textToOpen.startsWith("/")) { //$NON-NLS-1$
+							// relative path: try to append to the working directory
+							Optional<String> workingDirectory = terminal.getTerminalConnector().getWorkingDirectory();
+							if (workingDirectory.isPresent()) {
+								fullPath = Optional.of(workingDirectory.get() + "/" + textToOpen);
+							}
+						}
+						// if the selection is a file location that maps to a resource
+						// open the resource
+						IFile fileForLocation = ResourcesPlugin.getWorkspace().getRoot()
+								.getFileForLocation(new Path(fullPath.orElse(textToOpen)));
+						if (fileForLocation != null && fileForLocation.exists()) {
+							IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
+									fileForLocation, true);
+							return;
+						}
+						// try an external file, if it exists
+						File file = new File(fullPath.orElse(textToOpen));
+						if (file.exists() && !file.isDirectory()) {
+							try {
+								IDE.openEditor(getParentView().getViewSite().getPage(), file.toURI(),
+										IDE.getEditorDescriptor(file.getName(), true, true).getId(), true);
+								return;
+							} catch (Exception e) {
+								// continue
+							}
+						}
+						OpenResourceDialog openResourceDialog = new OpenResourceDialog(
+								getParentView().getViewSite().getShell(),
+								ResourcesPlugin.getPlugin().getWorkspace().getRoot(), IResource.FILE);
+						openResourceDialog.setInitialPattern(textToOpen);
+						if (openResourceDialog.open() != Window.OK)
+							return;
+						Object[] results = openResourceDialog.getResult();
+						List<IFile> files = new ArrayList<>();
+						for (Object result : results) {
+							if (result instanceof IFile) {
+								files.add((IFile) result);
+							}
+						}
+						if (files.size() > 0) {
+
+							final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+							if (window == null) {
+								throw new ExecutionException("no active workbench window"); //$NON-NLS-1$
+							}
+
+							final IWorkbenchPage page = window.getActivePage();
+							if (page == null) {
+								throw new ExecutionException("no active workbench page"); //$NON-NLS-1$
+							}
+
+							try {
+								for (IFile iFile : files) {
+									IDE.openEditor(page, iFile, true);
+								}
+							} catch (final PartInitException e) {
+								throw new ExecutionException("error opening file in editor", e); //$NON-NLS-1$
+							}
+						}
+					} catch (IllegalArgumentException | NullPointerException | ExecutionException
+							| PartInitException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+			}
+		});
 	}
 
 	/**

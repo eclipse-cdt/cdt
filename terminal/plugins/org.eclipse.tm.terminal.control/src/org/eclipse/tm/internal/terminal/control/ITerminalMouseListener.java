@@ -16,6 +16,7 @@ import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 /**
  * Terminal specific version of {@link org.eclipse.swt.events.MouseListener}
  * @since 4.1
+ * @see ITerminalMouseListener2
  */
 public interface ITerminalMouseListener {
 	/**

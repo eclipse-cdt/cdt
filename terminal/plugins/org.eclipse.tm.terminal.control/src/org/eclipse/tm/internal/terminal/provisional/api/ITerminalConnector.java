@@ -16,6 +16,7 @@
 package org.eclipse.tm.internal.terminal.provisional.api;
 
 import java.io.OutputStream;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
@@ -145,5 +146,13 @@ public interface ITerminalConnector extends IAdaptable {
 	 * may be shown in the status line of the terminal view.
 	 */
 	String getSettingsSummary();
+
+	/**
+	 * @return An optional with the absolute path if available of the current working dir, empty otherwise.
+	 * @since 5.1
+	 */
+	default Optional<String> getWorkingDirectory() {
+		return Optional.empty();
+	}
 
 }

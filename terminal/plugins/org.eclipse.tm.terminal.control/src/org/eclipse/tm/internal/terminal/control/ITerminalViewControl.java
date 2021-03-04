@@ -159,11 +159,13 @@ public interface ITerminalViewControl {
 
 	/**
 	 * @since 4.1
+	 * @param listener may be a {@link ITerminalMouseListener2} for extra callbacks
 	 */
 	void addMouseListener(ITerminalMouseListener listener);
 
 	/**
 	 * @since 4.1
+	 * @param listener may be a {@link ITerminalMouseListener2} for extra callbacks
 	 */
 	void removeMouseListener(ITerminalMouseListener listener);
 
@@ -171,4 +173,9 @@ public interface ITerminalViewControl {
 	 * @since 5.1
 	 */
 	void setTerminalTitle(String newTitle);
+
+	/**
+	 * @since 5.1
+	 */
+	String getHoverSelection();
 }

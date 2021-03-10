@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.utils.CommandLineUtil;
@@ -101,6 +102,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	protected static final String COMPILER_MACRO = "${COMMAND}"; //$NON-NLS-1$
 	/** @since 8.3 */
 	protected static final String FLAGS_MACRO = "${FLAGS}"; //$NON-NLS-1$
+	/**	@since 9.2 */
+	protected static final String ALL_FLAGS_MACRO = "${ALL_FLAGS}"; //$NON-NLS-1$
 	protected static final String SPEC_FILE_MACRO = "${INPUTS}"; //$NON-NLS-1$
 	protected static final String SPEC_EXT_MACRO = "${EXT}"; //$NON-NLS-1$
 	protected static final String SPEC_FILE_BASE = "spec"; //$NON-NLS-1$
@@ -333,6 +336,11 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				String flags = getToolOptions(languageId);
 				if (flags != null)
 					cmd = cmd.replace(FLAGS_MACRO, flags);
+			}
+			if (cmd.contains(ALL_FLAGS_MACRO)) {
+				String flags = getAllToolOptions(languageId);
+				if (flags != null)
+					cmd = cmd.replace(ALL_FLAGS_MACRO, flags);
 			}
 			if (cmd.contains(SPEC_FILE_MACRO)) {
 				String specFileName = getSpecFile(languageId);
@@ -933,12 +941,30 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * Determine additional options to pass to scanner discovery command.
 	 * These options are intended to come from the tool-chain.
 	 *
+	 * Unlike {@link #getAllToolOptions(String)} this method filters to only
+	 * return a subset of all options. See {@link IOption#isForScannerDiscovery()}
+	 *
 	 * @param languageId - language ID.
 	 * @return additional options to pass to scanner discovery command.
 	 *
 	 * @since 8.3
 	 */
 	protected String getToolOptions(String languageId) {
+		return ""; //$NON-NLS-1$
+	}
+
+	/**
+	 * Determine additional options to pass to scanner discovery command.
+	 * These options are intended to come from the tool-chain.
+	 *
+	 * Unlike {@link #getToolOptions(String)} this returns all options.
+	 *
+	 * @param languageId - language ID.
+	 * @return additional options to pass to scanner discovery command.
+	 *
+	 * @since 9.2
+	 */
+	protected String getAllToolOptions(String languageId) {
 		return ""; //$NON-NLS-1$
 	}
 

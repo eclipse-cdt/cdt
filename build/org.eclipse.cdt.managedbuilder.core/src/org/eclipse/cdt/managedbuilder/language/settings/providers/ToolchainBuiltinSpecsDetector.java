@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -153,8 +154,10 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 		return extension.get();
 	}
 
-	@Override
-	protected String getToolOptions(String languageId) {
+	/**
+	 * @since 9.2
+	 */
+	protected String getToolOptions(String languageId, Predicate<IOption> predicate) {
 		Optional<IOption[]> found = languageTool(languageId).flatMap(t -> Optional.of(t.getOptions()));
 		if (!found.isPresent()) {
 			return ""; //$NON-NLS-1$
@@ -162,7 +165,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 		StringBuilder flags = new StringBuilder();
 		IOption[] options = found.get();
 		for (IOption option : options) {
-			if (option.isForScannerDiscovery()) {
+			if (predicate.test(option)) {
 				try {
 					String optionValue = null;
 					switch (option.getBasicValueType()) {
@@ -205,6 +208,16 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 			}
 		}
 		return flags.toString().trim();
+	}
+
+	@Override
+	protected String getToolOptions(String languageId) {
+		return getToolOptions(languageId, IOption::isForScannerDiscovery);
+	}
+
+	@Override
+	protected String getAllToolOptions(String languageId) {
+		return getToolOptions(languageId, option -> true);
 	}
 
 	@Override

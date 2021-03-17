@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -265,6 +266,9 @@ public class EvalUnary extends CPPDependentEvaluation {
 			type = prvalueTypeWithResolvedTypedefs(type);
 			if (type instanceof IPointerType) {
 				return glvalueType(((IPointerType) type).getType());
+			}
+			if (type instanceof ICPPClassType) {
+				return type;
 			}
 			if (type instanceof ISemanticProblem) {
 				return type;

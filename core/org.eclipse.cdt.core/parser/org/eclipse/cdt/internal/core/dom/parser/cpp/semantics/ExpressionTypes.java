@@ -78,6 +78,11 @@ public class ExpressionTypes {
 			t = typeFromReturnType(((IFunctionType) t).getReturnType());
 			return t;
 		}
+		if (t instanceof FunctionSetType) {
+			CPPFunctionSet fst = ((FunctionSetType) t).getFunctionSet();
+			t = typeFromReturnType(((IFunctionType) fst.getType()).getReturnType());
+			return t;
+		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 

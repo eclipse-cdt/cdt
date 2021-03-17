@@ -16,6 +16,7 @@
  *     Thomas Corbat (IFS)
  *     Nathan Ridge
  *     Marc-Andre Laperle
+ *     Michael Uhl
  *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
@@ -279,7 +280,7 @@ public class CPPVisitor extends ASTQueries {
 	// Thread-local set of declarators for which auto types are being created.
 	// Used to prevent infinite recursion while processing invalid self-referencing
 	// auto-type declarations.
-	private static final ThreadLocal<Set<IASTDeclarator>> autoTypeDeclarators = new ThreadLocal<Set<IASTDeclarator>>() {
+	private static final ThreadLocal<Set<IASTDeclarator>> autoTypeDeclarators = new ThreadLocal<>() {
 		@Override
 		protected Set<IASTDeclarator> initialValue() {
 			return new HashSet<>();
@@ -2562,9 +2563,7 @@ public class CPPVisitor extends ASTQueries {
 		ValueCategory valueCat = null;
 		initType = evaluation.getType();
 		valueCat = evaluation.getValueCategory();
-		if (initType == null || initType instanceof ISemanticProblem) {
-			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
-		}
+
 		ICPPClassTemplate initializer_list_template = null;
 		if (evaluation instanceof EvalInitList) {
 			initializer_list_template = get_initializer_list();
@@ -2577,9 +2576,11 @@ public class CPPVisitor extends ASTQueries {
 				return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 			}
 		}
+
 		if (declSpec != null && declarator != null) {
 			type = decorateType(type, declSpec, declarator);
 		}
+
 		ICPPFunctionTemplate template = new AutoTypeResolver(type);
 		CPPTemplateParameterMap paramMap = new CPPTemplateParameterMap(1);
 		TemplateArgumentDeduction.deduceFromFunctionArgs(template, Collections.singletonList(initType),

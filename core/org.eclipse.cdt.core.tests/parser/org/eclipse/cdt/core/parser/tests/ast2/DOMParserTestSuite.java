@@ -38,6 +38,7 @@ public class DOMParserTestSuite extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(DOMParserTestSuite.class.getName());
 		suite.addTest(AST2Tests.suite());
+		suite.addTestSuite(AutoRangeTest.class);
 		suite.addTestSuite(GCCTests.class);
 		suite.addTest(AST2CPPTests.suite());
 		suite.addTest(ASTCPPSpecDefectTests.suite());

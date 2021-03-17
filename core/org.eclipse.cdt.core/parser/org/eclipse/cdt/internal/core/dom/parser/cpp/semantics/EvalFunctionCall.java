@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
@@ -174,11 +176,27 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 		if (overload != null)
 			return ExpressionTypes.typeFromFunctionCall(overload);
 
-		ICPPEvaluation function = fArguments[0];
-		IType result = ExpressionTypes.typeFromFunctionCall(function.getType());
-		if (function instanceof EvalMemberAccess) {
-			result = ExpressionTypes.restoreTypedefs(result, ((EvalMemberAccess) function).getOwnerType());
+		IType result = null;
+		for (ICPPEvaluation fkt : fArguments) {
+			result = ExpressionTypes.typeFromFunctionCall(fkt.getType());
+			if (fkt instanceof EvalMemberAccess) {
+				result = ExpressionTypes.restoreTypedefs(result, ((EvalMemberAccess) fkt).getOwnerType());
+			}
+
+			if (result instanceof IProblemType) {
+				if (fkt.getType() instanceof ICPPTemplateInstance) {
+					ICPPTemplateInstance templateInstance = (ICPPTemplateInstance) fkt.getType();
+					ICPPTemplateArgument[] templateArguments = templateInstance.getTemplateArguments();
+
+					if (templateArguments.length == 1) {
+						return templateArguments[0].getTypeValue();
+					}
+				}
+			} else {
+				return result;
+			}
 		}
+
 		return result;
 	}
 

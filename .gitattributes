@@ -17,6 +17,7 @@ CONTRIBUTING text
 *.cc text
 *.cpp text
 *.h text
+*.hpp text
 *.s text
 *.S text
 *.elf binary

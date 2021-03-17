@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -59,6 +60,10 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 	@Override
 	public IBinding getOwner() {
 		return fBindings[0].getOwner();
+	}
+
+	public IType getType() {
+		return fBindings[0].getType();
 	}
 
 	public ICPPFunction[] getBindings() {

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be6f9eed_b96e44b2",
+        "filename": "core/org.eclipse.cdt.core.tests/resources/ast2/AutoRangeTestHeader.hpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-18T13:31:35Z",
+      "side": 1,
+      "message": "This is the first file in the repo with .hpp extension, therefore to ensure that newlines and other items are correct the .hpp extension needs to be added to the root .gitattributes\n\nThis is why the code cleanliness check is failing.",
+      "revId": "bc6e23434a4e71727a97a50e9bca1d0038077138",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

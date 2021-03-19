@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2020 QNX Software Systems and others.
+ * Copyright (c) 2007, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,6 +24,7 @@
  *     John Dallaway - Report download progress (Bug 543149)
  *     John Dallaway - Use 'reset and halt' command (Bug 535163)
  *     John Dallaway - Eliminate deprecated API (Bug 566462)
+ *     John Dallaway - Set executable file (Bug 457697)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -222,6 +223,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			return new String[] { //
 					"stepInitializeJTAGFinalLaunchSequence", //$NON-NLS-1$
 					"stepRetrieveJTAGDevice", //$NON-NLS-1$
+					"stepSetExecutableFile", //$NON-NLS-1$
 					"stepLoadSymbols", //$NON-NLS-1$
 					"stepConnectToTarget", //$NON-NLS-1$
 					"stepResetBoard", //$NON-NLS-1$
@@ -313,6 +315,24 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot get Jtag device", exception)); //$NON-NLS-1$
 		}
 		rm.done();
+	}
+
+	/*
+	 * Set the executable file
+	 */
+	/** @since 10.3 */
+	@Execute
+	public void stepSetExecutableFile(final RequestMonitor rm) {
+		final IPath programPath = fGDBBackend.getProgramPath();
+		if (!programPath.isEmpty()) {
+			// Escape backslashes for GDB
+			final String file = programPath.toOSString().replace("\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
+			fCommandControl.queueCommand(
+					fCommandControl.getCommandFactory().createMIFileExecFile(fCommandControl.getContext(), file),
+					new ImmediateDataRequestMonitor<MIInfo>(rm));
+		} else {
+			rm.done();
+		}
 	}
 
 	/*

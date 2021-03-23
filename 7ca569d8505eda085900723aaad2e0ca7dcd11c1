@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "693ce125_adc832ac",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2021-03-23T07:00:58Z",
+      "side": 1,
+      "message": "I have added support for multi-line selections in the latest patchset.",
+      "parentUuid": "2aba5883_7dc7f1cb",
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "81f46d73_2524e9f2",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2021-03-04T20:27:11Z",
       "side": 1,
       "message": "This is similar to the issues in TabFolderManager where I said \"We had a similar thing in LSP4E with URLs in Markdown editor https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d558573\" We should aim to have a consistent implementation of this where possible.",
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fde436bb_870bc9ad",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2021-03-23T07:00:58Z",
+      "side": 1,
+      "message": "I commented there.",
+      "parentUuid": "81f46d73_2524e9f2",
       "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
@@ -76,6 +112,30 @@
     },
     {
       "key": {
+        "uuid": "1e16bb38_fd840216",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/ITextCanvasModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2021-03-23T07:00:58Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "f54524ac_f7ec59a2",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 1
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c75dddad_6490b2d5",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextCanvas.java",
         "patchSetId": 2
@@ -87,6 +147,30 @@
       "writtenOn": "2021-03-04T20:27:11Z",
       "side": 1,
       "message": "this makes the line 160 if always false. I actually didn\u0027t understand the need for this extra check.",
+      "range": {
+        "startLine": 157,
+        "startChar": 22,
+        "endLine": 157,
+        "endChar": 65
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65e24010_b98b9fd4",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextCanvas.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2021-03-23T07:00:58Z",
+      "side": 1,
+      "message": "Yes, I can\u0027t remember either why I did it :-), removed",
+      "parentUuid": "c75dddad_6490b2d5",
       "range": {
         "startLine": 157,
         "startChar": 22,
@@ -162,6 +246,24 @@
     },
     {
       "key": {
+        "uuid": "1ca51dd1_3a634ccf",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextLineRenderer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2021-03-23T07:00:58Z",
+      "side": 1,
+      "message": "Improved to support multi-line hover selection",
+      "parentUuid": "6e6180bd_c9396e9e",
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "33540c8b_b3f7a381",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 2
@@ -173,6 +275,30 @@
       "writtenOn": "2021-03-04T20:27:11Z",
       "side": 1,
       "message": "hyperlink detection in general exists as a pluggable/extendable thing in Eclipse, we should hook into it if possible rather than reimplement. We had a similar thing in LSP4E with URLs in Markdown editor https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d558573",
+      "range": {
+        "startLine": 365,
+        "startChar": 6,
+        "endLine": 373,
+        "endChar": 7
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8339ab3_fcfa3ee9",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2021-03-23T07:00:58Z",
+      "side": 1,
+      "message": "Did not know about that.\n\nI had a brief look at `org.eclipse.jface.text.hyperlink.URLHyperlinkDetector` but it seems to require the target to implement `ITextViewer` so that means the terminal should implement that interface",
+      "parentUuid": "33540c8b_b3f7a381",
       "range": {
         "startLine": 365,
         "startChar": 6,
@@ -247,6 +373,53 @@
         "startChar": 50,
         "endLine": 411,
         "endChar": 68
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "573ec540_0d11ba15",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2021-03-23T07:00:58Z",
+      "side": 1,
+      "message": "The code is actually a shameless copy from there. I first tried to use that class, but it does not support setting an initial value in the resource selection dialog (although when pressing Ctrl_Shift+R in an editor with text selected that actually happen, just could not find the right place in the platform where this is handled).\n\nWill have another look around (I don\u0027t like this code myself...)",
+      "parentUuid": "7168a474_f834bb7f",
+      "range": {
+        "startLine": 411,
+        "startChar": 50,
+        "endLine": 411,
+        "endChar": 68
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a142dee_203fcd0b",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2021-03-23T07:00:58Z",
+      "side": 1,
+      "message": "this is the part that is missing in the OpenResourceHandler",
+      "range": {
+        "startLine": 414,
+        "startChar": 6,
+        "endLine": 414,
+        "endChar": 55
       },
       "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",

@@ -15,7 +15,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<prerequisites>
-		<maven>${requiredven-version}</maven>
+		<maven>${required-maven-version}</maven>
 	</prerequisites>
 
 	<groupId>org.eclipse.cdt</groupId>

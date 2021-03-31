@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "05c6be4e_e10e1104",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 858
+      },
+      "writtenOn": "2021-03-31T13:04:39Z",
+      "side": 1,
+      "message": "Is this a typo?",
+      "revId": "2d29c1683ec9c1f7e79e6b9b3ea92e6ccbcc7f2d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

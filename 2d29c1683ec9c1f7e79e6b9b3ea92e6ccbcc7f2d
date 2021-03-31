@@ -16,6 +16,24 @@
       "revId": "2d29c1683ec9c1f7e79e6b9b3ea92e6ccbcc7f2d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ab9d984_18268013",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-03-31T16:47:23Z",
+      "side": 1,
+      "message": "Yes. I will fix that now in https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/178658",
+      "parentUuid": "05c6be4e_e10e1104",
+      "revId": "2d29c1683ec9c1f7e79e6b9b3ea92e6ccbcc7f2d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

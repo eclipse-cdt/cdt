@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3efb2c_7d9f20ea",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T19:51:22Z",
+      "side": 1,
+      "message": "This fixes my previous comment \"There is a similar off-by-one error if there is first column isBoundaryChar and second column isn\u0027t (e.g. debug output of: hover: (0,91)-(6,92)-\"hello   \u003c- [1,91][0,6] - note the \" at the beginning of the string)\"",
+      "revId": "1465fedda185682b94dd56443ace98ecac1cd773",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

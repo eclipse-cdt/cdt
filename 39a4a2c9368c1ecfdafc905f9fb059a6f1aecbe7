@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8c54a6d7_d2cfa08c",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.connector.process/src/org/eclipse/tm/terminal/connector/process/ProcessConnector.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T19:51:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cad68b97_e764a55a",
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "af6c4d35_f755ad87",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
         "patchSetId": 6
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "e9d8a3f6_fb3673e9",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T19:51:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "af6c4d35_f755ad87",
+      "range": {
+        "startLine": 381,
+        "startChar": 3,
+        "endLine": 383,
+        "endChar": 25
+      },
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "76ceeb01_61f75ce7",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextLineRenderer.java",
         "patchSetId": 6
@@ -53,6 +95,24 @@
       "writtenOn": "2021-04-02T19:26:56Z",
       "side": 1,
       "message": "I am guessing this is where the off by one error for the underline is.",
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96561205_17e0980a",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextLineRenderer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T19:51:22Z",
+      "side": 1,
+      "message": "in PS7 I treated colEnd as inclusive. Is that what you intended? org.eclipse.tm.internal.terminal.textcanvas.AbstractTextCanvasModel.getHoverSelectionEnd() has a comment next to the decrement of x, y that says \"// use same convention as for selection\"",
+      "parentUuid": "76ceeb01_61f75ce7",
       "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
@@ -82,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "e0bfbaf7_b1d7df3e",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T19:51:22Z",
+      "side": 1,
+      "message": "For example:\n\nD:\\cdt\\runtime-New_configuration\\hello2\\src\\hello2.c\n\ndoes not work\n\nbut\n\n\\cdt\\runtime-New_configuration\\hello2\\src\\hello2.c\n\nopens the file as expected",
+      "parentUuid": "d69bbb4b_5ae6db20",
+      "range": {
+        "startLine": 380,
+        "startChar": 39,
+        "endLine": 380,
+        "endChar": 50
+      },
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6fa12486_2b3860a7",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 6
@@ -96,6 +180,24 @@
       "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5cfe1812_ebc18eb5",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T19:51:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6fa12486_2b3860a7",
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

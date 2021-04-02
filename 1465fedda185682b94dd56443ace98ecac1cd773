@@ -16,6 +16,23 @@
       "revId": "1465fedda185682b94dd56443ace98ecac1cd773",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "525e8695_728cfa95",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T20:16:04Z",
+      "side": 1,
+      "message": "The selection dragging problem can be fixed by using mouseUp here instead of mouseDown. VSCode uses mouseUp for Ctrl-click, my linux terminal uses mouseDown\n\nThe problem with selection dragging is that with the dialog active, the terminal does not get any mouseup event, meaning that fDraggingStart is never cleared in TextCanvas.\n\nThis same problem can be reproduced in any Eclipse editor like this:\n\n- start selection by mouse downing left button\n- with mouse button still pressed down, press Ctrl-Shft-R to open Open Resource dialog\n- let go of mouse button\n- press Esc to close dialog\n- note that the mouse is still controlling selection\n\n(or at least it does for me :-)\n\nWDYT about just changing this to mouseUp?",
+      "revId": "1465fedda185682b94dd56443ace98ecac1cd773",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

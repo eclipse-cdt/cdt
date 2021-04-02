@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "489c57ff_0a263c3d",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:06:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "693ce125_adc832ac",
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81f46d73_2524e9f2",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
         "patchSetId": 2
@@ -86,6 +104,24 @@
       "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d490549_5b5184e8",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:06:10Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "fde436bb_870bc9ad",
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -136,6 +172,30 @@
     },
     {
       "key": {
+        "uuid": "9b590f1c_3487d7e1",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/ITextCanvasModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:06:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e16bb38_fd840216",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 1
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c75dddad_6490b2d5",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextCanvas.java",
         "patchSetId": 2
@@ -180,6 +240,30 @@
       "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d97460aa_b2bb7276",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextCanvas.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:06:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "65e24010_b98b9fd4",
+      "range": {
+        "startLine": 157,
+        "startChar": 22,
+        "endLine": 157,
+        "endChar": 65
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -264,6 +348,24 @@
     },
     {
       "key": {
+        "uuid": "dec35000_1c341b90",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextLineRenderer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:06:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1ca51dd1_3a634ccf",
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "33540c8b_b3f7a381",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 2
@@ -311,6 +413,30 @@
     },
     {
       "key": {
+        "uuid": "0ec3b255_82b18ff9",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:06:10Z",
+      "side": 1,
+      "message": "I had a closer look now too - I don\u0027t think we should use URLHyperlinkDetector - it provides marginal parsing and is buggy (see https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d558656 and https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d483858 for examples)\n\nExtendedAutomaticLinkReplacementToken provides the functionality for Markdown heuristic detection (via https://git.eclipse.org/r/c/mylyn/org.eclipse.mylyn.docs/+/155621/2/wikitext/core/org.eclipse.mylyn.wikitext.markdown/src/main/java/org/eclipse/mylyn/wikitext/markdown/internal/phrase/ExtendedAutomaticLinkReplacementToken.java#51) - but that is not API",
+      "parentUuid": "e8339ab3_fcfa3ee9",
+      "range": {
+        "startLine": 365,
+        "startChar": 6,
+        "endLine": 373,
+        "endChar": 7
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "10fd3c9a_ce316a08",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 2
@@ -334,6 +460,30 @@
     },
     {
       "key": {
+        "uuid": "dab87e9b_51292144",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:06:10Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "10fd3c9a_ce316a08",
+      "range": {
+        "startLine": 396,
+        "startChar": 22,
+        "endLine": 396,
+        "endChar": 74
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7883de5_a07ec349",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 2
@@ -354,6 +504,30 @@
       "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "906f694d_89aa29ec",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:06:10Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c7883de5_a07ec349",
+      "range": {
+        "startLine": 383,
+        "startChar": 6,
+        "endLine": 409,
+        "endChar": 8
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -401,6 +575,30 @@
       "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db293024_6d0ea685",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:06:10Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "573ec540_0d11ba15",
+      "range": {
+        "startLine": 411,
+        "startChar": 50,
+        "endLine": 411,
+        "endChar": 68
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {

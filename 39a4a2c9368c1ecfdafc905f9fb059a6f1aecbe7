@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6fa12486_2b3860a7",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:06:10Z",
+      "side": 1,
+      "message": "this needs fixing - must be logged or comment explaining why it can be discarded",
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

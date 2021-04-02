@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1004aa8f_4d66483b",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 616,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T19:54:04Z",
+      "side": 1,
+      "message": "This line is what makes sure the build errors.\n\nNot sure what the prerequisites does.",
+      "revId": "e607b19275158f0011d7da388fbcc2d371a2c1a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

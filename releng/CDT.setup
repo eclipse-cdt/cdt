@@ -75,7 +75,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="2020-12"
+      defaultValue="2021-03"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
@@ -166,15 +166,15 @@
       <repositoryList
           name="CDT Latest Released">
         <repository
-            url="https://download.eclipse.org/eclipse/updates/4.18/R-4.18-202012021800/"/>
+            url="https://download.eclipse.org/eclipse/updates/4.19/R-4.19-202103031800/"/>
         <repository
-            url="https://download.eclipse.org/egit/updates-5.9/"/>
+            url="https://download.eclipse.org/egit/updates-5.11/"/>
         <repository
-            url="https://download.eclipse.org/linuxtools/update-2020-12-docker/"/>
+            url="https://download.eclipse.org/linuxtools/update-2021-03-rc2/"/>
         <repository
-            url="https://download.eclipse.org/lsp4e/releases/0.17.0/"/>
+            url="https://download.eclipse.org/lsp4e/releases/0.18.0/"/>
         <repository
-            url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.23/"/>
+            url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.25/"/>
         <repository
             url="https://download.eclipse.org/mylyn/docs/releases/3.0.38/"/>
         <repository
@@ -182,7 +182,7 @@
         <repository
             url="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
         <repository
-            url="https://download.eclipse.org/tools/cdt/releases/10.1/cdt-10.1.0">
+            url="https://download.eclipse.org/tools/cdt/releases/10.2/cdt-10.2.0">
           <annotation>
             <detail
                 key="description">
@@ -194,7 +194,7 @@
           </annotation>
         </repository>
         <repository
-            url="https://download.eclipse.org/tools/orbit/downloads/2020-12/"/>
+            url="https://download.eclipse.org/tools/orbit/downloads/drops/R20210223232630/repository"/>
         <repository
             url="https://download.eclipse.org/tools/ptp/updates/remote/3.0.1/"/>
       </repositoryList>
@@ -309,11 +309,11 @@
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
         <repositoryList
-            name="2020-12">
+            name="2021-03">
           <repository
               url="https://download.eclipse.org/cbi/updates/license/"/>
           <repository
-              url="https://download.eclipse.org/eclipse/updates/4.18/R-4.18-202012021800/"/>
+              url="https://download.eclipse.org/eclipse/updates/4.19/R-4.19-202103031800/"/>
           <repository
               url="https://download.eclipse.org/egit/updates/"/>
           <repository
@@ -321,7 +321,7 @@
           <repository
               url="https://download.eclipse.org/wildwebdeveloper/snapshots/"/>
           <repository
-              url="https://download.eclipse.org/lsp4e/releases/0.17.0/"/>
+              url="https://download.eclipse.org/lsp4e/releases/0.18.0/"/>
           <repository
               url="https://download.eclipse.org/modeling/emf/emf/builds/release/latest/"/>
           <repository
@@ -333,7 +333,7 @@
           <repository
               url="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
           <repository
-              url="https://download.eclipse.org/tools/cdt/releases/10.1/cdt-10.1.0/">
+              url="https://download.eclipse.org/tools/cdt/releases/10.2/cdt-10.2.0/">
             <annotation>
               <detail
                   key="description">
@@ -342,7 +342,7 @@
             </annotation>
           </repository>
           <repository
-              url="https://download.eclipse.org/tools/orbit/downloads/drops/R20201130205003/repository"/>
+              url="https://download.eclipse.org/tools/orbit/downloads/drops/R20210223232630/repository/"/>
           <repository
               url="https://download.eclipse.org/tools/ptp/remote/releases/3.0/remote-3.0.1/"/>
         </repositoryList>

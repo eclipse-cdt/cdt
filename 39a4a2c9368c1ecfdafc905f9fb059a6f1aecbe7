@@ -19,6 +19,29 @@
     },
     {
       "key": {
+        "uuid": "af6c4d35_f755ad87",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/AbstractTextCanvasModel.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:34:52Z",
+      "side": 1,
+      "message": "hide in a debug flag, comment out, or delete",
+      "range": {
+        "startLine": 381,
+        "startChar": 3,
+        "endLine": 383,
+        "endChar": 25
+      },
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6fa12486_2b3860a7",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 6

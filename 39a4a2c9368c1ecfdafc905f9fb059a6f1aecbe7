@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "cad68b97_e764a55a",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.connector.process/src/org/eclipse/tm/terminal/connector/process/ProcessConnector.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T18:07:58Z",
+      "side": 1,
+      "message": "Needs a fix here too.",
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6fa12486_2b3860a7",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 6

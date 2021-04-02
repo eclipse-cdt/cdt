@@ -602,6 +602,30 @@
     },
     {
       "key": {
+        "uuid": "b25d96e6_2b022568",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T19:26:56Z",
+      "side": 1,
+      "message": "I think we can go with what we have here. It would be nice if Eclipse Platform provided us a solution that didn\u0027t require using the selection service to provide that initial value.",
+      "parentUuid": "db293024_6d0ea685",
+      "range": {
+        "startLine": 411,
+        "startChar": 50,
+        "endLine": 411,
+        "endChar": 68
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a142dee_203fcd0b",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 2
@@ -622,6 +646,30 @@
       "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b702810c_9e362a22",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T19:26:56Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1a142dee_203fcd0b",
+      "range": {
+        "startLine": 414,
+        "startChar": 6,
+        "endLine": 414,
+        "endChar": 55
+      },
+      "revId": "7ca569d8505eda085900723aaad2e0ca7dcd11c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

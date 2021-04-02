@@ -42,6 +42,46 @@
     },
     {
       "key": {
+        "uuid": "76ceeb01_61f75ce7",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextLineRenderer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T19:26:56Z",
+      "side": 1,
+      "message": "I am guessing this is where the off by one error for the underline is.",
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d69bbb4b_5ae6db20",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-02T19:26:56Z",
+      "side": 1,
+      "message": "this does not get along with Windows paths well. i.e. the hover will underling c:\\mydir\\myname - but the resource dialog only fills in the C.\n\nI think this logic should be moved to the hover calculation so that the underline and what is clicked matches? WDYT?",
+      "range": {
+        "startLine": 380,
+        "startChar": 39,
+        "endLine": 380,
+        "endChar": 50
+      },
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6fa12486_2b3860a7",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 6

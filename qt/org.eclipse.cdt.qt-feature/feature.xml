@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright (c) 2013, 2021 Contributors to the Eclipse Foundation
+
+   This program and the accompanying materials
+   are made available under the terms of the Eclipse Public License 2.0
+   which accompanies this distribution, and is available at
+   https://www.eclipse.org/legal/epl-2.0/
+
+   SPDX-License-Identifier: EPL-2.0
+-->
 <feature
       id="org.eclipse.cdt.qt"
       label="%featureName"
-      version="10.2.0.qualifier"
+      version="10.3.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.qt.ui"
       license-feature="org.eclipse.license"
@@ -21,7 +31,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.launchbar" version="10.2.0" match="compatible"/>
+      <import feature="org.eclipse.launchbar" version="10.3.0" match="compatible"/>
    </requires>
 
    <plugin

@@ -90,7 +90,7 @@ public class GDBProcessesTest extends BaseParametrizedTestCase {
 	public void getProcessData() throws InterruptedException, ExecutionException, TimeoutException {
 		final IProcessDMContext processContext = DMContexts.getAncestorOfType(SyncUtil.getContainerContext(),
 				IProcessDMContext.class);
-		Query<IThreadDMData> query = new Query<IThreadDMData>() {
+		Query<IThreadDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IThreadDMData> rm) {
 				fProcService.getExecutionData(processContext, rm);

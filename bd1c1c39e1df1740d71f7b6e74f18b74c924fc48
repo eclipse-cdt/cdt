@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2547fbd1_ec660530",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-04T10:39:32Z",
+      "side": 1,
+      "message": "Please make commit summary the summary of the change",
+      "revId": "bd1c1c39e1df1740d71f7b6e74f18b74c924fc48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

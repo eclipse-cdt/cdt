@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "97564e54_13e0ab4c",
+        "filename": "build/org.eclipse.cdt.autotools-feature/feature.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-04T19:11:55Z",
+      "side": 1,
+      "message": "thanks for adding missing copyright headers",
+      "revId": "207defc4003ab46425d2334c013583873662f41c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

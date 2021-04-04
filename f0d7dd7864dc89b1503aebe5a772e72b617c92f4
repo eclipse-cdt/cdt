@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7e1bdc0_7b014a67",
+        "filename": "terminal/pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-04T19:11:55Z",
+      "side": 0,
+      "message": "good catch removing this redundant info",
+      "revId": "f0d7dd7864dc89b1503aebe5a772e72b617c92f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

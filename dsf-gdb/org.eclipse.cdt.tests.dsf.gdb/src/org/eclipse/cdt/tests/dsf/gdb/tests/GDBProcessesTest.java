@@ -146,8 +146,16 @@ public class GDBProcessesTest extends BaseParametrizedTestCase {
 		for (int i = 1; i <= 6; i++) {
 			IThreadDMData threadData = SyncUtil.getThreadData(i);
 			String name = threadData.getName();
-			String expectedName = threadNamesSupported() ? names[i - 1] : "";
-			assertEquals("Thread name of thread " + i, expectedName, name);
+			if (threadNamesSupported()) {
+				assertEquals("Thread name of thread " + i, names[i - 1], name);
+			} else {
+				// Sometimes GDBserver does provide this info - it seems unreliable. So
+				// we allow an empty name, but if not empty when !threadNamesSupported
+				// we require it to be the correct name. See Bug 518689
+				if (!"".equals(name)) {
+					assertEquals("Thread name of thread " + i, names[i - 1], name);
+				}
+			}
 		}
 	}
 }

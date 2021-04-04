@@ -217,16 +217,29 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 
 			String[] expectedParts = expected.split("\\."); //$NON-NLS-1$
 			String[] actualParts = actual.split("\\."); //$NON-NLS-1$
-
 			String comparableActualString = actual;
-			if (expectedParts.length == 2 // If the expected version does not care about the maintenance number
-					&& actualParts.length > 2) { // and the actual version has a maintenance number (and possibly more)
-				// We should ignore the maintenance number.
-				// For example, if we expect 7.12, then the actual
-				// version we should accept can be 7.12 or 7.12.1 or 7.12.2, 7.12.50.20170214, etc.
-				int firstDot = actual.indexOf('.');
-				int secondDot = actual.indexOf('.', firstDot + 1);
-				comparableActualString = actual.substring(0, secondDot);
+
+			// Starting in GDB 9 the versions are MAJOR.PATCH so we only care about first number
+			int majorVersion = Integer.parseInt(expectedParts[0]);
+			if (majorVersion >= 9) {
+				if (expectedParts.length == 1 // If the expected version does not care about the maintenance number
+						&& actualParts.length > 1) { // and the actual version has a maintenance number (and possibly more)
+					// We should ignore the maintenance number.
+					// For example, if we expect 11, then the actual
+					// version we should accept can be 11.1 or 11.0.50 or 11.0.50.20210303-git, etc.
+					int firstDot = actual.indexOf('.');
+					comparableActualString = actual.substring(0, firstDot);
+				}
+			} else {
+				if (expectedParts.length == 2 // If the expected version does not care about the maintenance number
+						&& actualParts.length > 2) { // and the actual version has a maintenance number (and possibly more)
+					// We should ignore the maintenance number.
+					// For example, if we expect 7.12, then the actual
+					// version we should accept can be 7.12 or 7.12.1 or 7.12.2, 7.12.50.20170214, etc.
+					int firstDot = actual.indexOf('.');
+					int secondDot = actual.indexOf('.', firstDot + 1);
+					comparableActualString = actual.substring(0, secondDot);
+				}
 			}
 
 			assertTrue("Unexpected GDB version.  Expected " + expected + " actual " + actual,

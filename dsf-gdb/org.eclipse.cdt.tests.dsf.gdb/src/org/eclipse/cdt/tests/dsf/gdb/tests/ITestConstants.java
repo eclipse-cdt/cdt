@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Ericsson and others.
+ * Copyright (c) 2010, 2021 Ericsson and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,9 +36,14 @@ public class ITestConstants {
 	public static final String SUFFIX_GDB_8_0 = "8.0";
 	public static final String SUFFIX_GDB_8_1 = "8.1";
 	public static final String SUFFIX_GDB_8_2 = "8.2";
+	public static final String SUFFIX_GDB_8_3 = "8.3";
+	// From GDB 9 the number scheme changed to MAJOR.PATCH so 9.2 is a patch for 9.1 release
+	public static final String SUFFIX_GDB_9 = "9";
+	public static final String SUFFIX_GDB_10 = "10";
 
 	public static String[] ALL_SUPPORTED_VERSIONS = new String[] {
 			// add new versions here
+			ITestConstants.SUFFIX_GDB_10, ITestConstants.SUFFIX_GDB_9, ITestConstants.SUFFIX_GDB_8_3,
 			ITestConstants.SUFFIX_GDB_8_2, ITestConstants.SUFFIX_GDB_8_1, ITestConstants.SUFFIX_GDB_8_0,
 			ITestConstants.SUFFIX_GDB_7_12, ITestConstants.SUFFIX_GDB_7_11, ITestConstants.SUFFIX_GDB_7_10,
 			ITestConstants.SUFFIX_GDB_7_9, ITestConstants.SUFFIX_GDB_7_8, ITestConstants.SUFFIX_GDB_7_7,

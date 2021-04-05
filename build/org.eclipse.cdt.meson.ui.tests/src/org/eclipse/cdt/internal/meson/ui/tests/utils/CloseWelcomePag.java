@@ -19,35 +19,25 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.junit.rules.ExternalResource;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
  * Closes the Welcome page and optionally opens a given perspective
  */
-public class CloseWelcomePageRule extends ExternalResource {
-
-	public static final String DOCKER_PERSPECTIVE_ID = "org.eclipse.linuxtools.docker.ui.perspective";
+public class CloseWelcomePag implements BeforeEachCallback {
 
 	public static final String CDT_PERSPECTIVE_ID = "org.eclipse.cdt.ui.CPerspective";
-
-	public static final String JAVA_PERSPECTIVE_ID = "org.eclipse.jdt.ui.JavaPerspective";
 
 	/** the Id of the perspective to open. */
 	private final String defaultPerspectiveId;
 
-	/**
-	 * Custom constructor with the id of the perspective to open once the
-	 * welcome page was closed.
-	 *
-	 * @param perspectiveId
-	 *            the id of the perspective to open.
-	 */
-	public CloseWelcomePageRule(final String perspectiveId) {
-		this.defaultPerspectiveId = perspectiveId;
+	public CloseWelcomePag() {
+		this.defaultPerspectiveId = CloseWelcomePag.CDT_PERSPECTIVE_ID;
 	}
 
 	@Override
-	protected void before() {
+	public void beforeEach(ExtensionContext context) throws Exception {
 		Display.getDefault().syncExec(() -> {
 			final IWorkbench workbench = PlatformUI.getWorkbench();
 			if (workbench.getIntroManager().getIntro() != null) {

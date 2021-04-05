@@ -83,11 +83,40 @@ public interface IMakeCommonBuildInfo {
 	 */
 	void setParallelBuildOn(boolean on) throws CoreException;
 
+	/**
+	 * @deprecated Use the {@link #isDefaultBuildCmdOnly()} and {@link #isDefaultBuildArgsOnly()}
+	 * @return
+	 */
+	@Deprecated
 	boolean isDefaultBuildCmd();
 
+	/**
+	 * @since 9.3
+	 */
+	boolean isDefaultBuildCmdOnly();
+
+	/**
+	 * @since 9.3
+	 */
+	boolean isDefaultBuildArgsOnly();
+
+	/**
+	 * @deprecated Use the {@link #setUseDefaultBuildCmdOnly(boolean)} and {@link #setUseDefaultBuildArgsOnly(boolean)}
+	 */
+	@Deprecated
 	void setUseDefaultBuildCmd(boolean on) throws CoreException;
 
 	IPath getBuildCommand();
+
+	/**
+	 * @since 9.3
+	 */
+	void setUseDefaultBuildCmdOnly(boolean on) throws CoreException;
+
+	/**
+	 * @since 9.3
+	 */
+	void setUseDefaultBuildArgsOnly(boolean on) throws CoreException;
 
 	/**
 	 * @deprecated - use setBuildString(BUILD_COMMAND...)

@@ -455,7 +455,7 @@ public class BaseTestCase {
 	 * @return The line number corresponding to tag.
 	 * @throws NoSuchElementException if the tag does not exist.
 	 */
-	protected int getLineForTag(String tag) {
+	protected int getLineForTag(String tag) throws Exception {
 		if (!fTagLocations.containsKey(tag)) {
 			throw new NoSuchElementException("tag " + tag);
 		}

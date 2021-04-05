@@ -204,23 +204,48 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSetArguments(RequestMonitor rm) {
+		String[] argArray = null;
 		try {
 			String args = CDebugUtils.getAttribute(fAttributes, ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
 					""); //$NON-NLS-1$
 
 			if (args.length() != 0) {
 				args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
-				String[] argArray = CommandLineUtil.argumentsToArray(args);
-				fCommandControl.queueCommand(fCommandFactory.createMIGDBSetArgs(getContainerContext(), argArray),
-						new ImmediateDataRequestMonitor<MIInfo>(rm));
-			} else {
-				rm.done();
+				argArray = CommandLineUtil.argumentsToArray(args);
 			}
 		} catch (CoreException e) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED,
 					"Cannot get inferior arguments", e)); //$NON-NLS-1$
 			rm.done();
+			return;
 		}
+
+		final String[] finalArgArray = argArray;
+		ImmediateDataRequestMonitor<MIInfo> setArgsRm = new ImmediateDataRequestMonitor<>(rm) {
+			@Override
+			protected void handleSuccess() {
+				if (finalArgArray != null) {
+					fCommandControl.queueCommand(
+							fCommandFactory.createMIGDBSetArgs(getContainerContext(), finalArgArray),
+							new ImmediateDataRequestMonitor<MIInfo>(rm));
+				} else {
+					rm.done();
+				}
+			}
+		};
+
+		String withshellString = CDebugUtils.getAttribute(fAttributes,
+				ICDTLaunchConfigurationConstants.ATTR_STARTUP_WITH_SHELL,
+				ICDTLaunchConfigurationConstants.STARTUP_WITH_SHELL_DEFAULT);
+		if (ICDTLaunchConfigurationConstants.STARTUP_WITH_SHELL_ON.equals(withshellString)
+				|| ICDTLaunchConfigurationConstants.STARTUP_WITH_SHELL_OFF.equals(withshellString)) {
+			boolean withShell = ICDTLaunchConfigurationConstants.STARTUP_WITH_SHELL_ON.equals(withshellString);
+			fCommandControl.queueCommand(
+					fCommandFactory.createMIGDBSetStartupWithShell(fCommandControl.getContext(), withShell), setArgsRm);
+		} else {
+			setArgsRm.done();
+		}
+
 	}
 
 	/**

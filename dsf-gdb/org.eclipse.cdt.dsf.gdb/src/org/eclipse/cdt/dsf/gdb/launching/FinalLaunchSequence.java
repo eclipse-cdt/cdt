@@ -63,6 +63,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 
+/**
+ * Final launch sequence for GDB < 7.0, extended by subclasses for newer versions.
+ *
+ * @see FinalLaunchSequence_7_0
+ */
 public class FinalLaunchSequence extends ReflectionSequence {
 	// The launchConfiguration attributes
 	private Map<String, Object> fAttributes;

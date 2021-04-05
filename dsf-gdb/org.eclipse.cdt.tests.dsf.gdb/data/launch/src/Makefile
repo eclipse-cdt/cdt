@@ -66,8 +66,12 @@ $(BINDIR)/%.exe: %.cc $(HEADERS) Makefile | $(BINDIR)
 
 # Generate a core file that is needed for post-morted core-file tests
 $(COREFILE): $(BINDIR)/ExpressionTestApp.exe Makefile | $(BINDIR)
-	gdb -nx --batch -ex 'b testLocals' -ex 'run' --ex 'next 16' \
-		-ex 'gcore ../bin/core' $(BINDIR)/ExpressionTestApp.exe > /dev/null
+	line=$(shell grep -n testLocals_init ../src/ExpressionTestApp.cc | cut -d : -f 1); \
+	gdb -nx --batch \
+		-ex 'b ExpressionTestApp.cc:'$$line \
+		-ex 'run'  \
+		-ex 'gcore ../bin/core' \
+		$(BINDIR)/ExpressionTestApp.exe > /dev/null
 
 # Compile sourcelookup once with old dwarf flags
 $(BINDIR)/SourceLookupDwarf2.exe: SourceLookup.cc $(HEADERS) Makefile | $(BINDIR)

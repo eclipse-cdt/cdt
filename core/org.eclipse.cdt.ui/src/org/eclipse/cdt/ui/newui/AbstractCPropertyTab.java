@@ -378,8 +378,35 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		return g;
 	}
 
+	/**
+	 * @since 7.2
+	 */
+	protected Composite setupComposite(Composite c, int cols, int mode) {
+		Composite c1 = new Composite(c, SWT.NONE);
+		c1.setLayout(new GridLayout(cols, false));
+		setupControl(c1, 1, mode);
+		return c1;
+	}
+
 	protected Button setupCheck(Composite c, String name, int span, int mode) {
 		Button b = new Button(c, SWT.CHECK);
+		b.setText(name);
+		setupControl(b, span, mode);
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				((Button) event.widget).setGrayed(false);
+				checkPressed(event);
+			}
+		});
+		return b;
+	}
+
+	/**
+	 * @since 7.2
+	 */
+	protected Button setupRadio(Composite c, String name, int span, int mode) {
+		Button b = new Button(c, SWT.RADIO);
 		b.setText(name);
 		setupControl(b, span, mode);
 		b.addSelectionListener(new SelectionAdapter() {

@@ -23,6 +23,9 @@ public class Messages extends NLS {
 	public static String ArtifactTab_1;
 	public static String ArtifactTab_2;
 	public static String ArtifactTab_3;
+	public static String BuildBehaviourTab_Build_arguments;
+	public static String BuildBehaviourTab_Use_custom_build_arguments;
+	public static String BuildBehaviourTab_Use_standard_build_arguments;
 	public static String BuilderSettingsTab_0;
 	public static String BuilderSettingsTab_1;
 	public static String BuilderSettingsTab_10;
@@ -47,6 +50,7 @@ public class Messages extends NLS {
 	public static String BuilderSettingsTab_7;
 	public static String BuilderSettingsTab_8;
 	public static String BuilderSettingsTab_9;
+	public static String BuilderSettingsTab_Configure_Build_Arguments_In_the_Behavior_tab;
 	public static String BuildOptionSettingsUI_0;
 	public static String BuildPropertyPage_error_Unknown_tree_element;
 	public static String BuildStepsTab_0;

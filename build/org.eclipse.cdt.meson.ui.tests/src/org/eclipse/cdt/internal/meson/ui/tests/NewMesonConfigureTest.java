@@ -14,15 +14,17 @@
 package org.eclipse.cdt.internal.meson.ui.tests;
 
 import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withRegex;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.meson.ui.tests.utils.CloseWelcomePageRule;
+import org.eclipse.cdt.internal.meson.ui.tests.utils.CloseWelcomePag;
 import org.eclipse.cdt.meson.core.MesonNature;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -36,26 +38,24 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTableItem;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.MethodName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-@SuppressWarnings("nls")
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
+@TestMethodOrder(MethodName.class)
+@ExtendWith(CloseWelcomePag.class)
+@Tag("flakyTest"/*BaseTestCase5.FLAKY_TEST_TAG*/)
+@Tag("slowTest"/*BaseTestCase5.SLOW_TEST_TAG*/)
 public class NewMesonConfigureTest {
 
 	private static SWTWorkbenchBot bot;
 
-	@ClassRule
-	public static CloseWelcomePageRule closeWelcomePage = new CloseWelcomePageRule(
-			CloseWelcomePageRule.CDT_PERSPECTIVE_ID);
-
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() {
 		SWTBotPreferences.TIMEOUT = 50000;
 		SWTBotPreferences.KEYBOARD_LAYOUT = "EN_US";
@@ -63,12 +63,13 @@ public class NewMesonConfigureTest {
 		bot = new SWTWorkbenchBot();
 	}
 
-	@Before
+	@BeforeEach
 	public void before() {
 		bot.resetWorkbench();
 	}
 
-	@Test(timeout = 120000)
+	@Test
+	@Timeout(value = 2, unit = TimeUnit.MINUTES)
 	public void addNewMesonProject() throws Exception {
 		// open C++ perspective
 		if (!"C/C++".equals(bot.activePerspective().getLabel())) {

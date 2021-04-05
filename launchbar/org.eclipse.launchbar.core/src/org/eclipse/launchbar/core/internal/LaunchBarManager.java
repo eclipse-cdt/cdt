@@ -932,8 +932,11 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 			for (LaunchConfigProviderInfo providerInfo : configProviders.get(descTypeInfo.getId())) {
 				try {
 					if (providerInfo.enabled(configuration)) {
-						if (providerInfo.getProvider().launchConfigurationChanged(configuration)) {
-							return;
+						ILaunchConfigurationProvider provider = providerInfo.getProvider();
+						if (provider != null) {
+							if (provider.launchConfigurationChanged(configuration)) {
+								return;
+							}
 						}
 					}
 				} catch (Throwable e) {

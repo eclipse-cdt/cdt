@@ -92,7 +92,7 @@ void locals2() {
 	char lCharVar = 'i';
 	char *lCharPtr = &lCharVar;
 	bool *lBoolPtr2 = (bool*)0xABCDE123;
-	lBoolPtr2 = 0;	// step up to this line to ensure all locals are in scope
+	/* locals2_init */
 	return;
 }
 
@@ -117,6 +117,7 @@ void testLocals() {
     double *lDoublePtr2 = (double*)0x2345;
     char *lCharPtr2 = (char*)0x1234;
     bool *lBoolPtr2 = (bool*)0x123ABCDE;
+	/* testLocals_init */
 
     locals2();
 	lBoolPtr2 = (bool*)0;	// step-out from locals2() will land here; ensures our vars are still visible
@@ -127,7 +128,7 @@ int testChildren() {
     foo f;
 
 	f.d = 1;
-	
+	/* testChildren_init */
 	return 0;
 }
 
@@ -142,11 +143,13 @@ int testWrite() {
 
 int testName1(int newVal) {
 	int a = newVal;
+	/* testName1_init */
 	return a;
 }
 
 int testName2(int newVal) {
 	int a = newVal;
+	/* testName2_init */
 	return a;
 }
 
@@ -154,6 +157,7 @@ int testSameName1(int newVal) {
 	int a = newVal;
 	Z z;
 	z.x = newVal;
+	/* testSameName1_a_init */
 	z.x = newVal; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible
 	return a;
 }
@@ -161,6 +165,7 @@ int testSameName1(int newVal, int ignore) {
 	int a = newVal;
 	Z z;
 	z.x = newVal;
+	/* testSameName1_b_init */
 	a = newVal; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible
 	return a;
 }
@@ -176,14 +181,17 @@ int testSameName() {
 
 int testConcurrent() {
 	int a[2] = {28, 32};
+	/* testConcurrent_init */
 	return a[0];
 }
 
 int testSubblock() {
 	int a = 8;
 	int b = 1;
+	/* testSubblock_init */
 	if (a) {
 		int a = 12;
+		/* testSubblock_subblock_init */
 		b = a;
 	}
 	return b;
@@ -192,7 +200,7 @@ int testSubblock() {
 int testAddress() {
 	int a = 8;
 	int* a_ptr = &a;
-	
+	/* testAddress_init */
 	return a;
 }
 
@@ -202,7 +210,7 @@ int testUpdateChildren(int val) {
 	childStruct a;
 	a.z.x = val + 10;
 	a.z.y = val + 11;
-	
+	/* testUpdateChildren_init */
 	a.z.x = val + 20;	
 	a.z.y = val + 21;
 	
@@ -212,7 +220,7 @@ int testUpdateChildren2(int val) {
 	childStruct a;
 	a.z.x = val + 10;
 	a.z.y = val + 11;
-	
+	/* testUpdateChildren2_init */
 	a.z.x = val + 20;	
 	a.z.y = val + 21;
 	
@@ -232,12 +240,14 @@ int testUpdateGDBBug() {
 	// since binary of 3 is 11 which is the same as the old value
 	// in natural format
 	int a = 11;
+	/* testUpdateGDBBug_init */
 	a = 3;
 	return 0;
 }
 
 int testUpdateIssue() {
 	double a = 1.99;
+	/* testUpdateIssue_init */
 	a = 1.22;
 	a = 1.22; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible
 }
@@ -248,6 +258,7 @@ int testUpdateIssue2() {
 	} z;
 	
 	z.d = 1.0;
+	/* testUpdateIssue2_init */
 	z.d = 1.22;
 	z.d = 1.22; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible	
 }
@@ -258,6 +269,7 @@ int testConcurrentReadAndUpdateChild() {
 	}z;
 	
 	z.d = 1;
+	/* testConcurrentReadAndUpdateChild_init */
 	z.d = 2;
 }
 
@@ -267,6 +279,7 @@ int testConcurrentUpdateOutOfScopeChildThenParent1() {
 	}z;
 
 	z.d = 1;
+	/* testConcurrentUpdateOutOfScopeChildThenParent1_init */
 	z.d = 1; // this redundant line is here to ensure 2 steps after running to this func leaves locals visible
 }
 
@@ -276,6 +289,7 @@ int testConcurrentUpdateOutOfScopeChildThenParent2() {
 	}z;
 
 	z.d = 2;
+	/* testConcurrentUpdateOutOfScopeChildThenParent2_init */
 	z.d = 2; // this redundant line is here to ensure 2 steps after running to this func leaves locals visible
 }
 
@@ -356,7 +370,7 @@ int testCasting() {
 	int array_small[4] = {65, 0x41424344, 0x45464748}; // Decimal: 65, 1094861636, 1162233672, Char: A, ABCD, EFGH
 
 	int* int_ptr = &array_small[0];
-
+	/* testCasting_init */
 	return 1;
 }
 
@@ -386,13 +400,14 @@ private:
     int f[4];
 };
 int testRTTI() {
-    Derived derived;
+    Derived derived;  // here derived.ptr is of type VirtualBase
     Derived child1;
     OtherDerived child2;
-    
-    derived.ptr = &child1;  // here derived.b is of type bar
-    
-    derived.ptr = &child2;  // here derived.b is of type foo   
+	/* testRTTI_tag1 */
+    derived.ptr = &child1;  // here derived.ptr is of type Derived
+	/* testRTTI_tag2 */ 
+    derived.ptr = &child2;  // here derived.ptr is of type OtherDerived
+	/* testRTTI_tag3 */
     
     return 1;   // here derived.b is of type Derived
 }

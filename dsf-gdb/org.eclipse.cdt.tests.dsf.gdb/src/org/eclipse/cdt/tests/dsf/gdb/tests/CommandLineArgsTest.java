@@ -39,13 +39,13 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class CommandLineArgsTest extends BaseParametrizedTestCase {
+	protected static final String SOURCE_NAME = "LaunchConfigurationAndRestartTestApp.cc";
 	protected static final String EXEC_NAME = "LaunchConfigurationAndRestartTestApp.exe";
 
 	private DsfSession fSession;
@@ -84,6 +84,26 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 			fExpService = fServicesTracker.getService(IExpressions.class);
 		};
 		fSession.getExecutor().submit(runnable).get();
+	}
+
+	@Override
+	protected int getLineForTag(String tag) throws Exception {
+		try {
+			super.getLineForTag(tag);
+		} catch (Exception e) {
+			resolveLineTagLocations(SOURCE_NAME, tag);
+		}
+		return super.getLineForTag(tag);
+	}
+
+	/**
+	 * Run to one of the tags in {@link #LINE_TAGS}
+	 * @throws Throwable
+	 */
+	private MIStoppedEvent runToTag(String tag) throws Throwable {
+		String location = String.format("%s:%d", SOURCE_NAME, getLineForTag(tag));
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(location);
+		return stoppedEvent;
 	}
 
 	/**
@@ -138,7 +158,7 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 	 */
 	protected void checkArguments(String... expected) throws Throwable {
 
-		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
+		MIStoppedEvent stoppedEvent = runToTag("FIRST_LINE_IN_MAIN");
 
 		// Check that argc is correct
 		final IExpressionDMContext argcDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argc");
@@ -213,7 +233,6 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 	 * bug 474648
 	 */
 	@Test
-	@Ignore
 	public void testSettingArgumentsWithSpecialSymbols() throws Throwable {
 		// Test that arguments are parsed correctly:
 		// The string provided by the user is split into arguments on spaces

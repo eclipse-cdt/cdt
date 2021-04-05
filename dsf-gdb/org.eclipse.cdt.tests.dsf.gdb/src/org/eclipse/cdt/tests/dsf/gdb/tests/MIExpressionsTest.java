@@ -206,7 +206,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * variables.
 	 */
 	@Test
-	@Ignore
 	public void testLocalVariables() throws Throwable {
 		// Run to the point where all local variables are initialized
 		SyncUtil.runToLocation("testLocals");
@@ -455,7 +454,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * children. See bug 320277.
 	 */
 	@Test
-	@Ignore
 	public void testNestedBaseChildrenBug() throws Throwable {
 
 		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("BaseTest::test");
@@ -626,7 +624,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * make sure the internal MI commands are sequenced properly.
 	 */
 	@Test
-	@Ignore
 	public void testConcurrentReads() throws Throwable {
 		// Next we test that we can read the value more than once
 		// of the same variable object at the exact same time
@@ -919,7 +916,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * sure the internal MI commands are sequenced properly.
 	 */
 	@Test
-	@Ignore
 	public void testConcurrentReadWrite() throws Throwable {
 		// Next we test that we can deal with a write request and read request
 		// at
@@ -1007,7 +1003,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * to make sure the internal MI commands are sequenced properly.
 	 */
 	@Test
-	@Ignore
 	public void testConcurrentReadWriteChildren() throws Throwable {
 		// Finally, we go nuts and request two reads, while requesting
 		// a get children and get children count.
@@ -1148,7 +1143,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * an MI command to the back-end
 	 */
 	@Test
-	@Ignore
 	public void testWriteCache() throws Throwable {
 		// Test the cache by changing a value but triggering a read before the
 		// write clears the cache
@@ -1295,7 +1289,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * expression
 	 */
 	@Test
-	@Ignore
 	public void testExprAddress() throws Throwable {
 
 		SyncUtil.runToLocation("testAddress");
@@ -1449,7 +1442,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * a thread selected, the top-most stack frame is used for evaluation
 	 */
 	@Test
-	@Ignore
 	public void testThreadContext() throws Throwable {
 
 		// Step to a stack level of 2 to be able to test differen stack frames
@@ -3318,7 +3310,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * This test verifies that we can cast to a type and then revert.
 	 */
 	@Test
-	@Ignore
 	public void testCastToType() throws Throwable {
 		SyncUtil.runToLocation("testCasting");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
@@ -3383,7 +3374,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * This test verifies that we can display as array and then revert.
 	 */
 	@Test
-	@Ignore
 	public void testDisplayAsArray() throws Throwable {
 		SyncUtil.runToLocation("testCasting");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
@@ -3435,7 +3425,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 *  and then revert.
 	 */
 	@Test
-	@Ignore
 	public void testDisplayAsArrayAndCastToType() throws Throwable {
 		SyncUtil.runToLocation("testCasting");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
@@ -4209,7 +4198,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * 7.5.
 	 */
 	@Test
-	@Ignore
 	public void testRTTI_7_5() throws Throwable {
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_5);
 		SyncUtil.runToLocation("testRTTI");

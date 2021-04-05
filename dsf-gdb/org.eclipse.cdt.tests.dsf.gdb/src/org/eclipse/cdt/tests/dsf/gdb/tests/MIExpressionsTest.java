@@ -95,16 +95,9 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 	}
 
-	/* Line tags in the source file. */
-	private static final String[] LINE_TAGS = new String[] { "testUpdateOfPointer_1", "testUpdateOfPointer_2",
-			"testUpdateOfPointerTypedef_1", "testUpdateOfPointerTypedef_2", };
-
 	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
-
-		/* Resolve line tags in source file. */
-		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
 
 		fSession = getGDBLaunch().getSession();
 		Runnable runnable = () -> {
@@ -127,6 +120,26 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		if (fServicesTracker != null) {
 			fServicesTracker.dispose();
 		}
+	}
+
+	@Override
+	protected int getLineForTag(String tag) throws Exception {
+		try {
+			super.getLineForTag(tag);
+		} catch (Exception e) {
+			resolveLineTagLocations(SOURCE_NAME, tag);
+		}
+		return super.getLineForTag(tag);
+	}
+
+	/**
+	 * Run to one of the tags in {@link #LINE_TAGS}
+	 * @throws Throwable
+	 */
+	private MIStoppedEvent runToTag(String tag) throws Throwable {
+		String location = String.format("%s:%d", SOURCE_NAME, getLineForTag(tag));
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(location);
+		return stoppedEvent;
 	}
 
 	// Handles ExpressionChangedEvent
@@ -160,8 +173,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testLiteralIntegerExpressions() throws Throwable {
-		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testLocals");
-
+		MIStoppedEvent stoppedEvent = runToTag("testLocals_init");
 		// Create a map of expressions and their expected values.
 		Map<String, String[]> tests = new HashMap<>();
 
@@ -183,7 +195,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testLiteralFloatingPointExpressions() throws Throwable {
-		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testLocals");
+		MIStoppedEvent stoppedEvent = runToTag("testLocals_init");
 
 		// Create a map of expressions and their expected values.
 		Map<String, String[]> tests = new HashMap<>();
@@ -206,11 +218,9 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * variables.
 	 */
 	@Test
-	@Ignore
 	public void testLocalVariables() throws Throwable {
 		// Run to the point where all local variables are initialized
-		SyncUtil.runToLocation("testLocals");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(16, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testLocals_init");
 
 		// Create a map of expressions to expected values.
 		Map<String, String[]> tests1 = new HashMap<>();
@@ -245,8 +255,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		// Step into the method and stop until all new local variables are
 		// initialized
-		SyncUtil.step(StepType.STEP_INTO);
-		stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
+		stoppedEvent = runToTag("locals2_init");
 
 		// Create a map of expressions to expected values.
 		Map<String, String[]> tests2 = new HashMap<>();
@@ -278,8 +287,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	@Ignore("Sublocks do not work with GDB")
 	@Test
 	public void testSubBlock() throws Throwable {
-		SyncUtil.runToLocation("testSubblock");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testSubblock_init");
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		Map<String, String[]> tests = new HashMap<>();
@@ -290,7 +298,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		executeExpressionSubTests(tests, frameDmc);
 
 		// Now enter a subblock with the same variable names
-		SyncUtil.step(2, StepType.STEP_OVER);
+		runToTag("testSubblock_subblock_init");
 
 		tests = new HashMap<>();
 
@@ -455,10 +463,9 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * children. See bug 320277.
 	 */
 	@Test
-	@Ignore
 	public void testNestedBaseChildrenBug() throws Throwable {
 
-		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("BaseTest::test");
+		MIStoppedEvent stoppedEvent = runToTag("BaseTest::test_init");
 
 		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -626,13 +633,11 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * make sure the internal MI commands are sequenced properly.
 	 */
 	@Test
-	@Ignore
 	public void testConcurrentReads() throws Throwable {
 		// Next we test that we can read the value more than once
 		// of the same variable object at the exact same time
 
-		SyncUtil.runToLocation("testConcurrent");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testConcurrent_init");
 
 		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -919,14 +924,12 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * sure the internal MI commands are sequenced properly.
 	 */
 	@Test
-	@Ignore
 	public void testConcurrentReadWrite() throws Throwable {
 		// Next we test that we can deal with a write request and read request
 		// at
 		// the same time and vice-versa
 
-		SyncUtil.runToLocation("testConcurrent");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testConcurrent_init");
 
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -1007,7 +1010,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * to make sure the internal MI commands are sequenced properly.
 	 */
 	@Test
-	@Ignore
 	public void testConcurrentReadWriteChildren() throws Throwable {
 		// Finally, we go nuts and request two reads, while requesting
 		// a get children and get children count.
@@ -1015,8 +1017,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// go through at any time and we don't exactly know when it will
 		// change the value we are reading.
 
-		SyncUtil.runToLocation("testConcurrent");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testConcurrent_init");
 
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -1148,13 +1149,11 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * an MI command to the back-end
 	 */
 	@Test
-	@Ignore
 	public void testWriteCache() throws Throwable {
 		// Test the cache by changing a value but triggering a read before the
 		// write clears the cache
 
-		SyncUtil.runToLocation("testConcurrent");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testConcurrent_init");
 
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -1295,11 +1294,9 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * expression
 	 */
 	@Test
-	@Ignore
 	public void testExprAddress() throws Throwable {
 
-		SyncUtil.runToLocation("testAddress");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testAddress_init");
 
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -1392,22 +1389,21 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testNamingSameDepth() throws Throwable {
-		SyncUtil.runToLocation("testName1");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testName1_init");
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		Map<String, String[]> tests = new HashMap<>();
 		tests.put("a", new String[] { "0x1", "01", "1", "1", "1", "1" });
 		executeExpressionSubTests(tests, frameDmc);
 
-		SyncUtil.runToLocation("testName2");
+		runToTag("testName2_init");
 		stoppedEvent = SyncUtil.step(1, StepType.STEP_INTO);
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 		tests = new HashMap<>();
 		tests.put("a", new String[] { "0x2", "02", "10", "2", "2", "2" });
 		executeExpressionSubTests(tests, frameDmc);
 
-		SyncUtil.runToLocation("testName1");
+		runToTag("testName1_init");
 		stoppedEvent = SyncUtil.step(1, StepType.STEP_INTO);
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 		tests = new HashMap<>();
@@ -1421,23 +1417,21 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testNamingSameMethod() throws Throwable {
-		SyncUtil.runToLocation("testSameName");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
+		MIStoppedEvent stoppedEvent = runToTag("testSameName1_a_init");
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		Map<String, String[]> tests = new HashMap<>();
 		tests.put("a", new String[] { "0x1", "01", "1", "1", "1", "1" });
 		executeExpressionSubTests(tests, frameDmc);
 
-		SyncUtil.step(StepType.STEP_RETURN);
-		stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
+		stoppedEvent = runToTag("testSameName1_b_init");
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 		tests = new HashMap<>();
 		tests.put("a", new String[] { "0x2", "02", "10", "2", "2", "2" });
 		executeExpressionSubTests(tests, frameDmc);
 
 		SyncUtil.step(StepType.STEP_RETURN);
-		stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
+		stoppedEvent = runToTag("testSameName1_a_init");
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 		tests = new HashMap<>();
 		tests.put("a", new String[] { "0x3", "03", "11", "3", "3", "3" });
@@ -1449,12 +1443,11 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * a thread selected, the top-most stack frame is used for evaluation
 	 */
 	@Test
-	@Ignore
 	public void testThreadContext() throws Throwable {
 
-		// Step to a stack level of 2 to be able to test differen stack frames
-		SyncUtil.runToLocation("locals2");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER);
+		// Step to a stack level of 2 to be able to test different stack frames
+		String tag = String.format("%s:%d", SOURCE_NAME, getLineForTag("locals2_init"));
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(tag);
 
 		// Create a map of expressions to expected values.
 		Map<String, String[]> tests = new HashMap<>();
@@ -1477,7 +1470,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	@Test
 	public void testChildNamingSameMethod() throws Throwable {
 		SyncUtil.runToLocation("testSameName");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(4, StepType.STEP_INTO);
+		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_INTO);
 		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -1637,20 +1630,17 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testUpdatingChildren() throws Throwable {
-		SyncUtil.runToLocation("testUpdateChildren");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testUpdateChildren_init");
 		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 		doUpdateTest(frameDmc, 0);
 
 		// Re-run the test to test out-of-scope update again
-		SyncUtil.step(StepType.STEP_RETURN);
-		stoppedEvent = SyncUtil.step(3, StepType.STEP_INTO);
+		stoppedEvent = runToTag("testUpdateChildren_init");
 		final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 		doUpdateTest(frameDmc2, 100);
 
 		// Re-run the test within a different method test out-of-scope updates
-		SyncUtil.step(StepType.STEP_RETURN);
-		stoppedEvent = SyncUtil.step(3, StepType.STEP_INTO);
+		stoppedEvent = runToTag("testUpdateChildren2_init");
 		final IFrameDMContext frameDmc3 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 		doUpdateTest(frameDmc3, 200);
 
@@ -1963,8 +1953,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testUpdateGDBBug() throws Throwable {
-		SyncUtil.runToLocation("testUpdateGDBBug");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testUpdateGDBBug_init");
 		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -2060,8 +2049,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testUpdateIssue() throws Throwable {
-		SyncUtil.runToLocation("testUpdateIssue");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testUpdateIssue_init");
 		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -2178,8 +2166,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testUpdateIssue2() throws Throwable {
-		SyncUtil.runToLocation("testUpdateIssue2");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testUpdateIssue2_init");
 		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -2300,8 +2287,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testConcurrentReadAndUpdateChild() throws Throwable {
-		SyncUtil.runToLocation("testConcurrentReadAndUpdateChild");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testConcurrentReadAndUpdateChild_init");
 		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -2418,7 +2404,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	@Test
 	public void testConcurrentUpdateOutOfScopeChildThenParent() throws Throwable {
 		SyncUtil.runToLocation("testConcurrentUpdateOutOfScopeChildThenParent");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
+		MIStoppedEvent stoppedEvent = runToTag("testConcurrentUpdateOutOfScopeChildThenParent1_init");
 
 		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -2471,7 +2457,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		wait.waitReset();
 
 		SyncUtil.step(StepType.STEP_RETURN);
-		stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
+		stoppedEvent = runToTag("testConcurrentUpdateOutOfScopeChildThenParent2_init");
 
 		// Now step to another method to make the previous variable objects out-of-scope
 		// then first request the child and then the parent.  We want to test this order
@@ -2825,7 +2811,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 								// Now run the current sub-test using each of
 								// the formats available for the type of
 								// the expression in the sub-test.
-
+								System.out.println(Arrays.toString(formatIds));
 								for (final String formatId : formatIds) {
 									// Get a FormattedValueCMContext object for
 									// the expression-formatID pair.
@@ -3318,10 +3304,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * This test verifies that we can cast to a type and then revert.
 	 */
 	@Test
-	@Ignore
 	public void testCastToType() throws Throwable {
-		SyncUtil.runToLocation("testCasting");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testCasting_init");
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "int_ptr");
@@ -3383,10 +3367,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * This test verifies that we can display as array and then revert.
 	 */
 	@Test
-	@Ignore
 	public void testDisplayAsArray() throws Throwable {
-		SyncUtil.runToLocation("testCasting");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testCasting_init");
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "int_ptr");
@@ -3435,10 +3417,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 *  and then revert.
 	 */
 	@Test
-	@Ignore
 	public void testDisplayAsArrayAndCastToType() throws Throwable {
-		SyncUtil.runToLocation("testCasting");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testCasting_init");
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "int_ptr");
@@ -4209,11 +4189,9 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * 7.5.
 	 */
 	@Test
-	@Ignore
 	public void testRTTI_7_5() throws Throwable {
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_5);
-		SyncUtil.runToLocation("testRTTI");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = runToTag("testRTTI_tag1");
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// The expression we will follow as it changes types: derived.ptr
@@ -4229,7 +4207,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		getChildren(exprDmc, expectedValues);
 
 		// Make the type of our expression change
-		SyncUtil.step(1, StepType.STEP_OVER);
+		runToTag("testRTTI_tag2");
 		// Now, the expression should be type Derived
 		getExpressionType(exprDmc, "Derived *");
 		assertChildrenCount(exprDmc, 5);
@@ -4243,7 +4221,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		getChildren(exprDmc, expectedValues);
 
 		// Make the type of our expression change
-		SyncUtil.step(1, StepType.STEP_OVER);
+		runToTag("testRTTI_tag3");
 		// Now, the expression should be type OtherDerived
 		getExpressionType(exprDmc, "OtherDerived *");
 		assertChildrenCount(exprDmc, 4);

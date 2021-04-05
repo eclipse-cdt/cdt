@@ -24,6 +24,7 @@ int envTest() {
 
 int main (int argc, char *argv[])
 {
+    int dummy = 1; // this line is to make sure that for all versions of GDB/GCC the line below where we run the tests is a different line than b main is inserted
     envTest(); // FIRST_LINE_IN_MAIN
     reverseTest(); // tests assume that every line between first and last
     stopAtOther(); // is steppable, so no blank lines allowed.

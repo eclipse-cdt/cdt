@@ -58,8 +58,12 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	private static final int SPINNER_MAX_VALUE = 10000;
 	private static final int SPINNER_MIN_VALUE = 2;
 
-	private static final int TRI_STATES_SIZE = 4;
+	private static final int TRI_STATES_SIZE = 7;
 	// Widgets
+	private Button r_useStandardBuildArguments;
+	private Button r_useCustomBuildArguments;
+	private Text t_buildArguments;
+
 	//3
 	private Button b_stopOnError; // 3
 	private Button b_parallel; // 3
@@ -68,6 +72,8 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	private Button b_parallelSpecific;
 	private Button b_parallelUnlimited;
 	private Spinner s_parallelNumber;
+
+	private Group grp_buildSettings;
 
 	private Label title2;
 	private Button b_autoBuild; //3
@@ -89,37 +95,35 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		usercomp.setLayout(new GridLayout(1, false));
 
 		// Build setting group
-		Group g3 = setupGroup(usercomp, Messages.BuilderSettingsTab_9, 2, GridData.FILL_HORIZONTAL);
+		grp_buildSettings = setupGroup(usercomp, Messages.BuilderSettingsTab_9, 2, GridData.FILL_HORIZONTAL);
 		GridLayout gl = new GridLayout(2, true);
 		gl.verticalSpacing = 0;
 		gl.marginWidth = 0;
-		g3.setLayout(gl);
+		grp_buildSettings.setLayout(gl);
 
-		Composite c1 = new Composite(g3, SWT.NONE);
+		r_useStandardBuildArguments = setupRadio(grp_buildSettings, "&Use standard build arguments", 3,
+				GridData.BEGINNING);
+
+		Composite c1 = new Composite(grp_buildSettings, SWT.NONE);
 		setupControl(c1, 1, GridData.FILL_BOTH);
 		GridData gd = (GridData) c1.getLayoutData();
 		gd.verticalSpan = 2;
 		gd.verticalIndent = 0;
 		c1.setLayoutData(gd);
 		gl = new GridLayout(1, false);
-		gl.verticalSpacing = 0;
-		gl.marginWidth = 0;
-		gl.marginHeight = 0;
 		c1.setLayout(gl);
 
 		b_stopOnError = setupCheck(c1, Messages.BuilderSettingsTab_10, 1, GridData.BEGINNING);
+		((GridData) (b_stopOnError.getLayoutData())).horizontalIndent = 15;
 
-		Composite c2 = new Composite(g3, SWT.NONE);
+		Composite c2 = new Composite(grp_buildSettings, SWT.NONE);
 		setupControl(c2, 1, GridData.FILL_BOTH);
 		gl = new GridLayout(1, false);
-		gl.verticalSpacing = 0;
-		gl.marginWidth = 0;
-		gl.marginHeight = 0;
 		c2.setLayout(gl);
 
 		b_parallel = setupCheck(c2, Messages.BuilderSettingsTab_EnableParallelBuild, 1, GridData.BEGINNING);
 
-		Composite c3 = new Composite(g3, SWT.NONE);
+		Composite c3 = new Composite(grp_buildSettings, SWT.NONE);
 		setupControl(c3, 1, GridData.FILL_BOTH);
 		gl = new GridLayout(2, false);
 		gl.verticalSpacing = 0;
@@ -191,6 +195,23 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 			}
 		});
 
+		r_useCustomBuildArguments = setupRadio(grp_buildSettings, "Use custom build arguments", 3, GridData.BEGINNING);
+		Composite c0 = setupComposite(grp_buildSettings, 3, GridData.FILL_BOTH);
+		setupControl(c0, 2, GridData.FILL_BOTH);
+		setupLabel(c0, "Build &arguments:\u0020", 1, GridData.BEGINNING);
+		t_buildArguments = setupBlock(c0, r_useCustomBuildArguments);
+		t_buildArguments.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (!canModify)
+					return;
+				String buildArgs = t_buildArguments.getText().trim();
+				if (!buildArgs.equals(bldr.getArguments())) {
+					setArguments(buildArgs);
+				}
+			}
+		});
+
 		// Workbench behaviour group
 		AccessibleListener makeTargetLabelAccessibleListener = new AccessibleAdapter() {
 			@Override
@@ -240,19 +261,28 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	 * @return:
 	 * Mode 0:
 	 *    0: bld.isManagedBuildOn()
-	 *    1: bld.isDefaultBuildCmd()
+	 *    1: N/A
 	 *    2: bld.canKeepEnvironmentVariablesInBuildfile()
 	 *    3: bld.keepEnvironmentVariablesInBuildfile()
+	 *    4: bld.isDefaultBuildCmdOnly()
+	 *    5: bld.isDefaultBuildArgsOnly()
+	 *    6: !bld.isDefaultBuildArgsOnly()
 	 * Mode 1:
 	 *    0: isStopOnError
 	 *    1: supportsStopOnError(true)
 	 *    2: bld.supportsStopOnError(false)
 	 *    3: N/A
+	 *    4: N/A
+	 *    5: bld.isDefaultBuildArgsOnly()
+	 *    6: !bld.isDefaultBuildArgsOnly()
 	 * Mode 2:
 	 *    0: b.isAutoBuildEnable()
 	 *    1: b.isIncrementalBuildEnabled()
 	 *    2: b.isCleanBuildEnabled()
 	 *    3: N/A
+	 *    4: N/A
+	 *    5: N/A
+	 *    6: N/A
 	 */
 	static int[] calc3states(ICPropertyProvider p, IConfiguration mcfg, int mode) {
 		if (p.isMultiCfg() && mcfg instanceof ICMultiItemsHolder) {
@@ -264,23 +294,33 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 			int[] res = new int[TRI_STATES_SIZE];
 			boolean[] b = new boolean[TRI_STATES_SIZE];
 			b[0] = m0 ? bldr0.isManagedBuildOn() : (m1 ? bldr0.isStopOnError() : bldr0.isAutoBuildEnable());
-			b[1] = m0 ? bldr0.isDefaultBuildCmd()
-					: (m1 ? bldr0.supportsStopOnError(true) : bldr0.isIncrementalBuildEnabled());
+			b[1] = m0 ? true : (m1 ? bldr0.supportsStopOnError(true) : bldr0.isIncrementalBuildEnabled());
 			b[2] = m0 ? bldr0.canKeepEnvironmentVariablesInBuildfile()
 					: (m1 ? bldr0.supportsStopOnError(false) : bldr0.isCleanBuildEnabled());
 			b[3] = m0 ? bldr0.keepEnvironmentVariablesInBuildfile() : false;
+			b[4] = m0 ? bldr0.isDefaultBuildCmdOnly() : false;
+			b[5] = (m0 || m1) ? bldr0.isDefaultBuildArgsOnly() : false;
+			b[6] = (m0 || m1) ? !bldr0.isDefaultBuildArgsOnly() : false;
 			for (int i = 1; i < cfgs.length; i++) {
 				IBuilder bldr = cfgs[i].getBuilder();
 				if (b[0] != (m0 ? bldr.isManagedBuildOn() : (m1 ? bldr.isStopOnError() : bldr.isAutoBuildEnable())))
 					res[0] = TRI_UNKNOWN;
-				if (b[1] != (m0 ? bldr.isDefaultBuildCmd()
-						: (m1 ? bldr.supportsStopOnError(true) : bldr.isIncrementalBuildEnabled())))
+				if (b[1] != (m0 ? true : (m1 ? bldr.supportsStopOnError(true) : bldr.isIncrementalBuildEnabled())))
 					res[1] = TRI_UNKNOWN;
 				if (b[2] != (m0 ? bldr.canKeepEnvironmentVariablesInBuildfile()
 						: (m1 ? bldr.supportsStopOnError(false) : bldr.isCleanBuildEnabled())))
 					res[2] = TRI_UNKNOWN;
 				if (b[3] != (m0 ? bldr.keepEnvironmentVariablesInBuildfile() : false)) {
 					res[3] = TRI_UNKNOWN;
+				}
+				if (b[4] != (m0 ? bldr.isDefaultBuildCmdOnly() : false)) {
+					res[4] = TRI_UNKNOWN;
+				}
+				if (b[5] != ((m0 || m1) ? bldr.isDefaultBuildArgsOnly() : false)) {
+					res[5] = TRI_UNKNOWN;
+				}
+				if (b[6] != ((m0 || m1) ? !bldr.isDefaultBuildArgsOnly() : false)) {
+					res[6] = TRI_UNKNOWN;
 				}
 			}
 			for (int i = 0; i < TRI_STATES_SIZE; i++) {
@@ -301,17 +341,45 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		bldr = (Builder) icfg.getEditableBuilder();
 		canModify = false;
 		int[] extStates = calc3states(page, icfg, 1);
+		boolean external = !isInternalBuilderEnabled();
 
-		// Stop on error
-		if (extStates != null) {
-			setTriSelection(b_stopOnError, extStates[0]);
-			b_stopOnError.setEnabled(extStates[1] == TRI_YES && extStates[2] == TRI_YES);
+		// use standard build args
+		if (extStates == null) { // no extended states available
+			setTriSelection(r_useStandardBuildArguments, bldr.isDefaultBuildArgsOnly());
+			setTriSelection(r_useCustomBuildArguments, !bldr.isDefaultBuildArgsOnly());
 		} else {
-			setTriSelection(b_stopOnError, bldr.isStopOnError());
-			b_stopOnError.setEnabled(bldr.supportsStopOnError(true) && bldr.supportsStopOnError(false));
+			int standardTri = extStates[5];
+			int customTri = extStates[6];
+			if (standardTri == TRI_UNKNOWN || customTri == TRI_UNKNOWN) {
+				setTriSelection(r_useStandardBuildArguments, TRI_UNKNOWN);
+				setTriSelection(r_useCustomBuildArguments, TRI_UNKNOWN);
+			} else {
+				setTriSelection(r_useStandardBuildArguments, standardTri);
+				setTriSelection(r_useCustomBuildArguments, customTri);
+			}
+		}
+		t_buildArguments.setText(nonNull(icfg.getBuildArguments()));
+		r_useStandardBuildArguments.setEnabled(external);
+		r_useCustomBuildArguments.setEnabled(external);
+		if (external) {
+			checkPressed(r_useCustomBuildArguments, false); // do not update
 		}
 
-		updateParallelBlock();
+		// Stop on error
+		boolean defaultBuildArguments = bldr.isDefaultBuildArgsOnly();
+		if (defaultBuildArguments) {
+			if (extStates != null) {
+				setTriSelection(b_stopOnError, extStates[0]);
+				b_stopOnError.setEnabled(extStates[1] == TRI_YES && extStates[2] == TRI_YES);
+			} else {
+				setTriSelection(b_stopOnError, bldr.isStopOnError());
+				b_stopOnError.setEnabled(bldr.supportsStopOnError(true) && bldr.supportsStopOnError(false));
+			}
+		} else {
+			b_stopOnError.setEnabled(defaultBuildArguments);
+		}
+
+		updateParallelBlock(defaultBuildArguments);
 
 		// Build commands
 		extStates = calc3states(page, icfg, 2);
@@ -337,7 +405,6 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 			t_cmdClean.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR));
 		}
 
-		boolean external = !isInternalBuilderEnabled();
 		title2.setVisible(external);
 		t_autoBuild.setVisible(external);
 		((Control) t_autoBuild.getData()).setVisible(external);
@@ -354,7 +421,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		canModify = true;
 	}
 
-	private void updateParallelBlock() {
+	private void updateParallelBlock(boolean defaultBuildArguments) {
 		// note: for multi-config selection bldr is from Active cfg
 
 		boolean isParallelSupported = bldr.supportsParallelBuild();
@@ -399,30 +466,42 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		s_parallelNumber.setVisible(isParallelSupported);
 
 		if (isParallelSupported) {
-			setTriSelection(b_parallel, triSelection);
-			boolean isParallelSelected = b_parallel.getSelection();
+			if (defaultBuildArguments) {
+				b_parallel.setEnabled(true);
+				s_parallelNumber.setEnabled(true);
 
-			b_parallelOptimal
-					.setText(MessageFormat.format(Messages.BuilderSettingsTab_UseOptimalJobs, optimalParallelNumber));
-			b_parallelOptimal.setEnabled(isParallelSelected);
-			b_parallelSpecific.setEnabled(isParallelSelected);
-			b_parallelUnlimited.setEnabled(isParallelSelected);
+				setTriSelection(b_parallel, triSelection);
+				boolean isParallelSelected = b_parallel.getSelection();
 
-			if (isParallelSelected) {
-				boolean isOptimal = parallelizationNumInternal <= 0;
-				boolean isUnlimited = parallelizationNumInternal == Builder.UNLIMITED_JOBS;
+				b_parallelOptimal.setText(
+						MessageFormat.format(Messages.BuilderSettingsTab_UseOptimalJobs, optimalParallelNumber));
+				b_parallelOptimal.setEnabled(isParallelSelected);
+				b_parallelSpecific.setEnabled(isParallelSelected);
+				b_parallelUnlimited.setEnabled(isParallelSelected);
 
-				b_parallelOptimal.setSelection(isOptimal);
-				b_parallelSpecific.setSelection(!isOptimal && !isUnlimited);
-				b_parallelUnlimited.setSelection(isUnlimited);
-				s_parallelNumber.setEnabled(b_parallelSpecific.getEnabled() && b_parallelSpecific.getSelection());
-				s_parallelNumber.setSelection(s_parallelNumber.isEnabled() ? parallelNumber : optimalParallelNumber);
+				if (isParallelSelected) {
+					boolean isOptimal = parallelizationNumInternal <= 0;
+					boolean isUnlimited = parallelizationNumInternal == Builder.UNLIMITED_JOBS;
+
+					b_parallelOptimal.setSelection(isOptimal);
+					b_parallelSpecific.setSelection(!isOptimal && !isUnlimited);
+					b_parallelUnlimited.setSelection(isUnlimited);
+					s_parallelNumber.setEnabled(b_parallelSpecific.getEnabled() && b_parallelSpecific.getSelection());
+					s_parallelNumber
+							.setSelection(s_parallelNumber.isEnabled() ? parallelNumber : optimalParallelNumber);
+				} else {
+					b_parallelOptimal.setSelection(true);
+					b_parallelSpecific.setSelection(false);
+					b_parallelUnlimited.setSelection(false);
+					s_parallelNumber.setEnabled(false);
+					s_parallelNumber.setSelection(optimalParallelNumber);
+				}
 			} else {
-				b_parallelOptimal.setSelection(true);
-				b_parallelSpecific.setSelection(false);
-				b_parallelUnlimited.setSelection(false);
+				b_parallel.setEnabled(false);
+				b_parallelOptimal.setEnabled(false);
+				b_parallelSpecific.setEnabled(false);
+				b_parallelUnlimited.setEnabled(false);
 				s_parallelNumber.setEnabled(false);
-				s_parallelNumber.setSelection(optimalParallelNumber);
 			}
 		}
 	}
@@ -527,12 +606,16 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 
 	static void copyBuilders(IBuilder b1, IBuilder b2) {
 		try {
-			b2.setUseDefaultBuildCmd(b1.isDefaultBuildCmd());
-			if (!b1.isDefaultBuildCmd()) {
+			b2.setUseDefaultBuildCmdOnly(b1.isDefaultBuildCmdOnly());
+			b2.setUseDefaultBuildArgsOnly(b1.isDefaultBuildArgsOnly());
+			if (!b1.isDefaultBuildCmdOnly()) {
 				b2.setCommand(b1.getCommand());
-				b2.setArguments(b1.getArguments());
 			} else {
 				b2.setCommand(null);
+			}
+			if (!b1.isDefaultBuildArgsOnly()) {
+				b2.setArguments(b1.getArguments());
+			} else {
 				b2.setArguments(null);
 			}
 			b2.setStopOnError(b1.isStopOnError());
@@ -582,6 +665,18 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		updateData(getResDesc());
 	}
 
+	private void setArguments(String makeArgs) {
+		if (icfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) icfg).getItems();
+			for (int i = 0; i < cfs.length; i++) {
+				IBuilder b = cfs[i].getEditableBuilder();
+				b.setArguments(makeArgs);
+			}
+		} else {
+			icfg.getEditableBuilder().setArguments(makeArgs);
+		}
+	}
+
 	private void setParallelDef(boolean def) {
 		if (icfg instanceof Configuration)
 			((Configuration) icfg).setParallelDef(def);
@@ -626,7 +721,11 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 				IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) icfg).getItems();
 				for (int i = 0; i < cfs.length; i++) {
 					IBuilder bld = cfs[i].getEditableBuilder();
-					if (b == b_autoBuild) {
+					if (b == r_useStandardBuildArguments) {
+						bld.setUseDefaultBuildArgsOnly(val);
+					} else if (b == r_useCustomBuildArguments) {
+						bld.setUseDefaultBuildArgsOnly(!val);
+					} else if (b == b_autoBuild) {
 						bld.setAutoBuildEnable(val);
 					} else if (b == b_cmdBuild) {
 						bld.setIncrementalBuildEnable(val);
@@ -639,7 +738,11 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 					}
 				}
 			} else {
-				if (b == b_autoBuild) {
+				if (b == r_useStandardBuildArguments) {
+					bldr.setUseDefaultBuildArgsOnly(val);
+				} else if (b == r_useCustomBuildArguments) {
+					bldr.setUseDefaultBuildArgsOnly(!val);
+				} else if (b == b_autoBuild) {
 					bldr.setAutoBuildEnable(val);
 				} else if (b == b_cmdBuild) {
 					bldr.setIncrementalBuildEnable(val);
@@ -654,5 +757,15 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		} catch (CoreException e) {
 			ManagedBuilderUIPlugin.log(e);
 		}
+	}
+
+	/**
+	 * Return an empty string is parameter is null
+	 */
+	private String nonNull(String maybeNullString) {
+		if (maybeNullString == null) {
+			return EMPTY_STR;
+		}
+		return maybeNullString;
 	}
 }

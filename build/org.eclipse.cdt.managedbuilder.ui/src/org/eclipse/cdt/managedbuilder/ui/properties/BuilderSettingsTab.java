@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.Widget;
 public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	// Widgets
 	//1
-	private Button b_useDefault;
+	private Button b_useDefaultBuildCommand;
 	private Combo c_builderType;
 	private Text t_buildCmd;
 	//2
@@ -85,24 +85,23 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			}
 		});
 
-		b_useDefault = setupCheck(g1, Messages.BuilderSettingsTab_4, 3, GridData.BEGINNING);
+		b_useDefaultBuildCommand = setupCheck(g1, Messages.BuilderSettingsTab_4, 3, GridData.BEGINNING);
 
 		setupLabel(g1, Messages.BuilderSettingsTab_5, 1, GridData.BEGINNING);
-		t_buildCmd = setupBlock(g1, b_useDefault);
+		t_buildCmd = setupBlock(g1, b_useDefaultBuildCommand);
 		t_buildCmd.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				if (!canModify)
 					return;
-				String fullCommand = t_buildCmd.getText().trim();
-				String buildCommand = parseMakeCommand(fullCommand);
-				String buildArgs = fullCommand.substring(buildCommand.length()).trim();
-				if (!buildCommand.equals(bldr.getCommand()) || !buildArgs.equals(bldr.getArguments())) {
+				String buildCommand = t_buildCmd.getText().trim();
+				if (!buildCommand.equals(bldr.getCommand())) {
 					setCommand(buildCommand);
-					setArguments(buildArgs);
 				}
 			}
 		});
+
+		setupLabel(g1, Messages.BuilderSettingsTab_25, 2, GridData.BEGINNING);
 
 		Group g2 = setupGroup(usercomp, Messages.BuilderSettingsTab_6, 2, GridData.FILL_HORIZONTAL);
 		((GridLayout) (g2.getLayout())).makeColumnsEqualWidth = true;
@@ -151,7 +150,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b_genMakefileAuto.setEnabled(icfg.supportsBuild(true));
 		if (extStates == null) { // no extended states available
 			BuildBehaviourTab.setTriSelection(b_genMakefileAuto, bldr.isManagedBuildOn());
-			BuildBehaviourTab.setTriSelection(b_useDefault, bldr.isDefaultBuildCmd());
+			BuildBehaviourTab.setTriSelection(b_useDefaultBuildCommand, bldr.isDefaultBuildCmdOnly());
 			// b_expandVars.setGrayed(false);
 			if (!bldr.canKeepEnvironmentVariablesInBuildfile())
 				b_expandVars.setEnabled(false);
@@ -161,7 +160,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			}
 		} else {
 			BuildBehaviourTab.setTriSelection(b_genMakefileAuto, extStates[0]);
-			BuildBehaviourTab.setTriSelection(b_useDefault, extStates[1]);
+			BuildBehaviourTab.setTriSelection(b_useDefaultBuildCommand, extStates[4]);
 			if (extStates[2] != BuildBehaviourTab.TRI_YES)
 				b_expandVars.setEnabled(false);
 			else {
@@ -172,7 +171,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		c_builderType.select(isInternalBuilderEnabled() ? 1 : 0);
 		c_builderType.setEnabled(canEnableInternalBuilder(true) && canEnableInternalBuilder(false));
 
-		t_buildCmd.setText(getMakeCommand());
+		t_buildCmd.setText(nonNull(icfg.getBuildCommand()));
 
 		if (page.isMultiCfg()) {
 			group_dir.setVisible(false);
@@ -187,16 +186,16 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		}
 		boolean external = (c_builderType.getSelectionIndex() == 0);
 
-		b_useDefault.setEnabled(external);
+		b_useDefaultBuildCommand.setEnabled(external);
 		t_buildCmd.setEnabled(external);
-		((Control) t_buildCmd.getData()).setEnabled(external & !b_useDefault.getSelection());
+		((Control) t_buildCmd.getData()).setEnabled(external & !b_useDefaultBuildCommand.getSelection());
 
 		b_genMakefileAuto.setEnabled(external && icfg.supportsBuild(true));
 		if (b_expandVars.getEnabled())
 			b_expandVars.setEnabled(external && b_genMakefileAuto.getSelection());
 
 		if (external) { // just set relatet text widget state,
-			checkPressed(b_useDefault, false); // do not update
+			checkPressed(b_useDefaultBuildCommand, false); // do not update
 		}
 		canModify = true;
 	}
@@ -278,7 +277,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 
 		if (b.getData() instanceof Text) {
 			Text t = (Text) b.getData();
-			if (b == b_useDefault) {
+			if (b == b_useDefaultBuildCommand) {
 				val = !val;
 			}
 			t.setEnabled(val);
@@ -292,7 +291,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		if (!needUpdate)
 			return;
 
-		if (b == b_useDefault) {
+		if (b == b_useDefaultBuildCommand) {
 			setUseDefaultBuildCmd(!val);
 		} else if (b == b_genMakefileAuto) {
 			setManagedBuild(val);
@@ -303,16 +302,13 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	}
 
 	/**
-	 * @return make command
+	 * Return an empty string is parameter is null
 	 */
-	private String getMakeCommand() {
-		String makeCommand = icfg.getBuildCommand();
-		String makeArgs = icfg.getBuildArguments();
-
-		if (!makeCommand.isEmpty() && makeArgs != null) {
-			return makeCommand + " " + makeArgs; //$NON-NLS-1$
+	private String nonNull(String maybeNullString) {
+		if (maybeNullString == null) {
+			return EMPTY_STR;
 		}
-		return EMPTY_STR;
+		return maybeNullString;
 	}
 
 	/**
@@ -330,20 +326,6 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	@Override
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		BuildBehaviourTab.apply(src, dst, page.isMultiCfg());
-	}
-
-	/* (non-Javadoc)
-	 *
-	 * @param string
-	 * @return
-	 */
-	private String parseMakeCommand(String rawCommand) {
-		String[] result = rawCommand.split("\\s"); //$NON-NLS-1$
-		if (result != null && result.length > 0)
-			return result[0];
-		else
-			return rawCommand;
-
 	}
 
 	// This page can be displayed for project only
@@ -400,10 +382,10 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				for (int i = 0; i < cfs.length; i++) {
 					IBuilder b = cfs[i].getEditableBuilder();
 					if (b != null)
-						b.setUseDefaultBuildCmd(val);
+						b.setUseDefaultBuildCmdOnly(val);
 				}
 			} else {
-				icfg.getEditableBuilder().setUseDefaultBuildCmd(val);
+				icfg.getEditableBuilder().setUseDefaultBuildCmdOnly(val);
 			}
 		} catch (CoreException e) {
 			ManagedBuilderUIPlugin.log(e);
@@ -432,18 +414,6 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			}
 		} else {
 			icfg.getEditableBuilder().setCommand(buildCommand);
-		}
-	}
-
-	private void setArguments(String makeArgs) {
-		if (icfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) icfg).getItems();
-			for (int i = 0; i < cfs.length; i++) {
-				IBuilder b = cfs[i].getEditableBuilder();
-				b.setArguments(makeArgs);
-			}
-		} else {
-			icfg.getEditableBuilder().setArguments(makeArgs);
 		}
 	}
 

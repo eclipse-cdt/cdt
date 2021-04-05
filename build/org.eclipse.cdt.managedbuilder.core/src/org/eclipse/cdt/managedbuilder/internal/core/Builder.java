@@ -1085,18 +1085,20 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	@Override
 	public String getArguments() {
 		String args = getArgumentsAttribute();
-		String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
-		int parallelNum = getParallelizationNum();
-		String parallelCmd = isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
+		if (isDefaultBuildArgsOnly()) {
+			String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
+			int parallelNum = getParallelizationNum();
+			String parallelCmd = isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
 
-		String reversedStopOnErrCmd = getStopOnErrCmd(!isStopOnError());
-		String reversedParallelBuildCmd = !isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
+			String reversedStopOnErrCmd = getStopOnErrCmd(!isStopOnError());
+			String reversedParallelBuildCmd = !isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
 
-		args = removeCmd(args, reversedStopOnErrCmd);
-		args = removeCmd(args, reversedParallelBuildCmd);
+			args = removeCmd(args, reversedStopOnErrCmd);
+			args = removeCmd(args, reversedParallelBuildCmd);
 
-		args = addCmd(args, stopOnErrCmd);
-		args = addCmd(args, parallelCmd);
+			args = addCmd(args, stopOnErrCmd);
+			args = addCmd(args, parallelCmd);
+		}
 
 		return args != null ? args.trim() : null;
 	}
@@ -1878,6 +1880,16 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	}
 
 	@Override
+	public boolean isDefaultBuildCmdOnly() {
+		return isExtensionBuilder || (command == null && superClass != null);
+	}
+
+	@Override
+	public boolean isDefaultBuildArgsOnly() {
+		return isExtensionBuilder || (args == null && superClass != null);
+	}
+
+	@Override
 	public boolean isStopOnError() {
 		if (stopOnErr == null) {
 			if (superClass != null) {
@@ -1932,6 +1944,28 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 				//				parallelNum = null;
 			} else {
 				command = getCommand();
+			}
+		}
+	}
+
+	@Override
+	public void setUseDefaultBuildCmdOnly(boolean on) throws CoreException {
+		if (!isExtensionBuilder && superClass != null) {
+			if (on) {
+				command = null;
+			} else {
+				command = getCommand();
+			}
+		}
+	}
+
+	@Override
+	public void setUseDefaultBuildArgsOnly(boolean on) throws CoreException {
+		if (!isExtensionBuilder && superClass != null) {
+			if (on) {
+				args = null;
+			} else {
+				args = EMPTY_STRING;
 			}
 		}
 	}

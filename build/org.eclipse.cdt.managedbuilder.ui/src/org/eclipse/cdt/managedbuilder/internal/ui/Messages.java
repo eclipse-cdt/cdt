@@ -40,6 +40,9 @@ public class Messages extends NLS {
 	public static String BuilderSettingsTab_20;
 	public static String BuilderSettingsTab_21;
 	public static String BuilderSettingsTab_22;
+	public static String BuilderSettingsTab_23;
+	public static String BuilderSettingsTab_24;
+	public static String BuilderSettingsTab_25;
 	public static String BuilderSettingsTab_3;
 	public static String BuilderSettingsTab_4;
 	public static String BuilderSettingsTab_5;

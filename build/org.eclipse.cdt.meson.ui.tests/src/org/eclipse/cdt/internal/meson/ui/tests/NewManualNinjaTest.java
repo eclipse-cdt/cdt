@@ -46,13 +46,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @SuppressWarnings("nls")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
 public class NewManualNinjaTest {
 
 	private static SWTWorkbenchBot bot;

@@ -43,13 +43,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @SuppressWarnings("nls")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
 public class NewMesonConfigureTest {
 
 	private static SWTWorkbenchBot bot;
@@ -128,7 +126,6 @@ public class NewMesonConfigureTest {
 	}
 
 	@Test
-	@Ignore
 	public void attemptMesonConfiguration() throws Exception {
 		String projectName = "MesonTestProj2";
 		// open C++ perspective
@@ -188,7 +185,6 @@ public class NewMesonConfigureTest {
 	}
 
 	@Test
-	@Ignore
 	public void buildMesonProject() throws Exception {
 		String projectName = "MesonTestProj2";
 		// Make sure the project indexer completes. At that point we're stable.
@@ -330,7 +326,6 @@ public class NewMesonConfigureTest {
 	}
 
 	@Test
-	@Ignore
 	public void rebuildMesonProject() throws Exception {
 		String projectName = "MesonTestProj2";
 		// Make sure the project indexer completes. At that point we're stable.

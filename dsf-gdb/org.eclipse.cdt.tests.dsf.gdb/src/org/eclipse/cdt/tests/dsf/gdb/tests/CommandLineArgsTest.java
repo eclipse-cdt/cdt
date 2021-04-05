@@ -39,7 +39,6 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -216,7 +215,6 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 	 * bug 474648
 	 */
 	@Test
-	@Ignore
 	public void testSettingArgumentsWithSpecialSymbols() throws Throwable {
 		// Test that arguments are parsed correctly:
 		// The string provided by the user is split into arguments on spaces

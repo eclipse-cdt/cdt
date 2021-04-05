@@ -57,7 +57,6 @@ import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
@@ -190,7 +189,6 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 * triggers a GDB notification that a new frame has been selected.
 	 */
 	@Test
-	@Ignore
 	public void testChangingCurrentFrameCLINotification() throws Throwable {
 		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
 				MIStoppedEvent.class);
@@ -268,7 +266,6 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 * the current GDB stack frame
 	 */
 	@Test
-	@Ignore
 	public void testGdbSyncServiceCanSwitchGDBStackFrame() throws Throwable {
 		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
 				MIStoppedEvent.class);

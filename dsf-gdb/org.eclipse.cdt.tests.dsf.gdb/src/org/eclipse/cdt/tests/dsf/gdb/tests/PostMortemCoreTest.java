@@ -360,7 +360,6 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 	 * variables.
 	 */
 	@Test
-	@Ignore
 	public void testLocalVariables() throws Throwable {
 		doLaunch();
 
@@ -397,7 +396,6 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 	}
 
 	@Test
-	@Ignore
 	public void readMemoryArray() throws Throwable {
 		doLaunch();
 

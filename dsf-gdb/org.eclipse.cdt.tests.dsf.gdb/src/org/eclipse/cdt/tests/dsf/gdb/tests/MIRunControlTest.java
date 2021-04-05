@@ -195,7 +195,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		/*
 		 * Create a request monitor
 		 */
-		final DataRequestMonitor<IExecutionDMContext[]> rm = new DataRequestMonitor<IExecutionDMContext[]>(
+		final DataRequestMonitor<IExecutionDMContext[]> rm = new DataRequestMonitor<>(
 				fRunCtrl.getExecutor(), null) {
 			@Override
 			protected void handleCompleted() {
@@ -250,7 +250,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		/*
 		 * Create a request monitor
 		 */
-		final DataRequestMonitor<IExecutionDMContext[]> rmExecutionCtxts = new DataRequestMonitor<IExecutionDMContext[]>(
+		final DataRequestMonitor<IExecutionDMContext[]> rmExecutionCtxts = new DataRequestMonitor<>(
 				fRunCtrl.getExecutor(), null) {
 			@Override
 			protected void handleCompleted() {
@@ -317,7 +317,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		/*
 		 * Create a request monitor
 		 */
-		final DataRequestMonitor<IExecutionDMData> rm = new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(),
+		final DataRequestMonitor<IExecutionDMData> rm = new DataRequestMonitor<>(fRunCtrl.getExecutor(),
 				null) {
 			@Override
 			protected void handleCompleted() {
@@ -366,7 +366,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		 */
 		final MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER);
 
-		final DataRequestMonitor<IExecutionDMData> rm = new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(),
+		final DataRequestMonitor<IExecutionDMData> rm = new DataRequestMonitor<>(fRunCtrl.getExecutor(),
 				null) {
 			@Override
 			protected void handleCompleted() {
@@ -411,7 +411,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		 */
 		final MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
 
-		final DataRequestMonitor<IExecutionDMData> rm = new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(),
+		final DataRequestMonitor<IExecutionDMData> rm = new DataRequestMonitor<>(fRunCtrl.getExecutor(),
 				null) {
 			@Override
 			protected void handleCompleted() {
@@ -452,7 +452,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		 */
 		SyncUtil.resumeUntilStopped();
 
-		final DataRequestMonitor<IExecutionDMData> rm = new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(),
+		final DataRequestMonitor<IExecutionDMData> rm = new DataRequestMonitor<>(fRunCtrl.getExecutor(),
 				null) {
 			@Override
 			protected void handleCompleted() {
@@ -484,7 +484,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	public void getExecutionContextsForInvalidContainerDMC() throws InterruptedException {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		final DataRequestMonitor<IExecutionDMContext[]> rm = new DataRequestMonitor<IExecutionDMContext[]>(
+		final DataRequestMonitor<IExecutionDMContext[]> rm = new DataRequestMonitor<>(
 				fRunCtrl.getExecutor(), null) {
 			@Override
 			protected void handleCompleted() {
@@ -528,7 +528,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	public void resume() throws InterruptedException, ExecutionException, TimeoutException {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		final DataRequestMonitor<MIInfo> rm = new DataRequestMonitor<MIInfo>(fRunCtrl.getExecutor(), null) {
+		final DataRequestMonitor<MIInfo> rm = new DataRequestMonitor<>(fRunCtrl.getExecutor(), null) {
 			@Override
 			protected void handleCompleted() {
 				wait.waitFinished(getStatus());
@@ -569,7 +569,7 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 	public void resumeContainerContext() throws InterruptedException, ExecutionException, TimeoutException {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		final DataRequestMonitor<MIInfo> rm = new DataRequestMonitor<MIInfo>(fRunCtrl.getExecutor(), null) {
+		final DataRequestMonitor<MIInfo> rm = new DataRequestMonitor<>(fRunCtrl.getExecutor(), null) {
 			@Override
 			protected void handleCompleted() {
 				wait.waitFinished(getStatus());
@@ -624,8 +624,10 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
-		fRunCtrl.getExecutor().submit(() -> fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME,
-				getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), true, new RequestMonitor(fRunCtrl.getExecutor(), null) {
+		int lineForTag = getLineForTag("LINE_MAIN_ALL_THREADS_STARTED");
+
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME, lineForTag, true,
+				new RequestMonitor(fRunCtrl.getExecutor(), null) {
 					@Override
 					protected void handleCompleted() {
 						wait.waitFinished(getStatus());

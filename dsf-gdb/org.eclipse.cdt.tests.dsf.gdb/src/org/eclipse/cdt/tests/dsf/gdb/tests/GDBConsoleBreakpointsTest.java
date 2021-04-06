@@ -679,7 +679,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	}
 
 	private MIBreakpoint[] getTargetBreakpoints(int timeout, TimeUnit unit) throws Throwable {
-		Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
+		Query<MIBreakListInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIBreakListInfo> rm) {
 				fCommandControl.queueCommand(fCommandControl.getCommandFactory().createMIBreakList(fBreakpointsDmc),
@@ -715,7 +715,7 @@ public class GDBConsoleBreakpointsTest extends BaseParametrizedTestCase {
 	}
 
 	private void queueConsoleCommand(final String command, int timeout, TimeUnit unit) throws Throwable {
-		Query<MIInfo> query = new Query<MIInfo>() {
+		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fCommandControl.queueCommand(fCommandControl.getCommandFactory()

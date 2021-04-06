@@ -142,7 +142,7 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 
 		// Check that argc is correct
 		final IExpressionDMContext argcDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argc");
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -160,7 +160,7 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 		for (int i = 0; i < expected.length; i++) {
 			final IExpressionDMContext argvDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(),
 					"argv[" + (i + 1) + "]");
-			Query<FormattedValueDMData> query2 = new Query<FormattedValueDMData>() {
+			Query<FormattedValueDMData> query2 = new Query<>() {
 				@Override
 				protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 					fExpService.getFormattedExpressionValue(

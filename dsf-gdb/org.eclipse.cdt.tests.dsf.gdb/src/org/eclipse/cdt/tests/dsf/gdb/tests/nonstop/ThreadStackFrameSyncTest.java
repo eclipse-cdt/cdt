@@ -372,7 +372,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	private String sendCLIThread(String tid) throws Exception {
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 
-		Query<CLIThreadInfo> query = new Query<CLIThreadInfo>() {
+		Query<CLIThreadInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<CLIThreadInfo> rm) {
 				fCommandControl.queueCommand(new CLICommand<CLIThreadInfo>(containerDmc, "thread " + tid) {
@@ -404,10 +404,10 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	private String sendCLIFrame(String level) throws Exception {
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 
-		Query<MIInfo> query = new Query<MIInfo>() {
+		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
-				fCommandControl.queueCommand(new CLICommand<MIInfo>(containerDmc, "frame " + level) {
+				fCommandControl.queueCommand(new CLICommand<>(containerDmc, "frame " + level) {
 					@Override
 					public CLIThreadInfo getResult(MIOutput output) {
 						return new CLIThreadInfo(output);
@@ -490,7 +490,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	}
 
 	private void queueConsoleCommand(final String command, int timeout, TimeUnit unit) throws Throwable {
-		Query<MIInfo> query = new Query<MIInfo>() {
+		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fCommandControl.queueCommand(fCommandControl.getCommandFactory()

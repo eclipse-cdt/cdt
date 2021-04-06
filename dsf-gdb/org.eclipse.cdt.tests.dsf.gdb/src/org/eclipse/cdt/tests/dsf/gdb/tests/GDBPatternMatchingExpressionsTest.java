@@ -115,7 +115,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 			"var", "var2" };
 
 	protected void checkChildrenCount(final IExpressionDMContext parentDmc, final int expectedCount) throws Throwable {
-		Query<Integer> query = new Query<Integer>() {
+		Query<Integer> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Integer> rm) {
 				fExpService.getSubExpressionCount(parentDmc, rm);
@@ -129,7 +129,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	}
 
 	protected String getRegisterValue(final String regName, final IMIExecutionDMContext threadDmc) throws Exception {
-		Query<String> query = new Query<String>() {
+		Query<String> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fRegService.getRegisters(threadDmc, new ImmediateDataRequestMonitor<IRegisterDMContext[]>(rm) {
@@ -162,7 +162,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	}
 
 	protected String getExpressionValue(final IExpressionDMContext exprDmc) throws Throwable {
-		Query<String> query = new Query<String>() {
+		Query<String> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				final FormattedValueDMContext valueDmc = fExpService.getFormattedValueContext(exprDmc,
@@ -185,7 +185,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	protected IExpressionDMContext[] checkChildren(final IExpressionDMContext parentDmc, final int startIndex,
 			final int length, String[] expectedValues) throws Throwable {
 
-		Query<IExpressionDMContext[]> query = new Query<IExpressionDMContext[]>() {
+		Query<IExpressionDMContext[]> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMContext[]> rm) {
 				fExpService.getSubExpressions(parentDmc, startIndex, length, rm);
@@ -1430,7 +1430,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
-		Query<IExpressionDMData> query = new Query<IExpressionDMData>() {
+		Query<IExpressionDMData> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMData> rm) {
 				fExpService.getExpressionData(exprDmc, rm);
@@ -1439,7 +1439,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 		fSession.getExecutor().execute(query);
 		IExpressionDMData data = query.get();
 
-		Query<IExpressionDMDataExtension> query2 = new Query<IExpressionDMDataExtension>() {
+		Query<IExpressionDMDataExtension> query2 = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMDataExtension> rm) {
 				fExpService.getExpressionDataExtension(exprDmc, rm);
@@ -1474,7 +1474,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
-		Query<IExpressionDMAddress> query = new Query<IExpressionDMAddress>() {
+		Query<IExpressionDMAddress> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMAddress> rm) {
 				fExpService.getExpressionAddressData(exprDmc, rm);
@@ -1509,7 +1509,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
-		Query<IExpressionDMContext[]> query = new Query<IExpressionDMContext[]>() {
+		Query<IExpressionDMContext[]> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMContext[]> rm) {
 				fExpService.getSubExpressions(exprDmc, rm);
@@ -1550,7 +1550,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				fExpService.canWriteExpression(exprDmc, rm);
@@ -1577,7 +1577,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 
-		Query<String[]> query = new Query<String[]>() {
+		Query<String[]> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String[]> rm) {
 				fExpService.getAvailableFormats(exprDmc, rm);

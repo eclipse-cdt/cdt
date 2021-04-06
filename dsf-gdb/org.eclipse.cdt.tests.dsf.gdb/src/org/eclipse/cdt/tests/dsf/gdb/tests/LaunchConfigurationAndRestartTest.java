@@ -171,7 +171,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		doLaunch();
 
-		Query<MIInfo> query = new Query<MIInfo>() {
+		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fGdbControl.queueCommand(
@@ -241,7 +241,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		// Check that argc is correct
 		final IExpressionDMContext argcDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argc");
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -258,7 +258,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		// Check that argv is also correct.  For simplicity we only check the last argument
 		final IExpressionDMContext argvDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argv[argc-1]");
-		Query<FormattedValueDMData> query2 = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query2 = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -298,7 +298,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		// The program has stored the content of $HOME into a variable called 'home'.
 		// Let's verify this variable is 0x0 which means $HOME does not exist.
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "home");
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -340,7 +340,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		// The program has stored the content of $LAUNCHTEST into a variable called 'launchTest'.
 		// Let's verify this variable is set to "IS SET".
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "launchTest");
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -356,7 +356,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		// Check that the normal environment is there by checking that $HOME (which is stored in 'home" exists.
 		final IExpressionDMContext exprDmc2 = SyncUtil.createExpression(stoppedEvent.getDMContext(), "home");
-		Query<FormattedValueDMData> query2 = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query2 = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -401,7 +401,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		// The program has stored the content of $LAUNCHTEST into a variable called 'launchTest'.
 		// Let's verify this variable is set to "IS SET".
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "launchTest");
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -418,7 +418,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		// The program has stored the content of $HOME into a variable called 'home'.
 		// Let's verify this variable is 0x0 which means it does not exist.
 		final IExpressionDMContext exprDmc2 = SyncUtil.createExpression(stoppedEvent.getDMContext(), "home");
-		Query<FormattedValueDMData> query2 = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query2 = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -458,7 +458,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		// Check that argc is correct
 		final IExpressionDMContext argcDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argc");
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -475,7 +475,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		// Check that argv is also correct.  For simplicity we only check the last argument
 		final IExpressionDMContext argvDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argv[argc-1]");
-		Query<FormattedValueDMData> query2 = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query2 = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -648,7 +648,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(),
 				IBreakpointsTargetDMContext.class);
-		Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
+		Query<MIBreakListInfo> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MIBreakListInfo> rm) {
 				fGdbControl.queueCommand(fGdbControl.getCommandFactory().createCLITrace(bpTargetDmc, "invalid", ""),
@@ -716,7 +716,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		final int REVERSE_NUM_STEPS = 2;
 		final IExecutionDMContext execDmc = stoppedEvent.getDMContext();
-		Query<MIInfo> query = new Query<MIInfo>() {
+		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fGdbControl.queueCommand(
@@ -780,7 +780,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
 		final int REVERSE_NUM_STEPS = 3;
-		Query<MIInfo> query2 = new Query<MIInfo>() {
+		Query<MIInfo> query2 = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fGdbControl.queueCommand(
@@ -853,7 +853,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
 		final int REVERSE_NUM_STEPS = 3;
-		Query<MIInfo> query2 = new Query<MIInfo>() {
+		Query<MIInfo> query2 = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fGdbControl.queueCommand(

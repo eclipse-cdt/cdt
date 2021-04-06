@@ -212,7 +212,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
 				IExitedDMEvent.class);
 
-		Query<Object> query = new Query<Object>() {
+		Query<Object> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Object> rm) {
 				IProcessDMContext processDmc = DMContexts.getAncestorOfType(fContainerDmc, IProcessDMContext.class);
@@ -289,7 +289,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 		ServiceEventWaitor<IExitedDMEvent> exitedEventWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
 				IExitedDMEvent.class);
 
-		Query<Object> query = new Query<Object>() {
+		Query<Object> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Object> rm) {
 				fProcesses.detachDebuggerFromProcess(fContainerDmc, rm);

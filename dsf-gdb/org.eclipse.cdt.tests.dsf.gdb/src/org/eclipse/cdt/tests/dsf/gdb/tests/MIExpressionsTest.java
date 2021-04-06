@@ -372,7 +372,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// First we get the expected value of the array pointer.
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "f");
 
-		Query<IExpressionDMData> query = new Query<IExpressionDMData>() {
+		Query<IExpressionDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IExpressionDMData> rm) {
 				fExpService.getExpressionData(exprDmc, rm);
@@ -421,7 +421,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "this");
 		final IExpressionDMContext[] children = getChildren(exprDmc, new String[] { "Base", "Base" });
 
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				FormattedValueDMContext dmc = fExpService.getFormattedValueContext(children[0],
@@ -436,7 +436,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		// This second child is testing the fact that we could have the child named
 		// the same as its type and we still want to be able to get the details without error.
-		query = new Query<FormattedValueDMData>() {
+		query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				FormattedValueDMContext dmc = fExpService.getFormattedValueContext(children[1],
@@ -468,7 +468,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		final IExpressionDMContext[] children = getChildren(children1[0], new String[] { "nested", "pNested" });
 		final IExpressionDMContext[] childOfPointer = getChildren(children[1], new String[] { "*pNested" });
 
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
@@ -481,7 +481,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		fExpService.getExecutor().submit(query);
 		query.get();
 
-		query = new Query<FormattedValueDMData>() {
+		query = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
@@ -494,7 +494,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		fExpService.getExecutor().submit(query);
 		query.get();
 
-		query = new Query<FormattedValueDMData>() {
+		query = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
@@ -542,7 +542,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		ServiceEventWaitor<IExpressionChangedDMEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				IExpressionChangedDMEvent.class);
 		// Write the new value using its formatted value
-		Query<Void> writeQuery = new Query<Void>() {
+		Query<Void> writeQuery = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<Void> rm) {
@@ -557,7 +557,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		assertThat(event.getDMContext(), is(exprDmc));
 
 		// Read the new value in decimal and check that it is what we expected
-		Query<FormattedValueDMData> readQuery = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> readQuery = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
@@ -3339,7 +3339,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// get child and its value
 		final IExpressionDMContext[] children = getChildren(exprDmc, new String[] { "*int_ptr" });
 
-		Query<String> query = new Query<String>() {
+		Query<String> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -3358,7 +3358,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		assertEquals("65", value);
 
 		final IExpressionDMContext[] castChildren = getChildren(castExprDmc, new String[] { "*((char*)(int_ptr))" });
-		query = new Query<String>() {
+		query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -3407,7 +3407,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		String[] expectedValues = new String[] { "1094861636", "1162233672" };
 		for (int i = 0; i < children.length; i++) {
 			final IExpressionDMContext child = children[i];
-			Query<String> query = new Query<String>() {
+			Query<String> query = new Query<>() {
 				@Override
 				protected void execute(final DataRequestMonitor<String> rm) {
 					fExpService.getFormattedExpressionValue(
@@ -3465,7 +3465,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 			getExpressionType(child, "char");
 
-			Query<String> query = new Query<String>() {
+			Query<String> query = new Query<>() {
 				@Override
 				protected void execute(final DataRequestMonitor<String> rm) {
 					fExpService.getFormattedExpressionValue(
@@ -3522,7 +3522,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 			getExpressionType(child, "char");
 
-			Query<String> query = new Query<String>() {
+			Query<String> query = new Query<>() {
 				@Override
 				protected void execute(final DataRequestMonitor<String> rm) {
 					fExpService.getFormattedExpressionValue(
@@ -3588,7 +3588,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 			final IExpressionDMContext child = castedChildren[i];
 			getExpressionType(child, "char");
 
-			Query<String> query = new Query<String>() {
+			Query<String> query = new Query<>() {
 				@Override
 				protected void execute(final DataRequestMonitor<String> rm) {
 					fExpService.getFormattedExpressionValue(
@@ -3660,7 +3660,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 			final IExpressionDMContext child = castedChildren[i];
 			getExpressionType(child, "int");
 
-			Query<String> query = new Query<String>() {
+			Query<String> query = new Query<>() {
 				@Override
 				protected void execute(final DataRequestMonitor<String> rm) {
 					fExpService.getFormattedExpressionValue(
@@ -3730,7 +3730,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 			final IExpressionDMContext child = castedChildren[i];
 			getExpressionType(child, "char");
 
-			Query<String> query = new Query<String>() {
+			Query<String> query = new Query<>() {
 				@Override
 				protected void execute(final DataRequestMonitor<String> rm) {
 					fExpService.getFormattedExpressionValue(
@@ -3780,7 +3780,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		// Now check how the return value will be displayed to the user
 		final IExpressionDMContext returnExprDmc = SyncUtil.createExpression(frameDmc, "$2");
-		Query<IExpressionDMData> query = new Query<IExpressionDMData>() {
+		Query<IExpressionDMData> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMData> rm) {
 				fExpService.getExpressionData(returnExprDmc, rm);
@@ -3830,7 +3830,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		// Now check how the return value will be displayed to the user
 		final IExpressionDMContext returnExprDmc = SyncUtil.createExpression(frameDmc, "$2");
-		Query<IExpressionDMData> query = new Query<IExpressionDMData>() {
+		Query<IExpressionDMData> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMData> rm) {
 				fExpService.getExpressionData(returnExprDmc, rm);
@@ -3891,7 +3891,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		// Fetch the child directly
 		final IExpressionDMContext childDmc = SyncUtil.createExpression(frameDmc, CHILD_EXPR);
-		Query<String> query = new Query<String>() {
+		Query<String> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -3911,7 +3911,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		// Now fetch the child through its parent
 		final IExpressionDMContext parentDmc = SyncUtil.createExpression(frameDmc, PARENT_EXPR);
-		query = new Query<String>() {
+		query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getSubExpressions(parentDmc, new ImmediateDataRequestMonitor<IExpressionDMContext[]>(rm) {
@@ -3976,7 +3976,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		// First fetch the child through its parent
 		final IExpressionDMContext parentDmc = SyncUtil.createExpression(frameDmc, PARENT_EXPR);
-		Query<String> query = new Query<String>() {
+		Query<String> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getSubExpressions(parentDmc, new ImmediateDataRequestMonitor<IExpressionDMContext[]>(rm) {
@@ -4024,7 +4024,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		// Now access the child directly
 		final IExpressionDMContext childDmc = SyncUtil.createExpression(frameDmc, CHILD_EXPR);
-		query = new Query<String>() {
+		query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getFormattedExpressionValue(
@@ -4044,7 +4044,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	}
 
 	protected void assertChildrenCount(final IExpressionDMContext parentDmc, final int expectedCount) throws Throwable {
-		Query<Integer> query = new Query<Integer>() {
+		Query<Integer> query = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<Integer> rm) {
@@ -4061,7 +4061,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 	protected String getExpressionType(final IExpressionDMContext exprDmc, final String expectedType) throws Throwable {
 
-		Query<String> query = new Query<String>() {
+		Query<String> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				fExpService.getExpressionData(exprDmc, new ImmediateDataRequestMonitor<IExpressionDMData>(rm) {

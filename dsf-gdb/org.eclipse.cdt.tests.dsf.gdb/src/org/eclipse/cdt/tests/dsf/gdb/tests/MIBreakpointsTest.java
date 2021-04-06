@@ -405,7 +405,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		final FormattedValueDMContext formattedValueDMC = SyncUtil.getFormattedValue(fExpressionService, expressionDMC,
 				IFormattedValues.DECIMAL_FORMAT);
 
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpressionService.getFormattedExpressionValue(formattedValueDMC, rm);
@@ -432,7 +432,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	 */
 	protected IBreakpointDMContext[] getBreakpoints(final IBreakpointsTargetDMContext context)
 			throws InterruptedException, ExecutionException, TimeoutException {
-		Query<IBreakpointDMContext[]> query = new Query<IBreakpointDMContext[]>() {
+		Query<IBreakpointDMContext[]> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IBreakpointDMContext[]> rm) {
 				fBreakpointService.getBreakpoints(context, rm);
@@ -458,7 +458,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	 */
 	protected IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint)
 			throws InterruptedException, ExecutionException, TimeoutException {
-		Query<IBreakpointDMData> query = new Query<IBreakpoints.IBreakpointDMData>() {
+		Query<IBreakpointDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IBreakpointDMData> rm) {
 				fBreakpointService.getBreakpointDMData(breakpoint, rm);
@@ -516,7 +516,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	 */
 	protected IBreakpointDMContext insertBreakpoint(final IBreakpointsTargetDMContext context,
 			final Map<String, Object> attributes) throws InterruptedException, ExecutionException, TimeoutException {
-		Query<IBreakpointDMContext> query = new Query<IBreakpointDMContext>() {
+		Query<IBreakpointDMContext> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IBreakpointDMContext> rm) {
 				fBreakpointService.insertBreakpoint(context, attributes, rm);
@@ -566,7 +566,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	 */
 	private void removeBreakpoint(final IBreakpointDMContext breakpoint)
 			throws InterruptedException, ExecutionException, TimeoutException {
-		Query<Void> query = new Query<Void>() {
+		Query<Void> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Void> rm) {
 				fBreakpointService.removeBreakpoint(breakpoint, rm);
@@ -617,7 +617,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	 */
 	private void updateBreakpoint(final IBreakpointDMContext breakpoint, final Map<String, Object> delta)
 			throws InterruptedException, ExecutionException, TimeoutException {
-		Query<Void> query = new Query<Void>() {
+		Query<Void> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Void> rm) {
 				fBreakpointService.updateBreakpoint(breakpoint, delta, rm);
@@ -2509,7 +2509,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	}
 
 	private void queueConsoleCommand(final String command) throws Throwable {
-		Query<MIInfo> query = new Query<MIInfo>() {
+		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fCommandControl.queueCommand(fCommandControl.getCommandFactory()

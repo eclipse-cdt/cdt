@@ -179,7 +179,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 
 		final DsfSession session = getGDBLaunch().getSession();
 
-		Query<Void> query = new Query<Void>() {
+		Query<Void> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Void> rm) {
 				DsfServicesTracker servicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(),
@@ -221,7 +221,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 		final ServiceEventWaitor<IResumedDMEvent> resumedWaitor = new ServiceEventWaitor<>(getGDBLaunch().getSession(),
 				IResumedDMEvent.class);
 
-		Query<Void> query = new Query<Void>() {
+		Query<Void> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Void> rm) {
 				fRunCtrl.resume(fContainerDmc, rm);
@@ -239,7 +239,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 			return;
 		}
 
-		Query<Boolean> querySuspend = new Query<Boolean>() {
+		Query<Boolean> querySuspend = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				rm.done(fRunCtrl.isSuspended(fContainerDmc));
@@ -265,7 +265,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
-		Query<MIInfo> requestSuspend = new Query<MIInfo>() {
+		Query<MIInfo> requestSuspend = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fRunCtrl.suspend(fThreadExecDmc, rm);
@@ -279,7 +279,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 		suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
 
 		// Double check that the target is in the suspended state
-		Query<Boolean> querySuspend = new Query<Boolean>() {
+		Query<Boolean> querySuspend = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				rm.done(fRunCtrl.isSuspended(fContainerDmc));

@@ -344,8 +344,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 				IFormattedValues.DECIMAL_FORMAT);
 
 		// Create the DataRequestMonitor which will store the operation result in the wait object
-		final DataRequestMonitor<FormattedValueDMData> drm = new DataRequestMonitor<FormattedValueDMData>(
-				fSession.getExecutor(), null) {
+		final DataRequestMonitor<FormattedValueDMData> drm = new DataRequestMonitor<>(fSession.getExecutor(), null) {
 			@Override
 			protected void handleCompleted() {
 				if (isSuccess()) {
@@ -388,7 +387,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		fWait.waitReset();
 
 		// Set the Request Monitor
-		final DataRequestMonitor<IBreakpointDMContext[]> drm = new DataRequestMonitor<IBreakpointDMContext[]>(
+		final DataRequestMonitor<IBreakpointDMContext[]> drm = new DataRequestMonitor<>(
 				fBreakpointService.getExecutor(), null) {
 			@Override
 			protected void handleCompleted() {
@@ -425,8 +424,8 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		fWait.waitReset();
 
 		// Set the Request Monitor
-		final DataRequestMonitor<IBreakpointDMData> drm = new DataRequestMonitor<IBreakpointDMData>(
-				fBreakpointService.getExecutor(), null) {
+		final DataRequestMonitor<IBreakpointDMData> drm = new DataRequestMonitor<>(fBreakpointService.getExecutor(),
+				null) {
 			@Override
 			protected void handleCompleted() {
 				fWait.waitFinished(getStatus());
@@ -464,8 +463,8 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		fWait.waitReset();
 
 		// Set the Request Monitor
-		final DataRequestMonitor<IBreakpointDMContext> drm = new DataRequestMonitor<IBreakpointDMContext>(
-				fBreakpointService.getExecutor(), null) {
+		final DataRequestMonitor<IBreakpointDMContext> drm = new DataRequestMonitor<>(fBreakpointService.getExecutor(),
+				null) {
 			@Override
 			protected void handleCompleted() {
 				fWait.waitFinished(getStatus());

@@ -101,7 +101,7 @@ public class CommandTimeoutTest extends BaseParametrizedTestCase {
 				ICommandControlShutdownDMEvent.class);
 
 		// Send the command that will timeout
-		Query<MIInfo> query = new Query<MIInfo>() {
+		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				DsfServicesTracker tracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), session.getId());

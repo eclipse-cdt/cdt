@@ -842,14 +842,6 @@
 					<artifactId>tycho-surefire-plugin</artifactId>
 					<version>${tycho-version}</version>
 					<configuration>
-					<!-- This includes block can be safely deleted once a tycho version never than 1.7 is in use. -->
-					<!-- NOTE: The following is the default include pattern of tycho 2.0 -->
-						<includes>
-							<include>**/Test*.java</include>
-							<include>**/*Test.java</include>
-							<include>**/*Tests.java</include>
-							<include>**/*TestCase.java</include>
-						</includes>
 						<!-- Default configuration, UI tests may have to override these -->
 						<useUIHarness>false</useUIHarness>
 						<useUIThread>false</useUIThread>

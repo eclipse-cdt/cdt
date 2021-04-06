@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt-baseline" sequenceNumber="27">
+<target name="cdt-baseline" sequenceNumber="28">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <repository location="https://download.eclipse.org/eclipse/updates/4.19/R-4.19-202103031800/"/>
@@ -11,7 +11,7 @@
 	</location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.linuxtools.docker.feature.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/linuxtools/update-2021-03-rc2/"/>
+<repository location="https://download.eclipse.org/linuxtools/update-2021-03-docker-rc2"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.lsp4e" version="0.0.0"/>

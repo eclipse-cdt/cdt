@@ -454,6 +454,8 @@
 						<useUIThread>true</useUIThread>
 						<argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
 						<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
+						<!-- using tags can cause all tests to be excluded, which is ok and should not fail the build -->
+						<failIfNoTests>false</failIfNoTests>
 					</configuration>
 				</plugin>
 				</plugins>
@@ -477,6 +479,8 @@
 						<useUIThread>false</useUIThread>
 						<argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
 						<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
+						<!-- using tags can cause all tests to be excluded, which is ok and should not fail the build -->
+						<failIfNoTests>false</failIfNoTests>
 					</configuration>
 				</plugin>
 				</plugins>
@@ -854,6 +858,8 @@
 						<product>org.eclipse.platform.ide</product>
 						<argLine>${tycho.testArgLine} ${base.test.vmargs}</argLine>
 						<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
+						<!-- using tags can cause all tests to be excluded, which is ok and should not fail the build -->
+						<failIfNoTests>false</failIfNoTests>
 					</configuration>
 				</plugin>
 				<plugin>

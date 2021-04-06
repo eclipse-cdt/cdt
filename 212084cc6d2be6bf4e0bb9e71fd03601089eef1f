@@ -16,6 +16,24 @@
       "revId": "212084cc6d2be6bf4e0bb9e71fd03601089eef1f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fe53fac_6e2228e9",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-06T01:02:23Z",
+      "side": 1,
+      "message": "Sorry - it is not that it is gone. This URL does not have org.eclipse.linuxtools.docker.feature.feature.group in it. Sadly I only visually reviewed this change earlier and did not run it up.\n\nThe URL is https://download.eclipse.org/linuxtools/update-2021-03-docker-rc2 and I will provide a working patch soon.",
+      "parentUuid": "45655657_14926195",
+      "revId": "212084cc6d2be6bf4e0bb9e71fd03601089eef1f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

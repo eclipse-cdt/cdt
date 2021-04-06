@@ -470,7 +470,7 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		final FormattedValueDMContext formattedValueDMC = SyncUtil.getFormattedValue(fExpService, expressionDMC,
 				IFormattedValues.HEX_FORMAT);
 
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
 				fExpService.getFormattedExpressionValue(formattedValueDMC, rm);

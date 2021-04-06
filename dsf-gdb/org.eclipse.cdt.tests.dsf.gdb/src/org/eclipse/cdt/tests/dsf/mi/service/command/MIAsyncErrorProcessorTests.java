@@ -195,7 +195,7 @@ public class MIAsyncErrorProcessorTests extends BaseParametrizedTestCase {
 		if (!runControl.isSuspended(containerDmc))
 			return false;
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				runControl.getExecutionData(containerDmc, new ImmediateDataRequestMonitor<IExecutionDMData>(rm) {

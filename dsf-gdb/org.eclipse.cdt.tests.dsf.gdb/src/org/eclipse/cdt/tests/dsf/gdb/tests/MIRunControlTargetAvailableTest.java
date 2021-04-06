@@ -113,7 +113,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			}
 		} };
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
@@ -161,7 +161,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		SyncUtil.resume();
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
@@ -220,7 +220,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			}
 		} };
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
@@ -289,7 +289,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			}
 		} };
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
@@ -353,7 +353,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		SyncUtil.resume();
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
@@ -426,7 +426,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		SyncUtil.resume();
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
@@ -476,7 +476,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			} };
 		}
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				CountingRequestMonitor crm = new CountingRequestMonitor(fGDBCtrl.getExecutor(), null) {
@@ -543,7 +543,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		SyncUtil.resume();
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				CountingRequestMonitor crm = new CountingRequestMonitor(fGDBCtrl.getExecutor(), null) {
@@ -618,7 +618,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			}
 		} };
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
@@ -686,7 +686,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		SyncUtil.resume();
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
@@ -747,7 +747,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 			}
 		} };
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);
@@ -813,7 +813,7 @@ public class MIRunControlTargetAvailableTest extends BaseParametrizedTestCase {
 
 		SyncUtil.resume();
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				fRunCtrl.executeWithTargetAvailable(fContainerDmc, steps, rm);

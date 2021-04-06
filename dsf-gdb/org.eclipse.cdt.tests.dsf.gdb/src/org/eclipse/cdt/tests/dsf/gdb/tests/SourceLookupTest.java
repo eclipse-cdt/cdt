@@ -672,7 +672,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 * Change directory to the binary (aka EXEC_PATH)
 	 */
 	protected void doCdToBinDir() throws Exception {
-		Query<MIInfo> query = new Query<MIInfo>() {
+		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fCommandControl.queueCommand(fCommandFactory.createMIEnvironmentCD(fCommandControl.getContext(),

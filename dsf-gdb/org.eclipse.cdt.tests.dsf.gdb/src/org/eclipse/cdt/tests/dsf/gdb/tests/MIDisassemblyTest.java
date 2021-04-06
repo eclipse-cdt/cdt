@@ -172,7 +172,7 @@ public class MIDisassemblyTest extends BaseParametrizedTestCase {
 	 */
 	private IInstruction[] getInstruction(final IDisassemblyDMContext dmc, final BigInteger startAddress,
 			final BigInteger endAddress) throws InterruptedException, ExecutionException {
-		Query<IInstruction[]> query = new Query<IInstruction[]>() {
+		Query<IInstruction[]> query = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<IInstruction[]> rm) {
@@ -204,7 +204,7 @@ public class MIDisassemblyTest extends BaseParametrizedTestCase {
 	 */
 	private IInstruction[] getInstruction(final IDisassemblyDMContext dmc, final String function, final int linenum,
 			final int count) throws InterruptedException, ExecutionException {
-		Query<IInstruction[]> query = new Query<IInstruction[]>() {
+		Query<IInstruction[]> query = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<IInstruction[]> rm) {
@@ -235,7 +235,7 @@ public class MIDisassemblyTest extends BaseParametrizedTestCase {
 	 */
 	private IMixedInstruction[] getMixedInstruction(final IDisassemblyDMContext dmc, final BigInteger startAddress,
 			final BigInteger endAddress) throws InterruptedException, ExecutionException {
-		Query<IMixedInstruction[]> query = new Query<IMixedInstruction[]>() {
+		Query<IMixedInstruction[]> query = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<IMixedInstruction[]> rm) {
@@ -266,7 +266,7 @@ public class MIDisassemblyTest extends BaseParametrizedTestCase {
 	 */
 	private IMixedInstruction[] getMixedInstruction(final IDisassemblyDMContext dmc, final String function,
 			final int linenum, final int count) throws InterruptedException, ExecutionException {
-		Query<IMixedInstruction[]> query = new Query<IMixedInstruction[]>() {
+		Query<IMixedInstruction[]> query = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<IMixedInstruction[]> rm) {

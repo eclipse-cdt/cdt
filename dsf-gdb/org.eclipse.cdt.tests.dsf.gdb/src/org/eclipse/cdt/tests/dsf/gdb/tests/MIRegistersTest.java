@@ -161,7 +161,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	 */
 	private IRegisterDMContext[] getAllRegisters(final IFrameDMContext frameDmc) throws Throwable {
 
-		Query<IRegisterDMContext[]> queryRegisters = new Query<IRegisterDMContext[]>() {
+		Query<IRegisterDMContext[]> queryRegisters = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IRegisterDMContext[]> rm) {
 				fRegService.getRegisters(new CompositeDMContext(new IDMContext[] { fCompositeDmc, frameDmc }), rm);
@@ -182,7 +182,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	 */
 	private IRegisterDMContext[] getRegisters(final IDMContext dmc) throws Throwable {
 
-		Query<IRegisterDMContext[]> queryRegistersDmc = new Query<IRegisterDMContext[]>() {
+		Query<IRegisterDMContext[]> queryRegistersDmc = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IRegisterDMContext[]> rm) {
 				fRegService.getRegisters(dmc, rm);
@@ -246,7 +246,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	private IRegisterDMData[] getRegistersData(final IRegisterDMContext[] regDMCs)
 			throws InterruptedException, ExecutionException {
 
-		Query<IRegisterDMData[]> query = new Query<IRegisterDMData[]>() {
+		Query<IRegisterDMData[]> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IRegisterDMData[]> rm) {
 				final IRegisterDMData[] datas = new IRegisterDMData[regDMCs.length];
@@ -283,7 +283,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 		final FormattedValueDMContext valueDmc = fRegService.getFormattedValueContext(registerDmc, format);
 
-		Query<FormattedValueDMData> queryFormattedData = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> queryFormattedData = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				fRegService.getFormattedExpressionValue(valueDmc, rm);
@@ -331,7 +331,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 		final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(),
 				IContainerDMContext.class);
 
-		Query<IExecutionDMContext[]> queryExecutionContexts = new Query<IExecutionDMContext[]>() {
+		Query<IExecutionDMContext[]> queryExecutionContexts = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IExecutionDMContext[]> rm) {
 				fRunControl.getExecutionContexts(containerDmc, rm);
@@ -394,7 +394,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	private void writeRegister(final IRegisterDMContext registerDmc, final String regValue, final String formatId)
 			throws Throwable {
 
-		Query<Object> queryAction = new Query<Object>() {
+		Query<Object> queryAction = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				fRegService.writeRegister(registerDmc, regValue, formatId, rm);
@@ -905,7 +905,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	 */
 	private IRegisterGroupDMContext[] getRegisterGroups() throws Throwable {
 
-		Query<IRegisterGroupDMContext[]> queryGroupsCtx = new Query<IRegisterGroupDMContext[]>() {
+		Query<IRegisterGroupDMContext[]> queryGroupsCtx = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IRegisterGroupDMContext[]> rm) {
 				fRegService.getRegisterGroups(fCompositeDmc, rm);
@@ -936,7 +936,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	private boolean canAddRegisterGroup(final IDMContext context) throws Throwable {
-		Query<Boolean> queryAction = new Query<Boolean>() {
+		Query<Boolean> queryAction = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				fRegService.canAddRegisterGroup(context, rm);
@@ -948,7 +948,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	private boolean canEditRegisterGroup(final IRegisterGroupDMContext context) throws Throwable {
-		Query<Boolean> queryAction = new Query<Boolean>() {
+		Query<Boolean> queryAction = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				fRegService.canEditRegisterGroup(context, rm);
@@ -960,7 +960,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	private boolean canRemoveRegisterGroups(final IRegisterGroupDMContext[] groupsContext) throws Throwable {
-		Query<Boolean> queryAction = new Query<Boolean>() {
+		Query<Boolean> queryAction = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				fRegService.canRemoveRegisterGroups(groupsContext, rm);
@@ -978,7 +978,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 			return;
 		}
 
-		Query<Object> queryAction = new Query<Object>() {
+		Query<Object> queryAction = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				IContainerDMContext contDmc = DMContexts.getAncestorOfType(regIndexes[0], IContainerDMContext.class);
@@ -993,7 +993,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	private void editGroup(final IRegisterGroupDMContext group, final String newGroupName,
 			final IRegisterDMContext[] regIndexes) throws Throwable {
 
-		Query<Object> queryAction = new Query<Object>() {
+		Query<Object> queryAction = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				fRegService.editRegisterGroup(group, newGroupName, regIndexes, rm);
@@ -1006,7 +1006,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 
 	private void removeGroups(final IRegisterGroupDMContext[] groups) throws Throwable {
 
-		Query<Object> queryAction = new Query<Object>() {
+		Query<Object> queryAction = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				fRegService.removeRegisterGroups(groups, rm);
@@ -1018,7 +1018,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	private boolean canRestoreDefaultGroups() throws Throwable {
-		Query<Boolean> queryCanRestore = new Query<Boolean>() {
+		Query<Boolean> queryCanRestore = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
@@ -1035,7 +1035,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	private void restoreDefaultGroups() throws Throwable {
-		Query<Object> queryRestore = new Query<Object>() {
+		Query<Object> queryRestore = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
@@ -1053,7 +1053,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	private void resetRegService() throws Throwable {
 		assert (fRegService instanceof GDBRegisters);
 		final GDBRegisters regManager = (GDBRegisters) fRegService;
-		Query<Object> queryReset = new Query<Object>() {
+		Query<Object> queryReset = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
@@ -1070,7 +1070,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	private void saveRegGroups() throws Throwable {
 		assert (fRegService instanceof GDBRegisters);
 		final GDBRegisters regManager = (GDBRegisters) fRegService;
-		Query<Object> querySave = new Query<Object>() {
+		Query<Object> querySave = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
@@ -1086,7 +1086,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	private IRegisterDMData getRegisterData(final IRegisterDMContext registerDmc) throws Throwable {
-		Query<IRegisterDMData> registerDataQ = new Query<IRegisterDMData>() {
+		Query<IRegisterDMData> registerDataQ = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IRegisterDMData> rm) {
 				fRegService.getRegisterData(registerDmc, rm);
@@ -1101,7 +1101,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	private FormattedValueDMData getRegisterValue(final IRegisterDMContext registerDmc) throws Throwable {
-		Query<FormattedValueDMData> registerValueQ = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> registerValueQ = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				FormattedValueDMContext valueDmc = new FormattedValueDMContext(fRegService, registerDmc,
@@ -1118,7 +1118,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	private IRegisterGroupDMData getRegisterGroupData(final IRegisterGroupDMContext groupDmc) throws Throwable {
-		Query<IRegisterGroupDMData> groupDataQ = new Query<IRegisterGroupDMData>() {
+		Query<IRegisterGroupDMData> groupDataQ = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IRegisterGroupDMData> rm) {
 				fRegService.getRegisterGroupData(groupDmc, rm);
@@ -1133,7 +1133,7 @@ public class MIRegistersTest extends BaseParametrizedTestCase {
 	}
 
 	private IRegisterGroupDMData[] getRegisterGroupsData(final IDMContext dmc) throws Throwable {
-		Query<IRegisterGroupDMData[]> groupDataQ = new Query<IRegisterGroupDMData[]>() {
+		Query<IRegisterGroupDMData[]> groupDataQ = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IRegisterGroupDMData[]> rm) {
 				getRegisterGroupsData(dmc, rm);

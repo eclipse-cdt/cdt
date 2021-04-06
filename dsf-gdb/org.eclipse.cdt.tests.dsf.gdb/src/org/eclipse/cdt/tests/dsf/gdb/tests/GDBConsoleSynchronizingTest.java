@@ -141,7 +141,7 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "i");
 
 		// Read the memory that will change first, or else there will be no event for it
-		Query<IExpressionDMAddress> query = new Query<IExpressionDMAddress>() {
+		Query<IExpressionDMAddress> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMAddress> rm) {
 				fExprService.getExpressionAddressData(exprDmc, rm);
@@ -186,7 +186,7 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "i");
 
 		// Read the memory that will change first, or else there will be no event for it
-		Query<IExpressionDMAddress> query = new Query<IExpressionDMAddress>() {
+		Query<IExpressionDMAddress> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMAddress> rm) {
 				fExprService.getExpressionAddressData(exprDmc, rm);
@@ -254,7 +254,7 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "i");
 
 		// Read the memory that will change first, or else there will be no event for it
-		Query<IExpressionDMAddress> query = new Query<IExpressionDMAddress>() {
+		Query<IExpressionDMAddress> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMAddress> rm) {
 				fExprService.getExpressionAddressData(exprDmc, rm);
@@ -303,7 +303,7 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		SyncUtil.runToLocation("testMemoryChanges");
 
 		// check starting state
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				reverseService.isReverseModeEnabled(fCommandControl.getContext(), rm);
@@ -323,7 +323,7 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		assertEquals(true, event.isReverseModeEnabled());
 
 		// Check the service
-		query = new Query<Boolean>() {
+		query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				reverseService.isReverseModeEnabled(fCommandControl.getContext(), rm);
@@ -349,7 +349,7 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		fEventsReceived.clear();
 
 		// check starting state
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				reverseService.enableReverseMode(fCommandControl.getContext(), true, new ImmediateRequestMonitor(rm) {
@@ -377,7 +377,7 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 		assertEquals(false, event.isReverseModeEnabled());
 
 		// Check the service
-		query = new Query<Boolean>() {
+		query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				reverseService.isReverseModeEnabled(fCommandControl.getContext(), rm);
@@ -405,7 +405,7 @@ public class GDBConsoleSynchronizingTest extends BaseParametrizedTestCase {
 	}
 
 	private void queueConsoleCommand(final String command, int timeout, TimeUnit unit) throws Throwable {
-		Query<MIInfo> query = new Query<MIInfo>() {
+		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fCommandControl.queueCommand(fCommandControl.getCommandFactory()

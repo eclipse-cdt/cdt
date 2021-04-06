@@ -363,7 +363,7 @@ public class SyncUtil {
 		final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc,
 				IBreakpointsTargetDMContext.class);
 
-		Query<MIBreakInsertInfo> query = new Query<MIBreakInsertInfo>() {
+		Query<MIBreakInsertInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIBreakInsertInfo> rm) {
 				fGdbControl.queueCommand(
@@ -388,7 +388,7 @@ public class SyncUtil {
 		final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc,
 				IBreakpointsTargetDMContext.class);
 
-		Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
+		Query<MIBreakListInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIBreakListInfo> rm) {
 				fGdbControl.queueCommand(fCommandFactory.createMIBreakList(bpTargetDmc), rm);
@@ -480,7 +480,7 @@ public class SyncUtil {
 	 * @throws Throwable
 	 */
 	public static boolean canResume(final IExecutionDMContext execDmc) throws Throwable {
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				fRunControl.canResume(execDmc, new ImmediateDataRequestMonitor<Boolean>(rm) {
@@ -620,7 +620,7 @@ public class SyncUtil {
 	 * @throws Exception
 	 */
 	public static IFrameDMContext getStackFrame(final IExecutionDMContext execCtx, final int level) throws Exception {
-		Query<IFrameDMContext> query = new Query<IFrameDMContext>() {
+		Query<IFrameDMContext> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IFrameDMContext> rm) {
 				fStack.getFrames(execCtx, level, level, new ImmediateDataRequestMonitor<IFrameDMContext[]>(rm) {
@@ -685,7 +685,7 @@ public class SyncUtil {
 	 * @throws Throwable
 	 */
 	public static Integer getStackDepth(final IExecutionDMContext execCtx, final int maxDepth) throws Throwable {
-		Query<Integer> query = new Query<Integer>() {
+		Query<Integer> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Integer> rm) {
 				fStack.getStackDepth(execCtx, maxDepth, rm);
@@ -706,7 +706,7 @@ public class SyncUtil {
 	 * @throws Throwable
 	 */
 	public static IFrameDMData getFrameData(final IExecutionDMContext execCtx, final int level) throws Throwable {
-		Query<IFrameDMData> query = new Query<IFrameDMData>() {
+		Query<IFrameDMData> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IFrameDMData> rm) {
 				fStack.getFrames(execCtx, level, level, new ImmediateDataRequestMonitor<IFrameDMContext[]>(rm) {
@@ -751,7 +751,7 @@ public class SyncUtil {
 		final IProcessDMContext processContext = DMContexts.getAncestorOfType(SyncUtil.getContainerContext(),
 				IProcessDMContext.class);
 
-		Query<IThreadDMData> query = new Query<IThreadDMData>() {
+		Query<IThreadDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IThreadDMData> rm) {
 				IThreadDMContext threadDmc = fProcessesService.createThreadContext(processContext,
@@ -793,7 +793,7 @@ public class SyncUtil {
 	 */
 	public static IExpressionDMContext[] getSubExpressions(final IExpressionDMContext dmc)
 			throws InterruptedException, ExecutionException {
-		Query<IExpressionDMContext[]> query = new Query<IExpressionDMContext[]>() {
+		Query<IExpressionDMContext[]> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IExpressionDMContext[]> rm) {
 				fExpressions.getSubExpressions(dmc, rm);
@@ -841,7 +841,7 @@ public class SyncUtil {
 	 * @throws Throwable
 	 */
 	public static String getExpressionValue(final IExpressionDMContext exprDmc, final String format) throws Throwable {
-		Query<String> query = new Query<String>() {
+		Query<String> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 				FormattedValueDMContext valueDmc = fExpressions.getFormattedValueContext(exprDmc, format);
@@ -1008,7 +1008,7 @@ public class SyncUtil {
 			throws InterruptedException, ExecutionException, TimeoutException {
 		assert !fProcessesService.getExecutor().isInExecutorThread();
 
-		Query<IContainerDMContext> query = new Query<IContainerDMContext>() {
+		Query<IContainerDMContext> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IContainerDMContext> rm) {
 				fProcessesService.getProcessesBeingDebugged(fGdbControl.getContext(),
@@ -1049,7 +1049,7 @@ public class SyncUtil {
 
 		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 
-		Query<IMIExecutionDMContext[]> query = new Query<IMIExecutionDMContext[]>() {
+		Query<IMIExecutionDMContext[]> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IMIExecutionDMContext[]> rm) {
 				fProcessesService.getProcessesBeingDebugged(containerDmc,
@@ -1101,7 +1101,7 @@ public class SyncUtil {
 		final IContainerDMContext containerDmc = getContainerContext();
 
 		// Check if restart is allowed
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				fProcessesService.canRestart(containerDmc, new ImmediateDataRequestMonitor<Boolean>(rm) {
@@ -1139,7 +1139,7 @@ public class SyncUtil {
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
 		// Perform the restart
-		Query<IContainerDMContext> query2 = new Query<IContainerDMContext>() {
+		Query<IContainerDMContext> query2 = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IContainerDMContext> rm) {
 				Map<String, Object> attributes = null;
@@ -1171,7 +1171,7 @@ public class SyncUtil {
 	 * @throws Throwable
 	 */
 	public static IVariableDMData[] getLocals(final IFrameDMContext frameDmc) throws Throwable {
-		Query<IVariableDMData[]> query = new Query<IVariableDMData[]>() {
+		Query<IVariableDMData[]> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IVariableDMData[]> rm) {
 				fStack.getLocals(frameDmc, new ImmediateDataRequestMonitor<IVariableDMContext[]>() {
@@ -1226,7 +1226,7 @@ public class SyncUtil {
 			// Note that we send an MI Command in this code and do not use the IRegister service;
 			// this is because we want to test the service later, comparing it to what we find
 			// by asking GDB directly.
-			Query<MIDataListRegisterNamesInfo> query = new Query<MIDataListRegisterNamesInfo>() {
+			Query<MIDataListRegisterNamesInfo> query = new Query<>() {
 				@Override
 				protected void execute(DataRequestMonitor<MIDataListRegisterNamesInfo> rm) {
 					IContainerDMContext containerDmc = DMContexts.getAncestorOfType(context, IContainerDMContext.class);
@@ -1269,7 +1269,7 @@ public class SyncUtil {
 	 */
 	public static MemoryByte[] readMemory(final IMemoryDMContext dmc, final IAddress address, final long offset,
 			final int wordSize, final int count) throws InterruptedException, ExecutionException {
-		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
+		Query<MemoryByte[]> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MemoryByte[]> rm) {
 				fMemory.getMemory(dmc, address, offset, wordSize, count, rm);
@@ -1295,7 +1295,7 @@ public class SyncUtil {
 	 */
 	public static void writeMemory(final IMemoryDMContext dmc, final IAddress address, final long offset,
 			final int wordSize, final int count, final byte[] buffer) throws InterruptedException, ExecutionException {
-		Query<Void> query = new Query<Void>() {
+		Query<Void> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Void> rm) {
 				fMemory.setMemory(dmc, address, offset, wordSize, count, buffer, rm);
@@ -1321,7 +1321,7 @@ public class SyncUtil {
 	 */
 	public static void fillMemory(final IMemoryDMContext dmc, final IAddress address, final long offset,
 			final int wordSize, final int count, final byte[] pattern) throws InterruptedException, ExecutionException {
-		Query<Void> query = new Query<Void>() {
+		Query<Void> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Void> rm) {
 				fMemory.fillMemory(dmc, address, offset, wordSize, count, pattern, rm);
@@ -1369,7 +1369,7 @@ public class SyncUtil {
 	 * {@link ISourceLookup#getSource(ISourceLookupDMContext, String, DataRequestMonitor)}
 	 */
 	public static Object getSource(final String debuggerPath) throws Exception {
-		Query<Object> query = new Query<Object>() {
+		Query<Object> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				final ISourceLookupDMContext ctx = DMContexts.getAncestorOfType(fGdbControl.getContext(),
@@ -1390,7 +1390,7 @@ public class SyncUtil {
 	 * {@link IDebugSourceFiles#getSources(IDMContext, DataRequestMonitor)}
 	 */
 	public static IDebugSourceFileInfo[] getSources(IDMContext ctx) throws Exception {
-		Query<IDebugSourceFileInfo[]> query = new Query<IDebugSourceFileInfo[]>() {
+		Query<IDebugSourceFileInfo[]> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IDebugSourceFileInfo[]> rm) {
 				fDebugSourceFiles.getSources(ctx, rm);

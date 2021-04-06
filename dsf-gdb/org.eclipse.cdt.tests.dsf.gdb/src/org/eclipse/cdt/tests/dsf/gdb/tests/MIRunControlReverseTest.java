@@ -106,7 +106,7 @@ public class MIRunControlReverseTest extends BaseParametrizedTestCase {
 		assertTrue("Reverse debugging is not supported", fRunCtrl instanceof IReverseRunControl);
 		final IReverseRunControl reverseService = (IReverseRunControl) fRunCtrl;
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				reverseService.enableReverseMode(fGDBCtrl.getContext(), true, new ImmediateRequestMonitor(rm) {
@@ -150,7 +150,7 @@ public class MIRunControlReverseTest extends BaseParametrizedTestCase {
 
 		String newValue = "8989";
 		// Now modify a variable to trigger the query as we are modifying a recorded value
-		Query<Void> writeQuery = new Query<Void>() {
+		Query<Void> writeQuery = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Void> rm) {
 				fExpressions.writeExpression(expr, newValue, IFormattedValues.DECIMAL_FORMAT, rm);

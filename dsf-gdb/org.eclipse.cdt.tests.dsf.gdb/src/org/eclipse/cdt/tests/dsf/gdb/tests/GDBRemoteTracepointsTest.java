@@ -301,7 +301,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 	protected IBreakpointDMContext insertBreakpoint(final IBreakpointsTargetDMContext context,
 			final Map<String, Object> attributes) throws Throwable {
-		Query<IBreakpointDMContext> query = new Query<IBreakpointDMContext>() {
+		Query<IBreakpointDMContext> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IBreakpointDMContext> rm) {
 				fBreakpointService.insertBreakpoint(context, attributes, rm);
@@ -318,7 +318,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	}
 
 	protected void removeBreakpoint(final IBreakpointDMContext breakpoint) throws Throwable {
-		Query<Object> query = new Query<Object>() {
+		Query<Object> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Object> rm) {
 				fBreakpointService.removeBreakpoint(breakpoint, rm);
@@ -335,7 +335,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 	protected void updateBreakpoint(final IBreakpointDMContext breakpoint, final Map<String, Object> delta)
 			throws Throwable {
-		Query<Object> query = new Query<Object>() {
+		Query<Object> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				fBreakpointService.updateBreakpoint(breakpoint, delta, rm);
@@ -351,7 +351,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	}
 
 	protected IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint) throws Throwable {
-		Query<IBreakpointDMData> query = new Query<IBreakpointDMData>() {
+		Query<IBreakpointDMData> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IBreakpointDMData> rm) {
 				fBreakpointService.getBreakpointDMData(breakpoint, rm);
@@ -368,7 +368,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	}
 
 	protected IBreakpointDMContext[] getBreakpoints(final IBreakpointsTargetDMContext context) throws Throwable {
-		Query<IBreakpointDMContext[]> query = new Query<IBreakpointDMContext[]>() {
+		Query<IBreakpointDMContext[]> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<IBreakpointDMContext[]> rm) {
 				fBreakpointService.getBreakpoints(context, rm);
@@ -707,7 +707,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_5);
 
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		Query<MIInfo> query = new Query<MIInfo>() {
+		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fGdbControl.queueCommand(

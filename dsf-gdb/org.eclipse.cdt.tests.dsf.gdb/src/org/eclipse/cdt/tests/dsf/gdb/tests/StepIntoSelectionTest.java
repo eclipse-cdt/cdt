@@ -165,7 +165,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 
 	private void checkGdbIsSuspended() throws Throwable {
 		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				rm.done(fRunCtrl.isSuspended(containerDmc));
@@ -185,7 +185,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 			final int targetLine, final IFunctionDeclaration function, final boolean skipBreakPoints) throws Throwable {
 		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<>(fSession, ISuspendedDMEvent.class);
 
-		Query<Object> query = new Query<Object>() {
+		Query<Object> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				fRunCtrl.stepIntoSelection(exeContext, sourceName, targetLine, skipBreakPoints, function, rm);
@@ -205,7 +205,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 			final int targetLine, final boolean skipBreakPoints) throws Throwable {
 		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<>(fSession, ISuspendedDMEvent.class);
 
-		Query<Object> query = new Query<Object>() {
+		Query<Object> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				fRunCtrl.runToLine(exeContext, sourceName, targetLine, skipBreakPoints, rm);

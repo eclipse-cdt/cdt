@@ -4,7 +4,7 @@ Bundle-Name: %bundleName
 Bundle-Description: %bundleDescription
 Bundle-Copyright: %Bundle-Copyright
 Bundle-SymbolicName: org.eclipse.cdt.cmake.is.core;singleton:=true
-Bundle-Version: 1.0.100.qualifier
+Bundle-Version: 1.0.200.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11

@@ -171,6 +171,12 @@ public class CompileCommandsJsonParser {
 				// parse file...
 				Gson gson = new Gson();
 				CommandEntry[] sourceFileInfos = gson.fromJson(in, CommandEntry[].class);
+				if (sourceFileInfos == null) {
+					final String msg = String.format(Messages.CompileCommandsJsonParser_errmsg_empty_json, jsonDiskFile,
+							WORKBENCH_WILL_NOT_KNOW_ALL_MSG);
+					createMarker(jsonFile, msg);
+					return false;
+				}
 				for (CommandEntry sourceFileInfo : sourceFileInfos) {
 					processCommandEntry(sourceFileInfo, jsonFile);
 				}

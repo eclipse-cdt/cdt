@@ -336,6 +336,11 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 			try (FileReader reader = new FileReader(commandsFile.toFile())) {
 				Gson gson = new Gson();
 				CompileCommand[] commands = gson.fromJson(reader, CompileCommand[].class);
+				if (commands == null) {
+					throw new CoreException(Activator.errorStatus(
+							String.format(Messages.MesonBuildConfiguration_ProcCompCmds, project.getName()),
+							new NullPointerException(Messages.MesonBuildConfiguration_StillNull)));
+				}
 				Map<String, CompileCommand> dedupedCmds = new HashMap<>();
 				for (CompileCommand command : commands) {
 					dedupedCmds.put(command.getFile(), command);

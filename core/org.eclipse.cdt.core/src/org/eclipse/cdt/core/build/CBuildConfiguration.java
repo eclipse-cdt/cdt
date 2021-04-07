@@ -644,9 +644,10 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 						scannerInfoCache = gson.fromJson(reader, ScannerInfoCache.class);
 					} catch (IOException e) {
 						CCorePlugin.log(e);
-						scannerInfoCache = new ScannerInfoCache();
 					}
-				} else {
+				}
+
+				if (scannerInfoCache == null) {
 					scannerInfoCache = new ScannerInfoCache();
 				}
 				scannerInfoCache.initCache();

@@ -32,6 +32,8 @@ public class Messages extends NLS {
 	public static String MesonBuildConfiguration_ProcCompCmds;
 	public static String MesonBuildConfiguration_ProcCompJson;
 
+	public static String MesonBuildConfiguration_StillNull;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

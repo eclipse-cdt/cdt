@@ -27,6 +27,8 @@ public class Messages extends NLS {
 	public static String CompilationDatabaseParser_ProgressParsingBuildCommands;
 	public static String CompilationDatabaseParser_ProgressParsingJSONFile;
 
+	public static String CompilationDatabaseParser_StillNull;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -326,6 +326,12 @@ public class CompilationDatabaseParser extends LanguageSettingsSerializableProvi
 					Messages.CompilationDatabaseParser_ErrorProcessingCompilationDatabase, e));
 		}
 
+		if (compileCommands == null) {
+			throw new CoreException(new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
+					Messages.CompilationDatabaseParser_ErrorProcessingCompilationDatabase,
+					new NullPointerException(Messages.CompilationDatabaseParser_StillNull)));
+		}
+
 		AbstractBuildCommandParser outputParser;
 		try {
 			outputParser = getBuildCommandParser(cfgDescription, getBuildParserId());

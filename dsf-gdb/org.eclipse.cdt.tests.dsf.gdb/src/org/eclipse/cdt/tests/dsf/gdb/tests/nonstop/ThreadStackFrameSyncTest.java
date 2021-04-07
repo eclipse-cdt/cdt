@@ -12,8 +12,6 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.nonstop;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -24,7 +22,6 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IMultiRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -46,7 +43,6 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MITuple;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
-import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
@@ -69,12 +65,12 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	private IGDBControl fCommandControl;
 	private IGDBFocusSynchronizer fGdbSync;
 	private DsfSession fSession;
-	private List<IDMEvent<? extends IDMContext>> fEventsReceived = new ArrayList<>();
 
 	// Breakpoint tags in MultiThread.cc
 	public static final String[] LINE_TAGS = new String[] { "LINE_MAIN_BEFORE_THREAD_START", // Just before StartThread
 			"LINE_MAIN_AFTER_THREAD_START", // Just after StartThread
-			"LINE_MAIN_ALL_THREADS_STARTED", // Where all threads are guaranteed to be started.
+			"LINE_MAIN_ALL_THREADS_STARTED", // Where all threads are guaranteed to be started,
+			"LINE_THREAD_IN_HELLO", // in the middle of one of the threads
 	};
 
 	/*
@@ -115,8 +111,6 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 			IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
 			Assert.assertTrue(procService != null);
 
-			// Register to receive DSF events
-			fSession.addServiceEventListener(ThreadStackFrameSyncTest.this, null);
 		};
 		fSession.getExecutor().submit(runnable).get();
 	}
@@ -134,13 +128,6 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	@Override
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
-
-		if (fSession != null) {
-			fSession.getExecutor().submit(() -> fSession.removeServiceEventListener(ThreadStackFrameSyncTest.this))
-					.get();
-		}
-		fEventsReceived.clear();
-
 		if (fServicesTracker != null)
 			fServicesTracker.dispose();
 	}
@@ -198,7 +185,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		// add a breakpoint in main
 		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
 		// add a breakpoint in thread code
-		SyncUtil.addBreakpoint("36", false);
+		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_THREAD_IN_HELLO"), false);
 		// Run program
 		SyncUtil.resumeAll();
 
@@ -247,19 +234,29 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		// *** at this point all 5 threads should be stopped
 
 		// have the sync service set GDB current tid to thread 5
-		fGdbSync.setFocus(new IDMContext[] { getContextForThreadId(5) }, new ImmediateRequestMonitor());
+		IMIExecutionDMContext contextForThreadId5 = getContextForThreadId(5);
+		fSession.getExecutor().execute(
+				() -> fGdbSync.setFocus(new IDMContext[] { contextForThreadId5 }, new ImmediateRequestMonitor()));
 		assertEquals("5", getCurrentThread());
 
-		fGdbSync.setFocus(new IDMContext[] { getContextForThreadId(4) }, new ImmediateRequestMonitor());
+		IMIExecutionDMContext contextForThreadId4 = getContextForThreadId(4);
+		fSession.getExecutor().execute(
+				() -> fGdbSync.setFocus(new IDMContext[] { contextForThreadId4 }, new ImmediateRequestMonitor()));
 		assertEquals("4", getCurrentThread());
 
-		fGdbSync.setFocus(new IDMContext[] { getContextForThreadId(3) }, new ImmediateRequestMonitor());
+		IMIExecutionDMContext contextForThreadId3 = getContextForThreadId(3);
+		fSession.getExecutor().execute(
+				() -> fGdbSync.setFocus(new IDMContext[] { contextForThreadId3 }, new ImmediateRequestMonitor()));
 		assertEquals("3", getCurrentThread());
 
-		fGdbSync.setFocus(new IDMContext[] { getContextForThreadId(2) }, new ImmediateRequestMonitor());
+		IMIExecutionDMContext contextForThreadId2 = getContextForThreadId(2);
+		fSession.getExecutor().execute(
+				() -> fGdbSync.setFocus(new IDMContext[] { contextForThreadId2 }, new ImmediateRequestMonitor()));
 		assertEquals("2", getCurrentThread());
 
-		fGdbSync.setFocus(new IDMContext[] { getContextForThreadId(1) }, new ImmediateRequestMonitor());
+		IMIExecutionDMContext contextForThreadId1 = getContextForThreadId(1);
+		fSession.getExecutor().execute(
+				() -> fGdbSync.setFocus(new IDMContext[] { contextForThreadId1 }, new ImmediateRequestMonitor()));
 		assertEquals("1", getCurrentThread());
 	}
 
@@ -294,15 +291,25 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		// do a few of times
 		for (int i = 0; i < 50; i++) {
 			// have the sync service switch stack frame to 1
-			fSession.getExecutor()
-					.execute(() -> fGdbSync.setFocus(new IDMContext[] { frame1 }, new ImmediateRequestMonitor()));
-			Thread.sleep(100);
+			Query<MIInfo> query1 = new Query<>() {
+				@Override
+				protected void execute(DataRequestMonitor<MIInfo> rm) {
+					fGdbSync.setFocus(new IDMContext[] { frame1 }, rm);
+				}
+			};
+			fCommandControl.getExecutor().execute(query1);
+			query1.get();
 			assertEquals("1", getCurrentStackFrameLevel());
 
 			// have the sync service switch stack frame to 0
-			fSession.getExecutor()
-					.execute(() -> fGdbSync.setFocus(new IDMContext[] { frame0 }, new ImmediateRequestMonitor()));
-			Thread.sleep(100);
+			Query<MIInfo> query0 = new Query<>() {
+				@Override
+				protected void execute(DataRequestMonitor<MIInfo> rm) {
+					fGdbSync.setFocus(new IDMContext[] { frame0 }, rm);
+				}
+			};
+			fCommandControl.getExecutor().execute(query0);
+			query0.get();
 			assertEquals("0", getCurrentStackFrameLevel());
 		}
 	}
@@ -325,11 +332,10 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 * @throws Throwable
 	 */
 	private String switchThreadAndCaptureThreadSwitchedEvent(String tid) throws Throwable {
-		Thread.sleep(100);
-		fEventsReceived.clear();
+		ServiceEventWaitor<IGDBFocusChangedEvent> waitor = new ServiceEventWaitor(fSession,
+				IGDBFocusChangedEvent.class);
 		selectGdbThread(tid);
-
-		IDMContext ctx = waitForEvent(IGDBFocusChangedEvent.class).getDMContext();
+		IDMContext ctx = waitor.waitForEvent(TestsPlugin.massageTimeout(2000)).getDMContext();
 		if (ctx instanceof IMIExecutionDMContext) {
 			IMIExecutionDMContext execDmc = (IMIExecutionDMContext) ctx;
 			return execDmc.getThreadId();
@@ -347,11 +353,21 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	private String switchFrameAndCaptureStackFrameSwitchedEvent(String frameLevel) throws Throwable {
 		IFrameDMContext newFrame = null;
 
-		Thread.sleep(100);
-		fEventsReceived.clear();
-		selectGdbStackFrame(frameLevel);
+		ServiceEventWaitor<IGDBFocusChangedEvent> waitor = new ServiceEventWaitor<>(fSession,
+				IGDBFocusChangedEvent.class);
 
-		Object[] elems = fGdbSync.getFocus();
+		selectGdbStackFrame(frameLevel);
+		waitor.waitForEvent(TestsPlugin.massageTimeout(DEFAULT_TIMEOUT));
+
+		Query<Object[]> query = new Query<>() {
+			@Override
+			protected void execute(DataRequestMonitor<Object[]> rm) {
+				rm.done(fGdbSync.getFocus());
+			}
+		};
+
+		fCommandControl.getExecutor().execute(query);
+		Object[] elems = query.get();
 		for (Object elem : elems) {
 			if (elem instanceof IFrameDMContext) {
 				newFrame = (IFrameDMContext) elem;
@@ -469,14 +485,6 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		return sendCLIFrame("");
 	}
 
-	@DsfServiceEventHandler
-	public void eventDispatched(IDMEvent<? extends IDMContext> e) {
-		synchronized (this) {
-			fEventsReceived.add(e);
-			notifyAll();
-		}
-	}
-
 	private void selectGdbThread(String tid) throws Throwable {
 		queueConsoleCommand(String.format("thread %s", tid));
 	}
@@ -499,40 +507,6 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		};
 		fSession.getExecutor().execute(query);
 		query.get(timeout, unit);
-	}
-
-	private <V extends IDMEvent<? extends IDMContext>> V waitForEvent(Class<V> eventType) throws Exception {
-		return waitForEvent(eventType, TestsPlugin.massageTimeout(DEFAULT_TIMEOUT));
-	}
-
-	@SuppressWarnings("unchecked")
-	private <V extends IDMEvent<? extends IDMContext>> V waitForEvent(Class<V> eventType, int timeout)
-			throws Exception {
-		IDMEvent<?> event = getEvent(eventType);
-		if (event == null) {
-			synchronized (this) {
-				try {
-					wait(timeout);
-				} catch (InterruptedException ex) {
-				}
-			}
-			event = getEvent(eventType);
-			if (event == null) {
-				throw new Exception(String.format("Timed out waiting for '%s' to occur.", eventType.getName()));
-			}
-		}
-		return (V) event;
-	}
-
-	@SuppressWarnings("unchecked")
-	private synchronized <V extends IDMEvent<? extends IDMContext>> V getEvent(Class<V> eventType) {
-		for (IDMEvent<?> e : fEventsReceived) {
-			if (eventType.isAssignableFrom(e.getClass())) {
-				fEventsReceived.remove(e);
-				return (V) e;
-			}
-		}
-		return null;
 	}
 
 }

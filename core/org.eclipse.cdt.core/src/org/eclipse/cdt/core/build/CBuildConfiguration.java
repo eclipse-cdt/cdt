@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -28,12 +27,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -61,12 +59,12 @@ import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
-import org.eclipse.cdt.core.parser.IncludeExportPatterns;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.build.Messages;
 import org.eclipse.cdt.internal.core.model.BinaryRunner;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.core.parser.ParserSettings2;
+import org.eclipse.cdt.internal.core.scannerinfo.ExtendedScannerInfoSerializer;
+import org.eclipse.cdt.internal.core.scannerinfo.IExtendedScannerInfoDeserializer;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.core.filesystem.URIUtil;
@@ -92,12 +90,6 @@ import org.osgi.service.prefs.Preferences;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 
 /**
  * Root class for CDT build configurations. Provides access to the build
@@ -639,63 +631,6 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 				.append(getProject().getName()).append(name + ".json").toFile(); //$NON-NLS-1$
 	}
 
-	private static class IExtendedScannerInfoCreator implements JsonDeserializer<IExtendedScannerInfo> {
-		@Override
-		public IExtendedScannerInfo deserialize(JsonElement element, Type arg1, JsonDeserializationContext arg2)
-				throws JsonParseException {
-			JsonObject infoObj = element.getAsJsonObject();
-
-			Map<String, String> definedSymbols = null;
-			if (infoObj.has("definedSymbols")) { //$NON-NLS-1$
-				JsonObject definedSymbolsObj = infoObj.get("definedSymbols").getAsJsonObject(); //$NON-NLS-1$
-				definedSymbols = new HashMap<>();
-				for (Entry<String, JsonElement> entry : definedSymbolsObj.entrySet()) {
-					definedSymbols.put(entry.getKey(), entry.getValue().getAsString());
-				}
-			}
-
-			String[] includePaths = null;
-			if (infoObj.has("includePaths")) { //$NON-NLS-1$
-				JsonArray includePathsArray = infoObj.get("includePaths").getAsJsonArray(); //$NON-NLS-1$
-				List<String> includePathsList = new ArrayList<>(includePathsArray.size());
-				for (Iterator<JsonElement> i = includePathsArray.iterator(); i.hasNext();) {
-					includePathsList.add(i.next().getAsString());
-				}
-				includePaths = includePathsList.toArray(new String[includePathsList.size()]);
-			}
-
-			IncludeExportPatterns includeExportPatterns = null;
-			if (infoObj.has("includeExportPatterns")) { //$NON-NLS-1$
-				JsonObject includeExportPatternsObj = infoObj.get("includeExportPatterns").getAsJsonObject(); //$NON-NLS-1$
-				String exportPattern = null;
-				if (includeExportPatternsObj.has("includeExportPattern")) { //$NON-NLS-1$
-					exportPattern = includeExportPatternsObj.get("includeExportPattern") //$NON-NLS-1$
-							.getAsJsonObject().get("pattern").getAsString(); //$NON-NLS-1$
-				}
-
-				String beginExportsPattern = null;
-				if (includeExportPatternsObj.has("includeBeginExportPattern")) { //$NON-NLS-1$
-					beginExportsPattern = includeExportPatternsObj.get("includeBeginExportPattern") //$NON-NLS-1$
-							.getAsJsonObject().get("pattern").getAsString(); //$NON-NLS-1$
-				}
-
-				String endExportsPattern = null;
-				if (includeExportPatternsObj.has("includeEndExportPattern")) { //$NON-NLS-1$
-					endExportsPattern = includeExportPatternsObj.get("includeEndExportPattern") //$NON-NLS-1$
-							.getAsJsonObject().get("pattern").getAsString(); //$NON-NLS-1$
-				}
-
-				includeExportPatterns = new IncludeExportPatterns(exportPattern, beginExportsPattern,
-						endExportsPattern);
-			}
-
-			ExtendedScannerInfo info = new ExtendedScannerInfo(definedSymbols, includePaths);
-			info.setIncludeExportPatterns(includeExportPatterns);
-			info.setParserSettings(new ParserSettings2());
-			return info;
-		}
-	}
-
 	/**
 	 * @since 6.1
 	 */
@@ -705,9 +640,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 				File cacheFile = getScannerInfoCacheFile();
 				if (cacheFile.exists()) {
 					try (FileReader reader = new FileReader(cacheFile)) {
-						GsonBuilder gsonBuilder = new GsonBuilder();
-						gsonBuilder.registerTypeAdapter(IExtendedScannerInfo.class, new IExtendedScannerInfoCreator());
-						Gson gson = gsonBuilder.create();
+						Gson gson = createGson();
 						scannerInfoCache = gson.fromJson(reader, ScannerInfoCache.class);
 					} catch (IOException e) {
 						CCorePlugin.log(e);
@@ -719,6 +652,14 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 				scannerInfoCache.initCache();
 			}
 		}
+	}
+
+	private Gson createGson() {
+		GsonBuilder gsonBuilder = new GsonBuilder();
+		gsonBuilder.registerTypeAdapter(IExtendedScannerInfo.class, new IExtendedScannerInfoDeserializer());
+		gsonBuilder.registerTypeAdapter(ExtendedScannerInfo.class, new ExtendedScannerInfoSerializer());
+		Gson gson = gsonBuilder.create();
+		return gson;
 	}
 
 	/**
@@ -736,7 +677,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		}
 
 		try (FileWriter writer = new FileWriter(getScannerInfoCacheFile())) {
-			Gson gson = new Gson();
+			Gson gson = createGson();
 			synchronized (scannerInfoLock) {
 				gson.toJson(scannerInfoCache, writer);
 			}

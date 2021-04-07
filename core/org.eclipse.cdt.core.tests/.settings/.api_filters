@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.core.tests" version="2">
+    <resource path="parser/org/eclipse/cdt/core/parser/tests/scannerinfo/ExtendedScannerInfoSerializerDeserializerTest.java" type="org.eclipse.cdt.core.parser.tests.scannerinfo.ExtendedScannerInfoSerializerDeserializerTest">
+        <filter comment="This is ok - there is just no way of marking @noreference as having friends." id="640712815">
+            <message_arguments>
+                <message_argument value="ExtendedScannerInfo"/>
+                <message_argument value="ExtendedScannerInfoSerializerDeserializerTest"/>
+                <message_argument value="getIncludeExportPatterns()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="suite/org/eclipse/cdt/core/testplugin/util/BaseTestCase5.java" type="org.eclipse.cdt.core.testplugin.util.BaseTestCase5$ModelJoiner">
         <filter comment="This is ok - there is just no way of marking @noreference as having friends." id="640712815">
             <message_arguments>

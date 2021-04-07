@@ -98,6 +98,7 @@ Export-Package: org.eclipse.cdt.core,
  org.eclipse.cdt.internal.core.pdom.indexer;x-friends:="org.eclipse.cdt.ui",
  org.eclipse.cdt.internal.core.pdom.tag;x-internal:=true,
  org.eclipse.cdt.internal.core.resources;x-friends:="org.eclipse.cdt.ui,org.eclipse.cdt.make.core,org.eclipse.cdt.codan.ui.cxx",
+ org.eclipse.cdt.internal.core.scannerinfo;x-friends:="org.eclipse.cdt.core.tests",
  org.eclipse.cdt.internal.core.settings.model;x-internal:=true,
  org.eclipse.cdt.internal.core.util;x-friends:="org.eclipse.cdt.ui",
  org.eclipse.cdt.internal.errorparsers;x-friends:="org.eclipse.cdt.codan.checkers.ui",
@@ -132,7 +133,7 @@ Require-Bundle: org.eclipse.cdt.core.native;bundle-version="[6.0.0,7.0.0)";visib
  org.eclipse.ltk.core.refactoring;bundle-version="[3.10.200,4.0.0)",
  org.eclipse.osgi.services;bundle-version="[3.8.0,4.0.0)",
  org.eclipse.text;bundle-version="[3.9.0,4.0.0)",
- com.google.gson,
+ com.google.gson;bundle-version="[2.8.6,3.0.0)",
  org.eclipse.jdt.annotation;bundle-version="[2.0.0,3.0.0)";resolution:=optional
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11

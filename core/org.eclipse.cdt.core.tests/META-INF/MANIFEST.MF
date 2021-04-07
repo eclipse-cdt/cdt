@@ -22,6 +22,7 @@ Export-Package: org.eclipse.cdt.core.cdescriptor.tests,
  org.eclipse.cdt.core.parser.tests.rewrite.changegenerator,
  org.eclipse.cdt.core.parser.tests.rewrite.comenthandler,
  org.eclipse.cdt.core.parser.tests.scanner,
+ org.eclipse.cdt.core.parser.tests.scannerinfo,
  org.eclipse.cdt.core.resources.tests,
  org.eclipse.cdt.core.settings.model,
  org.eclipse.cdt.core.suite,
@@ -42,7 +43,8 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.jface.text,
  org.eclipse.core.filesystem,
  org.eclipse.ltk.core.refactoring;bundle-version="3.4.0",
- org.hamcrest
+ org.hamcrest,
+ com.google.gson;bundle-version="[2.8.6,3.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-11

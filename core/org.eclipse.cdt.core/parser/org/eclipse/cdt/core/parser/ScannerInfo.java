@@ -33,9 +33,9 @@ public class ScannerInfo implements IScannerInfo {
 		this(macroDefinitions, null);
 	}
 
-	public ScannerInfo(Map<String, String> macroDefinitions, String[] includeSearchPath) {
-		definedSymbols = macroDefinitions != null ? macroDefinitions : Collections.<String, String>emptyMap();
-		includePaths = includeSearchPath != null ? includeSearchPath : new String[] {};
+	public ScannerInfo(Map<String, String> definedSymbols, String[] includePaths) {
+		this.definedSymbols = definedSymbols != null ? definedSymbols : Collections.<String, String>emptyMap();
+		this.includePaths = includePaths != null ? includePaths : new String[] {};
 	}
 
 	@Override

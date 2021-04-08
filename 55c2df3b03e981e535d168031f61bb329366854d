@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "436ab92f_99281b24",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-08T14:57:20Z",
+      "side": 0,
+      "message": "This has been completely rewitten to use Shadow* classes so that it can be written with little Gson API.",
+      "revId": "55c2df3b03e981e535d168031f61bb329366854d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

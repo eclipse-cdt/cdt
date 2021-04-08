@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "abf079b4_1232d78b",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/scannerinfo/ExtendedScannerInfoSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-08T14:57:20Z",
+      "side": 1,
+      "message": "extra I",
+      "range": {
+        "startLine": 30,
+        "startChar": 68,
+        "endLine": 30,
+        "endChar": 70
+      },
+      "revId": "3ea516262754bec08054d95034fc2efd60820fad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0bb112bb_dc840574",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/scannerinfo/ExtendedScannerInfoSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-08T14:57:20Z",
+      "side": 1,
+      "message": "extra I",
+      "range": {
+        "startLine": 32,
+        "startChar": 30,
+        "endLine": 32,
+        "endChar": 32
+      },
+      "revId": "3ea516262754bec08054d95034fc2efd60820fad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b228a790_61f64806",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/scannerinfo/ExtendedScannerInfoSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-08T14:57:20Z",
+      "side": 1,
+      "message": "extra instanceof check",
+      "range": {
+        "startLine": 34,
+        "startChar": 2,
+        "endLine": 34,
+        "endChar": 44
+      },
+      "revId": "3ea516262754bec08054d95034fc2efd60820fad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -78,6 +78,7 @@ public:
   BaseTest() {}
   void test() { 
     nested = 8;
+    pNested = &nested;
     return; 
   }
   Base Base; // make sure we don't get confused by the same name

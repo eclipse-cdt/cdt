@@ -48,4 +48,10 @@ void cdtTrace(const wchar_t *fmt, ...);
 
 int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace);
 
+// Returned pointer shall be freed with free().
+char *formatWinErrorCodeUtf8(DWORD messageId);
+
+// Returned pointer shall be freed with free().
+wchar_t *formatWinErrorCodeW(DWORD messageId);
+
 #endif /* UTIL_H */

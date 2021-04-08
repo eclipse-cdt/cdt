@@ -25,25 +25,25 @@
 
 #include <org_eclipse_cdt_utils_spawner_Spawner.h>
 
-void ThrowByName(JNIEnv *env, const char *name, const char *msg);
+void ThrowByName(JNIEnv *env, const char *name, const wchar_t *msg);
 
 #define BUFF_SIZE (1024)
 
 static HANDLE channelToHandle(JNIEnv *env, jobject channel) {
     if (!channel) {
-        ThrowByName(env, "java/io/IOException", "Invalid channel object");
+        ThrowByName(env, "java/io/IOException", L"Invalid channel object");
         return NULL;
     }
 
     jclass cls = (*env)->GetObjectClass(env, channel);
     if (!cls) {
-        ThrowByName(env, "java/io/IOException", "Unable to get channel class");
+        ThrowByName(env, "java/io/IOException", L"Unable to get channel class");
         return NULL;
     }
 
     jfieldID fid = (*env)->GetFieldID(env, cls, "handle", "J");
     if (!fid) {
-        ThrowByName(env, "java/io/IOException", "Unable to find handle");
+        ThrowByName(env, "java/io/IOException", L"Unable to find handle");
         return NULL;
     }
 
@@ -70,14 +70,10 @@ extern "C"
                                     NULL); // unnamed event object
 
     if (!overlapped.hEvent) {
-        char *lpMsgBuf;
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
-                      GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                      (wchar_t *)&lpMsgBuf, 0, NULL);
-
+        wchar_t *lpMsgBuf = formatWinErrorCode(GetLastError());
         ThrowByName(env, "java/io/IOException", lpMsgBuf);
         // Free the buffer.
-        LocalFree(lpMsgBuf);
+        free(lpMsgBuf);
     }
 
     if (isTraceEnabled(CDT_TRACE_SPAWNER) && isTraceEnabled(CDT_TRACE_SPAWNER_READ_REPORT)) {
@@ -103,19 +99,14 @@ extern "C"
                 break;
             }
             if (err != 0) {
-                char *lpMsgBuf;
                 if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                     cdtTrace(L"Read failed - %p, error %i\n", handle, err);
                 }
                 if (err !=
                     ERROR_MORE_DATA) { // Otherwise error means just that there are more data than buffer can accept
-                    FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                                      FORMAT_MESSAGE_IGNORE_INSERTS,
-                                  NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                                  (wchar_t *)&lpMsgBuf, 0, NULL);
-
+                    wchar_t *lpMsgBuf = formatWinErrorCode(err);
                     ThrowByName(env, "java/io/IOException", lpMsgBuf);
-                    LocalFree(lpMsgBuf);
+                    free(lpMsgBuf);
                     nBuffOffset = 0;
                     break;
                 } else {
@@ -200,13 +191,9 @@ extern "C"
         DWORD nNumberOfBytesWritten;
         (*env)->GetByteArrayRegion(env, buf, nBuffOffset, nNumberOfBytesToWrite, tmpBuf);
         if (0 == WriteFile(handle, tmpBuf, nNumberOfBytesToWrite, &nNumberOfBytesWritten, NULL)) {
-            char *lpMsgBuf;
-            FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                          NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                          (wchar_t *)&lpMsgBuf, 0, NULL);
-
+            wchar_t *lpMsgBuf = formatWinErrorCode(GetLastError());
             ThrowByName(env, "java/io/IOException", lpMsgBuf);
-            LocalFree(lpMsgBuf);
+            free(lpMsgBuf);
             return 0;
         }
         nBuffOffset += nNumberOfBytesWritten;

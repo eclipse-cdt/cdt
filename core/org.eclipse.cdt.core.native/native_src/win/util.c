@@ -151,3 +151,49 @@ int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace
 
     return j;
 }
+
+wchar_t *formatWinErrorCodeW(DWORD messageId) {
+    const wchar_t *NULL_STR = L"(null)";
+    size_t size = 0;
+    wchar_t *msg = NULL;
+
+    DWORD langId[] = {
+        MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US),
+        MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT),
+        0 /* Default */
+    };
+    wchar_t *winBuf = NULL;
+
+    /* Format the message */
+    for (int i = 0; winBuf == NULL && i < sizeof(langId) / sizeof(langId[0]); i++) {
+        if (FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                           NULL, messageId, langId[i], (wchar_t *)&winBuf, 0, NULL) == 0) {
+            winBuf = NULL;
+        }
+    }
+
+    /* Prefix the message */
+    size = 100 + wcslen(winBuf ? winBuf : NULL_STR);
+    msg = (wchar_t *)calloc(size + 1, sizeof(wchar_t));
+    if (msg) {
+        snwprintf(msg, size, L"Code 0x%lx: %s", (unsigned long)messageId, (winBuf ? winBuf : NULL_STR));
+    }
+
+    LocalFree(winBuf);
+    return msg;
+}
+
+char *formatWinErrorCodeUtf8(DWORD messageId) {
+    char *buf = NULL;
+    wchar_t *msg = formatWinErrorCodeW(messageId);
+    size_t msgLen = wcslen(msg);
+    int nChars = WideCharToMultiByte(CP_UTF8, 0, msg, msgLen, NULL, 0, NULL, NULL);
+    if (nChars == 0) {
+        buf = strdup("");
+    } else {
+        buf = (char *)calloc(nChars + 1, sizeof(char));
+        WideCharToMultiByte(CP_UTF8, 0, msg, msgLen, buf, nChars, NULL, NULL);
+    }
+    free(msg);
+    return buf;
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "356cdeed_cb4a5386",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextLineRenderer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-08T14:59:15Z",
+      "side": 1,
+      "message": "I haven\u0027t diagnosed it yet - but this underline drawing isn\u0027t working reliably. I can see cases of wrapped lines that the ctrl-click are working, but the underline is not drawing.",
+      "revId": "a19c35c6251a25ae06ab52190e04e9589c0e5659",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

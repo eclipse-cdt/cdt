@@ -463,6 +463,8 @@ extern "C"
                              &si,      /* (in)  startup information */
                              &pi);     /* (out) process information */
 
+    const DWORD error_CreateProcessW = GetLastError();
+
     free(cwd);
     free(envBlock);
     free(cmdLine);
@@ -510,12 +512,10 @@ extern "C"
     } else { // Launching error
         char *lpMsgBuf;
         CLOSE_HANDLES(stdHandles);
-        FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                       NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                       (char *)&lpMsgBuf, 0, NULL);
+        lpMsgBuf = formatWinErrorCodeUtf8(error_CreateProcessW);
         ThrowByName(env, "java/io/IOException", lpMsgBuf);
         // Free the buffer.
-        LocalFree(lpMsgBuf);
+        free(lpMsgBuf);
         cleanUpProcBlock(pCurProcInfo);
         ret = -1;
     }
@@ -580,6 +580,7 @@ extern "C"
                              cwd,      /* change to the new current directory */
                              &si,      /* (in)  startup information */
                              &pi);     /* (out) process information */
+    const DWORD error_CreateProcessW = GetLastError();
 
     free(cwd);
     free(cmdLine);
@@ -591,14 +592,10 @@ extern "C"
         CloseHandle(pi.hProcess);
         ret = (long)pi.dwProcessId; // hProcess;
     } else {                        // error
-        char *lpMsgBuf;
-
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
-                      GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                      (wchar_t *)&lpMsgBuf, 0, NULL);
+        char *lpMsgBuf = formatWinErrorCodeUtf8(error_CreateProcessW);
         ThrowByName(env, "java/io/IOException", lpMsgBuf);
         // Free the buffer.
-        LocalFree(lpMsgBuf);
+        free(lpMsgBuf);
         ret = -1;
     }
 

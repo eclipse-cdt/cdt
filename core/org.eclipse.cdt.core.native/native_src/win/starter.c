@@ -479,12 +479,9 @@ int main() {
 }
 
 void DisplayErrorMessage() {
-    wchar_t *lpMsgBuf;
-    FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
-                   GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                   (wchar_t *)&lpMsgBuf, 0, NULL);
+    wchar_t *lpMsgBuf = formatWinErrorCodeW(GetLastError());
     OutputDebugStringW(lpMsgBuf);
     // Free the buffer.
-    LocalFree(lpMsgBuf);
+    free(lpMsgBuf);
 }
 //////////////////////////////// End of File //////////////////////////////////

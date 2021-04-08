@@ -70,14 +70,10 @@ extern "C"
                                     NULL); // unnamed event object
 
     if (!overlapped.hEvent) {
-        char *lpMsgBuf;
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
-                      GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                      (wchar_t *)&lpMsgBuf, 0, NULL);
-
+        char *lpMsgBuf = formatWinErrorCodeUtf8(GetLastError());
         ThrowByName(env, "java/io/IOException", lpMsgBuf);
         // Free the buffer.
-        LocalFree(lpMsgBuf);
+        free(lpMsgBuf);
     }
 
     if (isTraceEnabled(CDT_TRACE_SPAWNER) && isTraceEnabled(CDT_TRACE_SPAWNER_READ_REPORT)) {
@@ -109,13 +105,9 @@ extern "C"
                 }
                 if (err !=
                     ERROR_MORE_DATA) { // Otherwise error means just that there are more data than buffer can accept
-                    FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                                      FORMAT_MESSAGE_IGNORE_INSERTS,
-                                  NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                                  (wchar_t *)&lpMsgBuf, 0, NULL);
-
+                    lpMsgBuf = formatWinErrorCodeUtf8(err);
                     ThrowByName(env, "java/io/IOException", lpMsgBuf);
-                    LocalFree(lpMsgBuf);
+                    free(lpMsgBuf);
                     nBuffOffset = 0;
                     break;
                 } else {
@@ -200,13 +192,9 @@ extern "C"
         DWORD nNumberOfBytesWritten;
         (*env)->GetByteArrayRegion(env, buf, nBuffOffset, nNumberOfBytesToWrite, tmpBuf);
         if (0 == WriteFile(handle, tmpBuf, nNumberOfBytesToWrite, &nNumberOfBytesWritten, NULL)) {
-            char *lpMsgBuf;
-            FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                          NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                          (wchar_t *)&lpMsgBuf, 0, NULL);
-
+            char *lpMsgBuf = formatWinErrorCodeUtf8(GetLastError());
             ThrowByName(env, "java/io/IOException", lpMsgBuf);
-            LocalFree(lpMsgBuf);
+            free(lpMsgBuf);
             return 0;
         }
         nBuffOffset += nNumberOfBytesWritten;

@@ -62,7 +62,7 @@ typedef struct _procInfo {
 static int procCounter = 0; // Number of running processes
 
 // This is a VM helper
-void ThrowByName(JNIEnv *env, const char *name, const char *msg);
+void ThrowByName(JNIEnv *env, const char *name, const wchar_t *msg);
 
 // Creates _procInfo block for every launched process
 pProcInfo_t createProcInfo();
@@ -213,7 +213,7 @@ static bool createCommandLine(JNIEnv *env, jobjectArray cmdarray, wchar_t **cmdL
         } else {
             // malloc failed, clean up and return
             va_end(ap);
-            ThrowByName(env, "java/io/IOException", "Not enough memory");
+            ThrowByName(env, "java/io/IOException", L"Not enough memory");
             return false;
         }
     } while (size <= required);
@@ -229,7 +229,7 @@ static bool createCommandLine(JNIEnv *env, jobjectArray cmdarray, wchar_t **cmdL
             required = nPos + len + 2; // 2 => space + \0
             if (required > 32 * 1024) {
                 free(buffer);
-                ThrowByName(env, "java/io/IOException", "Command line too long");
+                ThrowByName(env, "java/io/IOException", L"Command line too long");
                 return false;
             }
 
@@ -248,7 +248,7 @@ static bool createCommandLine(JNIEnv *env, jobjectArray cmdarray, wchar_t **cmdL
                     } else {
                         // Failed to realloc memory
                         free(buffer);
-                        ThrowByName(env, "java/io/IOException", "Not enough memory");
+                        ThrowByName(env, "java/io/IOException", L"Not enough memory");
                         return false;
                     }
                 }
@@ -270,7 +270,7 @@ static bool createCommandLine(JNIEnv *env, jobjectArray cmdarray, wchar_t **cmdL
             (*env)->ReleaseStringChars(env, item, str);
         } else {
             free(buffer);
-            ThrowByName(env, "java/io/IOException", "Command line contained null string");
+            ThrowByName(env, "java/io/IOException", L"Command line contained null string");
             return false;
         }
     }
@@ -307,7 +307,7 @@ static bool createEnvironmentBlock(JNIEnv *env, jobjectArray envp, wchar_t **blo
                 } else {
                     free(buffer);
                     (*env)->ReleaseStringChars(env, item, str);
-                    ThrowByName(env, "java/io/IOException", "Not enough memory");
+                    ThrowByName(env, "java/io/IOException", L"Not enough memory");
                     return false;
                 }
                 if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
@@ -338,29 +338,29 @@ extern "C"
     Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv *env, jobject process, jobjectArray cmdarray,
                                                      jobjectArray envp, jstring dir, jobjectArray channels) {
     if (!channels) {
-        ThrowByName(env, "java/io/IOException", "Channels can't be null");
+        ThrowByName(env, "java/io/IOException", L"Channels can't be null");
         return 0;
     }
 
     jclass channelClass = (*env)->FindClass(env, "org/eclipse/cdt/utils/spawner/Spawner$WinChannel");
     if (!channelClass) {
-        ThrowByName(env, "java/io/IOException", "Unable to find channel class");
+        ThrowByName(env, "java/io/IOException", L"Unable to find channel class");
         return 0;
     }
 
     jmethodID channelConstructor = (*env)->GetMethodID(env, channelClass, "<init>", "(J)V");
     if (!channelConstructor) {
-        ThrowByName(env, "java/io/IOException", "Unable to find channel constructor");
+        ThrowByName(env, "java/io/IOException", L"Unable to find channel constructor");
         return 0;
     }
 
     if ((HIBYTE(LOWORD(GetVersion()))) & 0x80) {
-        ThrowByName(env, "java/io/IOException", "Does not support Windows 3.1/95/98/Me");
+        ThrowByName(env, "java/io/IOException", L"Does not support Windows 3.1/95/98/Me");
         return 0;
     }
 
     if (!cmdarray) {
-        ThrowByName(env, "java/lang/NullPointerException", "No command line specified");
+        ThrowByName(env, "java/lang/NullPointerException", L"No command line specified");
         return 0;
     }
 
@@ -376,14 +376,14 @@ extern "C"
         !createStandardNamedPipe(&stdHandles[1], STD_OUTPUT_HANDLE, pid, nLocalCounter) ||
         !createStandardNamedPipe(&stdHandles[2], STD_ERROR_HANDLE, pid, nLocalCounter)) {
         CLOSE_HANDLES(stdHandles);
-        ThrowByName(env, "java/io/IOException", "CreatePipe");
+        ThrowByName(env, "java/io/IOException", L"CreatePipe");
         return 0;
     }
 
     pProcInfo_t pCurProcInfo = createProcInfo();
     if (!pCurProcInfo) {
         CLOSE_HANDLES(stdHandles);
-        ThrowByName(env, "java/io/IOException", "Too many processes");
+        ThrowByName(env, "java/io/IOException", L"Too many processes");
         return 0;
     }
 
@@ -395,7 +395,7 @@ extern "C"
         !createNamedEvent(&pCurProcInfo->eventCtrlc, FALSE, L"SACtrlc", pid, nLocalCounter)) {
         cleanUpProcBlock(pCurProcInfo);
         CLOSE_HANDLES(stdHandles);
-        ThrowByName(env, "java/io/IOException", "Cannot create event");
+        ThrowByName(env, "java/io/IOException", L"Cannot create event");
         return 0;
     }
 
@@ -463,6 +463,8 @@ extern "C"
                              &si,      /* (in)  startup information */
                              &pi);     /* (out) process information */
 
+    const DWORD error_CreateProcessW = GetLastError();
+
     free(cwd);
     free(envBlock);
     free(cmdLine);
@@ -483,7 +485,7 @@ extern "C"
             }
             cleanUpProcBlock(pCurProcInfo);
             CLOSE_HANDLES(stdHandles);
-            ThrowByName(env, "java/io/IOException", "Launching failed");
+            ThrowByName(env, "java/io/IOException", L"Launching failed");
             if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                 cdtTrace(L"Process failed\n");
             }
@@ -508,14 +510,12 @@ extern "C"
         }
         LeaveCriticalSection(&cs);
     } else { // Launching error
-        char *lpMsgBuf;
+        wchar_t *lpMsgBuf;
         CLOSE_HANDLES(stdHandles);
-        FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                       NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                       (char *)&lpMsgBuf, 0, NULL);
+        lpMsgBuf = formatWinErrorCode(error_CreateProcessW);
         ThrowByName(env, "java/io/IOException", lpMsgBuf);
         // Free the buffer.
-        LocalFree(lpMsgBuf);
+        free(lpMsgBuf);
         cleanUpProcBlock(pCurProcInfo);
         ret = -1;
     }
@@ -580,6 +580,7 @@ extern "C"
                              cwd,      /* change to the new current directory */
                              &si,      /* (in)  startup information */
                              &pi);     /* (out) process information */
+    const DWORD error_CreateProcessW = GetLastError();
 
     free(cwd);
     free(cmdLine);
@@ -591,14 +592,10 @@ extern "C"
         CloseHandle(pi.hProcess);
         ret = (long)pi.dwProcessId; // hProcess;
     } else {                        // error
-        char *lpMsgBuf;
-
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
-                      GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-                      (wchar_t *)&lpMsgBuf, 0, NULL);
+        wchar_t *lpMsgBuf = formatWinErrorCode(error_CreateProcessW);
         ThrowByName(env, "java/io/IOException", lpMsgBuf);
         // Free the buffer.
-        LocalFree(lpMsgBuf);
+        free(lpMsgBuf);
         ret = -1;
     }
 
@@ -730,13 +727,23 @@ extern "C"
 // Throws Java exception (will be trapped by VM).
 // Arguments:
 //			[in]  name - name of exception class
-//			[in]  message to assign thi event
+//			[in]  message to assign the event
 /////////////////////////////////////////////////////////////////////////////////////
-void ThrowByName(JNIEnv *env, const char *name, const char *msg) {
+void ThrowByName(JNIEnv *env, const char *name, const wchar_t *msg) {
     jclass cls = (*env)->FindClass(env, name);
 
     if (cls) { /* Otherwise an exception has already been thrown */
-        (*env)->ThrowNew(env, cls, msg);
+        size_t msgLen = wcslen(msg);
+        int nChars = WideCharToMultiByte(CP_UTF8, 0, msg, msgLen, NULL, 0, NULL, NULL);
+        if (nChars == 0) {
+            (*env)->ThrowNew(env, cls, "");
+        } else {
+            // ThrowNew expects message to be encoded in "modified UTF-8"
+            char *buf = (char *)calloc(nChars + 1, sizeof(char));
+            WideCharToMultiByte(CP_UTF8, 0, msg, msgLen, buf, nChars, NULL, NULL);
+            (*env)->ThrowNew(env, cls, buf);
+            free(buf);
+        }
     }
 
     /* It's a good practice to clean up the local references. */

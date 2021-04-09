@@ -146,6 +146,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetRemoteTimeout;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSchedulerLocking;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibAbsolutePrefix;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetStartupWithShell;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetAsync;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetWideCharset;
@@ -429,17 +430,17 @@ public class CommandFactory {
 	}
 
 	/** @since 5.0 */
-	public ICommand<MIInfo> createMIBreakDelete(IBreakpointsTargetDMContext ctx, String[] array) {
+	public ICommand<MIInfo> createMIBreakDelete(IBreakpointsTargetDMContext ctx, String... array) {
 		return new MIBreakDelete(ctx, array);
 	}
 
 	/** @since 5.0 */
-	public ICommand<MIInfo> createMIBreakDisable(IBreakpointsTargetDMContext ctx, String[] array) {
+	public ICommand<MIInfo> createMIBreakDisable(IBreakpointsTargetDMContext ctx, String... array) {
 		return new MIBreakDisable(ctx, array);
 	}
 
 	/** @since 5.0 */
-	public ICommand<MIInfo> createMIBreakEnable(IBreakpointsTargetDMContext ctx, String[] array) {
+	public ICommand<MIInfo> createMIBreakEnable(IBreakpointsTargetDMContext ctx, String... array) {
 		return new MIBreakEnable(ctx, array);
 	}
 
@@ -883,6 +884,11 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createMIGDBSetSolibSearchPath(ICommandControlDMContext ctx, String[] paths) {
 		return new MIGDBSetSolibSearchPath(ctx, paths);
+	}
+
+	/** @since 6.3 */
+	public ICommand<MIInfo> createMIGDBSetStartupWithShell(ICommandControlDMContext ctx, boolean enable) {
+		return new MIGDBSetStartupWithShell(ctx, enable);
 	}
 
 	public ICommand<MIInfo> createMIGDBSetTargetAsync(ICommandControlDMContext ctx, boolean isSet) {

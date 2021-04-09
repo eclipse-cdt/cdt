@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
@@ -38,6 +37,7 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
@@ -55,33 +55,28 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
-import org.eclipse.cdt.tests.dsf.gdb.framework.Intermittent;
-import org.eclipse.cdt.tests.dsf.gdb.framework.IntermittentRule;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
-import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-@Intermittent(repetition = 3)
-@Ignore
 public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase {
-	public @Rule IntermittentRule intermittentRule = new IntermittentRule();
 	protected static final String EXEC_NAME = "LaunchConfigurationAndRestartTestApp.exe";
 	protected static final String SOURCE_NAME = "LaunchConfigurationAndRestartTestApp.cc";
 
-	protected static final String[] LINE_TAGS = new String[] { "FIRST_LINE_IN_MAIN", "LAST_LINE_IN_MAIN", };
+	protected static final String[] LINE_TAGS = new String[] { "FIRST_LINE_IN_MAIN", "LAST_LINE_IN_MAIN",
+			"three_steps_back_from_b_stopAtOther" };
 
 	protected int FIRST_LINE_IN_MAIN;
 	protected int LAST_LINE_IN_MAIN;
+	protected int three_steps_back_from_b_stopAtOther;
 
 	// The exit code returned by the test program
 	private static final int TEST_EXIT_CODE = 36;
@@ -98,7 +93,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	@Override
 	public void doBeforeTest() throws Exception {
 		assumeLocalSession();
-		removeTeminatedLaunchesBeforeTest();
+		teminateAndRemoveLaunches();
 		setLaunchAttributes();
 		// Can't run the launch right away because each test needs to first set some
 		// parameters.  The individual tests will be responsible for starting the launch.
@@ -109,6 +104,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		FIRST_LINE_IN_MAIN = getLineForTag("FIRST_LINE_IN_MAIN");
 		LAST_LINE_IN_MAIN = getLineForTag("LAST_LINE_IN_MAIN");
+		three_steps_back_from_b_stopAtOther = getLineForTag("three_steps_back_from_b_stopAtOther");
 	}
 
 	@Override
@@ -148,10 +144,9 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
-
 		if (fServicesTracker != null)
 			fServicesTracker.dispose();
+		super.doAfterTest();
 	}
 
 	// *********************************************************************
@@ -510,9 +505,10 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
 		assertTrue(
-				"Expected to stop at main:27 but got " + stoppedEvent.getFrame().getFunction() + ":"
-						+ Integer.toString(stoppedEvent.getFrame().getLine()),
-				stoppedEvent.getFrame().getFunction().equals("main") && stoppedEvent.getFrame().getLine() == 27);
+				"Expected to stop at main:" + FIRST_LINE_IN_MAIN + " but got " + stoppedEvent.getFrame().getFunction()
+						+ ":" + Integer.toString(stoppedEvent.getFrame().getLine()),
+				stoppedEvent.getFrame().getFunction().equals("main")
+						&& stoppedEvent.getFrame().getLine() == FIRST_LINE_IN_MAIN);
 	}
 
 	/**
@@ -553,32 +549,28 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	 * the launch to NOT "stop on main".  We will verify that the first stop is
 	 * at the breakpoint that we set.
 	 */
-	@Ignore
 	@Test
 	public void testNoStopAtMain() throws Throwable {
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 		// Set this one as well to make sure it gets ignored
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
 
-		// We need to set the breakpoint before the launch is started, but the only way to do that is
-		// to set it in the platorm.  Ok, but how do I get an IResource that points to my binary?
-		// The current workspace is the JUnit runtime workspace instead of the workspace containing
-		// the JUnit tests.
-
-		IFile fakeFile = null;
-		CDIDebugModel.createLineBreakpoint(EXEC_PATH + EXEC_NAME, fakeFile, ICBreakpointType.REGULAR,
-				LAST_LINE_IN_MAIN + 1, true, 0, "", true); //$NON-NLS-1$
+		CDIDebugModel.createFunctionBreakpoint(null, ResourcesPlugin.getWorkspace().getRoot(), 0, "stopAtOther", -1, -1,
+				-1, true, 0, "", true);
 		doLaunch();
 
 		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
-		assertTrue("Expected to stop at envTest but got " + stoppedEvent.getFrame().getFunction() + ":",
-				stoppedEvent.getFrame().getFunction().equals("envTest"));
+		assertTrue("Expected to stop at stopAtOther but got " + stoppedEvent.getFrame().getFunction() + ":",
+				stoppedEvent.getFrame().getFunction().equals("stopAtOther"));
+		final IExecutionDMContext execDmc = stoppedEvent.getDMContext();
+		IFrameDMData frame = SyncUtil.getFrameData(execDmc, 0);
+		assertTrue("Expected to stop at stopAtOther but got " + frame.getFunction() + ":",
+				frame.getFunction().equals("stopAtOther"));
 	}
 
 	/**
 	 * Repeat the test testNoStopAtMain, but after a restart.
 	 */
-	@Ignore
 	@Test
 	public void testNoStopAtMainRestart() throws Throwable {
 		fRestart = true;
@@ -716,11 +708,12 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		final int REVERSE_NUM_STEPS = 2;
 		final IExecutionDMContext execDmc = stoppedEvent.getDMContext();
+		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		Query<MIInfo> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fGdbControl.queueCommand(
-						fGdbControl.getCommandFactory().createMIExecReverseNext(execDmc, REVERSE_NUM_STEPS), rm);
+						fGdbControl.getCommandFactory().createMIExecReverseNext(containerDmc, REVERSE_NUM_STEPS), rm);
 			}
 		};
 		{
@@ -794,18 +787,16 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		stoppedEvent = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
 
-		assertTrue(
-				"Expected to stop at main:" + (FIRST_LINE_IN_MAIN) + " but got " + stoppedEvent.getFrame().getFunction()
-						+ ":" + Integer.toString(stoppedEvent.getFrame().getLine()),
+		assertTrue("Expected to stop at main:" + (three_steps_back_from_b_stopAtOther) + " but got "
+				+ stoppedEvent.getFrame().getFunction() + ":" + Integer.toString(stoppedEvent.getFrame().getLine()),
 				stoppedEvent.getFrame().getFunction().equals("main")
-						&& stoppedEvent.getFrame().getLine() == FIRST_LINE_IN_MAIN);
+						&& stoppedEvent.getFrame().getLine() == three_steps_back_from_b_stopAtOther);
 	}
 
 	/**
 	 * Repeat the test testStopAtOtherWithReverse, but after a restart.
 	 */
 	@Test
-	@Ignore("Fails. Investigate what it needs to wait for.")
 	public void testStopAtOtherWithReverseRestart() throws Throwable {
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_2);
 		fRestart = true;
@@ -820,7 +811,6 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	 * enabled at the very start).
 	 */
 	@Test
-	@Ignore("TODO: this is not working because it does not insert the breakpoint propertly")
 	public void testNoStopAtMainWithReverse() throws Throwable {
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_2);
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
@@ -828,50 +818,41 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
 		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE, true);
 
-		// MUST SET BREAKPOINT AT LAST LINE BUT BEFORE LAUNCH IS STARTED
-		// MUST SET BREAKPOINT AT LAST LINE BUT BEFORE LAUNCH IS STARTED
-		// MUST SET BREAKPOINT AT LAST LINE BUT BEFORE LAUNCH IS STARTED
-		// see testNoStopAtMain()
-
+		CDIDebugModel.createFunctionBreakpoint(null, ResourcesPlugin.getWorkspace().getRoot(), 0, "stopAtOther", -1, -1,
+				-1, true, 0, "", true);
 		doLaunch();
 
 		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
-
-		// The initial stopped event is not the last stopped event.
-		// With reverse we have to stop the program, turn on reverse and start it again.
-		// Let's get the frame where we really are stopped right now.
+		assertTrue("Expected to stop at stopAtOther but got " + stoppedEvent.getFrame().getFunction() + ":",
+				stoppedEvent.getFrame().getFunction().equals("stopAtOther"));
 		final IExecutionDMContext execDmc = stoppedEvent.getDMContext();
 		IFrameDMData frame = SyncUtil.getFrameData(execDmc, 0);
-
-		// Make sure we stopped at the first line of main
-		assertTrue(
-				"Expected to stop at main:" + LAST_LINE_IN_MAIN + " but got " + frame.getFunction() + ":"
-						+ Integer.toString(frame.getLine()),
-				frame.getFunction().equals("main") && frame.getLine() == LAST_LINE_IN_MAIN);
+		assertTrue("Expected to stop at stopAtOther but got " + frame.getFunction() + ":",
+				frame.getFunction().equals("stopAtOther"));
 
 		// Now step backwards all the way to the start to make sure reverse was enabled from the very start
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession, MIStoppedEvent.class);
 
-		final int REVERSE_NUM_STEPS = 3;
-		Query<MIInfo> query2 = new Query<>() {
-			@Override
-			protected void execute(DataRequestMonitor<MIInfo> rm) {
-				fGdbControl.queueCommand(
-						fGdbControl.getCommandFactory().createMIExecReverseNext(execDmc, REVERSE_NUM_STEPS), rm);
-			}
-		};
-		{
+		int maxSteps = 100;
+		while (--maxSteps > 0) {
+			Query<MIInfo> query2 = new Query<>() {
+				@Override
+				protected void execute(DataRequestMonitor<MIInfo> rm) {
+					fGdbControl.queueCommand(fGdbControl.getCommandFactory().createMIExecReverseNext(execDmc, 1), rm);
+				}
+			};
 			fGdbControl.getExecutor().execute(query2);
 			query2.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+			stoppedEvent = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
+
+			if (stoppedEvent.getFrame().getFunction().equals("main")
+					&& stoppedEvent.getFrame().getLine() == FIRST_LINE_IN_MAIN) {
+				// success
+				return;
+			}
+
 		}
-
-		stoppedEvent = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
-
-		assertTrue(
-				"Expected to stop at main:" + (FIRST_LINE_IN_MAIN) + " but got " + stoppedEvent.getFrame().getFunction()
-						+ ":" + Integer.toString(stoppedEvent.getFrame().getLine()),
-				stoppedEvent.getFrame().getFunction().equals("main")
-						&& stoppedEvent.getFrame().getLine() == FIRST_LINE_IN_MAIN);
+		fail("Expected to eventually stop at main:" + (FIRST_LINE_IN_MAIN));
 	}
 
 	/**
@@ -879,7 +860,6 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	 * TODO: remove ignore when parent test is fixed
 	 */
 	@Test
-	@Ignore
 	public void testNoStopAtMainWithReverseRestart() throws Throwable {
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_2);
 		fRestart = true;

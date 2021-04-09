@@ -18,14 +18,12 @@ import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
-import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
@@ -76,11 +74,10 @@ public class MIRunControlReverseTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
-
 		if (fServicesTracker != null) {
 			fServicesTracker.dispose();
 		}
+		super.doAfterTest();
 	}
 
 	@Override
@@ -102,25 +99,7 @@ public class MIRunControlReverseTest extends BaseParametrizedTestCase {
 	@Test
 	public void testQueryHandling() throws Throwable {
 		SyncUtil.runToLocation("testLocals");
-
-		assertTrue("Reverse debugging is not supported", fRunCtrl instanceof IReverseRunControl);
-		final IReverseRunControl reverseService = (IReverseRunControl) fRunCtrl;
-
-		Query<Boolean> query = new Query<>() {
-			@Override
-			protected void execute(final DataRequestMonitor<Boolean> rm) {
-				reverseService.enableReverseMode(fGDBCtrl.getContext(), true, new ImmediateRequestMonitor(rm) {
-					@Override
-					protected void handleSuccess() {
-						reverseService.isReverseModeEnabled(fGDBCtrl.getContext(), rm);
-					}
-				});
-			}
-		};
-
-		fSession.getExecutor().execute(query);
-		Boolean enabled = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-		assertTrue("Reverse debugging should be enabled", enabled);
+		SyncUtil.enableReverseMode();
 
 		// Step forward a couple of times
 		SyncUtil.step(2, StepType.STEP_OVER);

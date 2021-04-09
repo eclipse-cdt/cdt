@@ -92,12 +92,12 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
 		fExpService = null;
 		if (fServicesTracker != null) {
 			fServicesTracker.dispose();
 			fServicesTracker = null;
 		}
+		super.doAfterTest();
 	}
 
 	//**************************************************************************************

@@ -128,10 +128,9 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
-
 		if (fServicesTracker != null)
 			fServicesTracker.dispose();
+		super.doAfterTest();
 	}
 
 	@Override
@@ -618,8 +617,10 @@ public class MIRunControlTest extends BaseParametrizedTestCase {
 		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
-		fRunCtrl.getExecutor().submit(() -> fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME,
-				getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), true, new RequestMonitor(fRunCtrl.getExecutor(), null) {
+		int lineForTag = getLineForTag("LINE_MAIN_ALL_THREADS_STARTED");
+
+		fRunCtrl.getExecutor().submit(() -> fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME, lineForTag, true,
+				new RequestMonitor(fRunCtrl.getExecutor(), null) {
 					@Override
 					protected void handleCompleted() {
 						wait.waitFinished(getStatus());

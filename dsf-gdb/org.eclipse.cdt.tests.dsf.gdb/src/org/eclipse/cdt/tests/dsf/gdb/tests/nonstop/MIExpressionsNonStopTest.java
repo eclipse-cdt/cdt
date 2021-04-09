@@ -18,12 +18,10 @@ import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.MIExpressionsTest;
 import org.junit.Assume;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-@Ignore
 public class MIExpressionsNonStopTest extends MIExpressionsTest {
 
 	@BeforeClass

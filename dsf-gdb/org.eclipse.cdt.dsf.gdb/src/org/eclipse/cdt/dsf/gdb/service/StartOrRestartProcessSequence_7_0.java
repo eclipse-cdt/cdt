@@ -263,6 +263,14 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 									if (fUserBreakpoint != null) {
 										fUserBreakpointIsOnMain = fBreakPointForReverse.getAddress()
 												.equals(fUserBreakpoint.getAddress());
+										if (fUserBreakpointIsOnMain) {
+											String number = fBreakPointForReverse.getNumber();
+											fBreakPointForReverse = fUserBreakpoint;
+											fCommandControl.queueCommand(
+													fCommandFactory.createMIBreakDelete(bpTargetDmc, number),
+													new ImmediateDataRequestMonitor<MIInfo>(rm));
+											return;
+										}
 									}
 								}
 							}

@@ -196,7 +196,6 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
 		if (fSession != null) {
 			Runnable runnable = () -> fRunControl.getSession().removeServiceEventListener(MICatchpointsTest.this);
 			fSession.getExecutor().submit(runnable).get();
@@ -208,6 +207,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 			fServicesTracker.dispose();
 		fServicesTracker = null;
 		clearEventCounters();
+		super.doAfterTest();
 	}
 
 	// ========================================================================

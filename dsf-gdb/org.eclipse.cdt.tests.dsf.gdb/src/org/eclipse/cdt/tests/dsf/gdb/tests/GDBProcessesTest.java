@@ -69,11 +69,10 @@ public class GDBProcessesTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
-
 		fProcService = null;
 		if (fServicesTracker != null)
 			fServicesTracker.dispose();
+		super.doAfterTest();
 	}
 
 	@Override

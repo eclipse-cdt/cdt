@@ -90,10 +90,9 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
-
 		if (fServicesTracker != null)
 			fServicesTracker.dispose();
+		super.doAfterTest();
 	}
 
 	private abstract class AsyncRunnable<V> {

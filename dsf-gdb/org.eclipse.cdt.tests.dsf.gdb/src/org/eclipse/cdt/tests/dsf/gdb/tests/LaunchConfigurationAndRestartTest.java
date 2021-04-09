@@ -92,7 +92,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	@Override
 	public void doBeforeTest() throws Exception {
 		assumeLocalSession();
-		removeTeminatedLaunchesBeforeTest();
+		teminateAndRemoveLaunches();
 		setLaunchAttributes();
 		// Can't run the launch right away because each test needs to first set some
 		// parameters.  The individual tests will be responsible for starting the launch.
@@ -142,10 +142,9 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
-
 		if (fServicesTracker != null)
 			fServicesTracker.dispose();
+		super.doAfterTest();
 	}
 
 	// *********************************************************************

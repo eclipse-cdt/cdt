@@ -93,7 +93,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		assumeRemoteSession();
 		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_4);
-		removeTeminatedLaunchesBeforeTest();
+		teminateAndRemoveLaunches();
 		// Suppress settings of the launch attributes and launching.
 		// Each test sets its own launch attributes
 	}
@@ -125,7 +125,6 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	@Override
 	@After
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
 		fBreakpointService = null;
 		fTraceService = null;
 		fBreakpointsDmc = null;
@@ -134,6 +133,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 			fServicesTracker.dispose();
 			fServicesTracker = null;
 		}
+		super.doAfterTest();
 	}
 
 	/**

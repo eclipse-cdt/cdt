@@ -74,7 +74,7 @@
 		     users expect. -->
 		<skipTests>${cdt-other.skip.tests}</skipTests>
 		<dsf.gdb.tests.gdbPath>/shared/common/gdb/gdb-all/bin</dsf.gdb.tests.gdbPath>
-		<cdt.tests.dsf.gdb.versions>gdb.10.1</cdt.tests.dsf.gdb.versions>
+		<cdt.tests.dsf.gdb.versions>gdb.10,gdbserver.10</cdt.tests.dsf.gdb.versions>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 	    <buildId>${buildTimestamp}</buildId>

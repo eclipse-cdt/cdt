@@ -224,8 +224,28 @@ public class BaseTestCase {
 
 		private ILaunchConfiguration fLaunchConfiguration;
 
+		private boolean ignoreFirstStop = false;
+
 		public SessionEventListener(ILaunchConfiguration launchConfiguration) {
 			fLaunchConfiguration = launchConfiguration;
+
+			try {
+				String stopAt = fLaunchConfiguration
+						.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
+				boolean stopAtEnabled = fLaunchConfiguration
+						.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
+				boolean reverseEnabledAtStartup = fLaunchConfiguration
+						.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE, false);
+				if (stopAt == null)
+					stopAt = "main";
+				if (reverseEnabledAtStartup && !stopAtEnabled) {
+					ignoreFirstStop = true;
+				}
+				if (reverseEnabledAtStartup && stopAtEnabled && !"main".equals(stopAt)) {
+					ignoreFirstStop = true;
+				}
+			} catch (CoreException e) {
+			}
 		}
 
 		public void setSession(DsfSession session) {
@@ -260,36 +280,57 @@ public class BaseTestCase {
 
 					Object miEvent = iMIEvent.getMIEvent();
 					if (miEvent instanceof MIStoppedEvent) {
-						// Store the corresponding MI *stopped event
-						fInitialStoppedEvent = (MIStoppedEvent) miEvent;
+						if (ignoreFirstStop) {
+							ignoreFirstStop = false;
 
-						// Check the content of the frame for the method we
-						// should stop at
-						String stopAt = null;
-						try {
-							stopAt = fLaunchConfiguration.getAttribute(
-									ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
-						} catch (CoreException e) {
-						}
-						if (stopAt == null)
-							stopAt = "main";
+						} else {
+							// Store the corresponding MI *stopped event
+							fInitialStoppedEvent = (MIStoppedEvent) miEvent;
 
-						MIFrame frame = fInitialStoppedEvent.getFrame();
-						if (frame != null && frame.getFunction() != null && frame.getFunction().indexOf(stopAt) != -1) {
-							// Set the event semaphore that will allow the test
-							// to proceed
-							synchronized (fTargetSuspendedSem) {
-								fTargetSuspended = true;
-								fTargetSuspendedSem.notify();
+							// Check the content of the frame for the method we
+							// should stop at
+							String stopAt = null;
+							boolean stopAtEnabled = true;
+							boolean reverseEnabledAtStartup = true;
+							try {
+								stopAt = fLaunchConfiguration.getAttribute(
+										ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
+								stopAtEnabled = fLaunchConfiguration.getAttribute(
+										ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
+								reverseEnabledAtStartup = fLaunchConfiguration
+										.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE, false);
+							} catch (CoreException e) {
 							}
 
-							// We found our event, no further need for this
-							// listener
-							fSession.removeServiceEventListener(this);
+							if (!stopAtEnabled) {
+								success();
+							} else {
+								if (stopAt == null)
+									stopAt = "main";
+
+								MIFrame frame = fInitialStoppedEvent.getFrame();
+								if (frame != null && frame.getFunction() != null
+										&& frame.getFunction().indexOf(stopAt) != -1) {
+									success();
+								}
+							}
 						}
 					}
 				}
 			}
+		}
+
+		private void success() {
+			// Set the event semaphore that will allow the test
+			// to proceed
+			synchronized (fTargetSuspendedSem) {
+				fTargetSuspended = true;
+				fTargetSuspendedSem.notify();
+			}
+
+			// We found our event, no further need for this
+			// listener
+			fSession.removeServiceEventListener(this);
 		}
 
 		public void waitUntilTargetSuspended() throws InterruptedException {
@@ -304,6 +345,7 @@ public class BaseTestCase {
 		public MIStoppedEvent getInitialStoppedEvent() {
 			return fInitialStoppedEvent;
 		}
+
 	}
 
 	/**

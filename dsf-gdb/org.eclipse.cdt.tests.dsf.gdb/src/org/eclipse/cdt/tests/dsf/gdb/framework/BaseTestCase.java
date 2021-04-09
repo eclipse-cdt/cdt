@@ -18,7 +18,6 @@ package org.eclipse.cdt.tests.dsf.gdb.framework;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -225,8 +224,28 @@ public class BaseTestCase {
 
 		private ILaunchConfiguration fLaunchConfiguration;
 
+		private boolean ignoreFirstStop = false;
+
 		public SessionEventListener(ILaunchConfiguration launchConfiguration) {
 			fLaunchConfiguration = launchConfiguration;
+
+			try {
+				String stopAt = fLaunchConfiguration
+						.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
+				boolean stopAtEnabled = fLaunchConfiguration
+						.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
+				boolean reverseEnabledAtStartup = fLaunchConfiguration
+						.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE, false);
+				if (stopAt == null)
+					stopAt = "main";
+				if (reverseEnabledAtStartup && !stopAtEnabled) {
+					ignoreFirstStop = true;
+				}
+				if (reverseEnabledAtStartup && stopAtEnabled && !"main".equals(stopAt)) {
+					ignoreFirstStop = true;
+				}
+			} catch (CoreException e) {
+			}
 		}
 
 		public void setSession(DsfSession session) {
@@ -261,36 +280,57 @@ public class BaseTestCase {
 
 					Object miEvent = iMIEvent.getMIEvent();
 					if (miEvent instanceof MIStoppedEvent) {
-						// Store the corresponding MI *stopped event
-						fInitialStoppedEvent = (MIStoppedEvent) miEvent;
+						if (ignoreFirstStop) {
+							ignoreFirstStop = false;
 
-						// Check the content of the frame for the method we
-						// should stop at
-						String stopAt = null;
-						try {
-							stopAt = fLaunchConfiguration.getAttribute(
-									ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
-						} catch (CoreException e) {
-						}
-						if (stopAt == null)
-							stopAt = "main";
+						} else {
+							// Store the corresponding MI *stopped event
+							fInitialStoppedEvent = (MIStoppedEvent) miEvent;
 
-						MIFrame frame = fInitialStoppedEvent.getFrame();
-						if (frame != null && frame.getFunction() != null && frame.getFunction().indexOf(stopAt) != -1) {
-							// Set the event semaphore that will allow the test
-							// to proceed
-							synchronized (fTargetSuspendedSem) {
-								fTargetSuspended = true;
-								fTargetSuspendedSem.notify();
+							// Check the content of the frame for the method we
+							// should stop at
+							String stopAt = null;
+							boolean stopAtEnabled = true;
+							boolean reverseEnabledAtStartup = true;
+							try {
+								stopAt = fLaunchConfiguration.getAttribute(
+										ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
+								stopAtEnabled = fLaunchConfiguration.getAttribute(
+										ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
+								reverseEnabledAtStartup = fLaunchConfiguration
+										.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE, false);
+							} catch (CoreException e) {
 							}
 
-							// We found our event, no further need for this
-							// listener
-							fSession.removeServiceEventListener(this);
+							if (!stopAtEnabled) {
+								success();
+							} else {
+								if (stopAt == null)
+									stopAt = "main";
+
+								MIFrame frame = fInitialStoppedEvent.getFrame();
+								if (frame != null && frame.getFunction() != null
+										&& frame.getFunction().indexOf(stopAt) != -1) {
+									success();
+								}
+							}
 						}
 					}
 				}
 			}
+		}
+
+		private void success() {
+			// Set the event semaphore that will allow the test
+			// to proceed
+			synchronized (fTargetSuspendedSem) {
+				fTargetSuspended = true;
+				fTargetSuspendedSem.notify();
+			}
+
+			// We found our event, no further need for this
+			// listener
+			fSession.removeServiceEventListener(this);
 		}
 
 		public void waitUntilTargetSuspended() throws InterruptedException {
@@ -305,6 +345,7 @@ public class BaseTestCase {
 		public MIStoppedEvent getInitialStoppedEvent() {
 			return fInitialStoppedEvent;
 		}
+
 	}
 
 	/**
@@ -321,12 +362,12 @@ public class BaseTestCase {
 	 * Make sure we are starting with a clean/known state. That means no
 	 * existing launches.
 	 */
-	public void removeTeminatedLaunchesBeforeTest() throws CoreException {
+	public void teminateAndRemoveLaunches() throws Exception {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches = launchManager.getLaunches();
 		for (ILaunch launch : launches) {
 			if (!launch.isTerminated()) {
-				fail("Something has gone wrong, there is an unterminated launch from a previous test!");
+				assertLaunchTerminates((GdbLaunch) launch, true);
 			}
 		}
 		if (launches.length > 0) {
@@ -354,7 +395,7 @@ public class BaseTestCase {
 
 	@Before
 	public void doBeforeTest() throws Exception {
-		removeTeminatedLaunchesBeforeTest();
+		teminateAndRemoveLaunches();
 		removeAllPlatformBreakpoints();
 		setLaunchAttributes();
 		doLaunch();
@@ -455,7 +496,7 @@ public class BaseTestCase {
 	 * @return The line number corresponding to tag.
 	 * @throws NoSuchElementException if the tag does not exist.
 	 */
-	protected int getLineForTag(String tag) {
+	protected int getLineForTag(String tag) throws Exception {
 		if (!fTagLocations.containsKey(tag)) {
 			throw new NoSuchElementException("tag " + tag);
 		}
@@ -602,11 +643,18 @@ public class BaseTestCase {
 		assertLaunchTerminates(launch);
 	}
 
-	protected void assertLaunchTerminates(GdbLaunch launch) throws InterruptedException {
+	protected void assertLaunchTerminates(GdbLaunch launch) throws Exception {
+		assertLaunchTerminates(launch, false);
+	}
+
+	protected void assertLaunchTerminates(GdbLaunch launch, boolean terminate) throws Exception {
 		if (launch != null) {
 			// Give a few seconds to allow the launch to terminate
 			int waitCount = 100;
 			while (!launch.isTerminated() && !launch.getDsfExecutor().isShutdown() && --waitCount > 0) {
+				if (terminate) {
+					launch.terminate();
+				}
 				Thread.sleep(TestsPlugin.massageTimeout(100));
 			}
 			assertTrue("Launch failed to terminate before timeout", launch.isTerminated());
@@ -621,6 +669,7 @@ public class BaseTestCase {
 			fLaunch = null;
 		}
 		removeAllPlatformBreakpoints();
+		teminateAndRemoveLaunches();
 	}
 
 	/**

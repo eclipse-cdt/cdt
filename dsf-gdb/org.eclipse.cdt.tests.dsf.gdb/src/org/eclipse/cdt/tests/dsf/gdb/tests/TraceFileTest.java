@@ -93,7 +93,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		assumeRemoteSession();
 		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_4);
-		removeTeminatedLaunchesBeforeTest();
+		teminateAndRemoveLaunches();
 		// Suppress settings of the launch attributes and launching.
 		// Each test sets its own launch attributes
 	}

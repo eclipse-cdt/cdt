@@ -57,7 +57,6 @@ import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
@@ -74,7 +73,8 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	// Breakpoint tags in MultiThread.cc
 	public static final String[] LINE_TAGS = new String[] { "LINE_MAIN_BEFORE_THREAD_START", // Just before StartThread
 			"LINE_MAIN_AFTER_THREAD_START", // Just after StartThread
-			"LINE_MAIN_ALL_THREADS_STARTED", // Where all threads are guaranteed to be started.
+			"LINE_MAIN_ALL_THREADS_STARTED", // Where all threads are guaranteed to be started,
+			"LINE_THREAD_IN_HELLO", // in the middle of one of the threads
 	};
 
 	/*
@@ -190,7 +190,6 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 * triggers a GDB notification that a new frame has been selected.
 	 */
 	@Test
-	@Ignore
 	public void testChangingCurrentFrameCLINotification() throws Throwable {
 		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
 				MIStoppedEvent.class);
@@ -198,7 +197,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		// add a breakpoint in main
 		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
 		// add a breakpoint in thread code
-		SyncUtil.addBreakpoint("36", false);
+		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_THREAD_IN_HELLO"), false);
 		// Run program
 		SyncUtil.resumeAll();
 
@@ -247,19 +246,29 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		// *** at this point all 5 threads should be stopped
 
 		// have the sync service set GDB current tid to thread 5
-		fGdbSync.setFocus(new IDMContext[] { getContextForThreadId(5) }, new ImmediateRequestMonitor());
+		IMIExecutionDMContext contextForThreadId5 = getContextForThreadId(5);
+		fSession.getExecutor().execute(
+				() -> fGdbSync.setFocus(new IDMContext[] { contextForThreadId5 }, new ImmediateRequestMonitor()));
 		assertEquals("5", getCurrentThread());
 
-		fGdbSync.setFocus(new IDMContext[] { getContextForThreadId(4) }, new ImmediateRequestMonitor());
+		IMIExecutionDMContext contextForThreadId4 = getContextForThreadId(4);
+		fSession.getExecutor().execute(
+				() -> fGdbSync.setFocus(new IDMContext[] { contextForThreadId4 }, new ImmediateRequestMonitor()));
 		assertEquals("4", getCurrentThread());
 
-		fGdbSync.setFocus(new IDMContext[] { getContextForThreadId(3) }, new ImmediateRequestMonitor());
+		IMIExecutionDMContext contextForThreadId3 = getContextForThreadId(3);
+		fSession.getExecutor().execute(
+				() -> fGdbSync.setFocus(new IDMContext[] { contextForThreadId3 }, new ImmediateRequestMonitor()));
 		assertEquals("3", getCurrentThread());
 
-		fGdbSync.setFocus(new IDMContext[] { getContextForThreadId(2) }, new ImmediateRequestMonitor());
+		IMIExecutionDMContext contextForThreadId2 = getContextForThreadId(2);
+		fSession.getExecutor().execute(
+				() -> fGdbSync.setFocus(new IDMContext[] { contextForThreadId2 }, new ImmediateRequestMonitor()));
 		assertEquals("2", getCurrentThread());
 
-		fGdbSync.setFocus(new IDMContext[] { getContextForThreadId(1) }, new ImmediateRequestMonitor());
+		IMIExecutionDMContext contextForThreadId1 = getContextForThreadId(1);
+		fSession.getExecutor().execute(
+				() -> fGdbSync.setFocus(new IDMContext[] { contextForThreadId1 }, new ImmediateRequestMonitor()));
 		assertEquals("1", getCurrentThread());
 	}
 
@@ -268,7 +277,6 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 * the current GDB stack frame
 	 */
 	@Test
-	@Ignore
 	public void testGdbSyncServiceCanSwitchGDBStackFrame() throws Throwable {
 		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
 				MIStoppedEvent.class);
@@ -351,7 +359,15 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		fEventsReceived.clear();
 		selectGdbStackFrame(frameLevel);
 
-		Object[] elems = fGdbSync.getFocus();
+		Query<Object[]> query = new Query<>() {
+			@Override
+			protected void execute(DataRequestMonitor<Object[]> rm) {
+				rm.done(fGdbSync.getFocus());
+			}
+		};
+
+		fCommandControl.getExecutor().execute(query);
+		Object[] elems = query.get();
 		for (Object elem : elems) {
 			if (elem instanceof IFrameDMContext) {
 				newFrame = (IFrameDMContext) elem;

@@ -37,10 +37,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -66,11 +68,13 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMData;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles;
 import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles.IDebugSourceFileInfo;
 import org.eclipse.cdt.dsf.gdb.service.IGDBMemory2;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
+import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
@@ -90,6 +94,7 @@ import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.MemoryByte;
 
 /**
@@ -150,6 +155,31 @@ public class SyncUtil {
 			tracker.dispose();
 		};
 		fSession.getExecutor().submit(runnable).get();
+	}
+
+	/**
+	 * Enable reverse mode on the target and checks that the reverse service thinks it is set.
+	 *
+	 * Will fail the test if reverse debugging is not supported.
+	 */
+	public static void enableReverseMode() throws Throwable {
+		assertTrue("Reverse debugging is not supported", fRunControl instanceof IReverseRunControl);
+		final IReverseRunControl reverseService = (IReverseRunControl) fRunControl;
+		Query<Boolean> query = new Query<>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				reverseService.enableReverseMode(fGdbControl.getContext(), true, new ImmediateRequestMonitor(rm) {
+					@Override
+					protected void handleSuccess() {
+						reverseService.isReverseModeEnabled(fGdbControl.getContext(), rm);
+					}
+				});
+			}
+		};
+
+		fSession.getExecutor().execute(query);
+		Boolean enabled = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		assertTrue("Reverse debugging should be enabled", enabled);
 	}
 
 	/**
@@ -1121,6 +1151,32 @@ public class SyncUtil {
 	}
 
 	/**
+	 * Under some conditions the startup code of CDT runs, stops and then resumes. This method
+	 * can be used to determine if that first stop should be ignored while waiting for startup.
+	 */
+	public static boolean shouldIgnoreFirstStopAtStartup(ILaunchConfiguration launchConfiguration) {
+		boolean ignoreFirstStop = false;
+		try {
+			String stopAt = launchConfiguration
+					.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
+			boolean stopAtEnabled = launchConfiguration
+					.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
+			boolean reverseEnabledAtStartup = launchConfiguration
+					.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE, false);
+			if (stopAt == null)
+				stopAt = "main";
+			if (reverseEnabledAtStartup && !stopAtEnabled) {
+				ignoreFirstStop = true;
+			}
+			if (reverseEnabledAtStartup && stopAtEnabled && !"main".equals(stopAt)) {
+				ignoreFirstStop = true;
+			}
+		} catch (CoreException e) {
+		}
+		return ignoreFirstStop;
+	}
+
+	/**
 	 * Restarts the program ({@code launch})
 	 *
 	 * @param launch
@@ -1159,6 +1215,14 @@ public class SyncUtil {
 		if (event instanceof MISignalEvent) {
 			// This is not the stopped event we were waiting for.  Get the next one.
 			event = eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
+		}
+
+		if (shouldIgnoreFirstStopAtStartup(launch.getLaunchConfiguration())) {
+			event = eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
+			if (event instanceof MISignalEvent) {
+				// This is not the stopped event we were waiting for.  Get the next one.
+				event = eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
+			}
 		}
 		return event;
 	}

@@ -61,7 +61,7 @@ public class CommandTimeoutTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doBeforeTest() throws Exception {
-		removeTeminatedLaunchesBeforeTest();
+		teminateAndRemoveLaunches();
 		setLaunchAttributes();
 		// Can't run the launch right away because each test needs to first set some
 		// parameters.  The individual tests will be responsible for starting the launch.

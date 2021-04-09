@@ -34,15 +34,12 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
-import org.eclipse.cdt.tests.dsf.gdb.framework.Intermittent;
-import org.eclipse.cdt.tests.dsf.gdb.framework.IntermittentRule;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.Assume;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -51,9 +48,7 @@ import org.junit.runners.Parameterized;
  * Tests IMultiRunControl class for Non-stop multi-threaded application.
  */
 @RunWith(Parameterized.class)
-@Intermittent
 public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
-	public @Rule IntermittentRule irule = new IntermittentRule();
 
 	private DsfServicesTracker fServicesTracker;
 
@@ -95,10 +90,9 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
-
 		if (fServicesTracker != null)
 			fServicesTracker.dispose();
+		super.doAfterTest();
 	}
 
 	private abstract class AsyncRunnable<V> {

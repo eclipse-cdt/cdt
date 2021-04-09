@@ -141,8 +141,46 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is a string specifying
 	 * application arguments for a C/C++ launch configuration, as they should
 	 * appear on the command line.
+	 *
+	 * @see ATTR_STARTUP_WITH_SHELL
 	 */
 	public static final String ATTR_PROGRAM_ARGUMENTS = CDT_LAUNCH_ID + ".PROGRAM_ARGUMENTS"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a string as to whether to use
+	 * gdb's startup-with-shell. This can affect how program arguments are expanded.
+	 * Possible values are:
+	 * - {@link #STARTUP_WITH_SHELL_ON}
+	 * - {@link #STARTUP_WITH_SHELL_OFF}
+	 * - {@link #STARTUP_WITH_SHELL_UNSET} - use gdb's default
+	 *
+	 * Only supported in GDB > 7.7 for local launches and 8.1 for remote launches.
+	 *
+	 * See https://sourceware.org/gdb/onlinedocs/gdb/Starting.html
+	 * @since 8.7
+	 */
+	public static final String ATTR_STARTUP_WITH_SHELL = CDT_LAUNCH_ID + ".STARTUP_WITH_SHELL"; //$NON-NLS-1$
+	/**
+	 * @see #ATTR_STARTUP_WITH_SHELL
+	 * @since 8.7
+	 */
+	public static final String STARTUP_WITH_SHELL_ON = "on"; //$NON-NLS-1$
+	/**
+	 * @see #ATTR_STARTUP_WITH_SHELL
+	 * @since 8.7
+	 */
+	public static final String STARTUP_WITH_SHELL_OFF = "off"; //$NON-NLS-1$
+	/**
+	 * @see #ATTR_STARTUP_WITH_SHELL
+	 * @since 8.7
+	 */
+	public static final String STARTUP_WITH_SHELL_UNSET = ""; //$NON-NLS-1$
+	/**
+	 * Default value for {@link #ATTR_STARTUP_WITH_SHELL}
+	 * @see #ATTR_STARTUP_WITH_SHELL
+	 * @since 8.7
+	 */
+	public static final String STARTUP_WITH_SHELL_DEFAULT = STARTUP_WITH_SHELL_UNSET;
 
 	/**
 	 * Launch configuration attribute key. The value is a string specifying a

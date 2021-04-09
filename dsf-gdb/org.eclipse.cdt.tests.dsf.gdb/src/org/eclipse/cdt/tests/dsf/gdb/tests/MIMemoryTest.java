@@ -138,7 +138,6 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
 		// Clear the references (not strictly necessary)
 		if (fSession != null)
 			fSession.getExecutor().submit(() -> fSession.removeServiceEventListener(MIMemoryTest.this)).get();
@@ -150,6 +149,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 			fServicesTracker.dispose();
 		fServicesTracker = null;
 		clearEventCounters();
+		super.doAfterTest();
 	}
 
 	// ========================================================================

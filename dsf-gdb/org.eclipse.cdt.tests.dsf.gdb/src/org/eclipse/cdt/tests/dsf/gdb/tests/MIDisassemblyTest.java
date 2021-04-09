@@ -120,14 +120,13 @@ public class MIDisassemblyTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
-
 		fExpressionService = null;
 		fDisassembly = null;
 		if (fServicesTracker != null) {
 			fServicesTracker.dispose();
 			fServicesTracker = null;
 		}
+		super.doAfterTest();
 	}
 
 	// ========================================================================

@@ -205,13 +205,13 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
 		if (fSession != null)
 			fSession.getExecutor().submit(() -> fSession.removeServiceEventListener(GDBRemoteTracepointsTest.this))
 					.get();
 		fBreakpointService = null;
 		if (fServicesTracker != null)
 			fServicesTracker.dispose();
+		super.doAfterTest();
 	}
 
 	// *********************************************************************

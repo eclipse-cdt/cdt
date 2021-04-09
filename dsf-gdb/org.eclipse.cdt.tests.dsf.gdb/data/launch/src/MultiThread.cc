@@ -33,7 +33,7 @@ static ThreadRet THREAD_CALL_CONV PrintHello(void *void_arg)
 	/* Make sure that all threads are started before the breakpoint in main hits. */
 	ThreadBarrierWait(barrier_start);
 
-	printf("Thread %d in the middle\n", thread_id);
+	printf("Thread %d in the middle\n", thread_id); /* LINE_THREAD_IN_HELLO */
 
 	/* Make sure that the thread does not finish before the breakpoint in main hits. */
 	ThreadBarrierWait(barrier_finish);

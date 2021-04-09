@@ -41,6 +41,7 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -71,6 +72,7 @@ import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles;
 import org.eclipse.cdt.dsf.gdb.service.IDebugSourceFiles.IDebugSourceFileInfo;
 import org.eclipse.cdt.dsf.gdb.service.IGDBMemory2;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
+import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
@@ -150,6 +152,31 @@ public class SyncUtil {
 			tracker.dispose();
 		};
 		fSession.getExecutor().submit(runnable).get();
+	}
+
+	/**
+	 * Enable reverse mode on the target and checks that the reverse service thinks it is set.
+	 *
+	 * Will fail the test if reverse debugging is not supported.
+	 */
+	public static void enableReverseMode() throws Throwable {
+		assertTrue("Reverse debugging is not supported", fRunControl instanceof IReverseRunControl);
+		final IReverseRunControl reverseService = (IReverseRunControl) fRunControl;
+		Query<Boolean> query = new Query<>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				reverseService.enableReverseMode(fGdbControl.getContext(), true, new ImmediateRequestMonitor(rm) {
+					@Override
+					protected void handleSuccess() {
+						reverseService.isReverseModeEnabled(fGdbControl.getContext(), rm);
+					}
+				});
+			}
+		};
+
+		fSession.getExecutor().execute(query);
+		Boolean enabled = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
+		assertTrue("Reverse debugging should be enabled", enabled);
 	}
 
 	/**

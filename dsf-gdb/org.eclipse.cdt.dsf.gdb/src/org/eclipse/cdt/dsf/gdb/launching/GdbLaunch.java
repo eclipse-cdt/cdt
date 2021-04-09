@@ -170,7 +170,7 @@ public class GdbLaunch extends DsfLaunch implements ITracedLaunch, ITargetedLaun
 		// To maintain a mapping of memory contexts to the corresponding memory
 		// retrieval in this session
 		try {
-			fExecutor.submit(new Callable<Object>() {
+			fExecutor.submit(new Callable<>() {
 				@Override
 				public Object call() throws CoreException {
 					fMemRetrievalManager = new GdbMemoryBlockRetrievalManager(GdbLaunchDelegate.GDB_DEBUG_MODEL_ID,
@@ -550,7 +550,11 @@ public class GdbLaunch extends DsfLaunch implements ITracedLaunch, ITargetedLaun
 
 	/**
 	 * Gets the CDT environment from the CDT project's configuration referenced
-	 * by the launch
+	 * by the launch. This environment is used as the environment to run GDB in
+	 * and is different than the launch environment in ILaunchManager.ATTR_ENVIRONMENT_VARIABLES
+	 * which is used to run the inferior in.
+	 *
+	 * Essentially this is getting the build environment of the associated project.
 	 *
 	 * @since 5.0
 	 */

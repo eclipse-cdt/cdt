@@ -215,7 +215,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doBeforeTest() throws Exception {
-		removeTeminatedLaunchesBeforeTest();
+		teminateAndRemoveLaunches();
 		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
 		manager.addBreakpointListener(fBreakpointListener);
 		setExeNames();

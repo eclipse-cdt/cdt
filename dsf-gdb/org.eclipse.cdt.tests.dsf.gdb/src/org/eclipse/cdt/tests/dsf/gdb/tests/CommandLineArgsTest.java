@@ -22,8 +22,10 @@ import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -39,13 +41,13 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class CommandLineArgsTest extends BaseParametrizedTestCase {
+	protected static final String SOURCE_NAME = "LaunchConfigurationAndRestartTestApp.cc";
 	protected static final String EXEC_NAME = "LaunchConfigurationAndRestartTestApp.exe";
 
 	private DsfSession fSession;
@@ -55,7 +57,7 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 	@Override
 	public void doBeforeTest() throws Exception {
 		assumeLocalSession();
-		removeTeminatedLaunchesBeforeTest();
+		teminateAndRemoveLaunches();
 		setLaunchAttributes();
 		// Can't run the launch right away because each test needs to first set
 		// ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS
@@ -67,6 +69,20 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 
 		// Set the binary
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
+
+		// while testing command line arguments we are trying to make sure command line gets from
+		// cdt to gdb as expected - we don't want to be affected by whatever shell may be on
+		// the machine. We can't turn startup_with_shell off because GDB's primitive argument
+		// parsing in that mode causes these tests to be useless. Therefore, force a specific
+		// shell to use so that we have consistent results.
+		// There is no way today of setting the SHELL environement variable when GDB runs from
+		// these tests (that comes from org.eclipse.cdt.dsf.gdb.launching.GdbLaunch.getLaunchEnvironment())
+		// So, instead we ensure that the environement we have has SHELL set appropriately
+		// and rely on what we are running in to have SHELL set properly.
+		assertEquals("/bin/bash", System.getenv("SHELL"));
+		// XXX: The above may need to be updated to verify their validity on Windows/Mac. To
+		// make it easier to know where to look for such testers fail the test here as
+		// almost surely the SHELL work above need to be addressed on those platforms.
 	}
 
 	// This method cannot be tagged as @Before, because the launch is not
@@ -84,6 +100,26 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 			fExpService = fServicesTracker.getService(IExpressions.class);
 		};
 		fSession.getExecutor().submit(runnable).get();
+	}
+
+	@Override
+	protected int getLineForTag(String tag) throws Exception {
+		try {
+			super.getLineForTag(tag);
+		} catch (Exception e) {
+			resolveLineTagLocations(SOURCE_NAME, tag);
+		}
+		return super.getLineForTag(tag);
+	}
+
+	/**
+	 * Run to one of the tags in {@link #LINE_TAGS}
+	 * @throws Throwable
+	 */
+	private MIStoppedEvent runToTag(String tag) throws Throwable {
+		String location = String.format("%s:%d", SOURCE_NAME, getLineForTag(tag));
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(location);
+		return stoppedEvent;
 	}
 
 	/**
@@ -138,7 +174,7 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 	 */
 	protected void checkArguments(String... expected) throws Throwable {
 
-		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
+		MIStoppedEvent stoppedEvent = runToTag("main_init");
 
 		// Check that argc is correct
 		final IExpressionDMContext argcDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argc");
@@ -152,14 +188,12 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 
 		fExpService.getExecutor().execute(query);
 		FormattedValueDMData value = query.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
-
-		assertTrue("Expected " + (1 + expected.length) + " but got " + value.getFormattedValue(),
-				value.getFormattedValue().trim().equals(Integer.toString(1 + expected.length)));
-
+		int actualArgc = Integer.parseInt(value.getFormattedValue().trim());
+		List<String> actualArgv = new ArrayList<>();
 		// check all argvs are correct
-		for (int i = 0; i < expected.length; i++) {
+		for (int i = 1; i < actualArgc; i++) {
 			final IExpressionDMContext argvDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(),
-					"argv[" + (i + 1) + "]");
+					"argv[" + i + "]");
 			Query<FormattedValueDMData> query2 = new Query<>() {
 				@Override
 				protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
@@ -172,8 +206,9 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 			FormattedValueDMData value2 = query2.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 			String details = value2.getFormattedValue();
 			String actual = convertDetails(details);
-			assertEquals(expected[i], actual);
+			actualArgv.add(actual);
 		}
+		assertEquals(Arrays.asList(expected), actualArgv);
 	}
 
 	/**
@@ -213,7 +248,6 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 	 * bug 474648
 	 */
 	@Test
-	@Ignore
 	public void testSettingArgumentsWithSpecialSymbols() throws Throwable {
 		// Test that arguments are parsed correctly:
 		// The string provided by the user is split into arguments on spaces

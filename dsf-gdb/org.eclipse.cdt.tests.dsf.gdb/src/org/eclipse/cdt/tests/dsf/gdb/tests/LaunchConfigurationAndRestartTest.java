@@ -55,8 +55,6 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
-import org.eclipse.cdt.tests.dsf.gdb.framework.Intermittent;
-import org.eclipse.cdt.tests.dsf.gdb.framework.IntermittentRule;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
@@ -65,15 +63,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-@Intermittent(repetition = 3)
 public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase {
-	public @Rule IntermittentRule intermittentRule = new IntermittentRule();
 	protected static final String EXEC_NAME = "LaunchConfigurationAndRestartTestApp.exe";
 	protected static final String SOURCE_NAME = "LaunchConfigurationAndRestartTestApp.cc";
 

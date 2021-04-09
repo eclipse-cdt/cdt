@@ -220,7 +220,6 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
 		// cleanup cannot assume sane state since it runs even test is failed or skipped
 		if (fSession != null) {
 			// Clear the references (not strictly necessary)
@@ -233,6 +232,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 			fServicesTracker.dispose();
 		fServicesTracker = null;
 		clearEventCounters();
+		super.doAfterTest();
 	}
 	// ========================================================================
 	// Event Management Functions

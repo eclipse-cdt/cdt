@@ -74,7 +74,7 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 	@Override
 	public void doBeforeTest() throws Exception {
 		assumeLocalSession();
-		removeTeminatedLaunchesBeforeTest();
+		teminateAndRemoveLaunches();
 		setLaunchAttributes();
 		// Can't run the launch right away because each test needs to first set some
 		// parameters.  The individual tests will be responsible for starting the launch.
@@ -124,8 +124,6 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
-
 		if (fSession != null) {
 			fSession.getExecutor().submit(() -> fSession.removeServiceEventListener(PostMortemCoreTest.this)).get();
 		}
@@ -133,6 +131,8 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		fExpService = null;
 		if (fServicesTracker != null)
 			fServicesTracker.dispose();
+
+		super.doAfterTest();
 	}
 
 	/**

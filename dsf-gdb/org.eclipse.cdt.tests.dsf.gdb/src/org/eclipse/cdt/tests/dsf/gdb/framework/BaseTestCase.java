@@ -18,7 +18,6 @@ package org.eclipse.cdt.tests.dsf.gdb.framework;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -321,12 +320,12 @@ public class BaseTestCase {
 	 * Make sure we are starting with a clean/known state. That means no
 	 * existing launches.
 	 */
-	public void removeTeminatedLaunchesBeforeTest() throws CoreException {
+	public void teminateAndRemoveLaunches() throws Exception {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches = launchManager.getLaunches();
 		for (ILaunch launch : launches) {
 			if (!launch.isTerminated()) {
-				fail("Something has gone wrong, there is an unterminated launch from a previous test!");
+				assertLaunchTerminates((GdbLaunch) launch, true);
 			}
 		}
 		if (launches.length > 0) {
@@ -354,7 +353,7 @@ public class BaseTestCase {
 
 	@Before
 	public void doBeforeTest() throws Exception {
-		removeTeminatedLaunchesBeforeTest();
+		teminateAndRemoveLaunches();
 		removeAllPlatformBreakpoints();
 		setLaunchAttributes();
 		doLaunch();
@@ -602,11 +601,26 @@ public class BaseTestCase {
 		assertLaunchTerminates(launch);
 	}
 
-	protected void assertLaunchTerminates(GdbLaunch launch) throws InterruptedException {
+	/**
+	 * Assert that the launch terminates, optionally requesting this method to terminate unterminated launch.
+	 */
+	protected void assertLaunchTerminates(boolean terminate) throws Exception {
+		GdbLaunch launch = fLaunch;
+		assertLaunchTerminates(launch, terminate);
+	}
+
+	protected void assertLaunchTerminates(GdbLaunch launch) throws Exception {
+		assertLaunchTerminates(launch, false);
+	}
+
+	protected void assertLaunchTerminates(GdbLaunch launch, boolean terminate) throws Exception {
 		if (launch != null) {
 			// Give a few seconds to allow the launch to terminate
 			int waitCount = 100;
 			while (!launch.isTerminated() && !launch.getDsfExecutor().isShutdown() && --waitCount > 0) {
+				if (terminate) {
+					launch.terminate();
+				}
 				Thread.sleep(TestsPlugin.massageTimeout(100));
 			}
 			assertTrue("Launch failed to terminate before timeout", launch.isTerminated());
@@ -621,6 +635,7 @@ public class BaseTestCase {
 			fLaunch = null;
 		}
 		removeAllPlatformBreakpoints();
+		teminateAndRemoveLaunches();
 	}
 
 	/**

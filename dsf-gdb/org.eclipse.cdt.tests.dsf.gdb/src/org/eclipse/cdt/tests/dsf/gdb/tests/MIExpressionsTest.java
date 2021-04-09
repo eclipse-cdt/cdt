@@ -112,7 +112,6 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
 		if (fSession != null) {
 			fSession.getExecutor().submit(() -> fSession.removeServiceEventListener(MIExpressionsTest.this)).get();
 		}
@@ -120,6 +119,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		if (fServicesTracker != null) {
 			fServicesTracker.dispose();
 		}
+		super.doAfterTest();
 	}
 
 	@Override

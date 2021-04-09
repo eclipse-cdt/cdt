@@ -87,14 +87,13 @@ public class OperationsWhileTargetIsRunningTest extends BaseParametrizedTestCase
 
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
-
 		if (fServicesTracker != null)
 			fServicesTracker.dispose();
 
 		// Restore the different preferences we might have changed
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, fgAutoTerminate);
+		super.doAfterTest();
 	}
 
 	@Override

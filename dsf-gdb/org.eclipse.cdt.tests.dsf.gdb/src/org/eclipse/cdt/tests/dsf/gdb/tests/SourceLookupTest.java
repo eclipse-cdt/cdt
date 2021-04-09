@@ -215,7 +215,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 
 	@Override
 	public void doBeforeTest() throws Exception {
-		removeTeminatedLaunchesBeforeTest();
+		teminateAndRemoveLaunches();
 		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
 		manager.addBreakpointListener(fBreakpointListener);
 		setExeNames();
@@ -229,11 +229,10 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 	 */
 	@Override
 	public void doAfterTest() throws Exception {
-		super.doAfterTest();
-
 		removeAllPlatformBreakpoints();
 		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
 		manager.removeBreakpointListener(fBreakpointListener);
+		super.doAfterTest();
 	}
 
 	protected void doLaunch(String programName) throws Exception {
@@ -912,7 +911,7 @@ public class SourceLookupTest extends BaseParametrizedTestCase {
 		sourceFinderMappingAC_ActiveLaunchHelper(withBackend);
 
 		// Terminate the launch, but don't remove it
-		doAfterTest();
+		assertLaunchTerminates(true);
 		assertFinderFinds(EXEC_AC_NAME, new File(SOURCE_PATH, SOURCE_NAME).getAbsolutePath());
 	}
 

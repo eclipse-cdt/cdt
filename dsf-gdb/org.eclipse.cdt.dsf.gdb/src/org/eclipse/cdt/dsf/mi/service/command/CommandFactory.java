@@ -430,17 +430,17 @@ public class CommandFactory {
 	}
 
 	/** @since 5.0 */
-	public ICommand<MIInfo> createMIBreakDelete(IBreakpointsTargetDMContext ctx, String[] array) {
+	public ICommand<MIInfo> createMIBreakDelete(IBreakpointsTargetDMContext ctx, String... array) {
 		return new MIBreakDelete(ctx, array);
 	}
 
 	/** @since 5.0 */
-	public ICommand<MIInfo> createMIBreakDisable(IBreakpointsTargetDMContext ctx, String[] array) {
+	public ICommand<MIInfo> createMIBreakDisable(IBreakpointsTargetDMContext ctx, String... array) {
 		return new MIBreakDisable(ctx, array);
 	}
 
 	/** @since 5.0 */
-	public ICommand<MIInfo> createMIBreakEnable(IBreakpointsTargetDMContext ctx, String[] array) {
+	public ICommand<MIInfo> createMIBreakEnable(IBreakpointsTargetDMContext ctx, String... array) {
 		return new MIBreakEnable(ctx, array);
 	}
 

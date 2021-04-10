@@ -34,6 +34,24 @@
       "revId": "fcc8a289744d2af0b233cdd08480581b57439ba8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19d0edb2_53d34f76",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/util.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-10T14:39:34Z",
+      "side": 1,
+      "message": "Thanks. That is interesting and unexpected. That makes your decision to add the error number much more significant because it ensures that the support person can look the error number up.",
+      "parentUuid": "236b2351_ae16c3a6",
+      "revId": "fcc8a289744d2af0b233cdd08480581b57439ba8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

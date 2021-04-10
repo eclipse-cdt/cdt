@@ -52,6 +52,29 @@
       "revId": "fcc8a289744d2af0b233cdd08480581b57439ba8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e3ddb09c_87568851",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/util.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-04-10T17:28:40Z",
+      "side": 1,
+      "message": "Is this a good format?\nThe result will look like:\n\n!ENTRY org.eclipse.cdt.core 4 0 2021-04-10 10:18:02.943\n!MESSAGE Error: Cannot run program \"g++\": Code 0x2: 지정된 파일을 찾을 수 없습니다.\n\n!STACK 0\njava.io.IOException: Cannot run program \"g++\": Code 0x2: 지정된 파일을 찾을 수 없습니다.\n\n\tat org.eclipse.cdt.utils.spawner.Spawner.exec(Spawner.java:352)\n\tat org.eclipse.cdt.utils.spawner.Spawner.\u003cinit\u003e(Spawner.java:94)\n\tat org.eclipse.cdt.utils.spawner.ProcessFactory.exec(ProcessFactory.java:99)\n\tat org.eclipse.cdt.core.CommandLauncher.execute(CommandLauncher.java:190)\n\tat org.eclipse.cdt.internal.core.BuildRunnerHelper.build(BuildRunnerHelper.java:274)\n\tat org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector.runProgramForLanguage(AbstractBuiltinSpecsDetector.java:799)\n\tat org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector.runForLanguage(AbstractBuiltinSpecsDetector.java:727)\n\tat org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector.runForEachLanguage(AbstractBuiltinSpecsDetector.java:592)\n\tat org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector$1.runInWorkspace(AbstractBuiltinSpecsDetector.java:518)\n\tat org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:42)\n\tat org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)",
+      "range": {
+        "startLine": 184,
+        "startChar": 31,
+        "endLine": 184,
+        "endChar": 45
+      },
+      "revId": "fcc8a289744d2af0b233cdd08480581b57439ba8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

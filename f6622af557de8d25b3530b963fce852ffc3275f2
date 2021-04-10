@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "528f0ef2_7786e448",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-10T16:43:35Z",
+      "side": 1,
+      "message": "Not anymore with the fixes done.",
+      "revId": "f6622af557de8d25b3530b963fce852ffc3275f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

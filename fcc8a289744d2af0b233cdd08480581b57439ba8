@@ -75,6 +75,30 @@
       "revId": "fcc8a289744d2af0b233cdd08480581b57439ba8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89d9772b_60b73e69",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/util.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-10T18:32:57Z",
+      "side": 1,
+      "message": "Lgtm",
+      "parentUuid": "e3ddb09c_87568851",
+      "range": {
+        "startLine": 184,
+        "startChar": 31,
+        "endLine": 184,
+        "endChar": 45
+      },
+      "revId": "fcc8a289744d2af0b233cdd08480581b57439ba8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -864,4 +864,455 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		fRestart = true;
 		testNoStopAtMainWithReverse();
 	}
+
+	@Test
+	public void testAgain1() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain2() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain3() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain4() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain5() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain6() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain7() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain8() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain9() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain10() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain11() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain12() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain13() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain14() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain15() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain16() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain17() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain18() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain19() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain20() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain21() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain22() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain23() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain24() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain25() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain26() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain27() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain28() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain29() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain30() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain31() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain32() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain33() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain34() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain35() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain36() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain37() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain38() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain39() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain40() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain41() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain42() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain43() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain44() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain45() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain46() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain47() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain48() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain49() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain50() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain51() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain52() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain53() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain54() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain55() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain56() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain57() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain58() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain59() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain60() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain61() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain62() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain63() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain64() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain65() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain66() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain67() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain68() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain69() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain70() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain71() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain72() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain73() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain74() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain75() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain76() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain77() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain78() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain79() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain80() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain81() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain82() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain83() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain84() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain85() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain86() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain87() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain88() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain89() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
+	@Test
+	public void testAgain90() throws Throwable {
+		testNoStopAtMainWithReverseRestart();
+	}
+
 }

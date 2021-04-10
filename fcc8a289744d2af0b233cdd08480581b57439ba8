@@ -16,6 +16,24 @@
       "revId": "fcc8a289744d2af0b233cdd08480581b57439ba8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "236b2351_ae16c3a6",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/util.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-04-10T14:12:35Z",
+      "side": 1,
+      "message": "I had a friend try it on a French Windows installation and there was no English messages on that system anyway.\nI think it\u0027s a bit interesting to optimize out the English messages as I guess that\u0027s the first thing a support technician would ask for...",
+      "parentUuid": "72a0c4ae_40ca8a2d",
+      "revId": "fcc8a289744d2af0b233cdd08480581b57439ba8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

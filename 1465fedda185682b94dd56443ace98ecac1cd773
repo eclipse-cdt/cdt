@@ -33,6 +33,24 @@
       "revId": "1465fedda185682b94dd56443ace98ecac1cd773",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb3a9cfc_0812da47",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2021-04-11T11:16:57Z",
+      "side": 1,
+      "message": "Yes, sounds like the best option here (I was trying to replicate the gnome terminal behaviour).",
+      "parentUuid": "525e8695_728cfa95",
+      "revId": "1465fedda185682b94dd56443ace98ecac1cd773",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "ecc85143_8d0a8697",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-11T13:27:25Z",
+      "side": 1,
+      "message": "Probably should abort - however note that the DSF-GDB tests do launches with relative paths to the exe (relative to PWD). Not sure if you have the code to resolve that case, or whether this code is hit.\n\nie. in the trace for a DSF-GDB test I see:\n\n    17-file-exec-and-symbols --thread-group i1 data/launch/bin/TargetAvail.exe",
+      "parentUuid": "25ed2c91_5f045a06",
+      "range": {
+        "startLine": 123,
+        "startChar": 16,
+        "endLine": 123,
+        "endChar": 72
+      },
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f412eb8b_cdacec1c",
         "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
         "patchSetId": 3
@@ -132,6 +156,30 @@
       "side": 1,
       "message": "In what way does the screenshot of the terminal view have anything to do with the C project limitation?",
       "parentUuid": "e1da73c6_daefcdbf",
+      "range": {
+        "startLine": 156,
+        "startChar": 40,
+        "endLine": 156,
+        "endChar": 61
+      },
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3aeedf7f_51adc862",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-11T13:27:25Z",
+      "side": 1,
+      "message": "Wrong one - https://bugzillaattachments.eclipsecontent.org/bugs/attachment.cgi?id\u003d286085",
+      "parentUuid": "34fe1234_7e393585",
       "range": {
         "startLine": 156,
         "startChar": 40,

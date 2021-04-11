@@ -184,6 +184,30 @@
     },
     {
       "key": {
+        "uuid": "c9775209_54295b9d",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2021-04-11T14:37:56Z",
+      "side": 1,
+      "message": "I was hoping to find a way to actually jump to the specified row column and therefore have it part of the hover selection, but until then I agree with your proposal: the hover selection should match the underlined text.\n\nI did not consider windows paths, I guess the case of a path starting with \"X:\" for X in [a-zA-Z]  should be handled specifically.",
+      "parentUuid": "e0bfbaf7_b1d7df3e",
+      "range": {
+        "startLine": 380,
+        "startChar": 39,
+        "endLine": 380,
+        "endChar": 50
+      },
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6fa12486_2b3860a7",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 6

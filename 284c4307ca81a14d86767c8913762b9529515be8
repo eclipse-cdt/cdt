@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eb7e0642_77fa2012",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/CdtTemplate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-11T12:22:42Z",
+      "side": 1,
+      "message": "Note because of https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d572755#c3 this sort is not stable. comparing id \u003d\u003d null with id !\u003d null needs a consistent return value. Note that name can be the same for two different templates, one with an ID and one without.\n\nOne way to do it is to use a non-null key for the comparison, with the constructor having something like:\n\n  this.id \u003d id\n  if (id \u003d\u003d null) {\n    this.key \u003d \"\";\n  } else {\n    this.key \u003d id;\n  }\n  this.template \u003d template\n  if (template \u003d\u003d null || template.getName() \u003d\u003d null) {\n    this.name \u003d \"\";\n  } else {\n    this.name \u003d template.getName();\n  }\n\nand then in the compareTo you can chain: \n\n   Objects.compare(key, cdtTmp.key, String::compareTo);\n\nand\n\n   Objects.compare(name, cdtTmp.name, String.CASE_INSENSITIVE_ORDER);",
+      "revId": "284c4307ca81a14d86767c8913762b9529515be8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e076dc0_77454e8c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/CdtTemplate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-11T12:22:42Z",
+      "side": 1,
+      "message": "I think this should be case-insensitive on the names to be consistent with other places in the IDE, like the Preferences -\u003e C/C++ -\u003e Code Style -\u003e Code Templates.",
+      "range": {
+        "startLine": 47,
+        "startChar": 30,
+        "endLine": 47,
+        "endChar": 71
+      },
+      "revId": "284c4307ca81a14d86767c8913762b9529515be8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b01bb1e6_c55dc709",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 772,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-11T12:22:42Z",
+      "side": 1,
+      "message": "This if statement should probably be in the first loop so that you are only sorting the elements that you actually use.\n\nFeel free to adapt this code to use streams if you like, for example the final loop and return could be written like this:\n\n  return cdtResult.stream().map(CdtTemplate::getTemplate).toArray(Template[]::new);\n\nI leave it up to you how much you want to collapse loops into streams. For example, while you could write this entire method as a single chained stream operation, that would probably be too hard to read/debug.",
+      "revId": "284c4307ca81a14d86767c8913762b9529515be8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

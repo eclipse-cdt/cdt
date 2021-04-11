@@ -240,6 +240,30 @@
     },
     {
       "key": {
+        "uuid": "326d656b_4433dbc6",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-11T16:39:57Z",
+      "side": 1,
+      "message": "\u003e [...]  not entirely related to the bugzilla.\n\nI agree - don\u0027t make that UI change as part of this gerrit/bug (and of course feel free to not make it at all - my previous point was that allowing non-CDT projects to be launched will require lots of small changes throughout, and I am not sure it is worth it without a use case).\n\n\u003e [...] limited to C projects, will the binary containers etc work then?\n\nPerhaps - however the binary containers is not 100% reliable either.\n\nFWIW Users can debug projects that aren\u0027t CDT projects, they just can\u0027t use the \"Project\" field in the launch configuration to do it. If the user has a CDT project, there is a magic that gets picked up from the project setting that is applied to the launch.\n\nAnyway all of this is a bigger topic and hopefully your original question \"Do we need to create the ICProject instance here or would it be enough to use the IProject instance directly?\" is sufficiently answered.",
+      "parentUuid": "e41b7eb2_3baac231",
+      "range": {
+        "startLine": 156,
+        "startChar": 40,
+        "endLine": 156,
+        "endChar": 61
+      },
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "be84e6b4_e253fbc0",
         "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
         "patchSetId": 3

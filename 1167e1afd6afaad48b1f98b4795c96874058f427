@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "25ed2c91_5f045a06",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-04-11T13:12:17Z",
+      "side": 1,
+      "message": "Oh right. Sorry for that. Will be fixed in next PS.\nAt the same time, should it be an error and aborting the launch if the programPath is not absolute after this line?",
+      "parentUuid": "2a44f34b_14c1e167",
+      "range": {
+        "startLine": 123,
+        "startChar": 16,
+        "endLine": 123,
+        "endChar": 72
+      },
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f412eb8b_cdacec1c",
         "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
         "patchSetId": 3
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "Good question. I can\u0027t see why it should be limited to C projects. I don\u0027t know if there is other places that will fail if you remove the current assumption, but I can\u0027t see why the limitation should be there.\n\nNote the UI has the limitation to https://bugzillaattachments.eclipsecontent.org/bugs/attachment.cgi?id\u003d286082",
       "parentUuid": "f412eb8b_cdacec1c",
+      "range": {
+        "startLine": 156,
+        "startChar": 40,
+        "endLine": 156,
+        "endChar": 61
+      },
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34fe1234_7e393585",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-04-11T13:12:17Z",
+      "side": 1,
+      "message": "In what way does the screenshot of the terminal view have anything to do with the C project limitation?",
+      "parentUuid": "e1da73c6_daefcdbf",
       "range": {
         "startLine": 156,
         "startChar": 40,

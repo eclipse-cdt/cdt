@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b09c3973_9213f51c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-04-11T09:56:03Z",
+      "side": 1,
+      "message": "This looks kind ugly, but I cannot see any better way to do it. I would like to avoid duplicating the code...\nDoes this also mean that I should update the minimum required version for the org.eclipse.cdt.launch bundle in the org.eclipse.cdt.dsf.gdb manifest?",
+      "range": {
+        "startLine": 123,
+        "startChar": 16,
+        "endLine": 123,
+        "endChar": 72
+      },
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f412eb8b_cdacec1c",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-04-11T09:56:03Z",
+      "side": 1,
+      "message": "Do we need to create the ICProject instance here or would it be enough to use the IProject instance directly?\nAre there any side effects of the ICPorject instance creation that would make this lookup fail if it\u0027s omitted?",
+      "range": {
+        "startLine": 156,
+        "startChar": 40,
+        "endLine": 156,
+        "endChar": 61
+      },
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -18,6 +18,7 @@ package org.eclipse.cdt.internal.corext.codemanipulation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -759,13 +760,25 @@ public class StubUtility {
 			}
 			templateDatas = projectStore.getTemplateData();
 		}
+
 		List<Template> result = new ArrayList<>();
+		List<CdtTemplate> cdtResult = new ArrayList<>();
 		for (int j = 0; j < contentTypes.length; j++) {
 			for (int i = 0; i < templateDatas.length; i++) {
 				Template template = templateDatas[i].getTemplate();
 				final String contextTypeId = template.getContextTypeId();
 				if (FileTemplateContextType.isContextTypeForContentType(contextTypeId, contentTypes[j])) {
-					result.add(template);
+					cdtResult.add(new CdtTemplate(templateDatas[i].getId(), templateDatas[i].getTemplate()));
+				}
+			}
+		}
+
+		Collections.sort(cdtResult);
+		for (int j = 0; j < contentTypes.length; j++) {
+			for (CdtTemplate c : cdtResult) {
+				if (FileTemplateContextType.isContextTypeForContentType(c.getTemplate().getContextTypeId(),
+						contentTypes[j])) {
+					result.add(c.getTemplate());
 				}
 			}
 		}

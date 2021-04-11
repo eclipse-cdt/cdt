@@ -119,6 +119,24 @@
     },
     {
       "key": {
+        "uuid": "b0096452_b89a9752",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextLineRenderer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1372
+      },
+      "writtenOn": "2021-04-11T11:13:54Z",
+      "side": 1,
+      "message": "Yes, the TextRange object is supposed to have the x/y end parameters as exclusive, but here I chose to follow the same convention as for the selected text (inclusive). I\u0027ll proof again the ranges.",
+      "parentUuid": "96561205_17e0980a",
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d69bbb4b_5ae6db20",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 6

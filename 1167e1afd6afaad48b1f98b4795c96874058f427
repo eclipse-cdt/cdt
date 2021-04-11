@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2a44f34b_14c1e167",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-11T11:48:58Z",
+      "side": 1,
+      "message": "I think it is fine, and yes the version should be increased. (I have requested that it should be an error if you don\u0027t https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d570692)\n\nbigger problem is the NPE because of not checking cproject for null :-) This is what is causing all the test failures. I don\u0027t know why a full stack trace isn\u0027t appearing, but the stack trace for one failure is:\n\n  java.lang.NullPointerException\n\tat org.eclipse.cdt.dsf.gdb.launching.LaunchUtils.verifyProgramPath(LaunchUtils.java:123)\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.checkBinaryDetails(GdbLaunchDelegate.java:329)\n\tat org.eclipse.cdt.tests.dsf.gdb.launching.TestLaunchDelegate.checkBinaryDetails(TestLaunchDelegate.java:69)\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launchDebugSession(GdbLaunchDelegate.java:151)\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launchDebugger(GdbLaunchDelegate.java:108)\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launch(GdbLaunchDelegate.java:96)\n\tat org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:803)\n\tat org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:716)\n\tat org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:711)\n\tat org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase.doLaunchInner(BaseTestCase.java:572)\n\tat org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase.doLaunch(BaseTestCase.java:526)\n\tat org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase.doBeforeTest(BaseTestCase.java:384)\n\tat org.eclipse.cdt.tests.dsf.gdb.tests.MIRunControlTargetAvailableTest.doBeforeTest(MIRunControlTargetAvailableTest.java:64)\n\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:566)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)\n\tat org.junit.internal.runners.statements.RunBefores.invokeMethod(RunBefores.java:33)\n\tat org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:24)\n\tat org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)\n\tat org.junit.rules.TestWatcher$1.evaluate(TestWatcher.java:61)\n\tat org.junit.internal.runners.statements.FailOnTimeout$CallableStatement.call(FailOnTimeout.java:288)\n\tat org.junit.internal.runners.statements.FailOnTimeout$CallableStatement.call(FailOnTimeout.java:282)\n\tat java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)\n\tat java.base/java.lang.Thread.run(Thread.java:834)",
+      "parentUuid": "b09c3973_9213f51c",
+      "range": {
+        "startLine": 123,
+        "startChar": 16,
+        "endLine": 123,
+        "endChar": 72
+      },
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f412eb8b_cdacec1c",
         "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
         "patchSetId": 3
@@ -45,6 +69,64 @@
       "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e1da73c6_daefcdbf",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-11T11:48:58Z",
+      "side": 1,
+      "message": "Good question. I can\u0027t see why it should be limited to C projects. I don\u0027t know if there is other places that will fail if you remove the current assumption, but I can\u0027t see why the limitation should be there.\n\nNote the UI has the limitation to https://bugzillaattachments.eclipsecontent.org/bugs/attachment.cgi?id\u003d286082",
+      "parentUuid": "f412eb8b_cdacec1c",
+      "range": {
+        "startLine": 156,
+        "startChar": 40,
+        "endLine": 156,
+        "endChar": 61
+      },
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be84e6b4_e253fbc0",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-11T11:48:58Z",
+      "side": 1,
+      "message": "I think this method\u0027s heuristic for resolving paths is good.",
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b43880b2_9baa0f32",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/ui/CMainTab2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-11T11:48:58Z",
+      "side": 1,
+      "message": "This is a welcome bug fix :-)\n\nThis was caused by removing too much logic when Bug 328012 was fixed.",
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

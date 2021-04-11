@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "c811f7f9_ab66b334",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-04-11T14:41:58Z",
+      "side": 1,
+      "message": "I think I\u0027ll drop that point for now as it\u0027s not completely related to what the bug is about. That \"wrong\" state have been there before too and it\u0027s only happening with the project is null.",
+      "parentUuid": "ecc85143_8d0a8697",
+      "range": {
+        "startLine": 123,
+        "startChar": 16,
+        "endLine": 123,
+        "endChar": 72
+      },
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f412eb8b_cdacec1c",
         "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
         "patchSetId": 3
@@ -189,6 +213,30 @@
       "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e41b7eb2_3baac231",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/LaunchUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-04-11T14:41:58Z",
+      "side": 1,
+      "message": "I think it\u0027s wrong to limit the search there too, but if it\u0027s not limited to C projects, will the binary containers etc work then?\nRegardless, I don\u0027t think that part needs to be covered here as that case was there before too and not entirely related to the bugzilla.",
+      "parentUuid": "3aeedf7f_51adc862",
+      "range": {
+        "startLine": 156,
+        "startChar": 40,
+        "endLine": 156,
+        "endChar": 61
+      },
+      "revId": "1167e1afd6afaad48b1f98b4795c96874058f427",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {

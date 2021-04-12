@@ -9,13 +9,4 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="suite/org/eclipse/cdt/core/testplugin/util/BaseTestCase5.java" type="org.eclipse.cdt.core.testplugin.util.BaseTestCase5$ModelJoiner">
-        <filter comment="This is ok - there is just no way of marking @noreference as having friends." id="640712815">
-            <message_arguments>
-                <message_argument value="CCorePlugin"/>
-                <message_argument value="ModelJoiner"/>
-                <message_argument value="createStatus(String, Throwable)"/>
-            </message_arguments>
-        </filter>
-    </resource>
 </component>

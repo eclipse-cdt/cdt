@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e59c8b8d_7c107a43",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 10
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-12T20:02:42Z",
+      "side": 1,
+      "message": "these three optional bundles are only needed for OpenFileMouseHandler - they are optional so that RCP based adopters dependencies don\u0027t change.",
+      "revId": "9b2f9548be796dae2d8b35bc89b0b8e5d052d120",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d648e740_48c3e78b",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/OpenFileMouseHandler.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-12T20:02:42Z",
+      "side": 1,
+      "message": "I can test this neededBundlesAvailable code partially, but I don\u0027t know how to setup the mythical RCP program that includes the terminal view, but no IDE features.",
+      "revId": "9b2f9548be796dae2d8b35bc89b0b8e5d052d120",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

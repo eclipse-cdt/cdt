@@ -16,6 +16,41 @@
       "revId": "a19c35c6251a25ae06ab52190e04e9589c0e5659",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "169ac406_3dd139e1",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextLineRenderer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-12T18:44:24Z",
+      "side": 1,
+      "message": "The issue here was TextRange.isEmpty. See gerrit comment on that line.",
+      "parentUuid": "356cdeed_cb4a5386",
+      "revId": "a19c35c6251a25ae06ab52190e04e9589c0e5659",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d3f2362_82a4c8e7",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/terminal/model/TextRange.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-12T18:44:24Z",
+      "side": 1,
+      "message": "Here was the problem for why wrapped lines sometimes didn\u0027t get underlined. It needs to be || instead of \u0026\u0026",
+      "revId": "a19c35c6251a25ae06ab52190e04e9589c0e5659",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

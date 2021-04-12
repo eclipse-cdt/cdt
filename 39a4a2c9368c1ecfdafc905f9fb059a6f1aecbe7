@@ -137,6 +137,41 @@
     },
     {
       "key": {
+        "uuid": "3c1c7b0b_bc9513fb",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/textcanvas/TextLineRenderer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-12T18:44:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b0096452_b89a9752",
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4fa63bd3_1aee284f",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-12T18:44:24Z",
+      "side": 1,
+      "message": ":-( just realized that I don\u0027t think we can add this dependency as required as the terminal may be used in RCP without the IDE.",
+      "revId": "39a4a2c9368c1ecfdafc905f9fb059a6f1aecbe7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d69bbb4b_5ae6db20",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
         "patchSetId": 6

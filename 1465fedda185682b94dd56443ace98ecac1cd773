@@ -51,6 +51,24 @@
       "revId": "1465fedda185682b94dd56443ace98ecac1cd773",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "677890ff_2308cddd",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/tabs/TabFolderManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-12T18:44:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb3a9cfc_0812da47",
+      "revId": "1465fedda185682b94dd56443ace98ecac1cd773",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

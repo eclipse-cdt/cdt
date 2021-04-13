@@ -25,12 +25,17 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.tm.internal.terminal.control.ITerminalMouseListener2;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
@@ -43,7 +48,16 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IConsoleDocumentPartitioner;
+import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.console.IPatternMatchListener;
+import org.eclipse.ui.console.PatternMatchEvent;
+import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.console.PatternMatchListener;
+import org.eclipse.ui.internal.console.PatternMatchListenerExtension;
 import org.eclipse.ui.internal.ide.dialogs.OpenResourceDialog;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -58,7 +72,8 @@ public class OpenFileMouseHandler implements ITerminalMouseListener2 {
 			List.of("org.eclipse.core.resources", //$NON-NLS-1$
 					"org.eclipse.ui.ide", //$NON-NLS-1$
 					"org.eclipse.ui.editors", //$NON-NLS-1$
-					"org.eclipse.text"); //$NON-NLS-1$
+					"org.eclipse.text", //$NON-NLS-1$
+					"org.eclipse.ui.console"); //$NON-NLS-1$
 
 	private final ITerminalViewControl terminal;
 	private Pattern regex = Pattern.compile("(\\d*)(:(\\d*))?.*"); //$NON-NLS-1$
@@ -68,6 +83,8 @@ public class OpenFileMouseHandler implements ITerminalMouseListener2 {
 	 * Check if we have the bundles needed.
 	 */
 	private boolean neededBundlesAvailable;
+	private List<CompiledPatternMatchListener> patterns = null;
+	private VirtualTextConsole virtualTextConsole;
 
 	OpenFileMouseHandler(IWorkbenchPartSite site, ITerminalViewControl terminal) {
 		this.site = site;
@@ -88,6 +105,7 @@ public class OpenFileMouseHandler implements ITerminalMouseListener2 {
 		}
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	public void mouseUp(ITerminalTextDataReadOnly terminalText, int line, int column, int button, int stateMask) {
 		if ((stateMask & SWT.MODIFIER_MASK) != SWT.MOD1) {
@@ -111,6 +129,68 @@ public class OpenFileMouseHandler implements ITerminalMouseListener2 {
 				// After this we need Eclipse IDE features. If we don't have them then we stop here.
 				if (!neededBundlesAvailable) {
 					return;
+				}
+
+				if (patterns == null) {
+					// TODO add dispose - see org.eclipse.ui.internal.console.ConsolePatternMatcher.disconnect()
+					patterns = new ArrayList<>();
+					virtualTextConsole = new VirtualTextConsole();
+
+					IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(
+							ConsolePlugin.getUniqueIdentifier(),
+							IConsoleConstants.EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENERS);
+					IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
+					for (IConfigurationElement config : elements) {
+						PatternMatchListenerExtension extension = new PatternMatchListenerExtension(config);
+						PatternMatchListener matchListener;
+						try {
+							matchListener = new PatternMatchListener(extension);
+						} catch (CoreException e) {
+							if (DEBUG_HOVER) {
+								System.out.format("hover: cannot create matchListener for %s", extension); //$NON-NLS-1$
+								e.printStackTrace(System.out);
+							}
+							continue;
+						}
+						if (matchListener.getPattern() == null) {
+							if (DEBUG_HOVER) {
+								System.out.format("hover: matchListener %s has null pattern", matchListener); //$NON-NLS-1$
+							}
+							continue;
+						}
+
+						Pattern pattern = Pattern.compile(matchListener.getPattern(), matchListener.getCompilerFlags());
+						String qualifier = matchListener.getLineQualifier();
+						Pattern qPattern = null;
+						if (qualifier != null) {
+							qPattern = Pattern.compile(qualifier, matchListener.getCompilerFlags());
+						}
+						CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, qPattern,
+								matchListener);
+						patterns.add(notifier);
+						matchListener.connect(virtualTextConsole);
+					}
+
+				}
+
+				virtualTextConsole.hyperlink = null;
+				for (CompiledPatternMatchListener notifier : patterns) {
+					// TODO to make Java Exceptions work the document and matcher need to be
+					// run on the full line
+					Matcher reg = notifier.pattern.matcher(textToOpen);
+					if (reg.find()) {
+						int start = reg.start();
+						int end = reg.end();
+						IPatternMatchListener listener = notifier.listener;
+						if (listener != null) {
+							virtualTextConsole.getDocument().set(textToOpen);
+							listener.matchFound(new PatternMatchEvent(virtualTextConsole, start, end - start));
+						}
+					}
+					if (virtualTextConsole.hyperlink != null) {
+						virtualTextConsole.hyperlink.linkActivated();
+						return;
+					}
 				}
 
 				// extract the path from file:// URLs
@@ -267,5 +347,102 @@ public class OpenFileMouseHandler implements ITerminalMouseListener2 {
 			provider.disconnect(input);
 		}
 		return Optional.empty();
+	}
+
+	private static class CompiledPatternMatchListener {
+		Pattern pattern;
+
+		Pattern qualifier;
+
+		IPatternMatchListener listener;
+
+		int end = 0;
+
+		CompiledPatternMatchListener(Pattern pattern, Pattern qualifier, IPatternMatchListener matchListener) {
+			this.pattern = pattern;
+			this.listener = matchListener;
+			this.qualifier = qualifier;
+		}
+
+		public void dispose() {
+			listener.disconnect();
+			pattern = null;
+			qualifier = null;
+			listener = null;
+		}
+	}
+
+	private static class VirtualTextConsole extends TextConsole {
+
+		private VirtualConsoleDocumentPartitioner partitioner;
+		private IHyperlink hyperlink;
+
+		public VirtualTextConsole() {
+			super(VirtualTextConsole.class.getName(), VirtualTextConsole.class.getName(), null, false);
+		}
+
+		@Override
+		protected IConsoleDocumentPartitioner getPartitioner() {
+			return partitioner;
+		}
+
+		@Override
+		public void addHyperlink(IHyperlink hyperlink, int offset, int length) throws BadLocationException {
+			this.hyperlink = hyperlink;
+			super.addHyperlink(hyperlink, offset, length);
+		}
+	}
+
+	private static class VirtualConsoleDocumentPartitioner implements IConsoleDocumentPartitioner {
+
+		@Override
+		public void connect(IDocument document) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void disconnect() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void documentAboutToBeChanged(DocumentEvent event) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean documentChanged(DocumentEvent event) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public String[] getLegalContentTypes() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public String getContentType(int offset) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ITypedRegion[] computePartitioning(int offset, int length) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ITypedRegion getPartition(int offset) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean isReadOnly(int offset) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public StyleRange[] getStyleRanges(int offset, int length) {
+			throw new UnsupportedOperationException();
+		}
 	}
 }

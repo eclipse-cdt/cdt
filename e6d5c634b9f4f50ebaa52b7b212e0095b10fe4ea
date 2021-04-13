@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "362907c9_6f3218c8",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-13T17:47:26Z",
+      "side": 1,
+      "message": "Oops - I think we need to update the dependency on this bundle so that the spawner with the new code is available to prevent it being installed with old spawner.",
+      "revId": "e6d5c634b9f4f50ebaa52b7b212e0095b10fe4ea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

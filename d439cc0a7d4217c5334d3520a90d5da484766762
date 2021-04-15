@@ -22,6 +22,30 @@
       "revId": "d439cc0a7d4217c5334d3520a90d5da484766762",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4718215e_9506cfff",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2009,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-15T11:36:35Z",
+      "side": 1,
+      "message": "I am researching the correct way to do this. This is the second time this week I have had to deal with optional deps. https://help.liferay.com/hc/en-us/articles/360018162711-Declaring-Optional-Import-Package-Requirements has a nice pattern, and I am sending email to eclipse-dev to see if there is a canonical way of doing this.",
+      "parentUuid": "180edaae_42b5ec8e",
+      "range": {
+        "startLine": 2009,
+        "startChar": 6,
+        "endLine": 2009,
+        "endChar": 36
+      },
+      "revId": "d439cc0a7d4217c5334d3520a90d5da484766762",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

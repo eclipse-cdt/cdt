@@ -313,7 +313,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 
 		// Create the array and copy the elements over
-		int size = projectTypes != null ? projectTypes.size() : 0;
+		if (projectTypes == null) {
+			return new IProjectType[0];
+		}
+
+		int size = projectTypes.size();
 
 		IProjectType[] types = new IProjectType[size];
 
@@ -1997,9 +2001,13 @@ public class ManagedBuildManager extends AbstractCExtension {
 					}
 				}
 
-				//  Upgrade the project's CDT version if necessary
-				if (!UpdateManagedProjectManager.isCompatibleProject(buildInfo)) {
-					UpdateManagedProjectManager.updateProject(project, buildInfo);
+				try {
+					//  Upgrade the project's CDT version if necessary
+					if (!UpdateManagedProjectManager.isCompatibleProject(buildInfo)) {
+						UpdateManagedProjectManager.updateProject(project, buildInfo);
+					}
+				} catch (NoClassDefFoundError e) {
+					// IOverwriteQuery (from optional dependency org.eclipse.ui) not available
 				}
 				//  Check to see if the upgrade (if required) succeeded
 				if (buildInfo.getManagedProject() == null || (!buildInfo.getManagedProject().isValid())) {
@@ -2634,7 +2642,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 		if (BuildDbgUtil.DEBUG)
 			BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
 					"build info load: info is null, querying the update mngr"); //$NON-NLS-1$
-		buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
+		try {
+			buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
+		} catch (NoClassDefFoundError e) {
+			// IOverwriteQuery (from optional dependency org.eclipse.ui) not available
+		}
 
 		if (buildInfo != null)
 			return buildInfo;
@@ -2778,7 +2790,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 		if (buildInfo == null && resource instanceof IProject) {
 			// Check weather getBuildInfo is called from converter
-			buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo((IProject) resource);
+			try {
+				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo((IProject) resource);
+			} catch (NoClassDefFoundError e) {
+				// IOverwriteQuery (from optional dependency org.eclipse.ui) not available
+				buildInfo = null;
+			}
 			if (buildInfo != null)
 				return true;
 			// Check if the build information can be loaded from the .cdtbuild file
@@ -3380,12 +3397,20 @@ public class ManagedBuildManager extends AbstractCExtension {
 				try {
 					if (bi != null) {
 						prj = (IProject) bi.getManagedProject().getOwner();
-						UpdateManagedProjectManager.addInfo(prj, bi);
+						try {
+							UpdateManagedProjectManager.addInfo(prj, bi);
+						} catch (NoClassDefFoundError e) {
+							// IOverwriteQuery (from optional dependency org.eclipse.ui) not available
+						}
 					}
 					result = convertBuildObject.convert(buildObject, fromId, toId, false);
 				} finally {
 					if (bi != null)
-						UpdateManagedProjectManager.delInfo(prj);
+						try {
+							UpdateManagedProjectManager.delInfo(prj);
+						} catch (NoClassDefFoundError e) {
+							// IOverwriteQuery (from optional dependency org.eclipse.ui) not available
+						}
 				}
 				return result;
 			}

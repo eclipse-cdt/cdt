@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.pde.ui.RuntimeWorkbench">
+    <setAttribute key="additional_plugins"/>
+    <booleanAttribute key="append.args" value="true"/>
+    <stringAttribute key="application" value="org.eclipse.cdt.managedbuilder.core.headlessbuild"/>
+    <booleanAttribute key="askclear" value="true"/>
+    <booleanAttribute key="automaticAdd" value="true"/>
+    <booleanAttribute key="automaticValidate" value="false"/>
+    <stringAttribute key="bootstrap" value=""/>
+    <stringAttribute key="checked" value="[NONE]"/>
+    <booleanAttribute key="clearConfig" value="true"/>
+    <booleanAttribute key="clearws" value="false"/>
+    <booleanAttribute key="clearwslog" value="false"/>
+    <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/CDT headless (minimum number of bundles enabled)"/>
+    <booleanAttribute key="default" value="false"/>
+    <setAttribute key="deselected_workspace_bundles">
+        <setEntry value="org.eclipse.cdt"/>
+        <setEntry value="org.eclipse.cdt.autotools.core"/>
+        <setEntry value="org.eclipse.cdt.autotools.docs"/>
+        <setEntry value="org.eclipse.cdt.autotools.tests"/>
+        <setEntry value="org.eclipse.cdt.autotools.ui"/>
+        <setEntry value="org.eclipse.cdt.autotools.ui.tests"/>
+        <setEntry value="org.eclipse.cdt.build.crossgcc"/>
+        <setEntry value="org.eclipse.cdt.build.gcc.core"/>
+        <setEntry value="org.eclipse.cdt.build.gcc.ui"/>
+        <setEntry value="org.eclipse.cdt.cmake.core"/>
+        <setEntry value="org.eclipse.cdt.cmake.core.tests"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.arm"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.arm.tests"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.core"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.core.doc"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.core.tests"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.core.ui"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.hpenonstop"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.hpenonstop.tests"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.intel"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.microsoft"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.microsoft.tests"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.nvidia"/>
+        <setEntry value="org.eclipse.cdt.cmake.is.nvidia.tests"/>
+        <setEntry value="org.eclipse.cdt.cmake.ui"/>
+        <setEntry value="org.eclipse.cdt.cmake.ui.tests"/>
+        <setEntry value="org.eclipse.cdt.codan.checkers"/>
+        <setEntry value="org.eclipse.cdt.codan.checkers.ui"/>
+        <setEntry value="org.eclipse.cdt.codan.checkers.ui.tests"/>
+        <setEntry value="org.eclipse.cdt.codan.core"/>
+        <setEntry value="org.eclipse.cdt.codan.core.cxx"/>
+        <setEntry value="org.eclipse.cdt.codan.core.tests"/>
+        <setEntry value="org.eclipse.cdt.codan.examples"/>
+        <setEntry value="org.eclipse.cdt.codan.ui"/>
+        <setEntry value="org.eclipse.cdt.codan.ui.cfgview"/>
+        <setEntry value="org.eclipse.cdt.codan.ui.cxx"/>
+        <setEntry value="org.eclipse.cdt.core.autotools.core"/>
+        <setEntry value="org.eclipse.cdt.core.autotools.ui"/>
+        <setEntry value="org.eclipse.cdt.core.linux.aarch64"/>
+        <setEntry value="org.eclipse.cdt.core.linux.ppc64le"/>
+        <setEntry value="org.eclipse.cdt.core.macosx"/>
+        <setEntry value="org.eclipse.cdt.core.tests"/>
+        <setEntry value="org.eclipse.cdt.core.win32"/>
+        <setEntry value="org.eclipse.cdt.core.win32.x86_64"/>
+        <setEntry value="org.eclipse.cdt.debug.application"/>
+        <setEntry value="org.eclipse.cdt.debug.application.doc"/>
+        <setEntry value="org.eclipse.cdt.debug.application.tests"/>
+        <setEntry value="org.eclipse.cdt.debug.core"/>
+        <setEntry value="org.eclipse.cdt.debug.core.memory"/>
+        <setEntry value="org.eclipse.cdt.debug.core.memory.tests"/>
+        <setEntry value="org.eclipse.cdt.debug.dap"/>
+        <setEntry value="org.eclipse.cdt.debug.dap.gdbjtag"/>
+        <setEntry value="org.eclipse.cdt.debug.gdbjtag"/>
+        <setEntry value="org.eclipse.cdt.debug.gdbjtag.core"/>
+        <setEntry value="org.eclipse.cdt.debug.gdbjtag.core.tests"/>
+        <setEntry value="org.eclipse.cdt.debug.gdbjtag.ui"/>
+        <setEntry value="org.eclipse.cdt.debug.ui"/>
+        <setEntry value="org.eclipse.cdt.debug.ui.memory.floatingpoint"/>
+        <setEntry value="org.eclipse.cdt.debug.ui.memory.memorybrowser"/>
+        <setEntry value="org.eclipse.cdt.debug.ui.memory.search"/>
+        <setEntry value="org.eclipse.cdt.debug.ui.memory.traditional"/>
+        <setEntry value="org.eclipse.cdt.debug.ui.memory.transport"/>
+        <setEntry value="org.eclipse.cdt.doc.isv"/>
+        <setEntry value="org.eclipse.cdt.doc.user"/>
+        <setEntry value="org.eclipse.cdt.docker.launcher"/>
+        <setEntry value="org.eclipse.cdt.dsf"/>
+        <setEntry value="org.eclipse.cdt.dsf.gdb"/>
+        <setEntry value="org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui"/>
+        <setEntry value="org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests"/>
+        <setEntry value="org.eclipse.cdt.dsf.gdb.tests"/>
+        <setEntry value="org.eclipse.cdt.dsf.gdb.ui"/>
+        <setEntry value="org.eclipse.cdt.dsf.ui"/>
+        <setEntry value="org.eclipse.cdt.examples.dsf"/>
+        <setEntry value="org.eclipse.cdt.examples.dsf.gdb"/>
+        <setEntry value="org.eclipse.cdt.examples.dsf.pda"/>
+        <setEntry value="org.eclipse.cdt.examples.dsf.pda.ui"/>
+        <setEntry value="org.eclipse.cdt.flatpak.launcher"/>
+        <setEntry value="org.eclipse.cdt.gdb"/>
+        <setEntry value="org.eclipse.cdt.gdb.ui"/>
+        <setEntry value="org.eclipse.cdt.launch"/>
+        <setEntry value="org.eclipse.cdt.launch.remote"/>
+        <setEntry value="org.eclipse.cdt.launch.serial.core"/>
+        <setEntry value="org.eclipse.cdt.launch.serial.ui"/>
+        <setEntry value="org.eclipse.cdt.llvm.dsf.lldb.core"/>
+        <setEntry value="org.eclipse.cdt.llvm.dsf.lldb.ui"/>
+        <setEntry value="org.eclipse.cdt.lsp.clangd"/>
+        <setEntry value="org.eclipse.cdt.lsp.core"/>
+        <setEntry value="org.eclipse.cdt.lsp.core.tests"/>
+        <setEntry value="org.eclipse.cdt.lsp.cquery"/>
+        <setEntry value="org.eclipse.cdt.lsp.cquery.tests"/>
+        <setEntry value="org.eclipse.cdt.lsp.ui"/>
+        <setEntry value="org.eclipse.cdt.make.core.tests"/>
+        <setEntry value="org.eclipse.cdt.make.ui"/>
+        <setEntry value="org.eclipse.cdt.make.ui.tests"/>
+        <setEntry value="org.eclipse.cdt.managedbuilder.core.tests"/>
+        <setEntry value="org.eclipse.cdt.managedbuilder.llvm.tests"/>
+        <setEntry value="org.eclipse.cdt.managedbuilder.llvm.ui"/>
+        <setEntry value="org.eclipse.cdt.managedbuilder.ui"/>
+        <setEntry value="org.eclipse.cdt.managedbuilder.ui.tests"/>
+        <setEntry value="org.eclipse.cdt.meson.core"/>
+        <setEntry value="org.eclipse.cdt.meson.docs"/>
+        <setEntry value="org.eclipse.cdt.meson.ui"/>
+        <setEntry value="org.eclipse.cdt.meson.ui.editor"/>
+        <setEntry value="org.eclipse.cdt.meson.ui.tests"/>
+        <setEntry value="org.eclipse.cdt.msw.build"/>
+        <setEntry value="org.eclipse.cdt.msw.build.tests"/>
+        <setEntry value="org.eclipse.cdt.native.serial"/>
+        <setEntry value="org.eclipse.cdt.platform.branding"/>
+        <setEntry value="org.eclipse.cdt.qt.core"/>
+        <setEntry value="org.eclipse.cdt.qt.core.tests"/>
+        <setEntry value="org.eclipse.cdt.qt.ui"/>
+        <setEntry value="org.eclipse.cdt.qt.ui.tests"/>
+        <setEntry value="org.eclipse.cdt.remote.core"/>
+        <setEntry value="org.eclipse.cdt.sdk"/>
+        <setEntry value="org.eclipse.cdt.testing"/>
+        <setEntry value="org.eclipse.cdt.tests.dsf"/>
+        <setEntry value="org.eclipse.cdt.tests.dsf.gdb"/>
+        <setEntry value="org.eclipse.cdt.testsrunner"/>
+        <setEntry value="org.eclipse.cdt.testsrunner.boost"/>
+        <setEntry value="org.eclipse.cdt.testsrunner.gtest"/>
+        <setEntry value="org.eclipse.cdt.testsrunner.qttest"/>
+        <setEntry value="org.eclipse.cdt.testsrunner.tap"/>
+        <setEntry value="org.eclipse.cdt.testsrunner.tests"/>
+        <setEntry value="org.eclipse.cdt.ui"/>
+        <setEntry value="org.eclipse.cdt.ui.tests"/>
+        <setEntry value="org.eclipse.cdt.unittest"/>
+        <setEntry value="org.eclipse.cdt.util"/>
+        <setEntry value="org.eclipse.cdt.visualizer.core"/>
+        <setEntry value="org.eclipse.cdt.visualizer.examples"/>
+        <setEntry value="org.eclipse.cdt.visualizer.ui"/>
+        <setEntry value="org.eclipse.core.net.linux.x86_64"/>
+        <setEntry value="org.eclipse.embedcdt"/>
+        <setEntry value="org.eclipse.embedcdt.codered"/>
+        <setEntry value="org.eclipse.embedcdt.codered.ui"/>
+        <setEntry value="org.eclipse.embedcdt.core"/>
+        <setEntry value="org.eclipse.embedcdt.debug.core"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.core"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.jlink"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.jlink.core"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.jlink.ui"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.openocd"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.openocd.core"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.openocd.ui"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.pyocd"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.pyocd.core"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.pyocd.ui"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.qemu"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.qemu.core"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.qemu.ui"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.restart.ui"/>
+        <setEntry value="org.eclipse.embedcdt.debug.gdbjtag.ui"/>
+        <setEntry value="org.eclipse.embedcdt.debug.packs"/>
+        <setEntry value="org.eclipse.embedcdt.doc.user"/>
+        <setEntry value="org.eclipse.embedcdt.managedbuild.cross"/>
+        <setEntry value="org.eclipse.embedcdt.managedbuild.cross.arm"/>
+        <setEntry value="org.eclipse.embedcdt.managedbuild.cross.arm.core"/>
+        <setEntry value="org.eclipse.embedcdt.managedbuild.cross.arm.ui"/>
+        <setEntry value="org.eclipse.embedcdt.managedbuild.cross.core"/>
+        <setEntry value="org.eclipse.embedcdt.managedbuild.cross.riscv"/>
+        <setEntry value="org.eclipse.embedcdt.managedbuild.cross.riscv.core"/>
+        <setEntry value="org.eclipse.embedcdt.managedbuild.cross.riscv.ui"/>
+        <setEntry value="org.eclipse.embedcdt.managedbuild.cross.ui"/>
+        <setEntry value="org.eclipse.embedcdt.managedbuild.packs.ui"/>
+        <setEntry value="org.eclipse.embedcdt.packs"/>
+        <setEntry value="org.eclipse.embedcdt.packs.core"/>
+        <setEntry value="org.eclipse.embedcdt.packs.ui"/>
+        <setEntry value="org.eclipse.embedcdt.templates.ad"/>
+        <setEntry value="org.eclipse.embedcdt.templates.ad.ui"/>
+        <setEntry value="org.eclipse.embedcdt.templates.core"/>
+        <setEntry value="org.eclipse.embedcdt.templates.cortexm"/>
+        <setEntry value="org.eclipse.embedcdt.templates.cortexm.ui"/>
+        <setEntry value="org.eclipse.embedcdt.templates.freescale"/>
+        <setEntry value="org.eclipse.embedcdt.templates.freescale.pe.ui"/>
+        <setEntry value="org.eclipse.embedcdt.templates.freescale.ui"/>
+        <setEntry value="org.eclipse.embedcdt.templates.sifive"/>
+        <setEntry value="org.eclipse.embedcdt.templates.sifive.ui"/>
+        <setEntry value="org.eclipse.embedcdt.templates.stm"/>
+        <setEntry value="org.eclipse.embedcdt.templates.stm.ui"/>
+        <setEntry value="org.eclipse.embedcdt.ui"/>
+        <setEntry value="org.eclipse.launchbar.core"/>
+        <setEntry value="org.eclipse.launchbar.core.tests"/>
+        <setEntry value="org.eclipse.launchbar.remote.core"/>
+        <setEntry value="org.eclipse.launchbar.remote.ui"/>
+        <setEntry value="org.eclipse.launchbar.ui"/>
+        <setEntry value="org.eclipse.launchbar.ui.controls"/>
+        <setEntry value="org.eclipse.launchbar.ui.tests"/>
+        <setEntry value="org.eclipse.linuxtools.cdt.libhover"/>
+        <setEntry value="org.eclipse.tm.terminal.connector.cdtserial"/>
+        <setEntry value="org.eclipse.tm.terminal.connector.local"/>
+        <setEntry value="org.eclipse.tm.terminal.connector.process"/>
+        <setEntry value="org.eclipse.tm.terminal.connector.remote"/>
+        <setEntry value="org.eclipse.tm.terminal.connector.ssh"/>
+        <setEntry value="org.eclipse.tm.terminal.connector.telnet"/>
+        <setEntry value="org.eclipse.tm.terminal.control"/>
+        <setEntry value="org.eclipse.tm.terminal.test"/>
+        <setEntry value="org.eclipse.tm.terminal.view.core"/>
+        <setEntry value="org.eclipse.tm.terminal.view.ui"/>
+        <setEntry value="org.eclipse.tools.templates.ui"/>
+    </setAttribute>
+    <stringAttribute key="featureDefaultLocation" value="workspace"/>
+    <stringAttribute key="featurePluginResolution" value="workspace"/>
+    <booleanAttribute key="includeOptional" value="false"/>
+    <stringAttribute key="location" value="${workspace_loc}/../runtime-CDT"/>
+    <mapAttribute key="org.eclipse.debug.core.environmentVariables">
+        <mapEntry key="PATH" value="/tmp/xxx:${env_var:PATH}"/>
+    </mapAttribute>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false"/>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -consolelog -cleanBuild all -no-indexer"/>
+    <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms40m&#13;&#10;-Xmx10g&#10;-Dosgi.dataAreaRequiresExplicitInit=true"/>
+    <stringAttribute key="pde.version" value="3.3"/>
+    <stringAttribute key="product" value="org.eclipse.sdk.ide"/>
+    <booleanAttribute key="restart" value="true"/>
+    <setAttribute key="selected_features">
+        <setEntry value="org.eclipse.cdt.arduino:default"/>
+        <setEntry value="org.eclipse.cdt.autotools:default"/>
+        <setEntry value="org.eclipse.cdt.build.crossgcc:default"/>
+        <setEntry value="org.eclipse.cdt.bupc:default"/>
+        <setEntry value="org.eclipse.cdt.cmake:default"/>
+        <setEntry value="org.eclipse.cdt.core.autotools:default"/>
+        <setEntry value="org.eclipse.cdt.core.lrparser.feature:default"/>
+        <setEntry value="org.eclipse.cdt.core.lrparser.sdk:default"/>
+        <setEntry value="org.eclipse.cdt.core.parser.upc.feature:default"/>
+        <setEntry value="org.eclipse.cdt.core.parser.upc.sdk:default"/>
+        <setEntry value="org.eclipse.cdt.debug.dap.gdbjtag:default"/>
+        <setEntry value="org.eclipse.cdt.debug.dap:default"/>
+        <setEntry value="org.eclipse.cdt.debug.gdbjtag:default"/>
+        <setEntry value="org.eclipse.cdt.debug.standalone:default"/>
+        <setEntry value="org.eclipse.cdt.debug.ui.memory:default"/>
+        <setEntry value="org.eclipse.cdt.docker.launcher:default"/>
+        <setEntry value="org.eclipse.cdt.examples.dsf:default"/>
+        <setEntry value="org.eclipse.cdt.gdb:default"/>
+        <setEntry value="org.eclipse.cdt.gnu.build:default"/>
+        <setEntry value="org.eclipse.cdt.gnu.debug:default"/>
+        <setEntry value="org.eclipse.cdt.gnu.dsf:default"/>
+        <setEntry value="org.eclipse.cdt.gnu.multicorevisualizer:default"/>
+        <setEntry value="org.eclipse.cdt.launch.remote:default"/>
+        <setEntry value="org.eclipse.cdt.launch.serial.feature:default"/>
+        <setEntry value="org.eclipse.cdt.llvm.dsf.lldb:default"/>
+        <setEntry value="org.eclipse.cdt.lsp:default"/>
+        <setEntry value="org.eclipse.cdt.managedbuilder.llvm:default"/>
+        <setEntry value="org.eclipse.cdt.meson:default"/>
+        <setEntry value="org.eclipse.cdt.msw:default"/>
+        <setEntry value="org.eclipse.cdt.native:default"/>
+        <setEntry value="org.eclipse.cdt.platform:default"/>
+        <setEntry value="org.eclipse.cdt.qt:default"/>
+        <setEntry value="org.eclipse.cdt.sdk:default"/>
+        <setEntry value="org.eclipse.cdt.testing:default"/>
+        <setEntry value="org.eclipse.cdt.testsrunner.feature:default"/>
+        <setEntry value="org.eclipse.cdt.visualizer:default"/>
+        <setEntry value="org.eclipse.cdt.xlc.feature:default"/>
+        <setEntry value="org.eclipse.cdt.xlc.sdk:default"/>
+        <setEntry value="org.eclipse.cdt:default"/>
+        <setEntry value="org.eclipse.e4.rcp.source:default"/>
+        <setEntry value="org.eclipse.e4.rcp:default"/>
+        <setEntry value="org.eclipse.ecf.core.feature.source:default"/>
+        <setEntry value="org.eclipse.ecf.core.feature:default"/>
+        <setEntry value="org.eclipse.ecf.core.ssl.feature.source:default"/>
+        <setEntry value="org.eclipse.ecf.core.ssl.feature:default"/>
+        <setEntry value="org.eclipse.ecf.filetransfer.feature.source:default"/>
+        <setEntry value="org.eclipse.ecf.filetransfer.feature:default"/>
+        <setEntry value="org.eclipse.ecf.filetransfer.httpclient45.feature.source:default"/>
+        <setEntry value="org.eclipse.ecf.filetransfer.httpclient45.feature:default"/>
+        <setEntry value="org.eclipse.ecf.filetransfer.ssl.feature.source:default"/>
+        <setEntry value="org.eclipse.ecf.filetransfer.ssl.feature:default"/>
+        <setEntry value="org.eclipse.emf.common.source:default"/>
+        <setEntry value="org.eclipse.emf.common:default"/>
+        <setEntry value="org.eclipse.emf.ecore.source:default"/>
+        <setEntry value="org.eclipse.emf.ecore:default"/>
+        <setEntry value="org.eclipse.epp.logging.aeri.feature:default"/>
+        <setEntry value="org.eclipse.equinox.executable:default"/>
+        <setEntry value="org.eclipse.equinox.p2.core.feature.source:default"/>
+        <setEntry value="org.eclipse.equinox.p2.core.feature:default"/>
+        <setEntry value="org.eclipse.equinox.p2.extras.feature.source:default"/>
+        <setEntry value="org.eclipse.equinox.p2.extras.feature:default"/>
+        <setEntry value="org.eclipse.equinox.p2.rcp.feature.source:default"/>
+        <setEntry value="org.eclipse.equinox.p2.rcp.feature:default"/>
+        <setEntry value="org.eclipse.equinox.p2.user.ui.source:default"/>
+        <setEntry value="org.eclipse.equinox.p2.user.ui:default"/>
+        <setEntry value="org.eclipse.help.source:default"/>
+        <setEntry value="org.eclipse.help:default"/>
+        <setEntry value="org.eclipse.jdt.source:default"/>
+        <setEntry value="org.eclipse.jdt:default"/>
+        <setEntry value="org.eclipse.launchbar.remote:default"/>
+        <setEntry value="org.eclipse.launchbar:default"/>
+        <setEntry value="org.eclipse.license:default"/>
+        <setEntry value="org.eclipse.linuxtools.docker.feature:default"/>
+        <setEntry value="org.eclipse.pde.source:default"/>
+        <setEntry value="org.eclipse.pde:default"/>
+        <setEntry value="org.eclipse.platform.source:default"/>
+        <setEntry value="org.eclipse.platform:default"/>
+        <setEntry value="org.eclipse.rcp.source:default"/>
+        <setEntry value="org.eclipse.rcp:default"/>
+        <setEntry value="org.eclipse.remote.console:default"/>
+        <setEntry value="org.eclipse.remote.serial:default"/>
+        <setEntry value="org.eclipse.remote:default"/>
+        <setEntry value="org.eclipse.sdk:default"/>
+        <setEntry value="org.eclipse.swtbot.eclipse.test.junit:default"/>
+        <setEntry value="org.eclipse.swtbot.eclipse:default"/>
+        <setEntry value="org.eclipse.swtbot.forms:default"/>
+        <setEntry value="org.eclipse.swtbot:default"/>
+        <setEntry value="org.eclipse.test:default"/>
+        <setEntry value="org.eclipse.tm.terminal.connector.cdtserial.feature:default"/>
+        <setEntry value="org.eclipse.tm.terminal.connector.local.feature:default"/>
+        <setEntry value="org.eclipse.tm.terminal.connector.ssh.feature:default"/>
+        <setEntry value="org.eclipse.tm.terminal.connector.telnet.feature:default"/>
+        <setEntry value="org.eclipse.tm.terminal.control.feature:default"/>
+        <setEntry value="org.eclipse.tm.terminal.feature:default"/>
+        <setEntry value="org.eclipse.tm.terminal.view.feature:default"/>
+        <setEntry value="org.eclipse.tm4e.feature:default"/>
+        <setEntry value="org.eclipse.wst.common_core.feature:default"/>
+        <setEntry value="org.eclipse.wst.common_ui.feature:default"/>
+        <setEntry value="org.eclipse.wst.xml_core.feature:default"/>
+        <setEntry value="org.eclipse.wst.xml_ui.feature:default"/>
+        <setEntry value="org.eclipse.wst.xml_userdoc.feature:default"/>
+    </setAttribute>
+    <setAttribute key="selected_target_bundles">
+        <setEntry value="com.google.gson@default:default"/>
+        <setEntry value="com.ibm.icu@default:default"/>
+        <setEntry value="com.sun.jna*5.6.0.v20200716-0148@default:default"/>
+        <setEntry value="com.sun.jna.platform*5.6.0.v20200722-0209@default:default"/>
+        <setEntry value="com.sun.xml.bind@default:default"/>
+        <setEntry value="jakarta.xml.bind@default:default"/>
+        <setEntry value="javax.activation@default:default"/>
+        <setEntry value="javax.annotation@default:default"/>
+        <setEntry value="javax.inject@default:default"/>
+        <setEntry value="javax.xml@default:default"/>
+        <setEntry value="org.apache.batik.constants@default:default"/>
+        <setEntry value="org.apache.batik.css@default:default"/>
+        <setEntry value="org.apache.batik.i18n@default:default"/>
+        <setEntry value="org.apache.batik.util@default:default"/>
+        <setEntry value="org.apache.commons.io@default:default"/>
+        <setEntry value="org.apache.commons.jxpath@default:default"/>
+        <setEntry value="org.apache.commons.logging@default:default"/>
+        <setEntry value="org.apache.felix.gogo.runtime@default:default"/>
+        <setEntry value="org.apache.felix.gogo.shell@default:default"/>
+        <setEntry value="org.apache.felix.scr@1:true"/>
+        <setEntry value="org.apache.xmlgraphics@default:default"/>
+        <setEntry value="org.eclipse.ant.core@default:default"/>
+        <setEntry value="org.eclipse.compare.core@default:default"/>
+        <setEntry value="org.eclipse.core.commands@default:default"/>
+        <setEntry value="org.eclipse.core.contenttype@default:default"/>
+        <setEntry value="org.eclipse.core.databinding.observable@default:default"/>
+        <setEntry value="org.eclipse.core.databinding.property@default:default"/>
+        <setEntry value="org.eclipse.core.databinding@default:default"/>
+        <setEntry value="org.eclipse.core.expressions@default:default"/>
+        <setEntry value="org.eclipse.core.filebuffers@default:default"/>
+        <setEntry value="org.eclipse.core.filesystem.linux.x86_64@default:false"/>
+        <setEntry value="org.eclipse.core.filesystem@default:default"/>
+        <setEntry value="org.eclipse.core.jobs@default:default"/>
+        <setEntry value="org.eclipse.core.resources@default:default"/>
+        <setEntry value="org.eclipse.core.runtime@default:true"/>
+        <setEntry value="org.eclipse.core.variables@default:default"/>
+        <setEntry value="org.eclipse.debug.core@default:default"/>
+        <setEntry value="org.eclipse.e4.core.commands@default:default"/>
+        <setEntry value="org.eclipse.e4.core.contexts@default:default"/>
+        <setEntry value="org.eclipse.e4.core.di.annotations@default:default"/>
+        <setEntry value="org.eclipse.e4.core.di.extensions.supplier@default:default"/>
+        <setEntry value="org.eclipse.e4.core.di.extensions@default:default"/>
+        <setEntry value="org.eclipse.e4.core.di@default:default"/>
+        <setEntry value="org.eclipse.e4.core.services@default:default"/>
+        <setEntry value="org.eclipse.e4.emf.xpath@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.css.core@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.css.swt.theme@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.css.swt@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.di@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.dialogs@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.model.workbench@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.swt.gtk@default:false"/>
+        <setEntry value="org.eclipse.e4.ui.workbench3@default:default"/>
+        <setEntry value="org.eclipse.emf.common@default:default"/>
+        <setEntry value="org.eclipse.emf.ecore.change@default:default"/>
+        <setEntry value="org.eclipse.emf.ecore.xmi@default:default"/>
+        <setEntry value="org.eclipse.emf.ecore@default:default"/>
+        <setEntry value="org.eclipse.equinox.app@default:default"/>
+        <setEntry value="org.eclipse.equinox.common@2:true"/>
+        <setEntry value="org.eclipse.equinox.concurrent@default:default"/>
+        <setEntry value="org.eclipse.equinox.console@default:default"/>
+        <setEntry value="org.eclipse.equinox.event@default:default"/>
+        <setEntry value="org.eclipse.equinox.frameworkadmin.equinox@default:default"/>
+        <setEntry value="org.eclipse.equinox.frameworkadmin@default:default"/>
+        <setEntry value="org.eclipse.equinox.preferences@default:default"/>
+        <setEntry value="org.eclipse.equinox.registry@default:default"/>
+        <setEntry value="org.eclipse.equinox.simpleconfigurator@1:true"/>
+        <setEntry value="org.eclipse.help@default:default"/>
+        <setEntry value="org.eclipse.jface.databinding@default:default"/>
+        <setEntry value="org.eclipse.jface.notifications@default:default"/>
+        <setEntry value="org.eclipse.jface@default:default"/>
+        <setEntry value="org.eclipse.ltk.core.refactoring@default:default"/>
+        <setEntry value="org.eclipse.osgi.compatibility.state@default:false"/>
+        <setEntry value="org.eclipse.osgi.services@default:default"/>
+        <setEntry value="org.eclipse.osgi.util@default:default"/>
+        <setEntry value="org.eclipse.osgi@-1:true"/>
+        <setEntry value="org.eclipse.swt.browser.chromium.gtk.linux.x86_64@default:false"/>
+        <setEntry value="org.eclipse.swt.gtk.linux.x86_64@default:false"/>
+        <setEntry value="org.eclipse.swt@default:default"/>
+        <setEntry value="org.eclipse.team.core@default:default"/>
+        <setEntry value="org.eclipse.text@default:default"/>
+        <setEntry value="org.eclipse.urischeme@default:default"/>
+        <setEntry value="org.freemarker@default:default"/>
+        <setEntry value="org.w3c.css.sac@default:default"/>
+        <setEntry value="org.w3c.dom.events@default:default"/>
+        <setEntry value="org.w3c.dom.smil@default:default"/>
+        <setEntry value="org.w3c.dom.svg@default:default"/>
+    </setAttribute>
+    <setAttribute key="selected_workspace_bundles">
+        <setEntry value="org.eclipse.cdt.core.linux.x86_64@default:false"/>
+        <setEntry value="org.eclipse.cdt.core.linux@default:false"/>
+        <setEntry value="org.eclipse.cdt.core.native@default:default"/>
+        <setEntry value="org.eclipse.cdt.core@default:default"/>
+        <setEntry value="org.eclipse.cdt.make.core@default:default"/>
+        <setEntry value="org.eclipse.cdt.managedbuilder.core@default:default"/>
+        <setEntry value="org.eclipse.cdt.managedbuilder.gnu.ui@default:default"/>
+        <setEntry value="org.eclipse.cdt.managedbuilder.headlessbuilderapp@default:default"/>
+        <setEntry value="org.eclipse.tools.templates.core@default:default"/>
+        <setEntry value="org.eclipse.tools.templates.freemarker@default:default"/>
+    </setAttribute>
+    <booleanAttribute key="show_selected_only" value="false"/>
+    <stringAttribute key="templateConfig" value="${target_home}/configuration/config.ini"/>
+    <booleanAttribute key="tracing" value="true"/>
+    <mapAttribute key="tracingOptions">
+        <mapEntry key="org.eclipse.cdt.cmake.is.core/debug/arglets" value="false"/>
+        <mapEntry key="org.eclipse.cdt.cmake.is.core/debug/detected.entries" value="false"/>
+        <mapEntry key="org.eclipse.cdt.cmake.is.core/debug/participant" value="false"/>
+        <mapEntry key="org.eclipse.cdt.cmake.is.core/debug/performance" value="false"/>
+        <mapEntry key="org.eclipse.cdt.codan.core/debug" value="false"/>
+        <mapEntry key="org.eclipse.cdt.codan.core/debug/performance" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core.native/debug" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core.native/debug/win32/registry" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/ASTCache" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/deltaprocessor" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/formatter" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/index/IndexFileSet" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/index/locks" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/indexer/activity" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/indexer/problems" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/indexer/problems/inclusion" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/indexer/problems/scanner" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/indexer/problems/syntax" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/indexer/setup" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/indexer/statistics" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/matchlocator" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/model" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/parser" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/parser/CompositeValue" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/parser/exceptions" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/resourceLookup" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/scanner" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/scanner/missingIncludeGuards" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/search" value="false"/>
+        <mapEntry key="org.eclipse.cdt.core/debug/typeresolver" value="false"/>
+        <mapEntry key="org.eclipse.cdt.debug.core/debug" value="false"/>
+        <mapEntry key="org.eclipse.cdt.debug.core/debug/executables" value="false"/>
+        <mapEntry key="org.eclipse.cdt.debug.ui.memory.traditional/debug" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf.gdb/debug" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf.gdb/debug/timeouts" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf.ui/debug" value="true"/>
+        <mapEntry key="org.eclipse.cdt.dsf.ui/debug/disassembly" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf.ui/debug/stepping" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf.ui/debug/vm/atomicUpdate" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf.ui/debug/vm/cache" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf.ui/debug/vm/contentProvider" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf.ui/debug/vm/delta" value="true"/>
+        <mapEntry key="org.eclipse.cdt.dsf.ui/debug/vm/presentationId" value=""/>
+        <mapEntry key="org.eclipse.cdt.dsf.ui/debug/vm/updates" value="true"/>
+        <mapEntry key="org.eclipse.cdt.dsf.ui/debug/vm/updates/regex" value=""/>
+        <mapEntry key="org.eclipse.cdt.dsf/debug" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf/debug/executor" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf/debug/executorName" value=""/>
+        <mapEntry key="org.eclipse.cdt.dsf/debug/monitors" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf/debug/session" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf/debug/session/dispatches" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf/debug/session/listeners" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf/debug/session/modelAdapters" value="false"/>
+        <mapEntry key="org.eclipse.cdt.dsf/debugCache" value="false"/>
+        <mapEntry key="org.eclipse.cdt.examples.dsf.pda/debug" value="false"/>
+        <mapEntry key="org.eclipse.cdt.make.core/debug" value="true"/>
+        <mapEntry key="org.eclipse.cdt.make.core/debug/scdiscovery" value="false"/>
+        <mapEntry key="org.eclipse.cdt.managedbuilder.core/debug" value="true"/>
+        <mapEntry key="org.eclipse.cdt.managedbuilder.core/debug/buildModel" value="false"/>
+        <mapEntry key="org.eclipse.cdt.managedbuilder.core/debug/builder" value="true"/>
+        <mapEntry key="org.eclipse.cdt.managedbuilder.core/debug/pathEntry" value="false"/>
+        <mapEntry key="org.eclipse.cdt.managedbuilder.core/debug/pathEntryInit" value="false"/>
+        <mapEntry key="org.eclipse.cdt.tests.dsf.gdb/debug" value="false"/>
+        <mapEntry key="org.eclipse.cdt.tests.dsf.gdb/debug/waitMetrics" value="false"/>
+        <mapEntry key="org.eclipse.cdt.ui.tests/debug" value="false"/>
+        <mapEntry key="org.eclipse.cdt.ui/debug" value="false"/>
+        <mapEntry key="org.eclipse.cdt.ui/debug/SemanticHighlighting" value="false"/>
+        <mapEntry key="org.eclipse.cdt.ui/debug/contentassist" value="false"/>
+        <mapEntry key="org.eclipse.cdt.ui/debug/folding" value="false"/>
+        <mapEntry key="org.eclipse.cdt.ui/debug/includeOrganizer/headerSubstitution" value="false"/>
+        <mapEntry key="org.eclipse.launchbar.core/debug" value="true"/>
+        <mapEntry key="org.eclipse.launchbar.core/debug/launchbar" value="true"/>
+        <mapEntry key="org.eclipse.launchbar.ui/iconSize32" value="false"/>
+        <mapEntry key="org.eclipse.launchbar.ui/launchIconUpdater" value="false"/>
+        <mapEntry key="org.eclipse.remote.core/debug" value="false"/>
+        <mapEntry key="org.eclipse.remote.core/debug/commands" value="false"/>
+        <mapEntry key="org.eclipse.tm.terminal.connector.local/debugmode" value="0"/>
+        <mapEntry key="org.eclipse.tm.terminal.connector.process/debugmode" value="0"/>
+        <mapEntry key="org.eclipse.tm.terminal.connector.serial/debugmode" value="0"/>
+        <mapEntry key="org.eclipse.tm.terminal.connector.serial/trace/serialLinePanel" value="false"/>
+        <mapEntry key="org.eclipse.tm.terminal.connector.ssh/debugmode" value="0"/>
+        <mapEntry key="org.eclipse.tm.terminal.connector.telnet/debugmode" value="0"/>
+        <mapEntry key="org.eclipse.tm.terminal.control/debug/log" value="true"/>
+        <mapEntry key="org.eclipse.tm.terminal.control/debug/log/VT100Backend" value="true"/>
+        <mapEntry key="org.eclipse.tm.terminal.control/debug/log/char" value="true"/>
+        <mapEntry key="org.eclipse.tm.terminal.view.core/debugmode" value="0"/>
+        <mapEntry key="org.eclipse.tm.terminal.view.ui/debugmode" value="0"/>
+        <mapEntry key="org.eclipse.tm.terminal.view.ui/trace/launchTerminalCommandHandler" value="false"/>
+        <mapEntry key="org.eclipse.tm.terminal.view.ui/trace/outputStreamMonitor" value="false"/>
+    </mapAttribute>
+    <booleanAttribute key="useCustomFeatures" value="false"/>
+    <booleanAttribute key="useDefaultConfig" value="true"/>
+    <booleanAttribute key="useDefaultConfigArea" value="true"/>
+    <booleanAttribute key="useProduct" value="false"/>
+</launchConfiguration>

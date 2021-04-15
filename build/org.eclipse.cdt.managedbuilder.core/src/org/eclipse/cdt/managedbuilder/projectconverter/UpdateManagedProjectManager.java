@@ -48,9 +48,9 @@ import org.osgi.framework.Version;
  */
 public class UpdateManagedProjectManager {
 	static private ThreadLocal<Map<String, UpdateManagedProjectManager>> fThreadInfo = new ThreadLocal<>();
-	static private IOverwriteQuery fBackupFileOverwriteQuery = null;
-	static private IOverwriteQuery fOpenQuestionQuery = null;
-	static private IOverwriteQuery fUpdateProjectQuery = null;
+	static private Object fBackupFileOverwriteQuery = null;
+	static private Object fOpenQuestionQuery = null;
+	static private Object fUpdateProjectQuery = null;
 
 	private ManagedBuildInfo fConvertedInfo = null;
 	private boolean fIsInfoReadOnly = false;
@@ -151,7 +151,7 @@ public class UpdateManagedProjectManager {
 			return;
 		IContainer destFolder = project;
 		IFile dstFile = destFolder.getFile(new Path(settingsFile.getName() + suffix));
-		mngr.backupFile(settingsFile, dstFile, monitor, project, fBackupFileOverwriteQuery);
+		mngr.backupFile(settingsFile, dstFile, monitor, project, (IOverwriteQuery) fBackupFileOverwriteQuery);
 	}
 
 	/*
@@ -171,7 +171,7 @@ public class UpdateManagedProjectManager {
 			return;
 		IContainer destFolder = project;
 		IFile dstFile = destFolder.getFile(new Path(settingsFile.getName() + suffix));
-		mngr.backupFile(settingsFile, dstFile, monitor, project, fBackupFileOverwriteQuery);
+		mngr.backupFile(settingsFile, dstFile, monitor, project, (IOverwriteQuery) fBackupFileOverwriteQuery);
 	}
 
 	/* (non-Javadoc)
@@ -202,7 +202,7 @@ public class UpdateManagedProjectManager {
 							ConverterMessages.getResourceString("UpdateManagedProjectManager.0"), //$NON-NLS-1$
 							ConverterMessages.getFormattedString("UpdateManagedProjectManager.1", //$NON-NLS-1$
 									new String[] { dstFile.getName(), project.getName() }),
-							fOpenQuestionQuery, false);
+							(IOverwriteQuery) fOpenQuestionQuery, false);
 
 				if (shouldUpdate) {
 					dstFile.delete();
@@ -327,14 +327,14 @@ public class UpdateManagedProjectManager {
 			boolean shouldUpdate;
 			if (fUpdateProjectQuery != null)
 				shouldUpdate = ProjectConverter.getBooleanFromQueryAnswer(
-						fUpdateProjectQuery.queryOverwrite(fProject.getFullPath().toString()));
+						((IOverwriteQuery) fUpdateProjectQuery).queryOverwrite(fProject.getFullPath().toString()));
 			else
 				shouldUpdate = ProjectConverter.openQuestion(fProject, "UpdateManagedProjectManager.3", //$NON-NLS-1$
 						ConverterMessages.getResourceString("UpdateManagedProjectManager.3"), //$NON-NLS-1$
 						ConverterMessages.getFormattedString("UpdateManagedProjectManager.4", //$NON-NLS-1$
 								new String[] { fProject.getName(), version.toString(),
 										ManagedBuildManager.getBuildInfoVersion().toString() }),
-						fOpenQuestionQuery, false);
+						(IOverwriteQuery) fOpenQuestionQuery, false);
 
 			if (!shouldUpdate) {
 				fIsInfoReadOnly = true;

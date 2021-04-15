@@ -51,6 +51,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.cdt.managedbuilder.internal.core.UIBundlesAvailable;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -253,6 +254,9 @@ public class ProjectConverter implements ICProjectConverter {
 		return false;
 	}
 
+	/**
+	 * Do not reference this method without checking {@link UIBundlesAvailable} first.
+	 */
 	static public boolean openQuestion(final IResource rc, final String id, final String title, final String message,
 			IOverwriteQuery query, final boolean multiple) {
 		if (query != null)
@@ -279,6 +283,9 @@ public class ProjectConverter implements ICProjectConverter {
 		return answer[0];
 	}
 
+	/**
+	 * Do not reference this method without checking {@link UIBundlesAvailable} first.
+	 */
 	static private void openInformation(final IResource rc, final String id, final String title, final String message,
 			final boolean multiple) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();

@@ -103,6 +103,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.TargetPlatform;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.cdt.managedbuilder.internal.core.UIBundlesAvailable;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildConfigurationData;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildEntryStorage;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
@@ -313,7 +314,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 
 		// Create the array and copy the elements over
-		int size = projectTypes != null ? projectTypes.size() : 0;
+		if (projectTypes == null) {
+			return new IProjectType[0];
+		}
+
+		int size = projectTypes.size();
 
 		IProjectType[] types = new IProjectType[size];
 
@@ -1216,31 +1221,39 @@ public class ManagedBuildManager extends AbstractCExtension {
 					if (projectFile.isReadOnly()) {
 						// If we are not running headless, and there is a UI Window around, grab it
 						// and the associated shell
-						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						if (window == null) {
-							IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-							window = windows[0];
-						}
-						Shell shell = null;
-						if (window != null) {
-							shell = window.getShell();
-						}
-						// Inform Eclipse that we are intending to modify this file
-						// This will provide the user the opportunity, via UI prompts, to fetch the file from source code control
-						// reset a read-only file protection to write etc.
-						// If there is no shell, i.e. shell is null, then there will be no user UI interaction
-						IStatus status = projectFile.getWorkspace().validateEdit(new IFile[] { projectFile }, shell);
-						// If the file is still read-only, then we should not attempt the write, since it will
-						// just fail - just throw an exception, to be caught below, and inform the user
-						// For other non-successful status, we take our chances, attempt the write, and pass
-						// along any exception thrown
-						if (!status.isOK()) {
-							if (status.getCode() == IResourceStatus.READ_ONLY_LOCAL) {
-								stream.close();
-								throw new IOException(ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_READ_ONLY,
-										projectFile.getFullPath().toString()));
+						if (UIBundlesAvailable.INSTANCE.isAvailable()) {
+							IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+							if (window == null) {
+								IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+								window = windows[0];
 							}
+							Shell shell = null;
+							if (window != null) {
+								shell = window.getShell();
+							}
+							// Inform Eclipse that we are intending to modify this file
+							// This will provide the user the opportunity, via UI prompts, to fetch the file from source code control
+							// reset a read-only file protection to write etc.
+							// If there is no shell, i.e. shell is null, then there will be no user UI interaction
+							IStatus status = projectFile.getWorkspace().validateEdit(new IFile[] { projectFile },
+									shell);
+							// If the file is still read-only, then we should not attempt the write, since it will
+							// just fail - just throw an exception, to be caught below, and inform the user
+							// For other non-successful status, we take our chances, attempt the write, and pass
+							// along any exception thrown
+							if (!status.isOK()) {
+								if (status.getCode() == IResourceStatus.READ_ONLY_LOCAL) {
+									stream.close();
+									throw new IOException(ManagedMakeMessages.getFormattedString(
+											MANIFEST_ERROR_READ_ONLY, projectFile.getFullPath().toString()));
+								}
+							}
+						} else {
+							stream.close();
+							throw new IOException(ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_READ_ONLY,
+									projectFile.getFullPath().toString()));
 						}
+
 					}
 					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, //$NON-NLS-1$
 							new NullProgressMonitor());
@@ -1271,20 +1284,26 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 
 		if (err != null) {
-			// Put out an error message indicating that the attempted write to the .cdtbuild project file failed
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if (window == null) {
-				IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-				window = windows[0];
-			}
+			final String exceptionMsg = err.getMessage();
+			final String errMsg = ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_WRITE_FAILED, exceptionMsg);
+			if (UIBundlesAvailable.INSTANCE.isAvailable()) {
+				// Put out an error message indicating that the attempted write to the .cdtbuild project file failed
+				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				if (window == null) {
+					IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+					window = windows[0];
+				}
 
-			final Shell shell = window.getShell();
-			if (shell != null) {
-				final String exceptionMsg = err.getMessage();
-				shell.getDisplay()
-						.syncExec(() -> MessageDialog.openError(shell,
-								ManagedMakeMessages.getResourceString("ManagedBuildManager.error.write_failed_title"), //$NON-NLS-1$
-								ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_WRITE_FAILED, exceptionMsg)));
+				final Shell shell = window.getShell();
+				if (shell != null) {
+					shell.getDisplay()
+							.syncExec(() -> MessageDialog.openError(shell,
+									ManagedMakeMessages
+											.getResourceString("ManagedBuildManager.error.write_failed_title"), //$NON-NLS-1$
+									errMsg));
+				}
+			} else {
+				System.err.println(errMsg);
 			}
 		}
 		// If we return an honest status when the operation fails, there are instances when the UI behavior
@@ -1997,9 +2016,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 					}
 				}
 
-				//  Upgrade the project's CDT version if necessary
-				if (!UpdateManagedProjectManager.isCompatibleProject(buildInfo)) {
-					UpdateManagedProjectManager.updateProject(project, buildInfo);
+				if (UIBundlesAvailable.INSTANCE.isAvailable()) {
+					//  Upgrade the project's CDT version if necessary
+					if (!UpdateManagedProjectManager.isCompatibleProject(buildInfo)) {
+						UpdateManagedProjectManager.updateProject(project, buildInfo);
+					}
 				}
 				//  Check to see if the upgrade (if required) succeeded
 				if (buildInfo.getManagedProject() == null || (!buildInfo.getManagedProject().isValid())) {
@@ -2080,22 +2101,26 @@ public class ManagedBuildManager extends AbstractCExtension {
 					for (IExtension extension : extensions) {
 						// Can we read this manifest
 						if (!isVersionCompatible(extension)) {
-							//  The version of the Plug-in is greater than what the manager thinks it understands
-							//  Display error message
-							IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-							if (window == null) {
-								IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-								window = windows[0];
-							}
-
-							final Shell shell = window.getShell();
 							final String errMsg = ManagedMakeMessages.getFormattedString(MANIFEST_VERSION_ERROR,
 									extension.getUniqueIdentifier());
-							shell.getDisplay()
-									.asyncExec(() -> MessageDialog.openError(shell,
-											ManagedMakeMessages.getResourceString(
-													"ManagedBuildManager.error.manifest_load_failed_title"), //$NON-NLS-1$
-											errMsg));
+							if (UIBundlesAvailable.INSTANCE.isAvailable()) {
+								//  The version of the Plug-in is greater than what the manager thinks it understands
+								//  Display error message
+								IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+								if (window == null) {
+									IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+									window = windows[0];
+								}
+
+								final Shell shell = window.getShell();
+								shell.getDisplay()
+										.asyncExec(() -> MessageDialog.openError(shell,
+												ManagedMakeMessages.getResourceString(
+														"ManagedBuildManager.error.manifest_load_failed_title"), //$NON-NLS-1$
+												errMsg));
+							} else {
+								System.err.println(errMsg);
+							}
 						} else {
 							// Get the "configuraton elements" defined in the plugin.xml file.
 							// Note that these "configuration elements" are not related to the
@@ -2634,7 +2659,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 		if (BuildDbgUtil.DEBUG)
 			BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD,
 					"build info load: info is null, querying the update mngr"); //$NON-NLS-1$
-		buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
+		if (UIBundlesAvailable.INSTANCE.isAvailable()) {
+			buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
+		}
 
 		if (buildInfo != null)
 			return buildInfo;
@@ -2778,7 +2805,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 		if (buildInfo == null && resource instanceof IProject) {
 			// Check weather getBuildInfo is called from converter
-			buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo((IProject) resource);
+			if (UIBundlesAvailable.INSTANCE.isAvailable()) {
+				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo((IProject) resource);
+			} else {
+				// IOverwriteQuery (from optional dependency org.eclipse.ui) not available
+				buildInfo = null;
+			}
 			if (buildInfo != null)
 				return true;
 			// Check if the build information can be loaded from the .cdtbuild file
@@ -3360,39 +3392,43 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	private static IBuildObject invokeConverter(ManagedBuildInfo bi, IBuildObject buildObject,
 			IConfigurationElement element) {
+		if (UIBundlesAvailable.INSTANCE.isAvailable()) {
+			if (element != null) {
+				IConvertManagedBuildObject convertBuildObject = null;
+				String toId = element.getAttribute("toId"); //$NON-NLS-1$
+				String fromId = element.getAttribute("fromId"); //$NON-NLS-1$
 
-		if (element != null) {
-			IConvertManagedBuildObject convertBuildObject = null;
-			String toId = element.getAttribute("toId"); //$NON-NLS-1$
-			String fromId = element.getAttribute("fromId"); //$NON-NLS-1$
-
-			try {
-				convertBuildObject = (IConvertManagedBuildObject) element.createExecutableExtension("class"); //$NON-NLS-1$
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			if (convertBuildObject != null) {
-				// invoke the converter
-				IProject prj = null;
-				IBuildObject result = null;
 				try {
-					if (bi != null) {
-						prj = (IProject) bi.getManagedProject().getOwner();
-						UpdateManagedProjectManager.addInfo(prj, bi);
-					}
-					result = convertBuildObject.convert(buildObject, fromId, toId, false);
-				} finally {
-					if (bi != null)
-						UpdateManagedProjectManager.delInfo(prj);
+					convertBuildObject = (IConvertManagedBuildObject) element.createExecutableExtension("class"); //$NON-NLS-1$
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				return result;
+
+				if (convertBuildObject != null) {
+					// invoke the converter
+					IProject prj = null;
+					IBuildObject result = null;
+					try {
+						if (bi != null) {
+							prj = (IProject) bi.getManagedProject().getOwner();
+							UpdateManagedProjectManager.addInfo(prj, bi);
+						}
+						result = convertBuildObject.convert(buildObject, fromId, toId, false);
+					} finally {
+						if (bi != null) {
+							UpdateManagedProjectManager.delInfo(prj);
+						}
+
+					}
+					return result;
+				}
 			}
 		}
 		// if control comes here, it means that either 'convertBuildObject' is null or
 		// converter did not convert the object successfully
 		return null;
+
 	}
 
 	/*

@@ -24,6 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.UIBundlesAvailable;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ProjectConverter;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -43,6 +44,8 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.osgi.framework.Version;
 
 /**
+ * Do not reference this class without checking {@link UIBundlesAvailable} first.
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

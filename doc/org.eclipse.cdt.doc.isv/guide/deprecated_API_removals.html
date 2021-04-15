@@ -56,6 +56,12 @@
     <li><a href="#binaryparsers">32-bit Binary parsers with 64-bit replacements</a></li>
     <li><a href="#baudrate">BaudRate enum in org.eclipse.cdt.serial</a></li>
   </ol>
+  <p>
+    Planned Removals after June 2023
+  </p>
+  <ol>
+    <li><a href="#eclipseuiinmanagedcore">References to Eclipse UI in org.eclipse.cdt.managedbuilder.core</a></li>
+  </ol>
 
   <hr>
 
@@ -393,6 +399,18 @@
   </ul>
   <p>
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=563108" target="_blank">Bug 563108</a>.
+  </p>
+
+  <h3>API Removals after June 2023</h3>
+
+  <h3>1. <a name="eclipseuiinmanagedcore">References to Eclipse UI in org.eclipse.cdt.managedbuilder.core</a></h3>
+  <p>
+    There are numerous references to Eclipse UI in org.eclipse.cdt.managedbuilder.core. They are currently being "protected"
+    with org.eclipse.cdt.managedbuilder.internal.core.UIBundlesAvailable which must be checked before accessing the UI
+    components as the dependency to org.eclipse.ui is optional.
+  </p>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=572850" target="_blank">Bug 572850</a>.
   </p>
 </body>
 

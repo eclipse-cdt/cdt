@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "180edaae_42b5ec8e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2009,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-04-15T08:26:03Z",
+      "side": 1,
+      "message": "If this is unavoidable, perhaps we can re-throw the exception if it is not for the expected class?",
+      "range": {
+        "startLine": 2009,
+        "startChar": 6,
+        "endLine": 2009,
+        "endChar": 36
+      },
+      "revId": "d439cc0a7d4217c5334d3520a90d5da484766762",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

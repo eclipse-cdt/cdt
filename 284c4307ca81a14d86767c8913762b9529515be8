@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3f3d884e_2851ce9f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/CdtTemplate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1244
+      },
+      "writtenOn": "2021-04-16T16:35:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eb7e0642_77fa2012",
+      "revId": "284c4307ca81a14d86767c8913762b9529515be8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e076dc0_77454e8c",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/CdtTemplate.java",
         "patchSetId": 1
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "5fe7da4e_bbb6580a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/CdtTemplate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1244
+      },
+      "writtenOn": "2021-04-16T16:35:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8e076dc0_77454e8c",
+      "range": {
+        "startLine": 47,
+        "startChar": 30,
+        "endLine": 47,
+        "endChar": 71
+      },
+      "revId": "284c4307ca81a14d86767c8913762b9529515be8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b01bb1e6_c55dc709",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
         "patchSetId": 1
@@ -56,6 +98,24 @@
       "revId": "284c4307ca81a14d86767c8913762b9529515be8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "164b45a1_e9f44680",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 772,
+      "author": {
+        "id": 1244
+      },
+      "writtenOn": "2021-04-16T16:35:36Z",
+      "side": 1,
+      "message": "Thanks Jonah, I can create the cdtResult with items that are actually used, before sorting, but  after sorting I am losing order by contentTypes groups, and I need to recreate the list again. I prepared a new version of code. You will see what I mean.",
+      "parentUuid": "b01bb1e6_c55dc709",
+      "revId": "284c4307ca81a14d86767c8913762b9529515be8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

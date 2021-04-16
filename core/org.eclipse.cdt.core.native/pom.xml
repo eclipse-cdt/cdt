@@ -133,5 +133,31 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>production</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" failOnError="true" dir="./native_src">
+											<arg value="production" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>

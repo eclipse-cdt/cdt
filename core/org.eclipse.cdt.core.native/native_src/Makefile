@@ -66,6 +66,19 @@ clean :
 
 rebuild: clean all
 
+MAC_TO_SIGN=$(OS_DIR_MACOS_X86_64)/libspawner.jnilib \
+	$(OS_DIR_MACOS_X86_64)/libpty.jnilib \
+	$(OS_DIR_MACOS_X86)/libspawner.jnilib \
+	$(OS_DIR_MACOS_X86)/libpty.jnilib
+WIN_TO_SIGN=$(OS_DIR_WIN32_X86_64)/starter.exe \
+	$(OS_DIR_WIN32_X86_64)/spawner.dll \
+	$(OS_DIR_WIN32_X86_64)/pty.dll
+production: $(MAC_TO_SIGN) $(WIN_TO_SIGN)
+	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),mv $(tosign) $(tosign)-unsigned &&) true
+	$(foreach tosign,$(MAC_TO_SIGN),curl -o $(tosign) -F file=@$(tosign)-unsigned https://cbi.eclipse.org/macos/codesign/sign &&) true
+	$(foreach tosign,$(WIN_TO_SIGN),curl -o $(tosign) -F file=@$(tosign)-unsigned http://build.eclipse.org:31338/winsign.php &&) true
+	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),rm $(tosign)-unsigned &&) true
+
 
 # Windows x86_64
 # Windows DLLs have a build timestamp in them. This makes it impossible to have reproducible builds.

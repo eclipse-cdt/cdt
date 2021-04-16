@@ -47,6 +47,15 @@ all:	$(LIBS)
 clean :
 	$(RM) $(LIBS)
 
+production:
+	mv $(OS_DIR)/macosx/x86_64/libserial.jnilib $(OS_DIR)/macosx/x86_64/unsigned-libserial.jnilib
+	curl -o $(OS_DIR)/macosx/x86_64/libserial.jnilib -F file=@$(OS_DIR)/macosx/x86_64/unsigned-libserial.jnilib https://cbi.eclipse.org/macos/codesign/sign
+	rm $(OS_DIR)/macosx/x86_64/unsigned-libserial.jnilib
+
+	mv $(OS_DIR)/win32/x86_64/serial.dll $(OS_DIR)/win32/x86_64/unsigned-serial.dll
+	curl -o $(OS_DIR)/win32/x86_64/serial.dll -F file=$(OS_DIR)/win32/x86_64/unsigned-serial.dll http://build.eclipse.org:31338/winsign.php
+	rm $(OS_DIR)/win32/x86_64/serial.dll
+
 rebuild: clean all
 
 # Windows DLLs have a build timestamp in them. This makes it impossible to have reproducible builds.

@@ -58,6 +58,17 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<configuration>
+					<!-- When signing binaries, the result is not checked into repo, so the
+						 jgit timestamp provider cannot be used. This has the side effect
+						 that the version of this bundle needs to be incremented on each
+						 CDT release. -->
+					<timestampProvider>default</timestampProvider>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>

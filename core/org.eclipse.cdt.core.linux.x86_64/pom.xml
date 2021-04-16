@@ -21,7 +21,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>6.0.100-SNAPSHOT</version>
+	<version>6.0.200-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.core.linux.x86_64</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
@@ -57,6 +57,17 @@
 						<phase>none</phase>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<configuration>
+					<!-- When signing binaries, the result is not checked into repo, so the
+						 jgit timestamp provider cannot be used. This has the side effect
+						 that the version of this bundle needs to be incremented on each
+						 CDT release. -->
+					<timestampProvider>default</timestampProvider>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

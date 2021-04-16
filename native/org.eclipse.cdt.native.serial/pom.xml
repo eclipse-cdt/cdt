@@ -227,5 +227,46 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>production</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" failOnError="true" dir="./native_src">
+											<arg value="production" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<configuration>
+					<!-- When signing binaries, the result is not checked into repo, so the
+						 jgit timestamp provider cannot be used. This has the side effect
+						 that the version of this bundle needs to be incremented on each
+						 CDT release. -->
+					<timestampProvider>default</timestampProvider>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

@@ -116,6 +116,24 @@
       "revId": "284c4307ca81a14d86767c8913762b9529515be8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2144d44e_56219682",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 772,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-16T17:56:55Z",
+      "side": 1,
+      "message": "+1 I see what you mean and had not understood that subtlety when I made the original comment.",
+      "parentUuid": "164b45a1_e9f44680",
+      "revId": "284c4307ca81a14d86767c8913762b9529515be8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

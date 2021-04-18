@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 Wind River Systems and others.
+ * Copyright (c) 2006, 2021 Wind River Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Marc Khouzam (Ericsson) - Create the gdb process through the process factory (Bug 210366)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
  *     John Dallaway - Resolve variables using launch context (Bug 399460)
+ *     John Dallaway - Set GDB process attributes (Bug 572944)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -215,6 +217,9 @@ public class GdbLaunch extends DsfLaunch implements ITracedLaunch, ITargetedLaun
 			// First set attribute to specify we want to create the gdb process.
 			// Bug 210366
 			Map<String, String> attributes = new HashMap<>();
+			attributes.put(DebugPlugin.ATTR_ENVIRONMENT, StringUtil.join(getLaunchEnvironment(), "\n")); //$NON-NLS-1$
+			attributes.put(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, Long.toString(System.currentTimeMillis()));
+			attributes.put(DebugPlugin.ATTR_WORKING_DIRECTORY, getGDBWorkingDirectory().toOSString());
 			attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
 					IGdbDebugConstants.GDB_PROCESS_CREATION_VALUE);
 			DebugPlugin.newProcess(this, gdbProc, label, attributes);

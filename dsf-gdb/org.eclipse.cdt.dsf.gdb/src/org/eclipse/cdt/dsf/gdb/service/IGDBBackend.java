@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Nokia Corporation.
+ * Copyright (c) 2008, 2021 Nokia Corporation.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *    Nokia    - initial version
  *    Ericsson - Minor cleanup
+ *    John Dallaway - Add getDebuggerCommandLineArray() method (Bug 572944)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -84,6 +85,16 @@ public interface IGDBBackend extends IMIBackend {
 	 *             - if any error occurs.
 	 */
 	public IPath getGDBWorkingDirectory() throws CoreException;
+
+	/**
+	 * Get the command line used to invoke GDB.
+	 *
+	 * @return String[] - the GDB command and its arguments as an array
+	 * @since 6.4
+	 */
+	default String[] getDebuggerCommandLineArray() {
+		return new String[0];
+	}
 
 	/**
 	 * @throws CoreException

@@ -123,13 +123,14 @@ public class GDBBackend_7_12 extends GDBBackend {
 		return fDummyErrorStream;
 	}
 
+	/** @deprecated Override {@link #getDebuggerCommandLineArray()} instead */
 	@Override
+	@Deprecated(since = "6.4", forRemoval = true)
 	protected String[] getDebuggerCommandLine() {
 		// Start from the original command line method which
 		// could have been overridden by extenders, and add what we need
 		// to convert it to a command that will launch in CLI mode.
 		// Then trigger the MI console
-		@SuppressWarnings("deprecation")
 		String[] originalCommandLine = getGDBCommandLineArray();
 
 		if (!isFullGdbConsoleSupported()) {
@@ -195,7 +196,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 		// If we are launching the full console, we need to use a PTY in TERMINAL mode
 		// for the GDB CLI to properly display in its view
 		Process proc = null;
-		String[] commandLine = getDebuggerCommandLine();
+		String[] commandLine = getDebuggerCommandLineArray();
 		try {
 			fCLIPty = new PTY(Mode.TERMINAL);
 			IPath path = getGDBWorkingDirectory();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 QNX Software Systems and others.
+ * Copyright (c) 2008, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@
  * Marc Khouzam (Ericsson - Show GDB version in debug view node label (Bug 455408)
  * Samuel Hultgren (STMicroelectronics) - Bug 533769
  * Red Hat Inc.           - add Flatpak support
+ * John Dallaway          - Show GDB path in OS format (Bug 572944)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -223,7 +224,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 		final IProgressMonitor subMon2 = new SubProgressMonitor(monitor, 4,
 				SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 
-		Query<Object> completeLaunchQuery = new Query<Object>() {
+		Query<Object> completeLaunchQuery = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Object> rm) {
 				DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(),
@@ -283,7 +284,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 		if (gdbPath == null) {
 			gdbPath = LaunchUtils.getGDBPath(config);
 		}
-		return gdbPath.toString().trim() + " (" + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return gdbPath.toOSString().trim() + " (" + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -293,7 +294,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 	protected void cleanupLaunch(ILaunch launch) throws DebugException {
 		if (launch instanceof GdbLaunch) {
 			final GdbLaunch gdbLaunch = (GdbLaunch) launch;
-			Query<Object> launchShutdownQuery = new Query<Object>() {
+			Query<Object> launchShutdownQuery = new Query<>() {
 				@Override
 				protected void execute(DataRequestMonitor<Object> rm) {
 					gdbLaunch.shutdownSession(rm);

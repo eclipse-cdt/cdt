@@ -395,6 +395,14 @@ public class VT100Emulator implements ControlListener {
 					resetTerminal();
 					break;
 
+				case 'M':
+					// Reverse line feed
+					ansiState = ANSISTATE_INITIAL;
+					if (text.getCursorLine() == 0)
+						text.scrollDown(1);
+					moveCursorUp(1);
+					break;
+
 				default:
 					Logger.log("Unsupported escape sequence: escape '" + character + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 					ansiState = ANSISTATE_INITIAL;

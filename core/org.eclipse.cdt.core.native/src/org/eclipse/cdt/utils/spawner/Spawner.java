@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.internal.core.natives.Messages;
+import org.eclipse.cdt.internal.core.natives.SpawnerHandle;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
@@ -71,6 +72,7 @@ public class Spawner extends Process {
 	InputStream in;
 	InputStream err;
 	private PTY fPty;
+	private ProcessHandle fHandle;
 
 	public Spawner(String command, boolean bNoRedirect) throws IOException {
 		StringTokenizer tokenizer = new StringTokenizer(command);
@@ -206,6 +208,14 @@ public class Spawner extends Process {
 			}
 		}
 		return err;
+	}
+
+	/**
+	 * See java.lang.Process#toHandle ();
+	 **/
+	@Override
+	public ProcessHandle toHandle() {
+		return fHandle;
 	}
 
 	/**
@@ -351,6 +361,7 @@ public class Spawner extends Process {
 				}
 			}
 		}
+		fHandle = new SpawnerHandle(cmdarray, pid);
 
 		// Check for errors.
 		if (pid == -1) {
@@ -389,6 +400,7 @@ public class Spawner extends Process {
 				}
 			}
 		}
+		fHandle = new SpawnerHandle(cmdarray, pid);
 
 		// Check for errors.
 		if (pid == -1) {
@@ -405,6 +417,9 @@ public class Spawner extends Process {
 		if (envp == null)
 			envp = new String[0];
 		pid = exec1(cmdarray, envp, dirpath);
+		fHandle = new SpawnerHandle(cmdarray, pid);
+
+		// Check for errors.
 		if (pid == -1) {
 			throw new IOException("Exec error"); //$NON-NLS-1$
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Nokia and others.
+ * Copyright (c) 2006, 2021 Wind River Systems, Nokia and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     Marc Khouzam (Ericsson) - Use the new IMIBackend2 interface (Bug 350837)
  *     Mark Bozeman (Mentor Graphics) - Report GDB start failures (Bug 376203)
  *     Iulia Vasii (Freescale Semiconductor) - Separate GDB command from its arguments (Bug 445360)
+ *     John Dallaway - Implement getDebuggerCommandLineArray() method (Bug 572944)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -176,9 +177,9 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 * array. Allow subclass to override.
 	 *
 	 * @since 4.6
-	 * @deprecated Replaced by getDebuggerCommandLine()
+	 * @deprecated Override {@link #getDebuggerCommandLineArray()} instead
 	 */
-	@Deprecated
+	@Deprecated(since = "5.2", forRemoval = true)
 	protected String[] getGDBCommandLineArray() {
 		// The goal here is to keep options to an absolute minimum.
 		// All configuration should be done in the final launch sequence
@@ -196,10 +197,17 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		return CommandLineUtil.argumentsToArray(cmd);
 	}
 
+	@Override
+	public String[] getDebuggerCommandLineArray() {
+		// Call the deprecated method which might be overridden
+		return getDebuggerCommandLine();
+	}
+
 	/**
 	 * Returns the GDB command and its arguments as an array.
 	 * Allow subclass to override.
 	 * @since 5.2
+	 * @deprecated Override {@link #getDebuggerCommandLineArray()} instead
 	 */
 	// This method replaces getGDBCommandLineArray() because we need
 	// to override it for GDB 7.12 even if an extender has overridden
@@ -224,6 +232,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	// Note that we didn't name this method getGDBCommandLine() because
 	// this name had been used in CDT 8.8 and could still be part of
 	// extenders' code.
+	@Deprecated(since = "6.4", forRemoval = true)
 	protected String[] getDebuggerCommandLine() {
 		// Call the old method in case it was overridden
 		return getGDBCommandLineArray();
@@ -294,7 +303,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	// not starting the full GDB console properly.
 	protected Process launchGDBProcess() throws CoreException {
 		// Call the old method in case it was overridden
-		return launchGDBProcess(getDebuggerCommandLine());
+		return launchGDBProcess(getDebuggerCommandLineArray());
 	}
 
 	/**

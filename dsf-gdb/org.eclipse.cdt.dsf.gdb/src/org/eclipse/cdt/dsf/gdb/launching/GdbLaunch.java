@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 Wind River Systems and others.
+ * Copyright (c) 2006, 2021 Wind River Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,20 +14,17 @@
  *     Marc Khouzam (Ericsson) - Create the gdb process through the process factory (Bug 210366)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
  *     John Dallaway - Resolve variables using launch context (Bug 399460)
+ *     John Dallaway - Set GDB process attributes (Bug 572944)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -40,6 +37,7 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -66,6 +64,7 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlockRetrievalManager;
+import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -92,6 +91,7 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IDisconnectHandler;
 import org.eclipse.debug.core.commands.ITerminateHandler;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
@@ -210,11 +210,25 @@ public class GdbLaunch extends DsfLaunch implements ITracedLaunch, ITargetedLaun
 				}
 			}).get();
 
+			IGDBBackend gdbBackend = getDsfExecutor().submit(new Callable<IGDBBackend>() {
+				@Override
+				public IGDBBackend call() throws CoreException {
+					return fTracker.getService(IGDBBackend.class);
+				}
+			}).get();
+
+			// Set process attributes for presentation in process properties page
+			Map<String, String> attributes = new HashMap<>();
+			attributes.put(IProcess.ATTR_CMDLINE, StringUtil.join(gdbBackend.getDebuggerCommandLineArray(), "\n")); //$NON-NLS-1$
+			attributes.put(DebugPlugin.ATTR_ENVIRONMENT, StringUtil.join(getLaunchEnvironment(), "\n")); //$NON-NLS-1$
+			attributes.put(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, Long.toString(System.currentTimeMillis()));
+			Optional.ofNullable(gdbBackend.getGDBWorkingDirectory()).map(IPath::toOSString)
+					.ifPresent(dir -> attributes.put(DebugPlugin.ATTR_WORKING_DIRECTORY, dir));
+
 			// Need to go through DebugPlugin.newProcess so that we can use
 			// the overrideable process factory to allow others to override.
 			// First set attribute to specify we want to create the gdb process.
 			// Bug 210366
-			Map<String, String> attributes = new HashMap<>();
 			attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
 					IGdbDebugConstants.GDB_PROCESS_CREATION_VALUE);
 			DebugPlugin.newProcess(this, gdbProc, label, attributes);
@@ -512,40 +526,6 @@ public class GdbLaunch extends DsfLaunch implements ITracedLaunch, ITargetedLaun
 		fGdbVersion = gdbVersion;
 		return fGdbVersion;
 
-	}
-
-	/**
-	 * Read from the specified stream and return what was read.
-	 *
-	 * @param stream
-	 *            The input stream to be used to read the data. This method will
-	 *            close the stream.
-	 * @return The data read from the stream
-	 * @throws IOException
-	 *             If an IOException happens when reading the stream
-	 */
-	private static String readStream(InputStream stream) throws IOException {
-		StringBuilder cmdOutput = new StringBuilder(200);
-		try {
-			Reader r = new InputStreamReader(stream);
-			BufferedReader reader = new BufferedReader(r);
-
-			String line;
-			while ((line = reader.readLine()) != null) {
-				cmdOutput.append(line);
-				cmdOutput.append('\n');
-			}
-			return cmdOutput.toString();
-		} finally {
-			// Cleanup to avoid leaking pipes
-			// Bug 345164
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-				}
-			}
-		}
 	}
 
 	/**

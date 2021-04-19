@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d084c3cc_e4794036",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3431,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-19T12:32:22Z",
+      "side": 1,
+      "message": ":-(",
+      "revId": "4f247483c32d220897fbf044ff8e8d975defd1b7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

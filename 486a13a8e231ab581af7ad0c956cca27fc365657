@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "064ca042_0dca4c39",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-04-19T07:52:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f27cb3a3_192b9a49",
+      "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d710d7a3_98ac4e9c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 1
@@ -90,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "a065f1ee_0d53fcf6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-04-19T07:52:49Z",
+      "side": 1,
+      "message": "@Jonah, there are three options to retrieve the GDB command line from the IGDBBackend:\n\n* Promote IGDBBackend.getDebuggerCommandLine() from protected to public. Is this acceptable with an API filter outside a major version change?\n* Add a new public method and deprecate IGDBBackend.getDebuggerCommandLine().\n* Pass the command line as a service property when registering the IGDBBackend service instance in IGDBBackend.doRegisterStep(). This seems distinctly non-DSF in character.\n\nThoughts?",
+      "parentUuid": "d4e58730_199568e9",
+      "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "12abdff4_6800bc0d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 1
@@ -101,6 +137,24 @@
       "writtenOn": "2021-04-19T01:46:13Z",
       "side": 1,
       "message": "I don\u0027t know why the CI is not showing full stack traces on errors - but this change is definitely breaking tests with stack traces like below when I run locally.\n\n  java.lang.NullPointerException\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunch.addCLIProcess(GdbLaunch.java:222)\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launchDebugSession(GdbLaunchDelegate.java:219)\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launchDebugger(GdbLaunchDelegate.java:109)\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launch(GdbLaunchDelegate.java:97)\n\tat org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:803)\n\tat org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:716)\n\tat org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:711)\n\tat org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase.doLaunchInner(BaseTestCase.java:572)\n\tat org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase.doLaunch(BaseTestCase.java:526)\n\tat org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase.doBeforeTest(BaseTestCase.java:384)\n\tat org.eclipse.cdt.tests.dsf.gdb.tests.MIRunControlTest.doBeforeTest(MIRunControlTest.java:106)\n\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:566)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)\n\tat org.junit.internal.runners.statements.RunBefores.invokeMethod(RunBefores.java:33)\n\tat org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:24)\n\tat org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)\n\tat org.junit.rules.TestWatcher$1.evaluate(TestWatcher.java:61)\n\tat org.junit.internal.runners.statements.FailOnTimeout$CallableStatement.call(FailOnTimeout.java:288)\n\tat org.junit.internal.runners.statements.FailOnTimeout$CallableStatement.call(FailOnTimeout.java:282)\n\tat java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)\n\tat java.base/java.lang.Thread.run(Thread.java:834)",
+      "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "438ab0e6_f3e8ba88",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-04-19T07:52:49Z",
+      "side": 1,
+      "message": "Presumably getGDBWorkingDirectory() is returning null within the test. I will accommodate this.",
+      "parentUuid": "12abdff4_6800bc0d",
       "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

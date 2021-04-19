@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d710d7a3_98ac4e9c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-19T00:26:12Z",
+      "side": 1,
+      "message": "Please hold off on submitting this as I want to review more closely because of the difference between gdb\u0027s environment and the inferior\u0027s environment.",
+      "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

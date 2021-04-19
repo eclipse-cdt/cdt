@@ -126,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "f971c77a_07889b31",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-19T18:03:31Z",
+      "side": 1,
+      "message": "I provide a 4th option - implement the new info API in Java Process? https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/ProcessHandle.Info.html\n\nIndeed - if the Platform used that it could deprecate all these special ways of collecting the same info?\n\n---\n\nRegarding your original choices:\n\n\u003e - Promote IGDBBackend.getDebuggerCommandLine() from protected to public. Is this acceptable with an API filter outside a major version change?\n\nNo, this change breaks source compatibility - extenders who are customizing the command line will be broken, at least at source level, if not binary level with a \"reduced visibility\" error. (FWIW I know of at least one extender who overrides that method)\n\n\u003e - Add a new public method and deprecate IGDBBackend.getDebuggerCommandLine().\n\nSeems like best option - but I don\u0027t know if you need to deprecate. Make the new method and comment it something like returns \"user visible command line\".\n\n\u003e - Pass the command line as a service property when registering the IGDBBackend service instance in IGDBBackend.doRegisterStep(). This seems distinctly non-DSF in character.\n\n:-) I agree, so I don\u0027t like it.",
+      "parentUuid": "a065f1ee_0d53fcf6",
+      "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "12abdff4_6800bc0d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 1

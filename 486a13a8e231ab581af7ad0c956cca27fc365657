@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "d4e58730_199568e9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-19T01:49:54Z",
+      "side": 1,
+      "message": "\u003e My thinking is that these attributes concern the launched process which is GDB itself. If we wish to present data relating to the inferior process, we should create another IProcess object to represent the inferior.\n\nI didn\u0027t see this ^^^ comment until after I submitted mine. I do agree with you, either a new IProcess object, or enable such property pages in the node representing the process in the debug tree.",
+      "parentUuid": "fe0273e8_4c414f94",
+      "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "12abdff4_6800bc0d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 1

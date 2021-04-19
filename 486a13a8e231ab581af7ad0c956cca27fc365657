@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "f27cb3a3_192b9a49",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-19T01:46:13Z",
+      "side": 1,
+      "message": "This comment applies to the code now on line 223 so should be moved with that code (the code that is for PROCESS_TYPE_CREATION_ATTR)",
+      "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d710d7a3_98ac4e9c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 1
@@ -31,6 +48,41 @@
       "side": 1,
       "message": "My thinking is that these attributes concern the launched process which is GDB itself. If we wish to present data relating to the inferior process, we should create another IProcess object to represent the inferior.",
       "parentUuid": "d710d7a3_98ac4e9c",
+      "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe0273e8_4c414f94",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-19T01:46:13Z",
+      "side": 1,
+      "message": "I have now had a look - I am fine with this change. Indeed I think it is a great addition. Did you look if the command line was feasible to add too?\n\nI got concerned when I saw the DSF failures, but after looking more closely AFAICT this attribute is only used to populate the Environment part of the gdb processes\u0027 property page - a feature I didn\u0027t know about until now (screenshot for anyone else who is interested https://imgur.com/RqNdO7C.png - the feature was introduced in Eclipse Platform in Bug 285720 - AFAICT it wasn\u0027t included in N\u0026N so perhaps few people ever knew of this feature).",
+      "parentUuid": "d710d7a3_98ac4e9c",
+      "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "12abdff4_6800bc0d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-19T01:46:13Z",
+      "side": 1,
+      "message": "I don\u0027t know why the CI is not showing full stack traces on errors - but this change is definitely breaking tests with stack traces like below when I run locally.\n\n  java.lang.NullPointerException\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunch.addCLIProcess(GdbLaunch.java:222)\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launchDebugSession(GdbLaunchDelegate.java:219)\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launchDebugger(GdbLaunchDelegate.java:109)\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launch(GdbLaunchDelegate.java:97)\n\tat org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:803)\n\tat org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:716)\n\tat org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:711)\n\tat org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase.doLaunchInner(BaseTestCase.java:572)\n\tat org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase.doLaunch(BaseTestCase.java:526)\n\tat org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase.doBeforeTest(BaseTestCase.java:384)\n\tat org.eclipse.cdt.tests.dsf.gdb.tests.MIRunControlTest.doBeforeTest(MIRunControlTest.java:106)\n\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:566)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)\n\tat org.junit.internal.runners.statements.RunBefores.invokeMethod(RunBefores.java:33)\n\tat org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:24)\n\tat org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)\n\tat org.junit.rules.TestWatcher$1.evaluate(TestWatcher.java:61)\n\tat org.junit.internal.runners.statements.FailOnTimeout$CallableStatement.call(FailOnTimeout.java:288)\n\tat org.junit.internal.runners.statements.FailOnTimeout$CallableStatement.call(FailOnTimeout.java:282)\n\tat java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)\n\tat java.base/java.lang.Thread.run(Thread.java:834)",
       "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

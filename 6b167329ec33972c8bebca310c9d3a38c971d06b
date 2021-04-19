@@ -16,6 +16,24 @@
       "revId": "6b167329ec33972c8bebca310c9d3a38c971d06b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38a77ac2_4638120a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 1244
+      },
+      "writtenOn": "2021-04-19T09:44:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "355b2254_68b784bf",
+      "revId": "6b167329ec33972c8bebca310c9d3a38c971d06b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

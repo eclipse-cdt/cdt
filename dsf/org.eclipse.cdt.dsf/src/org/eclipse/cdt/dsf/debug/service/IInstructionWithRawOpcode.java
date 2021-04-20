@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Renesas Electronics and others.
+ * Copyright (c) 2021 Intel Corporation.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,13 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- *
  * Contributors:
- *     William Riley (Renesas) - Bug 357270
+ *     Intel Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.service;
-
-import java.math.BigInteger;
 
 /**
  * Extension interface for instructions with raw Opcodes
@@ -22,17 +19,15 @@ import java.math.BigInteger;
  * this interface directly.
  * </p>
  *
- * @since 2.5
+ * @since 2.10
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * @deprecated use {@link IInstructionWithRawOpcode} instead.
  */
-@Deprecated
-public interface IInstructionWithRawOpcodes extends IInstruction {
+public interface IInstructionWithRawOpcode extends IInstruction {
 
 	/**
-	 * @return The raw Opcodes of the Instruction or <code>null</code> if
-	 *         unknown
+	 * @return The raw opcode of the instruction as <code>String</code>, the instruction
+	 * bytes are separated by space. If there is no opcode, <code>null</code> is returned.
 	 */
-	BigInteger getRawOpcodes();
+	String getRawOpcode();
 }

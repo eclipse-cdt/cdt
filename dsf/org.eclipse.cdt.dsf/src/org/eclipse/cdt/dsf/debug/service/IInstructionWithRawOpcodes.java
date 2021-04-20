@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.service;
 
-import java.math.BigInteger;
-
 /**
  * Extension interface for instructions with raw Opcodes
  * <p>
@@ -29,8 +27,8 @@ import java.math.BigInteger;
 public interface IInstructionWithRawOpcodes extends IInstruction {
 
 	/**
-	 * @return The raw Opcodes of the Instruction or <code>null</code> if
+	 * @return The raw Opcode of the Instruction or an empty <code>Byte</code> array if
 	 *         unknown
 	 */
-	BigInteger getRawOpcodes();
+	Byte[] getRawOpcode();
 }

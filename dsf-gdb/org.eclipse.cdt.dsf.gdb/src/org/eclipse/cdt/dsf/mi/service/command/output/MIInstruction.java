@@ -18,6 +18,8 @@
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.dsf.debug.service.AbstractInstruction;
 
@@ -29,7 +31,7 @@ public class MIInstruction extends AbstractInstruction {
 	long offset;
 	String opcode = ""; //$NON-NLS-1$
 	String args = ""; //$NON-NLS-1$
-	BigInteger rawOpcodes = null;
+	Byte[] rawOpcode = {};
 	Integer opcodeSize = null;
 
 	public MIInstruction(MITuple tuple) {
@@ -67,8 +69,8 @@ public class MIInstruction extends AbstractInstruction {
 	}
 
 	@Override
-	public BigInteger getRawOpcodes() {
-		return rawOpcodes;
+	public Byte[] getRawOpcode() {
+		return rawOpcode;
 	}
 
 	/**
@@ -156,11 +158,8 @@ public class MIInstruction extends AbstractInstruction {
 			}
 
 			if (var.equals("opcodes")) { //$NON-NLS-1$
-				try {
-					rawOpcodes = decodeOpcodes(str);
-					opcodeSize = Integer.valueOf(str.replace(" ", "").length() / 2); //$NON-NLS-1$//$NON-NLS-2$
-				} catch (NumberFormatException e) {
-				}
+				rawOpcode = decodeOpcode(str);
+				opcodeSize = rawOpcode.length;
 				continue;
 			}
 		}
@@ -186,13 +185,26 @@ public class MIInstruction extends AbstractInstruction {
 	 * Decode given string representation of a space separated hex encoded byte
 	 * array
 	 *
-	 * @param string
+	 * @param value
 	 *            space separated hexadecimal byte array
-	 * @return opcode bytes as <code>BigInteger</code>
+	 * @return opcode bytes as <code>Byte</code> array
 	 */
-	private static BigInteger decodeOpcodes(String string) {
-		// Removing space separation and parse as single big integer
-		return new BigInteger(string.replace(" ", ""), 16); //$NON-NLS-1$ //$NON-NLS-2$
+	private static Byte[] decodeOpcode(String value) {
+		List<Byte> opcodeBytesList = new ArrayList<>();
+		if (value == null || value.isBlank()) {
+			return new Byte[0];
+		}
+		// Removing space separation and parse as bytes
+		for (String opcodeStringValue : value.split("\\s+")) { //$NON-NLS-1$
+			if (opcodeStringValue.length() > 0 && opcodeStringValue.length() <= 2) {
+				byte byteValue = 0;
+				char charAtIndexZero = opcodeStringValue.charAt(0);
+				char charAtIndexOne = opcodeStringValue.length() > 1 ? opcodeStringValue.charAt(1) : 0;
+				byteValue = (byte) ((Character.digit(charAtIndexZero, 16) << 4) + Character.digit(charAtIndexOne, 16));
+				opcodeBytesList.add(Byte.valueOf(byteValue));
+			}
+		}
+		return opcodeBytesList.toArray(new Byte[0]);
 	}
 
 	/* (non-Javadoc)

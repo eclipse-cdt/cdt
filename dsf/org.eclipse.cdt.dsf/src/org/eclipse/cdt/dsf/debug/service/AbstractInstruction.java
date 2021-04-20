@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.service;
 
-import java.math.BigInteger;
-
 /**
  * Implementers of {@link IInstruction} should extend this abstract class
  * instead of implementing the interface directly.
@@ -36,8 +34,8 @@ public abstract class AbstractInstruction implements IInstructionWithSize, IInst
 	 * @since 2.5
 	 */
 	@Override
-	public BigInteger getRawOpcodes() {
-		return null;
+	public Byte[] getRawOpcode() {
+		return new Byte[0];
 	}
 
 }

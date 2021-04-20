@@ -35,7 +35,7 @@ public interface IDisassemblyDocument {
 			throws BadLocationException;
 
 	AddressRangePosition insertDisassemblyLine(AddressRangePosition p, BigInteger address, int length,
-			String functionOffset, BigInteger opcode, String instruction, String compilationPath, int lineNumber)
+			String functionOffset, Byte[] opcode, String instruction, String compilationPath, int lineNumber)
 			throws BadLocationException;
 
 	AddressRangePosition getDisassemblyPosition(BigInteger address);

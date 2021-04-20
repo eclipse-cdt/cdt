@@ -21,7 +21,7 @@ import java.math.BigInteger;
 public class DisassemblyPosition extends AddressRangePosition {
 
 	public char[] fFunction;
-	public BigInteger fOpcodes;
+	public Byte[] fOpcode;
 
 	/**
 	 * @param offset
@@ -29,12 +29,12 @@ public class DisassemblyPosition extends AddressRangePosition {
 	 * @param addressOffset
 	 * @param addressLength
 	 * @param functionOffset
-	 * @param opcodes
+	 * @param opcode
 	 */
 	public DisassemblyPosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength,
-			String functionOffset, BigInteger opcodes) {
+			String functionOffset, Byte[] opcode) {
 		super(offset, length, addressOffset, addressLength);
-		fOpcodes = opcodes;
+		fOpcode = opcode;
 		fFunction = functionOffset.toCharArray();
 	}
 

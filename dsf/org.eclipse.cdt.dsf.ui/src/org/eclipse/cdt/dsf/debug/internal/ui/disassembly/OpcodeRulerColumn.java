@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
+import java.math.BigInteger;
+import java.util.IllegalFormatException;
+
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocument;
@@ -30,7 +33,10 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 	public static final String ID = "org.eclipse.cdt.dsf.ui.disassemblyColumn.opcode"; //$NON-NLS-1$
 
 	/** Maximum width of column (in characters) */
-	private static final int MAXWIDTH = 20;
+	/** 15 bytes plus hex prefix and separator */
+	private static final int MAXWIDTH_WITH_PREFIX = 74;
+	/** 15 bytes plus separator */
+	private static final int MAXWIDTH_WITHOUT_PREFIX = 44;
 
 	private int fRadix;
 	private String fRadixPrefix;
@@ -42,19 +48,12 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 		super();
 		setBackground(getColor(DisassemblyPreferenceConstants.RULER_BACKGROUND_COLOR));
 		setForeground(getColor(DisassemblyPreferenceConstants.CODE_BYTES_COLOR));
-		setRadix(getPreferenceStore().getInt(DisassemblyPreferenceConstants.OPCODE_RADIX));
+		setShowRadixPrefix(getPreferenceStore().getBoolean(DisassemblyPreferenceConstants.SHOW_ADDRESS_RADIX));
 	}
 
-	public void setRadix(int radix) {
-		fRadix = radix;
-		setShowRadixPrefix();
-	}
-
-	public void setShowRadixPrefix() {
-		if (fRadix == 16) {
+	public void setShowRadixPrefix(boolean showRadix) {
+		if (showRadix) {
 			fRadixPrefix = "0x"; //$NON-NLS-1$
-		} else if (fRadix == 8) {
-			fRadixPrefix = "0"; //$NON-NLS-1$
 		} else {
 			fRadixPrefix = null;
 		}
@@ -73,25 +72,9 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 				AddressRangePosition pos = doc.getDisassemblyPosition(offset);
 				if (pos instanceof DisassemblyPosition && pos.length > 0 && pos.offset == offset && pos.fValid) {
 					DisassemblyPosition disassPos = (DisassemblyPosition) pos;
-					if (disassPos.fOpcodes != null) {
+					if (disassPos.fOpcode != null) {
 						// Format the output.
-						String str = disassPos.fOpcodes.toString(fRadix);
-						int prefixLength = 0;
-
-						if (fRadixPrefix != null)
-							prefixLength = fRadixPrefix.length();
-
-						StringBuilder buf = new StringBuilder(nChars);
-
-						if (prefixLength != 0)
-							buf.append(fRadixPrefix);
-
-						for (int i = str.length() + prefixLength; i < nChars; ++i)
-							buf.append('0');
-						buf.append(str);
-						if (buf.length() > nChars)
-							buf.delete(nChars, buf.length());
-						return buf.toString();
+						return getOpcodeString(disassPos.fOpcode, fRadix);
 					}
 				} else if (pos != null && !pos.fValid) {
 					return DOTS.substring(0, nChars);
@@ -103,10 +86,31 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 		return ""; //$NON-NLS-1$
 	}
 
+	protected String getOpcodeString(Byte[] opcode, int fRadix) {
+		String opcodeString = ""; //$NON-NLS-1$
+		try {
+			for (int i = 0; i < opcode.length; i++) {
+				if (!opcodeString.isEmpty()) {
+					opcodeString += " "; //$NON-NLS-1$
+				}
+
+				String hexOpcode = String.format("%02x", //$NON-NLS-1$
+						BigInteger.valueOf(opcode[i].intValue() & 0xff));
+				if (fRadixPrefix != null)
+					hexOpcode = fRadixPrefix + hexOpcode;
+				opcodeString += hexOpcode;
+			}
+		} catch (IllegalFormatException e) {
+			// silently ignored
+		}
+		return opcodeString;
+	}
+
 	@Override
 	protected int computeNumberOfCharacters() {
 		DisassemblyDocument doc = (DisassemblyDocument) getParentRuler().getTextViewer().getDocument();
-		return Math.min(MAXWIDTH, doc.getMaxOpcodeLength(fRadix));
+		return Math.min(fRadixPrefix == null ? MAXWIDTH_WITHOUT_PREFIX : MAXWIDTH_WITH_PREFIX,
+				doc.getMaxOpcodeLength(fRadixPrefix));
 	}
 
 	@Override
@@ -117,8 +121,10 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 		if (DisassemblyPreferenceConstants.CODE_BYTES_COLOR.equals(property)) {
 			setForeground(getColor(property));
 			needRedraw = true;
-		} else if (DisassemblyPreferenceConstants.OPCODE_RADIX.equals(property)) {
-			setRadix(store.getInt(property));
+		} else if (DisassemblyPreferenceConstants.SHOW_ADDRESS_RADIX.equals(property)) {
+			setShowRadixPrefix(store.getBoolean(property));
+			updateNumberOfDigits();
+			computeIndentations();
 			layout(false);
 			needRedraw = true;
 		} else if (DisassemblyPreferenceConstants.RULER_BACKGROUND_COLOR.equals(property)) {

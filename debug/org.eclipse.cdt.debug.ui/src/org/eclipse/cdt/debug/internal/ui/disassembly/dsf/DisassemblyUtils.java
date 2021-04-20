@@ -15,6 +15,8 @@
 package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.Platform;
@@ -67,5 +69,31 @@ public class DisassemblyUtils {
 			return new BigInteger(string.substring(2), 16);
 		}
 		return new BigInteger(string);
+	}
+
+	/**
+	 * Decode given string representation of a space separated hex encoded byte
+	 * array
+	 *
+	 * @param value
+	 *            space separated hexadecimal byte array
+	 * @return opcode bytes as <code>Byte</code> array
+	 */
+	public static Byte[] decodeOpcode(String value) {
+		List<Byte> opcodeBytesList = new ArrayList<>();
+		if (value == null || value.isBlank()) {
+			return new Byte[0];
+		}
+		// Removing space separation and parse as bytes
+		for (String opcodeStringValue : value.split("\\s+")) { //$NON-NLS-1$
+			if (opcodeStringValue.length() > 0 && opcodeStringValue.length() <= 2) {
+				byte byteValue = 0;
+				char charAtIndexZero = opcodeStringValue.charAt(0);
+				char charAtIndexOne = opcodeStringValue.length() > 1 ? opcodeStringValue.charAt(1) : 0;
+				byteValue = (byte) ((Character.digit(charAtIndexZero, 16) << 4) + Character.digit(charAtIndexOne, 16));
+				opcodeBytesList.add(Byte.valueOf(byteValue));
+			}
+		}
+		return opcodeBytesList.toArray(new Byte[0]);
 	}
 }

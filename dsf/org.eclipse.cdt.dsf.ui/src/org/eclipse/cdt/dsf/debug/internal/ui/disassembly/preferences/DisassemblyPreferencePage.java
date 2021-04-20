@@ -57,7 +57,6 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 		}
 	};
 	private Combo fAddressFormatCombo;
-	private Combo fOpcodeFormatCombo;
 	private final static String[] fcRadixItems = { DisassemblyMessages.DisassemblyPreferencePage_radix_octal,
 			DisassemblyMessages.DisassemblyPreferencePage_radix_decimal,
 			DisassemblyMessages.DisassemblyPreferencePage_radix_hexadecimal, };
@@ -103,10 +102,6 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 		label = DisassemblyMessages.DisassemblyPreferencePage_showAddressRadix;
 		Button showRadixCB = addCheckBox(composite, label, DisassemblyPreferenceConstants.SHOW_ADDRESS_RADIX, 0);
 		showRadixCB.setToolTipText(DisassemblyMessages.DisassemblyPreferencePage_showRadixTooltip);
-
-		label = DisassemblyMessages.DisassemblyPreferencePage_OpcodeFormat;
-		fOpcodeFormatCombo = addComboBox(composite, label, DisassemblyPreferenceConstants.OPCODE_RADIX, fcRadixItems);
-		fOpcodeFormatCombo.setToolTipText(DisassemblyMessages.DisassemblyPreferencePage_OpcodeFormatTooltip);
 
 		label = DisassemblyMessages.DisassemblyPreferencePage_showSource;
 		Button showSourceCB = addCheckBox(composite, label, DisassemblyPreferenceConstants.SHOW_SOURCE, 0);

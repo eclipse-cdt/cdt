@@ -33,7 +33,6 @@ public class DisassemblyPreferenceConstants {
 	public static final String SHOW_SOURCE = "disassembly.showSource"; //$NON-NLS-1$
 	public static final String SHOW_SYMBOLS = "disassembly.showSymbols"; //$NON-NLS-1$
 	public static final String ADDRESS_RADIX = "disassembly.addressRadix"; //$NON-NLS-1$
-	public static final String OPCODE_RADIX = "disassembly.opcodeRadix"; //$NON-NLS-1$
 	public static final String SHOW_ADDRESS_RADIX = "disassembly.showAddressRadix"; //$NON-NLS-1$
 	public static final String ADDRESS_COLOR = "disassembly.addressColor"; //$NON-NLS-1$
 	public static final String FUNCTION_OFFSETS_COLOR = "disassembly.functionOffsetsColor"; //$NON-NLS-1$
@@ -65,7 +64,6 @@ public class DisassemblyPreferenceConstants {
 		store.setDefault(SHOW_SOURCE, true);
 		store.setDefault(SHOW_SYMBOLS, true);
 		store.setDefault(ADDRESS_RADIX, 16);
-		store.setDefault(OPCODE_RADIX, 16);
 		store.setDefault(SHOW_ADDRESS_RADIX, false);
 		store.setDefault(AVOID_READ_BEFORE_PC, false);
 		PreferenceConverter.setDefault(store, ADDRESS_COLOR, new RGB(0, 96, 0));

@@ -28,6 +28,7 @@ public class MIInstruction extends AbstractInstruction {
 	String function = ""; //$NON-NLS-1$
 	long offset;
 	String opcode = ""; //$NON-NLS-1$
+	String rawOpcodeString = null;
 	String args = ""; //$NON-NLS-1$
 	BigInteger rawOpcodes = null;
 	Integer opcodeSize = null;
@@ -69,6 +70,11 @@ public class MIInstruction extends AbstractInstruction {
 	@Override
 	public BigInteger getRawOpcodes() {
 		return rawOpcodes;
+	}
+
+	@Override
+	public String getRawOpcode() {
+		return rawOpcodeString;
 	}
 
 	/**
@@ -157,6 +163,7 @@ public class MIInstruction extends AbstractInstruction {
 
 			if (var.equals("opcodes")) { //$NON-NLS-1$
 				try {
+					rawOpcodeString = str;
 					rawOpcodes = decodeOpcodes(str);
 					opcodeSize = Integer.valueOf(str.replace(" ", "").length() / 2); //$NON-NLS-1$//$NON-NLS-2$
 				} catch (NumberFormatException e) {

@@ -22,7 +22,8 @@ import java.math.BigInteger;
  *
  * @since 2.2
  */
-public abstract class AbstractInstruction implements IInstructionWithSize, IInstructionWithRawOpcodes {
+public abstract class AbstractInstruction
+		implements IInstructionWithSize, IInstructionWithRawOpcodes, IInstructionWithRawOpcode {
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.service.IInstructionWithSize#getSize()
 	 */
@@ -40,4 +41,11 @@ public abstract class AbstractInstruction implements IInstructionWithSize, IInst
 		return null;
 	}
 
+	/**
+	 * @since 2.10
+	 */
+	@Override
+	public String getRawOpcode() {
+		return null;
+	}
 }

@@ -9,6 +9,12 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/cdt/dsf/debug/service/AbstractInstruction.java" type="org.eclipse.cdt.dsf.debug.service.AbstractInstruction">
+        <filter comment="Bug 567810 - Squash false positive warning Type implements non-API interface " id="576725006">
+            <message_arguments>
+                <message_argument value="IInstructionWithRawOpcode"/>
+                <message_argument value="AbstractInstruction"/>
+            </message_arguments>
+        </filter>
         <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
             <message_arguments>
                 <message_argument value="IInstructionWithRawOpcodes"/>

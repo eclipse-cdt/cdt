@@ -34,7 +34,7 @@ public class DisassemblyWithSourcePosition extends DisassemblyPosition {
 	 * @param opcode
 	 */
 	public DisassemblyWithSourcePosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength,
-			String functionOffset, BigInteger opcode, String file, int lineNr) {
+			String functionOffset, Byte[] opcode, String file, int lineNr) {
 		super(offset, length, addressOffset, addressLength, functionOffset, opcode);
 		fFile = file;
 		fLine = lineNr;

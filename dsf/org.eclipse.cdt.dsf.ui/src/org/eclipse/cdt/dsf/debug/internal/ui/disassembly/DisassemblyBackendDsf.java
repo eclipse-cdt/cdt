@@ -56,7 +56,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IInstruction;
-import org.eclipse.cdt.dsf.debug.service.IInstructionWithRawOpcodes;
+import org.eclipse.cdt.dsf.debug.service.IInstructionWithRawOpcode;
 import org.eclipse.cdt.dsf.debug.service.IInstructionWithSize;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
 import org.eclipse.cdt.dsf.debug.service.IRegisters;
@@ -739,14 +739,14 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 					functionOffset = ""; //$NON-NLS-1$
 				}
 
-				BigInteger opCodes = null;
+				Byte[] opcode = {};
 				// Get raw Opcodes if available
-				if (instruction instanceof IInstructionWithRawOpcodes) {
-					opCodes = ((IInstructionWithRawOpcodes) instruction).getRawOpcodes();
+				if (instruction instanceof IInstructionWithRawOpcode) {
+					opcode = DisassemblyUtils.decodeOpcode(((IInstructionWithRawOpcode) instruction).getRawOpcode());
 				}
 
 				p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), functionOffset,
-						opCodes, instruction.getInstruction(), compilationPath, -1);
+						opcode, instruction.getInstruction(), compilationPath, -1);
 				if (p == null) {
 					break;
 				}
@@ -895,13 +895,14 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 						funcOffset = ""; //$NON-NLS-1$
 					}
 
-					BigInteger opCodes = null;
-					if (instruction instanceof IInstructionWithRawOpcodes) {
-						opCodes = ((IInstructionWithRawOpcodes) instruction).getRawOpcodes();
+					Byte[] opcode = {};
+					if (instruction instanceof IInstructionWithRawOpcode) {
+						opcode = DisassemblyUtils
+								.decodeOpcode(((IInstructionWithRawOpcode) instruction).getRawOpcode());
 					}
 
 					p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), funcOffset,
-							opCodes, instruction.getInstruction(), file, lineNumber);
+							opcode, instruction.getInstruction(), file, lineNumber);
 					if (p == null) {
 						break;
 					}

@@ -73,7 +73,8 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	private final Map<IStorage, SourceFileInfo> fFileInfoMap = new HashMap<>();
 
 	private int fMaxFunctionLength = 0;
-	private BigInteger fMaxOpcodeLength = null;
+	/** Max opcode length is equal to the single bytes shown */
+	private int fMaxOpcodeLength = 0;
 
 	private boolean fShowAddresses = false;
 	private int fRadix = 16;
@@ -150,25 +151,22 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		return fMaxFunctionLength;
 	}
 
-	public void setMaxOpcodeLength(BigInteger longOpcode) {
-		fMaxOpcodeLength = longOpcode;
+	public void setMaxOpcodeLength(int opcodeLength) {
+		fMaxOpcodeLength = opcodeLength;
 	}
 
-	public int getMaxOpcodeLength(int radix) {
-		int retVal = 0;
-		if (fMaxOpcodeLength != null) {
-			String str = fMaxOpcodeLength.toString(radix);
-			retVal = str.length();
-			switch (radix) {
-			case 8:
-				retVal += 1; // Padded for 0 prefix
-				break;
-			case 16:
-				retVal += 2; // Padded for 0x prefix
-				break;
-			default:
-				break;
-			}
+	public int getMaxOpcodeLength() {
+		// Check if an error on opcode decode occurred, in
+		// this case we show ??
+		if (fMaxOpcodeLength == 0) {
+			return 2;
+		}
+		int retVal = fMaxOpcodeLength;
+		// We show the bytes in hex, therefore it needs to be multiplied by 2
+		retVal *= 2;
+		// add bytes separator length
+		if (retVal > 0) {
+			retVal += fMaxOpcodeLength - 1;
 		}
 		return retVal;
 	}
@@ -706,9 +704,10 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			if (functionLength > fMaxFunctionLength) {
 				fMaxFunctionLength = functionLength;
 			}
-			if (disassPos.fOpcodes != null) {
-				if (fMaxOpcodeLength == null || fMaxOpcodeLength.compareTo(disassPos.fOpcodes) == -1) {
-					fMaxOpcodeLength = disassPos.fOpcodes;
+			if (disassPos.fOpcode != null) {
+				int opcodeLength = disassPos.fOpcode.length;
+				if (opcodeLength > fMaxOpcodeLength) {
+					fMaxOpcodeLength = opcodeLength;
 				}
 			}
 			if (fNumberOfInstructions < 100 && fMeanSizeOfInstructions < 16.0) {
@@ -1023,7 +1022,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 */
 	@Override
 	public AddressRangePosition insertDisassemblyLine(AddressRangePosition pos, BigInteger address, int length,
-			String functionOffset, BigInteger opcode, String instruction, String file, int lineNr)
+			String functionOffset, Byte[] opcode, String instruction, String file, int lineNr)
 			throws BadLocationException {
 		assert isGuiThread();
 		String disassLine = null;

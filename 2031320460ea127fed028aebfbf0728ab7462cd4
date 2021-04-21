@@ -1,0 +1,221 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a72bd47e_50221a47",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/disassembly/dsf/DisassemblyUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-21T15:15:01Z",
+      "side": 1,
+      "message": "I find this method does not handle input errors in a consistent way. Some types of errors means that the incorrect byte is elided from opcodeBytesList (e.g opcodeStringValue.length() \u003e 2) , some errors means that a (randomish) byte is inserted into  opcodeBytesList (e.g. opcodeStringValue.charAt(0) is not a valid digit)\n\nI can think of a few options on how to handle this, e.g. return int[] and have -1 indicate the error. If you do that the parsing is Integer.parseInt with a range check.",
+      "revId": "2031320460ea127fed028aebfbf0728ab7462cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4da5fae8_c022889a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/disassembly/dsf/DisassemblyUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-21T15:15:01Z",
+      "side": 1,
+      "message": "since the returned array is boxed type anyway, I would simply use List\u003cByte\u003e (or considering comment above List\u003cInteger\u003e). Wrapping the return in Collections.unmodifiableList will ensure that no one modifies the list in unexpected ways.",
+      "range": {
+        "startLine": 97,
+        "startChar": 9,
+        "endLine": 97,
+        "endChar": 46
+      },
+      "revId": "2031320460ea127fed028aebfbf0728ab7462cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "16ea6426_14861276",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIInstruction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-21T15:15:01Z",
+      "side": 1,
+      "message": "Same comments here as on DisassemblyUtils\n\nAlternatively, have MIInstruction return the raw string from GDB and do the decode later (using DisassemblyUtils).\n\nBTW The DisassemblyUtils version is unreachable using standard CDT. However, perhaps TCF uses that code path? If TCF doesn\u0027t, then that code path is probably leftover from removal of CDI.",
+      "revId": "2031320460ea127fed028aebfbf0728ab7462cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fa1b8b8_b770f8ea",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/OpcodeRulerColumn.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-21T15:15:01Z",
+      "side": 1,
+      "message": "StringBuilder please.",
+      "revId": "2031320460ea127fed028aebfbf0728ab7462cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43f29091_5a14b06c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/OpcodeRulerColumn.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-21T15:15:01Z",
+      "side": 1,
+      "message": "Here could check for opcode[i] \u003d\u003d -1 (or whatever is used to indicate the error in the decode method) and if so opcodeString +\u003d \"??\" or \"..\" to indicate the error",
+      "revId": "2031320460ea127fed028aebfbf0728ab7462cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "083f2ac6_a1925d57",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/OpcodeRulerColumn.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-21T15:15:01Z",
+      "side": 1,
+      "message": "Is opcode[i] sufficient? It certainly seems overkill to place it in a BigInteger first?",
+      "range": {
+        "startLine": 98,
+        "startChar": 6,
+        "endLine": 98,
+        "endChar": 53
+      },
+      "revId": "2031320460ea127fed028aebfbf0728ab7462cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fbeff8a5_17c34243",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/OpcodeRulerColumn.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-21T15:15:01Z",
+      "side": 1,
+      "message": "I am not sure that there is ever value in having radix prefixes on the individual bytes if they are always in hex as you have removed the preference for changing the radix (which is fine). The problem is that if a user wants address radix prefix, they may (probably) don\u0027t want the individual bytes to have them.\n\nBTW this is what I see with radix prefix on https://imgur.com/Of4M2je.png and off https://i.imgur.com/8b1Z57N.png",
+      "range": {
+        "startLine": 100,
+        "startChar": 17,
+        "endLine": 100,
+        "endChar": 41
+      },
+      "revId": "2031320460ea127fed028aebfbf0728ab7462cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e55fc006_8a8d3a0c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/OpcodeRulerColumn.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-21T15:15:01Z",
+      "side": 1,
+      "message": "ignored or unreachable?",
+      "range": {
+        "startLine": 104,
+        "startChar": 6,
+        "endLine": 104,
+        "endChar": 22
+      },
+      "revId": "2031320460ea127fed028aebfbf0728ab7462cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b89dcd24_4ea8835c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/OpcodeRulerColumn.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-21T15:15:01Z",
+      "side": 1,
+      "message": "see comment for line 100",
+      "range": {
+        "startLine": 124,
+        "startChar": 44,
+        "endLine": 124,
+        "endChar": 62
+      },
+      "revId": "2031320460ea127fed028aebfbf0728ab7462cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0da0d4b_428ed0d2",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/AbstractInstruction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-21T15:15:01Z",
+      "side": 1,
+      "message": "Unfortunately this breaks the API compatibility.\n\nInstead, create a new method.",
+      "revId": "2031320460ea127fed028aebfbf0728ab7462cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "535cc030_e0179869",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IInstructionWithRawOpcodes.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-21T15:15:01Z",
+      "side": 1,
+      "message": "This breaks API - instead introduce a new method.",
+      "revId": "2031320460ea127fed028aebfbf0728ab7462cd4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

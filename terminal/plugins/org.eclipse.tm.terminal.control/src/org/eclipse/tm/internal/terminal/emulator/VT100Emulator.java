@@ -784,6 +784,11 @@ public class VT100Emulator implements ControlListener {
 			text.eraseAll();
 			break;
 
+		case 3:
+			// Erase display and clear scrollback (extended "E3" capability)
+			text.clearAll();
+			break;
+
 		default:
 			Logger.log("Unexpected J-command parameter: " + ansiParameter); //$NON-NLS-1$
 			break;

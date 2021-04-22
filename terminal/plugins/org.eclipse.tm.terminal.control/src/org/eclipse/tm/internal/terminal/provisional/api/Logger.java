@@ -164,6 +164,8 @@ public final class Logger {
 	 * Logs the specified message. Do not append a newline to parameter
 	 * <i>message</i>. This method does that for you.
 	 *
+	 * Does not write to the message to the Eclipse log
+	 *
 	 * @param message           A String containing the message to log.
 	 */
 	public static final void log(String message) {
@@ -174,29 +176,43 @@ public final class Logger {
 	}
 
 	/**
-	 * Writes a stack trace for an exception to both Standard Error and to the
-	 * log file.
+	 * Writes an error message to the Terminal log and the Eclipse log
+	 * @since 5.2
+	 */
+	public static final void logError(String message) {
+		logStatus(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, message, null));
+	}
+
+	/**
+	 * Writes an exception to the Terminal log and the Eclipse log
 	 */
 	public static final void logException(Exception ex) {
+		logStatus(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
+	}
+
+	/**
+	 * Writes a Status to the Terminal log and the Eclipse log
+	 * @since 5.2
+	 */
+	public static final void logStatus(IStatus status) {
 		// log in eclipse error log
 		if (TerminalPlugin.getDefault() != null) {
-			TerminalPlugin.getDefault().getLog()
-					.log(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
+			TerminalPlugin.getDefault().getLog().log(status);
 		} else {
-			ex.printStackTrace();
+			System.err.println(status);
+			if (status.getException() != null) {
+				status.getException().printStackTrace();
+			}
 		}
 		// Additional Tracing for debug purposes:
 		// Read my own stack to get the class name, method name, and line number
 		// of where this method was called
 		if (logStream != null) {
-			PrintStream tmpStream = System.err;
-			if (logStream != null) {
-				tmpStream = logStream;
+			logStream.println(getCallSiteDescription() + ": " + //$NON-NLS-1$
+					status);
+			if (status.getException() != null) {
+				status.getException().printStackTrace(logStream);
 			}
-
-			tmpStream.println(getCallSiteDescription() + ": " + //$NON-NLS-1$
-					"Caught exception: " + ex); //$NON-NLS-1$
-			ex.printStackTrace(tmpStream);
 		}
 	}
 

@@ -17,6 +17,8 @@ package org.eclipse.tm.internal.terminal.provisional.api;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.lang.StackWalker.StackFrame;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -51,6 +53,7 @@ public final class Logger {
 	public static final String TRACE_DEBUG_LOG_HOVER = "org.eclipse.tm.terminal.control/debug/log/hover"; //$NON-NLS-1$
 
 	private static PrintStream logStream;
+	private static StackWalker walker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
 	static {
 		// Any of the known debugging options turns on the creation of the log file
@@ -165,17 +168,7 @@ public final class Logger {
 	 */
 	public static final void log(String message) {
 		if (logStream != null) {
-			// Read my own stack to get the class name, method name, and line
-			// number of
-			// where this method was called.
-
-			StackTraceElement caller = new Throwable().getStackTrace()[1];
-			int lineNumber = caller.getLineNumber();
-			String className = caller.getClassName();
-			String methodName = caller.getMethodName();
-			className = className.substring(className.lastIndexOf('.') + 1);
-
-			logStream.println(className + "." + methodName + ":" + lineNumber + ": " + message); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			logStream.println(getCallSiteDescription() + ": " + message); //$NON-NLS-1$
 			logStream.flush();
 		}
 	}
@@ -196,21 +189,30 @@ public final class Logger {
 		// Read my own stack to get the class name, method name, and line number
 		// of where this method was called
 		if (logStream != null) {
-			StackTraceElement caller = new Throwable().getStackTrace()[1];
-			int lineNumber = caller.getLineNumber();
-			String className = caller.getClassName();
-			String methodName = caller.getMethodName();
-			className = className.substring(className.lastIndexOf('.') + 1);
-
 			PrintStream tmpStream = System.err;
-
 			if (logStream != null) {
 				tmpStream = logStream;
 			}
 
-			tmpStream.println(className + "." + methodName + ":" + lineNumber + ": " + //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			tmpStream.println(getCallSiteDescription() + ": " + //$NON-NLS-1$
 					"Caught exception: " + ex); //$NON-NLS-1$
 			ex.printStackTrace(tmpStream);
 		}
+	}
+
+	/**
+	 * Return a description string of the call site of this logging call for use in logged messages.
+	 * This method will walk the stack to find the first method in the call stack not from the Logger
+	 * class.
+	 */
+	private static String getCallSiteDescription() {
+		Optional<StackFrame> stackFrame = walker
+				.walk(stream -> stream.filter(f -> f.getDeclaringClass() != Logger.class).findFirst());
+		int lineNumber = stackFrame.map(StackFrame::getLineNumber).orElse(0);
+		String className = stackFrame.map(StackFrame::getDeclaringClass).map(Class::getName)
+				.map(name -> name.substring(name.lastIndexOf('.') + 1)).orElse("UnknownClass"); //$NON-NLS-1$
+		String methodName = stackFrame.map(StackFrame::getMethodName).orElse("unknownMethod"); //$NON-NLS-1$
+		String locationString = className + "." + methodName + ":" + lineNumber; //$NON-NLS-1$//$NON-NLS-2$
+		return locationString;
 	}
 }

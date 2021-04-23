@@ -47,6 +47,13 @@ in `debug/org.eclipse.cdt.debug.application.product`
 
 Using any of the above profiles can skip large sets of tests. The CI build uses this to parallelize tests. See https://ci.eclipse.org/cdt/view/Gerrit/
 
+#### terminal-only
+
+The terminal directory has a special profile that enables only the terminal and its dependencies when used. The allows
+running maven like this `mvn -f terminal/pom.xml verify -P only-terminal` to build and test only the terminal
+and its dependencies. A special terminal only p2 site is created in `terminal/repo/target/repository`. The CI build
+uses this to speedup turnaround on changes only affecting the terminal. See https://ci.eclipse.org/cdt/view/Gerrit/
+
 #### baseline-compare-and-replace
 
 `baseline-compare-and-replace` profile controls whether baseline replace and compare

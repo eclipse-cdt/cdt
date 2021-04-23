@@ -1515,9 +1515,10 @@ public class VT100Emulator implements ControlListener {
 	}
 
 	private boolean hasNextChar() throws IOException {
-		if (fNextChar >= 0)
-			return true;
-		return fReader.ready();
+		if (fNextChar < 0 && fReader.ready()) {
+			fNextChar = fReader.read();
+		}
+		return fNextChar >= 0;
 	}
 
 	/**

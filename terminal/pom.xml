@@ -30,6 +30,7 @@
 	</modules>
 	<profiles>
 		<profile>
+		<!-- dummy edit -->
 			<!-- This is a special profile that allows you to build only the terminal and its CDT hosted dependencies -->
 			<id>only-terminal</id>
 			<modules>

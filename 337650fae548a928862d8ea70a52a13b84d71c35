@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "574cb31b_c2c8fca1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-04-23T16:57:10Z",
+      "side": 1,
+      "message": "@Jonah It transpires that ProcessHandle can only provide the command line, not the environment or working directory. So I now think it is not worth all the clutter. I will add public String[] GDBBackend.getDebuggerCommandLineArray() and deprecate protected String[] GDBBackend.getDebuggerCommandLine().",
+      "range": {
+        "startLine": 233,
+        "startChar": 4,
+        "endLine": 233,
+        "endChar": 59
+      },
+      "revId": "337650fae548a928862d8ea70a52a13b84d71c35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

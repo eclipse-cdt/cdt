@@ -16,6 +16,24 @@
       "revId": "e6d5c634b9f4f50ebaa52b7b212e0095b10fe4ea",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b057ea5_47ea8714",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-23T15:20:05Z",
+      "side": 1,
+      "message": "I don\u0027t know how to do this properly. I don\u0027t think it is a problem to run without the PID available, it just means you don\u0027t get newest features. I added a try/catch for this case.",
+      "parentUuid": "362907c9_6f3218c8",
+      "revId": "e6d5c634b9f4f50ebaa52b7b212e0095b10fe4ea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

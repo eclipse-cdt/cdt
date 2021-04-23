@@ -8,7 +8,10 @@ Bundle-Localization: plugin
 Require-Bundle: org.junit,
  org.eclipse.tm.terminal.control;bundle-version="4.5.0",
  org.eclipse.core.runtime,
- org.eclipse.ui
+ org.eclipse.ui,
+ org.mockito;bundle-version="2.23.0",
+ net.bytebuddy.byte-buddy;bundle-version="1.9.0",
+ org.objenesis;bundle-version="2.6.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.tm.internal.terminal.connector;x-internal:=true,
  org.eclipse.tm.internal.terminal.emulator;x-internal:=true,
@@ -20,3 +23,4 @@ Export-Package: org.eclipse.tm.internal.terminal.connector;x-internal:=true,
  org.eclipse.tm.terminal.model,
  org.eclipse.tm.terminal.test
 Automatic-Module-Name: org.eclipse.tm.terminal.test
+Import-Package: org.junit.jupiter.api;version="5.7.1"

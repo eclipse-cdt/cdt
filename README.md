@@ -54,6 +54,7 @@ running maven like this `mvn -f terminal/pom.xml verify -P only-terminal` to bui
 and its dependencies. No p2 site will be created with this option. The CI build uses this to speedup turnaround on
 changes only affecting the terminal. See https://ci.eclipse.org/cdt/view/Gerrit/
 
+
 #### baseline-compare-and-replace
 
 `baseline-compare-and-replace` profile controls whether baseline replace and compare

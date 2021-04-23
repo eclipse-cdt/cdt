@@ -180,6 +180,24 @@
     },
     {
       "key": {
+        "uuid": "9f9a508c_551694d0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-04-23T15:26:37Z",
+      "side": 1,
+      "message": "@Jonah Inspired by your option 4, I have proof of concept for retrieving the command line by implementing org.eclipse.cdt.utils.spawner.Spawner.toHandle() to return a ProcessHandle object. We can use this technique to get the environment too. I will clean this up for review.",
+      "parentUuid": "5eefc176_599e97c5",
+      "revId": "486a13a8e231ab581af7ad0c956cca27fc365657",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "12abdff4_6800bc0d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 1

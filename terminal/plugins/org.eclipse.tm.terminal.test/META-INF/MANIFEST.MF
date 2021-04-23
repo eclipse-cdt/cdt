@@ -20,3 +20,5 @@ Export-Package: org.eclipse.tm.internal.terminal.connector;x-internal:=true,
  org.eclipse.tm.terminal.model,
  org.eclipse.tm.terminal.test
 Automatic-Module-Name: org.eclipse.tm.terminal.test
+Import-Package: org.junit.jupiter.api;version="5.7.1",
+ org.opentest4j;version="1.2.0"

@@ -34,6 +34,10 @@ public class VT100EmulatorTest {
 	private static final String CLEAR_CURSOR_TO_EOL = "\033[K";
 	private static final String CURSOR_POSITION_TOP_LEFT = "\033[H";
 
+	private static String TITLE(String title) {
+		return "\033]0;" + title + "\007";
+	}
+
 	/**
 	 * Set the cursor position to line/column. Note that this is the logical
 	 * line and column, so 1, 1 is the top left.
@@ -210,6 +214,16 @@ public class VT100EmulatorTest {
 		assertAll(() -> assertCursorLocation(1, 0), () -> assertTextEquals(expected));
 		run(CURSOR_POSITION(2, 2));
 		assertAll(() -> assertCursorLocation(2, 1), () -> assertTextEquals(expected));
+	}
+
+	@Test
+	public void testTitle() {
+		run( //
+				TITLE("TITLE1"), //
+				"HELLO", //
+				TITLE("TITLE2"));
+		assertAll(() -> assertTextEquals("HELLO"),
+				() -> assertEquals(List.of("TITLE1", "TITLE2"), control.getAllTitles()));
 	}
 
 }

@@ -55,6 +55,16 @@ public final class Logger {
 	private static PrintStream logStream;
 	private static StackWalker walker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
+	private static boolean underTest = false;
+
+	/**
+	 * When underTest we want exception that are deep inside the code to be surfaced to the test
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void setUnderTest(boolean underTest) {
+		Logger.underTest = underTest;
+	}
+
 	static {
 		// Any of the known debugging options turns on the creation of the log file
 		boolean createLogFile = TerminalPlugin.isOptionEnabled(TRACE_DEBUG_LOG)
@@ -187,6 +197,9 @@ public final class Logger {
 	 * Writes an exception to the Terminal log and the Eclipse log
 	 */
 	public static final void logException(Exception ex) {
+		if (underTest) {
+			throw new RuntimeException("Terminal Under Test - examine cause for real failure", ex); //$NON-NLS-1$
+		}
 		logStatus(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
 	}
 

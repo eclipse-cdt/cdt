@@ -35,6 +35,7 @@ public class VT100EmulatorTest {
 	private static final String CURSOR_POSITION_TOP_LEFT = "\033[H";
 	private static final String CLEAR_ENTIRE_SCREEN_AND_SCROLLBACK = "\033[3J";
 	private static final String CLEAR_ENTIRE_SCREEN = "\033[2J";
+	private static final String SCROLL_REVERSE = "\033M";
 
 	private static String TITLE(String title) {
 		return "\033]0;" + title + "\007";
@@ -260,4 +261,53 @@ public class VT100EmulatorTest {
 		run(CURSOR_POSITION_TOP_LEFT + CLEAR_ENTIRE_SCREEN + CLEAR_ENTIRE_SCREEN_AND_SCROLLBACK);
 		assertAll(() -> assertCursorLocation(0, 0), () -> assertTextEquals(""));
 	}
+
+	/**
+	 * Runs what "up arrow" would send back to terminal in less/man/etc.
+	 */
+	@Test
+	public void testScrollReverseNoScrollback() {
+		List<String> expected = new ArrayList<>();
+		for (int i = 0; i < WINDOW_LINES; i++) {
+			String line = "Hello " + i;
+			run(line);
+			expected.add(line);
+			if (i != data.getHeight() - 1) {
+				run("\r\n");
+			}
+		}
+		assertAll(() -> assertCursorLocation(WINDOW_LINES - 1, expected.get(expected.size() - 1).length()),
+				() -> assertTextEquals(expected));
+		run(CURSOR_POSITION_TOP_LEFT);
+		assertAll(() -> assertCursorLocation(0, 0), () -> assertTextEquals(expected));
+		run(SCROLL_REVERSE);
+		expected.add(0, "");
+		expected.remove(expected.size() - 1);
+		assertAll(() -> assertCursorLocation(0, 0), () -> assertTextEquals(expected));
+	}
+
+	/**
+	 * Runs what "up arrow" would send back to terminal in less/man/etc.
+	 */
+	@Test
+	public void testScrollReverse() {
+		data.setMaxHeight(1000);
+		List<String> expected = new ArrayList<>();
+		for (int i = 0; i < WINDOW_LINES; i++) {
+			String line = "Hello " + i;
+			run(line);
+			expected.add(line);
+			run("\r\n");
+		}
+		assertAll(() -> assertCursorLocation(WINDOW_LINES, 0), () -> assertTextEquals(expected));
+		run(CURSOR_POSITION_TOP_LEFT);
+		assertAll(() -> assertCursorLocation(1, 0), () -> assertTextEquals(expected));
+		run(SCROLL_REVERSE);
+		expected.add(1, "");
+		assertAll(() -> assertCursorLocation(1, 0), () -> assertTextEquals(expected));
+		run("New text on top line following scroll reverse");
+		expected.set(1, "New text on top line following scroll reverse");
+		assertAll(() -> assertCursorLocation(1, expected.get(1).length()), () -> assertTextEquals(expected));
+	}
+
 }

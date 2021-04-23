@@ -306,14 +306,18 @@ public class ProcessConnector extends AbstractStreamsConnector {
 	 */
 	@Override
 	public Optional<String> getWorkingDirectory() {
-		long pid = process.pid();
 		try {
-			if (Platform.getOS().equals(Platform.OS_LINUX)) {
-				Path procCwd = Files.readSymbolicLink(FileSystems.getDefault().getPath("/proc/" + pid + "/cwd")); //$NON-NLS-1$//$NON-NLS-2$
-				return Optional.of(procCwd.toAbsolutePath().toString());
+			long pid = process.pid();
+			try {
+				if (Platform.getOS().equals(Platform.OS_LINUX)) {
+					Path procCwd = Files.readSymbolicLink(FileSystems.getDefault().getPath("/proc/" + pid + "/cwd")); //$NON-NLS-1$//$NON-NLS-2$
+					return Optional.of(procCwd.toAbsolutePath().toString());
+				}
+			} catch (Exception e) {
+				UIPlugin.log("Failed to obtain working directory of process id " + pid, e); //$NON-NLS-1$
 			}
 		} catch (Exception e) {
-			UIPlugin.log("Failed to obtain working directory of process id " + pid, e); //$NON-NLS-1$
+			UIPlugin.log("Failed to obtain process id of terminal process", e); //$NON-NLS-1$
 		}
 		return Optional.empty();
 	}

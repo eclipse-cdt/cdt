@@ -33,6 +33,8 @@ public class VT100EmulatorTest {
 	private static final int WINDOW_LINES = 24;
 	private static final String CLEAR_CURSOR_TO_EOL = "\033[K";
 	private static final String CURSOR_POSITION_TOP_LEFT = "\033[H";
+	private static final String CLEAR_ENTIRE_SCREEN_AND_SCROLLBACK = "\033[3J";
+	private static final String CLEAR_ENTIRE_SCREEN = "\033[2J";
 
 	private static String TITLE(String title) {
 		return "\033]0;" + title + "\007";
@@ -226,4 +228,36 @@ public class VT100EmulatorTest {
 				() -> assertEquals(List.of("TITLE1", "TITLE2"), control.getAllTitles()));
 	}
 
+	@Test
+	public void testE3ClearScreenAndScrollback() {
+		data.setMaxHeight(1000);
+		List<String> expected = new ArrayList<>();
+		for (int i = 0; i < 1000; i++) {
+			String line = "Hello " + i;
+			run(line + "\r\n");
+			expected.add(line);
+		}
+		expected.remove(0);
+		assertAll(() -> assertCursorLocation(999, 0), () -> assertTextEquals(expected));
+		run(CLEAR_ENTIRE_SCREEN_AND_SCROLLBACK);
+		assertAll(() -> assertTextEquals(""));
+	}
+
+	/**
+	 * Runs what "clear" command does on modern Linux installs, including E3 extension
+	 */
+	@Test
+	public void testClear() {
+		data.setMaxHeight(1000);
+		List<String> expected = new ArrayList<>();
+		for (int i = 0; i < 1000; i++) {
+			String line = "Hello " + i;
+			run(line + "\r\n");
+			expected.add(line);
+		}
+		expected.remove(0);
+		assertAll(() -> assertCursorLocation(999, 0), () -> assertTextEquals(expected));
+		run(CURSOR_POSITION_TOP_LEFT + CLEAR_ENTIRE_SCREEN + CLEAR_ENTIRE_SCREEN_AND_SCROLLBACK);
+		assertAll(() -> assertCursorLocation(0, 0), () -> assertTextEquals(""));
+	}
 }

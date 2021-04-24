@@ -22,6 +22,30 @@
       "revId": "337650fae548a928862d8ea70a52a13b84d71c35",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8ce243d_4967bbab",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-24T00:21:13Z",
+      "side": 1,
+      "message": "That is too bad it won\u0027t work out.\n\nI agree with your conclusion. I hope you at least had fun writing and learning new API at least :-) \n\n(I have recently been doing some work bring other bits of code to newer API, see https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/179701 for an example of using the StackWalker API)",
+      "parentUuid": "574cb31b_c2c8fca1",
+      "range": {
+        "startLine": 233,
+        "startChar": 4,
+        "endLine": 233,
+        "endChar": 59
+      },
+      "revId": "337650fae548a928862d8ea70a52a13b84d71c35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

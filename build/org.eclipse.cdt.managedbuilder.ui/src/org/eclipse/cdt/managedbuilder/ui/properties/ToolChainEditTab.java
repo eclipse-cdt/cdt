@@ -44,6 +44,7 @@ import org.eclipse.cdt.managedbuilder.tcmodification.IToolModification;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -113,7 +114,14 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		c_toolchain.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				modifyToolchain();
+				if (MessageDialog.open(MessageDialog.WARNING, c_toolchain.getShell(), Messages.BuilderSettingsTab_23,
+						Messages.BuilderSettingsTab_24, SWT.NONE, Messages.BuilderSettingsTab_25,
+						Messages.BuilderSettingsTab_26) == MessageDialog.OK) {
+					modifyToolchain();
+				} else {
+					e.doit = false;
+					fillToolChainCombo();
+				}
 			}
 		});
 		c_toolchain.setEnabled(!page.isForFile());

@@ -16,6 +16,24 @@
       "revId": "04b47fa7bc4c2725cf0a1d448377c914002b925e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f05a1c19_9987b757",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/internal/ui/Messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-25T00:38:56Z",
+      "side": 1,
+      "message": "This is fine, I wonder if it should be even more explicit though?\n\nYou are about to change toolchain. Changing toolchain will reset all settings (compiler, project includes, defines, etc) in the tooolchain integration and the settings will not be recovered by switching the toolchain back.",
+      "parentUuid": "9045c0ea_bffbf790",
+      "revId": "04b47fa7bc4c2725cf0a1d448377c914002b925e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

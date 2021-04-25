@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d05f86e7_a645091c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/internal/ui/Messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-04-25T13:58:15Z",
+      "side": 1,
+      "message": "Consider less verbose text such as:\n\nChanging toolchain will reset all tool settings to default values. Existing settings will be unrecoverable.",
+      "range": {
+        "startLine": 45,
+        "startChar": 22,
+        "endLine": 45,
+        "endChar": 244
+      },
+      "revId": "ec62724d583b25e987644aacebdf1f39ab906bb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

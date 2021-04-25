@@ -46,6 +46,30 @@
       "revId": "ec62724d583b25e987644aacebdf1f39ab906bb9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75421714_8f2ead09",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/internal/ui/Messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-04-25T14:56:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "01f5f3cb_ccc61402",
+      "range": {
+        "startLine": 45,
+        "startChar": 22,
+        "endLine": 45,
+        "endChar": 244
+      },
+      "revId": "ec62724d583b25e987644aacebdf1f39ab906bb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

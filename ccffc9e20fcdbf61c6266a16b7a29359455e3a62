@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5e87d90_11e43149",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-04-25T13:41:04Z",
+      "side": 1,
+      "message": "if you are going to use ofNullable here, may as well use map too :-)\n\n   Optional.ofNullable(gdbBackend.getGDBWorkingDirectory())\n    .map(IPath::toOSString).ifPresent(dir -\u003e attributes.put(DebugPlugin.ATTR_WORKING_DIRECTORY, dir));\n\nalthough I find it easier to read (and debug) an if statement in such a simple case. See https://stackoverflow.com/a/52048770/2796832 and https://dzone.com/articles/using-optional-correctly-is-not-optional item 12",
+      "range": {
+        "startLine": 226,
+        "startChar": 74,
+        "endLine": 226,
+        "endChar": 91
+      },
+      "revId": "ccffc9e20fcdbf61c6266a16b7a29359455e3a62",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

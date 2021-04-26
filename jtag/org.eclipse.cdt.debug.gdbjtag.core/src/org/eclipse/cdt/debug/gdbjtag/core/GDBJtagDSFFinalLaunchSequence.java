@@ -325,8 +325,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	public void stepSetExecutableFile(final RequestMonitor rm) {
 		final IPath programPath = fGDBBackend.getProgramPath();
 		if (!programPath.isEmpty()) {
-			// Escape backslashes for GDB
-			final String file = programPath.toOSString().replace("\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
+			final String file = programPath.toOSString();
 			fCommandControl.queueCommand(
 					fCommandControl.getCommandFactory().createMIFileExecFile(fCommandControl.getContext(), file),
 					new ImmediateDataRequestMonitor<MIInfo>(rm));

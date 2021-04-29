@@ -61,6 +61,7 @@
   </p>
   <ol>
     <li><a href="#gdbBackendDebuggerCommandLine">Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb</a></li>
+    <li><a name="ManagedCommandLineGenerator.toManagedCommandLineInfo">Add ITool parameter to ManagedCommandLineGenerator.toManagedCommandLineInfo</a></li>
   </ol>
 
   <hr>
@@ -419,6 +420,22 @@
   </p>
   <p>
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=572944" target="_blank">Bug 572944</a>.
+  </p>
+
+  <h3>2. <a name="ManagedCommandLineGenerator.toManagedCommandLineInfo">Add ITool parameter to ManagedCommandLineGenerator.toManagedCommandLineInfo</a></h3>
+  <p>
+    To allow extenders to know the context of a generated command line, the ITool instance was added to ManagedCommandLineGenerator.toManagedCommandLineInfo
+    method and the method without the ITool parameter will be removed:
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator.toManagedCommandLineInfo(String, String, String, String[], String, String, String, String[])</li>
+  </ul>
+  <p>
+    Extenders that override the above protected method should override
+    org.eclipse.cdt.managedbuilder.core.ManagedCommandLineGenerator.toManagedCommandLineInfo(ITool, String, String, String, String[], String, String, String, String[]) instead.
+  </p>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=573254" target="_blank">Bug 573254</a>.
   </p>
 </body>
 

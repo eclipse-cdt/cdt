@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ea7e93f_dfb42b20",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-04-29T17:26:04Z",
+      "side": 1,
+      "message": "Is this really enough?\nWhat if someone sub-classes and overrides the method without the ITool parameter, then there is nothing that will call the overridden method and the default behavior will be used.\n\nIs that situation acceptable?",
+      "range": {
+        "startLine": 86,
+        "startChar": 1,
+        "endLine": 86,
+        "endChar": 46
+      },
+      "revId": "ae6d6775fe1c55b57b586bdf9dc5b8e816f0b275",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4488a50e_ac908b47",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 424,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-04-29T17:26:04Z",
+      "side": 1,
+      "message": "Saw that I missed to add this before the last release, so I added it here. Hope it\u0027s okay to have it in this commit since it\u0027s related.",
+      "range": {
+        "startLine": 424,
+        "startChar": 2,
+        "endLine": 424,
+        "endChar": 92
+      },
+      "revId": "ae6d6775fe1c55b57b586bdf9dc5b8e816f0b275",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

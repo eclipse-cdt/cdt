@@ -79,13 +79,23 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 		command = command.replace(makeVariable(OUTPUT_PRM_NAME.toLowerCase()), outputName);
 		command = command.replace(makeVariable(INPUTS_PRM_NAME.toLowerCase()), inputsStr);
 
-		return toManagedCommandLineInfo(command.trim(), commandLinePattern, commandName, flags, outputFlag,
+		return toManagedCommandLineInfo(tool, command.trim(), commandLinePattern, commandName, flags, outputFlag,
 				outputPrefix, outputName, inputResources);
 	}
 
+	@Deprecated(since = "9.2", forRemoval = true)
 	protected IManagedCommandLineInfo toManagedCommandLineInfo(String commandLine, String commandLinePattern,
 			String commandName, String[] flags, String outputFlag, String outputPrefix, String outputName,
 			String[] inputResources) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * @since 9.3
+	 */
+	protected IManagedCommandLineInfo toManagedCommandLineInfo(ITool tool, String commandLine,
+			String commandLinePattern, String commandName, String[] flags, String outputFlag, String outputPrefix,
+			String outputName, String[] inputResources) {
 		String flagsStr = stringArrayToString(flags);
 		String inputResourcesStr = stringArrayToString(inputResources);
 

@@ -219,4 +219,12 @@ public interface IVT100EmulatorBackend {
 	 * @param lines  number of lines to scroll
 	 */
 	void scrollDown(int lines);
+
+	/**
+	 * Process a reverse line feed/reverse index.
+	 *
+	 * The content is scrolled down if the cursor is at the top of the
+	 * scroll region.
+	 */
+	void processReverseLineFeed();
 }

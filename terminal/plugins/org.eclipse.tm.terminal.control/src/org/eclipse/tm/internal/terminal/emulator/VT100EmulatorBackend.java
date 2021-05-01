@@ -367,6 +367,20 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		}
 	}
 
+	private void doReverseLineFeed() {
+		if (fCursorLine == fScrollRegion.getTopLine())
+			scrollDown(1);
+		else
+			setCursorLine(fCursorLine - 1);
+	}
+
+	@Override
+	public void processReverseLineFeed() {
+		synchronized (fTerminal) {
+			doReverseLineFeed();
+		}
+	}
+
 	@Override
 	public int getCursorLine() {
 		synchronized (fTerminal) {

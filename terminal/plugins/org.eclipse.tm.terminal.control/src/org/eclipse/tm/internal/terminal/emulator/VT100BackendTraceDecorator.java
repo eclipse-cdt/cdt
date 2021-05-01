@@ -205,4 +205,10 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
 		fBackend.scrollDown(lines);
 	}
 
+	@Override
+	public void processReverseLineFeed() {
+		fWriter.println("processReverseLineFeed()"); //$NON-NLS-1$
+		fBackend.processReverseLineFeed();
+	}
+
 }

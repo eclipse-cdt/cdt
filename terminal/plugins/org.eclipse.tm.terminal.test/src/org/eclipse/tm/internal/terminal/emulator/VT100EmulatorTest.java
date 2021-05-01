@@ -41,6 +41,10 @@ public class VT100EmulatorTest {
 		return "\033]0;" + title + "\007";
 	}
 
+	private static String SCROLL_REGION(int startRow, int endRow) {
+		return "\033[" + startRow + ";" + endRow + "r";
+	}
+
 	/**
 	 * Set the cursor position to line/column. Note that this is the logical
 	 * line and column, so 1, 1 is the top left.
@@ -308,6 +312,32 @@ public class VT100EmulatorTest {
 		run("New text on top line following scroll reverse");
 		expected.set(1, "New text on top line following scroll reverse");
 		assertAll(() -> assertCursorLocation(1, expected.get(1).length()), () -> assertTextEquals(expected));
+	}
+
+	/**
+	 * Runs what "up arrow" would send back to terminal in less/man/etc.
+	 * but with a scrolling region set
+	 */
+	@Test
+	public void testScrollReverseScrollingRegion() {
+		data.setMaxHeight(1000);
+		List<String> expected = new ArrayList<>();
+		for (int i = 0; i < WINDOW_LINES; i++) {
+			String line = "Hello " + i;
+			run(line);
+			expected.add(line);
+			run("\r\n");
+		}
+		assertAll(() -> assertCursorLocation(WINDOW_LINES, 0), () -> assertTextEquals(expected));
+		run(CURSOR_POSITION_TOP_LEFT + "\n");
+		assertAll(() -> assertCursorLocation(2, 0), () -> assertTextEquals(expected));
+		run(SCROLL_REGION(2, WINDOW_LINES));
+		run(SCROLL_REVERSE);
+		expected.add(2, "");
+		assertAll(() -> assertCursorLocation(2, 0), () -> assertTextEquals(expected));
+		run("New text on top line following scroll reverse");
+		expected.set(2, "New text on top line following scroll reverse");
+		assertAll(() -> assertCursorLocation(2, expected.get(2).length()), () -> assertTextEquals(expected));
 	}
 
 }

@@ -398,9 +398,7 @@ public class VT100Emulator implements ControlListener {
 				case 'M':
 					// Reverse line feed
 					ansiState = ANSISTATE_INITIAL;
-					if (text.getCursorLine() == 0)
-						text.scrollDown(1);
-					moveCursorUp(1);
+					text.processReverseLineFeed();
 					break;
 
 				default:

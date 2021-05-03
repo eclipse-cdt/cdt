@@ -886,7 +886,7 @@ public class CommandFactory {
 		return new MIGDBSetSolibSearchPath(ctx, paths);
 	}
 
-	/** @since 6.3 */
+	/** @since 6.4 */
 	public ICommand<MIInfo> createMIGDBSetStartupWithShell(ICommandControlDMContext ctx, boolean enable) {
 		return new MIGDBSetStartupWithShell(ctx, enable);
 	}

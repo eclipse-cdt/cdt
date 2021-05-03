@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "72275bde_b7970c2e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF",
+        "patchSetId": 6
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-03T00:19:40Z",
+      "side": 1,
+      "message": "Oops I missed this in the review - the version had already been bumped this release. I don\u0027t think it matters that much, and I don\u0027t like versions going backwards, so unless you have an objection we\u0027ll live with the double bump. A build with 6.4.0 has already been published to simrel - https://download.eclipse.org/staging/2021-06/plugins/org.eclipse.cdt.dsf.gdb_6.4.0.202104251839.jar\n\n10.2 version: https://download.eclipse.org/tools/cdt/releases/10.2/cdt-10.2.0/plugins/org.eclipse.cdt.dsf.gdb_6.2.0.202102231601.jar",
+      "revId": "5e9fc0024228992f9f434c503ef14f8ad89c84ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

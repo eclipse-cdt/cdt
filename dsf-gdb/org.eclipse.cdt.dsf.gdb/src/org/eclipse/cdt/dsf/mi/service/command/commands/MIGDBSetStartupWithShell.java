@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  *
  * Available with GDB 7.7 in GDB and 8.1 for gdbserver
  *
- * @since 6.3
+ * @since 6.4
  *
  */
 public class MIGDBSetStartupWithShell extends MIGDBSet {

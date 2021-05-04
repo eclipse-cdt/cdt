@@ -148,6 +148,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 				String content = StubUtility.getFileContent(template, fileHandle, lineDelimiter);
 				if (content != null) {
 					try {
+						StubUtility.setSelection(getResourceName(), template);
 						String charset = fileHandle.getParent().getDefaultCharset();
 						return new ByteArrayInputStream(content.getBytes(charset));
 					} catch (UnsupportedEncodingException exc) {
@@ -181,6 +182,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 			if (!isDefaultSelected && selected != null && selected.getName().equals(names[i])) {
 				idx = i;
 			}
+			idx = StubUtility.getSelection(getResourceName(), fTemplates);
 		}
 		if (fTemplatesCombo != null) {
 			if (names.length == 0) {

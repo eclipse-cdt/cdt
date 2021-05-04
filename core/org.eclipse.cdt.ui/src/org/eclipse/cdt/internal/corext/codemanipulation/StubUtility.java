@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2016 IBM Corporation and others.
+ * Copyright (c) 2001, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Jens Elmenthaler (Verigy) - http://bugs.eclipse.org/235586
  *     Sergey Prigogin (Google)
+ *     Lidia Popescu (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.codemanipulation;
 
@@ -58,6 +59,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -76,6 +78,9 @@ import org.eclipse.text.templates.TemplatePersistenceData;
 
 public class StubUtility {
 	private static final String[] EMPTY = {};
+
+	/** Dialog settings key to persist selected template. */
+	private static final String KEY_TEMPLATE = "org.eclipse.cdt.internal.corext.codemanipulation"; //$NON-NLS-1$
 
 	private StubUtility() {
 	}
@@ -974,5 +979,80 @@ public class StubUtility {
 		} else {
 			return fieldName.substring(firstWordStart, lastWordEnd);
 		}
+	}
+
+	/**
+	 * Returns the specific section from dialog based on provided key
+	 *
+	 * @param fileExtension
+	 * @return
+	 */
+	protected static IDialogSettings getDialogSettings(String fileExtension) {
+		if (fileExtension == null) {
+			return null;
+		}
+		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings().getSection(KEY_TEMPLATE);
+		if (settings == null) {
+			settings = CUIPlugin.getDefault().getDialogSettings().addNewSection(KEY_TEMPLATE);
+		}
+		IDialogSettings eSettings = settings.getSection(fileExtension);
+		if (eSettings == null) {
+			eSettings = settings.addNewSection(fileExtension);
+		}
+		return eSettings;
+	}
+
+	/**
+	 * Saves the template that has been used for a specific file extension.
+	 *
+	 * @param fileName
+	 * @param template
+	 */
+	public static void setSelection(String fileName, Template template) {
+
+		String extension = fileName.substring(fileName.lastIndexOf("."), fileName.length()); //$NON-NLS-1$
+
+		IDialogSettings settings = getDialogSettings(extension);
+		if (settings != null) {
+			settings.put("id", template.getContextTypeId()); //$NON-NLS-1$
+			settings.put("name", template.getName()); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * @param fileName
+	 * @param fTemplates
+	 * @return the position of found template in the list for combobox selection
+	 */
+	public static int getSelection(String fileName, Template[] fTemplates) {
+		if (fileName == null || fTemplates == null) {
+			return 0;
+		}
+		if (fileName.isEmpty() || fTemplates.length == 0) {
+			return 0;
+		}
+		if (!fileName.contains(".")) { //$NON-NLS-1$
+			return 0;
+		}
+		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings().getSection(KEY_TEMPLATE);
+		if (settings == null) {
+			return 0;
+		}
+		String extension = fileName.substring(fileName.lastIndexOf("."), fileName.length()); //$NON-NLS-1$
+		IDialogSettings eSettings = settings.getSection(extension);
+		if (eSettings == null) {
+			return 0;
+		}
+		String tContextId = eSettings.get("id"); //$NON-NLS-1$
+		String tName = eSettings.get("name"); //$NON-NLS-1$
+		if (tContextId == null || tName == null) {
+			return 0;
+		}
+		for (int i = 0; i < fTemplates.length; i++) {
+			if (fTemplates[i].getContextTypeId().equals(tContextId) && fTemplates[i].getName().equals(tName)) {
+				return i;
+			}
+		}
+		return 0;
 	}
 }

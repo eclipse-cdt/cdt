@@ -92,6 +92,10 @@ public final class DisassemblyMessages extends NLS {
 	public static String Disassembly_action_AddBreakpoint_errorTitle;
 	public static String Disassembly_action_AddBreakpoint_errorMessage;
 	public static String Disassembly_action_ToggleBreakpoint_accelerator;
+	public static String Disassembly_action_JumpToMemory_label;
+	public static String Disassembly_action_JumpToMemory_tooltip;
+	public static String Disassembly_action_JumpToMemory_errorTitle;
+	public static String Disassembly_action_JumpToMemory_errorMessage;
 
 	static {
 		NLS.initializeMessages(DisassemblyMessages.class.getName(), DisassemblyMessages.class);

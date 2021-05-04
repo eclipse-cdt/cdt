@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2021 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,21 +10,26 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Lidia Popescu (Wind River Systems) - http://bugs.eclipse.org/573204
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
 import org.eclipse.cdt.internal.ui.preferences.CodeTemplatePreferencePage;
+import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -34,6 +39,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.content.IContentTypeMatcher;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -48,6 +54,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
@@ -61,6 +68,8 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 	private Combo fTemplatesCombo;
 	private Template[] fTemplates;
 	protected boolean fUseTemplate = true;
+	/** Dialog settings key to persist selected template. */
+	private static final String KEY_TEMPLATE = "org.eclipse.cdt.internal.corext.codemanipulation"; //$NON-NLS-1$
 
 	/**
 	 * Create a new 'file from template' page.
@@ -148,6 +157,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 				String content = StubUtility.getFileContent(template, fileHandle, lineDelimiter);
 				if (content != null) {
 					try {
+						saveSelection(getContainterProject(), getFileExtensionFromName(), template);
 						String charset = fileHandle.getParent().getDefaultCharset();
 						return new ByteArrayInputStream(content.getBytes(charset));
 					} catch (UnsupportedEncodingException exc) {
@@ -181,6 +191,10 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 			if (!isDefaultSelected && selected != null && selected.getName().equals(names[i])) {
 				idx = i;
 			}
+		}
+		Optional<Integer> idxo = getSelection(getContainterProject(), getFileExtensionFromName(), fTemplates);
+		if (idxo.isPresent()) {
+			idx = idxo.get();
 		}
 		if (fTemplatesCombo != null) {
 			if (names.length == 0) {
@@ -277,4 +291,160 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 		return result.toArray(new String[result.size()]);
 	}
 
+	/**
+	 * @return
+	 */
+	private String getFileExtensionFromName() {
+		String fName = getFileName();
+		if (fName == null || fName.isEmpty() || !fName.contains(".")) { //$NON-NLS-1$
+			return null;
+		}
+		return fName.substring(fName.lastIndexOf("."), fName.length()); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the specific section from dialog based on provided key
+	 *
+	 * @param fileExtension
+	 * @return
+	 */
+	protected static IDialogSettings getDialogSettings(String fileExtension) {
+		if (fileExtension == null) {
+			return null;
+		}
+		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings().getSection(KEY_TEMPLATE);
+		if (settings == null) {
+			settings = CUIPlugin.getDefault().getDialogSettings().addNewSection(KEY_TEMPLATE);
+		}
+		IDialogSettings eSettings = settings.getSection(fileExtension);
+		if (eSettings == null) {
+			eSettings = settings.addNewSection(fileExtension);
+		}
+		return eSettings;
+	}
+
+	/**
+	 * Saves the template that has been used for a specific file extension.
+	 *
+	 * @param project
+	 * @param fExtension
+	 * @param template
+	 */
+	private static void saveSelection(IProject project, String fExtension, Template template) {
+		if (fExtension == null || fExtension.isEmpty() || template == null) {
+			return;
+		}
+		IDialogSettings settings = getDialogSettings(fExtension);
+		if (settings != null) {
+			TemplatePersistenceData[] data = getTemplatePersistentData(project);
+			String templateID = getTemplateId(template, data);
+			settings.put("id", templateID == null ? "" : templateID); //$NON-NLS-1$ //$NON-NLS-2$
+			settings.put("name", template.getName()); //$NON-NLS-1$
+			settings.put("contextId", template.getContextTypeId()); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * @param template
+	 * @param data
+	 * @return
+	 */
+	private static String getTemplateId(Template template, TemplatePersistenceData[] data) {
+		if (template == null || data == null)
+			return null;
+		for (int i = 0; i < data.length; i++) {
+			TemplatePersistenceData tData = data[i];
+			if (tData.getTemplate().equals(template)) {
+				return tData.getId();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param project
+	 * @return
+	 */
+	private static TemplatePersistenceData[] getTemplatePersistentData(IProject project) {
+		TemplatePersistenceData[] templateDatas;
+		if (project == null) {
+			templateDatas = CUIPlugin.getDefault().getCodeTemplateStore().getTemplateData(true);
+		} else {
+			ProjectTemplateStore projectStore = new ProjectTemplateStore(project.getProject());
+			try {
+				projectStore.load();
+			} catch (IOException e) {
+				CUIPlugin.log(e);
+			}
+			templateDatas = projectStore.getTemplateData();
+		}
+		return templateDatas;
+	}
+
+	/**
+	 * @param project
+	 * @param fExtension
+	 * @param fTemplates
+	 * @return the position of found template in the list for combobox selection inside Optional
+	 */
+	private static Optional<Integer> getSelection(IProject project, String fExtension, Template[] fTemplates) {
+		if (fExtension == null || fTemplates == null) {
+			return Optional.empty();
+		}
+		if (fExtension.isEmpty() || fTemplates.length == 0) {
+			return Optional.empty();
+		}
+		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings().getSection(KEY_TEMPLATE);
+		if (settings == null) {
+			return Optional.empty();
+		}
+		IDialogSettings eSettings = settings.getSection(fExtension);
+		if (eSettings == null) {
+			return Optional.empty();
+		}
+		String tId = eSettings.get("id"); //$NON-NLS-1$
+		String tName = eSettings.get("name"); //$NON-NLS-1$
+		String tContextId = eSettings.get("contextId"); //$NON-NLS-1$
+		Template template = getTemplateFromId(project, tId);
+
+		if (template != null) {
+			for (int i = 0; i < fTemplates.length; i++) {
+				if (fTemplates[i].equals(template)) {
+					return Optional.of(i);
+				}
+			}
+		}
+		for (int i = 0; i < fTemplates.length; i++) {
+			if (fTemplates[i].getContextTypeId().equals(tContextId) && fTemplates[i].getName().equals(tName)) {
+				return Optional.of(i);
+			}
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Templates provided thought extension point may have id, but user manually created templates will not have ids.
+	 *
+	 * The method finds template object from provided template id stored in DialogSettings.
+	 * If the plugin that provided the template has been uninstalled, it may not found the template.
+	 *
+	 * @param project
+	 * @param tId
+	 * @return
+	 */
+	private static Template getTemplateFromId(IProject project, String tId) {
+		if (tId == null || tId.isEmpty()) {
+			return null;
+		}
+		TemplatePersistenceData[] data = getTemplatePersistentData(project);
+		if (data == null) {
+			return null;
+		}
+		for (int i = 0; i < data.length; i++) {
+			if (tId.equals(data[i].getId())) {
+				return data[i].getTemplate();
+			}
+		}
+		return null;
+	}
 }

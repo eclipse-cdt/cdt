@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2016 IBM Corporation and others.
+ * Copyright (c) 2001, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Jens Elmenthaler (Verigy) - http://bugs.eclipse.org/235586
  *     Sergey Prigogin (Google)
+ *     Lidia Popescu (Wind River Systems) - http://bugs.eclipse.org/572755
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.codemanipulation;
 
@@ -975,4 +976,5 @@ public class StubUtility {
 			return fieldName.substring(firstWordStart, lastWordEnd);
 		}
 	}
+
 }

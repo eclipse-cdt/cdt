@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
@@ -148,6 +149,7 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 				String content = StubUtility.getFileContent(template, fileHandle, lineDelimiter);
 				if (content != null) {
 					try {
+						StubUtility.saveSelection(getContainterProject(), getFileExtensionFromName(), template);
 						String charset = fileHandle.getParent().getDefaultCharset();
 						return new ByteArrayInputStream(content.getBytes(charset));
 					} catch (UnsupportedEncodingException exc) {
@@ -181,6 +183,11 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 			if (!isDefaultSelected && selected != null && selected.getName().equals(names[i])) {
 				idx = i;
 			}
+		}
+		Optional<Integer> idxo = StubUtility.getSelection(getContainterProject(), getFileExtensionFromName(),
+				fTemplates);
+		if (idxo.isPresent()) {
+			idx = idxo.get();
 		}
 		if (fTemplatesCombo != null) {
 			if (names.length == 0) {
@@ -277,4 +284,11 @@ public class WizardNewFileFromTemplateCreationPage extends WizardNewFileCreation
 		return result.toArray(new String[result.size()]);
 	}
 
+	private String getFileExtensionFromName() {
+		String fName = getFileName();
+		if (fName == null || fName.isEmpty() || !fName.contains(".")) { //$NON-NLS-1$
+			return null;
+		}
+		return fName.substring(fName.lastIndexOf("."), fName.length()); //$NON-NLS-1$
+	}
 }

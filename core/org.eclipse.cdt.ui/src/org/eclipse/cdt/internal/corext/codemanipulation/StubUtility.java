@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2016 IBM Corporation and others.
+ * Copyright (c) 2001, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Jens Elmenthaler (Verigy) - http://bugs.eclipse.org/235586
  *     Sergey Prigogin (Google)
+ *     Lidia Popescu (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.codemanipulation;
 
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -58,6 +60,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -76,6 +79,9 @@ import org.eclipse.text.templates.TemplatePersistenceData;
 
 public class StubUtility {
 	private static final String[] EMPTY = {};
+
+	/** Dialog settings key to persist selected template. */
+	private static final String KEY_TEMPLATE = "org.eclipse.cdt.internal.corext.codemanipulation"; //$NON-NLS-1$
 
 	private StubUtility() {
 	}
@@ -975,4 +981,151 @@ public class StubUtility {
 			return fieldName.substring(firstWordStart, lastWordEnd);
 		}
 	}
+
+	/**
+	 * Returns the specific section from dialog based on provided key
+	 *
+	 * @param fileExtension
+	 * @return
+	 */
+	protected static IDialogSettings getDialogSettings(String fileExtension) {
+		if (fileExtension == null) {
+			return null;
+		}
+		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings().getSection(KEY_TEMPLATE);
+		if (settings == null) {
+			settings = CUIPlugin.getDefault().getDialogSettings().addNewSection(KEY_TEMPLATE);
+		}
+		IDialogSettings eSettings = settings.getSection(fileExtension);
+		if (eSettings == null) {
+			eSettings = settings.addNewSection(fileExtension);
+		}
+		return eSettings;
+	}
+
+	/**
+	 * Saves the template that has been used for a specific file extension.
+	 *
+	 * @param project
+	 * @param fExtension
+	 * @param template
+	 */
+	public static void saveSelection(IProject project, String fExtension, Template template) {
+		if (fExtension == null || fExtension.isEmpty() || template == null) {
+			return;
+		}
+		IDialogSettings settings = getDialogSettings(fExtension);
+		if (settings != null) {
+			TemplatePersistenceData[] data = getTemplatePersistentData(project);
+			String templateID = getTemplateId(template, data);
+			settings.put("id", templateID == null ? "" : templateID); //$NON-NLS-1$ //$NON-NLS-2$
+			settings.put("name", template.getName()); //$NON-NLS-1$
+			settings.put("contextId", template.getContextTypeId()); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * @param template
+	 * @param data
+	 * @return
+	 */
+	private static String getTemplateId(Template template, TemplatePersistenceData[] data) {
+		if (template == null || data == null)
+			return null;
+		for (int i = 0; i < data.length; i++) {
+			TemplatePersistenceData tData = data[i];
+			if (tData.getTemplate().equals(template)) {
+				return tData.getId();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param project
+	 * @return
+	 */
+	private static TemplatePersistenceData[] getTemplatePersistentData(IProject project) {
+		TemplatePersistenceData[] templateDatas;
+		if (project == null) {
+			templateDatas = CUIPlugin.getDefault().getCodeTemplateStore().getTemplateData(true);
+		} else {
+			ProjectTemplateStore projectStore = new ProjectTemplateStore(project.getProject());
+			try {
+				projectStore.load();
+			} catch (IOException e) {
+				CUIPlugin.log(e);
+			}
+			templateDatas = projectStore.getTemplateData();
+		}
+		return templateDatas;
+	}
+
+	/**
+	 * @param project
+	 * @param fExtension
+	 * @param fTemplates
+	 * @return the position of found template in the list for combobox selection inside Optional
+	 */
+	public static Optional<Integer> getSelection(IProject project, String fExtension, Template[] fTemplates) {
+		if (fExtension == null || fTemplates == null) {
+			return Optional.empty();
+		}
+		if (fExtension.isEmpty() || fTemplates.length == 0) {
+			return Optional.empty();
+		}
+		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings().getSection(KEY_TEMPLATE);
+		if (settings == null) {
+			return Optional.empty();
+		}
+		IDialogSettings eSettings = settings.getSection(fExtension);
+		if (eSettings == null) {
+			return Optional.empty();
+		}
+		String tId = eSettings.get("id"); //$NON-NLS-1$
+		String tName = eSettings.get("name"); //$NON-NLS-1$
+		String tContextId = eSettings.get("contextId"); //$NON-NLS-1$
+		Template template = getTemplateFromId(project, tId);
+
+		if (template != null) {
+			for (int i = 0; i < fTemplates.length; i++) {
+				if (fTemplates[i].equals(template)) {
+					return Optional.of(i);
+				}
+			}
+		}
+		for (int i = 0; i < fTemplates.length; i++) {
+			if (fTemplates[i].getContextTypeId().equals(tContextId) && fTemplates[i].getName().equals(tName)) {
+				return Optional.of(i);
+			}
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Templates provided thought extension point may have id, but user manually created templates will not have ids.
+	 *
+	 * The method finds template object from provided template id stored in DialogSettings.
+	 * If the plugin that provided the template has been uninstalled, it may not found the template.
+	 *
+	 * @param project
+	 * @param tId
+	 * @return
+	 */
+	private static Template getTemplateFromId(IProject project, String tId) {
+		if (tId == null || tId.isEmpty()) {
+			return null;
+		}
+		TemplatePersistenceData[] data = getTemplatePersistentData(project);
+		if (data == null) {
+			return null;
+		}
+		for (int i = 0; i < data.length; i++) {
+			if (tId.equals(data[i].getId())) {
+				return data[i].getTemplate();
+			}
+		}
+		return null;
+	}
+
 }

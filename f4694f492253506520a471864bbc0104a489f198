@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "78dfc3a0_71e49c0f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1013,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-05T00:57:18Z",
+      "side": 1,
+      "message": "I think this will throw IndexOutOfBoundsException if file name has no extension? In the getSelection you test for fileName contains \".\" before splitting off the extenstion.\n\nFor both cases, passing in just the extension may make the most sense? getFileExtension() is a method on WizardNewFileFromTemplateCreationPage",
+      "range": {
+        "startLine": 1013,
+        "startChar": 40,
+        "endLine": 1013,
+        "endChar": 65
+      },
+      "revId": "f4694f492253506520a471864bbc0104a489f198",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "516459d6_422e7098",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-05T00:57:18Z",
+      "side": 1,
+      "message": "For all these cases that return 0, I suspect that returning Optional.empty() makes more sense and have the method return Optional\u003cInteger\u003e",
+      "revId": "f4694f492253506520a471864bbc0104a489f198",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3bd005c5_4ab01b7d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/filewizard/WizardNewFileFromTemplateCreationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-05T00:57:18Z",
+      "side": 1,
+      "message": "can this be renamed - perhaps something like \"saveSelection\"?",
+      "range": {
+        "startLine": 151,
+        "startChar": 18,
+        "endLine": 151,
+        "endChar": 30
+      },
+      "revId": "f4694f492253506520a471864bbc0104a489f198",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14621491_a8635552",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/filewizard/WizardNewFileFromTemplateCreationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-05T00:57:18Z",
+      "side": 1,
+      "message": "idx is assigned a couple of lines above this. Is that if statement still relevant as its results are now no longer used. AFAICT the whole loop isn\u0027t needed. \n\nIt may be best that StubUtility.getSelection returns an Optional\u003cInteger\u003e and use the existing idx calculation if getSelection returns not present?",
+      "revId": "f4694f492253506520a471864bbc0104a489f198",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

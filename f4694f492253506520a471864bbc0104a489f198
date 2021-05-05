@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "441505d2_76863c85",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1013,
+      "author": {
+        "id": 1244
+      },
+      "writtenOn": "2021-05-05T23:06:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "78dfc3a0_71e49c0f",
+      "range": {
+        "startLine": 1013,
+        "startChar": 40,
+        "endLine": 1013,
+        "endChar": 65
+      },
+      "revId": "f4694f492253506520a471864bbc0104a489f198",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "516459d6_422e7098",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
         "patchSetId": 1
@@ -39,6 +63,24 @@
       "revId": "f4694f492253506520a471864bbc0104a489f198",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb94c1fc_8d6fbb92",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 1244
+      },
+      "writtenOn": "2021-05-05T23:06:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "516459d6_422e7098",
+      "revId": "f4694f492253506520a471864bbc0104a489f198",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "dc595977_fbd9c2dd",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/filewizard/WizardNewFileFromTemplateCreationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1244
+      },
+      "writtenOn": "2021-05-05T23:06:07Z",
+      "side": 1,
+      "message": "Done, I also 1st called it saveSelection",
+      "parentUuid": "3bd005c5_4ab01b7d",
+      "range": {
+        "startLine": 151,
+        "startChar": 18,
+        "endLine": 151,
+        "endChar": 30
+      },
+      "revId": "f4694f492253506520a471864bbc0104a489f198",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "14621491_a8635552",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/filewizard/WizardNewFileFromTemplateCreationPage.java",
         "patchSetId": 1
@@ -79,6 +145,24 @@
       "revId": "f4694f492253506520a471864bbc0104a489f198",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b560490_3217428b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/wizards/filewizard/WizardNewFileFromTemplateCreationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1244
+      },
+      "writtenOn": "2021-05-05T23:06:07Z",
+      "side": 1,
+      "message": "Done, I also was wondering about this \u0027if\u0027 statement , when it happens, as I wasn\u0027t able to satisfy conditions. And maybe it\u0027s not ok to always override it.",
+      "parentUuid": "14621491_a8635552",
+      "revId": "f4694f492253506520a471864bbc0104a489f198",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -39,7 +39,10 @@ test30_1.so.1.2.3 \
 
 
 # All Target
-all: Test30_1.so.4.5.6 secondary-outputs
+all: main-build
+
+# Main-build Target
+main-build: Test30_1.so.4.5.6 secondary-outputs
 
 # Tool invocations
 Test30_1.so.4.5.6: $(EXECUTABLES) makefile objects.mk $(OPTIONAL_TOOL_DEPS)

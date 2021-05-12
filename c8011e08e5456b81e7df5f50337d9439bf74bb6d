@@ -52,6 +52,24 @@
       "revId": "c8011e08e5456b81e7df5f50337d9439bf74bb6d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c2826d0_7e50cf54",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3480,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-12T16:11:30Z",
+      "side": 1,
+      "message": "What would be the preferred way to handle the removal of the \"static\" keyword here? Is it to choose a different name for the non-static version or is there a better solution?\nThe same goes for all 3 functions...",
+      "parentUuid": "0496bff3_bb0a6e99",
+      "revId": "c8011e08e5456b81e7df5f50337d9439bf74bb6d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

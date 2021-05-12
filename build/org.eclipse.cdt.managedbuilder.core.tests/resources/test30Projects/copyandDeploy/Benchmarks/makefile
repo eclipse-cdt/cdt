@@ -37,7 +37,10 @@ USER_OBJS.foo \
 
 
 # All Target
-all: TestCopyandDeploy
+all: main-build
+
+# Main-build Target
+main-build: TestCopyandDeploy
 
 # Tool invocations
 TestCopyandDeploy: $(EXECUTABLES) makefile objects.mk $(OPTIONAL_TOOL_DEPS)

@@ -34,7 +34,10 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: MBS2dot1.exe
+all: main-build
+
+# Main-build Target
+main-build: MBS2dot1.exe
 
 # Tool invocations
 MBS2dot1.exe: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)

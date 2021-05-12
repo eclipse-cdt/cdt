@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Ericsson - Adapted for DSF
  *     Dmitry Kozlov (Mentor Graphics) - Add tab symbols parsing (Bug 391115)
  *     William Riley (Renesas) - Add raw Opcode parsing (Bug 357270)
+ *     John Dallaway - Fix counting of opcode bytes (Bug 573506)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -165,7 +166,9 @@ public class MIInstruction extends AbstractInstruction {
 				try {
 					rawOpcodeString = str;
 					rawOpcodes = decodeOpcodes(str);
-					opcodeSize = Integer.valueOf(str.replace(" ", "").length() / 2); //$NON-NLS-1$//$NON-NLS-2$
+
+					// count the space-separated bytes (do not assume 8 bits per byte)
+					opcodeSize = (int) str.chars().filter(ch -> (' ' == ch)).count() + 1;
 				} catch (NumberFormatException e) {
 				}
 				continue;

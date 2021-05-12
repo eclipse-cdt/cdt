@@ -1384,57 +1384,46 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				.equals(config.getBuildArtefactType().getId()))
 			refConfigs = ManagedBuildManager.getReferencedConfigurations(config);
 
-		/*		try {
-					refdProjects = project.getReferencedProjects();
-				} catch (CoreException e) {
-					// There are 2 exceptions; the project does not exist or it is not open
-					// and neither conditions apply if we are building for it ....
-				}
-		*/
-		// If a prebuild step exists, redefine the all target to be
-		// all:
-		//     $(MAKE) pre-build
-		//     $(MAKE) main-build
-		// and then reset the "traditional" all target to main-build
-		// This will allow something meaningful to happen if the generated
-		// makefile is
-		// extracted and run standalone via "make all"
-		//
-		String defaultTarget = "all:"; //$NON-NLS-1$
-		if (prebuildStep.length() > 0) {
+		// Add the comment for the "All" target
+		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(ALL_TARGET))
+				.append(NEWLINE);
 
-			// Add the comment for the "All" target
-			buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(ALL_TARGET))
-					.append(NEWLINE);
+		if (!prebuildStep.isEmpty() || !postbuildStep.isEmpty()) {
+			// all:
+			buffer.append("all").append(COLON).append(NEWLINE); //$NON-NLS-1$
 
-			// Invoke make multiple times to ensure pre-build is executed before main-build
-			buffer.append(defaultTarget).append(NEWLINE);
-			buffer.append(TAB).append(MAKE).append(WHITESPACE).append(NO_PRINT_DIR).append(WHITESPACE).append(PREBUILD)
-					.append(NEWLINE);
-			buffer.append(TAB).append(MAKE).append(WHITESPACE).append(NO_PRINT_DIR).append(WHITESPACE).append(MAINBUILD)
-					.append(NEWLINE);
+			String makeNoPrintDir = MAKE + WHITESPACE + NO_PRINT_DIR + WHITESPACE;
+			buffer.append(TAB).append("+@"); //$NON-NLS-1$
+			if (!prebuildStep.isEmpty()) {
+				buffer.append(makeNoPrintDir).append(PREBUILD).append(WHITESPACE).append(LOGICAL_AND)
+						.append(WHITESPACE);
+			}
+			buffer.append(makeNoPrintDir).append(MAINBUILD);
+			if (!postbuildStep.isEmpty()) {
+				buffer.append(WHITESPACE).append(LOGICAL_AND).append(WHITESPACE).append(makeNoPrintDir)
+						.append(POSTBUILD);
+			}
+
 			buffer.append(NEWLINE);
 
-			// Update the defaultTarget, main-build, by adding a colon, which is
-			// needed below
-			defaultTarget = MAINBUILD.concat(COLON);
+		} else {
+			// all: main-build
+			buffer.append("all").append(COLON).append(WHITESPACE).append(MAINBUILD).append(NEWLINE); //$NON-NLS-1$
+		}
+		buffer.append(NEWLINE);
 
-			// Add the comment for the "main-build" target
-			buffer.append(COMMENT_SYMBOL).append(WHITESPACE)
-					.append(ManagedMakeMessages.getResourceString(MAINBUILD_TARGET)).append(NEWLINE);
-		} else
-			// Add the comment for the "All" target
-			buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(ALL_TARGET))
-					.append(NEWLINE);
+		// Add the comment for the "main-build" target
+		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(MAINBUILD_TARGET))
+				.append(NEWLINE);
 
-		// Write out the all target first in case someone just runs make
-		// all: <target_name> or mainbuild: <target_name>
+		// Write out the main-build target first in case someone just runs make
+		// main-build: <target_name>
 
 		String outputPrefix = EMPTY_STRING;
 		if (targetTool != null) {
 			outputPrefix = targetTool.getOutputPrefix();
 		}
-		buffer.append(defaultTarget).append(WHITESPACE).append(outputPrefix)
+		buffer.append(MAINBUILD).append(COLON).append(WHITESPACE).append(outputPrefix)
 				.append(ensurePathIsGNUMakeTargetRuleCompatibleSyntax(buildTargetName));
 		if (buildTargetExt.length() > 0) {
 			buffer.append(DOT).append(buildTargetExt);
@@ -1519,8 +1508,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 
 		// Add the targets tool rules
-		buffer.append(addTargetsRules(targetTool, outputVarsAdditionsList, managedProjectOutputs,
-				(postbuildStep.length() > 0)));
+		buffer.append(addTargetsRules(targetTool, outputVarsAdditionsList, managedProjectOutputs));
 
 		// Add the prebuild step target, if specified
 		if (prebuildStep.length() > 0) {
@@ -1584,7 +1572,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * @return StringBuffer
 	 */
 	private StringBuffer addTargetsRules(ITool targetTool, List<String> outputVarsAdditionsList,
-			Vector<String> managedProjectOutputs, boolean postbuildStep) {
+			Vector<String> managedProjectOutputs) {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
 		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(BUILD_TOP))
@@ -1599,7 +1587,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			// appear to be used there (and tool outputs are consulted directly), but
 			// we quote it anyway just in case it starts to use it in future.
 			if (addRuleForTool(targetTool, buffer, true, ensurePathIsGNUMakeTargetRuleCompatibleSyntax(buildTargetName),
-					buildTargetExt, outputVarsAdditionsList, managedProjectOutputs, postbuildStep)) {
+					buildTargetExt, outputVarsAdditionsList, managedProjectOutputs, false)) {
 				//  Mark the target tool as processed
 				for (int i = 0; i < buildTools.length; i++) {
 					if (targetTool == buildTools[i]) {
@@ -1659,6 +1647,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 	/**
+	 * @deprecated Use {@link #addRuleForTool(ITool, StringBuffer, boolean, String, String, List, Vector)}
+	 */
+	@Deprecated
+	protected boolean addRuleForTool(ITool tool, StringBuffer buffer, boolean bTargetTool, String targetName,
+			String targetExt, List<String> outputVarsAdditionsList, Vector<String> managedProjectOutputs,
+			boolean bEmitPostBuildStepCall) {
+		return addRuleForTool(tool, buffer, bTargetTool, targetName, targetExt, outputVarsAdditionsList,
+				managedProjectOutputs);
+	}
+
+	/**
 	 * Create the rule
 	 *
 	 * @param buffer  Buffer to add makefile rules to
@@ -1667,11 +1666,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * @param targetExt  If this is the "targetTool", the target file extension, else <code>null</code>
 	 * @param outputVarsAdditionsList  list to add needed build output variables to
 	 * @param managedProjectOutputs  Other projects in the workspace that this project depends upon
-	 * @param bEmitPostBuildStepCall  Emit post-build step invocation
+	 * @since 9.3
 	 */
 	protected boolean addRuleForTool(ITool tool, StringBuffer buffer, boolean bTargetTool, String targetName,
-			String targetExt, List<String> outputVarsAdditionsList, Vector<String> managedProjectOutputs,
-			boolean bEmitPostBuildStepCall) {
+			String targetExt, List<String> outputVarsAdditionsList, Vector<String> managedProjectOutputs) {
 
 		//  Get the tool's inputs and outputs
 		Vector<String> inputs = new Vector<>();
@@ -1805,16 +1803,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 					escapedEcho((bTargetTool ? MESSAGE_FINISH_BUILD : MESSAGE_FINISH_FILE) + WHITESPACE + OUT_MACRO));
 			buffer.append(TAB).append(AT).append(ECHO_BLANK_LINE);
 
-			// If there is a post build step, then add a recursive invocation of MAKE to invoke it after the main build
-			// Note that $(MAKE) will instantiate in the recusive invocation to the make command that was used to invoke
-			// the makefile originally
-			if (bEmitPostBuildStepCall) {
-				buffer.append(TAB).append(MAKE).append(WHITESPACE).append(NO_PRINT_DIR).append(WHITESPACE)
-						.append(POSTBUILD).append(NEWLINE).append(NEWLINE);
-			} else {
-				// Just emit a blank line
-				buffer.append(NEWLINE);
-			}
+			// Just emit a blank line
+			buffer.append(NEWLINE);
 		}
 
 		// If we have secondary outputs, output dependency rules without commands

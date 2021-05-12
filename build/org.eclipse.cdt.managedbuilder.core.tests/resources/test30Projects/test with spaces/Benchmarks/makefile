@@ -34,7 +34,10 @@ BUILD_ARTIFACT :=  $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_AR
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: testwithspaces.exe
+all: main-build
+
+# Main-build Target
+main-build: testwithspaces.exe
 
 # Tool invocations
 testwithspaces.exe: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)

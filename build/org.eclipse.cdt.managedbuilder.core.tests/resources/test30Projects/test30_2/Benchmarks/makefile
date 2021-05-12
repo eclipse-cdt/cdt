@@ -34,7 +34,10 @@ new.log \
 
 
 # All Target
-all: test30_2.tmp
+all: main-build
+
+# Main-build Target
+main-build: test30_2.tmp
 
 # Tool invocations
 test30_2.tmp: $(LOGFILE) makefile objects.mk $(OPTIONAL_TOOL_DEPS)

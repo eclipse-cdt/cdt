@@ -46,8 +46,7 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 
 # All Target
 all:
-	$(MAKE) --no-print-directory pre-build
-	$(MAKE) --no-print-directory main-build
+	+@$(MAKE) --no-print-directory pre-build && $(MAKE) --no-print-directory main-build && $(MAKE) --no-print-directory post-build
 
 # Main-build Target
 main-build: preAndPostBuildSteps
@@ -59,7 +58,6 @@ preAndPostBuildSteps: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_D
 	g++  -o "preAndPostBuildSteps" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
-	$(MAKE) --no-print-directory post-build
 
 # Other Targets
 clean:

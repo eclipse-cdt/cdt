@@ -48,7 +48,10 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: test20.exe
+all: main-build
+
+# Main-build Target
+main-build: test20.exe
 
 # Tool invocations
 test20.exe: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)

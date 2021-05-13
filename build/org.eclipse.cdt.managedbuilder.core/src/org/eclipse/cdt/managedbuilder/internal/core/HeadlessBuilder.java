@@ -18,6 +18,7 @@
  *     R. Zulliger, C. Walther (Indel AG) - Bug 355609 Disable indexer
  *     John Dallaway - Bug 513763 Save workspace on conclusion
  *     Torbjörn Svensson (STMicroelectronics) - bug #330204
+ *     Marc Siebenhaar (top-logic.com) - Bug #573512
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.internal.core;
@@ -84,6 +85,8 @@ import org.eclipse.osgi.service.datalocation.Location;
  *
  * IApplication ID: org.eclipse.cdt.managedbuilder.core.headlessbuild
  * Provides:
+ *   - Remove projects from workspace :        -remove     {[uri:/]/path/to/project}
+ *   - Remove all projects in the tree :       -removeAll  {[uri:/]/path/to/projectTreeURI}
  *   - Import projects :                       -import     {[uri:/]/path/to/project}
  *   - Import all projects in the tree :       -importAll  {[uri:/]/path/to/projectTreeURI}
  *   - Build projects / the workspace :        -build      {project_name_reg_ex/config_name_reg_ex | all}
@@ -177,6 +180,10 @@ public class HeadlessBuilder implements IApplication {
 	/** Show usage return status */
 	public static final Integer SHOW_USAGE = 2;
 
+	/** Set of project URIs / paths to remove */
+	protected final Set<String> projectsToRemove = new HashSet<>();
+	/** Tree of projects to recursively remove */
+	protected final Set<String> projectTreeToRemove = new HashSet<>();
 	/** Set of project URIs / paths to import */
 	protected final Set<String> projectsToImport = new HashSet<>();
 	/** Tree of projects to recursively import */
@@ -401,6 +408,91 @@ public class HeadlessBuilder implements IApplication {
 		return OK;
 	}
 
+	/**
+	 * Close and remove a project from the workspace
+	 * @param projURIStr base URI string
+	 * @param recurse should we recurse down the URI removing all projects?
+	 * @return int OK / ERROR
+	 */
+	protected int removeProject(String projURIStr, boolean recurse) throws CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProgressMonitor monitor = new PrintingProgressMonitor();
+		InputStream in = null;
+		try {
+			URI project_uri = null;
+			try {
+				project_uri = URI.create(projURIStr);
+			} catch (Exception e) {
+				// Will be treated as straightforward path in the case below
+			}
+
+			// Handle local paths as well
+			if (project_uri == null || project_uri.getScheme() == null) {
+				IPath p = new Path(projURIStr).addTrailingSeparator();
+				project_uri = URIUtil.toURI(p);
+
+				// Handle relative paths as relative to cwd
+				if (project_uri.getScheme() == null) {
+					String cwd = System.getProperty("user.dir"); //$NON-NLS-1$
+					p = new Path(cwd).addTrailingSeparator();
+					p = p.append(projURIStr);
+					project_uri = URIUtil.toURI(p);
+				}
+				if (project_uri.getScheme() == null) {
+					System.err.println(HeadlessBuildMessages.HeadlessBuilder_invalid_uri + project_uri);
+					return ERROR;
+				}
+			}
+
+			if (recurse) {
+				if (!EFS.getStore(project_uri).fetchInfo().exists()) {
+					System.err.println(HeadlessBuildMessages.HeadlessBuilder_Directory + project_uri
+							+ HeadlessBuildMessages.HeadlessBuilder_cant_be_found);
+					return ERROR;
+				}
+				for (IFileStore info : EFS.getStore(project_uri).childStores(EFS.NONE, monitor)) {
+					if (!info.fetchInfo().isDirectory())
+						continue;
+					int status = removeProject(info.toURI().toString(), recurse);
+					if (status != OK)
+						return status;
+				}
+			}
+
+			// Load the project description
+			IFileStore fstore = EFS.getStore(project_uri).getChild(".project"); //$NON-NLS-1$
+			if (!fstore.fetchInfo().exists()) {
+				if (!recurse) {
+					System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + project_uri
+							+ HeadlessBuildMessages.HeadlessBuilder_cant_be_found);
+					return ERROR;
+				}
+				// .project not found; OK if we're not recursing
+				return OK;
+			}
+
+			in = fstore.openInputStream(EFS.NONE, monitor);
+			IProjectDescription desc = root.getWorkspace().loadProjectDescription(in);
+
+			// Check that a project with the name exist in the workspace, then close and remove the project gently from workspace
+			IProject project = root.getProject(desc.getName());
+			if (project.exists()) {
+				if (project.isOpen()) {
+					project.close(monitor);
+				}
+				project.delete(false, true, monitor);
+				return OK;
+			}
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e2) {
+				/* don't care */ }
+		}
+		return OK;
+	}
+
 	protected boolean isProjectSuccesfullyBuild(IProject project) {
 		try {
 			for (String markerType : markerTypes) {
@@ -491,17 +583,32 @@ public class HeadlessBuilder implements IApplication {
 			if (System.getProperty("org.eclipse.cdt.core.console") == null) //$NON-NLS-1$
 				System.setProperty("org.eclipse.cdt.core.console", "org.eclipse.cdt.core.systemConsole"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			/*
-			 * Perform the project import
-			 */
-			// Import any projects that need importing
+			// Perform the import of list of project trees
+			projectTreeToImport.removeAll(projectTreeToRemove);
+			for (String projURIStr : projectTreeToImport) {
+				int status = importProject(projURIStr, true);
+				if (status != OK)
+					return status;
+			}
+
+			// Perform the removal of list of project trees
+			for (String projURIStr : projectTreeToRemove) {
+				int status = removeProject(projURIStr, true);
+				if (status != OK)
+					return status;
+			}
+
+			// Perform the import of list of single projects
+			projectsToImport.removeAll(projectsToRemove);
 			for (String projURIStr : projectsToImport) {
 				int status = importProject(projURIStr, false);
 				if (status != OK)
 					return status;
 			}
-			for (String projURIStr : projectTreeToImport) {
-				int status = importProject(projURIStr, true);
+
+			// Perform the removal of list of single projects
+			for (String projURIStr : projectsToRemove) {
+				int status = removeProject(projURIStr, false);
 				if (status != OK)
 					return status;
 			}
@@ -648,6 +755,8 @@ public class HeadlessBuilder implements IApplication {
 	 * Helper method to process expected arguments
 	 *
 	 * Arguments
+	 *   -remove     {[uri:/]/path/to/project}
+	 *   -removeAll  {[uri:/]/path/to/projectTreeURI} Remove all projects in the tree
 	 *   -import     {[uri:/]/path/to/project}
 	 *   -importAll  {[uri:/]/path/to/projectTreeURI} Import all projects in the tree
 	 *   -build      {project_name_reg_ex/config_name_reg_ex | all}
@@ -678,6 +787,10 @@ public class HeadlessBuilder implements IApplication {
 			for (int i = 0; i < args.length; i++) {
 				if ("-help".equals(args[i])) { //$NON-NLS-1$
 					throw new Exception(HeadlessBuildMessages.HeadlessBuilder_help_requested);
+				} else if ("-remove".equals(args[i])) { //$NON-NLS-1$
+					projectsToRemove.add(args[++i]);
+				} else if ("-removeAll".equals(args[i])) { //$NON-NLS-1$
+					projectTreeToRemove.add(args[++i]);
 				} else if ("-import".equals(args[i])) { //$NON-NLS-1$
 					projectsToImport.add(args[++i]);
 				} else if ("-importAll".equals(args[i])) { //$NON-NLS-1$

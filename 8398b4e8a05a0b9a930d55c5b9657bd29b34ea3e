@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cd4e8c59_dbcecadf",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/HeadlessBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-14T02:02:15Z",
+      "side": 1,
+      "message": "recurse is never true. if a removeAll is added then I would say leave it, otherwise remove unreachable code.",
+      "range": {
+        "startLine": 414,
+        "startChar": 48,
+        "endLine": 414,
+        "endChar": 63
+      },
+      "revId": "8398b4e8a05a0b9a930d55c5b9657bd29b34ea3e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -584,6 +584,7 @@ public class HeadlessBuilder implements IApplication {
 				System.setProperty("org.eclipse.cdt.core.console", "org.eclipse.cdt.core.systemConsole"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// Perform the import of list of project trees
+			projectTreeToImport.removeAll(projectTreeToRemove);
 			for (String projURIStr : projectTreeToImport) {
 				int status = importProject(projURIStr, true);
 				if (status != OK)
@@ -598,6 +599,7 @@ public class HeadlessBuilder implements IApplication {
 			}
 
 			// Perform the import of list of single projects
+			projectsToImport.removeAll(projectsToRemove);
 			for (String projURIStr : projectsToImport) {
 				int status = importProject(projURIStr, false);
 				if (status != OK)

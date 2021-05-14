@@ -900,7 +900,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 	}
 
 	private Color getHighlightColor(Display disp) {
-		return disp.getSystemColor(SWT.COLOR_GRAY);
+		return disp.getSystemColor(SWT.COLOR_TEXT_DISABLED_BACKGROUND);
 	}
 
 	private Color getSelectionColor(Display disp) {

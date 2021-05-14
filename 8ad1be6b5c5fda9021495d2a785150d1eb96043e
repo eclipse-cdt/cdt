@@ -118,6 +118,30 @@
       "revId": "8ad1be6b5c5fda9021495d2a785150d1eb96043e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1fb3f2f_12d3df72",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1653,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-14T18:47:28Z",
+      "side": 1,
+      "message": "I\u0027ll go with the safe solution and keep the deprecated function in the call-stack.\nWhen someone removes the deprecated method, it should be trivial to also remove the \", false\" part that calls it.",
+      "parentUuid": "69d244c7_3bab36e4",
+      "range": {
+        "startLine": 1653,
+        "startChar": 1,
+        "endLine": 1653,
+        "endChar": 106
+      },
+      "revId": "8ad1be6b5c5fda9021495d2a785150d1eb96043e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

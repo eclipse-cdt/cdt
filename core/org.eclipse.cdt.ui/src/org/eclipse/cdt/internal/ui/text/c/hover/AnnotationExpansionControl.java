@@ -110,6 +110,12 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		StyleRange[] oldStyles;
 
 		public void selected() {
+			if (fSelection != null) {
+				// We can get two selection events back to back because of
+				// code in org.eclipse.cdt.internal.ui.text.c.hover.AnnotationExpansionControl.setVisible(boolean)
+				// which forces a select on first open
+				deselect();
+			}
 			Display disp = fShell.getDisplay();
 			canvas.setCursor(getHandCursor(disp));
 			// TODO: shade - for now: set grey background

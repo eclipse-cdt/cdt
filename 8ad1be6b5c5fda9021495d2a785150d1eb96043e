@@ -22,6 +22,30 @@
       "revId": "8ad1be6b5c5fda9021495d2a785150d1eb96043e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd726482_fe9b3f7d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1653,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-14T16:27:14Z",
+      "side": 1,
+      "message": "@Jonah: Any thoughts on this question?",
+      "parentUuid": "6d33f077_8a3c443c",
+      "range": {
+        "startLine": 1653,
+        "startChar": 1,
+        "endLine": 1653,
+        "endChar": 106
+      },
+      "revId": "8ad1be6b5c5fda9021495d2a785150d1eb96043e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

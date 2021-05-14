@@ -70,6 +70,30 @@
       "revId": "8ad1be6b5c5fda9021495d2a785150d1eb96043e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef6b55bc_735ce7ca",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1653,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-14T17:55:54Z",
+      "side": 1,
+      "message": "Okay, maybe it\u0027s better to call the deprecated method in all places with bEmitPostBuildStepCall\u003dfalse just to be safe and record the deprecated method for removal and that all calls in CDT code should remove the extra argument?\nThat way, if someone is overriding the method addRuleForTool, it would still do the right thing based on the input.\nRegardless, I feel that the implementation of addRuleForTool is rather internal and highly depending on that the sub-class knows how the GnuMakefileGenerator internals behave.\n\nIs there any example in the CDT history where an API function removed use of one or several parameter(s) and how it was handled?",
+      "parentUuid": "18c8cb72_ed002739",
+      "range": {
+        "startLine": 1653,
+        "startChar": 1,
+        "endLine": 1653,
+        "endChar": 106
+      },
+      "revId": "8ad1be6b5c5fda9021495d2a785150d1eb96043e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

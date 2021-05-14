@@ -583,32 +583,30 @@ public class HeadlessBuilder implements IApplication {
 			if (System.getProperty("org.eclipse.cdt.core.console") == null) //$NON-NLS-1$
 				System.setProperty("org.eclipse.cdt.core.console", "org.eclipse.cdt.core.systemConsole"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			/*
-			 * Perform the project import
-			 */
-			// Import any projects that need importing
-			for (String projURIStr : projectsToImport) {
-				int status = importProject(projURIStr, false);
-				if (status != OK)
-					return status;
-			}
+			// Perform the import of list of project trees
 			for (String projURIStr : projectTreeToImport) {
 				int status = importProject(projURIStr, true);
 				if (status != OK)
 					return status;
 			}
 
-			/*
-			 * Perform the project remove
-			 */
-			// Remove any projects that not needed
-			for (String projURIStr : projectsToRemove) {
-				int status = removeProject(projURIStr, false);
+			// Perform the removement of list of a project trees
+			for (String projURIStr : projectTreeToRemove) {
+				int status = removeProject(projURIStr, true);
 				if (status != OK)
 					return status;
 			}
-			for (String projURIStr : projectTreeToRemove) {
-				int status = removeProject(projURIStr, true);
+
+			// Perform the import of list of single projects
+			for (String projURIStr : projectsToImport) {
+				int status = importProject(projURIStr, false);
+				if (status != OK)
+					return status;
+			}
+
+			// Perform the removement of list of single projects
+			for (String projURIStr : projectsToRemove) {
+				int status = removeProject(projURIStr, false);
 				if (status != OK)
 					return status;
 			}

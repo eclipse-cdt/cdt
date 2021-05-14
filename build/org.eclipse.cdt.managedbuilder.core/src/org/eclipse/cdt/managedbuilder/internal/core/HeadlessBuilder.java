@@ -86,6 +86,7 @@ import org.eclipse.osgi.service.datalocation.Location;
  * IApplication ID: org.eclipse.cdt.managedbuilder.core.headlessbuild
  * Provides:
  *   - Remove projects from workspace :        -remove     {[uri:/]/path/to/project}
+ *   - Remove all projects in the tree :       -removeAll  {[uri:/]/path/to/projectTreeURI}
  *   - Import projects :                       -import     {[uri:/]/path/to/project}
  *   - Import all projects in the tree :       -importAll  {[uri:/]/path/to/projectTreeURI}
  *   - Build projects / the workspace :        -build      {project_name_reg_ex/config_name_reg_ex | all}
@@ -181,6 +182,8 @@ public class HeadlessBuilder implements IApplication {
 
 	/** Set of project URIs / paths to remove */
 	protected final Set<String> projectsToRemove = new HashSet<>();
+	/** Tree of projects to recursively remove */
+	protected final Set<String> projectTreeToRemove = new HashSet<>();
 	/** Set of project URIs / paths to import */
 	protected final Set<String> projectsToImport = new HashSet<>();
 	/** Tree of projects to recursively import */
@@ -604,6 +607,11 @@ public class HeadlessBuilder implements IApplication {
 				if (status != OK)
 					return status;
 			}
+			for (String projURIStr : projectTreeToRemove) {
+				int status = removeProject(projURIStr, true);
+				if (status != OK)
+					return status;
+			}
 
 			// Hook in our external settings to the build
 			HeadlessBuilderExternalSettingsProvider.hookExternalSettingsProvider();
@@ -748,6 +756,7 @@ public class HeadlessBuilder implements IApplication {
 	 *
 	 * Arguments
 	 *   -remove     {[uri:/]/path/to/project}
+	 *   -removeAll  {[uri:/]/path/to/projectTreeURI} Remove all projects in the tree
 	 *   -import     {[uri:/]/path/to/project}
 	 *   -importAll  {[uri:/]/path/to/projectTreeURI} Import all projects in the tree
 	 *   -build      {project_name_reg_ex/config_name_reg_ex | all}
@@ -780,6 +789,8 @@ public class HeadlessBuilder implements IApplication {
 					throw new Exception(HeadlessBuildMessages.HeadlessBuilder_help_requested);
 				} else if ("-remove".equals(args[i])) { //$NON-NLS-1$
 					projectsToRemove.add(args[++i]);
+				} else if ("-removeAll".equals(args[i])) { //$NON-NLS-1$
+					projectTreeToRemove.add(args[++i]);
 				} else if ("-import".equals(args[i])) { //$NON-NLS-1$
 					projectsToImport.add(args[++i]);
 				} else if ("-importAll".equals(args[i])) { //$NON-NLS-1$

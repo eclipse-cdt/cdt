@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -103,6 +104,7 @@ import org.eclipse.osgi.service.datalocation.Location;
  *   - Prepend to a tool option value:         -Tp         {toolid} {optionid=value}
  *   - Remove a tool option:                   -Tr         {toolid} {optionid=value}
  *   - Disable indexer:                        -no-indexer
+ *   - Verbose progress updates:               -verbose
  *   - Error marker types to consider:         -markerType {all | cdt | marker_id}
  *        where:
  *           all is all markers -- default
@@ -119,10 +121,38 @@ public class HeadlessBuilder implements IApplication {
 	 * IProgressMonitor to provide printing of task
 	 */
 	public static class PrintingProgressMonitor extends NullProgressMonitor {
+
+		/**
+		 * During operations, such as remove projects, the subtask has useful
+		 * information for users. However during a normal build there ends
+		 * up being lots of output that is of little value.
+		 */
+		private boolean printSubtasks;
+
+		/**
+		 * The progress monitor some times received a subtask with the same
+		 * name as the main task, in the UI that change is not visible,
+		 * but at the command line it is an extra line of output, so
+		 * suppress that case.
+		 */
+		private String last;
+
+		public PrintingProgressMonitor(boolean printSubtasks) {
+			this.printSubtasks = printSubtasks;
+		}
+
 		@Override
 		public void beginTask(String name, int totalWork) {
 			if (name != null && name.length() > 0)
 				System.out.println(name);
+			last = name;
+		}
+
+		@Override
+		public void subTask(String name) {
+			if (printSubtasks && name != null && name.length() > 0 && !Objects.equals(last, name))
+				System.out.println(name);
+			last = name;
 		}
 	}
 
@@ -195,6 +225,7 @@ public class HeadlessBuilder implements IApplication {
 	protected boolean buildAll = false;
 	protected boolean cleanAll = false;
 	protected boolean disableIndexer = false;
+	protected boolean verboseProgressMonitor = false;
 
 	/** List of Tool Option values being set */
 	protected List<ToolOption> toolOptions = new ArrayList<>();
@@ -310,7 +341,7 @@ public class HeadlessBuilder implements IApplication {
 	 */
 	protected int importProject(String projURIStr, boolean recurse) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProgressMonitor monitor = new PrintingProgressMonitor();
+		IProgressMonitor monitor = new PrintingProgressMonitor(verboseProgressMonitor);
 		InputStream in = null;
 		try {
 			URI project_uri = null;
@@ -416,7 +447,7 @@ public class HeadlessBuilder implements IApplication {
 	 */
 	protected int removeProject(String projURIStr, boolean recurse) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProgressMonitor monitor = new PrintingProgressMonitor();
+		IProgressMonitor monitor = new PrintingProgressMonitor(true);
 		InputStream in = null;
 		try {
 			URI project_uri = null;
@@ -536,7 +567,6 @@ public class HeadlessBuilder implements IApplication {
 		if (!checkInstanceLocation())
 			return ERROR;
 
-		IProgressMonitor monitor = new PrintingProgressMonitor();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 		final boolean isAutoBuilding = root.getWorkspace().isAutoBuilding();
@@ -640,6 +670,8 @@ public class HeadlessBuilder implements IApplication {
 						ManagedBuildManager.saveBuildInfo(project, true);
 					}
 
+				IProgressMonitor monitor = new PrintingProgressMonitor(verboseProgressMonitor);
+
 				// Clean the projects
 				if (cleanAll) {
 					// Ensure we clean all the configurations
@@ -706,7 +738,7 @@ public class HeadlessBuilder implements IApplication {
 			root.getWorkspace().setDescription(desc);
 
 			// Save modified workspace (bug 513763)
-			root.getWorkspace().save(true, monitor);
+			root.getWorkspace().save(true, new PrintingProgressMonitor(verboseProgressMonitor));
 		}
 		if (printErrorMarkers) {
 			if (buildSuccessful) {
@@ -773,6 +805,7 @@ public class HeadlessBuilder implements IApplication {
 	 *   -Tp         {toolid} {optionid=value} prepend to a tool option value
 	 *   -Tr         {toolid} {optionid=value} remove a tool option value
 	 *   -no-indexer Disable indexer
+	 *   -verbose    Verbose progress monitor updates
 	 *   -markerType Which markers to consider
 	 *   -printErrorMarkers Print all error markers that caused build to fail
 	 *
@@ -840,6 +873,8 @@ public class HeadlessBuilder implements IApplication {
 					addToolOption(toolId, option, ToolOption.REMOVE);
 				} else if ("-no-indexer".equals(args[i])) { //$NON-NLS-1$
 					disableIndexer = true;
+				} else if ("-verbose".equals(args[i])) { //$NON-NLS-1$
+					verboseProgressMonitor = true;
 				} else if ("-markerType".equals(args[i])) { //$NON-NLS-1$
 					addMarkerType(args[++i]);
 				} else if ("-printErrorMarkers".equals(args[i])) { //$NON-NLS-1$

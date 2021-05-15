@@ -218,4 +218,22 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 						"required from here", "conversion from 'long int' to 'float' may change value [-Wconversion]" },
 				new String[] { GCC_ERROR_PARSER_ID });
 	}
+
+	public void testGccErrorMessages_InConstexprExpansion() throws IOException {
+		runParserTest(
+				new String[] { "../can/CANBus.h: In instantiation of 'constexpr void Test::setupBitrate(T)':",
+						"../can/CANBus.h:113:6:   required from 'static auto& Test::getInstance()'",
+						"../can/CAN.cpp:19:27:   required from here",
+						"../can/CANBus.h:72:17:   in 'constexpr' expansion of 'instance.Test::Test()'",
+						"../can/CANBus.h:173:92: warning: unused parameter 'bitrate' [-Wunused-parameter]",
+						"  173 |  constexpr void setupBitrate(T bitrate) noexcept {" },
+				0, // errors
+				1, //warnings
+				3, //infos
+				new String[] { "CAN.cpp", "CANBus.h" },
+				new String[] { "required from 'static auto& Test::getInstance()'", "required from here",
+						"in 'constexpr' expansion of 'instance.Test::Test()'",
+						"unused parameter 'bitrate' [-Wunused-parameter]" },
+				new String[] { GCC_ERROR_PARSER_ID });
+	}
 }

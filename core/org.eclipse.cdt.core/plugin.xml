@@ -202,6 +202,14 @@
                severity="Info">
          </pattern>
          <pattern
+               description-expr="$4"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr="$2"
+               regex="%CDTGNUCErrorParser.regex.InConstexprExpansion"
+               severity="Info">
+         </pattern>
+         <pattern
                description-expr="$7"
                eat-processed-line="true"
                file-expr="$1"

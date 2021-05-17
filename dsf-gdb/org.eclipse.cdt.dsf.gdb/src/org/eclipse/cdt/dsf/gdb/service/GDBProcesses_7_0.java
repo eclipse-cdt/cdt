@@ -76,6 +76,7 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
+import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_1.MIThreadDMData_7_1;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -1131,8 +1132,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 									// We must indicate and empty id by using null
 									if (id.isEmpty())
 										id = null;
-
-									threadData = new MIThreadDMData("", id); //$NON-NLS-1$
+									//<CUSTOMISATION-ASHLING>This is a temporary hack to get rid of git-lab#141/ https://bugs.eclipse.org/bugs/show_bug.cgi?id=339005
+									threadData = createThreadDMData(thread);//new MIThreadDMData("", id); //$NON-NLS-1$
+									//</CUSTOMISATION>
 								}
 							}
 
@@ -1149,6 +1151,32 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
 			rm.done();
 		}
+	}
+
+	/**
+	 * <CUSTOMISATION - ASHLING>
+	 */
+	private IGdbThreadDMData createThreadDMData(MIThread thread) {
+		String id = ""; //$NON-NLS-1$
+
+		if (thread.getOsId() != null) {
+			id = thread.getOsId();
+		}
+		// append thread details (if any) to the thread ID
+		// as for GDB 6.x with CLIInfoThreadsInfo#getOsId()
+		final String details = thread.getDetails();
+		if (details != null && !details.isEmpty()) {
+			if (!id.isEmpty())
+				id += " "; //$NON-NLS-1$
+			id += "(" + details + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		// We must indicate and empty id by using null
+		if (id.isEmpty())
+			id = null;
+
+		String name = thread.getName();
+		String core = thread.getCore();
+		return new MIThreadDMData_7_1(name == null ? "" : name, id, core == null ? null : new String[] { core }); //$NON-NLS-1$
 	}
 
 	@Override

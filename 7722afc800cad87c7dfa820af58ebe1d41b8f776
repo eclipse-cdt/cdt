@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b96aadd0_5efe1f97",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-17T19:11:07Z",
+      "side": 1,
+      "message": "Please use a commit message similar to others in the git log.\nUsually, they are on this form: \n\nBug xyz: Short description, max 50 characters\n\nLonger description of the problem, max 72 characters per line\nand can be several lines...",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 89
+      },
+      "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1687448_fcb76146",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1135,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-17T19:11:07Z",
+      "side": 1,
+      "message": "Please don\u0027t use comments like that. This information is available though the git log.",
+      "range": {
+        "startLine": 1135,
+        "startChar": 9,
+        "endLine": 1135,
+        "endChar": 138
+      },
+      "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e5fd729_67a552eb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1136,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-17T19:11:07Z",
+      "side": 1,
+      "message": "Remove this commented old code too.\nThis comment is valid for the entire changeset.",
+      "range": {
+        "startLine": 1136,
+        "startChar": 49,
+        "endLine": 1136,
+        "endChar": 92
+      },
+      "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7106e5a8_7bafe526",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1160,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-17T19:11:07Z",
+      "side": 1,
+      "message": "Please use StringBuilder instead.",
+      "range": {
+        "startLine": 1160,
+        "startChar": 2,
+        "endLine": 1160,
+        "endChar": 8
+      },
+      "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8a17d43_806e1219",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1179,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-17T19:11:07Z",
+      "side": 1,
+      "message": "I think this part is plain wrong as you are returning an object that is invalid for the GDB 7.0 implementation. Why do you need to touch the GDBProcesses_7_0 at all when fixing an issue in GDB 7.1 and later versions?",
+      "range": {
+        "startLine": 1179,
+        "startChar": 13,
+        "endLine": 1179,
+        "endChar": 31
+      },
+      "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

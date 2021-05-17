@@ -114,6 +114,23 @@
       "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce216202_2576b3a5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1179,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-17T19:15:49Z",
+      "side": 1,
+      "message": "So I assume the question from the call was partially related to this line of code? Yes, returning a GDB 7.1 dmdata for 7.0 is unusual/concerning.",
+      "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -71,6 +71,23 @@
     },
     {
       "key": {
+        "uuid": "91fa9eea_e4808e89",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1136,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-17T20:40:29Z",
+      "side": 1,
+      "message": "I see what you are trying to do - but this isn\u0027t the right way to solve the problem. I have added some comments to the Bug.",
+      "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7106e5a8_7bafe526",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
         "patchSetId": 1
@@ -91,6 +108,30 @@
       "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1c85e06_e28b62e4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1160,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-17T20:40:29Z",
+      "side": 1,
+      "message": "This is copied from line 1120-1134, so don\u0027t make that change, it is a separate issue.",
+      "parentUuid": "7106e5a8_7bafe526",
+      "range": {
+        "startLine": 1160,
+        "startChar": 2,
+        "endLine": 1160,
+        "endChar": 8
+      },
+      "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -128,6 +169,23 @@
       "writtenOn": "2021-05-17T19:15:49Z",
       "side": 1,
       "message": "So I assume the question from the call was partially related to this line of code? Yes, returning a GDB 7.1 dmdata for 7.0 is unusual/concerning.",
+      "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63716f34_17c42ce3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_1.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-17T20:40:29Z",
+      "side": 1,
+      "message": "This code does not make sense actually - under no circumstances should this method be called from outside the executor thread, so this if is always true.\n\nIf it is not always true in your case that indicates some code is violating the executor thread rules.",
       "revId": "7722afc800cad87c7dfa820af58ebe1d41b8f776",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

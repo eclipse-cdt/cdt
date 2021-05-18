@@ -16,6 +16,24 @@
       "revId": "dfa469fffbf9e728fe254079b354c6a6d0209a21",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e362f2c8_99369ad7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-05-18T01:57:06Z",
+      "side": 1,
+      "message": "From what I understand, the log service is more for tracing parser logic rather than lower layer failures, here it would be IO failure or database corruption. So I think what you did is good.",
+      "parentUuid": "6f763ac0_a0e2d676",
+      "revId": "dfa469fffbf9e728fe254079b354c6a6d0209a21",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

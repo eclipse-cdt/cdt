@@ -739,10 +739,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 					functionOffset = ""; //$NON-NLS-1$
 				}
 
-				Byte[] opcode = {};
+				String opcode = null;
 				// Get raw Opcodes if available
 				if (instruction instanceof IInstructionWithRawOpcode) {
-					opcode = DisassemblyUtils.decodeOpcode(((IInstructionWithRawOpcode) instruction).getRawOpcode());
+					opcode = ((IInstructionWithRawOpcode) instruction).getRawOpcode();
 				}
 
 				p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), functionOffset,
@@ -895,10 +895,9 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 						funcOffset = ""; //$NON-NLS-1$
 					}
 
-					Byte[] opcode = {};
+					String opcode = null;
 					if (instruction instanceof IInstructionWithRawOpcode) {
-						opcode = DisassemblyUtils
-								.decodeOpcode(((IInstructionWithRawOpcode) instruction).getRawOpcode());
+						opcode = ((IInstructionWithRawOpcode) instruction).getRawOpcode();
 					}
 
 					p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), funcOffset,

@@ -55,7 +55,11 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 				if (pos instanceof DisassemblyPosition && pos.length > 0 && pos.offset == offset && pos.fValid) {
 					DisassemblyPosition disassPos = (DisassemblyPosition) pos;
 					if (disassPos.fRawOpcode != null) {
-						return disassPos.fRawOpcode;
+						if (disassPos.fRawOpcode.length() > nChars) {
+							return disassPos.fRawOpcode.substring(0, nChars - 1) + "…"; //$NON-NLS-1$
+						} else {
+							return disassPos.fRawOpcode;
+						}
 					}
 				} else if (pos != null && !pos.fValid) {
 					return DOTS.substring(0, nChars);

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
@@ -156,19 +157,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	}
 
 	public int getMaxOpcodeLength() {
-		// Check if an error on opcode decode occurred, in
-		// this case we show ??
-		if (fMaxOpcodeLength == 0) {
-			return 2;
-		}
-		int retVal = fMaxOpcodeLength;
-		// We show the bytes in hex, therefore it needs to be multiplied by 2
-		retVal *= 2;
-		// add bytes separator length
-		if (retVal > 0) {
-			retVal += fMaxOpcodeLength - 1;
-		}
-		return retVal;
+		return fMaxOpcodeLength;
 	}
 
 	public int getAddressLength() {
@@ -704,8 +693,8 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			if (functionLength > fMaxFunctionLength) {
 				fMaxFunctionLength = functionLength;
 			}
-			if (disassPos.fOpcode != null) {
-				int opcodeLength = disassPos.fOpcode.length;
+			if (disassPos.fRawOpcode != null) {
+				int opcodeLength = disassPos.fRawOpcode.length();
 				if (opcodeLength > fMaxOpcodeLength) {
 					fMaxOpcodeLength = opcodeLength;
 				}
@@ -1008,21 +997,32 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		return pos;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyDocument#insertDisassemblyLine(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition, java.math.BigInteger, int, java.lang.String, java.lang.String, java.lang.String, int)
-	 */
 	@Override
 	public AddressRangePosition insertDisassemblyLine(AddressRangePosition pos, BigInteger address, int length,
 			String functionOffset, String instruction, String file, int lineNr) throws BadLocationException {
-		return insertDisassemblyLine(pos, address, length, functionOffset, null, instruction, file, lineNr);
+		return insertDisassemblyLine(pos, address, length, functionOffset, (String) null, instruction, file, lineNr);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyDocument#insertDisassemblyLine(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition, java.math.BigInteger, int, java.lang.String, java.lang.String, java.lang.String, int)
-	 */
 	@Override
 	public AddressRangePosition insertDisassemblyLine(AddressRangePosition pos, BigInteger address, int length,
 			String functionOffset, Byte[] opcode, String instruction, String file, int lineNr)
+			throws BadLocationException {
+
+		String opcodeString = "??"; //$NON-NLS-1$
+		if (opcode != null && opcode.length > 0) {
+			StringJoiner opcodeStringJoiner = new StringJoiner(" "); //$NON-NLS-1$
+			for (int i = 0; i < opcode.length; i++) {
+				opcodeStringJoiner.add(String.format("%02x", //$NON-NLS-1$
+						opcode[i].intValue() & 0xff));
+			}
+			opcodeString = opcodeStringJoiner.toString();
+		}
+		return insertDisassemblyLine(pos, address, length, functionOffset, opcodeString, instruction, file, lineNr);
+	}
+
+	@Override
+	public AddressRangePosition insertDisassemblyLine(AddressRangePosition pos, BigInteger address, int length,
+			String functionOffset, String rawOpcode, String instruction, String file, int lineNr)
 			throws BadLocationException {
 		assert isGuiThread();
 		String disassLine = null;
@@ -1034,14 +1034,15 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		AddressRangePosition disassPos;
 		if (lineNr < 0) {
 			disassPos = new DisassemblyPosition(0, disassLine.length(), address, BigInteger.valueOf(length),
-					functionOffset, opcode);
+					functionOffset, rawOpcode);
 		} else {
 			disassPos = new DisassemblyWithSourcePosition(0, disassLine.length(), address, BigInteger.valueOf(length),
-					functionOffset, opcode, file, lineNr);
+					functionOffset, rawOpcode, file, lineNr);
 		}
 		pos = insertAddressRange(pos, disassPos, disassLine, true);
 		addDisassemblyPosition(disassPos);
 		return pos;
+
 	}
 
 	/**

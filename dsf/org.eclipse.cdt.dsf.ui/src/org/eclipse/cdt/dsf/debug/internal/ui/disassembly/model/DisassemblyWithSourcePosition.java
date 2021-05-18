@@ -31,11 +31,11 @@ public class DisassemblyWithSourcePosition extends DisassemblyPosition {
 	 * @param addressOffset
 	 * @param addressLength
 	 * @param functionOffset
-	 * @param opcode
+	 * @param rawOpcode String of opcodes as it will be displayed to users. Can be null which is handled the same as empty string.
 	 */
 	public DisassemblyWithSourcePosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength,
-			String functionOffset, Byte[] opcode, String file, int lineNr) {
-		super(offset, length, addressOffset, addressLength, functionOffset, opcode);
+			String functionOffset, String rawOpcode, String file, int lineNr) {
+		super(offset, length, addressOffset, addressLength, functionOffset, rawOpcode);
 		fFile = file;
 		fLine = lineNr;
 	}

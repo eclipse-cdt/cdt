@@ -73,11 +73,13 @@ MAC_TO_SIGN=$(OS_DIR_MACOS_X86_64)/libspawner.jnilib \
 WIN_TO_SIGN=$(OS_DIR_WIN32_X86_64)/starter.exe \
 	$(OS_DIR_WIN32_X86_64)/spawner.dll \
 	$(OS_DIR_WIN32_X86_64)/pty.dll
+TMPDIR := $(shell mktemp -d -t production-XXXXXXXXXX)
 production: $(MAC_TO_SIGN) $(WIN_TO_SIGN)
-	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),mv $(tosign) unsigned-$(tosign) &&) true
-	$(foreach tosign,$(MAC_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@unsigned-$(tosign) https://cbi.eclipse.org/macos/codesign/sign &&) true
-	$(foreach tosign,$(WIN_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@unsigned-$(tosign) https://cbi.eclipse.org/authenticode/sign   &&) true
-	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),rm unsigned-$(tosign) &&) true
+	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),mv $(tosign) $(TMPDIR)$(tosign) &&) true
+	$(foreach tosign,$(MAC_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@$(TMPDIR)$(tosign) https://cbi.eclipse.org/macos/codesign/sign &&) true
+	$(foreach tosign,$(WIN_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@$(TMPDIR)$(tosign) https://cbi.eclipse.org/authenticode/sign   &&) true
+	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),rm $(TMPDIR)$(tosign) &&) true
+	rmdir $(TMPDIR)
 
 
 # Windows x86_64

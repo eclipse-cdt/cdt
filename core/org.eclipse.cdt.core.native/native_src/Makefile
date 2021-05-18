@@ -75,8 +75,8 @@ WIN_TO_SIGN=$(OS_DIR_WIN32_X86_64)/starter.exe \
 	$(OS_DIR_WIN32_X86_64)/pty.dll
 production: $(MAC_TO_SIGN) $(WIN_TO_SIGN)
 	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),mv $(tosign) $(tosign)-unsigned &&) true
-	$(foreach tosign,$(MAC_TO_SIGN),curl -o $(tosign) -F file=@$(tosign)-unsigned https://cbi.eclipse.org/macos/codesign/sign &&) true
-	$(foreach tosign,$(WIN_TO_SIGN),curl -o $(tosign) -F file=@$(tosign)-unsigned https://cbi.eclipse.org/authenticode/sign   &&) true
+	$(foreach tosign,$(MAC_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@$(tosign)-unsigned https://cbi.eclipse.org/macos/codesign/sign &&) true
+	$(foreach tosign,$(WIN_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@$(tosign)-unsigned https://cbi.eclipse.org/authenticode/sign   &&) true
 	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),rm $(tosign)-unsigned &&) true
 
 

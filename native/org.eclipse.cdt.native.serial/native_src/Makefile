@@ -12,7 +12,7 @@
 #     QNX Software Systems - initial API and implementation
 #     Alex Blewitt - MacOSX with a 64-bit vm 
 #*******************************************************************************/
-
+SHELL=/bin/bash -o pipefail
 ifeq ($(JAVA_HOME),)
 $(error Please define JAVA_HOME)
 endif
@@ -49,12 +49,22 @@ clean :
 
 MAC_TO_SIGN=$(OS_DIR)/macosx/x86_64/libserial.jnilib
 WIN_TO_SIGN=$(OS_DIR)/win32/x86_64/serial.dll
+### This block of code also exists in core/org.eclipse.cdt.core.native/native_src/Makefile
 TMPDIR := $(shell mktemp -d -t production-XXXXXXXXXX)
+.PHONY: production
 production: $(MAC_TO_SIGN) $(WIN_TO_SIGN)
-	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),mv $(tosign) $(TMPDIR)$(tosign) &&) true
-	$(foreach tosign,$(MAC_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@$(TMPDIR)$(tosign) https://cbi.eclipse.org/macos/codesign/sign &&) true
-	$(foreach tosign,$(WIN_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@$(TMPDIR)$(tosign) https://cbi.eclipse.org/authenticode/sign   &&) true
-	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),rm $(TMPDIR)$(tosign) &&) true
+	set -x ; $(foreach tosign,$(MAC_TO_SIGN),\
+		temp=$(TMPDIR)/$(shell basename $(tosign)) && \
+		mv $(tosign) $$temp && \
+		curl -f --silent --show-error -o $(tosign) -F file=@$$temp https://cbi.eclipse.org/macos/codesign/sign && \
+		rm $$temp && \
+		) true
+	set -x ; $(foreach tosign,$(WIN_TO_SIGN),\
+		temp=$(TMPDIR)/$(shell basename $(tosign)) && \
+		mv $(tosign) $$temp && \
+		curl -f --silent --show-error -o $(tosign) -F file=@$$temp https://cbi.eclipse.org/authenticode/sign && \
+		rm $$temp && \
+		) true
 	rmdir $(TMPDIR)
 
 

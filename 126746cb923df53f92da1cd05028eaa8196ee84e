@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b9ccdc3f_0c91c9a6",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/disassembly/dsf/IDisassemblyDocument.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-18T17:55:30Z",
+      "side": 1,
+      "message": "If TCF can move to the new method before its next release, then this method kept for TCF can be removed...",
+      "revId": "126746cb923df53f92da1cd05028eaa8196ee84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56694c52_768efebd",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/model/DisassemblyDocument.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1007,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-18T17:55:30Z",
+      "side": 1,
+      "message": "... along with this implementation of the method.",
+      "revId": "126746cb923df53f92da1cd05028eaa8196ee84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

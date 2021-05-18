@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "b38f9b9e_f13fb3c0",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/model/DisassemblyDocument.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 697,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-18T20:38:24Z",
+      "side": 1,
+      "message": "Yes - the fMaxOpcodeLength javadoc should be updated though. The accomodation is getMaxOpcodeLength which is now simpler.",
+      "parentUuid": "00a7d9fd_1f5749ef",
+      "range": {
+        "startLine": 697,
+        "startChar": 23,
+        "endLine": 697,
+        "endChar": 52
+      },
+      "revId": "126746cb923df53f92da1cd05028eaa8196ee84e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "56694c52_768efebd",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/model/DisassemblyDocument.java",
         "patchSetId": 1

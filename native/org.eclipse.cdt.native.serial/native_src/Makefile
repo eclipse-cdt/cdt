@@ -50,10 +50,10 @@ clean :
 MAC_TO_SIGN=$(OS_DIR)/macosx/x86_64/libserial.jnilib
 WIN_TO_SIGN=$(OS_DIR)/win32/x86_64/serial.dll
 production: $(MAC_TO_SIGN) $(WIN_TO_SIGN)
-	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),mv $(tosign) $(tosign)-unsigned &&) true
-	$(foreach tosign,$(MAC_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@$(tosign)-unsigned https://cbi.eclipse.org/macos/codesign/sign &&) true
-	$(foreach tosign,$(WIN_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@$(tosign)-unsigned https://cbi.eclipse.org/authenticode/sign   &&) true
-	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),rm $(tosign)-unsigned &&) true
+	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),mv $(tosign) unsigned-$(tosign) &&) true
+	$(foreach tosign,$(MAC_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@unsigned-$(tosign) https://cbi.eclipse.org/macos/codesign/sign &&) true
+	$(foreach tosign,$(WIN_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@unsigned-$(tosign) https://cbi.eclipse.org/authenticode/sign   &&) true
+	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),rm unsigned-$(tosign) &&) true
 
 
 rebuild: clean all

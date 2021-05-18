@@ -258,13 +258,8 @@ public class DapDisassemblyBackend extends AbstractDisassemblyBackend {
 					funcOffset = ""; //$NON-NLS-1$
 				}
 
-				Byte[] opcode = null;
-				if (instruction.getInstructionBytes() != null) {
-					opcode = DisassemblyUtils.decodeOpcode(instruction.getInstructionBytes());
-				}
-
 				p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), funcOffset,
-						opcode, instruction.getInstruction(), file, lineNumber);
+						instruction.getInstructionBytes(), instruction.getInstruction(), file, lineNumber);
 				if (p == null) {
 					break;
 				}

@@ -15,8 +15,6 @@
 package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.Platform;
@@ -69,42 +67,5 @@ public class DisassemblyUtils {
 			return new BigInteger(string.substring(2), 16);
 		}
 		return new BigInteger(string);
-	}
-
-	/**
-	 * Decode given string representation of a space separated hex encoded byte
-	 * array
-	 *
-	 * @param value
-	 *            space separated hexadecimal byte array
-	 * @return opcode bytes as <code>Byte</code> array, an empty array if the decoding failed
-	 */
-	public static Byte[] decodeOpcode(String value) {
-		List<Byte> opcodeBytesList = new ArrayList<>();
-		if (value == null || value.isBlank()) {
-			return new Byte[0];
-		}
-		// Removing space separation and parse as bytes
-		for (String opcodeStringValue : value.split("\\s+")) { //$NON-NLS-1$
-			if (opcodeStringValue.length() > 0) {
-				// Check that the opcode does not contain some invalid byte sequence
-				if (opcodeStringValue.length() > 2) {
-					return new Byte[0];
-				}
-				byte byteValue = 0;
-				char charAtIndexZero = opcodeStringValue.charAt(0);
-				char charAtIndexOne = opcodeStringValue.length() > 1 ? opcodeStringValue.charAt(1) : 0;
-
-				int digitZero = Character.digit(charAtIndexZero, 16);
-				int digitOne = Character.digit(charAtIndexOne, 16);
-				// Check if characters are valid hex numbers
-				if (digitZero == -1 || digitOne == -1) {
-					return new Byte[0];
-				}
-				byteValue = (byte) ((digitZero << 4) + digitOne);
-				opcodeBytesList.add(Byte.valueOf(byteValue));
-			}
-		}
-		return opcodeBytesList.toArray(new Byte[0]);
 	}
 }

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
-import java.util.StringJoiner;
-
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocument;
@@ -31,7 +29,7 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 	public static final String ID = "org.eclipse.cdt.dsf.ui.disassemblyColumn.opcode"; //$NON-NLS-1$
 
 	/** Maximum width of column (in characters) */
-	/** 15 bytes plus separator */
+	/** 15 bytes plus separator for typical 8-bit instruction words */
 	private static final int MAXWIDTH = 44;
 
 	/**
@@ -56,9 +54,8 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 				AddressRangePosition pos = doc.getDisassemblyPosition(offset);
 				if (pos instanceof DisassemblyPosition && pos.length > 0 && pos.offset == offset && pos.fValid) {
 					DisassemblyPosition disassPos = (DisassemblyPosition) pos;
-					if (disassPos.fOpcode != null) {
-						// Format the output.
-						return getOpcodeString(disassPos.fOpcode);
+					if (disassPos.fRawOpcode != null) {
+						return disassPos.fRawOpcode;
 					}
 				} else if (pos != null && !pos.fValid) {
 					return DOTS.substring(0, nChars);
@@ -68,18 +65,6 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 			}
 		}
 		return ""; //$NON-NLS-1$
-	}
-
-	protected String getOpcodeString(Byte[] opcode) {
-		if (opcode.length == 0) {
-			return "??"; //$NON-NLS-1$
-		}
-		StringJoiner opcodeStringJoiner = new StringJoiner(" "); //$NON-NLS-1$
-		for (int i = 0; i < opcode.length; i++) {
-			opcodeStringJoiner.add(String.format("%02x", //$NON-NLS-1$
-					opcode[i].intValue() & 0xff));
-		}
-		return opcodeStringJoiner.toString();
 	}
 
 	@Override

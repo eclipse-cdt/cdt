@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2021 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,8 +20,9 @@ import java.math.BigInteger;
 import org.eclipse.jface.text.BadLocationException;
 
 /**
- * DSF Disassembly view backends (CDI and DSF) need this limited access to the
- * editor/view Document.
+ * Disassembly view backends need this limited access to the
+ * editor/view Document. The known backends are DSF, TCF and Dap. Formerly
+ * the CDI backend used it before it was removed from the CDT soure tree.
  */
 public interface IDisassemblyDocument {
 
@@ -34,8 +35,18 @@ public interface IDisassemblyDocument {
 			String functionOffset, String instruction, String compilationPath, int lineNumber)
 			throws BadLocationException;
 
+	/**
+	 * This method. that takes opcode as a Byte[] exists solely for TCF integration.
+	 */
 	AddressRangePosition insertDisassemblyLine(AddressRangePosition p, BigInteger address, int length,
 			String functionOffset, Byte[] opcode, String instruction, String compilationPath, int lineNumber)
+			throws BadLocationException;
+
+	/**
+	 * @param rawOpcode String of opcodes as it will be displayed to users. Can be null which is handled the same as empty string.
+	 */
+	AddressRangePosition insertDisassemblyLine(AddressRangePosition p, BigInteger address, int length,
+			String functionOffset, String rawOpcode, String instruction, String compilationPath, int lineNumber)
 			throws BadLocationException;
 
 	AddressRangePosition getDisassemblyPosition(BigInteger address);

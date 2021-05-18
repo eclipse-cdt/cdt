@@ -12,7 +12,7 @@
 #     QNX Software Systems - initial API and implementation
 #     Torbjörn Svensson - Bug 521515 - Adopted jenkins build
 #*******************************************************************************/
-
+SHELL=/bin/bash -o pipefail
 ifeq ($(JAVA_HOME),)
 $(error JAVA_HOME not set in environment)
 endif
@@ -73,12 +73,22 @@ MAC_TO_SIGN=$(OS_DIR_MACOS_X86_64)/libspawner.jnilib \
 WIN_TO_SIGN=$(OS_DIR_WIN32_X86_64)/starter.exe \
 	$(OS_DIR_WIN32_X86_64)/spawner.dll \
 	$(OS_DIR_WIN32_X86_64)/pty.dll
+### This block of code also exists in native/org.eclipse.cdt.native.serial/native_src/Makefile
 TMPDIR := $(shell mktemp -d -t production-XXXXXXXXXX)
+.PHONY: production
 production: $(MAC_TO_SIGN) $(WIN_TO_SIGN)
-	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),mv $(tosign) $(TMPDIR)$(tosign) &&) true
-	$(foreach tosign,$(MAC_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@$(TMPDIR)$(tosign) https://cbi.eclipse.org/macos/codesign/sign &&) true
-	$(foreach tosign,$(WIN_TO_SIGN),curl -f --silent --show-error -o $(tosign) -F file=@$(TMPDIR)$(tosign) https://cbi.eclipse.org/authenticode/sign   &&) true
-	$(foreach tosign,$(MAC_TO_SIGN) $(WIN_TO_SIGN),rm $(TMPDIR)$(tosign) &&) true
+	set -x ; $(foreach tosign,$(MAC_TO_SIGN),\
+		temp=$(TMPDIR)/$(shell basename $(tosign)) && \
+		mv $(tosign) $$temp && \
+		curl -f --silent --show-error -o $(tosign) -F file=@$$temp https://cbi.eclipse.org/macos/codesign/sign && \
+		rm $$temp && \
+		) true
+	set -x ; $(foreach tosign,$(WIN_TO_SIGN),\
+		temp=$(TMPDIR)/$(shell basename $(tosign)) && \
+		mv $(tosign) $$temp && \
+		curl -f --silent --show-error -o $(tosign) -F file=@$$temp https://cbi.eclipse.org/authenticode/sign && \
+		rm $$temp && \
+		) true
 	rmdir $(TMPDIR)
 
 

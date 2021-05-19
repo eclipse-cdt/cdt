@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -257,8 +258,7 @@ public class ConsoleManager {
 		IViewPart part = null;
 
 		if (id.equals(lastActiveViewId)) {
-			if (secondaryId == null || ANY_SECONDARY_ID.equals(secondaryId)
-					|| secondaryId.equals(lastActiveSecondaryViewId)) {
+			if (ANY_SECONDARY_ID.equals(secondaryId) || Objects.equals(secondaryId, lastActiveSecondaryViewId)) {
 				part = getTerminalsViewWithSecondaryId(lastActiveViewId, lastActiveSecondaryViewId, false);
 			}
 		}

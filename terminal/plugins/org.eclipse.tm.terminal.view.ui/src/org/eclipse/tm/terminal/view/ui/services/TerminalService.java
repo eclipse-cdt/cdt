@@ -292,11 +292,8 @@ public class TerminalService implements ITerminalService {
 				}
 				// Open the new console
 				CTabItem item;
-				if (secondaryId != null)
-					item = ConsoleManager.getInstance().openConsole(id, secondaryId, title, encoding, connector, data,
-							flags);
-				else
-					item = ConsoleManager.getInstance().openConsole(id, title, encoding, connector, data, flags);
+				item = ConsoleManager.getInstance().openConsole(id, secondaryId, title, encoding, connector, data,
+						flags);
 				// Associate the original terminal properties with the tab item.
 				// This makes it easier to persist the connection data within the memento handler
 				if (item != null && !item.isDisposed())

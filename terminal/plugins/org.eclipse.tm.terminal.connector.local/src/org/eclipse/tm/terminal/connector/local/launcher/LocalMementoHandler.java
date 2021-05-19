@@ -14,6 +14,7 @@ package org.eclipse.tm.terminal.connector.local.launcher;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
 import org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler;
 import org.eclipse.ui.IMemento;
 
@@ -26,11 +27,38 @@ public class LocalMementoHandler implements IMementoHandler {
 	public void saveState(IMemento memento, Map<String, Object> properties) {
 		Assert.isNotNull(memento);
 		Assert.isNotNull(properties);
+
+		if ((String) properties.get(ITerminalsConnectorConstants.PROP_PROCESS_PATH) != null) {
+			memento.putString(ITerminalsConnectorConstants.PROP_PROCESS_PATH,
+					(String) properties.get(ITerminalsConnectorConstants.PROP_PROCESS_PATH));
+		}
+		if ((String) properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ARGS) != null) {
+			memento.putString(ITerminalsConnectorConstants.PROP_PROCESS_ARGS,
+					(String) properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ARGS));
+		}
+		if ((Boolean) properties.get(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE) != null) {
+			memento.putBoolean(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE,
+					(Boolean) properties.get(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE));
+		}
 	}
 
 	@Override
 	public void restoreState(IMemento memento, Map<String, Object> properties) {
 		Assert.isNotNull(memento);
 		Assert.isNotNull(properties);
+
+		if (memento.getString(ITerminalsConnectorConstants.PROP_PROCESS_PATH) != null) {
+			properties.put(ITerminalsConnectorConstants.PROP_PROCESS_PATH,
+					memento.getString(ITerminalsConnectorConstants.PROP_PROCESS_PATH));
+		}
+		if (memento.getString(ITerminalsConnectorConstants.PROP_PROCESS_ARGS) != null) {
+			properties.put(ITerminalsConnectorConstants.PROP_PROCESS_ARGS,
+					memento.getString(ITerminalsConnectorConstants.PROP_PROCESS_ARGS));
+		}
+		if (memento.getBoolean(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE) != null) {
+			properties.put(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE,
+					memento.getBoolean(ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE));
+		}
+
 	}
 }

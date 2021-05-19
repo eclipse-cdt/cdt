@@ -106,52 +106,55 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 		}
 
 		// Initialize the local terminal working directory.
-		// By default, start the local terminal in the users home directory
-		String initialCwd = org.eclipse.tm.terminal.view.ui.activator.UIPlugin.getScopedPreferences()
-				.getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD);
-		String cwd = null;
-		if (initialCwd == null || IPreferenceKeys.PREF_INITIAL_CWD_USER_HOME.equals(initialCwd)
-				|| "".equals(initialCwd.trim())) { //$NON-NLS-1$
-			cwd = System.getProperty("user.home"); //$NON-NLS-1$
-		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME.equals(initialCwd)) {
-			String eclipseHomeLocation = System.getProperty("eclipse.home.location"); //$NON-NLS-1$
-			if (eclipseHomeLocation != null) {
+		if (!properties.containsKey(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR)) {
+			// By default, start the local terminal in the users home directory
+			String initialCwd = org.eclipse.tm.terminal.view.ui.activator.UIPlugin.getScopedPreferences()
+					.getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD);
+			String cwd = null;
+			if (initialCwd == null || IPreferenceKeys.PREF_INITIAL_CWD_USER_HOME.equals(initialCwd)
+					|| "".equals(initialCwd.trim())) { //$NON-NLS-1$
+				cwd = System.getProperty("user.home"); //$NON-NLS-1$
+			} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME.equals(initialCwd)) {
+				String eclipseHomeLocation = System.getProperty("eclipse.home.location"); //$NON-NLS-1$
+				if (eclipseHomeLocation != null) {
+					try {
+						URI uri = URIUtil.fromString(eclipseHomeLocation);
+						File f = URIUtil.toFile(uri);
+						cwd = f.getAbsolutePath();
+					} catch (URISyntaxException ex) {
+						/* ignored on purpose */ }
+				}
+			} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS.equals(initialCwd)) {
+				Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
+				if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
+					if (org.eclipse.core.resources.ResourcesPlugin.getWorkspace() != null
+							&& org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot() != null
+							&& org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot()
+									.getLocation() != null) {
+						cwd = org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation()
+								.toOSString();
+					}
+				}
+			} else {
 				try {
-					URI uri = URIUtil.fromString(eclipseHomeLocation);
-					File f = URIUtil.toFile(uri);
-					cwd = f.getAbsolutePath();
-				} catch (URISyntaxException ex) {
-					/* ignored on purpose */ }
-			}
-		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS.equals(initialCwd)) {
-			Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-			if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
-				if (org.eclipse.core.resources.ResourcesPlugin.getWorkspace() != null
-						&& org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot() != null
-						&& org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation() != null) {
-					cwd = org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation()
-							.toOSString();
-				}
-			}
-		} else {
-			try {
-				// Resolve possible dynamic variables
-				IStringVariableManager vm = VariablesPlugin.getDefault().getStringVariableManager();
-				String resolved = vm.performStringSubstitution(initialCwd);
+					// Resolve possible dynamic variables
+					IStringVariableManager vm = VariablesPlugin.getDefault().getStringVariableManager();
+					String resolved = vm.performStringSubstitution(initialCwd);
 
-				IPath p = new Path(resolved);
-				if (p.toFile().canRead() && p.toFile().isDirectory()) {
-					cwd = p.toOSString();
-				}
-			} catch (CoreException ex) {
-				if (Platform.inDebugMode()) {
-					UIPlugin.getDefault().getLog().log(ex.getStatus());
+					IPath p = new Path(resolved);
+					if (p.toFile().canRead() && p.toFile().isDirectory()) {
+						cwd = p.toOSString();
+					}
+				} catch (CoreException ex) {
+					if (Platform.inDebugMode()) {
+						UIPlugin.getDefault().getLog().log(ex.getStatus());
+					}
 				}
 			}
-		}
 
-		if (cwd != null && !"".equals(cwd)) { //$NON-NLS-1$
-			properties.put(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR, cwd);
+			if (cwd != null && !"".equals(cwd)) { //$NON-NLS-1$
+				properties.put(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR, cwd);
+			}
 		}
 
 		// If the current selection resolved to an folder, default the working directory

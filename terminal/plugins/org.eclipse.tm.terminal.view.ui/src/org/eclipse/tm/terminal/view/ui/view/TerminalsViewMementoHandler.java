@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.custom.CTabItem;
@@ -113,6 +114,17 @@ public class TerminalsViewMementoHandler {
 					connectionMemento.putString(ITerminalsConnectorConstants.PROP_ENCODING, encoding);
 				}
 
+				// Store the current working directory, or if not available, the initial working directory
+				if (terminal != null) {
+					encoding = terminal.getEncoding();
+					Optional<String> workingDirectory = terminal.getTerminalConnector().getWorkingDirectory();
+					String cwd = workingDirectory
+							.orElse((String) properties.get(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR));
+					if (cwd != null) {
+						connectionMemento.putString(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR, cwd);
+					}
+				}
+
 				// Pass on to the memento handler
 				mementoHandler.saveState(connectionMemento, properties);
 			}
@@ -162,6 +174,12 @@ public class TerminalsViewMementoHandler {
 				if (connection.getString(ITerminalsConnectorConstants.PROP_ENCODING) != null) {
 					properties.put(ITerminalsConnectorConstants.PROP_ENCODING,
 							connection.getString(ITerminalsConnectorConstants.PROP_ENCODING));
+				}
+
+				// Restore the working directory
+				if (connection.getString(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR) != null) {
+					properties.put(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR,
+							connection.getString(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR));
 				}
 
 				// Get the terminal launcher delegate

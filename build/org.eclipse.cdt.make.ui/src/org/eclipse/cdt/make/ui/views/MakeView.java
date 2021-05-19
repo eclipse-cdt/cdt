@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,9 +41,12 @@ import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.util.DelegatingDragAdapter;
 import org.eclipse.jface.util.DelegatingDropAdapter;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -59,10 +62,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.TextActionHandler;
+import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -75,6 +85,8 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class MakeView extends ViewPart {
 	private static final String TARGET_BUILD_LAST_COMMAND = "org.eclipse.cdt.make.ui.targetBuildLastCommand"; //$NON-NLS-1$
+	// Persistance tags.
+	private static final String TAG_WORKINGSET = "workingSet"; //$NON-NLS-1$
 
 	private Clipboard clipboard;
 
@@ -89,6 +101,43 @@ public class MakeView extends ViewPart {
 	private DrillDownAdapter drillDownAdapter;
 	private FilterEmtpyFoldersAction trimEmptyFolderAction;
 	private IBindingService bindingService;
+	private ResourceWorkingSetFilter workingSetFilter = new ResourceWorkingSetFilter();
+	private WorkingSetFilterActionGroup workingSetGroup;
+	private IMemento memento;
+
+	private IPropertyChangeListener workingSetListener = ev -> {
+		String property = ev.getProperty();
+		Object newValue = ev.getNewValue();
+		Object oldValue = ev.getOldValue();
+		IWorkingSet filterWorkingSet = workingSetFilter.getWorkingSet();
+
+		if (property == null) {
+			return;
+		}
+		if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && oldValue == filterWorkingSet) {
+			setWorkingSet(null);
+		} else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property)
+				&& newValue == filterWorkingSet) {
+			fViewer.refresh();
+		}
+	};
+
+	IPropertyChangeListener workingSetUpdater = new IPropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent event) {
+			String property = event.getProperty();
+
+			if (WorkingSetFilterActionGroup.CHANGE_WORKING_SET.equals(property)) {
+				Object newValue = event.getNewValue();
+
+				if (newValue instanceof IWorkingSet) {
+					setWorkingSet((IWorkingSet) newValue);
+				} else if (newValue == null) {
+					setWorkingSet(null);
+				}
+			}
+		}
+	};
 
 	public MakeView() {
 		super();
@@ -106,6 +155,8 @@ public class MakeView extends ViewPart {
 		fViewer.setUseHashlookup(true);
 		fViewer.setContentProvider(new MakeContentProvider());
 		fViewer.setLabelProvider(new MakeLabelProvider());
+		initFilters(fViewer);
+
 		initDragAndDrop();
 
 		drillDownAdapter = new DrillDownAdapter(fViewer);
@@ -137,6 +188,17 @@ public class MakeView extends ViewPart {
 			}
 		});
 		fViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
+
+		if (memento != null) {
+			// The working set selection needs to be restored prior to making the actions
+			// and connecting to the manager
+			restoreStateWorkingSetSelection(memento);
+		}
+
+		//Add the property changes after all of the UI work has been done.
+		IWorkingSetManager wsmanager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
+		wsmanager.addPropertyChangeListener(workingSetListener);
+
 		getSite().setSelectionProvider(fViewer);
 
 		makeActions();
@@ -149,6 +211,7 @@ public class MakeView extends ViewPart {
 		if (bindingService != null) {
 			bindingService.addBindingManagerListener(bindingManagerListener);
 		}
+		memento = null;
 	}
 
 	/**
@@ -195,6 +258,8 @@ public class MakeView extends ViewPart {
 		deleteTargetAction = new DeleteTargetAction(shell);
 		editTargetAction = new EditTargetAction(shell);
 		trimEmptyFolderAction = new FilterEmtpyFoldersAction(fViewer);
+		workingSetGroup = new WorkingSetFilterActionGroup(shell, workingSetUpdater);
+		workingSetGroup.setWorkingSet(getWorkingSet());
 	}
 
 	private void contributeToActionBars() {
@@ -208,6 +273,8 @@ public class MakeView extends ViewPart {
 		textActionHandler.setDeleteAction(deleteTargetAction);
 
 		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), editTargetAction);
+
+		workingSetGroup.fillActionBars(actionBars);
 	}
 
 	private void fillLocalToolBar(IToolBarManager toolBar) {
@@ -272,6 +339,7 @@ public class MakeView extends ViewPart {
 		editTargetAction.selectionChanged(sel);
 		copyTargetAction.selectionChanged(sel);
 		pasteTargetAction.selectionChanged(sel);
+		workingSetGroup.updateActionBars();
 	}
 
 	/**
@@ -287,6 +355,12 @@ public class MakeView extends ViewPart {
 		if (bindingService != null) {
 			bindingService.removeBindingManagerListener(bindingManagerListener);
 			bindingService = null;
+		}
+
+		IWorkingSetManager wsmanager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
+		if (workingSetListener != null) {
+			wsmanager.removePropertyChangeListener(workingSetListener);
+			workingSetListener = null;
 		}
 
 		super.dispose();
@@ -327,4 +401,74 @@ public class MakeView extends ViewPart {
 		}
 	};
 
+	/**
+	 * Returns the working set filter for this view.
+	 *
+	 * @return the working set
+	 * @since 8.1
+	 */
+	public IWorkingSet getWorkingSet() {
+		return workingSetFilter.getWorkingSet();
+	}
+
+	/**
+	 * Adds the filters to the viewer.
+	 *
+	 * @param viewer
+	 *            the viewer
+	 */
+	void initFilters(TreeViewer viewer) {
+		viewer.addFilter(workingSetFilter);
+	}
+
+	@Override
+	public void saveState(IMemento memento) {
+		if (fViewer == null) {
+			if (this.memento != null) { //Keep the old state;
+				memento.putMemento(this.memento);
+			}
+			return;
+		}
+
+		//Save the working set away
+		if (workingSetFilter.getWorkingSet() != null) {
+			String wsname = workingSetFilter.getWorkingSet().getName();
+			if (wsname != null) {
+				memento.putString(TAG_WORKINGSET, wsname);
+			}
+		}
+	}
+
+	private void restoreStateWorkingSetSelection(IMemento memento) {
+		String wsname = memento.getString(TAG_WORKINGSET);
+		if (wsname != null && !wsname.isEmpty()) {
+			IWorkingSetManager wsmanager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
+			IWorkingSet workingSet = wsmanager.getWorkingSet(wsname);
+			if (workingSet != null) {
+				workingSetFilter.setWorkingSet(workingSet);
+			}
+		}
+	}
+
+	/**
+	 * @since 8.1
+	 */
+	public void setWorkingSet(IWorkingSet workingSet) {
+		Object[] expanded = fViewer.getExpandedElements();
+		ISelection selection = fViewer.getSelection();
+
+		workingSetFilter.setWorkingSet(workingSet);
+		fViewer.refresh();
+		fViewer.setExpandedElements(expanded);
+		if (selection.isEmpty() == false && selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+			fViewer.reveal(structuredSelection.getFirstElement());
+		}
+	}
+
+	@Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		this.memento = memento;
+	}
 }

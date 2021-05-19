@@ -15,6 +15,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.make.core.IMakeTarget;
+import org.eclipse.cdt.make.core.IMakeTargetManager;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.dnd.AbstractContainerAreaDropAdapter;
 import org.eclipse.cdt.make.internal.ui.dnd.AbstractSelectionDragAdapter;
@@ -30,8 +41,13 @@ import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.make.ui.MakeContentProvider;
 import org.eclipse.cdt.make.ui.MakeLabelProvider;
 import org.eclipse.cdt.make.ui.TargetSourceContainer;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -50,6 +66,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -60,7 +77,9 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -86,6 +105,15 @@ import org.eclipse.ui.part.ViewPart;
 public class MakeView extends ViewPart {
 	private static final String TARGET_BUILD_LAST_COMMAND = "org.eclipse.cdt.make.ui.targetBuildLastCommand"; //$NON-NLS-1$
 	// Persistance tags.
+	private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
+	private static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
+	private static final String TAG_CONTAINER = "container"; //$NON-NLS-1$
+	private static final String TAG_PATH = "path"; //$NON-NLS-1$
+	private static final String TAG_MAKE_TARGET = "makeTarget"; //$NON-NLS-1$
+	private static final String TAG_SOURCE_CONTAINER = "sourceContainer"; //$NON-NLS-1$
+	private static final String TAG_NAME = "name"; //$NON-NLS-1$
+	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
+	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 	private static final String TAG_WORKINGSET = "workingSet"; //$NON-NLS-1$
 
 	private Clipboard clipboard;
@@ -210,6 +238,10 @@ public class MakeView extends ViewPart {
 		bindingService = PlatformUI.getWorkbench().getService(IBindingService.class);
 		if (bindingService != null) {
 			bindingService.addBindingManagerListener(bindingManagerListener);
+		}
+
+		if (memento != null) {
+			restoreState(memento);
 		}
 		memento = null;
 	}
@@ -421,6 +453,96 @@ public class MakeView extends ViewPart {
 		viewer.addFilter(workingSetFilter);
 	}
 
+	private void saveState(IMemento memento, Object[] elements) {
+		for (Object element : elements) {
+			if (element instanceof IMakeTarget) {
+				IMakeTarget makeTarget = (IMakeTarget) element;
+				IContainer c = makeTarget.getContainer();
+				if (c.getFullPath() != null) {
+					IMemento elementMem = memento.createChild(TAG_MAKE_TARGET);
+					elementMem.putString(TAG_PATH, c.getFullPath().toPortableString());
+					elementMem.putString(TAG_NAME, makeTarget.getName());
+				}
+			} else if (element instanceof TargetSourceContainer) {
+				TargetSourceContainer targetSourceContainer = (TargetSourceContainer) element;
+				IContainer c = targetSourceContainer.getContainer();
+				if (c.getFullPath() != null) {
+					IMemento elementMem = memento.createChild(TAG_SOURCE_CONTAINER);
+					elementMem.putString(TAG_PATH, c.getFullPath().toPortableString());
+				}
+			} else if (element instanceof IContainer) {
+				IContainer c = (IContainer) element;
+				if (c.getLocation() != null) {
+					IMemento elementMem = memento.createChild(TAG_CONTAINER);
+					elementMem.putString(TAG_PATH, c.getFullPath().toPortableString());
+				}
+			} else {
+				// Unexpected/unknown type, expansion or selection of it will not be restored
+			}
+		}
+	}
+
+	private List<Object> restoreStateElements(IMemento memento) {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IMakeTargetManager makeTargetManager = MakeCorePlugin.getDefault().getTargetManager();
+
+		List<Object> elements = new ArrayList<>();
+		IMemento[] makeTargetMementos = memento.getChildren(TAG_MAKE_TARGET);
+		for (IMemento mem : makeTargetMementos) {
+			String path = mem.getString(TAG_PATH);
+			String name = mem.getString(TAG_NAME);
+			if (path == null || name == null) {
+				continue;
+			}
+			IResource res = root.findMember(Path.fromPortableString(path));
+			if (res instanceof IContainer) {
+				IContainer container = (IContainer) res;
+				try {
+					IMakeTarget makeTarget = makeTargetManager.findTarget(container, name);
+					if (makeTarget != null) {
+						elements.add(makeTarget);
+					}
+				} catch (CoreException e) {
+					continue;
+				}
+			}
+		}
+
+		IMemento[] sourceContainerMementos = memento.getChildren(TAG_SOURCE_CONTAINER);
+		for (IMemento mem : sourceContainerMementos) {
+			String path = mem.getString(TAG_PATH);
+			if (path == null) {
+				continue;
+			}
+			IResource res = root.findMember(Path.fromPortableString(path));
+			if (res == null) {
+				continue;
+			}
+			IProject project = res.getProject();
+			ICSourceEntry[] srcEntries = getSourceEntries(project);
+			for (ICSourceEntry srcEntry : srcEntries) {
+				if (srcEntry.getFullPath().equals(res.getFullPath())) {
+					elements.add(new TargetSourceContainer(srcEntry));
+				}
+			}
+		}
+
+		IMemento[] containerMementos = memento.getChildren(TAG_CONTAINER);
+		for (IMemento mem : containerMementos) {
+			String path = mem.getString(TAG_PATH);
+			if (path == null) {
+				continue;
+			}
+			IResource res = root.findMember(Path.fromPortableString(path));
+			if (res == null) {
+				continue;
+			}
+			elements.add(res);
+		}
+
+		return elements;
+	}
+
 	@Override
 	public void saveState(IMemento memento) {
 		if (fViewer == null) {
@@ -430,11 +552,63 @@ public class MakeView extends ViewPart {
 			return;
 		}
 
+		//save expanded elements
+		Tree tree = fViewer.getTree();
+		Object[] expandedElements = fViewer.getExpandedElements();
+		if (expandedElements.length > 0) {
+			IMemento expandedMem = memento.createChild(TAG_EXPANDED);
+			saveState(expandedMem, expandedElements);
+		}
+
+		//save selection
+		Object[] elements = ((IStructuredSelection) fViewer.getSelection()).toArray();
+		if (elements.length > 0) {
+			IMemento selectionMem = memento.createChild(TAG_SELECTION);
+			saveState(selectionMem, elements);
+		}
+
+		//save vertical position
+		ScrollBar bar = tree.getVerticalBar();
+		int position = bar != null ? bar.getSelection() : 0;
+		memento.putInteger(TAG_VERTICAL_POSITION, position);
+		//save horizontal position
+		bar = tree.getHorizontalBar();
+		position = bar != null ? bar.getSelection() : 0;
+		memento.putInteger(TAG_HORIZONTAL_POSITION, position);
+
 		//Save the working set away
 		if (workingSetFilter.getWorkingSet() != null) {
 			String wsname = workingSetFilter.getWorkingSet().getName();
 			if (wsname != null) {
 				memento.putString(TAG_WORKINGSET, wsname);
+			}
+		}
+	}
+
+	private void restoreState(IMemento memento) {
+
+		IMemento expandedMemento = memento.getChild(TAG_EXPANDED);
+		if (expandedMemento != null) {
+			fViewer.setExpandedElements(restoreStateElements(expandedMemento).toArray());
+		}
+		IMemento selectionMemento = memento.getChild(TAG_SELECTION);
+		if (selectionMemento != null) {
+			fViewer.setSelection(new StructuredSelection(restoreStateElements(selectionMemento)));
+		}
+
+		Tree tree = fViewer.getTree();
+		ScrollBar bar = tree.getVerticalBar();
+		if (bar != null) {
+			Integer position = memento.getInteger(TAG_VERTICAL_POSITION);
+			if (position != null) {
+				bar.setSelection(position);
+			}
+		}
+		bar = tree.getHorizontalBar();
+		if (bar != null) {
+			Integer position = memento.getInteger(TAG_HORIZONTAL_POSITION);
+			if (position != null) {
+				bar.setSelection(position);
 			}
 		}
 	}
@@ -471,4 +645,22 @@ public class MakeView extends ViewPart {
 		super.init(site, memento);
 		this.memento = memento;
 	}
+
+	/**
+	 * Get source entries for default setting configuration (i.e. configuration shown in UI).
+	 */
+	private static ICSourceEntry[] getSourceEntries(IProject project) {
+		ICProjectDescriptionManager mgr = CCorePlugin.getDefault().getProjectDescriptionManager();
+		ICProjectDescription prjDescription = mgr.getProjectDescription(project, false);
+		if (prjDescription != null) {
+			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
+			if (cfgDescription != null) {
+				ICSourceEntry[] srcEntries = cfgDescription.getResolvedSourceEntries();
+				return srcEntries;
+			}
+		}
+
+		return new ICSourceEntry[0];
+	}
+
 }

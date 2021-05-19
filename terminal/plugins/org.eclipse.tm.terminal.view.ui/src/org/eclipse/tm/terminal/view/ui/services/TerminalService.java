@@ -153,6 +153,9 @@ public class TerminalService implements ITerminalService {
 		// Extract the properties
 		String id = (String) properties.get(ITerminalsConnectorConstants.PROP_ID);
 		String secondaryId = (String) properties.get(ITerminalsConnectorConstants.PROP_SECONDARY_ID);
+		if (!properties.containsKey(ITerminalsConnectorConstants.PROP_SECONDARY_ID)) {
+			secondaryId = ITerminalsConnectorConstants.LAST_ACTIVE_SECONDARY_ID;
+		}
 		String title = (String) properties.get(ITerminalsConnectorConstants.PROP_TITLE);
 		Object data = properties.get(ITerminalsConnectorConstants.PROP_DATA);
 
@@ -292,11 +295,8 @@ public class TerminalService implements ITerminalService {
 				}
 				// Open the new console
 				CTabItem item;
-				if (secondaryId != null)
-					item = ConsoleManager.getInstance().openConsole(id, secondaryId, title, encoding, connector, data,
-							flags);
-				else
-					item = ConsoleManager.getInstance().openConsole(id, title, encoding, connector, data, flags);
+				item = ConsoleManager.getInstance().openConsole(id, secondaryId, title, encoding, connector, data,
+						flags);
 				// Associate the original terminal properties with the tab item.
 				// This makes it easier to persist the connection data within the memento handler
 				if (item != null && !item.isDisposed())

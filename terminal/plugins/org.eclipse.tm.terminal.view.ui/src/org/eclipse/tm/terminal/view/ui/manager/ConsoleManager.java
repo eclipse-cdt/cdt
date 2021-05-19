@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -52,9 +53,6 @@ import org.eclipse.ui.PlatformUI;
  * Terminal console manager.
  */
 public class ConsoleManager {
-
-	// Constant to indicate any secondary id is acceptable
-	private final static String ANY_SECONDARY_ID = new String("*"); //$NON-NLS-1$
 
 	// Reference to the perspective listener instance
 	private final IPerspectiveListener perspectiveListener;
@@ -198,7 +196,9 @@ public class ConsoleManager {
 	 * <b>Note:</b> The method must be called within the UI thread.
 	 *
 	 * @param id The terminals console view id or <code>null</code> to show the default terminals console view.
-	 * @param secondaryId The terminals console view secondary id or <code>null</code>.
+	 * @param secondaryId The terminal console secondary id, which may be <code>null</code> which is the secondary id of
+	 *        the first terminal view opened. To specify reuse of most recent terminal view use special value of
+	 *        {@link ITerminalsConnectorConstants#LAST_ACTIVE_SECONDARY_ID}.
 	 *
 	 * @return The console view instance if available or <code>null</code> otherwise.
 	 */
@@ -225,7 +225,9 @@ public class ConsoleManager {
 	 * Search and return a terminal view with a specific secondary id
 	 *
 	 * @param id The terminals console view id. Must not be <code>null</code>.
-	 * @param secondaryId The terminals console view secondary id or <code>null</code>.
+	 * @param secondaryId The terminal console secondary id, which may be <code>null</code> which is the secondary id of
+	 *        the first terminal view opened. To specify reuse of any active terminal view use special value of
+	 *        {@link ITerminalsConnectorConstants#ANY_ACTIVE_SECONDARY_ID}.
 	 * @param restore <code>True</code> if to try to restore the view, <code>false</code> otherwise.
 	 *
 	 * @return The terminals console view instance or <code>null</code> if not found.
@@ -235,8 +237,8 @@ public class ConsoleManager {
 
 		for (IViewReference ref : getActiveWorkbenchPage().getViewReferences()) {
 			if (ref.getId().equals(id)) {
-				if (ANY_SECONDARY_ID.equals(secondaryId) || secondaryId == null && ref.getSecondaryId() == null
-						|| secondaryId != null && secondaryId.equals(ref.getSecondaryId())) {
+				if (ITerminalsConnectorConstants.ANY_ACTIVE_SECONDARY_ID.equals(secondaryId)
+						|| Objects.equals(secondaryId, ref.getSecondaryId())) {
 					return ref.getView(restore);
 				}
 			}
@@ -248,7 +250,9 @@ public class ConsoleManager {
 	 * Search and return the active terminals view.
 	 *
 	 * @param id The terminals console view id. Must not be <code>null</code>.
-	 * @param secondaryId The terminals console view secondary id or <code>null</code>.
+	 * @param secondaryId The terminal console secondary id, which may be <code>null</code> which is the secondary id of
+	 *        the first terminal view opened. To specify reuse of most recent terminal view use special value of
+	 *        {@link ITerminalsConnectorConstants#LAST_ACTIVE_SECONDARY_ID}.
 	 * @return The terminals console view instance or <code>null</code> if not found.
 	 */
 	private IViewPart getActiveTerminalsView(String id, String secondaryId) {
@@ -257,8 +261,8 @@ public class ConsoleManager {
 		IViewPart part = null;
 
 		if (id.equals(lastActiveViewId)) {
-			if (secondaryId == null || ANY_SECONDARY_ID.equals(secondaryId)
-					|| secondaryId.equals(lastActiveSecondaryViewId)) {
+			if (ITerminalsConnectorConstants.LAST_ACTIVE_SECONDARY_ID.equals(secondaryId)
+					|| Objects.equals(secondaryId, lastActiveSecondaryViewId)) {
 				part = getTerminalsViewWithSecondaryId(lastActiveViewId, lastActiveSecondaryViewId, false);
 			}
 		}
@@ -363,7 +367,8 @@ public class ConsoleManager {
 			IViewPart activePart = getActiveTerminalsView(id != null ? id : IUIConstants.ID, secondaryId);
 			if (activePart == null) {
 				// Create a new one
-				IViewPart newPart = showConsoleView(id != null ? id : IUIConstants.ID, getSecondaryId(secondaryId, id));
+				IViewPart newPart = showConsoleView(id != null ? id : IUIConstants.ID,
+						getNextTerminalSecondaryId(IUIConstants.ID));
 				return newPart;
 			}
 
@@ -378,20 +383,6 @@ public class ConsoleManager {
 	}
 
 	/**
-	 * Return the secondary id to use.
-	 * @param secondaryId
-	 * @param id
-	 * @return the secondaryId argument is not null, or *, otherwise use the auto generated secondary id.
-	 */
-	private String getSecondaryId(String secondaryId, String id) {
-		if (secondaryId == null || ANY_SECONDARY_ID.equals(secondaryId)) {
-			return getNextTerminalSecondaryId(id != null ? id : IUIConstants.ID);
-		}
-
-		return secondaryId;
-	}
-
-	/**
 	 * Opens the console with the given title and connector.
 	 * <p>
 	 * <b>Note:</b> The method must be called within the UI thread.
@@ -402,10 +393,14 @@ public class ConsoleManager {
 	 * @param connector The terminal connector. Must not be <code>null</code>.
 	 * @param data The custom terminal data node or <code>null</code>.
 	 * @param flags The flags controlling how the console is opened or <code>null</code> to use defaults.
+	 * @deprecated Use {@link #openConsole(String, String, String, String, ITerminalConnector, Object, Map)}
+	 * and explicitly specify an ID {@link ITerminalsConnectorConstants#LAST_ACTIVE_SECONDARY_ID}
 	 */
+	@Deprecated
 	public CTabItem openConsole(String id, String title, String encoding, ITerminalConnector connector, Object data,
 			Map<String, Boolean> flags) {
-		return openConsole(id, ANY_SECONDARY_ID, title, encoding, connector, data, flags);
+		return openConsole(id, ITerminalsConnectorConstants.LAST_ACTIVE_SECONDARY_ID, title, encoding, connector, data,
+				flags);
 	}
 
 	/**
@@ -414,7 +409,9 @@ public class ConsoleManager {
 	 * <b>Note:</b> The method must be called within the UI thread.
 	 *
 	 * @param id The terminals console view id or <code>null</code> to show the default terminals console view.
-	 * @param secondaryId The terminals console view secondary id or <code>null</code>.
+	 * @param secondaryId The terminal console secondary id, which may be <code>null</code> which is the secondary id of
+	 *        the first terminal view opened. To specify reuse of most recent terminal view use special value of
+	 *        {@link ITerminalsConnectorConstants#LAST_ACTIVE_SECONDARY_ID}.
 	 * @param title The console title. Must not be <code>null</code>.
 	 * @param encoding The terminal encoding or <code>null</code>.
 	 * @param connector The terminal connector. Must not be <code>null</code>.

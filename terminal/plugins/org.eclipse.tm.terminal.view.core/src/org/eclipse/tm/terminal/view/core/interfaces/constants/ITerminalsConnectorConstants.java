@@ -32,9 +32,34 @@ public interface ITerminalsConnectorConstants {
 	/**
 	 * Property: The unique secondary id of the terminals view to open.
 	 * <p>
+	 * Special values:
+	 * <ul>
+	 * <li>
+	 * not present in properties table or {@link #LAST_ACTIVE_SECONDARY_ID} means open on most recent terminal view
+	 * </li>
+	 * <li>
+	 * {@link #ANY_ACTIVE_SECONDARY_ID} means open on any terminal view
+	 * </li>
+	 * <li>
+	 * <code>null</code> means open on the first primary terminal (the one with no secondary id)
+	 * </li>
+	 * <ul>
+	 * <p>
 	 * Property Type: {@link String}
 	 */
 	public static final String PROP_SECONDARY_ID = "secondaryId"; //$NON-NLS-1$
+
+	/**
+	 * Special value for {@link #PROP_SECONDARY_ID} to indicate reuse of the most recent terminal view
+	 * @since 4.8
+	 */
+	public static final String LAST_ACTIVE_SECONDARY_ID = "last"; //$NON-NLS-1$
+
+	/**
+	 * Special value for {@link #PROP_SECONDARY_ID} to indicate reuse of any terminal view
+	 * @since 4.8
+	 */
+	public static final String ANY_ACTIVE_SECONDARY_ID = "*"; //$NON-NLS-1$
 
 	/**
 	 * Property: The title of the terminal tab to open.

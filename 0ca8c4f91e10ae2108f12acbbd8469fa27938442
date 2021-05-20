@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "66ed7fac_98007b1c",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.core/src/org/eclipse/tm/terminal/view/core/interfaces/constants/ITerminalsConnectorConstants.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-20T03:28:04Z",
+      "side": 1,
+      "message": "these will be moved to another commit.",
+      "revId": "0ca8c4f91e10ae2108f12acbbd8469fa27938442",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

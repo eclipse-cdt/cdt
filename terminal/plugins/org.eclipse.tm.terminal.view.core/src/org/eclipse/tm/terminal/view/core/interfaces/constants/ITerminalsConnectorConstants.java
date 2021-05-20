@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.core.interfaces.constants;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalServiceOutputStreamMonitorListener;
 
 /**

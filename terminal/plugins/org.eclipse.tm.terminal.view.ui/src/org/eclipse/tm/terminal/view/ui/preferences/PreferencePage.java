@@ -30,6 +30,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -374,13 +375,16 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		group.setLayout(new GridLayout(2, false));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-		viewer = new TableViewer(group, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
+		viewer = CheckboxTableViewer.newCheckList(group,
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 
 		Table table = viewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
 		TableColumn column = new TableColumn(table, SWT.LEFT);
+		column.setText("Default");
+		column = new TableColumn(table, SWT.LEFT);
 		column.setText(Messages.PreferencePage_executables_column_name_label);
 		column = new TableColumn(table, SWT.LEFT);
 		column.setText(Messages.PreferencePage_executables_column_path_label);
@@ -388,6 +392,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		ColumnViewerToolTipSupport.enableFor(viewer);
 
 		TableLayout tableLayout = new TableLayout();
+		tableLayout.addColumnData(new ColumnWeightData(35));
 		tableLayout.addColumnData(new ColumnWeightData(35));
 		tableLayout.addColumnData(new ColumnWeightData(65));
 		table.setLayout(tableLayout);
@@ -504,8 +509,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 					switch (columnIndex) {
 					case 0:
-						return (String) m.get(IExternalExecutablesProperties.PROP_NAME);
+						return ""; //$NON-NLS-1$
 					case 1:
+						return (String) m.get(IExternalExecutablesProperties.PROP_NAME);
+					case 2:
 						return (String) m.get(IExternalExecutablesProperties.PROP_PATH);
 					}
 				}

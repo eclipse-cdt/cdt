@@ -13,6 +13,7 @@ package org.eclipse.tm.internal.terminal.model;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 
@@ -64,21 +65,112 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	public void setDimensions(int height, int width) {
 		assert height >= 0 || throwRuntimeException();
 		assert width >= 0 || throwRuntimeException();
-		// just extend the region
-		if (height > fChars.length) {
-			int h = 4 * height / 3;
-			if (fMaxHeight > 0 && h > fMaxHeight)
-				h = fMaxHeight;
-			fStyle = (TerminalStyle[][]) resizeArray(fStyle, height);
-			fChars = (char[][]) resizeArray(fChars, height);
+		if (width != fWidth) {
+			reflowLines(width, height);
+		} else {
+			// just extend the region
+			if (height > fChars.length) {
+				int h = 4 * height / 3;
+				if (fMaxHeight > 0 && h > fMaxHeight)
+					h = fMaxHeight;
+				fStyle = (TerminalStyle[][]) resizeArray(fStyle, height);
+				fChars = (char[][]) resizeArray(fChars, height);
+			}
+			// clean the new lines
+			if (height > fHeight) {
+				for (int i = fHeight; i < height; i++) {
+					cleanLine(i);
+				}
+			}
+			// set dimensions after successful resize!
+			fWidth = width;
+			fHeight = height;
 		}
-		// clean the new lines
-		if (height > fHeight) {
-			for (int i = fHeight; i < height; i++) {
-				cleanLine(i);
+	}
+
+	private void reflowLines(int width, int height) {
+		TerminalStyle[][] style = new TerminalStyle[height][];
+		char[][] lines = new char[height][];
+		BitSet wrapped = new BitSet();
+		int cursorLine = fCursorLine;
+		int r = 0;
+		int c = 0;
+		char ch = '\u0000';
+		TerminalStyle ts = null;
+		for (int row = 0; r < fHeight; row++) {
+			//			if (!fWrappedLines.get(r)) {
+			//				lines[row] = fChars[r];
+			//				style[row] = fStyle[r];
+			//				r++;
+			//				continue;
+			//			}
+			// TODO: very inefficient!
+			// discard lines at the top if necessary
+			if (row == height) {
+				System.arraycopy(lines, 1, lines, 0, height - 1);
+				row = height - 1;
+				if (cursorLine > 0)
+					cursorLine--;
+			}
+			if (fChars[r] == null) {
+				if (r == fCursorLine) {
+					cursorLine = r;
+				}
+				r++;
+				c = 0;
+				continue;
+			}
+			lines[row] = new char[width];
+			style[row] = new TerminalStyle[width];
+			int col = 0;
+			boolean eol = false;
+			for (; col < width; col++) {
+				if (c < fChars[r].length) {
+					ts = fStyle[r][c];
+					ch = fChars[r][c++];
+				} else {
+					if (r < fHeight && fWrappedLines.get(r)) {
+						c = 0;
+						r++;
+						ts = fStyle[r][c];
+						ch = fChars[r][c++];
+					} else {
+						eol = true;
+					}
+				}
+				if (ch == '\u0000') {
+					eol = true;
+				}
+				if (eol) {
+					break;
+				}
+				lines[row][col] = ch;
+				style[row][col] = ts;
+			}
+			if (col < width) {
+				lines[row] = Arrays.copyOf(lines[row], col);
+				style[row] = Arrays.copyOf(style[row], col);
+			} else {
+				if (c == fChars[r].length && !fWrappedLines.get(r))
+					eol = true;
+				else if (c < fChars[r].length && fChars[r][c] == '\u0000')
+					eol = true;
+			}
+			if (eol) {
+				r++;
+				c = 0;
+			} else {
+				wrapped.set(row);
 			}
 		}
-		// set dimensions after successful resize!
+		fChars = lines;
+		fStyle = style;
+		fWrappedLines.clear();
+		System.out.format("---- w=%d, h=%d\n", width, height);
+		for (int i = 0; i < height; i++) {
+			fWrappedLines.set(i, wrapped.get(i));
+			//System.out.format("L%03d:%s\n", i, fChars[i] == null ? "" : String.valueOf(fChars[i]));
+		}
 		fWidth = width;
 		fHeight = height;
 	}

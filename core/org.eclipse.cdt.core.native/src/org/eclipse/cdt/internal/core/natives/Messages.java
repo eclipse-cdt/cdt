@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.core.natives;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
+	public static String PTY_FailedToStartConPTY;
+	public static String PTY_NoClassDefFoundError;
 	public static String Util_exception_cannotCreatePty;
 	public static String Util_exception_cannotSetTerminalSize;
 	public static String Util_error_cannotRun;

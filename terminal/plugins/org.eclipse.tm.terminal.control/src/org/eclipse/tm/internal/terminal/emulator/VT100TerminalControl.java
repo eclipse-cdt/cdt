@@ -232,6 +232,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		// Use Default Charset as start, until setCharset() is called
 		setCharset(Charset.defaultCharset());
 		setupTerminal(wndParent);
+		fTerminalText.setReflowOnDimensionsChanged(preferenceStore.getBoolean(ITerminalConstants.PREF_TEXT_REFLOW));
 	}
 
 	@Override
@@ -681,6 +682,14 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		setInvertedColors(invert);
 		onTerminalColorsChanged();
 		onTerminalFontChanged();
+		onTerminalTextReflowChanged();
+	}
+
+	private void onTerminalTextReflowChanged() {
+		if (fPreferenceStore != null) {
+			fTerminalText
+					.setReflowOnDimensionsChanged(fPreferenceStore.getBoolean(ITerminalConstants.PREF_TEXT_REFLOW));
+		}
 	}
 
 	private void onTerminalColorsChanged() {

@@ -202,6 +202,10 @@ public class VT100Emulator implements ControlListener {
 
 	}
 
+	public void setReflowOnDimensionsChanged(boolean enable) {
+		text.setReflowOnDimensionsChanged(enable);
+	}
+
 	/**
 	 * This method performs clean up when this VT100Emulator object is no longer
 	 * needed. After calling this method, no other method on this object should

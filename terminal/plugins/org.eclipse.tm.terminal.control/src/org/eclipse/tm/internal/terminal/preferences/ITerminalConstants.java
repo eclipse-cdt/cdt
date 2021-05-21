@@ -41,6 +41,11 @@ public interface ITerminalConstants {
 	public static final String DEFAULT_FONT_DEFINITION = FONT_DEFINITION;
 
 	/**
+	 * @since 5.4
+	 */
+	public static final String PREF_TEXT_REFLOW = "terminal.views.view.textreflow"; //$NON-NLS-1$
+
+	/**
 	 * @since 5.0
 	 */
 	public static String getPrefForTerminalColor(TerminalColor tc) {

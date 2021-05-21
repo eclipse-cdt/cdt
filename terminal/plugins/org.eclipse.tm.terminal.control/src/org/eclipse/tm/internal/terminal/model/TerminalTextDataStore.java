@@ -14,6 +14,7 @@ package org.eclipse.tm.internal.terminal.model;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.tm.terminal.model.ITerminalTextData;
@@ -81,6 +82,12 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		// set dimensions after successful resize!
 		fWidth = width;
 		fHeight = height;
+	}
+
+	@Override
+	public void reflow(int width, int minHeight, int[] linesToTrack) {
+		assert width >= 0 || throwRuntimeException();
+		fWidth = width;
 	}
 
 	/**
@@ -187,6 +194,78 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		for (int i = 0; i < len; i++) {
 			fChars[line][column + i] = chars[i + start];
 			fStyle[line][column + i] = style;
+		}
+	}
+
+	public Iterable<FullLine> fullLines(final int line) {
+		return new Iterable<>() {
+			@Override
+			public Iterator<FullLine> iterator() {
+				return new FullLineIterator(line);
+			}
+		};
+	}
+
+	public static class FullLine {
+		public int origLineStart = 0;
+		public int origLineEnd = 0;
+		public char[] fChars = null;
+		public TerminalStyle[] fStyle = null;
+	}
+
+	public class FullLineIterator implements Iterator<FullLine> {
+		private final int fStart;
+		private int fLine;
+		private int fCount;
+
+		public FullLineIterator(int line) {
+			fStart = line;
+			fLine = line;
+			fCount = fHeight;
+			// do not iterate over last null lines
+			while (fCount > 0 && fChars[(fStart + fCount - 1) % fHeight] == null) {
+				fCount--;
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			return fCount > 0;
+		}
+
+		@Override
+		public FullLine next() {
+			assert hasNext();
+			FullLine fl = new FullLine();
+			char[] fullLine = null;
+			TerminalStyle[] fullStyle = null;
+			int l = fLine;
+			int lCount = 1;
+			int len = fChars[l] == null ? 0 : fChars[l].length;
+			while (fWrappedLines.get(l) && lCount < fCount) {
+				l = (l + 1) % fHeight;
+				len += fChars[l] == null ? 0 : fChars[l].length;
+				lCount++;
+			}
+			if (len > 0) {
+				fullLine = new char[len];
+				fullStyle = new TerminalStyle[len];
+				int pos = 0;
+				int line = fLine;
+				for (int i = 0; i < lCount; i++) {
+					System.arraycopy(fChars[line], 0, fullLine, pos, fChars[line].length);
+					System.arraycopy(fStyle[line], 0, fullStyle, pos, fStyle[line].length);
+					pos += fChars[line % fHeight].length;
+					line = (line + 1) % fHeight;
+				}
+			}
+			fl.origLineStart = fLine;
+			fl.origLineEnd = (fLine + lCount) % fHeight;
+			fl.fStyle = fullStyle;
+			fl.fChars = fullLine;
+			fLine = (fLine + lCount) % fHeight;
+			fCount -= lCount;
+			return fl;
 		}
 	}
 

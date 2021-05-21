@@ -211,4 +211,9 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
 		fBackend.processReverseLineFeed();
 	}
 
+	@Override
+	public void setReflowOnDimensionsChanged(boolean enable) {
+		fWriter.println("setReflowOnDimensionschanged()"); //$NON-NLS-1$
+		fBackend.setReflowOnDimensionsChanged(enable);
+	}
 }

@@ -55,5 +55,5 @@ public class TerminalMessages extends NLS {
 	//Preference Page
 	public static String INVERT_COLORS;
 	public static String BUFFERLINES;
-
+	public static String TerminalTextReflow;
 }

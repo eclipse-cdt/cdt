@@ -69,6 +69,9 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
 		addField(new BooleanFieldEditor(ITerminalConstants.PREF_INVERT_COLORS, TerminalMessages.INVERT_COLORS,
 				getFieldEditorParent()));
 
+		addField(new BooleanFieldEditor(ITerminalConstants.PREF_TEXT_REFLOW, TerminalMessages.TerminalTextReflow,
+				getFieldEditorParent()));
+
 		addField(new IntegerFieldEditor(ITerminalConstants.PREF_BUFFERLINES, TerminalMessages.BUFFERLINES,
 				getFieldEditorParent()));
 

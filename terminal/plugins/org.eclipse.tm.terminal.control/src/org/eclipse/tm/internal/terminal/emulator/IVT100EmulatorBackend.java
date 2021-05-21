@@ -227,4 +227,13 @@ public interface IVT100EmulatorBackend {
 	 * scroll region.
 	 */
 	void processReverseLineFeed();
+
+	/**
+	 * Enable text reflow when dimensions of the terminal change.
+	 *
+	 * By default reflow is disabled.
+	 *
+	 * @param enable if true reflow is enabled, if false disabled
+	 */
+	void setReflowOnDimensionsChanged(boolean enable);
 }

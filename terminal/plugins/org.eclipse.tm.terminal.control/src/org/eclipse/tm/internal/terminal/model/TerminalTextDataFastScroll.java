@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
+import java.util.Arrays;
+
+import org.eclipse.tm.internal.terminal.model.TerminalTextDataStore.FullLine;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
@@ -24,7 +27,7 @@ import org.eclipse.tm.terminal.model.TerminalStyle;
  */
 public class TerminalTextDataFastScroll implements ITerminalTextData {
 
-	final ITerminalTextData fData;
+	final TerminalTextDataStore fData;
 	private int fHeight;
 	private int fMaxHeight;
 	/**
@@ -32,7 +35,7 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 	 */
 	int fOffset;
 
-	public TerminalTextDataFastScroll(ITerminalTextData data, int maxHeight) {
+	private TerminalTextDataFastScroll(TerminalTextDataStore data, int maxHeight) {
 		fMaxHeight = maxHeight;
 		fData = data;
 		fData.setDimensions(maxHeight, fData.getWidth());
@@ -73,7 +76,6 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 	void moveOffset(int delta) {
 		assert Math.abs(delta) < fMaxHeight || throwRuntimeException();
 		fOffset = (fMaxHeight + fOffset + delta) % fMaxHeight;
-
 	}
 
 	/**
@@ -242,6 +244,83 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 			fData.setDimensions(fMaxHeight, width);
 	}
 
+	public void setLine(int line, char[] chars, TerminalStyle[] styles) {
+		assert (line >= 0 && line < fHeight) || throwRuntimeException();
+		fData.setLine(getPositionOfLine(line), chars, styles);
+	}
+
+	public int setFullLine(int line, char[] chars, TerminalStyle[] styles) {
+		int pos = 0;
+		if (chars == null) {
+			cleanLine(line);
+			line++;
+		} else {
+			int fullLen = chars.length;
+			// trim nulls at end of line TODO: should also trim whitespaces?
+			while (fullLen > 0 && chars[fullLen - 1] == '\0') {
+				fullLen--;
+			}
+			while (pos < fullLen) {
+				int len = fullLen - pos;
+				if (len > fData.getWidth()) {
+					len = fData.getWidth();
+				}
+				setLine(line, Arrays.copyOfRange(chars, pos, pos + len), Arrays.copyOfRange(styles, pos, pos + len));
+				pos += len;
+				if (pos < fullLen)
+					setWrappedLine(line);
+				if ((line == fMaxHeight - 1) && pos < fullLen) {
+					moveOffset(1);
+				} else {
+					line++;
+				}
+			}
+		}
+		return line;
+	}
+
+	@Override
+	public void reflow(int width, int minHeight, int[] linesToTrack) {
+		assert width >= 0 || throwRuntimeException();
+		assert minHeight >= 0 || throwRuntimeException();
+		int oldWidth = fData.getWidth();
+		int dstLine = 0;
+		int[] linesToTrackOrig = linesToTrack.clone();
+		// get first line before resetting offset
+		final int firstLine = 0;
+		final TerminalTextDataStore data = new TerminalTextDataStore();
+		data.copy(fData);
+		cleanLines(0, fMaxHeight);
+		fOffset = 0;
+		fData.setDimensions(fMaxHeight, width);
+
+		Iterable<FullLine> fullLines = data.fullLines(firstLine);
+		for (FullLine fullLine : fullLines) {
+			if (dstLine == fMaxHeight) {
+				moveOffset(1);
+				dstLine--;
+			}
+			// adjust tracked lines
+			for (int i = 0; i < linesToTrack.length; i += 2) {
+				if (fullLine.origLineStart <= linesToTrackOrig[i] && linesToTrackOrig[i] < fullLine.origLineEnd) {
+					final int fullLineCol = (linesToTrackOrig[i] - fullLine.origLineStart) * oldWidth
+							+ linesToTrackOrig[i + 1];
+					linesToTrack[i] = dstLine + fullLineCol / width;
+					linesToTrack[i + 1] = fullLineCol % width;
+					// if the line full/unwrapped column is not 0 and a multiple of the width do not
+					// wrap the position to the next line, but rather let it exceed the width and leave to the
+					// caller how to handle that
+					if (fullLineCol > 0 && fullLineCol % width == 0) {
+						linesToTrack[0] -= 1;
+						linesToTrack[1] = width;
+					}
+				}
+			}
+			dstLine = setFullLine(dstLine, fullLine.fChars, fullLine.fStyle);
+		}
+		fHeight = Math.max(dstLine, minHeight);
+	}
+
 	@Override
 	public void setMaxHeight(int maxHeight) {
 		assert maxHeight >= fHeight || throwRuntimeException();
@@ -269,22 +348,31 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 
 	@Override
 	public int getCursorColumn() {
-		throw new UnsupportedOperationException();
+		return fData.getCursorColumn();
+	}
+
+	private int getLineOfPosition(int linePos) {
+		return (fMaxHeight + linePos - fOffset) % fMaxHeight;
 	}
 
 	@Override
 	public int getCursorLine() {
-		throw new UnsupportedOperationException();
+		int acl = fData.getCursorLine();
+		int cl = getLineOfPosition(acl);
+		long tid = Thread.currentThread().getId();
+		return cl;
 	}
 
 	@Override
 	public void setCursorColumn(int column) {
-		throw new UnsupportedOperationException();
+		fData.setCursorColumn(column);
 	}
 
 	@Override
 	public void setCursorLine(int line) {
-		throw new UnsupportedOperationException();
+		int acl = getPositionOfLine(line);
+		fData.setCursorLine(acl);
+		long tid = Thread.currentThread().getId();
 	}
 
 	@Override

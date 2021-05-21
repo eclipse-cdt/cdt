@@ -124,22 +124,17 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			int height = fTerminal.getHeight();
 			// absolute cursor line
 			int acl = cl + height - fLines;
-			int newLines = Math.max(lines, height);
-			if (lines < fLines) {
-				if (height == fLines) {
-					// if the terminal has no history, then resize by
-					// setting the size to the new size
-					// TODO We are assuming that cursor line points at end of text
-					newLines = Math.max(lines, cl + 1);
-				}
-			}
+			int[] positionToTrack = new int[2];
+			positionToTrack[0] = acl;
+			positionToTrack[1] = cc;
+			// make the terminal at least as high as we need lines
+			fTerminal.reflow(cols, lines, positionToTrack);
+			height = fTerminal.getHeight();
+			int newCl = positionToTrack[0] - (height - lines);
+			int newCC = positionToTrack[1];
 			fLines = lines;
 			fColumns = cols;
-			// make the terminal at least as high as we need lines
-			fTerminal.setDimensions(newLines, fColumns);
-			// compute relative cursor line
-			cl = acl - (newLines - fLines);
-			setCursor(cl, cc);
+			setCursor(newCl, newCC);
 		}
 	}
 

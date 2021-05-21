@@ -144,6 +144,11 @@ public class SynchronizedTerminalTextData implements ITerminalTextData {
 	}
 
 	@Override
+	public void reflow(int width, int minHeight, int[] lineToTracks) {
+		fData.reflow(width, minHeight, lineToTracks);
+	}
+
+	@Override
 	synchronized public void setMaxHeight(int height) {
 		fData.setMaxHeight(height);
 	}

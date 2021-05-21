@@ -108,7 +108,13 @@ public class TerminalTextData implements ITerminalTextData {
 		int w = getWidth();
 		if (w == width && h == height)
 			return;
+		fData.setCursorLine(fCursorLine);
+		fData.setCursorColumn(fCursorColumn);
 		fData.setDimensions(height, width);
+		fCursorLine = fData.getCursorLine();
+		fCursorColumn = fData.getCursorColumn();
+		fData.setCursorLine(0);
+		fData.setCursorColumn(0);
 		sendDimensionsChanged(h, w, height, width);
 	}
 

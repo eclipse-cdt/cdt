@@ -136,9 +136,11 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			fLines = lines;
 			fColumns = cols;
 			// make the terminal at least as high as we need lines
+			int cldelta = fTerminal.getCursorLine();
 			fTerminal.setDimensions(newLines, fColumns);
+			cldelta = fTerminal.getCursorLine() - cldelta;
 			// compute relative cursor line
-			cl = acl - (newLines - fLines);
+			cl = acl + cldelta - (newLines - fLines);
 			setCursor(cl, cc);
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 QNX Software Systems and others.
+ * Copyright (c) 2002, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,19 +40,36 @@ public class PTY {
 	}
 
 	final Mode mode;
+	/**
+	 * Unused in conPTY.
+	 * Created, but never read in winPTY.
+	 * Important for Posix PTY.
+	 */
 	final String slave;
 	final PTYInputStream in;
 	final PTYOutputStream out;
 
 	/**
 	 * NOTE: Field is accessed by the native layer. Do not refactor!
+	 * This field is NOT used by ConPTY layer.
 	 */
 	int master;
 
 	private static boolean hasPTY;
+
+	private enum IS_CONPTY {
+		CONPTY_UNKNOWN, CONPTY_YES, CONPTY_NO;
+	}
+
+	/**
+	 * We don't know if we have conpty until we try - so this starts
+	 * null and will be true or false once it is determined.
+	 */
+	private static IS_CONPTY isConPTY = IS_CONPTY.CONPTY_UNKNOWN;
 	private static boolean isWinPTY;
 	private static boolean isConsoleModeSupported;
 	private static boolean setTerminalSizeErrorAlreadyLogged;
+	private ConPTY conPTY;
 
 	/**
 	 * The master fd is used on two streams. We need to wrap the fd
@@ -119,14 +136,40 @@ public class PTY {
 		if (isConsole() && !isConsoleModeSupported) {
 			throw new IOException(Messages.Util_exception_cannotCreatePty);
 		}
-		slave = hasPTY ? openMaster(isConsole()) : null;
-
-		if (slave == null) {
-			throw new IOException(Messages.Util_exception_cannotCreatePty);
+		PTYInputStream inInit = null;
+		PTYOutputStream outInit = null;
+		String slaveInit = null;
+		if (isConPTY != IS_CONPTY.CONPTY_NO) {
+			try {
+				conPTY = new ConPTY();
+				isConPTY = IS_CONPTY.CONPTY_YES;
+				slaveInit = "conpty"; //$NON-NLS-1$
+				inInit = new ConPTYInputStream(conPTY);
+				outInit = new ConPTYOutputStream(conPTY);
+			} catch (RuntimeException e) {
+				isConPTY = IS_CONPTY.CONPTY_NO;
+				CNativePlugin.log(Messages.PTY_FailedToStartConPTY, e);
+			} catch (NoClassDefFoundError e) {
+				isConPTY = IS_CONPTY.CONPTY_NO;
+				CNativePlugin.log(Messages.PTY_NoClassDefFoundError, e);
+			}
 		}
 
-		in = new PTYInputStream(new MasterFD());
-		out = new PTYOutputStream(new MasterFD(), !isWinPTY);
+		// fall through in exception case as well as normal non-conPTY
+		if (isConPTY == IS_CONPTY.CONPTY_NO) {
+
+			slaveInit = hasPTY ? openMaster(isConsole()) : null;
+
+			if (slaveInit == null) {
+				throw new IOException(Messages.Util_exception_cannotCreatePty);
+			}
+
+			inInit = new PTYInputStream(new MasterFD());
+			outInit = new PTYOutputStream(new MasterFD(), !isWinPTY);
+		}
+		slave = slaveInit;
+		in = inInit;
+		out = outInit;
 	}
 
 	/**
@@ -185,12 +228,17 @@ public class PTY {
 	 */
 	public final void setTerminalSize(int width, int height) {
 		try {
-			change_window_size(master, width, height);
-		} catch (UnsatisfiedLinkError ule) {
+			if (isConPTY == IS_CONPTY.CONPTY_YES) {
+				conPTY.setTerminalSize(width, height);
+			} else {
+				change_window_size(master, width, height);
+			}
+		} catch (UnsatisfiedLinkError | IOException e) {
 			if (!setTerminalSizeErrorAlreadyLogged) {
 				setTerminalSizeErrorAlreadyLogged = true;
-				CNativePlugin.log(Messages.Util_exception_cannotSetTerminalSize, ule);
+				CNativePlugin.log(Messages.Util_exception_cannotSetTerminalSize, e);
 			}
+
 		}
 	}
 
@@ -200,7 +248,9 @@ public class PTY {
 	 */
 	public int exec_pty(Spawner spawner, String[] cmdarray, String[] envp, String dir, IChannel[] chan)
 			throws IOException {
-		if (isWinPTY) {
+		if (isConPTY == IS_CONPTY.CONPTY_YES) {
+			return conPTY.exec(cmdarray, envp, dir);
+		} else if (isWinPTY) {
 			return exec2(cmdarray, envp, dir, chan, slave, master, isConsole());
 		} else {
 			return spawner.exec2(cmdarray, envp, dir, chan, slave, master, isConsole());
@@ -212,7 +262,9 @@ public class PTY {
 	 * @since 5.6
 	 */
 	public int waitFor(Spawner spawner, int pid) {
-		if (isWinPTY) {
+		if (isConPTY == IS_CONPTY.CONPTY_YES) {
+			return conPTY.waitFor();
+		} else if (isWinPTY) {
 			return waitFor(master, pid);
 		} else {
 			return spawner.waitFor(pid);
@@ -236,8 +288,19 @@ public class PTY {
 
 	static {
 		try {
-			isWinPTY = Platform.OS_WIN32.equals(Platform.getOS());
-			if (isWinPTY) {
+			boolean isWindows = Platform.OS_WIN32.equals(Platform.getOS());
+			if (!isWindows) {
+				isConPTY = IS_CONPTY.CONPTY_NO;
+			}
+			// Force conpty off by default
+			// NOTE: to invert the default, the presence of the property must be checked too, not
+			// just the getBoolean return!
+			if (!Boolean.getBoolean("org.eclipse.cdt.core.winpty_console_mode")) { //$NON-NLS-1$
+				isConPTY = IS_CONPTY.CONPTY_NO;
+			}
+
+			isWinPTY = isWindows;
+			if (isWindows) {
 				// When we used to build with VC++ we used DelayLoadDLLs (See Gerrit 167674 and Bug 521515) so that the winpty
 				// could be found. When we ported to mingw we didn't port across this feature because it was simpler to just
 				// manually load winpty first.

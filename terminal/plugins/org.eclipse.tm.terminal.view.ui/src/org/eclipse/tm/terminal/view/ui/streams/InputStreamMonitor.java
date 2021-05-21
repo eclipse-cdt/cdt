@@ -82,6 +82,11 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 	private int replacement;
 
 	/**
+	 * @see #disposalComing()
+	 */
+	private boolean disposalComing;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param terminalControl The parent terminal control. Must not be <code>null</code>.
@@ -153,6 +158,8 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 		// If already disposed --> return immediately
 		if (disposed)
 			return;
+
+		disposalComing();
 
 		// Mark the monitor disposed
 		disposed = true;
@@ -250,7 +257,7 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 					}
 				} catch (IOException e) {
 					// IOException received. If this is happening when already disposed -> ignore
-					if (!disposed) {
+					if (!disposed && !disposalComing) {
 						IStatus status = new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(),
 								NLS.bind(Messages.InputStreamMonitor_error_writingToStream, e.getLocalizedMessage()),
 								e);
@@ -354,5 +361,14 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 		}
 
 		return bytes;
+	}
+
+	/**
+	 * Notify the receiver that the stream is about to be closed. This allows the stream to suppress error messages
+	 * that are side effects of the asynchronous nature of the stream closing.
+	 * @since 4.9
+	 */
+	public void disposalComing() {
+		disposalComing = true;
 	}
 }

@@ -64,6 +64,11 @@ public class OutputStreamMonitor implements IDisposable {
 	private final ListenerList<ITerminalServiceOutputStreamMonitorListener> listeners;
 
 	/**
+	 * @see #disposalComing()
+	 */
+	private boolean disposalComing;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param terminalControl The parent terminal control. Must not be <code>null</code>.
@@ -131,6 +136,8 @@ public class OutputStreamMonitor implements IDisposable {
 		// If already disposed --> return immediately
 		if (disposed)
 			return;
+
+		disposalComing();
 
 		// Mark the monitor disposed
 		disposed = true;
@@ -208,7 +215,7 @@ public class OutputStreamMonitor implements IDisposable {
 				}
 			} catch (IOException e) {
 				// IOException received. If this is happening when already disposed -> ignore
-				if (!disposed) {
+				if (!disposed && !disposalComing) {
 					IStatus status = new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(),
 							NLS.bind(Messages.OutputStreamMonitor_error_readingFromStream, e.getLocalizedMessage()), e);
 					UIPlugin.getDefault().getLog().log(status);
@@ -217,7 +224,7 @@ public class OutputStreamMonitor implements IDisposable {
 			} catch (NullPointerException e) {
 				// killing the stream monitor while reading can cause an NPE
 				// when reading from the stream
-				if (!disposed && thread != null) {
+				if (!disposed && thread != null && !disposalComing) {
 					IStatus status = new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(),
 							NLS.bind(Messages.OutputStreamMonitor_error_readingFromStream, e.getLocalizedMessage()), e);
 					UIPlugin.getDefault().getLog().log(status);
@@ -317,5 +324,14 @@ public class OutputStreamMonitor implements IDisposable {
 		}
 
 		return byteBuffer;
+	}
+
+	/**
+	 * Notify the receiver that the stream is about to be closed. This allows the stream to suppress error messages
+	 * that are side effects of the asynchronous nature of the stream closing.
+	 * @since 4.9
+	 */
+	public void disposalComing() {
+		disposalComing = true;
 	}
 }

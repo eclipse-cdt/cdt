@@ -160,6 +160,19 @@ public abstract class AbstractStreamsConnector extends TerminalConnectorImpl {
 
 	@Override
 	protected void doDisconnect() {
+		// First let all the monitors know they are about to be closed, this allows them
+		// to suppress errors if closing one stream causes other streams to all close
+		// as a side effect.
+		if (stdInMonitor != null) {
+			stdInMonitor.disposalComing();
+		}
+		if (stdOutMonitor != null) {
+			stdOutMonitor.disposalComing();
+		}
+		if (stdErrMonitor != null) {
+			stdErrMonitor.disposalComing();
+		}
+
 		// Dispose the streams
 		if (stdInMonitor != null) {
 			stdInMonitor.dispose();

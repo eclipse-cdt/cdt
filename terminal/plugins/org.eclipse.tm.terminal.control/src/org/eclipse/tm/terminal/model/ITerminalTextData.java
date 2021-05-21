@@ -36,6 +36,18 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 */
 	void setDimensions(int height, int width);
 
+	/**
+	 * Reflow the content using the given width.
+	 *
+	 * This operation can alter the height of the receiver
+	 * if lines are joined or split due to the change in width.
+	 *
+	 * @param width the new width
+	 * @param minHeight
+	 * @param positionsToTrack list of (line, col) pairs to track during reflow
+	 */
+	void reflow(int width, int minHeight, int[] positionsToTrack);
+
 	void setMaxHeight(int height);
 
 	int getMaxHeight();

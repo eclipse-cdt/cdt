@@ -196,6 +196,11 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 	}
 
 	@Override
+	public void reflow(int width, int minHeight, int[] linesToTrack) {
+		fData.reflow(width, minHeight, linesToTrack);
+	}
+
+	@Override
 	public void setMaxHeight(int height) {
 		fMaxHeight = height;
 	}
@@ -212,10 +217,6 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 
 	public int getWindowSize() {
 		return fWindowSize;
-	}
-
-	public void setHeight(int height) {
-		fHeight = height;
 	}
 
 	@Override

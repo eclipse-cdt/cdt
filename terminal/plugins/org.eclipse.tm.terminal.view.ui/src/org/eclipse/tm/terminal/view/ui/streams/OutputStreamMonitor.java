@@ -208,6 +208,8 @@ public class OutputStreamMonitor implements IDisposable {
 				}
 			} catch (IOException e) {
 				// IOException received. If this is happening when already disposed -> ignore
+				// TODO there is a race condition that means that the backedn can be disposed before disposed is set,
+				// this leads to superfluous error messages that should be suppressed.
 				if (!disposed) {
 					IStatus status = new Status(IStatus.ERROR, UIPlugin.getUniqueIdentifier(),
 							NLS.bind(Messages.OutputStreamMonitor_error_readingFromStream, e.getLocalizedMessage()), e);

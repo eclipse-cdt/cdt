@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a71f82ed_ef82bba8",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/WindowsArgumentQuoter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-22T13:00:37Z",
+      "side": 1,
+      "message": "Missing *2 +1",
+      "revId": "558445a8b736b367fa5bfdd0e32f84e8f85406ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

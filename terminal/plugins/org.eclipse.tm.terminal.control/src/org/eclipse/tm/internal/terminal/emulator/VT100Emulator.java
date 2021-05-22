@@ -927,34 +927,58 @@ public class VT100Emulator implements ControlListener {
 				style = style.setReverse(false);
 				break;
 
+			case 90:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 30:
 				style = style.setForeground(BLACK);
 				break;
 
+			case 91:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 31:
 				style = style.setForeground(RED);
 				break;
 
+			case 92:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 32:
 				style = style.setForeground(GREEN);
 				break;
 
+			case 93:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 33:
 				style = style.setForeground(YELLOW);
 				break;
 
+			case 94:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 34:
 				style = style.setForeground(BLUE);
 				break;
 
+			case 95:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 35:
 				style = style.setForeground(MAGENTA);
 				break;
 
+			case 96:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 36:
 				style = style.setForeground(CYAN);
 				break;
 
+			case 97:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 37:
 				style = style.setForeground(WHITE);
 				break;
@@ -963,34 +987,58 @@ public class VT100Emulator implements ControlListener {
 				style = style.setForeground(text.getDefaultStyle());
 				break;
 
+			case 100:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 40:
 				style = style.setBackground(BLACK);
 				break;
 
+			case 101:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 41:
 				style = style.setBackground(RED);
 				break;
 
+			case 102:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 42:
 				style = style.setBackground(GREEN);
 				break;
 
+			case 103:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 43:
 				style = style.setBackground(YELLOW);
 				break;
 
+			case 104:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 44:
 				style = style.setBackground(BLUE);
 				break;
 
+			case 105:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 45:
 				style = style.setBackground(MAGENTA);
 				break;
 
+			case 106:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 46:
 				style = style.setBackground(CYAN);
 				break;
 
+			case 107:
+				style = style.setBold(true);
+				//$FALL-THROUGH$
 			case 47:
 				style = style.setBackground(WHITE);
 				break;

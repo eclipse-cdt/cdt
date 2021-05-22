@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa9f7af1_2ddb17cb",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/ConPTY.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-22T23:07:22Z",
+      "side": 1,
+      "message": "This isn\u0027t being called with consistent sizes until I manually resize.",
+      "revId": "a853d7eb9ee75918cb6f7304de3f46492ac8e39f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7298047d_ddf25942",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/streams/OutputStreamMonitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-22T23:07:22Z",
+      "side": 1,
+      "message": "Resolve this.",
+      "revId": "a853d7eb9ee75918cb6f7304de3f46492ac8e39f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

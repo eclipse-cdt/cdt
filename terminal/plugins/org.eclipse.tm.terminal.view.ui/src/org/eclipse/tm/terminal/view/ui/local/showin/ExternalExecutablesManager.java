@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 import org.eclipse.tm.terminal.view.ui.internal.ExternalExecutablesState;
 import org.eclipse.tm.terminal.view.ui.local.showin.detectors.DetectGitBash;
+import org.eclipse.tm.terminal.view.ui.local.showin.detectors.DetectWSL;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.ISourceProviderService;
 
@@ -39,7 +40,7 @@ import org.eclipse.ui.services.ISourceProviderService;
  */
 public class ExternalExecutablesManager {
 	// XXX: This may make a useful extension point?
-	private static List<IDetectExternalExecutable> detectors = List.of(new DetectGitBash());
+	private static List<IDetectExternalExecutable> detectors = List.of(new DetectGitBash(), new DetectWSL());
 
 	public static boolean hasEntries() {
 		IPath stateLocation = UIPlugin.getDefault().getStateLocation();

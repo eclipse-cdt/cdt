@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "816a4306_18110069",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/ConPTY.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-23T13:41:27Z",
+      "side": 1,
+      "message": "This should be cmdarray[0] - but unless I can fix Bug 573677 I can\u0027t change it.",
+      "range": {
+        "startLine": 74,
+        "startChar": 53,
+        "endLine": 74,
+        "endChar": 57
+      },
+      "revId": "a853d7eb9ee75918cb6f7304de3f46492ac8e39f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "aa9f7af1_2ddb17cb",
         "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/ConPTY.java",
         "patchSetId": 2

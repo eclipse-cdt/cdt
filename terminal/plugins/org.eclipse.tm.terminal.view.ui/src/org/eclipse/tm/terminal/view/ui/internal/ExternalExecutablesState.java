@@ -12,7 +12,6 @@
 package org.eclipse.tm.terminal.view.ui.internal;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.tm.terminal.view.ui.local.showin.ExternalExecutablesManager;
@@ -27,8 +26,7 @@ public class ExternalExecutablesState extends AbstractSourceProvider {
 	private boolean enabled;
 
 	public ExternalExecutablesState() {
-		List<Map<String, String>> externals = ExternalExecutablesManager.load();
-		this.enabled = (externals != null && !externals.isEmpty());
+		this.enabled = ExternalExecutablesManager.hasEntries();
 	}
 
 	@Override

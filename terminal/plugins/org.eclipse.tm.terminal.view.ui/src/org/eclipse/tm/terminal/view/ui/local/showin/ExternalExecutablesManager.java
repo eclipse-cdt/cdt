@@ -41,6 +41,37 @@ public class ExternalExecutablesManager {
 	// XXX: This may make a useful extension point?
 	private static List<IDetectExternalExecutable> detectors = List.of(new DetectGitBash());
 
+	public static boolean hasEntries() {
+		IPath stateLocation = UIPlugin.getDefault().getStateLocation();
+		if (stateLocation != null) {
+			File f = stateLocation.append(".executables/data.properties").toFile(); //$NON-NLS-1$
+			if (f.canRead()) {
+
+				try (FileReader r = new FileReader(f)) {
+					Properties data = new Properties();
+					data.load(r);
+					if (!data.isEmpty()) {
+						return true;
+					}
+				} catch (IOException e) {
+					if (Platform.inDebugMode()) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+
+		// There are not any saved entries - run the detectors and if any of them
+		// have entries, then we can stop.
+		for (IDetectExternalExecutable iDetectExternalExecutable : detectors) {
+			if (iDetectExternalExecutable.hasEntries()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * Loads the list of all saved external executables.
 	 *
@@ -111,7 +142,7 @@ public class ExternalExecutablesManager {
 		}
 
 		var readOnly = Collections.unmodifiableList(externalExecutables);
-		var detected = detectors.stream().flatMap(detector -> detector.run(readOnly).stream())
+		var detected = detectors.stream().flatMap(detector -> detector.getEntries(readOnly).stream())
 				.collect(Collectors.toList());
 		if (!detected.isEmpty()) {
 			externalExecutables.addAll(detected);

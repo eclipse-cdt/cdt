@@ -15,8 +15,13 @@ import java.util.Map;
 
 import org.eclipse.tm.terminal.view.ui.interfaces.IExternalExecutablesProperties;
 
-@FunctionalInterface
 public interface IDetectExternalExecutable {
+	/**
+	 * Detect if {@link #getEntries(List)} will return a non-empty list of entries, assuming externalEntries is an empty
+	 * list. This method is used during critical UI times (such as startup) and should be very fast.
+	 */
+	boolean hasEntries();
+
 	/**
 	 * Detect any additional external executables that can be added to the Show In list.
 	 *
@@ -31,5 +36,6 @@ public interface IDetectExternalExecutable {
 	 * that match {@link IExternalExecutablesProperties}. Must not return <code>null</code>, return
 	 * an empty list instead.
 	 */
-	List<Map<String, String>> run(List<Map<String, String>> externalExecutables);
+	List<Map<String, String>> getEntries(List<Map<String, String>> externalExecutables);
+
 }

@@ -29,7 +29,20 @@ public class DetectGitBash implements IDetectExternalExecutable {
 	private static boolean gitBashSearchDone = false;
 
 	@Override
-	public List<Map<String, String>> run(List<Map<String, String>> externalExecutables) {
+	public boolean hasEntries() {
+		if (Platform.OS_WIN32.equals(Platform.getOS())) {
+			// the order of operations here is different than getEntries because we just
+			// want to know if anything can match. We avoid iterating over the whole PATH
+			// if the user has git installed in the default location. This gets us the
+			// correct answer to hasEntries quickly without having to iterate over the whole
+			// PATH (especially if PATH is long!).
+			return getGitInstallDirectory().or(this::getGitInstallDirectoryFromPATH).isPresent();
+		}
+		return false;
+	}
+
+	@Override
+	public List<Map<String, String>> getEntries(List<Map<String, String>> externalExecutables) {
 		// Lookup git bash (Windows Hosts only)
 		if (!gitBashSearchDone && Platform.OS_WIN32.equals(Platform.getOS())) {
 			// Do not search again for git bash while the session is running
@@ -42,29 +55,9 @@ public class DetectGitBash implements IDetectExternalExecutable {
 				return Collections.emptyList();
 			}
 
-			// If not found in the existing entries, check the path
-			Optional<File> result = ExternalExecutablesUtils.visitPATH(entry -> {
-				File f = new File(entry, "git.exe"); //$NON-NLS-1$
-				if (f.canRead()) {
-					File check = f.getParentFile().getParentFile();
-					if (new File(check, "bin/sh.exe").canExecute()) { //$NON-NLS-1$
-						return Optional.of(check);
-					}
-				}
-				return Optional.empty();
-			});
+			// If not found in the existing entries, check the path, then
 			// if it is not found in the PATH, check the default install locations
-			result = result.or(() -> {
-				File f = new File("C:/Program Files (x86)/Git/bin/sh.exe"); //$NON-NLS-1$
-				if (!f.exists()) {
-					f = new File("C:/Program Files/Git/bin/sh.exe"); //$NON-NLS-1$
-				}
-				if (f.exists() && f.canExecute()) {
-					return Optional.of(f.getParentFile().getParentFile());
-				}
-				return Optional.empty();
-			});
-
+			Optional<File> result = getGitInstallDirectoryFromPATH().or(this::getGitInstallDirectory);
 			Optional<String> gitPath = result.map(f -> new File(f, "bin/sh.exe").getAbsolutePath()); //$NON-NLS-1$
 			Optional<String> iconPath = result.flatMap(f -> getGitIconPath(f));
 
@@ -81,7 +74,33 @@ public class DetectGitBash implements IDetectExternalExecutable {
 
 		}
 		return Collections.emptyList();
+	}
 
+	private Optional<File> getGitInstallDirectoryFromPATH() {
+		return ExternalExecutablesUtils.visitPATH(entry -> {
+			File f = new File(entry, "git.exe"); //$NON-NLS-1$
+			if (f.canRead()) {
+				File check = f.getParentFile().getParentFile();
+				if (new File(check, "bin/sh.exe").canExecute()) { //$NON-NLS-1$
+					return Optional.of(check);
+				}
+			}
+			return Optional.empty();
+		});
+	}
+
+	private Optional<File> getGitInstallDirectory() {
+		// If 32-bit and 64-bit are both present, prefer the 64-bit one
+		// as it is probably newer and more likely to be present
+		// for the fast check required by hasEntries
+		File f = new File("C:/Program Files/Git/bin/sh.exe"); //$NON-NLS-1$
+		if (!f.exists()) {
+			f = new File("C:/Program Files (x86)/Git/bin/sh.exe"); //$NON-NLS-1$
+		}
+		if (f.exists() && f.canExecute()) {
+			return Optional.of(f.getParentFile().getParentFile());
+		}
+		return Optional.empty();
 	}
 
 	private static Optional<String> getGitIconPath(File parent) {

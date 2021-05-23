@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.emulator.VT100Emulator;
 import org.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
@@ -209,6 +210,8 @@ public class ProcessConnector extends AbstractStreamsConnector {
 		} catch (IOException e) {
 			// Disconnect right away
 			disconnect();
+			// Save the shell so the error message can have somewhere to display
+			Shell shell = control.getShell();
 			// Lookup the tab item
 			CTabItem item = ConsoleManager.getInstance().findConsole(control);
 			if (item != null)
@@ -221,7 +224,7 @@ public class ProcessConnector extends AbstractStreamsConnector {
 			// Repackage into a more user friendly error
 			msg = NLS.bind(Messages.ProcessConnector_error_creatingProcess, settings.getImage(), msg);
 			// Open an error dialog
-			MessageDialog.openError(control.getShell(), Messages.ProcessConnector_error_title, msg);
+			MessageDialog.openError(shell, Messages.ProcessConnector_error_title, msg);
 		}
 	}
 

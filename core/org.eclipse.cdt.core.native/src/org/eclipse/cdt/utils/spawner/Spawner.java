@@ -72,6 +72,10 @@ public class Spawner extends Process {
 	InputStream err;
 	private PTY fPty;
 
+	/**
+	 * @deprecated Do not use this method it splits command line arguments on whitespace with no regard to quoting rules. See Bug 573677
+	 */
+	@Deprecated
 	public Spawner(String command, boolean bNoRedirect) throws IOException {
 		StringTokenizer tokenizer = new StringTokenizer(command);
 		String[] cmdarray = new String[tokenizer.countTokens()];
@@ -104,7 +108,9 @@ public class Spawner extends Process {
 
 	/**
 	 * Executes the specified string command in a separate process.
-	 **/
+	 * @deprecated Do not use this method it splits command line arguments on whitespace with no regard to quoting rules. See Bug 573677
+	 */
+	@Deprecated
 	protected Spawner(String command) throws IOException {
 		this(command, null);
 	}
@@ -127,7 +133,9 @@ public class Spawner extends Process {
 	/**
 	 * Executes the specified string command in a separate process with the specified
 	 * environment.
-	 **/
+	 * @deprecated Do not use this method it splits command line arguments on whitespace with no regard to quoting rules. See Bug 573677
+	 */
+	@Deprecated
 	protected Spawner(String cmd, String[] envp) throws IOException {
 		this(cmd, envp, null);
 	}
@@ -135,7 +143,9 @@ public class Spawner extends Process {
 	/**
 	 * Executes the specified string command in a separate process with the specified
 	 * environment and working directory.
-	 **/
+	 * @deprecated Do not use this method it splits command line arguments on whitespace with no regard to quoting rules. See Bug 573677
+	 */
+	@Deprecated
 	protected Spawner(String command, String[] envp, File dir) throws IOException {
 		StringTokenizer tokenizer = new StringTokenizer(command);
 		String[] cmdarray = new String[tokenizer.countTokens()];

@@ -237,8 +237,9 @@ public class ConsoleManager {
 
 		for (IViewReference ref : getActiveWorkbenchPage().getViewReferences()) {
 			if (ref.getId().equals(id)) {
+				String refSecondaryId = ref.getSecondaryId();
 				if (ITerminalsConnectorConstants.ANY_ACTIVE_SECONDARY_ID.equals(secondaryId)
-						|| Objects.equals(secondaryId, ref.getSecondaryId())) {
+						|| Objects.equals(secondaryId, refSecondaryId)) {
 					return ref.getView(restore);
 				}
 			}
@@ -268,7 +269,14 @@ public class ConsoleManager {
 		}
 
 		if (part == null) {
-			part = getTerminalsViewWithSecondaryId(id, secondaryId, true);
+			String finalSecondaryId;
+			if (ITerminalsConnectorConstants.LAST_ACTIVE_SECONDARY_ID.equals(secondaryId)) {
+				// There is no last available, so get any available instead
+				finalSecondaryId = ITerminalsConnectorConstants.ANY_ACTIVE_SECONDARY_ID;
+			} else {
+				finalSecondaryId = secondaryId;
+			}
+			part = getTerminalsViewWithSecondaryId(id, finalSecondaryId, true);
 			if (part != null) {
 				lastActiveViewId = part.getViewSite().getId();
 				lastActiveSecondaryViewId = part.getViewSite().getSecondaryId();
@@ -339,8 +347,19 @@ public class ConsoleManager {
 			try {
 				// show the view
 				IViewPart part = getActiveTerminalsView(id != null ? id : IUIConstants.ID, secondaryId);
-				if (part == null)
-					part = page.showView(id != null ? id : IUIConstants.ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
+				if (part == null) {
+					String finalSecondaryId;
+					if (ITerminalsConnectorConstants.LAST_ACTIVE_SECONDARY_ID.equals(secondaryId)
+							|| ITerminalsConnectorConstants.ANY_ACTIVE_SECONDARY_ID.equals(secondaryId)) {
+						// We have already checked all open views, so since none of the special flags work
+						// we are opening the first view, which means no secondary id.
+						finalSecondaryId = null;
+					} else {
+						finalSecondaryId = secondaryId;
+					}
+					part = page.showView(id != null ? id : IUIConstants.ID, finalSecondaryId,
+							IWorkbenchPage.VIEW_ACTIVATE);
+				}
 				// and force the view to the foreground
 				page.bringToTop(part);
 				return part;

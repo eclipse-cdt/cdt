@@ -64,6 +64,7 @@ import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 import org.eclipse.tm.terminal.view.ui.controls.NoteCompositeHelper;
 import org.eclipse.tm.terminal.view.ui.interfaces.IExternalExecutablesProperties;
 import org.eclipse.tm.terminal.view.ui.interfaces.IPreferenceKeys;
+import org.eclipse.tm.terminal.view.ui.local.showin.ExternalExecutablesUtils;
 import org.eclipse.tm.terminal.view.ui.local.showin.ExternalExecutablesDialog;
 import org.eclipse.tm.terminal.view.ui.local.showin.ExternalExecutablesManager;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
@@ -524,7 +525,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 						if (icon != null) {
 							i = images.get(icon);
 							if (i == null) {
-								ImageData id = ExternalExecutablesManager.loadImage(icon);
+								ImageData id = ExternalExecutablesUtils.loadImage(icon);
 								if (id != null) {
 									ImageDescriptor d = ImageDescriptor.createFromImageData(id);
 									if (d != null)

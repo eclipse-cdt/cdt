@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bb7e8b02_87094879",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3488,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-24T12:13:30Z",
+      "side": 1,
+      "message": "Can you add the @deprecated javadoc tag too with the what to use instead (i.e. the comment in the html file)",
+      "revId": "c29b0cf5ba3396588695c5da8387e58d5a4dbb2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "faea4a4f_959d4a11",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3514,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-24T12:13:30Z",
+      "side": 1,
+      "message": "Can you add the @deprecated javadoc tag too with the what to use instead (i.e. the comment in the html file)",
+      "revId": "c29b0cf5ba3396588695c5da8387e58d5a4dbb2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d390419_57b487fb",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3717,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-24T12:13:30Z",
+      "side": 1,
+      "message": "Can you add the @deprecated javadoc tag too with the what to use instead (i.e. the comment in the html file)",
+      "revId": "c29b0cf5ba3396588695c5da8387e58d5a4dbb2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

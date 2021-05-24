@@ -397,9 +397,9 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 					// Process each cell, updating the status and history/change
 					for (int i = 0; i < length; i++) {
 						if (i < newLength) {
-							newBlock[i].setFlags(fBlock[distance + i].getFlags());
 							newBlock[i].setHistoryKnown(true);
-							if (newBlock[i].getValue() != fBlock[distance + i].getValue()) {
+							if (newBlock[i].getValue() != fBlock[distance + i].getValue()
+									|| newBlock[distance + i].getFlags() != fBlock[i].getFlags()) {
 								newBlock[i].setChanged(true);
 							}
 						}
@@ -482,9 +482,9 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 					// Process each cell, updating the status and history/change
 					for (int i = 0; i < length; i++) {
 						if ((distance + i) < newLength) {
-							newBlock[distance + i].setFlags(fBlock[i].getFlags());
 							newBlock[distance + i].setHistoryKnown(true);
-							if (newBlock[distance + i].getValue() != fBlock[i].getValue()) {
+							if (newBlock[distance + i].getValue() != fBlock[i].getValue()
+									|| newBlock[distance + i].getFlags() != fBlock[i].getFlags()) {
 								newBlock[distance + i].setChanged(true);
 							}
 						}
@@ -613,7 +613,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		final Addr64 address = new Addr64(bigAddress);
 
 		// Use a Query to synchronize the downstream calls
-		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
+		Query<MemoryByte[]> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
 				IMemory memoryService = fRetrieval.getServiceTracker().getService();
@@ -669,7 +669,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		final Addr64 address = new Addr64(fBaseAddress);
 
 		// Use a Query to synchronize the downstream calls
-		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
+		Query<MemoryByte[]> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
 				IMemory memoryService = fRetrieval.getServiceTracker().getService();

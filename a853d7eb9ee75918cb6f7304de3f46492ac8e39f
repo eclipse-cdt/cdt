@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b89f4407_56f67b18",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/ConPTY.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-24T00:24:55Z",
+      "side": 1,
+      "message": "I will cross reference this line from Bug 573677, but not include the fix as part of this change.",
+      "parentUuid": "816a4306_18110069",
+      "range": {
+        "startLine": 74,
+        "startChar": 53,
+        "endLine": 74,
+        "endChar": 57
+      },
+      "revId": "a853d7eb9ee75918cb6f7304de3f46492ac8e39f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aa9f7af1_2ddb17cb",
         "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/ConPTY.java",
         "patchSetId": 2
@@ -42,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "db563e92_cd06a7f9",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/ConPTY.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-24T00:24:55Z",
+      "side": 1,
+      "message": "I saw this happen a couple of times while debugging other issues, but I cannot reproduce this.\n\nThe symptom was that \"vi\" would not fill the screen.",
+      "parentUuid": "aa9f7af1_2ddb17cb",
+      "revId": "a853d7eb9ee75918cb6f7304de3f46492ac8e39f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7298047d_ddf25942",
         "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/streams/OutputStreamMonitor.java",
         "patchSetId": 2
@@ -56,6 +98,24 @@
       "revId": "a853d7eb9ee75918cb6f7304de3f46492ac8e39f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "53b5e8ce_37860674",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/streams/OutputStreamMonitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-24T00:24:55Z",
+      "side": 1,
+      "message": "Done with the disposalComing flag",
+      "parentUuid": "7298047d_ddf25942",
+      "revId": "a853d7eb9ee75918cb6f7304de3f46492ac8e39f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "63500336_c0580768",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3488,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-24T13:51:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb7e8b02_87094879",
+      "revId": "c29b0cf5ba3396588695c5da8387e58d5a4dbb2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "faea4a4f_959d4a11",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "f258386a_63b80a2b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3514,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-24T13:51:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "faea4a4f_959d4a11",
+      "revId": "c29b0cf5ba3396588695c5da8387e58d5a4dbb2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1d390419_57b487fb",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 3
@@ -50,6 +86,24 @@
       "revId": "c29b0cf5ba3396588695c5da8387e58d5a4dbb2b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79bd47b4_6a7a3ae8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3717,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-24T13:51:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1d390419_57b487fb",
+      "revId": "c29b0cf5ba3396588695c5da8387e58d5a4dbb2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

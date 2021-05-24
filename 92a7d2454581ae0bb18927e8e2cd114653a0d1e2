@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e4dc1ac8_3a34395e",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/local/showin/detectors/DetectWSL.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-24T04:31:24Z",
+      "side": 1,
+      "message": "Missing copyright",
+      "revId": "92a7d2454581ae0bb18927e8e2cd114653a0d1e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

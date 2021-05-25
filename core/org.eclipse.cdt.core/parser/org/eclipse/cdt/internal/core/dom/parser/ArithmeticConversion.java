@@ -79,6 +79,7 @@ public abstract class ArithmeticConversion {
 			return convert(op1, op2);
 
 		case IASTBinaryExpression.op_shiftLeft:
+			return promote(op2, getDomain(op2));
 		case IASTBinaryExpression.op_shiftRight:
 			return promote(op1, getDomain(op1));
 

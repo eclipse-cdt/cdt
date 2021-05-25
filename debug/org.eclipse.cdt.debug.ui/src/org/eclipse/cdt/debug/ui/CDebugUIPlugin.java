@@ -40,6 +40,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
@@ -90,6 +93,19 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	private DisassemblyEditorManager fDisassemblyEditorManager;
 
 	private static IDebuggerConsoleManager fDebuggerConsoleManager;
+
+	/**
+	 * At least one listener must be registered on the DebugPlugin in order
+	 * for certain actions, like RunToLine, to work. See bug 573696.
+	 */
+	private static class DebugListener implements IDebugEventSetListener {
+		@Override
+		public void handleDebugEvents(DebugEvent[] arg0) {
+			/* Do nothing, see bug 573696*/
+		}
+	}
+
+	private static DebugListener dummy = new DebugListener();
 
 	/**
 	 * The constructor.
@@ -294,6 +310,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		fDisassemblyEditorManager = new DisassemblyEditorManager();
 		CDebugCorePlugin.getDefault().addCBreakpointListener(CBreakpointUpdater.getInstance());
 
+		// See bug 573696
+		DebugPlugin.getDefault().addDebugEventListener(dummy);
+
 		fDebuggerConsoleManager = new DebuggerConsoleManager();
 
 		WorkbenchJob wjob = new WorkbenchJob("Initializing CDT Debug UI") { //$NON-NLS-1$
@@ -335,6 +354,10 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		CDebugCorePlugin.getDefault().removeCBreakpointListener(CBreakpointUpdater.getInstance());
 		fDisassemblyEditorManager.dispose();
+
+		// See bug 573696
+		DebugPlugin.getDefault().removeDebugEventListener(dummy);
+
 		if (fImageDescriptorRegistry != null) {
 			fImageDescriptorRegistry.dispose();
 		}

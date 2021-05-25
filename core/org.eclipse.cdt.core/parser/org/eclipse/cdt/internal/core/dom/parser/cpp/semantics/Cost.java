@@ -20,6 +20,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
@@ -282,6 +283,12 @@ public class Cost {
 				return -1;
 			if ((other.fQualificationAdjustments & qdiff) == 0)
 				return 1;
+		}
+
+		if (other.target instanceof IPointerType && !(this.target instanceof IPointerType)) {
+			return 1;
+		} else if (!(other.target instanceof IPointerType) && this.target instanceof IPointerType) {
+			return -1;
 		}
 
 		return 0;

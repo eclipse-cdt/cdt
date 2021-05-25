@@ -374,4 +374,14 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableType("waldo", CommonCPPTypes.int_);
 	}
+
+	//	void function(signed int *pElementId) {}
+	//	void function(unsigned int configCmd) {}
+	//
+	//	void erroneous() {
+	//	  function((((0x0UL)&0xFUL)<<16));
+	//	}
+	public void testFunctionSelectionPointerNonPointer() throws Exception {
+		parseAndCheckBindings();
+	}
 }

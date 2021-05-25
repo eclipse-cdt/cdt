@@ -292,10 +292,8 @@ public class PTY {
 			if (!isWindows) {
 				isConPTY = IS_CONPTY.CONPTY_NO;
 			}
-			// Force conpty off by default
-			// NOTE: to invert the default, the presence of the property must be checked too, not
-			// just the getBoolean return!
-			if (!Boolean.getBoolean("org.eclipse.cdt.core.conpty_enabled")) { //$NON-NLS-1$
+			// Disable ConPTY if the user needs to
+			if (Boolean.parseBoolean(System.getProperty("org.eclipse.cdt.core.conpty_enabled", "true")) == false) { //$NON-NLS-1$ //$NON-NLS-2$
 				isConPTY = IS_CONPTY.CONPTY_NO;
 			}
 

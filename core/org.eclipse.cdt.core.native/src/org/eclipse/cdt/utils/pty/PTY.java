@@ -295,7 +295,7 @@ public class PTY {
 			// Force conpty off by default
 			// NOTE: to invert the default, the presence of the property must be checked too, not
 			// just the getBoolean return!
-			if (!Boolean.getBoolean("org.eclipse.cdt.core.winpty_console_mode")) { //$NON-NLS-1$
+			if (!Boolean.getBoolean("org.eclipse.cdt.core.conpty_enabled")) { //$NON-NLS-1$
 				isConPTY = IS_CONPTY.CONPTY_NO;
 			}
 

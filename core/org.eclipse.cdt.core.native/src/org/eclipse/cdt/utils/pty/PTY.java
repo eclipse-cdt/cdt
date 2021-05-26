@@ -146,12 +146,12 @@ public class PTY {
 				slaveInit = "conpty"; //$NON-NLS-1$
 				inInit = new ConPTYInputStream(conPTY);
 				outInit = new ConPTYOutputStream(conPTY);
-			} catch (RuntimeException e) {
-				isConPTY = IS_CONPTY.CONPTY_NO;
-				CNativePlugin.log(Messages.PTY_FailedToStartConPTY, e);
 			} catch (NoClassDefFoundError e) {
 				isConPTY = IS_CONPTY.CONPTY_NO;
 				CNativePlugin.log(Messages.PTY_NoClassDefFoundError, e);
+			} catch (Throwable e) {
+				isConPTY = IS_CONPTY.CONPTY_NO;
+				CNativePlugin.log(Messages.PTY_FailedToStartConPTY, e);
 			}
 		}
 

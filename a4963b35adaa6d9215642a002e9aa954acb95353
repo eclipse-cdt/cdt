@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "37f1b655_a9982ed0",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.view.ui/src/org/eclipse/tm/terminal/view/ui/local/showin/IDetectExternalExecutable.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-27T00:52:39Z",
+      "side": 1,
+      "message": "For any casual readers here, this class is not API as this package is internal (despite not having internal in the name).",
+      "revId": "a4963b35adaa6d9215642a002e9aa954acb95353",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

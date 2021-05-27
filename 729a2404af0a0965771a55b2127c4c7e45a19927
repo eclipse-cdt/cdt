@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a85b6ac_35272657",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/VariableTemplateTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-05-27T17:51:53Z",
+      "side": 1,
+      "message": "I see something different in clang\nclang++ main.cpp \nmain.cpp:10:5: error: call to \u0027function\u0027 is ambiguous\n                  function((((0x0UL)\u00260xFUL)\u003c\u003c16));\n                  ^~~~~~~~\nmain.cpp:2:8: note: candidate function\n                void function(signed int *pElementId) { }\n                     ^\nmain.cpp:4:8: note: candidate function\n                void function(unsigned int configCmd) { }\n                     ^",
+      "revId": "729a2404af0a0965771a55b2127c4c7e45a19927",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

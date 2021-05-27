@@ -16,10 +16,13 @@ import java.util.Map;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -81,6 +84,20 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
 		}
 
 		setControl(panel);
+	}
+
+	@Override
+	protected void decorateEncoding(ControlDecoration encodingComboDecorator, String encoding) {
+		if ((Platform.OS_MACOSX.equals(Platform.getOS()) || Platform.OS_WIN32.equals(Platform.getOS()))
+				&& !"UTF-8".equals(encoding)) { //$NON-NLS-1$
+			Image decorationImage = FieldDecorationRegistry.getDefault()
+					.getFieldDecoration(FieldDecorationRegistry.DEC_WARNING).getImage();
+			encodingComboDecorator.setImage(decorationImage);
+			encodingComboDecorator.setDescriptionText(Messages.LocalWizardConfigurationPanel_encoding_does_not_match);
+			encodingComboDecorator.show();
+		} else {
+			super.decorateEncoding(encodingComboDecorator, encoding);
+		}
 	}
 
 	@Override

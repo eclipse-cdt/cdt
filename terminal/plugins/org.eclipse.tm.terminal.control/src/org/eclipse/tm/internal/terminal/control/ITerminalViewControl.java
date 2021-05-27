@@ -17,6 +17,7 @@
 package org.eclipse.tm.internal.terminal.control;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.graphics.Font;
@@ -38,8 +39,19 @@ public interface ITerminalViewControl {
 	 *
 	 * @see ITerminalControl#setEncoding(String)
 	 * @since org.eclipse.tm.terminal 2.0
+	 * @deprecated Use {@link #setCharset(Charset)} and do the error handling in the UI code.
 	 */
+	@Deprecated
 	void setEncoding(String encoding) throws UnsupportedEncodingException;
+
+	/**
+	 * Set the charset that the Terminal uses to decode byte streams into
+	 * characters.
+	 *
+	 * @see ITerminalControl#setCharset(Charset)
+	 * @since 5.3
+	 */
+	void setCharset(Charset charset);
 
 	/**
 	 * Get the Terminal's current encoding.
@@ -47,8 +59,17 @@ public interface ITerminalViewControl {
 	 * @return the current Encoding of the Terminal.
 	 * @see ITerminalControl#getEncoding()
 	 * @since org.eclipse.tm.terminal 2.0
+	 * @deprecated Use {@link #getCharset()} and call {@link Charset#name()} on the result
 	 */
+	@Deprecated
 	String getEncoding();
+
+	/**
+	 * @return the non-<code>null</code> current Charset of the Terminal.
+	 * @see ITerminalControl#getCharset()
+	 * @since 5.3
+	 */
+	Charset getCharset();
 
 	boolean isEmpty();
 

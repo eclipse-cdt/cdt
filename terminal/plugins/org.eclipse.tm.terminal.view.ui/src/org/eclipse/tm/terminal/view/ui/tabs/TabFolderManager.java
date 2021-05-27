@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.ui.tabs;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -279,8 +280,12 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			new TerminalControlSelectionListener(terminal);
 			// Configure the terminal encoding
 			try {
-				terminal.setEncoding(encoding);
-			} catch (UnsupportedEncodingException e) {
+				Charset charset = null;
+				if (encoding != null) {
+					charset = Charset.forName(encoding);
+				}
+				terminal.setCharset(charset);
+			} catch (UnsupportedCharsetException e) {
 				/* ignored on purpose */
 			}
 			// Associated the terminal with the tab item

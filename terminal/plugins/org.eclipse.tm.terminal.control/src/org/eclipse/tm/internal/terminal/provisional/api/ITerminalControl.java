@@ -18,6 +18,7 @@ package org.eclipse.tm.internal.terminal.provisional.api;
 
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -83,8 +84,38 @@ public interface ITerminalControl {
 	 * LANG on UNIX systems.
 	 *
 	 * @since org.eclipse.tm.terminal 2.0
+	 * @deprecated Use {@link #setCharset(Charset)} and do the error handling in the UI code.
 	 */
+	@Deprecated
 	void setEncoding(String encoding) throws UnsupportedEncodingException;
+
+	/**
+	 * Set the charset that the Terminal uses to decode bytes from the
+	 * Terminal-to-remote-Stream into Unicode Characters used in Java; or, to
+	 * encode Characters typed by the user into bytes sent over the wire to the
+	 * remote.
+	 *
+	 * By default, the local Platform Default charset is used. Also note that
+	 * the encoding must not be applied in case the terminal stream is processed
+	 * by some data transfer protocol which requires binary data.
+	 *
+	 * Validity of the charset set here is not checked. Since some encodings do
+	 * not cover the entire range of Unicode characters, it can happen that a
+	 * particular Unicode String typed in by the user can not be encoded into a
+	 * byte Stream with the encoding specified. and UnsupportedEncodingException
+	 * will be thrown in this case at the time the String is about to be
+	 * processed.
+	 *
+	 * The concrete encoding to use can either be specified manually by a user,
+	 * by means of a dialog, or a connector can try to obtain it automatically
+	 * from the remote side e.g. by evaluating an environment variable such as
+	 * LANG on UNIX systems.
+	 *
+	 * @param charset Charset to use, or <code>null</code> for platform's default charset.
+	 *
+	 * @since 5.3
+	 */
+	void setCharset(Charset charset);
 
 	/**
 	 * Return the current encoding. That's interesting when the previous
@@ -94,8 +125,18 @@ public interface ITerminalControl {
 	 *
 	 * @return the current Encoding of the Terminal.
 	 * @since org.eclipse.tm.terminal 2.0
+	 * @deprecated Use {@link #getCharset()} and call {@link Charset#name()} on the result
 	 */
+	@Deprecated
 	String getEncoding();
+
+	/**
+	 * Return the current charset.
+	 *
+	 * @return the non-<code>null</code> current charset of the Terminal
+	 * @since 5.3
+	 */
+	Charset getCharset();
 
 	/**
 	 * Show a text in the terminal. If puts newlines at the beginning and the

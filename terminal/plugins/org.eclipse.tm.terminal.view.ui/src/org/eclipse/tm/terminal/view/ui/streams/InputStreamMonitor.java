@@ -339,11 +339,8 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 		Assert.isNotNull(bytes);
 
 		if (replacement != NO_CHANGE && len > 0) {
-			String origText = new String(bytes, off, len);
+			String origText = new String(bytes, off, len, terminalControl.getCharset());
 			String text = null;
-			//
-			// TODO: check whether this is correct! new String(byte[], int, int) always uses the default
-			//       encoding!
 
 			if (replacement == CHANGE_CR_TO_LF) {
 				text = origText.replace('\r', '\n');
@@ -356,7 +353,7 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 			}
 
 			if (text != null && !origText.equals(text)) {
-				bytes = text.getBytes();
+				bytes = text.getBytes(terminalControl.getCharset());
 			}
 		}
 

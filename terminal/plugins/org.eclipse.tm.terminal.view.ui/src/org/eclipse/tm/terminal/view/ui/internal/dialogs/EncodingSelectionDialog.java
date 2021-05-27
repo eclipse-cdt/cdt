@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.ui.internal.dialogs;
 
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
@@ -33,7 +36,7 @@ public class EncodingSelectionDialog extends TrayDialog {
 	private String contextHelpId = null;
 
 	// The selected encoding or null
-	/* default */ String encoding = null;
+	private String encoding;
 
 	// Reference to the encodings panel
 	private EncodingPanel encodingPanel = null;
@@ -194,16 +197,25 @@ public class EncodingSelectionDialog extends TrayDialog {
 	}
 
 	/**
-	 * Set the encoding to default to on creating the dialog.
+	 * Set the charset to default to on creating the dialog.
 	 */
-	public final void setEncoding(String encoding) {
-		this.encoding = encoding;
+
+	public void setCharset(Charset charset) {
+		this.encoding = charset == null ? null : charset.name();
 	}
 
 	/**
-	 * Returns the selected encoding or <code>null</code>.
+	 * Returns the selected charset or <code>null</code>.
 	 */
-	public final String getEncoding() {
-		return encoding;
+	public final Charset getCharset() {
+		if (encoding == null) {
+			return null;
+		}
+		try {
+			return Charset.forName(encoding);
+		} catch (UnsupportedCharsetException e) {
+			return null;
+		}
 	}
+
 }

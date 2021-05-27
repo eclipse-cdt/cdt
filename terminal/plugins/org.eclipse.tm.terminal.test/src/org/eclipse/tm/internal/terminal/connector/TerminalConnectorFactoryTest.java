@@ -17,6 +17,7 @@
 package org.eclipse.tm.internal.terminal.connector;
 
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Composite;
@@ -54,8 +55,17 @@ public class TerminalConnectorFactoryTest extends TestCase {
 		}
 
 		@Override
+		public void setCharset(Charset charset) {
+		}
+
+		@Override
 		public String getEncoding() {
 			return "ISO-8859-1"; //$NON-NLS-1$
+		}
+
+		@Override
+		public Charset getCharset() {
+			return Charset.defaultCharset();
 		}
 
 		@Override

@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -454,6 +455,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 		label.setText(Messages.AbstractConfigurationPanel_encoding);
 
 		encodingCombo = new Combo(panel, SWT.READ_ONLY);
+		ControlDecoration encodingComboDecorator = new ControlDecoration(encodingCombo, SWT.TOP | SWT.LEFT);
 		encodingCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		encodingCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -494,6 +496,8 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 						encodingCombo.select(encodingCombo.indexOf(lastSelectedEncoding));
 					}
 				}
+
+				decorateEncoding(encodingComboDecorator, encodingCombo.getText());
 			}
 		});
 
@@ -504,6 +508,20 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 		if (defaultEncoding != null && !"".equals(defaultEncoding)) { //$NON-NLS-1$
 			setEncoding(defaultEncoding);
 		}
+	}
+
+	/**
+	 * Allow the encoding combo box to be decorated with a warning or similar in case user selects
+	 * inappropriate encoding.
+	 *
+	 * @param encodingComboDecorator control decoration on the encoding combo box
+	 * @param encoding the encoding the user has selected
+	 * @since 4.10
+	 */
+	protected void decorateEncoding(ControlDecoration encodingComboDecorator, String encoding) {
+		// by default don't warn users
+		encodingComboDecorator.hide();
+		encodingComboDecorator.hideHover();
 	}
 
 	/**

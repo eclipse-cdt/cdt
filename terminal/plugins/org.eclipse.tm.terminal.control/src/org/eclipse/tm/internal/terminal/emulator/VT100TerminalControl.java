@@ -156,8 +156,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	private boolean connectOnEnterIfClosed = true;
 
 	PipedInputStream fInputStream;
-	private static final String defaultEncoding = Charset.defaultCharset().name();
-	private String fEncoding = defaultEncoding;
+	private Charset fCharset = Charset.defaultCharset();
 	private InputStreamReader fInputStreamReader;
 
 	private ICommandInputField fCommandInputField;
@@ -230,38 +229,43 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		fTerminalModel.setMaxHeight(1000);
 		fInputStream = new PipedInputStream(8 * 1024);
 		fTerminalText = new VT100Emulator(fTerminalModel, this, null);
-		try {
-			// Use Default Encoding as start, until setEncoding() is called
-			setEncoding(null);
-		} catch (UnsupportedEncodingException e) {
-			// Should never happen
-			e.printStackTrace();
-			// Fall back to local Platform Default Encoding
-			fEncoding = defaultEncoding;
-			fInputStreamReader = new InputStreamReader(fInputStream);
-			fTerminalText.setInputStreamReader(fInputStreamReader);
-		}
-
+		// Use Default Charset as start, until setCharset() is called
+		setCharset(Charset.defaultCharset());
 		setupTerminal(wndParent);
 	}
 
 	@Override
+	@Deprecated
 	public void setEncoding(String encoding) throws UnsupportedEncodingException {
+		Charset charset;
 		if (encoding == null) {
-			// TODO better use a standard remote-to-local encoding?
-			encoding = "ISO-8859-1"; //$NON-NLS-1$
-			// TODO or better use the local default encoding?
-			// encoding = defaultEncoding;
+			charset = Charset.defaultCharset();
+		} else {
+			charset = Charset.forName(encoding);
 		}
-		fInputStreamReader = new InputStreamReader(fInputStream, encoding);
 		// remember encoding if above didn't throw an exception
-		fEncoding = encoding;
+		setCharset(charset);
+	}
+
+	@Override
+	public void setCharset(Charset charset) {
+		if (charset == null) {
+			charset = Charset.defaultCharset();
+		}
+		fInputStreamReader = new InputStreamReader(fInputStream, charset);
+		fCharset = charset;
 		fTerminalText.setInputStreamReader(fInputStreamReader);
 	}
 
 	@Override
+	@Deprecated
 	public String getEncoding() {
-		return fEncoding;
+		return fCharset.name();
+	}
+
+	@Override
+	public Charset getCharset() {
+		return fCharset;
 	}
 
 	@Override
@@ -312,14 +316,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			return false;
 		if (strText == null)
 			return false;
-		if (!fEncoding.equals(defaultEncoding)) {
-			sendString(strText);
-		} else {
-			// TODO I do not understand why pasteString would do this here...
-			for (int i = 0; i < strText.length(); i++) {
-				sendChar(strText.charAt(i), false);
-			}
-		}
+		sendString(strText);
 		return true;
 	}
 
@@ -554,7 +551,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			// TODO: Find a way to force this to use the ISO Latin-1 encoding.
 			// TODO: handle Encoding Errors in a better way
 
-			getOutputStream().write(string.getBytes(fEncoding));
+			getOutputStream().write(string.getBytes(fCharset));
 			getOutputStream().flush();
 		} catch (SocketException socketException) {
 			displayTextInTerminal(socketException.getMessage());
@@ -598,7 +595,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					//
 					// TODO: Make the ESCAPE-vs-highbit behavior user configurable.
 
-					byte[] bytesToSend = String.valueOf(chKey).getBytes(fEncoding);
+					byte[] bytesToSend = String.valueOf(chKey).getBytes(fCharset);
 					StringBuilder b = new StringBuilder("sending ESC"); //$NON-NLS-1$
 					for (int i = 0; i < bytesToSend.length; i++) {
 						if (i != 0)
@@ -609,7 +606,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					os.write('\u001b');
 					os.write(bytesToSend);
 				} else {
-					byte[] bytesToSend = String.valueOf(chKey).getBytes(fEncoding);
+					byte[] bytesToSend = String.valueOf(chKey).getBytes(fCharset);
 					StringBuilder b = new StringBuilder("sending"); //$NON-NLS-1$
 					for (int i = 0; i < bytesToSend.length; i++) {
 						if (i != 0)
@@ -833,10 +830,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	private void writeToTerminal(String text) {
 		try {
-			getRemoteToTerminalOutputStream().write(text.getBytes(fEncoding));
-		} catch (UnsupportedEncodingException e) {
-			// should never happen!
-			e.printStackTrace();
+			getRemoteToTerminalOutputStream().write(text.getBytes(fCharset));
 		} catch (IOException e) {
 			// should never happen!
 			e.printStackTrace();

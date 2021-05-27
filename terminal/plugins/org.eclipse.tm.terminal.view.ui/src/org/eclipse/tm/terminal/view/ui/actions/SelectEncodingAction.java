@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.ui.actions;
 
-import java.io.UnsupportedEncodingException;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -53,14 +51,10 @@ public class SelectEncodingAction extends AbstractTerminalAction {
 			return;
 
 		EncodingSelectionDialog dialog = new EncodingSelectionDialog(null);
-		dialog.setEncoding(target.getEncoding());
+		dialog.setCharset(target.getCharset());
 		if (dialog.open() == Window.OK) {
-			try {
-				target.setEncoding(dialog.getEncoding());
-				tabFolderManager.updateStatusLine();
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			target.setCharset(dialog.getCharset());
+			tabFolderManager.updateStatusLine();
 		}
 	}
 

@@ -16,6 +16,9 @@
 package org.eclipse.cdt.utils.pty;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.internal.core.natives.Messages;
@@ -268,6 +271,22 @@ public class PTY {
 			return waitFor(master, pid);
 		} else {
 			return spawner.waitFor(pid);
+		}
+	}
+
+	/**
+	 * Return the charset that the PTY is running in, if the PTY knows.
+	 * <p>
+	 * Implementation note: When the underlying PTY implementation is
+	 * ConPTY, the encoding should be fixed at UTF-8, see Bug 573796
+	 * @return the charset to use if present.
+	 * @since 6.2
+	 */
+	public Optional<Charset> getCharset() {
+		if (isConPTY == IS_CONPTY.CONPTY_YES) {
+			return Optional.of(StandardCharsets.UTF_8);
+		} else {
+			return null;
 		}
 	}
 

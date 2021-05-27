@@ -114,6 +114,7 @@ public class ProcessConnector extends AbstractStreamsConnector {
 				if (PTY.isSupported(PTY.Mode.TERMINAL)) {
 					try {
 						pty = new PTY(PTY.Mode.TERMINAL);
+						pty.getCharset().ifPresent(control::setCharset);
 
 						// Initialize the terminal size
 						VT100Emulator text = ((VT100TerminalControl) control).getTerminalText();

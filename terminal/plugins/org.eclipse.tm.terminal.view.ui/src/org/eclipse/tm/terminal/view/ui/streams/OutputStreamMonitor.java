@@ -274,8 +274,7 @@ public class OutputStreamMonitor implements IDisposable {
 		// Remember if the text got changed.
 		boolean changed = false;
 
-		// How can me make sure that we don't mess with the encoding here?
-		String text = new String(byteBuffer, 0, bytesRead);
+		String text = new String(byteBuffer, 0, bytesRead, terminalControl.getCharset());
 
 		// Shift-In (14) and Shift-Out(15) confuses the terminal widget
 		if (text.indexOf(14) != -1 || text.indexOf(15) != -1) {
@@ -312,7 +311,7 @@ public class OutputStreamMonitor implements IDisposable {
 
 		// If changed, get the new bytes array
 		if (changed) {
-			byteBuffer = text.getBytes();
+			byteBuffer = text.getBytes(terminalControl.getCharset());
 			bytesRead = byteBuffer.length;
 		}
 

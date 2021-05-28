@@ -16,6 +16,41 @@
       "revId": "729a2404af0a0965771a55b2127c4c7e45a19927",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1dff46d3_f7019f92",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/VariableTemplateTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-05-28T06:09:02Z",
+      "side": 1,
+      "message": "Ah sorry, it seemed to be dependent on the std. I don\u0027t get it with -std\u003dc++11 and up.",
+      "parentUuid": "0a85b6ac_35272657",
+      "revId": "729a2404af0a0965771a55b2127c4c7e45a19927",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7ead908_14dc3fde",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/VariableTemplateTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-05-28T06:09:02Z",
+      "side": 1,
+      "message": "we should probably check that the call resolves to the correct function, not just that there are no errors.\n\nIn fact, if I use this code:\n\n#include \u003ciostream\u003e\nvoid function(signed int *pElementId) { std::cout \u003c\u003c 1 \u003c\u003c std::endl;}\nvoid function(unsigned int configCmd) { std::cout \u003c\u003c 2 \u003c\u003c std::endl;}\n\nint main()\n{\n\tfunction(0\u00261);\n}\n\nWith this change, it resolves to the first function declaration but if I run it, it outputs \"2\"",
+      "revId": "729a2404af0a0965771a55b2127c4c7e45a19927",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

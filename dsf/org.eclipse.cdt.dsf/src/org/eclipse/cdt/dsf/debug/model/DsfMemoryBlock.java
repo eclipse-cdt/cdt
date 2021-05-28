@@ -397,11 +397,11 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 					// Process each cell, updating the status and history/change
 					for (int i = 0; i < length; i++) {
 						if (i < newLength) {
-							newBlock[i].setHistoryKnown(true);
 							if (newBlock[i].getValue() != fBlock[distance + i].getValue()
-									|| newBlock[distance + i].getFlags() != fBlock[i].getFlags()) {
+									|| newBlock[i].getFlags() != fBlock[distance + i].getFlags()) {
 								newBlock[i].setChanged(true);
 							}
+							newBlock[i].setHistoryKnown(true);
 						}
 					}
 				}
@@ -482,11 +482,11 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 					// Process each cell, updating the status and history/change
 					for (int i = 0; i < length; i++) {
 						if ((distance + i) < newLength) {
-							newBlock[distance + i].setHistoryKnown(true);
 							if (newBlock[distance + i].getValue() != fBlock[i].getValue()
 									|| newBlock[distance + i].getFlags() != fBlock[i].getFlags()) {
 								newBlock[distance + i].setChanged(true);
 							}
+							newBlock[distance + i].setHistoryKnown(true);
 						}
 					}
 				}

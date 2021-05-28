@@ -399,7 +399,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 						if (i < newLength) {
 							newBlock[i].setHistoryKnown(true);
 							if (newBlock[i].getValue() != fBlock[distance + i].getValue()
-									|| newBlock[distance + i].getFlags() != fBlock[i].getFlags()) {
+									|| isReadableFlagSet(newBlock[i]) != isReadableFlagSet(fBlock[distance + i])) {
 								newBlock[i].setChanged(true);
 							}
 						}
@@ -484,7 +484,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 						if ((distance + i) < newLength) {
 							newBlock[distance + i].setHistoryKnown(true);
 							if (newBlock[distance + i].getValue() != fBlock[i].getValue()
-									|| newBlock[distance + i].getFlags() != fBlock[i].getFlags()) {
+									|| isReadableFlagSet(newBlock[distance + i]) != isReadableFlagSet(fBlock[i])) {
 								newBlock[distance + i].setChanged(true);
 							}
 						}
@@ -507,6 +507,10 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		}
 
 		return fBlock;
+	}
+
+	private boolean isReadableFlagSet(MemoryByte mb) {
+		return (mb.getFlags() & MemoryByte.READABLE) != 0;
 	}
 
 	/* (non-Javadoc)

@@ -137,7 +137,7 @@ public class HeadlessBuilderWrapper implements IApplication {
 	}
 
 	private void showUsage(IApplicationContext context) {
-		String binaryName = "PROGRAM"; //$NON-NLS-1$ // TODO: Lookup the name of the eclipse binary, might be branded!
+		String binaryName = System.getProperty("eclipse.launcher", "PROGRAM"); //$NON-NLS-1$ //$NON-NLS-2$
 		System.out.println(NLS.bind(Messages.CommandLineUsage, binaryName));
 	}
 

@@ -51,6 +51,24 @@
       "revId": "729a2404af0a0965771a55b2127c4c7e45a19927",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "786722e5_9376f69b",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/cxx14/VariableTemplateTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-05-29T04:07:29Z",
+      "side": 1,
+      "message": "I investigated this bug some more. I was confused by the difference of behavior in C++11 (testing with Clang). Then I noticed the behavior is also different in C++11 when calling function(0) instead of function(0 \u0026 1). The answer is that it\u0027s a difference in the handling of the \"null pointer constant\"\n\nNotice the C++11 difference here https://en.cppreference.com/w/cpp/types/NULL\n\"The macro NULL is an implementation-defined null pointer constant, which may be\n* an integral constant expression rvalue of integer type that evaluates to zero\n(until C++11)\n* an integer literal with value zero, or a prvalue of type std::nullptr_t\n(since C++11)\n\nA null pointer constant may be implicitly converted to any pointer and pointer to member type; such conversion results in the null pointer value of that type.\"\n\nSo in C++11, it has to be specifically an integer literal of 0 and not any constant expression in order to be considered a null pointer constant. Indeed, the CDT code follows the old way if you check in Conversions.isNullPointerConstant. With (0 \u0026 1) wrongly being considered a null pointer constant, it can implicitly convert to a pointer type (like int *) which leads to the ambiguity with the other function in the example.\n\nSo the proper fix involves modifying Conversions.isNullPointerConstant so that it checks for zero only for a basic (integer) type that comes from an integer literal. I\u0027d also be worried of breaking conversions for pre C++11 which I\u0027m sure is still widely used in embedded world so ideally there should be a version check (is that even done anywhere in CDT semantic code?).\n\nAdding a flag to track whether a CPPBasicType comes from an integer literal is easy. The problem is that when evaluating the type of an expression, like binary expression above (0 \u0026 1), it can return directly the types of one of the operands without creating a new type so we still wrongly have the flag indicating that it comes from a literal. Updating all code paths in order to create new types that wouldn\u0027t have the flag seems error prone and clients (implementers of ICCPPEvaluation) would also be affected in an error-prone way. Perhaps you have a idea how to do this more safely.",
+      "parentUuid": "c7ead908_14dc3fde",
+      "revId": "729a2404af0a0965771a55b2127c4c7e45a19927",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

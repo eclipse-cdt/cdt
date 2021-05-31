@@ -16,6 +16,24 @@
       "revId": "ad139654876efa5c24044417c0446f748a2e9a26",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56742426_6d8392ca",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 512,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-05-31T13:51:08Z",
+      "side": 1,
+      "message": "I suppose the readable flag is the only relevant one to check here.\nMy intention is that if the memory cell goes from a value, say 0x42, to not being accessible, it should be highlighted (the shown value will change to ?? by default).\nShould I also check the writable flag? is that even something that is supported by CDT?",
+      "parentUuid": "cd4f18bd_26bdec39",
+      "revId": "ad139654876efa5c24044417c0446f748a2e9a26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

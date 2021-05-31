@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cd4f18bd_26bdec39",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/model/DsfMemoryBlock.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 512,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-05-31T13:47:33Z",
+      "side": 1,
+      "message": "THis seems like a good idea to be explicit about which flags are being checked.",
+      "revId": "ad139654876efa5c24044417c0446f748a2e9a26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

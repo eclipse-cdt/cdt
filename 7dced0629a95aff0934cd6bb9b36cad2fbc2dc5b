@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43f3bdfb_1ebe2fb8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-02T03:35:45Z",
+      "side": 1,
+      "message": "This is not correct, \"The type of the result is that of the promoted left operand.\"\nhttp://eel.is/c++draft/expr.shift#1\n\nSo in this example:\n\n#include \u003ciostream\u003e\n\nvoid function(int) { std::cout \u003c\u003c 1 \u003c\u003c std::endl;}\nvoid function(long) { std::cout \u003c\u003c 2 \u003c\u003c std::endl;}\n\nint main() {\n  function(0L \u003c\u003c 1);\n}\n\nRunning this will output \"2\" but your change resolves to the first function that returns \"1\".\n\nThe only way to correctly solve this bug without breaking something else (in C++ \u003e\u003d 2011) is to fix Conversions.isNullPointerConstant so that it checks for zero only for an integer type that comes from a literal.\n\nI can attempt to make a patch if you\u0027d like but it might not cover perfectly all types of expression evaluations but at least the ones that are not properly handled (if any) will not be worse than before in regards of integer converting to null pointer constant.",
+      "revId": "7dced0629a95aff0934cd6bb9b36cad2fbc2dc5b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

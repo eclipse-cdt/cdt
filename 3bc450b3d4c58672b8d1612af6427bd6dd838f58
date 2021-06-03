@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2031e818_e1693a31",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-03T19:45:41Z",
+      "side": 1,
+      "message": "Because addInput and close can be called from different threads you probably want closed to be volatile. \n\nIn addition, not directly related to this change, but because StringBuilder buffer is not thread safe there is the potential for issues as both methods in different threads are modifying the buffer. This is theoretical, perhaps there is locking somewhere higher up the stack that prevents a problem here.",
+      "revId": "3bc450b3d4c58672b8d1612af6427bd6dd838f58",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

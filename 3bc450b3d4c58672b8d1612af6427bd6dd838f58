@@ -16,6 +16,24 @@
       "revId": "3bc450b3d4c58672b8d1612af6427bd6dd838f58",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98482ba4_ce9a4320",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeErrorParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-06-03T21:14:03Z",
+      "side": 1,
+      "message": "The original IndexOOBException happens when used in code that is not submitted yet (and I am somehow stalled an that change).\nThis class is intended to fed by a ParsingOutputStream (which is some kind of console output sniffer). My not-yet-submitted code instanciated the class in a try-with-resources statement, passed it to a ParsingOutputStream and on ParsingOutputStream#close() method CMakeErrorParser#close() is called: All runs fine until the try-with-resources statement leaves scope and calls CMakeErrorParser#close() again --\u003e IndexOOBException.\nSo the real problem is that CMakeErrorParser is implemented in a way that makes developers instanciate the class in a try-with-resources statement. To avoid future use in a try-with-resources statement, CMakeErrorParser should not implement AutoCloseable.\n\nThis change should be abandoned. WDYT?\n\nAnd well: CMakeErrorParser is not thread safe. Apart from \u0027buffer\u0027 it has \u0027currentHandler\u0027 as internal state. And if you attach the same CMakeErrorParser object to both the stderr and stdout stream of a cmake-process, the CMakeErrorParser will receive stderr and stdout intermixed, which is impossible to parse it error messages can span multiple lines. (Just have a look to the CDT output console).\n\nSorrry for the noise.",
+      "parentUuid": "2031e818_e1693a31",
+      "revId": "3bc450b3d4c58672b8d1612af6427bd6dd838f58",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "682e692b_0f69bd9c",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-04T10:51:35Z",
+      "side": 1,
+      "message": "It should never be necessary to synchronize DSF data as that implies you have multiple threads operating on it. Methods like this should be called only from DSF executor threads.",
+      "revId": "d68a9200e9826456a7ffe2c39d762c696215a516",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00ddb172_a41e0ba5",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-04T10:51:35Z",
+      "side": 1,
+      "message": "Is this \"info variables\" because the MI command is insufficient in some way?",
+      "revId": "d68a9200e9826456a7ffe2c39d762c696215a516",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7747c219_590ef80d",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/ui/GdbVariableVMProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-04T10:51:35Z",
+      "side": 1,
+      "message": "Does this differ from org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbVariableVMProvider?",
+      "revId": "d68a9200e9826456a7ffe2c39d762c696215a516",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

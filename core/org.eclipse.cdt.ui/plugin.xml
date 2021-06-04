@@ -574,6 +574,47 @@
             %CEditorFontDefinition.description
          </description>
        </fontDefinition>
+       <themeElementCategory
+             id="org.eclipse.cdt.ui.COutline.presentation"
+             label="%COutlinePresentation.label"
+             parentId="org.eclipse.cdt.ui.presentation">
+       </themeElementCategory>
+       <fontDefinition
+             categoryId="org.eclipse.cdt.ui.COutline.presentation"
+             defaultsTo="org.eclipse.jface.bannerfont"
+             id="org.eclipse.cdt.ui.outline.mark.textfont"
+             label="%COutline.mark.font.label">
+         <description>
+            %COutline.mark.font.description
+         </description>
+       </fontDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.outline.mark.textcolor"
+            categoryId="org.eclipse.cdt.ui.COutline.presentation"
+            isEditable="true"
+            label="%COutline.mark.textcolor.label"
+            value="80,80,80">
+         <description>
+            %COutline.mark.textcolor.description
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.cdt.ui.COutline.presentation"
+            id="org.eclipse.cdt.ui.outline.mark.dividercolor"
+            isEditable="true"
+            label="%COutline.mark.dividercolor.label"
+            value="80,80,80">
+         <description>
+            %COutline.mark.dividercolor.description
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.ColoredLabels.writeaccess_highlight"
+            categoryId="org.eclipse.cdt.ui.presentation"
+            isEditable="true"
+            label="%CSearch.color.match_write_highlight"
+            value="240, 216, 168">
+      </colorDefinition>
              <fontDefinition
             label="%BuildConsoleFontDefinition.label"
             defaultsTo="org.eclipse.jface.textfont"

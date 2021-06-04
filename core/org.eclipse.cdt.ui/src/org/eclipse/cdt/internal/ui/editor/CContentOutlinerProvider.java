@@ -71,7 +71,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	 *            Tree viewer.
 	 */
 	public CContentOutlinerProvider(TreeViewer viewer, IWorkbenchPartSite site) {
-		super(true, true);
+		super(true, true, true);
 		treeViewer = viewer;
 		final IPreferenceStore store = PreferenceConstants.getPreferenceStore();
 		setIncludesGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));

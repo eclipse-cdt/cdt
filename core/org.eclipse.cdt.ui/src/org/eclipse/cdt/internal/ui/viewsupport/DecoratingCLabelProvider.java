@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
+import org.eclipse.cdt.internal.ui.cview.DividerLine;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.viewers.DecorationContext;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
 
 public class DecoratingCLabelProvider extends ColoringLabelProvider {
@@ -41,6 +46,31 @@ public class DecoratingCLabelProvider extends ColoringLabelProvider {
 				DecorationContext.DEFAULT_CONTEXT);
 		if (errorTick) {
 			labelProvider.addLabelDecorator(new ProblemsLabelDecorator(null));
+		}
+	}
+
+	@Override
+	protected void measure(Event event, Object element) {
+		if (!isOwnerDrawEnabled())
+			return;
+
+		super.measure(event, element);
+
+	}
+
+	@Override
+	protected void paint(Event event, Object element) {
+		if (!isOwnerDrawEnabled())
+			return;
+		if (element instanceof DividerLine) {
+			// XXX: Review this - is this an OK thing to do? Is there API already so I can delegate this to the DiverLine already?
+			int y = event.y + event.height / 2;
+			ColorRegistry colorRegistry = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme()
+					.getColorRegistry();
+			event.gc.setForeground(new Color(colorRegistry.getRGB(PreferenceConstants.OUTLINE_MARK_TEXT_COLOR)));
+			event.gc.drawLine(event.x - 2000, y, event.x + 2000, y);
+		} else {
+			super.paint(event, element);
 		}
 	}
 }

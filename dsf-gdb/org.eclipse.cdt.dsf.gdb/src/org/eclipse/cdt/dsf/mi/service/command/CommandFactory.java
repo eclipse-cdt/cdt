@@ -158,6 +158,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowNewConsole;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBVersion;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInfoOs;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIInfoVariables;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExec;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsole;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsoleKill;
@@ -228,6 +229,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowNewConsoleInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBVersionInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIGlobalVariableInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfoOsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListFeaturesInfo;
@@ -1224,4 +1226,9 @@ public class CommandFactory {
 	public ICommand<MIVarUpdateInfo> createMIVarUpdate(ICommandControlDMContext dmc, String name) {
 		return new MIVarUpdate(dmc, name);
 	}
+
+	public ICommand<MIGlobalVariableInfo> createMIInfoVariables(ICommandControlDMContext dmc) {
+		return new MIInfoVariables(dmc);
+	}
+
 }

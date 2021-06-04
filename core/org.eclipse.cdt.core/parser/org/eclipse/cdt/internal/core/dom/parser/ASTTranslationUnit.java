@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -70,6 +71,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = {};
 	private static final IASTPreprocessorMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = {};
 	private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = {};
+	private static final IASTPreprocessorPragmaStatement[] EMPTY_PRAGMA_STATEMENT_ARRAY = {};
 	private static final IASTProblem[] EMPTY_PROBLEM_ARRAY = {};
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -233,6 +235,13 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		if (fLocationResolver == null)
 			return EMPTY_PREPROCESSOR_INCLUSION_ARRAY;
 		return fLocationResolver.getIncludeDirectives();
+	}
+
+	@Override
+	public IASTPreprocessorPragmaStatement[] getPragmaStatements() {
+		if (fLocationResolver == null)
+			return EMPTY_PRAGMA_STATEMENT_ARRAY;
+		return fLocationResolver.getPragmaStatements();
 	}
 
 	@Override

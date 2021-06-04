@@ -14,7 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
+import org.eclipse.cdt.internal.ui.cview.DividerLine;
 import org.eclipse.jface.viewers.DecorationContext;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
 
 public class DecoratingCLabelProvider extends ColoringLabelProvider {
@@ -41,6 +43,27 @@ public class DecoratingCLabelProvider extends ColoringLabelProvider {
 				DecorationContext.DEFAULT_CONTEXT);
 		if (errorTick) {
 			labelProvider.addLabelDecorator(new ProblemsLabelDecorator(null));
+		}
+	}
+
+	@Override
+	protected void measure(Event event, Object element) {
+		if (!isOwnerDrawEnabled())
+			return;
+
+		super.measure(event, element);
+
+	}
+
+	@Override
+	protected void paint(Event event, Object element) {
+		if (!isOwnerDrawEnabled())
+			return;
+		if (element instanceof DividerLine) {
+			int y = event.y + event.height / 2;
+			event.gc.drawLine(event.x - 2000, y, event.x + 2000, y);
+		} else {
+			super.paint(event, element);
 		}
 	}
 }

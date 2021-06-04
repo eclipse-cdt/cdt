@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter3;
 
 /*
  * This class is basically a clone of org.eclipse.cdt.core.model.util.CElementLabels
@@ -292,7 +293,14 @@ public class CElementLabels {
 		} else if (obj instanceof IAdaptable) {
 			IWorkbenchAdapter wbadapter = ((IAdaptable) obj).getAdapter(IWorkbenchAdapter.class);
 			if (wbadapter != null) {
-				return Strings.markLTR(new StyledString(wbadapter.getLabel(obj)));
+				StyledString styledString;
+				if (wbadapter instanceof IWorkbenchAdapter3) {
+					IWorkbenchAdapter3 adapter3 = (IWorkbenchAdapter3) wbadapter;
+					styledString = adapter3.getStyledText(obj);
+				} else {
+					styledString = new StyledString(wbadapter.getLabel(obj));
+				}
+				return Strings.markLTR(styledString);
 			}
 		}
 		return new StyledString();

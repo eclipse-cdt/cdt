@@ -396,4 +396,9 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	 * @since 5.6
 	 */
 	public void setHasNodesOmitted(boolean nodesOmitted);
+
+	/**
+	 * @since 7.3
+	 */
+	public IASTPreprocessorPragmaStatement[] getPragmaStatements();
 }

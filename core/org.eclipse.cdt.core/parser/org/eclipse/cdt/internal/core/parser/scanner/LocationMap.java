@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -764,6 +765,17 @@ public class LocationMap implements ILocationResolver {
 			}
 		}
 		return result.toArray(new IASTPreprocessorIncludeStatement[result.size()]);
+	}
+
+	@Override
+	public IASTPreprocessorPragmaStatement[] getPragmaStatements() {
+		ArrayList<IASTPreprocessorPragmaStatement> result = new ArrayList<>();
+		for (ASTPreprocessorNode directive : fDirectives) {
+			if (directive instanceof IASTPreprocessorPragmaStatement) {
+				result.add((IASTPreprocessorPragmaStatement) directive);
+			}
+		}
+		return result.toArray(new IASTPreprocessorPragmaStatement[result.size()]);
 	}
 
 	@Override

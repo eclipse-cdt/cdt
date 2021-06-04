@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,9 +15,12 @@
 package org.eclipse.cdt.internal.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -37,10 +40,13 @@ import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.IPragma;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.cview.DividerLine;
+import org.eclipse.cdt.internal.ui.cview.PragmaMark;
 import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.IncludesGrouping;
@@ -85,14 +91,16 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	protected boolean fNamespacesGrouping = false;
 	protected boolean fMemberGrouping = false;
 	protected boolean fMacroGrouping = false;
+	protected boolean fProvidePragmaMarks = false;
 
 	public BaseCElementContentProvider() {
-		this(false, false);
+		this(false, false, false);
 	}
 
-	public BaseCElementContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
+	public BaseCElementContentProvider(boolean provideMembers, boolean provideWorkingCopy, boolean providePragmaMarks) {
 		fProvideMembers = provideMembers;
 		fProvideWorkingCopy = provideWorkingCopy;
+		fProvidePragmaMarks = providePragmaMarks;
 	}
 
 	/**
@@ -452,6 +460,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	protected Object[] getTranslationUnitChildren(ITranslationUnit unit) throws CModelException {
 		Object[] children = unit.getChildren();
+		children = filterAndTransformPragmas(children);
 		if (fIncludesGrouping) {
 			boolean hasInclude = false;
 			ArrayList<Object> list = new ArrayList<>(children.length);
@@ -536,6 +545,55 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			children = list.toArray();
 		}
 		return children;
+	}
+
+	/**
+	 * Filter and transform pragma elements in the list
+	 * @param children the list of objects
+	 * @return a new list of objects
+	 */
+	private Object[] filterAndTransformPragmas(Object[] children) {
+		List<Object> list = new LinkedList<>(Arrays.asList(children));
+
+		for (ListIterator<Object> iterator = list.listIterator(); iterator.hasNext();) {
+			Object object = iterator.next();
+			if (object instanceof IPragma) {
+				IPragma pragma = (IPragma) object;
+				iterator.remove();
+				if (!fProvidePragmaMarks) {
+					continue;
+				}
+				String elementName = pragma.getElementName().trim();
+				if (elementName.startsWith("mark")) { //$NON-NLS-1$
+					elementName = elementName.substring("mark".length()).trim(); //$NON-NLS-1$
+					boolean splitBefore = false;
+					boolean splitAfter = false;
+					if (elementName.startsWith("-")) { //$NON-NLS-1$
+						splitBefore = true;
+						elementName = elementName.substring(1);
+					}
+					if (elementName.endsWith("-")) { //$NON-NLS-1$
+						splitAfter = true;
+						elementName = elementName.substring(0, elementName.length() - 1);
+					}
+					elementName = elementName.trim();
+					if (splitBefore) {
+						iterator.add(new DividerLine(pragma));
+					}
+					if (!elementName.isEmpty()) {
+						// XXX: Create a custom type rather than use CElement?
+						// If so, remember to make sure features of CElement are inherited, such as link with editor
+						// I think this means it should implement ISourceReference - see org.eclipse.cdt.internal.ui.editor.CEditor.selectionChanged(SelectionChangedEvent)
+						iterator.add(new PragmaMark(pragma, elementName));
+					}
+					if (splitAfter) {
+						iterator.add(new DividerLine(pragma));
+					}
+				}
+			}
+		}
+
+		return list.toArray();
 	}
 
 	protected Object[] getNamespaceChildren(IParent element) throws CModelException {

@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -224,6 +225,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				createMacro(fTranslationUnit, macroDefinition);
 			}
 		}
+		// Pragmas
+		final IASTPreprocessorPragmaStatement[] pragmas = ast.getPragmaStatements();
+		for (IASTPreprocessorPragmaStatement pragma : pragmas) {
+			if (isLocalToFile(pragma)) {
+				createPragma(fTranslationUnit, pragma);
+			}
+		}
 		// Declarations
 		final IASTDeclaration[] declarations = ast.getDeclarations(true);
 		for (IASTDeclaration declaration : declarations) {
@@ -318,6 +326,23 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		if (macro instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
 			element.setFunctionStyle(true);
 		}
+		return element;
+	}
+
+	private Pragma createPragma(Parent parent, IASTPreprocessorPragmaStatement pragma) throws CModelException {
+		// Create element
+		final char[] message = pragma.getMessage();
+		// XXX get isPragmaOperator too?
+		// XXX when to change to String? Now?
+		Pragma element = new Pragma(parent, new String(message));
+		setIndex(element);
+		element.setActive(pragma.isActive());
+		// Add to parent
+		parent.addChild(element);
+		// Set positions
+		// XXX What, if anything, should the identifier position be
+		//		setIdentifierPosition(element, name);
+		setBodyPosition(element, pragma);
 		return element;
 	}
 

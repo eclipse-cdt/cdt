@@ -318,7 +318,9 @@ public class GlobalVariableService extends AbstractDsfService implements IGlobal
 	 * @return
 	 * @throws DebugException
 	 */
-	//TODO: Move this to service initialization, use a thread pool too
+	// TODO: Move this to service initialization to get better performance
+	// TODO : Does regular expression can do better?
+	// TODO: Any types going to break the parsing logic?
 	private List<IGlobalVariableDescriptor> getInitialGlobalsFromElfs(IDMContext frameDmc) throws DebugException {
 		List<IGlobalVariableDescriptor> list = new ArrayList<>();
 		MIInfo infoVariablesResponse = executeGDBCommand(frameDmc, "info variables"); //$NON-NLS-1$
@@ -345,33 +347,41 @@ public class GlobalVariableService extends AbstractDsfService implements IGlobal
 					int globalEnd = globalString.length();
 
 					// Array variable, EG: 306,643 ~"334:\t static int test_array[5]
-					if (globalString.endsWith("]")) //$NON-NLS-1$
-						globalEnd = globalString.indexOf("["); //$NON-NLS-1$
+					if (globalString.endsWith("];\\n\"")) //$NON-NLS-1$
+						globalEnd = globalString.indexOf("[") + 4; //$NON-NLS-1$
 					if (globalString.startsWith("*")) //$NON-NLS-1$
 						globalStart++;
-					globalVariableString = globalString.trim().substring(globalStart, globalEnd-4);
+					globalVariableString = globalString.trim().substring(globalStart, globalEnd - 4);
 				}
-				final String globalVariableName = globalVariableString;
-				if (globalVariableName != null) {
-					list.add(new IGlobalVariableDescriptor() {
-
-						@Override
-						public IPath getPath() {
-							// TODO Needed if user has to go to the definition, not very sure
-							return null;
-						}
-
-						@Override
-						public String getName() {
-							return globalVariableName;
-						}
-					});
+				if (globalVariableString != null) {
+					list.add(new GlobalVariableDescriptor(globalVariableString, null));
 				}
 			}
 		}
 		return list;
 	}
-	
+
+	class GlobalVariableDescriptor implements IGlobalVariableDescriptor {
+
+		String globalVariableName;
+		IPath sourceFileRelativePath;
+
+		GlobalVariableDescriptor(String globalVariableName, IPath sourceFileRelativePath) {
+			this.globalVariableName = globalVariableName;
+			this.sourceFileRelativePath = sourceFileRelativePath;
+		}
+
+		@Override
+		public IPath getPath() {
+			return sourceFileRelativePath;
+		}
+
+		@Override
+		public String getName() {
+			return globalVariableName;
+		}
+	}
+
 	@Override
 	public List<IGlobalVariableDescriptor> getInitialGlobals(IDMContext frameDmc) throws DebugException {
 		if (initialGlobals == null || initialGlobals.isEmpty()) {

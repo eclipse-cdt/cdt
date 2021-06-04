@@ -16,12 +16,6 @@
             name="Global Variables View">
       </view>
    </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
-   </extension>
  <extension
           point="org.eclipse.ui.popupMenus">
        <viewerContribution

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 QNX Software Systems and others.
+ * Copyright (c) 2016, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -154,6 +154,15 @@ public class TemplateSelectionPage extends WizardPage {
 			}
 		}
 		return super.getNextPage();
+	}
+
+	@Override
+	public void dispose() {
+		if (templateTable != null) {
+			templateTable.dispose();
+			templateTable = null;
+		}
+		super.dispose();
 	}
 
 }

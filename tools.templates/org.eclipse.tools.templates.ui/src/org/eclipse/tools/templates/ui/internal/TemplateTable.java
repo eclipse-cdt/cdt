@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 QNX Software Systems and others.
+ * Copyright (c) 2016, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -187,6 +187,17 @@ public class TemplateTable implements Listener {
 				}
 				gc.drawText(description, event.x + imageWidth, event.y + nameExtent.y, flags);
 			}
+		}
+	}
+
+	public void dispose() {
+		if (fontDefault != null) {
+			fontDefault.dispose();
+			fontDefault = null;
+		}
+		if (fontBold != null) {
+			fontBold.dispose();
+			fontBold = null;
 		}
 	}
 

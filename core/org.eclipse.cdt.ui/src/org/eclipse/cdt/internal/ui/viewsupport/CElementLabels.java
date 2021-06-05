@@ -323,11 +323,11 @@ public class CElementLabels {
 	}
 
 	/**
-	 * Returns the label for a Java element with the flags as defined by this class.
+	 * Returns the label for a C element with the flags as defined by this class.
 	 *
 	 * @param element the element to render
 	 * @param flags the rendering flags
-	 * @return the label of the Java element
+	 * @return the label of the C element
 	 */
 	public static String getElementLabel(ICElement element, long flags) {
 		StringBuilder result = new StringBuilder();
@@ -336,11 +336,11 @@ public class CElementLabels {
 	}
 
 	/**
-	 * Returns the styled label for a Java element with the flags as defined by this class.
+	 * Returns the styled label for a C element with the flags as defined by this class.
 	 *
 	 * @param element the element to render
 	 * @param flags the rendering flags
-	 * @return the label of the Java element
+	 * @return the label of the C element
 	 *
 	 */
 	public static StyledString getStyledElementLabel(ICElement element, long flags) {
@@ -350,7 +350,7 @@ public class CElementLabels {
 	}
 
 	/**
-	 * Returns the label for a Java element with the flags as defined by this class.
+	 * Returns the label for a C element with the flags as defined by this class.
 	 *
 	 * @param element the element to render
 	 * @param flags the rendering flags
@@ -361,7 +361,7 @@ public class CElementLabels {
 	}
 
 	/**
-	 * Returns the styled label for a Java element with the flags as defined by this class.
+	 * Returns the styled label for a C element with the flags as defined by this class.
 	 *
 	 * @param element the element to render
 	 * @param flags the rendering flags

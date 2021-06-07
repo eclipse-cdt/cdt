@@ -911,7 +911,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		}
 		imageCombo.setText(""); //$NON-NLS-1$
 		model.setDataVolumes(null);
-		model.setSelectedDataVolumes(null);
+		model.setSelectedDataVolumes(new HashSet<>());
 		enableButton.setSelection(false);
 		setControlsEnabled(false);
 	}

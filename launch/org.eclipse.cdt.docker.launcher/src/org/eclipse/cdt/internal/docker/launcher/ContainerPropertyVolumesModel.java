@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.linuxtools.docker.core.DockerException;
 import org.eclipse.linuxtools.docker.core.IDockerConnection;
 import org.eclipse.linuxtools.docker.core.IDockerImage;
@@ -129,7 +130,12 @@ public class ContainerPropertyVolumesModel extends BaseDatabindingModel {
 		return selectedDataVolumes;
 	}
 
+	/**
+	 *
+	 * @param selectedDataVolumes non-<code>null</code> set of selected data volumes
+	 */
 	public void setSelectedDataVolumes(final Set<DataVolumeModel> selectedDataVolumes) {
+		Assert.isNotNull(selectedDataVolumes);
 		firePropertyChange(SELECTED_DATA_VOLUMES, this.selectedDataVolumes,
 				this.selectedDataVolumes = selectedDataVolumes);
 	}

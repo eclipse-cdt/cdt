@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.core.runtime.CoreException;
@@ -145,6 +146,9 @@ public class EvalComma extends CPPDependentEvaluation {
 	public IType getType() {
 		if (fType == null) {
 			fType = computeType();
+			if (fType instanceof CPPBasicType) {
+				fType = ((CPPBasicType) fType).clone(~CPPBasicType.FROM_LITERAL);
+			}
 		}
 		return fType;
 	}

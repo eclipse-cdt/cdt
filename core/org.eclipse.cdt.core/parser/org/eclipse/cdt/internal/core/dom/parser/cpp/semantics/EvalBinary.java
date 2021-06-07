@@ -151,6 +151,11 @@ public class EvalBinary extends CPPDependentEvaluation {
 				}
 			}
 		}
+
+		if (fType instanceof CPPBasicType) {
+			fType = ((CPPBasicType) fType).clone(~CPPBasicType.FROM_LITERAL);
+		}
+
 		return fType;
 	}
 

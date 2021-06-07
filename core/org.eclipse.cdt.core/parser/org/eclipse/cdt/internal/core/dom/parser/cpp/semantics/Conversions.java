@@ -1168,9 +1168,13 @@ public class Conversions {
 			if (basicType.getKind() == Kind.eNullPtr)
 				return true;
 
-			Long val = basicType.getAssociatedNumericalValue();
-			if (val != null && val == 0) {
-				return true;
+			// Starting from C++11, the value is required to be a literal. This means pre-C++11 parsing will not be correct here.
+			// But we don't currently have a way to check the C++ version here and in semantics code in general.
+			if (basicType.getKind() == Kind.eInt && basicType.isFromLiteral()) {
+				Long val = basicType.getAssociatedNumericalValue();
+				if (val != null && val == 0) {
+					return true;
+				}
 			}
 		}
 		return false;

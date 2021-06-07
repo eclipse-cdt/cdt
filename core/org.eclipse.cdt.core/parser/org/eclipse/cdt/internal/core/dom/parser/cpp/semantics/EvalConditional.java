@@ -39,6 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
@@ -180,6 +181,14 @@ public class EvalConditional extends CPPDependentEvaluation {
 		if (fValueCategory != null)
 			return;
 
+		evaluateInternal();
+
+		if (fType instanceof CPPBasicType) {
+			fType = ((CPPBasicType) fType).clone(~CPPBasicType.FROM_LITERAL);
+		}
+	}
+
+	private void evaluateInternal() {
 		fValueCategory = PRVALUE;
 
 		final ICPPEvaluation positive = fPositive == null ? fCondition : fPositive;

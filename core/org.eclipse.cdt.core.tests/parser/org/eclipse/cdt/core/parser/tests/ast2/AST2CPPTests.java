@@ -13658,4 +13658,69 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 
+	//	void function(int * a) { }
+	//	void function(unsigned int b) { }
+	//
+	//	void functionPtr(decltype(nullptr) c) { }
+	//
+	//	int main()
+	//	{
+	//		function(0); // 0
+	//		function(nullptr); // 1
+	//		functionPtr(0); // 2
+	//		functionPtr(nullptr); // 3
+	//
+	//		function(0 & 1); // 4
+	//		functionPtr(0 & 1); // 5
+	//
+	//		function(0 << 1); // 6
+	//		functionPtr(0 << 1); // 7
+	//
+	//		function((0,0)); // 8
+	//		functionPtr((0,0)); // 9
+	//
+	//		function(int{0}); // 10
+	//		functionPtr(int{0}); // 11
+	//
+	//		function(true ? 0 : 0); // 12
+	//		functionPtr(true ? 0 : 0); // 13
+	//	}
+	public void testNullPointerConstantConversion_573764() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+		NameCollector collector = new NameCollector();
+		tu.accept(collector);
+
+		IBinding funcDeclA = collector.getName(0).resolveBinding();
+		IBinding funcDeclB = collector.getName(2).resolveBinding();
+		IBinding funcDeclC = collector.getName(4).resolveBinding();
+
+		int callIndexStart = 7;
+		// Ambiguous
+		assertTrue(collector.getName(callIndexStart + 0).resolveBinding() instanceof IProblemBinding);
+		assertEquals(funcDeclA, collector.getName(callIndexStart + 1).resolveBinding());
+		assertEquals(funcDeclC, collector.getName(callIndexStart + 2).resolveBinding());
+		assertEquals(funcDeclC, collector.getName(callIndexStart + 3).resolveBinding());
+
+		assertEquals(funcDeclB, collector.getName(callIndexStart + 4).resolveBinding());
+		// Invalid argument (not null pointer constant)
+		assertTrue(collector.getName(callIndexStart + 5).resolveBinding() instanceof IProblemBinding);
+
+		assertEquals(funcDeclB, collector.getName(callIndexStart + 6).resolveBinding());
+		// Invalid argument (not null pointer constant)
+		assertTrue(collector.getName(callIndexStart + 7).resolveBinding() instanceof IProblemBinding);
+
+		// EvalComma
+		assertEquals(funcDeclB, collector.getName(callIndexStart + 8).resolveBinding());
+		// Invalid argument (not null pointer constant)
+		assertTrue(collector.getName(callIndexStart + 9).resolveBinding() instanceof IProblemBinding);
+
+		assertEquals(funcDeclB, collector.getName(callIndexStart + 10).resolveBinding());
+		// Invalid argument (not null pointer constant)
+		assertTrue(collector.getName(callIndexStart + 11).resolveBinding() instanceof IProblemBinding);
+
+		// EvalConditional
+		assertEquals(funcDeclB, collector.getName(callIndexStart + 12).resolveBinding());
+		// Invalid argument (not null pointer constant)
+		assertTrue(collector.getName(callIndexStart + 13).resolveBinding() instanceof IProblemBinding);
+	}
 }

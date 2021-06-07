@@ -17,6 +17,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
 
+import java.text.MessageFormat;
+
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -58,10 +61,16 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public static final CPPBasicType CHAR = new CPPBasicType(Kind.eChar, 0);
 	public static final CPPBasicType VOID = new CPPBasicType(Kind.eVoid, 0);
 
-	private static final int FROM_STRING_LITERAL = 1 << 31;
+	public static final int FROM_LITERAL = 1 << 30;
+	public static final int FROM_STRING_LITERAL = 1 << 31;
+
+	private static final short TYPE_BUFFER_KIND_OFFSET = ITypeMarshalBuffer.FIRST_FLAG;
+	private static final short TYPE_BUFFER_FROM_LITERAL_FLAG = ITypeMarshalBuffer.SECOND_LAST_FLAG / 2;
+	private static final short TYPE_BUFFER_FIRST_FLAG_AFTER_KIND = TYPE_BUFFER_FROM_LITERAL_FLAG;
+	private static final int MAX_KIND_INT_VALUE = (TYPE_BUFFER_FIRST_FLAG_AFTER_KIND - 1) / TYPE_BUFFER_KIND_OFFSET;
 
 	private final Kind fKind;
-	private final int fModifiers;
+	private int fModifiers;
 	private Long fAssociatedValue;
 	private ICPPFunction fPseudoDestructor;
 
@@ -77,9 +86,11 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		} else {
 			fKind = kind;
 		}
-		if (expression instanceof IASTLiteralExpression
-				&& ((IASTLiteralExpression) expression).getKind() == IASTLiteralExpression.lk_string_literal) {
-			qualifiers |= FROM_STRING_LITERAL;
+		if (expression instanceof IASTLiteralExpression) {
+			qualifiers |= FROM_LITERAL;
+			if (((IASTLiteralExpression) expression).getKind() == IASTLiteralExpression.lk_string_literal) {
+				qualifiers |= FROM_STRING_LITERAL;
+			}
 		}
 		fModifiers = qualifiers;
 		if (expression instanceof ICPPASTInitializerClause) {
@@ -209,9 +220,19 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 
 	@Override
 	public CPPBasicType clone() {
+		return clone(~0);
+	}
+
+	/**
+	 * Clone as normal but keep only requested flags.
+	 *
+	 * @param flagsMask The mask of flags to preserve during the clone.
+	 */
+	public CPPBasicType clone(int flagsMask) {
 		CPPBasicType t = null;
 		try {
 			t = (CPPBasicType) super.clone();
+			t.fModifiers &= flagsMask;
 		} catch (CloneNotSupportedException e) {
 			// Not going to happen.
 		}
@@ -235,15 +256,22 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	}
 
 	/**
-	 * Returns {@code true} if the type was created for a string literal.
+	 * Returns {@code true} if the type was created from a string literal.
 	 */
 	public final boolean isFromStringLiteral() {
 		return (fModifiers & FROM_STRING_LITERAL) != 0;
 	}
 
+	/**
+	 * Returns {@code true} if the type was created from a literal.
+	 */
+	public final boolean isFromLiteral() {
+		return (fModifiers & FROM_LITERAL) != 0;
+	}
+
 	@Override
 	public final int getModifiers() {
-		return fModifiers & ~FROM_STRING_LITERAL;
+		return fModifiers & ~FROM_STRING_LITERAL & ~FROM_LITERAL;
 	}
 
 	@Override
@@ -254,27 +282,47 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		final int kind = getKind().ordinal();
-		final int shiftedKind = kind * ITypeMarshalBuffer.FIRST_FLAG;
+		// 'kind' uses the space of the first few flags so make sure it doesn't overflow to the actual used flags further.
+		if (kind > MAX_KIND_INT_VALUE) {
+			throw new CoreException(CCorePlugin.createStatus(
+					MessageFormat.format("Cannot marshal a basic type, kind ''{0}'' would overflow following flags.", //$NON-NLS-1$
+							getKind().toString())));
+		}
+		final int shiftedKind = kind * TYPE_BUFFER_KIND_OFFSET;
 		final int modifiers = getModifiers();
 		short firstBytes = (short) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind);
-		if (modifiers != 0)
-			firstBytes |= ITypeMarshalBuffer.LAST_FLAG;
+		if (isFromLiteral())
+			firstBytes = setFirstBytesFlag(firstBytes, TYPE_BUFFER_FROM_LITERAL_FLAG);
 		if (fAssociatedValue != null)
-			firstBytes |= ITypeMarshalBuffer.SECOND_LAST_FLAG;
+			firstBytes = setFirstBytesFlag(firstBytes, ITypeMarshalBuffer.SECOND_LAST_FLAG);
+		if (modifiers != 0)
+			firstBytes = setFirstBytesFlag(firstBytes, ITypeMarshalBuffer.LAST_FLAG);
 		buffer.putShort(firstBytes);
 		if (modifiers != 0)
 			buffer.putByte((byte) modifiers);
 		if (fAssociatedValue != null)
 			buffer.putLong(getAssociatedNumericalValue());
+
+	}
+
+	private static short setFirstBytesFlag(short firstBytes, short flag) throws CoreException {
+		if (flag < TYPE_BUFFER_FIRST_FLAG_AFTER_KIND) {
+			throw new CoreException(CCorePlugin.createStatus(
+					MessageFormat.format("Cannot marshal a basic type, flag ''0x{0}'' overlaps ''kind'' bytes.", //$NON-NLS-1$
+							Integer.toHexString(flag))));
+		}
+		return (short) (firstBytes | flag);
 	}
 
 	public static IType unmarshal(short firstBytes, ITypeMarshalBuffer buffer) throws CoreException {
 		final boolean haveModifiers = (firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0;
 		final boolean haveAssociatedNumericalValue = (firstBytes & ITypeMarshalBuffer.SECOND_LAST_FLAG) != 0;
 		int modifiers = 0;
-		int kind = (firstBytes & (ITypeMarshalBuffer.SECOND_LAST_FLAG - 1)) / ITypeMarshalBuffer.FIRST_FLAG;
+		int kind = (firstBytes & (TYPE_BUFFER_FIRST_FLAG_AFTER_KIND - 1)) / TYPE_BUFFER_KIND_OFFSET;
 		if (haveModifiers)
 			modifiers = buffer.getByte();
+		if ((firstBytes & TYPE_BUFFER_FROM_LITERAL_FLAG) != 0)
+			modifiers |= FROM_LITERAL;
 		CPPBasicType result = new CPPBasicType(Kind.values()[kind], modifiers);
 		if (haveAssociatedNumericalValue)
 			result.setAssociatedNumericalValue(buffer.getLong());

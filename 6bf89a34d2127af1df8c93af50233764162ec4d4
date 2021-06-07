@@ -19,6 +19,29 @@
     },
     {
       "key": {
+        "uuid": "89888c01_9c4101c9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/PragmaMark.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-07T18:48:48Z",
+      "side": 1,
+      "message": "(In reply to Greg Willits from Bug 546981 comment #26)\n\u003e * The labels should be lighter than the outline text as well. Probably\n\u003e something in the territory of RGB #666666 at the darkest to #999999 at the\n\u003e lightest. I\u0027m partial to #808080 (R128, G128, B128) myself.",
+      "range": {
+        "startLine": 49,
+        "startChar": 15,
+        "endLine": 49,
+        "endChar": 26
+      },
+      "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6938331b_1bb02159",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/PragmaMark.java",
         "patchSetId": 3
@@ -92,6 +115,29 @@
         "startChar": 29,
         "endLine": 64,
         "endChar": 35
+      },
+      "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2422b681_c933091f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/DecoratingCLabelProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-07T18:48:48Z",
+      "side": 1,
+      "message": "(In reply to Greg Willits from Bug 546981 comment #26)\n\u003e * The lines should be quite light -- probably the same color as the Outline\n\u003e frame when it is inactive. They should be light like menu separators, and\n\u003e since we don\u0027t want them darker than an inactive frame, that inactive frame\n\u003e color looks about right to me for both purposes.",
+      "range": {
+        "startLine": 64,
+        "startChar": 3,
+        "endLine": 64,
+        "endChar": 11
       },
       "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",

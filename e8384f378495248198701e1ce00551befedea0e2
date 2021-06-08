@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "42878e07_be9e8774",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTTranslationUnit.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-08T04:13:11Z",
+      "side": 1,
+      "message": "does this return pragmas already? Maybe the new method would not be needed?",
+      "revId": "e8384f378495248198701e1ce00551befedea0e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

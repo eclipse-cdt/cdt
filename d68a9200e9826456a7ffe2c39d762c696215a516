@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9596562e_a12ed0c0",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 252234
+      },
+      "writtenOn": "2021-06-09T05:03:45Z",
+      "side": 1,
+      "message": "Okay, It\u0027s clear. I\u0027ve removed the synchronization locally.",
+      "parentUuid": "682e692b_0f69bd9c",
+      "revId": "d68a9200e9826456a7ffe2c39d762c696215a516",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "00ddb172_a41e0ba5",
         "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2021-06-04T10:51:35Z",
       "side": 1,
       "message": "Is this \"info variables\" because the MI command is insufficient in some way?",
+      "revId": "d68a9200e9826456a7ffe2c39d762c696215a516",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f2a50a2_80247a1f",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 252234
+      },
+      "writtenOn": "2021-06-09T05:03:45Z",
+      "side": 1,
+      "message": "I\u0027ve used mi commands now, introduced new classes for command and return values. Everything is available locally now. Once I\u0027ve understand how to amend to this commit, I\u0027ll push the changes.",
+      "parentUuid": "00ddb172_a41e0ba5",
       "revId": "d68a9200e9826456a7ffe2c39d762c696215a516",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

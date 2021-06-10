@@ -285,6 +285,8 @@ public class SyncUtil {
 	 *
 	 * @param dmc
 	 * @param stepType
+	 * @param reverse
+	 * @param massagedTimeout
 	 * @return
 	 * @throws Throwable
 	 */
@@ -368,7 +370,7 @@ public class SyncUtil {
 	 * locations see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
 	 *
 	 * @param location
-	 * @param massagedTimeout
+	 * @param temporary
 	 * @return
 	 * @throws Throwable
 	 */
@@ -386,7 +388,22 @@ public class SyncUtil {
 	 * @return
 	 * @throws Throwable
 	 */
-	private static String addBreakpoint(final String location, final boolean temporary, int massagedTimeout)
+	public static String addBreakpoint(final String location, boolean temporary, int massagedTimeout) throws Throwable {
+		return addBreakpoint(location, temporary, false, massagedTimeout);
+	}
+
+	/**
+	 * Adds a (possible temporary/hardware) breakpoint at {@code location}. For possible
+	 * locations see {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 *
+	 * @param location
+	 * @param temporary
+	 * @param hardware
+	 * @param massagedTimeout
+	 * @return
+	 * @throws Throwable
+	 */
+	public static String addBreakpoint(final String location, boolean temporary, boolean hardware, int massagedTimeout)
 			throws Throwable {
 
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
@@ -397,7 +414,8 @@ public class SyncUtil {
 			@Override
 			protected void execute(DataRequestMonitor<MIBreakInsertInfo> rm) {
 				fGdbControl.queueCommand(
-						fCommandFactory.createMIBreakInsert(bpTargetDmc, temporary, false, null, 0, location, "0"), rm);
+						fCommandFactory.createMIBreakInsert(bpTargetDmc, temporary, hardware, null, 0, location, "0"),
+						rm);
 			}
 		};
 
@@ -616,7 +634,7 @@ public class SyncUtil {
 	 * @throws Throwable
 	 */
 	public static MIStoppedEvent runToLocation(String location) throws Throwable {
-		return runToLocation(location, DefaultTimeouts.get(ETimeout.runToLocation));
+		return runToLocation(location, false, DefaultTimeouts.get(ETimeout.runToLocation));
 	}
 
 	/**
@@ -629,10 +647,39 @@ public class SyncUtil {
 	 * @throws Throwable
 	 */
 	public static MIStoppedEvent runToLocation(String location, int timeout) throws Throwable {
+		return runToLocation(location, false, DefaultTimeouts.get(ETimeout.runToLocation));
+	}
+
+	/**
+	 * Runs the process' execution to {@code location} using a {@code hardware}
+	 * breakpoint. For an example of possible locations see
+	 * {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 *
+	 * @param location
+	 * @param timeout
+	 * @return
+	 *
+	 * @throws Throwable
+	 */
+	public static MIStoppedEvent runToLocation(String location, boolean hardware) throws Throwable {
+		return runToLocation(location, hardware, DefaultTimeouts.get(ETimeout.runToLocation));
+	}
+
+	/**
+	 * Runs the process' execution to {@code location} using a {@code hardware}
+	 * breakpoint. For an example of possible locations see
+	 * {@link SyncUtil#addBreakpoint(String) addBreakpoint(String)}
+	 *
+	 * @param location
+	 * @param timeout
+	 * @return
+	 * @throws Throwable
+	 */
+	public static MIStoppedEvent runToLocation(String location, boolean hardware, int timeout) throws Throwable {
 		// Set a temporary breakpoint and run to it.
 		// Note that if there were other breakpoints set ahead of this one,
 		// they will stop execution earlier than planned
-		addBreakpoint(location, true, timeout);
+		addBreakpoint(location, true, hardware, timeout);
 		// Don't provide a timeout so we use the resume default timeout for this step
 		// if a timeout value is provided via DefaultTimeouts the value will be massaged twice
 		return resumeUntilStopped();
@@ -800,7 +847,7 @@ public class SyncUtil {
 	 * given process, thread or, frame ({@code parentCtx}). For example, given 2
 	 * thread, thread1 and thread2, an expression may not be valid in the context of
 	 * thread1 but it may be valid in the context of thread2. Therefore, while
-	 * creating expression its important that the correct context is passed
+	 * creating expression it's important that the correct context is passed
 	 *
 	 * @param parentCtx
 	 * @param expression
@@ -942,14 +989,14 @@ public class SyncUtil {
 	 * <li>Massage timeouts i.e. a common multiplier for all timeouts
 	 * <ul>
 	 */
-	static class DefaultTimeouts {
+	public static class DefaultTimeouts {
 
 		/**
 		 * Overridable default timeout values. An override is specified using a
 		 * system property that is "dsf.gdb.tests.timeout.default." plus the
 		 * name of the enum below.
 		 */
-		enum ETimeout {
+		public enum ETimeout {
 			addBreakpoint, deleteBreakpoint, getBreakpointList, createExecutionContext, createExpression,
 			getFormattedValue, getStackFrame, resume, resumeUntilStopped, runToLine, runToLocation, step, waitForStop
 		}
@@ -993,7 +1040,7 @@ public class SyncUtil {
 		 *            the timeout enum
 		 * @return the default value
 		 */
-		static int get(ETimeout timeout) {
+		public static int get(ETimeout timeout) {
 			int value = -1;
 			final String propname = "dsf.gdb.tests.timeout.default." + timeout.toString();
 			final String prop = System.getProperty(propname);

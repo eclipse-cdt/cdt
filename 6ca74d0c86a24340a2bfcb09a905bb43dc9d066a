@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cb7a23c2_1af224fc",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-10T20:52:25Z",
+      "side": 1,
+      "message": "This line is too long - the formatter is wrapping it. Normally this type of thing is fixed on Save in the editor, but it is possible to do some operations in JDT that bypasses the format on save.",
+      "revId": "6ca74d0c86a24340a2bfcb09a905bb43dc9d066a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -126,6 +126,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -2960,40 +2961,22 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 *         plugin
 	 */
 	public static URL getURLInBuildDefinitions(DefaultManagedConfigElement element, IPath path) {
-
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
-		if (extensionPoint != null) {
-			IExtension[] extensions = extensionPoint.getExtensions();
-			if (extensions != null) {
-
-				// Iterate over all extensions that contribute to .buildDefinitions
-				for (IExtension extension : extensions) {
-					// Determine whether the configuration element that is
-					// associated with the path, is valid for the extension that
-					// we are currently processing.
-					//
-					// Note: If not done, icon file names would have to be unique
-					// across several plug-ins.
-					if (element.getExtension().getExtensionPointUniqueIdentifier() == extension
-							.getExtensionPointUniqueIdentifier()) {
-						// Get the path-name
-						Bundle bundle = Platform.getBundle(extension.getNamespace());
-						URL url = Platform.find(bundle, path);
-						if (url != null) {
-							try {
-								return Platform.asLocalURL(url);
-							} catch (IOException e) {
-								// Ignore the exception
-								return null;
-							}
-						} else {
-							// Print a warning
-							outputIconError(path.toString());
-						}
-					}
+		IExtension extension = element.getExtension();
+		if (extension != null) {
+			Bundle bundle = Platform.getBundle(extension.getNamespaceIdentifier());
+			URL url = FileLocator.find(bundle, path);
+			if (url != null) {
+				try {
+					return FileLocator.toFileURL(url);
+				} catch (IOException e) {
+					// Ignore the exception
 				}
 			}
 		}
+
+		// Print a warning
+		outputIconError(path.toString());
+
 		return null;
 	}
 

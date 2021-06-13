@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1dadc870_751cc6b0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPBasicType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-13T05:54:12Z",
+      "side": 1,
+      "message": "every time an additional flag is used, the maximum value for \"kind\" is affected. Right now we still have room for either new Kinds (enum) or a couple more flags, but this safe guard will help detect if we run out of space by throwing an exception right away instead of writing wrong bytes to the buffer and fail in less obvious ways.",
+      "revId": "85206daca39ffb67e56c73e5cd01be3771213291",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f18ae774_88ec1784",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPBasicType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-13T05:54:12Z",
+      "side": 1,
+      "message": "this one is the actual new flag marshalled to track if the type is from a literal",
+      "revId": "85206daca39ffb67e56c73e5cd01be3771213291",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da90401c_c36fbde0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPBasicType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-13T05:54:12Z",
+      "side": 1,
+      "message": "At first when I added the new flag, it failed with a wrong \u0027kind\u0027 and it wasn\u0027t directly obvious to me why. I tried to make the code a bit more robust to detect such problem, i.e. the data length for \u0027kind\u0027 is affected by number of flags used",
+      "revId": "85206daca39ffb67e56c73e5cd01be3771213291",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9533a661_af75db79",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2963,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-13T21:08:51Z",
+      "side": 1,
+      "message": "the change stops using this variable. The result is that the code below looks in *all* bundles for the given path. That is incorrect as it means that if two bundles have the same image path, it will be random which one is picked.",
+      "range": {
+        "startLine": 2963,
+        "startChar": 72,
+        "endLine": 2963,
+        "endChar": 79
+      },
+      "revId": "152081bce5139427038708176274106b806a47a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12f3e31b_caea36cb",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2976,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-13T21:08:51Z",
+      "side": 1,
+      "message": "+1 for moving away from deprecated API",
+      "range": {
+        "startLine": 2976,
+        "startChar": 14,
+        "endLine": 2976,
+        "endChar": 45
+      },
+      "revId": "152081bce5139427038708176274106b806a47a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9f90a0c_61ebf47f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2979,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-13T21:08:51Z",
+      "side": 1,
+      "message": "+1 for moving away from deprecated API",
+      "range": {
+        "startLine": 2979,
+        "startChar": 14,
+        "endLine": 2979,
+        "endChar": 41
+      },
+      "revId": "152081bce5139427038708176274106b806a47a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7ae15a6_ea609e37",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2989,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-13T21:08:51Z",
+      "side": 1,
+      "message": "I think it is ok that the warning is moved to the outer scope. I am not sure if there are cases where the bundle wasn\u0027t found before.",
+      "range": {
+        "startLine": 2989,
+        "startChar": 2,
+        "endLine": 2989,
+        "endChar": 17
+      },
+      "revId": "152081bce5139427038708176274106b806a47a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

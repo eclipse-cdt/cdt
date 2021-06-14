@@ -105,6 +105,24 @@
       "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "025a74be_ade82044",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2967,
+      "author": {
+        "id": 159054
+      },
+      "writtenOn": "2021-06-14T19:09:54Z",
+      "side": 1,
+      "message": "If we have to support platform:/plugin URIs then the code has to be slightly reworked.\nAFAIK FileLocator.find(bundle, path) limits the scope to the given bundle, which is too restrictive for a platform-wide scope.\n\n\n1. FileLocator.toFileURL(url), return if exists   /* cover platform:/plugins URIs */\n2. FileLocator.toFileURL(FileLocator.find(bundle, path)), returns if exists",
+      "parentUuid": "71cade10_69dd2822",
+      "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

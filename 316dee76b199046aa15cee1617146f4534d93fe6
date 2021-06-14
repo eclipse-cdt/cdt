@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c384c949_d53c700b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2966,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-06-14T16:30:43Z",
+      "side": 1,
+      "message": "Should we try `ResourceLocator#locate(String bundleSymbolicName, String filePath)?",
+      "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "16f8235d_5ed48aa0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2967,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-06-14T16:30:43Z",
+      "side": 1,
+      "message": "Will it work for `platform:/plugin` URIs?",
+      "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

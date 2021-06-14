@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d4ca1745_4af12b7a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2966,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-14T17:44:07Z",
+      "side": 1,
+      "message": "Do you mean org.eclipse.jface.resource.ResourceLocator? If so, I recommend against that as this is a core bundle.\n\nThe URL creation is \"core\" - the loading of the URL happens in the UI side.",
+      "parentUuid": "c384c949_d53c700b",
+      "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "16f8235d_5ed48aa0",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2021-06-14T16:30:43Z",
       "side": 1,
       "message": "Will it work for `platform:/plugin` URIs?",
+      "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b84c09d_29bfe0a0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2967,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-14T17:44:07Z",
+      "side": 1,
+      "message": "FileLocator.find() is what is supposed to be used to replace the deprecated Platform.find() - so while I don\u0027t know the answer to your question, it at least does not regress at all.\n\nBTW If you mean does this whole code handle \"url\" being a platform:/plugin URI? then yes, FileLocatror.toFileURL is specifically designed to extract the image from the jar.",
+      "parentUuid": "16f8235d_5ed48aa0",
       "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

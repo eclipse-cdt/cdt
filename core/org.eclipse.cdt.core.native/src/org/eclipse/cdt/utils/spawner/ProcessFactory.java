@@ -58,6 +58,10 @@ public class ProcessFactory {
 		return instance;
 	}
 
+	/**
+	 * @deprecated Do not use this method it splits command line arguments on whitespace with no regard to quoting rules. See Bug 573677
+	 */
+	@Deprecated
 	public Process exec(String cmd) throws IOException {
 		cmd = modifyCmdIfFlatpak(cmd);
 		if (hasSpawner)
@@ -79,6 +83,10 @@ public class ProcessFactory {
 		return runtime.exec(cmdarray, envp);
 	}
 
+	/**
+	 * @deprecated Do not use this method it splits command line arguments on whitespace with no regard to quoting rules. See Bug 573677
+	 */
+	@Deprecated
 	public Process exec(String cmd, String[] envp) throws IOException {
 		cmd = modifyCmdIfFlatpak(cmd);
 		if (hasSpawner)
@@ -86,6 +94,10 @@ public class ProcessFactory {
 		return runtime.exec(cmd, envp);
 	}
 
+	/**
+	 * @deprecated Do not use this method it splits command line arguments on whitespace with no regard to quoting rules. See Bug 573677
+	 */
+	@Deprecated
 	public Process exec(String cmd, String[] envp, File dir) throws IOException {
 		cmd = modifyCmdIfFlatpak(cmd);
 		if (hasSpawner)

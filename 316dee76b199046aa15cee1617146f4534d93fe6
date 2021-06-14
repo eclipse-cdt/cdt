@@ -123,6 +123,24 @@
       "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "275c8ad2_445bd743",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2967,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-14T19:28:29Z",
+      "side": 1,
+      "message": "If we want to allow such URIs that would be a new feature and should be done under a separate bug/gerrit please.",
+      "parentUuid": "025a74be_ade82044",
+      "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

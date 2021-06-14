@@ -191,11 +191,11 @@ public class FlatpakCommandLauncherFactory
 					}
 					try {
 						Process p1 = ProcessFactory.getFactory()
-								.exec("mkdir -p " + pluginPath.append(path).toOSString()); //$NON-NLS-1$
+								.exec(new String[] { "mkdir", "-p", pluginPath.append(path).toOSString() }); //$NON-NLS-1$ //$NON-NLS-2$
 						int rc1 = waitFor(p1);
 						if (rc1 == 0) {
-							Process p2 = ProcessFactory.getFactory().exec("cp -ru " + path //$NON-NLS-1$
-									+ " " + pluginPath.append(path).removeLastSegments(1).toOSString()); //$NON-NLS-1$
+							Process p2 = ProcessFactory.getFactory().exec(new String[] { "cp", "-ru", "path", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+									pluginPath.append(path).removeLastSegments(1).toOSString() });
 							int rc2 = waitFor(p2);
 							if (rc2 == 0) {
 								copiedDirs.add(path);
@@ -270,11 +270,11 @@ public class FlatpakCommandLauncherFactory
 					if (!copiedDirs.contains(path)) {
 						try {
 							Process p1 = ProcessFactory.getFactory()
-									.exec("mkdir -p " + copiedPath.append(path).toOSString()); //$NON-NLS-1$
+									.exec(new String[] { "mkdir", "-p", copiedPath.append(path).toOSString() }); //$NON-NLS-1$ //$NON-NLS-2$
 							int rc1 = waitFor(p1);
 							if (rc1 == 0) {
-								Process p2 = ProcessFactory.getFactory().exec("cp -ru " + path //$NON-NLS-1$
-										+ " " + copiedPath.append(path).removeLastSegments(1).toOSString()); //$NON-NLS-1$
+								Process p2 = ProcessFactory.getFactory().exec(new String[] { "cp", "-ru", path, //$NON-NLS-1$ //$NON-NLS-2$
+										copiedPath.append(path).removeLastSegments(1).toOSString() });
 								int rc2 = waitFor(p2);
 								if (rc2 == 0) {
 									copiedDirs.add(path);
@@ -321,11 +321,11 @@ public class FlatpakCommandLauncherFactory
 					if (removedDirs.contains(path)) {
 						try {
 							Process p1 = ProcessFactory.getFactory()
-									.exec("mkdir -p " + hostDir.append(path).toOSString()); //$NON-NLS-1$
+									.exec(new String[] { "mkdir", "-p", hostDir.append(path).toOSString() }); //$NON-NLS-1$ //$NON-NLS-2$
 							int rc1 = waitFor(p1);
 							if (rc1 == 0) {
-								Process p2 = ProcessFactory.getFactory().exec("cp -ru " + path //$NON-NLS-1$
-										+ " " + hostDir.append(path).removeLastSegments(1).toOSString()); //$NON-NLS-1$
+								Process p2 = ProcessFactory.getFactory().exec(new String[] { "cp", "-ru", path, //$NON-NLS-1$ //$NON-NLS-2$
+										hostDir.append(path).removeLastSegments(1).toOSString() });
 								int rc2 = waitFor(p2);
 								if (rc2 == 0) {
 									copiedDirs.add(path);

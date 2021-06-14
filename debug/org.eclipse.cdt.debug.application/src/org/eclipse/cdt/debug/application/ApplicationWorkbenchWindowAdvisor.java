@@ -109,7 +109,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		Path x = new Path(input);
 		try {
 			if (!x.isAbsolute() && x.segmentCount() == 1) {
-				String command = "which " + input; //$NON-NLS-1$
+				String[] command = new String[] { "which", input }; //$NON-NLS-1$
 				Process p = null;
 				InputStream in = null;
 				try {

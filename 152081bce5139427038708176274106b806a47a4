@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4e5c52e3_6d9047c1",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2963,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-06-14T07:51:36Z",
+      "side": 1,
+      "message": "I\u0027m not sure of this, but it looks like DefaultManagedConfigElement contains a reference to the IExtension. Wouldn\u0027t it be enough to just use that for the lookup rather than looping over all implementations of the extension point?",
+      "parentUuid": "9533a661_af75db79",
+      "range": {
+        "startLine": 2963,
+        "startChar": 72,
+        "endLine": 2963,
+        "endChar": 79
+      },
+      "revId": "152081bce5139427038708176274106b806a47a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "12f3e31b_caea36cb",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
         "patchSetId": 3

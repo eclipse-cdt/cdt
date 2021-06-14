@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "660310ce_51e5bdd2",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2966,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-06-14T18:57:06Z",
+      "side": 1,
+      "message": "Oops, I missed the class location. You are right.",
+      "parentUuid": "d4ca1745_4af12b7a",
+      "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "16f8235d_5ed48aa0",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
         "patchSetId": 4
@@ -69,6 +87,24 @@
       "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71cade10_69dd2822",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2967,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-06-14T18:57:06Z",
+      "side": 1,
+      "message": "Yes, I tried to mention \"platform:/plugin\" URIs\n\nThank you for the answer",
+      "parentUuid": "8b84c09d_29bfe0a0",
+      "revId": "316dee76b199046aa15cee1617146f4534d93fe6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

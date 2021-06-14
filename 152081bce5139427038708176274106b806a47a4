@@ -73,6 +73,53 @@
     },
     {
       "key": {
+        "uuid": "dd0d27ac_5adcd669",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2963,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-14T16:19:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0139f48f_3b89df4f",
+      "range": {
+        "startLine": 2963,
+        "startChar": 72,
+        "endLine": 2963,
+        "endChar": 79
+      },
+      "revId": "152081bce5139427038708176274106b806a47a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4641e8b_33fdc018",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2975,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-14T16:19:08Z",
+      "side": 1,
+      "message": "(sorry - I thought I wrote this comment already - not sure where it went)\n\nThis is the wrong method to call, it probably should be extention.getContributor().getName() - see depreaction notice on the getNamespace method. \n\nhttps://help.eclipse.org/2021-03/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/IExtension.html#getNamespace()\n\nNote that the implementation of the deprecated getNamespace is to call getContributor().getName().\n\nNote that getContributor().getName() is the same as getNamespaceIdentifier for plugins declaring themselves as \u003c 3.2 (\u003c?eclipse version\u003d\"3.2\"?\u003e).",
+      "range": {
+        "startLine": 2975,
+        "startChar": 50,
+        "endLine": 2975,
+        "endChar": 72
+      },
+      "revId": "152081bce5139427038708176274106b806a47a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "12f3e31b_caea36cb",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
         "patchSetId": 3
@@ -93,6 +140,30 @@
       "revId": "152081bce5139427038708176274106b806a47a4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f68c0b6d_4e8bd57c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2976,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-14T16:19:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12f3e31b_caea36cb",
+      "range": {
+        "startLine": 2976,
+        "startChar": 14,
+        "endLine": 2976,
+        "endChar": 45
+      },
+      "revId": "152081bce5139427038708176274106b806a47a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -119,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "98b08cec_0c4545a4",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2979,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-14T16:19:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9f90a0c_61ebf47f",
+      "range": {
+        "startLine": 2979,
+        "startChar": 14,
+        "endLine": 2979,
+        "endChar": 41
+      },
+      "revId": "152081bce5139427038708176274106b806a47a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7ae15a6_ea609e37",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
         "patchSetId": 3
@@ -139,6 +234,30 @@
       "revId": "152081bce5139427038708176274106b806a47a4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7f93546_8414242f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2989,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-14T16:19:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7ae15a6_ea609e37",
+      "range": {
+        "startLine": 2989,
+        "startChar": 2,
+        "endLine": 2989,
+        "endChar": 17
+      },
+      "revId": "152081bce5139427038708176274106b806a47a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -22,6 +22,30 @@
       "revId": "6352e0c207d468811700411f1b13f4224e2085de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a417163_99735ea1",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2976,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-14T16:19:08Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "360cab16_7a7e8a40",
+      "range": {
+        "startLine": 2975,
+        "startChar": 8,
+        "endLine": 2976,
+        "endChar": 32
+      },
+      "revId": "6352e0c207d468811700411f1b13f4224e2085de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

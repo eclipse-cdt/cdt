@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "0139f48f_3b89df4f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2963,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-14T11:00:28Z",
+      "side": 1,
+      "message": "Yes, that is likely.",
+      "parentUuid": "4e5c52e3_6d9047c1",
+      "range": {
+        "startLine": 2963,
+        "startChar": 72,
+        "endLine": 2963,
+        "endChar": 79
+      },
+      "revId": "152081bce5139427038708176274106b806a47a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "12f3e31b_caea36cb",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java",
         "patchSetId": 3

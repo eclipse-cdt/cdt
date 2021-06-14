@@ -142,6 +142,9 @@ class ProjectMap {
 	 */
 	public void save() throws CoreException {
 		ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(fProject, true);
+		if (pd == null) {
+			return;
+		}
 
 		// remove current associations
 		ICStorageElement data = pd.getStorage(ATTRVAL_STORAGEID, true);

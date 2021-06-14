@@ -50,9 +50,10 @@ public abstract class BaseParserTest {
 	public static void beforeClassMethod() {
 		// Verify that the necessary binaries are available, and if they are not,
 		// the tests will be ignored.
-		String[] testBinaryCommands = { "libtool --version", "autoconf --version", "automake --version" };
+		String[][] testBinaryCommands = { { "libtool", "--version" }, { "autoconf", "--version" },
+				{ "automake", "--version" } };
 		try {
-			for (String cmd : testBinaryCommands) {
+			for (String[] cmd : testBinaryCommands) {
 				Process process = ProcessFactory.getFactory().exec(cmd);
 				process.destroy();
 			}

@@ -56,6 +56,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	private SelectionButtonDialogField fOutlineGroupMacros;
 	private SelectionButtonDialogField fShowSourceRootsAtTopOfProject;
 	private SelectionButtonDialogField fCViewSortOrderOfExcludedFiles;
+	private SelectionButtonDialogField fOutlineHidePragmaMarks;
 
 	public AppearancePreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
@@ -102,6 +103,10 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fOutlineGroupMacros.setDialogFieldListener(listener);
 		fOutlineGroupMacros.setLabelText(PreferencesMessages.AppearancePreferencePage_outlineGroupMacros_label);
 
+		fOutlineHidePragmaMarks = new SelectionButtonDialogField(SWT.CHECK);
+		fOutlineHidePragmaMarks.setDialogFieldListener(listener);
+		fOutlineHidePragmaMarks.setLabelText(PreferencesMessages.AppearancePreferencePage_HidePragmaMarks_label);
+
 		fCViewGroupMacros = new SelectionButtonDialogField(SWT.CHECK);
 		fCViewGroupMacros.setDialogFieldListener(listener);
 		fCViewGroupMacros.setLabelText(PreferencesMessages.AppearancePreferencePage_cviewGroupMacros_label);
@@ -123,6 +128,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fOutlineGroupNamespaces.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
 		fOutlineGroupMembers.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
 		fOutlineGroupMacros.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS));
+		fOutlineHidePragmaMarks.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_HIDE_PRAGMA_MARK));
 		boolean showSourceRootsAtTopOfProject = CCorePlugin.showSourceRootsAtTopOfProject();
 		fShowSourceRootsAtTopOfProject.setSelection(showSourceRootsAtTopOfProject);
 		fCViewSortOrderOfExcludedFiles.setSelection(prefs.getBoolean(PreferenceConstants.SORT_ORDER_OF_EXCLUDED_FILES));
@@ -159,6 +165,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fOutlineGroupMembers.doFillIntoGrid(result, nColumns);
 		fCViewGroupMacros.doFillIntoGrid(result, nColumns);
 		fOutlineGroupMacros.doFillIntoGrid(result, nColumns);
+		fOutlineHidePragmaMarks.doFillIntoGrid(result, nColumns);
 
 		new Separator().doFillIntoGrid(result, nColumns);
 
@@ -216,6 +223,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_NAMESPACES, fOutlineGroupNamespaces.isSelected());
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_MEMBERS, fOutlineGroupMembers.isSelected());
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_MACROS, fOutlineGroupMacros.isSelected());
+		prefs.setValue(PreferenceConstants.OUTLINE_HIDE_PRAGMA_MARK, fOutlineHidePragmaMarks.isSelected());
 		prefs.setValue(PreferenceConstants.SORT_ORDER_OF_EXCLUDED_FILES, fCViewSortOrderOfExcludedFiles.isSelected());
 		try {
 			InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID).flush();
@@ -244,6 +252,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fOutlineGroupNamespaces.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
 		fOutlineGroupMembers.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
 		fOutlineGroupMacros.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS));
+		fOutlineHidePragmaMarks.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_HIDE_PRAGMA_MARK));
 		boolean showSourceRootsPref = DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID)
 				.getBoolean(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT, true);
 		fShowSourceRootsAtTopOfProject.setSelection(showSourceRootsPref);

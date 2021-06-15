@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
+import java.util.Optional;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
@@ -27,6 +29,8 @@ import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IInheritance;
 import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.IPragma;
+import org.eclipse.cdt.core.model.IPragma.PragmaMarkInfo;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -35,12 +39,18 @@ import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.model.CoreModelMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.TextStyle;
+import org.eclipse.ui.PlatformUI;
 
 // Most parts of this file were previously located in CElementLabels.
 // FlexibleBuffer and sub-types are taken from JDTs JavaElementLabelComposer.
@@ -214,6 +224,9 @@ public class CElementLabelComposer {
 		case ICElement.C_MACRO:
 			appendMacroLabel((IMacro) element, flags);
 			break;
+		case ICElement.C_PRAGMA:
+			appendPragmaLabel((IPragma) element, flags);
+			break;
 		case ICElement.C_METHOD:
 		case ICElement.C_METHOD_DECLARATION:
 		case ICElement.C_TEMPLATE_METHOD:
@@ -301,6 +314,45 @@ public class CElementLabelComposer {
 
 		if (getFlag(flags, CElementLabels.MF_POST_FILE_QUALIFIED)) {
 			IPath path = macro.getPath();
+			if (path != null) {
+				int offset = fBuffer.length();
+				fBuffer.append(CElementLabels.CONCAT_STRING);
+				fBuffer.append(path.toString());
+				if (getFlag(flags, CElementLabels.COLORIZE)) {
+					fBuffer.setStyle(offset, fBuffer.length() - offset, QUALIFIER_STYLE);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Appends the label for a pragma definition to a StringBuilder.
+	 * @param pragma a pragma
+	 * @param flags {@link CElementLabels#MF_POST_FILE_QUALIFIED}, or 0.
+	 */
+	public void appendPragmaLabel(IPragma pragma, long flags) {
+		Optional<PragmaMarkInfo> pragmaMarkInfo = pragma.getPragmaMarkInfo();
+		String display = pragmaMarkInfo.map(PragmaMarkInfo::getMarkName).orElseGet(() -> pragma.getElementName());
+		int displayOffset = fBuffer.length();
+		fBuffer.append(display);
+		if (pragmaMarkInfo.isPresent()) {
+			if (getFlag(flags, CElementLabels.COLORIZE)) {
+				Styler styler = new Styler() {
+					@Override
+					public void applyStyles(TextStyle textStyle) {
+						textStyle.font = JFaceResources.getFont(PreferenceConstants.OUTLINE_MARK_TEXT_FONT);
+						ColorRegistry colorRegistry = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme()
+								.getColorRegistry();
+						textStyle.foreground = new Color(
+								colorRegistry.getRGB(PreferenceConstants.OUTLINE_MARK_TEXT_COLOR));
+					}
+				};
+				fBuffer.setStyle(displayOffset, fBuffer.length() - displayOffset, styler);
+			}
+		}
+
+		if (getFlag(flags, CElementLabels.MF_POST_FILE_QUALIFIED)) {
+			IPath path = pragma.getPath();
 			if (path != null) {
 				int offset = fBuffer.length();
 				fBuffer.append(CElementLabels.CONCAT_STRING);

@@ -244,6 +244,12 @@ public interface ICElement extends IAdaptable {
 	static final int ASM_LABEL = 94;
 
 	/**
+	 * A pragma statement.
+	 * @since 7.3
+	 */
+	static final int C_PRAGMA = 95;
+
+	/**
 	 * @deprecated use {@link IMethodDeclaration#isConstructor()}
 	 * @noreference This field is not intended to be referenced by clients.
 	 */

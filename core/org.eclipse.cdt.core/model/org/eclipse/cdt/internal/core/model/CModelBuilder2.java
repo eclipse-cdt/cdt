@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -210,20 +211,18 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		fVisibilityStack = new Stack<>();
 		fEqualElements = new HashMap<>();
 
-		// includes
-		final IASTPreprocessorIncludeStatement[] includeDirectives = ast.getIncludeDirectives();
-		for (IASTPreprocessorIncludeStatement includeDirective : includeDirectives) {
-			if (isLocalToFile(includeDirective)) {
-				createInclusion(fTranslationUnit, includeDirective);
+		for (IASTPreprocessorStatement statement : ast.getAllPreprocessorStatements()) {
+			if (statement instanceof IASTPreprocessorIncludeStatement) {
+				if (isLocalToFile(statement)) {
+					createInclusion(fTranslationUnit, (IASTPreprocessorIncludeStatement) statement);
+				}
+			} else if (statement instanceof IASTPreprocessorMacroDefinition) {
+				if (isLocalToFile(statement)) {
+					createMacro(fTranslationUnit, (IASTPreprocessorMacroDefinition) statement);
+				}
 			}
 		}
-		// Macros
-		final IASTPreprocessorMacroDefinition[] macroDefinitions = ast.getMacroDefinitions();
-		for (IASTPreprocessorMacroDefinition macroDefinition : macroDefinitions) {
-			if (isLocalToFile(macroDefinition)) {
-				createMacro(fTranslationUnit, macroDefinition);
-			}
-		}
+
 		// Declarations
 		final IASTDeclaration[] declarations = ast.getDeclarations(true);
 		for (IASTDeclaration declaration : declarations) {

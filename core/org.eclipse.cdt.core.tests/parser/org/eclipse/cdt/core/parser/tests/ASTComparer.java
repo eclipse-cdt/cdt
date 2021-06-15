@@ -46,7 +46,7 @@ public class ASTComparer extends Assert {
 
 			// Ignore preprocessor nodes
 			"getMacroDefinitions", "getBuiltinMacroDefinitions", "getIncludeDirectives", "getAllPreprocessorStatements",
-			"getMacroExpansions", "getPreprocessorProblems", "getComments",
+			"getMacroExpansions", "getPreprocessorProblems", "getComments", "getPragmaStatements",
 
 			// Avoid name resolution
 			"isDeclaration", "isDefinition", "isReference", "isAssociatedWithLastName", "getNestingLevel",

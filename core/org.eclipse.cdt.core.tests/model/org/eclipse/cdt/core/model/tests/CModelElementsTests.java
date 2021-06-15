@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.IMethodTemplateDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.IPragma;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IStructure;
@@ -137,6 +138,98 @@ public class CModelElementsTests extends BaseTestCase {
 
 		checkBug180815(tu);
 		checkBug352350(tu);
+
+		checkPragmas(tu);
+	}
+
+	private void checkPragmas(ITranslationUnit tu) throws CModelException {
+		List pragmas = tu.getChildrenOfType(ICElement.C_PRAGMA);
+
+		int line = 0;
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("mark - before and after -", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("before and after", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("mark - before", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(false, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("before", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("mark after -", pragma.getElementName());
+			assertEquals(false, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("after", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("mark neither", pragma.getElementName());
+			assertEquals(false, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(false, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("neither", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("mark -", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(false, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("mark", pragma.getElementName());
+			assertEquals(false, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(false, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			// region no name
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("region", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(false, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("region named", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("named", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("endregion", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(false, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("endregion endnamed", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("endnamed", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("ms_struct on", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().isEmpty());
+			assertEquals(false, pragma.isPragmaOperator());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("_Pragma(\"once\")", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().isEmpty());
+			assertEquals(true, pragma.isPragmaOperator());
+		}
+		assertEquals(line, pragmas.size());
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=180815

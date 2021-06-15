@@ -71,13 +71,17 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	 *            Tree viewer.
 	 */
 	public CContentOutlinerProvider(TreeViewer viewer, IWorkbenchPartSite site) {
-		super(true, true);
+		super(true, true, true, () -> isSorted(viewer));
 		treeViewer = viewer;
 		final IPreferenceStore store = PreferenceConstants.getPreferenceStore();
 		setIncludesGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
 		setNamespacesGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
 		setMemberGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
 		setMacroGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS));
+	}
+
+	private static boolean isSorted(TreeViewer viewer) {
+		return viewer != null && viewer.getComparator() != null;
 	}
 
 	/**

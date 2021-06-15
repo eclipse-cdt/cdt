@@ -214,6 +214,9 @@ public class CDTSharedImages {
 	public static final String IMG_VIEW_PIN_ACTION_B = "icons/obj16/toolbar_pinned_b.gif"; //$NON-NLS-1$
 	public static final String IMG_VIEW_PIN_ACTION_MULTI = "icons/obj16/toolbar_pinned_multi.gif"; //$NON-NLS-1$
 
+	/** @since 7.3*/
+	public static final String IMG_OUTLINE_MARK = "icons/obj16/outline_mark.png"; //$NON-NLS-1$
+
 	private static SharedImagesFactory imagesFactory = new SharedImagesFactory(CUIPlugin.getDefault());
 
 	/**

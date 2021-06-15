@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCOutlineLabelProvider;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IncludesGrouping;
@@ -52,6 +52,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.commands.ActionHandler;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -108,6 +109,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 
 		public COutlineLabelProvider(long textFlags, int imageFlags) {
 			super(textFlags, imageFlags);
+			JFaceResources.getFontRegistry().addListener(this);
 			PreferenceConstants.getPreferenceStore().addPropertyChangeListener(this);
 			fSimpleName = PreferenceConstants.getPreferenceStore()
 					.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
@@ -115,6 +117,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 
 		@Override
 		public void dispose() {
+			JFaceResources.getFontRegistry().removeListener(this);
 			PreferenceConstants.getPreferenceStore().removePropertyChangeListener(this);
 			super.dispose();
 		}
@@ -137,6 +140,15 @@ public abstract class AbstractCModelOutlinePage extends Page
 					fSimpleName = PreferenceConstants.getPreferenceStore()
 							.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
 				}
+			}
+			if (event.getProperty().equals(PreferenceConstants.OUTLINE_MARK_TEXT_FONT)) {
+				// TODO refresh
+			}
+			if (event.getProperty().equals(PreferenceConstants.OUTLINE_MARK_TEXT_COLOR)) {
+				// TODO refresh & add listener that will report this change
+			}
+			if (event.getProperty().equals(PreferenceConstants.OUTLINE_MARK_DIVIDER_COLOR)) {
+				// TODO refresh & add listener that will report this change
 			}
 		}
 	}
@@ -454,7 +466,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	protected ProblemTreeViewer createTreeViewer(Composite parent) {
 		ProblemTreeViewer treeViewer = new OutlineTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		treeViewer.setContentProvider(createContentProvider(treeViewer));
-		treeViewer.setLabelProvider(new DecoratingCLabelProvider(createLabelProvider(), true));
+		treeViewer.setLabelProvider(new DecoratingCOutlineLabelProvider(createLabelProvider()));
 		treeViewer.setAutoExpandLevel(3);
 		treeViewer.setUseHashlookup(true);
 		treeViewer.addSelectionChangedListener(this);

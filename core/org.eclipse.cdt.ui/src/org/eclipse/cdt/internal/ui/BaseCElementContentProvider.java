@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,9 +15,12 @@
 package org.eclipse.cdt.internal.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -37,10 +40,13 @@ import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.IPragma;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.model.Pragma;
+import org.eclipse.cdt.internal.ui.cview.DividerLine;
 import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.IncludesGrouping;
@@ -85,14 +91,22 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	protected boolean fNamespacesGrouping = false;
 	protected boolean fMemberGrouping = false;
 	protected boolean fMacroGrouping = false;
+	protected boolean fProvidePragmaMarks = false;
 
 	public BaseCElementContentProvider() {
-		this(false, false);
+		this(false, false, false);
 	}
 
-	public BaseCElementContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
+	/**
+	 *
+	 * @param provideMembers
+	 * @param provideWorkingCopy
+	 * @param providePragmaMarks Include {@link PragmaMark} and its {@link DividerLine}s
+	 */
+	public BaseCElementContentProvider(boolean provideMembers, boolean provideWorkingCopy, boolean providePragmaMarks) {
 		fProvideMembers = provideMembers;
 		fProvideWorkingCopy = provideWorkingCopy;
+		fProvidePragmaMarks = providePragmaMarks;
 	}
 
 	/**
@@ -452,6 +466,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	protected Object[] getTranslationUnitChildren(ITranslationUnit unit) throws CModelException {
 		Object[] children = unit.getChildren();
+		children = filterAndTransformPragmas(children);
 		if (fIncludesGrouping) {
 			boolean hasInclude = false;
 			ArrayList<Object> list = new ArrayList<>(children.length);
@@ -536,6 +551,46 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			children = list.toArray();
 		}
 		return children;
+	}
+
+	/**
+	 * Filter and transform pragma elements in the list
+	 * @param children the list of objects
+	 * @return a new list of objects
+	 */
+	private Object[] filterAndTransformPragmas(Object[] children) {
+		List<Object> list = new LinkedList<>(Arrays.asList(children));
+
+		for (ListIterator<Object> iterator = list.listIterator(); iterator.hasNext();) {
+			Object object = iterator.next();
+			if (object instanceof IPragma) {
+				IPragma iPragma = (IPragma) object;
+				// remove the pragma
+				iterator.remove();
+				if (!fProvidePragmaMarks) {
+					continue;
+				}
+
+				if (iPragma instanceof Pragma) {
+					Pragma pragma = (Pragma) iPragma;
+					pragma.getPragmaMarkInfo().ifPresent(info -> {
+						if (info.isDividerBeforeMark()) {
+							iterator.add(new DividerLine(iPragma));
+						}
+						if (!info.getMarkName().isEmpty()) {
+							// Add the pragma back in if the mark has something to display
+							iterator.add(pragma);
+						}
+						if (info.isDividerAfterMark()) {
+							iterator.add(new DividerLine(iPragma));
+						}
+					});
+				}
+
+			}
+		}
+
+		return list.toArray();
 	}
 
 	protected Object[] getNamespaceChildren(IParent element) throws CModelException {

@@ -97,7 +97,7 @@ public class CElementContentProvider extends BaseCElementContentProvider
 	 * Creates a new content provider for C elements.
 	 */
 	public CElementContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
-		super(provideMembers, provideWorkingCopy);
+		super(provideMembers, provideWorkingCopy, false, () -> false);
 	}
 
 	@Override

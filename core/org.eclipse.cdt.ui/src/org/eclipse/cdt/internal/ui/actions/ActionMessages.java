@@ -111,6 +111,9 @@ public class ActionMessages extends NLS {
 	public static String CopyQualifiedNameAction_ActionName;
 	public static String CopyQualifiedNameAction_ErrorTitle;
 	public static String CopyQualifiedNameAction_NoElementToQualify;
+	public static String HidePragmaMarks_label;
+	public static String HidePragmaMarks_tooltip;
+	public static String HidePragmaMarks_description;
 
 	static {
 		// Initialize resource bundle.

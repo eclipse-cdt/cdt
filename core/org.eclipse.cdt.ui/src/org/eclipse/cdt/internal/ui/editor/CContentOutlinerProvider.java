@@ -71,13 +71,18 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	 *            Tree viewer.
 	 */
 	public CContentOutlinerProvider(TreeViewer viewer, IWorkbenchPartSite site) {
-		super(true, true);
+		super(true, true, true, () -> isSorted(viewer));
 		treeViewer = viewer;
 		final IPreferenceStore store = PreferenceConstants.getPreferenceStore();
 		setIncludesGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
 		setNamespacesGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
 		setMemberGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
 		setMacroGrouping(store.getBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS));
+		setHidePragmaMark(store.getBoolean(PreferenceConstants.OUTLINE_HIDE_PRAGMA_MARK));
+	}
+
+	private static boolean isSorted(TreeViewer viewer) {
+		return viewer != null && viewer.getComparator() != null;
 	}
 
 	/**
@@ -373,6 +378,15 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 					boolean value = ((Boolean) newValue).booleanValue();
 					if (isMacroGroupingEnabled() != value) {
 						setMacroGrouping(value);
+						contentUpdated();
+					}
+				}
+			} else if (prop.equals(PreferenceConstants.OUTLINE_HIDE_PRAGMA_MARK)) {
+				Object newValue = event.getNewValue();
+				if (newValue instanceof Boolean) {
+					boolean value = ((Boolean) newValue).booleanValue();
+					if (isHidePragmaMarkEnabled() != value) {
+						setHidePragmaMark(value);
 						contentUpdated();
 					}
 				}

@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
@@ -108,6 +109,14 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	private ASTAccessVisibility fCurrentVisibility;
 	private Stack<ASTAccessVisibility> fVisibilityStack;
 	private HashMap<ISourceReference, int[]> fEqualElements;
+
+	/**
+	 * To support the new feature "#pragma mark to Outline view" (Bug 546981) the model was updated
+	 * to include pragmas. Because the model is widely used, this feature flag allows turning off
+	 * including pragmas in the model.
+	 */
+	private static final boolean INCLUDE_PRAGMAS_IN_MODEL = Boolean
+			.parseBoolean(System.getProperty("org.eclipse.cdt.core.model_include_pragmas", "true")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * Create a model builder for the given translation unit.
@@ -220,6 +229,12 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				if (isLocalToFile(statement)) {
 					createMacro(fTranslationUnit, (IASTPreprocessorMacroDefinition) statement);
 				}
+			} else if (statement instanceof IASTPreprocessorPragmaStatement) {
+				if (INCLUDE_PRAGMAS_IN_MODEL) {
+					if (isLocalToFile(statement)) {
+						createPragma(fTranslationUnit, (IASTPreprocessorPragmaStatement) statement);
+					}
+				}
 			}
 		}
 
@@ -317,6 +332,27 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		if (macro instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
 			element.setFunctionStyle(true);
 		}
+		return element;
+	}
+
+	private Pragma createPragma(Parent parent, IASTPreprocessorPragmaStatement pragma) throws CModelException {
+		// Create element
+		String name;
+		if (pragma.isPragmaOperator()) {
+			name = pragma.getRawSignature();
+		} else {
+			char[] message = pragma.getMessage();
+			name = new String(message);
+		}
+		Pragma element = new Pragma(parent, name);
+		setIndex(element);
+		element.setActive(pragma.isActive());
+		// Add to parent
+		parent.addChild(element);
+		// Set positions
+		setIdentifierPosition(element, pragma);
+		setBodyPosition(element, pragma);
+		element.setPragmaOperator(pragma.isPragmaOperator());
 		return element;
 	}
 
@@ -1217,6 +1253,16 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Utility method to set the identifier position of an element from an AST node.
+	 *
+	 * @param element
+	 * @param astNode
+	 */
+	private void setIdentifierPosition(SourceManipulation element, IASTNode astNode) {
+		setIdentifierPosition(getSourceManipulationInfo(element), astNode);
 	}
 
 	/**

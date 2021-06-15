@@ -144,3 +144,17 @@ struct bug180815 {
 namespace {
   int bug352350;
 }
+
+// https://bugs.eclipse.org/bugs/show_bug.cgi?id=574271
+#pragma mark - before and after -
+#pragma mark - before
+#pragma mark after -
+#pragma mark neither
+#pragma mark -// blank1
+#pragma mark // blank2
+#pragma region // no name
+#pragma region named
+#pragma endregion // no name
+#pragma endregion endnamed
+#pragma ms_struct on
+_Pragma("once")

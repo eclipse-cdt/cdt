@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.ui.editor.LexicalSortingAction;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCOutlineLabelProvider;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -84,7 +84,7 @@ public class COutlineInformationControl extends AbstractInformationControl {
 		if (PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS))
 			textFlags = textFlags | CElementLabels.M_SIMPLE_NAME | CElementLabels.F_SIMPLE_NAME;
 		treeViewer.setLabelProvider(
-				new DecoratingCLabelProvider(new AppearanceAwareLabelProvider(textFlags, IMAGE_FLAGS), true));
+				new DecoratingCOutlineLabelProvider(new AppearanceAwareLabelProvider(textFlags, IMAGE_FLAGS)));
 		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		return treeViewer;
 	}

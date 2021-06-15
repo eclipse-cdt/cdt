@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,10 +15,14 @@
 package org.eclipse.cdt.internal.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
@@ -37,10 +41,12 @@ import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.IPragma;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.cview.DividerLine;
 import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.IncludesGrouping;
@@ -50,6 +56,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -85,14 +92,29 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	protected boolean fNamespacesGrouping = false;
 	protected boolean fMemberGrouping = false;
 	protected boolean fMacroGrouping = false;
+	protected boolean fProvidePragmaMarks = false;
+
+	private BooleanSupplier fIsSorted;
 
 	public BaseCElementContentProvider() {
-		this(false, false);
+		this(false, false, false, () -> false);
 	}
 
-	public BaseCElementContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
+	/**
+	 *
+	 * @param provideMembers
+	 * @param provideWorkingCopy
+	 * @param providePragmaMarks Include {@link PragmaMark} and its {@link DividerLine}s
+	 * @param isSorted is a non-<code>null</code> supplier that returns true if the content is sorted, this is used
+	 * to remove {@link DividerLine}s when sorted
+	 */
+	public BaseCElementContentProvider(boolean provideMembers, boolean provideWorkingCopy, boolean providePragmaMarks,
+			BooleanSupplier isSorted) {
+		Assert.isNotNull(isSorted);
 		fProvideMembers = provideMembers;
 		fProvideWorkingCopy = provideWorkingCopy;
+		fProvidePragmaMarks = providePragmaMarks;
+		fIsSorted = isSorted;
 	}
 
 	/**
@@ -185,6 +207,21 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 */
 	public void setMacroGrouping(boolean enable) {
 		fMacroGrouping = enable;
+	}
+
+	/**
+	 * @return whether hiding pragma mark is enabled
+	 */
+	public boolean isHidePragmaMarkEnabled() {
+		return !fProvidePragmaMarks;
+	}
+
+	/**
+	 * Enable/disable hiding pragma mark
+	 * @param enable
+	 */
+	public void setHidePragmaMark(boolean enable) {
+		fProvidePragmaMarks = !enable;
 	}
 
 	/* (non-Cdoc)
@@ -452,6 +489,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	protected Object[] getTranslationUnitChildren(ITranslationUnit unit) throws CModelException {
 		Object[] children = unit.getChildren();
+		children = filterAndTransformPragmas(children);
 		if (fIncludesGrouping) {
 			boolean hasInclude = false;
 			ArrayList<Object> list = new ArrayList<>(children.length);
@@ -536,6 +574,42 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			children = list.toArray();
 		}
 		return children;
+	}
+
+	/**
+	 * Filter and transform pragma elements in the list
+	 * @param children the list of objects
+	 * @return a new list of objects
+	 */
+	private Object[] filterAndTransformPragmas(Object[] children) {
+		List<Object> list = new LinkedList<>(Arrays.asList(children));
+		boolean isSorted = fIsSorted.getAsBoolean();
+		for (ListIterator<Object> iterator = list.listIterator(); iterator.hasNext();) {
+			Object object = iterator.next();
+			if (object instanceof IPragma) {
+				IPragma pragma = (IPragma) object;
+				// remove the pragma
+				iterator.remove();
+				if (!fProvidePragmaMarks) {
+					continue;
+				}
+
+				pragma.getPragmaMarkInfo().ifPresent(info -> {
+					if (!isSorted && info.isDividerBeforeMark()) {
+						iterator.add(new DividerLine(pragma));
+					}
+					if (!info.getMarkName().isEmpty()) {
+						// Add the pragma back in if the mark has something to display
+						iterator.add(pragma);
+					}
+					if (!isSorted && info.isDividerAfterMark()) {
+						iterator.add(new DividerLine(pragma));
+					}
+				});
+			}
+		}
+
+		return list.toArray();
 	}
 
 	protected Object[] getNamespaceChildren(IParent element) throws CModelException {

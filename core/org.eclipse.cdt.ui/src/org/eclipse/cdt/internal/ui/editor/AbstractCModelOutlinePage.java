@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCOutlineLabelProvider;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IncludesGrouping;
@@ -52,6 +52,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.commands.ActionHandler;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -60,6 +61,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -108,14 +110,18 @@ public abstract class AbstractCModelOutlinePage extends Page
 
 		public COutlineLabelProvider(long textFlags, int imageFlags) {
 			super(textFlags, imageFlags);
+			JFaceResources.getFontRegistry().addListener(this);
 			PreferenceConstants.getPreferenceStore().addPropertyChangeListener(this);
+			PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().addListener(this);
 			fSimpleName = PreferenceConstants.getPreferenceStore()
 					.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
 		}
 
 		@Override
 		public void dispose() {
+			JFaceResources.getFontRegistry().removeListener(this);
 			PreferenceConstants.getPreferenceStore().removePropertyChangeListener(this);
+			PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().removeListener(this);
 			super.dispose();
 		}
 
@@ -137,6 +143,15 @@ public abstract class AbstractCModelOutlinePage extends Page
 					fSimpleName = PreferenceConstants.getPreferenceStore()
 							.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
 				}
+			}
+			if (PreferenceConstants.OUTLINE_MARK_TEXT_FONT.equals(event.getProperty())) {
+				fireLabelProviderChanged(new LabelProviderChangedEvent(this));
+			}
+			if (PreferenceConstants.OUTLINE_MARK_TEXT_COLOR.equals(event.getProperty())) {
+				fireLabelProviderChanged(new LabelProviderChangedEvent(this));
+			}
+			if (PreferenceConstants.OUTLINE_MARK_DIVIDER_COLOR.equals(event.getProperty())) {
+				fireLabelProviderChanged(new LabelProviderChangedEvent(this));
 			}
 		}
 	}
@@ -237,6 +252,29 @@ public abstract class AbstractCModelOutlinePage extends Page
 
 		public boolean isMacroGroupingEnabled() {
 			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS);
+		}
+	}
+
+	protected static class HidePragmaMarkAction extends Action {
+
+		public HidePragmaMarkAction(AbstractCModelOutlinePage outlinePage) {
+			super(ActionMessages.HidePragmaMarks_label);
+			setDescription(ActionMessages.HidePragmaMarks_description);
+			setToolTipText(ActionMessages.HidePragmaMarks_tooltip);
+			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_HIDE_PRAGMA_MARKS);
+
+			boolean enabled = isHidePragmaMarkEnabled();
+			setChecked(enabled);
+		}
+
+		@Override
+		public void run() {
+			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_HIDE_PRAGMA_MARK,
+					isChecked());
+		}
+
+		public boolean isHidePragmaMarkEnabled() {
+			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_HIDE_PRAGMA_MARK);
 		}
 	}
 
@@ -454,7 +492,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	protected ProblemTreeViewer createTreeViewer(Composite parent) {
 		ProblemTreeViewer treeViewer = new OutlineTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		treeViewer.setContentProvider(createContentProvider(treeViewer));
-		treeViewer.setLabelProvider(new DecoratingCLabelProvider(createLabelProvider(), true));
+		treeViewer.setLabelProvider(new DecoratingCOutlineLabelProvider(createLabelProvider()));
 		treeViewer.setAutoExpandLevel(3);
 		treeViewer.setUseHashlookup(true);
 		treeViewer.addSelectionChangedListener(this);
@@ -604,6 +642,8 @@ public abstract class AbstractCModelOutlinePage extends Page
 		fToggleLinkingAction = new ToggleLinkingAction();
 		menu.add(fToggleLinkingAction);
 
+		menu.add(new Separator("dividers.layout")); //$NON-NLS-1$
+		menu.add(new HidePragmaMarkAction(this));
 		menu.add(new Separator("group.layout")); //$NON-NLS-1$
 		menu.add(new IncludeGroupingAction(this));
 		menu.add(new MacroGroupingAction(this));

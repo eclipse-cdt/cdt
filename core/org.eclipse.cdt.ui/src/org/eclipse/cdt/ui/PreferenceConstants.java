@@ -561,6 +561,24 @@ public class PreferenceConstants {
 	public final static String EDITOR_TEXT_FONT = "org.eclipse.cdt.ui.editors.textfont"; //$NON-NLS-1$
 
 	/**
+	 * The symbolic font name for the C/C++ outline pragma mark or pragma region text font.
+	 * @since 7.3
+	 */
+	public final static String OUTLINE_MARK_TEXT_FONT = "org.eclipse.cdt.ui.outline.mark.textfont"; //$NON-NLS-1$
+
+	/**
+	 * The color preference for the C/C++ outline pragma mark or pragma region text font color.
+	 * @since 7.3
+	 */
+	public final static String OUTLINE_MARK_TEXT_COLOR = "org.eclipse.cdt.ui.outline.mark.textcolor"; //$NON-NLS-1$
+
+	/**
+	 * The color preference for the C/C++ outline pragma mark or pragma region divider color.
+	 * @since 7.3
+	 */
+	public final static String OUTLINE_MARK_DIVIDER_COLOR = "org.eclipse.cdt.ui.outline.mark.dividercolor"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls whether the cview's selection is linked to the active
 	 * editor.
 	 * <p>
@@ -765,6 +783,14 @@ public class PreferenceConstants {
 	 * Value is of type {@code Boolean}.
 	 */
 	public static final String OUTLINE_LINK_TO_EDITOR = "org.eclipse.cdt.ui.outline.linktoeditor"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether the Outline view should hide pragma mark directives.
+	 * <p>
+	 * Value is of type {@code Boolean}.
+	 * @since 7.3
+	 */
+	public static final String OUTLINE_HIDE_PRAGMA_MARK = "org.eclipse.cdt.ui.outline.hidePragmaMark"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether include directives should be grouped in

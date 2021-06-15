@@ -16,6 +16,24 @@
       "revId": "3e0ceebfa3b360e17903819027b4cb09133e39d6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "740ff85f_9e31d831",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CModelBuilder2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-15T03:42:19Z",
+      "side": 1,
+      "message": "I have reviewed many of the places in CDT itself and how it uses this information. Many of the code paths properly handle new types being returned, and none of them that I have reviewed fails when I return the pragmas along with the other information.\n\nHowever, this does have a side effect, for example the left vertical ruler highlight becomes highlighted for pragmas with this change, not highlighted before it.\n\nITranslationUnit does vaguely document that \" The children are of type {@code IStructureElement}, {@code IInclude}, etc.. and appear in the order in which they are declared in the source.\" and I am not violating that constraint by changing the return value of ITranslationUnit.getChildren\n\nBecause we are not changing the AST, and all the \"fancy/complicated\" stuff happens on the AST, the risk seems lower.\n\nThe conservative part of me makes me want to hide the whole new feature in a preference that prevents the pragmas ending up in the model if not enabled. \n\nTh part of me that does not want to be stuck on \"legacy\" forever makes me want to just do it.\n\nThoughts?",
+      "parentUuid": "3849189d_5704b58f",
+      "revId": "3e0ceebfa3b360e17903819027b4cb09133e39d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

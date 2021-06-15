@@ -18,6 +18,7 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
@@ -42,6 +43,8 @@ import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.model.Pragma;
+import org.eclipse.cdt.internal.core.model.Pragma.PragmaMarkInfo;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -483,6 +486,15 @@ public class CElementImageProvider {
 
 		case ICElement.C_USING:
 			return getUsingImageDescriptor();
+
+		case ICElement.C_PRAGMA:
+			if (celement instanceof Pragma) {
+				Pragma pragma = (Pragma) celement;
+				Optional<PragmaMarkInfo> pragmaMarkInfo = pragma.getPragmaMarkInfo();
+				return pragmaMarkInfo.map(x -> CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OUTLINE_MARK))
+						.orElse(null);
+			}
+			return null;
 
 		default:
 			return getImageDescriptor(type);

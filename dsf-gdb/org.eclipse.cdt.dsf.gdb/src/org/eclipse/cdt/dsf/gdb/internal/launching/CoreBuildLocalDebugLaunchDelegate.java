@@ -59,7 +59,11 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 		} else {
 			locator.initializeFromMemento(memento, configuration);
 		}
-
+		String type = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
+		if (type == null) {
+			type = configuration.getType().getSourceLocatorId();
+		}
+		locator.setId(type);
 		launch.setSourceLocator(locator);
 		return launch;
 	}

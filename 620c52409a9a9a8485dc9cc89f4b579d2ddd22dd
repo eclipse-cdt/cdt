@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1610979d_21512785",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 462,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-16T21:06:15Z",
+      "side": 1,
+      "message": "+1  - this makes the code here match the logic in org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditor.addSourceMappingToLaunch(String, IPath) so that (as you said in the bug) modifying with the source not found editor will result in the same ID.",
+      "revId": "620c52409a9a9a8485dc9cc89f4b579d2ddd22dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -312,14 +312,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			return false;
 		if (strText == null)
 			return false;
-		if (!fEncoding.equals(defaultEncoding)) {
-			sendString(strText);
-		} else {
-			// TODO I do not understand why pasteString would do this here...
-			for (int i = 0; i < strText.length(); i++) {
-				sendChar(strText.charAt(i), false);
-			}
-		}
+		sendString(strText);
 		return true;
 	}
 

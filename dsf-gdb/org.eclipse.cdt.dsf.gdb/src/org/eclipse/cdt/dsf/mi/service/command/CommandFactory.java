@@ -62,6 +62,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInferior;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoBreak;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoProgram;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoRecord;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIFunctionsCallHistory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoSharedLibrary;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoThreads;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIJump;
@@ -208,6 +209,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoRecordInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIFunctionsCallHistoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIShowEndianInfo;
@@ -652,6 +654,13 @@ public class CommandFactory {
 		return new MIExecReturn(dmc, arg);
 	}
 
+	/**
+	 * @since 6.5
+	 */
+	public ICommand<CLIFunctionsCallHistoryInfo> createCLIFunctionsCallHistory(ICommandControlDMContext ctx) {
+		return new CLIFunctionsCallHistory(ctx);
+	}
+
 	public ICommand<MIInfo> createMIExecReverseContinue(IExecutionDMContext dmc) {
 		return new MIExecReverseContinue(dmc);
 	}
@@ -886,7 +895,7 @@ public class CommandFactory {
 		return new MIGDBSetSolibSearchPath(ctx, paths);
 	}
 
-	/** @since 6.4 */
+	/** @since 6.5 */
 	public ICommand<MIInfo> createMIGDBSetStartupWithShell(ICommandControlDMContext ctx, boolean enable) {
 		return new MIGDBSetStartupWithShell(ctx, enable);
 	}

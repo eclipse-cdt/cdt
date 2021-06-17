@@ -16,6 +16,24 @@
       "revId": "47896a3f2d8906bae97d66bcde169eeb2b0ae5a4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e637b74d_8bf2efd5",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/emulator/VT100TerminalControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-17T20:04:19Z",
+      "side": 1,
+      "message": "Done: https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/182140",
+      "parentUuid": "dadc38a3_8ebcda7b",
+      "revId": "47896a3f2d8906bae97d66bcde169eeb2b0ae5a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

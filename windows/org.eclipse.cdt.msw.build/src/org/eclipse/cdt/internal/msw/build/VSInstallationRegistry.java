@@ -35,11 +35,12 @@ public class VSInstallationRegistry {
 		fVsInstallations = new TreeMap<>();
 		// We are opting-in which versions to detect instead of trying to detect even unknown ones in order
 		// to allow proper testing for a new version before exposing it to users.
-		Arrays.asList(IVSVersionConstants.VS2017_BASE_VER, IVSVersionConstants.VS2019_BASE_VER).forEach(version -> {
-			VSInstallation insllation = detectVSInstallation(version);
-			if (insllation != null)
-				fVsInstallations.put(version, insllation);
-		});
+		Arrays.asList(IVSVersionConstants.VS2017_BASE_VER, IVSVersionConstants.VS2019_BASE_VER,
+				IVSVersionConstants.VS2022_BASE_VER).forEach(version -> {
+					VSInstallation insllation = detectVSInstallation(version);
+					if (insllation != null)
+						fVsInstallations.put(version, insllation);
+				});
 	}
 
 	private static VSInstallation detectVSInstallation(VSVersionNumber baseVersion) {

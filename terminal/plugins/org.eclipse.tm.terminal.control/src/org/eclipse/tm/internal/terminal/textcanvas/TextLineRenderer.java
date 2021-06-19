@@ -176,7 +176,7 @@ public class TextLineRenderer implements ILinelRenderer {
 				// TODO why do I have to draw the background character by character??????
 				gc.fillRectangle(xx, y, fStyleMap.getFontWidth(), fStyleMap.getFontHeight());
 				if (c != ' ' && c != '\000') {
-					gc.drawString(String.valueOf(c), fStyleMap.getCharOffset(c) + xx, y, true);
+					gc.drawString(String.valueOf(c), fStyleMap.getCharOffset(c) + xx, y, false);
 				}
 			}
 		} else {

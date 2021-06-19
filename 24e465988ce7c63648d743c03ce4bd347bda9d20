@@ -16,6 +16,24 @@
       "revId": "24e465988ce7c63648d743c03ce4bd347bda9d20",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b2e7c39_6741214d",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/ICElement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-19T22:13:53Z",
+      "side": 1,
+      "message": "I have reviewed switch statements, the default: for the ones not changed look like valid behaviour. However there are some code paths in CDT I have no idea how to hit, so relying on just inspection rather than inspection + running.",
+      "parentUuid": "c412da6f_b08d47fd",
+      "revId": "24e465988ce7c63648d743c03ce4bd347bda9d20",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

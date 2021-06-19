@@ -35,11 +35,12 @@ public class VSInstallationRegistry {
 		fVsInstallations = new TreeMap<>();
 		// We are opting-in which versions to detect instead of trying to detect even unknown ones in order
 		// to allow proper testing for a new version before exposing it to users.
-		Arrays.asList(IVSVersionConstants.VS2017_BASE_VER, IVSVersionConstants.VS2019_BASE_VER).forEach(version -> {
-			VSInstallation insllation = detectVSInstallation(version);
-			if (insllation != null)
-				fVsInstallations.put(version, insllation);
-		});
+		Arrays.asList(IVSVersionConstants.VS2017_BASE_VER, IVSVersionConstants.VS2019_BASE_VER,
+				IVSVersionConstants.VS2022_BASE_VER).forEach(version -> {
+					VSInstallation insllation = detectVSInstallation(version);
+					if (insllation != null)
+						fVsInstallations.put(version, insllation);
+				});
 	}
 
 	private static VSInstallation detectVSInstallation(VSVersionNumber baseVersion) {
@@ -48,7 +49,7 @@ public class VSInstallationRegistry {
 		String versionFilterRange = "[" + baseVersion.toString() + "," + upperBound + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String vsInstallationLocation[] = ProcessOutputUtil.getAllOutputFromCommand("cmd", "/c", //$NON-NLS-1$//$NON-NLS-2$
 				"\"\"%ProgramFiles(x86)%\\Microsoft Visual Studio\\Installer\\vswhere.exe\"\"", //$NON-NLS-1$
-				"-version", versionFilterRange, "-property", "installationPath"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"-prerelease", "-version", versionFilterRange, "-property", "installationPath"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (vsInstallationLocation == null || vsInstallationLocation.length == 0
 				|| vsInstallationLocation[0].isEmpty()) {
 			return null;

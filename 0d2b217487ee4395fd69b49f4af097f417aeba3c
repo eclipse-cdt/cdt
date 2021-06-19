@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c1649a84_f1814d2a",
+        "filename": "windows/org.eclipse.cdt.msw.build/src/org/eclipse/cdt/internal/msw/build/VSInstallationRegistry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-19T04:14:09Z",
+      "side": 1,
+      "message": "this line needs to be reverted for the real release.",
+      "revId": "0d2b217487ee4395fd69b49f4af097f417aeba3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

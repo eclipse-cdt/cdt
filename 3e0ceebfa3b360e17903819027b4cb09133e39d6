@@ -87,6 +87,24 @@
       "revId": "3e0ceebfa3b360e17903819027b4cb09133e39d6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f24122fb_f5d96a38",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CModelBuilder2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-19T23:42:37Z",
+      "side": 1,
+      "message": "\u003e Th part of me that does not want to be stuck on \"legacy\" forever makes me want to just do it.\n\u003e Thoughts?\n\nI saw let\u0027s do it. \n* You already went through many cases and found no issue.\n* It\u0027s not the first time a new element type is added.\n* CDT being more in community rebuilding mode, choosing between a reasonably small risk of side effect and a flashy new feature on by default, I feel the latter should win right now.",
+      "parentUuid": "e617845d_dd71ef33",
+      "revId": "3e0ceebfa3b360e17903819027b4cb09133e39d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

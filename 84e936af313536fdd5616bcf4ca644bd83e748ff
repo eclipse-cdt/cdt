@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d253468f_fb6fec80",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/Pragma.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-19T22:12:35Z",
+      "side": 1,
+      "message": "Need a test for this.",
+      "revId": "84e936af313536fdd5616bcf4ca644bd83e748ff",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

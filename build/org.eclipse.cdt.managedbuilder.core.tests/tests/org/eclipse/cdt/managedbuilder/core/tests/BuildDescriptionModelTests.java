@@ -55,6 +55,7 @@ import org.eclipse.cdt.managedbuilder.internal.buildmodel.DbgUtil;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
+import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -62,6 +63,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -877,6 +879,17 @@ public class BuildDescriptionModelTests extends TestCase {
 	}
 
 	private IProject createProject(String name, String id) {
+
+		//  In case the projects need to be updated...
+		IOverwriteQuery queryALL = new IOverwriteQuery() {
+			@Override
+			public String queryOverwrite(String file) {
+				return ALL;
+			}
+		};
+		UpdateManagedProjectManager.setBackupFileOverwriteQuery(queryALL);
+		UpdateManagedProjectManager.setUpdateProjectQuery(queryALL);
+
 		IProject proj = ManagedBuildTestHelper.createProject(name, id);
 		if (proj != null)
 			fCompositeCleaner.addRunnable(new ProjectCleaner(proj));

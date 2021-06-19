@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e97012da_d06b8e56",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/ILocationResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-19T21:24:22Z",
+      "side": 1,
+      "message": "Method removed.",
+      "parentUuid": "a2498f36_220a02a7",
+      "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "89888c01_9c4101c9",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/PragmaMark.java",
         "patchSetId": 3
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "98985cb1_cf1807cd",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/PragmaMark.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-19T21:24:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "89888c01_9c4101c9",
+      "range": {
+        "startLine": 49,
+        "startChar": 15,
+        "endLine": 49,
+        "endChar": 26
+      },
+      "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6938331b_1bb02159",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/PragmaMark.java",
         "patchSetId": 3
@@ -62,6 +104,30 @@
       "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3d96a89_7f768347",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/PragmaMark.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-19T21:24:22Z",
+      "side": 1,
+      "message": "Now using font definition.",
+      "parentUuid": "6938331b_1bb02159",
+      "range": {
+        "startLine": 50,
+        "startChar": 63,
+        "endLine": 50,
+        "endChar": 89
+      },
+      "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -132,6 +198,24 @@
       "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95fca2ee_f53dbeb3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/DecoratingCLabelProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-19T21:24:22Z",
+      "side": 1,
+      "message": "measure is used.",
+      "parentUuid": "7773b24a_f86e6bc8",
+      "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -222,6 +306,54 @@
         "startChar": 3,
         "endLine": 64,
         "endChar": 11
+      },
+      "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18a62681_09a709e7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/DecoratingCLabelProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-19T21:24:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "355c13b6_ca27109e",
+      "range": {
+        "startLine": 64,
+        "startChar": 3,
+        "endLine": 64,
+        "endChar": 11
+      },
+      "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "692d6b3c_671e7dc8",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/DecoratingCLabelProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-19T21:24:22Z",
+      "side": 1,
+      "message": "current way of drawing looks good on GTK - need to check Windows and macOS",
+      "parentUuid": "0dbe454d_6ef034f9",
+      "range": {
+        "startLine": 64,
+        "startChar": 29,
+        "endLine": 64,
+        "endChar": 35
       },
       "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",

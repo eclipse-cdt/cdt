@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "2ace40cb_30bb2e5b",
+        "filename": "windows/org.eclipse.cdt.msw.build/src/org/eclipse/cdt/internal/msw/build/VSInstallationRegistry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-19T12:28:19Z",
+      "side": 1,
+      "message": "As VS2022 is going to be 64-bit I assume it will be installed in Program Files rather than Program Files x86?",
+      "range": {
+        "startLine": 51,
+        "startChar": 9,
+        "endLine": 51,
+        "endChar": 28
+      },
+      "revId": "0d2b217487ee4395fd69b49f4af097f417aeba3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c1649a84_f1814d2a",
         "filename": "windows/org.eclipse.cdt.msw.build/src/org/eclipse/cdt/internal/msw/build/VSInstallationRegistry.java",
         "patchSetId": 1

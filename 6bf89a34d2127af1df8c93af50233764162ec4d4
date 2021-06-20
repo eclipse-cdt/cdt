@@ -382,6 +382,30 @@
       "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f408d24_df9adf63",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/DecoratingCLabelProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-20T01:56:05Z",
+      "side": 1,
+      "message": "PS13 has a new way of handling the divider line that works well on Windows - now to test on macOS and GTK to see if it works well there too.",
+      "parentUuid": "d021e023_b9e1aa1c",
+      "range": {
+        "startLine": 64,
+        "startChar": 29,
+        "endLine": 64,
+        "endChar": 35
+      },
+      "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

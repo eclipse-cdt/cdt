@@ -16,6 +16,24 @@
       "revId": "84e936af313536fdd5616bcf4ca644bd83e748ff",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4637ee99_6cd3a426",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/Pragma.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-20T01:56:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d253468f_fb6fec80",
+      "revId": "84e936af313536fdd5616bcf4ca644bd83e748ff",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

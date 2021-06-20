@@ -23,6 +23,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIFunctionsCallHistoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoRecordInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -36,7 +37,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /** @since 5.0 */
-public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRunControl2 {
+public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRunControl3 {
 
 	private IMICommandControl fCommandControl;
 	private CommandFactory fCommandFactory;
@@ -70,7 +71,8 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 
 		// Don't register as an event listener because our base class does it already
 
-		register(new String[] { IReverseRunControl2.class.getName() }, new Hashtable<String, String>());
+		register(new String[] { IReverseRunControl2.class.getName(), IReverseRunControl3.class.getName() },
+				new Hashtable<String, String>());
 
 		requestMonitor.done();
 	}
@@ -258,5 +260,45 @@ public class GDBRunControl_7_10 extends GDBRunControl_7_6 implements IReverseRun
 		assert formatStr.isEmpty() : "Unexpected format string in =record-started: " + formatStr; //$NON-NLS-1$
 
 		return null;
+	}
+
+	@Override
+	public void functionsCallHistory(final ICommandControlDMContext context, final RequestMonitor rm) {
+		if (fReverseTraceMethod != ReverseDebugMethod.OFF) { // && doCanResume(context)) {
+			//ICommand<CLIFunctionsCallHistory> cmd = null;
+			/** commented because context is alreday of type ICommandControlDMContext **/
+			//if (context instanceof ICommandControlDMContext) {
+			//cmd = fCommandFactory.createCLIFunctionsCallHistory(context);
+			/*} else {
+				ICommandControlDMContext dmc = DMContexts.getAncestorOfType(context, ICommandControlDMContext.class);
+				if (dmc == null) {
+					rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+							"Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+					rm.done();
+					return;
+				}
+				cmd = fCommandFactory.createCLIFunctionsCallHistory(dmc);
+			}*/
+
+			//setResumePending(true);
+			// Cygwin GDB will accept commands and execute them after the step
+			// which is not what we want, so mark the target as unavailable
+			// as soon as we send a resume command.
+			//getCache().setContextAvailable(context, false);
+
+			getConnection().queueCommand(fCommandFactory.createCLIFunctionsCallHistory(context),
+					new DataRequestMonitor<CLIFunctionsCallHistoryInfo>(getExecutor(), rm) {
+						@Override
+						public void handleFailure() {
+							setResumePending(false);
+							getCache().setContextAvailable(context, true);
+						}
+					});
+
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+					"Given context: " + context + ", is already running or reverse not enabled.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+			rm.done();
+		}
 	}
 }

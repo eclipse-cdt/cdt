@@ -26,6 +26,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
 import org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler;
+import org.eclipse.cdt.debug.core.model.IFunctionsCallHistoryHandler;
 import org.eclipse.cdt.debug.core.model.IMemoryBlockAddressInfoRetrieval;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler;
 import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
@@ -61,6 +62,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbRestartCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbSteppingModeTarget;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbConnectCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbDebugNewExecutableCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbFunctionsCallHistoryCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbResumeWithoutSignalCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseResumeCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseStepIntoCommand;
@@ -190,12 +192,13 @@ public class GdbSessionAdapters {
 				ISteppingModeTarget.class, ISourceDisplay.class, IStepIntoHandler.class,
 				IStepIntoSelectionHandler.class, IReverseStepIntoHandler.class, IStepOverHandler.class,
 				IReverseStepOverHandler.class, IStepReturnHandler.class, IUncallHandler.class, ISuspendHandler.class,
-				IResumeHandler.class, IReverseResumeHandler.class, IResumeWithoutSignalHandler.class,
-				IRestartHandler.class, ITerminateHandler.class, IDebugNewExecutableHandler.class, IConnectHandler.class,
-				IDisconnectHandler.class, IModelSelectionPolicyFactory.class, IRefreshAllTarget.class,
-				IReverseToggleHandler.class, IStartTracingHandler.class, IStopTracingHandler.class,
-				ISaveTraceDataHandler.class, ISelectNextTraceRecordHandler.class, ISelectPrevTraceRecordHandler.class,
-				IPinProvider.class, IDebugModelProvider.class, ILaunch.class, ICEditorTextHover.class,
+				IResumeHandler.class, IFunctionsCallHistoryHandler.class, IReverseResumeHandler.class,
+				IResumeWithoutSignalHandler.class, IRestartHandler.class, ITerminateHandler.class,
+				IDebugNewExecutableHandler.class, IConnectHandler.class, IDisconnectHandler.class,
+				IModelSelectionPolicyFactory.class, IRefreshAllTarget.class, IReverseToggleHandler.class,
+				IStartTracingHandler.class, IStopTracingHandler.class, ISaveTraceDataHandler.class,
+				ISelectNextTraceRecordHandler.class, ISelectPrevTraceRecordHandler.class, IPinProvider.class,
+				IDebugModelProvider.class, ILaunch.class, ICEditorTextHover.class,
 				IMemoryBlockAddressInfoRetrieval.class));
 	}
 
@@ -264,6 +267,9 @@ public class GdbSessionAdapters {
 		}
 		if (IResumeHandler.class.equals(adapterType)) {
 			return (T) new DsfResumeCommand(session);
+		}
+		if (IFunctionsCallHistoryHandler.class.equals(adapterType)) {
+			return (T) new GdbFunctionsCallHistoryCommand(session);
 		}
 		if (IReverseResumeHandler.class.equals(adapterType)) {
 			return (T) new GdbReverseResumeCommand(session);

@@ -90,7 +90,7 @@ public interface IGDBBackend extends IMIBackend {
 	 * Get the command line used to invoke GDB.
 	 *
 	 * @return String[] - the GDB command and its arguments as an array
-	 * @since 6.4
+	 * @since 6.5
 	 */
 	default String[] getDebuggerCommandLineArray() {
 		return new String[0];

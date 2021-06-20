@@ -1559,6 +1559,12 @@
     </command>
     <command
           categoryId="org.eclipse.cdt.debug.ui.category.reverseDebugging"
+          description="%FunctionsCallHistory.description"
+          id="org.eclipse.cdt.debug.ui.command.functionsCallHistory"
+          name="%FunctionsCallHistory.name">
+    </command>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.reverseDebugging"
           description="%ReverseResume.description"
           id="org.eclipse.cdt.debug.ui.command.reverseResume"
           name="%ReverseResume.name">
@@ -1665,6 +1671,10 @@
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.ReverseToggleCommandHandler"
             commandId="org.eclipse.cdt.debug.ui.command.reverseToggle">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.FunctionsCallHistoryCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.functionsCallHistory">
       </handler>
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.ReverseResumeCommandHandler"
@@ -1806,6 +1816,12 @@
  <extension
          point="org.eclipse.ui.bindings">
       <key
+            commandId="org.eclipse.cdt.debug.ui.command.functionsCallHistory"
+            contextId="org.eclipse.cdt.debug.ui.debugging"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="SHIFT+F9">
+      </key>
+      <key
             commandId="org.eclipse.cdt.debug.ui.command.reverseResume"
             contextId="org.eclipse.cdt.debug.ui.debugging"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -1917,6 +1933,21 @@
       <menuContribution
             locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=threadGroup">
          <command
+               commandId="org.eclipse.cdt.debug.ui.command.functionsCallHistory"
+               icon="icons/obj16/functions_call_history.gif"
+               label="%FunctionsCallHistory.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <and>
+                  <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+                  <systemTest property="org.eclipse.debug.ui.debugViewToolbarVisible" value="true"/>
+               </and>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=threadGroup">
+         <command
                commandId="org.eclipse.cdt.debug.ui.command.reverseResume"
                icon="icons/obj16/reverse_resume.gif"
                label="%ReverseResume.label"
@@ -1988,6 +2019,18 @@
             </visibleWhen>
          </menu>
       </menuContribution>      
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.run?after=stepGroup">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.functionsCallHistory"
+               icon="icons/obj16/functions_call_history.gif"
+               label="%FunctionsCallHistory.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+            </visibleWhen>
+         </command>
+      </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.run?after=stepGroup">
          <command
@@ -2084,6 +2127,18 @@
       <menuContribution
             locationURI="popup:org.eclipse.debug.ui.DebugView?after=threadGroup">
          <command
+               commandId="org.eclipse.cdt.debug.ui.command.functionsCallHistory"
+               icon="icons/obj16/functions_call_history.gif"
+               label="%FunctionsCallHistory.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.DebugView?after=threadGroup">
+         <command
                commandId="org.eclipse.cdt.debug.ui.command.reverseResume"
                icon="icons/obj16/reverse_resume.gif"
                label="%ReverseResume.label"
@@ -2167,6 +2222,18 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?before=threadGroup">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.functionsCallHistory"
+               icon="icons/obj16/functions_call_history.gif"
+               label="%FunctionsCallHistory.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+            </visibleWhen>
+         </command>
+       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?before=threadGroup">
          <command

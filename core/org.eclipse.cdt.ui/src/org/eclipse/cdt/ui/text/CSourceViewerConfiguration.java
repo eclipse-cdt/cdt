@@ -497,14 +497,18 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		String partitioning = getConfiguredDocumentPartitioning(sourceViewer);
 
-		IDocCommentOwner owner = DocCommentOwnerManager.getInstance().getCommentOwner(getProject());
-		IAutoEditStrategy single = owner.getSinglelineConfiguration().createAutoEditStrategy();
-		IAutoEditStrategy multi = owner.getMultilineConfiguration().createAutoEditStrategy();
+		IProject project = getProject();
+		ICProject cProject = getCProject();
+		IDocCommentOwner owner = DocCommentOwnerManager.getInstance().getCommentOwner(project);
+		ICProject projectDefiningOwnership = project != null
+				&& DocCommentOwnerManager.getInstance().projectDefinesOwnership(project) ? cProject : null;
+		IAutoEditStrategy single = owner.getSinglelineConfiguration().createAutoEditStrategy(projectDefiningOwnership);
+		IAutoEditStrategy multi = owner.getMultilineConfiguration().createAutoEditStrategy(projectDefiningOwnership);
 
 		IAutoEditStrategy[] NONE = new IAutoEditStrategy[0];
 
 		if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType))
-			return new IAutoEditStrategy[] { new DefaultMultilineCommentAutoEditStrategy(getCProject()) };
+			return new IAutoEditStrategy[] { new DefaultMultilineCommentAutoEditStrategy(cProject) };
 		if (ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(contentType))
 			return single != null ? new IAutoEditStrategy[] { single } : NONE;
 		else if (ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(contentType))
@@ -512,9 +516,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		else if (ICPartitions.C_STRING.equals(contentType))
 			return new IAutoEditStrategy[] {
 					/*new SmartSemicolonAutoEditStrategy(partitioning),*/ new CStringAutoIndentStrategy(partitioning,
-							getCProject()) };
+							cProject) };
 		else
-			return new IAutoEditStrategy[] { new CAutoIndentStrategy(partitioning, getCProject()) };
+			return new IAutoEditStrategy[] { new CAutoIndentStrategy(partitioning, cProject) };
 	}
 
 	/**

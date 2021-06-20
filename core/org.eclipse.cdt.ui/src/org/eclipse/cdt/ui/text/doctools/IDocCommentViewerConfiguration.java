@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools;
 
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.ICTokenScanner;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
@@ -48,6 +49,17 @@ public interface IDocCommentViewerConfiguration {
 	 * in the case where no auto-edit-strategy is required.
 	 */
 	IAutoEditStrategy createAutoEditStrategy();
+
+	/**
+	 * @return an auto edit strategy suitable for the appropriate comment region. This auto edit
+	 * strategy is project-aware and might be affected by project-specific options. May return null
+	 * in the case where no auto-edit-strategy is required.
+	 *
+	 * @since 7.3
+	 */
+	default IAutoEditStrategy createAutoEditStrategy(ICProject project) {
+		return createAutoEditStrategy();
+	}
 
 	/**
 	 * @return a double click strategy suitable for the associated comment-region. May return null in

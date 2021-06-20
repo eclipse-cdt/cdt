@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "aeec466e_c3455ef5",
+        "filename": "windows/org.eclipse.cdt.msw.build/src/org/eclipse/cdt/internal/msw/build/VSInstallationRegistry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-20T00:15:31Z",
+      "side": 1,
+      "message": "The VS installer and vswhere.exe are global to all installations and always located here. Individual VS installations/versions can be installed anywhere 64 bit or not then vswhere.exe is used to query where they are.",
+      "parentUuid": "2ace40cb_30bb2e5b",
+      "range": {
+        "startLine": 51,
+        "startChar": 9,
+        "endLine": 51,
+        "endChar": 28
+      },
+      "revId": "0d2b217487ee4395fd69b49f4af097f417aeba3c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c1649a84_f1814d2a",
         "filename": "windows/org.eclipse.cdt.msw.build/src/org/eclipse/cdt/internal/msw/build/VSInstallationRegistry.java",
         "patchSetId": 1

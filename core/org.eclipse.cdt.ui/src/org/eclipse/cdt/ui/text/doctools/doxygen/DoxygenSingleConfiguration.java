@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools.doxygen;
 
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
@@ -53,7 +54,15 @@ public class DoxygenSingleConfiguration extends AbstractGenericTagDocCommentView
 	 */
 	@Override
 	public IAutoEditStrategy createAutoEditStrategy() {
-		return new DoxygenSingleAutoEditStrategy();
+		return createAutoEditStrategy(null);
+	}
+
+	/**
+	 * @since 7.3
+	 */
+	@Override
+	public IAutoEditStrategy createAutoEditStrategy(ICProject project) {
+		return new DoxygenSingleAutoEditStrategy(project);
 	}
 
 	/*

@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.ui" version="2">
+    <resource path="src/org/eclipse/cdt/ui/text/doctools/IDocCommentViewerConfiguration.java" type="org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration">
+        <filter comment="new default method to handle edit strategy with project-specific options. Unlikely to clash with any implementers." id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration"/>
+                <message_argument value="createAutoEditStrategy(ICProject)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/cdt/ui/wizards/CDTCommonProjectWizard.java" type="org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard">
         <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
             <message_arguments>

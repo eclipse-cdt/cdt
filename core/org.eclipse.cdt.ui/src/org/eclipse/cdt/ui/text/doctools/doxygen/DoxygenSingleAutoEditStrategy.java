@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentCommand;
@@ -42,7 +43,15 @@ public class DoxygenSingleAutoEditStrategy extends DoxygenMultilineAutoEditStrat
 	private static final String EXCL_COMMENT = "//!"; //$NON-NLS-1$
 	private static String fgDefaultLineDelim = "\n"; //$NON-NLS-1$
 
+	/**
+	 * @since 7.3
+	 */
+	public DoxygenSingleAutoEditStrategy(ICProject project) {
+		super(project);
+	}
+
 	public DoxygenSingleAutoEditStrategy() {
+		this(null);
 	}
 
 	/**

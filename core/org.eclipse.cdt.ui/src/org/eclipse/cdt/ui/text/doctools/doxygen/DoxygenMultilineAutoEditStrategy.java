@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.doxygen.DoxygenOptions;
 import org.eclipse.cdt.doxygen.core.DoxygenConfiguration;
@@ -110,10 +111,18 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 
 	private final DoxygenConfiguration doxygenConfiguration;
 
-	public DoxygenMultilineAutoEditStrategy() {
+	/**
+	 * @since 7.3
+	 */
+	public DoxygenMultilineAutoEditStrategy(ICProject project) {
+		super(project);
 		doxygenConfiguration = EclipseContextFactory
 				.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
 				.get(DoxygenConfiguration.class);
+	}
+
+	public DoxygenMultilineAutoEditStrategy() {
+		this(null);
 	}
 
 	private void refreshPreferences() {

@@ -16,6 +16,7 @@
 package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.cdt.doxygen.core.DoxygenPreferences;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.ui.dialogs.DocCommentOwnerArea;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
@@ -120,6 +121,7 @@ public class DocCommentOwnerBlock extends AbstractCOptionPage {
 			fManager.setCommentOwner(project, newOwner, true);
 		}
 		docCommentOwnerArea.apply(doxygenPreferences.projectStorage(project));
+		CCoreInternals.savePreferences(project, true);
 	}
 
 	public IProject getProject() {

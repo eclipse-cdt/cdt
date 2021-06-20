@@ -358,6 +358,30 @@
       "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d021e023_b9e1aa1c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/DecoratingCLabelProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-20T00:05:15Z",
+      "side": 1,
+      "message": "Looks good on macOS too.\n\nOn Windows it it pretty good, but the clipping range of the tree item causes the divider line to not extend fully to the right. Instead it extends as wide as the widest item in the tree.\n\nThere is also a small drawing error when the widest item gets wider, not all the lines get redrawn, so their clipping area is not updated until a full redraw. It leaves temporary narrow lines like https://bugzillaattachments.eclipsecontent.org/bugs/attachment.cgi?id\u003d286636\nThis could be solved by forcing a redraw on the whole control when one item is detected as a new maximum width. Need to try that out.",
+      "parentUuid": "692d6b3c_671e7dc8",
+      "range": {
+        "startLine": 64,
+        "startChar": 29,
+        "endLine": 64,
+        "endChar": 35
+      },
+      "revId": "6bf89a34d2127af1df8c93af50233764162ec4d4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

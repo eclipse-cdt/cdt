@@ -105,6 +105,24 @@
       "revId": "3e0ceebfa3b360e17903819027b4cb09133e39d6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "818ebf4a_c74a480d",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CModelBuilder2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-20T00:05:15Z",
+      "side": 1,
+      "message": "Thanks for sharing your thoughts. I agree with you and as I work on it more I am increasing comfortable with this. I am aiming to get this in soon with a final target of having it in M1.",
+      "parentUuid": "f24122fb_f5d96a38",
+      "revId": "3e0ceebfa3b360e17903819027b4cb09133e39d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -498,8 +498,11 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		String partitioning = getConfiguredDocumentPartitioning(sourceViewer);
 
 		IDocCommentOwner owner = DocCommentOwnerManager.getInstance().getCommentOwner(getProject());
-		IAutoEditStrategy single = owner.getSinglelineConfiguration().createAutoEditStrategy();
-		IAutoEditStrategy multi = owner.getMultilineConfiguration().createAutoEditStrategy();
+		ICProject projectDefiningOwnership = DocCommentOwnerManager.getInstance().projectDefinesOwnership(getProject())
+				? getCProject()
+				: null;
+		IAutoEditStrategy single = owner.getSinglelineConfiguration().createAutoEditStrategy(projectDefiningOwnership);
+		IAutoEditStrategy multi = owner.getMultilineConfiguration().createAutoEditStrategy(projectDefiningOwnership);
 
 		IAutoEditStrategy[] NONE = new IAutoEditStrategy[0];
 

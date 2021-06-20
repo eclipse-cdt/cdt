@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools;
 
+import org.eclipse.core.resources.IProject;
+
 /**
  * A comment owner provides {@link IDocCommentViewerConfiguration} to
  * the CDT c/c++ editor.<p>
@@ -50,4 +52,24 @@ public interface IDocCommentOwner {
 	 * @return a non-null {@link IDocCommentViewerConfiguration} suitable for a single-line comment context
 	 */
 	IDocCommentViewerConfiguration getSinglelineConfiguration();
+
+	/**
+	 * @return a non-null {@link IDocCommentViewerConfiguration} suitable for a multi-line comment context.
+	 * This configuration is project-aware and might be affected by project-specific options.
+	 *
+	 * @since 7.3
+	 */
+	default IDocCommentViewerConfiguration getMultilineConfiguration(IProject project) {
+		return getMultilineConfiguration();
+	}
+
+	/**
+	 * @return a non-null {@link IDocCommentViewerConfiguration} suitable for a single-line comment context.
+	 * This configuration is project-aware and might be affected by project-specific options.
+	 *
+	 * @since 7.3
+	 */
+	default IDocCommentViewerConfiguration getSinglelineConfiguration(IProject project) {
+		return getSinglelineConfiguration();
+	}
 }

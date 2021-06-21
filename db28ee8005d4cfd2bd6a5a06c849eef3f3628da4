@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c91b6e76_5fc8b27c",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/Pragma.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-21T21:42:39Z",
+      "side": 1,
+      "message": "Move this to a new commit.",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 10
+      },
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb62ac86_379140c3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-21T21:42:39Z",
+      "side": 1,
+      "message": "Add a menu (overflow toolbar) item to turn this on and off.",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f64f5d20_393862ef",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/AbstractCModelOutlinePage.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-21T21:42:39Z",
+      "side": 1,
+      "message": "unrelated change",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

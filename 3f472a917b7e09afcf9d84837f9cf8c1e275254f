@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bef7b72e_bc513c88",
+        "filename": "build/org.eclipse.cdt.managedbuilder.gnu.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1224,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-25T01:10:16Z",
+      "side": 1,
+      "message": "BTW the names in the properties files were correctly using \u003d just the command had -",
+      "revId": "3f472a917b7e09afcf9d84837f9cf8c1e275254f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

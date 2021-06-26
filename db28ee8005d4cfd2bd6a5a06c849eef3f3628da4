@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b9868bed_17e628c2",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ASTComparer.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-26T18:39:28Z",
+      "side": 1,
+      "message": "Yes! will do.",
+      "parentUuid": "0b481c2f_c791502a",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "15eea874_30297993",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/IPragma.java",
         "patchSetId": 15
@@ -33,6 +51,24 @@
       "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f01f65d_fd7c6060",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/IPragma.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-26T18:39:28Z",
+      "side": 1,
+      "message": "Thanks - this was one of the areas I kept changing my mind on. Thanks for giving this a once over.",
+      "parentUuid": "15eea874_30297993",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -104,6 +140,24 @@
       "writtenOn": "2021-06-26T18:02:14Z",
       "side": 1,
       "message": "By default isOwnerDrawEnabled is true because IWorkbenchPreferenceConstants.USE_COLORED_LABELS is enabled by default. If you disable that preference then this does not get called and divider lines are not drawn. The preference is in General \u003e Appearance \u003e Use mixed fonts and colors for labels.",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "467f27fd_a91c11d3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/DecoratingCOutlineLabelProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-26T18:39:28Z",
+      "side": 1,
+      "message": "thanks - I will review this to figure out best way forward (my guess is to not create divider lines instances in the first place if owner draw is disabled.)",
+      "parentUuid": "1d534d0a_77569df0",
       "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

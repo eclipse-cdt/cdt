@@ -166,7 +166,7 @@ class CommandDescriptorBuilder {
 	}
 
 	/**
-	 * Command-lin arguments and additional environment variables to be used to run a process.
+	 * Command-line arguments and additional environment variables to be used to run a process.
 	 * @author Martin Weber
 	 */
 	static final class CommandDescriptor {
@@ -185,6 +185,8 @@ class CommandDescriptorBuilder {
 
 		/**
 		 * Gets the command-line arguments for the process.
+		 *
+		 * @return a non-empty list containing at least the name of the command to invoke.
 		 */
 		public List<String> getArguments() {
 			return arguments;

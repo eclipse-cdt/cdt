@@ -38,6 +38,8 @@ import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.envvar.EnvironmentVariable;
@@ -178,12 +180,23 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					// in order to run builds in a container.
 					Process p = startBuildProcess(command.getArguments(), new IEnvironmentVariable[0], workingDir,
 							errConsole, monitor);
+					String arg0 = command.getArguments().get(0);
 					if (p == null) {
-						console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
+						// process start failed
+						String msg = String.format(Messages.CMakeBuildConfiguration_Failure, ""); //$NON-NLS-1$
+						addMarker(new ProblemMarkerInfo(srcFolder.getProject(), -1, msg,
+								IMarkerGenerator.SEVERITY_ERROR_BUILD, null, new org.eclipse.core.runtime.Path(arg0)));
 						return null;
 					}
 
-					watchProcess(p, errConsole);
+					// check cmake exit status
+					final int exitValue = watchProcess(p, errConsole);
+					if (exitValue != 0) {
+						// cmake had errors...
+						String msg = String.format(Messages.CMakeBuildConfiguration_ExitFailure, arg0, exitValue);
+						addMarker(srcFolder.getProject(), -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+						return null;
+					}
 				}
 				cmakeListsModified = false;
 			}
@@ -227,7 +240,14 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					return null;
 				}
 
-				watchProcess(p, new IConsoleParser[] { epm });
+				// check exit status
+				final int exitValue = watchProcess(p, new IConsoleParser[] { epm });
+				if (exitValue != 0) {
+					// had errors...
+					String msg2 = String.format(Messages.CMakeBuildConfiguration_ExitFailure, command.get(0),
+							exitValue);
+					addMarker(project, -1, msg2, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+				}
 
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
@@ -271,11 +291,21 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			Process p = startBuildProcess(command.getArguments(), new IEnvironmentVariable[0], workingDir, console,
 					monitor);
 			if (p == null) {
-				console.getErrorStream().write(String.format(Messages.CMakeBuildConfiguration_Failure, "")); //$NON-NLS-1$
+				// process start failed
+				String msg = String.format(Messages.CMakeBuildConfiguration_Failure, ""); //$NON-NLS-1$
+				addMarker(new ProblemMarkerInfo(project, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null,
+						new org.eclipse.core.runtime.Path(command.getArguments().get(0))));
 				return;
 			}
 
-			watchProcess(p, console);
+			// check exit status
+			final int exitValue = watchProcess(p, console);
+			if (exitValue != 0) {
+				// had errors...
+				String msg = String.format(Messages.CMakeBuildConfiguration_ExitFailure, command.getArguments().get(0),
+						exitValue);
+				addMarker(project, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+			}
 
 			outStream.write(Messages.CMakeBuildConfiguration_BuildComplete);
 

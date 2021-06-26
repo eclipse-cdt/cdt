@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3deb4c30_bb98e316",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-06-26T17:57:41Z",
+      "side": 1,
+      "message": "My previous comment was about the `role` of this variable. Perhaps the name can tell us more. Is this the name of executable? Do we always have non empty arguments?",
+      "revId": "b459a83d9f636dfd6e23fbd4b6b4dd72e3426f2a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -112,6 +112,24 @@
     },
     {
       "key": {
+        "uuid": "e80a9317_a191a437",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-26T22:34:14Z",
+      "side": 1,
+      "message": "I think so too",
+      "parentUuid": "eb62ac86_379140c3",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f64f5d20_393862ef",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/AbstractCModelOutlinePage.java",
         "patchSetId": 15
@@ -158,6 +176,24 @@
       "side": 1,
       "message": "thanks - I will review this to figure out best way forward (my guess is to not create divider lines instances in the first place if owner draw is disabled.)",
       "parentUuid": "1d534d0a_77569df0",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c12eb253_d1517b59",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/DecoratingCOutlineLabelProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-26T22:34:14Z",
+      "side": 1,
+      "message": "I think it should be the other way around: if pragma-marks/dividers are enabled in the view, it should request owner draw explicitly. Or just enable owner draw all the time? In all likelihood it\u0027s almost always enabled since USE_COLORED_LABELS is enabled by default anyway.",
+      "parentUuid": "467f27fd_a91c11d3",
       "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

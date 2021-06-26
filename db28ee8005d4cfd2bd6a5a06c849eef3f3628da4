@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "0b481c2f_c791502a",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ASTComparer.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-26T18:02:14Z",
+      "side": 1,
+      "message": "remove?",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15eea874_30297993",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/IPragma.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-26T18:02:14Z",
+      "side": 1,
+      "message": "It\u0027s not clear to me in general what the CModel responsibility should be and where it should end compared to the \"view part\". My first impression was that PragmaMarkInfo is too close to the knowledge of the view, but this is a grey area and it\u0027s convenient here so I think it should stay.",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c91b6e76_5fc8b27c",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/Pragma.java",
         "patchSetId": 15
@@ -53,6 +87,23 @@
       "writtenOn": "2021-06-21T21:42:39Z",
       "side": 1,
       "message": "unrelated change",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d534d0a_77569df0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/DecoratingCOutlineLabelProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-06-26T18:02:14Z",
+      "side": 1,
+      "message": "By default isOwnerDrawEnabled is true because IWorkbenchPreferenceConstants.USE_COLORED_LABELS is enabled by default. If you disable that preference then this does not get called and divider lines are not drawn. The preference is in General \u003e Appearance \u003e Use mixed fonts and colors for labels.",
       "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

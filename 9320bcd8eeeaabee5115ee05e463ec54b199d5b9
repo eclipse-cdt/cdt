@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d1b6b624_9a9bf78f",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-06-26T17:02:07Z",
+      "side": 1,
+      "message": "`command.getArguments().get(0)`\nthis looks too implicit, perhaps we can use more explicit value here\n\nthere are 2 more entries like this below",
+      "revId": "9320bcd8eeeaabee5115ee05e463ec54b199d5b9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

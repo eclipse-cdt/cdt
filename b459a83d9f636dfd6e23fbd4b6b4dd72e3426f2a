@@ -34,6 +34,24 @@
       "revId": "b459a83d9f636dfd6e23fbd4b6b4dd72e3426f2a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e1aedbc_815f3787",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-06-26T19:40:20Z",
+      "side": 1,
+      "message": "\u003e Should I change the javadoc to state that\n\nIt would be good to highlight the contract. It could be another gerrit.",
+      "parentUuid": "25ae85bf_2530202a",
+      "revId": "b459a83d9f636dfd6e23fbd4b6b4dd72e3426f2a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

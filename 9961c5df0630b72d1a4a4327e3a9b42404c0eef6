@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3e782a8_82d1030f",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakePropertiesController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-27T00:35:18Z",
+      "side": 1,
+      "message": "snakeyaml is still used here",
+      "revId": "9961c5df0630b72d1a4a4327e3a9b42404c0eef6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

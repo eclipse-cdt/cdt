@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.text.MessageFormat;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,9 +58,9 @@ public class LLDBLaunch extends GdbLaunch {
 	private static final Pattern LLDB_REVISION_PATTERN = Pattern.compile("lldb-(\\d+)\\.(\\d+)\\.(\\d+)(\\.(\\d)+)?.*", //$NON-NLS-1$
 			Pattern.DOTALL);
 
-	private IntegerTuple fLldbVersion;
-	private IntegerTuple fLldbRevision;
-	private Set<LLDBTrait> fTraits;
+	private Optional<IntegerTuple> fLldbVersion;
+	private Optional<IntegerTuple> fLldbRevision;
+	private Set<LLDBTrait> fTraits = new HashSet<>();
 
 	/**
 	 * Constructs a launch.
@@ -125,15 +126,16 @@ public class LLDBLaunch extends GdbLaunch {
 	public String getGDBVersion() throws CoreException {
 		String gdbVersion = super.getGDBVersion();
 		computeLLDBVersions();
-		if (fLldbRevision != null) {
-			if (fLldbRevision.compareTo(LLDB_MINIMUM_REVISION) < 0) {
-				throw new DebugException(LLDBCorePlugin.createStatus(MessageFormat.format(
-						Messages.LLDBLaunch_minimum_version_error, fLldbRevision, LLDB_MINIMUM_REVISION, XCODE_HINT)));
+		if (fLldbRevision.isPresent()) {
+			if (fLldbRevision.get().compareTo(LLDB_MINIMUM_REVISION) < 0) {
+				throw new DebugException(
+						LLDBCorePlugin.createStatus(MessageFormat.format(Messages.LLDBLaunch_minimum_version_error,
+								fLldbRevision.get(), LLDB_MINIMUM_REVISION, XCODE_HINT)));
 			}
-		} else if (fLldbVersion != null) {
-			if (fLldbVersion.compareTo(LLDB_MINIMUM_VERSION) < 0) {
-				throw new DebugException(LLDBCorePlugin.createStatus(MessageFormat
-						.format(Messages.LLDBLaunch_minimum_version_error, fLldbVersion, LLDB_MINIMUM_VERSION, ""))); //$NON-NLS-1$
+		} else if (fLldbVersion.isPresent()) {
+			if (fLldbVersion.get().compareTo(LLDB_MINIMUM_VERSION) < 0) {
+				throw new DebugException(LLDBCorePlugin.createStatus(MessageFormat.format(
+						Messages.LLDBLaunch_minimum_version_error, fLldbVersion.get(), LLDB_MINIMUM_VERSION, ""))); //$NON-NLS-1$
 			}
 		}
 
@@ -145,9 +147,14 @@ public class LLDBLaunch extends GdbLaunch {
 			return;
 		}
 
+		// Initialize to non-null here so that we don't try to retrieve the version and spawn a process repeatedly.
+		fLldbRevision = Optional.empty();
+		fLldbVersion = Optional.empty();
+
 		// LLDB-MI always outputs the GDB version so try LLDB (non-MI)
 		// FIXME: There should be a better way to get the lldb version number
-		// from lldb-mi
+		// from lldb-mi because "lldb" is not guaranteed to be next to lldb-mi.
+		// (Especially since Xcode doesn't include lldb-mi anymore).
 		IPath lldbMiPath = getGDBPath();
 		String lastSegment = lldbMiPath.lastSegment();
 		if (lastSegment.contains(ILLDBConstants.LLDB_MI_EXECUTABLE_NAME)) {
@@ -189,7 +196,7 @@ public class LLDBLaunch extends GdbLaunch {
 
 			fLldbVersion = getLLDBVersionFromText(streamOutput);
 			fLldbRevision = getLLDBRevisionFromText(streamOutput);
-			if (fLldbVersion == null && fLldbRevision == null) {
+			if (fLldbVersion.isEmpty() && fLldbRevision.isEmpty()) {
 				if (!streamOutput.isEmpty()) {
 					// We got some output but couldn't parse it. Make that
 					// output visible to the user in the error dialog.
@@ -224,33 +231,29 @@ public class LLDBLaunch extends GdbLaunch {
 	}
 
 	private void computeTraits() {
-		if (fTraits == null) {
-			fTraits = new HashSet<>();
+		// Here are some LLDB/Xcode version mappings
+		// 360.1.65 => Xcode 8.1.0
+		// 360.1.70 => Xcode 8.2.1, 8.2.0
+		// 370.0.37 => Xcode 8.3.0
+		// 370.0.40 => Xcode 8.3.1
+		// 902.0.79.7 => Xcode 9.4.1
+		// 1000.11.37.1 => Xcode 10.0
+		// 1100.0.28.19 => Xcode 11.1 (lldb-mi not included anymore)
+		//
+		// Note that a LLDB built from source on macOS can report the same
+		// Apple-style version even for different LLDB/Clang-style version
+		// For example, 3.9.1 and 4.0.0 both report 360.99.0, how
+		// inconvenient! But this will only affect people building it from
+		// source, not LLDB included in Xcode.
 
-			// Here are some LLDB/Xcode version mappings
-			// 360.1.65 => Xcode 8.1.0
-			// 360.1.70 => Xcode 8.2.1, 8.2.0
-			// 370.0.37 => Xcode 8.3.0
-			// 370.0.40 => Xcode 8.3.1
-			// 902.0.79.7 => Xcode 9.4.1
-			// 1000.11.37.1 => Xcode 10.0
-			// 1100.0.28.19 => Xcode 11.1 (lldb-mi not included anymore)
-			//
-			// Note that a LLDB built from source on macOS can report the same
-			// Apple-style version even for different LLDB/Clang-style version
-			// For example, 3.9.1 and 4.0.0 both report 360.99.0, how
-			// inconvenient! But this will only affect people building it from
-			// source, not LLDB included in Xcode.
+		if (fLldbVersion.isPresent() && fLldbVersion.get().compareTo(new IntegerTuple(4, 0, 0)) < 0
+				|| fLldbRevision.isPresent() && fLldbRevision.get().compareTo(new IntegerTuple(370, 0, 37)) < 0) {
+			fTraits.add(LLDBTrait.BROKEN_BREAKPOINT_INSERT_FULL_PATH_LLVM_BUG_28709);
+		}
 
-			if (fLldbVersion != null && fLldbVersion.compareTo(new IntegerTuple(4, 0, 0)) < 0
-					|| fLldbRevision != null && fLldbRevision.compareTo(new IntegerTuple(370, 0, 37)) < 0) {
-				fTraits.add(LLDBTrait.BROKEN_BREAKPOINT_INSERT_FULL_PATH_LLVM_BUG_28709);
-			}
-
-			if (fLldbVersion != null && fLldbVersion.compareTo(new IntegerTuple(8, 0, 0)) < 0
-					|| fLldbRevision != null) {
-				fTraits.add(LLDBTrait.MISSING_GDB_SET_BREAKPOINT_PENDING);
-			}
+		if (fLldbVersion.isPresent() && fLldbVersion.get().compareTo(new IntegerTuple(8, 0, 0)) < 0
+				|| fLldbRevision.isPresent()) {
+			fTraits.add(LLDBTrait.MISSING_GDB_SET_BREAKPOINT_PENDING);
 		}
 	}
 
@@ -340,14 +343,14 @@ public class LLDBLaunch extends GdbLaunch {
 	 * @return String representation of revision of lldb such as "350.0.21.9" on
 	 *         success; null otherwise.
 	 */
-	private static IntegerTuple getLLDBRevisionFromText(String versionOutput) {
+	private static Optional<IntegerTuple> getLLDBRevisionFromText(String versionOutput) {
 		// These are the LLDB version patterns I have seen up to now
 		// Apple Xcode 7.3.1: lldb-350.0.21.9
 		// LLVM build: lldb-360.99.0
 
 		Matcher matcher = LLDB_REVISION_PATTERN.matcher(versionOutput);
 		if (!matcher.matches()) {
-			return null;
+			return Optional.empty();
 		}
 
 		try {
@@ -357,14 +360,14 @@ public class LLDBLaunch extends GdbLaunch {
 			String patchGroup = matcher.group(5);
 			if (patchGroup != null) {
 				Integer patch = Integer.valueOf(patchGroup);
-				return new IntegerTuple(major, minor, micro, patch);
+				return Optional.of(new IntegerTuple(major, minor, micro, patch));
 			} else {
-				return new IntegerTuple(major, minor, micro);
+				return Optional.of(new IntegerTuple(major, minor, micro));
 			}
 		} catch (NumberFormatException e) {
 			LLDBCorePlugin.log(e);
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	/**
@@ -375,14 +378,14 @@ public class LLDBLaunch extends GdbLaunch {
 	 * @return String representation of version of lldb such as "3.9.0" on
 	 *         success; null otherwise.
 	 */
-	private static IntegerTuple getLLDBVersionFromText(String versionOutput) {
+	private static Optional<IntegerTuple> getLLDBVersionFromText(String versionOutput) {
 		// These are the LLDB version patterns I have seen up to now
 		// Ubuntu 14.04: lldb version 3.6.0 ( revision )
 		// Ubuntu 14.04: lldb version 3.8.0 ( revision )
 
 		Matcher matcher = LLDB_VERSION_PATTERN.matcher(versionOutput);
 		if (!matcher.find()) {
-			return null;
+			return Optional.empty();
 		}
 
 		try {
@@ -390,11 +393,11 @@ public class LLDBLaunch extends GdbLaunch {
 			Integer minor = Integer.valueOf(matcher.group(2));
 			Integer micro = Integer.valueOf(matcher.group(3));
 			IntegerTuple version = new IntegerTuple(major, minor, micro);
-			return version;
+			return Optional.of(version);
 		} catch (NumberFormatException e) {
 			LLDBCorePlugin.log(e);
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	private static String getDefaultLLDBPath() {

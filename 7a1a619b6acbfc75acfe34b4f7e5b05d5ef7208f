@@ -22,6 +22,30 @@
       "revId": "7a1a619b6acbfc75acfe34b4f7e5b05d5ef7208f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a71f0b22_5817c2bd",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.nvidia.tests/.classpath",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-06-28T20:38:18Z",
+      "side": 1,
+      "message": "Just had an extra lock into the output locations and found that eclipse PDE puts classes below /bin as specified in the build.properties, Java nature gives warnings if Output location is not /bin and the maven tycho build by default puts classes below /target/classes anyway. Sigh.\nAnyway, it is now in sync with other CDT plugins.",
+      "parentUuid": "af53e06e_ba65fc48",
+      "range": {
+        "startLine": 14,
+        "startChar": 37,
+        "endLine": 14,
+        "endChar": 41
+      },
+      "revId": "7a1a619b6acbfc75acfe34b4f7e5b05d5ef7208f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

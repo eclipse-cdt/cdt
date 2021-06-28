@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9eebd76d_745c4eda",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/starter.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-28T19:19:13Z",
+      "side": 1,
+      "message": "Any reason we can\u0027t make every process cooperative by default? I am not really sure why original starter.exe was so aggressive, although I do remember the early days of CDT and there was always leftover processes lying around.",
+      "revId": "a9b1e3bfbaa48dfa12ff2b7f5739f7cd62292cb8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

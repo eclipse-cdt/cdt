@@ -16,6 +16,24 @@
       "revId": "ce3b664508c748ec095d256c3c3e919eee08ab4d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db29c369_c41eddbc",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.arm.tests/src/arm/ToolDetectionParticipantTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-06-28T19:14:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "952ea511_ac36f6cc",
+      "revId": "ce3b664508c748ec095d256c3c3e919eee08ab4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

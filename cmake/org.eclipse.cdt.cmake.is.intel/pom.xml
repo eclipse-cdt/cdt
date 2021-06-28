@@ -22,7 +22,7 @@
   <artifactId>org.eclipse.cdt.cmake.is.intel</artifactId>
   <!-- always use .qualifier in manifest, we do not plan to publish this plugin
     to a maven repo. (The repository version is a different thing) -->
-  <version>1.0.100-SNAPSHOT</version>
+  <version>1.0.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
 </project>

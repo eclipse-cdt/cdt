@@ -28,8 +28,15 @@
 
 #include "util.h"
 
-#define MAX_CMD_LINE_LENGTH (2049)
+#define MAX_CMD_LINE_LENGTH (1024 * 10)
 #define PIPE_NAME_LENGTH 100
+
+/* record whether or not the target process is one that we let clean up itself
+ */
+static struct {
+    bool f_is_cooperative;
+    bool f_ctrl_c_sent;
+} sg_target_process = { false, false };
 
 int copyTo(wchar_t *target, const wchar_t *source, int cpyLength, int availSpace);
 void DisplayErrorMessage();
@@ -266,6 +273,11 @@ int main() {
         }
     }
 
+    /* is openocd the target process? This is a very basic way 
+     * of checking but should be OK for initial cases
+     */
+    sg_target_process.f_is_cooperative = (wcsstr(argv[9], L"openocd") != NULL);
+
     STARTUPINFOW si = {sizeof(si)};
     PROCESS_INFORMATION pi = {0};
     DWORD dwExitCode = 0;
@@ -403,7 +415,15 @@ int main() {
                         GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
                     }
                 } else {
-                    GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+                    // if running cooperatively then only ever send one Ctrl-C
+                    if (!sg_target_process.f_is_cooperative) {
+                        GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+                    } else {
+                        if (!sg_target_process.f_ctrl_c_sent) {
+                            GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+                            sg_target_process.f_ctrl_c_sent = true;
+                        }
+                    }
                 }
 
                 SetEvent(waitEvent);
@@ -438,16 +458,29 @@ int main() {
                         GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
                     }
                 } else {
-                    GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+                    // if running cooperatively then only ever send one Ctrl-C
+                    if (!sg_target_process.f_is_cooperative) {
+                        GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+                    } else {
+                        if (!sg_target_process.f_ctrl_c_sent) {
+                            GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+                            sg_target_process.f_ctrl_c_sent = true;
+                        }
+                    }
                 }
 
                 SetEvent(waitEvent);
 
-                if (hJob) {
-                    if (!TerminateJobObject(hJob, (DWORD)-1)) {
-                        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
-                            cdtTrace(L"Cannot terminate job\n");
-                            DisplayErrorMessage();
+                /* if running cooperatively. Let process process Ctrl-C, clean up
+                 * & terminate gracefully.
+                 */ 
+                if (!sg_target_process.f_is_cooperative) {
+                    if (hJob) {
+                        if (!TerminateJobObject(hJob, (DWORD)-1)) {
+                            if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
+                                cdtTrace(L"Cannot terminate job\n");
+                                DisplayErrorMessage();
+                            }
                         }
                     }
                 }

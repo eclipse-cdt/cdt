@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af53e06e_ba65fc48",
+        "filename": "cmake/org.eclipse.cdt.cmake.is.nvidia.tests/.classpath",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-06-28T19:33:31Z",
+      "side": 1,
+      "message": "I think this is better - a while ago there were discussions as to whether the paths should be the same as what maven uses (target/classes).",
+      "range": {
+        "startLine": 14,
+        "startChar": 37,
+        "endLine": 14,
+        "endChar": 41
+      },
+      "revId": "7a1a619b6acbfc75acfe34b4f7e5b05d5ef7208f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

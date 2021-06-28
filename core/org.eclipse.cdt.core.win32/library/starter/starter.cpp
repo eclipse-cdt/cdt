@@ -17,6 +17,18 @@
  *  This is a small utility for windows spawner
  *******************************************************************************/
 
+/*******************************************************************************
+ * Original sources obtained from here:
+ * http://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tree/core/org.eclipse.cdt.core.win32/library/starter/starter.cpp?h=cdt_9_8
+ * 
+ * MICROSEMI modifications added to alter the way that target process
+ * termination is handled for OpenOCD (openocd.exe) in order to allow it to 
+ * terminate gracefully and not hang due to multiple Ctrl-Cs being sent 
+ * and/or TerminateJobObject() being called to kill the openocd process before
+ * it has finished shutting down Fpcommwrapper/abiactel/FlashPro3/4.
+ * See http://bugzilla/show_bug.cgi?id=64075#c10
+ *******************************************************************************/
+
 #define STRICT
 #define _WIN32_WINNT 0x0500
 #include <windows.h>
@@ -26,7 +38,11 @@
 #include <psapi.h>
 
 //#define DEBUG_MONITOR 
+#if defined(MICROSEMI)
+#define MAX_CMD_LINE_LENGTH (1024 * 10)
+#else
 #define MAX_CMD_LINE_LENGTH (2049)
+#endif /* MICROSEMI */
 #define PIPE_NAME_LENGTH 100
 
 int copyTo(wchar_t * target, const wchar_t * source, int cpyLength,
@@ -136,6 +152,16 @@ void ensureSize(wchar_t** ptr, int* psize, int requiredLength) {
 	}
 }
 
+#if defined(MICROSEMI)
+/* MICROSEMI: record whether or not the target process is openocd and
+ * if Ctrl-C has already been sent to it.
+ */
+static struct {
+	bool f_is_openocd;
+	bool f_ctrl_c_sent;
+} sg_target_process = { false, false };
+#endif /* MICROSEMI */
+
 int main() {
 
 	int argc;
@@ -143,10 +169,22 @@ int main() {
 
 	// Make sure that we've been passed the right number of arguments
 	if (argc < 8) {
+#if defined(MICROSEMI)
+		wprintf(L"Usage: %ls (four inheritable event handles) (CommandLineToSpawn)\n",
+				argv[0]);
+#else		
 		_tprintf(_T("Usage: %s (four inheritable event handles) (CommandLineToSpawn)\n"),
 				argv[0]);
+#endif /* MICROSEMI */		
 		return(0);
 	}
+
+#if defined(MICROSEMI)
+	/* MICROSEMI: is openocd the target process? This is a very basic way 
+	 * of checking but should be OK in the context of SoftConsole.
+	 */
+	sg_target_process.f_is_openocd = (wcsstr(argv[8], L"openocd") != NULL);
+#endif /* MICROSEMI */
 
 	// Construct the full command line
 	int nCmdLineLength= MAX_CMD_LINE_LENGTH;
@@ -356,7 +394,21 @@ int main() {
 						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
 					}
 				} else {
+#if defined(MICROSEMI)
+					/* MICROSEMI: if running OpenOCD then only ever send 
+					 * one Ctrl-C
+					 */
+					if (!sg_target_process.f_is_openocd) {
+						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+					} else {
+						if (!sg_target_process.f_ctrl_c_sent) {
+							GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+							sg_target_process.f_ctrl_c_sent = true;
+						}
+					}
+#else
 					GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+#endif /* MICROSEMI */
 				}
 
 				SetEvent(waitEvent);
@@ -394,11 +446,34 @@ int main() {
 						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
 					}
 				} else {				
+#if defined(MICROSEMI)
+					/* MICROSEMI: if running OpenOCD then only ever send 
+					 * one Ctrl-C
+					 */
+					if (!sg_target_process.f_is_openocd) {
+						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+					} else {
+						if (!sg_target_process.f_ctrl_c_sent) {
+							GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+							sg_target_process.f_ctrl_c_sent = true;
+						}
+					}
+#else
 					GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+#endif /* MICROSEMI */
 				}
 				
 				SetEvent(waitEvent);
 				
+#if defined(MICROSEMI)
+				/* MICROSEMI: if we're running OpenOCD then don't terminate
+				 * the job/process. Let OpenOCD process Ctrl-C, clean up
+				 * & terminate gracefully.
+				 * See http://bugzilla/show_bug.cgi?id=64075#c10 
+				 */ 
+				if (!sg_target_process.f_is_openocd) {
+#endif /* MICROSEMI */
+
 				if(NULL != hJob) {
 					if(!TerminateJobObject(hJob, (DWORD)-1)) {
 #ifdef DEBUG_MONITOR
@@ -406,6 +481,9 @@ int main() {
 						DisplayErrorMessage();
 #endif
 					}
+#if defined(MICROSEMI)
+				}
+#endif /* MICROSEMI */
 				}
 
 				// Note that we keep trucking until the child process terminates (case WAIT_OBJECT_0 + 1)

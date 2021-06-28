@@ -5,7 +5,7 @@
 "org.eclipse.cdt.cmake.is.core.internal.ui.CompileCommandsJsonParserOptionPage">
  <extension
        id="CompileCommandsJsonParserMarker"
-       name="CMake compile_commands.json parser"
+       name="%CompileCommandsJsonParserMarker.name"
        point="org.eclipse.core.resources.markers">
     <persistent
           value="false">

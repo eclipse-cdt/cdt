@@ -5421,6 +5421,17 @@ public class AST2Tests extends AST2TestBase {
 		}
 	}
 
+	//typedef struct _MyStruct {
+	//} MyStruct;
+	//
+	//MyStruct __declspec(dllexport) foo;
+	//MyStruct  __declspec(dllexport) __declspec(deprecated) bar;
+	public void testDeclspecAfterDeclSpecifierIdentifier_464624() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			parseAndCheckBindings(getAboveComment(), lang, true);
+		}
+	}
+
 	// struct Outer {
 	//    struct {int a1;};
 	//    struct {int a2;} a3;

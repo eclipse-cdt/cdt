@@ -1162,8 +1162,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 						throwBacktrack(LA(1));
 					attributes = CollectionUtils.merge(attributes, __attribute_decl_seq(true, false));
 					break;
-				case IGCCToken.t__declspec: // __declspec precedes the identifier
-					if (identifier != null || !supportDeclspecSpecifiers)
+				case IGCCToken.t__declspec:
+					if (!supportDeclspecSpecifiers)
 						throwBacktrack(LA(1));
 					__attribute_decl_seq(false, true);
 					break;

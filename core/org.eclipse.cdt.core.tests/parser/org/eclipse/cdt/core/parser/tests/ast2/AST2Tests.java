@@ -5421,6 +5421,18 @@ public class AST2Tests extends AST2TestBase {
 		}
 	}
 
+	//	using MyType = __declspec(dllexport) int;
+	//
+	//	template <typename T>
+	//	class Vector {
+	//	};
+	//	void test() {
+	//		Vector <__declspec(dllexport) int> a;
+	//	}
+	public void testDeclspecTypeId_574578() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
+
 	// struct Outer {
 	//    struct {int a1;};
 	//    struct {int a2;} a3;

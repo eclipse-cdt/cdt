@@ -2816,6 +2816,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		case IGCCToken.t__attribute__:
 		case IGCCToken.tTT_underlying_type:
 
+			// msvc-compatibility
+		case IGCCToken.t__declspec:
+
 			// content assist
 		case IToken.tCOMPLETION:
 			return true;

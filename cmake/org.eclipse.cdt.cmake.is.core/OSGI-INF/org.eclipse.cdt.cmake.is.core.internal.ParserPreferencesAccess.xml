@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.cdt.cmake.is.core.internal.ParserPreferencesAccess">
-   <service>
-      <provide interface="org.eclipse.cdt.cmake.is.core.IParserPreferencesAccess"/>
-   </service>
-   <implementation class="org.eclipse.cdt.cmake.is.core.internal.ParserPreferencesAccess"/>
-</scr:component>

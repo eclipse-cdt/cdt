@@ -45,20 +45,20 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.cdt.cmake.is.core"
+         id="org.eclipse.cdt.jsoncdb.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.cdt.cmake.is.core.doc"
+         id="org.eclipse.cdt.jsoncdb.core.doc"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.cdt.cmake.is.core.ui"
+         id="org.eclipse.cdt.jsoncdb.core.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

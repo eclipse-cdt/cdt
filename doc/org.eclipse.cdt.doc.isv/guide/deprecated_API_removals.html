@@ -29,6 +29,13 @@
   </p>
 
   <p>
+    API Changes in CDT 10.3.2.
+  </p>
+  <ol>
+    <li><a href="#jsoncdb">Package org.eclipse.cdt.cmake.is.core.participant has been renamed to
+    org.eclipse.cdt.jsoncdb.core.participant.</a></li>
+  </ol>
+  <p>
     API Changes in CDT 10.0.
   </p>
   <ol>
@@ -67,7 +74,17 @@
   </ol>
 
   <hr>
+  <h2>API Changes in CDT 10.3.2.</h2>
+  <h3>1. <a name="jsoncdb">Package org.eclipse.cdt.cmake.is.core.participant has been renamed to
+    org.eclipse.cdt.jsoncdb.core.participant.</a></h3>
+  <p>
+    Affects CMake build, indexer support.<br> Package org.eclipse.cdt.cmake.is.core.participant was inadvertently not marked as experimental.
+    Third-party compiler vendors that provide a plugin teaching Eclipse CDT their compiler specific command-line options
+    will have to update the import statements in their plugin's code.
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564349" target="_blank">Bug 564349</a>.
+  </p>
 
+  <hr>
   <h2>API Changes in CDT 10.0.</h2>
   <h3>1. <a name="java11">Eclipse CDT requires Java 11 as a minimum to build and run.</a></h3>
   <p>

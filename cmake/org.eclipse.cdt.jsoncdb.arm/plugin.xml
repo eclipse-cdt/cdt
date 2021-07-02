@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension point="org.eclipse.cdt.jsoncdb.core.detectionParticipant">
+      <tool class="org.eclipse.cdt.jsoncdb.arm.ArmccToolDetectionParticipant"
+            displayName="ARM.com armcc, C &amp; C++"/>
+      <tool class="org.eclipse.cdt.jsoncdb.arm.ArmClangToolDetectionParticipant"
+            displayName="ARM.com armclang, C &amp; C++"/>
+   </extension>
+   <extension
+         point="org.eclipse.help.contentExtension">
+      <contentExtension
+            file="help_content_extension.xml">
+      </contentExtension>
+   </extension>
+</plugin>

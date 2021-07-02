@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.cdt.cmake.ui.page1"
+            class="org.eclipse.cdt.jsoncdb.core.ui.internal.IndexerSupportPreferencePage"
+            id="org.eclipse.cdt.jsoncdb.core.ui.IndexerSupportPreferencePage"
+            name="%page.name">
+      </page>
+   </extension>
+
+</plugin>

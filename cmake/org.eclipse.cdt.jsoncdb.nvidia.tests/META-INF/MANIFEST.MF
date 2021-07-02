@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Copyright: %Bundle-Copyright
+Bundle-SymbolicName: org.eclipse.cdt.jsoncdb.nvidia.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: %Bundle-Vendor
+Fragment-Host: org.eclipse.cdt.jsoncdb.nvidia
+Import-Package: org.eclipse.cdt.core.settings.model,
+ org.junit
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: org.eclipse.cdt.jsoncdb.nvidia.tests
+Bundle-Name: %Bundle-Name

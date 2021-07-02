@@ -224,34 +224,34 @@
    <bundle id="org.eclipse.tools.templates.freemarker.source" version="0.0.0"/>
    <bundle id="org.eclipse.tools.templates.ui" version="0.0.0"/>
    <bundle id="org.eclipse.tools.templates.ui.source" version="0.0.0"/>
-   <bundle id="org.eclipse.cdt.cmake.is.arm">
+   <bundle id="org.eclipse.cdt.jsoncdb.arm">
       <category name="extra"/>
    </bundle>
-   <bundle id="org.eclipse.cdt.cmake.is.arm.source">
+   <bundle id="org.eclipse.cdt.jsoncdb.arm.source">
       <category name="extra"/>
    </bundle>
-   <bundle id="org.eclipse.cdt.cmake.is.hpenonstop">
+   <bundle id="org.eclipse.cdt.jsoncdb.hpenonstop">
       <category name="extra"/>
    </bundle>
-   <bundle id="org.eclipse.cdt.cmake.is.hpenonstop.source">
+   <bundle id="org.eclipse.cdt.jsoncdb.hpenonstop.source">
       <category name="extra"/>
    </bundle>
-   <bundle id="org.eclipse.cdt.cmake.is.intel">
+   <bundle id="org.eclipse.cdt.jsoncdb.intel">
       <category name="extra"/>
    </bundle>
-   <bundle id="org.eclipse.cdt.cmake.is.intel.source">
+   <bundle id="org.eclipse.cdt.jsoncdb.intel.source">
       <category name="extra"/>
    </bundle>
-   <bundle id="org.eclipse.cdt.cmake.is.microsoft">
+   <bundle id="org.eclipse.cdt.jsoncdb.microsoft">
       <category name="extra"/>
    </bundle>
-   <bundle id="org.eclipse.cdt.cmake.is.microsoft.source">
+   <bundle id="org.eclipse.cdt.jsoncdb.microsoft.source">
       <category name="extra"/>
    </bundle>
-   <bundle id="org.eclipse.cdt.cmake.is.nvidia">
+   <bundle id="org.eclipse.cdt.jsoncdb.nvidia">
       <category name="extra"/>
    </bundle>
-   <bundle id="org.eclipse.cdt.cmake.is.nvidia.source">
+   <bundle id="org.eclipse.cdt.jsoncdb.nvidia.source">
       <category name="extra"/>
    </bundle>
    <category-def name="main" label="CDT Main Features"/>

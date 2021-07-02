@@ -20,14 +20,12 @@
   </p>
 
   <p>
-    API Changes prior to CDT 10.0 / 2020-09.
+    API Changes in CDT 10.4.0
   </p>
-  <p>
-    Prior to CDT 10 release API changes were published as part of the <a
-      href="https://wiki.eclipse.org/CDT/User/NewInCDT">New and Noteworthy</a> entries for that release. From CDT 10
-    forward breaking API changes are included in this document.
-  </p>
-
+  <ol>
+    <li><a href="#jsoncdb">Package org.eclipse.cdt.cmake.is.core.participant has been renamed to
+    org.eclipse.cdt.jsoncdb.core.participant.</a></li>
+  </ol>
   <p>
     API Changes in CDT 10.0.
   </p>
@@ -66,8 +64,27 @@
     <li><a href="#GnuMakefileGenerator.addDefaultHeader">Changed methods from static to non-static</a></li>
   </ol>
 
-  <hr>
+  <p>
+    API Changes prior to CDT 10.0 / 2020-09.
+  </p>
+  <p>
+    Prior to CDT 10 release API changes were published as part of the <a
+      href="https://wiki.eclipse.org/CDT/User/NewInCDT">New and Noteworthy</a> entries for that release. From CDT 10
+    forward breaking API changes are included in this document.
+  </p>
 
+  <hr>
+  <h2>API Changes in CDT 10.4.0.</h2>
+  <h3>1. <a name="jsoncdb">Package org.eclipse.cdt.cmake.is.core.participant has been renamed to
+    org.eclipse.cdt.jsoncdb.core.participant.</a></h3>
+  <p>
+    Affects CMake build, indexer support.<br> Package org.eclipse.cdt.cmake.is.core.participant was inadvertently not marked as experimental.
+    Third-party compiler vendors that provide a plugin teaching Eclipse CDT their compiler specific command-line options
+    will have to update the import statements in their plugin's code.
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=564349" target="_blank">Bug 564349</a>.
+  </p>
+
+  <hr>
   <h2>API Changes in CDT 10.0.</h2>
   <h3>1. <a name="java11">Eclipse CDT requires Java 11 as a minimum to build and run.</a></h3>
   <p>

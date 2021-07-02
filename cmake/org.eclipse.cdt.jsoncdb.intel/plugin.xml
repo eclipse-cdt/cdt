@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension point="org.eclipse.cdt.jsoncdb.core.detectionParticipant">
+      <tool class="org.eclipse.cdt.jsoncdb.intel.IccToolDetectionParticipant"
+            displayName="Intel icc, C, Linux &amp; OS X, EDG"/>
+      <tool class="org.eclipse.cdt.jsoncdb.intel.IclCandCppToolDetectionParticipant"
+            displayName="Intel icl, C &amp; C++, Windows"/>
+      <tool class="org.eclipse.cdt.jsoncdb.intel.IclToolDetectionParticipant"
+            displayName="Intel icl, C, OS X, clang"/>
+      <tool class="org.eclipse.cdt.jsoncdb.intel.IcpcClangToolDetectionParticipant"
+            displayName="Intel icpc, C++, OS X, clang"/>
+      <tool class="org.eclipse.cdt.jsoncdb.intel.IcpcToolDetectionParticipant"
+            displayName="Intel icpc, C++, Linux &amp; OS X, EDG"/>
+   </extension>
+   <extension
+         point="org.eclipse.help.contentExtension">
+      <contentExtension
+            file="help_content_extension.xml">
+      </contentExtension>
+   </extension>
+</plugin>

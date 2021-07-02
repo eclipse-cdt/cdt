@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension point="org.eclipse.cdt.jsoncdb.core.detectionParticipant">
+      <tool class="org.eclipse.cdt.jsoncdb.hpenonstop.HpeC89ToolDetectionParticipant"
+            displayName="HPE NonStop c89 C &amp; C++"/>
+      <tool class="org.eclipse.cdt.jsoncdb.hpenonstop.HpeC99ToolDetectionParticipant"
+            displayName="HPE NonStop c99 C &amp; C++"/>
+      <tool class="org.eclipse.cdt.jsoncdb.hpenonstop.HpeC11ToolDetectionParticipant"
+            displayName="HPE NonStop c11 C &amp; C++"/>
+   </extension>
+   <extension
+         point="org.eclipse.help.contentExtension">
+      <contentExtension
+            file="help_content_extension.xml">
+      </contentExtension>
+   </extension>
+</plugin>

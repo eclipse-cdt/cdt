@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contentExtension>
+  <contribution content="doc/compiler.xhtml#lsp"
+    path="/org.eclipse.cdt.jsoncdb.core.doc/doc/html/supported-compilers.xhtml#extra_detection_participant_list"/>
+  <contribution content="doc/compiler.xhtml#builtins"
+    path="/org.eclipse.cdt.jsoncdb.core.doc/doc/html/builtins-detection.xhtml#extra_detection_participant_builtins_list"/>
+</contentExtension>

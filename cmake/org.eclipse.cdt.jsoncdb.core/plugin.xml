@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="detectionParticipant" name="%extension-point.name" schema="schema/participant.exsd"/>
+"org.eclipse.cdt.jsoncdb.core.internal.ui.CompileCommandsJsonParserOptionPage">
+ <extension
+       id="CompileCommandsJsonParserMarker"
+       name="%CompileCommandsJsonParserMarker.name"
+       point="org.eclipse.core.resources.markers">
+    <persistent
+          value="false">
+    </persistent>
+    <super
+          type="org.eclipse.core.resources.problemmarker">
+    </super>
+ </extension>
+</plugin>

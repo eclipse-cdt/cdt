@@ -22,6 +22,30 @@
       "revId": "72064ac2283f68d9bb78a8feeb84c6b08a3d21f4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88ad47e1_456ec00d",
+        "filename": "cmake/org.eclipse.cdt.jsoncdb.core/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-07-04T16:31:22Z",
+      "side": 1,
+      "message": "Oops, this should not have been made public.\nOTOH I doubt any third-party compiler vendor has written a compiler-built-ins detection participant yet.",
+      "parentUuid": "0022257d_5b45416c",
+      "range": {
+        "startLine": 17,
+        "startChar": 17,
+        "endLine": 17,
+        "endChar": 24
+      },
+      "revId": "72064ac2283f68d9bb78a8feeb84c6b08a3d21f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

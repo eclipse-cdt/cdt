@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0022257d_5b45416c",
+        "filename": "cmake/org.eclipse.cdt.jsoncdb.core/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-04T01:12:39Z",
+      "side": 1,
+      "message": "This package change on public package name breaks API.",
+      "range": {
+        "startLine": 17,
+        "startChar": 17,
+        "endLine": 17,
+        "endChar": 24
+      },
+      "revId": "72064ac2283f68d9bb78a8feeb84c6b08a3d21f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

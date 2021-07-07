@@ -277,6 +277,9 @@ public class CompilationDatabaseParser extends LanguageSettingsSerializableProvi
 			return false;
 		}
 
+		if (!cfgDescription.equals(cfgDescription.getProjectDescription().getDefaultSettingConfiguration()))
+			return false;
+
 		if (getCompilationDataBasePathProperty().isEmpty()) {
 			throw new CoreException(new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
 					Messages.CompilationDatabaseParser_CDBNotConfigured));

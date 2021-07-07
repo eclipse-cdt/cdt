@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c27dc0e7_4be6d6a5",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-07-07T19:35:49Z",
+      "side": 1,
+      "message": "I ordered with newer API changes more to the top of the document.",
+      "parentUuid": "eea9d56d_6242a3a1",
+      "revId": "3d54f3115a05f1fc6eea38bcf9e5313c05f57ee8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8463ae9d_44c3adea",
         "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
         "patchSetId": 6
@@ -39,6 +57,30 @@
       "revId": "3d54f3115a05f1fc6eea38bcf9e5313c05f57ee8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "970a14e2_33ca1700",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+        "patchSetId": 6
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-07-07T19:35:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8463ae9d_44c3adea",
+      "range": {
+        "startLine": 77,
+        "startChar": 26,
+        "endLine": 77,
+        "endChar": 31
+      },
+      "revId": "3d54f3115a05f1fc6eea38bcf9e5313c05f57ee8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

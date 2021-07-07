@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eea9d56d_6242a3a1",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-07T01:22:01Z",
+      "side": 1,
+      "message": "Yes, this should be 10.4.0. Please also move this section to after API changes in 10.0, or move the API changes prior to 10.0 to the end.",
+      "revId": "3d54f3115a05f1fc6eea38bcf9e5313c05f57ee8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8463ae9d_44c3adea",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+        "patchSetId": 6
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-07T01:22:01Z",
+      "side": 1,
+      "message": "10.4.0",
+      "range": {
+        "startLine": 77,
+        "startChar": 26,
+        "endLine": 77,
+        "endChar": 31
+      },
+      "revId": "3d54f3115a05f1fc6eea38bcf9e5313c05f57ee8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

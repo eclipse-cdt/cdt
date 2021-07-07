@@ -1,6 +1,7 @@
 /*/*/bin
 /*/*/index
 /*/*/target
+/target/
 /workspace/
 .DS_Store
 .nfs*

@@ -51,6 +51,6 @@ clean:
 	-$(RM) $(OBJS)$(C_DEPS) liblinkedFolder.a
 	-@echo ' '
 
-.PHONY: all clean dependents
+.PHONY: all clean dependents main-build
 
 -include ../makefile.targets

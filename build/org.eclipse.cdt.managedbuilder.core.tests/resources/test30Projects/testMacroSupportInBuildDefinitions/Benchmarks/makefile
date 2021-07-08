@@ -45,6 +45,6 @@ clean:
 	-$(RM) $(TAR_FILE_OUTPUTS)$(BAR_FILES) testMacroSupportInBuildDefinitions.tar
 	-@echo ' '
 
-.PHONY: all clean dependents
+.PHONY: all clean dependents main-build
 
 -include ../makefile.targets

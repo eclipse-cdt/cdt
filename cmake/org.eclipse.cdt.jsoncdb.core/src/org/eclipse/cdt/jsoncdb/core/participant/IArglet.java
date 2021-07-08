@@ -41,7 +41,7 @@ public interface IArglet {
 	 *
 	 * @author Martin Weber
 	 */
-	interface IArgumentCollector extends IRawIndexerInfoCollector {
+	interface IArgumentCollector extends IRawSourceFileInfoCollector {
 		/**
 		 * Adds a compiler argument that affects built-in detection. For the GNU
 		 * compilers, these are options like {@code --sysroot} and options that specify

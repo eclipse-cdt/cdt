@@ -17,7 +17,7 @@ package org.eclipse.cdt.jsoncdb.core.participant;
  *
  * @author weber
  */
-public interface IRawIndexerInfoCollector {
+public interface IRawSourceFileInfoCollector {
 
 	/**
 	 * Adds a preprocessor symbol (macro definition).

@@ -5,8 +5,8 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.eclipse.cdt.cmake.ui.page1"
-            class="org.eclipse.cdt.jsoncdb.core.ui.internal.IndexerSupportPreferencePage"
-            id="org.eclipse.cdt.jsoncdb.core.ui.IndexerSupportPreferencePage"
+            class="org.eclipse.cdt.jsoncdb.core.ui.internal.JsonCdbPreferencePage"
+            id="org.eclipse.cdt.jsoncdb.core.ui.JsonCdbPreferencePage"
             name="%page.name">
       </page>
    </extension>

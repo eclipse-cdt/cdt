@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
 
-import org.eclipse.cdt.jsoncdb.core.participant.IRawIndexerInfoCollector;
+import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfoCollector;
 
 /**
  * An OutputStream that passes each line written to it to a
@@ -28,7 +28,7 @@ public class OutputSniffer extends OutputStream {
 	private static final String SEP = System.lineSeparator();
 	private final StringBuilder buffer;
 	private final IBuiltinsOutputProcessor processor;
-	private final IRawIndexerInfoCollector infoCollector;
+	private final IRawSourceFileInfoCollector infoCollector;
 	private final OutputStream os;
 
 	/**
@@ -37,7 +37,7 @@ public class OutputSniffer extends OutputStream {
 	 *                      and include paths
 	 */
 	public OutputSniffer(IBuiltinsOutputProcessor processor, OutputStream outputStream,
-			IRawIndexerInfoCollector infoCollector) {
+			IRawSourceFileInfoCollector infoCollector) {
 		this.processor = Objects.requireNonNull(processor, "processor"); //$NON-NLS-1$
 		this.infoCollector = Objects.requireNonNull(infoCollector, "infoCollector"); //$NON-NLS-1$
 		this.os = outputStream;

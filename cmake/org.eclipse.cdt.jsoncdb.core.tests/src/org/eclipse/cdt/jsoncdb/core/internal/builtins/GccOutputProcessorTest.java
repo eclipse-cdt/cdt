@@ -41,13 +41,13 @@ public class GccOutputProcessorTest {
 	@Test
 	@Ignore
 	public void testProcessLine() {
-		testee.processLine("#define AAA xyz", new RawIndexerInfo());
+		testee.processLine("#define AAA xyz", new RawSourceFileInfo());
 	}
 
 	@Test
 	public void testProcessFile() throws IOException {
 		// pass resource content line-wise to the testee...
-		RawIndexerInfo pc = new RawIndexerInfo();
+		RawSourceFileInfo pc = new RawSourceFileInfo();
 		try (InputStream is = getClass().getResourceAsStream("cbd-gcc.output.txt");
 				OutputSniffer os = new OutputSniffer(testee, null, pc)) {
 			byte[] buffer = new byte[1024];

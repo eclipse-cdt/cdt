@@ -19,10 +19,10 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.jsoncdb.core.ui.internal.messages"; //$NON-NLS-1$
-	public static String IndexerSupportPreferencePage_description;
-	public static String IndexerSupportPreferencePage_errmsg_suffix_regex;
-	public static String IndexerSupportPreferencePage_label_suffix_pattern;
-	public static String IndexerSupportPreferencePage_label_version_suffix_group;
+	public static String JsonCdbPreferencePage_description;
+	public static String JsonCdbPreferencePage_errmsg_suffix_regex;
+	public static String JsonCdbPreferencePage_label_suffix_pattern;
+	public static String JsonCdbPreferencePage_label_version_suffix_group;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

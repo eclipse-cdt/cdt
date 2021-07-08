@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.osgi.framework.FrameworkUtil;
 
 /**
- * Preference page for indexer support.
+ * Preference page for JSON Compilation Database Parser.
  */
 public class IndexerSupportPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 

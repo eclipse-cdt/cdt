@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IFile;
  */
 public final class ParseRequest {
 	private final IFile compileCommandsJson;
-	private final IIndexerInfoConsumer indexerInfoConsumer;
+	private final ISourceFileInfoConsumer indexerInfoConsumer;
 	private final ICommandLauncher launcher;
 	private final IConsole console;
 
@@ -39,7 +39,7 @@ public final class ParseRequest {
 	 *                 detection to or <code>null</code> if no console output is requested.
 	 *                 Ignored if workspace preferences indicate that no console output is wanted.
 	 */
-	public ParseRequest(IFile compileCommandsJsonFile, IIndexerInfoConsumer indexerInfoConsumer,
+	public ParseRequest(IFile compileCommandsJsonFile, ISourceFileInfoConsumer indexerInfoConsumer,
 			ICommandLauncher launcher, IConsole console) {
 		this.compileCommandsJson = Objects.requireNonNull(compileCommandsJsonFile, "compileCommandsJsonFile"); //$NON-NLS-1$
 		this.indexerInfoConsumer = Objects.requireNonNull(indexerInfoConsumer, "indexerInfoConsumer"); //$NON-NLS-1$
@@ -56,7 +56,7 @@ public final class ParseRequest {
 	/** Gets the object that receives the indexer relevant
 	 *                            information for each source file
 	 */
-	public IIndexerInfoConsumer getIndexerInfoConsumer() {
+	public ISourceFileInfoConsumer getSourceFileInfoConsumer() {
 		return indexerInfoConsumer;
 	}
 

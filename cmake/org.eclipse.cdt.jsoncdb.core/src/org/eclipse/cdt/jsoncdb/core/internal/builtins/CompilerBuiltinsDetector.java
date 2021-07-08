@@ -20,7 +20,7 @@ import java.util.Objects;
 import org.eclipse.cdt.jsoncdb.core.IParserPreferences;
 import org.eclipse.cdt.jsoncdb.core.IParserPreferencesAccess;
 import org.eclipse.cdt.jsoncdb.core.internal.Plugin;
-import org.eclipse.cdt.jsoncdb.core.participant.IRawIndexerInfo;
+import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfo;
 import org.eclipse.cdt.jsoncdb.core.participant.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.cdt.jsoncdb.core.participant.builtins.IBuiltinsOutputProcessor;
 import org.eclipse.cdt.jsoncdb.core.participant.builtins.OutputSniffer;
@@ -86,7 +86,7 @@ public class CompilerBuiltinsDetector {
 	 *                           <code>null</code> if no console output is requested.
 	 * @throws CoreException
 	 */
-	public IRawIndexerInfo detectBuiltins(IProject project, java.nio.file.Path buildDirectory,
+	public IRawSourceFileInfo detectBuiltins(IProject project, java.nio.file.Path buildDirectory,
 			ICommandLauncher launcher, IConsole console, IProgressMonitor monitor) throws CoreException {
 		this.project = Objects.requireNonNull(project, "project"); //$NON-NLS-1$
 		this.buildDirectory = Objects.requireNonNull(buildDirectory, "buildDirectory"); //$NON-NLS-1$
@@ -95,7 +95,7 @@ public class CompilerBuiltinsDetector {
 			monitor = new NullProgressMonitor();
 		}
 
-		RawIndexerInfo result = new RawIndexerInfo();
+		RawSourceFileInfo result = new RawSourceFileInfo();
 
 		final List<String> argList = getCompilerArguments();
 		argList.addAll(builtinsDetectionArgs);

@@ -32,7 +32,7 @@ import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 import org.eclipse.cdt.cmake.core.properties.ICMakePropertiesController;
 import org.eclipse.cdt.cmake.core.properties.IOsOverrides;
 import org.eclipse.cdt.jsoncdb.core.CompileCommandsJsonParser;
-import org.eclipse.cdt.jsoncdb.core.IIndexerInfoConsumer;
+import org.eclipse.cdt.jsoncdb.core.ISourceFileInfoConsumer;
 import org.eclipse.cdt.jsoncdb.core.ParseRequest;
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
@@ -490,7 +490,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		project.deleteMarkers(ICMakeExecutionMarkerFactory.CMAKE_PROBLEM_MARKER_ID, false, IResource.DEPTH_INFINITE);
 	}
 
-	private static class CMakeIndexerInfoConsumer implements IIndexerInfoConsumer {
+	private static class CMakeIndexerInfoConsumer implements ISourceFileInfoConsumer {
 		/**
 		 * gathered IScannerInfo objects or <code>null</code> if no new IScannerInfo was received
 		 */

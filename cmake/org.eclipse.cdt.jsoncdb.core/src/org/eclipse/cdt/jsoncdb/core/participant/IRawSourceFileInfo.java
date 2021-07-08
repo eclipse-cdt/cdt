@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * @author weber
  */
-public interface IRawIndexerInfo {
+public interface IRawSourceFileInfo {
 	/**
 	 * Gets the preprocessor symbols (macro definition)s.
 	 */

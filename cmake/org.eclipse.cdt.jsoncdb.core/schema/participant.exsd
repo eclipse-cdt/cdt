@@ -7,7 +7,9 @@
       </appinfo>
       <documentation>
          Allows plug-ins to contribute to detection of compiler include paths and preprocessor defines from a command-line text.
-&lt;p&gt;This extension point teaches the &lt;i&gt;CompileCommandsParser&lt;/i&gt; to analyze compiler-specific command-lines incl. options for a specific compiler. The detected include paths, preprocessor defines and preprocessor un-defines from the compiler command-line get passed to the CDT indexer.&lt;/p&gt;
+&lt;p&gt;This extension point teaches the &lt;i&gt;JSON Compilation Database Parser&lt;/i&gt; to analyze compiler-specific command-lines incl. options for a specific compiler. The detected include paths, preprocessor defines and 
+preprocessor un-defines from the compiler command-line get passed to the 
+&lt;i&gt;JSON Compilation Database Parser&lt;/i&gt; and finally to the CDT indexer.&lt;/p&gt;
 &lt;p&gt;Third party compiler vendors may use this extension point to add their compiler (or other tool) for improved syntax highlighting in the CDT&apos;s C/C++ editors.
 &lt;/p&gt;
       </documentation>

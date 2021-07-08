@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<toc label="Tasks" link_to="cmake4eclipse_Tasks_Anchor" topic="doc/html/o_tasks.html">
+<toc label="Tasks" link_to="jsoncdb_Tasks_Anchor" topic="doc/html/o_tasks.html">
   <topic label="Build">
   </topic>
   <topic href="doc/html/supported-compilers.xhtml" label="Syntax Highlighting Support">

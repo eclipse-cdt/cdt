@@ -12,7 +12,7 @@ package org.eclipse.cdt.jsoncdb.core.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.jsoncdb.core.internal.builtins.RawIndexerInfo;
+import org.eclipse.cdt.jsoncdb.core.internal.builtins.RawSourceFileInfo;
 import org.eclipse.cdt.jsoncdb.core.participant.IArglet;
 import org.eclipse.cdt.jsoncdb.core.participant.IToolCommandlineParser;
 
@@ -21,7 +21,7 @@ import org.eclipse.cdt.jsoncdb.core.participant.IToolCommandlineParser;
  *
  * @author Martin Weber
  */
-public final class ParseContext extends RawIndexerInfo
+public final class ParseContext extends RawSourceFileInfo
 		implements IArglet.IArgumentCollector, IToolCommandlineParser.IResult {
 	private final List<String> args = new ArrayList<>();
 

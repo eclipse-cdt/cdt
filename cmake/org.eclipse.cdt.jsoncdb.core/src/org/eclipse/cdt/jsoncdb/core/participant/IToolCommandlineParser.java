@@ -49,7 +49,7 @@ public interface IToolCommandlineParser {
 	 *
 	 * @see IToolCommandlineParser#processArgs(IPath, String)
 	 */
-	interface IResult extends IRawIndexerInfo {
+	interface IResult extends IRawSourceFileInfo {
 		/**
 		 * Gets the compiler arguments from the command-line that affect built-in
 		 * detection. For the GNU compilers, these are options like {@code --sysroot}

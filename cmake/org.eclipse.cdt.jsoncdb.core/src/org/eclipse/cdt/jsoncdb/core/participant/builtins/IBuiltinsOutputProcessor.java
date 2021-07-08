@@ -9,7 +9,7 @@
 
 package org.eclipse.cdt.jsoncdb.core.participant.builtins;
 
-import org.eclipse.cdt.jsoncdb.core.participant.IRawIndexerInfoCollector;
+import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfoCollector;
 
 /**
  * Responsible for parsing the output that is produced when a compiler is
@@ -25,5 +25,5 @@ public interface IBuiltinsOutputProcessor {
 	 * @param infoCollector the buffer that receives the new {@code LanguageSetting}
 	 *                      entries
 	 */
-	void processLine(String line, IRawIndexerInfoCollector infoCollector);
+	void processLine(String line, IRawSourceFileInfoCollector infoCollector);
 }

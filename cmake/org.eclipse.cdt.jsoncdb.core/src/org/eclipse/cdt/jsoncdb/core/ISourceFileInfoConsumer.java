@@ -22,13 +22,13 @@ import java.util.Map;
  *
  * @author weber
  */
-public interface IIndexerInfoConsumer {
+public interface ISourceFileInfoConsumer {
 	// Cmake writes filenames with forward slashes (/) even if it runs on windows.
 	// OTOH, IScannerInfoProvider requests info for IResourceS.
 	// Somewhere in	the calling sequence, the filenames	have to	be converted/mapped to IResource. Conversion *could*
 	// be done in CompileCommandsJsonParser, but	when I	think of	builds running
 	// in a Linux-Docker-Container under windows, it might be better to do the conversion
-	// on the IIndexerInfoConsumer side which has more information on the build setup.
+	// on the ISourceFileInfoConsumer side which has more information on the build setup.
 
 	/** Adds indexer relevant information for a single source file.
 	 *

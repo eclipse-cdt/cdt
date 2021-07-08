@@ -39,17 +39,17 @@ import org.osgi.framework.FrameworkUtil;
 /**
  * Preference page for JSON Compilation Database Parser.
  */
-public class IndexerSupportPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class JsonCdbPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private Text pattern;
 	private Button btnVersionsEnabled;
 	private Button btnWithConsole;
 	private final IParserPreferencesAccess prefsAccess;
 
-	public IndexerSupportPreferencePage() {
+	public JsonCdbPreferencePage() {
 		prefsAccess = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())
 				.get(IParserPreferencesAccess.class);
-		setDescription(Messages.IndexerSupportPreferencePage_description);
+		setDescription(Messages.JsonCdbPreferencePage_description);
 	}
 
 	/**
@@ -64,13 +64,13 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 		composite.setLayout(new GridLayout(1, false));
 		GridDataFactory.swtDefaults().applyTo(composite);
 
-		final Group gr = createGroup(composite, SWT.FILL, 1,
-				Messages.IndexerSupportPreferencePage_label_version_suffix_group, 2);
+		final Group gr = createGroup(composite, SWT.FILL, 1, Messages.JsonCdbPreferencePage_label_version_suffix_group,
+				2);
 		btnVersionsEnabled = createCheckbox(gr, SWT.BEGINNING, 2, prefsMeta.tryVersionSuffix());
 		btnVersionsEnabled.setSelection(prefs.getTryVersionSuffix());
 		{
 			Label label = new Label(gr, SWT.NONE);
-			label.setText(Messages.IndexerSupportPreferencePage_label_suffix_pattern);
+			label.setText(Messages.JsonCdbPreferencePage_label_suffix_pattern);
 			GridDataFactory.defaultsFor(label).applyTo(label);
 		}
 
@@ -88,7 +88,7 @@ public class IndexerSupportPreferencePage extends PreferencePage implements IWor
 						Pattern.compile(text);
 						setErrorMessage(null);
 					} catch (PatternSyntaxException ex) {
-						String msg = String.format(Messages.IndexerSupportPreferencePage_errmsg_suffix_regex,
+						String msg = String.format(Messages.JsonCdbPreferencePage_errmsg_suffix_regex,
 								ex.getDescription(), ex.getPattern(), ex.getIndex());
 						setErrorMessage(msg);
 					}

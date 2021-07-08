@@ -64,6 +64,6 @@ clean:
 	-$(RM) $(TAROUT)$(TERMINAL__DUMMY_OUTPUT__OUTPUTS)$(LOGFILE) test30_2.tmp
 	-@echo ' '
 
-.PHONY: all clean dependents
+.PHONY: all clean dependents main-build
 
 -include ../makefile.targets

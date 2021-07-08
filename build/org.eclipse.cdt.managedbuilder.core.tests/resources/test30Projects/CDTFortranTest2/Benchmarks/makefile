@@ -47,6 +47,6 @@ clean:
 	-$(RM) $(OBJS)$(MODS)$(EXECUTABLES) CDTFortranTest2
 	-@echo ' '
 
-.PHONY: all clean dependents
+.PHONY: all clean dependents main-build
 
 -include ../makefile.targets

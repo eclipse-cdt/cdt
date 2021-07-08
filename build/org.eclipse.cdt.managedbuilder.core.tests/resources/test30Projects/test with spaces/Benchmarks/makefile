@@ -52,6 +52,6 @@ clean:
 	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) testwithspaces.exe
 	-@echo ' '
 
-.PHONY: all clean dependents
+.PHONY: all clean dependents main-build
 
 -include ../makefile.targets

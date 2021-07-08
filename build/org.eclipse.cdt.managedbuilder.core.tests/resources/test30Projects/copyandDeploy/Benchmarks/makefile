@@ -61,6 +61,6 @@ clean:
 	-$(RM) $(OBJS)$(FINAL)$(C_DEPS)$(CS)$(EXECUTABLES) TestCopyandDeploy
 	-@echo ' '
 
-.PHONY: all clean dependents
+.PHONY: all clean dependents main-build
 
 -include ../makefile.targets

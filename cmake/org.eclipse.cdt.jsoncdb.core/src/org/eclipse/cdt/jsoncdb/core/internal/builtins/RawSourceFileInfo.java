@@ -21,16 +21,16 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.eclipse.cdt.jsoncdb.core.internal.Plugin;
-import org.eclipse.cdt.jsoncdb.core.participant.IRawIndexerInfo;
-import org.eclipse.cdt.jsoncdb.core.participant.IRawIndexerInfoCollector;
+import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfoCollector;
+import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfo;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * Default implementation of IRawIndexerInfo.
+ * Default implementation of IRawSourceFileInfo.
  *
  * @author weber
  */
-public class RawIndexerInfo implements IRawIndexerInfo, IRawIndexerInfoCollector {
+public class RawSourceFileInfo implements IRawSourceFileInfo, IRawSourceFileInfoCollector {
 
 	@SuppressWarnings("nls")
 	private static final boolean DEBUG = Boolean

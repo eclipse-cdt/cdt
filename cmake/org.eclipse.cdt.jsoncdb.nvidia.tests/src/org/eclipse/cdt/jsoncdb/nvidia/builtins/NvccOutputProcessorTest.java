@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.eclipse.cdt.jsoncdb.core.participant.IRawIndexerInfoCollector;
+import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfoCollector;
 import org.eclipse.cdt.jsoncdb.core.participant.builtins.GccOutputProcessor;
 import org.eclipse.cdt.jsoncdb.core.participant.builtins.OutputSniffer;
 import org.junit.Before;
@@ -45,7 +45,7 @@ public class NvccOutputProcessorTest {
 	@Test
 	public void testProcessFile() throws IOException {
 		// pass resource content line-wise to the testee...
-		RawIndexerInfoMock pc = new RawIndexerInfoMock();
+		RawSourceFileInfoMock pc = new RawSourceFileInfoMock();
 		try (InputStream is = getClass().getResourceAsStream("cbd-nvcc.output.txt");
 				OutputSniffer os = new OutputSniffer(testee, null, pc)) {
 			byte[] buffer = new byte[1024];
@@ -63,7 +63,7 @@ public class NvccOutputProcessorTest {
 		assertEquals("value", "85", pc.defines.get("__CUDACC_VER_BUILD__"));
 	}
 
-	private static class RawIndexerInfoMock implements IRawIndexerInfoCollector {
+	private static class RawSourceFileInfoMock implements IRawSourceFileInfoCollector {
 		private final Map<String, String> defines = new HashMap<>();
 		private final List<String> undefines = new ArrayList<>();
 		private final List<String> includePaths = new ArrayList<>();

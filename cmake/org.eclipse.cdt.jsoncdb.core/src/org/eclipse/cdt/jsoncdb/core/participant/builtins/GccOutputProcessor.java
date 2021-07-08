@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.jsoncdb.core.participant.IRawIndexerInfoCollector;
+import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfoCollector;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -50,7 +50,7 @@ public final class GccOutputProcessor implements IBuiltinsOutputProcessor {
 
 	@SuppressWarnings("nls")
 	@Override
-	public void processLine(String line, IRawIndexerInfoCollector infoCollector) {
+	public void processLine(String line, IRawSourceFileInfoCollector infoCollector) {
 
 		// include paths
 		if (line.equals("#include \"...\" search starts here:")) {

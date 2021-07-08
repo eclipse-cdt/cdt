@@ -32,7 +32,7 @@ import org.eclipse.cdt.jsoncdb.core.internal.ParserDetection.ParserDetectionResu
 import org.eclipse.cdt.jsoncdb.core.internal.Plugin;
 import org.eclipse.cdt.jsoncdb.core.internal.builtins.CompilerBuiltinsDetector;
 import org.eclipse.cdt.jsoncdb.core.participant.DefaultToolDetectionParticipant;
-import org.eclipse.cdt.jsoncdb.core.participant.IRawIndexerInfo;
+import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfo;
 import org.eclipse.cdt.jsoncdb.core.participant.IToolCommandlineParser;
 import org.eclipse.cdt.jsoncdb.core.participant.IToolCommandlineParser.IResult;
 import org.eclipse.cdt.jsoncdb.core.participant.IToolDetectionParticipant;
@@ -100,7 +100,7 @@ public class CompileCommandsJsonParser {
 	 * the raw scanner info results for each source file (source file name ->
 	 * IResult)
 	 */
-	private Map<String, IRawIndexerInfo> fileResults;
+	private Map<String, IRawSourceFileInfo> fileResults;
 
 	/**
 	 * minimized set of CompilerBuiltinsDetector to run. (detector key ->
@@ -272,9 +272,9 @@ public class CompileCommandsJsonParser {
 
 		java.nio.file.Path buildDir = java.nio.file.Path.of(buildRootFolder.getLocationURI());
 		// run each built-in detector and collect the results..
-		Map<String, IRawIndexerInfo> builtinDetectorsResults = new HashMap<>();
+		Map<String, IRawSourceFileInfo> builtinDetectorsResults = new HashMap<>();
 		for (Entry<String, CompilerBuiltinsDetector> entry : builtinDetectorsToRun.entrySet()) {
-			IRawIndexerInfo result = entry.getValue().detectBuiltins(jsonFile.getProject(), buildDir,
+			IRawSourceFileInfo result = entry.getValue().detectBuiltins(jsonFile.getProject(), buildDir,
 					parseRequest.getLauncher(), parseRequest.getConsole(), monitor);
 			// store detector key with result
 			builtinDetectorsResults.put(entry.getKey(), result);
@@ -294,8 +294,8 @@ public class CompileCommandsJsonParser {
 		// merge built-in results with source file results
 		for (Entry<String, String> link : fileToBuiltinDetectorLinks.entrySet()) {
 			String sourceFileName = link.getKey();
-			IRawIndexerInfo fileResult = fileResults.get(sourceFileName);
-			IRawIndexerInfo builtinDetectorsResult = builtinDetectorsResults.get(link.getValue());
+			IRawSourceFileInfo fileResult = fileResults.get(sourceFileName);
+			IRawSourceFileInfo builtinDetectorsResult = builtinDetectorsResults.get(link.getValue());
 			mergeResultsForFile(stringPooler, sourceFileName, fileResult, builtinDetectorsResult);
 		}
 	}
@@ -303,7 +303,7 @@ public class CompileCommandsJsonParser {
 	/**
 	 * Merges preprocessor symbols and macros for a source file with compiler
 	 * built-in preprocessor symbols and macros and passes the to the
-	 * {@code IIndexerInfoConsumer} that was specified in the constructor.
+	 * {@code ISourceFileInfoConsumer} that was specified in the constructor.
 	 *
 	 * @param fileResult             source file preprocessor symbols and macros
 	 * @param builtinDetectorsResult compiler built-in preprocessor symbols and
@@ -313,7 +313,7 @@ public class CompileCommandsJsonParser {
 	 * @param sourceFileName         the name of the source file
 	 */
 	private void mergeResultsForFile(Function<String, String> stringPooler, String sourceFileName,
-			IRawIndexerInfo fileResult, IRawIndexerInfo builtinDetectorsResult) {
+			IRawSourceFileInfo fileResult, IRawSourceFileInfo builtinDetectorsResult) {
 		/*
 		 * Handling of -U and -D is ambivalent here. - The GCC man page states: '-U name
 		 * Cancel any previous definition of name, either built in or provided with a -D
@@ -344,7 +344,7 @@ public class CompileCommandsJsonParser {
 		List<String> includeFiles = fileResult.getIncludeFiles();
 
 		// feed the paths and defines with the file name to the indexer..
-		parseRequest.getIndexerInfoConsumer().acceptSourceFileInfo(sourceFileName, systemIncludePaths, effectiveDefines,
+		parseRequest.getSourceFileInfoConsumer().acceptSourceFileInfo(sourceFileName, systemIncludePaths, effectiveDefines,
 				includePaths, macroFiles, includeFiles);
 	}
 
@@ -417,7 +417,7 @@ public class CompileCommandsJsonParser {
 	 * Parses the {@code compile_commands.json} file in the build directory of the
 	 * build configuration if necessary and generates indexer information. If the JSON file did not change since the last invocation
 	 * of this method on the same build configuration, parsing of the file will be skipped; that is:
-	 * Method {@link IIndexerInfoConsumer#accept()} is not invoked.
+	 * Method {@link ISourceFileInfoConsumer#accept()} is not invoked.
 	 * @param monitor  the job's progress monitor
 	 *
 	 * @return {@code true} if the {@code compile_commands.json} file did change
@@ -440,7 +440,7 @@ public class CompileCommandsJsonParser {
 			}
 			return processJsonFile(monitor);
 		} finally {
-			parseRequest.getIndexerInfoConsumer().shutdown();
+			parseRequest.getSourceFileInfoConsumer().shutdown();
 			if (DEBUG_TIME) {
 				long end = System.currentTimeMillis();
 				System.out.printf("Parsed file '%s' in %dms%n", //$NON-NLS-1$
@@ -492,7 +492,7 @@ public class CompileCommandsJsonParser {
 	 * @param file
 	 * @param result
 	 */
-	private void rememberFileResult(String sourceFileName, IRawIndexerInfo result) {
+	private void rememberFileResult(String sourceFileName, IRawSourceFileInfo result) {
 		fileResults.put(sourceFileName, result);
 	}
 

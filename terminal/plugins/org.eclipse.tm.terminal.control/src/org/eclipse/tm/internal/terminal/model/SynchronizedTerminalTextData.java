@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
+import org.eclipse.tm.terminal.model.ITerminalLine;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
@@ -53,14 +54,26 @@ public class SynchronizedTerminalTextData implements ITerminalTextData {
 		fData.copyRange(source, sourceStartLine, destStartLine, length);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	synchronized public char getChar(int line, int column) {
 		return fData.getChar(line, column);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	synchronized public char[] getChars(int line) {
 		return fData.getChars(line);
+	}
+
+	@Override
+	synchronized public int getCodePoint(int line, int column) {
+		return fData.getCodePoint(line, column);
+	}
+
+	@Override
+	synchronized public ITerminalLine getTerminalLine(int line) {
+		return fData.getTerminalLine(line);
 	}
 
 	@Override
@@ -113,19 +126,37 @@ public class SynchronizedTerminalTextData implements ITerminalTextData {
 		fData.scroll(startLine, size, shift);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	synchronized public void setChar(int line, int column, char c, TerminalStyle style) {
 		fData.setChar(line, column, c, style);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	synchronized public void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style) {
 		fData.setChars(line, column, chars, start, len, style);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	synchronized public void setChars(int line, int column, char[] chars, TerminalStyle style) {
 		fData.setChars(line, column, chars, style);
+	}
+
+	@Override
+	synchronized public void setCodePoint(int line, int column, int c, TerminalStyle style) {
+		fData.setCodePoint(line, column, c, style);
+	}
+
+	@Override
+	synchronized public void setCodePoints(int line, int column, int[] chars, int start, int len, TerminalStyle style) {
+		fData.setCodePoints(line, column, chars, start, len, style);
+	}
+
+	@Override
+	synchronized public void setCodePoints(int line, int column, int[] chars, TerminalStyle style) {
+		fData.setCodePoints(line, column, chars, style);
 	}
 
 	@Override

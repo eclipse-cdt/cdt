@@ -158,7 +158,7 @@ public class TextLineRenderer implements ILinelRenderer {
 				}
 				style = style.setReverse(!style.isReverse());
 				setupGC(gc, style);
-				String text = String.valueOf(getTerminalText().getChar(row, cursorColumn));
+				String text = Character.toString(getTerminalText().getCodePoint(row, cursorColumn));
 				drawText(gc, x, y, colFirst, cursorColumn, text);
 			}
 		}

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
+import org.eclipse.tm.terminal.model.ITerminalLine;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
@@ -54,6 +55,7 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 		return line >= fWindowStartLine && line < fWindowStartLine + fWindowSize;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public char getChar(int line, int column) {
 		if (!isInWindow(line))
@@ -61,11 +63,26 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 		return fData.getChar(line - fWindowStartLine, column);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public char[] getChars(int line) {
 		if (!isInWindow(line))
 			return null;
 		return fData.getChars(line - fWindowStartLine);
+	}
+
+	@Override
+	public int getCodePoint(int line, int column) {
+		if (!isInWindow(line))
+			return 0;
+		return fData.getCodePoint(line - fWindowStartLine, column);
+	}
+
+	@Override
+	public ITerminalLine getTerminalLine(int line) {
+		if (!isInWindow(line))
+			return null;
+		return fData.getTerminalLine(line - fWindowStartLine);
 	}
 
 	@Override
@@ -167,6 +184,7 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 			fData.scroll(start, n, shift);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChar(int line, int column, char c, TerminalStyle style) {
 		if (!isInWindow(line))
@@ -174,6 +192,7 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 		fData.setChar(line - fWindowStartLine, column, c, style);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style) {
 		if (!isInWindow(line))
@@ -181,11 +200,33 @@ public class TerminalTextDataWindow implements ITerminalTextData {
 		fData.setChars(line - fWindowStartLine, column, chars, start, len, style);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChars(int line, int column, char[] chars, TerminalStyle style) {
 		if (!isInWindow(line))
 			return;
 		fData.setChars(line - fWindowStartLine, column, chars, style);
+	}
+
+	@Override
+	public void setCodePoint(int line, int column, int c, TerminalStyle style) {
+		if (!isInWindow(line))
+			return;
+		fData.setCodePoint(line - fWindowStartLine, column, c, style);
+	}
+
+	@Override
+	public void setCodePoints(int line, int column, int[] chars, int start, int len, TerminalStyle style) {
+		if (!isInWindow(line))
+			return;
+		fData.setCodePoints(line - fWindowStartLine, column, chars, start, len, style);
+	}
+
+	@Override
+	public void setCodePoints(int line, int column, int[] chars, TerminalStyle style) {
+		if (!isInWindow(line))
+			return;
+		fData.setCodePoints(line - fWindowStartLine, column, chars, style);
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.tm.terminal.model.ITerminalLine;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
@@ -130,9 +131,15 @@ public class TerminalTextData implements ITerminalTextData {
 		return fData.getLineSegments(line, column, len);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public char getChar(int line, int column) {
 		return fData.getChar(line, column);
+	}
+
+	@Override
+	public int getCodePoint(int line, int column) {
+		return fData.getCodePoint(line, column);
 	}
 
 	@Override
@@ -140,21 +147,42 @@ public class TerminalTextData implements ITerminalTextData {
 		return fData.getStyle(line, column);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChar(int line, int column, char c, TerminalStyle style) {
 		fData.setChar(line, column, c, style);
 		sendLineChangedToSnapshots(line);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChars(int line, int column, char[] chars, TerminalStyle style) {
 		fData.setChars(line, column, chars, style);
 		sendLineChangedToSnapshots(line);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style) {
 		fData.setChars(line, column, chars, start, len, style);
+		sendLineChangedToSnapshots(line);
+	}
+
+	@Override
+	public void setCodePoint(int line, int column, int c, TerminalStyle style) {
+		fData.setCodePoint(line, column, c, style);
+		sendLineChangedToSnapshots(line);
+	}
+
+	@Override
+	public void setCodePoints(int line, int column, int[] chars, TerminalStyle style) {
+		fData.setCodePoints(line, column, chars, style);
+		sendLineChangedToSnapshots(line);
+	}
+
+	@Override
+	public void setCodePoints(int line, int column, int[] chars, int start, int len, TerminalStyle style) {
+		fData.setCodePoints(line, column, chars, start, len, style);
 		sendLineChangedToSnapshots(line);
 	}
 
@@ -276,6 +304,11 @@ public class TerminalTextData implements ITerminalTextData {
 	@Override
 	public char[] getChars(int line) {
 		return fData.getChars(line);
+	}
+
+	@Override
+	public ITerminalLine getTerminalLine(int line) {
+		return fData.getTerminalLine(line);
 	}
 
 	@Override

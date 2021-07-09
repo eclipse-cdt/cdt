@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
+import org.eclipse.tm.internal.terminal.model.UnicodeCalc;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.TerminalStyle;
 
@@ -160,13 +161,13 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			int line = toAbsoluteLine(fCursorLine);
 			int n = charactersToInsert;
 			for (int col = fColumns - 1; col >= fCursorColumn + n; col--) {
-				char c = fTerminal.getChar(line, col - n);
+				int c = fTerminal.getCodePoint(line, col - n);
 				TerminalStyle style = fTerminal.getStyle(line, col - n);
-				fTerminal.setChar(line, col, c, style);
+				fTerminal.setCodePoint(line, col, c, style);
 			}
 			int last = Math.min(fCursorColumn + n, fColumns);
 			for (int col = fCursorColumn; col < last; col++) {
-				fTerminal.setChar(line, col, '\000', null);
+				fTerminal.setCodePoint(line, col, 0, null);
 			}
 		}
 	}
@@ -213,7 +214,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		synchronized (fTerminal) {
 			int line = toAbsoluteLine(fCursorLine);
 			for (int col = fCursorColumn; col < fColumns; col++) {
-				fTerminal.setChar(line, col, '\000', null);
+				fTerminal.setCodePoint(line, col, 0, null);
 			}
 		}
 	}
@@ -223,7 +224,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		synchronized (fTerminal) {
 			int line = toAbsoluteLine(fCursorLine);
 			for (int col = 0; col <= fCursorColumn; col++) {
-				fTerminal.setChar(line, col, '\000', null);
+				fTerminal.setCodePoint(line, col, 0, null);
 			}
 		}
 	}
@@ -245,13 +246,13 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		synchronized (fTerminal) {
 			int line = toAbsoluteLine(fCursorLine);
 			for (int col = fCursorColumn + n; col < fColumns; col++) {
-				char c = fTerminal.getChar(line, col);
+				int c = fTerminal.getCodePoint(line, col);
 				TerminalStyle style = fTerminal.getStyle(line, col);
-				fTerminal.setChar(line, col - n, c, style);
+				fTerminal.setCodePoint(line, col - n, c, style);
 			}
 			int first = Math.max(fCursorColumn, fColumns - n);
 			for (int col = first; col < fColumns; col++) {
-				fTerminal.setChar(line, col, '\000', null);
+				fTerminal.setCodePoint(line, col, 0, null);
 			}
 		}
 	}
@@ -314,8 +315,10 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 				if (fWrapPending) {
 					line = doLineWrap();
 				}
-				int n = Math.min(fColumns - fCursorColumn, chars.length - i);
-				fTerminal.setChars(line, fCursorColumn, chars, i, n, fStyle);
+				int widthLeft = UnicodeCalc.width(chars, i, chars.length - i);
+				int n = Math.min(fColumns - fCursorColumn, widthLeft);
+				int[] codePoints = UnicodeCalc.getColumns(chars, i, n);
+				fTerminal.setCodePoints(line, fCursorColumn, codePoints, fStyle);
 				int col = fCursorColumn + n;
 				i += n;
 				// wrap needed?

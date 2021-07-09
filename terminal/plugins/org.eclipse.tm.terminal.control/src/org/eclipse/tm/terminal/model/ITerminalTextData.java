@@ -47,7 +47,9 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * @param c the new character at this position
 	 * @param style the style or null
 	 * @since 5.0
+	 * @deprecated This method does not handle surrogate pairs and wide characters. Use {@link #setCodePoint(int, int, int, TerminalStyle)}.
 	 */
+	@Deprecated
 	void setChar(int line, int column, char c, TerminalStyle style);
 
 	/**
@@ -57,7 +59,9 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * @param chars the new characters at this position
 	 * @param style the style or null
 	 * @since 5.0
+	 * @deprecated This method does not handle surrogate pairs and wide characters. Use {@link #setCodePoints(int, int, int[], TerminalStyle)}
 	 */
+	@Deprecated
 	void setChars(int line, int column, char[] chars, TerminalStyle style);
 
 	/**
@@ -69,8 +73,35 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * @param len the number of characters to insert. Characters beyond width are not inserted.
 	 * @param style the style or null
 	 * @since 5.0
+	 * @deprecated This method does not handle surrogate pairs and wide characters. Use {@link #setCodePoints(int, int, int[], int, int, TerminalStyle)}
 	 */
+	@Deprecated
 	void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style);
+
+	/**
+	 * Set a single character and the associated {@link TerminalStyle}.
+	 * @param line line must be >=0 and < height
+	 * @param column column must be >=0 and < width
+	 * @param c the new code point at this position
+	 * @param style the style or null
+	 * @since 5.3
+	 */
+	void setCodePoint(int line, int column, int c, TerminalStyle style);
+
+	/**
+	 * @since 5.3
+	 */
+	public interface IWriteCodePointsResult {
+		int getCodePointsConsumed();
+
+		int getWidthConsumed();
+	}
+
+	/**
+	 * @since 5.3
+	 */
+	IWriteCodePointsResult writeCodePoints(int line, int startColumn, int[] input, int start, int length,
+			TerminalStyle style);
 
 	/**
 	 * Cleans the entire line.

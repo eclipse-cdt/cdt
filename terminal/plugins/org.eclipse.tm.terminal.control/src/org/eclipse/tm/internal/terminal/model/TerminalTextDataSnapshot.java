@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.tm.terminal.model.ITerminalLine;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
@@ -124,6 +125,11 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	@Override
 	public char getChar(int line, int column) {
 		return fSnapshot.getChar(line, column);
+	}
+
+	@Override
+	public int getCodePoint(int line, int column) {
+		return fSnapshot.getCodePoint(line, column);
 	}
 
 	@Override
@@ -296,6 +302,11 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	@Override
 	public char[] getChars(int line) {
 		return fSnapshot.getChars(line);
+	}
+
+	@Override
+	public ITerminalLine getTerminalLine(int line) {
+		return fSnapshot.getTerminalLine(line);
 	}
 
 	@Override

@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -41,6 +42,7 @@ public class AllTestSuite extends TestCase {
 		suite.addTestSuite(TerminalTextDataStoreTest.class);
 		suite.addTestSuite(TerminalTextDataTest.class);
 		suite.addTestSuite(TerminalTextDataWindowTest.class);
+		suite.addTest(new JUnit4TestAdapter(TerminalLineTest.class));
 		return suite;
 	}
 

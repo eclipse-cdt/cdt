@@ -12,9 +12,7 @@
 package org.eclipse.tm.internal.terminal.model;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.List;
 
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
@@ -26,8 +24,7 @@ import org.eclipse.tm.terminal.model.TerminalStyle;
  *
  */
 public class TerminalTextDataStore implements ITerminalTextData {
-	private char[][] fChars;
-	private TerminalStyle[][] fStyle;
+	private TerminalLine[] fChars;
 	private int fWidth;
 	private int fHeight;
 	private int fMaxHeight;
@@ -36,8 +33,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	final private BitSet fWrappedLines = new BitSet();
 
 	public TerminalTextDataStore() {
-		fChars = new char[0][];
-		fStyle = new TerminalStyle[0][];
+		fChars = new TerminalLine[0];
 		fWidth = 0;
 	}
 
@@ -66,11 +62,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		assert width >= 0 || throwRuntimeException();
 		// just extend the region
 		if (height > fChars.length) {
-			int h = 4 * height / 3;
-			if (fMaxHeight > 0 && h > fMaxHeight)
-				h = fMaxHeight;
-			fStyle = (TerminalStyle[][]) resizeArray(fStyle, height);
-			fChars = (char[][]) resizeArray(fChars, height);
+			fChars = (TerminalLine[]) resizeArray(fChars, height);
 		}
 		// clean the new lines
 		if (height > fHeight) {
@@ -106,88 +98,82 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	@Override
 	public LineSegment[] getLineSegments(int line, int column, int len) {
 		// get the styles and chars for this line
-		TerminalStyle[] styles = fStyle[line];
-		char[] chars = fChars[line];
-		int col = column;
+		TerminalLine chars = fChars[line];
 		int n = column + len;
 
 		// expand the line if needed....
-		if (styles == null)
-			styles = new TerminalStyle[n];
-		else if (styles.length < n)
-			styles = (TerminalStyle[]) resizeArray(styles, n);
-
 		if (chars == null)
-			chars = new char[n];
-		else if (chars.length < n)
-			chars = (char[]) resizeArray(chars, n);
+			chars = new TerminalLine(n);
+		else if (chars.getWidth() < n)
+			chars.setWidth(n);
 
-		// and create the line segments
-		TerminalStyle style = styles[column];
-		List<LineSegment> segments = new ArrayList<>();
-		for (int i = column; i < n; i++) {
-			if (styles[i] != style) {
-				segments.add(new LineSegment(col, new String(chars, col, i - col), style));
-				style = styles[i];
-				col = i;
-			}
-		}
-		if (col < n) {
-			segments.add(new LineSegment(col, new String(chars, col, n - col), style));
-		}
-		return segments.toArray(new LineSegment[segments.size()]);
+		return chars.getLineSegments(column, len);
 	}
 
 	@Override
 	public char getChar(int line, int column) {
+		return (char) getCodePoint(line, column);
+	}
+
+	@Override
+	public int getCodePoint(int line, int column) {
 		assert column < fWidth || throwRuntimeException();
-		if (fChars[line] == null || column >= fChars[line].length)
+		if (fChars[line] == null || column >= fChars[line].getWidth())
 			return 0;
-		return fChars[line][column];
+		return fChars[line].getCodePointAt(column);
 	}
 
 	@Override
 	public TerminalStyle getStyle(int line, int column) {
 		assert column < fWidth || throwRuntimeException();
-		if (fStyle[line] == null || column >= fStyle[line].length)
+		if (fChars[line] == null || column >= fChars[line].getWidth())
 			return null;
-		return fStyle[line][column];
+		return fChars[line].getStyleAt(column);
 	}
 
 	void ensureLineLength(int iLine, int length) {
 		if (length > fWidth)
 			throw new RuntimeException();
 		if (fChars[iLine] == null) {
-			fChars[iLine] = new char[length];
-		} else if (fChars[iLine].length < length) {
-			fChars[iLine] = (char[]) resizeArray(fChars[iLine], length);
-		}
-		if (fStyle[iLine] == null) {
-			fStyle[iLine] = new TerminalStyle[length];
-		} else if (fStyle[iLine].length < length) {
-			fStyle[iLine] = (TerminalStyle[]) resizeArray(fStyle[iLine], length);
+			fChars[iLine] = new TerminalLine(length);
+		} else if (fChars[iLine].getWidth() < length) {
+			fChars[iLine].setWidth(length);
 		}
 	}
 
 	@Override
+	@Deprecated
 	public void setChar(int line, int column, char c, TerminalStyle style) {
 		ensureLineLength(line, column + 1);
-		fChars[line][column] = c;
-		fStyle[line][column] = style;
+		fChars[line].setCodePointAt(column, c, style);
 	}
 
 	@Override
+	@Deprecated
 	public void setChars(int line, int column, char[] chars, TerminalStyle style) {
 		setChars(line, column, chars, 0, chars.length, style);
 	}
 
 	@Override
+	@Deprecated
 	public void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style) {
 		ensureLineLength(line, column + len);
 		for (int i = 0; i < len; i++) {
-			fChars[line][column + i] = chars[i + start];
-			fStyle[line][column + i] = style;
+			fChars[line].setCodePointAt(column + i, chars[i + start], style);
 		}
+	}
+
+	@Override
+	public void setCodePoint(int line, int column, int c, TerminalStyle style) {
+		ensureLineLength(line, column + 1);
+		fChars[line].setCodePointAt(column, c, style);
+	}
+
+	@Override
+	public IWriteCodePointsResult writeCodePoints(int line, int startColumn, int[] input, int start, int length,
+			TerminalStyle style) {
+		ensureLineLength(line, fWidth);
+		return fChars[line].writeCodePoints(startColumn, input, start, length, style);
 	}
 
 	@Override
@@ -198,7 +184,6 @@ public class TerminalTextDataStore implements ITerminalTextData {
 			// shift is negative!!
 			for (int i = startLine; i < startLine + size + shift; i++) {
 				fChars[i] = fChars[i - shift];
-				fStyle[i] = fStyle[i - shift];
 				fWrappedLines.set(i, fWrappedLines.get(i - shift));
 			}
 			// then clean the opened lines
@@ -207,7 +192,6 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		} else {
 			for (int i = startLine + size - 1; i >= startLine && i - shift >= 0; i--) {
 				fChars[i] = fChars[i - shift];
-				fStyle[i] = fStyle[i - shift];
 				fWrappedLines.set(i, fWrappedLines.get(i - shift));
 			}
 			cleanLines(startLine, Math.min(shift, getHeight() - startLine));
@@ -261,8 +245,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		fWidth = source.getWidth();
 		int n = source.getHeight();
 		if (getHeight() != n) {
-			fChars = new char[n][];
-			fStyle = new TerminalStyle[n][];
+			fChars = new TerminalLine[n];
 		}
 		for (int i = 0; i < n; i++) {
 			copyLine(source, i, i);
@@ -281,8 +264,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 
 	@Override
 	public void copyLine(ITerminalTextData source, int sourceLine, int destLine) {
-		fChars[destLine] = source.getChars(sourceLine);
-		fStyle[destLine] = source.getStyles(sourceLine);
+		fChars[destLine] = (TerminalLine) source.getTerminalLine(sourceLine);
 		fWrappedLines.set(destLine, source.isWrappedLine(sourceLine));
 	}
 
@@ -290,20 +272,17 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	public char[] getChars(int line) {
 		if (fChars[line] == null)
 			return null;
-		return fChars[line].clone();
+		return fChars[line].getChars();
+	}
+
+	@Override
+	public TerminalLine getTerminalLine(int line) {
+		return new TerminalLine(fChars[line]);
 	}
 
 	@Override
 	public TerminalStyle[] getStyles(int line) {
-		if (fStyle[line] == null)
-			return null;
-		return fStyle[line].clone();
-	}
-
-	public void setLine(int line, char[] chars, TerminalStyle[] styles) {
-		fChars[line] = chars.clone();
-		fStyle[line] = styles.clone();
-		fWrappedLines.clear(line);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -319,7 +298,6 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	@Override
 	public void cleanLine(int line) {
 		fChars[line] = null;
-		fStyle[line] = null;
 		fWrappedLines.clear(line);
 	}
 
@@ -352,4 +330,5 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	public void setWrappedLine(int line) {
 		fWrappedLines.set(line);
 	}
+
 }

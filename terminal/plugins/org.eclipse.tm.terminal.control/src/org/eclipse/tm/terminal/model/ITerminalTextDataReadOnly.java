@@ -42,8 +42,18 @@ public interface ITerminalTextDataReadOnly {
 	 * @param line must be >=0 and < height
 	 * @param column must be >=0 and < width
 	 * @return the character at column,line
+	 * @deprecated This method does not handle surrogate pairs and wide characters. Use {@link #getCodePoint(int, int)} instead.
 	 */
+	@Deprecated
 	char getChar(int line, int column);
+
+	/**
+	 * @param line must be >=0 and < height
+	 * @param column must be >=0 and < width
+	 * @return the code point at column,line
+	 * @since 5.3
+	 */
+	int getCodePoint(int line, int column);
 
 	/**
 	 * @param line must be >=0 and < height
@@ -66,11 +76,23 @@ public interface ITerminalTextDataReadOnly {
 	 */
 	public ITerminalTextDataSnapshot makeSnapshot();
 
+	/**
+	 * @deprecated Use {@link #getTerminalLine(int)}
+	 */
+	@Deprecated
 	char[] getChars(int line);
 
 	/**
-	 * @since 5.0
+	 * @since 5.3
 	 */
+	ITerminalLine getTerminalLine(int line);
+
+	/**
+	 * @throws UnsupportedOperationException always
+	 * @since 5.0
+	 * @deprecated Unused within terminal code
+	 */
+	@Deprecated
 	TerminalStyle[] getStyles(int line);
 
 	/**

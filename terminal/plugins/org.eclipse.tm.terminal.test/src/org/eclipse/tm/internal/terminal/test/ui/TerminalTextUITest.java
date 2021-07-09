@@ -65,6 +65,13 @@ public class TerminalTextUITest {
 	}
 
 	public static void main(String[] args) {
+		try {
+			assert false;
+			throw new Error("No Assertions! Run this code with assertions enabled! (vmargs: -ea)");
+		} catch (AssertionError e) {
+			// OK, assertions are enabled!
+		}
+
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout());
@@ -98,6 +105,8 @@ public class TerminalTextUITest {
 		reader = new DataReader("Fast", fTerminalModel, new FastDataSource(), status);
 		addDataReader(composite, reader);
 		reader = new DataReader("Colors", fTerminalModel, new VT100DataSource(), status);
+		addDataReader(composite, reader);
+		reader = new DataReader("Unicode", fTerminalModel, new UnicodeDataSource(), status);
 		addDataReader(composite, reader);
 		reader = new DataReader("Random", fTerminalModel, new RandomDataSource(), status);
 		addDataReader(composite, reader);

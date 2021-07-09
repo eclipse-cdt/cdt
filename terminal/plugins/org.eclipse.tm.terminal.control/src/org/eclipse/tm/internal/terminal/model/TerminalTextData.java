@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.tm.terminal.model.ITerminalLine;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
@@ -50,25 +51,21 @@ public class TerminalTextData implements ITerminalTextData {
 		if (len < 0)
 			len = term.getHeight();
 		StringBuffer buff = new StringBuffer();
-		int width = term.getWidth();
 		int n = Math.min(len, term.getHeight() - start);
 		for (int line = start; line < n; line++) {
 			if (line > 0)
 				buff.append("\n"); //$NON-NLS-1$
-			for (int column = 0; column < width; column++) {
-				buff.append(term.getChar(line, column));
-			}
+			TerminalLine terminalLine = (TerminalLine) term.getTerminalLine(line);
+			buff.append(terminalLine.getString());
 		}
 		// get rid of the empty space at the end of the lines
 		//return buff.toString().replaceAll("\000+", "");  //$NON-NLS-1$//$NON-NLS-2$
-		//<J2ME CDC-1.1 Foundation-1.1 variant>
 		int i = buff.length() - 1;
 		while (i >= 0 && buff.charAt(i) == '\000') {
 			i--;
 		}
 		buff.setLength(i + 1);
 		return buff.toString();
-		//</J2ME CDC-1.1 Foundation-1.1 variant>
 	}
 
 	/**
@@ -130,9 +127,15 @@ public class TerminalTextData implements ITerminalTextData {
 		return fData.getLineSegments(line, column, len);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public char getChar(int line, int column) {
 		return fData.getChar(line, column);
+	}
+
+	@Override
+	public int getCodePoint(int line, int column) {
+		return fData.getCodePoint(line, column);
 	}
 
 	@Override
@@ -140,22 +143,39 @@ public class TerminalTextData implements ITerminalTextData {
 		return fData.getStyle(line, column);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChar(int line, int column, char c, TerminalStyle style) {
 		fData.setChar(line, column, c, style);
 		sendLineChangedToSnapshots(line);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChars(int line, int column, char[] chars, TerminalStyle style) {
 		fData.setChars(line, column, chars, style);
 		sendLineChangedToSnapshots(line);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style) {
 		fData.setChars(line, column, chars, start, len, style);
 		sendLineChangedToSnapshots(line);
+	}
+
+	@Override
+	public void setCodePoint(int line, int column, int c, TerminalStyle style) {
+		fData.setCodePoint(line, column, c, style);
+		sendLineChangedToSnapshots(line);
+	}
+
+	@Override
+	public IWriteCodePointsResult writeCodePoints(int line, int startColumn, int[] input, int start, int length,
+			TerminalStyle style) {
+		var consumed = fData.writeCodePoints(line, startColumn, input, start, length, style);
+		sendLineChangedToSnapshots(line);
+		return consumed;
 	}
 
 	@Override
@@ -273,11 +293,18 @@ public class TerminalTextData implements ITerminalTextData {
 		fData.copyRange(source, sourceStartLine, destStartLine, length);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public char[] getChars(int line) {
 		return fData.getChars(line);
 	}
 
+	@Override
+	public ITerminalLine getTerminalLine(int line) {
+		return fData.getTerminalLine(line);
+	}
+
+	@SuppressWarnings("deprecation")
 	@Override
 	public TerminalStyle[] getStyles(int line) {
 		return fData.getStyles(line);

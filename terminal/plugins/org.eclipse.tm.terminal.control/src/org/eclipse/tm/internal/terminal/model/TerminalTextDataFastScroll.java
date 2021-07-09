@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
+import org.eclipse.tm.terminal.model.ITerminalLine;
 import org.eclipse.tm.terminal.model.ITerminalTextData;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
@@ -122,16 +123,30 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public char getChar(int line, int column) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		return fData.getChar(getPositionOfLine(line), column);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public char[] getChars(int line) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		return fData.getChars(getPositionOfLine(line));
+	}
+
+	@Override
+	public int getCodePoint(int line, int column) {
+		assert (line >= 0 && line < fHeight) || throwRuntimeException();
+		return fData.getCodePoint(getPositionOfLine(line), column);
+	}
+
+	@Override
+	public ITerminalLine getTerminalLine(int line) {
+		assert (line >= 0 && line < fHeight) || throwRuntimeException();
+		return fData.getTerminalLine(getPositionOfLine(line));
 	}
 
 	@Override
@@ -156,6 +171,7 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		return fData.getStyle(getPositionOfLine(line), column);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public TerminalStyle[] getStyles(int line) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
@@ -213,22 +229,38 @@ public class TerminalTextDataFastScroll implements ITerminalTextData {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChar(int line, int column, char c, TerminalStyle style) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		fData.setChar(getPositionOfLine(line), column, c, style);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChars(int line, int column, char[] chars, int start, int len, TerminalStyle style) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		fData.setChars(getPositionOfLine(line), column, chars, start, len, style);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setChars(int line, int column, char[] chars, TerminalStyle style) {
 		assert (line >= 0 && line < fHeight) || throwRuntimeException();
 		fData.setChars(getPositionOfLine(line), column, chars, style);
+	}
+
+	@Override
+	public void setCodePoint(int line, int column, int c, TerminalStyle style) {
+		assert (line >= 0 && line < fHeight) || throwRuntimeException();
+		fData.setCodePoint(getPositionOfLine(line), column, c, style);
+	}
+
+	@Override
+	public IWriteCodePointsResult writeCodePoints(int line, int startColumn, int[] input, int start, int length,
+			TerminalStyle style) {
+		assert (line >= 0 && line < fHeight) || throwRuntimeException();
+		return fData.writeCodePoints(getPositionOfLine(line), startColumn, input, start, length, style);
 	}
 
 	@Override

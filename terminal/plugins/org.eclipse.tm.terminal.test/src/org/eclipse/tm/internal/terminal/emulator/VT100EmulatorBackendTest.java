@@ -33,7 +33,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		return new VT100EmulatorBackend(term);
 	}
 
-	protected ITerminalTextData makeITerminalTextData() {
+	protected TerminalTextDataStore makeITerminalTextData() {
 		return new TerminalTextDataStore();
 	}
 
@@ -836,7 +836,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 	}
 
 	public void testInsertMode() {
-		ITerminalTextData term = makeITerminalTextData();
+		TerminalTextDataStore term = makeITerminalTextData();
 		IVT100EmulatorBackend vt100 = makeBakend(term);
 		term.setMaxHeight(10);
 		vt100.setDimensions(4, 6);
@@ -844,7 +844,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		vt100.appendString("123");
 		vt100.setCursorColumn(0);
 		vt100.appendString("abc");
-		assertEquals("abc", new String(term.getChars(0)));
+		assertEquals("abc", term.getTerminalLine(0).getStringTrimmed());
 		vt100.clearAll();
 		// insert mode
 		vt100.setCursorColumn(0);
@@ -853,11 +853,11 @@ public class VT100EmulatorBackendTest extends TestCase {
 		vt100.setInsertMode(true);
 		vt100.appendString("abc");
 		vt100.setInsertMode(false);
-		assertEquals("abc123", new String(term.getChars(0)));
+		assertEquals("abc123", term.getTerminalLine(0).getStringTrimmed());
 	}
 
 	public void testScrollRegion() {
-		ITerminalTextData term = makeITerminalTextData();
+		TerminalTextDataStore term = makeITerminalTextData();
 		IVT100EmulatorBackend vt100 = makeBakend(term);
 		term.setMaxHeight(10);
 		vt100.setDimensions(8, 6);
@@ -882,48 +882,48 @@ public class VT100EmulatorBackendTest extends TestCase {
 		vt100.setCursorLine(1);
 		vt100.setScrollRegion(1, 4);
 		vt100.scrollUp(1);
-		assertEquals("123", new String(term.getChars(0)));
-		assertEquals("789", new String(term.getChars(1)));
-		assertEquals("abc", new String(term.getChars(2)));
-		assertEquals("def", new String(term.getChars(3)));
-		assertNull(term.getChars(4));
-		assertEquals("ghi", new String(term.getChars(5)));
+		assertEquals("123", term.getTerminalLine(0).getStringTrimmed());
+		assertEquals("789", term.getTerminalLine(1).getStringTrimmed());
+		assertEquals("abc", term.getTerminalLine(2).getStringTrimmed());
+		assertEquals("def", term.getTerminalLine(3).getStringTrimmed());
+		assertEquals("", term.getTerminalLine(4).getStringTrimmed());
+		assertEquals("ghi", term.getTerminalLine(5).getStringTrimmed());
 		vt100.scrollDown(1);
-		assertEquals("123", new String(term.getChars(0)));
-		assertNull(term.getChars(1));
-		assertEquals("789", new String(term.getChars(2)));
-		assertEquals("abc", new String(term.getChars(3)));
-		assertEquals("def", new String(term.getChars(4)));
-		assertEquals("ghi", new String(term.getChars(5)));
+		assertEquals("123", term.getTerminalLine(0).getStringTrimmed());
+		assertEquals("", term.getTerminalLine(1).getStringTrimmed());
+		assertEquals("789", term.getTerminalLine(2).getStringTrimmed());
+		assertEquals("abc", term.getTerminalLine(3).getStringTrimmed());
+		assertEquals("def", term.getTerminalLine(4).getStringTrimmed());
+		assertEquals("ghi", term.getTerminalLine(5).getStringTrimmed());
 
 		// test scroll without region
 		vt100.setScrollRegion(-1, -1);
 		vt100.scrollDown(1);
-		assertNull(term.getChars(0));
-		assertEquals("123", new String(term.getChars(1)));
-		assertNull(term.getChars(2));
-		assertEquals("789", new String(term.getChars(3)));
-		assertEquals("abc", new String(term.getChars(4)));
-		assertEquals("def", new String(term.getChars(5)));
-		assertEquals("ghi", new String(term.getChars(6)));
+		assertEquals("", term.getTerminalLine(0).getStringTrimmed());
+		assertEquals("123", term.getTerminalLine(1).getStringTrimmed());
+		assertEquals("", term.getTerminalLine(2).getStringTrimmed());
+		assertEquals("789", term.getTerminalLine(3).getStringTrimmed());
+		assertEquals("abc", term.getTerminalLine(4).getStringTrimmed());
+		assertEquals("def", term.getTerminalLine(5).getStringTrimmed());
+		assertEquals("ghi", term.getTerminalLine(6).getStringTrimmed());
 		vt100.scrollUp(1);
-		assertEquals("123", new String(term.getChars(0)));
-		assertNull(term.getChars(1));
-		assertEquals("789", new String(term.getChars(2)));
-		assertEquals("abc", new String(term.getChars(3)));
-		assertEquals("def", new String(term.getChars(4)));
-		assertEquals("ghi", new String(term.getChars(5)));
+		assertEquals("123", term.getTerminalLine(0).getStringTrimmed());
+		assertEquals("", term.getTerminalLine(1).getStringTrimmed());
+		assertEquals("789", term.getTerminalLine(2).getStringTrimmed());
+		assertEquals("abc", term.getTerminalLine(3).getStringTrimmed());
+		assertEquals("def", term.getTerminalLine(4).getStringTrimmed());
+		assertEquals("ghi", term.getTerminalLine(5).getStringTrimmed());
 
 		// test scroll by newline
 		vt100.setScrollRegion(1, 4);
 		vt100.setCursorLine(4);
 		vt100.processNewline();
-		assertEquals("123", new String(term.getChars(0)));
-		assertEquals("789", new String(term.getChars(1)));
-		assertEquals("abc", new String(term.getChars(2)));
-		assertEquals("def", new String(term.getChars(3)));
-		assertNull(term.getChars(4));
-		assertEquals("ghi", new String(term.getChars(5)));
+		assertEquals("123", term.getTerminalLine(0).getStringTrimmed());
+		assertEquals("789", term.getTerminalLine(1).getStringTrimmed());
+		assertEquals("abc", term.getTerminalLine(2).getStringTrimmed());
+		assertEquals("def", term.getTerminalLine(3).getStringTrimmed());
+		assertEquals("", term.getTerminalLine(4).getStringTrimmed());
+		assertEquals("ghi", term.getTerminalLine(5).getStringTrimmed());
 	}
 
 }

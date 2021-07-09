@@ -40,7 +40,7 @@ public class TerminalTextData implements ITerminalTextData {
 	/**
 	 * Debug helper method -- use as "New Detail Formatter.." in the
 	 * debugger variables view:
-	 *   <pre>TerminalTextData.toMultiLineText(this,0,200))</pre>
+	 *   <pre>TerminalTextData.toMultiLineText(this,0,200)</pre>
 	 * @param term the terminal
 	 * @param start start line to show
 	 * @param len number of lines to show -- negative numbers means show all

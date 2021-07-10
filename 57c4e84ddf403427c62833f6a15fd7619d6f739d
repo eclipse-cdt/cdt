@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "13ecbc1d_d5011338",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalLine.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-10T01:38:28Z",
+      "side": 1,
+      "message": "\"private\"",
+      "revId": "57c4e84ddf403427c62833f6a15fd7619d6f739d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f4abc11_afeab51f",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalLine.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-10T01:38:28Z",
+      "side": 1,
+      "message": "I may call this way too much to be performant.",
+      "range": {
+        "startLine": 67,
+        "startChar": 10,
+        "endLine": 67,
+        "endChar": 27
+      },
+      "revId": "57c4e84ddf403427c62833f6a15fd7619d6f739d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "576c970c_4b038629",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalLine.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-10T01:38:28Z",
+      "side": 1,
+      "message": "This...",
+      "revId": "57c4e84ddf403427c62833f6a15fd7619d6f739d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84cced4d_e70305a3",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalLine.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-10T01:38:28Z",
+      "side": 1,
+      "message": "...and this is the suspect code performance wise.\n\nI am not sure that growing and shrinking the arrays all the time is performant enough.",
+      "revId": "57c4e84ddf403427c62833f6a15fd7619d6f739d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dcc61bfc_7d34ab5b",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/UnicodeCalc.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-10T01:38:28Z",
+      "side": 1,
+      "message": "Need the full table here. https://twitter.com/JonahGrahamKC/status/1413298516928208898",
+      "revId": "57c4e84ddf403427c62833f6a15fd7619d6f739d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

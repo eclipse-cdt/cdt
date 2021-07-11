@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "3eb6195e_54df797e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ASTComparer.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T20:52:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b9868bed_17e628c2",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "15eea874_30297993",
         "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/IPragma.java",
         "patchSetId": 15
@@ -95,6 +113,30 @@
     },
     {
       "key": {
+        "uuid": "00fbb79c_e36997f2",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/Pragma.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T20:52:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c91b6e76_5fc8b27c",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 10
+      },
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eb62ac86_379140c3",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java",
         "patchSetId": 15
@@ -130,6 +172,24 @@
     },
     {
       "key": {
+        "uuid": "2b2d48bb_958accc2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T20:52:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e80a9317_a191a437",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f64f5d20_393862ef",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/AbstractCModelOutlinePage.java",
         "patchSetId": 15
@@ -144,6 +204,24 @@
       "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5b6df03_356c3f77",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/AbstractCModelOutlinePage.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T20:52:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f64f5d20_393862ef",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -197,6 +275,24 @@
       "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99dd9f1c_34a556d4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/DecoratingCOutlineLabelProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T20:52:24Z",
+      "side": 1,
+      "message": "It turns out when owner draw is disabled, the listener is not even called, so the \"isOwnerDrawEnabled\" is never false. That also means there is no opportunity in this code to ever do the custom painting. Instead I solved this by make the divider lines non-custom draw just be a bunch of dashes.",
+      "parentUuid": "c12eb253_d1517b59",
+      "revId": "db28ee8005d4cfd2bd6a5a06c849eef3f3628da4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -56,6 +56,18 @@ public class Pragma extends SourceManipulation implements IPragma {
 				markName = restOfLine.trim();
 			}
 				break;
+			case "region": //$NON-NLS-1$
+			case "endregion": { //$NON-NLS-1$
+				if (restOfLine.isEmpty()) {
+					dividerBeforeMark = true;
+					dividerAfterMark = false;
+				} else {
+					dividerBeforeMark = true;
+					dividerAfterMark = true;
+					markName = restOfLine;
+				}
+			}
+				break;
 			default:
 				return null;
 			}

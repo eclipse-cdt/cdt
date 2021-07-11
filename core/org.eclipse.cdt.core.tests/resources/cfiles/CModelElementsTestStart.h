@@ -152,6 +152,9 @@ namespace {
 #pragma mark neither
 #pragma mark -// blank1
 #pragma mark // blank2
+#pragma region // no name
+#pragma region named
+#pragma endregion // no name
+#pragma endregion endnamed
 #pragma ms_struct on
 _Pragma("once")
-

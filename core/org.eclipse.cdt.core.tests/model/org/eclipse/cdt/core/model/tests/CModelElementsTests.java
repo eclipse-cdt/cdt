@@ -189,6 +189,35 @@ public class CModelElementsTests extends BaseTestCase {
 			assertEquals("", pragma.getPragmaMarkInfo().get().getMarkName());
 		}
 		{
+			// region no name
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("region", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(false, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("region named", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("named", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("endregion", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(false, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
+			IPragma pragma = (IPragma) pragmas.get(line++);
+			assertEquals("endregion endnamed", pragma.getElementName());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerBeforeMark());
+			assertEquals(true, pragma.getPragmaMarkInfo().get().isDividerAfterMark());
+			assertEquals("endnamed", pragma.getPragmaMarkInfo().get().getMarkName());
+		}
+		{
 			IPragma pragma = (IPragma) pragmas.get(line++);
 			assertEquals("ms_struct on", pragma.getElementName());
 			assertEquals(true, pragma.getPragmaMarkInfo().isEmpty());

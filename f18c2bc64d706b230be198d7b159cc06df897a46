@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "31ba70b1_0abcadf9",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalTextDataFastScroll.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:21:46Z",
+      "side": 1,
+      "message": "So this block is what gets more complicated when dealing with both surrogate pairs and wide glyphs. The number of columns !\u003d number of chars. appendString in the emulator is what handles wrapping today, so my rewrite the understands both is [1]\n\nhttps://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/182953/2/terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/emulator/VT100EmulatorBackend.java#17",
+      "revId": "f18c2bc64d706b230be198d7b159cc06df897a46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f2b9a15_e7cd6948",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalTextDataFastScroll.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:21:46Z",
+      "side": 1,
+      "message": "\"scroll\" can insert a null line in the middle of content - not sure how that translates to full lines.",
+      "range": {
+        "startLine": 298,
+        "startChar": 6,
+        "endLine": 298,
+        "endChar": 11
+      },
+      "revId": "f18c2bc64d706b230be198d7b159cc06df897a46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db50f68a_a33cf42a",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalTextDataStore.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:21:46Z",
+      "side": 1,
+      "message": "I am introducing a new type TerminalLine that represents one line of the terminal. It makes some of the manipulation marginally easier. https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/182953/2/terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalLine.java",
+      "revId": "f18c2bc64d706b230be198d7b159cc06df897a46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

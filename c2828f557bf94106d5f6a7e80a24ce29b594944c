@@ -1,0 +1,323 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ce9a5102_4330dcd6",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/emulator/VT100EmulatorBackend.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "TODO - setDimensions is not being transferred to new TerminalLine fully yet.",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86a7834b_92355abe",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/emulator/VT100EmulatorBackend.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "This loop needs to advance columns by width of glyphs (i.e. skip the right hand side of a wide glyph)",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da4e0df8_cd34473b",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/emulator/VT100EmulatorBackend.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "This loop does NOT need to advance columns by width of glyphs as the TerminalLine implementation allows replacing a wide glyph by two narrow glyphs.",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64c286f5_8d90d94c",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/emulator/VT100EmulatorBackend.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "This loop does NOT need to advance columns by width of glyphs as the TerminalLine implementation allows replacing a wide glyph by two narrow glyphs.",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a059b4d_56342b2e",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/emulator/VT100EmulatorBackend.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "This loop needs to advance columns by width of glyphs (i.e. skip the right hand side of a wide glyph)",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "06a25cf0_3d3f2efb",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalLine.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "TODO add some javadoc comments.",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ec9c604_a051ed5b",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalLine.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "I suspect that boxing/unboxing here is not ideal. Eclipse collections (amongst others) has a primitive integer list.\n\nhttps://www.eclipse.org/collections/javadoc/9.1.0/org/eclipse/collections/api/list/primitive/IntList.html",
+      "range": {
+        "startLine": 22,
+        "startChar": 12,
+        "endLine": 22,
+        "endChar": 19
+      },
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ea433be_dea6a997",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalTextDataStore.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "TerminalLine does not get told about width until ensureLineLength is called. Is that best? Should TerminalLine know current and max width?",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c67a61d_8f2ae120",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalTextDataStore.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "this relates to comment on set dimensions - this check would probably be better in TerminalLine.\n\nIs the optimization of deferring construction of TerminalLine until first write useful enough for all the extra code checks?",
+      "range": {
+        "startLine": 121,
+        "startChar": 30,
+        "endLine": 121,
+        "endChar": 63
+      },
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "241837e1_13f83dd1",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalTextDataStore.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "Should the line itself know if is wrapped? Should the line itself know the line it is wrapped to? Would that simplify https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/180891?",
+      "range": {
+        "startLine": 187,
+        "startChar": 4,
+        "endLine": 187,
+        "endChar": 17
+      },
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "76c2a577_d227724f",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/TerminalTextDataWindow.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "TODO figure this out! setChars essentially silently discarded the write, but relied on the caller (appendString in VT100Emulator) to know how far to advance the input. Now that we are delegating to the TerminalLine to do it is the commented out code what should happen here?",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26e10242_94464b81",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/UnicodeCalc.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "The TODO here is to have a real width calculation based on XML from http://unicode.org/Public/UCD/latest/ucdxml/ - which one to use (all or nounihan?)",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2bcfcb5_164f7da9",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/UnicodeCalc.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "For now my tests are limited to these cases, clock which does not need surrogate pair and sheep which does.",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8fa57849_f681c674",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/UnicodeCalc.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "How often do we need length for array of chars - converting them to a string to get code points is easy to write, but means lots of extra copying.",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "177ec1d5_4cd8c3c5",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/internal/terminal/model/UnicodeCalc.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "TODO I don\u0027t think I am using this method anymore.",
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c167ab3_4a94fec4",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/terminal/model/ITerminalTextData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "I probably should stop using word characters and say wide glyphs?",
+      "range": {
+        "startLine": 50,
+        "startChar": 69,
+        "endLine": 50,
+        "endChar": 79
+      },
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0bbee6b6_5d02cb1f",
+        "filename": "terminal/plugins/org.eclipse.tm.terminal.control/src/org/eclipse/tm/terminal/model/ITerminalTextData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-11T14:46:09Z",
+      "side": 1,
+      "message": "s/input/codePoints/",
+      "range": {
+        "startLine": 103,
+        "startChar": 73,
+        "endLine": 103,
+        "endChar": 78
+      },
+      "revId": "c2828f557bf94106d5f6a7e80a24ce29b594944c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

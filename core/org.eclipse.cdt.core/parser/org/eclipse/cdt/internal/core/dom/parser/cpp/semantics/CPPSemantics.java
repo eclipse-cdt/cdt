@@ -3105,7 +3105,7 @@ public class CPPSemantics {
 
 			if (argType instanceof FunctionSetType) {
 				cost = ((FunctionSetType) argType).costForTarget(paramType);
-			} else if (argType.isSameType(paramType)) {
+			} else if (argType.isSameType(paramType) || argTypes[j + skipArg].isSameType(paramType)) {
 				cost = new Cost(argType, paramType, Rank.IDENTITY);
 			} else {
 				if (CPPTemplates.isDependentType(paramType))

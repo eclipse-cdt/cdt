@@ -20,11 +20,9 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -35,14 +33,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
-import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
@@ -51,7 +47,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 
 /**
@@ -569,39 +564,5 @@ public class TypeTraits {
 		} else {
 			return isScalar(type);
 		}
-	}
-
-	/**
-	 * Returns true if 'typeToConstruct' is constructible from arguments
-	 * of type 'argumentTypes', as defined in [meta.unary.prop].
-	 *
-	 * If 'checkTrivial' is true, additionally checks if 'typeToConstruct'
-	 * is trivially constructible from said argument types.
-	 */
-	public static boolean isConstructible(IType typeToConstruct, IType[] argumentTypes, IBinding pointOfDefinition,
-			boolean checkTrivial) {
-		IType type = SemanticUtil.getSimplifiedType(typeToConstruct);
-		if (!(type instanceof ICPPClassType)) {
-			return true;
-		}
-		// Invent (the evaluation of) a type constructor expression of the form "T(declval<Args>()...)".
-		// (The standard says a variable declaration of the form "T t(declval<Args>()...)",
-		// but we don't currently type-check variable initialization, and a type constructor expression
-		// should have the same semantics.)
-		ICPPEvaluation[] arguments = new ICPPEvaluation[argumentTypes.length];
-		for (int i = 0; i < argumentTypes.length; i++) {
-			// Value category is xvalue because declval() returns an rvalue reference.
-			arguments[i] = new EvalFixed(argumentTypes[i], ValueCategory.XVALUE, IntegralValue.UNKNOWN);
-		}
-		EvalTypeId eval = new EvalTypeId(type, pointOfDefinition, false, false, arguments);
-		ICPPFunction constructor = eval.getConstructor();
-		if (!(constructor instanceof ICPPMethod)) {
-			return false;
-		}
-		// TODO check that conversions are trivial as well
-		if (checkTrivial && !((ICPPMethod) constructor).isImplicit()) {
-			return false;
-		}
-		return true;
 	}
 }

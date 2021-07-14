@@ -63,6 +63,8 @@ public class IntegralValue implements IValue {
 
 	private static int sUnique = 0;
 
+	public static final IntegralValue NULL_PTR = IntegralValue.create(0);
+
 	private final char[] fFixedValue;
 
 	private IntegralValue(char[] fixedValue) {

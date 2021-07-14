@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static java.util.Arrays.stream;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromReturnType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
@@ -69,6 +70,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	private IType fOutputType;
 
 	private ICPPFunction fConstructor = CPPFunction.UNINITIALIZED_FUNCTION;
+	private ICPPFunction fDestructor = CPPFunction.UNINITIALIZED_FUNCTION;
 	private boolean fCheckedIsTypeDependent;
 	private boolean fIsTypeDependent;
 	private boolean fCheckedIsConstantExpression;
@@ -283,6 +285,13 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		return fConstructor;
 	}
 
+	public ICPPFunction getDestructor() {
+		if (fDestructor == CPPFunction.UNINITIALIZED_FUNCTION) {
+			fDestructor = computeDestructor();
+		}
+		return fDestructor;
+	}
+
 	private static boolean allConstructorsAreCompilerGenerated(ICPPConstructor[] constructors) {
 		for (ICPPConstructor constructor : constructors) {
 			if (!EvalUtil.isCompilerGeneratedCtor(constructor))
@@ -353,6 +362,24 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			}
 		}
 		return null;
+	}
+
+	private ICPPFunction computeDestructor() {
+		IType simplifiedType = SemanticUtil.getNestedType(fInputType, TDEF | CVTYPE);
+		if (simplifiedType instanceof ICPPClassType) {
+			ICPPClassType classType = (ICPPClassType) simplifiedType;
+
+			ICPPMethod[] destructors = //
+					stream(classType.getMethods()).filter(m -> m.isDestructor()).toArray(ICPPMethod[]::new);
+
+			for (ICPPMethod destructor : destructors) {
+				if (destructor.getParameters().length == 0) {
+					return destructor;
+				}
+			}
+
+		}
+		return CPPFunction.UNINITIALIZED_FUNCTION;
 	}
 
 	private ICPPConstructor findDefaultConstructor(ICPPClassType classType, ICPPConstructor[] constructors) {

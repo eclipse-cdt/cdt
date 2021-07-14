@@ -333,8 +333,9 @@ public class ValueFactory {
 			IASTLiteralExpression litEx = (IASTLiteralExpression) exp;
 			switch (litEx.getKind()) {
 			case IASTLiteralExpression.lk_false:
-			case IASTLiteralExpression.lk_nullptr:
 				return IntegralValue.create(0);
+			case IASTLiteralExpression.lk_nullptr:
+				return IntegralValue.NULL_PTR;
 			case IASTLiteralExpression.lk_true:
 				return IntegralValue.create(1);
 			case IASTLiteralExpression.lk_integer_constant:
@@ -625,9 +626,14 @@ public class ValueFactory {
 			boolean checkTrivial = (operator == Operator.__is_trivially_constructible);
 			IType typeToConstruct = operands[0];
 			IType[] argumentTypes = Arrays.copyOfRange(operands, 1, operands.length);
-			return IntegralValue.create(
-					TypeTraits.isConstructible(typeToConstruct, argumentTypes, pointOfDefinition, checkTrivial) ? 1
-							: 0);
+
+			IsConstructibleEvaluator ce = new IsConstructibleEvaluator(typeToConstruct, argumentTypes,
+					pointOfDefinition, checkTrivial);
+			return ce.evaluate();
+		//
+		//					return IntegralValue.create(
+		//							TypeTraits.isConstructible(typeToConstruct, argumentTypes, pointOfDefinition, checkTrivial) ? 1
+		//									: 0);
 		}
 		return IntegralValue.UNKNOWN;
 	}

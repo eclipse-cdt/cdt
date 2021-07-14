@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import java.util.EnumSet;
+
 /**
  * Interface for basic types.
  *
@@ -55,6 +57,11 @@ public interface IBasicType extends IType {
 	/** @since 5.2 */
 	final int IS_LONG_LONG = 1 << 6;
 
+	public default boolean isNumeric() {
+		return EnumSet.of(Kind.eInt, Kind.eFloat, Kind.eDouble, Kind.eInt128, Kind.eFloat128, Kind.eDecimal32,
+				Kind.eDecimal64, Kind.eDecimal128).contains(getKind());
+	}
+
 	/**
 	 * This returns the kind of basic type you are looking at. The type is
 	 * then refined by qualifiers for signed/unsigned and short/long/long long.
@@ -75,6 +82,8 @@ public interface IBasicType extends IType {
 	public boolean isShort();
 
 	public boolean isLong();
+
+	public boolean isBool();
 
 	/**
 	 * @since 5.2

@@ -127,6 +127,11 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	}
 
 	@Override
+	public boolean isBool() {
+		return fKind == Kind.eBoolean;
+	}
+
+	@Override
 	public boolean isSameType(IType obj) {
 		if (obj == this)
 			return true;

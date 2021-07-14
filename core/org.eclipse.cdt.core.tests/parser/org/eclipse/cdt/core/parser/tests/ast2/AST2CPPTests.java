@@ -12737,18 +12737,6 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		helper.assertVariableValue("waldo5", 0);
 	}
 
-	//	template <typename T, typename U>
-	//	struct pair {
-	//	    pair();
-	//	    pair(T, U);
-	//	};
-	//
-	//	constexpr bool waldo = __is_constructible(pair<const int>, pair<int, int>&&);
-	public void testIsConstructible_539052() throws Exception {
-		BindingAssertionHelper helper = getAssertionHelper();
-		helper.assertVariableValue("waldo", 1);
-	}
-
 	//	constexpr bool waldo = unsigned(-1) < unsigned(0);
 	public void testNegativeCastToUnsigned_544509() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -13588,76 +13576,6 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		parseAndCheckBindings();
 	}
 
-	//	using MyBool = bool;
-	//
-	//	class Foo {
-	//	};
-	//
-	//	template<typename T = void>
-	//	class Templated {
-	//	};
-	//
-	//	template<bool>
-	//	class Test {
-	//	public:
-	//		constexpr static int false_val = 0;
-	//	};
-	//
-	//	template<>
-	//	class Test<true> {
-	//	public:
-	//		constexpr static int true_val = 0;
-	//	};
-	//
-	//	enum Enum {
-	//	};
-	//
-	//	enum EnumChar : char {
-	//	};
-	//
-	//	template<typename T, typename U>
-	//	class TemplateArgs {
-	//	public:
-	//		constexpr static bool Value = __is_same(T, U);
-	//	};
-	//
-	//	int main() {
-	//		Test<__is_same(bool, bool)>::true_val;
-	//		Test<__is_same_as(bool, bool)>::true_val;
-	//		Test<__is_same(bool, bool&)>::false_val;
-	//		Test<__is_same(bool, bool*)>::false_val;
-	//		Test<__is_same(bool*, bool*)>::true_val;
-	//		Test<__is_same(bool&, bool&)>::true_val;
-	//		Test<__is_same(bool[], bool[])>::true_val;
-	//		Test<__is_same(bool[], bool*)>::false_val;
-	//		Test<__is_same(bool, const volatile MyBool)>::false_val;
-	//		Test<__is_same(bool, MyBool)>::true_val;
-	//		Test<__is_same(bool, Foo)>::false_val;
-	//		Test<__is_same(Templated<bool>, Templated<Foo>)>::false_val;
-	//		Test<__is_same(Templated<>, Templated<void>)>::true_val;
-	//
-	//		auto func = []() {
-	//		};
-	//		auto func2 = []() {
-	//		};
-	//		Test<__is_same(decltype(func), decltype(func))>::true_val;
-	//		Test<__is_same(decltype(func), decltype(func2))>::false_val;
-	//
-	//		Test<__is_same(void (*)(int), void (*)(int))>::true_val;
-	//		Test<__is_same(void (*)(bool), void (*)(MyBool))>::true_val;
-	//
-	//		Test<__is_same(Enum, Enum)>::true_val;
-	//		Test<__is_same(Enum, int)>::false_val;
-	//		Test<__is_same(EnumChar, char)>::false_val;
-	//		Test<__is_same(__underlying_type(EnumChar), char)>::true_val;
-	//
-	//		Test<TemplateArgs<int, bool>::Value>::false_val;
-	//		Test<TemplateArgs<int, int>::Value>::true_val;
-	//	}
-	public void testIsSame() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
-	}
-
 	//	void function(int * a) { }
 	//	void function(unsigned int b) { }
 	//
@@ -13722,5 +13640,1127 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertEquals(funcDeclB, collector.getName(callIndexStart + 12).resolveBinding());
 		// Invalid argument (not null pointer constant)
 		assertTrue(collector.getName(callIndexStart + 13).resolveBinding() instanceof IProblemBinding);
+	}
+
+	//	using MyBool = bool;
+	//
+	//	class Foo {
+	//	};
+	//
+	//	template<typename T = void>
+	//	class Templated {
+	//	};
+	//
+	//	template<bool>
+	//	class Test {
+	//	public:
+	//		constexpr static int false_val = 0;
+	//	};
+	//
+	//	template<>
+	//	class Test<true> {
+	//	public:
+	//		constexpr static int true_val = 0;
+	//	};
+	//
+	//	enum Enum {
+	//	};
+	//
+	//	enum EnumChar : char {
+	//	};
+	//
+	//	template<typename T, typename U>
+	//	class TemplateArgs {
+	//	public:
+	//		constexpr static bool Value = __is_same(T, U);
+	//	};
+	//
+	//	int main() {
+	//		Test<__is_same(bool, bool)>::true_val;
+	//		Test<__is_same_as(bool, bool)>::true_val;
+	//		Test<__is_same(bool, bool&)>::false_val;
+	//		Test<__is_same(bool, bool*)>::false_val;
+	//		Test<__is_same(bool*, bool*)>::true_val;
+	//		Test<__is_same(bool&, bool&)>::true_val;
+	//		Test<__is_same(bool[], bool[])>::true_val;
+	//		Test<__is_same(bool[], bool*)>::false_val;
+	//		Test<__is_same(bool, const volatile MyBool)>::false_val;
+	//		Test<__is_same(bool, MyBool)>::true_val;
+	//		Test<__is_same(bool, Foo)>::false_val;
+	//		Test<__is_same(Templated<bool>, Templated<Foo>)>::false_val;
+	//		Test<__is_same(Templated<>, Templated<void>)>::true_val;
+	//
+	//		auto func = []() {
+	//		};
+	//		auto func2 = []() {
+	//		};
+	//		Test<__is_same(decltype(func), decltype(func))>::true_val;
+	//		Test<__is_same(decltype(func), decltype(func2))>::false_val;
+	//
+	//		Test<__is_same(void (*)(int), void (*)(int))>::true_val;
+	//		Test<__is_same(void (*)(bool), void (*)(MyBool))>::true_val;
+	//
+	//		Test<__is_same(Enum, Enum)>::true_val;
+	//		Test<__is_same(Enum, int)>::false_val;
+	//		Test<__is_same(EnumChar, char)>::false_val;
+	//
+	//		Test<TemplateArgs<int, bool>::Value>::false_val;
+	//		Test<TemplateArgs<int, int>::Value>::true_val;
+	//	}
+	public void testIsSame() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
+
+	//template<bool>
+	//class Test {
+	//public:
+	//  constexpr static int false_val = 0;
+	//};
+	//
+	//template<>
+	//class Test<true> {
+	//public:
+	//  constexpr static int true_val = 0;
+	//};
+	//
+	//class Param {
+	//};
+	//class NoParam {
+	//};
+	//
+	//class Construct {
+	//public:
+	//  Construct(Param param);
+	//};
+	//
+	//struct A {
+	//};
+	//struct B {
+	//  int i;
+	//  B()
+	//  {
+	//  }
+	//};
+	//struct D : B {
+	//};
+	//
+	//template<class T> struct Foo {
+	//  Foo(T = nullptr)
+	//  {
+	//  }
+	//};
+	//template<class T> struct Bar {
+	//  Bar(T)
+	//  {
+	//  }
+	//};
+	//template<class T> struct Baz {
+	//  Baz(T = 1)
+	//  {
+	//  }
+	//};
+	//
+	//template<typename _Tp>
+	//struct remove_reference {
+	//  typedef _Tp type;
+	//};
+	//
+	//template<typename _Tp>
+	//struct remove_reference<_Tp&> {
+	//  typedef _Tp type;
+	//};
+	//
+	//template<typename _Tp>
+	//struct remove_reference<_Tp&&> {
+	//  typedef _Tp type;
+	//};
+	//
+	//template<typename _Tp>
+	//constexpr typename remove_reference<_Tp>::type&&
+	//move(_Tp&& __t) noexcept
+	//{ return static_cast<typename remove_reference<_Tp>::type&&>(__t);}
+	//
+	//struct derived;
+	//struct base {
+	//  operator derived &() &;
+	//  operator derived const &() const &;
+	//  operator derived &&() &&;
+	//};
+	//
+	//struct derived : base {
+	//};
+	//
+	//base::operator derived &() &
+	//{
+	//  return *static_cast<derived*>(this);
+	//}
+	//
+	//base::operator derived const &() const &
+	//{
+	//  return *static_cast<derived const*>(this);
+	//}
+	//
+	//base::operator derived &&() &&
+	//{
+	//  return move(*static_cast<derived*>(this));
+	//}
+	//
+	//struct X {
+	//  X()
+	//  {
+	//  }
+	//};
+	//
+	//struct aggressive_aggregate {
+	//  int a;
+	//  int b;
+	//};
+	//
+	//struct vicious_variation {
+	//  int a;
+	//  int b = 42;
+	//};
+	//
+	//class Class {
+	//  Class()
+	//  {
+	//  }
+	//};
+	//
+	//struct Empty {
+	//};
+	//enum E {
+	//  ee1
+	//};
+	//enum E2 {
+	//  ee2
+	//};
+	//enum class SE {
+	//  e1
+	//};
+	//enum class SE2 {
+	//  e2
+	//};
+	//enum OpE : int
+	//;
+	//enum class OpSE : bool
+	//;
+	//union U {
+	//  int i;
+	//  Empty b;
+	//};
+	//
+	//struct Abstract {
+	//  virtual ~Abstract() = 0;
+	//};
+	//struct AbstractDelDtor {
+	//  ~AbstractDelDtor() = delete;
+	//  virtual void foo() = 0;
+	//};
+	//struct Ukn;
+	//template<class To>
+	//struct ImplicitTo {
+	//  operator To();
+	//};
+	//template<class To>
+	//struct DelImplicitTo {
+	//  operator To() = delete;
+	//};
+	//template<class To>
+	//struct ExplicitTo {
+	//  explicit operator To();
+	//};
+	//struct Ellipsis {
+	//  Ellipsis(...)
+	//  {
+	//  }
+	//};
+	//struct DelEllipsis {
+	//  DelEllipsis(...) = delete;
+	//};
+	//struct Any {
+	//  template<class T>
+	//  Any(T&&)
+	//  {
+	//  }
+	//};
+	//struct nAny {
+	//  template<class ... T>
+	//  nAny(T&&...)
+	//  {
+	//  }
+	//};
+	//struct DelnAny {
+	//  template<class ... T>
+	//  DelnAny(T&&...) = delete;
+	//};
+	//template<class ... Args>
+	//struct FromArgs {
+	//  FromArgs(Args...);
+	//};
+	//struct DelDef {
+	//  DelDef() = delete;
+	//};
+	//struct DelCopy {
+	//  DelCopy(const DelCopy&) = delete;
+	//};
+	//struct DelDtor {
+	//  DelDtor() = default;
+	//  DelDtor(const DelDtor&) = default;
+	//  DelDtor(DelDtor&&) = default;
+	//  DelDtor(int);
+	//  DelDtor(int, B, U);
+	//  ~DelDtor() = delete;
+	//};
+	//struct Nontrivial {
+	//  Nontrivial();
+	//  Nontrivial(const Nontrivial&);
+	//  Nontrivial& operator=(const Nontrivial&);
+	//  ~Nontrivial();
+	//};
+	//union NontrivialUnion {
+	//  int i;
+	//  Nontrivial n;
+	//};
+	//struct UnusualCopy {
+	//  UnusualCopy(UnusualCopy&);
+	//};
+	//
+	//struct CopyConsOnlyType {
+	//  CopyConsOnlyType(int)
+	//  {
+	//  }
+	//  CopyConsOnlyType(CopyConsOnlyType&&) = delete;
+	//  CopyConsOnlyType(const CopyConsOnlyType&) = default;
+	//  CopyConsOnlyType& operator=(const CopyConsOnlyType&) = delete;
+	//  CopyConsOnlyType& operator=(CopyConsOnlyType&&) = delete;
+	//};
+	//struct MoveConsOnlyType {
+	//  MoveConsOnlyType(int)
+	//  {
+	//  }
+	//  MoveConsOnlyType(const MoveConsOnlyType&) = delete;
+	//  MoveConsOnlyType(MoveConsOnlyType&&) = default;
+	//  MoveConsOnlyType& operator=(const MoveConsOnlyType&) = delete;
+	//  MoveConsOnlyType& operator=(MoveConsOnlyType&&) = delete;
+	//};
+	//template<class _E>
+	//class initializer_list {
+	//public:
+	//  typedef _E value_type;
+	//  typedef const _E &reference;
+	//  typedef const _E &const_reference;
+	//  typedef unsigned int size_type;
+	//  typedef const _E *iterator;
+	//  typedef const _E *const_iterator;
+	//
+	//private:
+	//  iterator _M_array;
+	//  size_type _M_len;
+	//
+	//  // The compiler can call a private constructor.
+	//  constexpr initializer_list(const_iterator __a, size_type __l) :
+	//      _M_array(__a), _M_len(__l)
+	//  {
+	//  }
+	//
+	//public:
+	//  constexpr initializer_list() noexcept :
+	//      _M_array(0), _M_len(0)
+	//  {
+	//  }
+	//
+	//  // Number of elements.
+	//  constexpr size_type size() const noexcept
+	//  {
+	//    return _M_len;
+	//  }
+	//
+	//  // First element.
+	//  constexpr const_iterator begin() const noexcept
+	//  {
+	//    return _M_array;
+	//  }
+	//
+	//  // One past the last element.
+	//  constexpr const_iterator end() const noexcept
+	//  {
+	//    return begin() + size();
+	//  }
+	//};
+	//
+	///**
+	// *  @brief  Return an iterator pointing to the first element of
+	// *          the initializer_list.
+	// *  @param  __ils  Initializer list.
+	// *  @relates initializer_list
+	// */
+	//template<class _Tp>
+	//constexpr const _Tp*
+	//begin(initializer_list<_Tp> __ils) noexcept
+	//{
+	//  return __ils.begin();
+	//}
+	//
+	///**
+	// *  @brief  Return an iterator pointing to one past the last element
+	// *          of the initializer_list.
+	// *  @param  __ils  Initializer list.
+	// *  @relates initializer_list
+	// */
+	//template<class _Tp>
+	//constexpr const _Tp*
+	//end(initializer_list<_Tp> __ils) noexcept
+	//{
+	//  return __ils.end();
+	//}
+	//
+	//void problem()
+	//{
+	//  Test<__is_constructible(int&, int&)>::true_val;
+	//  Test<__is_constructible(int&, char&)>::false_val;
+	//  Test<__is_constructible(int*, char*)>::false_val;
+	//  Test<__is_constructible(int*, char)>::false_val;
+	//  Test<__is_constructible(int, char*)>::false_val;
+	//  Test<__is_constructible(int*, int*)>::true_val;
+	//  Test<__is_constructible(int, int)>::true_val;
+	//  Test<__is_constructible(int, char)>::true_val;
+	//  Test<__is_constructible(char, char)>::true_val;
+	//  Test<__is_constructible(int, bool)>::true_val;
+	//  Test<__is_constructible(double, int)>::true_val;
+	//  Test<__is_constructible(int, double)>::true_val;
+	//  Test<__is_constructible(int, float, float)>::false_val;
+	//  Test<__is_constructible(Construct, Param)>::true_val;
+	//  Test<__is_constructible(Construct*, Param)>::false_val;
+	//  Test<__is_constructible(Construct*, Param*)>::false_val;
+	//  Test<__is_constructible(Construct, NoParam)>::false_val;
+	//  Test<__is_constructible(Construct*, NoParam)>::false_val;
+	//  Test<__is_constructible(Construct*, NoParam*)>::false_val;
+	//  Test<__is_constructible(Baz<int>)>::true_val;
+	//  Test<__is_constructible(Bar<int>)>::false_val;
+	//
+	//  // Taken from gcc testsuite (gcc/libstdc++-v3/testsuite/20_util/is_constructible)
+	//  // Found on https://github.com/gcc-mirror/
+	//  //51185.cc
+	//  Test<__is_constructible(B &&, A)>::false_val;
+	//  Test<__is_constructible(B const &&, A)>::false_val;
+	//  Test<__is_constructible(B const &&, A const)>::false_val;
+	//  Test<__is_constructible(B volatile &&, A)>::false_val;
+	//  Test<__is_constructible(B volatile &&, A volatile)>::false_val;
+	//  Test<__is_constructible(B const volatile &&, A)>::false_val;
+	//  Test<__is_constructible(B const volatile &&, A const)>::false_val;
+	//  Test<__is_constructible(B const volatile &&, A volatile)>::false_val;
+	//  Test<__is_constructible(B const volatile &&, A const volatile)>::false_val;
+	//  //68430.cc
+	//  Test<__is_constructible(Foo<int>)>::false_val;
+	//  //77395.cc
+	//  Test<__is_constructible(derived&&, base&&)>::true_val;
+	//  //80812.cc
+	////  Test<__is_constructible(X[4])>::true_val;
+	//  //92878_92947.cc
+	//  Test<__is_constructible(aggressive_aggregate, int, int)>::false_val;
+	//  Test<__is_constructible(aggressive_aggregate, int)>::false_val;
+	//  Test<__is_constructible(aggressive_aggregate)>::true_val;
+	//////  static_assert(std::is_default_constructible_v<aggressive_aggregate>);
+	//////  static_assert(std::is_trivially_default_constructible_v<aggressive_aggregate>);
+	//////  static_assert(std::is_constructible_v<vicious_variation, int, int>);
+	//////  static_assert(std::is_constructible_v<vicious_variation, int>);
+	//////  static_assert(std::is_constructible_v<vicious_variation>);
+	//////  static_assert(std::is_default_constructible_v<vicious_variation>);
+	//////  static_assert(!std::is_trivially_default_constructible_v<vicious_variation>);
+	////  //94003.cc
+	//  Test<__is_constructible(Class)>::false_val;
+	////  // value-2.cc
+	//  Test<__is_constructible(int, int)>::true_val;
+	//  Test<__is_constructible(typeof(nullptr), typeof(nullptr))>::true_val;
+	//  Test<__is_constructible(E, E)>::true_val;
+	//  Test<__is_constructible(SE, SE)>::true_val;
+	//  Test<__is_constructible(OpE, OpE)>::true_val;
+	//  Test<__is_constructible(OpSE, OpSE)>::true_val;
+	//  Test<__is_constructible(Empty, Empty)>::true_val;
+	//  Test<__is_constructible(B, B)>::true_val;
+	//  Test<__is_constructible(U, U)>::true_val;
+	//  Test<__is_constructible(int B::*, int B::*)>::true_val;
+	//  Test<__is_constructible(Ellipsis, Ellipsis)>::true_val;
+	//  Test<__is_constructible(int*, int*)>::true_val;
+	//  Test<__is_constructible(void*, void*)>::true_val;
+	//  Test<__is_constructible(Any, Any)>::true_val;
+	//  Test<__is_constructible(nAny, nAny)>::true_val;
+	//  Test<__is_constructible(initializer_list<int>, initializer_list<int>)>::true_val;
+	//  Test<__is_constructible(DelDef, DelDef)>::true_val;
+	//
+	//  Test<__is_constructible(void, void)>::false_val;
+	//  Test<__is_constructible(Abstract, Abstract)>::false_val;
+	//  Test<__is_constructible(int[], int[])>::false_val;
+	//  Test<__is_constructible(int[1], int[1])>::false_val;
+	//  Test<__is_constructible(DelCopy, const DelCopy&)>::false_val;
+	//  Test<__is_constructible(DelCopy, DelCopy&&)>::false_val;
+	//  Test<__is_constructible(DelCopy, DelCopy)>::false_val;
+	//  Test<__is_constructible(DelDtor, void)>::false_val;
+	//  Test<__is_constructible(DelDtor, int)>::false_val;
+	//  Test<__is_constructible(DelDtor, DelDtor)>::false_val;
+	//  Test<__is_constructible(DelDtor, DelDtor&&)>::false_val;
+	//  Test<__is_constructible(DelDtor, const DelDtor&)>::false_val;
+	//
+	//  Test<__is_constructible(DelEllipsis, const DelEllipsis&)>::true_val;
+	//  Test<__is_constructible(DelEllipsis, DelEllipsis&&)>::true_val;
+	//  Test<__is_constructible(DelEllipsis, DelEllipsis)>::true_val;
+	//  Test<__is_constructible(DelEllipsis, void)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, typeof(nullptr))>::false_val;
+	//
+	//  Test<__is_constructible(DelEllipsis, B)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, Empty)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, E)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, SE)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, OpE)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, OpSE)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, void())>::false_val;
+	//  Test<__is_constructible(DelEllipsis, void() const)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, int[1])>::false_val;
+	//  Test<__is_constructible(DelEllipsis, int[])>::false_val;
+	//  Test<__is_constructible(DelEllipsis, int*)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, void*)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, int B::*)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, int D::*)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, Abstract)>::false_val;
+	//  Test<__is_constructible(int, DelImplicitTo<int>)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr), DelImplicitTo<typeof(nullptr)>)>::false_val;
+	//  Test<__is_constructible(int&, DelImplicitTo<const int&>)>::false_val;
+	//
+	//  Test<__is_constructible(int, void)>::false_val;
+	//  Test<__is_constructible(void, int)>::false_val;
+	//  Test<__is_constructible(void*, int*)>::true_val;
+	//  Test<__is_constructible(int*, void*)>::false_val;
+	//  Test<__is_constructible(int*, typeof(nullptr))>::true_val;
+	//  Test<__is_constructible(typeof(nullptr), int*)>::false_val;
+	//  Test<__is_constructible(Empty, E)>::false_val;
+	//  Test<__is_constructible(Empty, SE)>::false_val;
+	//  Test<__is_constructible(Empty, OpE)>::false_val;
+	//  Test<__is_constructible(Empty, OpSE)>::false_val;
+	//  Test<__is_constructible(Empty, void)>::false_val;
+	//  Test<__is_constructible(Empty, void*)>::false_val;
+	//  Test<__is_constructible(Empty, typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(Empty, int[])>::false_val;
+	//  Test<__is_constructible(Empty, int[3])>::false_val;
+	//  Test<__is_constructible(Empty, int)>::false_val;
+	//  Test<__is_constructible(Abstract, int)>::false_val;
+	//  Test<__is_constructible(Abstract, typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(typeof(nullptr), Abstract)>::false_val;
+	//  Test<__is_constructible(Abstract, int[])>::false_val;
+	//  Test<__is_constructible(B, D)>::true_val;
+	//////  #ifndef __cpp_aggregate_paren_init
+	//////  static_assert(!std::is_constructible<D, B>::value, "Error");
+	//////  #endif
+	//  Test<__is_constructible(int[], int[1])>::false_val;
+	//  Test<__is_constructible(int[1], int[])>::false_val;
+	//  Test<__is_constructible(int[], Empty)>::false_val;
+	//  Test<__is_constructible(int[], typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(int[1], Abstract)>::false_val;
+	//
+	//  Test<__is_constructible(const int*, int*)>::true_val;
+	//  Test<__is_constructible(const void*, void*)>::true_val;
+	//  Test<__is_constructible(const void*, int*)>::true_val;
+	//  Test<__is_constructible(int*, const void*)>::false_val;
+	//
+	//  Test<__is_constructible(int, E)>::true_val;
+	//  Test<__is_constructible(E, int)>::false_val;
+	//  Test<__is_constructible(E, E2)>::false_val;
+	//  Test<__is_constructible(E, E)>::true_val;
+	//  Test<__is_constructible(bool, E)>::true_val;
+	//  Test<__is_constructible(E, bool)>::false_val;
+	//  Test<__is_constructible(double, E)>::true_val;
+	//  Test<__is_constructible(E, double)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr), E)>::false_val;
+	//  Test<__is_constructible(E, typeof(nullptr))>::false_val;
+	//
+	//  Test<__is_constructible(int, OpE)>::true_val;
+	//  Test<__is_constructible(OpE, int)>::false_val;
+	//  Test<__is_constructible(OpE, E2)>::false_val;
+	//  Test<__is_constructible(OpE, OpE)>::true_val;
+	//  Test<__is_constructible(bool, OpE)>::true_val;
+	//  Test<__is_constructible(OpE, bool)>::false_val;
+	//  Test<__is_constructible(double, OpE)>::true_val;
+	//  Test<__is_constructible(OpE, double)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr), OpE)>::false_val;
+	//  Test<__is_constructible(OpE, typeof(nullptr))>::false_val;
+	//
+	//  Test<__is_constructible(int, SE)>::false_val;
+	//  Test<__is_constructible(SE, int)>::false_val;
+	//  Test<__is_constructible(E, SE)>::false_val;
+	//  Test<__is_constructible(SE, SE2)>::false_val;
+	//  Test<__is_constructible(SE, SE)>::true_val;
+	//  Test<__is_constructible(bool, SE)>::false_val;
+	//  Test<__is_constructible(SE, bool)>::false_val;
+	//  Test<__is_constructible(double, SE)>::false_val;
+	//  Test<__is_constructible(SE, double)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr), SE)>::false_val;
+	//  Test<__is_constructible(SE, typeof(nullptr))>::false_val;
+	//
+	//  Test<__is_constructible(int, OpSE)>::false_val;
+	//  Test<__is_constructible(OpSE, int)>::false_val;
+	//  Test<__is_constructible(OpE, OpSE)>::false_val;
+	//  Test<__is_constructible(OpSE, SE2)>::false_val;
+	//  Test<__is_constructible(OpSE, OpSE)>::true_val;
+	//  Test<__is_constructible(bool, OpSE)>::false_val;
+	//  Test<__is_constructible(OpSE, bool)>::false_val;
+	//  Test<__is_constructible(double, OpSE)>::false_val;
+	//  Test<__is_constructible(OpSE, double)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr), OpSE)>::false_val;
+	//  Test<__is_constructible(OpSE, typeof(nullptr))>::false_val;
+	//
+	//  Test<__is_constructible(D*, B*)>::false_val;
+	//  Test<__is_constructible(const volatile D*, B*)>::false_val;
+	//  Test<__is_constructible(D*, const volatile B*)>::false_val;
+	//
+	//  Test<__is_constructible(D*, B* const)>::false_val;
+	//  Test<__is_constructible(const volatile D*, B* const)>::false_val;
+	//  Test<__is_constructible(D*, const volatile B* const)>::false_val;
+	//
+	//  Test<__is_constructible(D*, B*&)>::false_val;
+	//  Test<__is_constructible(const volatile D*, B*&)>::false_val;
+	//  Test<__is_constructible(D*, const volatile B*&)>::false_val;
+	//
+	//  Test<__is_constructible(int B::*, int D::*)>::false_val;
+	//  Test<__is_constructible(const volatile int B::*, int D::*)>::false_val;
+	//  Test<__is_constructible(int B::*, const volatile int D::*)>::false_val;
+	//
+	//  Test<__is_constructible(int B::*, int D::* const)>::false_val;
+	//  Test<__is_constructible(const volatile int B::*, int D::* const)>::false_val;
+	//  Test<__is_constructible(int B::*, const volatile int D::* const)>::false_val;
+	//
+	//  Test<__is_constructible(int B::*, int D::*&)>::false_val;
+	//  Test<__is_constructible(const volatile int B::*, int D::*&)>::false_val;
+	//  Test<__is_constructible(int B::*, const volatile int D::*&)>::false_val;
+	//
+	//  Test<__is_constructible(int B::*, int D::* const &)>::false_val;
+	//  Test<__is_constructible(const volatile int B::*, int D::* const &)>::false_val;
+	//  Test<__is_constructible(int B::*, const volatile int D::* const &)>::false_val;
+	//
+	//  Test<__is_constructible(int&&, int&)>::false_val;
+	//  Test<__is_constructible(const int&&, int&)>::false_val;
+	//
+	//  Test<__is_constructible(B&, D&)>::true_val;
+	//  Test<__is_constructible(B&&, D&&)>::true_val;
+	//  Test<__is_constructible(const B&, D&)>::true_val;
+	//  Test<__is_constructible(const B&&, D&&)>::true_val;
+	//  Test<__is_constructible(B&, const D&)>::false_val;
+	//  Test<__is_constructible(B&&, const D&&)>::false_val;
+	////
+	////  #if __cpp_aggregate_bases && __cpp_aggregate_paren_init
+	////  // In C++20 an rvalue reference or const lvalue reference can bind to a
+	////  // temporary of aggregate type that is initialized from a base class value.
+	////  constexpr bool v = true;
+	////  #else
+	////  constexpr bool v = false;
+	////  #endif
+	////
+	////  static_assert(!std::is_constructible<D&, B&>::value, "Error");
+	////  static_assert(v == std::is_constructible<D&&, B&&>::value, "Error");
+	////  static_assert(!std::is_constructible<D&, const B&>::value, "Error");
+	////  static_assert(v == std::is_constructible<D&&, const B&&>::value, "Error");
+	////  static_assert(v == std::is_constructible<const D&, B&>::value, "Error");
+	////  static_assert(v == std::is_constructible<const D&&, B&&>::value, "Error");
+	//
+	//  Test<__is_constructible(B&&, B&)>::false_val;
+	//  Test<__is_constructible(B&&, D&)>::false_val;
+	//  Test<__is_constructible(B&&, ImplicitTo<D&&>)>::true_val;
+	//  Test<__is_constructible(B&&, ImplicitTo<D&&>&)>::true_val;
+	//  Test<__is_constructible(int&&, double&)>::true_val;
+	//  Test<__is_constructible(int, ImplicitTo<int>)>::true_val;
+	//  Test<__is_constructible(int&, ImplicitTo<int&>)>::true_val;
+	//  Test<__is_constructible(const int&, ImplicitTo<int&>&)>::true_val;
+	//  Test<__is_constructible(const int&, ImplicitTo<int&>)>::true_val;
+	//  Test<__is_constructible(const int&, ExplicitTo<int&>&)>::true_val;
+	//  Test<__is_constructible(const int&, ExplicitTo<int&>)>::true_val;
+	//
+	//  Test<__is_constructible(B&&, ExplicitTo<D&&>)>::false_val;
+	//  Test<__is_constructible(B&&, ExplicitTo<D&&>&)>::false_val;
+	//
+	//  Test<__is_constructible(B&, B&&)>::false_val;
+	//  Test<__is_constructible(D&, B&&)>::false_val;
+	//  Test<__is_constructible(B&, D&&)>::false_val;
+	//
+	//  Test<__is_constructible(void(&)(), void(&)())>::true_val;
+	//  Test<__is_constructible(void(&&)(), void(&&)())>::true_val;
+	//  Test<__is_constructible(void(&&)(), void())>::true_val;
+	//
+	//  Test<__is_constructible(void)>::false_val;
+	//  Test<__is_constructible(void, int)>::false_val;
+	//  Test<__is_constructible(void, int, double)>::false_val;
+	//
+	//  Test<__is_constructible(int&)>::false_val;
+	//  Test<__is_constructible(const int&)>::false_val;
+	//  Test<__is_constructible(int&, int, int)>::false_val;
+	//  Test<__is_constructible(const int&, int, int)>::false_val;
+	//  Test<__is_constructible(const int&, int, int, char&)>::false_val;
+	//
+	//  Test<__is_constructible(void(&)(), void())>::true_val;
+	//  Test<__is_constructible(void(&)(), void(&&)())>::true_val;
+	//
+	//  Test<__is_constructible(int&, int&)>::true_val;
+	//  Test<__is_constructible(int&, const int&)>::false_val;
+	//  Test<__is_constructible(int&, int)>::false_val;
+	//  Test<__is_constructible(int&, int&&)>::false_val;
+	//  Test<__is_constructible(int&, const int&&)>::false_val;
+	//  Test<__is_constructible(const int&, int&)>::true_val;
+	//  Test<__is_constructible(const int&, int)>::true_val;
+	//  Test<__is_constructible(const int&, const int)>::true_val;
+	//  Test<__is_constructible(const int&, int&&)>::true_val;
+	//  Test<__is_constructible(const int&, const int&&)>::true_val;
+	//  Test<__is_constructible(volatile int&, int&)>::true_val;
+	//  Test<__is_constructible(volatile int&, const int&)>::false_val;
+	//  Test<__is_constructible(volatile int&, int)>::false_val;
+	//  Test<__is_constructible(volatile int&, int&&)>::false_val;
+	//  Test<__is_constructible(volatile int&, const int&&)>::false_val;
+	//  Test<__is_constructible(const volatile int&, int&)>::true_val;
+	//  Test<__is_constructible(const volatile int&, int)>::false_val;
+	//  Test<__is_constructible(const volatile int&, const int)>::false_val;
+	//  Test<__is_constructible(const volatile int&, int&&)>::false_val;
+	//  Test<__is_constructible(const volatile int&, const int&&)>::false_val;
+	//
+	//  Test<__is_constructible(int&&, int)>::true_val;
+	//  Test<__is_constructible(int&&, int&&)>::true_val;
+	//  Test<__is_constructible(int&&, const int&&)>::false_val;
+	//  Test<__is_constructible(int&&, int&)>::false_val;
+	//  Test<__is_constructible(int&&, const int&)>::false_val;
+	//  Test<__is_constructible(int&&, double&)>::true_val;
+	//  Test<__is_constructible(const int&&, int)>::true_val;
+	//  Test<__is_constructible(const int&&, int&&)>::true_val;
+	//  Test<__is_constructible(const int&&, const int)>::true_val;
+	//  Test<__is_constructible(const int&&, const int&&)>::true_val;
+	//  Test<__is_constructible(int&&, const int&)>::false_val;
+	//  Test<__is_constructible(const int&&, int&)>::false_val;
+	//  Test<__is_constructible(const int&&, const int&)>::false_val;
+	//  Test<__is_constructible(volatile int&&, int)>::true_val;
+	//  Test<__is_constructible(volatile int&&, int&&)>::true_val;
+	//  Test<__is_constructible(volatile int&&, const int&&)>::false_val;
+	//  Test<__is_constructible(volatile int&&, int&)>::false_val;
+	//  Test<__is_constructible(volatile int&&, const int&)>::false_val;
+	//  Test<__is_constructible(volatile int&&, double&)>::true_val;
+	//  Test<__is_constructible(volatile const int&&, int)>::true_val;
+	//  Test<__is_constructible(const volatile int&&, int&&)>::true_val;
+	//  Test<__is_constructible(const volatile int&&, const int)>::true_val;
+	//  Test<__is_constructible(const volatile int&&, const int&&)>::true_val;
+	//  Test<__is_constructible(volatile int&&, const int&)>::false_val;
+	//  Test<__is_constructible(const volatile int&&, int&)>::false_val;
+	//  Test<__is_constructible(const volatile int&&, const int&)>::false_val;
+	//
+	//  Test<__is_constructible(Empty&, Empty&)>::true_val;
+	//  Test<__is_constructible(Empty&, const Empty&)>::false_val;
+	//  Test<__is_constructible(Empty&, Empty)>::false_val;
+	//  Test<__is_constructible(Empty&, Empty&&)>::false_val;
+	//  Test<__is_constructible(Empty&, const Empty&&)>::false_val;
+	//  Test<__is_constructible(const Empty&, Empty&)>::true_val;
+	//  Test<__is_constructible(const Empty&, Empty)>::true_val;
+	//  Test<__is_constructible(const Empty&, const Empty)>::true_val;
+	//  Test<__is_constructible(const Empty&, Empty&&)>::true_val;
+	//  Test<__is_constructible(const Empty&, const Empty&&)>::true_val;
+	//  Test<__is_constructible(volatile Empty&, Empty&)>::true_val;
+	//  Test<__is_constructible(volatile Empty&, const Empty&)>::false_val;
+	//  Test<__is_constructible(volatile Empty&, Empty)>::false_val;
+	//  Test<__is_constructible(volatile Empty&, Empty&&)>::false_val;
+	//  Test<__is_constructible(volatile Empty&, const Empty&&)>::false_val;
+	//  Test<__is_constructible(const volatile Empty&, Empty&)>::true_val;
+	//  Test<__is_constructible(const volatile Empty&, Empty)>::false_val;
+	//  Test<__is_constructible(const volatile Empty&, const Empty)>::false_val;
+	//  Test<__is_constructible(const volatile Empty&, Empty&&)>::false_val;
+	//  Test<__is_constructible(const volatile Empty&, const Empty&&)>::false_val;
+	//
+	//  Test<__is_constructible(Empty&&, Empty)>::true_val;
+	//  Test<__is_constructible(Empty&&, Empty&&)>::true_val;;
+	//  Test<__is_constructible(Empty&&, const Empty&&)>::false_val;
+	//  Test<__is_constructible(Empty&&, Empty&)>::false_val;
+	//  Test<__is_constructible(Empty&&, const Empty&)>::false_val;
+	//  Test<__is_constructible(Empty&&, double&)>::false_val;
+	//  Test<__is_constructible(Empty&&, const double&)>::false_val;
+	//  Test<__is_constructible(const Empty&&, Empty)>::true_val;
+	//  Test<__is_constructible(const Empty&&, Empty&&)>::true_val;
+	//  Test<__is_constructible(const Empty&&, const Empty)>::true_val;
+	//  Test<__is_constructible(const Empty&&, const Empty&&)>::true_val;
+	//  Test<__is_constructible(Empty&&, const Empty&)>::false_val;
+	//  Test<__is_constructible(const Empty&&, Empty&)>::false_val;
+	//  Test<__is_constructible(const Empty&&, const Empty&)>::false_val;
+	//  Test<__is_constructible(volatile Empty&&, Empty)>::true_val;
+	//  Test<__is_constructible(volatile Empty&&, Empty&&)>::true_val;
+	//  Test<__is_constructible(volatile Empty&&, const Empty&&)>::false_val;
+	//  Test<__is_constructible(volatile Empty&&, Empty&)>::false_val;
+	//  Test<__is_constructible(volatile Empty&&, const Empty&)>::false_val;
+	//  Test<__is_constructible(volatile Empty&&, double&)>::false_val;
+	//  Test<__is_constructible(volatile Empty&&, const double&)>::false_val;
+	//  Test<__is_constructible(const volatile Empty&&, Empty)>::true_val;
+	//  Test<__is_constructible(const volatile Empty&&, Empty&&)>::true_val;
+	//  Test<__is_constructible(const volatile Empty&&, const Empty)>::true_val;
+	//  Test<__is_constructible(const volatile Empty&&,const Empty&&)>::true_val;
+	//  Test<__is_constructible(volatile Empty&&,  const Empty&)>::false_val;
+	//  Test<__is_constructible(const volatile Empty&&,  Empty&)>::false_val;
+	//  Test<__is_constructible(const volatile Empty&&, const Empty&)>::false_val;
+	//
+	//  Test<__is_constructible(Ellipsis, int)>::true_val;
+	//  Test<__is_constructible(Ellipsis, Empty)>::true_val;
+	//  Test<__is_constructible(Ellipsis, typeof(nullptr))>::true_val;
+	//  Test<__is_constructible(Ellipsis, int[])>::true_val;
+	//  Test<__is_constructible(Ellipsis, int[1])>::true_val;
+	//  Test<__is_constructible(Ellipsis, void)>::false_val;
+	//
+	//  Test<__is_constructible(int(&)[1], int(&)[1])>::true_val;
+	//  Test<__is_constructible(const int(&)[1], int(&)[1])>::true_val;
+	//  Test<__is_constructible(volatile int(&)[1], int(&)[1])>::true_val;
+	//  Test<__is_constructible(const volatile int(&)[1], int(&)[1])>::true_val;
+	//  Test<__is_constructible(int(&)[1],  const int(&)[1])>::false_val;
+	//  Test<__is_constructible(const int(&)[1], volatile int(&)[1])>::false_val;
+	//
+	//  Test<__is_constructible(int(&)[], int(&)[])>::true_val;
+	//
+	//  Test<__is_constructible(int(&)[1], int(&)[2])>::false_val;
+	//  Test<__is_constructible(int(&)[1], int&)>::false_val;
+	//  Test<__is_constructible(int&, int(&)[1])>::false_val;
+	//
+	////  #ifndef __cpp_aggregate_paren_init
+	////  static_assert(!std::is_constructible<U, int>::value, "Error");
+	////  #endif
+	//  Test<__is_constructible(U, Empty)>::false_val;
+	//
+	//  Test<__is_constructible(void(), void())>::false_val;
+	//  Test<__is_constructible(void(), int)>::false_val;
+	//  Test<__is_constructible(void(), Abstract)>::false_val;
+	//  Test<__is_constructible(void(), typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(void(), Empty)>::false_val;
+	//  Test<__is_constructible(void(), U)>::false_val;
+	//  Test<__is_constructible(void(), E)>::false_val;
+	//  Test<__is_constructible(void(), SE)>::false_val;
+	//  Test<__is_constructible(void(), OpE)>::false_val;
+	//  Test<__is_constructible(void(), OpSE)>::false_val;
+	//  Test<__is_constructible(void(), int[])>::false_val;
+	//  Test<__is_constructible(void(), int[1])>::false_val;
+	//
+	//  Test<__is_constructible(void() const, void() volatile)>::false_val;
+	//  Test<__is_constructible(void() const, int)>::false_val;
+	//  Test<__is_constructible(void() const, Abstract)>::false_val;
+	//  Test<__is_constructible(void() const, typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(void() const, Empty)>::false_val;
+	//  Test<__is_constructible(void() const, U)>::false_val;
+	//  Test<__is_constructible(void() const, E)>::false_val;
+	//  Test<__is_constructible(void() const, SE)>::false_val;
+	//  Test<__is_constructible(void() const, OpE)>::false_val;
+	//  Test<__is_constructible(void() const, OpSE)>::false_val;
+	//  Test<__is_constructible(void() const, int[])>::false_val;
+	//  Test<__is_constructible(void() const, int[1])>::false_val;
+	//
+	//  Test<__is_constructible(void(int), void())>::false_val;
+	//  Test<__is_constructible(int, void())>::false_val;
+	//  Test<__is_constructible(Abstract, void())>::false_val;
+	//  Test<__is_constructible(typeof(nullptr), void())>::false_val;
+	//  Test<__is_constructible(Empty, void())>::false_val;
+	//  Test<__is_constructible(U, void())>::false_val;
+	//  Test<__is_constructible(E, void())>::false_val;
+	//  Test<__is_constructible(SE, void())>::false_val;
+	//  Test<__is_constructible(OpE, void())>::false_val;
+	//  Test<__is_constructible(OpSE, void())>::false_val;
+	//  Test<__is_constructible(int[], void())>::false_val;
+	//  Test<__is_constructible(int[1], void())>::false_val;
+	//
+	//  Test<__is_constructible(void(int) const, void() const)>::false_val;
+	//  Test<__is_constructible(int, void() const)>::false_val;
+	//  Test<__is_constructible(Abstract, void() const)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr), void() const)>::false_val;
+	//  Test<__is_constructible(Empty, void() const)>::false_val;
+	//  Test<__is_constructible(U, void() const)>::false_val;
+	//  Test<__is_constructible(E, void() const)>::false_val;
+	//  Test<__is_constructible(SE, void() const)>::false_val;
+	//  Test<__is_constructible(OpE, void() const)>::false_val;
+	//  Test<__is_constructible(OpSE, void() const)>::false_val;
+	//  Test<__is_constructible(int[], void() const)>::false_val;
+	//  Test<__is_constructible(int[1], void() const)>::false_val;
+	//
+	//  Test<__is_constructible(void, int, int)>::false_val;
+	//  Test<__is_constructible(void, Empty, B)>::false_val;
+	//  Test<__is_constructible(void, Empty, Empty)>::false_val;
+	//  Test<__is_constructible(void, U, Empty)>::false_val;
+	//  Test<__is_constructible(void, U, U)>::false_val;
+	//  Test<__is_constructible(void, typeof(nullptr), typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(void, int[1], int[1])>::false_val;
+	//  Test<__is_constructible(void, int[], int[])>::false_val;
+	//  Test<__is_constructible(void, void, int)>::false_val;
+	//  Test<__is_constructible(void, void, void)>::false_val;
+	//  Test<__is_constructible(void, void(), void())>::false_val;
+	//  Test<__is_constructible(void, void() const, void() volatile)>::false_val;
+	//
+	//  Test<__is_constructible(int, int, int)>::false_val;
+	//  Test<__is_constructible(const int, int, int)>::false_val;
+	//  Test<__is_constructible(int, void, int)>::false_val;
+	//  Test<__is_constructible(const int, void, int)>::false_val;
+	//  Test<__is_constructible(int, void, void)>::false_val;
+	//  Test<__is_constructible(const int, void, void)>::false_val;
+	//  Test<__is_constructible(bool, int, int)>::false_val;
+	//  Test<__is_constructible(const bool, int, int)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr), int, int)>::false_val;
+	//  Test<__is_constructible(const typeof(nullptr), int, int)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr), void, int)>::false_val;
+	//  Test<__is_constructible(const typeof(nullptr), void, int)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr), void, void)>::false_val;
+	//  Test<__is_constructible(const typeof(nullptr), void, void)>::false_val;
+	//  Test<__is_constructible(E, int, int)>::false_val;
+	//  Test<__is_constructible(const E, int, int)>::false_val;
+	//  Test<__is_constructible(E, void, int)>::false_val;
+	//  Test<__is_constructible(const E, void, int)>::false_val;
+	//  Test<__is_constructible(E, void, void)>::false_val;
+	//  Test<__is_constructible(const E, void, void)>::false_val;
+	//  Test<__is_constructible(SE, int, int)>::false_val;
+	//  Test<__is_constructible(const SE, int, int)>::false_val;
+	//  Test<__is_constructible(SE, void, int)>::false_val;
+	//  Test<__is_constructible(const SE, void, int)>::false_val;
+	//  Test<__is_constructible(SE, void, void)>::false_val;
+	//  Test<__is_constructible(const SE, void, void)>::false_val;
+	//  Test<__is_constructible(OpE, int, int)>::false_val;
+	//  Test<__is_constructible(const OpE, int, int)>::false_val;
+	//  Test<__is_constructible(OpE, void, int)>::false_val;
+	//  Test<__is_constructible(const OpE, void, int)>::false_val;
+	//  Test<__is_constructible(OpE, void, void)>::false_val;
+	//  Test<__is_constructible(const OpE, void, void)>::false_val;
+	//  Test<__is_constructible(OpSE, int, int)>::false_val;
+	//  Test<__is_constructible(const OpSE, int, int)>::false_val;
+	//  Test<__is_constructible(OpSE, void, int)>::false_val;
+	//  Test<__is_constructible(const OpSE, void, int)>::false_val;
+	//  Test<__is_constructible(OpSE, void, void)>::false_val;
+	//  Test<__is_constructible(const OpSE, void, void)>::false_val;
+	//  Test<__is_constructible(Empty, int, int)>::false_val;
+	//  Test<__is_constructible(const Empty, int, int)>::false_val;
+	//  Test<__is_constructible(Empty, void, int)>::false_val;
+	//  Test<__is_constructible(const Empty, void, int)>::false_val;
+	//  Test<__is_constructible(Empty, void, void)>::false_val;
+	//  Test<__is_constructible(const Empty, void, void)>::false_val;
+	//  Test<__is_constructible(U, int, int)>::false_val;
+	//  Test<__is_constructible(const U, int, int)>::false_val;
+	//  Test<__is_constructible(U, void, int)>::false_val;
+	//  Test<__is_constructible(const U, void, int)>::false_val;
+	//  Test<__is_constructible(U, void, void)>::false_val;
+	//  Test<__is_constructible(const U, void, void)>::false_val;
+	//  Test<__is_constructible(B, int, int)>::false_val;
+	//  Test<__is_constructible(const B, int, int)>::false_val;
+	//  Test<__is_constructible(B, void, int)>::false_val;
+	//  Test<__is_constructible(const B, void, int)>::false_val;
+	//  Test<__is_constructible(B, void, void)>::false_val;
+	//  Test<__is_constructible(const B, void, void)>::false_val;
+	//  Test<__is_constructible(Any, int, int)>::false_val;
+	//  Test<__is_constructible(const Any, int, int)>::false_val;
+	//  Test<__is_constructible(Any, void, int)>::false_val;
+	//  Test<__is_constructible(const Any, void, int)>::false_val;
+	//  Test<__is_constructible(Any, void, void)>::false_val;
+	//  Test<__is_constructible(const Any, void, void)>::false_val;
+	//  Test<__is_constructible(nAny, void, int)>::false_val;
+	//  Test<__is_constructible(const nAny, void, int)>::false_val;
+	//  Test<__is_constructible(nAny, void, void)>::false_val;
+	//  Test<__is_constructible(const nAny, void, void)>::false_val;
+	//  Test<__is_constructible(FromArgs<>, int, int)>::false_val;
+	//  Test<__is_constructible(const FromArgs<>, int, int)>::false_val;
+	//  Test<__is_constructible(FromArgs<>, void, int)>::false_val;
+	//  Test<__is_constructible(const FromArgs<>, void, int)>::false_val;
+	//  Test<__is_constructible(FromArgs<>, void, void)>::false_val;
+	//  Test<__is_constructible(const FromArgs<>, void, void)>::false_val;
+	//  Test<__is_constructible(Abstract, int, int)>::false_val;
+	//  Test<__is_constructible(const Abstract, int, int)>::false_val;
+	//  Test<__is_constructible(Abstract, void, int)>::false_val;
+	//  Test<__is_constructible(const Abstract, void, int)>::false_val;
+	//  Test<__is_constructible(Abstract, void, void)>::false_val;
+	//  Test<__is_constructible(const Abstract, void, void)>::false_val;
+	//  Test<__is_constructible(AbstractDelDtor, int, int)>::false_val;
+	//  Test<__is_constructible(const AbstractDelDtor, int, int)>::false_val;
+	//  Test<__is_constructible(AbstractDelDtor, void, int)>::false_val;
+	//  Test<__is_constructible(const AbstractDelDtor, void, int)>::false_val;
+	//  Test<__is_constructible(AbstractDelDtor, void, void)>::false_val;
+	//  Test<__is_constructible(const AbstractDelDtor, void, void)>::false_val;
+	//  Test<__is_constructible(int[1], int, int)>::false_val;
+	//  Test<__is_constructible(const int[1], int, int)>::false_val;
+	//  Test<__is_constructible(int[1], void, int)>::false_val;
+	//  Test<__is_constructible(const int[1], void, int)>::false_val;
+	//  Test<__is_constructible(int[1], void, void)>::false_val;
+	//  Test<__is_constructible(const int[1], void, void)>::false_val;
+	//  Test<__is_constructible(int&, int, int)>::false_val;
+	//  Test<__is_constructible(int&, void, int)>::false_val;
+	//  Test<__is_constructible(int&, void, void)>::false_val;
+	//  Test<__is_constructible(int&, int&, int&)>::false_val;
+	//  Test<__is_constructible(int&, void, int&)>::false_val;
+	//  Test<__is_constructible(int&, void, void)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr)&, int, int)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr)&, void, int)>::false_val;
+	//  Test<__is_constructible(typeof(nullptr)&, void, void)>::false_val;
+	//  Test<__is_constructible(E&, int, int)>::false_val;
+	//  Test<__is_constructible(E&, void, int)>::false_val;
+	//  Test<__is_constructible(E&, void, void)>::false_val;
+	//  Test<__is_constructible(SE&, int, int)>::false_val;
+	//  Test<__is_constructible(SE&, void, int)>::false_val;
+	//  Test<__is_constructible(SE&, void, void)>::false_val;
+	//  Test<__is_constructible(OpE&, int, int)>::false_val;
+	//  Test<__is_constructible(OpE&, void, int)>::false_val;
+	//  Test<__is_constructible(OpE&, void, void)>::false_val;
+	//  Test<__is_constructible(OpSE&, int, int)>::false_val;
+	//  Test<__is_constructible(OpSE&, void, int)>::false_val;
+	//  Test<__is_constructible(OpSE&, void, void)>::false_val;
+	//  Test<__is_constructible(Empty&, int, int)>::false_val;
+	//  Test<__is_constructible(Empty&, void, int)>::false_val;
+	//  Test<__is_constructible(Empty&, void, void)>::false_val;
+	//  Test<__is_constructible(U&, int, int)>::false_val;
+	//  Test<__is_constructible(U&, void, int)>::false_val;
+	//  Test<__is_constructible(U&, void, void)>::false_val;
+	//  Test<__is_constructible(B&, void, int)>::false_val;
+	//  Test<__is_constructible(B&, void, void)>::false_val;
+	//  Test<__is_constructible(Any&, int, int)>::false_val;
+	//  Test<__is_constructible(Any&, void, int)>::false_val;
+	//  Test<__is_constructible(Any&, void, void)>::false_val;
+	//  Test<__is_constructible(nAny&, void, int)>::false_val;
+	//  Test<__is_constructible(nAny&, void, void)>::false_val;
+	//  Test<__is_constructible(FromArgs<>&, int, int)>::false_val;
+	//  Test<__is_constructible(FromArgs<>&, void, int)>::false_val;
+	//  Test<__is_constructible(FromArgs<>&, void, void)>::false_val;
+	//  Test<__is_constructible(Abstract&, int, int)>::false_val;
+	//  Test<__is_constructible(Abstract&, void, int)>::false_val;
+	//  Test<__is_constructible(Abstract&, void, void)>::false_val;
+	//  Test<__is_constructible(int(&)[1], int, int)>::false_val;
+	//  Test<__is_constructible(int(&)[1], void, int)>::false_val;
+	//  Test<__is_constructible(int(&)[1], void, void)>::false_val;
+	//
+	//  Test<__is_constructible(void(), int, int)>::false_val;
+	//  Test<__is_constructible(void(), void, int)>::false_val;
+	//  Test<__is_constructible(void(), void, void)>::false_val;
+	//  Test<__is_constructible(void(), void(), int)>::false_val;
+	//  Test<__is_constructible(void(), void(), void())>::false_val;
+	//
+	//  Test<__is_constructible(void() const, int, int)>::false_val;
+	//  Test<__is_constructible(void() const, void, int)>::false_val;
+	//  Test<__is_constructible(void() const, void, void)>::false_val;
+	//  Test<__is_constructible(void() const, void() volatile, int)>::false_val;
+	//  Test<__is_constructible(void() const, void() volatile const, void() const)>::false_val;
+	////
+	//  Test<__is_constructible(FromArgs<int>, int, int)>::false_val;
+	//  Test<__is_constructible(const FromArgs<int>, int, int)>::false_val;
+	//  Test<__is_constructible(FromArgs<int>, void, int)>::false_val;
+	//  Test<__is_constructible(const FromArgs<int>, void, int)>::false_val;
+	//  Test<__is_constructible(FromArgs<int, int>, void, int)>::false_val;
+	//  Test<__is_constructible(const FromArgs<int, int>, void, int)>::false_val;
+	////
+	//  Test<__is_constructible(DelDtor, int, B, U)>::false_val;
+	//  Test<__is_constructible(const DelDtor, int, B, U)>::false_val;
+	//  Test<__is_constructible(DelDtor, int)>::false_val;
+	//  Test<__is_constructible(const DelDtor, int)>::false_val;
+	//  Test<__is_constructible(DelDtor)>::false_val;
+	//  Test<__is_constructible(const DelDtor)>::false_val;
+	//  Test<__is_constructible(DelDtor, void*, void(&)())>::false_val;
+	//  Test<__is_constructible(const DelDtor, void*, void(&)())>::false_val;
+	////
+	//  Test<__is_constructible(AbstractDelDtor)>::false_val;
+	//  Test<__is_constructible(const AbstractDelDtor)>::false_val;
+	//  Test<__is_constructible(DelEllipsis)>::false_val;
+	//  Test<__is_constructible(const DelEllipsis)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, double)>::false_val;
+	//  Test<__is_constructible(const DelEllipsis, double)>::false_val;
+	//  Test<__is_constructible(DelEllipsis, double, int&)>::false_val;
+	//  Test<__is_constructible(const DelEllipsis, double, int&)>::false_val;
+	//  Test<__is_constructible(DelnAny)>::false_val;
+	//  Test<__is_constructible(const DelnAny)>::false_val;
+	//  Test<__is_constructible(DelnAny, int)>::false_val;
+	//  Test<__is_constructible(const DelnAny, int)>::false_val;
+	//  Test<__is_constructible(DelnAny, int, void*)>::false_val;
+	//  Test<__is_constructible(const DelnAny, int, void*)>::false_val;
+	//  Test<__is_constructible(DelnAny, Empty, B, D)>::false_val;
+	//  Test<__is_constructible(const DelnAny, Empty, B, D)>::false_val;
+	//
+	//  // Deleted members in unions with non-trivial members:
+	//  Test<__is_constructible(NontrivialUnion)>::false_val;
+	//  Test<__is_constructible(NontrivialUnion, const NontrivialUnion&)>::false_val;
+	//
+	//  // Unusual copy:
+	//  Test<__is_constructible(UnusualCopy)>::false_val;
+	//  Test<__is_constructible(UnusualCopy, UnusualCopy)>::false_val;
+	//  Test<__is_constructible(UnusualCopy, UnusualCopy&&)>::false_val;
+	//  Test<__is_constructible(UnusualCopy, const UnusualCopy&)>::false_val;
+	//  Test<__is_constructible(UnusualCopy, UnusualCopy&)>::true_val;
+	//
+	//  Test<__is_constructible(FromArgs<int, char>, int, char)>::true_val;
+	//  Test<__is_constructible(const FromArgs<int, char>, int, char)>::true_val;
+	//  Test<__is_constructible(FromArgs<int, char>, int, int)>::true_val;
+	//  Test<__is_constructible(const FromArgs<int, char>, int, int)>::true_val;
+	//  Test<__is_constructible(nAny, int, int)>::true_val;
+	//  Test<__is_constructible(const nAny, int, int)>::true_val;
+	//  Test<__is_constructible(FromArgs<int, char>, ImplicitTo<int>, ImplicitTo<char>)>::true_val;
+	//  Test<__is_constructible(const FromArgs<int, char>, ImplicitTo<int>, ImplicitTo<char>)>::true_val;
+	//  Test<__is_constructible(Ellipsis, int, char)>::true_val;
+	//  Test<__is_constructible(const Ellipsis, int, char)>::true_val;
+	//  Test<__is_constructible(Ellipsis, B, U, int&)>::true_val;
+	//  Test<__is_constructible(const Ellipsis, B, U, int&)>::true_val;
+	//  Test<__is_constructible(nAny, B, U, int&)>::true_val;
+	//  Test<__is_constructible(const nAny, B, U, int&)>::true_val;
+	////  Test<__is_constructible(FromArgs<initializer_list<int>, initializer_list<B>>, initializer_list<int>, initializer_list<B>)>::false_val;
+	////  Test<__is_constructible(const FromArgs<initializer_list<int>, initializer_list<B>>, initializer_list<int>, initializer_list<B>)>::false_val;
+	////  Test<__is_constructible(FromArgs<initializer_list<int>, initializer_list<B>>, initializer_list<int>&, initializer_list<B>&)>::false_val;
+	//  Test<__is_constructible(FromArgs<initializer_list<int>&, initializer_list<B>&>, initializer_list<int>, initializer_list<B>)>::false_val;
+	////
+	////  #if __cpp_aggregate_paren_init
+	////  // In C++20 arrays can be initialized using parentheses.
+	////  constexpr bool w = true;
+	////  #else
+	////  constexpr bool w = false;
+	////  #endif
+	////
+	//  Test<__is_constructible(FromArgs<initializer_list<int>>, int, int)>::false_val;
+	//  Test<__is_constructible(const FromArgs<initializer_list<int>>, int, int)>::false_val;
+	////  static_assert(w == std::is_constructible<B[2], B, B>::value, "Error");
+	////  static_assert(w == std::is_constructible<const B[2], B, B>::value, "Error");
+	////  static_assert(w == std::is_constructible<U[2], U, U>::value, "Error");
+	////  static_assert(w == std::is_constructible<const U[2], U, U>::value, "Error");
+	////
+	//  Test<__is_constructible(E, E, E)>::false_val;
+	//  Test<__is_constructible(const E, E, E)>::false_val;
+	//  Test<__is_constructible(SE, SE, SE)>::false_val;
+	//  Test<__is_constructible(const SE, SE, SE)>::false_val;
+	//  Test<__is_constructible(E, B, typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(const E, B, typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(SE, B, typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(const SE, B,  typeof(nullptr))>::false_val,
+	//  Test<__is_constructible(E, int[], int[])>::false_val;
+	//  Test<__is_constructible(const E, int[], int[])>::false_val;
+	//  Test<__is_constructible(SE, int[], int[])>::false_val;
+	//  Test<__is_constructible(const SE, int[], int[])>::false_val;
+	//
+	//  Test<__is_constructible(OpE, OpE, OpE)>::false_val;
+	//  Test<__is_constructible(const OpE, OpE, OpE)>::false_val;
+	//  Test<__is_constructible(OpSE, OpSE, OpSE)>::false_val;
+	//  Test<__is_constructible(const OpSE, OpSE, OpSE)>::false_val;
+	//  Test<__is_constructible(OpE, B, typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(const OpE, B, typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(OpSE, B, typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(const OpSE, B, typeof(nullptr))>::false_val;
+	//  Test<__is_constructible(OpE, int[], int[])>::false_val;
+	//  Test<__is_constructible(const OpE, int[], int[])>::false_val;
+	//  Test<__is_constructible(OpSE, int[], int[])>::false_val;
+	//  Test<__is_constructible(const OpSE, int[], int[])>::false_val;
+	//
+	//  Test<__is_constructible(int[], int, int)>::false_val;
+	//  Test<__is_constructible(const int[], int, int)>::false_val;
+	//
+	//  Test<__is_constructible(int&, ImplicitTo<int&>)>::true_val;
+	//  Test<__is_constructible(const int&, ImplicitTo<int&&>)>::true_val;
+	//  Test<__is_constructible(int&&, ImplicitTo<int&&>)>::true_val;
+	//  Test<__is_constructible(const int&, ImplicitTo<int>)>::true_val;
+	//
+	//  Test<__is_constructible(const int&, ExplicitTo<int>)>::false_val;
+	//  Test<__is_constructible(int&&, ExplicitTo<int>)>::false_val;
+	//
+	//  // Binding through reference-compatible type is required to perform
+	//  // direct-initialization as described in [over.match.ref] p. 1 b. 1:
+	//  Test<__is_constructible(int&, ExplicitTo<int&>)>::true_val;
+	//  Test<__is_constructible(int&&, ExplicitTo<int&&>)>::true_val;
+	//
+	//  // But an xvalue doesn't count for direct binding.
+	//  Test<__is_constructible(const int&, ExplicitTo<int&&>)>::false_val;
+	//
+	//  // Binding through temporary behaves like copy-initialization,
+	//  // see [dcl.init.ref] p. 5, very last sub-bullet:
+	//  Test<__is_constructible(const int&, ExplicitTo<double&&>)>::false_val;
+	//  Test<__is_constructible(int&&, ExplicitTo<double&&>)>::false_val;
+	//
+	//  Test<__is_constructible(void(&&)(), void(&)())>::true_val;
+	//}
+	public void testIsConstructible() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 }

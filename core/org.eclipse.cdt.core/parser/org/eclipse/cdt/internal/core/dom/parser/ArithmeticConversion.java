@@ -437,6 +437,9 @@ public abstract class ArithmeticConversion {
 		// A boolean can be represented by any other integral type.
 		if (source.getKind() == Kind.eBoolean)
 			return true;
+		// void can't be presented by any other integral type
+		if (source.getKind() == Kind.eVoid)
+			return false;
 
 		// If the source is signed, it might be negative, so an unsigned target cannot represent it.
 		if (!source.isUnsigned() && target.isUnsigned())

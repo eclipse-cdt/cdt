@@ -68,6 +68,12 @@
             name="%PEMicro.name">
       </device>
       <device
+            class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.PyOCD"
+            default_connection="localhost:3333"
+            id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.PyOCD"
+            name="%PyOCD.name">
+      </device>
+      <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.SeggerJLink"
             default_connection="localhost:2331"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.SeggerJLink"

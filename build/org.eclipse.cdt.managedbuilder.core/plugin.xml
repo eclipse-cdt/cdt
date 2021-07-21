@@ -638,6 +638,11 @@
             name="%CompilationDatabaseParser.name"
             prefer-non-shared="true">
       </provider>
+      <provider
+            class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.JsonCompilationDatabaseParser"
+            id="org.eclipse.cdt.managedbuilder.core.JsonCompilationDatabaseParser"
+            name="Compile_commands.json Parser">
+       </provider>
    </extension>
    <extension
          id="scanner.discovery.problem"

@@ -15,8 +15,11 @@
 package org.eclipse.cdt.internal.core.model;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Vector;
+import java.util.Set;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
@@ -38,7 +41,7 @@ public class CElementInfo {
 	 * object. This is an empty array if this element has
 	 * no children.
 	 */
-	private List<ICElement> fChildren;
+	private Set<ICElement> fChildren;
 
 	/**
 	 * Is the structure of this element known
@@ -50,8 +53,8 @@ public class CElementInfo {
 
 	protected CElementInfo(CElement element) {
 		this.element = element;
-		// Array list starts with size = 0
-		fChildren = new Vector<>(0);
+		// Collection starts with size = 0, a linked hash set preserves insertion order
+		fChildren = Collections.synchronizedSet(new LinkedHashSet<>(0));
 	}
 
 	protected CElement getElement() {
@@ -72,7 +75,8 @@ public class CElementInfo {
 	}
 
 	List<ICElement> internalGetChildren() {
-		return fChildren;
+		// Maybe this internal API can return Collection<ICElement> instead to avoid creating a list here?
+		return new ArrayList<>(fChildren);
 	}
 
 	/**

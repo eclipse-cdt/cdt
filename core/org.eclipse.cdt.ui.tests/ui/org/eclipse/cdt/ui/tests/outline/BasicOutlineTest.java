@@ -110,6 +110,27 @@ public class BasicOutlineTest extends BaseUITestCase {
 		checkTreeNode(tree, 4, "main(int, char**) : int");
 	}
 
+	//#include "user.h"
+	//#include <system.h>
+	//#define MACRO
+	//int main(int argc, char** argv) {}
+	//#define MACRO2()
+	public void testOutlineContentOrder() throws Exception {
+		StringBuilder[] contents = getContentsForTest(1);
+		IProject project = getProject().getProject();
+		IFile source = createFile(project, "source.cpp", contents[0].toString());
+		waitForIndexer(project, source);
+
+		final IViewPart outline = activateView(IPageLayout.ID_OUTLINE);
+		openEditor(source);
+
+		Tree tree = checkTreeNode(outline, 0, "user.h").getParent();
+		checkTreeNode(tree, 1, "system.h");
+		checkTreeNode(tree, 2, "MACRO");
+		checkTreeNode(tree, 3, "main(int, char**) : int");
+		checkTreeNode(tree, 4, "MACRO2()");
+	}
+
 	//class Foo {
 	//	static int field;
 	//	void bar();

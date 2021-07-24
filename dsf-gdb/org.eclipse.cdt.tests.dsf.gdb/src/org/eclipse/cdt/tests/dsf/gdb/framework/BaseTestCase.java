@@ -683,7 +683,8 @@ public class BaseTestCase {
 				String[] commandLine = { server, ":" + port, program };
 				try {
 					if (GdbDebugOptions.DEBUG)
-						GdbDebugOptions.trace("Starting gdbserver with command: " + commandLine + "\n");
+						GdbDebugOptions
+								.trace("Starting gdbserver with command: " + Arrays.toString(commandLine) + "\n");
 
 					gdbserverProc = ProcessFactory.getFactory().exec(commandLine);
 					Reader r = new InputStreamReader(gdbserverProc.getErrorStream());

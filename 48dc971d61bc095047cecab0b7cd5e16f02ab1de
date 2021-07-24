@@ -16,6 +16,24 @@
       "revId": "48dc971d61bc095047cecab0b7cd5e16f02ab1de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "339eb755_c3e0ff09",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CElementInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-07-24T15:39:30Z",
+      "side": 1,
+      "message": "Indeed, this much not return a copy or else the sort done in CModelBuilder2.buildModel does not work. The other use of this method is for debug code only, just to get the size.",
+      "parentUuid": "2d5e0bcc_ed0cab8e",
+      "revId": "48dc971d61bc095047cecab0b7cd5e16f02ab1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

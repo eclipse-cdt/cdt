@@ -31,7 +31,7 @@ public class AsyncCompletionWaitor {
 	 */
 	private IStatus fStatus;
 	private Object fReturnInfo;
-	private boolean fWaitFinished;
+	private volatile boolean fWaitFinished;
 	private int fNumWaiting;
 
 	/*

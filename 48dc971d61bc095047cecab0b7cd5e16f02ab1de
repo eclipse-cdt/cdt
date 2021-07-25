@@ -52,6 +52,24 @@
       "revId": "48dc971d61bc095047cecab0b7cd5e16f02ab1de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "edf3228c_fef76d54",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CElementInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2021-07-25T10:12:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7eee837d_2df17d9c",
+      "revId": "48dc971d61bc095047cecab0b7cd5e16f02ab1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

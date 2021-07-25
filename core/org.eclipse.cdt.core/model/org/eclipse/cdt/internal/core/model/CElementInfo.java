@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -62,6 +62,14 @@ public class CElementInfo {
 		// Do not add a check if the child is contained here
 		// because it causes a performance bottle neck for large files.
 		fChildren.add(child);
+	}
+
+	protected void addChildIfAbsent(ICElement child) {
+		synchronized (fChildren) {
+			if (!fChildren.contains(child)) {
+				fChildren.add(child);
+			}
+		}
 	}
 
 	protected ICElement[] getChildren() {

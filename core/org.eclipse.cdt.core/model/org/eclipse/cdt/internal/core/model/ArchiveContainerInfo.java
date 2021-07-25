@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,8 +36,6 @@ public class ArchiveContainerInfo extends OpenableInfo {
 
 	@Override
 	protected void addChild(ICElement child) {
-		if (!includesChild(child)) {
-			super.addChild(child);
-		}
+		addChildIfAbsent(child);
 	}
 }

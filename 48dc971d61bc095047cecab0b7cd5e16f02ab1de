@@ -34,6 +34,24 @@
       "revId": "48dc971d61bc095047cecab0b7cd5e16f02ab1de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7eee837d_2df17d9c",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CElementInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2021-07-25T09:35:12Z",
+      "side": 1,
+      "message": "The only place I can see where it may matter is here, where CModelBuilder2 expects to be able to sort the List:\n\nhttps://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tree/core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/CModelBuilder2.java#n250\n\nWDYT?",
+      "parentUuid": "2d5e0bcc_ed0cab8e",
+      "revId": "48dc971d61bc095047cecab0b7cd5e16f02ab1de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -23,7 +23,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.IAddress;
@@ -198,7 +200,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = runToTag("testLocals_init");
 
 		// Create a map of expressions and their expected values.
-		Map<String, String[]> tests = new HashMap<>();
+		Map<String, String[]> tests = new LinkedHashMap<>();
 
 		tests.put("3.14159 + 1.1111", new String[] { "0x4", "04", "100", "4", "4.2526", "4.2526" });
 		tests.put("100.0 / 3.0", new String[] { "0x21", "041", "100001", "33", "33.3333", "33.3333" });
@@ -2788,11 +2790,10 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// Now evaluate each of the above expressions and compare the actual
 		// value against
 		// the expected value.
-		for (final String expressionToEvaluate : tests.keySet()) {
-
+		for (final Entry<String, String[]> test : tests.entrySet()) {
 			// Get an IExpressionDMContext object representing the expression to
 			// be evaluated.
-			final IExpressionDMContext exprDMC = SyncUtil.createExpression(dmc, expressionToEvaluate);
+			final IExpressionDMContext exprDMC = SyncUtil.createExpression(dmc, test.getKey());
 
 			final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
@@ -2840,7 +2841,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 														// object from the waiter.
 														FormattedValueDMData exprValueDMData = getData();
 
-														final String[] expectedValues = tests.get(expressionToEvaluate);
+														final String[] expectedValues = test.getValue();
 
 														// Check the value of the expression for correctness.
 														String actualValue = exprValueDMData.getFormattedValue();
@@ -2875,8 +2876,8 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 															wait.waitFinished();
 														} else {
 															String errorMsg = "Failed to correctly evalutate '"
-																	+ expressionToEvaluate + "': expected '"
-																	+ expectedValue + "', got '" + actualValue + "'";
+																	+ test.getKey() + "': expected '" + expectedValue
+																	+ "', got '" + actualValue + "'";
 															wait.waitFinished(new Status(IStatus.ERROR,
 																	TestsPlugin.PLUGIN_ID, errorMsg, null));
 														}

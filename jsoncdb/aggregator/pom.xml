@@ -16,19 +16,18 @@
 
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
-		<artifactId>cmake-parent</artifactId>
+		<artifactId>jsoncdb-parent</artifactId>
 		<version>10.4.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>cmake-aggregator</artifactId>
+	<artifactId>jsoncdb-aggregator</artifactId>
 	<packaging>pom</packaging>
-    <!-- aggregates just the cmake bundles
-        Convenient if you focus on working on the cmake bundles only.
+    <!-- aggregates just the jsoncdb modules
+        Convenient if you focus on working on the jsoncdb modules only.
      -->
 
 	<modules>
 		<module>../../releng/org.eclipse.cdt.target</module>
-        <module>../../jsoncdb</module>
         <module>..</module>
 	</modules>
 </project>

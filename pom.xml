@@ -259,6 +259,7 @@
 
 		<module>terminal</module>
 
+		<module>jsoncdb</module>
 		<module>cmake</module>
 
 		<module>releng/org.eclipse.cdt.native-feature</module>

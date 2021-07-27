@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "a50cdf73_b6faf252",
+        "filename": "core/org.eclipse.cdt.core/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 665,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-07-27T15:18:32Z",
+      "side": 1,
+      "message": "See comment elsewhere about this behaviour.",
+      "range": {
+        "startLine": 665,
+        "startChar": 95,
+        "endLine": 665,
+        "endChar": 115
+      },
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b380f0e2_e3aa883b",
+        "filename": "core/org.eclipse.cdt.core/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 666,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-07-27T15:18:32Z",
+      "side": 1,
+      "message": "\"cdt_env_var\" for consistency",
+      "range": {
+        "startLine": 666,
+        "startChar": 18,
+        "endLine": 666,
+        "endChar": 42
+      },
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "238123ac_927ebf98",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
         "patchSetId": 1
@@ -13,6 +59,29 @@
       "writtenOn": "2021-07-27T15:02:32Z",
       "side": 1,
       "message": "Please add copyright header.",
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1aaa4ca_3928b368",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-07-27T15:18:32Z",
+      "side": 1,
+      "message": "Other classes in this package just assume we\u0027re talking about CDT environment variables. Consider removing CDT prefix.\nWe don\u0027t use \"_\" in class names.",
+      "range": {
+        "startLine": 18,
+        "startChar": 13,
+        "endLine": 18,
+        "endChar": 17
+      },
       "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
@@ -65,6 +134,75 @@
     },
     {
       "key": {
+        "uuid": "4275abb0_4690e7a8",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-07-27T15:18:32Z",
+      "side": 1,
+      "message": "Need a null check.",
+      "range": {
+        "startLine": 40,
+        "startChar": 25,
+        "endLine": 40,
+        "endChar": 33
+      },
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf2d0b4c_5ada6d0e",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-07-27T15:18:32Z",
+      "side": 1,
+      "message": "If the selected resource is within a build configuration folder of an inactive configuration, it seems counter-intuitive to return the active configuration. Compare with the CDT launch shortcut which also examines the current selection.",
+      "range": {
+        "startLine": 41,
+        "startChar": 11,
+        "endLine": 41,
+        "endChar": 44
+      },
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7135360f_1b6eaadc",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-07-27T15:18:32Z",
+      "side": 1,
+      "message": "Always return an IStatus reason.",
+      "range": {
+        "startLine": 44,
+        "startChar": 12,
+        "endLine": 44,
+        "endChar": 31
+      },
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2c768166_3034522c",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
         "patchSetId": 1
@@ -81,6 +219,52 @@
         "startChar": 26,
         "endLine": 70,
         "endChar": 45
+      },
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60c1f03c_e22ff48f",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-07-27T15:18:32Z",
+      "side": 1,
+      "message": "Use CCorePlugin.PLUGIN_ID",
+      "range": {
+        "startLine": 76,
+        "startChar": 45,
+        "endLine": 76,
+        "endChar": 62
+      },
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c76fc2b3_9a2ed773",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-07-27T15:18:32Z",
+      "side": 1,
+      "message": "Eclipse does not use pleasantries. Match tone of message with that of similar Eclipse variables. \"project\" -\u003e \"C/C++ project\"",
+      "range": {
+        "startLine": 77,
+        "startChar": 6,
+        "endLine": 77,
+        "endChar": 12
       },
       "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",

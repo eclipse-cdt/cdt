@@ -16,6 +16,24 @@
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01dcb5aa_e0525176",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-07-27T18:45:05Z",
+      "side": 1,
+      "message": "The code iterates on the *active* configuration of each opened project that has ScannerConfigNature\nAre there any reasons to call it for *each config* as you suggest?",
+      "parentUuid": "46f343b7_6fd52906",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

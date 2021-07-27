@@ -661,6 +661,12 @@
             resolver="org.eclipse.cdt.internal.core.build.CBuildDirectoryResolver"
             supportsArgument="true">
       </variable>
+            <variable
+            description="The value of the cdt environment variable from the selected project's active configuration with the name provided in the argument."
+            name="cdt_environment_variable"
+            resolver="org.eclipse.cdt.internal.core.envvar.CDT_EnvironmentVariableResolver"
+            supportsArgument="true">
+      </variable>
    </extension>
    <extension
          point="org.eclipse.core.variables.dynamicVariables">

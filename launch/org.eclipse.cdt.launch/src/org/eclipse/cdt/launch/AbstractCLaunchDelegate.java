@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2020 QNX Software Systems and others.
+ * Copyright (c) 2005, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,8 @@ package org.eclipse.cdt.launch;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -77,9 +79,6 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.osgi.util.NLS;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * AbstractCLaunchDelegate is the launch delegate used by most CDI based debuggers.

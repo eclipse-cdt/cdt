@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 QNX Software Systems and others.
+ * Copyright (c) 2004, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,7 @@ package org.eclipse.cdt.launch;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,8 +57,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Utility methods.

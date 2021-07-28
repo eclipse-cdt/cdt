@@ -274,6 +274,30 @@
     },
     {
       "key": {
+        "uuid": "8301fac5_43ce9cd4",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-07-28T06:31:41Z",
+      "side": 1,
+      "message": "\u003e Unfortunately Eclipse does not provide a method to find the currently active/selected project. I (and many others ) think it should\n\nI\u0027m afraid it is not possible to implement such a method, because it depends on \"context\" too much. If we are talling about UI scenarioes, one can always examine the current selection to understand how it is related with a \"project\" (the \"project\" itself for particular \"product\" coulkd be more complex than just platform IProject).\n\n\u003e As to headless build. I see no usage for external tool launches on a CDT project configuration data in a headless build. \n\nBut others do see such a usages, and have them integrated in the pipelines. The configuration should have enough attributes to specify everything needed,",
+      "parentUuid": "9ce57199_1089e395",
+      "range": {
+        "startLine": 70,
+        "startChar": 26,
+        "endLine": 70,
+        "endChar": 45
+      },
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "60c1f03c_e22ff48f",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
         "patchSetId": 1
@@ -314,6 +338,23 @@
         "endLine": 77,
         "endChar": 12
       },
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa2fbbdf_da653f1f",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-07-28T06:31:41Z",
+      "side": 1,
+      "message": "I can hardly imagine the IResource outside of IProject, except IWOrkspaceRoot. Looks like wrong diagnostic.",
       "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Nokia Corporation.
+ * Copyright (c) 2008, 2021 Nokia Corporation.
  *
  * This fProgram and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -43,8 +44,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.Launch;
 import org.osgi.framework.BundleContext;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Service that manages the backend process: starting the process
@@ -235,8 +234,7 @@ public class PDABackend extends AbstractDsfService {
 		}
 		File exe = new File(javaVMExec);
 		if (!exe.exists()) {
-			abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[] { javaVMExec }),
-					null);
+			abort(MessageFormat.format("Specified java VM executable {0} does not exist.", javaVMExec), null);
 		}
 
 		fBackendProcessName = javaVMExec;
@@ -269,8 +267,8 @@ public class PDABackend extends AbstractDsfService {
 			if (file.exists())
 				absolutePath = file.getLocation().toPortableString();
 			else
-				abort(MessageFormat.format("PDA program {0} does not exist.",
-						new Object[] { file.getFullPath().toPortableString() }), null);
+				abort(MessageFormat.format("PDA program {0} does not exist.", file.getFullPath().toPortableString()),
+						null);
 		}
 
 		commandList.add(absolutePath);

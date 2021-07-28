@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.examples.dsf.pda;singleton:=true
-Bundle-Version: 2.2.100.qualifier
+Bundle-Version: 2.2.200.qualifier
 Bundle-Activator: org.eclipse.cdt.examples.dsf.pda.PDAPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
@@ -21,5 +21,4 @@ Export-Package: org.eclipse.cdt.examples.dsf.pda,
  org.eclipse.cdt.examples.dsf.pda.sourcelookup
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: %providerName
-Import-Package: com.ibm.icu.text
 Automatic-Module-Name: org.eclipse.cdt.examples.dsf.pda

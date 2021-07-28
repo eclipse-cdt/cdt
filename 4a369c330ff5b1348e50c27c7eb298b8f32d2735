@@ -180,6 +180,30 @@
     },
     {
       "key": {
+        "uuid": "c9f6bd27_0183d24e",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2021-07-28T00:59:33Z",
+      "side": 1,
+      "message": "That is a way to approach it but it is not the way I want this to work.\nThe CDT launch needs a working build. I intend to use this for things (like burn a bootloader) where a working build is not needed.\nAs you can see from my test scenario I tested without even trying to build.\n\nThis type of issues is why I shared the code here. I need the active config of the active/selected project, if CDT prefers the active/selected projectConfig that is fine for me.\nThen we will end up with a Sloeber resolver and a CDT resolver.\nTo me that is perfectly fine.",
+      "parentUuid": "bf2d0b4c_5ada6d0e",
+      "range": {
+        "startLine": 41,
+        "startChar": 11,
+        "endLine": 41,
+        "endChar": 44
+      },
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7135360f_1b6eaadc",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
         "patchSetId": 1
@@ -214,6 +238,30 @@
       "writtenOn": "2021-07-27T15:02:32Z",
       "side": 1,
       "message": "this method is the only thing I have a problem with. However this may be down to my inexperience in this area of the code. \n\nI don\u0027t think we should be relying on the selected_resource_path (a UI thing) in this build variable. If so, it would change depending on what is selected. This would also mean that headless build wouldn\u0027t resolve it.\n\nCan you provide some more explanation please?",
+      "range": {
+        "startLine": 70,
+        "startChar": 26,
+        "endLine": 70,
+        "endChar": 45
+      },
+      "revId": "4a369c330ff5b1348e50c27c7eb298b8f32d2735",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ce57199_1089e395",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/envvar/CDT_EnvironmentVariableResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 96955
+      },
+      "writtenOn": "2021-07-28T00:59:33Z",
+      "side": 1,
+      "message": "Unfortunately Eclipse does not provide a method to find the currently active/selected project.\nI (and many others ) think it should.\nSloeber has it\u0027s own method and based on a review remark CDT has one as well. However Sloeber is dependent on UI plugins and I fear the CDT method as well.\nAs I didn\u0027t want this method to be dependent on the UI plugins and because other IDynamicVariableResolver used this method I opted to go for this one (for now).\nDuring testing I found this has a serious drawback because the result is dumped in the console and once this has been activated the active/selected project is no longer found.\n\nAs to headless build. I see no usage for external tool launches on a CDT project configuration data in a headless build. You need a way to find the project/configuration and the whole point here is to select the project active/selected in the UI.\nDid you see my explanation how I tested this?\n\nFYI I basically put this code in a method to make it easy to replace by something better.",
+      "parentUuid": "2c768166_3034522c",
       "range": {
         "startLine": 70,
         "startChar": 26,

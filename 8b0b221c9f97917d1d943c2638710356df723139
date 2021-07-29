@@ -52,6 +52,24 @@
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d41fff3_9c8947e5",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-07-29T20:19:53Z",
+      "side": 1,
+      "message": "Hmmh, interesting.\nFrom what I reverse engineered, it is called only once; with a null argument.",
+      "parentUuid": "377e000c_88c802b9",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

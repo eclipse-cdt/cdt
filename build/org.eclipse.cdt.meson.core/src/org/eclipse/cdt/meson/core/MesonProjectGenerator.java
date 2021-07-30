@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2018 QNX Software Systems and others.
+ * Copyright (c) 2015, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,6 +28,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.tools.templates.freemarker.FMProjectGenerator;
 import org.eclipse.tools.templates.freemarker.SourceRoot;
 import org.eclipse.tools.templates.freemarker.TemplateManifest;
@@ -81,7 +82,8 @@ public class MesonProjectGenerator extends FMProjectGenerator {
 			}
 		}
 
-		entries.add(CoreModel.newOutputEntry(buildFolder.getFullPath(), new IPath[] {}));
+		entries.add(
+				CoreModel.newOutputEntry(buildFolder.getFullPath(), new IPath[] { new Path("**/meson-private/**") })); //$NON-NLS-1$
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);
 	}

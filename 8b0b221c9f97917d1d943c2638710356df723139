@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "bb3346bf_a88b6622",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-07-30T20:38:56Z",
+      "side": 1,
+      "message": "Soory, don\u0027t get it.\nCould you explain the benefits?",
+      "parentUuid": "817d1b04_1db4a769",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d346cf90_5d90634a",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2021-07-30T12:08:20Z",
       "side": 1,
       "message": "Do we have a good reason to use UI thread for this?",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2aa59489_f9fd9232",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-07-30T20:38:56Z",
+      "side": 1,
+      "message": "The reason is to postpone parsing until the workbench has been constructed and is displaying.",
+      "parentUuid": "d346cf90_5d90634a",
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

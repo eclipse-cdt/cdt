@@ -11,3 +11,5 @@ Require-Bundle: org.eclipse.swtbot.go;bundle-version="2.7.0",
  org.eclipse.cdt.cmake.core;bundle-version="1.2.0"
 Automatic-Module-Name: org.eclipse.cdt.cmake.ui.tests
 Bundle-Localization: plugin
+Import-Package: org.junit.jupiter.api;version="5.8.1",
+ org.junit.jupiter.api.io;version="5.8.1"

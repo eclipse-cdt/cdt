@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 QNX Software Systems and others.
+ * Copyright (c) 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -74,6 +74,7 @@ public abstract class FMProjectGenerator extends FMGenerator {
 
 		project = workspace.getRoot().getProject(projectName);
 		if (!project.exists()) {
+			// Create project from scratch
 			IProjectDescription description = workspace.newProjectDescription(projectName);
 			description.setLocationURI(locationURI);
 			if (referencedProjects != null) {
@@ -83,8 +84,11 @@ public abstract class FMProjectGenerator extends FMGenerator {
 			project.create(description, sub);
 			project.open(sub);
 		} else {
-			// TODO make sure it's got all our settings or is this an error
-			// condition?
+			// Project is already created by smart import, so just configure the description
+			IProjectDescription description = project.getDescription();
+			initProjectDescription(description);
+			project.setDescription(description, sub);
+			project.open(sub);
 		}
 
 		sub.worked(1);

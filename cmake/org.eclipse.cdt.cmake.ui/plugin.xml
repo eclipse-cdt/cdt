@@ -74,5 +74,12 @@
             tabClass="org.eclipse.cdt.cmake.ui.internal.CMakeBuildTab">
       </provider>
    </extension>
+   <extension
+         point="org.eclipse.ui.ide.projectConfigurators">
+      <projectConfigurator
+            class="org.eclipse.cdt.cmake.ui.internal.CMakeProjectConfigurator"
+            label="CMake Project">
+      </projectConfigurator>
+   </extension>
 
 </plugin>

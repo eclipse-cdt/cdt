@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 QNX Software Systems and others.
+ * Copyright (c) 2016, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -74,7 +74,7 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 				IDE.openEditor(activePage, file);
 			}
 		} catch (PartInitException e) {
-			log("Failed to open editor", e); //$NON-NLS-1$
+			log(Messages.TemplateWizard_FailedToOpen, e);
 		}
 	}
 
@@ -91,7 +91,7 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 				@Override
 				protected void execute(IProgressMonitor monitor)
 						throws CoreException, InvocationTargetException, InterruptedException {
-					SubMonitor sub = SubMonitor.convert(monitor, "Generating", 1);
+					SubMonitor sub = SubMonitor.convert(monitor, Messages.TemplateWizard_Generating, 1);
 					generator.generate(model, sub);
 					getWorkbench().getDisplay().asyncExec(new Runnable() {
 						@Override
@@ -116,16 +116,16 @@ public abstract class TemplateWizard extends BasicNewResourceWizard {
 	}
 
 	private void handle(Throwable target) {
-		String message = "Project cannot be created";
+		String message = Messages.TemplateWizard_CannotBeCreated;
 		log(message, target);
 		IStatus status;
 		if (target instanceof CoreException) {
 			status = ((CoreException) target).getStatus();
 		} else {
 			status = new Status(IStatus.ERROR, FrameworkUtil.getBundle(getClass()).getSymbolicName(),
-					"Internal Error: ", target);
+					Messages.TemplateWizard_InternalError, target);
 		}
-		ErrorDialog.openError(getShell(), "Error Creating Project", message, status);
+		ErrorDialog.openError(getShell(), Messages.TemplateWizard_ErrorCreating, message, status);
 	}
 
 	private void log(String message, Throwable e) {

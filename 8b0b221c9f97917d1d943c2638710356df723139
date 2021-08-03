@@ -2,6 +2,74 @@
   "comments": [
     {
       "key": {
+        "uuid": "f2454bdd_59710f82",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-03T03:29:33Z",
+      "side": 1,
+      "message": "normally require-bundle is used for eclipse project dependencies (unless this changed recently)",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e245664b_332469e4",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/plugin.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 644,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-03T03:29:33Z",
+      "side": 1,
+      "message": "I think you want this here:\nprefer-non-shared\u003d\"true\"",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f9f6d68a_4aff926b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-03T03:29:33Z",
+      "side": 1,
+      "message": "the indexer already checks for exclusion based on the preference (project or workspace), so you shouldn\u0027t need this check?",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e483ca2_501d8587",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-03T03:29:33Z",
+      "side": 1,
+      "message": "I believe the indexer update is already handled by LanguageSettingsChangeListener.",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "817d1b04_1db4a769",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
         "patchSetId": 3
@@ -66,6 +134,24 @@
       "side": 1,
       "message": "The reason is to postpone parsing until the workbench has been constructed and is displaying.",
       "parentUuid": "d346cf90_5d90634a",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18527f3b_9404a458",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-03T03:29:33Z",
+      "side": 1,
+      "message": "This is a possibly long running operation that also doesn\u0027t touch the UI so it should not be forced to run in the UI thread, even if a bit later (async). If this was modifying the project description (like setting exclusions) I believe you would need a workspace job to \"lock\" the resource. But if writing only language setting entries, the serializing is possibly already handled by the Language settings manager when you save the entries (LanguageSettingsManager.serializeLanguageSettingsInBackground?). But I would expect here at least a normal Job with progress monitor while the commands are parsed and entries created (mapping to workspace resources, etc is long).\nI also remember having issues with files being double indexed if the provider was ran async after saving the project properties UI. I believe I \"solved\" this by creating a new public method passing the writable project config.",
+      "parentUuid": "2aa59489_f9fd9232",
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
@@ -137,6 +223,24 @@
       "side": 1,
       "message": "Hmmh, interesting.\nFrom what I reverse engineered, it is called only once; with a null argument.",
       "parentUuid": "377e000c_88c802b9",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05603e07_96837116",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-03T03:29:33Z",
+      "side": 1,
+      "message": "It looks like the provider is configured to be global by default. It makes more sense to be project specific (non-shared) by default. It\u0027s very likely this is the reason why you only see it called once with null config. I left a comment in plugin.xml to address this.",
+      "parentUuid": "5d41fff3_9c8947e5",
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

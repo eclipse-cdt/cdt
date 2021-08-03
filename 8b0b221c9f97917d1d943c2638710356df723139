@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2b96cb16_b3a64a21",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-08-03T06:08:06Z",
+      "side": 1,
+      "message": "+1\nAlthough \"Import-Package\" could be preferrable for pure OSGi world I would recommend to use \"Require-Bundle\" for CDT. The main reason behind this recommendation is simple: in Eclipse world we operate with \"bundles\" that includes much more than packages to resolve and classes to load, i.e. xml manifests, images, localization resources and so on.",
+      "parentUuid": "f2454bdd_59710f82",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e245664b_332469e4",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/plugin.xml",
         "patchSetId": 3
@@ -99,6 +117,24 @@
       "side": 1,
       "message": "Soory, don\u0027t get it.\nCould you explain the benefits?",
       "parentUuid": "817d1b04_1db4a769",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34992fa3_d89c71d2",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-08-03T06:08:06Z",
+      "side": 1,
+      "message": "`IWorkspaceRoot#getFileForLocation(IPath location)` requires absolute path. One need to ensure that path is absolute or better use `IWorkspaceRoot#findFilesForLocationURI(URI location)`",
+      "parentUuid": "bb3346bf_a88b6622",
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

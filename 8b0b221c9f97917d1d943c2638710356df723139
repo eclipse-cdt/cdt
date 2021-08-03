@@ -71,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "6f383558_f5557cd5",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-08-03T20:25:41Z",
+      "side": 1,
+      "message": "I do not know the indexer behavior very well, if you confirm this should be removed, I will do so.",
+      "parentUuid": "f9f6d68a_4aff926b",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6e483ca2_501d8587",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
         "patchSetId": 3
@@ -82,6 +100,24 @@
       "writtenOn": "2021-08-03T03:29:33Z",
       "side": 1,
       "message": "I believe the indexer update is already handled by LanguageSettingsChangeListener.",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20ba0fa1_c5df6c9c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-08-03T20:25:41Z",
+      "side": 1,
+      "message": "AFAIKS, LanguageSettingsChangeListener is notified only if settings get serialized. This code does not serialize any language settings (causing the LSC-event to be fired), it just gathers the settings to be returned by #getSettingEntries() from the json file.",
+      "parentUuid": "6e483ca2_501d8587",
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
@@ -194,6 +230,24 @@
     },
     {
       "key": {
+        "uuid": "caa419ac_4ce8d391",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-08-03T20:25:41Z",
+      "side": 1,
+      "message": "\u003e This is a possibly long running operation that also doesn\u0027t touch the UI so it should \n\nI agree.\n\n\u003e not be forced to run in the UI thread, even if a bit later (async). If this was modifying the project description (like setting exclusions) I believe you would need a workspace job to \"lock\" the resource. But if writing only language setting entries, the \n\nNo, it does not even *write* any language setting entries. This is just to gather and cache the settings to be returned by #getSettingEntries() from the json file up-front. We could avoid this by postponing the initial parsing of the json file until #getSettingEntries() is called. But the javadoc of #getSettingEntries() states: /This method should not be used to do any long running operations such as extensive calculations or reading files. If you need to do so, the recommended way is to do the calculations outside of this function call - in advance and on appropriate event./ \nDo you know of a better way to handle this?",
+      "parentUuid": "18527f3b_9404a458",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "46f343b7_6fd52906",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
         "patchSetId": 3
@@ -277,6 +331,24 @@
       "side": 1,
       "message": "It looks like the provider is configured to be global by default. It makes more sense to be project specific (non-shared) by default. It\u0027s very likely this is the reason why you only see it called once with null config. I left a comment in plugin.xml to address this.",
       "parentUuid": "5d41fff3_9c8947e5",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8b73aa6_a19c715d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-08-03T20:25:41Z",
+      "side": 1,
+      "message": "\u003e It looks like the provider is configured to be global by default. It makes more sense to be project specific (non-shared) by default. It\u0027s very likely this is the reason why you only see it called once with null config. I left a comment in plugin.xml to address this.\n\nYes, it is global by default. But configuring to be global by default does not prevent any user from configuring it to be global so we have to deal with it.",
+      "parentUuid": "05603e07_96837116",
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

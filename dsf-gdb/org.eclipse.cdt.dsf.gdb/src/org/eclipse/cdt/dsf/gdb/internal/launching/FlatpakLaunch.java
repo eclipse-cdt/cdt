@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Red Hat and others.
+ * Copyright (c) 2020, 2021 Red Hat and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -140,7 +140,7 @@ public class FlatpakLaunch {
 			String gdbserverPortNumber = configuration.getAttribute(IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_PORT,
 					IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_PORT_DEFAULT);
 
-			String gdbserverPort = gdbserverPortNumber + "/tcp"; //$NON-NLS-1$
+			String gdbserverPort = gdbserverPortNumber;
 			String gdbserverCommand = configuration.getAttribute(IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_COMMAND,
 					IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
 

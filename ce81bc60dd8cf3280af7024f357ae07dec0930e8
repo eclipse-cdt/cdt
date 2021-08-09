@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a86a07f2_311c0f04",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-09T15:55:04Z",
+      "side": 1,
+      "message": "Can you add a Bugzilla bug number in the subject line please.",
+      "revId": "ce81bc60dd8cf3280af7024f357ae07dec0930e8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "539b8f20_8c98165b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/launching/FlatpakLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-09T15:55:04Z",
+      "side": 1,
+      "message": "Please just remove the dead code rather than leave it in and commented.",
+      "revId": "ce81bc60dd8cf3280af7024f357ae07dec0930e8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

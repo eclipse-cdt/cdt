@@ -54,6 +54,23 @@
     },
     {
       "key": {
+        "uuid": "64e6ccc6_b2610f9c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-09T05:48:17Z",
+      "side": 1,
+      "message": "I haven\u0027t been able to simulate a changed file and see the index update. I edit the json and restart Eclipse, then oldEntries is always null here. I guess since nothing is serialized there is nothing to compare with from before?",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f9f6d68a_4aff926b",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
         "patchSetId": 3
@@ -89,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "c52dfb14_b98c1814",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-09T05:48:17Z",
+      "side": 1,
+      "message": "I\u0027ll double check once I\u0027m able to trigger an index update.",
+      "parentUuid": "6f383558_f5557cd5",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6e483ca2_501d8587",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
         "patchSetId": 3
@@ -118,6 +153,41 @@
       "side": 1,
       "message": "AFAIKS, LanguageSettingsChangeListener is notified only if settings get serialized. This code does not serialize any language settings (causing the LSC-event to be fired), it just gathers the settings to be returned by #getSettingEntries() from the json file.",
       "parentUuid": "6e483ca2_501d8587",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa9cff31_81471610",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-09T05:48:17Z",
+      "side": 1,
+      "message": "Ah, I didn\u0027t realize this was not serializing anything. This changes things quite a bit (and some of my previous comments).",
+      "parentUuid": "20ba0fa1_c5df6c9c",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f031c1f_fa5c8cb6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-09T05:48:17Z",
+      "side": 1,
+      "message": "If I generate with Cmake + Ninja generator + MSVC toolchain, it generates native paths, i.e. H:\\path\\to\\source.c (double-backslashed for json escaping of course). My internal generator also generates native paths. Which combination generates forward slashes like above? Not sure how to best handle all of these cases at the same time.",
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
@@ -171,6 +241,57 @@
       "side": 1,
       "message": "`IWorkspaceRoot#getFileForLocation(IPath location)` requires absolute path. One need to ensure that path is absolute or better use `IWorkspaceRoot#findFilesForLocationURI(URI location)`",
       "parentUuid": "bb3346bf_a88b6622",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27481f2d_56c3e486",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-09T05:48:17Z",
+      "side": 1,
+      "message": "For a folder with absolute path outside the workspace:\n\njava.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d1efaa7_2a1a5cce",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-09T05:48:17Z",
+      "side": 1,
+      "message": "I\u0027m not sure this should use IResources, it doesn\u0027t allow files outside the workspace.",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9431f268_caf5cd61",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-09T05:48:17Z",
+      "side": 1,
+      "message": "I saw an exception if the build folder doesn\u0027t exist yet in the worspace (not refreshed).\n\njava.lang.Exception: Resource \u0027/llvm2/build2\u0027 does not exist.",
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
@@ -242,6 +363,24 @@
       "side": 1,
       "message": "\u003e This is a possibly long running operation that also doesn\u0027t touch the UI so it should \n\nI agree.\n\n\u003e not be forced to run in the UI thread, even if a bit later (async). If this was modifying the project description (like setting exclusions) I believe you would need a workspace job to \"lock\" the resource. But if writing only language setting entries, the \n\nNo, it does not even *write* any language setting entries. This is just to gather and cache the settings to be returned by #getSettingEntries() from the json file up-front. We could avoid this by postponing the initial parsing of the json file until #getSettingEntries() is called. But the javadoc of #getSettingEntries() states: /This method should not be used to do any long running operations such as extensive calculations or reading files. If you need to do so, the recommended way is to do the calculations outside of this function call - in advance and on appropriate event./ \nDo you know of a better way to handle this?",
       "parentUuid": "18527f3b_9404a458",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62699a83_145664d8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-09T05:48:17Z",
+      "side": 1,
+      "message": "I would suggest using a normal Eclipse Job to do this, which does not run on the UI thread by default. I don\u0027t think you need to worry about the workbench displaying, this is core (non-UI) code and if worried about start-up time, it should probably be a concern of the calling code.\nAs it it, I tested on a project and it hangs the UI thread for about 2 mins shortly after start, so I think it\u0027s worth trying to address.",
+      "parentUuid": "caa419ac_4ce8d391",
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
@@ -349,6 +488,24 @@
       "side": 1,
       "message": "\u003e It looks like the provider is configured to be global by default. It makes more sense to be project specific (non-shared) by default. It\u0027s very likely this is the reason why you only see it called once with null config. I left a comment in plugin.xml to address this.\n\nYes, it is global by default. But configuring to be global by default does not prevent any user from configuring it to be global so we have to deal with it.",
       "parentUuid": "05603e07_96837116",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b206997c_6722b37f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/language/settings/providers/JsonCompilationDatabaseParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-08-09T05:48:17Z",
+      "side": 1,
+      "message": "Global for a provider normally means all settings are the same for every project and config that use the global provider. Here is seems entries are still computed per project and (active) configs so \"global\" was a bit confusing and unexpected to me. If the provider had a setting/label for the json path, it would be clear that globally this json would be the one used, everywhere. I think the best would be to be able to opt-out providers from being ever global so that the UI never shows it, but that\u0027s more work that feels outside the scope of this patch.\nI also don\u0027t know how to uncheck \"global\" in the UI of the provider, it is greyed out if I go in the providers tab. Maybe this wouldn\u0027t be an issue if global vs non-global behaved the same way, but it looks like the global provider won\u0027t update when adding a new project with the provider (or adding the provider to existing project) until restart.\nMaybe keeping the \"global\" code path here as it is would be OK in terms of fallback if the user selects global explicitly, but since it doesn\u0027t look like the \"global\" code path handles new projects and adding the provider properly, I don\u0027t think it should be the default.",
+      "parentUuid": "f8b73aa6_a19c715d",
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

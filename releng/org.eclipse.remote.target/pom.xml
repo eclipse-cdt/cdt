@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.eclipse.remote</groupId>
 		<artifactId>remote-parent</artifactId>
-		<version>3.0.1-SNAPSHOT</version>
+		<version>3.0.2-SNAPSHOT</version>
 		<relativePath>../org.eclipse.remote.build/pom.xml</relativePath>
 	</parent>
 
@@ -30,7 +30,7 @@
 						<configuration>
 							<artifacts>
 								<artifact>
-									<file>photon.target</file>
+									<file>remote.target</file>
 									<type>target</type>
 									<classifier>remote-photon</classifier>
 								</artifact>

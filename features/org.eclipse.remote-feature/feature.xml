@@ -2,12 +2,12 @@
 <feature
       id="org.eclipse.remote"
       label="%featureName"
-      version="3.0.1.qualifier"
+      version="3.0.2.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
-   <description url="http://eclipse.org/ptp">
+   <description url="http://eclipse.org/remote">
       %description
    </description>
 

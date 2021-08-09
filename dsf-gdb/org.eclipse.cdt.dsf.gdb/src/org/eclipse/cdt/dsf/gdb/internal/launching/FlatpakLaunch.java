@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Red Hat and others.
+ * Copyright (c) 2020, 2021 Red Hat and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -140,7 +140,12 @@ public class FlatpakLaunch {
 			String gdbserverPortNumber = configuration.getAttribute(IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_PORT,
 					IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_PORT_DEFAULT);
 
-			String gdbserverPort = gdbserverPortNumber + "/tcp"; //$NON-NLS-1$
+			// Do not modify port string value by adding any suffix like `/tcp`, to the port string,
+			// keeping it clean port number value on order to make NODE:PORT-like address string later
+			// when a DGB launch is created
+			// See: https://github.com/flathub/org.eclipse.Java/issues/36
+			String gdbserverPort = gdbserverPortNumber;
+
 			String gdbserverCommand = configuration.getAttribute(IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_COMMAND,
 					IGDBFlatpakLaunchConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
 

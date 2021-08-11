@@ -32,7 +32,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ManagedBuildClean extends AbstractBuilderTest {
+public class ManagedBuildCleanTest extends AbstractBuilderTest {
 	private static final String PROJ_PATH = "testCleanProjects";
 	private IProject fInternalBuilderProject;
 	private IProject fExternalBuilderProject;

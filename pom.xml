@@ -45,8 +45,7 @@
 		     replace the the newly built docs because the only change is in the filtered out index/* resources. -->
 		<help-docs-eclipserun-repo>http://download.eclipse.org/eclipse/updates/4.21-I-builds/</help-docs-eclipserun-repo>
 
-
-		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/cdt/org.eclipse.cdt.git</tycho.scmUrl>
+		<tycho.scmUrl>scm:git:https://git.eclipse.org/r/cdt/org.eclipse.cdt</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
 		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/10.3/cdt-10.3.0/</comparator.repo>
 		<!-- these parameters are to control baseline replace and compare. On a local build you want

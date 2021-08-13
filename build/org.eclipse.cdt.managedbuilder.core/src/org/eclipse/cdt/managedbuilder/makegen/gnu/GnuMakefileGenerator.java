@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -341,6 +342,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private static final String MAINBUILD = "main-build"; //$NON-NLS-1$
 	private static final String POSTBUILD = "post-build"; //$NON-NLS-1$
 	private static final String SECONDARY_OUTPUTS = "secondary-outputs"; //$NON-NLS-1$
+
+	/**
+	 * On Windows XP and above, the maximum command line length is 8191, on Linux it is at least 131072, but
+	 * that includes the environment. We want to limit the invocation of a single command to this number of
+	 * characters, and we want to ensure that the number isn't so low as to slow down operation.
+	 *
+	 * Doing each rm in its own command would be very slow, especially on Windows.
+	 */
+	private static final int MAX_CLEAN_LENGTH = 6000;
 
 	// Enumerations
 	public static final int PROJECT_RELATIVE = 1, PROJECT_SUBDIR_RELATIVE = 2, ABSOLUTE = 3;
@@ -1006,7 +1016,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		IFile modMakefile = createFile(moduleOutputDir.append(MODFILE_NAME));
 		StringBuffer makeBuf = new StringBuffer();
 		makeBuf.append(addFragmentMakefileHeader());
-		makeBuf.append(addSources(module));
+		makeBuf.append(addSources(module, toCleanTarget(moduleRelativePath)));
 
 		// Save the files
 		save(makeBuf, modMakefile);
@@ -1625,11 +1635,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		// Always add a clean target
 		buffer.append("clean:").append(NEWLINE); //$NON-NLS-1$
-		buffer.append(TAB).append("-$(RM)").append(WHITESPACE); //$NON-NLS-1$
-		for (Entry<String, List<IPath>> entry : buildOutVars.entrySet()) {
-			String macroName = entry.getKey();
-			buffer.append("$(").append(macroName).append(')'); //$NON-NLS-1$
-		}
 		String outputPrefix = EMPTY_STRING;
 		if (targetTool != null) {
 			outputPrefix = targetTool.getOutputPrefix();
@@ -1638,10 +1643,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		if (buildTargetExt.length() > 0) {
 			completeBuildTargetName = completeBuildTargetName + DOT + buildTargetExt;
 		}
+		buffer.append(TAB).append("-$(RM)").append(WHITESPACE); //$NON-NLS-1$
 		if (completeBuildTargetName.contains(" ")) { //$NON-NLS-1$
-			buffer.append(WHITESPACE).append('"').append(completeBuildTargetName).append('"');
+			buffer.append('"').append(completeBuildTargetName).append('"');
 		} else {
-			buffer.append(WHITESPACE).append(completeBuildTargetName);
+			buffer.append(completeBuildTargetName);
 		}
 		buffer.append(NEWLINE);
 		buffer.append(TAB).append(DASH).append(AT).append(ECHO_BLANK_LINE).append(NEWLINE);
@@ -2006,13 +2012,22 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 	/**
+	 * @deprecated Use {@link #addSources(IContainer, String)}
+	 */
+	@Deprecated
+	protected StringBuffer addSources(IContainer module) throws CoreException {
+		return addSources(module, null);
+	}
+
+	/**
 	 * Returns a <code>StringBuffer</code> containing makefile text for all of the sources
 	 * contributed by a container (project directory/subdirectory) to the fragement makefile
 	 *
 	 * @param module  project resource directory/subdirectory
 	 * @return StringBuffer  generated text for the fragement makefile
+	 * @since 9.3
 	 */
-	protected StringBuffer addSources(IContainer module) throws CoreException {
+	protected StringBuffer addSources(IContainer module, String cleanTarget) throws CoreException {
 		// Calculate the new directory relative to the build output
 		IPath moduleRelativePath = module.getProjectRelativePath();
 		String relativePath = moduleRelativePath.toString();
@@ -2045,6 +2060,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		IResourceInfo rcInfo;
 		IFolder folder = project.getFolder(computeTopBuildDir(config.getName()));
+		Set<IPath> filesToClean = new HashSet<>();
 
 		for (IResource resource : resources) {
 			if (resource.getType() == IResource.FILE) {
@@ -2056,16 +2072,59 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				//				if( (rcInfo.isExcluded()) )
 				//					continue;
 				addFragmentMakefileEntriesForSource(buildVarToRuleStringMap, ruleBuffer, folder, relativePath, resource,
-						getPathForResource(resource), rcInfo, null, false);
+						getPathForResource(resource), rcInfo, null, false, filesToClean);
 			}
 		}
 
 		// Write out the macro addition entries to the buffer
 		buffer.append(writeAdditionMacros(buildVarToRuleStringMap));
-		return buffer.append(ruleBuffer).append(NEWLINE);
+		buffer.append(ruleBuffer).append(NEWLINE);
+
+		if (cleanTarget != null && !filesToClean.isEmpty()) {
+			buffer.append("clean: " + cleanTarget).append(NEWLINE).append(NEWLINE); //$NON-NLS-1$
+			buffer.append(cleanTarget + COLON).append(NEWLINE);
+
+			StringBuffer rmLineBuffer = new StringBuffer();
+			rmLineBuffer.append(TAB).append("-$(RM)"); //$NON-NLS-1$
+
+			// Convert the set to an ordered list. Without this "unneeded" sorting, the unit tests will fail
+			List<IPath> filesToCleanOrdered = new ArrayList<>(filesToClean);
+			filesToCleanOrdered.sort((p1, p2) -> p1.toString().compareTo(p2.toString()));
+
+			for (IPath fileToClean : filesToCleanOrdered) {
+				String path = escapeWhitespaces((fileToClean.isAbsolute() ? "" : "./") + fileToClean.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+
+				// There is a max length for a command line, wrap to multiple invocations if needed.
+				if (rmLineBuffer.length() + path.length() > MAX_CLEAN_LENGTH) {
+					// Terminate this RM line
+					buffer.append(rmLineBuffer).append(NEWLINE);
+
+					// Start a new RM line
+					rmLineBuffer = new StringBuffer();
+					rmLineBuffer.append(TAB).append("-$(RM)"); //$NON-NLS-1$
+				}
+				rmLineBuffer.append(WHITESPACE).append(path);
+			}
+
+			buffer.append(rmLineBuffer).append(NEWLINE).append(NEWLINE);
+			buffer.append(".PHONY: ").append(cleanTarget).append(NEWLINE).append(NEWLINE); //$NON-NLS-1$
+		}
+
+		return buffer;
 	}
 
-	/* (non-Javadoc
+	/**
+	 * @deprecated Use {@link #addFragmentMakefileEntriesForSource(LinkedHashMap, StringBuffer, IFolder, String, IResource, IPath, IResourceInfo, String, boolean, Set)}
+	 */
+	@Deprecated
+	protected void addFragmentMakefileEntriesForSource(LinkedHashMap<String, String> buildVarToRuleStringMap,
+			StringBuffer ruleBuffer, IFolder folder, String relativePath, IResource resource, IPath sourceLocation,
+			IResourceInfo rcInfo, String varName, boolean generatedSource) {
+		addFragmentMakefileEntriesForSource(buildVarToRuleStringMap, ruleBuffer, folder, relativePath, resource,
+				sourceLocation, rcInfo, varName, generatedSource, new HashSet<>());
+	}
+
+	/**
 	 * Adds the entries for a particular source file to the fragment makefile
 	 *
 	 * @param buildVarToRuleStringMap  map of build variable names to the list of files assigned to the variable
@@ -2078,10 +2137,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * @param varName  the build variable to add this invocation's outputs to
 	 *                   if <code>null</code>, use the file extension to find the name
 	 * @param generatedSource  if <code>true</code>, this file was generated by another tool in the tool-chain
+	 * @since 9.3
 	 */
 	protected void addFragmentMakefileEntriesForSource(LinkedHashMap<String, String> buildVarToRuleStringMap,
 			StringBuffer ruleBuffer, IFolder folder, String relativePath, IResource resource, IPath sourceLocation,
-			IResourceInfo rcInfo, String varName, boolean generatedSource) {
+			IResourceInfo rcInfo, String varName, boolean generatedSource, Set<IPath> filesToClean) {
 
 		//  Determine which tool, if any, builds files with this extension
 		String ext = sourceLocation.getFileExtension();
@@ -2211,8 +2271,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 						nextRcInfo = rcInfo;
 					}
 					addFragmentMakefileEntriesForSource(buildVarToRuleStringMap, ruleBuffer, folder, relativePath,
-							generateOutputResource, generatedOutput, nextRcInfo, buildVariable, true);
+							generateOutputResource, generatedOutput, nextRcInfo, buildVariable, true, filesToClean);
 				}
+
+				filesToClean.addAll(generatedDepFiles);
+				filesToClean.addAll(generatedOutputs);
 			}
 		} else {
 			//  If this is a secondary input, add it to build vars
@@ -4785,4 +4848,24 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return root;
 	}
 
+	private String toCleanTarget(IPath path) {
+		final BitSet allowedCodePoints = new BitSet(128);
+		allowedCodePoints.set("A".codePointAt(0), "Z".codePointAt(0) + 1); //$NON-NLS-1$ //$NON-NLS-2$
+		allowedCodePoints.set("a".codePointAt(0), "z".codePointAt(0) + 1); //$NON-NLS-1$ //$NON-NLS-2$
+		allowedCodePoints.set("0".codePointAt(0), "9".codePointAt(0) + 1); //$NON-NLS-1$ //$NON-NLS-2$
+		allowedCodePoints.set("_".codePointAt(0)); //$NON-NLS-1$
+
+		StringBuilder sb = new StringBuilder("clean-"); //$NON-NLS-1$
+		(path.isEmpty() ? DOT : path.toString()).codePoints().forEach(c -> {
+			if (allowedCodePoints.get(c)) {
+				sb.append(Character.toChars(c));
+			} else {
+				sb.append("-"); //$NON-NLS-1$
+				sb.append(Long.toHexString(c));
+				sb.append("-"); //$NON-NLS-1$
+			}
+		});
+
+		return sb.toString();
+	}
 }

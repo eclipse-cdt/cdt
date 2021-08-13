@@ -49,7 +49,7 @@ testwithspaces.exe: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEP
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) testwithspaces.exe
+	-$(RM) testwithspaces.exe
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

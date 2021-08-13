@@ -25,3 +25,10 @@ d1_1/%.o: ../d1_1/%.cpp d1_1/subdir.mk
 	@echo ' '
 
 
+clean: clean-d1_1
+
+clean-d1_1:
+	-$(RM) ./d1_1/i.d ./d1_1/i.o ./d1_1/o.d ./d1_1/o.o
+
+.PHONY: clean-d1_1
+

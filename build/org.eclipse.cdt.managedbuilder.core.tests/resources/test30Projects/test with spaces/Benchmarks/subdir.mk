@@ -22,3 +22,10 @@ main\ with\ spaces.o: ../main\ with\ spaces.c subdir.mk
 	@echo ' '
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./main\ with\ spaces.d ./main\ with\ spaces.o
+
+.PHONY: clean--2e-
+

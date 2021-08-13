@@ -50,7 +50,7 @@ test1DepCalcPreBuild: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_D
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) test1DepCalcPreBuild
+	-$(RM) test1DepCalcPreBuild
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

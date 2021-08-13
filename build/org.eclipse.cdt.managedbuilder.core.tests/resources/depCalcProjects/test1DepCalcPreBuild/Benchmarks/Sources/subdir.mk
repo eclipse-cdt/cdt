@@ -33,3 +33,10 @@ Sources/%.d: ../Sources/%.c Sources/subdir.mk
 	@echo ' '
 
 
+clean: clean-Sources
+
+clean-Sources:
+	-$(RM) ./Sources/func1.d ./Sources/func1.o ./Sources/func2.d ./Sources/func2.o ./Sources/func4.d ./Sources/func4.o
+
+.PHONY: clean-Sources
+

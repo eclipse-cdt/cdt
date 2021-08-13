@@ -27,3 +27,10 @@ MAIN.obj: AVE_CALCULATOR.mod ../MODULE.F90
 ./AVE_CALCULATOR.mod: MODULE.obj
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./AVERAGE.obj ./MAIN.obj ./MODULE.obj
+
+.PHONY: clean--2e-
+

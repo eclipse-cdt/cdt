@@ -63,3 +63,10 @@ CDT.bmp: f1.c
 	@echo ' '
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./f1.d ./f1.oprestripped ./f2.d ./f2.oprestripped
+
+.PHONY: clean--2e-
+

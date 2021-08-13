@@ -164,3 +164,10 @@ module/yyy_module.obj: A2_MODULE.mod ../module/a2_module.f90 A_MODULE.mod ../mod
 ./YYY_MODULE.mod: module/yyy_module.obj A2_MODULE.mod ../module/a2_module.f90 A_MODULE.mod ../module/a_module.f90 B1_MODULE.mod ../module/b1_module.f90 D.mod ../module/d.f90 L1_MODULE.mod ../module/l1_module.f90 UN_MODULE.mod ../module/un_module.f90 XYZ_MODULE.mod ../module/xyz_module.f90
 
 
+clean: clean-module
+
+clean-module:
+	-$(RM) ./module/F_module.obj ./module/a1_module.obj ./module/a2_module.obj ./module/a_module.obj ./module/abc_module.obj ./module/b1_module.obj ./module/b2_module.obj ./module/c1_module.obj ./module/c2_module.obj ./module/c3_module.obj ./module/cba_module.obj ./module/cr_module.obj ./module/d.obj ./module/e_module.obj ./module/et_module.obj ./module/g_module.obj ./module/jj_module.obj ./module/k_module.obj ./module/l1_module.obj ./module/l_module.obj ./module/m1_module.obj ./module/mf_module.obj ./module/mg_module.obj ./module/p_module.obj ./module/un_module.obj ./module/v_module.obj ./module/w_module.obj ./module/xxx_module.obj ./module/xyz_module.obj ./module/yyy_module.obj
+
+.PHONY: clean-module
+

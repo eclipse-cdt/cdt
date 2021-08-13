@@ -48,7 +48,7 @@ libtwoFileSO.SOS: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(LIBRARIES) libtwoFileSO.SOS
+	-$(RM) libtwoFileSO.SOS
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

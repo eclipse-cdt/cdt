@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
@@ -342,6 +344,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private static final String POSTBUILD = "post-build"; //$NON-NLS-1$
 	private static final String SECONDARY_OUTPUTS = "secondary-outputs"; //$NON-NLS-1$
 
+	/**
+	 * On Windows XP and above, the maximum command line length is 8191, on Linux it is at least 131072, but
+	 * that includes the environment. We want to limit the invocation of a single command to this number of
+	 * characters, and we want to ensure that the number isn't so low as to slow down operation.
+	 *
+	 * Doing each rm in its own command would be very slow, especially on Windows.
+	 */
+	private static final int MAX_CLEAN_LENGTH = 6000;
+
 	// Enumerations
 	public static final int PROJECT_RELATIVE = 1, PROJECT_SUBDIR_RELATIVE = 2, ABSOLUTE = 3;
 
@@ -386,7 +397,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private final HashMap<String, List<IPath>> buildOutVars = new HashMap<>();
 	//  Map of dependency file build variable names to a List of GnuDependencyGroupInfo objects
 	private final HashMap<String, GnuDependencyGroupInfo> buildDepVars = new HashMap<>();
-	private final LinkedHashMap<String, String> topBuildOutVars = new LinkedHashMap<>();
+	private final Map<String, Set<String>> topBuildOutVars = new LinkedHashMap<>();
 	// Dependency file variables
 	//	private Vector dependencyMakefiles;		//  IPath's - relative to the top build directory or absolute
 
@@ -1006,7 +1017,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		IFile modMakefile = createFile(moduleOutputDir.append(MODFILE_NAME));
 		StringBuffer makeBuf = new StringBuffer();
 		makeBuf.append(addFragmentMakefileHeader());
-		makeBuf.append(addSources(module));
+		makeBuf.append(addSources(module, toCleanTarget(moduleRelativePath)));
 
 		// Save the files
 		save(makeBuf, modMakefile);
@@ -1181,7 +1192,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		StringBuffer targetRules = addTargets(outputVarsAdditionsList, rebuild);
 
 		// Add outputMacros that were added to by the target rules
-		buffer.append(writeTopAdditionMacros(outputVarsAdditionsList, getTopBuildOutputVars()));
+		buffer.append(writeTopAdditionMacros(outputVarsAdditionsList, getTopBuildOutputVarsMap()));
 
 		// Add target rules
 		buffer.append(targetRules);
@@ -1625,11 +1636,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		// Always add a clean target
 		buffer.append("clean:").append(NEWLINE); //$NON-NLS-1$
-		buffer.append(TAB).append("-$(RM)").append(WHITESPACE); //$NON-NLS-1$
-		for (Entry<String, List<IPath>> entry : buildOutVars.entrySet()) {
-			String macroName = entry.getKey();
-			buffer.append("$(").append(macroName).append(')'); //$NON-NLS-1$
-		}
+
+		Set<String> filesToClean = new HashSet<>();
 		String outputPrefix = EMPTY_STRING;
 		if (targetTool != null) {
 			outputPrefix = targetTool.getOutputPrefix();
@@ -1638,11 +1646,39 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		if (buildTargetExt.length() > 0) {
 			completeBuildTargetName = completeBuildTargetName + DOT + buildTargetExt;
 		}
-		if (completeBuildTargetName.contains(" ")) { //$NON-NLS-1$
-			buffer.append(WHITESPACE).append('"').append(completeBuildTargetName).append('"');
-		} else {
-			buffer.append(WHITESPACE).append(completeBuildTargetName);
+		completeBuildTargetName = ensurePathIsGNUMakeTargetRuleCompatibleSyntax(completeBuildTargetName);
+		filesToClean.add(completeBuildTargetName);
+
+		Map<String, Set<String>> map = getTopBuildOutputVarsMap();
+		for (String macroName : outputVarsAdditionsList) {
+			Set<String> set = map.getOrDefault(macroName, Collections.emptySet());
+			filesToClean.addAll(set);
 		}
+
+		if (!filesToClean.isEmpty()) {
+			StringBuffer rmLineBuffer = new StringBuffer();
+			rmLineBuffer.append(TAB).append("-$(RM)"); //$NON-NLS-1$
+
+			// Convert the set to an ordered list. Without this "unneeded" sorting, the unit tests will fail
+			List<String> filesToCleanOrdered = new ArrayList<>(filesToClean);
+			filesToCleanOrdered.sort((p1, p2) -> p1.toString().compareTo(p2.toString()));
+
+			for (String path : filesToCleanOrdered) {
+				// There is a max length for a command line, wrap to multiple invocations if needed.
+				if (rmLineBuffer.length() + path.length() > MAX_CLEAN_LENGTH) {
+					// Terminate this RM line
+					buffer.append(rmLineBuffer).append(NEWLINE);
+
+					// Start a new RM line
+					rmLineBuffer = new StringBuffer();
+					rmLineBuffer.append(TAB).append("-$(RM)"); //$NON-NLS-1$
+				}
+				rmLineBuffer.append(WHITESPACE).append(path);
+			}
+
+			buffer.append(rmLineBuffer);
+		}
+
 		buffer.append(NEWLINE);
 		buffer.append(TAB).append(DASH).append(AT).append(ECHO_BLANK_LINE).append(NEWLINE);
 
@@ -2006,13 +2042,22 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 	/**
+	 * @deprecated Use {@link #addSources(IContainer, String)}
+	 */
+	@Deprecated
+	protected StringBuffer addSources(IContainer module) throws CoreException {
+		return addSources(module, null);
+	}
+
+	/**
 	 * Returns a <code>StringBuffer</code> containing makefile text for all of the sources
 	 * contributed by a container (project directory/subdirectory) to the fragement makefile
 	 *
 	 * @param module  project resource directory/subdirectory
 	 * @return StringBuffer  generated text for the fragement makefile
+	 * @since 9.3
 	 */
-	protected StringBuffer addSources(IContainer module) throws CoreException {
+	protected StringBuffer addSources(IContainer module, String cleanTarget) throws CoreException {
 		// Calculate the new directory relative to the build output
 		IPath moduleRelativePath = module.getProjectRelativePath();
 		String relativePath = moduleRelativePath.toString();
@@ -2045,6 +2090,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		IResourceInfo rcInfo;
 		IFolder folder = project.getFolder(computeTopBuildDir(config.getName()));
+		Set<IPath> filesToClean = new HashSet<>();
 
 		for (IResource resource : resources) {
 			if (resource.getType() == IResource.FILE) {
@@ -2056,16 +2102,59 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				//				if( (rcInfo.isExcluded()) )
 				//					continue;
 				addFragmentMakefileEntriesForSource(buildVarToRuleStringMap, ruleBuffer, folder, relativePath, resource,
-						getPathForResource(resource), rcInfo, null, false);
+						getPathForResource(resource), rcInfo, null, false, filesToClean);
 			}
 		}
 
 		// Write out the macro addition entries to the buffer
 		buffer.append(writeAdditionMacros(buildVarToRuleStringMap));
-		return buffer.append(ruleBuffer).append(NEWLINE);
+		buffer.append(ruleBuffer).append(NEWLINE);
+
+		if (cleanTarget != null && !filesToClean.isEmpty()) {
+			buffer.append("clean: " + cleanTarget).append(NEWLINE).append(NEWLINE); //$NON-NLS-1$
+			buffer.append(cleanTarget + COLON).append(NEWLINE);
+
+			StringBuffer rmLineBuffer = new StringBuffer();
+			rmLineBuffer.append(TAB).append("-$(RM)"); //$NON-NLS-1$
+
+			// Convert the set to an ordered list. Without this "unneeded" sorting, the unit tests will fail
+			List<IPath> filesToCleanOrdered = new ArrayList<>(filesToClean);
+			filesToCleanOrdered.sort((p1, p2) -> p1.toString().compareTo(p2.toString()));
+
+			for (IPath fileToClean : filesToCleanOrdered) {
+				String path = escapeWhitespaces((fileToClean.isAbsolute() ? "" : "./") + fileToClean.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+
+				// There is a max length for a command line, wrap to multiple invocations if needed.
+				if (rmLineBuffer.length() + path.length() > MAX_CLEAN_LENGTH) {
+					// Terminate this RM line
+					buffer.append(rmLineBuffer).append(NEWLINE);
+
+					// Start a new RM line
+					rmLineBuffer = new StringBuffer();
+					rmLineBuffer.append(TAB).append("-$(RM)"); //$NON-NLS-1$
+				}
+				rmLineBuffer.append(WHITESPACE).append(path);
+			}
+
+			buffer.append(rmLineBuffer).append(NEWLINE).append(NEWLINE);
+			buffer.append(".PHONY: ").append(cleanTarget).append(NEWLINE).append(NEWLINE); //$NON-NLS-1$
+		}
+
+		return buffer;
 	}
 
-	/* (non-Javadoc
+	/**
+	 * @deprecated Use {@link #addFragmentMakefileEntriesForSource(LinkedHashMap, StringBuffer, IFolder, String, IResource, IPath, IResourceInfo, String, boolean, Set)}
+	 */
+	@Deprecated
+	protected void addFragmentMakefileEntriesForSource(LinkedHashMap<String, String> buildVarToRuleStringMap,
+			StringBuffer ruleBuffer, IFolder folder, String relativePath, IResource resource, IPath sourceLocation,
+			IResourceInfo rcInfo, String varName, boolean generatedSource) {
+		addFragmentMakefileEntriesForSource(buildVarToRuleStringMap, ruleBuffer, folder, relativePath, resource,
+				sourceLocation, rcInfo, varName, generatedSource, new HashSet<>());
+	}
+
+	/**
 	 * Adds the entries for a particular source file to the fragment makefile
 	 *
 	 * @param buildVarToRuleStringMap  map of build variable names to the list of files assigned to the variable
@@ -2078,10 +2167,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * @param varName  the build variable to add this invocation's outputs to
 	 *                   if <code>null</code>, use the file extension to find the name
 	 * @param generatedSource  if <code>true</code>, this file was generated by another tool in the tool-chain
+	 * @since 9.3
 	 */
 	protected void addFragmentMakefileEntriesForSource(LinkedHashMap<String, String> buildVarToRuleStringMap,
 			StringBuffer ruleBuffer, IFolder folder, String relativePath, IResource resource, IPath sourceLocation,
-			IResourceInfo rcInfo, String varName, boolean generatedSource) {
+			IResourceInfo rcInfo, String varName, boolean generatedSource, Set<IPath> filesToClean) {
 
 		//  Determine which tool, if any, builds files with this extension
 		String ext = sourceLocation.getFileExtension();
@@ -2211,8 +2301,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 						nextRcInfo = rcInfo;
 					}
 					addFragmentMakefileEntriesForSource(buildVarToRuleStringMap, ruleBuffer, folder, relativePath,
-							generateOutputResource, generatedOutput, nextRcInfo, buildVariable, true);
+							generateOutputResource, generatedOutput, nextRcInfo, buildVariable, true, filesToClean);
 				}
+
+				filesToClean.addAll(generatedDepFiles);
+				filesToClean.addAll(generatedOutputs);
 			}
 		} else {
 			//  If this is a secondary input, add it to build vars
@@ -3858,12 +3951,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 	/**
 	 * Adds file(s) to an entry in a map of macro names to entries.
-	 * File additions look like:
-	 * 	example.c, \
+	 * @since 9.3
 	 */
-	public void addMacroAdditionFiles(HashMap<String, String> map, String macroName, Vector<String> filenames) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(map.get(macroName));
+	public void addMacroAdditionFiles(Map<String, Set<String>> map, String macroName, Vector<String> filenames) {
+		Set<String> set = map.get(macroName);
+
 		for (int i = 0; i < filenames.size(); i++) {
 			String filename = filenames.get(i);
 			if (filename.length() > 0) {
@@ -3871,11 +3963,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				// Bug 417288, ilg@livius.net & freidin.alex@gmail.com
 				filename = ensurePathIsGNUMakeTargetRuleCompatibleSyntax(filename);
 
-				buffer.append(filename).append(WHITESPACE).append(LINEBREAK);
+				set.add(filename);
 			}
 		}
-		// re-insert string in the map
-		map.put(macroName, buffer.toString());
+	}
+
+	@Deprecated
+	public void addMacroAdditionFiles(HashMap<String, String> map, String macroName, Vector<String> filenames) {
+		throw new RuntimeException("Removed function"); //$NON-NLS-1$
 	}
 
 	/**
@@ -3909,23 +4004,35 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return buffer.append(NEWLINE);
 	}
 
+	@Deprecated
+	protected StringBuffer writeTopAdditionMacros(List<String> varList, HashMap<String, String> varMap) {
+		throw new RuntimeException("Function removed"); //$NON-NLS-1$
+	}
+
 	/**
 	 * Write all macro addition entries in a map to the buffer
+	 *
+	 * @since 9.3
 	 */
-	protected StringBuffer writeTopAdditionMacros(List<String> varList, HashMap<String, String> varMap) {
+	protected StringBuffer writeTopAdditionMacros(List<String> varList, Map<String, Set<String>> varMap) {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
 		buffer.append(COMMENT_SYMBOL).append(WHITESPACE).append(ManagedMakeMessages.getResourceString(MOD_VARS))
 				.append(NEWLINE);
 
-		for (int i = 0; i < varList.size(); i++) {
-			String addition = varMap.get(varList.get(i));
-			StringBuffer currentBuffer = new StringBuffer();
-			currentBuffer.append(addition);
-			currentBuffer.append(NEWLINE);
+		for (String macroName : varList) {
+			Set<String> files = varMap.get(macroName);
 
-			// append the contents of the buffer to the master buffer for the whole file
-			buffer.append(currentBuffer);
+			buffer.append(macroName).append(WHITESPACE).append(MACRO_ADDITION_PREFIX_SUFFIX);
+
+			for (String filename : files) {
+				// Bug 417288, ilg@livius.net & freidin.alex@gmail.com
+				filename = ensurePathIsGNUMakeTargetRuleCompatibleSyntax(filename);
+
+				buffer.append(filename).append(WHITESPACE).append(LINEBREAK);
+			}
+
+			buffer.append(NEWLINE);
 		}
 		return buffer.append(NEWLINE);
 	}
@@ -3990,16 +4097,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				}
 
 				//  Initialize the build output variable to file additions map
-				LinkedHashMap<String, String> map = getTopBuildOutputVars();
+				Map<String, Set<String>> map = getTopBuildOutputVarsMap();
 				Set<Entry<String, List<IPath>>> set = buildOutVars.entrySet();
 				for (Entry<String, List<IPath>> entry : set) {
 					String macroName = entry.getKey();
 
 					// for projects with specific setting on folders/files do
 					// not clear the macro value on subsequent passes
-					if (!map.containsKey(macroName)) {
-						addMacroAdditionPrefix(map, macroName, "", false); //$NON-NLS-1$
-					}
+					map.putIfAbsent(macroName, new HashSet<>());
 				}
 
 				// Set of input extensions for which macros have been created so far
@@ -4142,12 +4247,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return buildOutVars;
 	}
 
+	@Deprecated
+	public LinkedHashMap<String, String> getTopBuildOutputVars() {
+		throw new RuntimeException("Function removed"); //$NON-NLS-1$
+	}
+
 	/**
 	 * Returns the map of build variables used in the top makefile to list of files
 	 *
-	 * @return HashMap
+	 * @since 9.3
 	 */
-	public LinkedHashMap<String, String> getTopBuildOutputVars() {
+	public Map<String, Set<String>> getTopBuildOutputVarsMap() {
 		return topBuildOutVars;
 	}
 
@@ -4785,4 +4895,24 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return root;
 	}
 
+	private String toCleanTarget(IPath path) {
+		final BitSet allowedCodePoints = new BitSet(128);
+		allowedCodePoints.set("A".codePointAt(0), "Z".codePointAt(0) + 1); //$NON-NLS-1$ //$NON-NLS-2$
+		allowedCodePoints.set("a".codePointAt(0), "z".codePointAt(0) + 1); //$NON-NLS-1$ //$NON-NLS-2$
+		allowedCodePoints.set("0".codePointAt(0), "9".codePointAt(0) + 1); //$NON-NLS-1$ //$NON-NLS-2$
+		allowedCodePoints.set("_".codePointAt(0)); //$NON-NLS-1$
+
+		StringBuilder sb = new StringBuilder("clean-"); //$NON-NLS-1$
+		(path.isEmpty() ? DOT : path.toString()).codePoints().forEach(c -> {
+			if (allowedCodePoints.get(c)) {
+				sb.append(Character.toChars(c));
+			} else {
+				sb.append("-"); //$NON-NLS-1$
+				sb.append(Long.toHexString(c));
+				sb.append("-"); //$NON-NLS-1$
+			}
+		});
+
+		return sb.toString();
+	}
 }

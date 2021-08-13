@@ -22,3 +22,10 @@ Sources/sub\ sources/func\ 3.o: ../Sources/sub\ sources/func\ 3.c Sources/sub\ s
 	@echo ' '
 
 
+clean: clean-Sources-2f-sub-20-sources
+
+clean-Sources-2f-sub-20-sources:
+	-$(RM) ./Sources/sub\ sources/func\ 3.d ./Sources/sub\ sources/func\ 3.o
+
+.PHONY: clean-Sources-2f-sub-20-sources
+

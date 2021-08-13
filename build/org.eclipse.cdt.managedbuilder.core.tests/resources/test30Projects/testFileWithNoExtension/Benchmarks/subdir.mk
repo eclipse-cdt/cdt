@@ -22,3 +22,10 @@ C_DEPS += \
 	@echo ' '
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./test.d ./test.o
+
+.PHONY: clean--2e-
+

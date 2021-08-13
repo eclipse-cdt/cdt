@@ -60,3 +60,10 @@ f2_30.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f2_30.c subdir.mk
 	@echo ' '
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./f1.d ./f1.o ./f1_30.d ./f1_30.o ./f2.d ./f2.o ./f2_30.d ./f2_30.o
+
+.PHONY: clean--2e-
+

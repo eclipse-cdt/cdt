@@ -19,3 +19,10 @@ this_is_a_test_prefix_with_a_macro_for_the_project_name_between_here_testMacroSu
 	@echo ' '
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./this_is_a_test_prefix_with_a_macro_for_the_project_name_between_here_testMacroSupportInBuildDefinitions_and_heresomefile.bar
+
+.PHONY: clean--2e-
+

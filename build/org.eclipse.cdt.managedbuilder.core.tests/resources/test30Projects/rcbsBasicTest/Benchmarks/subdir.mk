@@ -19,3 +19,10 @@ rcbsBasicTest.o: ../rcbsBasicTest.c subdir.mk
 	@echo ' '
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./rcbsBasicTest.o
+
+.PHONY: clean--2e-
+

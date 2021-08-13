@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
@@ -765,9 +766,9 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 			enumeratedSecondaryOutputs.addAll(myEnumeratedSecondaryOutputs);
 			outputVariables.addAll(myOutputMacros.keySet());
 			outputsCalculated = true;
+			Map<String, Set<String>> map = makeGen.getTopBuildOutputVars();
 			for (int i = 0; i < myBuildVars.size(); i++) {
-				makeGen.addMacroAdditionFiles(makeGen.getTopBuildOutputVars(), myBuildVars.get(i),
-						myBuildVarsValues.get(i));
+				makeGen.addMacroAdditionFiles(map, myBuildVars.get(i), myBuildVarsValues.get(i));
 			}
 			return true;
 		}

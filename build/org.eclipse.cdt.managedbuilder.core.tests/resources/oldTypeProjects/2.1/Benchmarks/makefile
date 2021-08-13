@@ -49,7 +49,7 @@ MBS2dot1.exe: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) MBS2dot1.exe
+	-$(RM) MBS2dot1.exe
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

@@ -48,3 +48,10 @@ resourceSettingRelativeCompiler.o: ../resourceSettingRelativeCompiler.c ../A\ Fo
 	@echo ' '
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./picksUpGlobalAbsoluteInputOptionPath.d ./picksUpGlobalAbsoluteInputOptionPath.o ./resourceSettingAbsoluteCompiler.d ./resourceSettingAbsoluteCompiler.o ./resourceSettingRelativeCompiler.d ./resourceSettingRelativeCompiler.o
+
+.PHONY: clean--2e-
+

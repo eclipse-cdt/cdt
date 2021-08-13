@@ -32,3 +32,10 @@ d1/d2/%.o: ../d1/d2/%.cpp d1/d2/subdir.mk
 	@echo ' '
 
 
+clean: clean-d1-2f-d2
+
+clean-d1-2f-d2:
+	-$(RM) ./d1/d2/e.d ./d1/d2/e.o ./d1/d2/r.d ./d1/d2/r.o
+
+.PHONY: clean-d1-2f-d2
+

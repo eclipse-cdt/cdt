@@ -24,3 +24,10 @@ source2/%.o: ../source2/%.cpp source2/subdir.mk
 	@echo ' '
 
 
+clean: clean-source2
+
+clean-source2:
+	-$(RM) ./source2/Class2.d ./source2/Class2.o
+
+.PHONY: clean-source2
+

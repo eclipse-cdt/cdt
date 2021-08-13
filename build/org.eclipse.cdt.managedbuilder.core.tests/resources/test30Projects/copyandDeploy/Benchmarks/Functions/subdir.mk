@@ -34,3 +34,10 @@ Functions/%.o: ./Functions/%.c Functions/subdir.mk
 	@echo ' '
 
 
+clean: clean-Functions
+
+clean-Functions:
+	-$(RM) ./Functions/Func1.c ./Functions/Func1.d ./Functions/Func1.o
+
+.PHONY: clean-Functions
+

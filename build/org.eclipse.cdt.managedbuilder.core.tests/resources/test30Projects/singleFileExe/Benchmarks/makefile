@@ -48,7 +48,7 @@ singleFileExe: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) singleFileExe
+	-$(RM) singleFileExe
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

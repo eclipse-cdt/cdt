@@ -26,3 +26,10 @@ OBJS += \
 	@echo ' '
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./TestATO.obj
+
+.PHONY: clean--2e-
+

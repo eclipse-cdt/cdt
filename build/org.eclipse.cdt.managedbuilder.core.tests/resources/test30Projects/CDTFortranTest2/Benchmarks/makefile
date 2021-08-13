@@ -44,7 +44,7 @@ CDTFortranTest2: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(MODS)$(EXECUTABLES) CDTFortranTest2
+	-$(RM) CDTFortranTest2
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

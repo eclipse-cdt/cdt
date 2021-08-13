@@ -173,3 +173,10 @@ Sources/y.obj: D.mod ../module/d.f90 L_MODULE.mod ../module/l_module.f90 M1_MODU
 Sources/z.obj: A_MODULE.mod ../module/a_module.f90 CBA_MODULE.mod ../module/cba_module.f90 D.mod ../module/d.f90 JJ_MODULE.mod ../module/jj_module.f90 MF_MODULE.mod ../module/mf_module.f90 XXX_MODULE.mod ../module/xxx_module.f90
 
 
+clean: clean-Sources
+
+clean-Sources:
+	-$(RM) ./Sources/a.obj ./Sources/ab.obj ./Sources/ac.obj ./Sources/c.obj ./Sources/ca.obj ./Sources/cd.obj ./Sources/ce.obj ./Sources/d1.obj ./Sources/e.obj ./Sources/et.obj ./Sources/f.obj ./Sources/fa.obj ./Sources/fex.obj ./Sources/ff.obj ./Sources/g.obj ./Sources/h.obj ./Sources/ha.obj ./Sources/i.obj ./Sources/ia.obj ./Sources/ii.obj ./Sources/is.obj ./Sources/l.obj ./Sources/m.obj ./Sources/ma.obj ./Sources/main.obj ./Sources/mo.obj ./Sources/o.obj ./Sources/p.obj ./Sources/r.obj ./Sources/rx.obj ./Sources/s.obj ./Sources/t.obj ./Sources/u.obj ./Sources/u1.obj ./Sources/v.obj ./Sources/w.obj ./Sources/x.obj ./Sources/y.obj ./Sources/z.obj
+
+.PHONY: clean-Sources
+

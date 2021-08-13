@@ -61,7 +61,7 @@ new.log: $(TAROUT) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 
 # Other Targets
 clean:
-	-$(RM) $(TAROUT)$(TERMINAL__DUMMY_OUTPUT__OUTPUTS)$(LOGFILE) test30_2.tmp
+	-$(RM) new.log new.tar test30_2.tmp
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

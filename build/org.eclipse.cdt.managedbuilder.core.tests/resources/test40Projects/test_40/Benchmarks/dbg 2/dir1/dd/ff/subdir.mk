@@ -36,3 +36,10 @@ dir1/dd/ff/%.o: ../dir1/dd/ff/%.cpp dir1/dd/ff/subdir.mk
 	@echo ' '
 
 
+clean: clean-dir1-2f-dd-2f-ff
+
+clean-dir1-2f-dd-2f-ff:
+	-$(RM) ./dir1/dd/ff/vbn.d ./dir1/dd/ff/vbn.o ./dir1/dd/ff/zxc.d ./dir1/dd/ff/zxc.o
+
+.PHONY: clean-dir1-2f-dd-2f-ff
+

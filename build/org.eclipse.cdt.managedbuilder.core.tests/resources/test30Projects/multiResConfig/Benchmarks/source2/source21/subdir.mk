@@ -24,3 +24,10 @@ source2/source21/Class21.o: ../source2/source21/Class21.cpp source2/source21/sub
 	@echo ' '
 
 
+clean: clean-source2-2f-source21
+
+clean-source2-2f-source21:
+	-$(RM) ./source2/source21/Class21.d ./source2/source21/Class21.o
+
+.PHONY: clean-source2-2f-source21
+

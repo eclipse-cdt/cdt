@@ -61,7 +61,7 @@ preAndPostBuildSteps: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_D
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(EXECUTABLES)$(CXX_DEPS)$(C_UPPER_DEPS) preAndPostBuildSteps
+	-$(RM) preAndPostBuildSteps
 	-@echo ' '
 
 pre-build:

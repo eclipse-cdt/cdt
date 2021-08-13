@@ -62,6 +62,7 @@
     <li><a href="#ManagedCommandLineGenerator.toManagedCommandLineInfo">Add ITool parameter to ManagedCommandLineGenerator.toManagedCommandLineInfo</a></li>
     <li><a href="#GnuMakefileGenerator.addRuleForTool">Removed unneded boolean from function</a></li>
     <li><a href="#GnuMakefileGenerator.addDefaultHeader">Changed methods from static to non-static</a></li>
+    <li><a href="#GnuMakefileGenerator.cleanTooLong">Rework of how clean target is generated in GnuMakefileGenerator</a></li>
   </ol>
 
   <p>
@@ -487,6 +488,21 @@
   </ul>
   <p>
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=573722" target="_blank">Bug 573722</a>.
+  </p>
+
+  <h3>5. <a name="GnuMakefileGenerator.cleanTooLong">Rework of how clean target is generated in GnuMakefileGenerator</a></h3>
+  <p>
+    An additional argument was added to some of the protected functions rendering the old functions without the argument deprecated.
+    The following APIs will be removed, listed with their replacement.
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator.addSources(IContainer), use
+      org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator.addSources(IContainer, String) instead.</li>
+    <li>org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator.addFragmentMakefileEntriesForSource(LinkedHashMap&lt;String, String&gt;, StringBuffer, IFolder, String, IResource, IPath, IResourceInfo, String, boolean), use
+      org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator.addFragmentMakefileEntriesForSource(LinkedHashMap&lt;String, String&gt;, StringBuffer, IFolder, String, IResource, IPath, IResourceInfo, String, boolean, Set&lt;IPath&gt;) instead.</li>
+  </ul>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=505882" target="_blank">Bug 505882</a>.
   </p>
 </body>
 

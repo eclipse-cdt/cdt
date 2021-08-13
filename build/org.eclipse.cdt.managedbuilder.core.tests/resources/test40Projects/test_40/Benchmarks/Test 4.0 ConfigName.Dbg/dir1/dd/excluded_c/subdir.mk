@@ -22,3 +22,10 @@ dir1/dd/excluded_c/%.o: ../dir1/dd/excluded_c/%.cpp dir1/dd/excluded_c/subdir.mk
 	@echo ' '
 
 
+clean: clean-dir1-2f-dd-2f-excluded_c
+
+clean-dir1-2f-dd-2f-excluded_c:
+	-$(RM) ./dir1/dd/excluded_c/inc.d ./dir1/dd/excluded_c/inc.o
+
+.PHONY: clean-dir1-2f-dd-2f-excluded_c
+

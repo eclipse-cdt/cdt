@@ -60,7 +60,7 @@ DeleteFile: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(EXECUTABLES)$(CXX_DEPS)$(C_UPPER_DEPS) DeleteFile
+	-$(RM) DeleteFile
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

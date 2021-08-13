@@ -22,3 +22,10 @@ CPP_DEPS += \
 	@echo ' '
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./Test1.d ./Test1.o
+
+.PHONY: clean--2e-
+

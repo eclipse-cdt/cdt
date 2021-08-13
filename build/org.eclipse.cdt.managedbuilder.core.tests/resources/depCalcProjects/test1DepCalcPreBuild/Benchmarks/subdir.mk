@@ -27,3 +27,10 @@ main.d: ../main.c subdir.mk
 	@echo ' '
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./main.d ./main.o
+
+.PHONY: clean--2e-
+

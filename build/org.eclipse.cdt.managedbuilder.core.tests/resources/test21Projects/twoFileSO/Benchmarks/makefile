@@ -60,7 +60,7 @@ libtestDoubleSO.so: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEP
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(CXX_DEPS)$(C_UPPER_DEPS) libtestDoubleSO.so
+	-$(RM) libtestDoubleSO.so
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

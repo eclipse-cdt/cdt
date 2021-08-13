@@ -27,3 +27,10 @@ C_DEPS += \
 	@echo ' '
 
 
+clean: clean--2e-
+
+clean--2e-:
+	-$(RM) ./so1.d ./so1.o ./so2.d ./so2.o
+
+.PHONY: clean--2e-
+

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7828c27c_6ae46363",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2021-08-14T06:11:28Z",
+      "side": 0,
+      "message": "Add reference to bug 505882",
+      "revId": "b9dd8152bb3a2b2e2663ba629ad6354c6904c60b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

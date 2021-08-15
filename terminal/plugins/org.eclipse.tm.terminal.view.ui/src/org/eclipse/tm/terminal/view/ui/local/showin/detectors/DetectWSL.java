@@ -38,6 +38,12 @@ public class DetectWSL implements IDetectExternalExecutable {
 	private List<Map<String, String>> result = null;
 	private WslDetectJob detectJob = null;
 
+	public DetectWSL() {
+		if (Platform.OS_WIN32.equals(Platform.getOS())) {
+			result = Collections.emptyList();
+		}
+	}
+
 	@Override
 	public boolean hasEntries() {
 		return !getEntries().isEmpty();
@@ -95,52 +101,50 @@ public class DetectWSL implements IDetectExternalExecutable {
 		protected IStatus run(IProgressMonitor monitor) {
 			if (result == null) {
 				result = Collections.emptyList();
-				if (Platform.OS_WIN32.equals(Platform.getOS())) {
-					String windir = System.getenv("windir"); //$NON-NLS-1$
-					if (windir == null) {
-						return Status.OK_STATUS;
-					}
-					String wsl = windir + "\\System32\\wsl.exe"; //$NON-NLS-1$
-					if (!Files.isExecutable(Paths.get(wsl))) {
-						return Status.OK_STATUS;
-					}
+				String windir = System.getenv("windir"); //$NON-NLS-1$
+				if (windir == null) {
+					return Status.OK_STATUS;
+				}
+				String wsl = windir + "\\System32\\wsl.exe"; //$NON-NLS-1$
+				if (!Files.isExecutable(Paths.get(wsl))) {
+					return Status.OK_STATUS;
+				}
 
-					ProcessBuilder pb = new ProcessBuilder(wsl, "--list", "--quiet"); //$NON-NLS-1$ //$NON-NLS-2$
-					try {
-						Process process = pb.start();
-						try (InputStream is = process.getErrorStream()) {
-							// drain the error stream
-							if (is.readAllBytes().length != 0) {
-								return Status.OK_STATUS;
-							}
+				ProcessBuilder pb = new ProcessBuilder(wsl, "--list", "--quiet"); //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					Process process = pb.start();
+					try (InputStream is = process.getErrorStream()) {
+						// drain the error stream
+						if (is.readAllBytes().length != 0) {
+							return Status.OK_STATUS;
 						}
-
-						try (BufferedReader reader = new BufferedReader(
-								new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_16LE))) {
-							result = new ArrayList<>();
-							String line = null;
-							while ((line = reader.readLine()) != null) {
-								String distribution = line.trim();
-								if (distribution.isBlank()) {
-									continue;
-								}
-								// docker-desktop entries are not "real" so shouldn't be shown in UI
-								if (distribution.startsWith("docker-desktop")) { //$NON-NLS-1$
-									continue;
-								}
-
-								String name = distribution + " (WSL)"; //$NON-NLS-1$
-								Map<String, String> m = new HashMap<>();
-								m.put(IExternalExecutablesProperties.PROP_NAME, name);
-								m.put(IExternalExecutablesProperties.PROP_PATH, wsl);
-								m.put(IExternalExecutablesProperties.PROP_ARGS, "--distribution " + distribution); //$NON-NLS-1$
-								m.put(IExternalExecutablesProperties.PROP_TRANSLATE, Boolean.TRUE.toString());
-								result.add(m);
-							}
-						}
-
-					} catch (IOException e) {
 					}
+
+					try (BufferedReader reader = new BufferedReader(
+							new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_16LE))) {
+						result = new ArrayList<>();
+						String line = null;
+						while ((line = reader.readLine()) != null) {
+							String distribution = line.trim();
+							if (distribution.isBlank()) {
+								continue;
+							}
+							// docker-desktop entries are not "real" so shouldn't be shown in UI
+							if (distribution.startsWith("docker-desktop")) { //$NON-NLS-1$
+								continue;
+							}
+
+							String name = distribution + " (WSL)"; //$NON-NLS-1$
+							Map<String, String> m = new HashMap<>();
+							m.put(IExternalExecutablesProperties.PROP_NAME, name);
+							m.put(IExternalExecutablesProperties.PROP_PATH, wsl);
+							m.put(IExternalExecutablesProperties.PROP_ARGS, "--distribution " + distribution); //$NON-NLS-1$
+							m.put(IExternalExecutablesProperties.PROP_TRANSLATE, Boolean.TRUE.toString());
+							result.add(m);
+						}
+					}
+
+				} catch (IOException e) {
 				}
 			}
 			return Status.OK_STATUS;

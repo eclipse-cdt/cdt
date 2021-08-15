@@ -70,7 +70,7 @@ public class DetectWSL implements IDetectExternalExecutable {
 			detectJob.schedule();
 		}
 		try {
-			if (detectJob.join(10, null)) {
+			if (detectJob.join(10, null) && detectJob.result != null) { // Suspended jobs return early from join()
 				result = detectJob.result;
 				detectJob = null;
 			} else {

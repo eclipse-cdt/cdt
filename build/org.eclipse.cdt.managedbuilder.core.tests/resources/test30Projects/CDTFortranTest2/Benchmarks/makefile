@@ -10,7 +10,6 @@ RM := rm -rf
 -include sources.mk
 -include module/subdir.mk
 -include Sources/subdir.mk
--include subdir.mk
 -include objects.mk
 
 -include ../makefile.defs
@@ -44,7 +43,7 @@ CDTFortranTest2: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(MODS)$(EXECUTABLES) CDTFortranTest2
+	-$(RM) $(MODS)$(EXECUTABLES)$(OBJS) CDTFortranTest2
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

@@ -10,7 +10,6 @@ RM := rm -rf
 -include sources.mk
 -include module/subdir.mk
 -include Sources/subdir.mk
--include subdir.mk
 -include objects.mk
 
 -include ../makefile.defs

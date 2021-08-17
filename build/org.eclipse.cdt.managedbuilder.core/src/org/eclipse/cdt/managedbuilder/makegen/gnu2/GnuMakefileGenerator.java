@@ -1258,15 +1258,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		List<String> subDirList = new ArrayList<>();
 		for (IContainer subDir : getSubdirList()) {
 			String projectRelativePath = subDir.getProjectRelativePath().toString();
-			if (!projectRelativePath.isEmpty())
-				subDirList.add(0, projectRelativePath);
+			subDirList.add(0, projectRelativePath);
 		}
 		Collections.sort(subDirList, Collections.reverseOrder());
 		for (String dir : subDirList) {
-			buffer.append("-include ").append(escapeWhitespaces(dir)).append(SEPARATOR).append("subdir.mk") //$NON-NLS-1$//$NON-NLS-2$
-					.append(NEWLINE);
+			buffer.append("-include "); //$NON-NLS-1$
+			if (!dir.isEmpty())
+				buffer.append(escapeWhitespaces(dir)).append(SEPARATOR);
+			buffer.append(MODFILE_NAME).append(NEWLINE);
 		}
-		buffer.append("-include subdir.mk").append(NEWLINE); //$NON-NLS-1$
 
 		buffer.append("-include objects.mk").append(NEWLINE).append(NEWLINE); //$NON-NLS-1$
 

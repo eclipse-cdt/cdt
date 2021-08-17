@@ -16,7 +16,6 @@ RM := rm -rf
 -include d1/d2/d3/subdir.mk
 -include d1/d2/subdir.mk
 -include d1/subdir.mk
--include subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

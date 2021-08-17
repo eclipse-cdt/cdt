@@ -142,6 +142,30 @@
       "revId": "f2d0d6c48d8724978e518da78cdd30be21fc244b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc1ead2d_17bb08b8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1018,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-17T20:09:41Z",
+      "side": 1,
+      "message": "Can you take a look at PS3 and see if it matches what you had in mind?",
+      "parentUuid": "184cb801_1f6c76ee",
+      "range": {
+        "startLine": 1018,
+        "startChar": 47,
+        "endLine": 1018,
+        "endChar": 63
+      },
+      "revId": "f2d0d6c48d8724978e518da78cdd30be21fc244b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

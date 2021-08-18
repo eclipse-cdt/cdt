@@ -72,6 +72,10 @@ public class DetectWSL implements IDetectExternalExecutable {
 		try {
 			if (detectJob.join(10, null)) {
 				result = detectJob.result;
+				if (result == null) {
+					// may happen if the JobManager is currently suspended
+					result = Collections.emptyList();
+				}
 				detectJob = null;
 			} else {
 				return Collections.emptyList();

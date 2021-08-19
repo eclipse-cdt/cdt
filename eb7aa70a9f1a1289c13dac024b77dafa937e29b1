@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b22fc79_62834013",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1629,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T21:45:35Z",
+      "side": 0,
+      "message": "I think the solution to my missing rm comments is to filter out the buildOutVars that are actively been handled, but leave the others in the original rm line.",
+      "range": {
+        "startLine": 1629,
+        "startChar": 42,
+        "endLine": 1629,
+        "endChar": 54
+      },
+      "revId": "eb7aa70a9f1a1289c13dac024b77dafa937e29b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "51f04769_861c654c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/depCalcProjects/test1DepCalc2/Benchmarks/subdir.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T21:45:35Z",
+      "side": 1,
+      "message": "only the minor esthetic thing of empty string coming up as -2e-",
+      "range": {
+        "startLine": 25,
+        "startChar": 13,
+        "endLine": 25,
+        "endChar": 16
+      },
+      "revId": "067338f7e39d402716346e4a1060766a93d3f2e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4f0e45f_3b89c700",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/test30Projects/copyandDeploy/Benchmarks/makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T21:45:35Z",
+      "side": 1,
+      "message": "AFAICT with this change USER_OBJS.foo is no longer cleaned.",
+      "revId": "067338f7e39d402716346e4a1060766a93d3f2e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "53b4d949_8bf6de47",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/resources/test30Projects/test30_1/Benchmarks/makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T21:45:35Z",
+      "side": 1,
+      "message": "AFAICT The clean of test30_1.so.1.2.3 and default.so.4.5.6 is now missed, along with f1.o and f2.o in the subdir.mk.",
+      "revId": "067338f7e39d402716346e4a1060766a93d3f2e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b6a405a8_196dc3d6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4846,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-19T15:14:22Z",
+      "side": 1,
+      "message": "It could, but then there would either need to be some synchronous block to init it, or need a static block. Not sure if it\u0027s better.\nThe time to init this part is rather low, so I considered it ok to do every time.",
+      "parentUuid": "f8df8eb3_458ca3ad",
+      "range": {
+        "startLine": 4846,
+        "startChar": 15,
+        "endLine": 4846,
+        "endChar": 21
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6151591c_48369027",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 3
@@ -71,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "030fe165_1287dd66",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4856,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-19T15:14:22Z",
+      "side": 1,
+      "message": "\u003e Only thing I would add is that I special cased / to encode as - to increase readability. As now your encoding of:\n\u003e \n\u003e    src/dir\n\u003e \n\u003e is\n\u003e \n\u003e    src-0002fdir\n\u003e \n\u003e rather than\n\u003e \n\u003e    src-dir\n\u003e \n\u003e Of course you have to make sure that doesn\u0027t conflict with the line below - so good luck on that :-)\n\nThe problem with this is that if you have a path like src/ö/foo, it would be encoded (with your scheme) as src-f6-foo, but so would also the literal src-b6-foo. What I\u0027m trying to say is that the marker for a the illegal bytes cannot be an allowed character or there will be an ambiguity.\n\nSo my followup question is; how should these be encoded?\n\nsrc/dir\nsrc-dir\nsrc_dir\nsrc-ö-dir\nsrc/ö/dir\n\n\nBy the way, with my version, \"src/dir\" is encoded as \"src-2fdir\", but yes, it\u0027s harder to read than \"src-dir\" or something similar.",
+      "parentUuid": "03390ee1_6c258fa6",
+      "range": {
+        "startLine": 4856,
+        "startChar": 0,
+        "endLine": 4856,
+        "endChar": 11
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d9721634_579abdd3",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 3
@@ -91,6 +139,30 @@
       "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "502c4089_a7eae987",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4858,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-19T15:14:22Z",
+      "side": 1,
+      "message": "It takes the CP and finds the first byte that has at least one bit set (removing the leading zeros) and that byte and all after and transform them into 2 characters, one for each nibble, per byte.\nSo one CP will be max 8 characters, but can be as low as 2 characters.\nTo be similar to the URL encoding, maybe the initial \"-\" should be moved inside the loop, or we could add another \"-\" as a terminator for the hex encoded CP. What would you prefer?",
+      "parentUuid": "d9721634_579abdd3",
+      "range": {
+        "startLine": 4858,
+        "startChar": 23,
+        "endLine": 4858,
+        "endChar": 26
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

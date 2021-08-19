@@ -167,6 +167,30 @@
     },
     {
       "key": {
+        "uuid": "a5404625_a4e195d2",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4856,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-19T20:22:27Z",
+      "side": 1,
+      "message": "It\u0027s implemented and I think I got all the test cases updated.\nWill get a confirmation in a bit.",
+      "parentUuid": "db450152_18ff2af0",
+      "range": {
+        "startLine": 4856,
+        "startChar": 0,
+        "endLine": 4856,
+        "endChar": 11
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d9721634_579abdd3",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 3
@@ -235,6 +259,30 @@
       "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4377164a_31982db7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4858,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-19T20:22:27Z",
+      "side": 1,
+      "message": "I read your earlier comment one more time and decided to go with that (-c- instead of the for-loop).",
+      "parentUuid": "c02c0af6_2275f6d7",
+      "range": {
+        "startLine": 4858,
+        "startChar": 23,
+        "endLine": 4858,
+        "endChar": 26
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "d619f55c_ccfb8c65",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4846,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T17:18:40Z",
+      "side": 1,
+      "message": "\u003e The time to init this part is rather low, so I considered it ok to do every time.\n\nOK.\n\n\n\u003e It could, but then there would either need to be some synchronous block to init it, or need a static block. Not sure if it\u0027s better.\n\nIf you decide to change it, a static block is probably best, synchronous is built in that way.",
+      "parentUuid": "b6a405a8_196dc3d6",
+      "range": {
+        "startLine": 4846,
+        "startChar": 15,
+        "endLine": 4846,
+        "endChar": 21
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6151591c_48369027",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 3
@@ -119,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "db450152_18ff2af0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4856,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T17:18:40Z",
+      "side": 1,
+      "message": ":-) Hence the good luck part - my brain didn\u0027t seem up to it at the time. Not sure brain still is - so here you go.\n\nActually, forget the special case, having - on both sides of the encoding makes it easy enough to read:\n\n    src-2f-dir\n    src-2d-dir\n    src_dir\n    src-2d--c3b6--2d--dir\n    src-2f--c3b6--2f--dir\n\nI am agnostic to lower vs uppercase for hex - just be consistent.",
+      "parentUuid": "030fe165_1287dd66",
+      "range": {
+        "startLine": 4856,
+        "startChar": 0,
+        "endLine": 4856,
+        "endChar": 11
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d9721634_579abdd3",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 3
@@ -154,6 +202,30 @@
       "side": 1,
       "message": "It takes the CP and finds the first byte that has at least one bit set (removing the leading zeros) and that byte and all after and transform them into 2 characters, one for each nibble, per byte.\nSo one CP will be max 8 characters, but can be as low as 2 characters.\nTo be similar to the URL encoding, maybe the initial \"-\" should be moved inside the loop, or we could add another \"-\" as a terminator for the hex encoded CP. What would you prefer?",
       "parentUuid": "d9721634_579abdd3",
+      "range": {
+        "startLine": 4858,
+        "startChar": 23,
+        "endLine": 4858,
+        "endChar": 26
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c02c0af6_2275f6d7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4858,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T17:18:40Z",
+      "side": 1,
+      "message": "The - as terminator because it solves the src/dir readability.\n\nBut I don\u0027t have a strong opinion. Once you generate the tests you will see how it looks and feels and if it seems right to you then.",
+      "parentUuid": "502c4089_a7eae987",
       "range": {
         "startLine": 4858,
         "startChar": 23,

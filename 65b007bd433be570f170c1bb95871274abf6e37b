@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f8df8eb3_458ca3ad",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4846,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T14:42:58Z",
+      "side": 1,
+      "message": "should this become static field? It feels like overhead to recalculate the bitset each call to toCleanTarget",
+      "range": {
+        "startLine": 4846,
+        "startChar": 15,
+        "endLine": 4846,
+        "endChar": 21
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6151591c_48369027",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4853,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T14:42:58Z",
+      "side": 1,
+      "message": "+1 for iterating over codePoints and not chars.",
+      "range": {
+        "startLine": 4853,
+        "startChar": 18,
+        "endLine": 4853,
+        "endChar": 28
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "03390ee1_6c258fa6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4856,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T14:42:58Z",
+      "side": 1,
+      "message": "Only thing I would add is that I special cased / to encode as - to increase readability. As now your encoding of:\n\n   src/dir\n\nis\n\n   src-0002fdir\n\nrather than\n\n   src-dir\n\nOf course you have to make sure that doesn\u0027t conflict with the line below - so good luck on that :-)",
+      "range": {
+        "startLine": 4856,
+        "startChar": 0,
+        "endLine": 4856,
+        "endChar": 11
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9721634_579abdd3",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4858,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T14:42:58Z",
+      "side": 1,
+      "message": "AFAICT your code coverts values from non-alpha to - followed by 4 hex chars? That leaves a little gap when codePoints are greater than 16-bits. My example was based on URL encoding. In URL encoding each byte is encoded as %XX, so the code point could be broken up into its individual bytes and encoded as -XX-XX-XX (for a 3-byte code point).\n\nHowever, for brevity and simplicity, you can just add an end to the encoding like this (replace lines 4857-4862):\n   sb.append(\"-\");\n   sb.append(c);\n   sb.append(\"-\");\n\nNo actual need to hex encode or add leading zeros if you mark beginning and end of the character.",
+      "range": {
+        "startLine": 4858,
+        "startChar": 23,
+        "endLine": 4858,
+        "endChar": 26
+      },
+      "revId": "65b007bd433be570f170c1bb95871274abf6e37b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

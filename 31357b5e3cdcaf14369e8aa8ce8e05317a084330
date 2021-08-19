@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bca5974c_0a637df7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-19T14:27:37Z",
+      "side": 1,
+      "message": "+1 - I think there should be a new parent commit of this change that stabilizes the order if possible. However, rather than a linkedhashmap my guess is a treemap is more appropriate so that the items stay sorted on the output regardless of how the code is rewritten.\n\nIf not straightforward it isn\u0027t the most serious thing as these makefiles should not be committed to source control (outside of our test system) so random changes (while undesirable) are not fatal.\n\nI saw another change come through recently that the order changed on and was going to make a similar comment. Maybe that change is still in my review queue.",
+      "range": {
+        "startLine": 29,
+        "startChar": 62,
+        "endLine": 30,
+        "endChar": 53
+      },
+      "revId": "31357b5e3cdcaf14369e8aa8ce8e05317a084330",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -22,6 +22,30 @@
       "revId": "eb7aa70a9f1a1289c13dac024b77dafa937e29b1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "786395bd_af17e366",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1629,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-20T07:42:57Z",
+      "side": 0,
+      "message": "That might be a solution, but I\u0027m not sure how to identify them. Need to debug this a bit more to see how this can be handled properly.",
+      "parentUuid": "0b22fc79_62834013",
+      "range": {
+        "startLine": 1629,
+        "startChar": 42,
+        "endLine": 1629,
+        "endChar": 54
+      },
+      "revId": "eb7aa70a9f1a1289c13dac024b77dafa937e29b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -144,6 +144,18 @@ public class DetectWSL implements IDetectExternalExecutable {
 						}
 					}
 
+					try {
+						// lets get the return code to make sure that the process did not produce anything unexpected. As the streams
+						// are closed, the waitFor shouldn't block.
+						if (process.waitFor() != 0) {
+							// WSL can send errors to stdout, so discard results if the exit value ends up being non-zero
+							result.clear();
+						}
+					} catch (InterruptedException e) {
+						// we've been interrupted, give up on the output we have (probably unreachable in practice)
+						result.clear();
+					}
+
 				} catch (IOException e) {
 				}
 			}

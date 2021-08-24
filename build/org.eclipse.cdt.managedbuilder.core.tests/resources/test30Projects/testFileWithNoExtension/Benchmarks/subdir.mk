@@ -6,11 +6,11 @@
 C_SRCS += \
 ../test.c 
 
-OBJS += \
-./test.o 
-
 C_DEPS += \
 ./test.d 
+
+OBJS += \
+./test.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

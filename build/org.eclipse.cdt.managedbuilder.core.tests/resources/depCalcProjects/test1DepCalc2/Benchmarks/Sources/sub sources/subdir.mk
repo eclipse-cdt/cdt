@@ -6,11 +6,11 @@
 C_SRCS += \
 ../Sources/sub\ sources/func\ 3.c 
 
-OBJS += \
-./Sources/sub\ sources/func\ 3.o 
-
 C_DEPS += \
 ./Sources/sub\ sources/func\ 3.d 
+
+OBJS += \
+./Sources/sub\ sources/func\ 3.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

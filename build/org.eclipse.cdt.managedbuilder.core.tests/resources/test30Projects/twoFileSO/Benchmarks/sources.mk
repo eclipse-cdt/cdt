@@ -2,11 +2,11 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-O_SRCS := 
 C_SRCS := 
-OBJS := 
+O_SRCS := 
 C_DEPS := 
 LIBRARIES := 
+OBJS := 
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \

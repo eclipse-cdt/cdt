@@ -735,7 +735,7 @@ public class ManagedBuildGnuToolInfo {
 		for (Entry<String, List<IPath>> entry : entrySet) {
 			String macroName = entry.getKey();
 			List<IPath> newMacroValue = entry.getValue();
-			HashMap<String, List<IPath>> map = makeGen.getBuildOutputVars();
+			Map<String, List<IPath>> map = makeGen.getBuildOutputVars();
 			if (map.containsKey(macroName)) {
 				List<IPath> macroValue = map.get(macroName);
 				macroValue.addAll(newMacroValue);
@@ -947,7 +947,7 @@ public class ManagedBuildGnuToolInfo {
 		for (Entry<String, List<IPath>> entry : entrySet) {
 			String macroName = entry.getKey();
 			List<IPath> newMacroValue = entry.getValue();
-			HashMap<String, List<IPath>> map = makeGen.getBuildOutputVars();
+			Map<String, List<IPath>> map = makeGen.getBuildOutputVars();
 			if (map.containsKey(macroName)) {
 				List<IPath> macroValue = map.get(macroName);
 				macroValue.addAll(newMacroValue);

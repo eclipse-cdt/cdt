@@ -6,14 +6,14 @@
 X_SRCS += \
 ../main.x 
 
-OBJS += \
-./main.o 
+CS += \
+./main.c 
 
 C_DEPS += \
 ./main.d 
 
-CS += \
-./main.c 
+OBJS += \
+./main.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

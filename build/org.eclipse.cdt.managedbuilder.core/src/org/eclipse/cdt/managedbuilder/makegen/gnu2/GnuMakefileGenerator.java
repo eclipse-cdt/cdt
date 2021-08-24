@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -394,13 +395,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private IPath topBuildDir; //  Build directory - relative to the workspace
 	//	private Set outputExtensionsSet;
 	//=== Maps of macro names (String) to values (List)
+	//    These are TreeMaps to avoid nondeterministic output because the
+	//    makefile output depends on their iteration order (bug 575702).
 	//  Map of source file build variable names to a List of source file Path's
-	private final HashMap<String, List<IPath>> buildSrcVars = new HashMap<>();
+	private final Map<String, List<IPath>> buildSrcVars = new TreeMap<>();
 	//  Map of output file build variable names to a List of output file Path's
-	private final HashMap<String, List<IPath>> buildOutVars = new HashMap<>();
+	private final Map<String, List<IPath>> buildOutVars = new TreeMap<>();
 	//  Map of dependency file build variable names to a List of GnuDependencyGroupInfo objects
-	private final HashMap<String, GnuDependencyGroupInfo> buildDepVars = new HashMap<>();
-	private final Map<String, Set<String>> topBuildOutVars = new LinkedHashMap<>();
+	private final Map<String, GnuDependencyGroupInfo> buildDepVars = new TreeMap<>();
+	private final Map<String, Set<String>> topBuildOutVars = new TreeMap<>();
 	// Dependency file variables
 	//	private Vector dependencyMakefiles;		//  IPath's - relative to the top build directory or absolute
 
@@ -4176,7 +4179,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *
 	 * @return HashMap
 	 */
-	public HashMap<String, List<IPath>> getBuildOutputVars() {
+	public Map<String, List<IPath>> getBuildOutputVars() {
 		return buildOutVars;
 	}
 

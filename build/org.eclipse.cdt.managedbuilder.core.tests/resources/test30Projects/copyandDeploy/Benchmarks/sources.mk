@@ -2,15 +2,15 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-O_SRCS := 
-FOO_SRCS := 
 C_SRCS := 
+FOO_SRCS := 
+O_SRCS := 
 X_SRCS := 
-OBJS := 
-FINAL := 
-C_DEPS := 
 CS := 
+C_DEPS := 
 EXECUTABLES := 
+FINAL := 
+OBJS := 
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \

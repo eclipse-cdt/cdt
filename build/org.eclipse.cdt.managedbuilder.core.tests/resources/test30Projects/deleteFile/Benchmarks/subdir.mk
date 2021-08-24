@@ -6,11 +6,11 @@
 CXX_SRCS += \
 ../main.cxx 
 
-OBJS += \
-./main.o 
-
 CXX_DEPS += \
 ./main.d 
+
+OBJS += \
+./main.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

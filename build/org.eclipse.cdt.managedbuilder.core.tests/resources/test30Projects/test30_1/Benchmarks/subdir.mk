@@ -6,20 +6,20 @@
 TAR_SRCS += \
 ../test.tar 
 
-STRIPPEDOBJS += \
-./f1.o \
-./f2.o 
+C_DEPS += \
+./f1.d \
+./f2.d 
 
 OBJS += \
 ./f1.oprestripped \
 ./f2.oprestripped 
 
+STRIPPEDOBJS += \
+./f1.o \
+./f2.o 
+
 TEST30_1_GNU_SO_CJPEG_OUTPUT_OUTPUTS += \
 ./CDT.jpeg 
-
-C_DEPS += \
-./f1.d \
-./f2.d 
 
 TEST30_1_GNU_SO_TAR_OUTPUTC_OUTPUTS += \
 ./f1.c \

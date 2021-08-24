@@ -6,11 +6,11 @@
 CPP_SRCS += \
 ../source2/Class2.cpp 
 
-OBJS += \
-./source2/Class2.o 
-
 CPP_DEPS += \
 ./source2/Class2.d 
+
+OBJS += \
+./source2/Class2.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

@@ -6,14 +6,14 @@
 X_SRCS += \
 ../Functions/Func1.x 
 
-OBJS += \
-./Functions/Func1.o 
+CS += \
+./Functions/Func1.c 
 
 C_DEPS += \
 ./Functions/Func1.d 
 
-CS += \
-./Functions/Func1.c 
+OBJS += \
+./Functions/Func1.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

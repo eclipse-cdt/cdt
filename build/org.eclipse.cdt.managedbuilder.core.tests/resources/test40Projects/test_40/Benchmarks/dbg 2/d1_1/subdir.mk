@@ -7,13 +7,13 @@ CPP_SRCS += \
 ../d1_1/i.cpp \
 ../d1_1/o.cpp 
 
-OBJS += \
-./d1_1/i.o \
-./d1_1/o.o 
-
 CPP_DEPS += \
 ./d1_1/i.d \
 ./d1_1/o.d 
+
+OBJS += \
+./d1_1/i.o \
+./d1_1/o.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

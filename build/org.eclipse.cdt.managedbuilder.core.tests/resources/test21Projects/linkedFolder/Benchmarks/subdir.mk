@@ -7,13 +7,13 @@ C_SRCS += \
 ../f1.c \
 ../f2.c 
 
-OBJS += \
-./f1.o \
-./f2.o 
-
 C_DEPS += \
 ./f1.d \
 ./f2.d 
+
+OBJS += \
+./f1.o \
+./f2.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

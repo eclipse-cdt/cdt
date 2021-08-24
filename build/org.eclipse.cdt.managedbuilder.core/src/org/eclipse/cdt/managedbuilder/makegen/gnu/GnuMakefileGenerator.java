@@ -380,12 +380,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private IPath topBuildDir; //  Build directory - relative to the workspace
 	//	private Set outputExtensionsSet;
 	//=== Maps of macro names (String) to values (List)
+	//    These are LinkedHashMaps to avoid nondeterministic output because the
+	//    makefile output depends on their iteration order (bug 575702).
 	//  Map of source file build variable names to a List of source file Path's
-	private final HashMap<String, List<IPath>> buildSrcVars = new HashMap<>();
+	private final HashMap<String, List<IPath>> buildSrcVars = new LinkedHashMap<>();
 	//  Map of output file build variable names to a List of output file Path's
-	private final HashMap<String, List<IPath>> buildOutVars = new HashMap<>();
+	private final HashMap<String, List<IPath>> buildOutVars = new LinkedHashMap<>();
 	//  Map of dependency file build variable names to a List of GnuDependencyGroupInfo objects
-	private final HashMap<String, GnuDependencyGroupInfo> buildDepVars = new HashMap<>();
+	private final HashMap<String, GnuDependencyGroupInfo> buildDepVars = new LinkedHashMap<>();
 	private final LinkedHashMap<String, String> topBuildOutVars = new LinkedHashMap<>();
 	// Dependency file variables
 	//	private Vector dependencyMakefiles;		//  IPath's - relative to the top build directory or absolute

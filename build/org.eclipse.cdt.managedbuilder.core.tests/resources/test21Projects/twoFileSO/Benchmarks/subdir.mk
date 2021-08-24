@@ -7,13 +7,13 @@ C_SRCS += \
 ../so1.c \
 ../so2.c 
 
-OBJS += \
-./so1.o \
-./so2.o 
-
 C_DEPS += \
 ./so1.d \
 ./so2.d 
+
+OBJS += \
+./so1.o \
+./so2.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

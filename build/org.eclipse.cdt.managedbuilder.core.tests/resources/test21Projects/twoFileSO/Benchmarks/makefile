@@ -15,17 +15,17 @@ ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(C_DEPS)),)
 -include $(C_DEPS)
 endif
+ifneq ($(strip $(C_UPPER_DEPS)),)
+-include $(C_UPPER_DEPS)
+endif
 ifneq ($(strip $(CC_DEPS)),)
 -include $(CC_DEPS)
-endif
-ifneq ($(strip $(CPP_DEPS)),)
--include $(CPP_DEPS)
 endif
 ifneq ($(strip $(CXX_DEPS)),)
 -include $(CXX_DEPS)
 endif
-ifneq ($(strip $(C_UPPER_DEPS)),)
--include $(C_UPPER_DEPS)
+ifneq ($(strip $(CPP_DEPS)),)
+-include $(CPP_DEPS)
 endif
 endif
 
@@ -60,7 +60,7 @@ libtestDoubleSO.so: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEP
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(CXX_DEPS)$(C_UPPER_DEPS) libtestDoubleSO.so
+	-$(RM) $(C_DEPS)$(C_UPPER_DEPS)$(CC_DEPS)$(CXX_DEPS)$(CPP_DEPS)$(OBJS) libtestDoubleSO.so
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

@@ -6,12 +6,12 @@
 C_SRCS += \
 ../TestATO.c 
 
+COP_SRCS += \
+../TestATO.cop 
+
 OPT_SRCS += \
 ../TestATO1.opt \
 ../TestATO2.opt 
-
-COP_SRCS += \
-../TestATO.cop 
 
 OBJS += \
 ./TestATO.obj 

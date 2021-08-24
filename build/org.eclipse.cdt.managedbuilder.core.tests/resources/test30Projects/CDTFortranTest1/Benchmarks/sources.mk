@@ -2,14 +2,14 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-O_SRCS := 
-F90_UPPER_SRCS := 
-F_UPPER_SRCS := 
 F_SRCS := 
-OBJ_SRCS := 
-FOR_UPPER_SRCS := 
+F_UPPER_SRCS := 
 FOR_SRCS := 
+FOR_UPPER_SRCS := 
 F90_SRCS := 
+F90_UPPER_SRCS := 
+OBJ_SRCS := 
+O_SRCS := 
 OBJS := 
 MODS := 
 EXECUTABLES := 

@@ -6,11 +6,11 @@
 CPP_SRCS += \
 ../dir1/dd/excluded_c/inc.cpp 
 
-OBJS += \
-./dir1/dd/excluded_c/inc.o 
-
 CPP_DEPS += \
 ./dir1/dd/excluded_c/inc.d 
+
+OBJS += \
+./dir1/dd/excluded_c/inc.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

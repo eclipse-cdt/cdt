@@ -6,11 +6,11 @@
 X_SRCS += \
 ../Functions/Func1.x 
 
-OBJS += \
-./Functions/Func1.o 
-
 C_DEPS += \
 ./Functions/Func1.d 
+
+OBJS += \
+./Functions/Func1.o 
 
 CS += \
 ./Functions/Func1.c 

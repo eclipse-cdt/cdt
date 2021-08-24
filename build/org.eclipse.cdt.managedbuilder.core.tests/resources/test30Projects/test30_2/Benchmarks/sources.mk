@@ -2,18 +2,18 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-CPP_SRCS := 
 C_UPPER_SRCS := 
+CPP_SRCS := 
+CXX_SRCS := 
+CC_SRCS := 
+C++_SRCS := 
 S_UPPER_SRCS := 
 ASM_SRCS := 
-LOG_SRCS := 
 TAR_SRCS := 
-CXX_SRCS := 
-C++_SRCS := 
-CC_SRCS := 
+LOG_SRCS := 
 TAROUT := 
-TERMINAL__DUMMY_OUTPUT__OUTPUTS := 
 LOGFILE := 
+TERMINAL__DUMMY_OUTPUT__OUTPUTS := 
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \

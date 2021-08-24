@@ -42,7 +42,7 @@ testMacroSupportInBuildDefinitions.tar: $(BAR_FILES) makefile objects.mk $(OPTIO
 
 # Other Targets
 clean:
-	-$(RM) $(TAR_FILE_OUTPUTS)$(BAR_FILES) testMacroSupportInBuildDefinitions.tar
+	-$(RM) $(BAR_FILES)$(TAR_FILE_OUTPUTS) testMacroSupportInBuildDefinitions.tar
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

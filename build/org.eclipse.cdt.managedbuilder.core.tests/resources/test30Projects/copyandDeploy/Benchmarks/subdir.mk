@@ -6,11 +6,11 @@
 X_SRCS += \
 ../main.x 
 
-OBJS += \
-./main.o 
-
 C_DEPS += \
 ./main.d 
+
+OBJS += \
+./main.o 
 
 CS += \
 ./main.c 

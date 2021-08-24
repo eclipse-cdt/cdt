@@ -8,15 +8,15 @@ CPP_SRCS += \
 ../d1/u.cpp \
 ../d1/w.cpp 
 
-OBJS += \
-./d1/q.o \
-./d1/u.o \
-./d1/w.o 
-
 CPP_DEPS += \
 ./d1/q.d \
 ./d1/u.d \
 ./d1/w.d 
+
+OBJS += \
+./d1/q.o \
+./d1/u.o \
+./d1/w.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

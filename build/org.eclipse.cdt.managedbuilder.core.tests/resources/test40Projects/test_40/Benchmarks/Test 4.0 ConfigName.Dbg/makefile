@@ -20,14 +20,8 @@ RM := rm -rf
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
-ifneq ($(strip $(C++_DEPS)),)
--include $(C++_DEPS)
-endif
-ifneq ($(strip $(CC_DEPS)),)
--include $(CC_DEPS)
-endif
-ifneq ($(strip $(C_DEPS)),)
--include $(C_DEPS)
+ifneq ($(strip $(C_UPPER_DEPS)),)
+-include $(C_UPPER_DEPS)
 endif
 ifneq ($(strip $(CPP_DEPS)),)
 -include $(CPP_DEPS)
@@ -35,8 +29,14 @@ endif
 ifneq ($(strip $(CXX_DEPS)),)
 -include $(CXX_DEPS)
 endif
-ifneq ($(strip $(C_UPPER_DEPS)),)
--include $(C_UPPER_DEPS)
+ifneq ($(strip $(CC_DEPS)),)
+-include $(CC_DEPS)
+endif
+ifneq ($(strip $(C++_DEPS)),)
+-include $(C++_DEPS)
+endif
+ifneq ($(strip $(C_DEPS)),)
+-include $(C_DEPS)
 endif
 endif
 
@@ -71,7 +71,7 @@ test_40: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C++_DEPS)$(EXECUTABLES)$(CC_DEPS)$(C_DEPS)$(CPP_DEPS)$(CXX_DEPS)$(C_UPPER_DEPS) test_40
+	-$(RM) $(C_UPPER_DEPS)$(CPP_DEPS)$(CXX_DEPS)$(CC_DEPS)$(C++_DEPS)$(OBJS)$(C_DEPS)$(EXECUTABLES) test_40
 	-@echo ' '
 
 .PHONY: all clean dependents main-build

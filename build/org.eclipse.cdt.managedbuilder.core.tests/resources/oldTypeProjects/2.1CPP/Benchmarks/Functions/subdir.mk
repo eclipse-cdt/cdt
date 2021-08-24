@@ -6,11 +6,11 @@
 CPP_SRCS += \
 ../Functions/Func1.cpp 
 
-OBJS += \
-./Functions/Func1.o 
-
 CPP_DEPS += \
 ./Functions/Func1.d 
+
+OBJS += \
+./Functions/Func1.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

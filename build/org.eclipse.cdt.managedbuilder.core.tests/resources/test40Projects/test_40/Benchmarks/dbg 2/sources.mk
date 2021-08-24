@@ -3,23 +3,23 @@
 ################################################################################
 
 C_UPPER_SRCS := 
-C_SRCS := 
 CPP_SRCS := 
-O_SRCS := 
-ASM_SRCS := 
-S_UPPER_SRCS := 
-C++_SRCS := 
 CXX_SRCS := 
 CC_SRCS := 
+C++_SRCS := 
+C_SRCS := 
 OBJ_SRCS := 
-OBJS := 
-C++_DEPS := 
-EXECUTABLES := 
-CC_DEPS := 
-C_DEPS := 
+O_SRCS := 
+S_UPPER_SRCS := 
+ASM_SRCS := 
+C_UPPER_DEPS := 
 CPP_DEPS := 
 CXX_DEPS := 
-C_UPPER_DEPS := 
+CC_DEPS := 
+C++_DEPS := 
+OBJS := 
+C_DEPS := 
+EXECUTABLES := 
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \

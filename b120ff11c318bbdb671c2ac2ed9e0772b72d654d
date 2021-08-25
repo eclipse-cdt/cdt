@@ -1,0 +1,400 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a27fa67a_4e6c001a",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/datamodel/GlobalVariableVMNode.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "VMNodes are view model things - should not be in the datamodel.",
+      "range": {
+        "startLine": 16,
+        "startChar": 49,
+        "endLine": 16,
+        "endChar": 58
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0150c24e_7e767838",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/datamodel/IGlobalVariableDMContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "Much of these fields look like DMData fields - the tradeoff between having these in the DMC and DMData can be tricky. The value is correctly not here, but the name is here. As a ref, IVariableDMData defined getName.",
+      "range": {
+        "startLine": 12,
+        "startChar": 17,
+        "endLine": 12,
+        "endChar": 41
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "597a6f23_1aff13a4",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "I think this service is missing refresh cabability and it should be listening to \u003dlibrary-loaded events which will change the available global variables. Not sure which other events may do that.",
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c127d3d3_92aa2f3b",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "standard practice is to initialize super first:\n\n\t\tsuper.initialize(new ImmediateRequestMonitor(requestMonitor) {\n\t\t\t@Override\n\t\t\tprotected void handleSuccess() {\n\t\t\t\tdoInitialize(requestMonitor);\n\t\t\t}\n\t\t});\n\nthen in doInitialize\n\n                register(new String[] { IGlobalVariableService.class.getName() }, new Hashtable\u003c\u003e());\n\nand any other things needed (like obtaining other services). If you do it out of order, getServicesTracker, for example, can\u0027t be called .",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 23
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "121681c7_75f3319c",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "missing call to unregister()",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 84,
+        "endChar": 21
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72b5d8cf_5cd12535",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "Not sure the purpose of this method.",
+      "range": {
+        "startLine": 93,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 76
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58f7f66d_8845680d",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "Standard practice (in services - as opposed to UI) is to obtain this service in doInitialize.",
+      "range": {
+        "startLine": 108,
+        "startChar": 5,
+        "endLine": 108,
+        "endChar": 102
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e36925dd_f7336625",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "? Still have synchronized on fGlobals - if needed that means the threading model is being violated. All fields in a service should only be accessed and modified from the executor thread, meaning no synchronized is needed.",
+      "range": {
+        "startLine": 225,
+        "startChar": 0,
+        "endLine": 225,
+        "endChar": 27
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a071d830_01810a19",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "unused",
+      "range": {
+        "startLine": 294,
+        "startChar": 68,
+        "endLine": 294,
+        "endChar": 84
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd2d0e40_6026af3a",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "I am confused as to why there is a query here - calling get() on a Query from within the Executor thread will deadlock or timeout. Since I assume this is working, the indication is that executeGDBCommand is being called from outside the Executor? If so, there are annotations to add to make that clear. \n\nFor example use ThreadSafeAndProhibitedFromDsfExecutor but note the tutorial  https://help.eclipse.org/2021-06/topic/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html?cp\u003d15_0_6 says:\n\n\u003e Rarely used, it indicates that the given element can be accessed on any thread except using the given executor.\n\n\nOn my linux x86_64, once libraries are loaded, there are hundreds of variables available. Even on my fast computer the info vairables (in CLI) takes a few seconds to run. Therefore this can\u0027t happen on a query initiated from the UI thread or the UI will lock up.",
+      "range": {
+        "startLine": 309,
+        "startChar": 15,
+        "endLine": 309,
+        "endChar": 38
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "304f7c14_18637b02",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "commands need to be created via the CommandFactory",
+      "range": {
+        "startLine": 319,
+        "startChar": 41,
+        "endLine": 319,
+        "endChar": 71
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfc571a7_b63c5513",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/IGlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "The name is already defined in the dmc.",
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6bd36500_5d19e5c6",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/IGlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "should this be IGlobalVariableDMContext?",
+      "range": {
+        "startLine": 47,
+        "startChar": 81,
+        "endLine": 47,
+        "endChar": 99
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41d1d826_ca1bda17",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/IGlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "should this be IGlobalVariableDMData?",
+      "range": {
+        "startLine": 55,
+        "startChar": 92,
+        "endLine": 55,
+        "endChar": 107
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28cf4a17_9db27ead",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/IGlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "should this be IGlobalVariableDMContext?",
+      "range": {
+        "startLine": 55,
+        "startChar": 35,
+        "endLine": 55,
+        "endChar": 53
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da48831d_2692d150",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/IGlobalVariableService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "This method should take a data request monitor and return the data on it (async return)",
+      "range": {
+        "startLine": 96,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 101
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab0952de_f5a361de",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/ui/GlobalVariableVMProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "dispose super after local dispose.",
+      "range": {
+        "startLine": 90,
+        "startChar": 0,
+        "endLine": 90,
+        "endChar": 18
+      },
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8cf10777_5327c375",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/views/GlobalVariablesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-25T18:24:55Z",
+      "side": 1,
+      "message": "Remove generated/copied comments that aren\u0027t relevant.",
+      "revId": "b120ff11c318bbdb671c2ac2ed9e0772b72d654d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

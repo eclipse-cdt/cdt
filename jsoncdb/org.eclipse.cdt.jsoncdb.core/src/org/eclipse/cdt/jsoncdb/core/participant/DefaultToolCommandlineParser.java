@@ -70,7 +70,7 @@ public class DefaultToolCommandlineParser implements IToolCommandlineParser {
 
 	@Override
 	public Optional<IBuiltinsDetectionBehavior> getIBuiltinsDetectionBehavior() {
-		return Optional.of(builtinsDetection);
+		return Optional.ofNullable(builtinsDetection);
 	}
 
 	@SuppressWarnings("nls")

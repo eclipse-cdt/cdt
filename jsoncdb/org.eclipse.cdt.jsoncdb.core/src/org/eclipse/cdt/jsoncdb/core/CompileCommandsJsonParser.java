@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.jsoncdb.core.internal.ParserDetection;
 import org.eclipse.cdt.jsoncdb.core.internal.ParserDetection.DetectorWithMethod;
 import org.eclipse.cdt.jsoncdb.core.internal.ParserDetection.ParserDetectionResult;
@@ -37,7 +38,6 @@ import org.eclipse.cdt.jsoncdb.core.participant.IToolCommandlineParser;
 import org.eclipse.cdt.jsoncdb.core.participant.IToolCommandlineParser.IResult;
 import org.eclipse.cdt.jsoncdb.core.participant.IToolDetectionParticipant;
 import org.eclipse.cdt.jsoncdb.core.participant.builtins.IBuiltinsDetectionBehavior;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -192,7 +192,17 @@ public class CompileCommandsJsonParser {
 				return false;
 			}
 
-			detectBuiltins(monitor);
+			if (!builtinDetectorsToRun.isEmpty()) {
+				detectBuiltins(monitor);
+			} else {
+				for (Entry<String, IRawSourceFileInfo> fileResultPair : fileResults.entrySet()) {
+					String sourceFileName = fileResultPair.getKey();
+					IRawSourceFileInfo fileResult = fileResultPair.getValue();
+					parseRequest.getSourceFileInfoConsumer().acceptSourceFileInfo(sourceFileName,
+							fileResult.getSystemIncludePaths(), fileResult.getDefines(), fileResult.getIncludePaths(),
+							fileResult.getMacroFiles(), fileResult.getIncludeFiles());
+				}
+			}
 			// store time-stamp
 			buildRootFolder.setSessionProperty(TIMESTAMP_COMPILE_COMMANDS_PROPERTY, tsJsonModified);
 			return true;
@@ -263,8 +273,6 @@ public class CompileCommandsJsonParser {
 	 * @throws CoreException
 	 */
 	private void detectBuiltins(IProgressMonitor monitor) throws CoreException {
-		if (builtinDetectorsToRun.isEmpty())
-			return;
 		monitor.setTaskName(Messages.CompileCommandsJsonParser_msg_detecting_builtins);
 
 		final IFile jsonFile = parseRequest.getFile();

@@ -48,42 +48,42 @@ public class IncludePath_C_POSIXTest {
 		// -I/an/Include/Path
 		result = new ParseContext();
 		assertEquals(2 + name.length(), testee.processArgument(result, cwd, "-I" + name + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 		// -I'/an/Include/Path'
 		result = new ParseContext();
 		assertEquals(2 + name.length() + 2, testee.processArgument(result, cwd, "-I" + "'" + name + "'" + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 		// -I"/an/Include/Path"
 		result = new ParseContext();
 		assertEquals(2 + name.length() + 2, testee.processArgument(result, cwd, "-I" + "\"" + name + "\"" + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 
 		// -I /an/Include/Path
 		result = new ParseContext();
 		assertEquals(2 + name.length() + 3, testee.processArgument(result, cwd, "-I   " + name + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 		// -I '/an/Include/Path'
 		result = new ParseContext();
 		assertEquals(2 + name.length() + 3 + 2, testee.processArgument(result, cwd, "-I   " + "'" + name + "'" + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 		// -I "/an/Include/Path"
 		result = new ParseContext();
 		assertEquals(2 + name.length() + 3 + 2,
 				testee.processArgument(result, cwd, "-I   " + "\"" + name + "\"" + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 
 		name = (new Path("A:an\\Include/Path")).toOSString();
 		// -IA:an\Include/Path
 		result = new ParseContext();
 		assertEquals(2 + name.length(), testee.processArgument(result, cwd, "-I" + name + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 	}
 
 	/**
@@ -101,32 +101,32 @@ public class IncludePath_C_POSIXTest {
 		// -I'/ye olde/In clu de/Pa the'
 		result = new ParseContext();
 		assertEquals(2 + name.length() + 2, testee.processArgument(result, cwd, "-I" + "'" + name + "'" + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 		// -I"/ye olde/In clu de/Pa the"
 		result = new ParseContext();
 		assertEquals(2 + name.length() + 2, testee.processArgument(result, cwd, "-I" + "\"" + name + "\"" + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 
 		// -I '/ye olde/In clu de/Pa the'
 		result = new ParseContext();
 		assertEquals(2 + name.length() + 3 + 2, testee.processArgument(result, cwd, "-I   " + "'" + name + "'" + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 		// -I "/ye olde/In clu de/Pa the"
 		result = new ParseContext();
 		assertEquals(2 + name.length() + 3 + 2,
 				testee.processArgument(result, cwd, "-I   " + "\"" + name + "\"" + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 
 		name = (new Path("A:an\\In CLU  de/Pat h")).toOSString();
 		// -I'A:an\In CLU de/Pat h'
 		result = new ParseContext();
 		assertEquals(2 + name.length() + 2, testee.processArgument(result, cwd, "-I" + "\"" + name + "\"" + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 	}
 
 	/**
@@ -143,32 +143,32 @@ public class IncludePath_C_POSIXTest {
 		IPath cwd = new Path("/compiler/working/dir");
 		ParseContext result = new ParseContext();
 		assertEquals(2 + name.length(), testee.processArgument(result, cwd, "-I" + name + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
 		String absPath = cwd.append(name).toString();
-		assertEquals("name", absPath, result.getIncludePaths().get(0));
+		assertEquals("name", absPath, result.getSystemIncludePaths().get(0));
 
 		name = (new Path("a\\relative\\Include\\Path")).toOSString();
 		cwd = new Path("\\compiler\\working\\dir");
 		result = new ParseContext();
 		assertEquals(2 + name.length(), testee.processArgument(result, cwd, "-I" + name + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
 		absPath = cwd.append(name).toString();
-		assertEquals("name", absPath, result.getIncludePaths().get(0));
+		assertEquals("name", absPath, result.getSystemIncludePaths().get(0));
 
 		name = (new Path("../../src/Include/Path")).toOSString();
 		cwd = new Path("/compiler/working/dir");
 		result = new ParseContext();
 		assertEquals(2 + name.length(), testee.processArgument(result, cwd, "-I" + name + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
 		absPath = cwd.append(name).toString();
-		assertEquals("name", absPath, result.getIncludePaths().get(0));
+		assertEquals("name", absPath, result.getSystemIncludePaths().get(0));
 
 		name = (new Path("..\\..\\src\\Include\\Path")).toOSString();
 		cwd = new Path("\\compiler\\working\\dir");
 		result = new ParseContext();
 		assertEquals(2 + name.length(), testee.processArgument(result, cwd, "-I" + name + more));
-		assertEquals("#entries", 1, result.getIncludePaths().size());
+		assertEquals("#entries", 1, result.getSystemIncludePaths().size());
 		absPath = cwd.append(name).toString();
-		assertEquals("name", absPath, result.getIncludePaths().get(0));
+		assertEquals("name", absPath, result.getSystemIncludePaths().get(0));
 	}
 }

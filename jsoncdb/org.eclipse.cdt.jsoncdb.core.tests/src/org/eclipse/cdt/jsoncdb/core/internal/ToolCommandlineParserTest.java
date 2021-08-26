@@ -66,8 +66,8 @@ public class ToolCommandlineParserTest {
 		assertTrue("found", result.getDefines().containsKey(defName));
 		assertEquals("value", "", result.getDefines().get(defName));
 
-		assertEquals("#paths", 1, result.getIncludePaths().size());
-		assertEquals("value", cwdP.resolve(incDirName).toString(), result.getIncludePaths().get(0));
+		assertEquals("#paths", 1, result.getSystemIncludePaths().size());
+		assertEquals("value", cwdP.resolve(incDirName).toString(), result.getSystemIncludePaths().get(0));
 
 		// @ a/response.file.txt
 		result = testee.processArgs(new Path(cwdP.toString()), "@ " + relRspP.toString() + " -D" + defName + more);
@@ -79,8 +79,8 @@ public class ToolCommandlineParserTest {
 		assertTrue("found", result.getDefines().containsKey(defName));
 		assertEquals("value", "", result.getDefines().get(defName));
 
-		assertEquals("#paths", 1, result.getIncludePaths().size());
-		assertEquals("value", cwdP.resolve(incDirName).toString(), result.getIncludePaths().get(0));
+		assertEquals("#paths", 1, result.getSystemIncludePaths().size());
+		assertEquals("value", cwdP.resolve(incDirName).toString(), result.getSystemIncludePaths().get(0));
 
 		Files.delete(absRspP);
 	}
@@ -102,7 +102,7 @@ public class ToolCommandlineParserTest {
 		result = new ParseContext();
 		// @<< ... <<
 		result = testee.processArgs(cwd, "@<<" + " -I" + name + " <<" + more);
-		assertEquals("#paths", 1, result.getIncludePaths().size());
-		assertEquals("name", name, result.getIncludePaths().get(0));
+		assertEquals("#paths", 1, result.getSystemIncludePaths().size());
+		assertEquals("name", name, result.getSystemIncludePaths().get(0));
 	}
 }

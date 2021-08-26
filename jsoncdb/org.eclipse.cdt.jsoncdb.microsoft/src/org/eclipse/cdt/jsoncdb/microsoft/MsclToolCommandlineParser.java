@@ -64,7 +64,7 @@ class MsclToolCommandlineParser extends DefaultToolCommandlineParser {
 		 */
 		@Override
 		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
-			return processArgument(false, resultCollector, cwd, argsLine, optionMatchers);
+			return processArgument(true, resultCollector, cwd, argsLine, optionMatchers);
 		}
 	}
 

@@ -37,7 +37,6 @@ import org.eclipse.cdt.jsoncdb.core.participant.IToolCommandlineParser;
 import org.eclipse.cdt.jsoncdb.core.participant.IToolCommandlineParser.IResult;
 import org.eclipse.cdt.jsoncdb.core.participant.IToolDetectionParticipant;
 import org.eclipse.cdt.jsoncdb.core.participant.builtins.IBuiltinsDetectionBehavior;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -201,8 +200,8 @@ public class CompileCommandsJsonParser {
 	}
 
 	/**
-	 * Processes an entry from a {@code compile_commands.json} file and stores a
-	 * {@link ICLanguageSettingEntry} for the file given the specified map.
+	 * Processes an entry from a {@code compile_commands.json} file and remembers a
+	 * {@link IRawSourceFileInfo} for the given sourceFileInfo.
 	 *
 	 * @param sourceFileInfo parsed command entry of a compile_commands.json file
 	 * @param jsonFile       the JSON file being parsed (for marker creation only)
@@ -258,51 +257,64 @@ public class CompileCommandsJsonParser {
 		createMarker(jsonFile, msg);
 	}
 
-	/**
+	/** Runs detection of compiler built-ins if supported and notifies the
+	 * {@code ISourceFileInfoConsumer} that was specified in the constructor for each source file.
+	 *
 	 * @param monitor
 	 * @throws CoreException
 	 */
 	private void detectBuiltins(IProgressMonitor monitor) throws CoreException {
-		if (builtinDetectorsToRun.isEmpty())
-			return;
-		monitor.setTaskName(Messages.CompileCommandsJsonParser_msg_detecting_builtins);
+		if (builtinDetectorsToRun.isEmpty()) {
+			// compiler does not support built-in detection:
+			// just feed the paths and defines with the file name to the indexer..
+			for (Entry<String, IRawSourceFileInfo> fileResultPair : fileResults.entrySet()) {
+				String sourceFileName = fileResultPair.getKey();
+				IRawSourceFileInfo fileResult = fileResultPair.getValue();
+				parseRequest.getSourceFileInfoConsumer().acceptSourceFileInfo(sourceFileName,
+						fileResult.getSystemIncludePaths(), fileResult.getDefines(), fileResult.getIncludePaths(),
+						fileResult.getMacroFiles(), fileResult.getIncludeFiles());
+			}
+		} else {
+			// run detection of compiler built-ins...
+			monitor.setTaskName(Messages.CompileCommandsJsonParser_msg_detecting_builtins);
 
-		final IFile jsonFile = parseRequest.getFile();
-		final IContainer buildRootFolder = jsonFile.getParent();
+			final IFile jsonFile = parseRequest.getFile();
+			final IContainer buildRootFolder = jsonFile.getParent();
 
-		java.nio.file.Path buildDir = java.nio.file.Path.of(buildRootFolder.getLocationURI());
-		// run each built-in detector and collect the results..
-		Map<String, IRawSourceFileInfo> builtinDetectorsResults = new HashMap<>();
-		for (Entry<String, CompilerBuiltinsDetector> entry : builtinDetectorsToRun.entrySet()) {
-			IRawSourceFileInfo result = entry.getValue().detectBuiltins(jsonFile.getProject(), buildDir,
-					parseRequest.getLauncher(), parseRequest.getConsole(), monitor);
-			// store detector key with result
-			builtinDetectorsResults.put(entry.getKey(), result);
-		}
-		// all built-in detectors have been run at this point, reduce memory footprint
-		builtinDetectorsToRun.clear();
+			java.nio.file.Path buildDir = java.nio.file.Path.of(buildRootFolder.getLocationURI());
+			// run each built-in detector and collect the results..
+			Map<String, IRawSourceFileInfo> builtinDetectorsResults = new HashMap<>();
+			for (Entry<String, CompilerBuiltinsDetector> entry : builtinDetectorsToRun.entrySet()) {
+				IRawSourceFileInfo result = entry.getValue().detectBuiltins(jsonFile.getProject(), buildDir,
+						parseRequest.getLauncher(), parseRequest.getConsole(), monitor);
+				// store detector key with result
+				builtinDetectorsResults.put(entry.getKey(), result);
+			}
+			// all built-in detectors have been run at this point, reduce memory footprint
+			builtinDetectorsToRun.clear();
 
-		// most of the time we get different String objects for different source files
-		// that have the same sequence of characters. So reduce the number of String
-		// objects by pooling them..
-		Map<String, String> strPool = new HashMap<>();
-		Function<String, String> stringPooler = v -> {
-			String old = strPool.putIfAbsent(v, v);
-			return old == null ? v : old;
-		};
+			// most of the time we get different String objects for different source files
+			// that have the same sequence of characters. So reduce the number of String
+			// objects by pooling them..
+			Map<String, String> strPool = new HashMap<>();
+			Function<String, String> stringPooler = v -> {
+				String old = strPool.putIfAbsent(v, v);
+				return old == null ? v : old;
+			};
 
-		// merge built-in results with source file results
-		for (Entry<String, String> link : fileToBuiltinDetectorLinks.entrySet()) {
-			String sourceFileName = link.getKey();
-			IRawSourceFileInfo fileResult = fileResults.get(sourceFileName);
-			IRawSourceFileInfo builtinDetectorsResult = builtinDetectorsResults.get(link.getValue());
-			mergeResultsForFile(stringPooler, sourceFileName, fileResult, builtinDetectorsResult);
+			// merge built-in results with source file results
+			for (Entry<String, String> link : fileToBuiltinDetectorLinks.entrySet()) {
+				String sourceFileName = link.getKey();
+				IRawSourceFileInfo fileResult = fileResults.get(sourceFileName);
+				IRawSourceFileInfo builtinDetectorsResult = builtinDetectorsResults.get(link.getValue());
+				mergeResultsForFile(stringPooler, sourceFileName, fileResult, builtinDetectorsResult);
+			}
 		}
 	}
 
 	/**
 	 * Merges preprocessor symbols and macros for a source file with compiler
-	 * built-in preprocessor symbols and macros and passes the to the
+	 * built-in preprocessor symbols and macros and passes them to the
 	 * {@code ISourceFileInfoConsumer} that was specified in the constructor.
 	 *
 	 * @param fileResult             source file preprocessor symbols and macros

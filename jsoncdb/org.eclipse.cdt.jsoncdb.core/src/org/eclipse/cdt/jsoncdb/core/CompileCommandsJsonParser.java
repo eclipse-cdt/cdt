@@ -121,7 +121,6 @@ public class CompileCommandsJsonParser {
 	 *
 	 * @param parseRequest  the parser configuration
 	 */
-	// TODO interface ICBuildConfiguration should be sufficient here
 	public CompileCommandsJsonParser(ParseRequest parseRequest) {
 		this.parseRequest = Objects.requireNonNull(parseRequest, "parseRequest"); //$NON-NLS-1$
 		prefsAccess = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext())

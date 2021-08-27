@@ -211,7 +211,10 @@ public class CompileCommandsJsonParser {
 		// NOTE that this is the absolute file system path of the source file in
 		// CMake-notation (directory separator are forward slashes, even on windows)
 		final String file = sourceFileInfo.getFile();
-		final String cmdLine = sourceFileInfo.getCommand();
+		String cmdLine = sourceFileInfo.getCommand();
+		if (cmdLine == null) {
+			cmdLine = String.join(" ", sourceFileInfo.getArguments()); //$NON-NLS-1$
+		}
 		if (file != null && !file.isEmpty() && cmdLine != null && !cmdLine.isEmpty()) {
 			ParserDetection.ParserDetectionResult pdr = fastDetermineDetector(cmdLine);
 			if (pdr != null) {

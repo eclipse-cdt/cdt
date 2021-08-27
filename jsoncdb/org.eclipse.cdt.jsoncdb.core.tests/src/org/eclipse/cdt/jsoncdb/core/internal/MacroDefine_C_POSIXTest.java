@@ -39,7 +39,7 @@ public class MacroDefine_C_POSIXTest {
 	 * Test method for {@link Arglets.MacroDefine_C_POSIX#processArgument}.
 	 */
 	@Test
-	public final void testProcessArgument() {
+	public final void testProcessArgument_NoValue() {
 		final String more = " -g -MMD -MT CMakeFiles/execut1.dir/util1.c.o -MF \"CMakeFiles/execut1.dir/util1.c.o.d\""
 				+ " -o CMakeFiles/execut1.dir/util1.c.o -c /testprojects/C-subsrc/src/src-sub/main1.c";
 		ParseContext result;
@@ -53,14 +53,14 @@ public class MacroDefine_C_POSIXTest {
 		result = new ParseContext();
 		len = testee.processArgument(result, cwd, arg + " " + arg + more);
 		assertTrue("found", result.getDefines().containsKey(name));
-		assertEquals("value", "", result.getDefines().get(name));
+		assertEquals("value", "1", result.getDefines().get(name));
 		assertEquals(2 + name.length(), len);
 		// -D FOO
 		result = new ParseContext();
 		arg = "-D   " + name;
 		len = testee.processArgument(result, cwd, arg + " " + arg + more);
 		assertTrue("found", result.getDefines().containsKey(name));
-		assertEquals("value", "", result.getDefines().get(name));
+		assertEquals("value", "1", result.getDefines().get(name));
 		assertEquals(2 + name.length() + 3, len);
 	}
 

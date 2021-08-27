@@ -64,7 +64,7 @@ public class ToolCommandlineParserTest {
 		assertTrue("found", result.getDefines().containsKey(def2Name));
 		assertEquals("value", "987", result.getDefines().get(def2Name));
 		assertTrue("found", result.getDefines().containsKey(defName));
-		assertEquals("value", "", result.getDefines().get(defName));
+		assertEquals("value", "1", result.getDefines().get(defName));
 
 		assertEquals("#paths", 1, result.getSystemIncludePaths().size());
 		assertEquals("value", cwdP.resolve(incDirName).toString(), result.getSystemIncludePaths().get(0));
@@ -77,7 +77,7 @@ public class ToolCommandlineParserTest {
 		assertTrue("found", result.getDefines().containsKey(def2Name));
 		assertEquals("value", "987", result.getDefines().get(def2Name));
 		assertTrue("found", result.getDefines().containsKey(defName));
-		assertEquals("value", "", result.getDefines().get(defName));
+		assertEquals("value", "1", result.getDefines().get(defName));
 
 		assertEquals("#paths", 1, result.getSystemIncludePaths().size());
 		assertEquals("value", cwdP.resolve(incDirName).toString(), result.getSystemIncludePaths().get(0));

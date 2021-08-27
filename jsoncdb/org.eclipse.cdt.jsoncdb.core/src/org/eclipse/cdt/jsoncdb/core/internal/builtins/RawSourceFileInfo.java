@@ -21,8 +21,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.eclipse.cdt.jsoncdb.core.internal.Plugin;
-import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfoCollector;
 import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfo;
+import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfoCollector;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -46,7 +46,7 @@ public class RawSourceFileInfo implements IRawSourceFileInfo, IRawSourceFileInfo
 	@Override
 	public void addDefine(String name, String value) {
 		Objects.requireNonNull(name);
-		value = Objects.toString(value, ""); //$NON-NLS-1$
+		value = Objects.toString(value, "1"); //$NON-NLS-1$
 		if (DEBUG)
 			System.out.printf("    Added define: %s=%s%n", name, value); //$NON-NLS-1$
 		defines.put(name, value);

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cff65d7a_845bb0dd",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/CompileCommandsJsonParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-08-27T20:31:11Z",
+      "side": 1,
+      "message": "As this whole variable goes out of scope in a couple of lines (and becomes eligible for GC then) this seems an over optimized piece of code.\n\nI am concerned if this is an optimization that is needed, then it should probably apply to the reading of the json file itself and instead of using fromJson, a JsonReader should be used instead?",
+      "range": {
+        "startLine": 180,
+        "startChar": 5,
+        "endLine": 180,
+        "endChar": 20
+      },
+      "revId": "b6ac5480cf0b87643f101d89154db85d2c894e1d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

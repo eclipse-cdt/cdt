@@ -12,16 +12,20 @@
 package org.eclipse.cdt.jsoncdb.core;
 
 /**
- * Represents a parsed command entry of a compile_commands.json file.
- * @author weber
+ * Represents a parsed command entry of a compile_commands.json file.<br>
+ * See the <a href="https://clang.llvm.org/docs/JSONCompilationDatabase.html">JSON Compilation Database Format Specification</a>.
+ *
+ * @author Martin Weber
  */
 class CommandEntry {
 	private String directory;
 	private String command;
+	private String[] arguments;
 	private String file;
 
 	/**
-	 *  Gets the build directory as a String.
+	 * Gets the working directory of the compilation the build directory as a String.<br>
+	 * The specification states: All paths specified in the command or file fields must be either absolute or relative to this directory.
 	 */
 	public String getDirectory() {
 		return directory;
@@ -32,6 +36,14 @@ class CommandEntry {
 	 */
 	public String getCommand() {
 		return command;
+	}
+
+	/**
+	 * Gets the command-line to compile the source file split up into arguments.<br>
+	 * Either {@link #getCommand()} or {@link #getArguments()} will return a non-null value.
+	 */
+	public String[] getArguments() {
+		return arguments;
 	}
 
 	/**

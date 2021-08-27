@@ -175,8 +175,9 @@ public class CompileCommandsJsonParser {
 					createMarker(jsonFile, msg);
 					return false;
 				}
-				for (CommandEntry sourceFileInfo : sourceFileInfos) {
-					processCommandEntry(sourceFileInfo, jsonFile);
+				for (int i = 0; i < sourceFileInfos.length; i++) {
+					processCommandEntry(sourceFileInfos[i], jsonFile);
+					sourceFileInfos[i] = null; // eligible for GC
 				}
 			} catch (JsonSyntaxException | JsonIOException ex) {
 				// file format error

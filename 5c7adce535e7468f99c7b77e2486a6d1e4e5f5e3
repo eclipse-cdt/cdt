@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30b44c96_6418208f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 3966,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-28T09:01:03Z",
+      "side": 1,
+      "message": "I\u0027m a bit uncertain if this should still be here.\nThe idea was to just store the paths in the map, but as it\u0027s instances of String flying around, one needs to be a bit more careful of the content. I think this line could be dropped in favor of line 4032 and adding the conversion in the loop at 1666. WDYT?",
+      "range": {
+        "startLine": 3966,
+        "startChar": 4,
+        "endLine": 3966,
+        "endChar": 71
+      },
+      "revId": "5c7adce535e7468f99c7b77e2486a6d1e4e5f5e3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d237a33_c0d0cca3",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 3975,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-28T09:01:03Z",
+      "side": 1,
+      "message": "Is there a better way to handle the breakage?\nThe symbol that was used as an input does not longer exist. I suppose the method could still be there, but it would be dead code.\nIf the function body is retained, it would give the user a feeling that it\u0027s supported, but as the function that takes the map and put the content in a file is not called anymore, it would be a false assumption and a hard bug to track down.",
+      "range": {
+        "startLine": 3975,
+        "startChar": 2,
+        "endLine": 3975,
+        "endChar": 63
+      },
+      "revId": "5c7adce535e7468f99c7b77e2486a6d1e4e5f5e3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e1e2b8b_a6fc7825",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 4011,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-28T09:01:03Z",
+      "side": 1,
+      "message": "Is there a better way to handle the breakage?\nThe symbol that was used as an input does not longer exist. I suppose the method could still be there, but it would be dead code.\nIf the function body is retained, it would give the user a feeling that it\u0027s supported, but as the function that takes the map and put the content in a file is not called anymore, it would be a false assumption and a hard bug to track down.",
+      "range": {
+        "startLine": 4011,
+        "startChar": 2,
+        "endLine": 4011,
+        "endChar": 63
+      },
+      "revId": "5c7adce535e7468f99c7b77e2486a6d1e4e5f5e3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af3f48ae_d4a2a1c0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 4254,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-28T09:01:03Z",
+      "side": 1,
+      "message": "Is there a better way to handle the breakage?\nThe variable that was used in this function earlier does not make sense anymore as it will never be output to the resulting makefile.",
+      "range": {
+        "startLine": 4254,
+        "startChar": 2,
+        "endLine": 4254,
+        "endChar": 63
+      },
+      "revId": "5c7adce535e7468f99c7b77e2486a6d1e4e5f5e3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7e93e0a9_c2a85a54",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 4262,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-28T09:01:03Z",
+      "side": 1,
+      "message": "Is this a good name?",
+      "range": {
+        "startLine": 4262,
+        "startChar": 33,
+        "endLine": 4262,
+        "endChar": 57
+      },
+      "revId": "5c7adce535e7468f99c7b77e2486a6d1e4e5f5e3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd7ecd5f_9cfb55c4",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/ManagedBuildGnuToolInfo.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 771,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-28T09:01:03Z",
+      "side": 1,
+      "message": "This API change can be avoided by adding a check in addMacroAdditionFiles that checks if the supplied argument is equal to the mageGen.getTopBuildOutputVarsMap(), but it would be something \"magic\" that is not clear to the caller.",
+      "range": {
+        "startLine": 771,
+        "startChar": 4,
+        "endLine": 771,
+        "endChar": 85
+      },
+      "revId": "5c7adce535e7468f99c7b77e2486a6d1e4e5f5e3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

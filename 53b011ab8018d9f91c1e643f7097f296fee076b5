@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f46d33f4_87a5ea1a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 3977,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-29T06:09:18Z",
+      "side": 1,
+      "message": "Well, the problem is not this method as I wrote in an earlier changeset. If the method body is kept as-is, it would give an impression that the API still exist, but it will lead to nowhere.\nThe problem is that in populateTopMakefile, only one of the maps can be used or there would be duplicated clean targets in the resulting makefile. So, if the method body is kept, how should we decided if we should use the new variant or per directory cleaning?\nAdding a new method that - by default - selects the per directory cleaning is still problematic for extenders and I suppose that we want to move away from the problem with long command lines...?\n\nI agree that it would be better to have the error at build time rather than run time, but that would break the binary API... Is this \"better\" than doing this?",
+      "parentUuid": "e74f39b5_76a4d729",
+      "range": {
+        "startLine": 3977,
+        "startChar": 2,
+        "endLine": 3977,
+        "endChar": 48
+      },
+      "revId": "53b011ab8018d9f91c1e643f7097f296fee076b5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3015ab30_17b68d72",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 8
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "5f318edc_9356e864",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 4017,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-29T06:09:18Z",
+      "side": 1,
+      "message": "Lets have the review in one place and discuss on the first instance of this comment.\nI\u0027ll resolve this one too when there is a consensus.",
+      "parentUuid": "3015ab30_17b68d72",
+      "range": {
+        "startLine": 4017,
+        "startChar": 2,
+        "endLine": 4017,
+        "endChar": 48
+      },
+      "revId": "53b011ab8018d9f91c1e643f7097f296fee076b5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "18488ee0_1cd976fd",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 8
@@ -59,6 +107,30 @@
       "writtenOn": "2021-08-28T20:08:33Z",
       "side": 1,
       "message": "Is it possible to continue to support callers of this public method during the period of deprecation in any way? By throwing an exception we force callers to modify their code immediately or trigger run-time problems which might not be immediately apparent. For third-party callers this is worse than removing the method entirely which would trigger a build-time problem and at least draw the developer\u0027s attention to the problem.",
+      "range": {
+        "startLine": 4264,
+        "startChar": 2,
+        "endLine": 4264,
+        "endChar": 48
+      },
+      "revId": "53b011ab8018d9f91c1e643f7097f296fee076b5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "462050be_f559067d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 4264,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-08-29T06:09:18Z",
+      "side": 1,
+      "message": "Lets have the review in one place and discuss on the first instance of this comment.\nI\u0027ll resolve this one too when there is a consensus.",
+      "parentUuid": "18488ee0_1cd976fd",
       "range": {
         "startLine": 4264,
         "startChar": 2,

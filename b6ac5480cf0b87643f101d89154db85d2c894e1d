@@ -22,6 +22,30 @@
       "revId": "b6ac5480cf0b87643f101d89154db85d2c894e1d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f29dce94_20612e9e",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/CompileCommandsJsonParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2021-08-30T05:56:17Z",
+      "side": 1,
+      "message": "I agree with Jonah. Since we read the whole json at once with \"fromJson\" - optimizing of \"process\" part of code should have less impact.",
+      "parentUuid": "cff65d7a_845bb0dd",
+      "range": {
+        "startLine": 180,
+        "startChar": 5,
+        "endLine": 180,
+        "endChar": 20
+      },
+      "revId": "b6ac5480cf0b87643f101d89154db85d2c894e1d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

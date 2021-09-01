@@ -97,7 +97,7 @@
 	                  <goal>sign</goal>
 	                </goals>
 	                <configuration>
-	                  <baseSearchDir>${project.build.directory}/products/${project.artifactId}</baseSearchDir>
+	                  <baseSearchDir>${project.build.directory}/products/proxy.server/macosx</baseSearchDir>
 	                  <fileNames>
 	                    <fileName>Proxy.app</fileName>
 	                  </fileNames>

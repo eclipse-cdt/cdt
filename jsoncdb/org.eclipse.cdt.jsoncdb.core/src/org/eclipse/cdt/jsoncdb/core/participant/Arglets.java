@@ -485,6 +485,24 @@ public final class Arglets {
 
 	////////////////////////////////////////////////////////////////////
 	/**
+	 * A tool argument parser capable to parse a Clang option to specify the compilation target {@code --target}.
+	 */
+	public static class Target_Clang extends BuiltinDetctionArgsGeneric implements IArglet {
+		private static final Matcher[] optionMatchers = {
+				/* "--target=" triple */
+				Pattern.compile("--target=\\w+(-\\w+)*").matcher("") }; //$NON-NLS-1$ //$NON-NLS-2$
+
+		/*-
+		* @see de.marw.cmake.cdt.lsp.IArglet#processArgs(java.lang.String)
+		*/
+		@Override
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(resultCollector, argsLine, optionMatchers);
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////
+	/**
 	 * A tool argument parser capable to parse a GCC option to specify the language
 	 * standard {@code -std=xxx}.
 	 */

@@ -87,7 +87,6 @@ public final class ParserDetection {
 				final IToolCommandlineParser gcc = new DefaultToolCommandlineParser(new ResponseFileArglets.At(),
 						btbGcc, gcc_args);
 				parserDetectors.add(new DefaultToolDetectionParticipant("gcc", true, "exe", gcc));
-				parserDetectors.add(new DefaultToolDetectionParticipant("clang", true, "exe", gcc));
 				// cross compilers, e.g. arm-none-eabi-gcc ====
 				parserDetectors.add(new DefaultToolDetectionParticipant("\\S+?-gcc", true, "exe", gcc));
 			}
@@ -96,9 +95,26 @@ public final class ParserDetection {
 				final IToolCommandlineParser gxx = new DefaultToolCommandlineParser(new ResponseFileArglets.At(),
 						btbGcc, gcc_args);
 				parserDetectors.add(new DefaultToolDetectionParticipant("g\\+\\+", true, "exe", gxx));
-				parserDetectors.add(new DefaultToolDetectionParticipant("clang\\+\\+", true, "exe", gxx));
 				// cross compilers, e.g. arm-none-eabi-g++ ====
 				parserDetectors.add(new DefaultToolDetectionParticipant("\\S+?-g\\+\\+", true, "exe", gxx));
+			}
+			// Clang C & C++ Compiler ====
+			{
+				/** Names of known tools along with their command line argument parsers for clang */
+				final IArglet[] clang_args = { new Arglets.IncludePath_C_POSIX(), new Arglets.MacroDefine_C_POSIX(),
+						new Arglets.MacroUndefine_C_POSIX(),
+						// not defined by POSIX, but does not harm..
+						new Arglets.SystemIncludePath_C(), new Arglets.LangStd_GCC(), new Arglets.Sysroot_GCC(),
+						new Arglets.IncludeFile_GCC(), new Arglets.MacrosFile_GCC(),
+						// Clang only
+						new Arglets.Target_Clang() };
+
+				final IToolCommandlineParser clang = new DefaultToolCommandlineParser(new ResponseFileArglets.At(),
+						btbGcc, clang_args);
+				parserDetectors.add(new DefaultToolDetectionParticipant("clang", true, "exe", clang));
+				final IToolCommandlineParser clangxx = new DefaultToolCommandlineParser(new ResponseFileArglets.At(),
+						btbGcc, clang_args);
+				parserDetectors.add(new DefaultToolDetectionParticipant("clang\\+\\+", true, "exe", clangxx));
 			}
 			{
 				// cross compilers, e.g. arm-none-eabi-c++ ====

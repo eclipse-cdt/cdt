@@ -22,6 +22,30 @@
       "revId": "cfd389919fd56a535912ea2cab353ca0ae2a3d4b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9513ec7a_34d282f8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-09-02T19:06:51Z",
+      "side": 1,
+      "message": "No, it came later. Original commit is here: https://github.com/ghaith/cmake4eclipse/commit/3d5c3755e1c752a9411dfa4eec3decf5f5ed1a4f\nConcerning IP, how should I handle this? I am not the author of that commit.",
+      "parentUuid": "05675d56_208dd28b",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 29
+      },
+      "revId": "cfd389919fd56a535912ea2cab353ca0ae2a3d4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

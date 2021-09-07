@@ -70,6 +70,30 @@
       "revId": "cfd389919fd56a535912ea2cab353ca0ae2a3d4b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "611ef0b2_7f0c18bc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-07T18:56:51Z",
+      "side": 1,
+      "message": "CQ has been approved for checkin.",
+      "parentUuid": "98ae3aac_e2c292fb",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 29
+      },
+      "revId": "cfd389919fd56a535912ea2cab353ca0ae2a3d4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

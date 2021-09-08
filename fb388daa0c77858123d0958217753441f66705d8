@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "79ab9df1_e09f68bf",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core.tests/src/org/eclipse/cdt/jsoncdb/core/internal/ToolCommandlineParserTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-09-08T18:28:58Z",
+      "side": 1,
+      "message": "Aah, this shitty egit always forgets some changes.\nDo you know of a way how to move it?",
+      "parentUuid": "0e995397_3c9d3cf2",
+      "revId": "fb388daa0c77858123d0958217753441f66705d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "902af096_0ea82632",
         "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/CompileCommandsJsonParser.java",
         "patchSetId": 3
@@ -47,6 +65,24 @@
       "writtenOn": "2021-09-08T06:50:47Z",
       "side": 1,
       "message": "I had an additional null check for getArguments() here to handle the possible invalid json format. Or is that handled somewhere else already perhaps?",
+      "revId": "fb388daa0c77858123d0958217753441f66705d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "027a7dbf_06b6fe12",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/CompileCommandsJsonParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-09-08T18:28:58Z",
+      "side": 1,
+      "message": "No, it is not handled by intention, giving users a chance to file a bug request for the tool that produces the invalid JSON.",
+      "parentUuid": "902af096_0ea82632",
       "revId": "fb388daa0c77858123d0958217753441f66705d8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

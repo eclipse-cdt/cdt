@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d3fbe8ad_5607e475",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core.tests/src/org/eclipse/cdt/jsoncdb/core/internal/MacroDefine_C_POSIXTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-09-08T06:50:47Z",
+      "side": 1,
+      "message": "move to previous commit",
+      "revId": "fb388daa0c77858123d0958217753441f66705d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e995397_3c9d3cf2",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core.tests/src/org/eclipse/cdt/jsoncdb/core/internal/ToolCommandlineParserTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-09-08T06:50:47Z",
+      "side": 1,
+      "message": "move to previous commit",
+      "revId": "fb388daa0c77858123d0958217753441f66705d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "902af096_0ea82632",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/CompileCommandsJsonParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-09-08T06:50:47Z",
+      "side": 1,
+      "message": "I had an additional null check for getArguments() here to handle the possible invalid json format. Or is that handled somewhere else already perhaps?",
+      "revId": "fb388daa0c77858123d0958217753441f66705d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

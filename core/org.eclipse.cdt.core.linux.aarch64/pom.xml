@@ -17,11 +17,11 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>10.3.2-SNAPSHOT</version>
+		<version>10.3.3-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>6.0.202-SNAPSHOT</version>
+	<version>6.0.203-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.core.linux.aarch64</artifactId>
 	<packaging>eclipse-plugin</packaging>
 

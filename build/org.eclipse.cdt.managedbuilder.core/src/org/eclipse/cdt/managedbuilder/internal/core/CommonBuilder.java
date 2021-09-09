@@ -1038,7 +1038,7 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 	@Override
 	protected final void clean(IProgressMonitor monitor) throws CoreException {
 		throw new IllegalStateException(
-				"Unexpcted/incorrect call to old clean method. Client code must call clean(Map,IProgressMonitor)"); //$NON-NLS-1$
+				"Unexpected/incorrect call to old clean method. Client code must call clean(Map,IProgressMonitor)"); //$NON-NLS-1$
 	}
 
 	@Override

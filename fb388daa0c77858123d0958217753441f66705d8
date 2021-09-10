@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "d64ad68b_605e4e29",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core.tests/src/org/eclipse/cdt/jsoncdb/core/internal/ToolCommandlineParserTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2021-09-10T02:56:29Z",
+      "side": 1,
+      "message": "I\u0027m sure there are several ways to do it. On the command-line I would do a rebase interactive, edit the first commit (the one missing the changes), then do a \"checkout -p\" on the next commit and accept only the relevant changes, then amend the commit and then rebase --continue.\nI don\u0027t use EGit very often nowadays but you can do a rebase interactive there too and do the \"edit\". For the \"checkout -p\" part it could be more tricky but you should be able to open the next commit the commit viewer and diff the files agains the workspace file and bring over the changes one by one using the compare editor. Otherwise for this step you could just edit each file by hand in the workspace (there are just a few lines here!) then amend and continue as usual. This is probably not the place for thorough git discussions though...",
+      "parentUuid": "79ab9df1_e09f68bf",
+      "revId": "fb388daa0c77858123d0958217753441f66705d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "902af096_0ea82632",
         "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/CompileCommandsJsonParser.java",
         "patchSetId": 3

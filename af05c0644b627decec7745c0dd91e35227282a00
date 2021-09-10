@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c43f8771_48477451",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-09-10T15:12:34Z",
+      "side": 1,
+      "message": "This line should not be here",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 31
+      },
+      "revId": "af05c0644b627decec7745c0dd91e35227282a00",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

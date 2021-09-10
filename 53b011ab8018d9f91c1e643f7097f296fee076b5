@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "a5cbf7ea_39a01eef",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 3977,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-10T16:24:54Z",
+      "side": 1,
+      "message": "The API here is so badly specified. Is this method API because extenders can override it or because extenders can call it? Or both. If an extender was expecting their method to be called, there override would no longer be called after this change.\n\nI don\u0027t think this method can be usefully overridden - but that doesn\u0027t exclude such overriddes being out there.\n\nTherefore, can extenders reasonably call this method. The answer is not really.",
+      "parentUuid": "f46d33f4_87a5ea1a",
+      "range": {
+        "startLine": 3977,
+        "startChar": 2,
+        "endLine": 3977,
+        "endChar": 48
+      },
+      "revId": "53b011ab8018d9f91c1e643f7097f296fee076b5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3015ab30_17b68d72",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 8
@@ -96,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "6cef5845_aad4f87c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 4017,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-10T16:24:54Z",
+      "side": 1,
+      "message": "Unlike the above case, the use case of this method (Called from populateTopMakefile) is more likely that someone could be calling this from extender (i.e. extender overrides populateTopMakefile)\n\nLooking at this method alone, I think the existing implementation can be left in place with no ill effects - i.e. if someone calls it it will do the \"right\" thing. The problem is getting the varMap. I will address that in the next comment",
+      "parentUuid": "5f318edc_9356e864",
+      "range": {
+        "startLine": 4017,
+        "startChar": 2,
+        "endLine": 4017,
+        "endChar": 48
+      },
+      "revId": "53b011ab8018d9f91c1e643f7097f296fee076b5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "18488ee0_1cd976fd",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
         "patchSetId": 8
@@ -131,6 +179,30 @@
       "side": 1,
       "message": "Lets have the review in one place and discuss on the first instance of this comment.\nI\u0027ll resolve this one too when there is a consensus.",
       "parentUuid": "18488ee0_1cd976fd",
+      "range": {
+        "startLine": 4264,
+        "startChar": 2,
+        "endLine": 4264,
+        "endChar": 48
+      },
+      "revId": "53b011ab8018d9f91c1e643f7097f296fee076b5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ca4cbcb_4ef1ec74",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu/GnuMakefileGenerator.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 4264,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-10T16:24:54Z",
+      "side": 1,
+      "message": "Here again it is not reasonable to override this method. But it is quite reasonable to be calling it.\n\nI can\u0027t see a sensible (in terms of effort) way to make the old API work. The not reasonable effort is to provide a LinkedHashMap subclass that provided a view of the topBuildOutVars.",
+      "parentUuid": "462050be_f559067d",
       "range": {
         "startLine": 4264,
         "startChar": 2,

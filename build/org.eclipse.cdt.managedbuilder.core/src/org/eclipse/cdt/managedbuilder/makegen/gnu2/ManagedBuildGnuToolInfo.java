@@ -12,7 +12,7 @@
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.makegen.gnu;
+package org.eclipse.cdt.managedbuilder.makegen.gnu2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +43,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
-import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator.ToolInfoHolder;
+import org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator.ToolInfoHolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -54,9 +54,7 @@ import org.eclipse.core.runtime.Path;
  * and outputs while a Gnu makefile is being generated.
  *
  * @noextend This class is not intended to be subclassed by clients.
- * @deprecated Replaced by {@link org.eclipse.cdt.managedbuilder.makegen.gnu2.ManagedBuildGnuToolInfo}
  */
-@Deprecated
 public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 
 	/*

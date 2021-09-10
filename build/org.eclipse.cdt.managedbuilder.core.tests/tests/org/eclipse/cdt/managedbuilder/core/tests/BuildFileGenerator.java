@@ -15,7 +15,7 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
-import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;

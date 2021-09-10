@@ -355,7 +355,7 @@
           variableFormat="${=}"
           isVariableCaseSensitive="true"
           reservedMacroNames="ROOT,DEPS,OBJS,.*_SRCS,EXECUTABLES,SUBDIRS,LIBS,USER_OBJS,.*_INPUTS,.*_OUTPUTS"
-          buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
+          buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator"
           macroInputFileNameValue="$(notdir $&lt;)"
           macroInputFileExtValue="$(suffix $(notdir $&lt;))"
           macroInputFileBaseNameValue="$(basename $(notdir $&lt;))"

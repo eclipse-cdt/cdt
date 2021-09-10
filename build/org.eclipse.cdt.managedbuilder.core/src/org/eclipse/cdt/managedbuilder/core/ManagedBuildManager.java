@@ -111,7 +111,7 @@ import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolChainModificationManager;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
-import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.internal.GnuMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolChainModificationManager;
 import org.eclipse.core.resources.ICommand;

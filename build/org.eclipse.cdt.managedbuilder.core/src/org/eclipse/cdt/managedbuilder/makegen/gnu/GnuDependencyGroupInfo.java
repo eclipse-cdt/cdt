@@ -23,8 +23,14 @@ package org.eclipse.cdt.managedbuilder.makegen.gnu;
 public class GnuDependencyGroupInfo {
 
 	//  Member Variables
-	String groupBuildVar;
-	boolean conditionallyInclude;
+	/**
+	 * @noreference
+	 */
+	public String groupBuildVar;
+	/**
+	 * @noreference
+	 */
+	public boolean conditionallyInclude;
 	//	ArrayList groupFiles;
 
 	//  Constructor

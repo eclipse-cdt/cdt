@@ -1234,7 +1234,7 @@
 		              name="Dbg Builder"
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 		     	  </builder>               
                   <tool
                       id="cdt.managedbuild.tool.testgnu.c.compiler.exe.debug"
@@ -2603,7 +2603,7 @@
 		              name="MBS30BuilderName.Dbg"
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 		     	  </builder>               
                   <tool
                       id="cdt.managedbuild.tool.testgnu30.c.compiler.exe.debug"
@@ -2668,7 +2668,7 @@
 		              name="MBS30BuilderName.Rel"		              
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				  </builder> 
                   <tool
                       id="cdt.managedbuild.tool.testgnu30.c.compiler.exe.release"
@@ -2741,7 +2741,7 @@
 		              name="MBS30BuilderName.Dbg"
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				  </builder>               		         
 				  <tool
 				      id="cdt.managedbuild.tool.testgnu30.c.compiler.so.debug"
@@ -2831,7 +2831,7 @@
 		              name="MBS30BuilderName.Rel"
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				  </builder>               
 				  <tool				     
 				      id="cdt.managedbuild.tool.testgnu30.c.compiler.so.release"
@@ -2928,7 +2928,7 @@
 					  name="MBS30BuilderName.Dbg"
 					  command="make"
 					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 			      </builder>               		         
 				  <tool
 					  id="cdt.managedbuild.tool.testgnu30.c.compiler.lib.debug"
@@ -2990,7 +2990,7 @@
 		              name="MBS30BuilderName.Rel"
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				  </builder>               		            
 		          <tool
 					  id="cdt.managedbuild.tool.testgnu30.c.compiler.lib.release"
@@ -3093,7 +3093,7 @@
 		              name="BuilderDbg"
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 		     	  </builder>               
                   <tool
                       id="cdt.managedbuild.tool.Testprepost30.gnu.c.compiler.exe.debug"
@@ -3179,7 +3179,7 @@
 				  <builder
 		              id="test30_1.gnu.so.builder"
 		              name="Builder for test30_1"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 		     	  </builder>               
                   <tool
                       id="test30_1.gnu.so.c.compiler"
@@ -3393,7 +3393,7 @@
                      name="Platform for test30_sto"
                      osList="all"/>
                <builder
-                     buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
+                     buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator"
                      id="test30_sto.dummy.builder"
                      isAbstract="false"
                      name="Builder for test30_sto"/>
@@ -3513,7 +3513,7 @@
 				  <builder
 		              id="test30_2.tar.builder"
 		              name="Builder for test30_2"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 		     	  </builder>               
 			      <tool
 			      		name="tar-create"
@@ -3658,7 +3658,7 @@
 		              variableFormat="@="
 		              isVariableCaseSensitive="false"
 		              reservedMacroNames="PATH"		              
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 		     	  </builder>               
                   <tool
                       id="cdt.managedbuild.tool.testenv.c.compiler.exe.debug"
@@ -4030,7 +4030,7 @@
 		              variableFormat="@="
 		              isVariableCaseSensitive="false"
 		              reservedMacroNames="PATH"		              
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 		     	  </builder>               
                   <tool
                       id="cdt.managedbuild.tool.testMultipleVersions.c.compiler.exe.debug_1.1.0"
@@ -4171,7 +4171,7 @@
 		              variableFormat="@="
 		              isVariableCaseSensitive="false"
 		              reservedMacroNames="PATH"		              
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 		     	  </builder>               
                   <tool
                       id="tool.testProjectConverterConvenienceRoutines.c.compiler.exe.debug_1.1.0"
@@ -4201,7 +4201,7 @@
                  targetTool="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportBarTool">
               <builder
                     arguments="-k"
-                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator"
                     command="make"
                     id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportBuilder"
                     isAbstract="false"
@@ -4335,7 +4335,7 @@
 		              name="Test Builder Version 1.0"		              
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				  </builder> 
                   <tool
                       id="test.tool1_1.0.0"
@@ -4378,7 +4378,7 @@
 		              name="Test Builder Version 2.0"		              
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				  </builder> 
                   <tool
                       id="test.tool1_2.0.0"
@@ -4481,7 +4481,7 @@
 		              name="Test Builder Version 1.0"		              
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				  </builder> 
                   <tool
                       id="testProject.tool1_1.0.0"
@@ -4522,7 +4522,7 @@
 		              name="Test Builder Version 2.0"		              
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				  </builder> 
                   <tool
                       id="testProject.tool1_2.0.0"
@@ -4750,7 +4750,7 @@
 		            name="Builder.Executable.Release"		              
 		            command="make"
                     arguments="-k"
-                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				</builder> 				  				  
 				<tool
 				    id="cdt.test.fortran.compilestep.executable.release"
@@ -4794,7 +4794,7 @@
 		            name="Builder.Executable.Debug"		              
 		            command="make"
                     arguments="-k"
-                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				</builder> 				  				  
 				<tool
 				    id="cdt.test.fortran.compilestep.executable.debug"
@@ -4852,7 +4852,7 @@
 		            name="AssignToOption Builder"		              
 		            command="make"
                     arguments="-k"
-                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				</builder> 				  				  
             </toolChain>
          </configuration>
@@ -5166,7 +5166,7 @@
 		            name="Builder"		              
 		            command="make"
                     arguments="-k"
-                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				</builder> 				  				  
             </toolChain>
          </configuration>
@@ -5239,7 +5239,7 @@
 		            name="Builder"		              
 		            command="make"
                     arguments="-k"
-                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 				</builder> 				  				  
             </toolChain>
          </configuration>
@@ -5283,7 +5283,7 @@
 		              variableFormat="@="
 		              isVariableCaseSensitive="false"
 		              reservedMacroNames="PATH"		              
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 		     	  </builder>               
                   <tool
                       id="enablement.this.child_1.2.3"
@@ -6474,7 +6474,7 @@
 		              name="MBS30BuilderName.Dbg"
 		              command="make"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
 		     	  </builder>               
                   <tool
                       id="cdt.managedbuild.tool.bdm.c.compiler.exe.debug"
@@ -8151,7 +8151,7 @@
           variableFormat="${=}"
           isVariableCaseSensitive="true"
           reservedMacroNames="ROOT,DEPS,OBJS,.*_SRCS,EXECUTABLES,SUBDIRS,LIBS,USER_OBJS,.*_INPUTS,.*_OUTPUTS"
-          buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
+          buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator"
           macroInputFileNameValue="$(notdir $&lt;)"
           macroInputFileExtValue="$(suffix $(notdir $&lt;))"
           macroInputFileBaseNameValue="$(basename $(notdir $&lt;))"

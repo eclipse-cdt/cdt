@@ -18,7 +18,7 @@
  *     Liviu Ionescu - [322168]
  *     Dorothea Pilz-Roeder (Advantest Europe GmbH) - [180451]
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.makegen.gnu;
+package org.eclipse.cdt.managedbuilder.makegen.gnu2;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -81,6 +81,8 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyPreBuild;
+import org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator3;
+import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuDependencyGroupInfo;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -112,9 +114,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  *
  * @since 1.2
  * @noinstantiate This class is not intended to be instantiated by clients.
- * @deprecated Replaced by {@link org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator}
  */
-@Deprecated
 public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private static final IPath DOT_SLASH_PATH = new Path("./"); //$NON-NLS-1$
 

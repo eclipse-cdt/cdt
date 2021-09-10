@@ -63,6 +63,12 @@
     <li><a href="#GnuMakefileGenerator.addRuleForTool">Removed unneded boolean from function</a></li>
     <li><a href="#GnuMakefileGenerator.addDefaultHeader">Changed methods from static to non-static</a></li>
   </ol>
+  <p>
+    Planned Removals after December 2023
+  </p>
+  <ol>
+    <li><a href="#GnuMakefileGeneratorAPI">GnuMakefileGenerator is no longer part of API</a></li>
+  </ol>
 
   <p>
     API Changes prior to CDT 10.0 / 2020-09.
@@ -487,6 +493,22 @@
   </ul>
   <p>
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=573722" target="_blank">Bug 573722</a>.
+  </p>
+
+
+  <h3>API Removals after December 2023</h3>
+
+  <h3>1. <a name="GnuMakefileGeneratorAPI">GnuMakefileGenerator is no longer part of API</a></h3>
+  <p>
+    The following classes have been removed from the API.
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator</li>
+    <li>org.eclipse.cdt.managedbuilder.makegen.gnu.IManagedBuildGnuToolInfo</li>
+    <li>org.eclipse.cdt.managedbuilder.makegen.gnu.ManagedBuildGnuToolInfo</li>
+  </ul>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=505882" target="_blank">Bug 505882</a>.
   </p>
 </body>
 

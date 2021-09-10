@@ -85,7 +85,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		String expectedCommand = "make";
 		String expectedArguments = "-k";
 		String[] expectedBuilderName = { "Dbg Builder", "Rel Builder" };
-		String expectedBuilderInfo = "org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator";
+		String expectedBuilderInfo = "org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator";
 		String[] expectedToolId1 = { "cdt.managedbuild.tool.testgnu.c.compiler.exe.debug",
 				"cdt.managedbuild.tool.testgnu.c.compiler.exe.release" };
 		String expectedSuperToolId1 = "cdt.managedbuild.tool.testgnu.c.compiler";

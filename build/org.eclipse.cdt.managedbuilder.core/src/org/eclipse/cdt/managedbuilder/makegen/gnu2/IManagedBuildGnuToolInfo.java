@@ -11,7 +11,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.makegen.gnu;
+package org.eclipse.cdt.managedbuilder.makegen.gnu2;
 
 import java.util.Vector;
 
@@ -21,9 +21,7 @@ import java.util.Vector;
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * @deprecated Replaced by {@link org.eclipse.cdt.managedbuilder.makegen.gnu2.IManagedBuildGnuToolInfo}
  */
-@Deprecated
 public interface IManagedBuildGnuToolInfo {
 	public final String DOT = "."; //$NON-NLS-1$
 

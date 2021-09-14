@@ -15,7 +15,7 @@
     <parent>
         <groupId>org.eclipse.cdt</groupId>
         <artifactId>cdt-parent</artifactId>
-        <version>10.4.0-SNAPSHOT</version>
+        <version>10.4.1-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
   <artifactId>org.eclipse.cdt.jsoncdb.hpenonstop.tests</artifactId>

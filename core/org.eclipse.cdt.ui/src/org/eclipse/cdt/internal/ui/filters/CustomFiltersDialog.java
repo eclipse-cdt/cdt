@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -137,6 +137,14 @@ public class CustomFiltersDialog extends SelectionDialog {
 		// Info text
 		final Label info = new Label(group, SWT.LEFT);
 		info.setText(FilterMessages.CustomFiltersDialog_patternInfo);
+		
+		// add the info text as a description to the pattern field
+		fUserDefinedPatterns.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getDescription(AccessibleEvent e) {
+				e.result = FilterMessages.CustomFiltersDialog_patternInfo;
+			}
+		});
 
 		// Enabling / disabling of pattern group
 		fEnableUserDefinedPatterns.setSelection(fEnablePatterns);

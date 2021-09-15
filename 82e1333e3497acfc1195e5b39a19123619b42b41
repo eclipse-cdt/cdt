@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd3a670e_86711741",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/filters/CustomFiltersDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 260806
+      },
+      "writtenOn": "2021-09-15T13:38:10Z",
+      "side": 1,
+      "message": "Looks like I missed setting up my formats in my new install and was lazy on my inspection.\nunneeded tab-ins due to default java behavior.",
+      "range": {
+        "startLine": 140,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 2
+      },
+      "revId": "82e1333e3497acfc1195e5b39a19123619b42b41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

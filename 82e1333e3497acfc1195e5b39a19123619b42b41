@@ -22,6 +22,30 @@
       "revId": "82e1333e3497acfc1195e5b39a19123619b42b41",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b291bde5_ffc61050",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/filters/CustomFiltersDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-15T14:41:51Z",
+      "side": 1,
+      "message": "BTW The CDT Projects (when edited in Eclipse JDT) will apply the correct formatting on saving of the file based on project settings. Sometimes manual edits or occasional undos seem to cause JDT to not leave the file in the correct state.\n\nThank you for fixing up the formatting in PS2.",
+      "parentUuid": "bd3a670e_86711741",
+      "range": {
+        "startLine": 140,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 2
+      },
+      "revId": "82e1333e3497acfc1195e5b39a19123619b42b41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

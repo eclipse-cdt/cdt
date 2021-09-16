@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -56,6 +56,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -647,6 +649,13 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		gd.widthHint = maxWidth;
 
 		fListViewer.getControl().setLayoutData(gd);
+		// add the coloring element label text as the name for the list viewer
+		fListViewer.getControl().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = PreferencesMessages.CEditorColoringConfigurationBlock_coloring_element;
+			}
+		});
 
 		Composite stylesComposite = new Composite(editorComposite, SWT.NONE);
 		layout = new GridLayout();
@@ -711,6 +720,13 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		gd.widthHint = convertWidthInCharsToPixels(20);
 		gd.heightHint = convertHeightInCharsToPixels(5);
 		previewer.setLayoutData(gd);
+		// add the preview label text as the name to the previewer
+		previewer.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = PreferencesMessages.CEditorColoringConfigurationBlock_preview;
+			}
+		});
 
 		fListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2021 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *     Ling Wang (Silicon Laboratories) - Honor start address (Bug 414519)
  *     Teodor Madan (Freescale) - Fix scrolling for memory spaces with 64-bit address
+ *     John Dallaway - Fix byte ordering when addressableSize != 1 (Bug 576058)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.traditional;
@@ -836,7 +837,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 						for (int unit = 0; unit < units; unit++) {
 							for (int unitbyte = 0; unitbyte < unitSize; unitbyte++) {
 								cachedBytesAsByteSequence[unit * unitSize + unitbyte] = cachedBytes[unit * unitSize
-										+ unitSize - unitbyte];
+										+ unitSize - unitbyte - 1];
 							}
 						}
 						cachedBytes = cachedBytesAsByteSequence;

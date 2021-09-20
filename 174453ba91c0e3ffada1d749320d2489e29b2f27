@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6df2063c_99fdf0a3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CodeAssistAdvancedConfigurationBlock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-20T15:23:19Z",
+      "side": 1,
+      "message": "Why does this label need special treatment....",
+      "revId": "174453ba91c0e3ffada1d749320d2489e29b2f27",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cbd8d686_846311c0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CodeAssistAdvancedConfigurationBlock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-20T15:23:19Z",
+      "side": 1,
+      "message": ".... but this label does not?",
+      "revId": "174453ba91c0e3ffada1d749320d2489e29b2f27",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

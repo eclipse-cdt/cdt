@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -56,6 +56,9 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
@@ -155,7 +158,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		}
 	}
 
-	private final Comparator<ModelElement> fCategoryComparator = new Comparator<ModelElement>() {
+	private final Comparator<ModelElement> fCategoryComparator = new Comparator<>() {
 		@Override
 		public int compare(ModelElement o1, ModelElement o2) {
 			return o1.getRank() - o2.getRank();
@@ -419,6 +422,21 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		textField.setToolTipText(toolTip);
 	}
 
+	private StyledText createAccessibleLabelUsingStyledText(Composite composite, int style, String value) {
+		StyledText styledTextWidget = new StyledText(composite, SWT.SINGLE | SWT.NONE);
+		styledTextWidget.setText(value);
+		styledTextWidget.setEditable(false);
+		styledTextWidget.setCaret(null);
+		styledTextWidget.setBackground(composite.getBackground());
+		styledTextWidget.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getDescription(AccessibleEvent e) {
+				e.result = value;
+			}
+		});
+		return styledTextWidget;
+	}
+
 	private void createDefaultLabel(Composite composite, int h_span) {
 		final ICommandService commandSvc = PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		final Command command = commandSvc.getCommand(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
@@ -430,16 +448,16 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		PixelConverter pixelConverter = new PixelConverter(composite);
 		int width = pixelConverter.convertWidthInCharsToPixels(40);
 
-		Label label = new Label(composite, SWT.NONE | SWT.WRAP);
-		label.setText(Messages.format(PreferencesMessages.CodeAssistAdvancedConfigurationBlock_page_description,
-				new Object[] { key }));
+		StyledText pageDescription = createAccessibleLabelUsingStyledText(composite, SWT.NONE | SWT.WRAP,
+				Messages.format(PreferencesMessages.CodeAssistAdvancedConfigurationBlock_page_description,
+						new Object[] { key }));
 		GridData gd = new GridData(GridData.FILL, GridData.FILL, true, false, h_span, 1);
 		gd.widthHint = width;
-		label.setLayoutData(gd);
+		pageDescription.setLayoutData(gd);
 
 		createFiller(composite, h_span);
 
-		label = new Label(composite, SWT.NONE | SWT.WRAP);
+		Label label = new Label(composite, SWT.NONE | SWT.WRAP);
 		label.setText(PreferencesMessages.CodeAssistAdvancedConfigurationBlock_default_table_description);
 		gd = new GridData(GridData.FILL, GridData.FILL, true, false, h_span, 1);
 		gd.widthHint = width;
@@ -468,6 +486,13 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 				boolean checked = event.getChecked();
 				ModelElement element = (ModelElement) event.getElement();
 				element.setInDefaultCategory(checked);
+			}
+		});
+
+		fDefaultViewer.getControl().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = PreferencesMessages.CodeAssistAdvancedConfigurationBlock_default_table_description;
 			}
 		});
 
@@ -570,6 +595,13 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 				boolean checked = event.getChecked();
 				ModelElement element = (ModelElement) event.getElement();
 				element.setSeparateCommand(checked);
+			}
+		});
+
+		fSeparateViewer.getControl().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = PreferencesMessages.CodeAssistAdvancedConfigurationBlock_separate_table_description;
 			}
 		});
 

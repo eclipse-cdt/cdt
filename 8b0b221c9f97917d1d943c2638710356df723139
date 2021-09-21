@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "f838cec7_7783bcf8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-09-21T20:01:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b96cb16_b3a64a21",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e245664b_332469e4",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/plugin.xml",
         "patchSetId": 3
@@ -51,6 +69,24 @@
       "revId": "8b0b221c9f97917d1d943c2638710356df723139",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a02ffb09_66801f9b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/plugin.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 644,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2021-09-21T20:01:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e245664b_332469e4",
+      "revId": "8b0b221c9f97917d1d943c2638710356df723139",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {

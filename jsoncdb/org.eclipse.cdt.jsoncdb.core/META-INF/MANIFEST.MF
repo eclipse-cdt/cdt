@@ -10,10 +10,7 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.jsoncdb.core.internal.Plugin
-Export-Package: org.eclipse.cdt.jsoncdb.core;x-friends:="org.eclipse.cdt.jsoncdb.core.ui";
-  uses:="org.eclipse.core.runtime,
-   org.eclipse.cdt.core.settings.model,
-   org.eclipse.cdt.jsoncdb.core.builtins",
+Export-Package: org.eclipse.cdt.jsoncdb.core;uses:="org.eclipse.core.runtime,org.eclipse.cdt.core.settings.model,org.eclipse.cdt.jsoncdb.core.builtins",
  org.eclipse.cdt.jsoncdb.core.participant;uses:="org.eclipse.core.runtime,org.eclipse.cdt.jsoncdb.core.participant.builtins",
  org.eclipse.cdt.jsoncdb.core.participant.builtins;uses:="org.eclipse.cdt.jsoncdb.core.participant"
 Require-Bundle: org.eclipse.ui.workbench;bundle-version="3.8.0",

@@ -182,7 +182,7 @@
         <repository
             url="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
         <repository
-            url="https://download.eclipse.org/tools/cdt/releases/10.3/cdt-10.3.0">
+            url="https://download.eclipse.org/tools/cdt/releases/10.4/cdt-10.4.1">
           <annotation>
             <detail
                 key="description">
@@ -333,7 +333,7 @@
           <repository
               url="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
           <repository
-              url="https://download.eclipse.org/tools/cdt/releases/10.3/cdt-10.3.0/">
+              url="https://download.eclipse.org/tools/cdt/releases/10.4/cdt-10.4.1/">
             <annotation>
               <detail
                   key="description">

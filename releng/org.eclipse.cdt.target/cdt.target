@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="105">
+<target name="cdt" sequenceNumber="106">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
@@ -47,7 +47,7 @@
 <repository location="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<repository location="https://download.eclipse.org/tools/cdt/releases/10.3/cdt-10.3.0/"/>
+<repository location="https://download.eclipse.org/tools/cdt/releases/10.4/cdt-10.4.1/"/>
 <!-- We explicitly have CDT in target platform so that developers can develop org.eclipse.cdt.core/ui without requiring all the projects from CDT in their workspace. -->
 	<unit id="org.eclipse.cdt.feature.group" version="0.0.0"/>
 </location>

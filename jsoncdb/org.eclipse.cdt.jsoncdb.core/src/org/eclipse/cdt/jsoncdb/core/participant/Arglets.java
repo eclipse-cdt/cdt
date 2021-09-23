@@ -486,6 +486,7 @@ public final class Arglets {
 	////////////////////////////////////////////////////////////////////
 	/**
 	 * A tool argument parser capable to parse a Clang option to specify the compilation target {@code --target}.
+	 * @since 1.1
 	 */
 	public static class Target_Clang extends BuiltinDetctionArgsGeneric implements IArglet {
 		private static final Matcher[] optionMatchers = {

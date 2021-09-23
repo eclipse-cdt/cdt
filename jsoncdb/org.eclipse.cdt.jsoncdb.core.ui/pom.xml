@@ -15,13 +15,13 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>10.4.0-SNAPSHOT</version>
+		<version>10.5.0-SNAPSHOT</version>
 		<relativePath>../..</relativePath>
 	</parent>
 
   <artifactId>org.eclipse.cdt.jsoncdb.core.ui</artifactId>
   <!-- always use .qualifier in manifest, we do not plan to publish this plugin
     to a maven repo. (The repository version is a different thing) -->
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

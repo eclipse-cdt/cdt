@@ -17,7 +17,7 @@ import org.eclipse.osgi.util.NLS;
  * @author weber
  *
  */
-public class Messages extends NLS {
+class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.jsoncdb.core.ui.internal.messages"; //$NON-NLS-1$
 	public static String JsonCdbPreferencePage_description;
 	public static String JsonCdbPreferencePage_errmsg_suffix_regex;

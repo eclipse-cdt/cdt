@@ -17,7 +17,7 @@ import org.eclipse.osgi.util.NLS;
  * @author weber
  *
  */
-/* package */ public class Messages extends NLS {
+/* package */ class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.jsoncdb.core.messages"; //$NON-NLS-1$
 	public static String CompileCommandsJsonParser_errmsg_empty_json;
 	public static String CompileCommandsJsonParser_errmsg_file_not_found;

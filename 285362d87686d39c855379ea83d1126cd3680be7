@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "addac313_8ecc0d54",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 625,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-27T19:13:01Z",
+      "side": 1,
+      "message": "Hmm. I wonder why remote timeout and some of the other numeric settings are String with boolean? Since you have just recently visited this I was wondering if you knew?",
+      "revId": "285362d87686d39c855379ea83d1126cd3680be7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4aaa057b_4a879fea",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
         "patchSetId": 1
@@ -13,6 +30,24 @@
       "writtenOn": "2021-09-27T18:39:21Z",
       "side": 1,
       "message": "I am having version number issues after adding these new constants.. I need help to fix these..",
+      "revId": "285362d87686d39c855379ea83d1126cd3680be7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ae2ef8a_be78bdb0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-27T19:13:01Z",
+      "side": 1,
+      "message": "Ack! I\u0027ll pull the change up in my IDE to see what is going on. In the last 24 hours I submitted the prep gerrit for the next release so that may be part of the problem.\n\nhttps://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/185775",
+      "parentUuid": "4aaa057b_4a879fea",
       "revId": "285362d87686d39c855379ea83d1126cd3680be7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true

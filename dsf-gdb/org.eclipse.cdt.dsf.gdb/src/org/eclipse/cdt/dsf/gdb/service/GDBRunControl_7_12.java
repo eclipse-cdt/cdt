@@ -23,6 +23,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -301,10 +303,6 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 	}
 
 	protected class MonitorSuspendJob extends Job {
-		// Bug 310274.  Until we have a preference to configure timeouts,
-		// we need a large enough default timeout to accommodate slow
-		// remote sessions.
-		private final static int TIMEOUT_DEFAULT_VALUE = 5000;
 
 		private final RequestMonitor fRequestMonitor;
 
@@ -314,7 +312,9 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 			fRequestMonitor = rm;
 
 			if (timeout <= 0) {
-				timeout = TIMEOUT_DEFAULT_VALUE; // default of 5 seconds
+				timeout = 1000 * Platform.getPreferencesService().getInt(GdbPlugin.PLUGIN_ID,
+						IGdbDebugPreferenceConstants.PREF_SUSPEND_TIMEOUT_VALUE,
+						IGdbDebugPreferenceConstants.SUSPEND_TIMEOUT_VALUE_DEFAULT, null);
 			}
 
 			// Register to listen for the stopped event

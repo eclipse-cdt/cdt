@@ -247,4 +247,25 @@ public interface IGdbDebugPreferenceConstants {
 	 * @since 5.5
 	 */
 	public static final String PREF_DEFAULT_REMOTE_TIMEOUT_VALUE = "defaultRemoteTimeoutValue"; //$NON-NLS-1$
+
+	/**
+	 * The value is a boolean specifying to use {@link #PREF_DEFAULT_SUSPEND_TIMEOUT_VALUE}
+	 *
+	 * @since 6.4
+	 */
+	public static final String PREF_SUSPEND_TIMEOUT_ENABLED = "suspendTimeoutEnabled"; //$NON-NLS-1$
+
+	/**
+	 * The value of suspend timeout, if enabled with {@link #PREF_SUSPEND_TIMEOUT_ENABLED}
+	 *
+	 * @since 6.4
+	 */
+	public static final String PREF_SUSPEND_TIMEOUT_VALUE = "suspendTimeoutValue"; //$NON-NLS-1$
+
+	/**
+	 * Default value of {@link #PREF_SUSPEND_TIMEOUT_VALUE}
+	 *
+	 * @since 6.4
+	 */
+	public static final int SUSPEND_TIMEOUT_VALUE_DEFAULT = 10;
 }

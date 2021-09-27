@@ -630,6 +630,13 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		group2.setLayout(groupLayout);
 		group2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		final IntegerFieldEditor suspendTimeout = new IntegerFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_SUSPEND_TIMEOUT_VALUE,
+				MessagesForPreferences.GdbDebugPreferencePage_suspendTimeout_label, group2);
+		suspendTimeout.setValidRange(5, Integer.MAX_VALUE);
+		suspendTimeout.fillIntoGrid(group2, 3);
+		addField(suspendTimeout);
+
 		BooleanFieldEditor boolField = new BooleanFieldEditor(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
 				MessagesForPreferences.GdbDebugPreferencePage_autoTerminateGdb_label, group2);
 

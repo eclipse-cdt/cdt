@@ -37,6 +37,7 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
@@ -55,6 +56,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
@@ -818,17 +820,15 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 * backend, and the current job will indicate this in the request monitor.
 	 *
 	 * The specified timeout is used to indicate how many milliseconds this job
-	 * should wait for. INTERRUPT_TIMEOUT_DEFAULT indicates to use the default
-	 * of 5 seconds. The default is also use if the timeout value is 0 or
+	 * should wait for. Default timeout is provided by preference
+	 * {@code IGdbDebugPreferenceConstants.PREF_SUSPEND_TIMEOUT_VALUE}.
+	 * The default is also used if the timeout value is 0 or
 	 * negative.
 	 *
 	 * @since 3.0
 	 */
 	protected class MonitorInterruptJob extends Job {
-		// Bug 310274. Until we have a preference to configure timeouts,
-		// we need a large enough default timeout to accommodate slow
-		// remote sessions.
-		private final static int TIMEOUT_DEFAULT_VALUE = 5000;
+
 		private final RequestMonitor fRequestMonitor;
 
 		public MonitorInterruptJob(int timeout, RequestMonitor rm) {
@@ -837,7 +837,9 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 			fRequestMonitor = rm;
 
 			if (timeout == INTERRUPT_TIMEOUT_DEFAULT || timeout <= 0) {
-				timeout = TIMEOUT_DEFAULT_VALUE; // default of 5 seconds
+				timeout = 1000 * Platform.getPreferencesService().getInt(GdbPlugin.PLUGIN_ID,
+						IGdbDebugPreferenceConstants.PREF_SUSPEND_TIMEOUT_VALUE,
+						IGdbDebugPreferenceConstants.SUSPEND_TIMEOUT_VALUE_DEFAULT, null);
 			}
 
 			schedule(timeout);

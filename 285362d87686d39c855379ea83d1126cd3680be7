@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4aaa057b_4a879fea",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 171781
+      },
+      "writtenOn": "2021-09-27T18:39:21Z",
+      "side": 1,
+      "message": "I am having version number issues after adding these new constants.. I need help to fix these..",
+      "revId": "285362d87686d39c855379ea83d1126cd3680be7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

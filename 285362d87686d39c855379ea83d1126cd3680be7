@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "cd607920_469d9776",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 625,
+      "author": {
+        "id": 171781
+      },
+      "writtenOn": "2021-09-27T19:49:33Z",
+      "side": 1,
+      "message": "remote timeout value is used as string in code, so it seems the only reason to keep it as string with boolean here.. but IMO these should be integer as well..",
+      "parentUuid": "addac313_8ecc0d54",
+      "revId": "285362d87686d39c855379ea83d1126cd3680be7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4aaa057b_4a879fea",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
         "patchSetId": 1

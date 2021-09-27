@@ -572,6 +572,13 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		});
 		setButtonLayoutData(browsebutton);
 
+		final IntegerFieldEditor suspendTimeout = new IntegerFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_SUSPEND_TIMEOUT_VALUE,
+				MessagesForPreferences.GdbDebugPreferencePage_suspendTimeout_label, group1);
+		suspendTimeout.setValidRange(5, Integer.MAX_VALUE);
+		suspendTimeout.fillIntoGrid(group1, 3);
+		addField(suspendTimeout);
+
 		final StringWithBooleanFieldEditor enableStopAtMain = new StringWithBooleanFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN,
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL,

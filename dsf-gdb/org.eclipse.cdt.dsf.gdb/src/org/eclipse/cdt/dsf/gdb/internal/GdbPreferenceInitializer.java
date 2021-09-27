@@ -71,5 +71,7 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 				IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_ENABLED_DEFAULT);
 		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_REMOTE_TIMEOUT_VALUE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TIMEOUT_VALUE_DEFAULT);
+		node.putInt(IGdbDebugPreferenceConstants.PREF_SUSPEND_TIMEOUT_VALUE,
+				IGdbDebugPreferenceConstants.SUSPEND_TIMEOUT_VALUE_DEFAULT);
 	}
 }

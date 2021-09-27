@@ -83,6 +83,8 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_remoteTimeout_label;
 	public static String GdbDebugPreferencePage_remoteTimeout_tooltip;
 
+	public static String GdbDebugPreferencePage_suspendTimeout_label;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(MessagesForPreferences.class.getName(), MessagesForPreferences.class);

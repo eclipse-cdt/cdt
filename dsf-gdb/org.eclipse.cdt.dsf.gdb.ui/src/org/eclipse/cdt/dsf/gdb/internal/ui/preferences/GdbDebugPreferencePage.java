@@ -622,6 +622,14 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		remoteTimeout.fillIntoGrid(group1, 3);
 		addField(remoteTimeout);
 
+		final IntegerWithBooleanFieldEditor suspendTimeout = new IntegerWithBooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_SUSPEND_TIMEOUT_ENABLED,
+				IGdbDebugPreferenceConstants.PREF_SUSPEND_TIMEOUT_VALUE,
+				MessagesForPreferences.GdbDebugPreferencePage_suspendTimeout_label, group1);
+		suspendTimeout.setValidRange(5, Integer.MAX_VALUE);
+		suspendTimeout.fillIntoGrid(group1, 3);
+		addField(suspendTimeout);
+
 		group1.setLayout(groupLayout);
 
 		final Group group2 = new Group(parent, SWT.NONE);

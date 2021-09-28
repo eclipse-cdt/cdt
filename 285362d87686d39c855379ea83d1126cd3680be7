@@ -87,6 +87,24 @@
       "revId": "285362d87686d39c855379ea83d1126cd3680be7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a2e6337_a2383a86",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-28T15:59:42Z",
+      "side": 1,
+      "message": "Ahh - this is one of the places where the API in CDT is not properly defined. In the past we have allowed adding the new fields under this situation as it is unlikely that someone else will have the same field name. Bump the minor version and add a filter (right click on field and add filter) - this diff should do it:\n\n    $ git diff --cached \n    diff --git a/dsf-gdb/org.eclipse.cdt.dsf.gdb/.settings/.api_filters b/dsf-gdb/org.eclipse.cdt.dsf.gdb/.settings/.api_filters\n    new file mode 100644\n    index 0000000000..7ea951e228\n    --- /dev/null\n    +++ b/dsf-gdb/org.eclipse.cdt.dsf.gdb/.settings/.api_filters\n    @@ -0,0 +1,17 @@\n    +\u003c?xml version\u003d\"1.0\" encoding\u003d\"UTF-8\" standalone\u003d\"no\"?\u003e\n    +\u003ccomponent id\u003d\"org.eclipse.cdt.dsf.gdb\" version\u003d\"2\"\u003e\n    +    \u003cresource path\u003d\"src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java\" type\u003d\"org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants\"\u003e\n    +        \u003cfilter id\u003d\"403767336\"\u003e\n    +            \u003cmessage_arguments\u003e\n    +                \u003cmessage_argument value\u003d\"org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants\"/\u003e\n    +                \u003cmessage_argument value\u003d\"PREF_SUSPEND_TIMEOUT_VALUE\"/\u003e\n    +            \u003c/message_arguments\u003e\n    +        \u003c/filter\u003e\n    +        \u003cfilter id\u003d\"403767336\"\u003e\n    +            \u003cmessage_arguments\u003e\n    +                \u003cmessage_argument value\u003d\"org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants\"/\u003e\n    +                \u003cmessage_argument value\u003d\"SUSPEND_TIMEOUT_VALUE_DEFAULT\"/\u003e\n    +            \u003c/message_arguments\u003e\n    +        \u003c/filter\u003e\n    +    \u003c/resource\u003e\n    +\u003c/component\u003e\n    diff --git a/dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF b/dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF\n    index 815fabed77..29e7d2fcf2 100644\n    --- a/dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF\n    +++ b/dsf-gdb/org.eclipse.cdt.dsf.gdb/META-INF/MANIFEST.MF\n    @@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2\n    Bundle-Name: %pluginName\n    Bundle-Vendor: %providerName\n    Bundle-SymbolicName: org.eclipse.cdt.dsf.gdb;singleton:\u003dtrue\n    -Bundle-Version: 6.4.200.qualifier\n    +Bundle-Version: 6.5.0.qualifier\n    Bundle-Activator: org.eclipse.cdt.dsf.gdb.internal.GdbPlugin\n    Bundle-Localization: plugin\n    Require-Bundle: org.eclipse.core.runtime,\n    diff --git a/dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java b/dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java\n    index a48f8d3da7..acc672f5ba 100644\n    --- a/dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java\n    +++ b/dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java\n    @@ -251,14 +251,14 @@ public interface IGdbDebugPreferenceConstants {\n            /**\n            * The value of suspend timeout\n            *\n    -        * @since 6.4\n    +        * @since 6.5\n            */\n            public static final String PREF_SUSPEND_TIMEOUT_VALUE \u003d \"suspendTimeoutValue\"; //$NON-NLS-1$\n\n            /**\n            * Default value of {@link #PREF_SUSPEND_TIMEOUT_VALUE}\n            *\n    -        * @since 6.4\n    +        * @since 6.5\n            */\n            public static final int SUSPEND_TIMEOUT_VALUE_DEFAULT \u003d 10;\n    }",
+      "parentUuid": "1ae2ef8a_be78bdb0",
+      "revId": "285362d87686d39c855379ea83d1126cd3680be7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

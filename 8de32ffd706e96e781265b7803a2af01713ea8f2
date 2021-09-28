@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "761dad75_60040345",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-28T15:59:42Z",
+      "side": 1,
+      "message": "(Oops - didn\u0027t see this when I used the gerrit alone, but when I ran it I saw it in the wrong place)\n\nThis needs to be moved down as it is in the section \"Debug Configuration Defaults\" - it should be in General Behaviour. \n\nAlternatively, implement it as a debug configuration default, which means that the UI for debug configuration needs to be extended to support this, which means the final value used needs to be from the launch configuration.\n\nFor now my vote is to just move it down in the UI - if someone later wants to have different values for different configs then they can do that work.",
+      "revId": "8de32ffd706e96e781265b7803a2af01713ea8f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

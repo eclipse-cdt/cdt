@@ -52,6 +52,24 @@
       "revId": "a67e48b46dc81df1741b2f789a184ca64eeaad16",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4ca7628_b4c605cf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 625,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-28T15:25:39Z",
+      "side": 1,
+      "message": "no objection. I look forward to testing it (and helping with API errors if there still are some to resolve)",
+      "parentUuid": "856f57bb_c8f8a9b4",
+      "revId": "a67e48b46dc81df1741b2f789a184ca64eeaad16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -34,6 +34,24 @@
       "revId": "a67e48b46dc81df1741b2f789a184ca64eeaad16",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "856f57bb_c8f8a9b4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 625,
+      "author": {
+        "id": 171781
+      },
+      "writtenOn": "2021-09-28T15:20:13Z",
+      "side": 1,
+      "message": "I\u0027ll move it after \"gdb command file\".. I\u0027ll proceed unless I hear an objection..",
+      "parentUuid": "5d7e3494_a9fc5371",
+      "revId": "a67e48b46dc81df1741b2f789a184ca64eeaad16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "3ae0dc47_17c57037",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 625,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-28T14:51:45Z",
+      "side": 1,
+      "message": "I agree - but for another bug. Changing it now has the unlikely but possible problem that the string is passed to GDB and any arbitrary expression is actually legal. In practice it is unlikely that someone would use a non-constant, but changing the field now is probably not worth the effort.\n\nIn this new code it needs to be a number.",
+      "parentUuid": "cd607920_469d9776",
+      "revId": "285362d87686d39c855379ea83d1126cd3680be7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4aaa057b_4a879fea",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
         "patchSetId": 1

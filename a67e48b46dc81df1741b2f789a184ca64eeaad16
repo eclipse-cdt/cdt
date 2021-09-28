@@ -16,6 +16,24 @@
       "revId": "a67e48b46dc81df1741b2f789a184ca64eeaad16",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d7e3494_a9fc5371",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 625,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-09-28T14:51:45Z",
+      "side": 1,
+      "message": "Yes - good catch.",
+      "parentUuid": "6b373636_8eb43f94",
+      "revId": "a67e48b46dc81df1741b2f789a184ca64eeaad16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

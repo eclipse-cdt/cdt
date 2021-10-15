@@ -133,7 +133,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 		fUserDefinedPatterns.setLayoutData(data);
 		String patterns = convertToString(fPatterns, SEPARATOR);
 		fUserDefinedPatterns.setText(patterns);
-
+		fUserDefinedPatterns.setToolTipText(FilterMessages.CustomFiltersDialog_patternInfo);
 		// Info text
 		final Label info = new Label(group, SWT.LEFT);
 		info.setText(FilterMessages.CustomFiltersDialog_patternInfo);
@@ -141,8 +141,11 @@ public class CustomFiltersDialog extends SelectionDialog {
 		// add the info text as a description to the pattern field
 		fUserDefinedPatterns.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
-			public void getDescription(AccessibleEvent e) {
-				e.result = FilterMessages.CustomFiltersDialog_patternInfo;
+			public void getName(AccessibleEvent e) {
+				super.getName(e);
+				if (e.childID == -1 && (e.result == null || e.result.trim().isEmpty())) {
+					e.result = FilterMessages.CustomFiltersDialog_patternInfo;
+				}
 			}
 		});
 
@@ -194,7 +197,10 @@ public class CustomFiltersDialog extends SelectionDialog {
 		fCheckBoxList.getTable().getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
-				e.result = FilterMessages.CustomFiltersDialog_filterList_label;
+				super.getName(e);
+				if (e.childID == -1 && (e.result == null || e.result.trim().isEmpty())) {
+					e.result = FilterMessages.CustomFiltersDialog_filterList_label;
+				}
 			}
 		});
 		fCheckBoxList.getTable().setToolTipText(FilterMessages.CustomFiltersDialog_filterList_label);

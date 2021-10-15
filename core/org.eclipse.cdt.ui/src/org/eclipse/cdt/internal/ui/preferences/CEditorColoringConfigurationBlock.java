@@ -653,7 +653,10 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		fListViewer.getControl().getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
-				e.result = PreferencesMessages.CEditorColoringConfigurationBlock_coloring_element;
+				super.getName(e);
+				if (e.childID == -1 && (e.result == null || e.result.trim().isEmpty())) {
+					e.result = PreferencesMessages.CEditorColoringConfigurationBlock_coloring_element;
+				}
 			}
 		});
 
@@ -724,7 +727,10 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		previewer.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
-				e.result = PreferencesMessages.CEditorColoringConfigurationBlock_preview;
+				super.getName(e);
+				if (e.childID == -1 && (e.result == null || e.result.trim().isEmpty())) {
+					e.result = PreferencesMessages.CEditorColoringConfigurationBlock_preview;
+				}
 			}
 		});
 

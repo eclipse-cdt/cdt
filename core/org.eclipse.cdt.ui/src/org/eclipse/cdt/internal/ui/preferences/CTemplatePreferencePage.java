@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -109,6 +109,29 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.TEMPLATE_PREFERENCE_PAGE);
+	}
+
+	/*
+	 * @see PreferencePage#createContents(Composite)
+	 */
+	@Override
+	protected Control createContents(Composite ancestor) {
+		Control control = super.createContents(ancestor);
+		//must occur after contents created
+		if(getTableViewer() == null) {
+			String description = getDescription(); 
+			//same description as used in PreferencePage.createDescriptionLabel(Composite parent)
+			getTableViewer().getControl().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+				@Override
+				public void getName(AccessibleEvent e) {
+					super.getName(e);
+					if (e.childID == -1 && (e.result == null || e.result.trim().isEmpty())) {
+	 					e.result = description;
+	 				}
+				}
+			});	
+		}
+		return control;
 	}
 
 	/*

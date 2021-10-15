@@ -158,7 +158,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		}
 	}
 
-	private final Comparator<ModelElement> fCategoryComparator = new Comparator<>() {
+	private final Comparator<ModelElement> fCategoryComparator = new Comparator<ModelElement>() {
 		@Override
 		public int compare(ModelElement o1, ModelElement o2) {
 			return o1.getRank() - o2.getRank();
@@ -428,10 +428,14 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		styledTextWidget.setEditable(false);
 		styledTextWidget.setCaret(null);
 		styledTextWidget.setBackground(composite.getBackground());
+		styledTextWidget.setToolTipText(value);
 		styledTextWidget.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
-			public void getDescription(AccessibleEvent e) {
-				e.result = value;
+			public void getName(AccessibleEvent e) {
+				super.getName(e);
+				if (e.childID == -1 && (e.result == null || e.result.trim().isEmpty())) {
+					e.result = value;
+				}
 			}
 		});
 		return styledTextWidget;
@@ -492,7 +496,10 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		fDefaultViewer.getControl().getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
-				e.result = PreferencesMessages.CodeAssistAdvancedConfigurationBlock_default_table_description;
+				super.getName(e);
+				if (e.childID == -1 && (e.result == null || e.result.trim().isEmpty())) {
+					e.result = PreferencesMessages.CodeAssistAdvancedConfigurationBlock_default_table_description;
+				}
 			}
 		});
 
@@ -601,7 +608,10 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		fSeparateViewer.getControl().getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
-				e.result = PreferencesMessages.CodeAssistAdvancedConfigurationBlock_separate_table_description;
+				super.getName(e);
+				if (e.childID == -1 && (e.result == null || e.result.trim().isEmpty())) {
+					e.result = PreferencesMessages.CodeAssistAdvancedConfigurationBlock_separate_table_description;
+				}
 			}
 		});
 

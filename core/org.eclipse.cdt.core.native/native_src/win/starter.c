@@ -246,6 +246,20 @@ bool createCommandLine(int argc, wchar_t **argv, wchar_t **cmdLine) {
     return true;
 }
 
+void raiseSignal(HANDLE h, int pid, const wchar_t *signal) {
+    if (isCygwin(h)) {
+        // Need to issue a kill command
+        wchar_t kill[1024];
+        swprintf(kill, sizeof(kill) / sizeof(kill[0]), L"kill -%s %d", signal, pid);
+        if (!runCygwinCommand(kill)) {
+            // fall back to console event
+            GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+        }
+    } else {
+        GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+    }
+}
+
 int main() {
 
     int argc;
@@ -384,24 +398,23 @@ int main() {
             }
         }
 
+#define SIGINT_EVENT (WAIT_OBJECT_0 + 0)
+#define EXIT_EVENT (WAIT_OBJECT_0 + 1)
+#define SIGTERM_EVENT (WAIT_OBJECT_0 + 2)
+#define SIGKILL_EVENT (WAIT_OBJECT_0 + 3)
+#define CTRLC_EVENT (WAIT_OBJECT_0 + 4)
         while (!exitProc) {
             // Wait for the spawned-process to die or for the event
             // indicating that the processes should be forcibly killed.
             DWORD event = WaitForMultipleObjects(5, h, FALSE, INFINITE);
             switch (event) {
-            case WAIT_OBJECT_0 + 0: // SIGINT
-            case WAIT_OBJECT_0 + 4: // CTRL-C
+            case SIGINT_EVENT:
+            case CTRLC_EVENT:
                 if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                     cdtTrace(L"starter (PID %i) received CTRL-C event\n", GetCurrentProcessId());
                 }
-                if ((event == (WAIT_OBJECT_0 + 0)) && isCygwin(h[1])) {
-                    // Need to issue a kill command
-                    wchar_t kill[1024];
-                    swprintf(kill, sizeof(kill) / sizeof(kill[0]), L"kill -SIGINT %d", pi.dwProcessId);
-                    if (!runCygwinCommand(kill)) {
-                        // fall back to console event
-                        GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
-                    }
+                if (event == SIGINT_EVENT) {
+                    raiseSignal(h[1], pi.dwProcessId, L"SIGINT");
                 } else {
                     GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
                 }
@@ -409,8 +422,8 @@ int main() {
                 SetEvent(waitEvent);
                 break;
 
-            case WAIT_OBJECT_0 + 1: // App terminated normally
-                                    // Make it's exit code our exit code
+            case EXIT_EVENT: // App terminated normally
+                             // Make it's exit code our exit code
                 if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
                     cdtTrace(L"starter: launched process has been terminated(PID %i)\n", pi.dwProcessId);
                 }
@@ -418,43 +431,34 @@ int main() {
                 exitProc = TRUE;
                 break;
 
-                // Terminate and Kill behavior differ only for cygwin processes, where
-                // we use the cygwin 'kill' command. We send a SIGKILL in one case,
-                // SIGTERM in the other. For non-cygwin processes, both requests
-                // are treated exactly the same
-            case WAIT_OBJECT_0 + 2: // TERM
-            case WAIT_OBJECT_0 + 3: // KILL
-            {
-                const wchar_t *signal = (event == WAIT_OBJECT_0 + 2) ? L"TERM" : L"KILL";
+            case SIGTERM_EVENT:
                 if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
-                    cdtTrace(L"starter received %s event (PID %i)\n", signal, GetCurrentProcessId());
-                }
-                if (isCygwin(h[1])) {
-                    // Need to issue a kill command
-                    wchar_t kill[1024];
-                    swprintf(kill, sizeof(kill) / sizeof(kill[0]), L"kill -%s %d", signal, pi.dwProcessId);
-                    if (!runCygwinCommand(kill)) {
-                        // fall back to console event
-                        GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
-                    }
-                } else {
-                    GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+                    cdtTrace(L"starter received TERM event (PID %i)\n", GetCurrentProcessId());
                 }
 
+                raiseSignal(h[1], pi.dwProcessId, L"TERM");
                 SetEvent(waitEvent);
 
-                if (hJob) {
-                    if (!TerminateJobObject(hJob, (DWORD)-1)) {
-                        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
-                            cdtTrace(L"Cannot terminate job\n");
-                            DisplayErrorMessage();
-                        }
+                // Note that we keep trucking until the child process terminates (case EXIT_EVENT)
+                break;
+
+            case SIGKILL_EVENT:
+                if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
+                    cdtTrace(L"starter received KILL event (PID %i)\n", GetCurrentProcessId());
+                }
+
+                raiseSignal(h[1], pi.dwProcessId, L"KILL");
+                SetEvent(waitEvent);
+
+                if (hJob && !TerminateJobObject(hJob, (DWORD)-1)) {
+                    if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
+                        cdtTrace(L"Cannot terminate job\n");
+                        DisplayErrorMessage();
                     }
                 }
 
-                // Note that we keep trucking until the child process terminates (case WAIT_OBJECT_0 + 1)
+                // Note that we keep trucking until the child process terminates (case EXIT_EVENT)
                 break;
-            }
 
             default:
                 // Unexpected code

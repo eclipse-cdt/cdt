@@ -56,8 +56,8 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleListener;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -158,7 +158,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		}
 	}
 
-	private final Comparator<ModelElement> fCategoryComparator = new Comparator<>() {
+	private final Comparator<ModelElement> fCategoryComparator = new Comparator<ModelElement>() {
 		@Override
 		public int compare(ModelElement o1, ModelElement o2) {
 			return o1.getRank() - o2.getRank();
@@ -428,12 +428,12 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		styledTextWidget.setEditable(false);
 		styledTextWidget.setCaret(null);
 		styledTextWidget.setBackground(composite.getBackground());
-		styledTextWidget.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getDescription(AccessibleEvent e) {
+		styledTextWidget.setToolTipText(value);
+		styledTextWidget.getAccessible().addAccessibleListener(AccessibleListener.getNameAdapter(e -> {
+			if (e.childID == ACC.CHILDID_SELF && (e.result == null || e.result.trim().isEmpty())) {
 				e.result = value;
 			}
-		});
+		}));
 		return styledTextWidget;
 	}
 
@@ -489,12 +489,11 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 			}
 		});
 
-		fDefaultViewer.getControl().getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getName(AccessibleEvent e) {
+		fDefaultViewer.getControl().getAccessible().addAccessibleListener(AccessibleListener.getNameAdapter(e -> {
+			if (e.childID == ACC.CHILDID_SELF && (e.result == null || e.result.trim().isEmpty())) {
 				e.result = PreferencesMessages.CodeAssistAdvancedConfigurationBlock_default_table_description;
 			}
-		});
+		}));
 
 		fDefaultViewer.setContentProvider(ArrayContentProvider.getInstance());
 
@@ -598,12 +597,11 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 			}
 		});
 
-		fSeparateViewer.getControl().getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getName(AccessibleEvent e) {
+		fSeparateViewer.getControl().getAccessible().addAccessibleListener(AccessibleListener.getNameAdapter(e -> {
+			if (e.childID == ACC.CHILDID_SELF && (e.result == null || e.result.trim().isEmpty())) {
 				e.result = PreferencesMessages.CodeAssistAdvancedConfigurationBlock_separate_table_description;
 			}
-		});
+		}));
 
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override

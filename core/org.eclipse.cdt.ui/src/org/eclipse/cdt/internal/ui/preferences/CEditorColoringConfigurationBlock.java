@@ -56,8 +56,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -650,12 +650,11 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 
 		fListViewer.getControl().setLayoutData(gd);
 		// add the coloring element label text as the name for the list viewer
-		fListViewer.getControl().getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getName(AccessibleEvent e) {
+		fListViewer.getControl().getAccessible().addAccessibleListener(AccessibleListener.getNameAdapter(e -> {
+			if (e.childID == ACC.CHILDID_SELF && (e.result == null || e.result.trim().isEmpty())) {
 				e.result = PreferencesMessages.CEditorColoringConfigurationBlock_coloring_element;
 			}
-		});
+		}));
 
 		Composite stylesComposite = new Composite(editorComposite, SWT.NONE);
 		layout = new GridLayout();
@@ -721,12 +720,11 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		gd.heightHint = convertHeightInCharsToPixels(5);
 		previewer.setLayoutData(gd);
 		// add the preview label text as the name to the previewer
-		previewer.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getName(AccessibleEvent e) {
+		previewer.getAccessible().addAccessibleListener(AccessibleListener.getNameAdapter(e -> {
+			if (e.childID == ACC.CHILDID_SELF && (e.result == null || e.result.trim().isEmpty())) {
 				e.result = PreferencesMessages.CEditorColoringConfigurationBlock_preview;
 			}
-		});
+		}));
 
 		fListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override

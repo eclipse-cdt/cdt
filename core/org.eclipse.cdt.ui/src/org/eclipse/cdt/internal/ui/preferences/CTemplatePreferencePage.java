@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Wind River Systems, Inc. - Bug fixes
+ * IBM Corporation - Bug fixes
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -33,8 +34,8 @@ import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -112,6 +113,25 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	}
 
 	/*
+	 * @see PreferencePage#createContents(Composite)
+	 */
+	@Override
+	protected Control createContents(Composite ancestor) {
+		Control control = super.createContents(ancestor);
+		//must occur after contents created
+		if (getTableViewer() == null) {
+			String description = getDescription();
+			//same description as used in PreferencePage.createDescriptionLabel(Composite parent)
+			getTableViewer().getControl().getAccessible().addAccessibleListener(AccessibleListener.getNameAdapter(e -> {
+				if (e.childID == ACC.CHILDID_SELF && (e.result == null || e.result.trim().isEmpty())) {
+					e.result = description;
+				}
+			}));
+		}
+		return control;
+	}
+
+	/*
 	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#getFormatterPreferenceKey()
 	 */
 	@Override
@@ -157,12 +177,9 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 		data.heightHint = convertHeightInCharsToPixels(5);
 		control.setLayoutData(data);
 
-		control.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getName(AccessibleEvent e) {
-				e.result = PreferencesMessages.TemplatePreferencePage_Viewer_preview;
-			}
-		});
+		control.getAccessible().addAccessibleListener(AccessibleListener.getNameAdapter(e -> {
+			e.result = PreferencesMessages.TemplatePreferencePage_Viewer_preview;
+		}));
 
 		CSourcePreviewerUpdater.registerPreviewer(viewer, configuration,
 				CUIPlugin.getDefault().getCombinedPreferenceStore());

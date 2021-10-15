@@ -14,6 +14,7 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.executables;
 
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -32,8 +33,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
-
-import com.ibm.icu.text.DateFormat;
 
 public class SourceFilesLabelProvider extends TreeColumnViewerLabelProvider implements IExecutablesChangeListener {
 

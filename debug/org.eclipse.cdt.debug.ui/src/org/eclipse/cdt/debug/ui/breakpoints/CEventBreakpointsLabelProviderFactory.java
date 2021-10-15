@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.breakpoints;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.DebugCoreMessages;
@@ -29,8 +30,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProv
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Factory for event breakpoint label provider

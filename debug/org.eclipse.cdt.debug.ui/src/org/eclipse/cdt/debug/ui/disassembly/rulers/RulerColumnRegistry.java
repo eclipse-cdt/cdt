@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.disassembly.rulers;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,8 +41,6 @@ import org.eclipse.ui.internal.texteditor.rulers.ExtensionPointHelper;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnMessages;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnPlacementConstraint;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A registry for all extensions to the
@@ -235,7 +234,7 @@ public final class RulerColumnRegistry {
 			}
 		}
 
-		Comparator<RulerColumnDescriptor> gravityComp = new Comparator<RulerColumnDescriptor>() {
+		Comparator<RulerColumnDescriptor> gravityComp = new Comparator<>() {
 			@Override
 			public int compare(RulerColumnDescriptor o1, RulerColumnDescriptor o2) {
 				float diff = o1.getPlacement().getGravity() - o2.getPlacement().getGravity();

@@ -15,6 +15,7 @@
 package org.eclipse.cdt.debug.internal.ui;
 
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
@@ -65,8 +66,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Utility methods for C/C++ Debug UI.

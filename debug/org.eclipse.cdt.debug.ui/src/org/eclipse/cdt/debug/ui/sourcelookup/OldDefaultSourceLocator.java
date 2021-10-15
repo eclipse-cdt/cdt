@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.ui.sourcelookup;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,8 +41,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Old default source locator. We keep it for migration purposes.

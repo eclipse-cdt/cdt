@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,8 +44,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.Breakpoint;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The base class for all C/C++ specific breakpoints.

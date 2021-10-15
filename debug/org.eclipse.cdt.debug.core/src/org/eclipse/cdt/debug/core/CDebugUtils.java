@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,8 +64,6 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Utility methods.

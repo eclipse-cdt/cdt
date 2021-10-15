@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CoreModel;
@@ -32,8 +33,6 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The source container that maps a backend path to the local filesystem path.

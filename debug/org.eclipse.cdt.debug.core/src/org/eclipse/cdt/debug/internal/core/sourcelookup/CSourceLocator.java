@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -55,8 +56,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Default source locator.

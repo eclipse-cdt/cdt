@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A DynamicPrintf that collects data when a function is entered.

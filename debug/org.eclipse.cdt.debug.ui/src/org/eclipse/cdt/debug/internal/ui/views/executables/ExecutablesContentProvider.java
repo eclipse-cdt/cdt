@@ -14,6 +14,7 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.executables;
 
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -30,8 +31,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.ui.progress.WorkbenchJob;
-
-import com.ibm.icu.text.DateFormat;
 
 class ExecutablesContentProvider extends ColumnLabelProvider
 		implements ITreeContentProvider, IExecutablesChangeListener {

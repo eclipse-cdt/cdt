@@ -37,8 +37,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -133,18 +133,17 @@ public class CustomFiltersDialog extends SelectionDialog {
 		fUserDefinedPatterns.setLayoutData(data);
 		String patterns = convertToString(fPatterns, SEPARATOR);
 		fUserDefinedPatterns.setText(patterns);
-
+		fUserDefinedPatterns.setToolTipText(FilterMessages.CustomFiltersDialog_patternInfo);
 		// Info text
 		final Label info = new Label(group, SWT.LEFT);
 		info.setText(FilterMessages.CustomFiltersDialog_patternInfo);
 
 		// add the info text as a description to the pattern field
-		fUserDefinedPatterns.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getDescription(AccessibleEvent e) {
+		fUserDefinedPatterns.getAccessible().addAccessibleListener(AccessibleListener.getNameAdapter(e -> {
+			if (e.childID == ACC.CHILDID_SELF && (e.result == null || e.result.trim().isEmpty())) {
 				e.result = FilterMessages.CustomFiltersDialog_patternInfo;
 			}
-		});
+		}));
 
 		// Enabling / disabling of pattern group
 		fEnableUserDefinedPatterns.setSelection(fEnablePatterns);
@@ -191,12 +190,11 @@ public class CustomFiltersDialog extends SelectionDialog {
 		if (initialSelection != null && !initialSelection.isEmpty())
 			checkInitialSelections();
 
-		fCheckBoxList.getTable().getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getName(AccessibleEvent e) {
+		fCheckBoxList.getTable().getAccessible().addAccessibleListener(AccessibleListener.getNameAdapter(e -> {
+			if (e.childID == ACC.CHILDID_SELF && (e.result == null || e.result.trim().isEmpty())) {
 				e.result = FilterMessages.CustomFiltersDialog_filterList_label;
 			}
-		});
+		}));
 		fCheckBoxList.getTable().setToolTipText(FilterMessages.CustomFiltersDialog_filterList_label);
 
 		// Description

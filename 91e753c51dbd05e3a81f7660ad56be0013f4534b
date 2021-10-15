@@ -117,6 +117,30 @@
     },
     {
       "key": {
+        "uuid": "242ea1db_dfd7f037",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 260806
+      },
+      "writtenOn": "2021-10-15T13:57:15Z",
+      "side": 1,
+      "message": "Thank you!",
+      "parentUuid": "0e335f8d_ead92187",
+      "range": {
+        "startLine": 121,
+        "startChar": 4,
+        "endLine": 121,
+        "endChar": 6
+      },
+      "revId": "91e753c51dbd05e3a81f7660ad56be0013f4534b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "485d59a8_b7b710cf",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java",
         "patchSetId": 2
@@ -140,6 +164,30 @@
     },
     {
       "key": {
+        "uuid": "081447e4_b82ce0a3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 260806
+      },
+      "writtenOn": "2021-10-15T13:57:15Z",
+      "side": 1,
+      "message": "Thank you! Something was weird in my format settings and I needed to reset.  This one and the one beneath doesn\u0027t get removed.  I have reset and it works now.",
+      "parentUuid": "485d59a8_b7b710cf",
+      "range": {
+        "startLine": 129,
+        "startChar": 1,
+        "endLine": 129,
+        "endChar": 2
+      },
+      "revId": "91e753c51dbd05e3a81f7660ad56be0013f4534b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "174d6f95_5f356566",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java",
         "patchSetId": 2
@@ -151,6 +199,30 @@
       "writtenOn": "2021-10-15T13:29:40Z",
       "side": 1,
       "message": "and here",
+      "range": {
+        "startLine": 130,
+        "startChar": 1,
+        "endLine": 130,
+        "endChar": 2
+      },
+      "revId": "91e753c51dbd05e3a81f7660ad56be0013f4534b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9d53f34_906e8b08",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 260806
+      },
+      "writtenOn": "2021-10-15T13:57:15Z",
+      "side": 1,
+      "message": "Thank you!",
+      "parentUuid": "174d6f95_5f356566",
       "range": {
         "startLine": 130,
         "startChar": 1,

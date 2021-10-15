@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e335f8d_ead92187",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-15T13:29:40Z",
+      "side": 1,
+      "message": "The cleanliness check is failing because of whitespace issues here.",
+      "range": {
+        "startLine": 121,
+        "startChar": 4,
+        "endLine": 121,
+        "endChar": 6
+      },
+      "revId": "91e753c51dbd05e3a81f7660ad56be0013f4534b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "485d59a8_b7b710cf",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-15T13:29:40Z",
+      "side": 1,
+      "message": "and here",
+      "range": {
+        "startLine": 129,
+        "startChar": 1,
+        "endLine": 129,
+        "endChar": 2
+      },
+      "revId": "91e753c51dbd05e3a81f7660ad56be0013f4534b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "174d6f95_5f356566",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-15T13:29:40Z",
+      "side": 1,
+      "message": "and here",
+      "range": {
+        "startLine": 130,
+        "startChar": 1,
+        "endLine": 130,
+        "endChar": 2
+      },
+      "revId": "91e753c51dbd05e3a81f7660ad56be0013f4534b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

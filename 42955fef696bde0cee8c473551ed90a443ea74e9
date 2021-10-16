@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a85ec0b_1cd5b1a7",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/starter.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-16T01:17:56Z",
+      "side": 1,
+      "message": "IIUC this block is the only behaviour change - i.e. that it now only runs for SIGKILL and not for SIGTERM?",
+      "range": {
+        "startLine": 453,
+        "startChar": 15,
+        "endLine": 458,
+        "endChar": 17
+      },
+      "revId": "42955fef696bde0cee8c473551ed90a443ea74e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

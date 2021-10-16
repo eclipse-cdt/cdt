@@ -22,6 +22,30 @@
       "revId": "42955fef696bde0cee8c473551ed90a443ea74e9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "afd065d8_a890a47b",
+        "filename": "core/org.eclipse.cdt.core.native/native_src/win/starter.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-10-16T06:15:25Z",
+      "side": 1,
+      "message": "Yes, the new part is that the TerminateJobObject is only issued for the SIGKILL signal.\nThe rest is about trying to make it more obvious what the difference is without duplicating too much code.",
+      "parentUuid": "6a85ec0b_1cd5b1a7",
+      "range": {
+        "startLine": 453,
+        "startChar": 15,
+        "endLine": 458,
+        "endChar": 17
+      },
+      "revId": "42955fef696bde0cee8c473551ed90a443ea74e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

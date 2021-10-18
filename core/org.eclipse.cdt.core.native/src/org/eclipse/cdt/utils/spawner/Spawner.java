@@ -29,10 +29,10 @@ import org.eclipse.osgi.util.NLS;
 
 public class Spawner extends Process {
 
-	public int NOOP = 0;
-	public int HUP = 1;
-	public int KILL = 9;
-	public int TERM = 15;
+	public final static int NOOP = 0;
+	public final static int HUP = 1;
+	public final static int KILL = 9;
+	public final static int TERM = 15;
 
 	/**
 	 * On Windows, what this does is far from easy to explain.
@@ -53,7 +53,7 @@ public class Spawner extends Process {
 	 * On non-Windows, raising this just raises a POSIX SIGINT
 	 *
 	 */
-	public int INT = 2;
+	public final static int INT = 2;
 
 	/**
 	 * A fabricated signal number for use on Windows only. Tells the starter program to send a CTRL-C
@@ -61,7 +61,7 @@ public class Spawner extends Process {
 	 *
 	 * @since 5.2
 	 */
-	public int CTRLC = 1000; // arbitrary high number to avoid collision
+	public final static int CTRLC = 1000; // arbitrary high number to avoid collision
 
 	int pid = 0;
 	int status;

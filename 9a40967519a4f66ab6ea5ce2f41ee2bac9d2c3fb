@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7d2c3fef_a9ff5b3d",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-10-18T20:56:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5d0159b3_08c9392f",
+      "revId": "9a40967519a4f66ab6ea5ce2f41ee2bac9d2c3fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3e71d532_68f97ff8",
         "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
         "patchSetId": 3
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "5394c1dd_f48f66e5",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 504,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-10-18T20:56:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e71d532_68f97ff8",
+      "range": {
+        "startLine": 504,
+        "startChar": 26,
+        "endLine": 504,
+        "endChar": 35
+      },
+      "revId": "9a40967519a4f66ab6ea5ce2f41ee2bac9d2c3fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "96c5df70_d9a94de3",
         "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
         "patchSetId": 3
@@ -62,6 +104,30 @@
       "revId": "9a40967519a4f66ab6ea5ce2f41ee2bac9d2c3fb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07a1a418_ca436370",
+        "filename": "doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 517,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-10-18T20:56:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "96c5df70_d9a94de3",
+      "range": {
+        "startLine": 517,
+        "startChar": 28,
+        "endLine": 517,
+        "endChar": 37
+      },
+      "revId": "9a40967519a4f66ab6ea5ce2f41ee2bac9d2c3fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

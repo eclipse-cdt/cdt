@@ -666,6 +666,10 @@ extern "C"
         ret = (WaitForSingleObject(pCurProcInfo->eventWait.handle, 100) == WAIT_OBJECT_0);
         break;
     default:
+        if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
+            cdtTrace(L"Spawner does not support custom signals on Windows\n");
+        }
+        ret = -1;
         break;
     }
 

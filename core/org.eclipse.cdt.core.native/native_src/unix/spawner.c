@@ -225,43 +225,9 @@ bail_out:
 }
 
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *env, jobject jobj, jint pid, jint sig) {
-    int status = -1;
-
-    switch (sig) {
-    case org_eclipse_cdt_utils_spawner_Spawner_SIG_NOOP:
-        status = killpg(pid, 0);
-        if (status == -1) {
-            status = kill(pid, 0);
-        }
-        break;
-
-    case org_eclipse_cdt_utils_spawner_Spawner_SIG_INT:
-        status = killpg(pid, SIGINT);
-        if (status == -1) {
-            status = kill(pid, SIGINT);
-        }
-        break;
-
-    case org_eclipse_cdt_utils_spawner_Spawner_SIG_KILL:
-        status = killpg(pid, SIGKILL);
-        if (status == -1) {
-            status = kill(pid, SIGKILL);
-        }
-        break;
-
-    case org_eclipse_cdt_utils_spawner_Spawner_SIG_TERM:
-        status = killpg(pid, SIGTERM);
-        if (status == -1) {
-            status = kill(pid, SIGTERM);
-        }
-        break;
-
-    default:
-        status = killpg(pid, sig);
-        if (status == -1) {
-            status = kill(pid, sig);
-        }
-        break;
+    int status = killpg(pid, sig);
+    if (status == -1) {
+        status = kill(pid, sig);
     }
 
     return status;

@@ -498,6 +498,13 @@ public class Spawner extends Process {
 	public native int raise(int processID, int sig);
 
 	/**
+	 * @since 6.2
+	 */
+	public int raise(int sig) {
+		return raise(pid, sig);
+	}
+
+	/**
 	 * Native method to wait(3) for process to terminate.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */

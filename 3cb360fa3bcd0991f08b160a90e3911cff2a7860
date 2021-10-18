@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "64d8b26f_b0fb37ee",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-18T15:15:48Z",
+      "side": 1,
+      "message": "Debug code.",
+      "range": {
+        "startLine": 268,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 105
+      },
+      "revId": "3cb360fa3bcd0991f08b160a90e3911cff2a7860",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15cbef8d_149c7d88",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-18T15:15:48Z",
+      "side": 1,
+      "message": "Please don\u0027t wrap \"catch InterruptedException\" in a while loop.",
+      "revId": "3cb360fa3bcd0991f08b160a90e3911cff2a7860",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "010c7553_c81442a1",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-18T15:15:48Z",
+      "side": 1,
+      "message": "I am concerned about this change in behaviour - if the process does not die it can leave callers hanging. While I don\u0027t like the idea of leaving idle or zombie processes behind, I don\u0027t like the idea of leaving debug sessions in a \"stuck\" state either.\n\nThis change would be fine if we provided real UI to handle this case, but I don\u0027t think that is likely anytime soon.",
+      "range": {
+        "startLine": 313,
+        "startChar": 0,
+        "endLine": 313,
+        "endChar": 12
+      },
+      "revId": "3cb360fa3bcd0991f08b160a90e3911cff2a7860",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

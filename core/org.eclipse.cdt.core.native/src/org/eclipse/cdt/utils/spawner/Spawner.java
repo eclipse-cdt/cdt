@@ -66,11 +66,16 @@ public class Spawner extends Process {
 	int pid = 0;
 	int status;
 	final IChannel[] fChannels = { null, null, null };
-	boolean isDone;
 	OutputStream out;
 	InputStream in;
 	InputStream err;
 	private PTY fPty;
+
+	private static enum State {
+		RUNNING, DESTROYING, DONE
+	}
+
+	private State fState = State.RUNNING;
 
 	/**
 	 * @deprecated Do not use this method it splits command line arguments on whitespace with no regard to quoting rules. See Bug 573677
@@ -223,7 +228,7 @@ public class Spawner extends Process {
 	 **/
 	@Override
 	public synchronized int waitFor() throws InterruptedException {
-		while (!isDone) {
+		while (fState != State.DONE) {
 			wait();
 		}
 
@@ -245,7 +250,7 @@ public class Spawner extends Process {
 	 **/
 	@Override
 	public synchronized int exitValue() {
-		if (!isDone) {
+		if (fState != State.DONE) {
 			throw new IllegalThreadStateException("Process not Terminated"); //$NON-NLS-1$
 		}
 		return status;
@@ -260,39 +265,50 @@ public class Spawner extends Process {
 	 **/
 	@Override
 	public synchronized void destroy() {
-		// Sends the TERM
-		terminate();
+		switch (fState) {
+		case RUNNING:
+			fState = State.DESTROYING;
 
-		// Close the streams on this side.
-		//
-		// We only close the streams that were
-		// never used by any client.
-		// So, if the stream was not created yet,
-		// we create it ourselves and close it
-		// right away, so as to release the pipe.
-		// Note that even if the stream was never
-		// created, the pipe has been allocated in
-		// native code, so we need to create the
-		// stream and explicitly close it.
-		//
-		// We don't close streams the clients have
-		// created because we don't know when the
-		// client will be finished using them.
-		// It is up to the client to close those
-		// streams.
-		//
-		// But 345164
-		closeUnusedStreams();
+			// Sends the TERM
+			terminate();
 
-		// Grace before using the heavy gone.
-		if (!isDone) {
-			try {
-				wait(1000);
-			} catch (InterruptedException e) {
+			// Close the streams on this side.
+			//
+			// We only close the streams that were
+			// never used by any client.
+			// So, if the stream was not created yet,
+			// we create it ourselves and close it
+			// right away, so as to release the pipe.
+			// Note that even if the stream was never
+			// created, the pipe has been allocated in
+			// native code, so we need to create the
+			// stream and explicitly close it.
+			//
+			// We don't close streams the clients have
+			// created because we don't know when the
+			// client will be finished using them.
+			// It is up to the client to close those
+			// streams.
+			//
+			// But 345164
+			closeUnusedStreams();
+
+			// Grace before using the heavy gun.
+			if (fState != State.DONE) {
+				try {
+					wait(1000);
+				} catch (InterruptedException e) {
+				}
 			}
-		}
-		if (!isDone) {
-			kill();
+			if (fState != State.DONE) {
+				kill();
+			}
+			break;
+
+		case DESTROYING:
+		case DONE:
+			// Nothing to do
+			break;
 		}
 	}
 
@@ -563,7 +579,7 @@ public class Spawner extends Process {
 				// Sync with spawner and notify when done.
 				status = waitFor(pid);
 				synchronized (Spawner.this) {
-					isDone = true;
+					fState = Spawner.State.DONE;
 					Spawner.this.notifyAll();
 				}
 			}

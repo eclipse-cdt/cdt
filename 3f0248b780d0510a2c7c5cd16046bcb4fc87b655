@@ -84,6 +84,30 @@
     },
     {
       "key": {
+        "uuid": "efbf062f_a68f9e17",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-18T16:55:23Z",
+      "side": 1,
+      "message": "You probably can\u0027t - or the code can be \"rude\" and just not return (i.e. leave it as you have it here) :-)\n\nBTW CDT\u0027s code base is filled with terrible code in this regard (including the handling of the wait 1000 a few lines up), for the most part it doesn\u0027t matter because of how it is used in practice. This new loop though can cause this thread to hang if there is any interrupting happening. The Spawner is used directly by other projects that don\u0027t use any other part of CDT.",
+      "parentUuid": "4381ccbf_7a36c1e6",
+      "range": {
+        "startLine": 311,
+        "startChar": 0,
+        "endLine": 311,
+        "endChar": 33
+      },
+      "revId": "3f0248b780d0510a2c7c5cd16046bcb4fc87b655",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0f25e0db_9ed3da4b",
         "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
         "patchSetId": 1
@@ -119,6 +143,30 @@
       "side": 1,
       "message": "I don\u0027t think this should be a problem as that case is handled on line 305 with the call to kill(). Hill will raise the SIGKILL and it should cut the process without any delay.\n\nWhat I want to achieve here is to not return the callers before the thread that first called destroy() has finished the sequence.",
       "parentUuid": "0f25e0db_9ed3da4b",
+      "range": {
+        "startLine": 313,
+        "startChar": 0,
+        "endLine": 313,
+        "endChar": 12
+      },
+      "revId": "3f0248b780d0510a2c7c5cd16046bcb4fc87b655",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3eed301d_3c8449bc",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-18T16:55:23Z",
+      "side": 1,
+      "message": "The problem is that SIGKILL does not guarantee the process will terminate. Most processes, most of the time will of course be terminated. On Linux this is most likely to occur with processes accessing devices in kernel mode - something that is more likely than most to be buggy, see uninterruptible sleep. On Windows processes running in compatibility mode (for example) cannot be added to the job group (AssignProcessToJobObject will fail).\n\nIn the above examples, if the processes do eventually terminate normally (i.e don\u0027t require special user intervention) then no one may notice, but here your code is hanging where it used to be fine.",
+      "parentUuid": "6be2a4b8_800a53ea",
       "range": {
         "startLine": 313,
         "startChar": 0,

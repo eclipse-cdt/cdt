@@ -29,10 +29,31 @@ import org.eclipse.osgi.util.NLS;
 
 public class Spawner extends Process {
 
-	public int NOOP = 0;
-	public int HUP = 1;
-	public int KILL = 9;
-	public int TERM = 15;
+	@Deprecated
+	public int NOOP = SIG_NOOP;
+
+	@Deprecated
+	public int HUP = SIG_HUP;
+
+	@Deprecated
+	public int KILL = SIG_KILL;
+
+	@Deprecated
+	public int TERM = SIG_TERM;
+
+	@Deprecated
+	public int INT = SIG_INT;
+
+	/**
+	 * @since 5.2
+	 */
+	@Deprecated
+	public int CTRLC = SIG_CTRLC;
+
+	private final static int SIG_NOOP = 0;
+	private final static int SIG_HUP = 1;
+	private final static int SIG_KILL = 9;
+	private final static int SIG_TERM = 15;
 
 	/**
 	 * On Windows, what this does is far from easy to explain.
@@ -51,17 +72,14 @@ public class Spawner extends Process {
 	 * </ul>
 	 *
 	 * On non-Windows, raising this just raises a POSIX SIGINT
-	 *
 	 */
-	public int INT = 2;
+	private final static int SIG_INT = 2;
 
 	/**
 	 * A fabricated signal number for use on Windows only. Tells the starter program to send a CTRL-C
 	 * regardless of whether the process is a Cygwin one or not.
-	 *
-	 * @since 5.2
 	 */
-	public int CTRLC = 1000; // arbitrary high number to avoid collision
+	private final static int SIG_CTRLC = 1000; // arbitrary high number to avoid collision
 
 	int pid = 0;
 	int status;
@@ -323,7 +341,7 @@ public class Spawner extends Process {
 	 * linux, interrupt it by raising a SIGINT.
 	 */
 	public int interrupt() {
-		return raise(pid, INT);
+		return raise(pid, SIG_INT);
 	}
 
 	/**
@@ -334,26 +352,26 @@ public class Spawner extends Process {
 	 */
 	public int interruptCTRLC() {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			return raise(pid, CTRLC);
+			return raise(pid, SIG_CTRLC);
 		} else {
 			return interrupt();
 		}
 	}
 
 	public int hangup() {
-		return raise(pid, HUP);
+		return raise(pid, SIG_HUP);
 	}
 
 	public int kill() {
-		return raise(pid, KILL);
+		return raise(pid, SIG_KILL);
 	}
 
 	public int terminate() {
-		return raise(pid, TERM);
+		return raise(pid, SIG_TERM);
 	}
 
 	public boolean isRunning() {
-		return (raise(pid, NOOP) == 0);
+		return (raise(pid, SIG_NOOP) == 0);
 	}
 
 	private void exec(String[] cmdarray, String[] envp, String dirpath) throws IOException {

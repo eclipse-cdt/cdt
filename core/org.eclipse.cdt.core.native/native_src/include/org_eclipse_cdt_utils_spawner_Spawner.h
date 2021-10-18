@@ -7,6 +7,18 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef org_eclipse_cdt_utils_spawner_Spawner_SIG_NOOP
+#define org_eclipse_cdt_utils_spawner_Spawner_SIG_NOOP 0L
+#undef org_eclipse_cdt_utils_spawner_Spawner_SIG_HUP
+#define org_eclipse_cdt_utils_spawner_Spawner_SIG_HUP 1L
+#undef org_eclipse_cdt_utils_spawner_Spawner_SIG_KILL
+#define org_eclipse_cdt_utils_spawner_Spawner_SIG_KILL 9L
+#undef org_eclipse_cdt_utils_spawner_Spawner_SIG_TERM
+#define org_eclipse_cdt_utils_spawner_Spawner_SIG_TERM 15L
+#undef org_eclipse_cdt_utils_spawner_Spawner_SIG_INT
+#define org_eclipse_cdt_utils_spawner_Spawner_SIG_INT 2L
+#undef org_eclipse_cdt_utils_spawner_Spawner_SIG_CTRLC
+#define org_eclipse_cdt_utils_spawner_Spawner_SIG_CTRLC 1000L
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
  * Method:    exec0

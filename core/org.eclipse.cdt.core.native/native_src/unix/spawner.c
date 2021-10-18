@@ -228,28 +228,28 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *
     int status = -1;
 
     switch (sig) {
-    case 0: /* NOOP */
+    case org_eclipse_cdt_utils_spawner_Spawner_SIG_NOOP:
         status = killpg(pid, 0);
         if (status == -1) {
             status = kill(pid, 0);
         }
         break;
 
-    case 2: /* INTERRUPT */
+    case org_eclipse_cdt_utils_spawner_Spawner_SIG_INT:
         status = killpg(pid, SIGINT);
         if (status == -1) {
             status = kill(pid, SIGINT);
         }
         break;
 
-    case 9: /* KILL */
+    case org_eclipse_cdt_utils_spawner_Spawner_SIG_KILL:
         status = killpg(pid, SIGKILL);
         if (status == -1) {
             status = kill(pid, SIGKILL);
         }
         break;
 
-    case 15: /* TERM */
+    case org_eclipse_cdt_utils_spawner_Spawner_SIG_TERM:
         status = killpg(pid, SIGTERM);
         if (status == -1) {
             status = kill(pid, SIGTERM);
@@ -257,9 +257,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise(JNIEnv *
         break;
 
     default:
-        status = killpg(pid, sig); /* WHAT ?? */
+        status = killpg(pid, sig);
         if (status == -1) {
-            status = kill(pid, sig); /* WHAT ?? */
+            status = kill(pid, sig);
         }
         break;
     }

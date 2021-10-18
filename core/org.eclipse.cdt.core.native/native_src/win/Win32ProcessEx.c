@@ -78,16 +78,6 @@ static void cleanUpProcBlock(pProcInfo_t pCurProcInfo);
 
 int interruptProcess(int pid);
 
-// Signal codes
-typedef enum {
-    SIG_NOOP,      //
-    SIG_HUP,       //
-    SIG_INT,       //
-    SIG_KILL = 9,  //
-    SIG_TERM = 15, //
-    CTRLC = 1000   // special, Windows only. Sends CTRL-C in all cases, even when inferior is a Cygwin program
-} signals;
-
 extern CRITICAL_SECTION cs;
 
 extern wchar_t path[MAX_PATH]; // Directory where spawner.dll is located
@@ -619,7 +609,7 @@ extern "C"
     pProcInfo_t pCurProcInfo = findProcInfo(uid);
 
     if (!pCurProcInfo) {
-        if (SIG_INT == signal) { // Try another way
+        if (org_eclipse_cdt_utils_spawner_Spawner_SIG_INT == signal) { // Try another way
             return interruptProcess(uid);
         }
         return -1;
@@ -636,15 +626,15 @@ extern "C"
     }
 
     switch (signal) {
-    case SIG_NOOP:
+    case org_eclipse_cdt_utils_spawner_Spawner_SIG_NOOP:
         // Wait 0 msec -just check if the process has been still running
         ret = ((WAIT_TIMEOUT == WaitForSingleObject(hProc, 0)) ? 0 : -1);
         break;
-    case SIG_HUP:
+    case org_eclipse_cdt_utils_spawner_Spawner_SIG_HUP:
         // Temporary do nothing
         ret = 0;
         break;
-    case SIG_TERM:
+    case org_eclipse_cdt_utils_spawner_Spawner_SIG_TERM:
         if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Spawner received TERM signal for process %i\n", pCurProcInfo->pid);
         }
@@ -655,7 +645,7 @@ extern "C"
         ret = 0;
         break;
 
-    case SIG_KILL:
+    case org_eclipse_cdt_utils_spawner_Spawner_SIG_KILL:
         if (isTraceEnabled(CDT_TRACE_SPAWNER)) {
             cdtTrace(L"Spawner received KILL signal for process %i\n", pCurProcInfo->pid);
         }
@@ -665,12 +655,12 @@ extern "C"
         }
         ret = 0;
         break;
-    case SIG_INT:
+    case org_eclipse_cdt_utils_spawner_Spawner_SIG_INT:
         ResetEvent(pCurProcInfo->eventWait.handle);
         SetEvent(pCurProcInfo->eventBreak.handle);
         ret = (WaitForSingleObject(pCurProcInfo->eventWait.handle, 100) == WAIT_OBJECT_0);
         break;
-    case CTRLC:
+    case org_eclipse_cdt_utils_spawner_Spawner_SIG_CTRLC:
         ResetEvent(pCurProcInfo->eventWait.handle);
         SetEvent(pCurProcInfo->eventCtrlc.handle);
         ret = (WaitForSingleObject(pCurProcInfo->eventWait.handle, 100) == WAIT_OBJECT_0);

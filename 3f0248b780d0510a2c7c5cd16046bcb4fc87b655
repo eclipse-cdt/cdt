@@ -108,6 +108,30 @@
     },
     {
       "key": {
+        "uuid": "f33cc090_ae9ae29a",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-10-18T17:53:07Z",
+      "side": 1,
+      "message": "Based on that the Spawner#destroy() is synchronized while Process#destroy() is not, I thought the intention was that the function should not return until the process was dead.\nAnyway, switching it to return early is easy :)\nI\u0027ll push a new changeset without the loop in a few.",
+      "parentUuid": "efbf062f_a68f9e17",
+      "range": {
+        "startLine": 311,
+        "startChar": 0,
+        "endLine": 311,
+        "endChar": 33
+      },
+      "revId": "3f0248b780d0510a2c7c5cd16046bcb4fc87b655",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0f25e0db_9ed3da4b",
         "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
         "patchSetId": 1
@@ -176,6 +200,30 @@
       "revId": "3f0248b780d0510a2c7c5cd16046bcb4fc87b655",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3777be6_9ee0c600",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/spawner/Spawner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-10-18T17:53:07Z",
+      "side": 1,
+      "message": "Okay, point taken!",
+      "parentUuid": "3eed301d_3c8449bc",
+      "range": {
+        "startLine": 313,
+        "startChar": 0,
+        "endLine": 313,
+        "endChar": 12
+      },
+      "revId": "3f0248b780d0510a2c7c5cd16046bcb4fc87b655",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

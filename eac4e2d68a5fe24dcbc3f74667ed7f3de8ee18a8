@@ -16,6 +16,24 @@
       "revId": "eac4e2d68a5fe24dcbc3f74667ed7f3de8ee18a8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3dfa9c25_c81397ed",
+        "filename": "core/org.eclipse.cdt.core.native/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-10-19T08:00:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e43d00cf_37a503a2",
+      "revId": "eac4e2d68a5fe24dcbc3f74667ed7f3de8ee18a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

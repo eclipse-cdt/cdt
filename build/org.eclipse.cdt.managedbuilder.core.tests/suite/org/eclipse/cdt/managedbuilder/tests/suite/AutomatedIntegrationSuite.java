@@ -30,7 +30,6 @@ import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildEnvironmentTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildMacrosTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildTCSupportedTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedCommandLineGeneratorTest;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject21MakefileTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject30MakefileTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedProjectUpdateTests;
 import org.eclipse.cdt.managedbuilder.core.tests.MultiVersionSupportTests;
@@ -79,7 +78,6 @@ public class AutomatedIntegrationSuite {
 		suite.addTest(ManagedProjectUpdateTests.suite());
 		suite.addTest(ManagedCommandLineGeneratorTest.suite());
 		suite.addTest(ResourceBuildCoreTests.suite());
-		suite.addTest(ManagedProject21MakefileTests.suite());
 		suite.addTest(ManagedProject30MakefileTests.suite());
 		suite.addTest(BuildSystem40Tests.suite());
 		suite.addTest(ManagedBuildCore_SharedToolOptionsTests.suite());

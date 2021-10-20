@@ -67,7 +67,7 @@ import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
 import org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
-import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.Assert;

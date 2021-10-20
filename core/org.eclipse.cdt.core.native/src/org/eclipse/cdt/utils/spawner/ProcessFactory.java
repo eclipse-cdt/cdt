@@ -76,10 +76,30 @@ public class ProcessFactory {
 		return runtime.exec(cmdarray);
 	}
 
+	/**
+	 * @since 6.2
+	 */
+	public Process exec(String[] cmdarray, int gracefulExitTimeMs) throws IOException {
+		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
+		if (hasSpawner)
+			return new Spawner(cmdarray, gracefulExitTimeMs);
+		return runtime.exec(cmdarray);
+	}
+
 	public Process exec(String[] cmdarray, String[] envp) throws IOException {
 		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
 		if (hasSpawner)
 			return new Spawner(cmdarray, envp);
+		return runtime.exec(cmdarray, envp);
+	}
+
+	/**
+	 * @since 6.2
+	 */
+	public Process exec(String[] cmdarray, String[] envp, int gracefulExitTimeMs) throws IOException {
+		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
+		if (hasSpawner)
+			return new Spawner(cmdarray, envp, gracefulExitTimeMs);
 		return runtime.exec(cmdarray, envp);
 	}
 
@@ -112,10 +132,31 @@ public class ProcessFactory {
 		return runtime.exec(cmdarray, envp, dir);
 	}
 
+	/**
+	 * @since 6.2
+	 */
+	public Process exec(String cmdarray[], String[] envp, File dir, int gracefulExitTimeMs) throws IOException {
+		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
+		if (hasSpawner)
+			return new Spawner(cmdarray, envp, dir, gracefulExitTimeMs);
+		return runtime.exec(cmdarray, envp, dir);
+	}
+
 	public Process exec(String cmdarray[], String[] envp, File dir, PTY pty) throws IOException {
 		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
 		if (hasSpawner)
 			return new Spawner(cmdarray, envp, dir, pty);
+		throw new UnsupportedOperationException(Messages.Util_exception_cannotCreatePty);
+	}
+
+	/**
+	 * @since 6.2
+	 */
+	public Process exec(String cmdarray[], String[] envp, File dir, PTY pty, int gracefulExitTimeMs)
+			throws IOException {
+		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
+		if (hasSpawner)
+			return new Spawner(cmdarray, envp, dir, pty, gracefulExitTimeMs);
 		throw new UnsupportedOperationException(Messages.Util_exception_cannotCreatePty);
 	}
 

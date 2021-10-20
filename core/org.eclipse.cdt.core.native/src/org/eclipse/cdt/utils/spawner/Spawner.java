@@ -89,6 +89,8 @@ public class Spawner extends Process {
 	InputStream err;
 	private PTY fPty;
 
+	private final int fGracefulExitTimeMs;
+
 	private static enum State {
 		RUNNING, DESTROYING, DONE
 	}
@@ -100,6 +102,7 @@ public class Spawner extends Process {
 	 */
 	@Deprecated
 	public Spawner(String command, boolean bNoRedirect) throws IOException {
+		fGracefulExitTimeMs = getDefaultGracefulExitTimeMs();
 		StringTokenizer tokenizer = new StringTokenizer(command);
 		String[] cmdarray = new String[tokenizer.countTokens()];
 		for (int n = 0; tokenizer.hasMoreTokens(); n++)
@@ -110,11 +113,17 @@ public class Spawner extends Process {
 			exec(cmdarray, new String[0], "."); //$NON-NLS-1$
 	}
 
+	protected Spawner(String[] cmdarray, String[] envp, File dir) throws IOException {
+		this(cmdarray, envp, dir, getDefaultGracefulExitTimeMs());
+	}
+
 	/**
 	 * Executes the specified command and arguments in a separate process with the
 	 * specified environment and working directory.
+	 * @since 6.2
 	 **/
-	protected Spawner(String[] cmdarray, String[] envp, File dir) throws IOException {
+	protected Spawner(String[] cmdarray, String[] envp, File dir, int gracefulExitTimeMs) throws IOException {
+		fGracefulExitTimeMs = gracefulExitTimeMs;
 		String dirpath = "."; //$NON-NLS-1$
 		if (dir != null)
 			dirpath = dir.getAbsolutePath();
@@ -122,6 +131,14 @@ public class Spawner extends Process {
 	}
 
 	protected Spawner(String[] cmdarray, String[] envp, File dir, PTY pty) throws IOException {
+		this(cmdarray, envp, dir, pty, getDefaultGracefulExitTimeMs());
+	}
+
+	/**
+	 * @since 6.2
+	 */
+	protected Spawner(String[] cmdarray, String[] envp, File dir, PTY pty, int gracefulExitTimeMs) throws IOException {
+		fGracefulExitTimeMs = gracefulExitTimeMs;
 		String dirpath = "."; //$NON-NLS-1$
 		if (dir != null)
 			dirpath = dir.getAbsolutePath();
@@ -146,11 +163,25 @@ public class Spawner extends Process {
 	}
 
 	/**
+	 * @since 6.2
+	 */
+	protected Spawner(String[] cmdarray, int gracefulExitTimeMs) throws IOException {
+		this(cmdarray, null, gracefulExitTimeMs);
+	}
+
+	/**
 	 * Executes the specified command and arguments in a separate process with the
 	 * specified environment.
 	 **/
 	protected Spawner(String[] cmdarray, String[] envp) throws IOException {
 		this(cmdarray, envp, null);
+	}
+
+	/**
+	 * @since 6.2
+	 */
+	protected Spawner(String[] cmdarray, String[] envp, int gracefulExitTimeMs) throws IOException {
+		this(cmdarray, envp, null, gracefulExitTimeMs);
 	}
 
 	/**
@@ -170,6 +201,7 @@ public class Spawner extends Process {
 	 */
 	@Deprecated
 	protected Spawner(String command, String[] envp, File dir) throws IOException {
+		fGracefulExitTimeMs = getDefaultGracefulExitTimeMs();
 		StringTokenizer tokenizer = new StringTokenizer(command);
 		String[] cmdarray = new String[tokenizer.countTokens()];
 		for (int n = 0; tokenizer.hasMoreTokens(); n++)
@@ -314,7 +346,7 @@ public class Spawner extends Process {
 			// Grace before using the heavy gun.
 			if (fState != State.DONE) {
 				try {
-					wait(1000);
+					wait(fGracefulExitTimeMs);
 				} catch (InterruptedException e) {
 				}
 			}
@@ -614,5 +646,10 @@ public class Spawner extends Process {
 			final String reason = fException != null ? fException.getMessage() : "Unknown reason"; //$NON-NLS-1$
 			return NLS.bind(Messages.Util_error_cannotRun, fCmdarray[0], reason);
 		}
+	}
+
+	private static int getDefaultGracefulExitTimeMs() {
+		// TODO: fetch the preference value here
+		return 1000;
 	}
 }

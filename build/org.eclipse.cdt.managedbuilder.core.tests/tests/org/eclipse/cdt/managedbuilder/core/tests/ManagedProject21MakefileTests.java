@@ -191,7 +191,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 			}
 		}
 
-		if (succeeded) { //  Otherwise leave the projects around for comparison
+		if (succeeded || true) { //  Otherwise leave the projects around for comparison
 			for (int i = 0; i < projects.length; i++)
 				ManagedBuildTestHelper.removeProject(projects[i].getName());
 		}

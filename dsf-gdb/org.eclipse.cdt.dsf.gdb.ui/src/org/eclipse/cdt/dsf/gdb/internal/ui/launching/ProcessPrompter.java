@@ -36,8 +36,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
-import com.ibm.icu.text.MessageFormat;
-
 public class ProcessPrompter implements IStatusHandler {
 
 	public static class PrompterInfo {
@@ -181,8 +179,8 @@ public class ProcessPrompter implements IStatusHandler {
 					for (Object sel : selection) {
 						String pid = Integer.toString(((IProcessExtendedInfo) sel).getPid(), 10);
 						if (prompterInfo.debuggedProcesses.contains(pid)) {
-							return new Status(IStatus.ERROR, GdbUIPlugin.getUniqueIdentifier(), MessageFormat
-									.format(LaunchUIMessages.getString("ProcessPrompter.ErrProcessConected"), pid)); //$NON-NLS-1$
+							return new Status(IStatus.ERROR, GdbUIPlugin.getUniqueIdentifier(),
+									LaunchUIMessages.getFormattedString("ProcessPrompter.ErrProcessConected", pid)); //$NON-NLS-1$
 						}
 					}
 					return new Status(IStatus.OK, GdbUIPlugin.getUniqueIdentifier(), ""); //$NON-NLS-1$

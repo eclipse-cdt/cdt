@@ -12,6 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     John Dallaway - PyOCD extension, bug 574928
+ *     John Dallaway - Use default delay implementation, bug 576811
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
@@ -21,11 +22,6 @@ import java.util.Collection;
  * @since 10.4
  */
 public class PyOCD extends DefaultGDBJtagConnectionImpl {
-
-	@Override
-	public void doDelay(int delay, Collection<String> commands) {
-		/* not supported */
-	}
 
 	@Override
 	public void doReset(Collection<String> commands) {

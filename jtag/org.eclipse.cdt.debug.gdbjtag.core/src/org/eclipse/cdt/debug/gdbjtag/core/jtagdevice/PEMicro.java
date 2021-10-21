@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 QNX Software Systems and others.
+ * Copyright (c) 2008, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     John Dallaway - PEmicro extension, bug 552597
  *     John Dallaway - Eliminate deprecated API, bug 566462
+ *     John Dallaway - Use default delay implementation, bug 576811
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
@@ -22,11 +23,6 @@ import java.util.Collection;
  * @since 9.4
  */
 public class PEMicro extends DefaultGDBJtagConnectionImpl {
-
-	@Override
-	public void doDelay(int delay, Collection<String> commands) {
-		/* not supported */
-	}
 
 	@Override
 	public void doHalt(Collection<String> commands) {

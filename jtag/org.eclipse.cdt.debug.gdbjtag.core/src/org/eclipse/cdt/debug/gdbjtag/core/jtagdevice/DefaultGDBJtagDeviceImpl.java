@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 QNX Software Systems and others.
+ * Copyright (c) 2008, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     John Dallaway - Use GDB/MI for temporary breakpoint, bug 525726
  *     John Dallaway - Eliminate deprecated API, bug 566462
+ *     John Dallaway - Generalize default delay implementation, bug 576811
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
@@ -32,7 +33,10 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 
 	@Override
 	public void doDelay(int delay, Collection<String> commands) {
-		String cmd = "monitor delay " + String.valueOf(delay * 1000); //$NON-NLS-1$
+		// sleep is available on most hosts (including Cygwin and MSYS2) as
+		// part of the coreutils package but extenders should override this
+		// method to use an equivalent GDB "monitor" command if available
+		String cmd = "shell sleep " + String.valueOf(delay); //$NON-NLS-1$
 		addCmd(commands, cmd);
 	}
 

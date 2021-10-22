@@ -498,7 +498,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				}
 			}
 			if (callPopulateDummyTargets) {
-				populateDummyTargets(rcInfo, depFile, force);
+				generateDummyTargets(rcInfo, depFile, force);
 			}
 		} catch (CoreException e) {
 			throw e;
@@ -1036,7 +1036,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// Master list of "object" dependencies, i.e. dependencies between input files and output files.
 		StringBuffer macroBuffer = new StringBuffer();
 		List<String> valueList;
-		macroBuffer.append(addDefaultHeader());
+		macroBuffer.append(addGenericHeader());
 
 		// Map of macro names (String) to its definition (List of Strings)
 		HashMap<String, List<String>> outputMacros = new HashMap<>();
@@ -1088,7 +1088,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 	protected void populateSourcesMakefile(IFile fileHandle) throws CoreException {
 		// Add the comment
-		StringBuffer buffer = addDefaultHeader();
+		StringBuffer buffer = addGenericHeader();
 
 		// Determine the set of macros
 		toolInfos.accept(new IPathSettingsContainerVisitor() {
@@ -1212,7 +1212,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * for the top-level makefile.
 	 */
 	protected StringBuffer addTopHeader() {
-		return addDefaultHeader();
+		return addGenericHeader();
 	}
 
 	/**
@@ -1603,7 +1603,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			// appear to be used there (and tool outputs are consulted directly), but
 			// we quote it anyway just in case it starts to use it in future.
 			if (addRuleForTool(targetTool, buffer, true, ensurePathIsGNUMakeTargetRuleCompatibleSyntax(buildTargetName),
-					buildTargetExt, outputVarsAdditionsList, managedProjectOutputs, false)) {
+					buildTargetExt, outputVarsAdditionsList, managedProjectOutputs)) {
 				//  Mark the target tool as processed
 				for (int i = 0; i < buildTools.length; i++) {
 					if (targetTool == buildTools[i]) {
@@ -1623,7 +1623,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			IInputType type = tool.getPrimaryInputType();
 			if (type != null && type.getMultipleOfType()) {
 				if (!buildToolsUsed[i]) {
-					addRuleForTool(tool, buffer, false, null, null, outputVarsAdditionsList, null, false);
+					addRuleForTool(tool, buffer, false, null, null, outputVarsAdditionsList, null);
 					//  Mark the target tool as processed
 					buildToolsUsed[i] = true;
 					// Look for tools that consume the output
@@ -1688,17 +1688,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		buffer.append(TAB).append(DASH).append(AT).append(ECHO_BLANK_LINE).append(NEWLINE);
 
 		return buffer;
-	}
-
-	/**
-	 * @deprecated Use {@link #addRuleForTool(ITool, StringBuffer, boolean, String, String, List, Vector)}
-	 */
-	@Deprecated
-	protected boolean addRuleForTool(ITool tool, StringBuffer buffer, boolean bTargetTool, String targetName,
-			String targetExt, List<String> outputVarsAdditionsList, Vector<String> managedProjectOutputs,
-			boolean bEmitPostBuildStepCall) {
-		return addRuleForTool(tool, buffer, bTargetTool, targetName, targetExt, outputVarsAdditionsList,
-				managedProjectOutputs);
 	}
 
 	/**
@@ -1897,7 +1886,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 								if ((outVariable == null && inVariable == null) || (outVariable != null
 										&& inVariable != null && outVariable.equals(inVariable))) {
 									if (addRuleForTool(buildTools[k], buffer, false, null, null,
-											outputVarsAdditionsList, null, false)) {
+											outputVarsAdditionsList, null)) {
 										buildToolsUsed[k] = true;
 										// Look for tools that consume the output
 										generateRulesForConsumers(buildTools[k], outputVarsAdditionsList, buffer);
@@ -2043,7 +2032,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * for a fragment makefile (subdir.mk).
 	 */
 	protected StringBuffer addFragmentMakefileHeader() {
-		return addDefaultHeader();
+		return addGenericHeader();
 	}
 
 	/**
@@ -3565,15 +3554,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 	/**
-	 * @deprecated Use {@link GnuMakefileGenerator#generateDummyTargets(IConfiguration, IFile, boolean)}
-	 */
-	@Deprecated
-	static public boolean populateDummyTargets(IConfiguration cfg, IFile makefile, boolean force)
-			throws CoreException, IOException {
-		return new GnuMakefileGenerator().generateDummyTargets(cfg, makefile, force);
-	}
-
-	/**
 	 *  This method postprocesses a .d file created by a build.
 	 *  It's main job is to add dummy targets for the header files dependencies.
 	 *  This prevents make from aborting the build if the header file does not exist.
@@ -3591,15 +3571,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	public boolean generateDummyTargets(IConfiguration cfg, IFile makefile, boolean force)
 			throws CoreException, IOException {
 		return generateDummyTargets(cfg.getRootFolderInfo(), makefile, force);
-	}
-
-	/**
-	 * @deprecated Use {@link GnuMakefileGenerator#generateDummyTargets(IResourceInfo, IFile, boolean)}
-	 */
-	@Deprecated
-	static public boolean populateDummyTargets(IResourceInfo rcInfo, IFile makefile, boolean force)
-			throws CoreException, IOException {
-		return new GnuMakefileGenerator().generateDummyTargets(rcInfo, makefile, force);
 	}
 
 	/**
@@ -3638,7 +3609,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		String[] bufferLines = inBufferString.split("[\\r\\n]"); //$NON-NLS-1$
 		for (String bufferLine : bufferLines) {
 			if (bufferLine.endsWith(":")) { //$NON-NLS-1$
-				StringBuffer outBuffer = addDefaultHeader();
+				StringBuffer outBuffer = addGenericHeader();
 				outBuffer.append(inBuffer);
 				save(outBuffer, makefile);
 				return true;
@@ -3681,7 +3652,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		// Put the generated comments in the output buffer
 		if (!firstToken.startsWith(COMMENT_SYMBOL)) {
-			outBuffer = addDefaultHeader();
+			outBuffer = addGenericHeader();
 		} else {
 			outBuffer = new StringBuffer();
 		}
@@ -3798,14 +3769,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 	static public String ECHO_BLANK_LINE = ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE;
-
-	/**
-	 * @deprecated Use {@link GnuMakefileGenerator#addGenericHeader()}
-	 */
-	@Deprecated
-	static protected StringBuffer addDefaultHeader() {
-		return new GnuMakefileGenerator().addGenericHeader();
-	}
 
 	/**
 	 * Outputs a comment formatted as follows:

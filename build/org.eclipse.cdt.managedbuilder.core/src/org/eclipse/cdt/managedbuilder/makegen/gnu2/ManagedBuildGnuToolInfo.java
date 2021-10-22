@@ -56,7 +56,8 @@ import org.eclipse.core.runtime.Path;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
+public class ManagedBuildGnuToolInfo {
+	public final String DOT = "."; //$NON-NLS-1$
 
 	/*
 	 * Members
@@ -94,48 +95,37 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		}
 	}
 
-	/*
-	 * IManagedBuildGnuToolInfo Methods
-	 */
-	@Override
 	public boolean areInputsCalculated() {
 		return inputsCalculated;
 	}
 
 	//  Command inputs are top build directory relative
-	@Override
 	public Vector<String> getCommandInputs() {
 		return commandInputs;
 	}
 
 	//  Enumerated inputs are project relative
-	@Override
 	public Vector<String> getEnumeratedInputs() {
 		return enumeratedInputs;
 	}
 
-	@Override
 	public boolean areOutputsCalculated() {
 		return outputsCalculated;
 	}
 
 	//  Command outputs are top build directory relative
-	@Override
 	public Vector<String> getCommandOutputs() {
 		return commandOutputs;
 	}
 
-	@Override
 	public Vector<String> getEnumeratedPrimaryOutputs() {
 		return enumeratedPrimaryOutputs;
 	}
 
-	@Override
 	public Vector<String> getEnumeratedSecondaryOutputs() {
 		return enumeratedSecondaryOutputs;
 	}
 
-	@Override
 	public Vector<String> getOutputVariables() {
 		return outputVariables;
 	}
@@ -144,19 +134,16 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		return outputVariablesCalculated;
 	}
 
-	@Override
 	public boolean areDependenciesCalculated() {
 		return dependenciesCalculated;
 	}
 
 	//  Command dependencies are top build directory relative
-	@Override
 	public Vector<String> getCommandDependencies() {
 		return commandDependencies;
 	}
 
 	//  Additional targets are top build directory relative
-	@Override
 	public Vector<String> getAdditionalTargets() {
 		return additionalTargets;
 	}
@@ -165,7 +152,6 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	//	return enumeratedDependencies;
 	//}
 
-	@Override
 	public boolean isTargetTool() {
 		return bIsTargetTool;
 	}

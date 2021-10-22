@@ -1909,7 +1909,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		ManagedBuildGnuToolInfo[] gnuToolInfos = h.gnuToolInfos;
 		//  Get the information regarding the tool's inputs and outputs from the objects
 		//  created by calculateToolInputsOutputs
-		IManagedBuildGnuToolInfo toolInfo = null;
+		ManagedBuildGnuToolInfo toolInfo = null;
 		for (int i = 0; i < buildTools.length; i++) {
 			if (tool == buildTools[i]) {
 				toolInfo = gnuToolInfos[i];

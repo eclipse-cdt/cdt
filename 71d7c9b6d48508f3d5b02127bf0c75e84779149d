@@ -46,6 +46,30 @@
       "revId": "71d7c9b6d48508f3d5b02127bf0c75e84779149d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ebdb3c9_a17fea6e",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-10-25T19:21:57Z",
+      "side": 1,
+      "message": "I get the same number of errors in the problems view regardless of sequenceNumber\u003d30 or 31.\n\nThere are a few complains about missing @since tag for org.eclipse.cdt.jsoncdb.core.*, should these be fixed before M2?\nAfter closing org.eclipse.cdt.core.native, I\u0027m down to 6 errors related to missing @since tag and the rest is related to that I closed org.eclipse.cdt.core.native to hide the C/C++ errors in my development environment (specs detector fails for some reason).",
+      "parentUuid": "744e560b_5a93ad35",
+      "range": {
+        "startLine": 3,
+        "startChar": 44,
+        "endLine": 3,
+        "endChar": 47
+      },
+      "revId": "71d7c9b6d48508f3d5b02127bf0c75e84779149d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

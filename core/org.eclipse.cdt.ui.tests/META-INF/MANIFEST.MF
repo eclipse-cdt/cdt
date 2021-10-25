@@ -40,7 +40,8 @@ Require-Bundle: org.eclipse.jface.text,
  org.eclipse.osgi,
  org.eclipse.e4.core.contexts;bundle-version="[1.8.300,2.0.0)",
  org.mockito,
- org.hamcrest
+ org.hamcrest.core,
+ org.hamcrest.library
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-11

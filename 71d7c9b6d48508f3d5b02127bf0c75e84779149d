@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "acc9c61a_e92b7423",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-10-25T18:53:34Z",
+      "side": 1,
+      "message": "Should this be updated when there is no change to the content otherwise?",
+      "range": {
+        "startLine": 3,
+        "startChar": 44,
+        "endLine": 3,
+        "endChar": 47
+      },
+      "revId": "71d7c9b6d48508f3d5b02127bf0c75e84779149d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

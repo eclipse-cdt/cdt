@@ -22,6 +22,30 @@
       "revId": "71d7c9b6d48508f3d5b02127bf0c75e84779149d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "744e560b_5a93ad35",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-25T18:57:40Z",
+      "side": 1,
+      "message": "I was having a problem that the IDE was not reloading the cdt-baseline target when the target platform changed. I couldn\u0027t track down the issue, but the sequence number change forces the reload.\n\nI could exclude it if you can confirm that your workspace doesn\u0027t get filled with bogus API errors when updating to this commit (without this part of the change).",
+      "parentUuid": "acc9c61a_e92b7423",
+      "range": {
+        "startLine": 3,
+        "startChar": 44,
+        "endLine": 3,
+        "endChar": 47
+      },
+      "revId": "71d7c9b6d48508f3d5b02127bf0c75e84779149d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

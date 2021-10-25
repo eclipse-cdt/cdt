@@ -303,6 +303,17 @@ public class GdbLaunch extends DsfLaunch implements ITracedLaunch, ITargetedLaun
 			return;
 		}
 
+		if (handler instanceof org.eclipse.debug.internal.core.commands.TerminateCommand) {
+			// The org.eclipse.debug.internal.core.commands.TerminateCommand adapter
+			// calls Launch#terminate (asynchronously) so don't use that adapter.
+			// This special case code is needed because of behaviour changes
+			// introduced in Platform. See Bug 576622 and Bug 576024. CDT, when running
+			// tests, was relying on the undocumented behaviour that meant getAdapter
+			// was returning null here.
+			super.terminate();
+			return;
+		}
+
 		LaunchCommandRequest req = new LaunchCommandRequest(new Object[] { this });
 		handler.execute(req);
 	}

@@ -15,6 +15,7 @@ package org.eclipse.cdt.jsoncdb.core;
  * Preferences to configure the {@code compile_commands.json} parser.
  *
  * @author weber
+ * @since 1.1
  */
 public interface IParserPreferences {
 	/** Gets whether to also try a version suffix to detect a compiler. */

@@ -21,6 +21,7 @@ import java.util.Map;
  * @see CompileCommandsJsonParser
  *
  * @author weber
+ * @since 1.1
  */
 public interface ISourceFileInfoConsumer {
 	// Cmake writes filenames with forward slashes (/) even if it runs on windows.

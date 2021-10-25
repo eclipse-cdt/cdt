@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IFile;
 /** Holds the arguments used to create a {@link CompileCommandsJsonParser}.
  *
  * @author weber
+ * @since 1.1
  */
 public final class ParseRequest {
 	private final IFile compileCommandsJson;

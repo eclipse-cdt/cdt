@@ -34,6 +34,24 @@
       "revId": "e60ef74ebbe3a6af27bc31bf0ade1ece530eb57d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f85f9a4e_6dfe0947",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 171685
+      },
+      "writtenOn": "2021-10-26T13:50:54Z",
+      "side": 1,
+      "message": "But wasn\u0027t this fixed (returnin wrong factory) or is there still an issue?",
+      "parentUuid": "8260ffd1_71c6692e",
+      "revId": "e60ef74ebbe3a6af27bc31bf0ade1ece530eb57d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -16,6 +16,24 @@
       "revId": "e60ef74ebbe3a6af27bc31bf0ade1ece530eb57d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8260ffd1_71c6692e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-26T13:43:22Z",
+      "side": 1,
+      "message": "getAdapter used to return null here because the the adapter factory that mapped GdbLaunch to ITerminateHandler is not in an activated bundle. With the changes, since GdbLaunch -\u003e ITerminateHandler is not activated/loaded, the new adapter manager uses the Launch -\u003e ITerminateHandler adapter factory instead. The adapter returned in that case does not work (it actually causes a non-UI hang as that adapter just calls GdbLaunch.terminate asynchronously, which is this method, so you end up in a (asynchronous) loop).\n\nThis is exactly the test case testGetAdapterXYNotLoaded - look at the diff between PS2 and PS5 \n\n\nhttps://git.eclipse.org/r/c/equinox/rt.equinox.bundles/+/186540/2..5/bundles/org.eclipse.equinox.common.tests/src/org/eclipse/equinox/common/tests/adaptable/IAdapterManagerTest.java#456\n\nPS2 passed in the code before any of this manager changes, the test needed to be changed to get it to pass in PS5. See the comment history which led to the test being changed rather than the code.\n\nThe problem is also explained in Bug 576622 Comment 10:\n\n\u003e For example, if you have an adapter factory registered for ExtensionBasedTextEditor -\u003e IContentOutlinePage  and another factory for MySubclassOfExtensionBasedTextEditor -\u003e IContentOutlinePage then requesting adaption from MySubclassOfExtensionBasedTextEditor -\u003e IContentOutlinePage  should never use the factory of ExtensionBasedTextEditor -\u003e IContentOutlinePage regardless of activation states.",
+      "parentUuid": "1232dad4_b4ac0ebd",
+      "revId": "e60ef74ebbe3a6af27bc31bf0ade1ece530eb57d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

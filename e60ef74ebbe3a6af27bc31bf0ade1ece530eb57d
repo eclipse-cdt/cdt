@@ -106,6 +106,24 @@
       "revId": "e60ef74ebbe3a6af27bc31bf0ade1ece530eb57d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "238bccc7_9fb9c02a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-26T14:28:17Z",
+      "side": 1,
+      "message": "PS:\n\n\u003e And if now the one for B returns null we actually ask A even though it is less specific for the given type and you get a non-null value correct?\n\nis true too - but that is not the case I am talking about in this CDT change.",
+      "parentUuid": "98ac16f9_e0975cde",
+      "revId": "e60ef74ebbe3a6af27bc31bf0ade1ece530eb57d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

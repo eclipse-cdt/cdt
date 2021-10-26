@@ -124,6 +124,24 @@
       "revId": "e60ef74ebbe3a6af27bc31bf0ade1ece530eb57d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0323e24f_07f83720",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 171685
+      },
+      "writtenOn": "2021-10-26T14:33:42Z",
+      "side": 1,
+      "message": "I see and I agree with you that this is a behavioral change/regression even though at first glance it seems to be useful.\nThe major problem I thing is that query for an adapter *without* forcing loads has very limited use-cases and often leads to hard to debug problems and thus most code is using the variant where loading is allowed.\nE4 solves this by a special return value \u0027NOT_A_VALUE\u0027 that is checked to see if loading down streams are desired, but this won\u0027t apply here as a not-active factory can\u0027t express this easily (of course we might add support for a factory to declare if it is fine to delegate if not active...).",
+      "parentUuid": "98ac16f9_e0975cde",
+      "revId": "e60ef74ebbe3a6af27bc31bf0ade1ece530eb57d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

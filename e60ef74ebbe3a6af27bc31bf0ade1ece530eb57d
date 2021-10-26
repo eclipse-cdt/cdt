@@ -52,6 +52,24 @@
       "revId": "e60ef74ebbe3a6af27bc31bf0ade1ece530eb57d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03b4bb20_9cc872df",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-26T14:11:32Z",
+      "side": 1,
+      "message": "There were two issues (as highlighted by testGetAdapterXYNotLoaded and testGetAdapterXYNotLoadedForceLoad that I added) - the latter test has been resolved and the behaviour matches what was in previous release of Eclipse. The former shows a behaviour change. The decision was to make that behaviour change. I originally argued that the behaviour change shown in testGetAdapterXYNotLoaded was not in the original spec of Bug 576024, but this is what Mickael said:\n\n\u003e I think this doesn\u0027t qualify as a regression; but instead as an improvement as we now get an adapter (as requested) because there is one available.\n\u003e As mentioned by Andrey, I think it can be qualified as a regression only if this causes a bug; but here I hardly see how things can be worse because of this change (unlike previous issue about sorting that was more obviously causing bad behaviors by not conforming to the \"naive\" expectation)\n\nSo, what is your opinion on this, does the CDT change I made count as a bug? Should we reopen the decision again? Or was CDT relying on undocumented behaviour and CDT has to adapt to the change.",
+      "parentUuid": "f85f9a4e_6dfe0947",
+      "revId": "e60ef74ebbe3a6af27bc31bf0ade1ece530eb57d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

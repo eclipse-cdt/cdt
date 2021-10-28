@@ -18,6 +18,7 @@
 package org.eclipse.cdt.dsf.gdb.internal.memory;
 
 import java.math.BigInteger;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -59,8 +60,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A specialization of the DSF memory block retrieval implementation supporting
@@ -371,7 +370,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements 
 		if (service instanceof IMemorySpaces2) {
 			final IMemorySpaces2 memSpaceService = (IMemorySpaces2) service;
 
-			Query<IMemorySpaces.DecodeResult> query = new Query<IMemorySpaces.DecodeResult>() {
+			Query<IMemorySpaces.DecodeResult> query = new Query<>() {
 				@Override
 				protected void execute(final DataRequestMonitor<IMemorySpaces.DecodeResult> drm) {
 					memSpaceService.decodeExpression(dmc, expression, drm);

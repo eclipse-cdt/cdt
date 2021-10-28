@@ -24,6 +24,7 @@
 
 package org.eclipse.cdt.dsf.mi.service;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -111,8 +112,6 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.osgi.framework.BundleContext;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Breakpoint service interface.  The breakpoint service tracks CDT breakpoint
@@ -659,8 +658,7 @@ public class MIBreakpointsManager extends AbstractDsfService
 
 		// Install the back-end breakpoint(s)
 		for (final String thread : threads) {
-			DataRequestMonitor<IBreakpointDMContext> drm = new DataRequestMonitor<IBreakpointDMContext>(getExecutor(),
-					installRM) {
+			DataRequestMonitor<IBreakpointDMContext> drm = new DataRequestMonitor<>(getExecutor(), installRM) {
 				@Override
 				protected void handleSuccess() {
 					// Add the new back-end breakpoint to the map
@@ -1116,8 +1114,8 @@ public class MIBreakpointsManager extends AbstractDsfService
 
 		// New back-end breakpoints insertion monitor
 		// Holds the list of new back-end breakpoint contexts of the platform breakpoint
-		final DataRequestMonitor<Vector<IBreakpointDMContext>> insertRM = new DataRequestMonitor<Vector<IBreakpointDMContext>>(
-				getExecutor(), null) {
+		final DataRequestMonitor<Vector<IBreakpointDMContext>> insertRM = new DataRequestMonitor<>(getExecutor(),
+				null) {
 
 			@Override
 			// In theory, we could have had a partial success and the original threads

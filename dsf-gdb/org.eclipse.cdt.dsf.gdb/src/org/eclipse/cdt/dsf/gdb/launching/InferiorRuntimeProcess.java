@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
@@ -22,8 +23,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.RuntimeProcess;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A process for the inferior to know it belongs to a DSF-GDB session.

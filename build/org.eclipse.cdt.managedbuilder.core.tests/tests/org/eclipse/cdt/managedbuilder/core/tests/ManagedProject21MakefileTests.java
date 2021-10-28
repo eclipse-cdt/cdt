@@ -156,42 +156,42 @@ public class ManagedProject21MakefileTests extends TestCase {
 			return false;
 
 		boolean succeeded = true;
-		for (int i = 0; i < projects.length; i++) {
-			IProject curProject = projects[i];
+		try {
+			for (int i = 0; i < projects.length; i++) {
+				IProject curProject = projects[i];
 
-			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(curProject);
+				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(curProject);
 
-			//check whether the managed build info is converted
-			boolean isCompatible = UpdateManagedProjectManager.isCompatibleProject(info);
-			assertTrue(isCompatible);
+				//check whether the managed build info is converted
+				boolean isCompatible = UpdateManagedProjectManager.isCompatibleProject(info);
+				assertTrue(isCompatible);
 
-			if (isCompatible) {
-				// Build the project in order to generate the maekfiles
-				try {
-					curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
-				} catch (CoreException e) {
-					fail(e.getStatus().getMessage());
-				} catch (OperationCanceledException e) {
-					fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: "
-							+ e.getMessage());
-				}
+				if (isCompatible) {
+					// Build the project in order to generate the maekfiles
+					try {
+						curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+					} catch (CoreException e) {
+						fail(e.getStatus().getMessage());
+					} catch (OperationCanceledException e) {
+						fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: "
+								+ e.getMessage());
+					}
 
-				//compare the generated makefiles to their benchmarks
-				if (files != null && files.length > 0) {
-					if (i == 0) {
-						String configName = info.getDefaultConfiguration().getName();
-						IPath buildDir = Path.fromOSString(configName);
-						//						succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files);
-						IPath benchmarkLocationBase = resourcesLocation.append(benchmarkDir);
-						IPath buildLocation = curProject.getLocation().append(buildDir);
-						succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildLocation, files,
-								benchmarkLocationBase);
+					//compare the generated makefiles to their benchmarks
+					if (files != null && files.length > 0) {
+						if (i == 0) {
+							String configName = info.getDefaultConfiguration().getName();
+							IPath buildDir = Path.fromOSString(configName);
+							//						succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files);
+							IPath benchmarkLocationBase = resourcesLocation.append(benchmarkDir);
+							IPath buildLocation = curProject.getLocation().append(buildDir);
+							succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildLocation, files,
+									benchmarkLocationBase);
+						}
 					}
 				}
 			}
-		}
-
-		if (succeeded) { //  Otherwise leave the projects around for comparison
+		} finally {
 			for (int i = 0; i < projects.length; i++)
 				ManagedBuildTestHelper.removeProject(projects[i].getName());
 		}

@@ -16,6 +16,24 @@
       "revId": "15c29ebf2cfd2b97a67ac837cc80f8ed468a0493",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "247fbb72_afe2427d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu2/GnuMakefileGenerator.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 3996,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-10-28T15:23:28Z",
+      "side": 1,
+      "message": "Or maybe it\u0027s easier to just generate a sorted list?\n\nfor (String filename : files.stream().sorted().collect(Collectors.toList())) { ... }",
+      "parentUuid": "b26926d6_7c3aa7d1",
+      "revId": "15c29ebf2cfd2b97a67ac837cc80f8ed468a0493",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

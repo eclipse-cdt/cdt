@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b26926d6_7c3aa7d1",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu2/GnuMakefileGenerator.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 3996,
+      "author": {
+        "id": 858
+      },
+      "writtenOn": "2021-10-28T13:56:36Z",
+      "side": 1,
+      "message": "This seems to be iterating over a HashSet (created on line 4075), which I suspect will lead to (more) nondeterministic ordering in the makefile output. I will check more thoroughly and try to include a fix in my reworked version of https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/184751 . Probably trivial by replacing the HashSet with a TreeSet.",
+      "revId": "15c29ebf2cfd2b97a67ac837cc80f8ed468a0493",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

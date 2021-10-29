@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -4035,7 +4036,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 					// for projects with specific setting on folders/files do
 					// not clear the macro value on subsequent passes
-					map.putIfAbsent(macroName, new HashSet<>());
+					// use TreeSet for deterministically sorted output
+					map.putIfAbsent(macroName, new TreeSet<>());
 				}
 
 				// Set of input extensions for which macros have been created so far

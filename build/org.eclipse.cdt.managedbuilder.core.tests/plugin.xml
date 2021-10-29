@@ -3613,6 +3613,42 @@
 			            outputs="tmp">
 			         </outputType>
 			      </tool>
+			      <tool
+			      		name="touch"
+			      		command="touch"
+			      		commandLinePattern="${COMMAND} -r ${INPUTS} ${FLAGS}"
+			      		id="test30_2.touch">
+					 <optionCategory
+						  name="Options"
+						  id="test30_2.touch.category">
+					 </optionCategory>
+					 <option
+						  name="Touched Files"
+						  category="test30_2.touch.category"
+						  command="&quot;${value}&quot;"
+						  id="test30_2.touch.filenames"
+						  valueType="stringList">
+						<listOptionValue value="these"/>
+						<listOptionValue value="file names"/>
+						<listOptionValue value="are"/>
+						<listOptionValue value="not"/>
+						<listOptionValue value="in"/>
+						<listOptionValue value="alphabetical"/>
+						<listOptionValue value="order"/>
+					 </option>
+			         <inputType
+			            id="test30_2.touch.input1"
+			            buildVariable="LOGFILE"
+			            sources="log">
+			         </inputType>
+			         <outputType
+			            id="test30_2.touch.output"
+			            name="Touched files"
+			            multipleOfType="true"
+			            buildVariable="TOUCHEDFILES"
+			            option="test30_2.touch.filenames">
+			         </outputType>
+			      </tool>
 			  </toolChain>
          </configuration>
       </projectType>                 

@@ -14,6 +14,7 @@ CC_SRCS :=
 TAROUT := 
 TERMINAL__DUMMY_OUTPUT__OUTPUTS := 
 LOGFILE := 
+TOUCHEDFILES := 
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \

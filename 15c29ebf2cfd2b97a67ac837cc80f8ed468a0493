@@ -34,6 +34,24 @@
       "revId": "15c29ebf2cfd2b97a67ac837cc80f8ed468a0493",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97ddab18_646b55db",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu2/GnuMakefileGenerator.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 3996,
+      "author": {
+        "id": 858
+      },
+      "writtenOn": "2021-10-29T12:23:45Z",
+      "side": 1,
+      "message": "Ah yes, that’s another possibility. I didn’t think of using streams to make that more concise. Although in that case we might as well go all the way and use\n\nfiles.stream().sorted().forEachOrdered(filename -\u003e { ... });\n\nReplacing “Hash” by “Tree” in one place still seems simpler to me though.\n\nOn closer examination, it seems rather uncommon that `files` would ever contain more than one element. It comes from outputType definitions in the toolchain, and most tools probably don’t generate multiple outputs of the same type. None of the current unit tests nor the real-world toolchain in our product do. Experimenting in org.eclipse.cdt.managedbuilder.core.tests.ManagedProject30MakefileTests.test30_2 (one of only 3 tests that even hit this line), it took me a while to come up with a toolchain definition that would create a working (somewhat realistic) makefile with multiple elements here. Will include that in any solution I submit.",
+      "parentUuid": "247fbb72_afe2427d",
+      "revId": "15c29ebf2cfd2b97a67ac837cc80f8ed468a0493",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

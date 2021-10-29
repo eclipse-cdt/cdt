@@ -1,0 +1,193 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7264772_6aab4337",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/META-INF/MANIFEST.MF",
+        "patchSetId": 12
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-29T17:58:03Z",
+      "side": 1,
+      "message": "Was removal of reexport intentional?",
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c63332e_95477529",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 12
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-29T17:58:03Z",
+      "side": 1,
+      "message": "SWTBot reexports JUnit 4 :-(",
+      "range": {
+        "startLine": 8,
+        "startChar": 16,
+        "endLine": 8,
+        "endChar": 37
+      },
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8dd8f48c_0ab76be8",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 12
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-29T17:58:03Z",
+      "side": 1,
+      "message": "Yay for Junit5/Jupiter use :-)",
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64cb5313_24acf679",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/src/org/eclipse/cdt/cmake/ui/internal/tests/NewCMakeProjectTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-29T17:58:03Z",
+      "side": 1,
+      "message": "Why?",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 34
+      },
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7cafd92_e2be7d95",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/src/org/eclipse/cdt/cmake/ui/internal/tests/NewCMakeProjectTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-29T17:58:03Z",
+      "side": 1,
+      "message": "The existing and new tests don\u0027t cleanup after themselves, so when run all the projects end up in the workspace. At the moment that isn\u0027t a big problem, but eventually we should be cleaning up.",
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b0a0aee7_e6153d9a",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/src/org/eclipse/cdt/cmake/ui/internal/tests/NewCMakeProjectTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-29T17:58:03Z",
+      "side": 1,
+      "message": "Suggestion: This test should ensure all three projects actually get imported.",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 124,
+        "endChar": 41
+      },
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7676acf0_b6a93e28",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/src/org/eclipse/cdt/cmake/ui/internal/tests/NewCMakeProjectTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-29T17:58:03Z",
+      "side": 1,
+      "message": "Please make this fail(e) so that the stacktrace of the inner exception is saved.",
+      "range": {
+        "startLine": 205,
+        "startChar": 5,
+        "endLine": 205,
+        "endChar": 26
+      },
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b7eb4b9_e55a1da4",
+        "filename": "tools.templates/org.eclipse.tools.templates.ui/src/org/eclipse/tools/templates/ui/ProjectImportConfigurator.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-29T17:58:03Z",
+      "side": 1,
+      "message": "NLS warning on this line",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 55
+      },
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ddca2982_478764f1",
+        "filename": "tools.templates/org.eclipse.tools.templates.ui/src/org/eclipse/tools/templates/ui/ProjectImportConfigurator.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-29T17:58:03Z",
+      "side": 1,
+      "message": "Not sure if it is possible here for the container to not be physically in the project - but getLocation can return null in general.",
+      "range": {
+        "startLine": 141,
+        "startChar": 0,
+        "endLine": 141,
+        "endChar": 51
+      },
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

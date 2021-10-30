@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "ae1abe53_d1871d31",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/META-INF/MANIFEST.MF",
+        "patchSetId": 12
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-10-30T23:58:36Z",
+      "side": 1,
+      "message": "I guess I am suprised that this doesn\u0027t cause an API error, but I don\u0027t like reexport so I am happy to see it go.",
+      "parentUuid": "9b10da35_b768a790",
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1c63332e_95477529",
         "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/META-INF/MANIFEST.MF",
         "patchSetId": 12

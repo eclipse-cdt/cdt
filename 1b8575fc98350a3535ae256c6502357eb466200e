@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9b10da35_b768a790",
+        "filename": "cmake/org.eclipse.cdt.cmake.core/META-INF/MANIFEST.MF",
+        "patchSetId": 12
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2021-10-30T11:35:56Z",
+      "side": 1,
+      "message": "Yes it didn\u0027t make sense to me to re-export this bundle\u0027s packages. Surely it would allow the possibility of OSGi wiring this bundle as a dep when a tools.templates.freemarker package is required? I assume there are tools.templates consumers that don\u0027t care about cmake at all.\n\nI added an explicit requirement on tools.templates.freemarker from cmake.ui to compensate for the removal of this re-export.",
+      "parentUuid": "f7264772_6aab4337",
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1c63332e_95477529",
         "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/META-INF/MANIFEST.MF",
         "patchSetId": 12
@@ -82,6 +100,30 @@
     },
     {
       "key": {
+        "uuid": "9334cc83_c2fcf8fd",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/src/org/eclipse/cdt/cmake/ui/internal/tests/NewCMakeProjectTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2021-10-30T11:35:56Z",
+      "side": 1,
+      "message": "Good question, I probably added this in temporarily and then left it. Obviously these tests do not depend on each other and order is not important. Removed.",
+      "parentUuid": "64cb5313_24acf679",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 34
+      },
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b7cafd92_e2be7d95",
         "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/src/org/eclipse/cdt/cmake/ui/internal/tests/NewCMakeProjectTest.java",
         "patchSetId": 12
@@ -122,6 +164,30 @@
     },
     {
       "key": {
+        "uuid": "62e29c98_23a31003",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/src/org/eclipse/cdt/cmake/ui/internal/tests/NewCMakeProjectTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2021-10-30T11:35:56Z",
+      "side": 1,
+      "message": "Yeah fair enough, done.",
+      "parentUuid": "b0a0aee7_e6153d9a",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 124,
+        "endChar": 41
+      },
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7676acf0_b6a93e28",
         "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/src/org/eclipse/cdt/cmake/ui/internal/tests/NewCMakeProjectTest.java",
         "patchSetId": 12
@@ -142,6 +208,30 @@
       "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8822705d_8e250ea3",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/src/org/eclipse/cdt/cmake/ui/internal/tests/NewCMakeProjectTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2021-10-30T11:35:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7676acf0_b6a93e28",
+      "range": {
+        "startLine": 205,
+        "startChar": 5,
+        "endLine": 205,
+        "endChar": 26
+      },
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     },
     {
       "key": {
@@ -168,6 +258,30 @@
     },
     {
       "key": {
+        "uuid": "ea94419d_eefd9b51",
+        "filename": "tools.templates/org.eclipse.tools.templates.ui/src/org/eclipse/tools/templates/ui/ProjectImportConfigurator.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2021-10-30T11:35:56Z",
+      "side": 1,
+      "message": "Ah yes, I left this warning on purpose as a reminder to externalise the string -- which I clearly didn\u0027t do ;-)\n\nIn the latest patchset I used Eclipse\u0027s externalise strings function to externalise all the strings in this package.",
+      "parentUuid": "0b7eb4b9_e55a1da4",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 55
+      },
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ddca2982_478764f1",
         "filename": "tools.templates/org.eclipse.tools.templates.ui/src/org/eclipse/tools/templates/ui/ProjectImportConfigurator.java",
         "patchSetId": 12
@@ -188,6 +302,30 @@
       "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "373835ad_b7021a44",
+        "filename": "tools.templates/org.eclipse.tools.templates.ui/src/org/eclipse/tools/templates/ui/ProjectImportConfigurator.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2021-10-30T11:35:56Z",
+      "side": 1,
+      "message": "The caller (SmartImportJob) does a null check on container.getLocation() before passing the container to us, so as-written container.getLocation() cannot be null here.",
+      "parentUuid": "ddca2982_478764f1",
+      "range": {
+        "startLine": 141,
+        "startChar": 0,
+        "endLine": 141,
+        "endChar": 51
+      },
+      "revId": "1b8575fc98350a3535ae256c6502357eb466200e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

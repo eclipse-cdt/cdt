@@ -16,6 +16,24 @@
       "revId": "858af9bdd8bba58efc089b3f7cac82d452031a9d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f9d6a33_6989b1a9",
+        "filename": "cmake/org.eclipse.cdt.cmake.ui.tests/src/org/eclipse/cdt/cmake/ui/internal/tests/NewCMakeProjectTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2021-10-31T10:55:11Z",
+      "side": 1,
+      "message": "No need to be sorry, what you say makes sense :-) Should be addressed in the latest patchset.",
+      "parentUuid": "0488d64d_899af77a",
+      "revId": "858af9bdd8bba58efc089b3f7cac82d452031a9d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

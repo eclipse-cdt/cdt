@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2020 QNX Software Systems and others.
+ * Copyright (c) 2007, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,7 +53,6 @@ import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -105,13 +104,8 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 	@Override
 	public void createControl(Composite parent) {
-		ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-		sc.setExpandHorizontal(true);
-		sc.setExpandVertical(true);
-		setControl(sc);
-
-		Composite comp = new Composite(sc, SWT.NONE);
-		sc.setContent(comp);
+		Composite comp = new Composite(parent, SWT.NONE);
+		setControl(comp);
 		GridLayout layout = new GridLayout(2, false);
 		comp.setLayout(layout);
 

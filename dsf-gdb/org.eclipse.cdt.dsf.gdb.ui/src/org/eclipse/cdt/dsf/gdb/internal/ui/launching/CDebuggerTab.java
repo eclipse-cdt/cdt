@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 QNX Software Systems and others.
+ * Copyright (c) 2008, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -44,7 +44,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -88,8 +87,6 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	protected Button fStopInMain;
 	protected Text fStopInMainSymbol;
 
-	private ScrolledComposite fContainer;
-
 	private Composite fContents;
 
 	private IContentChangeListener fContentListener = new IContentChangeListener() {
@@ -115,14 +112,8 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 
 	@Override
 	public void createControl(Composite parent) {
-		fContainer = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-		fContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fContainer.setLayout(new FillLayout());
-		fContainer.setExpandHorizontal(true);
-		fContainer.setExpandVertical(true);
-
-		fContents = new Composite(fContainer, SWT.NONE);
-		setControl(fContainer);
+		fContents = new Composite(parent, SWT.NONE);
+		setControl(fContents);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB);
 		int numberOfColumns = fAttachMode ? 2 : 1;
@@ -137,8 +128,6 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 
 		createOptionsComposite(fContents);
 		createDebuggerGroup(fContents, 2);
-
-		fContainer.setContent(fContents);
 	}
 
 	protected void initDebuggerTypes(String selection) {
@@ -378,7 +367,8 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	}
 
 	protected void contentsChanged() {
-		fContainer.setMinSize(fContents.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		ScrolledComposite parent = (ScrolledComposite) fContents.getParent();
+		parent.setMinSize(fContents.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	protected void loadDynamicDebugArea() {

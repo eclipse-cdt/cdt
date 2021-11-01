@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2016, 2021 QNX Software Systems and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +36,7 @@ import org.eclipse.launchbar.ui.ILaunchBarUIManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -198,13 +209,18 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		tabItem.setText(tab.getName());
 		tabItem.setImage(tab.getImage());
 
-		Composite tabComp = new Composite(tabFolder, SWT.NONE);
-		tabComp.setLayout(new GridLayout());
-		tabItem.setControl(tabComp);
-
-		tab.createControl(tabComp);
-		Control configControl = tab.getControl();
-		configControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		ScrolledComposite sc = new ScrolledComposite(tabItem.getParent(), SWT.V_SCROLL | SWT.H_SCROLL);
+		sc.setFont(tabItem.getParent().getFont());
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		sc.setShowFocusedControl(true);
+		tab.createControl(sc);
+		Control control = tab.getControl();
+		if (control != null) {
+			sc.setContent(control);
+			sc.setMinSize(control.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			tabItem.setControl(control.getParent());
+		}
 
 		return tabItem;
 	}

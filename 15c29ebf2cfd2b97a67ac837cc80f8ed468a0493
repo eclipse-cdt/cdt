@@ -52,6 +52,24 @@
       "revId": "15c29ebf2cfd2b97a67ac837cc80f8ed468a0493",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50475cae_ca3d44d0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu2/GnuMakefileGenerator.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 3996,
+      "author": {
+        "id": 858
+      },
+      "writtenOn": "2021-11-02T13:13:06Z",
+      "side": 1,
+      "message": "Done in https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/187227",
+      "parentUuid": "97ddab18_646b55db",
+      "revId": "15c29ebf2cfd2b97a67ac837cc80f8ed468a0493",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

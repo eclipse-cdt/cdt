@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3de330c9_6964695b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 910,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-04T13:24:05Z",
+      "side": 1,
+      "message": "Well that looks weird using the string from GDB as the format to MessageFormat.format",
+      "range": {
+        "startLine": 910,
+        "startChar": 0,
+        "endLine": 910,
+        "endChar": 77
+      },
+      "revId": "ef30e37327f805312f88d20d5291c2b4d3df9a2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

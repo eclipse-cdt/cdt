@@ -37,6 +37,7 @@ public abstract class SettingsProcessor implements ISettingsProcessor {
 	protected static final String NONE = ""; //$NON-NLS-1$
 	protected static final String CDATA = "CDATA"; //$NON-NLS-1$
 
+	protected static final String ID_ATTRIBUTE = "id"; //$NON-NLS-1$
 	protected static final String NAME_ATTRIBUTE = "name"; //$NON-NLS-1$
 	protected static final String LANGUAGE_ELEMENT = "language"; //$NON-NLS-1$
 
@@ -51,13 +52,6 @@ public abstract class SettingsProcessor implements ISettingsProcessor {
 	protected abstract void readSettings(ICLanguageSetting setting, Element language)
 			throws SettingsImportExportException;
 
-	/**
-	 * Outputs a newline (\n) to the given ContentHandler.
-	 */
-	protected static void newline(ContentHandler handler) throws SAXException {
-		handler.ignorableWhitespace("\n".toCharArray(), 0, 1); //$NON-NLS-1$
-	}
-
 	@Override
 	public void writeSectionXML(ICFolderDescription projectRoot, ContentHandler content)
 			throws SettingsImportExportException {
@@ -66,12 +60,14 @@ public abstract class SettingsProcessor implements ISettingsProcessor {
 
 		try {
 			for (ICLanguageSetting language : languages) {
-				//TODO for some reason language.getLanguageId() is returning null
+				String languageId = language.getLanguageId();
 				String languageName = language.getName();
 				attributes.clear();
+				if (languageId != null) {
+					attributes.addAttribute(NONE, NONE, ID_ATTRIBUTE, CDATA, languageId);
+				}
 				attributes.addAttribute(NONE, NONE, NAME_ATTRIBUTE, CDATA, languageName);
 				content.startElement(NONE, NONE, LANGUAGE_ELEMENT, attributes);
-				newline(content);
 
 				ICLanguageSettingEntry[] settings = language.getSettingEntries(getSettingsType());
 
@@ -81,9 +77,7 @@ public abstract class SettingsProcessor implements ISettingsProcessor {
 					}
 				}
 
-				newline(content);
 				content.endElement(NONE, NONE, LANGUAGE_ELEMENT);
-				newline(content);
 			}
 
 		} catch (SAXException e) {
@@ -95,15 +89,21 @@ public abstract class SettingsProcessor implements ISettingsProcessor {
 	public void readSectionXML(ICFolderDescription projectRoot, Element section) throws SettingsImportExportException {
 		ICLanguageSetting[] languageSettings = projectRoot.getLanguageSettings();
 
+		Map<String, ICLanguageSetting> languageIdMap = new HashMap<>();
 		Map<String, ICLanguageSetting> languageMap = new HashMap<>();
 		for (ICLanguageSetting language : languageSettings) {
+			languageIdMap.put(language.getLanguageId(), language);
 			languageMap.put(language.getName(), language);
 		}
 
 		List<Element> elements = XMLUtils.extractChildElements(section, LANGUAGE_ELEMENT); // throws SettingsImportExportException
 		for (Element languageElement : elements) {
-			String languageName = languageElement.getAttribute(NAME_ATTRIBUTE);
-			ICLanguageSetting setting = languageMap.get(languageName);
+			String languageId = languageElement.getAttribute(ID_ATTRIBUTE);
+			ICLanguageSetting setting = languageIdMap.get(languageId);
+			if (setting == null) {
+				String languageName = languageElement.getAttribute(NAME_ATTRIBUTE);
+				setting = languageMap.get(languageName);
+			}
 			if (setting != null)
 				readSettings(setting, languageElement);
 		}

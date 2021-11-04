@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.settingswizards;
 
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Writer;
 import java.net.URI;
 import java.util.List;
 
@@ -34,7 +33,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -82,12 +80,12 @@ public class ProjectSettingsExportStrategy implements IProjectSettingsWizardPage
 		// do nothing
 	}
 
-	private Writer getWriter(IProjectSettingsWizardPage page) throws IOException {
+	private FileOutputStream getFileOutputStream(IProjectSettingsWizardPage page) throws IOException {
 		IPath path = new Path(page.getDestinationFilePath());
 		if (!IProjectSettingsWizardPage.FILENAME_EXTENSION.equals(path.getFileExtension()))
 			path.addFileExtension(IProjectSettingsWizardPage.FILENAME_EXTENSION);
 
-		return new FileWriter(path.toFile());
+		return new FileOutputStream(path.toFile());
 	}
 
 	/**
@@ -107,22 +105,24 @@ public class ProjectSettingsExportStrategy implements IProjectSettingsWizardPage
 		}
 
 		// gets a writer for the file that was selected by the user
-		Writer writer;
+		FileOutputStream outputStream;
 		try {
-			writer = getWriter(page);
+			outputStream = getFileOutputStream(page);
 		} catch (IOException e) {
 			page.showErrorDialog(Messages.ProjectSettingsExportStrategy_fileOpenError,
 					Messages.ProjectSettingsExportStrategy_couldNotOpen);
 			return false;
 		}
 
-		// stream the results to the writer as text
-		handler.setResult(new StreamResult(writer));
-
 		// write out the XML header
 		Transformer transformer = handler.getTransformer();
-		transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); //$NON-NLS-1$ //$NON-NLS-2$
+		transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes"); //$NON-NLS-1$
+
+		// stream the results to the writer as text
+		handler.setResult(new StreamResult(outputStream));
 
 		List<ISettingsProcessor> exporters = page.getSelectedSettingsProcessors();
 
@@ -134,27 +134,21 @@ public class ProjectSettingsExportStrategy implements IProjectSettingsWizardPage
 			AttributesImpl attributes = new AttributesImpl();
 
 			handler.startDocument();
-			newline(handler);
 			handler.startElement(NONE, NONE, ROOT_ELEMENT, null);
-			newline(handler);
 
 			for (ISettingsProcessor exporter : exporters) {
 				attributes.clear();
 				attributes.addAttribute(NONE, NONE, SECTION_NAME_ATTRIBUTE, CDATA, exporter.getSectionName());
 				handler.startElement(NONE, NONE, SECTION_ELEMENT, attributes);
-				newline(handler);
 
 				// each exporter is responsible for writing out its own section of the file
 				exporter.writeSectionXML(projectRoot, handler);
 
 				handler.endElement(NONE, NONE, SECTION_ELEMENT);
-				newline(handler);
 			}
 
 			handler.endElement(NONE, NONE, ROOT_ELEMENT);
-			newline(handler);
 			handler.endDocument();
-			newline(handler);
 
 			result = true;
 		} catch (SAXException e) {
@@ -173,13 +167,6 @@ public class ProjectSettingsExportStrategy implements IProjectSettingsWizardPage
 		ResourcesUtil.refreshWorkspaceFiles(uri);
 
 		return result;
-	}
-
-	/**
-	 * Outputs a newline (\n) to the given ContentHandler.
-	 */
-	private static void newline(ContentHandler handler) throws SAXException {
-		handler.ignorableWhitespace("\n".toCharArray(), 0, 1); //$NON-NLS-1$
 	}
 
 }

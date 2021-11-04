@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 QNX Software Systems and others.
+ * Copyright (c) 2017, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,7 +53,7 @@ public class SWTBotCSelector extends AbstractSWTBotControl<CSelector> {
 	}
 
 	public void clickEdit() {
-		bot().buttonWithId(LaunchBarWidgetIds.EDIT).click(); // $NON-NLS-1$
+		bot().canvasWithId(LaunchBarWidgetIds.EDIT).click();
 	}
 
 	public void select(String text) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 QNX Software Systems and others.
+ * Copyright (c) 2017, 2021 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -73,6 +73,22 @@ public class SWTBotConfigSelector extends SWTBotCSelector {
 		}
 	}
 
+	public static class EditConfigDialog extends SWTBotShell {
+		public EditConfigDialog(Shell shell) {
+			super(shell);
+		}
+
+		public EditConfigDialog selectTab(String tab) {
+			bot().cTabItem(tab).activate();
+			return this;
+		}
+
+		public EditConfigDialog ok() {
+			bot().button("OK").click();
+			return this;
+		}
+	}
+
 	public SWTBotConfigSelector(ConfigSelector configSelector) {
 		super(configSelector);
 	}
@@ -87,4 +103,8 @@ public class SWTBotConfigSelector extends SWTBotCSelector {
 		return new NewConfigDialog(bot().shell("Create Launch Configuration").widget);
 	}
 
+	public EditConfigDialog editConfigDialog() {
+		clickEdit();
+		return new EditConfigDialog(bot().shell("Edit Configuration").widget);
+	}
 }

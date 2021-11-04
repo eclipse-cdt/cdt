@@ -74,7 +74,6 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 
 		try {
 			content.startElement(NONE, NONE, MACRO_ELEMENT, null);
-			newline(content);
 
 			content.startElement(NONE, NONE, NAME_ELEMENT, null);
 			content.characters(name, 0, name.length);
@@ -83,10 +82,8 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 			content.startElement(NONE, NONE, VALUE_ELEMENT, null);
 			content.characters(value, 0, value.length);
 			content.endElement(NONE, NONE, VALUE_ELEMENT);
-			newline(content);
 
 			content.endElement(NONE, NONE, MACRO_ELEMENT);
-			newline(content);
 
 		} catch (SAXException e) {
 			throw new SettingsImportExportException(e);

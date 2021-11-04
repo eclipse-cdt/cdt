@@ -76,7 +76,6 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 			content.startElement(NONE, NONE, INCLUDE_PATH_ELEMENT, attrib);
 			content.characters(value, 0, value.length);
 			content.endElement(NONE, NONE, INCLUDE_PATH_ELEMENT);
-			newline(content);
 
 		} catch (SAXException e) {
 			throw new SettingsImportExportException(e);

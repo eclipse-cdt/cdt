@@ -48,7 +48,10 @@ public class SettingsImportExportTest extends BaseUITestCase {
 			new CMacroEntry("smac", "blah", 0) };
 
 	private static ICLanguageSettingEntry[] EXPORTED_INCLUDES = new ICLanguageSettingEntry[] {
-			new CIncludePathEntry("/path/to/somewhere", 0), new CIncludePathEntry("/blah/blah/blah", 0),
+			// There is a multi-byte character at the end of this first string. When this test
+			// was run without the fix for Bug 577074 and -Dfile.encoding that would cause the
+			// character to be corrupted (e.g. windows-1252)
+			new CIncludePathEntry("/path/to/somewhere¢", 0), new CIncludePathEntry("/blah/blah/blah", 0),
 			new CIncludePathEntry("pantera/is/awesome", 0) };
 
 	public SettingsImportExportTest() {

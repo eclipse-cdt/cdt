@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2b331298_ae61f43d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-04T15:18:46Z",
+      "side": 1,
+      "message": "BTW the issue was originally derived from a change in platform debug that CDT never adapted to back in 2010. See Bug 295373 and https://git.eclipse.org/r/plugins/gitiles/platform/eclipse.platform.debug/+/218e145643e40fa60253ed05d3c575a07d12b807%5E%21/#F1 where LaunchConfigurationTabGroupViewer got a Scrolled Composite added.\nPrior to that each tab seemed to have to handle the scrolled composite itself. Most of the CDT tabs either existed before that, or were copied from code from before that AFAICT.",
+      "revId": "58490f8b9d10201c4c166bf7f09871b5848c1e47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

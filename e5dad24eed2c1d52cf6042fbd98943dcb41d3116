@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "880525b1_35b58b4e",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-06T17:15:16Z",
+      "side": 1,
+      "message": "What is this \"defaultValue\" used for - is it just a label? If so it should definitively be updated, but probably to say something like \"latest\"",
+      "revId": "e5dad24eed2c1d52cf6042fbd98943dcb41d3116",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a27caea7_2b8f729d",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-06T17:15:16Z",
+      "side": 1,
+      "message": "Hmm. This seems to have gone backwards. From 2021-12 M2 to 2021-09 R?",
+      "revId": "e5dad24eed2c1d52cf6042fbd98943dcb41d3116",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "90792c0f_ef9fee81",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-06T17:15:16Z",
+      "side": 1,
+      "message": "This has gone backwards - the master branch should be building on nightly.",
+      "revId": "e5dad24eed2c1d52cf6042fbd98943dcb41d3116",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e3de0b4_fdb4ff43",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-06T17:15:16Z",
+      "side": 1,
+      "message": "This has gone backwards from 2021-12 M2 to 2021-09 R",
+      "revId": "e5dad24eed2c1d52cf6042fbd98943dcb41d3116",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f7df448_537a7bf1",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-06T17:15:16Z",
+      "side": 1,
+      "message": "The API baseline should be 2021-03 still as that is the version of Platform that CDT 10.4.0 was built against. However I don\u0027t know if it really matters - and there are problems in the baseline (it probably shouldn\u0027t be using snapshot for wwd and docker)",
+      "revId": "e5dad24eed2c1d52cf6042fbd98943dcb41d3116",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

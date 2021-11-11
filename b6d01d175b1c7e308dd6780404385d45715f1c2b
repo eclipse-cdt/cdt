@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fc415e5c_fd742541",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/viewmodel/GdbExtendedVMMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-11T18:39:04Z",
+      "side": 1,
+      "message": "So... this one is the problem. I am 100% ok to fix this bad format, but this is the example code that CDT integrators use/copy from to extend DSF. Changing MessageFormat implementation on this means that things crash :-(\n\nA quick look at a couple of customer\u0027s implementations shows this same format problem (unquoted #) copied in one of them.",
+      "revId": "b6d01d175b1c7e308dd6780404385d45715f1c2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fda8f51c_276b0d6c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/properties/LabelText.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-11T18:39:04Z",
+      "side": 1,
+      "message": "This changes the signature of some methods - but this class is technically \"provisional API\" because the dependent packages in Platform Debug are provisional (see Bug 365672 and search [1] for \"provisional\"). \n\nThis change would cause a runtime exception for extenders who are not building against the latest version. \n\nTherefore, before merging this I think it needs at a minimum some notice on cdt-dev, and possibly the two year deprecate \u0026 delete process[2].\n\nWDYT?\n\n[1] https://help.eclipse.org/latest/topic/org.eclipse.cdt.doc.isv/guide/dsf/intro/dsf_programming_intro.html?cp\u003d14_0_6\n[2] https://wiki.eclipse.org/CDT/policy#Deprecating_and_Deleting_API",
+      "revId": "b6d01d175b1c7e308dd6780404385d45715f1c2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e32b2b80_f9ad592f",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/properties/LabelText.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-11T18:39:04Z",
+      "side": 1,
+      "message": "... this constructor",
+      "revId": "b6d01d175b1c7e308dd6780404385d45715f1c2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70bfa8b6_7a49a470",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/properties/LabelText.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-11T18:39:04Z",
+      "side": 1,
+      "message": "... this getter",
+      "revId": "b6d01d175b1c7e308dd6780404385d45715f1c2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd1c5dff_c1758f83",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/ui/viewmodel/properties/LabelText.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-11-11T18:39:04Z",
+      "side": 1,
+      "message": "... this setter",
+      "revId": "b6d01d175b1c7e308dd6780404385d45715f1c2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.IAddress;
@@ -33,8 +34,6 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * This factory provides an instance of ICSourceNotFoundDescription that can
  * generate a description of a IFrameDMContext.
@@ -47,7 +46,7 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType.equals(ICSourceNotFoundDescription.class) && adaptableObject instanceof IFrameDMContext) {
 			final IFrameDMContext frameDMC = (IFrameDMContext) adaptableObject;
-			Query<IStack.IFrameDMData> query = new Query<IStack.IFrameDMData>() {
+			Query<IStack.IFrameDMData> query = new Query<>() {
 				@Override
 				protected void execute(DataRequestMonitor<IStack.IFrameDMData> rm) {
 					DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),

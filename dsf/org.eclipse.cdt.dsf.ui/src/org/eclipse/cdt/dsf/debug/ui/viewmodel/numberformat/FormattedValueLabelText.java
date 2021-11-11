@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.core.runtime.IStatus;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Label attribute that fills in the formatted value text using the active

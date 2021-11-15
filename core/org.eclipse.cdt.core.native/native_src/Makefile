@@ -24,7 +24,7 @@ OS_DIR_LINUX_X86_64 := ../../org.eclipse.cdt.core.linux.x86_64/os/linux/x86_64
 OS_DIR_LINUX_AARCH64 := ../../org.eclipse.cdt.core.linux.aarch64/os/linux/aarch64
 OS_DIR_LINUX_PPC64LE := ../../org.eclipse.cdt.core.linux.ppc64le/os/linux/ppc64le
 OS_DIR_MACOS_X86_64 := ../../org.eclipse.cdt.core.macosx/os/macosx/x86_64
-OS_DIR_MACOS_X86 := ../../org.eclipse.cdt.core.macosx/os/macosx/x86
+OS_DIR_MACOS_AARCH64 := ../../org.eclipse.cdt.core.macosx/os/macosx/aarch64
 
 COMMON_CFLAGS :=  -Wall -pedantic -Werror
 
@@ -42,15 +42,15 @@ LIBS = \
 	$(OS_DIR_LINUX_PPC64LE)/libpty.so \
 	$(OS_DIR_MACOS_X86_64)/libspawner.jnilib \
 	$(OS_DIR_MACOS_X86_64)/libpty.jnilib \
-	$(OS_DIR_MACOS_X86)/libspawner.jnilib \
-	$(OS_DIR_MACOS_X86)/libpty.jnilib
+	$(OS_DIR_MACOS_AARCH64)/libspawner.jnilib \
+	$(OS_DIR_MACOS_AARCH64)/libpty.jnilib
 else
 ifeq ($(UNAME),Darwin)
 LIBS = \
 	$(OS_DIR_MACOS_X86_64)/libspawner.jnilib \
 	$(OS_DIR_MACOS_X86_64)/libpty.jnilib \
-	$(OS_DIR_MACOS_X86)/libspawner.jnilib \
-	$(OS_DIR_MACOS_X86)/libpty.jnilib
+	$(OS_DIR_MACOS_AARCH64)/libspawner.jnilib \
+	$(OS_DIR_MACOS_AARCH64)/libpty.jnilib
 else
 LIBS = \
 	$(OS_DIR_WIN32_X86_64)/starter.exe \
@@ -68,8 +68,8 @@ rebuild: clean all
 
 MAC_TO_SIGN=$(OS_DIR_MACOS_X86_64)/libspawner.jnilib \
 	$(OS_DIR_MACOS_X86_64)/libpty.jnilib \
-	$(OS_DIR_MACOS_X86)/libspawner.jnilib \
-	$(OS_DIR_MACOS_X86)/libpty.jnilib
+	$(OS_DIR_MACOS_AARCH64)/libspawner.jnilib \
+	$(OS_DIR_MACOS_AARCH64)/libpty.jnilib
 WIN_TO_SIGN=$(OS_DIR_WIN32_X86_64)/starter.exe \
 	$(OS_DIR_WIN32_X86_64)/spawner.dll \
 	$(OS_DIR_WIN32_X86_64)/pty.dll
@@ -169,29 +169,29 @@ $(OS_DIR_LINUX_PPC64LE)/libpty.so: unix/openpty.c unix/pty.c unix/ptyio.c
 # macos x86_64
 $(OS_DIR_MACOS_X86_64)/libspawner.jnilib: unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c
 	mkdir -p $(dir $@) && \
-	x86_64-apple-darwin17-clang $(COMMON_CFLAGS) -o $@ -arch x86_64 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
+	x86_64-apple-darwin21.1-clang $(COMMON_CFLAGS) -o $@ -arch x86_64 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
 		-D_REENTRANT \
 		$^ \
-		-dynamiclib -lc -framework JavaVM
+		-dynamiclib -lc
 
 $(OS_DIR_MACOS_X86_64)/libpty.jnilib: unix/openpty.c unix/pty.c unix/ptyio.c
 	mkdir -p $(dir $@) && \
-	x86_64-apple-darwin17-clang $(COMMON_CFLAGS) -o $@ -arch x86_64 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
+	x86_64-apple-darwin21.1-clang $(COMMON_CFLAGS) -o $@ -arch x86_64 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
 		-D_REENTRANT \
 		$^ \
-		-dynamiclib -lc -framework JavaVM
+		-dynamiclib -lc
 
-# macos x86
-$(OS_DIR_MACOS_X86)/libspawner.jnilib: unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c
+# macos aarch64
+$(OS_DIR_MACOS_AARCH64)/libspawner.jnilib: unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c
 	mkdir -p $(dir $@) && \
-	x86_64-apple-darwin17-clang $(COMMON_CFLAGS) -o $@ -arch i386 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
+	arm64-apple-darwin21.1-clang $(COMMON_CFLAGS) -o $@ -arch arm64 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
 		-D_REENTRANT \
 		$^ \
-		-dynamiclib -lc -framework JavaVM
+		-dynamiclib -lc
 
-$(OS_DIR_MACOS_X86)/libpty.jnilib: unix/openpty.c unix/pty.c unix/ptyio.c
+$(OS_DIR_MACOS_AARCH64)/libpty.jnilib: unix/openpty.c unix/pty.c unix/ptyio.c
 	mkdir -p $(dir $@) && \
-	x86_64-apple-darwin17-clang $(COMMON_CFLAGS) -o $@ -arch i386 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
+	arm64-apple-darwin21.1-clang $(COMMON_CFLAGS) -o $@ -arch arm64 -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin -fPIC \
 		-D_REENTRANT \
 		$^ \
-		-dynamiclib -lc -framework JavaVM
+		-dynamiclib -lc

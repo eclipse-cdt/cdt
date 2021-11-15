@@ -31,7 +31,8 @@ LIBS = \
 	$(OS_DIR)/linux/x86_64/libserial.so \
 	$(OS_DIR)/linux/aarch64/libserial.so \
 	$(OS_DIR)/linux/ppc64le/libserial.so \
-	$(OS_DIR)/macosx/x86_64/libserial.jnilib
+	$(OS_DIR)/macosx/x86_64/libserial.jnilib \
+	$(OS_DIR)/macosx/aarch64/libserial.jnilib
 else
 ifeq ($(UNAME),Darwin)
 LIBS = \
@@ -47,7 +48,7 @@ all:	$(LIBS)
 clean :
 	$(RM) $(LIBS)
 
-MAC_TO_SIGN=$(OS_DIR)/macosx/x86_64/libserial.jnilib
+MAC_TO_SIGN=$(OS_DIR)/macosx/x86_64/libserial.jnilib $(OS_DIR)/macosx/aarch64/libserial.jnilib
 WIN_TO_SIGN=$(OS_DIR)/win32/x86_64/serial.dll
 ### This block of code also exists in core/org.eclipse.cdt.core.native/native_src/Makefile
 TMPDIR := $(shell mktemp -d -t production-XXXXXXXXXX)
@@ -93,4 +94,8 @@ $(OS_DIR)/linux/ppc64le/libserial.so:	serial.c
 
 $(OS_DIR)/macosx/x86_64/libserial.jnilib:	serial.c
 	mkdir -p $(dir $@) && \
-	x86_64-apple-darwin17-clang $(COMMON_CFLAGS) $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin $(LDFLAGS) -dynamiclib -o $@ $^
+	x86_64-apple-darwin21.1-clang $(COMMON_CFLAGS) $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin $(LDFLAGS) -dynamiclib -o $@ $^
+
+$(OS_DIR)/macosx/aarch64/libserial.jnilib:	serial.c
+	mkdir -p $(dir $@) && \
+	arm64-apple-darwin21.1-clang $(COMMON_CFLAGS) $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin $(LDFLAGS) -dynamiclib -o $@ $^

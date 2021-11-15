@@ -75,7 +75,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="2021-09"
+      defaultValue="${eclipse.target.platform.latest}"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
@@ -214,8 +214,7 @@
         programArguments="-consolelog"
         vmArguments="-Xms40m -Xmx512M -ea">
       <targlet
-          name="CDT"
-          activeRepositoryList="${eclipse.target.platform}">
+          name="CDT">
         <requirement
             name="org.eclipse.license.feature.group"/>
         <requirement
@@ -308,18 +307,15 @@
         <sourceLocator
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
-        <repositoryList
-            name="2021-09">
+        <repositoryList>
           <repository
               url="https://download.eclipse.org/cbi/updates/license/"/>
           <repository
-              url="https://download.eclipse.org/eclipse/updates/4.21/R-4.21-202109060500/"/>
+              url="https://download.eclipse.org/eclipse/updates/4.22-I-builds/I20211023-1800/"/>
           <repository
               url="https://download.eclipse.org/egit/updates/"/>
           <repository
               url="https://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
-          <repository
-              url="https://download.eclipse.org/wildwebdeveloper/snapshots/"/>
           <repository
               url="https://download.eclipse.org/lsp4e/releases/0.19.0/"/>
           <repository
@@ -329,7 +325,7 @@
           <repository
               url="http://download.eclipse.org/mylyn/drops/3.25.2/v20200831-1956"/>
           <repository
-              url="https://download.eclipse.org/technology/swtbot/releases/3.0.0/"/>
+              url="https://download.eclipse.org/technology/swtbot/releases/3.1.0/"/>
           <repository
               url="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
           <repository
@@ -342,9 +338,11 @@
             </annotation>
           </repository>
           <repository
-              url="https://download.eclipse.org/tools/orbit/downloads/2021-09/"/>
+              url="https://download.eclipse.org/tools/orbit/downloads/drops/S20211020204107/repository/"/>
           <repository
               url="https://download.eclipse.org/tools/ptp/builds/remote/3.0/2021-09"/>
+          <repository
+              url="https://download.eclipse.org/wildwebdeveloper/snapshots/"/>
         </repositoryList>
       </targlet>
     </setupTask>

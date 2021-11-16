@@ -343,6 +343,66 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 		}
 	}
 
+	public final void testCustomOptionCommandGeneratorTargetTool() {
+		try {
+			IProject project = ManagedBuildTestHelper.createProject("COCG3", null, (IPath) null,
+					"cdt.test.customOptionCommand.ProjectType");
+			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+			IConfiguration config = info.getDefaultConfiguration();
+			ITool[] tools = config.getToolsBySuperClassId("cdt.test.customOptionCommand.TargetTool");
+			assertEquals(1, tools.length);
+
+			ITool tool = tools[0];
+
+			IOption optionLibs = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.TargetTool.optionLibs");
+
+			assertTrue(optionLibs.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+
+			optionLibs = config.setOption(tool, optionLibs, new String[] { "val", "${ProjName}" });
+
+			/* Expected results
+			 *  optionLibs: no custom-command generator because cdt.test.customOptionCommand.TargetTool is a targetTool in the toolChain and valueType is libs!
+			 */
+
+			String command = tool.getToolCommandFlagsString(null, null);
+			assertEquals("", command);
+
+			ManagedBuildTestHelper.removeProject("COCG3");
+		} catch (Exception e) {
+			fail("Test failed on project creation: " + e.getLocalizedMessage());
+		}
+	}
+
+	public final void testCustomOptionCommandGeneratorNonTargetTool() {
+		try {
+			IProject project = ManagedBuildTestHelper.createProject("COCG4", null, (IPath) null,
+					"cdt.test.customOptionCommand.ProjectType");
+			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+			IConfiguration config = info.getDefaultConfiguration();
+			ITool[] tools = config.getToolsBySuperClassId("cdt.test.customOptionCommand.NonTargetTool");
+			assertEquals(1, tools.length);
+
+			ITool tool = tools[0];
+
+			IOption optionLibs = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.NonTargetTool.optionLibs");
+
+			assertTrue(optionLibs.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+
+			optionLibs = config.setOption(tool, optionLibs, new String[] { "val", "${ProjName}" });
+
+			/* Expected results
+			 *  optionLibs: custom-command generator because cdt.test.customOptionCommand.NonTargetTool is NOT a targetTool in the toolChain and valueType is libs!
+			 */
+
+			String command = tool.getToolCommandFlagsString(null, null);
+			assertEquals("-optLibs=\"val;COCG4;\"", command);
+
+			ManagedBuildTestHelper.removeProject("COCG3");
+		} catch (Exception e) {
+			fail("Test failed on project creation: " + e.getLocalizedMessage());
+		}
+	}
+
 	public final void testDollarValue() {
 		try {
 			IProject project = ManagedBuildTestHelper.createProject("CDV", null, (IPath) null,

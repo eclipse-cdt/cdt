@@ -4985,7 +4985,7 @@
                   isAbstract="false"
                   isSystem="true"
                   name="Tools"
-                  targetTool="cdt.test.customOptionCommand.Tool2">
+                  targetTool="cdt.test.customOptionCommand.Tool2;cdt.test.customOptionCommand.TargetTool">
                 <tool
 		            command="xxx"
 		            id="cdt.test.customOptionCommand.Tool1"
@@ -5197,13 +5197,55 @@
               </treeOptionRoot>
            </option>
                 </tool>
+                <tool
+                      command="xxx"
+                      id="cdt.test.customOptionCommand.TargetTool"
+                      isAbstract="false"
+                      name="TargetTool"
+                      natureFilter="both"
+                      outputFlag="-o">
+                   <optionCategory
+                         id="cdt.test.customOptionCommand.TargetTool.optionCategory"
+                         name="Test Options"
+                         owner="cdt.test.customOptionCommand.TargetTool">
+                   </optionCategory>
+                   <option
+                         category="cdt.test.customOptionCommand.TargetTool.optionCategory"
+                         command="-optLibs="
+                         commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+                         id="cdt.test.customOptionCommand.TargetTool.optionLibs"
+                         name="OptionLibs"
+                         valueType="libs">
+                   </option>
+                </tool>
+                <tool
+                      command="xxx"
+                      id="cdt.test.customOptionCommand.NonTargetTool"
+                      isAbstract="false"
+                      name="NonTargetTool"
+                      natureFilter="both"
+                      outputFlag="-o">
+                   <optionCategory
+                         id="cdt.test.customOptionCommand.NonTargetTool.optionCategory"
+                         name="Test Options"
+                         owner="cdt.test.customOptionCommand.NonTargetTool">
+                   </optionCategory>
+                   <option
+                         category="cdt.test.customOptionCommand.NonTargetTool.optionCategory"
+                         command="-optLibs="
+                         commandGenerator="org.eclipse.cdt.managedbuilder.core.tests.CustomOptionCommandGenerator"
+                         id="cdt.test.customOptionCommand.NonTargetTool.optionLibs"
+                         name="OptionLibs"
+                         valueType="libs">
+                   </option>
+                </tool>
 				<builder
 				    id="cdt.test.customOptionCommand.builder"
 		            name="Builder"		              
 		            command="make"
                     arguments="-k"
                     buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator">
-				</builder> 				  				  
+				</builder>
             </toolChain>
          </configuration>
     </projectType>

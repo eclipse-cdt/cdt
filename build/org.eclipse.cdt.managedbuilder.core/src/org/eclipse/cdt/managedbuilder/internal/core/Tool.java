@@ -2674,14 +2674,17 @@ public class Tool extends HoldsOptions
 						case IOption.UNDEF_MACRO_FILES:
 						case IOption.PREPROCESSOR_SYMBOLS:
 						case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
-							IMacroContextInfo info = provider.getMacroContextInfo(BuildMacroProvider.CONTEXT_FILE,
-									new FileContextData(inputFileLocation, outputFileLocation, option, this));
-							if (info != null) {
-								macroSubstitutor.setMacroContextInfo(info);
-								String command = commandGenerator.generateCommand(option, macroSubstitutor);
-								if (command != null) {
-									sb.append(command);
-									generateDefaultCommand = false;
+						case IOption.LIBRARIES:
+							if (enableGenerateCommand(option.getValueType() == IOption.LIBRARIES)) {
+								IMacroContextInfo info = provider.getMacroContextInfo(BuildMacroProvider.CONTEXT_FILE,
+										new FileContextData(inputFileLocation, outputFileLocation, option, this));
+								if (info != null) {
+									macroSubstitutor.setMacroContextInfo(info);
+									String command = commandGenerator.generateCommand(option, macroSubstitutor);
+									if (command != null) {
+										sb.append(command);
+										generateDefaultCommand = false;
+									}
 								}
 							}
 							break;
@@ -2809,6 +2812,26 @@ public class Tool extends HoldsOptions
 		}
 		String[] f = new String[flags.size()];
 		return flags.toArray(f);
+	}
+
+	private boolean enableGenerateCommand(boolean isLibsOrUserObjOption) {
+		if (!isLibsOrUserObjOption) {
+			return true; //perform check for IOption.LIBRARIES or IOption.OBJECTS only
+		}
+		IToolChain toolChain = getToolChain();
+		if (toolChain != null) {
+			String[] targetToolsIds = toolChain.getTargetToolList();
+			String baseId = this.getBaseId();
+			if (baseId != null) {
+				for (String id : targetToolsIds) {
+					if (baseId.equals(id)) {
+						return false; //this tool is a targetTool, disable commandGenerator
+					}
+				}
+				return true;
+			}
+		}
+		return false; // do not generate command when toolChain or baseId can not be determined
 	}
 
 	/* (non-Javadoc)

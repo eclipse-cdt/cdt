@@ -2674,6 +2674,7 @@ public class Tool extends HoldsOptions
 						case IOption.UNDEF_MACRO_FILES:
 						case IOption.PREPROCESSOR_SYMBOLS:
 						case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+						case IOption.LIBRARIES:
 							IMacroContextInfo info = provider.getMacroContextInfo(BuildMacroProvider.CONTEXT_FILE,
 									new FileContextData(inputFileLocation, outputFileLocation, option, this));
 							if (info != null) {

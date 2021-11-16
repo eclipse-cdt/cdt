@@ -317,6 +317,7 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 					"-optEnumerated=value2", //
 					"-optIncludePath=\"val2;COCG2;\"", //
 					"-optDefinedSymbols=\"val3;COCG2;\"", //
+					"-optionLibs=\"val4;COCG2;\"", //
 					"-optSymbolFiles=\"val6;COCG2;\"", //
 					"-optIncludeFiles=\"val7;COCG2;\"", //
 					"-optLibPaths=\"val8;COCG2;\"", //

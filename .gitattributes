@@ -7,6 +7,7 @@ COPYING text
 NEWS text
 README text
 CONTRIBUTING text
+LICENSE text
 *.txt text
 *.md text
 *.zip binary

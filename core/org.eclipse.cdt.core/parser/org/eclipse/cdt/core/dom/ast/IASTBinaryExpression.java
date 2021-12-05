@@ -77,37 +77,37 @@ public interface IASTBinaryExpression extends IASTExpression {
 	public static final int op_minus = 5;
 
 	/**
-	 * shift left <<
+	 * shift left &lt;&lt;
 	 */
 	public static final int op_shiftLeft = 6;
 
 	/**
-	 * shift right >>
+	 * shift right &gt;&gt;
 	 */
 	public static final int op_shiftRight = 7;
 
 	/**
-	 * less than <
+	 * less than &lt;
 	 */
 	public static final int op_lessThan = 8;
 
 	/**
-	 * greater than >
+	 * greater than &gt;
 	 */
 	public static final int op_greaterThan = 9;
 
 	/**
-	 * less than or equals <=
+	 * less than or equals &lt;=
 	 */
 	public static final int op_lessEqual = 10;
 
 	/**
-	 * greater than or equals >=
+	 * greater than or equals &gt;=
 	 */
 	public static final int op_greaterEqual = 11;
 
 	/**
-	 * binary and &
+	 * binary and &amp;
 	 */
 	public static final int op_binaryAnd = 12;
 
@@ -122,7 +122,7 @@ public interface IASTBinaryExpression extends IASTExpression {
 	public static final int op_binaryOr = 14;
 
 	/**
-	 * logical and &&
+	 * logical and &amp;&amp;
 	 */
 	public static final int op_logicalAnd = 15;
 
@@ -162,17 +162,17 @@ public interface IASTBinaryExpression extends IASTExpression {
 	public static final int op_minusAssign = 22;
 
 	/**
-	 * shift left assignment <<=
+	 * shift left assignment &lt;&lt;=
 	 */
 	public static final int op_shiftLeftAssign = 23;
 
 	/**
-	 * shift right assign >>=
+	 * shift right assign &gt;&gt;=
 	 */
 	public static final int op_shiftRightAssign = 24;
 
 	/**
-	 * binary and assign &=
+	 * binary and assign &amp;=
 	 */
 	public static final int op_binaryAndAssign = 25;
 
@@ -210,13 +210,13 @@ public interface IASTBinaryExpression extends IASTExpression {
 
 	/**
 	 * For g++, only.
-	 * <code>op_max</code> represents >?
+	 * <code>op_max</code> represents &gt;?
 	 */
 	public static final int op_max = 32;
 
 	/**
 	 * For g++, only.
-	 * <code>op_min</code> represents <?
+	 * <code>op_min</code> represents &lt;?
 	 */
 	public static final int op_min = 33;
 

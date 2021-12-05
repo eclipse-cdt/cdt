@@ -32,8 +32,8 @@ import org.eclipse.jdt.annotation.Nullable;
  * Examples:
  * <ul>
  * <li><code>auto [x, y]{coordinate};</code></li>
- * <li><code>auto & [x, y](coordinate);</code></li>
- * <li><code>auto && [x, y] = createCoordinte();</code></li>
+ * <li><code>auto &amp; [x, y](coordinate);</code></li>
+ * <li><code>auto &amp;&amp; [x, y] = createCoordinte();</code></li>
  * </ul>
  *
  * @since 6.9
@@ -64,8 +64,8 @@ public interface ICPPASTStructuredBindingDeclaration
 	 * Examples:
 	 * <ul>
 	 * <li>For <code>auto [x, y] = coordinate;</code> it returns the empty <code>Optional</code></li>
-	 * <li>For <code>auto & [x, y] = coordinate;</code> it returns <code>Optional.of(RefQualifier.LVALUE)</code></li>
-	 * <li>For <code>auto && [x, y] = createCoordinte();</code> it returns <code>Optional.of(RefQualifier.RVALUE)</code></li>
+	 * <li>For <code>auto &amp; [x, y] = coordinate;</code> it returns <code>Optional.of(RefQualifier.LVALUE)</code></li>
+	 * <li>For <code>auto &amp;&amp; [x, y] = createCoordinte();</code> it returns <code>Optional.of(RefQualifier.RVALUE)</code></li>
 	 * </ul>
 	 *
 	 * @return The returned <code>RefQualifier</code> of the C++ declaration or <code>null</code> if there is no reference qualifier.
@@ -78,7 +78,7 @@ public interface ICPPASTStructuredBindingDeclaration
 	/**
 	 * Returns the list of names declared by this structured binding declaration.
 	 * <p>
-	 * Example: For <code>auto & [x, y] = coordinate;</code> it returns the names <code>x</code> and <code>y</code>.
+	 * Example: For <code>auto &amp; [x, y] = coordinate;</code> it returns the names <code>x</code> and <code>y</code>.
 	 *
 	 * @return All declared names of the structured binding as<code>IASTName[]</code>
 	 * @see IASTName
@@ -93,8 +93,8 @@ public interface ICPPASTStructuredBindingDeclaration
 	 *  * Examples:
 	 * <ul>
 	 * <li>For <code>auto [x, y]{coordinate};</code> it returns an <code>ICPPASTInitializerList</code></li>
-	 * <li>For <code>auto & [x, y](coordinate);</code> it returns an <code>ICPPASTConstructorInitializer</code></li>
-	 * <li>For <code>auto && [x, y] = createCoordinte();</code> it returns an <code>IASTEqualsInitializer</code></li>
+	 * <li>For <code>auto &amp; [x, y](coordinate);</code> it returns an <code>ICPPASTConstructorInitializer</code></li>
+	 * <li>For <code>auto &amp;&amp; [x, y] = createCoordinte();</code> it returns an <code>IASTEqualsInitializer</code></li>
 	 * </ul>
 	 *
 	 * @return The <code>IASTInitializer</code> of this structured binding. It can be <code>null</code> if the C++ declaration is lacking an initializer.

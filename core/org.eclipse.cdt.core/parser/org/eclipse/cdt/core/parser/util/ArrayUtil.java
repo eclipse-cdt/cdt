@@ -352,7 +352,7 @@ public abstract class ArrayUtil {
 
 	/**
 	 * Adds all elements of an array to a collection. For an {@link ArrayList} this method is
-	 * slightly more efficient than {@link java.util.Collections#addAll(Collection, T...)}.
+	 * slightly more efficient than {@link java.util.Collections#addAll(Collection, Object...)}.
 	 * @since 5.4
 	 */
 	@SafeVarargs

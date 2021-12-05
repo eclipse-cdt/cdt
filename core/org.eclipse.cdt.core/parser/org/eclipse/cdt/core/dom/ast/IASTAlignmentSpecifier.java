@@ -20,11 +20,11 @@ package org.eclipse.cdt.core.dom.ast;
  *
  * Possible forms are:
  *   C++:
- *     alignas(<type-id>)
- *     alignas(<expression>)
+ *     alignas(&lt;type-id&gt;)
+ *     alignas(&lt;expression&gt;)
  *   C:
- *     _Alignas(<type-id>)
- *     _Alignas(<expression>)
+ *     _Alignas(&lt;type-id&gt;)
+ *     _Alignas(&lt;expression&gt;)
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 5.10
@@ -39,13 +39,13 @@ public interface IASTAlignmentSpecifier extends IASTNode {
 			"IASTAlignmentSpecifier.ALIGNMENT_TYPEID - Type-id in alignment specifier"); //$NON-NLS-1$
 
 	/**
-	 * If the specifier is of the form 'alignas(<expression>)' or '_Alignas(<expression>)',
+	 * If the specifier is of the form 'alignas(&lt;expression&gt;)' or '_Alignas(&lt;expression&gt;)',
 	 * returns the enclosed expression. Otherwise, returns null.
 	 */
 	IASTExpression getExpression();
 
 	/**
-	 * If the specifier is of the form 'alignas(<type-id>)' or '_Alignas(<type-id>)',
+	 * If the specifier is of the form 'alignas(&lt;type-id&gt;)' or '_Alignas(&lt;type-id&gt;)',
 	 * returns the enclosed type-id. Otherwise, returns null.
 	 */
 	IASTTypeId getTypeId();

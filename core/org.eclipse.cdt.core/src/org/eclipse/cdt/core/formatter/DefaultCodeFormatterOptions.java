@@ -2529,7 +2529,7 @@ public class DefaultCodeFormatterOptions {
 	}
 
 	/**
-	 * Configure K&R style.
+	 * Configure K&amp;R style.
 	 * <p>Example:</p>
 	 * <pre>
 	 * namespace foospace {

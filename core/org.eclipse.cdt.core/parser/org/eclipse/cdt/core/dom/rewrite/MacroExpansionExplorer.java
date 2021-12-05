@@ -88,7 +88,7 @@ public abstract class MacroExpansionExplorer {
 	/**
 	 * Returns a description for the requested step within the expansion of the region of this
 	 * expansion explorer.
-	 * @throws IndexOutOfBoundsException if step < 0 or step >= getExpansionStepCount().
+	 * @throws IndexOutOfBoundsException if step &lt; 0 or step &gt;= getExpansionStepCount().
 	 */
 	public abstract IMacroExpansionStep getExpansionStep(int step) throws IndexOutOfBoundsException;
 }

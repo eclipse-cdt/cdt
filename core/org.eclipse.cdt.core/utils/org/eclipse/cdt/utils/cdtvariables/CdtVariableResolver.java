@@ -69,7 +69,7 @@ public class CdtVariableResolver {
 
 	/**
 	 * Converts list of strings to one string using given string as delimiter,
-	 * i.e -> "string1:string2:string3"
+	 * i.e -&gt; "string1:string2:string3"
 	 *
 	 * @param value - list of strings to convert.
 	 * @param listDelimiter - delimiter.

@@ -48,7 +48,7 @@ public class LanguageSettingsManager {
 	 * for the given configuration description, resource and language. This is a
 	 * combined list for all providers taking into account settings of parent folder
 	 * if settings for the given resource are not defined. For include paths both
-	 * local (#include "...") and system (#include <...>) entries are returned.
+	 * local (#include "...") and system (#include &lt;...&gt;) entries are returned.
 	 *
 	 * @param cfgDescription - configuration description.
 	 * @param rc - resource such as file or folder.

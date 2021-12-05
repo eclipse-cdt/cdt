@@ -194,7 +194,7 @@ public class ConPTY {
 	}
 
 	/**
-	 * Implements the contract of {@link Process#waitFor()}. This is used by {@link PTY#waitFor(org.eclipse.cdt.utils.spawner.Spawner, int),
+	 * Implements the contract of {@link Process#waitFor()}. This is used by {@link PTY#waitFor(org.eclipse.cdt.utils.spawner.Spawner, int)},
 	 * but in the Spawner case the PID is passed around unnecessarily. This method therefore waits for the process it created only,
 	 * like how Process#waitFor() behaves.
 	 *

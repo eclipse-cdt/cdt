@@ -1009,8 +1009,8 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Method convertProjectFromCtoCC converts a C Project to a C++ Project The
-	 * newProject MUST, not be null, already have a C Nature && must NOT already
-	 * have a C++ Nature
+	 * newProject MUST, not be null, already have a C Nature &amp;&amp; must
+	 * NOT already have a C++ Nature
 	 *
 	 * @param projectHandle
 	 * @param monitor
@@ -1455,7 +1455,7 @@ public class CCorePlugin extends Plugin {
 	 *            set call after that the description communicates directly to
 	 *            the Build System i.e. the implementer of the
 	 *            org.eclipse.cdt.core.CConfigurationDataProvider extension This
-	 *            ensures the Core<->Build System settings integrity.
+	 *            ensures the Core&lt;-&gt;Build System settings integrity.
 	 *
 	 * @return {@link ICProjectDescription} or null if the project does not
 	 *         contain the CDT data associated with it.

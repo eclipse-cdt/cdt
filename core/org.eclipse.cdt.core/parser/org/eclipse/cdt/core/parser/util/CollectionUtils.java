@@ -145,7 +145,7 @@ public final class CollectionUtils {
 	}
 
 	/**
-	 * Returns a List<U> corresponding to a T in a Map<T, List<U>>. If the mapping doesn't exist,
+	 * Returns a List&lt;U&gt; corresponding to a T in a Map&lt;T, List&lt;U&gt;&gt;. If the mapping doesn't exist,
 	 * creates it with an empty list as the initial value.
 	 * @since 5.6
 	 */

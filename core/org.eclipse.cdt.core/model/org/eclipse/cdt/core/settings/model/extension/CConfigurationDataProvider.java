@@ -37,7 +37,7 @@ public abstract class CConfigurationDataProvider {
 	 * The method can be called in following cases:
 	 * <br>
 	 * 1. Loading configuration from external data source such as .cproject.<br>
-	 * 2. Loading preference configuration defined in Preferences -> C/C++ -> New project Wizard -> Makefile Project.
+	 * 2. Loading preference configuration defined in Preferences -&gt; C/C++ -&gt; New project Wizard -&gt; Makefile Project.
 	 *
 	 * @param cfgDescription - configuration description being loaded.
 	 * @param monitor - progress monitor.

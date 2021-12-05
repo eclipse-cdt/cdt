@@ -23,22 +23,22 @@ import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
  */
 public interface ICPPASTCastExpression extends IASTCastExpression, ICPPASTExpression {
 	/**
-	 * <code>op_dynamic_cast</code> is used for dynamic_cast<>'s.
+	 * <code>op_dynamic_cast</code> is used for dynamic_cast&lt;&gt;'s.
 	 */
 	public static final int op_dynamic_cast = IASTCastExpression.op_last + 1;
 
 	/**
-	 * <code>op_static_cast</code> is used for static_cast<>'s.
+	 * <code>op_static_cast</code> is used for static_cast&lt;&gt;'s.
 	 */
 	public static final int op_static_cast = IASTCastExpression.op_last + 2;
 
 	/**
-	 * <oode>op_reinterpret_cast</code> is used for reinterpret_cast<>'s.
+	 * <oode>op_reinterpret_cast</code> is used for reinterpret_cast&lt;&gt;'s.
 	 */
 	public static final int op_reinterpret_cast = IASTCastExpression.op_last + 3;
 
 	/**
-	 * <code>op_const_cast</code> is used for const_cast<>'s.
+	 * <code>op_const_cast</code> is used for const_cast&lt;&gt;'s.
 	 */
 	public static final int op_const_cast = IASTCastExpression.op_last + 4;
 

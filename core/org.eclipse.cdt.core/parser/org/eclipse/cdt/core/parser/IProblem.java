@@ -123,7 +123,7 @@ public interface IProblem {
 	 * types of problems.
 	 *
 	 * @param bitmask
-	 * @return true if ( (id & bit-mask ) != 0 )
+	 * @return true if ( (id &amp; bit-mask ) != 0 )
 	 */
 	public boolean checkCategory(int bitmask);
 

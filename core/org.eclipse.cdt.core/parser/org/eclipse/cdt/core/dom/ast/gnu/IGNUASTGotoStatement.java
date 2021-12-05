@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
  *
  * <code>
  * foo:
- *   void *labelPtr = &&foo;
+ *   void *labelPtr = &amp;&amp;foo;
  *   goto *labelPtr;
  * </code>
  *

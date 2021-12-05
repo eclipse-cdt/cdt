@@ -14,8 +14,8 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This interface represents expressions that access a field reference. e.g. a.b => a
- * is the expression, b is the field name. e.g. a()->def => a() is the
+ * This interface represents expressions that access a field reference. e.g. a.b =&gt; a
+ * is the expression, b is the field name. e.g. a()-&gt;def =&gt; a() is the
  * expression, def is the field name.
  *
  * @noextend This interface is not intended to be extended by clients.

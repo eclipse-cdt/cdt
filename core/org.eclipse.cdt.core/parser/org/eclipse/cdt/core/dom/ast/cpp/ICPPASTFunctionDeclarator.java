@@ -182,13 +182,13 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public void setNoexceptExpression(ICPPASTExpression expression);
 
 	/**
-	 * Returns the trailing return type as in <code> auto f() -> int </code>, or <code>null</code>.
+	 * Returns the trailing return type as in <code> auto f() -gt; int </code>, or <code>null</code>.
 	 * @since 5.2
 	 */
 	public IASTTypeId getTrailingReturnType();
 
 	/**
-	 * Trailing return type as in <code> auto f() -> int </code>.
+	 * Trailing return type as in <code> auto f() -&gt; int </code>.
 	 * @since 5.2
 	 */
 	public void setTrailingReturnType(IASTTypeId typeId);

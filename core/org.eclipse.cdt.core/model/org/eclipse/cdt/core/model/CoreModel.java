@@ -1424,10 +1424,10 @@ public class CoreModel {
 	 *
 	 * Each getProjectDescription(project, true) returns a new copy of the project description
 	 *
-	 * The writable description uses the cached data untill the first set call
+	 * The writable description uses the cached data until the first set call
 	 * after that the description communicates directly to the Build System
 	 * i.e. the implementer of the org.eclipse.cdt.core.CConfigurationDataProvider extension
-	 * This ensures the Core<->Build System settings integrity
+	 * This ensures the Core&lt;-&gt;Build System settings integrity
 	 *
 	 * @return {@link ICProjectDescription} or null if the project does not contain the
 	 * CDT data associated with it.

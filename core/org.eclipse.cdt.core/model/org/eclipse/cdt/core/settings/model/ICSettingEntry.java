@@ -47,7 +47,7 @@ public interface ICSettingEntry {
 	/**
 	 * Flag {@code LOCAL} is used during creation of {@link IIncludeEntry}
 	 * to indicate that an include path is not a system path.
-	 * "System" path is denoted by angle brackets as in #include <x.h>
+	 * "System" path is denoted by angle brackets as in #include &lt;x.h&gt;
 	 * "Local" path is denoted by quotes as in #include "x.h"
 	 */
 	int LOCAL = 1 << 2;

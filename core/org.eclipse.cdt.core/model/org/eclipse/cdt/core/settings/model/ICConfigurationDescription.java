@@ -234,7 +234,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * If the current configuration does not reference any other configurations,
 	 * an empty map is returned.
 	 *
-	 * @return Map<String,String> of referenced Project -&gt; Configuration ID
+	 * @return Map&lt;String,String&gt; of referenced Project -&gt; Configuration ID
 	 * @see #setReferenceInfo(Map)
 	 * @see #getExternalSettings()
 	 * @see #createExternalSetting(String[], String[], String[], ICSettingEntry[])
@@ -250,7 +250,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * The empty string is a special configuration value which indicates the reference
 	 * tracks the Active configuration in the referenced Project.
 	 *
-	 * @param refs Map of project name -> configuration ID of referenced configurations
+	 * @param refs Map of project name -&gt; configuration ID of referenced configurations
 	 * @throws WriteAccessException when the configuration description is read-only
 	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
 	 * @see {@link #getReferenceInfo()} <br/>

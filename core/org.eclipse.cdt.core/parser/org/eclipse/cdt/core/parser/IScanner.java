@@ -124,7 +124,7 @@ public interface IScanner {
 
 	/**
 	 * Returns a list of additional (compiler specific) suffixes which can
-	 * be placed on numbers. e.g. 'u' 'l' -> 1l or 1u.
+	 * be placed on numbers. e.g. 'u' 'l' -&gt; 1l or 1u.
 	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */

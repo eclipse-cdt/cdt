@@ -60,10 +60,10 @@ public abstract class WindowsRegistry {
 	public abstract String getLocalMachineValue(String subkey, String name);
 
 	/**
-	 * Given a subkey of HKEY_LOCAL_MACHINE, return the map of valueName => value.
+	 * Given a subkey of HKEY_LOCAL_MACHINE, return the map of valueName =gt; value.
 	 * The return value is an empty map on error or when the subkey does not exist.
 	 * @param subkey subkey of HKEY_LOCAL_MACHINE
-	 * @return valueName => value map of the entries in subkey
+	 * @return valueName =&gt; value map of the entries in subkey
 	 * @since 6.1
 	 */
 	public abstract Map<String, Object> getLocalMachineValues(String subkey);
@@ -103,10 +103,10 @@ public abstract class WindowsRegistry {
 	public abstract String getCurrentUserValue(String subkey, String name);
 
 	/**
-	 * Given a subkey of HKEY_CURRENT_USER, return the map of valueName => value.
+	 * Given a subkey of HKEY_CURRENT_USER, return the map of valueName =&gt; value.
 	 * The return value is an empty map on error or when the subkey does not exist.
 	 * @param subkey subkey of HKEY_CURRENT_USER
-	 * @return valueName => value map of the entries in subkey
+	 * @return valueName =&gt; value map of the entries in subkey
 	 * @since 6.1
 	 */
 	public abstract Map<String, Object> getCurrentUserValues(String subkey);

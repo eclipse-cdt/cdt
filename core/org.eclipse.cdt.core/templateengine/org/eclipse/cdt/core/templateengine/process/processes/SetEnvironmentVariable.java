@@ -36,15 +36,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * A template process for setting an environment variable in all of the new project's
  * build configurations.  E.g.,
  * <pre>
- *  &lt;process type="org.eclipse.cdt.core.SetEnvironmentVariable">
- *      &lt;simple name="projectName" value="$(projectName)"/>
- *      &lt;complex-array name="variables">
- *          &lt;element>
- *              &lt;simple name="name" value="QMAKE"/>
- *              &lt;simple name="value" value="$(qmake)"/>
- *          &lt;/element>
- *      &lt;/complex-array>
- *  &lt;/process>
+ *  &lt;process type="org.eclipse.cdt.core.SetEnvironmentVariable"&gt;
+ *      &lt;simple name="projectName" value="$(projectName)"/&gt;
+ *      &lt;complex-array name="variables"&gt;
+ *          &lt;element&gt;
+ *              &lt;simple name="name" value="QMAKE"/&gt;
+ *              &lt;simple name="value" value="$(qmake)"/&gt;
+ *          &lt;/element&gt;
+ *      &lt;/complex-array&gt;
+ *  &lt;/process&gt;
  * </pre>
  * This will create an environment variable called "QMAKE" and will set the value to
  * be the value entered in a field (called qmake) in the New Project wizard.

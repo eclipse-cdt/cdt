@@ -104,7 +104,7 @@ public class PTY {
 
 	/**
 	 * Create PTY for use with Eclipse console.
-	 * Identical to {@link PTY#PTY(Mode.CONSOLE)}.
+	 * Identical to <code>PTY(Mode.CONSOLE)</code>.
 	 */
 	public PTY() throws IOException {
 		this(Mode.CONSOLE);

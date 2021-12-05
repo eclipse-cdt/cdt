@@ -61,7 +61,7 @@ public abstract class AbstractExportProjectProvider implements IExportProjectPro
 	 * Returns a mapping from string option to parameter string list
 	 * <br>
 	 * For example, if -option p1 p2 p3 appears on the command line, then
-	 * the mapping option=>[p1,p2,p3] will be present in the map
+	 * the mapping option=&gt;[p1,p2,p3] will be present in the map
 	 * @return a mapping from string option to parameter string list
 	 */
 	protected Map<String, List<String>> getParsedArgs() {

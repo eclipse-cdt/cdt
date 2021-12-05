@@ -20,14 +20,14 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 
 /**
- * This is the declarator for a K&R C Function.
+ * This is the declarator for a K&amp;R C Function.
  *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
 	/**
-	 * <code>PARAMETER_NAME</code> refers to the names qualified in a K&R C
+	 * <code>PARAMETER_NAME</code> refers to the names qualified in a K&amp;R C
 	 * function definition.
 	 */
 	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty(
@@ -35,7 +35,7 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
 
 	/**
 	 * <code>FUNCTION_PARAMETER</code> represents the relationship between an
-	 * K&R function declarator and the full parameter declarations.
+	 * K&amp;R function declarator and the full parameter declarations.
 	 */
 	public static final ASTNodeProperty FUNCTION_PARAMETER = new ASTNodeProperty(
 			"ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER - Full K&R Parameter Declaration"); //$NON-NLS-1$

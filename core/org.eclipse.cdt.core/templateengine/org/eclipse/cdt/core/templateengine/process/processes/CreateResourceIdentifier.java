@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Creates a template macro value that can be used as a pseudo-unique resource identifier.
  * It is based on the name of the application and is in the form of four capital letters.
- * e.g. Helloworld => HELL
+ * e.g. Helloworld =&gt; HELL
  */
 public class CreateResourceIdentifier extends ProcessRunner {
 

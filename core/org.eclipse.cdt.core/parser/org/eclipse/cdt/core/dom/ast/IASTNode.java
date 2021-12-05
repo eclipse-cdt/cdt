@@ -63,7 +63,7 @@ public interface IASTNode {
 	 * <p>
 	 * Nodes that span file context into a macro expansion (and potentially out
 	 * of the macro expansion again) result in an IASTNodeLocation[] result
-	 * that is of length > 1.
+	 * that is of length &gt; 1.
 	 * <p>
 	 * We do not provide meaningful node locations for nested macro references
 	 * (see {@link IASTPreprocessorMacroExpansion#getNestedMacroReferences()}).

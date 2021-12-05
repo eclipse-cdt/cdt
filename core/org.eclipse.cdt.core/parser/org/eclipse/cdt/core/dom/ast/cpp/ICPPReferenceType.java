@@ -27,7 +27,7 @@ public interface ICPPReferenceType extends IType {
 	public IType getType();
 
 	/**
-	 * Returns whether this is an rvalue reference (e.g: int&&)
+	 * Returns whether this is an rvalue reference (e.g: int&amp;&amp;)
 	 * @since 5.2
 	 */
 	public boolean isRValueReference();

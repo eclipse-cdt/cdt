@@ -38,7 +38,7 @@ public interface ICPPASTAliasDeclaration extends IASTDeclaration, IASTNameOwner,
 			"ICPPASTAliasDeclaration.ALIAS_NAME - Introduced alias name"); //$NON-NLS-1$
 
 	/**
-	 * <code>MAPPING_TYPE<ID/code> represents the pre-existing type id which
+	 * <code>MAPPING_TYPEID</code> represents the pre-existing type id which
 	 * the new symbol aliases.
 	 */
 	public static final ASTNodeProperty TARGET_TYPEID = new ASTNodeProperty(

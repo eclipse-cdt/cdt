@@ -165,7 +165,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * {@link #setSettingEntries(ICConfigurationDescription, IResource, String, List)}.
 	 * <br><br>
 	 * Note also that <b>you can compare these lists with simple equality operator ==</b>,
-	 * as the lists themselves are backed by WeakHashSet<List<ICLanguageSettingEntry>> where
+	 * as the lists themselves are backed by WeakHashSet&lt;List&lt;ICLanguageSettingEntry&gt;&gt; where
 	 * identical copies (deep comparison is used) are replaced with the same one instance.
 	 */
 	@Override

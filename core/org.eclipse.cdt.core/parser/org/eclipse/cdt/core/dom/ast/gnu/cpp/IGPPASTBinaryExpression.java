@@ -24,12 +24,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
  */
 public interface IGPPASTBinaryExpression extends ICPPASTBinaryExpression {
 	/**
-	 * <code>op_max</code> represents >?
+	 * <code>op_max</code> represents &gt;?
 	 */
 	public static final int op_max = IASTBinaryExpression.op_max;
 
 	/**
-	 * <code>op_min</code> represents <?
+	 * <code>op_min</code> represents &lt;?
 	 */
 	public static final int op_min = IASTBinaryExpression.op_min;
 

@@ -19,8 +19,8 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * a class template in its own right.
  *
  * E.g.:
- * template <class T> class A {};     // the primary class template
- * template <class T> class A<T*> {}; // a partial specialization of the primary class template
+ * template &lt;class T&gt; class A {};     // the primary class template
+ * template &lt;class T&gt; class A&lt;T*&gt; {}; // a partial specialization of the primary class template
  *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

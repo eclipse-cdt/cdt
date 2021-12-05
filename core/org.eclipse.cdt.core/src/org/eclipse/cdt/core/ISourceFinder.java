@@ -30,8 +30,8 @@ import org.eclipse.core.runtime.IAdaptable;
  * <p>
  * CDT has:
  * <ul>
- * <li>A global (common) source locator. Its containers are defined via Window > Preferences > C/C++ > Debug >
- * Source Lookup Path
+ * <li>A global (common) source locator. Its containers are defined via Window &gt; Preferences &gt;
+ * C/C++ &gt; Debug &gt; Source Lookup Path
  * <li>Launch configuration source locators. The containers of such a locator are defined via the 'Source' tab
  * in a CDT launch configuration. The common source containers are automatically added to this locator.
  * <li>Launch source locators. Typically, a launch's locator is the one defined in the launch configuration

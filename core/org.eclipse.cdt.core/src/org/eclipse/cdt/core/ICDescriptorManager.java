@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * @deprecated replace with {@link ICProjectDescriptionManager} & {@link ICProjectDescription}
+ * @deprecated replace with {@link ICProjectDescriptionManager} &amp; {@link ICProjectDescription}
  * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated

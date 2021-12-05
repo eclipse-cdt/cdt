@@ -2867,9 +2867,9 @@ public class DefaultCodeFormatterConstants {
 	}
 
 	/**
-	 * Returns the K&R formatter settings
+	 * Returns the K&amp;R formatter settings
 	 *
-	 * @return the K&R settings
+	 * @return the K&amp;R settings
 	 */
 	public static Map<String, String> getKandRSettings() {
 		return DefaultCodeFormatterOptions.getKandRSettings().getMap();

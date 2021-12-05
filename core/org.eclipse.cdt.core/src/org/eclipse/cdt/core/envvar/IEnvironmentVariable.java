@@ -50,9 +50,9 @@ public interface IEnvironmentVariable {
 	 * If the variable already exists and contains some value the new
 	 * value will be calculated in the following way:
 	 * For the "prepend" operation:
-	 * 	<New value> = <the value from the getValue() method><delimiter><Old value>
+	 * 	&lt;New value&gt; = &lt;the value from the getValue() method&gt;&lt;delimiter&gt;&lt;Old value&gt;
 	 * For the "append" operation:
-	 * 	<New value> = <Old value><delimiter><the value from the getValue() method>
+	 * 	&lt;New value&gt; = &lt;Old value&gt;&lt;delimiter&gt;&lt;the value from the getValue() method&gt;
 	 *
 	 * The Environment Variable Provider will also remove the duplicates of "sub-values"
 	 * in the resulting value.

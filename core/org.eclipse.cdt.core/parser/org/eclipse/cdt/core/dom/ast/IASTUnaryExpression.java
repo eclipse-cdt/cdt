@@ -53,7 +53,7 @@ public interface IASTUnaryExpression extends IASTExpression {
 
 	/**
 	 * Operator ampersand.
-	 * {@code op_amper}: &exp
+	 * {@code op_amper}: &amp;exp
 	 */
 	public static final int op_amper = 5;
 
@@ -129,7 +129,7 @@ public interface IASTUnaryExpression extends IASTExpression {
 	public static final int op_noexcept = 17;
 
 	/**
-	 * For GCC parsers, only. {@code op_labelReference} is used for &&label type expressions.
+	 * For GCC parsers, only. {@code op_labelReference} is used for &amp;&amp;label type expressions.
 	 * @since 5.8
 	 */
 	public static final int op_labelReference = 18;

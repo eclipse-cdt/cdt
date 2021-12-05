@@ -155,7 +155,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 * The macro can either be of object- or of function-style.
 	 * <pre>
 	 * Example:
-	 *    addMacro("max(a,b)", "(((a)>(b) ? (a) : (b))");
+	 *    addMacro("max(a,b)", "(((a)&gt;(b) ? (a) : (b))");
 	 * </pre>
 	 * @param signature the signature of the macro, see {@link IMacro#getSignature()}.
 	 * @param value the macro value

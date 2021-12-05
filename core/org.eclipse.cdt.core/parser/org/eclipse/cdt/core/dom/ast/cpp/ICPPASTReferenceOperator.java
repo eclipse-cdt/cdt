@@ -17,14 +17,14 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 
 /**
- * This is C++'s reference operator, i.e. &, used in a declarator.
+ * This is C++'s reference operator, i.e. &amp;, used in a declarator.
  *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTReferenceOperator extends IASTPointerOperator {
 	/**
-	 * Returns whether the operator denotes a rvalue reference (e.g. <code>int &&</code>).
+	 * Returns whether the operator denotes a rvalue reference (e.g. <code>int &amp;&amp;</code>).
 	 * @since 5.2
 	 */
 	public boolean isRValueReference();

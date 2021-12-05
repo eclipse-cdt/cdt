@@ -50,11 +50,11 @@ public class CommandLineUtil {
 	 * Parsing arguments in a shell style. i.e.
 	 *
 	 * <pre>
-	 * ["a b c" d] -> [[a b c],[d]]
-	 * [a   d] -> [[a],[d]]
-	 * ['"quoted"'] -> [["quoted"]]
-	 * [\\ \" \a] -> [[\],["],[a]]
-	 * ["str\\str\a"] -> [[str\str\a]]
+	 * ["a b c" d] -&gt; [[a b c],[d]]
+	 * [a   d] -&gt; [[a],[d]]
+	 * ['"quoted"'] -&gt; [["quoted"]]
+	 * [\\ \" \a] -&gt; [[\],["],[a]]
+	 * ["str\\str\a"] -&gt; [[str\str\a]]
 	 * </pre>
 	 *
 	 * @param line
@@ -166,11 +166,11 @@ public class CommandLineUtil {
 	 * Parsing arguments in a cmd style. i.e.
 	 *
 	 * <pre>
-	 * ["a b c" d] -> [[a b c],[d]]
-	 * [a   d] -> [[a],[d]]
-	 * ['"quoted"'] -> [['quoted']]
-	 * [\\ \" \a] -> [[\\],["],[\a]]
-	 * ["str\\str\a"] -> [[str\\str\a]]
+	 * ["a b c" d] -&gt; [[a b c],[d]]
+	 * [a   d] -&gt; [[a],[d]]
+	 * ['"quoted"'] -&gt; [['quoted']]
+	 * [\\ \" \a] -&gt; [[\\],["],[\a]]
+	 * ["str\\str\a"] -&gt; [[str\\str\a]]
 	 * </pre>
 	 *
 	 * @param line

@@ -58,7 +58,7 @@ public interface ICdtVariableManager {
 	/**
 	 *
 	 * converts StringList value into String of the following format:
-	 * "<value_1>< listDelimiter ><value_2>< listDelimiter > ... <value_n>"
+	 * "&lt;value_1&gt;&lt; listDelimiter &gt;&lt;value_2&gt;&lt; listDelimiter &gt; ... &lt;value_n&gt;"
 	 */
 	public String convertStringListToString(String value[], String listDelimiter);
 
@@ -70,7 +70,7 @@ public interface ICdtVariableManager {
 	 * expanded to. If null the BuildMacroException is thrown in case the string to be resolved
 	 * references inexistent macros
 	 * @param listDelimiter if not null, StringList macros are expanded as
-	 * "<value_1>< listDelimiter ><value_2>< listDelimiter > ... <value_n>"
+	 * "&lt;value_1&gt;&lt; listDelimiter &gt;&lt;value_2&gt;&lt; listDelimiter &gt; ... &lt;value_n&gt;"
 	 * otherwise the BuildMacroException is thrown in case the string to be resolved references
 	 * string-list macros
 	 */

@@ -92,9 +92,9 @@ public interface ICPPParserExtensionConfiguration {
 	public boolean supportAlignOfUnaryExpression();
 
 	/**
-	 * Support for Kernighan and Richie (K&R) C.
+	 * Support for Kernighan and Richie (K&amp;R) C.
 	 *
-	 * @return {@code true} if support for K&R C should be enabled
+	 * @return {@code true} if support for K&amp;R C should be enabled
 	 */
 	public boolean supportKnRC();
 
@@ -123,7 +123,7 @@ public interface ICPPParserExtensionConfiguration {
 	/**
 	 * Skips information in brackets provided at the beginning of a parameter declaration:
 	 * <br>
-	 * void accelerate([proc=marsh] const Speed &data);
+	 * void accelerate([proc=marsh] const Speed &amp;data);
 	 * @since 5.1
 	 */
 	public boolean supportParameterInfoBlock();

@@ -22,6 +22,30 @@
       "revId": "7a01668f954177445399b88c8c9dc61434edf09a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ec193ab_10eeca5d",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTY.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-12-05T17:19:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d26acf8_92a4fc25",
+      "range": {
+        "startLine": 107,
+        "startChar": 21,
+        "endLine": 107,
+        "endChar": 22
+      },
+      "revId": "7a01668f954177445399b88c8c9dc61434edf09a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "118467e5_a1e5c9c7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 635,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-12-14T19:52:54Z",
+      "side": 1,
+      "message": "The build is very strict and fails if formatting is incorrect - here there is a trailing space that causes:\n\n\u003e https://ci.eclipse.org/cdt/job/cdt-verify-code-cleanliness-pipeline/3454/ : FAILURE. The code base is not clean. This means one or more of formatting, whitespace, version numbers or other checks appears to have failed. Please see the console output for details and https://github.com/eclipse-cdt/cdt-infra/tree/master/jenkins/pipelines/cdt/verify#cdt-verify-code-cleanliness for documentation on what is checked.",
+      "range": {
+        "startLine": 635,
+        "startChar": 68,
+        "endLine": 635,
+        "endChar": 69
+      },
+      "revId": "baa255f9b8da821e7063f28f419de9a2de30f56e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

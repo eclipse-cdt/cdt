@@ -3,12 +3,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.eclipse.remote</groupId>
-    <artifactId>remote-parent</artifactId>
-    <version>3.0.2-SNAPSHOT</version>
-    <relativePath>../../releng/org.eclipse.remote.build/pom.xml</relativePath>
-  </parent>
+	<parent>
+		<groupId>org.eclipse.cdt</groupId>
+		<artifactId>cdt-parent</artifactId>
+		<version>10.5.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
 
 	<artifactId>org.eclipse.remote.proxy.server.product</artifactId>
 	<version>1.0.0</version>
@@ -73,50 +73,50 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
-							<tasks>
+							<target name="copy prebuilt servers to the individual plugins">
 								<copy file="${project.build.directory}/products/proxy.server-linux.gtk.x86_64.tar.gz"
 									tofile="${basedir}/../org.eclipse.remote.proxy.server.linux.x86_64/proxy.server.tar.gz"/>
 								<copy file="${project.build.directory}/products/proxy.server-linux.gtk.ppc64le.tar.gz"
 									tofile="${basedir}/../org.eclipse.remote.proxy.server.linux.ppc64le/proxy.server.tar.gz"/>
 								<copy file="${project.build.directory}/products/proxy.server-macosx.cocoa.x86_64.tar.gz"
 									tofile="${basedir}/../org.eclipse.remote.proxy.server.macosx.x86_64/proxy.server.tar.gz"/>
-							</tasks>
+							</target>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
-	    <profile>
-	      <id>eclipse-sign</id>
-	      <build>
-	        <plugins>
-	          <plugin>
-	            <groupId>org.eclipse.cbi.maven.plugins</groupId>
-	            <artifactId>eclipse-macsigner-plugin</artifactId>
-	            <version>${cbi-plugins.version}</version>
-	            <executions>
-	              <execution>
-	                <id>sign</id>
-	                <phase>package</phase>
-	                <goals>
-	                  <goal>sign</goal>
-	                </goals>
-	                <configuration>
-	                  <baseSearchDir>${project.build.directory}/products/proxy.server/macosx</baseSearchDir>
-	                  <fileNames>
-	                    <fileName>Proxy.app</fileName>
-	                  </fileNames>
-	                  <timeoutMillis>300000</timeoutMillis> <!-- 5 min -->
-	                  <entitlements>${project.basedir}/product.entitlements</entitlements>
-	                </configuration>
-	              </execution>
-	            </executions>
-	          </plugin>
-	        </plugins>
-	      </build>
-	    </profile>
-    </profiles>
+		<profile>
+		<id>production</id>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.cbi.maven.plugins</groupId>
+					<artifactId>eclipse-macsigner-plugin</artifactId>
+					<version>${cbi-plugins.version}</version>
+					<executions>
+						<execution>
+							<id>sign</id>
+							<phase>package</phase>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+							<configuration>
+								<baseSearchDir>${project.build.directory}/products/proxy.server/macosx</baseSearchDir>
+								<fileNames>
+									<fileName>Proxy.app</fileName>
+								</fileNames>
+								<timeoutMillis>300000</timeoutMillis>
+								<entitlements>${project.basedir}/product.entitlements</entitlements>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</build>
+		</profile>
+	</profiles>
 </project>

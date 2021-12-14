@@ -11,5 +11,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.remote.core,
  org.eclipse.remote.jsch.core,
  org.junit
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy

@@ -254,6 +254,36 @@
    <bundle id="org.eclipse.cdt.jsoncdb.nvidia.source">
       <category name="extra-jsoncdb"/>
    </bundle>
+   <feature url="features/org.eclipse.remote_0.0.0.jar" id="org.eclipse.remote" version="0.0.0">
+      <category name="Remote Services"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.source_0.0.0.jar" id="org.eclipse.remote.source" version="0.0.0">
+      <category name="Remote Services SDK"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.serial_0.0.0.jar" id="org.eclipse.remote.serial" version="0.0.0">
+      <category name="Remote Serial Port"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.serial.source_0.0.0.jar" id="org.eclipse.remote.serial.source" version="0.0.0">
+      <category name="Remote Console SDK"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.console_0.0.0.jar" id="org.eclipse.remote.console" version="0.0.0">
+      <category name="Remote Console"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.console.source_0.0.0.jar" id="org.eclipse.remote.console.source" version="0.0.0">
+      <category name="Remote Console SDK"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.telnet_0.0.0.jar" id="org.eclipse.remote.telnet" version="0.0.0">
+      <category name="Telnet Protocol Support"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.telnet.source_0.0.0.jar" id="org.eclipse.remote.telnet.source" version="0.0.0">
+      <category name="Telnet Protocol Support SDK"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.proxy_0.0.0.jar" id="org.eclipse.remote.proxy" version="0.0.0">
+      <category name="Remote Proxy Agent"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.proxy.source_0.0.0.jar" id="org.eclipse.remote.proxy.source" version="0.0.0">
+      <category name="Remote Proxy Agent SDK"/>
+   </feature>
    <category-def name="main" label="CDT Main Features"/>
    <category-def name="extra" label="CDT Optional Features"/>
    <category-def name="launchbar" label="LaunchBar"/>

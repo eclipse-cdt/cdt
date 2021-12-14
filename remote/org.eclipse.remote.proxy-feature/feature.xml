@@ -4,6 +4,7 @@
       label="%featureName"
       version="3.0.2.qualifier"
       provider-name="%providerName"
+      plugin="org.eclipse.remote.proxy.ui"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 

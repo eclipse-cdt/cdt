@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "031041c0_55afc9f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2021-12-14T20:27:27Z",
+      "side": 1,
+      "message": "I\u0027m fairly certain that this is not the pid you want.\nFrom my memory, this pid is for the GDB client, not the process you are debugging.",
+      "range": {
+        "startLine": 638,
+        "startChar": 4,
+        "endLine": 638,
+        "endChar": 47
+      },
+      "revId": "92aca9510b8c136a4d7054a47cdff183138bb610",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

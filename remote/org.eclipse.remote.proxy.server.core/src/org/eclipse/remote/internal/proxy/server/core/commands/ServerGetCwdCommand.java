@@ -17,7 +17,7 @@ public class ServerGetCwdCommand extends AbstractServerCommand {
 
 	private String cwd;
 	private final DataOutputStream result;
-	
+
 	private class CommandRunner implements Runnable {
 		@Override
 		public void run() {
@@ -29,7 +29,7 @@ public class ServerGetCwdCommand extends AbstractServerCommand {
 			}
 		}
 	}
-	
+
 	public ServerGetCwdCommand(StreamChannel chan) {
 		this.result = new DataOutputStream(chan.getOutputStream());
 	}

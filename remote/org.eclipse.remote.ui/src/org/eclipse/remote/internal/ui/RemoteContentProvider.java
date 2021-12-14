@@ -45,7 +45,7 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 
 	/**
 	 * Sets the workingSet.
-	 * 
+	 *
 	 * @param workingSet
 	 *            The workingSet to set
 	 */
@@ -55,7 +55,7 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 
 	/**
 	 * Returns the workingSet.
-	 * 
+	 *
 	 * @return IWorkingSet
 	 */
 	public IWorkingSet getWorkingSet() {

@@ -41,16 +41,16 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * Widget to allow the user to select a service provider and connection. Provides a "New" button to create a new connection.
- * 
+ *
  * If title is supplied then the widget will be placed in a group.
- * 
+ *
  * @since 5.0
- * 
+ *
  */
 public class RemoteConnectionWidget extends Composite {
 	/**
 	 * Listener for widget selected events. Allows the events to be enabled/disabled.
-	 * 
+	 *
 	 */
 	protected class WidgetListener implements SelectionListener {
 		/** State of the listener (enabled/disabled). */
@@ -83,7 +83,7 @@ public class RemoteConnectionWidget extends Composite {
 
 		/**
 		 * Set listener enabled state
-		 * 
+		 *
 		 * @param enabled
 		 */
 		public synchronized void setEnabled(boolean enabled) {
@@ -121,7 +121,7 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Force the use of the connection type combo, regardless of the PREF_CONNECTION_TYPE preference setting.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static int FLAG_FORCE_CONNECTION_TYPE_SELECTION = 1 << 0;
@@ -149,7 +149,7 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite
 	 * @param style
@@ -165,7 +165,7 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite
 	 * @param style
@@ -184,7 +184,7 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite
 	 * @param style
@@ -204,7 +204,7 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite
 	 * @param style
@@ -325,7 +325,7 @@ public class RemoteConnectionWidget extends Composite {
 	 * <p>
 	 * <code>widgetSelected</code> is called when the user changes the service provider or connection.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the listener which should be notified
 	 */
@@ -337,7 +337,7 @@ public class RemoteConnectionWidget extends Composite {
 	 * Limit the connection types that will be used when displaying valid connections. Only connection types that support
 	 * connections with supplied services will be displayed in the connection type combo, and only connections from these connection
 	 * types will be displayed in the connection combo.
-	 * 
+	 *
 	 * @param services
 	 *            list of services {@link IRemoteConnection.Service}
 	 * @since 2.0
@@ -353,7 +353,7 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Get the new button from the widget
-	 * 
+	 *
 	 * @return button
 	 * @since 7.0
 	 */
@@ -363,7 +363,7 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Get the connection that is currently selected in the widget, or null if there is no selected connection.
-	 * 
+	 *
 	 * @return selected connection
 	 */
 	public IRemoteConnection getConnection() {
@@ -426,7 +426,7 @@ public class RemoteConnectionWidget extends Composite {
 	/**
 	 * Handle creation of a new connection by pressing the 'New...' button. Calls handleRemoteServicesSelected() to update the
 	 * connection combo with the new connection.
-	 * 
+	 *
 	 * TODO should probably select the new connection
 	 */
 	protected void handleNewRemoteConnectionSelected() {
@@ -450,9 +450,9 @@ public class RemoteConnectionWidget extends Composite {
 	/**
 	 * Handle selection of a new connection type from the connection type combo. Handles the special case where the
 	 * connection type combo is null and a local connection is supplied. In this case, the selected connection type is not changed.
-	 * 
+	 *
 	 * The assumption is that this will trigger a call to the selection handler for the connection combo.
-	 * 
+	 *
 	 * @param conn
 	 *            connection to select as current. If conn is null, select the first item in the list.
 	 * @since 2.0
@@ -536,7 +536,7 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Initialize the contents of the connection type combo. Keeps an array of connection types that matches the combo elements.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	protected void initializeConnectionTypeCombo() {
@@ -573,7 +573,7 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Remove a listener that will be notified when one of the widget's controls are selected
-	 * 
+	 *
 	 * @param listener
 	 *            listener to remove
 	 */
@@ -583,7 +583,7 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Set the connection that should be selected in the widget.
-	 * 
+	 *
 	 * @param connection
 	 *            connection to select
 	 * @throws CoreException
@@ -604,7 +604,7 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Set the connection that should be selected in the widget.
-	 * 
+	 *
 	 * @param id
 	 *            connection type id
 	 * @param name

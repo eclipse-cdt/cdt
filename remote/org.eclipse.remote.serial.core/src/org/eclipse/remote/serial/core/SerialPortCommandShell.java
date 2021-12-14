@@ -30,8 +30,7 @@ public class SerialPortCommandShell implements IRemoteProcess {
 		this.serialPort = serialPort;
 		serialPort.open();
 	}
-	
-	
+
 	@Override
 	public synchronized void destroy() {
 		if (serialPort.isOpen()) {

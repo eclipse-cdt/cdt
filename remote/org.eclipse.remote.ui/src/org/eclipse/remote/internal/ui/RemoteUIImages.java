@@ -42,20 +42,23 @@ public class RemoteUIImages {
 	public static final String IMG_ELCL_NEW_FOLDER = NAME_PREFIX + T_ELCL + ".new_folder.gif"; //$NON-NLS-1$
 	public static final String IMG_DLCL_NEW_FOLDER = NAME_PREFIX + T_DLCL + ".new_folder.gif"; //$NON-NLS-1$
 	public static final String IMG_DEFAULT_TYPE = NAME_PREFIX + "defaultType"; //$NON-NLS-1$
-	
+
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
 	public static final ImageDescriptor DESC_ELCL_UP_NAV = createManaged(T_ELCL, "up_nav.gif", IMG_ELCL_UP_NAV); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DLCL_UP_NAV = createManaged(T_DLCL, "up_nav.gif", IMG_ELCL_UP_NAV); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_SYMLINK = createManaged(T_OVR, "symlink_ovr.gif", IMG_OVR_SYMLINK); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ELCL_NEW_FOLDER = createManaged(T_ELCL, "new_folder.gif", IMG_ELCL_NEW_FOLDER); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_DLCL_NEW_FOLDER = createManaged(T_DLCL, "new_folder.gif", IMG_DLCL_NEW_FOLDER); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_DEFAULT_TYPE = createManaged(ICONS_PATH.append("console.png"), IMG_DEFAULT_TYPE); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_NEW_FOLDER = createManaged(T_ELCL, "new_folder.gif", //$NON-NLS-1$
+			IMG_ELCL_NEW_FOLDER);
+	public static final ImageDescriptor DESC_DLCL_NEW_FOLDER = createManaged(T_DLCL, "new_folder.gif", //$NON-NLS-1$
+			IMG_DLCL_NEW_FOLDER);
+	public static final ImageDescriptor DESC_DEFAULT_TYPE = createManaged(ICONS_PATH.append("console.png"), //$NON-NLS-1$
+			IMG_DEFAULT_TYPE);
 
 	/**
 	 * Returns the image managed under the given key in this registry.
-	 * 
+	 *
 	 * @param key
 	 *            the image's key
 	 * @return the image managed under the given key
@@ -66,7 +69,7 @@ public class RemoteUIImages {
 
 	/**
 	 * Returns the image descriptor for the given key in this registry. Might be called in a non-UI thread.
-	 * 
+	 *
 	 * @param key
 	 *            the image's key
 	 * @return the image descriptor for the given key
@@ -78,7 +81,7 @@ public class RemoteUIImages {
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
 	 * are retrieved from the *lcl16 folders.
-	 * 
+	 *
 	 * @param action
 	 *            the action
 	 * @param iconName

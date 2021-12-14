@@ -175,7 +175,7 @@ public class ProcessTests extends TestCase {
 	public void testExitValue() {
 		IRemoteProcessService processService = fRemoteConnection.getService(IRemoteProcessService.class);
 		assertNotNull(processService);
-		IRemoteProcessBuilder builder = processService.getProcessBuilder(new String[]{"sleep","60"}); //$NON-NLS-1$
+		IRemoteProcessBuilder builder = processService.getProcessBuilder(new String[] { "sleep", "60" }); //$NON-NLS-1$
 		assertNotNull(builder);
 		IRemoteProcess rp = null;
 		try {
@@ -189,7 +189,7 @@ public class ProcessTests extends TestCase {
 		try {
 			p.exitValue();
 			fail("Process has not exited. Should throws an IllegalThreadStateException exception");
-		} catch(IllegalThreadStateException e) {
+		} catch (IllegalThreadStateException e) {
 			e.printStackTrace();
 		}
 	}

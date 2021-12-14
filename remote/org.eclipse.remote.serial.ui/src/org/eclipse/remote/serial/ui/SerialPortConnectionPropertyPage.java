@@ -22,46 +22,44 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-
 public class SerialPortConnectionPropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
 
 	protected SerialPortConnectionBlock block;
 	protected IRemoteConnectionWorkingCopy workingCopy;
-	
+
 	public SerialPortConnectionPropertyPage() {
 		super();
-		block =  new SerialPortConnectionBlock();
+		block = new SerialPortConnectionBlock();
 	}
 
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(2, false));
-		
+
 		block.addUpdateListener(block.new SerialBlockUpdateListener() {
 
 			@Override
 			public void update() {
 				setValid(block.isComplete());
 			}
-			
-		});	
-		
+
+		});
+
 		IRemoteConnection remoteConnection = getElement().getAdapter(IRemoteConnection.class);
 		if (remoteConnection != null)
 			workingCopy = remoteConnection.getWorkingCopy();
 		else
 			workingCopy = null;
-		
-		
+
 		block.createBlock(comp, workingCopy);
 		return comp;
 	}
-	
+
 	@Override
 	public boolean performOk() {
 		if (workingCopy != null) {
-			
+
 			workingCopy.setName(block.getConnectionName());
 			workingCopy.setAttribute(ISerialPortService.PORT_NAME_ATTR, block.getPortName());
 			workingCopy.setAttribute(ISerialPortService.BAUD_RATE_ATTR, Integer.toString(block.getBaudRateIndex()));
@@ -74,10 +72,10 @@ public class SerialPortConnectionPropertyPage extends PropertyPage implements IW
 				Activator.log(e);
 				return false;
 			}
-			
+
 		}
-		
+
 		return true;
 	}
-	
+
 }

@@ -46,7 +46,7 @@ import org.eclipse.remote.internal.jsch.core.messages.Messages;
 public class JschFileStore extends FileStore {
 	/**
 	 * Public factory method for obtaining JschFileStore instances.
-	 * 
+	 *
 	 * @param uri
 	 *            URI to get a fileStore for
 	 * @return an JschFileStore instance for the URI.
@@ -76,7 +76,8 @@ public class JschFileStore extends FileStore {
 		IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
 		IRemoteConnectionType connectionType = manager.getConnectionType(fURI);
 		if (connectionType == null) {
-			throw new RemoteConnectionException(NLS.bind(Messages.JschFileStore_No_remote_services_found_for_URI, fURI));
+			throw new RemoteConnectionException(
+					NLS.bind(Messages.JschFileStore_No_remote_services_found_for_URI, fURI));
 		}
 
 		try {
@@ -136,7 +137,8 @@ public class JschFileStore extends FileStore {
 
 	@Override
 	public IFileStore getChild(String name) {
-		URI uri = JSchFileSystem.getURIFor(JSchFileSystem.getConnectionNameFor(fURI), fRemotePath.append(name).toString());
+		URI uri = JSchFileSystem.getURIFor(JSchFileSystem.getConnectionNameFor(fURI),
+				fRemotePath.append(name).toString());
 		return JschFileStore.getInstance(uri);
 	}
 
@@ -147,7 +149,7 @@ public class JschFileStore extends FileStore {
 
 	/**
 	 * Utility routing to get the file name from an absolute path.
-	 * 
+	 *
 	 * @param path
 	 *            path to extract file name from
 	 * @return last segment of path, or the full path if it is root
@@ -168,7 +170,8 @@ public class JschFileStore extends FileStore {
 		if (fRemotePath.segmentCount() > 0) {
 			parentPath = fRemotePath.removeLastSegments(1).toString();
 		}
-		return JschFileStore.getInstance(JSchFileSystem.getURIFor(JSchFileSystem.getConnectionNameFor(fURI), parentPath));
+		return JschFileStore
+				.getInstance(JSchFileSystem.getURIFor(JSchFileSystem.getConnectionNameFor(fURI), parentPath));
 	}
 
 	@Override
@@ -180,7 +183,8 @@ public class JschFileStore extends FileStore {
 			IFileStore parent = getParent();
 			if (parent != null && !parent.fetchInfo(EFS.NONE, subMon.newChild(9)).exists()) {
 				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE,
-						NLS.bind(Messages.JschFileStore_The_parent_of_directory_does_not_exist, fRemotePath.toString()), null));
+						NLS.bind(Messages.JschFileStore_The_parent_of_directory_does_not_exist, fRemotePath.toString()),
+						null));
 			}
 			if (subMon.isCanceled()) {
 				return this;
@@ -201,11 +205,14 @@ public class JschFileStore extends FileStore {
 			if (!subMon.isCanceled()) {
 				if (!info.exists()) {
 					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE,
-							NLS.bind(Messages.JschFileStore_The_directory_could_not_be_created, fRemotePath.toString()), null));
+							NLS.bind(Messages.JschFileStore_The_directory_could_not_be_created, fRemotePath.toString()),
+							null));
 				}
 				if (!info.isDirectory()) {
-					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE,
-							NLS.bind(Messages.JschFileStore_A_file_of_name_already_exists, fRemotePath.toString()), null));
+					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(),
+							EFS.ERROR_WRONG_TYPE,
+							NLS.bind(Messages.JschFileStore_A_file_of_name_already_exists, fRemotePath.toString()),
+							null));
 				}
 			}
 		}

@@ -37,7 +37,7 @@ public class MkdirCommand extends AbstractCommand<Void> {
 			out.writeInt(options);
 			out.writeUTF(path);
 			out.flush();
-			
+
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();

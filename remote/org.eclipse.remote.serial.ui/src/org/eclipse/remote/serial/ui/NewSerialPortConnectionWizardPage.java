@@ -17,7 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 public class NewSerialPortConnectionWizardPage extends WizardPage {
-	
+
 	protected SerialPortConnectionBlock block;
 
 	public NewSerialPortConnectionWizardPage() {
@@ -31,14 +31,14 @@ public class NewSerialPortConnectionWizardPage extends WizardPage {
 			public void update() {
 				setPageComplete(block.isComplete());
 			}
-			
+
 		});
 	}
 
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout(2, false)); 
+		comp.setLayout(new GridLayout(2, false));
 		block.createBlock(comp, null);
 		setControl(comp);
 	}

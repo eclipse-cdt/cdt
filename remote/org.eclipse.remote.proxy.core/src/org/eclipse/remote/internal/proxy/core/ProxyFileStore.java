@@ -42,7 +42,7 @@ import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 public class ProxyFileStore extends FileStore {
 	/**
 	 * Public factory method for obtaining ProxyFileStore instances.
-	 * 
+	 *
 	 * @param uri
 	 *            URI to get a fileStore for
 	 * @return an ProxyFileStore instance for the URI.
@@ -145,7 +145,8 @@ public class ProxyFileStore extends FileStore {
 
 	@Override
 	public IFileStore getChild(String name) {
-		URI uri = ProxyFileSystem.getURIFor(ProxyFileSystem.getConnectionNameFor(fURI), fRemotePath.append(name).toString());
+		URI uri = ProxyFileSystem.getURIFor(ProxyFileSystem.getConnectionNameFor(fURI),
+				fRemotePath.append(name).toString());
 		return getInstance(uri);
 	}
 
@@ -156,7 +157,7 @@ public class ProxyFileStore extends FileStore {
 
 	/**
 	 * Utility routing to get the file name from an absolute path.
-	 * 
+	 *
 	 * @param path
 	 *            path to extract file name from
 	 * @return last segment of path, or the full path if it is root
@@ -214,8 +215,8 @@ public class ProxyFileStore extends FileStore {
 							NLS.bind(Messages.ProxyFileStore_4, fRemotePath.toString()), null));
 				}
 				if (!info.isDirectory()) {
-					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE,
-							NLS.bind(Messages.ProxyFileStore_5, fRemotePath.toString()), null));
+					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(),
+							EFS.ERROR_WRONG_TYPE, NLS.bind(Messages.ProxyFileStore_5, fRemotePath.toString()), null));
 				}
 			}
 		}

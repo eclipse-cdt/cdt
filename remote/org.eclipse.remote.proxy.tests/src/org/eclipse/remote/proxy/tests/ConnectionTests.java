@@ -28,50 +28,50 @@ import junit.framework.TestCase;
 public class ConnectionTests extends TestCase {
 
 	private IRemoteConnectionType connType;
-	
+
 	class Context {
 		private String line;
 		private State state;
 		private BufferedReader reader;
 		private BufferedWriter writer;
-		
+
 		public Context(BufferedReader reader, BufferedWriter writer) {
 			this.reader = reader;
 			this.writer = writer;
 			setState(States.INIT);
 		}
-		
-	    String getLine() {
-	    	return line;
-	    }
-	    
-	    void setLine(String line) {
-	    	this.line = line;
-	    }
-	    
-	    State getState() {
-	    	return state;
-	    }
-	    
-	    void setState(State state) {
-	    	this.state = state;
-	    }
+
+		String getLine() {
+			return line;
+		}
+
+		void setLine(String line) {
+			this.line = line;
+		}
+
+		State getState() {
+			return state;
+		}
+
+		void setState(State state) {
+			this.state = state;
+		}
 	}
-	
+
 	interface State {
-	    /**
-	       * @return true to keep processing, false to read more data.
-	     */
-	    boolean process(Context context) throws IOException;
+		/**
+		   * @return true to keep processing, false to read more data.
+		 */
+		boolean process(Context context) throws IOException;
 	}
-	
+
 	enum States implements State {
 		INIT {
 			@Override
 			public boolean process(Context context) throws IOException {
-				System.out.println("state="+INIT);
+				System.out.println("state=" + INIT);
 				String line = context.reader.readLine();
-				System.out.println("got "+ line);
+				System.out.println("got " + line);
 				if (line.equals("running")) {
 					context.setState(States.CHECK);
 					return true;
@@ -82,7 +82,7 @@ public class ConnectionTests extends TestCase {
 		CHECK {
 			@Override
 			public boolean process(Context context) throws IOException {
-				System.out.println("state="+CHECK);
+				System.out.println("state=" + CHECK);
 				context.writer.write("check\n");
 				context.writer.flush();
 				String line = context.reader.readLine();
@@ -95,14 +95,14 @@ public class ConnectionTests extends TestCase {
 					context.setState(States.DOWNLOAD);
 					return true;
 				}
-				System.out.println("fail:"+parts[1]);
+				System.out.println("fail:" + parts[1]);
 				return false;
 			}
 		},
 		DOWNLOAD {
 			@Override
 			public boolean process(Context context) throws IOException {
-				System.out.println("state="+DOWNLOAD);
+				System.out.println("state=" + DOWNLOAD);
 				File file = new File("proxy.server-linux.gtk.x86_64.tar.gz");
 				long count = file.length() / 510;
 				System.out.println("download " + count);
@@ -116,13 +116,13 @@ public class ConnectionTests extends TestCase {
 						context.setState(States.START);
 						return true;
 					case "fail":
-						System.out.println("fail:"+parts[1]);
+						System.out.println("fail:" + parts[1]);
 						return false;
 					}
 				}
 				return false;
 			}
-			
+
 			private boolean downloadFile(File file, BufferedWriter writer) {
 				try {
 					Base64.Encoder encoder = Base64.getEncoder();
@@ -147,14 +147,14 @@ public class ConnectionTests extends TestCase {
 		START {
 			@Override
 			public boolean process(Context context) throws IOException {
-				System.out.println("state="+START);
+				System.out.println("state=" + START);
 				context.writer.write("start\n");
 				context.writer.flush();
 				return false;
 			}
 		}
 	}
-	
+
 	public void testProxyConnection() {
 		try {
 			IJSchService jService = Activator.getService(IJSchService.class);
@@ -162,7 +162,7 @@ public class ConnectionTests extends TestCase {
 			session.setConfig("PreferredAuthentications", "password,keyboard-interactive,gssapi-with-mic,publickey"); //$NON-NLS-1$ //$NON-NLS-2$
 			new UserInfoPrompter(session);
 			jService.connect(session, 0, new NullProgressMonitor());
-			ChannelExec server = (ChannelExec)session.openChannel("exec");
+			ChannelExec server = (ChannelExec) session.openChannel("exec");
 			server.setCommand("/bin/sh");
 			server.connect();
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(server.getOutputStream()));
@@ -179,54 +179,54 @@ public class ConnectionTests extends TestCase {
 			while (context.getState().process(context)) {
 				// do state machine
 			}
-		} catch (JSchException  | IOException  e) {
+		} catch (JSchException | IOException e) {
 			fail(e.getMessage());
 		}
 
-//		try {
-//			final Process proc = Runtime.getRuntime().exec("java"
-//					+ " -cp /Users/gw6/Work/git/org.eclipse.remote/releng/org.eclipse.remote.proxy.server.product/target/products/proxy.server/macosx/cocoa/x86_64/Proxy.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.200.v20160318-1642.jar"
-//					+ " org.eclipse.equinox.launcher.Main"
-//					+ " -application org.eclipse.remote.proxy.server.core.application"
-//					+ " -noExit");
-//			assertTrue(proc.isAlive());
-//			
-//			new Thread("stderr") {
-//				private byte[] buf = new byte[1024];
-//				@Override
-//				public void run() {
-//					int n;
-//					BufferedInputStream err = new BufferedInputStream(proc.getErrorStream());
-//					try {
-//						while ((n = err.read(buf)) >= 0) {
-//							if (n > 0) {
-//								System.err.println("server: " + new String(buf, 0, n));
-//							}
-//						}
-//					} catch (IOException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}				
-//				}
-//				
-//			}.start();
-//			
-//			IRemoteConnection conn = connType.newConnection("test");
-//			assertNotNull(conn);
-//			IRemoteProxyService proxy = conn.getService(IRemoteProxyService.class);
-//			assertNotNull(proxy);
-//			proxy.setStreams(proc.getInputStream(), proc.getOutputStream());
-//			conn.open(new NullProgressMonitor());
-//			conn.close();
-//			
-//			proc.destroy();
-//			proc.waitFor();
-//			assertEquals(false, proc.isAlive());
-//		} catch (IOException | RemoteConnectionException | InterruptedException e) {
-//			fail(e.getMessage());
-//		}
+		//		try {
+		//			final Process proc = Runtime.getRuntime().exec("java"
+		//					+ " -cp /Users/gw6/Work/git/org.eclipse.remote/releng/org.eclipse.remote.proxy.server.product/target/products/proxy.server/macosx/cocoa/x86_64/Proxy.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.200.v20160318-1642.jar"
+		//					+ " org.eclipse.equinox.launcher.Main"
+		//					+ " -application org.eclipse.remote.proxy.server.core.application"
+		//					+ " -noExit");
+		//			assertTrue(proc.isAlive());
+		//
+		//			new Thread("stderr") {
+		//				private byte[] buf = new byte[1024];
+		//				@Override
+		//				public void run() {
+		//					int n;
+		//					BufferedInputStream err = new BufferedInputStream(proc.getErrorStream());
+		//					try {
+		//						while ((n = err.read(buf)) >= 0) {
+		//							if (n > 0) {
+		//								System.err.println("server: " + new String(buf, 0, n));
+		//							}
+		//						}
+		//					} catch (IOException e) {
+		//						// TODO Auto-generated catch block
+		//						e.printStackTrace();
+		//					}
+		//				}
+		//
+		//			}.start();
+		//
+		//			IRemoteConnection conn = connType.newConnection("test");
+		//			assertNotNull(conn);
+		//			IRemoteProxyService proxy = conn.getService(IRemoteProxyService.class);
+		//			assertNotNull(proxy);
+		//			proxy.setStreams(proc.getInputStream(), proc.getOutputStream());
+		//			conn.open(new NullProgressMonitor());
+		//			conn.close();
+		//
+		//			proc.destroy();
+		//			proc.waitFor();
+		//			assertEquals(false, proc.isAlive());
+		//		} catch (IOException | RemoteConnectionException | InterruptedException e) {
+		//			fail(e.getMessage());
+		//		}
 	}
-	
+
 	private String executeSshCommand(ChannelShell shell, String command) throws RemoteConnectionException {
 		try {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -247,11 +247,11 @@ public class ConnectionTests extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-//		IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
-//		connType = manager.getConnectionType("org.eclipse.remote.Proxy"); //$NON-NLS-1$
-//		assertNotNull(connType);
+		//		IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
+		//		connType = manager.getConnectionType("org.eclipse.remote.Proxy"); //$NON-NLS-1$
+		//		assertNotNull(connType);
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 	}

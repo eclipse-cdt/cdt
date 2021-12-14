@@ -31,7 +31,7 @@ public interface IRemoteUIConnectionService extends IRemoteConnectionType.Servic
 	/**
 	 * Create a wizard for adding or editing connections. The implementation can choose to do this in any way, but typically will
 	 * use a dialog or wizard.
-	 * 
+	 *
 	 * @param shell
 	 *            shell used to display dialogs
 	 * @return connection wizard
@@ -42,7 +42,7 @@ public interface IRemoteUIConnectionService extends IRemoteConnectionType.Servic
 	 * Attempt to open a connection using a progress monitor. Can be called on either open or closed connections, and will
 	 * initialize the remote services if necessary. Users should check connection.isOpen() on return to determine if the connection
 	 * was actually opened.
-	 * 
+	 *
 	 * @param shell
 	 *            shell used to display dialogs
 	 * @param context
@@ -55,7 +55,7 @@ public interface IRemoteUIConnectionService extends IRemoteConnectionType.Servic
 	/**
 	 * Return the label provider that provides the text and base image for the connection type
 	 * and connections of that type.
-	 * 
+	 *
 	 * @return label provider
 	 */
 	public ILabelProvider getLabelProvider();

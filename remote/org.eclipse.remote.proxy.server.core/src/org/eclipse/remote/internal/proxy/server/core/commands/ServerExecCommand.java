@@ -21,7 +21,7 @@ import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 public class ServerExecCommand extends AbstractServerExecCommand {
 	public Process doRun() throws IOException {
 		System.err.print("exec: ");
-		for (String arg:getCommand()) {
+		for (String arg : getCommand()) {
 			System.err.print(arg + " ");
 		}
 		System.err.println();
@@ -38,7 +38,7 @@ public class ServerExecCommand extends AbstractServerExecCommand {
 					}
 				}
 			}
-		} catch (UnsupportedOperationException | IllegalArgumentException  e) {
+		} catch (UnsupportedOperationException | IllegalArgumentException e) {
 			// Leave environment untouched
 		}
 		File dir = new File(getDirectory());
@@ -48,18 +48,19 @@ public class ServerExecCommand extends AbstractServerExecCommand {
 		builder.redirectErrorStream(isRedirect());
 		return builder.start();
 	}
-	
+
 	protected void doKill(Process proc) {
 		if (proc.isAlive()) {
 			proc.destroyForcibly();
 		}
 	}
-	
+
 	protected void doSetTerminalSize(Process proc, int cols, int rows) {
 		// Not supported
 	}
-	
-	public ServerExecCommand(List<String> command, Map<String, String> env, String directory, boolean redirect, boolean appendEnv, StreamChannel cmdChan, StreamChannel ioChan, StreamChannel errChan) {
+
+	public ServerExecCommand(List<String> command, Map<String, String> env, String directory, boolean redirect,
+			boolean appendEnv, StreamChannel cmdChan, StreamChannel ioChan, StreamChannel errChan) {
 		super(command, env, directory, redirect, appendEnv, cmdChan, ioChan, errChan);
 	}
 }

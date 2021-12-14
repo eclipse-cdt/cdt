@@ -26,7 +26,7 @@ import org.eclipse.ui.PlatformUI;
  * A label provider to show the test and base image for remote connections.
  * It calls out to the connection type services to get the text and images for
  * the types of the connections.
- * 
+ *
  * @since 2.0
  */
 public class RemoteConnectionsLabelProvider extends LabelProvider {
@@ -49,7 +49,7 @@ public class RemoteConnectionsLabelProvider extends LabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IRemoteConnection) {
-			IRemoteConnection connection = (IRemoteConnection) element; 
+			IRemoteConnection connection = (IRemoteConnection) element;
 			IRemoteConnectionType type = connection.getConnectionType();
 			IRemoteUIConnectionService uiService = type.getService(IRemoteUIConnectionService.class);
 			if (uiService != null) {
@@ -60,14 +60,15 @@ public class RemoteConnectionsLabelProvider extends LabelProvider {
 					String closedId = "closed." + type.getId(); //$NON-NLS-1$
 					Image closedImage = RemoteUIPlugin.getDefault().getImageRegistry().get(closedId);
 					if (closedImage == null) {
-						final Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_ERROR);
+						final Image errorImage = PlatformUI.getWorkbench().getSharedImages()
+								.getImage(ISharedImages.IMG_DEC_FIELD_ERROR);
 						ImageDescriptor desc = new CompositeImageDescriptor() {
 							@Override
 							protected Point getSize() {
 								Rectangle bounds = baseImage.getBounds();
 								return new Point(bounds.width, bounds.height);
 							}
-							
+
 							@Override
 							protected void drawCompositeImage(int width, int height) {
 								drawImage(baseImage.getImageData(), 0, 0);

@@ -37,14 +37,14 @@ import org.eclipse.swt.widgets.Text;
  * Widget to allow the user to select a remote file. Provides a "Browse"
  * button that uses the currently specified connection and a "Restore Default"
  * button to revert to the initial setting.
- * 
+ *
  * If GROUP_FLAG is set, then the widget will be placed in a group.
  * If RESTORE_BUTTON_FLAG is set, then a "Restore Default" button will be added
- * 
+ *
  * If defaultPath is not null, then the initial path will be set to its value.
- * 
+ *
  * The browse message can be modified using {@link #setBrowseMessage(String)}
- * 
+ *
  */
 public class RemoteFileWidget extends Composite {
 	public static int GROUP_FLAG = 0x01;
@@ -129,7 +129,7 @@ public class RemoteFileWidget extends Composite {
 
 	/**
 	 * Add a listener that will be notified when the file path is modified.
-	 * 
+	 *
 	 * @param listener
 	 *            listener to add
 	 */
@@ -157,7 +157,7 @@ public class RemoteFileWidget extends Composite {
 	/**
 	 * Get the file location path. This path will be relative to the remote
 	 * machine.
-	 * 
+	 *
 	 * @return file location path
 	 */
 	public String getLocationPath() {
@@ -166,7 +166,8 @@ public class RemoteFileWidget extends Composite {
 
 	private String getSavedPath() {
 		if (fRemoteConnection != null) {
-			return fPreviousSelections.get(fRemoteConnection.getConnectionType().getId() + "." + fRemoteConnection.getName()); //$NON-NLS-1$
+			return fPreviousSelections
+					.get(fRemoteConnection.getConnectionType().getId() + "." + fRemoteConnection.getName()); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -194,7 +195,7 @@ public class RemoteFileWidget extends Composite {
 	/**
 	 * Remove a listener that will be notified when the file path is
 	 * modified.
-	 * 
+	 *
 	 * @param listener
 	 *            listener to remove
 	 */
@@ -218,7 +219,7 @@ public class RemoteFileWidget extends Composite {
 	/**
 	 * Set the message that will be displayed in the remote file browser
 	 * dialog.
-	 * 
+	 *
 	 * @param message
 	 *            message to be displayed
 	 */
@@ -228,10 +229,10 @@ public class RemoteFileWidget extends Composite {
 
 	/**
 	 * Set the remote connection to use for browsing for the remote file.
-	 * 
+	 *
 	 * The connection type must provide the IRemoteUIConnectionService and IRemoteUIFileService services and the connection must
 	 * support the IRemoteFileService service. If any of these conditions are not met, this method will do nothing.
-	 * 
+	 *
 	 * @param conn
 	 *            remote connection
 	 * @since 4.0
@@ -241,7 +242,8 @@ public class RemoteFileWidget extends Composite {
 			throw new NullPointerException();
 		}
 
-		if (conn.hasService(IRemoteFileService.class) && conn.getConnectionType().hasService(IRemoteUIConnectionService.class)
+		if (conn.hasService(IRemoteFileService.class)
+				&& conn.getConnectionType().hasService(IRemoteUIConnectionService.class)
 				&& conn.getConnectionType().hasService(IRemoteUIFileService.class) && !conn.equals(fRemoteConnection)) {
 			fRemoteConnection = conn;
 			String path = getSavedPath();
@@ -262,7 +264,7 @@ public class RemoteFileWidget extends Composite {
 
 	/**
 	 * Set the label to be displayed
-	 * 
+	 *
 	 * @param label
 	 */
 	public void setLabel(String label) {
@@ -273,7 +275,7 @@ public class RemoteFileWidget extends Composite {
 
 	/**
 	 * Set the initial remote location that will be displayed in the widget.
-	 * 
+	 *
 	 * @param path
 	 */
 	public void setLocationPath(String path) {
@@ -284,7 +286,8 @@ public class RemoteFileWidget extends Composite {
 
 	private void setSavedPath(String path) {
 		if (fRemoteConnection != null) {
-			fPreviousSelections.put(fRemoteConnection.getConnectionType().getId() + "." + fRemoteConnection.getName(), path); //$NON-NLS-1$
+			fPreviousSelections.put(fRemoteConnection.getConnectionType().getId() + "." + fRemoteConnection.getName(), //$NON-NLS-1$
+					path);
 		}
 	}
 

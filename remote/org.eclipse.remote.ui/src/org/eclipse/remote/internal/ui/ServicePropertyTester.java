@@ -17,7 +17,8 @@ public class ServicePropertyTester extends PropertyTester {
 					String serviceName = (String) args[0];
 					try {
 						Class<?> service = Class.forName(serviceName);
-						return connection.getConnectionType().hasService((Class<IRemoteConnectionType.Service>) service);
+						return connection.getConnectionType()
+								.hasService((Class<IRemoteConnectionType.Service>) service);
 					} catch (ClassNotFoundException e) {
 						return false;
 					}
@@ -35,14 +36,16 @@ public class ServicePropertyTester extends PropertyTester {
 			} else if (property.equals("canDelete")) { //$NON-NLS-1$
 				return connection.getConnectionType().canRemove();
 			} else if (property.equals("canOpen")) { //$NON-NLS-1$
-				IRemoteConnectionControlService controlService = connection.getService(IRemoteConnectionControlService.class);
+				IRemoteConnectionControlService controlService = connection
+						.getService(IRemoteConnectionControlService.class);
 				if (controlService != null) {
 					return !connection.isOpen();
 				} else {
 					return false;
 				}
 			} else if (property.equals("canClose")) { //$NON-NLS-1$
-				IRemoteConnectionControlService controlService = connection.getService(IRemoteConnectionControlService.class);
+				IRemoteConnectionControlService controlService = connection
+						.getService(IRemoteConnectionControlService.class);
 				if (controlService != null) {
 					return connection.isOpen();
 				} else {

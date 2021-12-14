@@ -14,7 +14,7 @@ import org.eclipse.remote.core.IRemoteConnectionType.Service;
 public class ProxyConnectionProviderService implements IRemoteConnectionProviderService {
 
 	private IRemoteConnectionType connectionType;
-	
+
 	public static class Factory implements IRemoteConnectionType.Service.Factory {
 		@SuppressWarnings("unchecked")
 		@Override
@@ -25,7 +25,7 @@ public class ProxyConnectionProviderService implements IRemoteConnectionProvider
 			return null;
 		}
 	}
-	
+
 	public ProxyConnectionProviderService(IRemoteConnectionType connectionType) {
 		this.connectionType = connectionType;
 	}

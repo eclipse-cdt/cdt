@@ -40,7 +40,7 @@ public class TerminalConsoleSettingsDialog extends Dialog {
 	private static final String CONNECTION_TYPE = "connectionType"; //$NON-NLS-1$
 	private static final String CONNECTION_NAME = "connectionName"; //$NON-NLS-1$
 	private static final String ENCODING = "encoding"; //$NON-NLS-1$
-	
+
 	private RemoteConnectionWidget remoteConnWidget;
 	private Combo encodingCombo;
 	private String selectedEncoding;
@@ -60,11 +60,12 @@ public class TerminalConsoleSettingsDialog extends Dialog {
 
 		IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
 		// TODO remove the remote process service once we get command shell available with ssh and local
-		@SuppressWarnings("unchecked") List<IRemoteConnectionType> connTypes = manager.getConnectionTypesSupporting(
-				IRemoteCommandShellService.class, IRemoteProcessService.class);
+		@SuppressWarnings("unchecked")
+		List<IRemoteConnectionType> connTypes = manager.getConnectionTypesSupporting(IRemoteCommandShellService.class,
+				IRemoteProcessService.class);
 
 		remoteConnWidget = new RemoteConnectionWidget(composite, SWT.NONE, null, 0, connTypes);
-		
+
 		IDialogSettings settings = getDialogSettings();
 		String initialId = settings.get(CONNECTION_TYPE);
 		String initialName = settings.get(CONNECTION_NAME);
@@ -100,7 +101,7 @@ public class TerminalConsoleSettingsDialog extends Dialog {
 		return composite;
 	}
 
-	private List<String> getEncodings(){
+	private List<String> getEncodings() {
 		List<String> encodings = new ArrayList<>(2);
 		encodings.add("ISO-8859-1"); //$NON-NLS-1$
 		encodings.add("UTF-8"); //$NON-NLS-1$
@@ -159,18 +160,20 @@ public class TerminalConsoleSettingsDialog extends Dialog {
 			validateDialog();
 		}
 	}
-	
+
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings result = Activator.getDefault().getDialogSettings().getSection(TerminalConsoleSettingsDialog.class.getName());
+		IDialogSettings result = Activator.getDefault().getDialogSettings()
+				.getSection(TerminalConsoleSettingsDialog.class.getName());
 
 		if (result == null) {
-			result = Activator.getDefault().getDialogSettings().addNewSection(TerminalConsoleSettingsDialog.class.getName());
+			result = Activator.getDefault().getDialogSettings()
+					.addNewSection(TerminalConsoleSettingsDialog.class.getName());
 		}
 
 		return result;
-		
+
 	}
-	
+
 	@Override
 	public int open() {
 		int rc = super.open();
@@ -184,5 +187,5 @@ public class TerminalConsoleSettingsDialog extends Dialog {
 		}
 		return rc;
 	}
-	
+
 }

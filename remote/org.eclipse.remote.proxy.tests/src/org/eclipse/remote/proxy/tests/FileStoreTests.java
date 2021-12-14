@@ -40,7 +40,7 @@ public class FileStoreTests extends TestCase {
 	private IFileStore localParent;
 	private IFileStore remoteDir;
 	private IFileStore localDir;
-	
+
 	private static IRemoteFileService fileService;
 	private static IRemoteConnection connection;
 
@@ -78,7 +78,7 @@ public class FileStoreTests extends TestCase {
 				BufferedReader buf = new BufferedReader(new InputStreamReader(stream));
 				String line = buf.readLine();
 				assertEquals(line, TEST_CONTENTS.split("\n")[0]);
-			
+
 				buf.close();
 			} catch (Exception e) {
 				fail(e.getMessage());
@@ -201,7 +201,7 @@ public class FileStoreTests extends TestCase {
 		fi = fs.fetchInfo();
 		assertEquals(expected, fi.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
 	}
-	
+
 	public void xtestLargeFile() {
 		IFileStore local = EFS.getLocalFileSystem().getStore(new Path("/usr/bin/php"));
 		IFileStore remote = remoteDir.getChild("php.xxx");
@@ -223,7 +223,7 @@ public class FileStoreTests extends TestCase {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	public void testCopyLargeFile() {
 		IFileStore local = EFS.getLocalFileSystem().getStore(new Path("/usr/bin/php"));
 		IFileStore remote = remoteDir.getChild("php.xxx");
@@ -246,7 +246,7 @@ public class FileStoreTests extends TestCase {
 			IRemoteConnectionWorkingCopy wc = connType.newConnection(CONNECTION_NAME);
 			IRemoteConnectionHostService host = wc.getService(IRemoteConnectionHostService.class);
 			host.setHostname("titan-ext1.ccs.ornl.gov");
-//			host.setHostname("localhost");
+			//			host.setHostname("localhost");
 			host.setUsername("gw6");
 			connection = wc.save();
 			assertNotNull(connection);

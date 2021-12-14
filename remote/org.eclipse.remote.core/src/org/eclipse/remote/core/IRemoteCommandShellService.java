@@ -15,7 +15,7 @@ import java.io.IOException;
 /**
  * A service that provides a command shell on a remote. This is mainly used by
  * Terminal views.
- * 
+ *
  * @since 2.0
  */
 public interface IRemoteCommandShellService extends IRemoteConnection.Service {
@@ -25,14 +25,14 @@ public interface IRemoteCommandShellService extends IRemoteConnection.Service {
 	 * system. The flags may be used to modify behavior of the remote process. These flags may only be supported by specific types
 	 * of remote service providers. Clients can use {@link IRemoteProcessBuilder#getSupportedFlags()} to find out the flags
 	 * supported by the service provider.
-	 * 
+	 *
 	 * <pre>
 	 * Current flags are:
 	 *   {@link IRemoteProcessBuilder#NONE}			- disable any flags
 	 *   {@link IRemoteProcessBuilder#ALLOCATE_PTY}	- allocate a pseudo-terminal for the process (RFC-4254 Sec. 6.2)
 	 *   {@link IRemoteProcessBuilder#FORWARD_X11}	- enable X11 forwarding (RFC-4254 Sec. 6.3)
 	 * </pre>
-	 * 
+	 *
 	 * @param flags
 	 *            bitwise-or of flags
 	 * @return remote process object

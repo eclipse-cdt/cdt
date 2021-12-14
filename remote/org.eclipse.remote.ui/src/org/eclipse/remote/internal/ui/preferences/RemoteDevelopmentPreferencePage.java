@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
  * @since 4.1
- * 
+ *
  */
 public class RemoteDevelopmentPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -56,7 +56,7 @@ public class RemoteDevelopmentPreferencePage extends FieldEditorPreferencePage i
 			namesAndValues.add(nameAndValue);
 		}
 		addField(new ComboFieldEditor(IRemotePreferenceConstants.PREF_CONNECTION_TYPE_ID,
-				Messages.RemoteDevelopmentPreferencePage_Default_connection_type, namesAndValues.toArray(new String[namesAndValues
-						.size()][2]), getFieldEditorParent()));
+				Messages.RemoteDevelopmentPreferencePage_Default_connection_type,
+				namesAndValues.toArray(new String[namesAndValues.size()][2]), getFieldEditorParent()));
 	}
 }

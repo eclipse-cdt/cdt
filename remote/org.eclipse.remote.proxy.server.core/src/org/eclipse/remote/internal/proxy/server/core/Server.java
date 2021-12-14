@@ -20,8 +20,7 @@ public class Server {
 	private Thread serverThread;
 	private StreamChannel cmdChannel;
 	private Map<Integer, StreamChannel> auxChannel = Collections.synchronizedMap(new HashMap<Integer, StreamChannel>());
-	
-	
+
 	public void start() {
 		final StreamChannelManager mux = new StreamChannelManager(System.in, System.out);
 		mux.setServer(true);
@@ -46,7 +45,7 @@ public class Server {
 				System.err.println("closeChannel: " + chan.getId());
 				auxChannel.remove(chan.getId());
 			}
-			
+
 		});
 		serverThread = new Thread(mux) {
 			@Override
@@ -58,12 +57,12 @@ public class Server {
 		};
 		serverThread.start();
 	}
-	
+
 	public StreamChannel getChannel(int id) {
-		System.err.println("getChannel: "+id);
+		System.err.println("getChannel: " + id);
 		return auxChannel.get(id);
 	}
-	
+
 	public void waitFor() {
 		if (running && serverThread != null) {
 			try {

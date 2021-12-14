@@ -43,7 +43,7 @@ public class PutInfoCommand extends AbstractCommand<Void> {
 			SerializableFileInfo sInfo = new SerializableFileInfo(info);
 			sInfo.writeObject(out);
 			out.flush();
-			
+
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();

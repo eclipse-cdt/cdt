@@ -38,7 +38,7 @@ import org.osgi.framework.BundleContext;
  * </pre>
  *
  * @author Fran Litterio <francis.litterio@windriver.com>
- * 
+ *
  */
 public final class Logger implements DebugOptionsListener {
 	public static final String TRACE_DEBUG_LOG = "org.eclipse.remote.telnet.core/debug/log"; //$NON-NLS-1$
@@ -65,7 +65,7 @@ public final class Logger implements DebugOptionsListener {
 	/**
 	 * Encodes a String such that non-printable control characters are
 	 * converted into user-readable escape sequences for logging.
-	 * 
+	 *
 	 * @param message
 	 *            String to encode
 	 * @return encoded String
@@ -140,7 +140,7 @@ public final class Logger implements DebugOptionsListener {
 
 	/**
 	 * Checks if logging is enabled.
-	 * 
+	 *
 	 * @return true if logging is enabled.
 	 */
 	public static final boolean isLogEnabled() {
@@ -178,7 +178,8 @@ public final class Logger implements DebugOptionsListener {
 	public static final void logException(Exception ex) {
 		// log in eclipse error log
 		if (Activator.getDefault() != null) {
-			Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
+			Activator.getDefault().getLog()
+					.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
 		} else {
 			ex.printStackTrace();
 		}

@@ -21,10 +21,10 @@ import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 
 public class ServerChildInfosCommand extends AbstractServerCommand {
 	private IFileInfo[] infos;
-	
+
 	private final URI uri;
 	private final OutputStream out;
-	
+
 	private class CommandRunner implements Runnable {
 		@Override
 		public void run() {
@@ -42,7 +42,7 @@ public class ServerChildInfosCommand extends AbstractServerCommand {
 			}
 		}
 	}
-	
+
 	public ServerChildInfosCommand(StreamChannel chan, String path) {
 		this.out = chan.getOutputStream();
 		this.uri = URI.create("file:" + path); //$NON-NLS-1$

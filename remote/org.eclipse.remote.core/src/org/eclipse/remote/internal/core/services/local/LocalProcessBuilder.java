@@ -124,7 +124,8 @@ public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 
 	private IProcessFactory getProcessFactory() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IExtensionPoint extensionPoint = registry.getExtensionPoint(RemoteCorePlugin.getUniqueIdentifier(), EXTENSION_POINT_ID);
+		IExtensionPoint extensionPoint = registry.getExtensionPoint(RemoteCorePlugin.getUniqueIdentifier(),
+				EXTENSION_POINT_ID);
 
 		IProcessFactory processFactory = null;
 

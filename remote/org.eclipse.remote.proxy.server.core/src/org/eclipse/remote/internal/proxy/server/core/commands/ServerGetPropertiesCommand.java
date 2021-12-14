@@ -19,18 +19,23 @@ import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 public class ServerGetPropertiesCommand extends AbstractServerCommand {
 
 	private final DataOutputStream result;
-	
+
 	private class CommandRunner implements Runnable {
 		@Override
 		public void run() {
 			try {
-				Map<String,String> props = new HashMap<String, String>();
-				props.put(IRemoteConnection.FILE_SEPARATOR_PROPERTY, System.getProperty(IRemoteConnection.FILE_SEPARATOR_PROPERTY));
-				props.put(IRemoteConnection.PATH_SEPARATOR_PROPERTY, System.getProperty(IRemoteConnection.PATH_SEPARATOR_PROPERTY));
-				props.put(IRemoteConnection.LINE_SEPARATOR_PROPERTY, System.getProperty(IRemoteConnection.LINE_SEPARATOR_PROPERTY));
-				props.put(IRemoteConnection.USER_HOME_PROPERTY, System.getProperty(IRemoteConnection.USER_HOME_PROPERTY));
+				Map<String, String> props = new HashMap<String, String>();
+				props.put(IRemoteConnection.FILE_SEPARATOR_PROPERTY,
+						System.getProperty(IRemoteConnection.FILE_SEPARATOR_PROPERTY));
+				props.put(IRemoteConnection.PATH_SEPARATOR_PROPERTY,
+						System.getProperty(IRemoteConnection.PATH_SEPARATOR_PROPERTY));
+				props.put(IRemoteConnection.LINE_SEPARATOR_PROPERTY,
+						System.getProperty(IRemoteConnection.LINE_SEPARATOR_PROPERTY));
+				props.put(IRemoteConnection.USER_HOME_PROPERTY,
+						System.getProperty(IRemoteConnection.USER_HOME_PROPERTY));
 				props.put(IRemoteConnection.OS_NAME_PROPERTY, System.getProperty(IRemoteConnection.OS_NAME_PROPERTY));
-				props.put(IRemoteConnection.OS_VERSION_PROPERTY, System.getProperty(IRemoteConnection.OS_VERSION_PROPERTY));
+				props.put(IRemoteConnection.OS_VERSION_PROPERTY,
+						System.getProperty(IRemoteConnection.OS_VERSION_PROPERTY));
 				props.put(IRemoteConnection.OS_ARCH_PROPERTY, System.getProperty(IRemoteConnection.OS_ARCH_PROPERTY));
 				props.put(IRemoteConnection.LOCALE_CHARMAP_PROPERTY, System.getProperty("file.encoding")); //$NON-NLS-1$
 
@@ -45,7 +50,7 @@ public class ServerGetPropertiesCommand extends AbstractServerCommand {
 			}
 		}
 	}
-	
+
 	public ServerGetPropertiesCommand(StreamChannel chan) {
 		this.result = new DataOutputStream(chan.getOutputStream());
 	}

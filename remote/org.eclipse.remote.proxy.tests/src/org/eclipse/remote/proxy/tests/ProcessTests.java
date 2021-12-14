@@ -28,7 +28,7 @@ public class ProcessTests extends TestCase {
 
 	private static IRemoteConnection connection;
 	private static IRemoteProcessService processService;
-	
+
 	private boolean threadFailed = false;
 
 	public void testStreamHalfClose() {
@@ -52,9 +52,9 @@ public class ProcessTests extends TestCase {
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
-		
+
 	}
-	
+
 	public void testConcurrentProcess() {
 		Thread[] threads = new Thread[NUM_THREADS];
 
@@ -66,14 +66,14 @@ public class ProcessTests extends TestCase {
 					final Set<String> results = Collections.synchronizedSet(new HashSet<String>());
 					IRemoteProcessBuilder builder = processService.getProcessBuilder("perl", "-v"); //$NON-NLS-1$
 					assertNotNull(builder);
-//					builder.redirectErrorStream(true);
+					//					builder.redirectErrorStream(true);
 					for (int i = 0; i < 1; i++) {
 						try {
 							IRemoteProcess proc = builder.start();
 							BufferedReader stdout = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 							String line;
 							while ((line = stdout.readLine()) != null) {
-								System.out.println("read "+line);
+								System.out.println("read " + line);
 								results.add(line);
 								results.add("\n");
 							}
@@ -143,7 +143,7 @@ public class ProcessTests extends TestCase {
 						BufferedReader stdout = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 						String line = stdout.readLine();
 						int count = Integer.parseInt(line);
-						for (int i = 0 ; i < count; i++) {
+						for (int i = 0; i < count; i++) {
 							line = stdout.readLine();
 							if (line == null) {
 								break;
@@ -206,7 +206,7 @@ public class ProcessTests extends TestCase {
 	}
 
 	public void testExitValue() {
-		IRemoteProcessBuilder builder = processService.getProcessBuilder(new String[]{"sleep","50"}); //$NON-NLS-1$
+		IRemoteProcessBuilder builder = processService.getProcessBuilder(new String[] { "sleep", "50" }); //$NON-NLS-1$
 		assertNotNull(builder);
 		IRemoteProcess rp = null;
 		try {
@@ -220,7 +220,7 @@ public class ProcessTests extends TestCase {
 		try {
 			p.exitValue();
 			fail("Process has not exited. Should throws an IllegalThreadStateException exception");
-		} catch(IllegalThreadStateException e) {
+		} catch (IllegalThreadStateException e) {
 			// Ok
 		}
 		try {
@@ -231,7 +231,7 @@ public class ProcessTests extends TestCase {
 		}
 		assertFalse(p.isAlive());
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		if (connection == null) {
@@ -241,7 +241,7 @@ public class ProcessTests extends TestCase {
 			IRemoteConnectionWorkingCopy wc = connType.newConnection(CONNECTION_NAME);
 			IRemoteConnectionHostService host = wc.getService(IRemoteConnectionHostService.class);
 			host.setHostname("localhost");
-//			host.setHostname("titan-ext1.ccs.ornl.gov");
+			//			host.setHostname("titan-ext1.ccs.ornl.gov");
 			host.setUsername("gw6");
 			connection = wc.save();
 			assertNotNull(connection);
@@ -249,7 +249,7 @@ public class ProcessTests extends TestCase {
 			assertTrue(connection.isOpen());
 			processService = connection.getService(IRemoteProcessService.class);
 			assertNotNull(processService);
-		}		
+		}
 	}
 
 	@Override

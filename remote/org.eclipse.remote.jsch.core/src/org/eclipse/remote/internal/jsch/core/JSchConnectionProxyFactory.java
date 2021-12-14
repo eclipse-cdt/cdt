@@ -97,8 +97,8 @@ public class JSchConnectionProxyFactory {
 				processBuilder.setPreamble(false);
 				process = processBuilder.start();
 			} else {
-				process = Activator.getService(IRemoteServicesManager.class).getLocalConnectionType().getConnections().get(0).
-						getService(IRemoteProcessService.class).getProcessBuilder(cmd).start();
+				process = Activator.getService(IRemoteServicesManager.class).getLocalConnectionType().getConnections()
+						.get(0).getService(IRemoteProcessService.class).getProcessBuilder(cmd).start();
 			}
 
 			// Wait on command to produce stdout output
@@ -136,8 +136,8 @@ public class JSchConnectionProxyFactory {
 				} else if (bCanceled) {
 					cause = Messages.JSchConnectionProxyFactory_wasCanceled;
 				}
-				throw new IOException(MessageFormat.format(Messages.JSchConnectionProxyFactory_ProxyCommandFailed, command,
-						cause, msg));
+				throw new IOException(MessageFormat.format(Messages.JSchConnectionProxyFactory_ProxyCommandFailed,
+						command, cause, msg));
 			}
 
 			// Dump the stderr to log

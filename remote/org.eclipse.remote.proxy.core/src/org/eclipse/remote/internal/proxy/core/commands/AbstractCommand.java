@@ -81,4 +81,3 @@ public abstract class AbstractCommand<T> implements Callable<T> {
 		this.connection = conn;
 	}
 }
-

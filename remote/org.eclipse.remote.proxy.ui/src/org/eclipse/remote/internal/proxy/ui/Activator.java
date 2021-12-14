@@ -23,7 +23,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static Activator getDefault() {
@@ -32,7 +32,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Get unique identifier
-	 * 
+	 *
 	 * @return
 	 * @since 5.0
 	 */
@@ -45,7 +45,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -55,7 +55,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            the error message to log
 	 */
@@ -65,7 +65,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *            the exception to be logged
 	 */
@@ -83,7 +83,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Return the OSGi service with the given service interface.
-	 * 
+	 *
 	 * @param service service interface
 	 * @return the specified service or null if it's not registered
 	 */

@@ -27,7 +27,7 @@ import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 
 public abstract class AbstractServerExecCommand extends AbstractServerCommand {
-	
+
 	private class CommandRunner implements Runnable {
 		@Override
 		public void run() {
@@ -72,7 +72,7 @@ public abstract class AbstractServerExecCommand extends AbstractServerCommand {
 			}
 		}
 	}
-	
+
 	private class ProcMonitor implements Runnable {
 		@Override
 		public void run() {
@@ -94,17 +94,17 @@ public abstract class AbstractServerExecCommand extends AbstractServerCommand {
 			}
 		}
 	}
-	
+
 	private class Forwarder implements Runnable {
 		private final InputStream in;
 		private final OutputStream out;
 		private final String name;
-		
+
 		private boolean running = true;
-		
-        private final Lock lock = new ReentrantLock();
-        private final Condition cond = lock.newCondition();
-		
+
+		private final Lock lock = new ReentrantLock();
+		private final Condition cond = lock.newCondition();
+
 		public Forwarder(String name, InputStream in, OutputStream out) {
 			this.name = name;
 			this.in = new BufferedInputStream(in);
@@ -122,7 +122,8 @@ public abstract class AbstractServerExecCommand extends AbstractServerCommand {
 						out.write(buf, 0, n);
 						out.flush();
 					}
-					if (n < 0) break;
+					if (n < 0)
+						break;
 				}
 			} catch (IOException e) {
 				// Finish
@@ -141,11 +142,11 @@ public abstract class AbstractServerExecCommand extends AbstractServerCommand {
 				lock.unlock();
 			}
 		}
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
 		public synchronized void waitFor() {
 			lock.lock();
 			try {
@@ -161,68 +162,69 @@ public abstract class AbstractServerExecCommand extends AbstractServerCommand {
 			}
 		}
 	}
-	
+
 	private final List<String> command;
 	private final Map<String, String> env;
 	private final boolean redirect;
 	private final boolean appendEnv;
 	private final String directory;
-	
+
 	private final InputStream stdinChan;
 	private final OutputStream stdoutChan;
 	private final OutputStream stderrChan;
-	
+
 	private final DataInputStream cmdStream;
 	private final DataOutputStream resultStream;
 
 	private Process proc;
 
-	public AbstractServerExecCommand(List<String> command, Map<String, String> env, String directory, boolean redirect, boolean appendEnv, StreamChannel cmdChan, StreamChannel ioChan, StreamChannel errChan) {
+	public AbstractServerExecCommand(List<String> command, Map<String, String> env, String directory, boolean redirect,
+			boolean appendEnv, StreamChannel cmdChan, StreamChannel ioChan, StreamChannel errChan) {
 		this.command = command;
 		this.env = env;
 		this.directory = directory;
 		this.redirect = redirect;
 		this.appendEnv = appendEnv;
-		
+
 		this.stdinChan = ioChan.getInputStream();
 		this.stdoutChan = ioChan.getOutputStream();
-		
+
 		this.stderrChan = errChan != null ? errChan.getOutputStream() : this.stdoutChan;
-		
+
 		this.resultStream = new DataOutputStream(cmdChan.getOutputStream());
 		this.cmdStream = new DataInputStream(cmdChan.getInputStream());
 	}
 
 	protected abstract Process doRun() throws IOException;
-	
+
 	protected abstract void doKill(Process proc);
-	
+
 	protected abstract void doSetTerminalSize(Process proc, int col, int rows);
 
 	protected List<String> getCommand() {
 		return command;
 	}
-	
-	protected Map<String,String> getEnv() {
+
+	protected Map<String, String> getEnv() {
 		return env;
 	}
-	
+
 	protected boolean isRedirect() {
 		return redirect;
 	}
-	
+
 	protected boolean isAppendEnv() {
 		return appendEnv;
 	}
-	
+
 	protected String getDirectory() {
 		return directory;
 	}
-	
+
 	public void exec() throws ProxyException {
 		new Thread(new CommandRunner()).start();
 	}
-	
+
 	private Forwarder startForwarder(String name, InputStream in, OutputStream out) {
 		Forwarder forwarder = new Forwarder(name, in, out);
 		Thread thread = new Thread(forwarder, forwarder.getName());

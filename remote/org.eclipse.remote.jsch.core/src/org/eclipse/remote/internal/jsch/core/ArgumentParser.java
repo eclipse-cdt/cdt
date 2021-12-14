@@ -51,7 +51,8 @@ public class ArgumentParser {
 					 * string. Allows escaping.
 					 */
 					iterator.next(); // Skip quote
-					quoted_reader: while ((iterator.current() != CharacterIterator.DONE) && (iterator.current() != '"')) {
+					quoted_reader: while ((iterator.current() != CharacterIterator.DONE)
+							&& (iterator.current() != '"')) {
 						char innerChar = iterator.current();
 						switch (innerChar) {
 						case '\\':

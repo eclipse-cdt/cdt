@@ -77,20 +77,20 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Generic file/directory browser for remote resources.
- * 
+ *
  * @author greg
- * 
+ *
  */
 public class RemoteResourceBrowserWidget extends Composite {
 	/**
 	 * Delayed input dialog uses {@link ValidateJob} to create an InputDialog that only validates it's text field after an
 	 * appropriate timeout has occurred. This is to prevent excessive network traffic when checking the existence of a remote
 	 * directory on a target system.
-	 * 
+	 *
 	 * Due to the timing of the validation, it is possible to close the dialog prior to the validation completing. However since the
 	 * validation is only used to check for the existence of a remote file/directory, the worst that can happen is that the user
 	 * will not be notified that the directory already exists.
-	 * 
+	 *
 	 */
 	private class DelayedInputDialog extends InputDialog {
 		public DelayedInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue,
@@ -322,8 +322,8 @@ public class RemoteResourceBrowserWidget extends Composite {
 										fTreeViewer.refresh(element);
 										Object[] children = element.getChildren(null);
 										for (Object child : children) {
-											if (child instanceof DeferredFileStore
-													&& newPath.equals(((DeferredFileStore) child).getFileStore().getName())) {
+											if (child instanceof DeferredFileStore && newPath
+													.equals(((DeferredFileStore) child).getFileStore().getName())) {
 												fTreeViewer.deferSelection(new StructuredSelection(child));
 											}
 										}
@@ -404,8 +404,8 @@ public class RemoteResourceBrowserWidget extends Composite {
 		/*
 		 * Only add filter if we are a directory browser. File and resource browsers show everything.
 		 */
-		int mask = FILE_BROWSER|DIRECTORY_BROWSER;
-		if ((fOptionFlags & mask) != mask	// Avoid filter on resource browsers.
+		int mask = FILE_BROWSER | DIRECTORY_BROWSER;
+		if ((fOptionFlags & mask) != mask // Avoid filter on resource browsers.
 				&& (fOptionFlags & DIRECTORY_BROWSER) != 0) {
 			fTreeViewer.addFilter(new ViewerFilter() {
 				@Override
@@ -440,7 +440,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * Add a listener that will be notified when the selection is changed.
-	 * 
+	 *
 	 * @param listener
 	 *            listener to add
 	 */
@@ -450,7 +450,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * Change the viewers input. Called when a new connection is selected.
-	 * 
+	 *
 	 * @param conn
 	 *            new connection
 	 * @return true if input successfully changed
@@ -493,7 +493,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * When a new connection is selected, make sure it is open before using it.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	private void connectionSelected() throws CoreException {
@@ -535,7 +535,8 @@ public class RemoteResourceBrowserWidget extends Composite {
 							@Override
 							public void run() {
 								ErrorDialog.openError(getShell(), Messages.RemoteResourceBrowserWidget_New_Folder,
-										Messages.RemoteResourceBrowserWidget_Unable_to_create_new_folder, e.getStatus());
+										Messages.RemoteResourceBrowserWidget_Unable_to_create_new_folder,
+										e.getStatus());
 							}
 						});
 					}
@@ -544,21 +545,22 @@ public class RemoteResourceBrowserWidget extends Composite {
 					Display.getDefault().syncExec(new Runnable() {
 						@Override
 						public void run() {
-							DelayedInputDialog dialog = new DelayedInputDialog(getShell(), Messages.RemoteResourceBrowserWidget_1,
-									Messages.RemoteResourceBrowserWidget_2, basePath.getName(), new IInputValidator() {
-								@Override
-								public String isValid(String newText) {
-									if (!newText.equals("")) { //$NON-NLS-1$
-										IFileStore newPath = path.getChild(newText);
-										if (newPath.fetchInfo().exists()) {
-											return Messages.RemoteResourceBrowserWidget_3;
+							DelayedInputDialog dialog = new DelayedInputDialog(getShell(),
+									Messages.RemoteResourceBrowserWidget_1, Messages.RemoteResourceBrowserWidget_2,
+									basePath.getName(), new IInputValidator() {
+										@Override
+										public String isValid(String newText) {
+											if (!newText.equals("")) { //$NON-NLS-1$
+												IFileStore newPath = path.getChild(newText);
+												if (newPath.fetchInfo().exists()) {
+													return Messages.RemoteResourceBrowserWidget_3;
+												}
+											} else {
+												return Messages.RemoteResourceBrowserWidget_4;
+											}
+											return null;
 										}
-									} else {
-										return Messages.RemoteResourceBrowserWidget_4;
-									}
-									return null;
-								}
-							});
+									});
 							fValidateJob.setDialog(dialog);
 							if (dialog.open() == Dialog.OK) {
 								userPath[0] = dialog.getValue();
@@ -577,7 +579,8 @@ public class RemoteResourceBrowserWidget extends Composite {
 								@Override
 								public void run() {
 									ErrorDialog.openError(getShell(), Messages.RemoteResourceBrowserWidget_New_Folder,
-											Messages.RemoteResourceBrowserWidget_Unable_to_create_new_folder, e.getStatus());
+											Messages.RemoteResourceBrowserWidget_Unable_to_create_new_folder,
+											e.getStatus());
 								}
 							});
 						}
@@ -597,7 +600,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 * Determine the initial path for the browser. If the initial path is not
 	 * supplied or does not exist on the remote machine, then the initial path
 	 * will be the cwd.
-	 * 
+	 *
 	 * @param cwd
 	 * @param initialPath
 	 * @return initial path
@@ -617,7 +620,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * Get the connection that was selected
-	 * 
+	 *
 	 * @return selected connection
 	 */
 	public IRemoteConnection getConnection() {
@@ -626,7 +629,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * Get a resource that corresponds to the text field
-	 * 
+	 *
 	 * @return resource corresponding to the text field
 	 * @since 1.1
 	 */
@@ -641,7 +644,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * Get the resources that were selected.
-	 * 
+	 *
 	 * @return selected resources
 	 */
 	public List<IFileStore> getResources() {
@@ -663,7 +666,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * Remove a listener that will be notified when the selection is changed
-	 * 
+	 *
 	 * @param listener
 	 *            listener to remove
 	 */
@@ -674,7 +677,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 	/**
 	 * Set the connection for the browser. The connection must support the IRemoteFileService service or this method will have no
 	 * effect.
-	 * 
+	 *
 	 * @param connection
 	 *            connection that supports the IRemoteFileService service
 	 */
@@ -692,9 +695,9 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 * Set the initial path to start browsing. This will be set in the browser
 	 * text field, and in a future version should expand the browser to this
 	 * location if it exists.
-	 * 
+	 *
 	 * NOTE: This must be called *before* {@link #setConnection(IRemoteConnection)} to have any effect.
-	 * 
+	 *
 	 * @param path
 	 */
 	public void setInitialPath(String path) {
@@ -705,7 +708,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 	/**
 	 * Set the root directory for the browser. This will also update the text
 	 * field with the path. If the path is null, the browser will be set to the initial state.
-	 * 
+	 *
 	 * @param path
 	 *            path of root directory or null
 	 */
@@ -730,7 +733,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * Set the fDialogTitle of the dialog.
-	 * 
+	 *
 	 * @param title
 	 */
 	public void setTitle(String title) {

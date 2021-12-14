@@ -14,7 +14,7 @@ import org.eclipse.remote.core.exception.RemoteConnectionException;
 
 /**
  * A service abstraction for signals.
- * 
+ *
  * @since 2.0
  */
 public interface IRemoteProcessSignalService extends IRemoteProcess.Service {
@@ -37,7 +37,7 @@ public interface IRemoteProcessSignalService extends IRemoteProcess.Service {
 
 	/**
 	 * Send a signal to the remote process.
-	 * 
+	 *
 	 * @param signal
 	 *            signal to send.
 	 * @throws RemoteConnectionException

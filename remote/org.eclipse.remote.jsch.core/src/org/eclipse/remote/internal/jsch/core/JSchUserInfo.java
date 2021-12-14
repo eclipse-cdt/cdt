@@ -30,11 +30,11 @@ public class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
 
 	private final IRemoteConnectionHostService hostService;
 	private IUserAuthenticatorService userAuthenticatorService;
-	
+
 	public JSchUserInfo(IRemoteConnectionHostService hostService) {
 		this.hostService = hostService;
 	}
-	
+
 	public JSchUserInfo(IRemoteConnectionHostService hostService, IUserAuthenticatorService userAuthenticatorService) {
 		this(hostService);
 		this.userAuthenticatorService = userAuthenticatorService;
@@ -122,8 +122,9 @@ public class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
 			System.out.println("promptYesNo:" + message); //$NON-NLS-1$
 		}
 		if (userAuthenticatorService != null) {
-			int prompt = userAuthenticatorService.prompt(IUserAuthenticatorService.QUESTION, Messages.AuthInfo_Authentication_message,
-					message, new int[] { IUserAuthenticatorService.YES, IUserAuthenticatorService.NO },
+			int prompt = userAuthenticatorService.prompt(IUserAuthenticatorService.QUESTION,
+					Messages.AuthInfo_Authentication_message, message,
+					new int[] { IUserAuthenticatorService.YES, IUserAuthenticatorService.NO },
 					IUserAuthenticatorService.YES);
 			return prompt == IUserAuthenticatorService.YES;
 		}
@@ -136,8 +137,9 @@ public class JSchUserInfo implements UserInfo, UIKeyboardInteractive {
 			System.out.println("showMessage:" + message); //$NON-NLS-1$
 		}
 		if (userAuthenticatorService != null) {
-			userAuthenticatorService.prompt(IUserAuthenticatorService.INFORMATION, Messages.AuthInfo_Authentication_message, message,
-					new int[] { IUserAuthenticatorService.OK }, IUserAuthenticatorService.OK);
+			userAuthenticatorService.prompt(IUserAuthenticatorService.INFORMATION,
+					Messages.AuthInfo_Authentication_message, message, new int[] { IUserAuthenticatorService.OK },
+					IUserAuthenticatorService.OK);
 		}
 	}
 }

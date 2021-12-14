@@ -39,16 +39,16 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Generic file/directory browser for remote resources.
- * 
+ *
  * A directory browser (DIRECTORY_BROWSER) only allows selection of directories.
  * A file browser (FILE_BROWSER) allows selection of files and directories, but the ok button is only enabled when a file is
  * selected.
  * A resource browser (FILE_BROWSER|DIRECTORY_BROWSER) allows selection of files and directories. This is the default.
- * 
+ *
  * To select multiple resources, set the style to SWT.MULTI.
- * 
+ *
  * @author greg
- * 
+ *
  */
 public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -183,7 +183,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	/**
 	 * Get the connection that was selected
-	 * 
+	 *
 	 * @return selected connection
 	 */
 	public IRemoteConnection getConnection() {
@@ -195,7 +195,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	/**
 	 * Get the resources that was selected.
-	 * 
+	 *
 	 * @return selected resource or null if no resource is selected
 	 */
 	public IFileStore getResource() {
@@ -207,7 +207,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	/**
 	 * Get the resources that were selected.
-	 * 
+	 *
 	 * @return selected resources
 	 */
 	public List<IFileStore> getResources() {
@@ -218,8 +218,8 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	}
 
 	@Override
-	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException,
-			InterruptedException {
+	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+			throws InvocationTargetException, InterruptedException {
 		fProgressMonitor.attachToCancelComponent(null);
 		fProgressMonitor.getParent().setVisible(true);
 		try {
@@ -233,7 +233,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	/**
 	 * Set the connection for the browser. The connection must support the IRemoteFileService service or this method will have no
 	 * effect.
-	 * 
+	 *
 	 * @param connection
 	 *            connection that supports the IRemoteFileService service
 	 */
@@ -247,7 +247,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	 * Set the initial path to start browsing. This will be set in the browser
 	 * text field, and in a future version should expand the browser to this
 	 * location if it exists.
-	 * 
+	 *
 	 * @param path initial path
 	 */
 	public void setInitialPath(String path) {
@@ -256,7 +256,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	/**
 	 * Set the fDialogTitle of the dialog.
-	 * 
+	 *
 	 * @param title title to display
 	 */
 	public void setTitle(String title) {
@@ -281,7 +281,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	/**
 	 * Show available connections on browser if possible (default disabled).
-	 * 
+	 *
 	 * @param enable enable connection display if true
 	 */
 	public void showConnections(boolean enable) {
@@ -290,7 +290,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	/**
 	 * Enable a checkbox to show hidden files (default enabled)
-	 * 
+	 *
 	 * @param showHidden show hidden files if true
 	 */
 	public void showHiddenCheckbox(boolean showHidden) {
@@ -299,7 +299,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	/**
 	 * Enable selection of local files
-	 * 
+	 *
 	 * @param showLocalSelection show local files if true
 	 */
 	public void showLocalSelection(boolean showLocalSelection) {
@@ -308,7 +308,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 
 	/**
 	 * Enable a button to create new folders (default enabled)
-	 * 
+	 *
 	 * @param showNewFolderButton show new folder button if true
 	 */
 	public void showNewFolderButton(boolean showNewFolderButton) {

@@ -23,14 +23,14 @@ public interface IRemoteUIConnectionWizard extends IWizard {
 	 * Open configuration wizard allowing the user to enter information about a connection. If the user confirms the information is
 	 * correct (e.g. selects OK in a dialog) then a working copy of the connection is returned. If the user discards the
 	 * information, then null is returned.
-	 * 
+	 *
 	 * @return connection working copy or null if the wizard is canceled
 	 */
 	IRemoteConnectionWorkingCopy open();
 
 	/**
 	 * Get the connection being edited.
-	 * 
+	 *
 	 * @return connection being edited
 	 * @since 2.0
 	 */
@@ -39,7 +39,7 @@ public interface IRemoteUIConnectionWizard extends IWizard {
 	/**
 	 * Set a connection containing the information to be edited by the wizard. Setting this value overrides the
 	 * {@link #setConnectionName(String)} method.
-	 * 
+	 *
 	 * @param connection
 	 *            connection used to initialize the wizard
 	 */
@@ -47,7 +47,7 @@ public interface IRemoteUIConnectionWizard extends IWizard {
 
 	/**
 	 * Set the initial name of the connection.
-	 * 
+	 *
 	 * @param name
 	 *            initial connection name
 	 */
@@ -56,7 +56,7 @@ public interface IRemoteUIConnectionWizard extends IWizard {
 	/**
 	 * Supply a set of connection names that are invalid. The dialog should display an error if the user trys to select a name from
 	 * the set.
-	 * 
+	 *
 	 * @param names
 	 *            set of invalid connections names
 	 */

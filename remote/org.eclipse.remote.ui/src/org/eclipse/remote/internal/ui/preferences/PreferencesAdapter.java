@@ -21,7 +21,7 @@ import org.eclipse.remote.internal.core.preferences.Preferences;
 
 /**
  * Adapts {@link org.eclipse.core.runtime.IEclipsePreferences} to {@link org.eclipse.jface.preference.IPreferenceStore}
- * 
+ *
  * @since 3.0
  */
 public class PreferencesAdapter implements IPreferenceStore {
@@ -56,7 +56,7 @@ public class PreferencesAdapter implements IPreferenceStore {
 
 	/**
 	 * Initialize with the given Preferences.
-	 * 
+	 *
 	 * @param preferences
 	 *            The preferences to wrap.
 	 * @since 4.0

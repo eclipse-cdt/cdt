@@ -140,14 +140,16 @@ public class TerminalConsoleConnector {
 							return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e);
 						}
 					}
-					
+
 					if (remoteProcess == null) {
 						disconnect();
-						return new Status(IStatus.ERROR, Activator.PLUGIN_ID, ConsoleMessages.TerminalConsoleConnector_0);
+						return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+								ConsoleMessages.TerminalConsoleConnector_0);
 					}
 
 					if (width > 0 || height > 0) {
-						IRemoteProcessTerminalService termService = remoteProcess.getService(IRemoteProcessTerminalService.class);
+						IRemoteProcessTerminalService termService = remoteProcess
+								.getService(IRemoteProcessTerminalService.class);
 						if (termService != null) {
 							termService.setTerminalSize(width, height, 8 * width, 8 * height);
 						}
@@ -202,7 +204,8 @@ public class TerminalConsoleConnector {
 			height = minHeight;
 			synchronized (this) {
 				if (remoteProcess != null) {
-					IRemoteProcessTerminalService termService = remoteProcess.getService(IRemoteProcessTerminalService.class);
+					IRemoteProcessTerminalService termService = remoteProcess
+							.getService(IRemoteProcessTerminalService.class);
 					if (termService != null) {
 						termService.setTerminalSize(width, height, 8 * width, 8 * height);
 					}

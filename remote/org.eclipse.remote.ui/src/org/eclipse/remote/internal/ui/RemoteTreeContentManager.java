@@ -32,7 +32,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * A remote content manager that merges content into a tree rather then replacing its children with a
  * "pending" node, and then the real children when they are available. This avoids collapsing the viewer when
  * a refresh is performed. This implementation is currently tied to the <code>RemoteTreeViewer</code>.
- * 
+ *
  * @since 3.1
  */
 public class RemoteTreeContentManager {
@@ -124,7 +124,7 @@ public class RemoteTreeContentManager {
 
 	/**
 	 * Contructs a new content manager.
-	 * 
+	 *
 	 * @param provider
 	 *            content provider
 	 * @param viewer
@@ -144,7 +144,7 @@ public class RemoteTreeContentManager {
 
 	/**
 	 * Create the element collector for the receiver.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent object being filled in,
 	 * @param placeholder
@@ -158,7 +158,7 @@ public class RemoteTreeContentManager {
 	/**
 	 * Returns the child elements of the given element, or in the case of a deferred element, returns a
 	 * placeholder. If a deferred element is used, a job is created to fetch the children in the background.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent object.
 	 * @return Object[] or <code>null</code> if parent is not an instance of IDeferredWorkbenchAdapter.
@@ -182,7 +182,7 @@ public class RemoteTreeContentManager {
 
 	/**
 	 * Create a UIJob to replace the children of the parent in the tree viewer.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent for which children are to be replaced
 	 * @param children
@@ -192,7 +192,8 @@ public class RemoteTreeContentManager {
 	 * @param monitor
 	 *            progress monitor
 	 */
-	protected void replaceChildren(final Object parent, final Object[] children, final int offset, IProgressMonitor monitor) {
+	protected void replaceChildren(final Object parent, final Object[] children, final int offset,
+			IProgressMonitor monitor) {
 		if (monitor.isCanceled()) {
 			return;
 		}
@@ -214,7 +215,7 @@ public class RemoteTreeContentManager {
 
 	/**
 	 * Create a UIJob to prune the children of the parent in the tree viewer, starting at the given offset.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent for which children should be pruned
 	 * @param offset
@@ -241,7 +242,7 @@ public class RemoteTreeContentManager {
 	/**
 	 * Run a job to clear the placeholder. This is used when the update for the tree is complete so that the
 	 * user is aware that no more updates are pending.
-	 * 
+	 *
 	 * @param placeholder
 	 */
 	protected void runClearPlaceholderJob(final PendingUpdateAdapter placeholder) {
@@ -274,7 +275,7 @@ public class RemoteTreeContentManager {
 	/**
 	 * Return the IDeferredWorkbenchAdapter for element or the element if it is an instance of
 	 * IDeferredWorkbenchAdapter. If it does not exist return null.
-	 * 
+	 *
 	 * @param element
 	 * @return IDeferredWorkbenchAdapter or <code>null</code>
 	 */
@@ -313,7 +314,7 @@ public class RemoteTreeContentManager {
 	 * Provides an optimized lookup for determining if an element has children. This is required because
 	 * elements that are populated lazilly can't answer <code>getChildren</code> just to determine the
 	 * potential for children. Throw an AssertionFailedException if element is null.
-	 * 
+	 *
 	 * @param element
 	 *            The Object being tested. This should not be <code>null</code>.
 	 * @return boolean <code>true</code> if there are potentially children.

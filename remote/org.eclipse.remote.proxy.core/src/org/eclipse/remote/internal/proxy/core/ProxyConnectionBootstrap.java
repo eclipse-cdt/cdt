@@ -45,68 +45,68 @@ public class ProxyConnectionBootstrap {
 	private final IJSchService jSchService;
 	private Session session;
 	private ChannelExec exec;
-	
+
 	private class Context {
 		private State state;
 		private String osName;
 		private String osArch;
 		private String errorMessage;
-		
+
 		private final SubMonitor monitor;
 		private final BufferedReader reader;
 		private final BufferedWriter writer;
-		
+
 		public Context(BufferedReader reader, BufferedWriter writer, IProgressMonitor monitor) {
 			this.reader = reader;
 			this.writer = writer;
 			this.monitor = SubMonitor.convert(monitor);
 			setState(States.INIT);
 		}
-		
-	    State getState() {
-	    	return state;
-	    }
-	    
-	    SubMonitor getMonitor() {
-	    	return monitor;
-	    }
-	    
-	    void setState(State state) {
-	    	this.state = state;
-	    }
-	    
-	    String getOSName() {
-	    	return osName;
-	    }
-	    
-	    void setOSName(String osName) {
-	    	this.osName = osName;
-	    }
-	    
-	    String getOSArch() {
-	    	return osArch;
-	    }
-	    
-	    void setOSArch(String osArch) {
-	    	this.osArch = osArch;
-	    }
-	    
-	    void setErrorMessage(String message) {
-	    	this.errorMessage = message;
-	    }
-	    
-	    String getErrorMessage() {
-	    	return errorMessage;
-	    }
+
+		State getState() {
+			return state;
+		}
+
+		SubMonitor getMonitor() {
+			return monitor;
+		}
+
+		void setState(State state) {
+			this.state = state;
+		}
+
+		String getOSName() {
+			return osName;
+		}
+
+		void setOSName(String osName) {
+			this.osName = osName;
+		}
+
+		String getOSArch() {
+			return osArch;
+		}
+
+		void setOSArch(String osArch) {
+			this.osArch = osArch;
+		}
+
+		void setErrorMessage(String message) {
+			this.errorMessage = message;
+		}
+
+		String getErrorMessage() {
+			return errorMessage;
+		}
 	}
-	
+
 	private interface State {
-	    /**
-	       * @return true to keep processing, false to read more data.
-	     */
-	    boolean process(Context context) throws IOException;
+		/**
+		   * @return true to keep processing, false to read more data.
+		 */
+		boolean process(Context context) throws IOException;
 	}
-	
+
 	private enum States implements State {
 		INIT {
 			@Override
@@ -145,7 +145,7 @@ public class ProxyConnectionBootstrap {
 						return true;
 					case "fail": //$NON-NLS-1$
 						context.setErrorMessage(parts[1]);
-						System.out.println("fail:"+parts[1]); //$NON-NLS-1$
+						System.out.println("fail:" + parts[1]); //$NON-NLS-1$
 						return false;
 					case "debug": //$NON-NLS-1$
 						System.err.println(line);
@@ -163,7 +163,8 @@ public class ProxyConnectionBootstrap {
 			@Override
 			public boolean process(Context context) throws IOException {
 				context.getMonitor().subTask(Messages.ProxyConnectionBootstrap_3);
-				String bundleName = "org.eclipse.remote.proxy.server." + context.getOSName() + "." + context.getOSArch(); //$NON-NLS-1$ //$NON-NLS-2$
+				String bundleName = "org.eclipse.remote.proxy.server." + context.getOSName() + "." //$NON-NLS-1$//$NON-NLS-2$
+						+ context.getOSArch();
 				Bundle serverBundle = Platform.getBundle(bundleName);
 				if (serverBundle == null) {
 					throw new IOException(NLS.bind(Messages.ProxyConnectionBootstrap_2, bundleName));
@@ -187,7 +188,7 @@ public class ProxyConnectionBootstrap {
 							return true;
 						case "fail": //$NON-NLS-1$
 							context.setErrorMessage(parts[1]);
-							System.out.println("fail:"+parts[1]); //$NON-NLS-1$
+							System.out.println("fail:" + parts[1]); //$NON-NLS-1$
 							return false;
 						case "debug": //$NON-NLS-1$
 							System.err.println(line);
@@ -201,7 +202,7 @@ public class ProxyConnectionBootstrap {
 				}
 				return false;
 			}
-			
+
 			private boolean downloadFile(File file, BufferedWriter writer, IProgressMonitor monitor) {
 				SubMonitor subMon = SubMonitor.convert(monitor, 10);
 				try {
@@ -235,12 +236,13 @@ public class ProxyConnectionBootstrap {
 			}
 		}
 	}
-	
+
 	public ProxyConnectionBootstrap() {
 		jSchService = Activator.getService(IJSchService.class);
 	}
 
-	public StreamChannelManager run(IRemoteConnection connection, IProgressMonitor monitor) throws RemoteConnectionException {
+	public StreamChannelManager run(IRemoteConnection connection, IProgressMonitor monitor)
+			throws RemoteConnectionException {
 		SubMonitor subMon = SubMonitor.convert(monitor, 20);
 		try {
 			final Channel chan = openChannel(connection, subMon.newChild(10));
@@ -268,7 +270,8 @@ public class ProxyConnectionBootstrap {
 			if (context.getState() != States.START) {
 				context.writer.write("exit\n"); //$NON-NLS-1$
 				context.writer.flush();
-				throw new RemoteConnectionException(NLS.bind(Messages.ProxyConnectionBootstrap_7, context.getErrorMessage()));
+				throw new RemoteConnectionException(
+						NLS.bind(Messages.ProxyConnectionBootstrap_7, context.getErrorMessage()));
 			}
 			new Thread("server error stream") { //$NON-NLS-1$
 				@Override
@@ -277,7 +280,7 @@ public class ProxyConnectionBootstrap {
 						BufferedReader reader = new BufferedReader(new InputStreamReader(chan.getExtInputStream()));
 						String line;
 						while ((line = reader.readLine()) != null) {
-							System.err.println("server: "+ line); //$NON-NLS-1$
+							System.err.println("server: " + line); //$NON-NLS-1$
 						}
 					} catch (IOException e) {
 						// Ignore and terminate thread
@@ -289,18 +292,22 @@ public class ProxyConnectionBootstrap {
 			throw new RemoteConnectionException(e.getMessage());
 		}
 	}
-	
-	private Channel openChannel(IRemoteConnection connection, IProgressMonitor monitor) throws RemoteConnectionException {
+
+	private Channel openChannel(IRemoteConnection connection, IProgressMonitor monitor)
+			throws RemoteConnectionException {
 		IRemoteConnectionWorkingCopy wc = connection.getWorkingCopy();
 		IRemoteConnectionHostService hostService = wc.getService(IRemoteConnectionHostService.class);
 		IUserAuthenticatorService authService = wc.getService(IUserAuthenticatorService.class);
 		try {
-			session = jSchService.createSession(hostService.getHostname(), hostService.getPort(), hostService.getUsername());
+			session = jSchService.createSession(hostService.getHostname(), hostService.getPort(),
+					hostService.getUsername());
 			session.setUserInfo(new JSchUserInfo(hostService, authService));
 			if (hostService.usePassword()) {
-				session.setConfig("PreferredAuthentications", "password,keyboard-interactive,gssapi-with-mic,publickey"); //$NON-NLS-1$ //$NON-NLS-2$
+				session.setConfig("PreferredAuthentications", //$NON-NLS-1$
+						"password,keyboard-interactive,gssapi-with-mic,publickey"); //$NON-NLS-1$
 			} else {
-				session.setConfig("PreferredAuthentications", "publickey,gssapi-with-mic,password,keyboard-interactive"); //$NON-NLS-1$ //$NON-NLS-2$
+				session.setConfig("PreferredAuthentications", //$NON-NLS-1$
+						"publickey,gssapi-with-mic,password,keyboard-interactive"); //$NON-NLS-1$
 			}
 			String password = hostService.getPassword();
 			if (!password.isEmpty()) {

@@ -15,23 +15,23 @@ import junit.framework.TestCase;
 
 public class MultiplexServerTests extends TestCase {
 	private static final int NUM_CHANS = 5;
-	
+
 	private class ChanReader implements Runnable {
 		private byte[] buf = new byte[8192];
 		private StreamChannel chan;
 		private StringBuffer[] recvBufs;
 		private String name;
-		
+
 		public ChanReader(StreamChannel chan, StringBuffer[] recvBufs, String name) {
 			this.chan = chan;
 			this.recvBufs = recvBufs;
 			this.name = name;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
 		@Override
 		public void run() {
 			try {
@@ -53,33 +53,33 @@ public class MultiplexServerTests extends TestCase {
 			}
 		}
 	}
-	
+
 	private class ChanWriter implements Runnable {
 		private StreamChannel chan;
 		private StringBuffer[] sentBufs;
 		private Random r = new Random();
 		private String name;
-		
+
 		public ChanWriter(StreamChannel chan, StringBuffer[] sentBufs, String name) {
 			this.chan = chan;
 			this.sentBufs = sentBufs;
 			this.name = name;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
 		@Override
 		public void run() {
-			try{
+			try {
 				synchronized (MultiplexServerTests.this) {
 					System.out.println(getName() + " started");
 				}
 				for (int i = 0; i < 100; i++) {
 					String s = String.format("%05d\n", i);
 					chan.getOutputStream().write(s.getBytes());
-	//				chan.getOutputStream().flush();
+					//				chan.getOutputStream().flush();
 					sentBufs[chan.getId()].append(s);
 					try {
 						Thread.sleep(r.nextInt(100));
@@ -101,10 +101,10 @@ public class MultiplexServerTests extends TestCase {
 		try {
 			final StringBuffer[] clntSentBufs = new StringBuffer[NUM_CHANS];
 			final StringBuffer[] clntRecvBufs = new StringBuffer[NUM_CHANS];
-			
+
 			final Thread[] clntReaders = new Thread[NUM_CHANS];
 			final Thread[] clntWriters = new Thread[NUM_CHANS];
-			
+
 			for (int i = 0; i < NUM_CHANS; i++) {
 				clntSentBufs[i] = new StringBuffer();
 				clntRecvBufs[i] = new StringBuffer();
@@ -112,9 +112,10 @@ public class MultiplexServerTests extends TestCase {
 
 			final Process proc = Runtime.getRuntime().exec("java -jar /Users/gw6/Desktop/Server.jar");
 			assertTrue(proc.isAlive());
-			
+
 			new Thread("stderr") {
 				private byte[] buf = new byte[1024];
+
 				@Override
 				public void run() {
 					int n;
@@ -128,19 +129,20 @@ public class MultiplexServerTests extends TestCase {
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}				
+					}
 				}
-				
+
 			}.start();
-			
+
 			StreamChannelManager mpxClnt = startMpxClient(proc.getInputStream(), proc.getOutputStream());
-			
-			List<StreamChannel> channels = runChannelTest(mpxClnt, clntReaders, clntWriters, clntSentBufs, clntRecvBufs);
-			
+
+			List<StreamChannel> channels = runChannelTest(mpxClnt, clntReaders, clntWriters, clntSentBufs,
+					clntRecvBufs);
+
 			for (int i = 0; i < NUM_CHANS; i++) {
 				clntWriters[i].join();
 			}
-			
+
 			for (StreamChannel channel : channels) {
 				channel.close();
 			}
@@ -150,7 +152,7 @@ public class MultiplexServerTests extends TestCase {
 					clntReaders[i].join();
 				}
 			}
-			
+
 			proc.destroy();
 			proc.waitFor();
 			assertEquals(0, proc.exitValue());
@@ -158,16 +160,17 @@ public class MultiplexServerTests extends TestCase {
 			fail(e.getMessage());
 		}
 	}
-	
-	private List<StreamChannel> runChannelTest(StreamChannelManager mpx, Thread[] readers, Thread[] writers, final StringBuffer[] sentBufs, final StringBuffer[] recvBufs) throws IOException {
+
+	private List<StreamChannel> runChannelTest(StreamChannelManager mpx, Thread[] readers, Thread[] writers,
+			final StringBuffer[] sentBufs, final StringBuffer[] recvBufs) throws IOException {
 		List<StreamChannel> channels = new ArrayList<StreamChannel>();
-		for (int i = 0 ; i < NUM_CHANS; i++) {
+		for (int i = 0; i < NUM_CHANS; i++) {
 			StreamChannel chan = mpx.openChannel(); // needs to be in same thread as reader
-//			ChanReader reader = new ChanReader(chan, recvBufs, "clnt reader thread " + chan.getId());
-//			readers[chan.getId()] = new Thread(reader, reader.getName());
+			//			ChanReader reader = new ChanReader(chan, recvBufs, "clnt reader thread " + chan.getId());
+			//			readers[chan.getId()] = new Thread(reader, reader.getName());
 			ChanWriter writer = new ChanWriter(chan, sentBufs, "clnt writer thread " + chan.getId());
 			writers[chan.getId()] = new Thread(writer, writer.getName());
-//			readers[chan.getId()].start();
+			//			readers[chan.getId()].start();
 			writers[chan.getId()].start();
 			channels.add(chan);
 		}
@@ -179,11 +182,11 @@ public class MultiplexServerTests extends TestCase {
 		new Thread(mpx, "client multiplexer").start();
 		return mpx;
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 	}

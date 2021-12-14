@@ -32,7 +32,7 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 	private final ProxyConnection proxyConnection;
 	private Map<String, String> remoteEnv;
 	private List<StreamChannel> streams = new ArrayList<>();
-	
+
 	public ProxyProcessBuilder(ProxyConnection connection, List<String> command) {
 		super(connection.getRemoteConnection(), command);
 		proxyConnection = connection;
@@ -45,13 +45,13 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 	public ProxyProcessBuilder(ProxyConnection connection, String... command) {
 		this(connection, Arrays.asList(command));
 	}
-	
+
 	/**
 	 * Constructor for creating command shell
 	 * @param connection
 	 */
 	public ProxyProcessBuilder(ProxyConnection connection) {
-		super(connection.getRemoteConnection(), (List<String>)null);
+		super(connection.getRemoteConnection(), (List<String>) null);
 		proxyConnection = connection;
 		redirectErrorStream(true);
 	}
@@ -75,9 +75,9 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 		if (conn == null) {
 			throw new IOException(Messages.ProxyProcessBuilder_0);
 		}
-		
+
 		Job job;
-		
+
 		final List<String> cmdArgs = command();
 		if (cmdArgs != null) {
 			if (cmdArgs.size() < 1) {
@@ -90,18 +90,19 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 			if (remoteEnv != null) {
 				env.putAll(remoteEnv);
 			}
-			
+
 			final boolean append = (flags & IRemoteProcessBuilder.APPEND_ENVIRONMENT) != 0 || remoteEnv == null;
-			
+
 			streams.add(conn.openChannel());
 			streams.add(conn.openChannel());
 			streams.add(conn.openChannel());
-			
+
 			job = new Job("process executor") { //$NON-NLS-1$
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					ExecCommand cmd = new ExecCommand(conn, cmdArgs, env, directory().toURI().getPath(), redirectErrorStream(), append, 
-							streams.get(0).getId(), streams.get(1).getId(), streams.get(2).getId());
+					ExecCommand cmd = new ExecCommand(conn, cmdArgs, env, directory().toURI().getPath(),
+							redirectErrorStream(), append, streams.get(0).getId(), streams.get(1).getId(),
+							streams.get(2).getId());
 					try {
 						cmd.getResult(monitor);
 					} catch (ProxyException e) {
@@ -116,7 +117,7 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 			 */
 			streams.add(conn.openChannel());
 			streams.add(conn.openChannel());
-			
+
 			job = new Job("process executor") { //$NON-NLS-1$
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
@@ -130,7 +131,7 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 				}
 			};
 		}
-		
+
 		job.schedule();
 		try {
 			job.join();

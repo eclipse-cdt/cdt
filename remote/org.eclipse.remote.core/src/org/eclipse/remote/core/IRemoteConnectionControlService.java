@@ -16,14 +16,14 @@ import org.eclipse.remote.core.exception.RemoteConnectionException;
 /**
  * A service to control and report on the state of a connection, open or closed.
  * Connections that do not provide this service are always assumed to be opened.
- * 
+ *
  * @since 2.0
  */
 public interface IRemoteConnectionControlService extends IRemoteConnection.Service {
 
 	/**
 	 * Open the connection. Must be called before the connection can be used.
-	 * 
+	 *
 	 * @param monitor
 	 *            the progress monitor to use for reporting progress to the user. It is the caller's responsibility to call done()
 	 *            on the given monitor. Accepts null, indicating that no progress should be reported and that the operation cannot
@@ -39,7 +39,7 @@ public interface IRemoteConnectionControlService extends IRemoteConnection.Servi
 
 	/**
 	 * Test if the connection is open.
-	 * 
+	 *
 	 * @return true if connection is open.
 	 */
 	public boolean isOpen();

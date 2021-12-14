@@ -36,20 +36,20 @@ public class GetInputStreamCommand extends AbstractCommand<InputStream> {
 	public InputStream call() throws ProxyException {
 		try {
 			StreamChannel chan = openChannel();
-			
+
 			out.writeByte(Protocol.PROTO_COMMAND);
 			out.writeShort(Protocol.CMD_GETINPUTSTREAM);
 			out.writeByte(chan.getId());
 			out.writeInt(options);
 			out.writeUTF(path);
 			out.flush();
-			
+
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
 				throw new ProxyException(errMsg);
 			}
-			
+
 			return new BufferedInputStream(chan.getInputStream());
 		} catch (IOException e) {
 			throw new ProxyException(e.getMessage());

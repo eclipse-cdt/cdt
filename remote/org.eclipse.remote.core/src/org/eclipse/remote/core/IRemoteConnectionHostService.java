@@ -12,43 +12,43 @@ package org.eclipse.remote.core;
 
 /**
  * A service to obtain host specific information.
- * 
+ *
  * @since 2.0
  */
 public interface IRemoteConnectionHostService extends IRemoteConnection.Service {
 
 	/**
 	 * Obtain the hostname associated with this connection.
-	 * 
+	 *
 	 * @return hostname
 	 */
 	String getHostname();
 
 	/**
 	 * Obtain the port associated with this connection
-	 * 
+	 *
 	 * @return port
 	 */
 	int getPort();
 
 	/**
 	 * Obtain the timeout used when establishing the connection.
-	 * 
+	 *
 	 * @return timeout
 	 */
 	int getTimeout();
-	
+
 	/**
 	 * Get the pass phrase associated with this connection.
-	 * 
+	 *
 	 * @return pass phrase
 	 * @since 3.0
 	 */
 	String getPassphrase();
-	
+
 	/**
 	 * Get the password associated with this connection.
-	 * 
+	 *
 	 * @return password
 	 * @since 3.0
 	 */
@@ -56,22 +56,22 @@ public interface IRemoteConnectionHostService extends IRemoteConnection.Service 
 
 	/**
 	 * Get the value of the use password authentication flag. If true, the connection will try using a password first.
-	 * 
+	 *
 	 * @return use password authentication flag
 	 * @since 3.0
 	 */
 	boolean usePassword();
-	
+
 	/**
 	 * Obtain the flag that indicates a login shell should be started once the connection is established
-	 * 
+	 *
 	 * @return login shell flag
 	 */
 	boolean useLoginShell();
 
 	/**
 	 * Obtain the username associated with this connection.
-	 * 
+	 *
 	 * @return
 	 */
 	String getUsername();
@@ -79,7 +79,7 @@ public interface IRemoteConnectionHostService extends IRemoteConnection.Service 
 	/**
 	 * Set the hostname associated with this connection. Note, this method can only be used for an
 	 * IRemoteConnectionWorkingCopy and will have no effect otherwise.
-	 * 
+	 *
 	 * @param hostname
 	 *            new hostname for connection
 	 */
@@ -88,7 +88,7 @@ public interface IRemoteConnectionHostService extends IRemoteConnection.Service 
 	/**
 	 * Set the pass phrase associated with this connection. Note, this method can only be used for an
 	 * IRemoteConnectionWorkingCopy and will have no effect otherwise.
-	 * 
+	 *
 	 * @param passphrase
 	 */
 	void setPassphrase(String passphrase);
@@ -96,7 +96,7 @@ public interface IRemoteConnectionHostService extends IRemoteConnection.Service 
 	/**
 	 * Set the password associated with this connection. Note, this method can only be used for an
 	 * IRemoteConnectionWorkingCopy and will have no effect otherwise.
-	 * 
+	 *
 	 * @param password
 	 *            new password for connection
 	 */
@@ -105,7 +105,7 @@ public interface IRemoteConnectionHostService extends IRemoteConnection.Service 
 	/**
 	 * Set the port used for the connection. Note, this method can only be used forh an
 	 * IRemoteConnectionWorkingCopy and will have no effect otherwise.
-	 * 
+	 *
 	 * @param port
 	 *            new port for connection
 	 */
@@ -114,7 +114,7 @@ public interface IRemoteConnectionHostService extends IRemoteConnection.Service 
 	/**
 	 * Set the timeout used when establishing the connection. A timeout of 0 means infinite. Note, this method can only be used
 	 * for an IRemoteConnectionWorkingCopy and will have no effect otherwise.
-	 * 
+	 *
 	 * @param timeout
 	 *            new timeout value
 	 */
@@ -123,7 +123,7 @@ public interface IRemoteConnectionHostService extends IRemoteConnection.Service 
 	/**
 	 * Set the flag indicating a login shell should be stated for this connection. Note, this method can only be used
 	 * for an IRemoteConnectionWorkingCopy and will have no effect otherwise.
-	 * 
+	 *
 	 * @param useLogingShell
 	 *            true to start a login shell
 	 */
@@ -132,7 +132,7 @@ public interface IRemoteConnectionHostService extends IRemoteConnection.Service 
 	/**
 	 * Set the connection to try password authentication first. Note, this method can only be used for an
 	 * IRemoteConnectionWorkingCopy and will have no effect otherwise.
-	 * 
+	 *
 	 * @param usePassword
 	 *            use password authentication
 	 */
@@ -141,7 +141,7 @@ public interface IRemoteConnectionHostService extends IRemoteConnection.Service 
 	/**
 	 * Set the username associated with this connection. Note, this method can only be used for an
 	 * IRemoteConnectionWorkingCopy and will have no effect otherwise.
-	 * 
+	 *
 	 * @param username
 	 *            new username for connection
 	 */

@@ -246,8 +246,8 @@ public class JSchConnectionPage extends WizardPage {
 
 		fPasswordButton.setSelection(JSchConnection.DEFAULT_IS_PASSWORD);
 		fPublicKeyButton.setSelection(!JSchConnection.DEFAULT_IS_PASSWORD);
-		controls.setTabList(
-				new Control[] { fHostText, fUserText, fPublicKeyButton, fPassphraseText, fPasswordButton, fPasswordText });
+		controls.setTabList(new Control[] { fHostText, fUserText, fPublicKeyButton, fPassphraseText, fPasswordButton,
+				fPasswordText });
 	}
 
 	@Override
@@ -312,7 +312,8 @@ public class JSchConnectionPage extends WizardPage {
 		lblConnection.setText(Messages.JSchConnectionPage_SelectConnection);
 
 		fProxyConnectionWidget = new RemoteConnectionWidget(proxyComp, SWT.NONE, null, 0);
-		fProxyConnectionWidget.filterConnections(IRemoteConnectionHostService.class, IRemotePortForwardingService.class);
+		fProxyConnectionWidget.filterConnections(IRemoteConnectionHostService.class,
+				IRemotePortForwardingService.class);
 
 		Label lblCommand = new Label(proxyComp, SWT.WRAP);
 		lblCommand.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -384,7 +385,8 @@ public class JSchConnectionPage extends WizardPage {
 					: Boolean.parseBoolean(useLoginShellStr);
 			fUseLoginShellButton.setSelection(useLoginShell);
 			String loginShellStr = fConnection.getAttribute(JSchConnection.LOGIN_SHELL_COMMAND_ATTR);
-			fLoginShellText.setText(loginShellStr.isEmpty() ? JSchConnection.DEFAULT_LOGIN_SHELL_COMMAND : loginShellStr);
+			fLoginShellText
+					.setText(loginShellStr.isEmpty() ? JSchConnection.DEFAULT_LOGIN_SHELL_COMMAND : loginShellStr);
 			fProxyCommandText.setText(fConnection.getAttribute(JSchConnection.PROXYCOMMAND_ATTR));
 			JSchConnection proxyConn = fConnection.getService(JSchConnection.class).getProxyConnection();
 			if (proxyConn == null) {
@@ -520,7 +522,8 @@ public class JSchConnectionPage extends WizardPage {
 			fConnection.setAttribute(JSchConnection.TIMEOUT_ATTR, fTimeoutText.getText().trim());
 			fConnection.setAttribute(JSchConnection.PORT_ATTR, fPortText.getText().trim());
 			fConnection.setAttribute(JSchConnection.PROXYCOMMAND_ATTR, fProxyCommandText.getText().trim());
-			fConnection.setAttribute(JSchConnection.USE_LOGIN_SHELL_ATTR, Boolean.toString(fUseLoginShellButton.getSelection()));
+			fConnection.setAttribute(JSchConnection.USE_LOGIN_SHELL_ATTR,
+					Boolean.toString(fUseLoginShellButton.getSelection()));
 			fConnection.setAttribute(JSchConnection.LOGIN_SHELL_COMMAND_ATTR, fLoginShellText.getText().trim());
 			IRemoteConnection proxyConnection = fProxyConnectionWidget.getConnection();
 			IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);

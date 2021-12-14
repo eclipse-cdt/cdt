@@ -21,7 +21,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 
 public class ProxyUserAuthenticator implements IUserAuthenticatorService {
-	
+
 	private final IRemoteConnection remoteConnection;
 	private UserInfoPrompter prompter;
 
@@ -30,7 +30,8 @@ public class ProxyUserAuthenticator implements IUserAuthenticatorService {
 		IRemoteConnectionHostService hostService = conn.getService(IRemoteConnectionHostService.class);
 		if (hostService != null) {
 			try {
-				prompter = new UserInfoPrompter(new JSch().getSession(hostService.getUsername(), hostService.getHostname()));
+				prompter = new UserInfoPrompter(
+						new JSch().getSession(hostService.getUsername(), hostService.getHostname()));
 			} catch (JSchException e) {
 				// Not allowed
 			}
@@ -41,7 +42,7 @@ public class ProxyUserAuthenticator implements IUserAuthenticatorService {
 	public IRemoteConnection getRemoteConnection() {
 		return remoteConnection;
 	}
-	
+
 	@Override
 	public PasswordAuthentication prompt(String username, String message) {
 		if (prompter.promptPassword(message)) {
@@ -85,8 +86,8 @@ public class ProxyUserAuthenticator implements IUserAuthenticatorService {
 		}
 
 		display.syncExec(() -> {
-			final MessageDialog dialog = new MessageDialog(display.getActiveShell(), title, null /* title image */, message,
-					promptType, buttons, defaultResponseIndex);
+			final MessageDialog dialog = new MessageDialog(display.getActiveShell(), title, null /* title image */,
+					message, promptType, buttons, defaultResponseIndex);
 			retval[0] = dialog.open();
 		});
 		return promptResponses[retval[0]];
@@ -99,7 +100,7 @@ public class ProxyUserAuthenticator implements IUserAuthenticatorService {
 		}
 		return display;
 	}
-	
+
 	public static class Factory implements IRemoteConnection.Service.Factory {
 		@Override
 		@SuppressWarnings("unchecked")

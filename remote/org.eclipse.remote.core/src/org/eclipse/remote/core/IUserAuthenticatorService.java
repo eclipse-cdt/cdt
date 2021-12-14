@@ -17,7 +17,7 @@ import java.net.PasswordAuthentication;
 
 /**
  * Allow clients to provide their own user interface for connection authentication.
- * 
+ *
  * @since 2.0
  */
 public interface IUserAuthenticatorService extends IRemoteConnection.Service {
@@ -73,7 +73,7 @@ public interface IUserAuthenticatorService extends IRemoteConnection.Service {
 	 * into returned object. Implementors are allowed to
 	 * save user names and passwords. The user should be prompted for
 	 * user name and password if there is no saved one.
-	 * 
+	 *
 	 * @param username
 	 *            The initial username, or null if there is no initial username
 	 * @param message
@@ -85,7 +85,7 @@ public interface IUserAuthenticatorService extends IRemoteConnection.Service {
 	 * Prompts the user for a number values using text fields. The labels are provided in
 	 * the <core>prompt</code> array. Implementors will return the entered values, or null if
 	 * the user cancels the prompt.
-	 * 
+	 *
 	 * @param destination
 	 *            the destination in the format like username@hostname:port
 	 * @param name
@@ -104,7 +104,7 @@ public interface IUserAuthenticatorService extends IRemoteConnection.Service {
 	 * Prompts for additional information regarding this authentication
 	 * request. A default implementation of this method should return the <code>defaultResponse</code>,
 	 * whereas alternate implementations could prompt the user with a dialog.
-	 * 
+	 *
 	 * @param promptType
 	 *            one of the following values:
 	 *            <ul>

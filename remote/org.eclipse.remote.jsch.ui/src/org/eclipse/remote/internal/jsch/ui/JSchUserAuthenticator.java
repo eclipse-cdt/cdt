@@ -25,7 +25,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 
 public class JSchUserAuthenticator implements IUserAuthenticatorService {
-	
+
 	private final IRemoteConnection remoteConnection;
 	private UserInfoPrompter prompter;
 
@@ -44,7 +44,7 @@ public class JSchUserAuthenticator implements IUserAuthenticatorService {
 	public IRemoteConnection getRemoteConnection() {
 		return remoteConnection;
 	}
-	
+
 	@Override
 	public PasswordAuthentication prompt(String username, String message) {
 		if (prompter.promptPassword(message)) {
@@ -90,8 +90,8 @@ public class JSchUserAuthenticator implements IUserAuthenticatorService {
 		display.syncExec(new Runnable() {
 			@Override
 			public void run() {
-				final MessageDialog dialog = new MessageDialog(display.getActiveShell(), title, null /* title image */, message,
-						promptType, buttons, defaultResponseIndex);
+				final MessageDialog dialog = new MessageDialog(display.getActiveShell(), title, null /* title image */,
+						message, promptType, buttons, defaultResponseIndex);
 				retval[0] = dialog.open();
 			}
 		});
@@ -105,7 +105,7 @@ public class JSchUserAuthenticator implements IUserAuthenticatorService {
 		}
 		return display;
 	}
-	
+
 	public static class Factory implements IRemoteConnection.Service.Factory {
 		@Override
 		@SuppressWarnings("unchecked")

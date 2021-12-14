@@ -19,7 +19,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static Activator getDefault() {
@@ -28,7 +28,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Get unique identifier
-	 * 
+	 *
 	 * @return
 	 * @since 5.0
 	 */
@@ -41,7 +41,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -51,7 +51,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            the error message to log
 	 */
@@ -61,14 +61,13 @@ public class Activator extends Plugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *            the exception to be logged
 	 */
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e));
 	}
-
 
 	/**
 	 * The constructor
@@ -78,7 +77,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Return the OSGi service with the given service interface.
-	 * 
+	 *
 	 * @param service service interface
 	 * @return the specified service or null if it's not registered
 	 */

@@ -22,14 +22,14 @@ public interface IRemoteConnectionWorkingCopy extends IRemoteConnection {
 	/**
 	 * Returns the original connection this working copy was created from.
 	 * Returns null if this is a new connection.
-	 * 
+	 *
 	 * @return original connection
 	 */
 	public IRemoteConnection getOriginal();
 
 	/**
 	 * Returns whether this connection has been modified since it was last saved or created.
-	 * 
+	 *
 	 * @return true if the connection has been modified
 	 */
 	public boolean isDirty();
@@ -37,15 +37,15 @@ public interface IRemoteConnectionWorkingCopy extends IRemoteConnection {
 	/**
 	 * Saves this working copy to its original connection and returns a handle to the resulting connection. Has no effect if this
 	 * connection does not need saving.
-	 * 
+	 *
 	 * @return saved connection
-	 * @throws RemoteConnectionException 
+	 * @throws RemoteConnectionException
 	 */
 	public IRemoteConnection save() throws RemoteConnectionException;
 
 	/**
 	 * Set the name for this connection
-	 * 
+	 *
 	 * @param name
 	 */
 	public void setName(String name);
@@ -53,7 +53,7 @@ public interface IRemoteConnectionWorkingCopy extends IRemoteConnection {
 	/**
 	 * Set an implementation dependent attribute for the connection. Attributes keys supported by the connection can be obtained
 	 * using {@link #getAttributes()}. Attributes are persisted along with connection information.
-	 * 
+	 *
 	 * @param key
 	 *            attribute key
 	 * @param value
@@ -63,7 +63,7 @@ public interface IRemoteConnectionWorkingCopy extends IRemoteConnection {
 
 	/**
 	 * Set an attribute such as a password that's stored in secure storage.
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 * @since 2.0

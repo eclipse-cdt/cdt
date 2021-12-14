@@ -11,8 +11,7 @@ Export-Package: org.eclipse.remote.internal.proxy.core;x-friends:="org.eclipse.r
  org.eclipse.remote.internal.proxy.core.messages;x-friends:="org.eclipse.remote.proxy.ui"
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Import-Package: 
- com.jcraft.jsch,
+Import-Package: com.jcraft.jsch,
  org.eclipse.core.filesystem,
  org.eclipse.core.filesystem.provider,
  org.eclipse.core.runtime,

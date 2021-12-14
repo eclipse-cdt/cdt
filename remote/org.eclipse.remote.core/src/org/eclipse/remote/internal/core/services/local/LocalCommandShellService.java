@@ -41,7 +41,7 @@ public class LocalCommandShellService implements IRemoteCommandShellService {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public IRemoteConnection getRemoteConnection() {
 		return connection;

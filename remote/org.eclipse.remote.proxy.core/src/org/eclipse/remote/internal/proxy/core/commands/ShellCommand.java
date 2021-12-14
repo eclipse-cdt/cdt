@@ -37,7 +37,7 @@ public class ShellCommand extends AbstractCommand<Void> {
 			out.writeByte(cmdChan);
 			out.writeByte(ioChan);
 			out.flush();
-			
+
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();

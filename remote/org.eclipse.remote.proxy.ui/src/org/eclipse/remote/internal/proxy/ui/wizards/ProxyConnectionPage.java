@@ -150,7 +150,7 @@ public class ProxyConnectionPage extends WizardPage {
 		fServerCommandText.setText(ProxyConnection.DEFAULT_SERVER_COMMAND);
 		fServerCommandText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		fDefaultServerButton.setSelection(ProxyConnection.DEFAULT_USE_DEFAULT_SERVER);
-		
+
 		expComp.setClient(advancedComp);
 	}
 
@@ -226,8 +226,8 @@ public class ProxyConnectionPage extends WizardPage {
 
 		fPasswordButton.setSelection(ProxyConnection.DEFAULT_USE_PASSWORD);
 		fPublicKeyButton.setSelection(!ProxyConnection.DEFAULT_USE_PASSWORD);
-		controls.setTabList(
-				new Control[] { fHostText, fUserText, fPublicKeyButton, fPassphraseText, fPasswordButton, fPasswordText });
+		controls.setTabList(new Control[] { fHostText, fUserText, fPublicKeyButton, fPassphraseText, fPasswordButton,
+				fPasswordText });
 	}
 
 	@Override
@@ -322,7 +322,8 @@ public class ProxyConnectionPage extends WizardPage {
 					: Boolean.parseBoolean(useDefaultServerStr);
 			fDefaultServerButton.setSelection(useDefaultServer);
 			String serverCommandStr = fConnection.getAttribute(ProxyConnection.SERVER_COMMAND_ATTR);
-			fServerCommandText.setText(serverCommandStr.isEmpty() ? ProxyConnection.DEFAULT_SERVER_COMMAND : serverCommandStr);
+			fServerCommandText
+					.setText(serverCommandStr.isEmpty() ? ProxyConnection.DEFAULT_SERVER_COMMAND : serverCommandStr);
 
 		} else {
 			fConnectionName.setText(fInitialName);
@@ -438,10 +439,12 @@ public class ProxyConnectionPage extends WizardPage {
 			fConnection.setAttribute(ProxyConnection.USERNAME_ATTR, fUserText.getText().trim());
 			fConnection.setSecureAttribute(ProxyConnection.PASSWORD_ATTR, fPasswordText.getText().trim());
 			fConnection.setSecureAttribute(ProxyConnection.PASSPHRASE_ATTR, fPassphraseText.getText().trim());
-			fConnection.setAttribute(ProxyConnection.USE_PASSWORD_ATTR, Boolean.toString(fPasswordButton.getSelection()));
+			fConnection.setAttribute(ProxyConnection.USE_PASSWORD_ATTR,
+					Boolean.toString(fPasswordButton.getSelection()));
 			fConnection.setAttribute(ProxyConnection.TIMEOUT_ATTR, fTimeoutText.getText().trim());
 			fConnection.setAttribute(ProxyConnection.PORT_ATTR, fPortText.getText().trim());
-			fConnection.setAttribute(ProxyConnection.USE_DEFAULT_SERVER_ATTR, Boolean.toString(fDefaultServerButton.getSelection()));
+			fConnection.setAttribute(ProxyConnection.USE_DEFAULT_SERVER_ATTR,
+					Boolean.toString(fDefaultServerButton.getSelection()));
 			fConnection.setAttribute(ProxyConnection.SERVER_COMMAND_ATTR, fServerCommandText.getText().trim());
 		}
 	}

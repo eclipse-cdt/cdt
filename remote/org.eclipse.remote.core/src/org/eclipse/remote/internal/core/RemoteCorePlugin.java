@@ -35,7 +35,7 @@ public class RemoteCorePlugin extends Plugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static RemoteCorePlugin getDefault() {
@@ -54,7 +54,7 @@ public class RemoteCorePlugin extends Plugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -64,7 +64,7 @@ public class RemoteCorePlugin extends Plugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            the error message to log
 	 */
@@ -74,7 +74,7 @@ public class RemoteCorePlugin extends Plugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *            the exception to be logged
 	 */
@@ -84,7 +84,7 @@ public class RemoteCorePlugin extends Plugin {
 
 	/**
 	 * Return the OSGi service with the given service interface.
-	 * 
+	 *
 	 * @param service service interface
 	 * @return the specified service or null if it's not registered
 	 */

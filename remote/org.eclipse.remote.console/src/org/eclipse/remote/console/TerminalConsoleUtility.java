@@ -19,7 +19,7 @@ import org.eclipse.ui.console.IConsole;
 /**
  * A collection of public API utility methods to open consoles to
  * IRemoteConnection objects
- * 
+ *
  * @since 1.1
  */
 public class TerminalConsoleUtility {
@@ -33,7 +33,7 @@ public class TerminalConsoleUtility {
 
 	/**
 	 * Open a specific IRemoteConnection and encoding combination.
-	 * 
+	 *
 	 * @param connection
 	 * @param encoding
 	 */
@@ -43,7 +43,7 @@ public class TerminalConsoleUtility {
 
 	/**
 	 * Find an existing console for the given IRemoteConnection
-	 * 
+	 *
 	 * @param connection
 	 * @return
 	 */

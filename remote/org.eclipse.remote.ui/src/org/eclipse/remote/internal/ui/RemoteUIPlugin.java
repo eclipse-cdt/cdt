@@ -19,7 +19,7 @@ public class RemoteUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static RemoteUIPlugin getDefault() {
@@ -28,7 +28,7 @@ public class RemoteUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Get unique identifier for this plugin
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public static String getUniqueIdentifier() {
@@ -40,7 +40,7 @@ public class RemoteUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Generate a log message given an IStatus object
-	 * 
+	 *
 	 * @param status
 	 *            IStatus object
 	 * @since 5.0
@@ -51,7 +51,7 @@ public class RemoteUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Generate a log message
-	 * 
+	 *
 	 * @param msg
 	 *            message to log
 	 * @since 5.0
@@ -62,18 +62,19 @@ public class RemoteUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Generate a log message for an exception
-	 * 
+	 *
 	 * @param e
 	 *            exception used to generate message
 	 * @since 5.0
 	 */
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getDefault().getBundle().getSymbolicName(), IStatus.ERROR, Messages.PTPRemoteUIPlugin_3, e));
+		log(new Status(IStatus.ERROR, getDefault().getBundle().getSymbolicName(), IStatus.ERROR,
+				Messages.PTPRemoteUIPlugin_3, e));
 	}
 
 	/**
 	 * Return the OSGi service with the given service interface.
-	 * 
+	 *
 	 * @param service service interface
 	 * @return the specified service or null if it's not registered
 	 */

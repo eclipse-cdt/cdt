@@ -18,16 +18,16 @@ import org.eclipse.core.filesystem.provider.FileInfo;
 
 public class SerializableFileInfo implements Serializable {
 	private static final long serialVersionUID = -1986643088683154145L;
-	
+
 	private IFileInfo info;
-	
+
 	public SerializableFileInfo() {
 	}
 
 	public SerializableFileInfo(IFileInfo info) {
 		setIFileInfo(info);
 	}
-	
+
 	public void setIFileInfo(IFileInfo info) {
 		this.info = info;
 	}
@@ -35,7 +35,7 @@ public class SerializableFileInfo implements Serializable {
 	public IFileInfo getIFileInfo() {
 		return info;
 	}
-	
+
 	public void writeObject(DataOutputStream out) throws IOException {
 		out.writeUTF(info.getName());
 		boolean symlink = info.getAttribute(EFS.ATTRIBUTE_SYMLINK);
@@ -60,7 +60,7 @@ public class SerializableFileInfo implements Serializable {
 
 	public void readObject(DataInputStream in) throws IOException {
 		FileInfo newInfo = new FileInfo();
-		
+
 		try {
 			newInfo.setName(in.readUTF());
 			boolean symlink = in.readBoolean();
@@ -84,7 +84,7 @@ public class SerializableFileInfo implements Serializable {
 		} catch (IOException e) {
 			newInfo.setError(IFileInfo.IO_ERROR);
 		}
-		
+
 		setIFileInfo(newInfo);
 	}
 }

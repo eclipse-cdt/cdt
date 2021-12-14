@@ -83,7 +83,7 @@ public class RemoteConnection implements IRemoteConnection {
 
 	/**
 	 * Called from working copy when name has changed.
-	 * 
+	 *
 	 * @param name
 	 *            the new name
 	 */

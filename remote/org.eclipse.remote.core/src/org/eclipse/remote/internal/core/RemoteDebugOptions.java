@@ -78,7 +78,7 @@ public class RemoteDebugOptions implements DebugOptionsListener {
 
 	/**
 	 * Prints the given message to System.out and to the OSGi tracing (if enabled)
-	 * 
+	 *
 	 * @param message
 	 *            the message or <code>null</code>
 	 */
@@ -88,7 +88,7 @@ public class RemoteDebugOptions implements DebugOptionsListener {
 
 	/**
 	 * Prints the given message to System.out and to the OSGi tracing (if enabled)
-	 * 
+	 *
 	 * @param option
 	 *            the option to determine if tracing is displayed
 	 * @param message

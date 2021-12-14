@@ -21,7 +21,7 @@ import org.eclipse.remote.internal.core.RemoteProcess;
 /**
  * Abstract base class for remote process builders. Implementors can use this class to provide a default implementation of a remote
  * process builder.
- * 
+ *
  * @since 5.0
  */
 public abstract class AbstractRemoteProcessBuilder implements IRemoteProcessBuilder {
@@ -122,7 +122,7 @@ public abstract class AbstractRemoteProcessBuilder implements IRemoteProcessBuil
 	public IRemoteConnection getRemoteConnection() {
 		return fConnection;
 	}
-	
+
 	/**
 	 * @since 4.0
 	 */

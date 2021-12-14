@@ -27,11 +27,11 @@ public class ServerGetInputStreamCommand extends AbstractServerCommand {
 	private final OutputStream out;
 	private final URI uri;
 	private final int options;
-	
+
 	private class Forwarder implements Runnable {
 		private final InputStream in;
 		private final OutputStream out;
-		
+
 		public Forwarder(InputStream in, OutputStream out) {
 			this.in = in;
 			this.out = out;
@@ -72,13 +72,14 @@ public class ServerGetInputStreamCommand extends AbstractServerCommand {
 
 	public void exec() throws ProxyException {
 		try {
-			InputStream in = new BufferedInputStream(EFS.getStore(uri).openInputStream(options, new NullProgressMonitor()));
+			InputStream in = new BufferedInputStream(
+					EFS.getStore(uri).openInputStream(options, new NullProgressMonitor()));
 			startForwarder(in, out);
 		} catch (Exception e) {
 			throw new ProxyException(e.getMessage());
 		}
 	}
-	
+
 	private void startForwarder(InputStream in, OutputStream out) {
 		Forwarder forwarder = new Forwarder(in, out);
 		new Thread(forwarder).start();

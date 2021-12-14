@@ -118,10 +118,10 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 
 		/*
 		 * There are two possibilities:
-		 * 
+		 *
 		 * 1. Some environment variables have changed values, or new variables have been added. In this case we just want to
 		 * send send the changed values rather than all the variables.
-		 * 
+		 *
 		 * 2. Some of the existing variables have been removed. In this case, we need to resend the entire environment variable
 		 * list.
 		 */

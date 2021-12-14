@@ -19,16 +19,16 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Interface for providing file management operations in the UI. Clients can call these methods to open generic dialogs for
  * operations on remote resources.
- * 
+ *
  * @since 2.0
  */
 public interface IRemoteUIFileService extends IRemoteConnectionType.Service {
 	/**
 	 * Browse for a remote directory. The return value is the path of the
 	 * directory <i>on the remote system</i>.
-	 * 
+	 *
 	 * Equivalent to {@link org.eclipse.swt.widgets.DirectoryDialog}.
-	 * 
+	 *
 	 * @param shell
 	 *            workbench shell
 	 * @param message
@@ -46,9 +46,9 @@ public interface IRemoteUIFileService extends IRemoteConnectionType.Service {
 	/**
 	 * Browse for a remote file. The return value is the path of the file <i>on
 	 * the remote system</i>.
-	 * 
+	 *
 	 * Equivalent to {@link org.eclipse.swt.widgets.FileDialog}.
-	 * 
+	 *
 	 * @param shell
 	 *            workbench shell
 	 * @param message
@@ -67,9 +67,9 @@ public interface IRemoteUIFileService extends IRemoteConnectionType.Service {
 	/**
 	 * Browse for a set of remote files. The return value is a list of paths
 	 * of the files <i>on the remote system</i>.
-	 * 
+	 *
 	 * Equivalent to {@link org.eclipse.swt.widgets.FileDialog}.
-	 * 
+	 *
 	 * @param shell
 	 *            workbench shell
 	 * @param message
@@ -86,7 +86,7 @@ public interface IRemoteUIFileService extends IRemoteConnectionType.Service {
 
 	/**
 	 * Get the last connection that was selected in the browser.
-	 * 
+	 *
 	 * @return selected connection
 	 */
 	public IRemoteConnection getConnection();
@@ -94,7 +94,7 @@ public interface IRemoteUIFileService extends IRemoteConnectionType.Service {
 	/**
 	 * Set the connection to use for file browsing. The connection must support the IRemoteFileService service or it will be
 	 * ignored.
-	 * 
+	 *
 	 * @param connection
 	 *            connection to use for file browsing
 	 */
@@ -102,7 +102,7 @@ public interface IRemoteUIFileService extends IRemoteConnectionType.Service {
 
 	/**
 	 * Show a list of available connections if possible.
-	 * 
+	 *
 	 * @param enable
 	 *            enable connection list
 	 */

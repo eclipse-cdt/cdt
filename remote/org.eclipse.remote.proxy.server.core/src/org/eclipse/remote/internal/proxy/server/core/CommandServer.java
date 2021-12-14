@@ -40,14 +40,14 @@ public class CommandServer implements Runnable {
 	private DataOutputStream cmdOut;
 	private boolean running = true;
 	private StreamChannel chan;
-	
+
 	public CommandServer(StreamChannel chan, Server server) {
 		this.chan = chan;
 		this.server = server;
 		this.cmdIn = new DataInputStream(chan.getInputStream());
 		this.cmdOut = new DataOutputStream(chan.getOutputStream());
 	}
-	
+
 	public void run() {
 		new Thread("cmd reader") { //$NON-NLS-1$
 			@Override
@@ -64,11 +64,11 @@ public class CommandServer implements Runnable {
 								sendErrorResult(e.getMessage());
 							}
 							break;
-							
+
 						case Protocol.PROTO_SHUTDOWN:
 							running = false;
 							break;
-							
+
 						default:
 							System.err.println("Invalid protocol ID: " + proto);
 							break;
@@ -85,35 +85,34 @@ public class CommandServer implements Runnable {
 			}
 		}.start();
 	}
-	
+
 	private void sendOKResult() throws IOException {
 		cmdOut.writeByte(Protocol.PROTO_OK);
 		cmdOut.flush();
 	}
-	
+
 	private void sendErrorResult(String error) throws IOException {
 		cmdOut.writeByte(Protocol.PROTO_ERROR);
 		cmdOut.writeUTF(error);
 		cmdOut.flush();
 	}
 
-	
 	/**
 	 * TODO replace with dynamic dispatcher
 	 */
 	private void dispatchCommand(DataInputStream in) throws ProxyException, IOException {
 		AbstractServerCommand serverCmd;
-		
+
 		short cmd = in.readShort();
 		switch (cmd) {
 		case Protocol.CMD_CHILDINFOS:
 			serverCmd = cmdChildInfos(in);
 			break;
-			
+
 		case Protocol.CMD_DELETE:
 			serverCmd = cmdDelete(in);
 			break;
-			
+
 		case Protocol.CMD_EXEC:
 			serverCmd = cmdExec(in);
 			break;
@@ -125,11 +124,11 @@ public class CommandServer implements Runnable {
 		case Protocol.CMD_FETCHINFO:
 			serverCmd = cmdFetchInfo(in);
 			break;
-			
+
 		case Protocol.CMD_GETCWD:
 			serverCmd = cmdGetCwd(in);
 			break;
-			
+
 		case Protocol.CMD_GETENV:
 			serverCmd = cmdGetEnv(in);
 			break;
@@ -141,7 +140,7 @@ public class CommandServer implements Runnable {
 		case Protocol.CMD_GETOUTPUTSTREAM:
 			serverCmd = cmdGetOutputStream(in);
 			break;
- 
+
 		case Protocol.CMD_GETPROPERTIES:
 			serverCmd = cmdGetProperties(in);
 			break;
@@ -149,19 +148,19 @@ public class CommandServer implements Runnable {
 		case Protocol.CMD_MKDIR:
 			serverCmd = cmdMkdir(in);
 			break;
-			
+
 		case Protocol.CMD_PUTINFO:
 			serverCmd = cmdPutInfo(in);
 			break;
-			
+
 		default:
 			System.err.println("Invalid command ID: " + cmd);
 			throw new ProxyException("Invalid command ID: " + cmd); //$NON-NLS-1$
 		}
-		
+
 		serverCmd.exec();
 	}
-	
+
 	private AbstractServerCommand cmdExec(DataInputStream in) throws ProxyException, IOException {
 		int cmdChanId = in.readByte();
 		int ioChanId = in.readByte();
@@ -183,7 +182,7 @@ public class CommandServer implements Runnable {
 		boolean appendEnv = in.readBoolean();
 		StreamChannel cmdChan = server.getChannel(cmdChanId);
 		StreamChannel ioChan = server.getChannel(ioChanId);
-		StreamChannel errChan= server.getChannel(errChanId);
+		StreamChannel errChan = server.getChannel(errChanId);
 		if (cmdChan == null || ioChan == null || errChan == null) {
 			throw new ProxyException("Unable to locate channels for command"); //$NON-NLS-1$
 		}
@@ -200,6 +199,7 @@ public class CommandServer implements Runnable {
 		}
 		return new ServerShellCommand(cmdChan, ioChan);
 	}
+
 	private AbstractServerCommand cmdGetCwd(DataInputStream in) throws ProxyException, IOException {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
@@ -208,7 +208,7 @@ public class CommandServer implements Runnable {
 		}
 		return new ServerGetCwdCommand(chan);
 	}
-	
+
 	private AbstractServerCommand cmdGetEnv(DataInputStream in) throws ProxyException, IOException {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
@@ -217,7 +217,7 @@ public class CommandServer implements Runnable {
 		}
 		return new ServerGetEnvCommand(chan);
 	}
-	
+
 	private AbstractServerCommand cmdGetProperties(DataInputStream in) throws ProxyException, IOException {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
@@ -226,7 +226,7 @@ public class CommandServer implements Runnable {
 		}
 		return new ServerGetPropertiesCommand(chan);
 	}
-	
+
 	private AbstractServerCommand cmdChildInfos(DataInputStream in) throws ProxyException, IOException {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
@@ -246,7 +246,7 @@ public class CommandServer implements Runnable {
 		String path = in.readUTF();
 		return new ServerFetchInfoCommand(chan, path);
 	}
-	
+
 	private AbstractServerCommand cmdGetInputStream(DataInputStream in) throws ProxyException, IOException {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
@@ -257,7 +257,7 @@ public class CommandServer implements Runnable {
 		String path = in.readUTF();
 		return new ServerGetInputStreamCommand(chan, options, path);
 	}
-	
+
 	private AbstractServerCommand cmdGetOutputStream(DataInputStream in) throws ProxyException, IOException {
 		int chanId = in.readByte();
 		StreamChannel chan = server.getChannel(chanId);
@@ -280,7 +280,7 @@ public class CommandServer implements Runnable {
 		String path = in.readUTF();
 		return new ServerMkdirCommand(options, path);
 	}
-	
+
 	private AbstractServerCommand cmdPutInfo(DataInputStream in) throws ProxyException, IOException {
 		int options = in.readInt();
 		String path = in.readUTF();

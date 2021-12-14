@@ -23,7 +23,7 @@ public interface IRemoteConnectionChangeListener extends EventListener {
 
 	/**
 	 * Notifies this listener that the status of a connection has changed.
-	 * 
+	 *
 	 * @param event
 	 *            the connection change event
 	 * @since 2.0

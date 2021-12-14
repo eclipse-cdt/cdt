@@ -15,7 +15,7 @@ import java.io.OutputStream;
 
 /**
  * A service to control and report on the state of a process.
- * 
+ *
  * @since 2.0
  */
 public interface IRemoteProcessControlService extends IRemoteProcess.Service {
@@ -26,14 +26,14 @@ public interface IRemoteProcessControlService extends IRemoteProcess.Service {
 
 	/**
 	 * Returns the exit value for the process
-	 * 
+	 *
 	 * @return the exit value
 	 */
 	public int exitValue();
 
 	/**
 	 * Gets the error output stream of the process
-	 * 
+	 *
 	 * @return the output stream connected to the standard
 	 *         error of the process
 	 */
@@ -41,7 +41,7 @@ public interface IRemoteProcessControlService extends IRemoteProcess.Service {
 
 	/**
 	 * Gets an InputStream which can be used to read the standard output stream of the process
-	 * 
+	 *
 	 * @return the input stream connected to the standard
 	 *         output of the process
 	 */
@@ -49,7 +49,7 @@ public interface IRemoteProcessControlService extends IRemoteProcess.Service {
 
 	/**
 	 * Gets an output stream which can be used to write to the standard input stream of the process
-	 * 
+	 *
 	 * @return the output stream connected to the standard
 	 *         input of the process
 	 */
@@ -57,7 +57,7 @@ public interface IRemoteProcessControlService extends IRemoteProcess.Service {
 
 	/**
 	 * Wait until the process has terminated
-	 * 
+	 *
 	 * @return the exit value of the process
 	 * @throws InterruptedException
 	 *             if the current thread is
@@ -67,7 +67,7 @@ public interface IRemoteProcessControlService extends IRemoteProcess.Service {
 
 	/**
 	 * Check if the remote process has completed
-	 * 
+	 *
 	 * @return true if remote process has completed
 	 */
 	public boolean isCompleted();

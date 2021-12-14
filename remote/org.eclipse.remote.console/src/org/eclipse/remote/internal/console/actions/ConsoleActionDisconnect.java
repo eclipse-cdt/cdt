@@ -16,19 +16,14 @@ import org.eclipse.remote.internal.console.TerminalConsole;
 
 public class ConsoleActionDisconnect extends ConsoleAction {
 	private final TerminalConsole console;
-	
-	public ConsoleActionDisconnect(TerminalConsole console)
-	{
+
+	public ConsoleActionDisconnect(TerminalConsole console) {
 		super(ConsoleActionDisconnect.class.getName());
-		
+
 		this.console = console;
 
-		setupAction(ActionMessages.DISCONNECT,
-				ActionMessages.DISCONNECT,
-				ImageConsts.IMAGE_CLCL_DISCONNECT,
-				ImageConsts.IMAGE_ELCL_DISCONNECT,
-				ImageConsts.IMAGE_DLCL_DISCONNECT,
-				false);
+		setupAction(ActionMessages.DISCONNECT, ActionMessages.DISCONNECT, ImageConsts.IMAGE_CLCL_DISCONNECT,
+				ImageConsts.IMAGE_ELCL_DISCONNECT, ImageConsts.IMAGE_DLCL_DISCONNECT, false);
 	}
 
 	@Override

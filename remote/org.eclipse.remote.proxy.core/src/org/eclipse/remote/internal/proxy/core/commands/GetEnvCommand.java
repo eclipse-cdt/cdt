@@ -33,18 +33,18 @@ public class GetEnvCommand extends AbstractCommand<Map<String, String>> {
 		try {
 			final StreamChannel chan = openChannel();
 			DataInputStream resultStream = new DataInputStream(chan.getInputStream());
-			
+
 			out.writeByte(Protocol.PROTO_COMMAND);
 			out.writeShort(Protocol.CMD_GETENV);
 			out.writeByte(chan.getId());
 			out.flush();
-			
+
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
 				throw new ProxyException(errMsg);
 			}
-			
+
 			int len = resultStream.readInt();
 			Map<String, String> env = new HashMap<String, String>(len);
 			for (int i = 0; i < len; i++) {

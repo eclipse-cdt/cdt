@@ -99,9 +99,9 @@ public class TerminalConsolePage extends Page implements IAdaptable {
 		toolBarManager.appendToGroup(TOOLBAR_GROUP_ID, disconnectAction);
 		toolBarManager.appendToGroup(TOOLBAR_GROUP_ID, new ConsoleActionScrollLock(this));
 		toolBarManager.appendToGroup(TOOLBAR_GROUP_ID, new CloseConsoleAction(terminalConsole));
-		
+
 		toolBarManager.insertAfter(TOOLBAR_GROUP_ID, new GroupMarker(CONTRIBUTIONS_GROUP_ID));
-		
+
 		addToolbarContributions(toolBarManager);
 	}
 
@@ -125,9 +125,7 @@ public class TerminalConsolePage extends Page implements IAdaptable {
 		mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		mainComposite.setLayout(new FillLayout());
 
-		tViewCtrl = TerminalViewControlFactory.makeControl(listener,
-				mainComposite,
-				new ITerminalConnector[] {});
+		tViewCtrl = TerminalViewControlFactory.makeControl(listener, mainComposite, new ITerminalConnector[] {});
 		tViewCtrl.setConnector(terminalConsole.getTerminalConnector().newPageConnector());
 
 		try {
@@ -137,9 +135,7 @@ public class TerminalConsolePage extends Page implements IAdaptable {
 					NLS.bind(ConsoleMessages.ENCODING_UNAVAILABLE_1, encoding));
 			Activator.log(status);
 			ErrorDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
-					ConsoleMessages.OPEN_CONSOLE_ERROR,
-					ConsoleMessages.ENCODING_UNAVAILABLE_0,
-					status);
+					ConsoleMessages.OPEN_CONSOLE_ERROR, ConsoleMessages.ENCODING_UNAVAILABLE_0, status);
 		}
 		connectTerminalJob.schedule();
 	}

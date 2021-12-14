@@ -37,11 +37,11 @@ import org.eclipse.swt.widgets.Text;
  * Widget to allow the user to select a remote directory. Provides a "Browse"
  * button that uses the currently specified connection and a "Restore Default"
  * button to revert to the initial setting.
- * 
+ *
  * If title is supplied then the widget will be placed in a group.
- * 
+ *
  * The browse message can be modified using {@link #setBrowseMessage(String)}
- * 
+ *
  */
 public class RemoteDirectoryWidget extends Composite {
 	private final Text text;
@@ -131,7 +131,7 @@ public class RemoteDirectoryWidget extends Composite {
 
 	/**
 	 * Add a listener that will be notified when the directory path is modified.
-	 * 
+	 *
 	 * @param listener
 	 *            listener to add
 	 */
@@ -142,7 +142,7 @@ public class RemoteDirectoryWidget extends Composite {
 	/**
 	 * Get the directory location path. This path will be relative to the remote
 	 * machine.
-	 * 
+	 *
 	 * @return directory location path
 	 */
 	public String getLocationPath() {
@@ -152,7 +152,7 @@ public class RemoteDirectoryWidget extends Composite {
 	/**
 	 * Remove a listener that will be notified when the directory path is
 	 * modified.
-	 * 
+	 *
 	 * @param listener
 	 *            listener to remove
 	 */
@@ -163,7 +163,7 @@ public class RemoteDirectoryWidget extends Composite {
 	/**
 	 * Set the message that will be displayed in the remote directory browser
 	 * dialog.
-	 * 
+	 *
 	 * @param message
 	 *            message to be displayed
 	 */
@@ -173,10 +173,10 @@ public class RemoteDirectoryWidget extends Composite {
 
 	/**
 	 * Set the remote connection to use for browsing for the remote directory.
-	 * 
+	 *
 	 * The connection type must provide the IRemoteUIConnectionService and IRemoteUIFileService services and the connection must
 	 * support the IRemoteFileService service. If any of these conditions are not met, this method will do nothing.
-	 * 
+	 *
 	 * @param conn
 	 *            remote connection
 	 * @since 4.0
@@ -186,7 +186,8 @@ public class RemoteDirectoryWidget extends Composite {
 			throw new NullPointerException();
 		}
 
-		if (conn.hasService(IRemoteFileService.class) && conn.getConnectionType().hasService(IRemoteUIConnectionService.class)
+		if (conn.hasService(IRemoteFileService.class)
+				&& conn.getConnectionType().hasService(IRemoteUIConnectionService.class)
 				&& conn.getConnectionType().hasService(IRemoteUIFileService.class) && !conn.equals(fRemoteConnection)) {
 			fRemoteConnection = conn;
 			String path = getSavedPath();
@@ -197,7 +198,7 @@ public class RemoteDirectoryWidget extends Composite {
 
 	/**
 	 * Set the initial remote location that will be displayed in the widget.
-	 * 
+	 *
 	 * @param path
 	 */
 	public void setLocationPath(String path) {
@@ -225,7 +226,8 @@ public class RemoteDirectoryWidget extends Composite {
 
 	private String getSavedPath() {
 		if (fRemoteConnection != null) {
-			return previousSelections.get(fRemoteConnection.getConnectionType().getId() + "." + fRemoteConnection.getName()); //$NON-NLS-1$
+			return previousSelections
+					.get(fRemoteConnection.getConnectionType().getId() + "." + fRemoteConnection.getName()); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -265,7 +267,8 @@ public class RemoteDirectoryWidget extends Composite {
 
 	private void setSavedPath(String path) {
 		if (fRemoteConnection != null) {
-			previousSelections.put(fRemoteConnection.getConnectionType().getId() + "." + fRemoteConnection.getName(), path); //$NON-NLS-1$
+			previousSelections.put(fRemoteConnection.getConnectionType().getId() + "." + fRemoteConnection.getName(), //$NON-NLS-1$
+					path);
 		}
 	}
 

@@ -23,7 +23,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -102,10 +102,10 @@ public class Activator extends AbstractUIPlugin {
 			imageRegistry.put(entry.getKey(), imageDescriptor);
 		}
 	}
-	
+
 	/**
 	 * Create log entry from an IStatus
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -115,7 +115,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Create log entry from a string
-	 * 
+	 *
 	 * @param msg
 	 *            message to log
 	 */
@@ -125,7 +125,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Create log entry from a Throwable
-	 * 
+	 *
 	 * @param e
 	 *            throwable to log
 	 */

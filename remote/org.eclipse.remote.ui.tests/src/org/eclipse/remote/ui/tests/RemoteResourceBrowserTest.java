@@ -35,6 +35,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
 /*
  * Provides tests to several scenarios but they should be
  *  executed manually (i.e. browse and click OK)
@@ -105,6 +106,7 @@ public class RemoteResourceBrowserTest {
 	public static void tearDown() throws RemoteConnectionException {
 		fConnectionType.removeConnection(fRemoteConnection);
 	}
+
 	/*
 	 * Select any file.
 	 */
@@ -119,6 +121,7 @@ public class RemoteResourceBrowserTest {
 		assertNotNull(expectedResource);
 		assertTrue(!expectedResource.fetchInfo().isDirectory());
 	}
+
 	/*
 	 * Select any directory.
 	 */
@@ -133,6 +136,7 @@ public class RemoteResourceBrowserTest {
 		assertNotNull(expectedResource);
 		assertTrue(expectedResource.fetchInfo().isDirectory());
 	}
+
 	/*
 	 * Select either file or directory.
 	 */
@@ -145,6 +149,7 @@ public class RemoteResourceBrowserTest {
 		expectedResource = browser.getResource();
 		assertNotNull(expectedResource);
 	}
+
 	/*
 	 * Select more than one resource.
 	 */
@@ -158,6 +163,7 @@ public class RemoteResourceBrowserTest {
 		assertNotNull(expectedResources);
 		assertTrue(expectedResources.size() > 0);
 	}
+
 	/*
 	 * Select to local connection and select a directory.
 	 */
@@ -174,6 +180,7 @@ public class RemoteResourceBrowserTest {
 		assertNotNull(expectedResource);
 		assertEquals(expectedResource.getFileSystem().getScheme(), "file");
 	}
+
 	/*
 	 * Initial path set.
 	 */
@@ -187,6 +194,7 @@ public class RemoteResourceBrowserTest {
 		browser.setInitialPath(initialPath);
 		browser.open();
 	}
+
 	/*
 	 * Show connections.
 	 * Don't show hidden check box and new folder button.

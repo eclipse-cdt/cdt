@@ -46,10 +46,9 @@ import com.jcraft.jsch.ChannelShell;
 /**
  * @since 5.0
  */
-public class ProxyConnection implements IRemoteConnectionControlService,
-		IRemoteConnectionChangeListener, IRemoteProcessService,
-		IRemoteCommandShellService, IRemoteConnectionHostService, 
-		IRemoteConnectionPropertyService {
+public class ProxyConnection
+		implements IRemoteConnectionControlService, IRemoteConnectionChangeListener, IRemoteProcessService,
+		IRemoteCommandShellService, IRemoteConnectionHostService, IRemoteConnectionPropertyService {
 	// Connection Type ID
 	public static final String JSCH_ID = "org.eclipse.remote.Proxy"; //$NON-NLS-1$
 
@@ -73,7 +72,7 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 	private StreamChannelManager channelMux;
 	private StreamChannel commandChannel;
 	private boolean isOpen;
-	
+
 	private final IRemoteConnection fRemoteConnection;
 
 	private final Map<String, String> fEnv = new HashMap<>();
@@ -119,10 +118,9 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 					return (T) conn;
 				}
 			} else if (IRemoteConnectionControlService.class.equals(service)
-					|| IRemoteConnectionPropertyService.class.equals(service) 
-					|| IRemoteConnectionHostService.class.equals(service) 
-					|| IRemoteProcessService.class.equals(service)
-					|| IRemoteCommandShellService.class.equals(service) 
+					|| IRemoteConnectionPropertyService.class.equals(service)
+					|| IRemoteConnectionHostService.class.equals(service) || IRemoteProcessService.class.equals(service)
+					|| IRemoteCommandShellService.class.equals(service)
 					|| IRemoteConnectionPropertyService.class.equals(service)) {
 				return (T) connection.getService(ProxyConnection.class);
 			} else {
@@ -169,7 +167,7 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 			fRemoteConnection.fireConnectionChangeEvent(RemoteConnectionChangeEvent.CONNECTION_OPENED);
 		}
 	}
-	
+
 	private void initialize(IProgressMonitor monitor) throws RemoteConnectionException {
 		SubMonitor subMon = SubMonitor.convert(monitor, 30);
 		fWorkingDir = getCwd(subMon.newChild(10));
@@ -194,7 +192,7 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 			throw new RemoteConnectionException(e.getMessage());
 		}
 	}
-	
+
 	private Map<String, String> loadEnv(IProgressMonitor monitor) throws RemoteConnectionException {
 		try {
 			GetEnvCommand cmd = new GetEnvCommand(this);
@@ -203,7 +201,7 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 			throw new RemoteConnectionException(e.getMessage());
 		}
 	}
-	
+
 	private Map<String, String> loadProperties(IProgressMonitor monitor) throws RemoteConnectionException {
 		try {
 			GetPropertiesCommand cmd = new GetPropertiesCommand(this);
@@ -212,22 +210,22 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 			throw new RemoteConnectionException(e.getMessage());
 		}
 	}
-	
+
 	public Map<String, String> getEnv() {
 		return Collections.unmodifiableMap(fEnv);
 	}
-	
+
 	public StreamChannel getCommandChannel() {
 		return commandChannel;
 	}
-	
+
 	public StreamChannel openChannel() throws IOException {
 		return channelMux.openChannel();
 	}
-	
+
 	private StringBuffer stdout = new StringBuffer();
 	private StringBuffer stderr = new StringBuffer();
-	
+
 	@SuppressWarnings("unused")
 	private String executeSshCommand(ChannelShell shell, String command) throws RemoteConnectionException {
 		try {
@@ -246,7 +244,7 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 			throw new RemoteConnectionException(e.getMessage());
 		}
 	}
-	
+
 	@SuppressWarnings("unused")
 	private String executeCommand(List<String> command, IProgressMonitor monitor) throws ProxyException {
 		try {
@@ -281,7 +279,8 @@ public class ProxyConnection implements IRemoteConnectionControlService,
 					}
 				}
 			}.start();
-			ExecCommand cmd = new ExecCommand(this, command, getEnv(), getWorkingDirectory(), false, false, chanA.getId(), chanB.getId(), chanC.getId());
+			ExecCommand cmd = new ExecCommand(this, command, getEnv(), getWorkingDirectory(), false, false,
+					chanA.getId(), chanB.getId(), chanC.getId());
 			cmd.getResult(monitor);
 			DataInputStream status = new DataInputStream(chanC.getInputStream());
 			int stat = status.readInt();

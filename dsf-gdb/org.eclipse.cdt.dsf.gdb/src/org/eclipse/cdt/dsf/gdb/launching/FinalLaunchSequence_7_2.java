@@ -27,6 +27,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_2;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -97,5 +98,10 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 		fGdbControl.queueCommand(
 				fGdbControl.getCommandFactory().createMIGDBSetDetachOnFork(fGdbControl.getContext(), !debugOnFork),
 				new ImmediateDataRequestMonitor<MIInfo>(rm));
+	}
+
+	@Override
+	protected String getInitialGroupId() {
+		return GDBProcesses_7_2.INITIAL_THREAD_GROUP_ID;
 	}
 }

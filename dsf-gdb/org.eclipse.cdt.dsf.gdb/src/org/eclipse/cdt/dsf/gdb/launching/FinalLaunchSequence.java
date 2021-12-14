@@ -19,6 +19,7 @@
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *     Xavier Raynaud (Kalray) - Avoid duplicating fields in sub-classes (add protected accessors)
  *     Marc Khouzam (Ericsson) - Output the version of GDB at startup (Bug 455408)
+ *     Jonathan Tousignant (NordiaSoft) - Remote session breakpoint (Bug 528145)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -625,16 +626,23 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepAttachToProcess(final RequestMonitor requestMonitor) {
-		if (fGDBBackend.getIsAttachSession() && fGDBBackend.getSessionType() != SessionType.REMOTE) {
+		if (fGDBBackend.getIsAttachSession()) {
 			// Is the process id already stored in the launch?
 			int pid = CDebugUtils.getAttribute(fAttributes, ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID,
 					-1);
+			SessionType sessionType = fGDBBackend.getSessionType();
+
+			// Try to found the pid of the process running in remote session. 
+			// Bug 528145
+			if (pid == -1 && sessionType == SessionType.REMOTE) {
+				pid = (int) fGDBBackend.getProcess().pid();
+			}
 
 			if (pid != -1) {
 				fProcService.attachDebuggerToProcess(
 						fProcService.createProcessContext(fCommandControl.getContext(), Integer.toString(pid)),
 						new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
-			} else {
+			} else if (sessionType != SessionType.REMOTE) {
 				IConnectHandler connectCommand = (IConnectHandler) fSession.getModelAdapter(IConnectHandler.class);
 				if (connectCommand instanceof IConnect) {
 					((IConnect) connectCommand).connect(requestMonitor);

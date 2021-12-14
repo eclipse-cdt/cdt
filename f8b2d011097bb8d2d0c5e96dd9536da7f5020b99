@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa1b575d_1a5dc622",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2021-12-14T16:22:46Z",
+      "side": 0,
+      "message": "This is the URL that needed updating - I have also enabled docs building in the gerrit pipeline: https://github.com/eclipse-cdt/cdt-infra/commit/fd4046f52135946cb293f19f9eb908fa2d5164b9",
+      "revId": "f8b2d011097bb8d2d0c5e96dd9536da7f5020b99",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

@@ -34,19 +34,19 @@ public class ChildInfosCommand extends AbstractCommand<IFileInfo[]> {
 	public IFileInfo[] call() throws ProxyException {
 		try {
 			final StreamChannel chan = openChannel();
-			
+
 			out.writeByte(Protocol.PROTO_COMMAND);
 			out.writeShort(Protocol.CMD_CHILDINFOS);
 			out.writeByte(chan.getId());
 			out.writeUTF(path);
 			out.flush();
-			
+
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
 				throw new ProxyException(errMsg);
 			}
-			
+
 			DataInputStream resultStream = new DataInputStream(chan.getInputStream());
 			int length = resultStream.readInt();
 			SerializableFileInfo sInfo = new SerializableFileInfo();

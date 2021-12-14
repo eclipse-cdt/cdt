@@ -60,7 +60,7 @@ public class LocalProcess implements IRemoteProcessControlService, IRemoteProces
 	/**
 	 * Thread to merge stdout and stderr. Keeps refcount so that output stream
 	 * is not closed too early.
-	 * 
+	 *
 	 */
 	private class ProcOutputMerger implements Runnable {
 		private final static int BUF_SIZE = 8192;

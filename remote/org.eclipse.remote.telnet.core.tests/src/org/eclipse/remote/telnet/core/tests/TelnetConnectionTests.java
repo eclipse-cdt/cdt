@@ -53,15 +53,15 @@ public class TelnetConnectionTests {
 	@BeforeClass
 	public static void setup() {
 		String host = System.getenv("TEST_HOSTNAME");
-		if(host != null) {
+		if (host != null) {
 			hostname = host;
 		}
 		String user = System.getenv("TEST_USERNAME");
-		if(user != null) {
+		if (user != null) {
 			username = user;
 		}
 		String passwd = System.getenv("TEST_PASSWORD");
-		if(user != null) {
+		if (user != null) {
 			password = passwd;
 		}
 		IRemoteServicesManager services = Activator.getService(IRemoteServicesManager.class);
@@ -120,7 +120,7 @@ public class TelnetConnectionTests {
 		assertNotNull("Command shel output stream", os);
 		InputStream is = commandShell.getInputStream();
 		assertNotNull("Command shel input stream");
-		if(!username.isEmpty() && !password.isEmpty()) {
+		if (!username.isEmpty() && !password.isEmpty()) {
 			try {
 				// Assume that a login prompt appears
 				readPrompt(is);
@@ -157,7 +157,7 @@ public class TelnetConnectionTests {
 		int v;
 		try {
 			v = is.read();
-			while((v != -1) && (v != ':')) {
+			while ((v != -1) && (v != ':')) {
 				v = is.read();
 			}
 		} catch (IOException e) {

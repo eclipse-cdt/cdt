@@ -22,13 +22,14 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * Convenience class to facilitate using the new {@link IEclipsePreferences} story. Adapted from
  * org.eclipse.debug.internal.core.Preferences.
- * 
+ *
  * @since 5.0
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class Preferences {
 
-	private static final IScopeContext[] contexts = new IScopeContext[] { DefaultScope.INSTANCE, InstanceScope.INSTANCE };
+	private static final IScopeContext[] contexts = new IScopeContext[] { DefaultScope.INSTANCE,
+			InstanceScope.INSTANCE };
 
 	private static final int DEFAULT_CONTEXT = 0;
 	private static final int INSTANCE_CONTEXT = 1;
@@ -37,7 +38,7 @@ public final class Preferences {
 
 	/**
 	 * Adds the given preference listener to the {@link DefaultScope} and the {@link InstanceScope}
-	 * 
+	 *
 	 * @param listener
 	 */
 	public static void addPreferenceChangeListener(IPreferenceChangeListener listener) {
@@ -47,23 +48,23 @@ public final class Preferences {
 
 	/**
 	 * Returns whether the named preference is know in the preference store.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
 	public static boolean contains(String name) {
-		return (contexts[INSTANCE_CONTEXT].getNode(fQualifier).get(name, null) != null || contexts[DEFAULT_CONTEXT].getNode(
-				fQualifier).get(name, null) != null);
+		return (contexts[INSTANCE_CONTEXT].getNode(fQualifier).get(name, null) != null
+				|| contexts[DEFAULT_CONTEXT].getNode(fQualifier).get(name, null) != null);
 	}
 
 	/**
 	 * Returns the value in the preference store for the given key. If the key
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the value of the preference or the given default value
 	 */
 	public static boolean getBoolean(String key) {
@@ -74,10 +75,10 @@ public final class Preferences {
 	 * Returns the value in the preference store for the given key. If the key
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the value of the preference or the given default value
 	 */
 	public static byte[] getByteArray(String key) {
@@ -88,10 +89,10 @@ public final class Preferences {
 	 * Returns the default boolean value stored in the {@link DefaultScope} for
 	 * the given key or the specified default value if the key does not appear
 	 * in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the boolean value set in the {@link DefaultScope} for the given
 	 *         key, or the specified default value.
 	 */
@@ -103,10 +104,10 @@ public final class Preferences {
 	 * Returns the default byte array value stored in the {@link DefaultScope} for the given key or the specified default value if
 	 * the key does not
 	 * appear in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the byte array value set in the {@link DefaultScope} for the
 	 *         given key, or the specified default value.
 	 */
@@ -118,10 +119,10 @@ public final class Preferences {
 	 * Returns the default double value stored in the {@link DefaultScope} for
 	 * the given key or the specified default value if the key does not appear
 	 * in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the double value set in the {@link DefaultScope} for the given
 	 *         key, or the specified default value.
 	 */
@@ -133,10 +134,10 @@ public final class Preferences {
 	 * Returns the default float value stored in the {@link DefaultScope} for
 	 * the given key or the specified default value if the key does not appear
 	 * in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the float value set in the {@link DefaultScope} for the given
 	 *         key, or the specified default value.
 	 */
@@ -148,10 +149,10 @@ public final class Preferences {
 	 * Returns the default integer value stored in the {@link DefaultScope} for
 	 * the given key or the specified default value if the key does not appear
 	 * in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the integer value set in the {@link DefaultScope} for the given
 	 *         key, or the specified default value.
 	 */
@@ -163,10 +164,10 @@ public final class Preferences {
 	 * Returns the default long value stored in the {@link DefaultScope} for the
 	 * given key or the specified default value if the key does not appear in
 	 * the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the long value set in the {@link DefaultScope} for the given key,
 	 *         or the specified default value.
 	 */
@@ -178,10 +179,10 @@ public final class Preferences {
 	 * Returns the default string value stored in the {@link DefaultScope} for
 	 * the given key or the specified default value if the key does not appear
 	 * in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the string value set in the {@link DefaultScope} for the given
 	 *         key, or the specified default value.
 	 */
@@ -193,10 +194,10 @@ public final class Preferences {
 	 * Returns the value in the preference store for the given key. If the key
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the value of the preference or the given default value
 	 */
 	public static double getDouble(String key) {
@@ -207,11 +208,11 @@ public final class Preferences {
 	 * Returns the value in the preference store for the given key. If the key
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
-	 * 
+	 *
 	 * @param fQualifier
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the value of the preference or the given default value
 	 */
 	public static float getFloat(String key) {
@@ -222,11 +223,11 @@ public final class Preferences {
 	 * Returns the value in the preference store for the given key. If the key
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
-	 * 
+	 *
 	 * @param fQualifier
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the value of the preference or the given default value
 	 */
 	public static int getInt(String key) {
@@ -237,10 +238,10 @@ public final class Preferences {
 	 * Returns the value in the preference store for the given key. If the key
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the value of the preference or the given default value
 	 */
 	public static long getLong(String key) {
@@ -251,10 +252,10 @@ public final class Preferences {
 	 * Returns the value in the preference store for the given key. If the key
 	 * is not defined then return the default value. Use the canonical scope
 	 * lookup order for finding the preference value.
-	 * 
+	 *
 	 * @param key
 	 * @param defaultvalue
-	 * 
+	 *
 	 * @return the value of the preference or the given default value
 	 */
 	public static String getString(String key) {
@@ -263,7 +264,7 @@ public final class Preferences {
 
 	/**
 	 * Returns true if the named preference has the default value.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -279,7 +280,7 @@ public final class Preferences {
 	/**
 	 * Removes the given preference listener from the {@link DefaultScope} and
 	 * the {@link InstanceScope}
-	 * 
+	 *
 	 * @param listener
 	 */
 	public static void removePreferenceChangeListener(IPreferenceChangeListener listener) {
@@ -302,7 +303,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a boolean preference in the {@link InstanceScope}.
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -314,7 +315,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a byte array preference in the {@link InstanceScope}.
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -326,7 +327,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a boolean in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -338,7 +339,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a byte array in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -350,7 +351,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a double in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -362,7 +363,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a float in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -374,7 +375,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a integer in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -386,7 +387,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a long in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -398,7 +399,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a string in the {@link DefaultScope}
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -410,7 +411,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a double preference in the {@link InstanceScope}.
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -422,7 +423,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a float preference in the {@link InstanceScope}.
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -434,7 +435,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a integer preference in the {@link InstanceScope}.
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -446,7 +447,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a long preference in the {@link InstanceScope}.
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -458,7 +459,7 @@ public final class Preferences {
 
 	/**
 	 * Sets a string preference in the {@link InstanceScope}.
-	 * 
+	 *
 	 * @param key
 	 *            the key
 	 * @param value
@@ -472,7 +473,7 @@ public final class Preferences {
 	 * Sets the given preference to its default value. This is done by removing
 	 * any set value from the {@link InstanceScope}. Has no effect if the given
 	 * key is <code>null</code>.
-	 * 
+	 *
 	 * @param key
 	 *            the key for the preference
 	 */

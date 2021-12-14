@@ -15,7 +15,7 @@ package org.eclipse.remote.core;
  * and removing services. For example, the Local connection type needs to be able
  * to ensure the Local connection is created, or adapters to other target management
  * systems may prefer to let those systems manage the connections.
- * 
+ *
  * @since 2.0
  */
 public interface IRemoteConnectionProviderService extends IRemoteConnectionType.Service {

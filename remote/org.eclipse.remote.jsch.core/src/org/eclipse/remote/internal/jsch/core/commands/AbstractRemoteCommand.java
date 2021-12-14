@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - Initial Implementation
  * Martin Oberhuber - [468889] Support Eclipse older than Mars
@@ -43,7 +43,7 @@ import com.jcraft.jsch.SftpProgressMonitor;
 
 /**
  * @author greg
- * 
+ *
  */
 public abstract class AbstractRemoteCommand<T> {
 	protected static class CommandProgressMonitor implements SftpProgressMonitor {
@@ -80,7 +80,8 @@ public abstract class AbstractRemoteCommand<T> {
 				taskName.append(fPrefix);
 			}
 			if (fWorkPercentFactor < 0) {
-				taskName.append(MessageFormat.format(Messages.AbstractRemoteCommand_format1, new Object[] { workToDate, size }));
+				taskName.append(MessageFormat.format(Messages.AbstractRemoteCommand_format1,
+						new Object[] { workToDate, size }));
 			} else {
 				Double workPercent = Double.valueOf(fWorkPercentFactor * fWorkToDate);
 				taskName.append(MessageFormat.format(Messages.AbstractRemoteCommand_format2,
@@ -300,8 +301,8 @@ public abstract class AbstractRemoteCommand<T> {
 		return convertToFileInfo(path.lastSegment(), path.removeLastSegments(1), attrs, monitor);
 	}
 
-	protected IFileInfo convertToFileInfo(final String name, final IPath parentPath, SftpATTRS attrs, IProgressMonitor monitor)
-			throws RemoteConnectionException {
+	protected IFileInfo convertToFileInfo(final String name, final IPath parentPath, SftpATTRS attrs,
+			IProgressMonitor monitor) throws RemoteConnectionException {
 		SubMonitor progress = SubMonitor.convert(monitor, 10);
 		FileInfo fileInfo = new FileInfo(name);
 		fileInfo.setExists(true);

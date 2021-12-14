@@ -27,10 +27,10 @@ public class Activator extends AbstractUIPlugin {
 
 	// Image keys
 	public static final String IMG_CONNECTION_TYPE = PLUGIN_ID + ".connectionType"; //$NON-NLS-1$
-	
+
 	// The shared instance
 	private static Activator plugin;
-	
+
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -54,7 +54,7 @@ public class Activator extends AbstractUIPlugin {
 	public static void log(IStatus status) {
 		plugin.getLog().log(status);
 	}
-	
+
 	public static void log(Exception e) {
 		if (e instanceof CoreException) {
 			log(((CoreException) e).getStatus());

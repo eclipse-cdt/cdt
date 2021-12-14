@@ -17,7 +17,7 @@ import java.util.List;
  * The main entry point into the remote services system. The remote services manager
  * is an OSGi service. It provides a list of connection types and the global
  * list of all connections.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 2.0
  */
@@ -25,7 +25,7 @@ public interface IRemoteServicesManager {
 
 	/**
 	 * Get the connection type identified by the id
-	 * 
+	 *
 	 * @param id
 	 *            id of the connection type
 	 * @return connection type or null if the service can not be found
@@ -35,7 +35,7 @@ public interface IRemoteServicesManager {
 	/**
 	 * Get the connection type that provides connections to locations identified by
 	 * the URI.
-	 * 
+	 *
 	 * @param uri
 	 *            uri of locations to be accessed
 	 * @return the connection type that can be used to access the locations
@@ -45,14 +45,14 @@ public interface IRemoteServicesManager {
 
 	/**
 	 * Return the connection type used to access local resources.
-	 * 
+	 *
 	 * @return the local services
 	 */
 	IRemoteConnectionType getLocalConnectionType();
 
 	/**
 	 * Returns the list of all connection types including the local services.
-	 * 
+	 *
 	 * @return all connection types
 	 */
 	List<IRemoteConnectionType> getAllConnectionTypes();
@@ -61,7 +61,7 @@ public interface IRemoteServicesManager {
 	 * Returns the list of all connection types that support connections that provide specific services. The connections
 	 * can provide additional services that are not included in the list, so this just guarantees the minimum set of services that
 	 * will be supported.
-	 * 
+	 *
 	 * @param services
 	 *            services provided by connections supported by this connection type
 	 * @return compatible connection types
@@ -72,7 +72,7 @@ public interface IRemoteServicesManager {
 	/**
 	 * Returns the list of all connection types that provide specific services. The connection types can provide additional services
 	 * that are not included in the list, so this just guarantees the minimum set of services that will be supported.
-	 * 
+	 *
 	 * @param services
 	 *            services provided by this connection type
 	 * @return compatible connection types
@@ -82,21 +82,21 @@ public interface IRemoteServicesManager {
 
 	/**
 	 * Returns the list of connection types except for the local connection type.
-	 * 
+	 *
 	 * @return all connection types that are really remote
 	 */
 	List<IRemoteConnectionType> getRemoteConnectionTypes();
 
 	/**
 	 * Returns the list of all known remote connections.
-	 * 
+	 *
 	 * @return all remote connections
 	 */
 	List<IRemoteConnection> getAllRemoteConnections();
 
 	/**
 	 * Add a global connection change listener that receives events for all connections.
-	 * 
+	 *
 	 * @param listener
 	 *            global connection change listener to be added
 	 */
@@ -104,7 +104,7 @@ public interface IRemoteServicesManager {
 
 	/**
 	 * Remove the global connection change listener.
-	 * 
+	 *
 	 * @param listener
 	 *            global connection change listener to be removed
 	 */
@@ -113,7 +113,7 @@ public interface IRemoteServicesManager {
 	/**
 	 * Used by connections and other components to notify the global connection
 	 * change listeners of events.
-	 * 
+	 *
 	 * @param event
 	 *            connection change event
 	 */

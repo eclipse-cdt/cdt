@@ -50,11 +50,9 @@ public class GetOutputStreamCommand extends AbstractRemoteCommand<OutputStream> 
 									if ((fOptions & EFS.APPEND) != 0) {
 										mode = ChannelSftp.APPEND;
 									}
-									getChannel().put(
-											input,
-											fRemotePath.toString(),
-											new CommandProgressMonitor(NLS.bind(Messages.GetOutputStreamCommand_Sending, fRemotePath.toString()),
-													getProgressMonitor()), mode);
+									getChannel().put(input, fRemotePath.toString(), new CommandProgressMonitor(
+											NLS.bind(Messages.GetOutputStreamCommand_Sending, fRemotePath.toString()),
+											getProgressMonitor()), mode);
 									input.close();
 								} finally {
 									fIsClosed = true;

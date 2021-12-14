@@ -37,7 +37,8 @@ import org.eclipse.swt.widgets.Shell;
 public abstract class AbstractRemoteUIConnectionService implements IRemoteUIConnectionService {
 
 	@Override
-	public void openConnectionWithProgress(final Shell shell, IRunnableContext context, final IRemoteConnection connection) {
+	public void openConnectionWithProgress(final Shell shell, IRunnableContext context,
+			final IRemoteConnection connection) {
 		if (!connection.isOpen()) {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				@Override
@@ -60,12 +61,12 @@ public abstract class AbstractRemoteUIConnectionService implements IRemoteUIConn
 				}
 			} catch (InvocationTargetException e) {
 				ErrorDialog.openError(shell, Messages.AbstractRemoteUIConnectionManager_Connection_Error,
-						Messages.AbstractRemoteUIConnectionManager_Could_not_open_connection, new Status(IStatus.ERROR,
-								RemoteUIPlugin.PLUGIN_ID, e.getCause().getMessage()));
+						Messages.AbstractRemoteUIConnectionManager_Could_not_open_connection,
+						new Status(IStatus.ERROR, RemoteUIPlugin.PLUGIN_ID, e.getCause().getMessage()));
 			} catch (InterruptedException e) {
 				ErrorDialog.openError(shell, Messages.AbstractRemoteUIConnectionManager_Connection_Error,
-						Messages.AbstractRemoteUIConnectionManager_Could_not_open_connection, new Status(IStatus.ERROR,
-								RemoteUIPlugin.PLUGIN_ID, e.getMessage()));
+						Messages.AbstractRemoteUIConnectionManager_Could_not_open_connection,
+						new Status(IStatus.ERROR, RemoteUIPlugin.PLUGIN_ID, e.getMessage()));
 			}
 		}
 	}

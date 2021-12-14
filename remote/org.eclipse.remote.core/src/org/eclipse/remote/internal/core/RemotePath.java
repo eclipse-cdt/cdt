@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Tasse - Add extra constructor to Path class (bug 454959)
@@ -18,12 +18,12 @@ import java.util.Arrays;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 
-/** 
+/**
  * The Eclipse Mars implementation of <code>org.eclipse.core.runtime.Path</code>.
  *
  * Cloned from org.eclipse.equinox.common. This class should be removed when
  * Eclipse older than Mars no longer needs to be supported.
- * 
+ *
  * @see org.eclipse.core.runtime.Path
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -70,10 +70,10 @@ public class RemotePath implements IPath, Cloneable {
 	/** flags indicating separators (has leading, is UNC, has trailing, is for Windows) */
 	private int flags;
 
-	/** 
+	/**
 	 * Constructs a new path from the given string path.
 	 * The string path must represent a valid file system path
-	 * on the local file system. 
+	 * on the local file system.
 	 * The path is canonicalized and double slashes are removed
 	 * except at the beginning. (to handle UNC paths). All forward
 	 * slashes ('/') are treated as segment delimiters, and any
@@ -88,7 +88,7 @@ public class RemotePath implements IPath, Cloneable {
 		return new RemotePath(pathString);
 	}
 
-	/** 
+	/**
 	 * Constructs a new path from the given path string.
 	 * The path string must have been produced by a previous
 	 * call to <code>IPath.toPortableString</code>.
@@ -164,10 +164,10 @@ public class RemotePath implements IPath, Cloneable {
 		// not allowed
 	}
 
-	/** 
+	/**
 	 * Constructs a new path from the given string path.
 	 * The string path must represent a valid file system path
-	 * on the local file system. 
+	 * on the local file system.
 	 * The path is canonicalized and double slashes are removed
 	 * except at the beginning. (to handle UNC paths). All forward
 	 * slashes ('/') are treated as segment delimiters, and any
@@ -182,7 +182,7 @@ public class RemotePath implements IPath, Cloneable {
 		this(fullPath, RUNNING_ON_WINDOWS);
 	}
 
-	/** 
+	/**
 	 * Constructs a new path from the given device id and string path.
 	 * The given string path must be valid.
 	 * The path is canonicalized and double slashes are removed except
@@ -204,7 +204,7 @@ public class RemotePath implements IPath, Cloneable {
 		initialize(device, path, RUNNING_ON_WINDOWS);
 	}
 
-	/** 
+	/**
 	 * Constructs a new path from the given string path. The string path must
 	 * represent a valid file system path on the specified file system. The path
 	 * is canonicalized and double slashes are removed except at the beginning
@@ -238,7 +238,7 @@ public class RemotePath implements IPath, Cloneable {
 	 * Private constructor.
 	 */
 	private RemotePath(String device, String[] segments, int flags) {
-		// no segment validations are done for performance reasons	
+		// no segment validations are done for performance reasons
 		this.segments = segments;
 		this.device = device;
 		//hash code is cached in all but the bottom four bits of the flags field
@@ -298,7 +298,8 @@ public class RemotePath implements IPath, Cloneable {
 			newSegments[myLen + i] = tail.segment(i);
 		}
 		//use my leading separators and the tail's trailing separator
-		RemotePath result = new RemotePath(device, newSegments, (flags & (HAS_LEADING | IS_UNC | IS_FOR_WINDOWS)) | (tail.hasTrailingSeparator() ? HAS_TRAILING : 0));
+		RemotePath result = new RemotePath(device, newSegments,
+				(flags & (HAS_LEADING | IS_UNC | IS_FOR_WINDOWS)) | (tail.hasTrailingSeparator() ? HAS_TRAILING : 0));
 		String tailFirstSegment = newSegments[myLen];
 		if (tailFirstSegment.equals("..") || tailFirstSegment.equals(".")) { //$NON-NLS-1$ //$NON-NLS-2$
 			result.canonicalize();
@@ -383,7 +384,7 @@ public class RemotePath implements IPath, Cloneable {
 			String segment = segments[i];
 			if (segment.equals("..")) { //$NON-NLS-1$
 				if (stackPointer == 0) {
-					// if the stack is empty we are going out of our scope 
+					// if the stack is empty we are going out of our scope
 					// so we need to accumulate segments.  But only if the original
 					// path is relative.  If it is absolute then we can't go any higher than
 					// root so simply toss the .. references.
@@ -530,7 +531,7 @@ public class RemotePath implements IPath, Cloneable {
 		if (firstPosition == 1 && len > 1 && (path.charAt(1) == SEPARATOR))
 			firstPosition = 2;
 		int lastPosition = (path.charAt(len - 1) != SEPARATOR) ? len - 1 : len - 2;
-		// for non-empty paths, the number of segments is 
+		// for non-empty paths, the number of segments is
 		// the number of slashes plus 1, ignoring any leading
 		// and trailing slashes
 		int next = firstPosition;
@@ -1070,7 +1071,8 @@ public class RemotePath implements IPath, Cloneable {
 	@Override
 	public IPath setDevice(String value) {
 		if (value != null) {
-			Assert.isTrue(value.indexOf(IPath.DEVICE_SEPARATOR) == (value.length() - 1), "Last character should be the device separator"); //$NON-NLS-1$
+			Assert.isTrue(value.indexOf(IPath.DEVICE_SEPARATOR) == (value.length() - 1),
+					"Last character should be the device separator"); //$NON-NLS-1$
 		}
 		//return the receiver if the device is the same
 		if (value == device || (value != null && value.equals(device)))

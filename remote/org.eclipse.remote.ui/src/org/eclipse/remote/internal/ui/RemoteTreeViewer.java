@@ -43,7 +43,7 @@ public class RemoteTreeViewer extends TreeViewer {
 
 		/**
 		 * Constructs a job to expand the given element.
-		 * 
+		 *
 		 */
 		public ExpansionJob() {
 			super("Expansion"); //$NON-NLS-1$
@@ -167,7 +167,7 @@ public class RemoteTreeViewer extends TreeViewer {
 
 	/**
 	 * Constructs a remote tree viewer parented by the given composite.
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite
 	 */
@@ -181,7 +181,7 @@ public class RemoteTreeViewer extends TreeViewer {
 	/**
 	 * Constructs a remote tree viewer parented by the given composite
 	 * with the given style.
-	 * 
+	 *
 	 * @param parent
 	 *            parent composite
 	 * @param style
@@ -196,7 +196,7 @@ public class RemoteTreeViewer extends TreeViewer {
 
 	/**
 	 * Constructs a remote tree viewer with the given tree.
-	 * 
+	 *
 	 * @param tree
 	 *            tree widget
 	 */
@@ -228,7 +228,7 @@ public class RemoteTreeViewer extends TreeViewer {
 	/**
 	 * The given element is being removed from the tree. Cancel
 	 * any deferred updates for the element.
-	 * 
+	 *
 	 * @param element
 	 */
 	protected void validateDeferredUpdates(Object element) {

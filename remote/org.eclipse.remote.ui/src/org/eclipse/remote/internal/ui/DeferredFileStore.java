@@ -67,7 +67,8 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 			IFileInfo[] childInfos = fFileStore.childInfos(EFS.NONE, monitor);
 			for (IFileInfo info : childInfos) {
 				if (!(fExcludeHidden && info.getName().startsWith("."))) { //$NON-NLS-1$
-					children.add(new DeferredFileStore(fFileStore.getChild(info.getName()), info, fExcludeHidden, this));
+					children.add(
+							new DeferredFileStore(fFileStore.getChild(info.getName()), info, fExcludeHidden, this));
 				}
 			}
 		} catch (CoreException e) {
@@ -113,7 +114,7 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 	 * Return the IWorkbenchAdapter for element or the element if it is
 	 * an instance of IWorkbenchAdapter. If it does not exist return
 	 * null.
-	 * 
+	 *
 	 * @param element
 	 * @return IWorkbenchAdapter or <code>null</code>
 	 */
@@ -123,16 +124,16 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 
 	/**
 	 * If it is possible to adapt the given object to the given type, this returns the adapter. Performs the following checks:
-	 * 
+	 *
 	 * <ol>
 	 * <li>Returns <code>sourceObject</code> if it is an instance of the adapter type.</li>
 	 * <li>If sourceObject implements IAdaptable, it is queried for adapters.</li>
 	 * <li>If sourceObject is not an instance of PlatformObject (which would have already done so), the adapter manager is queried
 	 * for adapters</li>
 	 * </ol>
-	 * 
+	 *
 	 * Otherwise returns null.
-	 * 
+	 *
 	 * @param sourceObject
 	 *            object to adapt, or null
 	 * @param adapterType
@@ -187,7 +188,7 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 
 	/**
 	 * Get the filestore backing this object
-	 * 
+	 *
 	 * @return
 	 */
 	public IFileStore getFileStore() {

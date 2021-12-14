@@ -16,7 +16,7 @@ package org.eclipse.remote.core.exception;
  */
 public class UnableToForwardPortException extends RemoteConnectionException {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -5814772755700213717L;
 

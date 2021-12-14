@@ -349,7 +349,8 @@ public class TelnetProtocol extends Thread implements TelnetCodes {
 			// A "socket closed" exception is normal here. It's caused by the
 			// user clicking the disconnect button on the Terminal view toolbar.
 
-			if (message != null && !message.equalsIgnoreCase("Socket closed") && !message.equalsIgnoreCase("Connection reset")) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (message != null && !message.equalsIgnoreCase("Socket closed") //$NON-NLS-1$
+					&& !message.equalsIgnoreCase("Connection reset")) { //$NON-NLS-1$
 				Logger.logException(ex);
 			}
 
@@ -359,21 +360,21 @@ public class TelnetProtocol extends Thread implements TelnetCodes {
 			// Tell the command shell that we have terminated
 			shell.terminated();
 			try {
-				if(inputChannel != null) {
+				if (inputChannel != null) {
 					inputChannel.close();
 				}
 			} catch (IOException ioe) {
 				/* ignore */
 			}
 			try {
-				if(serverOutputStream != null) {
+				if (serverOutputStream != null) {
 					serverOutputStream.close();
 				}
 			} catch (IOException ioe) {
 				/* ignore */
 			}
 			try {
-				if(clientOutputStream != null) {
+				if (clientOutputStream != null) {
 					clientOutputStream.close();
 				}
 			} catch (IOException ioe) {
@@ -592,7 +593,8 @@ public class TelnetProtocol extends Thread implements TelnetCodes {
 					// of 255, it is necessary to double this byte in accordance
 					// the general TELNET rules."
 
-					if (nextSubnegotiationByteIndex > 0 && receivedSubnegotiation[nextSubnegotiationByteIndex - 1] == TELNET_IAC) {
+					if (nextSubnegotiationByteIndex > 0
+							&& receivedSubnegotiation[nextSubnegotiationByteIndex - 1] == TELNET_IAC) {
 						// The last input byte we received in this
 						// subnegotiation was IAC, so this is a double IAC. Leave the previous IAC
 						// in the receivedSubnegotiation[] array and drop the current
@@ -645,7 +647,8 @@ public class TelnetProtocol extends Thread implements TelnetCodes {
 
 						int subnegotiatedOption = receivedSubnegotiation[0] & 0xFF;
 
-						localOptions[subnegotiatedOption].handleSubnegotiation(receivedSubnegotiation, nextSubnegotiationByteIndex);
+						localOptions[subnegotiatedOption].handleSubnegotiation(receivedSubnegotiation,
+								nextSubnegotiationByteIndex);
 					} else {
 						Logger.log("NOT CALLING handleSubnegotiation() BECAUSE OF ERRORS!"); //$NON-NLS-1$
 					}

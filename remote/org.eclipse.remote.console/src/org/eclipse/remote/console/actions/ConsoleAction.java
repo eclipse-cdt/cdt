@@ -23,7 +23,7 @@ public abstract class ConsoleAction extends Action {
 
 	/**
 	 * @param id
-	 * 			The action id 
+	 * 			The action id
 	 */
 	public ConsoleAction(String id) {
 		this(id, 0);
@@ -31,9 +31,9 @@ public abstract class ConsoleAction extends Action {
 
 	/**
 	 * @param id
-	 * 			The action id 
+	 * 			The action id
 	 * @param style
-	 * 			one of AS_PUSH_BUTTON, AS_CHECK_BOX, AS_DROP_DOWN_MENU, AS_RADIO_BUTTON, 
+	 * 			one of AS_PUSH_BUTTON, AS_CHECK_BOX, AS_DROP_DOWN_MENU, AS_RADIO_BUTTON,
 	 *  and AS_UNSPECIFIED
 	 */
 	public ConsoleAction(String id, int style) {
@@ -55,8 +55,7 @@ public abstract class ConsoleAction extends Action {
 	 * @param enabled
 	 * 			the enabled state for this action
 	 */
-	protected void setupAction(String text, String tooltip,
-			String image, String enabledImage, String disabledImage,
+	protected void setupAction(String text, String tooltip, String image, String enabledImage, String disabledImage,
 			boolean enabled) {
 		ImageRegistry imageRegistry = Activator.getDefault().getImageRegistry();
 		setupAction(text, tooltip, image, enabledImage, disabledImage, enabled, imageRegistry);
@@ -78,15 +77,10 @@ public abstract class ConsoleAction extends Action {
 	 * @param imageRegistry
 	 * 			the ImageRegistry to retrieve ImageDescriptor for the keys provided
 	 */
-	protected void setupAction(String text, String tooltip,
-			String hoverImage, String enabledImage, String disabledImage,
-			boolean enabled, ImageRegistry imageRegistry) {
-		setupAction(text,
-				tooltip,
-				imageRegistry.getDescriptor(hoverImage),
-				imageRegistry.getDescriptor(enabledImage),
-				imageRegistry.getDescriptor(disabledImage),
-				enabled);
+	protected void setupAction(String text, String tooltip, String hoverImage, String enabledImage,
+			String disabledImage, boolean enabled, ImageRegistry imageRegistry) {
+		setupAction(text, tooltip, imageRegistry.getDescriptor(hoverImage), imageRegistry.getDescriptor(enabledImage),
+				imageRegistry.getDescriptor(disabledImage), enabled);
 	}
 
 	/**
@@ -103,9 +97,8 @@ public abstract class ConsoleAction extends Action {
 	 * @param enabled
 	 * 			the enabled state for this action
 	 */
-	protected void setupAction(String text, String tooltip,
-			ImageDescriptor hoverImage, ImageDescriptor enabledImage, ImageDescriptor disabledImage,
-			boolean enabled) {
+	protected void setupAction(String text, String tooltip, ImageDescriptor hoverImage, ImageDescriptor enabledImage,
+			ImageDescriptor disabledImage, boolean enabled) {
 		setText(text);
 		setToolTipText(tooltip);
 		setEnabled(enabled);

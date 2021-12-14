@@ -43,13 +43,13 @@ public class GetOutputStreamCommand extends AbstractCommand<OutputStream> {
 			out.writeInt(options);
 			out.writeUTF(path);
 			out.flush();
-			
+
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
 				throw new ProxyException(errMsg);
 			}
-			
+
 			return new BufferedOutputStream(chan.getOutputStream());
 		} catch (IOException e) {
 			throw new ProxyException(e.getMessage());

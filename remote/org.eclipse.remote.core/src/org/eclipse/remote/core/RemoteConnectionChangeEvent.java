@@ -67,7 +67,7 @@ public class RemoteConnectionChangeEvent {
 
 	/**
 	 * Get the connection that has changed.
-	 * 
+	 *
 	 * @return IRemoteConnection
 	 */
 	public IRemoteConnection getConnection() {
@@ -77,9 +77,9 @@ public class RemoteConnectionChangeEvent {
 	/**
 	 * Returns the type of event being reported. This type
 	 * is obtained by bitwise OR'ing the event types together.
-	 * 
+	 *
 	 * {@link #CONNECTION_CLOSED} {@link #CONNECTION_OPENED} {@link #CONNECTION_ABORTED} {@link #CONNECTION_RENAMED}
-	 * 
+	 *
 	 * @return a bitwise OR of event type constants
 	 */
 	public int getType() {

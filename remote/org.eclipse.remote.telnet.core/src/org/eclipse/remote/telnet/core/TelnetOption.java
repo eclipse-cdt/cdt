@@ -102,7 +102,7 @@ class TelnetOption implements TelnetCodes {
 			"SEND URL", // 48 //$NON-NLS-1$
 			"FORWARD X", // 49 //$NON-NLS-1$
 			"?", "?", "?", "?", "?", "?", "?", "?", "?", "?", // 50 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
-																// ...
+			// ...
 			"?", "?", "?", "?", "?", "?", "?", "?", "?", "?", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 			"?", "?", "?", "?", "?", "?", "?", "?", "?", "?", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 			"?", "?", "?", "?", "?", "?", "?", "?", "?", "?", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
@@ -111,12 +111,12 @@ class TelnetOption implements TelnetCodes {
 			"?", "?", "?", "?", "?", "?", "?", "?", "?", "?", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 			"?", "?", "?", "?", "?", "?", "?", "?", "?", "?", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 			"?", "?", "?", "?", "?", "?", "?", // ... //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
-												// 137
+			// 137
 			"TELOPT PRAGMA LOGON", // 138 //$NON-NLS-1$
 			"TELOPT SSPI LOGON", // 139 //$NON-NLS-1$
 			"TELOPT PRAGMA HEARTBEAT", // 140 //$NON-NLS-1$
 			"?", "?", "?", "?", "?", "?", "?", "?", "?", "?", // 141 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
-																// ...
+			// ...
 			"?", "?", "?", "?", "?", "?", "?", "?", "?", "?", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 			"?", "?", "?", "?", "?", "?", "?", "?", "?", "?", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 			"?", "?", "?", "?", "?", "?", "?", "?", "?", "?", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
@@ -550,8 +550,8 @@ class TelnetOption implements TelnetCodes {
 			//
 			// IAC SB TERMINAL-TYPE IS x t e r m IAC SE
 
-			byte[] terminalTypeData = { TELNET_IAC, TELNET_SB, TELNET_OPTION_TERMINAL_TYPE, TELNET_IS, (byte) 'x', (byte) 't',
-					(byte) 'e', (byte) 'r', (byte) 'm', TELNET_IAC, TELNET_SE };
+			byte[] terminalTypeData = { TELNET_IAC, TELNET_SB, TELNET_OPTION_TERMINAL_TYPE, TELNET_IS, (byte) 'x',
+					(byte) 't', (byte) 'e', (byte) 'r', (byte) 'm', TELNET_IAC, TELNET_SE };
 
 			try {
 				outputStream.write(terminalTypeData);

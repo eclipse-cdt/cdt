@@ -14,7 +14,7 @@ package org.eclipse.remote.core.exception;
  * Thrown when trying to add a connection with the same name as an existing
  * connection, or when trying to rename a connection to the same name as an
  * existing connection.
- * 
+ *
  * @since 2.0
  */
 public class ConnectionExistsException extends RemoteConnectionException {

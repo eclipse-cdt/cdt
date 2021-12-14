@@ -16,7 +16,7 @@ import org.eclipse.remote.core.IRemotePreferenceConstants;
 
 /**
  * Class used to initialize default preference values.
- * 
+ *
  * @since 6.0
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {

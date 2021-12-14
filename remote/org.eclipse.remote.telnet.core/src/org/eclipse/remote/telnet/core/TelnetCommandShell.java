@@ -35,7 +35,7 @@ public class TelnetCommandShell implements IRemoteProcess {
 
 	public TelnetCommandShell(IRemoteConnection remoteConnection, TelnetConnection telnetConnection) {
 		this.telnetConnection = telnetConnection;
-		assert(remoteConnection.getService(IRemoteConnectionHostService.class) != null);
+		assert (remoteConnection.getService(IRemoteConnectionHostService.class) != null);
 	}
 
 	@Override

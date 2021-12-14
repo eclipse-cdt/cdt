@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,9 +15,9 @@ import java.io.OutputStream;
 
 /**
  * Utility class to adapt an IRemoteProcess to a java.lang.Process
- * 
+ *
  * @author crecoskie
- * 
+ *
  */
 public class RemoteProcessAdapter extends Process {
 

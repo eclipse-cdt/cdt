@@ -30,7 +30,7 @@ public class SerialPortConnection implements ISerialPortService, IRemoteCommandS
 
 	private final IRemoteConnection remoteConnection;
 	private SerialPort serialPort;
-	
+
 	private SerialPortConnection(IRemoteConnection remoteConnection) {
 		this.remoteConnection = remoteConnection;
 		this.remoteConnection.addConnectionChangeListener(new IRemoteConnectionChangeListener() {
@@ -69,10 +69,14 @@ public class SerialPortConnection implements ISerialPortService, IRemoteCommandS
 			if (portName != null) {
 				serialPort = new SerialPort(portName);
 				try {
-					serialPort.setBaudRate(BaudRate.fromStringIndex(Integer.parseInt(remoteConnection.getAttribute(BAUD_RATE_ATTR))));
-					serialPort.setByteSize(ByteSize.fromStringIndex(Integer.parseInt(remoteConnection.getAttribute(BYTE_SIZE_ATTR))));
-					serialPort.setParity(Parity.fromStringIndex(Integer.parseInt(remoteConnection.getAttribute(PARITY_ATTR))));
-					serialPort.setStopBits(StopBits.fromStringIndex(Integer.parseInt(remoteConnection.getAttribute(STOP_BITS_ATTR))));
+					serialPort.setBaudRate(
+							BaudRate.fromStringIndex(Integer.parseInt(remoteConnection.getAttribute(BAUD_RATE_ATTR))));
+					serialPort.setByteSize(
+							ByteSize.fromStringIndex(Integer.parseInt(remoteConnection.getAttribute(BYTE_SIZE_ATTR))));
+					serialPort.setParity(
+							Parity.fromStringIndex(Integer.parseInt(remoteConnection.getAttribute(PARITY_ATTR))));
+					serialPort.setStopBits(
+							StopBits.fromStringIndex(Integer.parseInt(remoteConnection.getAttribute(STOP_BITS_ATTR))));
 				} catch (IOException e) {
 					Activator.log(e);
 				}

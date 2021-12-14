@@ -22,12 +22,8 @@ public class ConsoleActionConnect extends ConsoleAction {
 
 		this.console = console;
 
-		setupAction(ActionMessages.CONNECT,
-				ActionMessages.CONNECT,
-				ImageConsts.IMAGE_CLCL_CONNECT,
-				ImageConsts.IMAGE_ELCL_CONNECT,
-				ImageConsts.IMAGE_DLCL_CONNECT,
-				true);
+		setupAction(ActionMessages.CONNECT, ActionMessages.CONNECT, ImageConsts.IMAGE_CLCL_CONNECT,
+				ImageConsts.IMAGE_ELCL_CONNECT, ImageConsts.IMAGE_DLCL_CONNECT, true);
 	}
 
 	@Override

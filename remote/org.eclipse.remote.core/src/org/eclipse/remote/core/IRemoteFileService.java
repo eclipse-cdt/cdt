@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Interface for managing files on a remote system.
- * 
+ *
  * @since 2.0
  */
 public interface IRemoteFileService extends IRemoteConnection.Service {
@@ -25,11 +25,11 @@ public interface IRemoteFileService extends IRemoteConnection.Service {
 	/**
 	 * Get the resource associated with path. IFileStore can then be used to
 	 * perform operations on the file.
-	 * 
+	 *
 	 * The remote connection does not need to be open to use this method, but
 	 * subsequent operations on the IFileStore that access the underlying remote
 	 * filesystem may require the connection to be open.
-	 * 
+	 *
 	 * @param path
 	 *            path to resource
 	 * @return the file store representing the remote path
@@ -38,21 +38,21 @@ public interface IRemoteFileService extends IRemoteConnection.Service {
 
 	/**
 	 * Get the base directory to be used for relative paths.
-	 * 
+	 *
 	 * @return base directory
 	 */
 	String getBaseDirectory();
 
 	/**
 	 * Set the base directory to be used for relative paths..
-	 * 
+	 *
 	 * @param path new base directory
 	 */
 	void setBaseDirectory(String path);
 
 	/**
 	 * Gets the directory separator on the target system.
-	 * 
+	 *
 	 * @return String
 	 */
 	String getDirectorySeparator();
@@ -60,9 +60,9 @@ public interface IRemoteFileService extends IRemoteConnection.Service {
 	/**
 	 * Convert URI to a remote path. This path is suitable for direct file
 	 * operations <i>on the remote system</i>.
-	 * 
+	 *
 	 * The remote connection does not need to be open to use this method.
-	 * 
+	 *
 	 * @return IPath representing the remote path
 	 */
 	String toPath(URI uri);
@@ -70,9 +70,9 @@ public interface IRemoteFileService extends IRemoteConnection.Service {
 	/**
 	 * Convert remote path to equivalent URI. This URI is suitable for EFS
 	 * operations <i>on the local system</i>.
-	 * 
+	 *
 	 * The remote connection does not need to be open to use this method.
-	 * 
+	 *
 	 * @param path
 	 *            path on remote system
 	 * @return URI representing path on remote system, or null if the path is
@@ -83,9 +83,9 @@ public interface IRemoteFileService extends IRemoteConnection.Service {
 	/**
 	 * Convert string representation of a remote path to equivalent URI. This
 	 * URI is suitable for EFS operations <i>on the local system</i>.
-	 * 
+	 *
 	 * The remote connection does not need to be open to use this method.
-	 * 
+	 *
 	 * @param path
 	 *            path on remote system
 	 * @return URI representing path on remote system, or null if the path is

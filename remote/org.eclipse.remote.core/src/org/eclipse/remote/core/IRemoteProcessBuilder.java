@@ -29,14 +29,14 @@ public interface IRemoteProcessBuilder {
 	/**
 	 * Flag to request allocation of a pseudo-terminal for the process (RFC-4254
 	 * Sec. 6.2)
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public static int ALLOCATE_PTY = 0x01;
 
 	/**
 	 * Flag to request X11 forwarding (RFC-4254 Sec. 6.3)
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public static int FORWARD_X11 = 0x02;
@@ -47,17 +47,17 @@ public interface IRemoteProcessBuilder {
 	 * @since 3.0
 	 */
 	public static int APPEND_ENVIRONMENT = 0x03;
-	
+
 	/**
 	 * Returns this process builder's operating system program and arguments.
-	 * 
+	 *
 	 * @return a list containing the program and arguments
 	 */
 	List<String> command();
 
 	/**
 	 * Sets this process builder's operating system program and arguments.
-	 * 
+	 *
 	 * @param command
 	 * @return This process builder
 	 */
@@ -65,7 +65,7 @@ public interface IRemoteProcessBuilder {
 
 	/**
 	 * Sets this process builder's operating system program and arguments.
-	 * 
+	 *
 	 * @param command
 	 * @return this process builder
 	 */
@@ -73,14 +73,14 @@ public interface IRemoteProcessBuilder {
 
 	/**
 	 * Returns this process builder's working directory.
-	 * 
+	 *
 	 * @return an IFileStore reference to the working directory
 	 */
 	IFileStore directory();
 
 	/**
 	 * Sets this process builder's working directory.
-	 * 
+	 *
 	 * @param directory
 	 * @return This process builder
 	 */
@@ -89,14 +89,14 @@ public interface IRemoteProcessBuilder {
 	/**
 	 * Returns a string map view of this process builder's environment. The
 	 * returned map behaves in the same manner as described in {@link java.lang.ProcessBuilder#environment()}.
-	 * 
+	 *
 	 * @return the process builder's environment
 	 */
 	Map<String, String> environment();
 
 	/**
 	 * Get the flags that are supported by this process builder.
-	 * 
+	 *
 	 * @return bitwise-or of the supported flags
 	 * @since 5.0
 	 */
@@ -105,14 +105,14 @@ public interface IRemoteProcessBuilder {
 	/**
 	 * Tells whether this process builder merges standard error and standard
 	 * output.
-	 * 
+	 *
 	 * @return true if standard error and standard output will be merged
 	 */
 	boolean redirectErrorStream();
 
 	/**
 	 * Sets this process builder's redirectErrorStream property.
-	 * 
+	 *
 	 * @param redirectErrorStream
 	 * @return This process builder
 	 */
@@ -120,7 +120,7 @@ public interface IRemoteProcessBuilder {
 
 	/**
 	 * Starts a new process using the attributes of this process builder.
-	 * 
+	 *
 	 * @return remote process object
 	 * @throws IOException
 	 */
@@ -132,14 +132,14 @@ public interface IRemoteProcessBuilder {
 	 * may only be supported by specific types of remote service providers.
 	 * Clients can use {@link #getSupportedFlags()} to find out the flags
 	 * supported by the service provider.
-	 * 
+	 *
 	 * <pre>
 	 * Current flags are:
 	 *   NONE			- disable any flags
 	 *   ALLOCATE_PTY	- allocate a pseudo-terminal for the process (RFC-4254 Sec. 6.2)
 	 *   FORWARD_X11	- enable X11 forwarding (RFC-4254 Sec. 6.3)
 	 * </pre>
-	 * 
+	 *
 	 * @param flags
 	 *            bitwise-or of flags to use when starting process
 	 * @return remote process object
@@ -150,7 +150,7 @@ public interface IRemoteProcessBuilder {
 
 	/**
 	 * Get the connection that will be used by this process builder to create remote processes.
-	 * 
+	 *
 	 * @return connection used to create remote processes
 	 * @since 2.0
 	 */

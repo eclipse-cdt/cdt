@@ -61,13 +61,13 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		// capabilities, default is true for all of these
 		String canAddStr = ce.getAttribute("canAdd"); //$NON-NLS-1$
 		canAdd = canAddStr != null ? Boolean.parseBoolean(canAddStr) : true;
-		
+
 		String canEditStr = ce.getAttribute("canEdit"); //$NON-NLS-1$
 		canEdit = canEditStr != null ? Boolean.parseBoolean(canEditStr) : true;
-		
+
 		String canRemoveStr = ce.getAttribute("canRemove"); //$NON-NLS-1$
 		canRemove = canRemoveStr != null ? Boolean.parseBoolean(canRemoveStr) : true;
-		
+
 		// load up existing connections
 		try {
 			for (String nodeName : getPreferenceNode().childrenNames()) {
@@ -123,7 +123,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	}
 
 	@Override
-	public  <T extends Service> T getService(Class<T> service) {
+	public <T extends Service> T getService(Class<T> service) {
 		synchronized (serviceDefinitionMap) {
 			@SuppressWarnings("unchecked")
 			T obj = (T) serviceMap.get(service);
@@ -161,7 +161,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 
 	/**
 	 * Called from the connection to get a service object for that connection.
-	 * 
+	 *
 	 * @param connection
 	 *            the connection to which the service applies
 	 * @param service
@@ -169,7 +169,8 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 * @return the service object
 	 * @throws CoreException
 	 */
-	public <T extends IRemoteConnection.Service> T getConnectionService(IRemoteConnection connection, Class<T> service) {
+	public <T extends IRemoteConnection.Service> T getConnectionService(IRemoteConnection connection,
+			Class<T> service) {
 		synchronized (connectionServiceDefinitionMap) {
 			IConfigurationElement ce = connectionServiceDefinitionMap.get(service.getName());
 			if (ce != null) {
@@ -203,7 +204,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 
 	/**
 	 * Called from the remote process to get a service object for that process.
-	 * 
+	 *
 	 * @param process
 	 *            the process to which the service applies
 	 * @param service
@@ -216,7 +217,8 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 			IConfigurationElement ce = processServiceDefinitionMap.get(service.getName());
 			if (ce != null) {
 				try {
-					IRemoteProcess.Service.Factory factory = (IRemoteProcess.Service.Factory) ce.createExecutableExtension("factory"); //$NON-NLS-1$
+					IRemoteProcess.Service.Factory factory = (IRemoteProcess.Service.Factory) ce
+							.createExecutableExtension("factory"); //$NON-NLS-1$
 					if (factory != null) {
 						return factory.getService(process, service);
 					}
@@ -245,7 +247,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	/**
 	 * Called from the remote service manager to register a service extension for
 	 * this remote services implementation
-	 * 
+	 *
 	 * @param ce
 	 *            the extension element defining the service
 	 */
@@ -267,7 +269,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 
 	/**
 	 * Signal connection has been added.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	protected void connectionAdded(final IRemoteConnection connection) {
@@ -278,7 +280,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 
 	/**
 	 * Signal a connection is about to be removed.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	protected void connectionRemoved(final IRemoteConnection connection) {
@@ -296,7 +298,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 
 	@Override
 	public IRemoteConnection getConnection(URI uri) {
-		synchronized (connections) { 
+		synchronized (connections) {
 			IRemoteConnection connection = connections.get(uri.getAuthority());
 			if (connection != null) {
 				return connection;
@@ -356,7 +358,8 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 				connections.remove(conn.getName());
 				connection.fireConnectionChangeEvent(RemoteConnectionChangeEvent.CONNECTION_REMOVED);
 			} else {
-				RemoteCorePlugin.log("Wrong class for " + connection.getName() + ", was " + connection.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
+				RemoteCorePlugin
+						.log("Wrong class for " + connection.getName() + ", was " + connection.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

@@ -20,14 +20,14 @@ import org.eclipse.remote.core.exception.RemoteConnectionException;
  * A remote connection type manages a list of connections that implement the same services.
  * Services may be registered on the individual connections, or at the connection type level
  * for service that apply to all connections of this type.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 2.0
  */
 public interface IRemoteConnectionType {
 	/**
 	 * The interface that is extend by services provided for this remote services implementation.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	interface Service {
@@ -41,56 +41,56 @@ public interface IRemoteConnectionType {
 	/**
 	 * Get the remote services manager. This is a convenient way to get back
 	 * to the root.
-	 * 
+	 *
 	 * @return remote services manager
 	 */
 	IRemoteServicesManager getRemoteServicesManager();
 
 	/**
 	 * Get unique ID of this service. Can be used as a lookup key.
-	 * 
+	 *
 	 * @return unique ID
 	 */
 	String getId();
 
 	/**
 	 * Get display name of this service.
-	 * 
+	 *
 	 * @return display name
 	 */
 	String getName();
 
 	/**
 	 * Get the EFS scheme provided by this service.
-	 * 
+	 *
 	 * @return display name
 	 */
 	String getScheme();
 
 	/**
 	 * Can you add new connections of this type using the API.
-	 * 
+	 *
 	 * @return can add
 	 */
 	boolean canAdd();
 
 	/**
 	 * Can you edit connections of this type, i.e. create working copies.
-	 * 
+	 *
 	 * @return can edit
 	 */
 	boolean canEdit();
 
 	/**
 	 * Can you remove connections of this type using the API.
-	 * 
+	 *
 	 * @return can remove
 	 */
 	boolean canRemove();
 
 	/**
 	 * Get the service for this remote services implementation that implements the given interface.
-	 * 
+	 *
 	 * @param service
 	 *            the interface the required service must implements
 	 * @return the desired service or null if there is no such service available
@@ -101,7 +101,7 @@ public interface IRemoteConnectionType {
 
 	/**
 	 * Does this connection type support the given service.
-	 * 
+	 *
 	 * @param service
 	 *            the service to be tested
 	 * @return true if this connection type supports this service
@@ -110,14 +110,14 @@ public interface IRemoteConnectionType {
 
 	/**
 	 * Return the list of connection type services supported by this type.
-	 * 
+	 *
 	 * @return connection type services
 	 */
 	List<String> getServices();
 
 	/**
 	 * Do connections created by this connection type support the given service.
-	 * 
+	 *
 	 * @param service
 	 *            the service to be tested
 	 * @return true if connections created by this connection type support this service
@@ -126,14 +126,14 @@ public interface IRemoteConnectionType {
 
 	/**
 	 * Return the list of connection services supported by connections of this type.
-	 * 
+	 *
 	 * @return connection services
 	 */
 	List<String> getConnectionServices();
-	
+
 	/**
 	 * Do processes created by this connection type support the given service.
-	 * 
+	 *
 	 * @param service
 	 *            the service to be tested
 	 * @return true if processes created by this connection type support this service
@@ -142,14 +142,14 @@ public interface IRemoteConnectionType {
 
 	/**
 	 * Return the list of process services supported by connections of this type.
-	 * 
+	 *
 	 * @return process services
 	 */
 	List<String> getProcessServices();
 
 	/**
 	 * Gets the remote connection corresponding to the supplied name.
-	 * 
+	 *
 	 * @param name
 	 *            name of the connection (as returned by {@link IRemoteConnection#getName()})
 	 * @return remote connection or null if no connection exists
@@ -158,7 +158,7 @@ public interface IRemoteConnectionType {
 
 	/**
 	 * Gets the remote connection corresponding to the supplied URI.
-	 * 
+	 *
 	 * @param uri
 	 *            URI containing a schema for this remote connection
 	 * @return remote connection or null if no connection exists or the schema
@@ -169,7 +169,7 @@ public interface IRemoteConnectionType {
 
 	/**
 	 * Get all the connections for this service provider.
-	 * 
+	 *
 	 * @return connections that we know about
 	 */
 	List<IRemoteConnection> getConnections();
@@ -177,10 +177,10 @@ public interface IRemoteConnectionType {
 	/**
 	 * Creates a new remote connection named with supplied name. The connection attributes will be the default for the
 	 * implementation.
-	 * 
+	 *
 	 * Returns a working copy of the remote connection. Callers must call {@link IRemoteConnectionWorkingCopy#save()} before the
 	 * connection can be used.
-	 * 
+	 *
 	 * @param name
 	 *            name of the connection
 	 * @return a new connection working copy with the supplied name
@@ -192,7 +192,7 @@ public interface IRemoteConnectionType {
 
 	/**
 	 * Remove a connection and all resources associated with it.
-	 * 
+	 *
 	 * @param connection
 	 *            connection to remove
 	 * @throws RemoteConnectionException

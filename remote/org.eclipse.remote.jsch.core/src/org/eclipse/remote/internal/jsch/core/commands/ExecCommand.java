@@ -48,7 +48,7 @@ public class ExecCommand extends AbstractRemoteCommand<String> {
 				if (getProgressMonitor().isCanceled()) {
 					return ""; //$NON-NLS-1$
 				}
-				if (getChannel().getExitStatus()!=0) {
+				if (getChannel().getExitStatus() != 0) {
 					throw new RemoteConnectionException(err.toString());
 				}
 				return stream.toString();

@@ -18,14 +18,14 @@ import org.eclipse.remote.core.IRemoteConnection;
  * Manages and persists the mapping between launch configurations and
  * remote connections that they run on. Each launch configuration has an
  * active remote connection.
- * 
+ *
  * @since 2.0
  */
 public interface IRemoteLaunchConfigService {
 
 	/**
 	 * Sets the active remote connection for the given launch configuration.
-	 * 
+	 *
 	 * @param launchConfig launch configuration
 	 * @param connection active remote connection
 	 */
@@ -41,10 +41,10 @@ public interface IRemoteLaunchConfigService {
 	/**
 	 * For a given launch configuration type, get the remote connection that was last
 	 * used by a launch configuration of that type.
-	 * 
-	 * This is used for new launch configurations with the assumption that the user 
+	 *
+	 * This is used for new launch configurations with the assumption that the user
 	 * will want to use the same remote connection.
-	 * 
+	 *
 	 * @param launchConfigType launch configuration type
 	 * @return last active remote configuration
 	 */

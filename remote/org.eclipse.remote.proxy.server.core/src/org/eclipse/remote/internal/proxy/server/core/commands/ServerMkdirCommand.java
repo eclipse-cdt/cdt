@@ -17,7 +17,7 @@ import org.eclipse.remote.proxy.protocol.core.exceptions.ProxyException;
 public class ServerMkdirCommand extends AbstractServerCommand {
 	private final int options;
 	private final URI uri;
-	
+
 	public ServerMkdirCommand(int options, String path) {
 		this.options = options;
 		this.uri = URI.create("file:" + path); //$NON-NLS-1$

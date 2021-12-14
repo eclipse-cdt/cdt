@@ -31,18 +31,18 @@ public class GetCwdCommand extends AbstractCommand<String> {
 		try {
 			final StreamChannel chan = openChannel();
 			DataInputStream resultStream = new DataInputStream(chan.getInputStream());
-			
+
 			out.writeByte(Protocol.PROTO_COMMAND);
 			out.writeShort(Protocol.CMD_GETCWD);
 			out.writeByte(chan.getId());
 			out.flush();
-			
+
 			byte res = in.readByte();
 			if (res != Protocol.PROTO_OK) {
 				String errMsg = in.readUTF();
 				throw new ProxyException(errMsg);
 			}
-			
+
 			String cwd = resultStream.readUTF();
 			chan.close();
 			return cwd;

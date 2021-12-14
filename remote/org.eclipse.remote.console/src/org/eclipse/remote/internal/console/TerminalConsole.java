@@ -27,7 +27,8 @@ public class TerminalConsole extends AbstractConsole implements ITerminalConsole
 	private final int index;
 
 	public TerminalConsole(IRemoteConnection connection, int index, String encoding) {
-		super(connection.getName(), Activator.getDefault().getImageRegistry().getDescriptor(ImageConsts.IMAGE_TERMINAL_VIEW));
+		super(connection.getName(),
+				Activator.getDefault().getImageRegistry().getDescriptor(ImageConsts.IMAGE_TERMINAL_VIEW));
 		this.encoding = encoding;
 		this.terminalConnector = new TerminalConsoleConnector(connection);
 		this.index = index;
@@ -45,7 +46,7 @@ public class TerminalConsole extends AbstractConsole implements ITerminalConsole
 	public int getIndex() {
 		return index;
 	}
-	
+
 	public synchronized void setState(TerminalState terminalState) {
 		StringBuffer nameBuff = new StringBuffer(getConnection().getName());
 		if (index > 0) {

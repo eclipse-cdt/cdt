@@ -27,8 +27,8 @@ import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.RemoteConnectionChangeEvent;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 
-public class TelnetConnection implements IRemoteConnectionControlService, IRemoteCommandShellService, IRemoteConnectionHostService,
-		IRemoteConnectionChangeListener {
+public class TelnetConnection implements IRemoteConnectionControlService, IRemoteCommandShellService,
+		IRemoteConnectionHostService, IRemoteConnectionChangeListener {
 	public static int DEFAULT_PORT = 23;
 	public static int DEFAULT_TIMEOUT = 0; // Infinite
 
@@ -53,7 +53,8 @@ public class TelnetConnection implements IRemoteConnectionControlService, IRemot
 		public <T extends Service> T getService(IRemoteConnection remoteConnection, Class<T> service) {
 			if (TelnetConnection.class.equals(service)) {
 				return (T) new TelnetConnection(remoteConnection);
-			} else if (IRemoteConnectionControlService.class.equals(service) || IRemoteConnectionHostService.class.equals(service)
+			} else if (IRemoteConnectionControlService.class.equals(service)
+					|| IRemoteConnectionHostService.class.equals(service)
 					|| IRemoteCommandShellService.class.equals(service)) {
 				return (T) remoteConnection.getService(TelnetConnection.class);
 			}

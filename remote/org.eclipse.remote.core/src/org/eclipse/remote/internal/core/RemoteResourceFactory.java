@@ -17,9 +17,9 @@ import org.eclipse.remote.core.IRemoteResource;
 
 /**
  * Factory to create an IRemoteResource
- * 
+ *
  * @author greg
- * 
+ *
  */
 public class RemoteResourceFactory {
 	private final IConfigurationElement fConfigElement;
@@ -30,7 +30,7 @@ public class RemoteResourceFactory {
 
 	/**
 	 * Get the remote resource associated with the platform resource.
-	 * 
+	 *
 	 * @return IRemoteResource
 	 */
 	public IRemoteResource getRemoteResource(IResource resource) {

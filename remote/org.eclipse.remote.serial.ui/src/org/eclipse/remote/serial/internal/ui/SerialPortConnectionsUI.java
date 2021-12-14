@@ -28,11 +28,11 @@ import org.eclipse.swt.widgets.Shell;
 public class SerialPortConnectionsUI extends AbstractRemoteUIConnectionService {
 
 	private final IRemoteConnectionType connectionType;
-	
+
 	private SerialPortConnectionsUI(IRemoteConnectionType connectionType) {
 		this.connectionType = connectionType;
 	}
-	
+
 	public static class Factory implements IRemoteConnectionType.Service.Factory {
 		@SuppressWarnings("unchecked")
 		@Override

@@ -53,7 +53,8 @@ public class PutInfoCommand extends AbstractRemoteCommand<Void> {
 		return null;
 	}
 
-	private void chmod(final int permissions, final String path, IProgressMonitor monitor) throws RemoteConnectionException {
+	private void chmod(final int permissions, final String path, IProgressMonitor monitor)
+			throws RemoteConnectionException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 10);
 		SftpCallable<Void> c = new SftpCallable<Void>() {
 			@Override
@@ -69,7 +70,8 @@ public class PutInfoCommand extends AbstractRemoteCommand<Void> {
 		}
 	}
 
-	private void setMTime(final int mtime, final String path, IProgressMonitor monitor) throws RemoteConnectionException {
+	private void setMTime(final int mtime, final String path, IProgressMonitor monitor)
+			throws RemoteConnectionException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 10);
 		SftpCallable<Void> c = new SftpCallable<Void>() {
 			@Override

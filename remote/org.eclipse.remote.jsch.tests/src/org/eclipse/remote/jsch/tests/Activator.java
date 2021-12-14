@@ -14,7 +14,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -42,7 +42,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Return the OSGi service with the given service interface.
-	 * 
+	 *
 	 * @param service service interface
 	 * @return the specified service or null if it's not registered
 	 */

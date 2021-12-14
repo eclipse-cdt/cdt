@@ -35,7 +35,7 @@ import org.osgi.service.prefs.Preferences;
 
 /**
  * The implementation for the remote services manager service.
- * 
+ *
  */
 public class RemoteServicesManager implements IRemoteServicesManager {
 
@@ -83,7 +83,8 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 		for (IExtension ext : point.getExtensions()) {
 			for (IConfigurationElement ce : ext.getConfigurationElements()) {
 				String name = ce.getName();
-				if (name.equals("connectionTypeService") || name.equals("connectionService") || name.equals("processService")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (name.equals("connectionTypeService") || name.equals("connectionService") //$NON-NLS-1$//$NON-NLS-2$
+						|| name.equals("processService")) { //$NON-NLS-1$
 					String id = ce.getAttribute("connectionTypeId"); //$NON-NLS-1$
 					RemoteConnectionType services = connectionTypeMap.get(id);
 					if (services != null) {
@@ -95,7 +96,8 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 
 		// Init connection providers
 		for (IRemoteConnectionType connectionType : connectionTypeMap.values()) {
-			IRemoteConnectionProviderService providerService = connectionType.getService(IRemoteConnectionProviderService.class);
+			IRemoteConnectionProviderService providerService = connectionType
+					.getService(IRemoteConnectionProviderService.class);
 			if (providerService != null) {
 				providerService.init();
 			}
@@ -135,7 +137,8 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 
 	@Override
 	@SafeVarargs
-	public final List<IRemoteConnectionType> getConnectionTypesSupporting(Class<? extends IRemoteConnection.Service>... services) {
+	public final List<IRemoteConnectionType> getConnectionTypesSupporting(
+			Class<? extends IRemoteConnection.Service>... services) {
 		List<IRemoteConnectionType> connTypes = new ArrayList<IRemoteConnectionType>();
 		for (IRemoteConnectionType connType : getAllConnectionTypes()) {
 			for (Class<? extends IRemoteConnection.Service> service : services) {
@@ -150,7 +153,8 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 
 	@Override
 	@SafeVarargs
-	public final List<IRemoteConnectionType> getConnectionTypesByService(Class<? extends IRemoteConnectionType.Service>... services) {
+	public final List<IRemoteConnectionType> getConnectionTypesByService(
+			Class<? extends IRemoteConnectionType.Service>... services) {
 		List<IRemoteConnectionType> connTypes = new ArrayList<IRemoteConnectionType>();
 		for (IRemoteConnectionType connType : getAllConnectionTypes()) {
 			for (Class<? extends IRemoteConnectionType.Service> service : services) {

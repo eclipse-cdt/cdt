@@ -1,7 +1,7 @@
 /********************************************************************************
  * Copyright (c) 2016 Oak Ridge National Laboratory and others.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  ********************************************************************************/
 
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 public class ProxyFileSystem extends FileSystem {
 	/**
 	 * Return the connection name encoded in the URI.
-	 * 
+	 *
 	 * @param uri
 	 *            URI specifying a remote tools connection
 	 * @return name of the connection or null if the URI is invalid
@@ -30,7 +30,7 @@ public class ProxyFileSystem extends FileSystem {
 
 	/**
 	 * Return an URI uniquely naming a remote tools remote resource.
-	 * 
+	 *
 	 * @param connectionName
 	 *            remote tools connection name
 	 * @param path

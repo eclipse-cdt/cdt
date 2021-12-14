@@ -49,12 +49,12 @@ public class RemoteServicesUtils {
 
 	/**
 	 * Convert a UNC path to a URI
-	 * 
+	 *
 	 * Maps the UNC server component to a connection known by one of the remote service implementations. It is assumed that the
 	 * server component is of the form "[connection_type_id:]connection_name". If the "connection_type_id:" part is omitted then the
 	 * current connection type preference is used by default. If no preference is set, then each implementation is tried until
 	 * a matching connection name is found.
-	 * 
+	 *
 	 * @param path
 	 *            UNC path
 	 * @return corresponding URI or null if not a valid path

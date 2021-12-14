@@ -27,10 +27,12 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelShell;
 
-public class JSchProcess implements IRemoteProcessControlService, IRemoteProcessSignalService, IRemoteProcessTerminalService {
+public class JSchProcess
+		implements IRemoteProcessControlService, IRemoteProcessSignalService, IRemoteProcessTerminalService {
 	@SuppressWarnings("nls")
-	private final String signals[] = new String[] { "", "HUP", "INT", "QUIT", "ILL", "", "ABRT", "", "FPE", "KILL", "", "SEGV", "",
-			"PIPE", "ALRM", "TERM", "", "STOP", "TSTP", "CONT", "", "", "", "", "", "", "", "", "", "", "USR1", "USR2" };
+	private final String signals[] = new String[] { "", "HUP", "INT", "QUIT", "ILL", "", "ABRT", "", "FPE", "KILL", "",
+			"SEGV", "", "PIPE", "ALRM", "TERM", "", "STOP", "TSTP", "CONT", "", "", "", "", "", "", "", "", "", "",
+			"USR1", "USR2" };
 
 	private static int WAIT_TIMEOUT = 1000;
 	private static int refCount = 0;
@@ -147,7 +149,7 @@ public class JSchProcess implements IRemoteProcessControlService, IRemoteProcess
 
 	@Override
 	public int exitValue() {
-		if(!isCompleted()) {
+		if (!isCompleted()) {
 			throw new IllegalThreadStateException(Messages.JSchProcess_exitValue_exception_msg);
 		}
 		return fChannel.getExitStatus();

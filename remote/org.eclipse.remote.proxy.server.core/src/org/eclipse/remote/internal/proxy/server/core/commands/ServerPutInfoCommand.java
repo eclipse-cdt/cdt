@@ -19,7 +19,7 @@ public class ServerPutInfoCommand extends AbstractServerCommand {
 	private final IFileInfo info;
 	private final int options;
 	private final URI uri;
-	
+
 	public ServerPutInfoCommand(IFileInfo info, int options, String path) {
 		this.info = info;
 		this.options = options;
@@ -28,7 +28,8 @@ public class ServerPutInfoCommand extends AbstractServerCommand {
 
 	public void exec() throws ProxyException {
 		try {
-			EFS.getStore(uri).putInfo(info, options, new NullProgressMonitor());;
+			EFS.getStore(uri).putInfo(info, options, new NullProgressMonitor());
+			;
 		} catch (CoreException e) {
 			throw new ProxyException(e.getMessage());
 		}

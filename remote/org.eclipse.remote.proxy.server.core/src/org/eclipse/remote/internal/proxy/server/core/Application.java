@@ -20,13 +20,14 @@ public class Application implements IApplication {
 	private Server server = new Server();
 
 	public Object start(IApplicationContext context) throws Exception {
-		String[] args = (String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
+		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 		for (String arg : args) {
 			if (arg.equals("-magic")) { //$NON-NLS-1$
 				ByteBuffer b = ByteBuffer.allocate(4);
 				b.putInt(Protocol.MAGIC);
 				System.out.write(b.array());
-			};
+			}
+			;
 		}
 		server.start();
 		server.waitFor();

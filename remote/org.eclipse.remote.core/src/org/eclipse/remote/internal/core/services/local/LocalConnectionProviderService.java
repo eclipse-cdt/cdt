@@ -19,9 +19,9 @@ import org.eclipse.remote.internal.core.RemoteCorePlugin;
 public class LocalConnectionProviderService implements IRemoteConnectionProviderService {
 
 	private static final String localConnectionName = Messages.LocalConnectionProviderService_LocalConnectionName;
-	
+
 	private IRemoteConnectionType connectionType;
-	
+
 	public static class Factory implements IRemoteConnectionType.Service.Factory {
 		@SuppressWarnings("unchecked")
 		@Override
@@ -32,7 +32,7 @@ public class LocalConnectionProviderService implements IRemoteConnectionProvider
 			return null;
 		}
 	}
-	
+
 	public LocalConnectionProviderService(IRemoteConnectionType connectionType) {
 		this.connectionType = connectionType;
 	}

@@ -19,12 +19,12 @@ public class RemoteLaunchConfigService implements IRemoteLaunchConfigService {
 	private Preferences getPreferences(String node) {
 		return InstanceScope.INSTANCE.getNode(RemoteCorePlugin.getUniqueIdentifier()).node(node);
 	}
-	
+
 	private IRemoteConnection getRemoteConnection(String remoteId) {
 		if (remoteId == null) {
 			return null;
 		}
-		
+
 		String[] ids = remoteId.split(":"); //$NON-NLS-1$
 		if (ids.length < 2) {
 			return null;
@@ -35,7 +35,7 @@ public class RemoteLaunchConfigService implements IRemoteLaunchConfigService {
 		if (connectionType == null) {
 			return null;
 		}
-		
+
 		return connectionType.getConnection(ids[1]);
 	}
 
@@ -49,7 +49,7 @@ public class RemoteLaunchConfigService implements IRemoteLaunchConfigService {
 			RemoteCorePlugin.log(e.getStatus());
 		}
 	}
-	
+
 	@Override
 	public IRemoteConnection getActiveConnection(ILaunchConfiguration launchConfig) {
 		String remoteId = getPreferences(REMOTE_LAUNCH_CONFIG).get(launchConfig.getName(), null);

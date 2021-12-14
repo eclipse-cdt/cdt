@@ -23,7 +23,7 @@ import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 
 public class ProxyProcess implements IRemoteProcessControlService, IRemoteProcessTerminalService {
 	private IRemoteProcess remoteProcess;
-	
+
 	private final StreamChannel stdIOChan;
 	private final StreamChannel stdErrChan;
 	private final StreamChannel controlChan;
@@ -33,7 +33,7 @@ public class ProxyProcess implements IRemoteProcessControlService, IRemoteProces
 
 	private volatile int exitValue;
 	private volatile boolean isCompleted;
-	
+
 	public static class Factory implements IRemoteProcess.Service.Factory {
 		@SuppressWarnings("unchecked")
 		@Override
@@ -51,7 +51,7 @@ public class ProxyProcess implements IRemoteProcessControlService, IRemoteProces
 
 	protected ProxyProcess(IRemoteProcess process) {
 		remoteProcess = process;
-		ProxyProcessBuilder builder = (ProxyProcessBuilder)process.getProcessBuilder();
+		ProxyProcessBuilder builder = (ProxyProcessBuilder) process.getProcessBuilder();
 		List<StreamChannel> streams = builder.getStreams();
 		controlChan = streams.get(0);
 		stdIOChan = streams.get(1);
@@ -60,7 +60,7 @@ public class ProxyProcess implements IRemoteProcessControlService, IRemoteProces
 		resultStream = new DataInputStream(controlChan.getInputStream());
 		isCompleted = false;
 		exitValue = 0;
-		
+
 		cmdThread = new Thread("process result reader") { //$NON-NLS-1$
 			@Override
 			public void run() {
@@ -91,7 +91,7 @@ public class ProxyProcess implements IRemoteProcessControlService, IRemoteProces
 		};
 		cmdThread.start();
 	}
-	
+
 	@Override
 	public void destroy() {
 		try {
@@ -113,7 +113,7 @@ public class ProxyProcess implements IRemoteProcessControlService, IRemoteProces
 	@Override
 	public InputStream getErrorStream() {
 		if (stdErrChan == null) {
-			return new  InputStream() {
+			return new InputStream() {
 				@Override
 				public int read() throws IOException {
 					return -1;

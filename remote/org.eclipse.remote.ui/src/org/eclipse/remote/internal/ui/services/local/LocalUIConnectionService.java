@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Shell;
 public class LocalUIConnectionService extends AbstractRemoteUIConnectionService {
 
 	private IRemoteConnectionType connectionType;
-	
+
 	public LocalUIConnectionService(IRemoteConnectionType connectionType) {
 		this.connectionType = connectionType;
 	}
-	
+
 	@Override
 	public IRemoteUIConnectionWizard getConnectionWizard(Shell shell) {
 		// we don't do this

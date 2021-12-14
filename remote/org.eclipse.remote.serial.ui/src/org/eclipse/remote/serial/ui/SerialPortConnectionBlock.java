@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class SerialPortConnectionBlock {
-	
+
 	private String name;
 	private String portName;
 	private int baudRateIndex;
@@ -51,26 +51,25 @@ public class SerialPortConnectionBlock {
 	private Combo byteSizeCombo;
 	private Combo parityCombo;
 	private Combo stopBitsCombo;
-	
+
 	private boolean isComplete;
 	private List<SerialBlockUpdateListener> listeners = new ArrayList<>();
 
-	
 	/**
 	 * Creates the UI elements for the SerialPortConnectionBlock
-	 * 
+	 *
 	 * @param comp - parent composite
 	 * @param wc - an IRemoteConnectionWorkingCopy to populate the default values from. Can be null.
 	 */
 	public void createBlock(Composite comp, IRemoteConnectionWorkingCopy wc) {
-		
+
 		String name = "";
 		String connectionPortName = "";
 		int baudRateStringIndex = BaudRate.getStringIndex(BaudRate.getDefault());
 		int byteSizeStringIndex = ByteSize.getStringIndex(ByteSize.getDefault());
 		int parityStringIndex = Parity.getStringIndex(Parity.getDefault());
 		int stopBitsStringIndex = StopBits.getStringIndex(StopBits.getDefault());
-		
+
 		if (wc != null) {
 			name = wc.getName();
 			connectionPortName = wc.getAttribute(ISerialPortService.PORT_NAME_ATTR);
@@ -79,7 +78,7 @@ public class SerialPortConnectionBlock {
 			parityStringIndex = Integer.parseInt(wc.getAttribute(ISerialPortService.PARITY_ATTR));
 			stopBitsStringIndex = Integer.parseInt(wc.getAttribute(ISerialPortService.STOP_BITS_ATTR));
 		}
-		
+
 		Label nameLabel = new Label(comp, SWT.NONE);
 		nameLabel.setText(Messages.NewSerialPortConnectionWizardPage_NameLabel);
 
@@ -188,7 +187,6 @@ public class SerialPortConnectionBlock {
 			}
 		});
 
-		
 		updateStatus();
 	}
 
@@ -204,8 +202,8 @@ public class SerialPortConnectionBlock {
 		stopBitsIndex = stopBitsCombo.getSelectionIndex();
 
 		isComplete = (!name.isEmpty() && portName != null);
-		
-		for(SerialBlockUpdateListener listener : listeners) {
+
+		for (SerialBlockUpdateListener listener : listeners) {
 			listener.update();
 		}
 	}
@@ -233,20 +231,20 @@ public class SerialPortConnectionBlock {
 	public int getStopBitsIndex() {
 		return stopBitsIndex;
 	}
-	
+
 	public boolean isComplete() {
 		return isComplete;
 	}
-	
+
 	public void addUpdateListener(SerialBlockUpdateListener listener) {
 		if (listener != null && !listeners.contains(listener))
 			listeners.add(listener);
 	}
-	
+
 	public void removeUpdateListener(SerialBlockUpdateListener listener) {
 		listeners.remove(listener);
 	}
-	
+
 	public abstract class SerialBlockUpdateListener {
 		public abstract void update();
 	}

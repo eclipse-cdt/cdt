@@ -67,7 +67,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 /**
  * This class implements a preference page which can be used to view a list of
  * JSch connections, create new connections or to delete existing connections.
- * 
+ *
  */
 public class ConnectionsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -112,7 +112,8 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			IRemoteConnection connection = getOriginalIfClean((IRemoteConnection) element);
 			switch (columnIndex) {
 			case 0:
-				return connection.isOpen() ? Messages.ConnectionsPreferencePage_open : Messages.ConnectionsPreferencePage_closed;
+				return connection.isOpen() ? Messages.ConnectionsPreferencePage_open
+						: Messages.ConnectionsPreferencePage_closed;
 			case 1:
 				return connection.getName();
 			case 2:
@@ -157,7 +158,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	/**
 	 * Handle widget selection events for this page
-	 * 
+	 *
 	 */
 	private class EventHandler extends SelectionAdapter {
 		@Override
@@ -229,8 +230,8 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	 */
 	private void addConnection() {
 		if (fIsDirty) {
-			MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions, null,
-					Messages.ConnectionsPreferencePage_There_are_unsaved_changes, MessageDialog.QUESTION,
+			MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions,
+					null, Messages.ConnectionsPreferencePage_There_are_unsaved_changes, MessageDialog.QUESTION,
 					new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
 			if (dialog.open() == 1) {
 				return;
@@ -256,7 +257,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	/**
 	 * Create the contents for this page
-	 * 
+	 *
 	 * @param parent
 	 *            - The parent widget for the client area
 	 */
@@ -267,7 +268,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	/**
 	 * Create the widgets for this page
-	 * 
+	 *
 	 * @param parent
 	 *            The parent widget for the client area
 	 * @return
@@ -456,7 +457,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	/**
 	 * Delete service configurations when Ok button is pressed
-	 * 
+	 *
 	 * @return Status from superclass indicating if Ok processing is to continue
 	 */
 	@Override
@@ -524,9 +525,11 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 				if (conn instanceof IRemoteConnectionWorkingCopy) {
 					IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) conn;
 					if (wc.isDirty()) {
-						MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions,
-								null, Messages.ConnectionsPreferencePage_This_connection_contains_unsaved_changes,
-								MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+						MessageDialog dialog = new MessageDialog(getShell(),
+								Messages.ConnectionsPreferencePage_Confirm_Actions, null,
+								Messages.ConnectionsPreferencePage_This_connection_contains_unsaved_changes,
+								MessageDialog.QUESTION,
+								new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
 						if (dialog.open() == 1) {
 							return;
 						}
@@ -609,7 +612,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	/**
 	 * Get the original connection if the working copy is not dirty
-	 * 
+	 *
 	 * @param conn
 	 * @return
 	 */

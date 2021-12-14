@@ -12,14 +12,14 @@ package org.eclipse.remote.core;
 
 /**
  * A service abstraction for remote terminals.
- * 
+ *
  * @since 2.0
  */
 public interface IRemoteProcessTerminalService extends IRemoteProcess.Service {
 	/**
 	 * Change the terminal window dimension interactively. Refer to RFC 4254 6.7. Window Dimension Change Message. The character/row
 	 * dimensions override the pixel dimensions (when nonzero). Pixel dimensions refer to the drawable area of the window.
-	 * 
+	 *
 	 * @param cols
 	 *            terminal width in characters
 	 * @param rows

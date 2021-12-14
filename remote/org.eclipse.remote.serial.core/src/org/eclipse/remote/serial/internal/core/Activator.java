@@ -36,7 +36,8 @@ public class Activator extends Plugin {
 		if (exception instanceof CoreException) {
 			log(((CoreException) exception).getStatus());
 		} else {
-			log(new Status(IStatus.ERROR, plugin.getBundle().getSymbolicName(), exception.getLocalizedMessage(), exception));
+			log(new Status(IStatus.ERROR, plugin.getBundle().getSymbolicName(), exception.getLocalizedMessage(),
+					exception));
 		}
 	}
 

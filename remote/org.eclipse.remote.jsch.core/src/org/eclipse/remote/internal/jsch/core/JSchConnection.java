@@ -51,8 +51,9 @@ import com.jcraft.jsch.Session;
 /**
  * @since 5.0
  */
-public class JSchConnection implements IRemoteConnectionControlService, IRemoteConnectionPropertyService,
-		IRemotePortForwardingService, IRemoteProcessService, IRemoteConnectionHostService, IRemoteConnectionChangeListener {
+public class JSchConnection
+		implements IRemoteConnectionControlService, IRemoteConnectionPropertyService, IRemotePortForwardingService,
+		IRemoteProcessService, IRemoteConnectionHostService, IRemoteConnectionChangeListener {
 	// Connection Type ID
 	public static final String JSCH_ID = "org.eclipse.remote.JSch"; //$NON-NLS-1$
 
@@ -130,8 +131,9 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 					return (T) jschConnection;
 				}
 			} else if (IRemoteConnectionControlService.class.equals(service)
-					|| IRemoteConnectionPropertyService.class.equals(service) || IRemotePortForwardingService.class.equals(service)
-					|| IRemoteProcessService.class.equals(service) || IRemoteConnectionHostService.class.equals(service)) {
+					|| IRemoteConnectionPropertyService.class.equals(service)
+					|| IRemotePortForwardingService.class.equals(service) || IRemoteProcessService.class.equals(service)
+					|| IRemoteConnectionHostService.class.equals(service)) {
 				return (T) connection.getService(JSchConnection.class);
 			} else {
 				return null;
@@ -230,7 +232,8 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	}
 
 	@Override
-	public int forwardLocalPort(String fwdAddress, int fwdPort, IProgressMonitor monitor) throws RemoteConnectionException {
+	public int forwardLocalPort(String fwdAddress, int fwdPort, IProgressMonitor monitor)
+			throws RemoteConnectionException {
 		if (!isOpen()) {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
 		}
@@ -272,7 +275,8 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	}
 
 	@Override
-	public int forwardRemotePort(String fwdAddress, int fwdPort, IProgressMonitor monitor) throws RemoteConnectionException {
+	public int forwardRemotePort(String fwdAddress, int fwdPort, IProgressMonitor monitor)
+			throws RemoteConnectionException {
 		if (!isOpen()) {
 			throw new RemoteConnectionException(Messages.JSchConnection_connectionNotOpen);
 		}
@@ -426,7 +430,8 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 		if (proxyConnectionName.isEmpty()) {
 			return null;
 		}
-		return fRemoteConnection.getConnectionType().getConnection(proxyConnectionName).getService(JSchConnection.class);
+		return fRemoteConnection.getConnectionType().getConnection(proxyConnectionName)
+				.getService(JSchConnection.class);
 	}
 
 	/**
@@ -442,7 +447,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	 * Open an sftp command channel to the remote host. This channel is for commands that do not require any
 	 * state being preserved and should not be closed. Long running commands (such as get/put) should use a separate channel
 	 * obtained via {#link #newSftpChannel()}.
-	 * 
+	 *
 	 * Always use the second session if available.
 	 *
 	 * @return sftp channel
@@ -458,7 +463,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	/**
 	 * Open a channel for long running commands. This channel should be closed when the command is completed.
-	 * 
+	 *
 	 * @return sftp channel
 	 * @throws RemoteConnectionException
 	 *             if a channel could not be opened
@@ -680,12 +685,15 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 			IRemoteConnectionWorkingCopy wc = getRemoteConnection().getWorkingCopy();
 			IRemoteConnectionHostService hostService = wc.getService(IRemoteConnectionHostService.class);
 			IUserAuthenticatorService authService = wc.getService(IUserAuthenticatorService.class);
-			Session session = fJSchService.createSession(hostService.getHostname(), hostService.getPort(), hostService.getUsername());
+			Session session = fJSchService.createSession(hostService.getHostname(), hostService.getPort(),
+					hostService.getUsername());
 			session.setUserInfo(new JSchUserInfo(hostService, authService));
 			if (hostService.usePassword()) {
-				session.setConfig("PreferredAuthentications", "password,keyboard-interactive,gssapi-with-mic,publickey"); //$NON-NLS-1$ //$NON-NLS-2$
+				session.setConfig("PreferredAuthentications", //$NON-NLS-1$
+						"password,keyboard-interactive,gssapi-with-mic,publickey"); //$NON-NLS-1$
 			} else {
-				session.setConfig("PreferredAuthentications", "publickey,gssapi-with-mic,password,keyboard-interactive"); //$NON-NLS-1$ //$NON-NLS-2$
+				session.setConfig("PreferredAuthentications", //$NON-NLS-1$
+						"publickey,gssapi-with-mic,password,keyboard-interactive"); //$NON-NLS-1$
 			}
 			String password = hostService.getPassword();
 			if (!password.isEmpty()) {
@@ -695,11 +703,12 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 				fJSchService.connect(session, getTimeout() * 1000, progress.newChild(10)); // connect without proxy
 			} else {
 				if (getProxyCommand().isEmpty()) {
-					session.setProxy(JSchConnectionProxyFactory.createForwardProxy(getProxyConnection(), progress.newChild(10)));
+					session.setProxy(
+							JSchConnectionProxyFactory.createForwardProxy(getProxyConnection(), progress.newChild(10)));
 					fJSchService.connect(session, getTimeout() * 1000, progress.newChild(10));
 				} else {
-					session.setProxy(JSchConnectionProxyFactory.createCommandProxy(getProxyConnection(), getProxyCommand(),
-							progress.newChild(10)));
+					session.setProxy(JSchConnectionProxyFactory.createCommandProxy(getProxyConnection(),
+							getProxyCommand(), progress.newChild(10)));
 					session.connect(getTimeout() * 1000); // the fJSchService doesn't pass the timeout correctly
 				}
 			}

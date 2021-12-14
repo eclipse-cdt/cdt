@@ -18,18 +18,13 @@ import org.eclipse.remote.internal.console.TerminalConsolePage;
 public class ConsoleActionScrollLock extends ConsoleAction {
 	private final TerminalConsolePage page;
 
-	public ConsoleActionScrollLock(TerminalConsolePage page)
-	{
+	public ConsoleActionScrollLock(TerminalConsolePage page) {
 		super(ConsoleActionScrollLock.class.getName(), IAction.AS_RADIO_BUTTON);
 
 		this.page = page;
 
-		setupAction(ActionMessages.SCROLL_LOCK,
-				ActionMessages.SCROLL_LOCK,
-				ImageConsts.IMAGE_CLCL_SCROLL_LOCK,
-				ImageConsts.IMAGE_ELCL_SCROLL_LOCK,
-				ImageConsts.IMAGE_DLCL_SCROLL_LOCK,
-				true);
+		setupAction(ActionMessages.SCROLL_LOCK, ActionMessages.SCROLL_LOCK, ImageConsts.IMAGE_CLCL_SCROLL_LOCK,
+				ImageConsts.IMAGE_ELCL_SCROLL_LOCK, ImageConsts.IMAGE_DLCL_SCROLL_LOCK, true);
 	}
 
 	@Override

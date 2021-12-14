@@ -31,7 +31,7 @@ public class ServerShellCommand extends AbstractServerExecCommand {
 			this.proc = proc;
 			this.pty = pty;
 		}
-		
+
 		@Override
 		public OutputStream getOutputStream() {
 			if (pty != null) {
@@ -70,54 +70,54 @@ public class ServerShellCommand extends AbstractServerExecCommand {
 		public void destroy() {
 			proc.destroy();
 		}
-		
+
 		public void setTerminalSize(int cols, int rows) {
 			if (pty != null) {
 				pty.setTerminalSize(cols, rows);
 			}
 		}
 	}
-	
+
 	public ServerShellCommand(StreamChannel cmdChan, StreamChannel ioChan) {
 		super(null, null, null, true, false, cmdChan, ioChan, null);
 	}
 
 	public Process doRun() throws IOException {
 		String shell = findLoginShell();
-		
+
 		if (PTY.isSupported(Mode.TERMINAL)) {
 			PTY pty = new PTY(Mode.TERMINAL);
-			Process p = ProcessFactory.getFactory().exec(new String[] {shell, "-l"}, null, null, pty); //$NON-NLS-1$
+			Process p = ProcessFactory.getFactory().exec(new String[] { shell, "-l" }, null, null, pty); //$NON-NLS-1$
 			return new ShellProcess(p, pty);
 		}
-		
-		return ProcessFactory.getFactory().exec(new String[] {shell, "-l"}, null, null); //$NON-NLS-1$
+
+		return ProcessFactory.getFactory().exec(new String[] { shell, "-l" }, null, null); //$NON-NLS-1$
 	}
-	
+
 	protected void doKill(Process proc) {
 		if (proc.isAlive()) {
 			proc.destroyForcibly();
 		}
 	}
-	
+
 	protected void doSetTerminalSize(Process proc, int cols, int rows) {
 		if (proc.isAlive() && proc instanceof ShellProcess) {
-			ShellProcess shell = (ShellProcess)proc;
+			ShellProcess shell = (ShellProcess) proc;
 			shell.setTerminalSize(cols, rows);
 		}
 	}
 
 	/**
 	 * Find the login shell.
-	 * 
+	 *
 	 * On Linux, use `getent passwd $USER`
 	 * On Mac OSX, use `dscl . -read /Users/$USER UserShell`
-	 * 
+	 *
 	 * @return
 	 */
 	private String findLoginShell() throws IOException {
 		String res;
-		
+
 		String osName = System.getProperty("os.name"); //$NON-NLS-1$
 		String userName = System.getProperty("user.name"); //$NON-NLS-1$
 		if (osName == null || userName == null) {
@@ -147,7 +147,7 @@ public class ServerShellCommand extends AbstractServerExecCommand {
 		}
 		throw new IOException("Unable to find login shell for os=" + osName + " user=" + userName); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	private String executeCommand(String command) throws IOException {
 		String line;
 		StringBuffer output = new StringBuffer();

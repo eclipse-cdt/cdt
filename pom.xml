@@ -256,6 +256,38 @@
 		<module>tools.templates/org.eclipse.tools.templates.freemarker</module>
 		<module>tools.templates/org.eclipse.tools.templates.ui</module>
 
+		<!-- Remote bundles -->
+		<module>remote/org.eclipse.remote.core</module>
+		<module>remote/org.eclipse.remote.jsch.core</module>
+		<module>remote/org.eclipse.remote.jsch.ui</module>
+		<module>remote/org.eclipse.remote.ui</module>
+		<!-- Proxy bundles -->
+		<module>remote/org.eclipse.remote.proxy.core</module>
+		<module>remote/org.eclipse.remote.proxy.ui</module>
+		<module>remote/org.eclipse.remote.proxy.protocol.core</module>
+		<module>remote/org.eclipse.remote.proxy.server.core</module>
+		<module>remote/org.eclipse.remote.proxy.server.product</module>
+		<module>remote/org.eclipse.remote.proxy.server.linux.x86_64</module>
+		<module>remote/org.eclipse.remote.proxy.server.linux.ppc64le</module>
+		<module>remote/org.eclipse.remote.proxy.server.macosx.x86_64</module>
+		<!-- Main feature -->
+		<module>remote/org.eclipse.remote-feature</module>
+		<!-- Proxy feature -->
+		<module>remote/org.eclipse.remote.proxy-feature</module>
+		<!-- Console Terminal feature -->
+		<module>remote/org.eclipse.remote.console</module>
+		<module>remote/org.eclipse.remote.console-feature</module>
+		<!-- Serial Port feature -->
+		<module>remote/org.eclipse.remote.serial.core</module>
+		<module>remote/org.eclipse.remote.serial.ui</module>
+		<module>remote/org.eclipse.remote.serial-feature</module>
+		<!-- Telnet feature -->
+		<module>remote/org.eclipse.remote.telnet.core</module>
+		<module>remote/org.eclipse.remote.telnet.ui</module>
+		<module>remote/org.eclipse.remote.telnet-feature</module>
+		<!-- Documentation -->
+		<module>remote/org.eclipse.remote.doc.isv</module>
+
 		<module>terminal</module>
 
 		<module>jsoncdb</module>
@@ -679,6 +711,15 @@
 							<arch>aarch64</arch>
 						</environment>
 					</environments>
+					<dependency-resolution>
+						<extraRequirements>
+							<requirement>
+								<type>eclipse-plugin</type>
+								<id>org.eclipse.ui.ide</id>
+								<versionRange>0.0.0</versionRange>
+							</requirement>
+						</extraRequirements>
+					</dependency-resolution>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -725,6 +766,10 @@
 								<plugin id="net.sourceforge.lpg.lpgjavaruntime"/>
 								<plugin id="org.eclipse.ant.optional.junit"/>
 								<plugin id="org.eclipse.cdt.testing"/>
+								<plugin id="org.eclipse.remote.proxy.server.linux.x86_64"/>
+								<plugin id="org.eclipse.remote.proxy.server.linux.ppc64le"/>
+								<plugin id="org.eclipse.remote.proxy.server.macosx.x86_64"/>
+								<plugin id="org.eclipse.remote.doc.isv"/>
 							</excludes>
 						</configuration>
 					</execution>

@@ -89,7 +89,8 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
 
 			@Override
 			public boolean match(Object element) {
-				return matcher.matches(elementRenderer.getText(element));
+				String patternString = elementRenderer.getText(element);
+				return patternString != null && matcher.matches(patternString);
 			}
 		});
 

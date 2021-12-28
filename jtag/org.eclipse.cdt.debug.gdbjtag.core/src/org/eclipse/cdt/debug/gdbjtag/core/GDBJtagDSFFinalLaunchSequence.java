@@ -25,6 +25,7 @@
  *     John Dallaway - Use 'reset and halt' command (Bug 535163)
  *     John Dallaway - Eliminate deprecated API (Bug 566462)
  *     John Dallaway - Set executable file (Bug 457697)
+ *     John Dallaway - Initialize memory data before connecting to target (Bug 575934)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -225,6 +226,8 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 					"stepRetrieveJTAGDevice", //$NON-NLS-1$
 					"stepSetExecutableFile", //$NON-NLS-1$
 					"stepLoadSymbols", //$NON-NLS-1$
+					"stepInitializeMemory", //$NON-NLS-1$
+
 					"stepConnectToTarget", //$NON-NLS-1$
 					"stepResetBoard", //$NON-NLS-1$
 					"stepDelayStartup", //$NON-NLS-1$
@@ -234,7 +237,6 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 
 					"stepUpdateContainer", //$NON-NLS-1$
 
-					"stepInitializeMemory", //$NON-NLS-1$
 					"stepSetArguments", //$NON-NLS-1$
 					"stepSetEnvironmentVariables", //$NON-NLS-1$
 					"stepStartTrackingBreakpoints", //$NON-NLS-1$

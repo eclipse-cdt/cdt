@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="111">
+<target name="cdt" sequenceNumber="112">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/cbi/updates/license/"/>
 			<unit id="org.eclipse.license.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/eclipse/updates/4.22/R-4.22-202111241800/"/>
+			<repository location="https://download.eclipse.org/eclipse/updates/4.23-I-builds/I20220105-1800/"/>
 			<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.jdt.annotation" version="0.0.0"/>
 			<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
@@ -31,7 +31,7 @@
 			<repository location="https://download.eclipse.org/modeling/emf/emf/builds/release/latest/"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/mylyn/docs/releases/3.0.40/"/>
+			<repository location="https://download.eclipse.org/mylyn/docs/releases/3.0.41/"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/mylyn/drops/3.25.2/v20200831-1956/"/>
@@ -43,11 +43,11 @@
 			<unit id="org.eclipse.swtbot.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
+			<repository location="https://download.eclipse.org/tm4e/releases/0.4.3/"/>
 			<unit id="org.eclipse.tm4e.feature.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tools/cdt/releases/10.4/cdt-10.4.1/"/>
+			<repository location="https://download.eclipse.org/tools/cdt/releases/10.5/cdt-10.5.0/"/>
 			<!-- We explicitly have CDT in target platform so that developers can develop org.eclipse.cdt.core/ui without requiring all the projects from CDT in their workspace. -->
 			<unit id="org.eclipse.cdt.feature.group" version="0.0.0"/>
 		</location>
@@ -56,7 +56,7 @@
 			<unit id="org.eclipse.wildwebdeveloper.embedder.node.feature.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20211122181901/repository/"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository/"/>
 			<unit id="com.google.gson" version="0.0.0"/>
 			<unit id="com.sun.xml.bind" version="2.3.3.v20201118-1818"/>
 			<unit id="javax.activation" version="1.2.2.v20201119-1642"/>

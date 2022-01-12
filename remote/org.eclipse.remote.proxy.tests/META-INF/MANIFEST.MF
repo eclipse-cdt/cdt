@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Remote Proxy Tests
 Bundle-SymbolicName: org.eclipse.remote.proxy.tests
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.100.qualifier
 Bundle-Activator: org.eclipse.remote.proxy.tests.Activator
 Bundle-Vendor: Eclipse PTP
 Require-Bundle: org.eclipse.ui,

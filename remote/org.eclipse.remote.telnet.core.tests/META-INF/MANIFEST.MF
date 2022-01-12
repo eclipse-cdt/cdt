@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Remote Telnet tests
 Bundle-SymbolicName: org.eclipse.remote.telnet.core.tests
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.100.qualifier
 Bundle-Activator: org.eclipse.remote.telnet.core.tests.Activator
 Bundle-Vendor: Eclipse PTP
 Require-Bundle: org.eclipse.core.runtime,

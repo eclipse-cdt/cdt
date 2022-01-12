@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension-point id="remoteServices" name="Remote Services" schema="schema/remoteServices.exsd"/>
+   <extension-point id="remoteResources" name="Remote Resources" schema="schema/remoteResources.exsd"/>
+   <extension-point id="processFactory" name="Process Factory" schema="schema/processFactory.exsd"/>
+   <extension-point id="authenticator" name="User Authenticator" schema="schema/authenticator.exsd"/>
+   <extension
+         point="org.eclipse.remote.core.remoteServices">
+      <connectionType
+            canAdd="false"
+            canEdit="false"
+            canRemove="false"
+            id="org.eclipse.remote.LocalServices"
+            name="Local"
+            scheme="file">
+      </connectionType>
+      <connectionTypeService
+            factory="org.eclipse.remote.internal.core.services.local.LocalConnectionProviderService$Factory"
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            service="org.eclipse.remote.core.IRemoteConnectionProviderService">
+      </connectionTypeService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalConnectionPropertyService$Factory"
+            service="org.eclipse.remote.core.IRemoteConnectionPropertyService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalFileService$Factory"
+            service="org.eclipse.remote.core.IRemoteFileService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalProcessService$Factory"
+            service="org.eclipse.remote.core.IRemoteProcessService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalCommandShellService$Factory"
+            service="org.eclipse.remote.core.IRemoteCommandShellService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalConnectionHostService$Factory"
+            service="org.eclipse.remote.core.IRemoteConnectionHostService">
+      </connectionService>
+      <processService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalProcess$Factory"
+            service="org.eclipse.remote.core.IRemoteProcessControlService">
+      </processService>
+      <processService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalProcess$Factory"
+            service="org.eclipse.remote.internal.core.services.local.LocalProcess">
+      </processService>
+      <processService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalProcess$Factory"
+            service="org.eclipse.remote.core.IRemoteProcessTerminalService">
+      </processService>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.core.resources.IResource"
+            class="org.eclipse.remote.internal.core.RemoteResourceAdapterFactory">
+         <adapter
+               type="org.eclipse.remote.core.IRemoteResource">
+         </adapter>
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.remote.internal.core.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.remote.core.RemoteConnectionPropertyTester"
+            id="org.eclipse.remote.core.remoteConnectionTester"
+            namespace="org.eclipse.remote.core"
+            properties="isConnectionType"
+            type="org.eclipse.remote.core.IRemoteConnection">
+      </propertyTester>
+   </extension>
+
+</plugin>

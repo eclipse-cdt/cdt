@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.remote.core.remoteServices">
+      <connectionTypeService
+            connectionTypeId="org.eclipse.remote.serial.core.connectionType"
+            factory="org.eclipse.remote.serial.internal.ui.SerialPortConnectionsUI$Factory"
+            service="org.eclipse.remote.ui.IRemoteUIConnectionService">
+      </connectionTypeService>
+   </extension>
+      <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.eclipse.remote.serial.ui.SerialPortConnectionPropertyPage"
+            id="org.eclipse.remote.serial.ui.targetPropertyPage"
+            name="Serial Port Settings"
+            selectionFilter="single">
+         <enabledWhen>
+             <adapt type="org.eclipse.remote.core.IRemoteConnection">
+                <test
+                      property="org.eclipse.remote.core.isConnectionType"
+                      value="org.eclipse.remote.serial.core.connectionType"/>
+             </adapt>
+          </enabledWhen>
+      </page>
+	</extension>
+</plugin>
